@@ -1,5 +1,12 @@
-controllers:
+shared-api:
     resource:
-        path: ../src/Controller/
-        namespace: App\Controller
+        path: ../src/Shared/Infrastructure/UI/Api/
+        namespace: App\Shared\Infrastructure\UI\Api
+    type: attribute
+    prefix: '/api'
+
+shared-web:
+    resource:
+        path: ../src/Shared/Infrastructure/UI/Web/
+        namespace: App\Shared\Infrastructure\UI\Web
     type: attribute
