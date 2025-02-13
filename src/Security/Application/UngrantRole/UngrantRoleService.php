@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Security\Application\UngrantRole;
+
+use App\Security\Domain\Model\User\UserRepository;
+use InvalidArgumentException;
+
+class UngrantRoleService
+{
+    public function __construct(private UserRepository $repository)
+    {
+
+    }
+
+    public function __invoke(UngrantRoleRequest $request): UngrantRoleResponse
+    {
+        $user = $this->repository->find($request->userId);
+
+        if (null == $user) {
+            throw new InvalidArgumentException("User not found");
+        }
+
+        $user->ungrantRole($request->role);
+        
+        $this->repository->add($user);
+
+        return new UngrantRoleResponse(
+            userId: $user->id(),
+            username: $user->username(),
+            roles: $user->roles()
+        );
+    }
+}

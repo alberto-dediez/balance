@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Shared;
 
+use Behat\Step\Then;
+use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
@@ -22,25 +24,19 @@ final class ApiContext implements Context
     {
     }
 
-    /**
-     * @When I send a :method request to :path
-     */
+    #[When('I send a :method request to :path')]
     public function iSendARequestTo($method, $path)
     {
         $this->client->request($method, $path);
     }
 
-    /**
-     * @When I send a :method request to :path with body:
-     */
+    #[When('I send a :method request to :path with body:')]
     public function iSendARequestToWithBody($method, $path, PyStringNode $content)
     { 
         $this->client->request($method, $path, [], [], [], (string) $content);
     }
 
-    /**
-     * @Then the response JSON should be equal to:
-     */
+    #[Then('the response JSON should be equal to:')]
     public function theResponseJsonShouldBeEqualTo(PyStringNode $content)
     {
         $expected = json_encode(json_decode((string) $content), JSON_PRETTY_PRINT);
@@ -49,9 +45,7 @@ final class ApiContext implements Context
         Assert::assertEquals($expected, $actual);
     }
 
-    /**
-     * @Then the response JSON should be similar to:
-     */
+    #[Then('the response JSON should be similar to:')]
     public function theResponseJsonShouldBeSimilarTo(PyStringNode $content)
     {
         $expected = json_decode((string) $content);
@@ -62,9 +56,7 @@ final class ApiContext implements Context
         }
     }
 
-    /**
-     * @Then the status code should be :code
-     */
+    #[Then('the status code should be :code')]
     public function theStatusCodeShouldBe(int $code)
     {
         Assert::assertEquals($code, $this->client->getResponse()->getStatusCode());

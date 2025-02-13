@@ -10,3 +10,9 @@ shared-web:
         path: ../src/Shared/Infrastructure/UI/Web/
         namespace: App\Shared\Infrastructure\UI\Web
     type: attribute
+
+security-web:
+    resource:
+        path: ../src/Security/Infrastructure/UI/Web/
+        namespace: App\Security\Infrastructure\UI\Web
+    type: attribute

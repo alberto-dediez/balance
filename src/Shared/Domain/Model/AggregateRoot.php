@@ -5,18 +5,8 @@ namespace App\Shared\Domain\Model;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventPublisher;
 
-class AggregateRoot
+trait AggregateRoot
 {
-    public function __construct(protected AggregateRootId $id, protected array $events = [])
-    {
-        
-    }
-
-    public function id(): AggregateRootId
-    {
-        return $this->id;
-    }
-
     protected function recordApplyAndPublish(DomainEvent $event)
     {
         $this->record($event);
@@ -48,6 +38,10 @@ class AggregateRoot
 
     public function rebuild()
     {
+        if (null !== $this->events) {
+            return ;
+        }
+
         if (count($this->events) == 0) {
             return ;
         }

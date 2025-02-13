@@ -41,12 +41,14 @@ migrate:
 
 ## —— Testing ———————————————————————————————————————————————————————————————
 test-unit: ## Execute unit tests
-	# @$(PHP) bin/console doc:sch:upd -e test --force -q
+	@$(PHP) bin/console doc:sch:drop -e test --force -q
+	@$(PHP) bin/console doc:sch:upd -e test --force -q
 	# @$(PHP) bin/console doc:fix:load -e test -q
 	@$(PHP) bin/phpunit
 
 test-acceptance: ## Execute acceptance tests
-	# @$(PHP) bin/console doc:sch:upd -e test --force -q
+	@$(PHP) bin/console doc:sch:drop -e test --force -q
+	@$(PHP) bin/console doc:sch:upd -e test --force -q
 	# @$(PHP) bin/console doc:fix:load -e test -q
 	@$(PHP) vendor/bin/behat
 

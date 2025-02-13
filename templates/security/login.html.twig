@@ -1,0 +1,87 @@
+{% extends '@security/layout.html.twig' %}
+
+{% block form %}
+    <form action="" method="POST">
+        {% if error %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+
+        <div class="form-group mb-3">
+            <label class="form-label" for="username">{% trans -%}Email{%- endtrans %}</label>
+            <input 
+                class="form-control" 
+                type="text" 
+                id="username" 
+                required="" 
+                name="_username" 
+                placeholder="{% trans -%}Introduce tu email{%- endtrans %}"
+            >
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="form-label" for="password">{% trans -%}Contraseña{%- endtrans %}</label>
+            <div class="input-group" id="show_hide_password">
+                <input 
+                    class="form-control" 
+                    type="password" 
+                    required="" 
+                    id="password" 
+                    name="_password" 
+                    placeholder="{% trans -%}Introduce tu contraseña{%- endtrans %}"
+                >
+                <button class="btn btn-light reveal rounded-end" 
+                    type="button"
+                    title="{% trans -%}Mostrar / ocultar contraseña{%- endtrans %}"
+                >
+                    <i class="fa fa-eye-slash"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="form-group mb-3">
+            <div class="form-check form-switch">
+                <input type="checkbox" class="form-check-input" name="_remember_me" id="checkbox-signin">
+                <label class="form-check-label" for="checkbox-signin">{% trans -%}Recuerdame{%- endtrans %}</label>
+            </div>
+        </div>
+
+        <div class="form-group mb-0 text-center">
+            <button class="btn btn-primary w-100 py-8 mb-4 rounded-2" name="submit" type="submit">{% trans -%}Acceder{%- endtrans %}</button>
+        </div>
+
+
+        <input type="hidden" name="_csrf_token"
+            value="{{ csrf_token('authenticate') }}"
+        >
+    </form>
+    <!-- end row -->
+{% endblock form %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.reveal').addEventListener('click', function(event) {
+                event.preventDefault();
+    
+                var pwd = document.querySelector('#password');
+                var icon = event.target;
+    
+                if (!icon.matches('i')) {
+                    icon = icon.querySelector('i.fa');
+                }
+    
+                if (pwd.getAttribute('type') === 'password') {
+                    pwd.setAttribute('type', 'text');
+                    icon.setAttribute('class', 'fa fa-eye');
+                } else {
+                    pwd.setAttribute('type', 'password');
+                    icon.setAttribute('class', 'fa fa-eye-slash');
+                }
+    
+                return false;
+            });
+        });
+    </script>
+{% endblock %}        

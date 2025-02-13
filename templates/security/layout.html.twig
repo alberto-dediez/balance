@@ -1,0 +1,38 @@
+{% extends '@shared/base.html.twig' %}
+
+{% set page_title = 'Zona privada' | trans({}, 'backend') %}
+
+{% block body_tag %}class="authentication-bg"{% endblock %}
+
+{% block body %}
+    <!-- Begin page -->
+    <div id="main-wrapper">       
+        <div class="page-wrapper">
+            <div class="position-relative overflow-hidden min-vh-100 w-100 d-flex align-items-center justify-content-center">
+                <div class="d-flex align-items-center justify-content-center w-100">
+                    <div class="row justify-content-center w-100">
+                        <div class="text-center mb-3">
+                            <a href="{{ path('home') }}">
+                                <span><img src="/assets/images/logo-dark.png" alt="" height="48"></span>
+                            </a>
+                        </div>
+                        <div class="col-md-8 col-lg-6 col-xxl-4">
+                            {% block content %}
+                                <div class="card mb-0 bg-body">
+                                    <div class="card-body">
+                                        <div class="position-relative text-center my-4">
+                                            {% block form_title %}
+                                                <h4 class="text-uppercase mt-0">{% trans -%}Acceder{%- endtrans %}</h4>
+                                            {% endblock %}
+                                        </div>
+                                        {% block form %}{% endblock form %}
+                                    </div>
+                                </div>
+                            {% endblock content %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+  </div>
+{% endblock body %}

@@ -1,0 +1,35 @@
+{% extends '@shared/base.html.twig' %}
+
+{% block body %}
+    <div id="main-wrapper">
+        <!-- Sidebar Start -->
+        {% include '@shared/layout/app/left-sidebar.html.twig' %}
+        <!--  Sidebar End -->
+        <div class="page-wrapper">
+            {% include '@shared/layout/app/topbar.html.twig' %}
+
+            <div class="body-wrapper">
+                <div class="container-fluid">
+                    <div class="card card-body d-print-none">
+                        <div class="row align-items-center">
+                            <div class="col-12">
+                                <div class="d-sm-flex align-items-center justify-space-between">
+                                    {% block page_title %}
+                                        <h4 class="fw-semibold fs-4 mb-4 mb-md-0 card-title">{{ page_title }}</h4>
+                                    {% endblock %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="dark-transparent sidebartoggler"></div>
+
+    {% block right_bar %}{% endblock %}
+
+    {% include '@shared/layout/app/messages.html.twig' %}
+{% endblock body %}

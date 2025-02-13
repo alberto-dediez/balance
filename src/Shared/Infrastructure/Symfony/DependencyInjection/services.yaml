@@ -9,3 +9,6 @@ services:
     App\Shared\Infrastructure\UI\Console\:
         resource: '../../../Infrastructure/UI/Console/'
         tags: ['console.command']
+
+    App\DataFixtures\:
+        resource: '../../../../../fixtures'

@@ -1,0 +1,48 @@
+<a class="nav-link" href="javascript:void(0)" id="drop1" aria-expanded="false">
+    <iconify-icon icon="solar:user-circle-line-duotone" class="fs-6"></iconify-icon>
+</a>
+<div class="dropdown-menu content-dd dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop1">
+    <div class="profile-dropdown position-relative" data-simplebar>
+        <div class="py-3 px-7 pb-0">
+            <h5 class="mb-0 fs-5 fw-semibold">{% trans -%}Perfil del usuario{%- endtrans %}</h5>
+        </div>
+        <div class="d-flex align-items-center py-9 mx-7 border-bottom">
+            <img src="/assets/images/logo-sm.png" height="80" alt="Bioscore Sustainability" />
+            <div class="ms-3">
+                <h5 class="mb-0 fs-4">{{ app.user.username }}</h5>
+                <span class="mb-1 d-block">{{ app.user.username }}</span>
+                <p class="mb-0 d-flex align-items-center gap-2">
+                    <i class="ti ti-mail fs-4"></i> {{ app.user.username }}
+                </p>
+            </div>
+        </div>
+        <div class="message-body">
+            <a href="#profile" class="py-8 px-7 mt-8 d-flex align-items-center">
+                <span class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded round">
+                    <iconify-icon icon="solar:users-group-rounded-line-duotone" class="fs-7"></iconify-icon>
+                </span>
+                <div class="w-75 v-middle ps-3">
+                    <h5 class="mb-1 fs-3 fw-medium">{% trans -%}Editar perfil{%- endtrans %}</h5>
+                    <span class="fs-2 d-block text-body-secondary">{{ app.user.username }}</span>
+                </div>
+            </a>
+
+            {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+                <a href="{{ path('home', {'_switch_user': '_exit'}) }}" class="py-8 px-7 mt-8 d-flex align-items-center">
+                    <span class="d-flex align-items-center justify-content-center bg-warning-subtle text-warning rounded round">
+                        <iconify-icon icon="solar:key-square-2-line-duotone" class="fs-7"></iconify-icon>
+                    </span>
+                    <div class="w-75 v-middle ps-3">
+                        <h5 class="mb-1 fs-3 fw-medium">{% trans -%}Volver a mi usuario{%- endtrans %}</h5>
+                        <span class="fs-2 d-block text-body-secondary">{{ app.token.originalToken.user.username }}</span>
+                    </div>
+                </a>
+            {% endif %}
+        </div>
+        <div class="d-grid py-4 px-7 pt-8">
+            <a href="{{ path('app_logout') }}" class="btn btn-primary">
+                <span>{% trans -%}Cerrar sesión{%- endtrans %}</span>
+            </a>
+        </div>
+    </div>
+</div>

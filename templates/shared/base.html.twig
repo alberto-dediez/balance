@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8" />
+        <title>{% block title %}{{ (page_title is defined ? page_title : ('Bienvenido' | trans({}, 'backend'))) }} {% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="/assets/images/favicon.ico">
+        <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192x192.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+
+        {% block stylesheets %}
+            <!-- Vendor css -->
+            <link rel="stylesheet" href="/assets/libs/select2/dist/css/select2.min.css">
+            <link rel="stylesheet" href="/assets/libs/flatpickr/dist/flatpickr.min.css">
+            <link rel="stylesheet" href="/assets/libs/quill/dist/quill.snow.css">
+
+            <!-- App css -->
+            <link href="/assets/css/styles.css" rel="stylesheet" type="text/css" />
+        {% endblock %}
+    </head>
+
+    <body {% block body_tag %}{% endblock %}>
+        <!-- Pre-loader -->
+        <div class="preloader">
+            <img src="/assets/images/favicon.png" alt="loader" class="lds-ripple img-fluid" />
+        </div>
+        <!-- End Preloader-->
+
+        {% block body %}{% endblock %}
+
+        {% block javascripts %}
+            <!-- Vendor js -->
+            <script src="/assets/js/vendor.min.js"></script>
+            <script src="/assets/libs/quill/dist/quill.js"></script>
+            <script src="/assets/libs/select2/dist/js/select2.full.min.js"></script>
+            <script src="/assets/libs/select2/dist/js/i18n/es.js"></script>
+            <script src="/assets/libs/flatpickr/dist/flatpickr.min.js"></script>
+            <script src="/assets/libs/flatpickr/dist/l10n/es.js"></script>
+            <script src="/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="/assets/libs/simplebar/dist/simplebar.min.js"></script>
+            <script src="/assets/libs/jquery-ui/dist/jquery-ui.min.js"></script>
+            <script src="/assets/libs/htmx.org/dist/htmx.min.js"></script>
+
+            <!-- App js -->
+            <script src="/assets/js/theme/theme.js"></script>
+            <script src="/assets/js/theme/app.js"></script>
+        {% endblock %}        
+
+        <!-- solar icons -->
+        <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+    </body>
+</html>

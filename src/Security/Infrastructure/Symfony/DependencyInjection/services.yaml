@@ -1,0 +1,20 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\Security\:
+        resource: '../../../'
+        exclude:
+            - '../../../Infrastructure/Symfony/DependencyInjection/'
+
+    App\Security\Infrastructure\UI\Console\:
+        resource: '../../../Infrastructure/UI/Console/'
+        tags: ['console.command']
+
+    App\Security\Application\RegisterUser\RegisterUserService:
+        arguments:
+            $passwordHasher: '@App\Security\Infrastructure\Symfony\Security\UserPasswordHasher'
+
+    App\Security\Application\Infrastructure\Repository\User\InMemoryUserRepository:
+        public: true

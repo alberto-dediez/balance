@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Shared;
 
+use Behat\Step\Then;
+use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Behat\Behat\Context\Context;
-use Behat\Gherkin\Node\PyStringNode;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Behat\Behat\Tester\Exception\PendingException;
-use App\Security\Infrastructure\ORM\Entity\DoctrineUser;
-use App\Security\Infrastructure\ORM\Repository\DoctrineUserRepository;
+use App\Security\Domain\Model\User\UserRepository;
+use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 
 /**
  * This context class contains the definitions of the steps used by the demo
@@ -22,39 +22,33 @@ use App\Security\Infrastructure\ORM\Repository\DoctrineUserRepository;
  */
 final class WebContext implements Context
 {
-    public function __construct(private KernelBrowser $client, private Security $security)
+    public function __construct(private KernelBrowser $client, private Security $security, private UserRepository $userRepository)
     {
     }
 
-    /**
-     * @When I am logged as :username
-     */
+    #[When('I am logged as :username')]
     public function iAmLoggedAs($username)
     {
-        // $user = $this->client->getContainer()->get(DoctrineUserRepository::class)->findOneByUsername($username);
+        $user = $this->userRepository->findByUsername($username);
 
-        // $this->client->loginUser($user);
+        $securityUser = new SecurityUser($user);
+
+        $this->client->loginUser($securityUser);
     }
 
-    /**
-     * @When I go to :path
-     */
+    #[When('I go to :path')]
     public function iGoTo($path)
     {
         $this->client->request('GET', $path);
     }
 
-    /**
-     * @Then the response status should be :code
-     */
+    #[Then('the response status should be :code')]
     public function theResponseStatusShouldBe(int $code)
     {
         Assert::assertEquals($code, $this->client->getResponse()->getStatusCode(), $this->client->getResponse()->getContent());
     }
 
-    /**
-     * @Then I am redirected to :path
-     */
+    #[Then('I am redirected to :path')]
     public function iAmRedirectedTo($path)
     {
         $this->client->followRedirect();
@@ -62,9 +56,7 @@ final class WebContext implements Context
         Assert::assertEquals($path, $this->client->getRequest()->getPathInfo());
     }
 
-    /**
-     * @Then I see a button with name :name
-     */
+    #[Then('I see a button with name :name')]
     public function iSeeAButtonWithName($name)
     {
         $crawler = $this->getCrawler();
@@ -74,9 +66,7 @@ final class WebContext implements Context
         Assert::assertCount(1, $button);
     }
 
-    /**
-     * @Then I see a table with :rows rows
-     */
+    #[Then('I see a table with :rows rows')]
     public function iSeeATableWithRows($rows)
     {
         $crawler = $this->getCrawler();
@@ -86,9 +76,7 @@ final class WebContext implements Context
         Assert::assertCount((int) $rows, $nodes);
     }
 
-    /**
-     * @Then I see a text :text
-     */
+    #[Then('I see a text :text')]
     public function iSeeAText($text)
     {
         Assert::assertStringContainsString($text, $this->client->getResponse()->getContent());

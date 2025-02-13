@@ -2,6 +2,7 @@ twig:
     file_name_pattern: '*.twig'
     paths:
         'templates/shared': 'shared'
+        'templates/security': 'security'
 
 when@test:
     twig:
