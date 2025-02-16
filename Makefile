@@ -60,3 +60,28 @@ behat-init:
 
 behat-snippets:
 	@$(PHP) vendor/bin/behat --dry-run --append-snippets
+
+## —— Develop ———————————————————————————————————————————————————————————————
+develop:
+	rm ./public/assets/ -rf
+	@$(PHP) bin/console sass:build --watch
+
+asset-require:
+	@$(eval r ?=)
+	@$(PHP) bin/console importmap:require $(r)
+
+asset-install:
+	@$(PHP) bin/console importmap:install
+
+icon-import:
+	@$(eval p ?=)
+	@$(eval s ?=)
+	@$(PHP) bin/console ux:icons:import $(p) $(s)
+
+icon-lock:
+	@$(PHP) bin/console ux:icons:lock
+
+## —— Production ————————————————————————————————————————————————————————————
+production:
+	@$(PHP) bin/console sass:build
+	@$(PHP) bin/console asset-map:compile

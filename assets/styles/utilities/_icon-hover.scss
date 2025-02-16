@@ -1,0 +1,16 @@
+// 
+// Icon hover background
+// 
+.nav-icon-hover-bg {
+  width: 40px;
+  height: 40px;
+  margin: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary);
+  }
+}

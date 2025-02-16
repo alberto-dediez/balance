@@ -20,7 +20,7 @@
 
         <div class="form-group mb-3">
             <label class="form-label" for="password">{% trans -%}Contraseña{%- endtrans %}</label>
-            <div class="input-group" id="show_hide_password">
+            <div class="input-group" data-controller="password">
                 <input 
                     class="form-control" 
                     type="password" 
@@ -32,8 +32,10 @@
                 <button class="btn btn-light reveal rounded-end" 
                     type="button"
                     title="{% trans -%}Mostrar / ocultar contraseña{%- endtrans %}"
+                    data-action="click->password#toogleVisibility"
                 >
-                    <i class="fa fa-eye-slash"></i>
+                    <twig:ux:icon name="ph:eye-slash-duotone" class="icon see" />
+                    <twig:ux:icon name="ph:eye-duotone" class="icon hide d-none" />
                 </button>
             </div>
         </div>
@@ -59,29 +61,4 @@
 
 {% block javascripts %}
     {{ parent() }}
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelector('.reveal').addEventListener('click', function(event) {
-                event.preventDefault();
-    
-                var pwd = document.querySelector('#password');
-                var icon = event.target;
-    
-                if (!icon.matches('i')) {
-                    icon = icon.querySelector('i.fa');
-                }
-    
-                if (pwd.getAttribute('type') === 'password') {
-                    pwd.setAttribute('type', 'text');
-                    icon.setAttribute('class', 'fa fa-eye');
-                } else {
-                    pwd.setAttribute('type', 'password');
-                    icon.setAttribute('class', 'fa fa-eye-slash');
-                }
-    
-                return false;
-            });
-        });
-    </script>
 {% endblock %}        

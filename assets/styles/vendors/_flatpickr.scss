@@ -1,0 +1,13 @@
+.flatpickr {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    .flatpickr-input {
+        height: rem-calc(21);
+    }
+
+    .input-button {
+        cursor: pointer;
+    }
+}

@@ -1,0 +1,22 @@
+.sticky-action-bar {
+    --padding-vertical: 20px;
+    --padding-left: 389px;
+
+    position: fixed;
+    left: 0;
+    top: 100vh;
+    background-color: $white;
+    width: 100%;
+    padding-block: calc(var(--padding-vertical) / 2);
+    border-top: 1px solid $light-gray;
+    box-shadow: $box-shadow;
+    padding-left: var(--padding-left);
+    padding-right: 64px;
+    z-index: 9;
+}
+
+body[data-sidebartype=mini-sidebar] {
+    .sticky-action-bar {
+        --padding-left: 110px;
+    }
+}

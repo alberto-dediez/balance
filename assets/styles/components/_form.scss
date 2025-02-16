@@ -1,0 +1,12 @@
+.file-input {
+    position: relative;
+
+    .file-name {
+        position: absolute;
+        top: 2px;
+        left: 180px;
+        background: $white;
+        padding: 6px 0;
+        min-width: 400px;
+    }
+}

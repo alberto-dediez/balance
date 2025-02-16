@@ -1,0 +1,50 @@
+/*
+File: Email Css File
+*/
+
+//Fonts
+@import "email/fonts";
+
+$font-family-secondary: 'Karla', sans-serif;
+
+//Core files
+@import "variables/variables";
+
+// Import Bootstrap source files (Required file)
+@import '../../vendor/twbs/bootstrap/scss/bootstrap';
+
+//Components
+@import "email/reboot";
+@import "email/tables";
+@import "email/type";
+
+body {
+	background-color: $gray-200; 
+}
+
+table.body-wrap {
+	box-sizing: border-box; 
+	background-color: $white; 
+	box-sizing: border-box; 
+	vertical-align: top; 
+	display: block !important; 
+	max-width: 600px !important; 
+	clear: both !important; 
+	margin: 0 auto;
+}
+
+.container {
+
+}
+
+.top {
+	background: $light;
+	text-align: center;
+	padding: 20px 10px;
+}
+
+.footer {
+	font-size: 12px;
+	padding: 10px;
+	text-align: justify;
+}

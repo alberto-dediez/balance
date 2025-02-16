@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+
+// ------------------------------------
+// Variables
+// ------------------------------------
+@import "./variables/variables";
+@import "./variables/theme_variables";
+@import "./variables/variables-dark"; 
+
+// Import Bootstrap source files (Required file)
+@import '../../vendor/twbs/bootstrap/scss/bootstrap';
+
+// ------------------------------------
+// Layouts
+// ------------------------------------
+@import "./layouts/layouts";
+@import "./layouts/sidebar";
+@import "./layouts/header";
+@import "./layouts/lp-header";
+@import "./layouts/horizontal";
+@import "./layouts/customizer";
+@import "./layouts/spinner";
+@import "./layouts/print";
+
+// ------------------------------------
+// Components
+// ------------------------------------
+@import "./components/buttons";
+@import "./components/cards";
+@import "./components/dropdown-animation";
+@import "./components/tabs";
+@import "./components/wizard";
+@import "./components/form";
+@import "./components/actionbar";
+
+// ------------------------------------
+// Utilities
+// ------------------------------------
+@import "./utilities/icon-size";
+@import "./utilities/icon-hover";
+@import "./utilities/background";
+@import "./utilities/override";
+
+// ------------------------------------
+// RTL
+// ------------------------------------
+@import "./layouts/rtl"; 
+
+
+// ------------------------------------
+// Vendors
+// ------------------------------------
+@import "./vendors/simplebar";
+@import "./vendors/flatpickr";
+@import "./vendors/quill-editor";
