@@ -402,10 +402,12 @@ if ((at = "vertical")) {
         var menuid = (closestNav && closestNav.id) || "menu-right-mini-0";
         var menu = menuid[menuid.length - 1];
 
-        document
-            .getElementById("menu-right-mini-" + menu)
-            .classList.add("d-block");
-        document.getElementById("mini-" + menu).classList.add("selected");  
+        if (document.getElementById("menu-right-mini-" + menu)) {
+          document
+              .getElementById("menu-right-mini-" + menu)
+              .classList.add("d-block");
+          document.getElementById("mini-" + menu).classList.add("selected");  
+        }
     }
       
 

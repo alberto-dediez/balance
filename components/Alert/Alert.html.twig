@@ -1,0 +1,6 @@
+<div{{ attributes.defaults({'data-controller': 'Alert--Alert'}).without('class') }} 
+    class="alert alert-{{ type }}"
+    data-controller="alert"
+>
+    {% block content %}{% endblock %}
+</div>
