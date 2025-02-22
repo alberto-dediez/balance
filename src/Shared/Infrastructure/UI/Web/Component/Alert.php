@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Component\Alert;
+namespace App\Shared\Infrastructure\UI\Web\Component;
 
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 

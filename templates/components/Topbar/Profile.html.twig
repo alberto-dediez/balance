@@ -1,5 +1,5 @@
 <a class="nav-link" href="javascript:void(0)" id="drop1" aria-expanded="false">
-   <twig:ux:icon name="solar:user-circle-line-duotone" class="icon" />
+   <twig:Icon name="solar:user-circle-line-duotone" />
 </a>
 <div class="dropdown-menu content-dd dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop1">
     <div class="profile-dropdown position-relative" data-simplebar>
@@ -19,7 +19,7 @@
         <div class="message-body">
             <a href="#profile" class="py-8 px-7 mt-8 d-flex align-items-center">
                 <span class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded round">
-                   <twig:ux:icon name="solar:users-group-rounded-line-duotone" class="icon icon-500" />
+                   <twig:Icon name="solar:users-group-rounded-line-duotone" size="lg" />
                 </span>
                 <div class="w-75 v-middle ps-3">
                     <h5 class="mb-1 fs-3 fw-medium">{% trans -%}Editar perfil{%- endtrans %}</h5>
@@ -30,7 +30,7 @@
             {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
                 <a href="{{ path('home', {'_switch_user': '_exit'}) }}" class="py-8 px-7 mt-8 d-flex align-items-center">
                     <span class="d-flex align-items-center justify-content-center bg-warning-subtle text-warning rounded round">
-                        <twig:ux:icon name="solar:key-square-2-line-duotone" class="icon icon-500" />
+                        <twig:Icon name="solar:key-square-2-line-duotone" size="lg" />
                     </span>
                     <div class="w-75 v-middle ps-3">
                         <h5 class="mb-1 fs-3 fw-medium">{% trans -%}Volver a mi usuario{%- endtrans %}</h5>

@@ -51,14 +51,14 @@
         align-items: center;
         justify-content: center;
 
-        iconify-icon {
+        .icon {
           z-index: 2;
           position: relative;
           color: var(--bs-body-color);
         }
 
         &:hover {
-          iconify-icon {
+          .icon {
             color: var(--bs-primary);
           }
 
@@ -80,7 +80,7 @@
       }
 
       &.selected > a {
-        iconify-icon {
+        .icon {
           color: var(--bs-primary);
         }
 

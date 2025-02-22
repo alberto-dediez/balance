@@ -10,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class HomeController extends AbstractController
 {
     public function __invoke(): Response
-    {
+    {   
         return $this->render('@shared/home.html.twig');
     }
 }

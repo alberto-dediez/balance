@@ -5,7 +5,7 @@
             <ul class="navbar-nav">
                 <li class="nav-item nav-icon-hover ms-n3">
                     <a class="nav-link sidebartoggler" id="headerCollapse" href="javascript:void(0)">
-                        <twig:ux:icon name="solar:hamburger-menu-line-duotone" class="icon icon-500" />
+                        <twig:Icon name="solar:hamburger-menu-line-duotone" size="lg" />
                     </a>
                 </li>
             </ul>
@@ -15,7 +15,7 @@
             </div>
             <a class="navbar-toggler p-0 border-0 nav-icon-hover" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="p-2">
-                    <twig:ux:icon name="ph:dots-three" class="icon" />
+                    <twig:Icon name="ph:dots-three" class="icon" />
                 </span>
             </a>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
@@ -23,14 +23,14 @@
                     <ul class="navbar-nav flex-row mx-auto ms-lg-auto align-items-center justify-content-center">
                         <li class="nav-item nav-icon-hover">
                             <a class="nav-link moon dark-layout" href="javascript:void(0)">
-                                <twig:ux:icon name="solar:moon-line-duotone" class="icon moon" />
+                                <twig:Icon name="solar:moon-line-duotone" class="moon" />
                             </a>
                             <a class="nav-link sun light-layout" href="javascript:void(0)">
-                                <twig:ux:icon name="solar:sun-2-line-duotone" class="icon sun" />
+                                <twig:Icon name="solar:sun-2-line-duotone" class="sun" />
                             </a>
                         </li>
                         <li class="nav-item dropdown">
-                            {% include '@shared/layout/app/topbar/profile.html.twig' %}
+                            <twig:Topbar:Profile></twig:Topbar:Profile>
                         </li>
                     </ul>
                 </div>

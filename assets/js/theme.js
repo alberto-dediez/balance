@@ -8,6 +8,8 @@ var userSettings = {
   cardBorder: false, // true | false
 };
 
+import { Tooltip, Popover } from 'bootstrap';
+
 document.addEventListener("DOMContentLoaded", function () {
   "use strict";
 
@@ -18,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll('[data-bs-toggle="tooltip"]')
   );
   tooltipTriggerList.forEach((tooltipTriggerEl) => {
-    new bootstrap.Tooltip(tooltipTriggerEl);
+    new Tooltip(tooltipTriggerEl);
   });
 
   // =================================
@@ -28,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll('[data-bs-toggle="popover"]')
   );
   var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-    return new bootstrap.Popover(popoverTriggerEl);
+    return new Popover(popoverTriggerEl);
   });
   // =================================
   // Hide preloader

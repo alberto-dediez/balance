@@ -7,5 +7,3 @@ import './bootstrap.js';
  */
 
 import 'theme';
-
-console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');

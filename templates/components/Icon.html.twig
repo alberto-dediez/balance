@@ -1,0 +1,13 @@
+{% props name = '', size = 'md' %}
+
+{% set icon = cva({
+    base: 'icon',
+    variants: {
+        size: {
+            md: 'icon-400',
+            lg: 'icon-500',
+        }
+    }
+}) %}
+
+<twig:ux:icon name="{{ name }}" class="{{ icon.apply({size}, attributes.render('class')) }}" />

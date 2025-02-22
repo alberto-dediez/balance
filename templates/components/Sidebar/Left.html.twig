@@ -8,11 +8,15 @@
                     </a>
                 </div>
                 <ul class="mini-nav-ul" data-simplebar>
-                    
+                    {% for node in this.nodes %}
+                        <twig:Sidebar:Mini node="{{ node }}"></twig:Sidebar:Mini>
+                    {% endfor %}
                 </ul>
             </div>
             <div class="sidebarmenu">
-                
+                {% for node in this.nodes %}
+                    <twig:Sidebar:Nav node="{{ node }}"></twig:Sidebar:Nav>
+                {% endfor %}
             </div>
         </div>
     </div>

@@ -17,7 +17,7 @@ return [
         'entrypoint' => true,
     ],
     'bootstrap' => [
-        'version' => '5.3.3',
+        'version' => '5.3.3'
     ],
     '@popperjs/core' => [
         'version' => '2.11.8',

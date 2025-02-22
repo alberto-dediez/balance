@@ -64,6 +64,10 @@ behat-snippets:
 ## —— Develop ———————————————————————————————————————————————————————————————
 develop:
 	rm ./public/assets/ -rf
+	@$(PHP) bin/console sass:build
+
+develop-watch:
+	rm ./public/assets/ -rf
 	@$(PHP) bin/console sass:build --watch
 
 asset-require:

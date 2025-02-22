@@ -1,0 +1,9 @@
+<li class="sidebar-item">
+    <a class="sidebar-link {% if link.selected %}active{% endif %}" href="{{ link.target }}"
+        title="{{ link.label }}"
+    >
+        <twig:Icon name="{{ link.icon }}" />
+
+        <span class="hide-menu">{{ link.label }}</span>
+    </a>
+</li>

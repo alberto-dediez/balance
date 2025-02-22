@@ -1,0 +1,11 @@
+<nav class="sidebar-nav {% if node.selected %}d-block simplebar-scrollable-y{% endif %}" id="menu-right-mini-{{ node.id }}" data-simplebar>
+    <ul class="sidebar-menu" id="sidebarnav">
+        <li class="nav-small-cap">
+            <span class="hide-menu">{{ node.label }}</span>
+        </li>
+
+        {% for link in node.items %}
+            <twig:Sidebar:Link link="{{ link }}"></twig:Sidebar:Link>
+        {% endfor %}
+    </ul>
+</nav>

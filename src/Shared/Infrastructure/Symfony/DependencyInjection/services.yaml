@@ -12,6 +12,3 @@ services:
 
     App\DataFixtures\:
         resource: '../../../../../fixtures'
-
-    App\Component\:
-        resource: '../../../../../components/'

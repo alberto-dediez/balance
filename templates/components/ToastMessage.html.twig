@@ -1,0 +1,16 @@
+<div class="toast align-items-center text-bg-{{ type == 'error' ? 'danger' : type }} border-0" 
+    data-controller="toast"
+    role="alert" 
+    aria-live="assertive"
+    aria-atomic="true">
+    <div class="toast-body hstack align-items-start gap-6">
+        <i class="ti ti-alert-circle fs-6"></i>
+    <div>
+        <h6 class="text-white fs-4 mb-0">
+            {% block content %}{% endblock %}
+        </h6>
+    </div>
+    <button type="button" class="btn-close btn-close-white fs-2 m-0 ms-auto shadow-none" data-bs-dismiss="toast"
+        aria-label="Close"></button>
+    </div>
+</div>

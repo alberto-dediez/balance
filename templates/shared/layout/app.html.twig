@@ -2,11 +2,10 @@
 
 {% block body %}
     <div id="main-wrapper">
-        <!-- Sidebar Start -->
-        {% include '@shared/layout/app/left-sidebar.html.twig' %}
-        <!--  Sidebar End -->
+        <twig:Sidebar:Left></twig:Sidebar:Left>
+
         <div class="page-wrapper">
-            {% include '@shared/layout/app/topbar.html.twig' %}
+            <twig:Topbar></twig:Topbar>
 
             <div class="body-wrapper">
                 <div class="container-fluid">
@@ -31,5 +30,5 @@
 
     {% block right_bar %}{% endblock %}
 
-    {% include '@shared/layout/app/messages.html.twig' %}
+    <twig:Messages></twig:Messages>
 {% endblock body %}
