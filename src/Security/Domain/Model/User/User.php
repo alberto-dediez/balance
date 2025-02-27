@@ -6,6 +6,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Security\Domain\Model\User\RoleGranted;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserRegistered;
 
 class User
@@ -16,6 +17,7 @@ class User
         protected UserId $id, 
         protected string $username = '',
         protected string $password = '',
+        protected ?AccountId $accountId = null,
         protected array $roles = [],
         protected array $events = [],
         protected ?\DateTimeImmutable $registeredAt = null
@@ -38,6 +40,11 @@ class User
         return $this->password;
     }
 
+    public function accountId(): ?AccountId
+    {
+        return $this->accountId;
+    }
+
     public function roles(): array
     {
         $roles = array_merge($this->roles, [Role::User->value]);
@@ -50,13 +57,14 @@ class User
         return $this->registeredAt;
     }
 
-    public function register(string $username, string $password)
+    public function register(string $username, string $password, ?AccountId $account = null)
     {
         $this->recordApplyAndPublish(
             new UserRegistered(
-                $this->id(),
-                $username,
-                $password
+                userId: $this->id(),
+                username: $username,
+                password: $password,
+                accountId: $account
             )
         );
     }
@@ -85,6 +93,7 @@ class User
     {
         $this->username = $event->username();
         $this->password = $event->password();
+        $this->accountId = $event->accountId();
 
         $this->registeredAt = $event->occurredOn();
     }

@@ -6,6 +6,7 @@ use DateTimeImmutable;
 use App\Security\Domain\DomainEvent;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Security\Domain\Model\Account\AccountId;
 
 final class UserRegistered extends DomainEvent
 {
@@ -15,6 +16,7 @@ final class UserRegistered extends DomainEvent
         private UserId $userId, 
         private string $username, 
         private string $password,
+        private ?AccountId $accountId = null,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -36,12 +38,18 @@ final class UserRegistered extends DomainEvent
         return $this->password;
     }
 
+    public function accountId(): ?AccountId
+    {
+        return $this->accountId;
+    }
+
     public function payload(): ?array
     {
         return [
             'userId' => (string) $this->userId,
             'username' => $this->username,
-            'password' => $this->password
+            'password' => $this->password,
+            'accountId' => (string) $this->accountId
         ];
     }
 
@@ -54,6 +62,9 @@ final class UserRegistered extends DomainEvent
             userId: new UserId($payload['userId']), 
             username: $payload['username'],
             password: $payload['password'],
+            accountId: (isset($payload['accountId']) && !empty($payload['accountId']))
+                ? new AccountId($payload['accountId']) 
+                : null,
             id: $id,
             occurredOn: $occurredOn
         );

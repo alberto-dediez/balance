@@ -17,6 +17,6 @@
         <field name="roles" type="array" nullable="false"/>
         <field name="events" type="array" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="accountId" type="string" length="36" nullable="true"/>
     </entity>
-
 </doctrine-mapping>

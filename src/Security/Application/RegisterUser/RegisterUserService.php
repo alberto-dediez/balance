@@ -24,10 +24,10 @@ class RegisterUserService
         $hashedPassword = $this->passwordHasher->hashPassword($request->password);
 
         $user = new User($id);
-        $user->register($request->username, $hashedPassword);
+        $user->register($request->username, $hashedPassword, $request->accountId);
 
         $this->userRepository->add($user);
 
-        return new RegisterUserResponse($user->id(), $user->username());
+        return new RegisterUserResponse($user->id(), $user->username(), $user->accountId());
     }
 }

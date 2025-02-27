@@ -3,6 +3,7 @@
 namespace App\Security\Infrastructure\UI\Console\User;
 
 use Symfony\Component\Console\Command\Command;
+use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -27,14 +28,18 @@ class RegisterCommand extends Command
         $this
             ->addArgument('username', InputArgument::REQUIRED, 'The username of the user')
             ->addArgument('password', InputArgument::REQUIRED, 'The password of the user')
+            ->addArgument('accountId', InputArgument::OPTIONAL, 'The id of the account of the user')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $request = new RegisterUserRequest(
-            $input->getArgument('username'), 
-            $input->getArgument('password')
+            username: $input->getArgument('username'), 
+            password: $input->getArgument('password'),
+            accountId: ($input->hasArgument('accountId') && null !== $input->getArgument('accountId')) 
+                ? new AccountId($input->getArgument('accountId')) 
+                : null
         );
 
         $response = $this->registerUser->__invoke($request);
@@ -47,6 +52,7 @@ class RegisterCommand extends Command
             [
                 ['userId', (string) $response->userId],
                 ['username', $response->username],
+                ['cuenta', (string) $response->accountId],
             ]
         );
 

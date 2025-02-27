@@ -40,6 +40,8 @@ migrate:
 	@$(PHP) bin/console doctrine:migrations:migrate -q
 
 ## —— Testing ———————————————————————————————————————————————————————————————
+test: | test-acceptance test-unit
+
 test-unit: ## Execute unit tests
 	@$(PHP) bin/console doc:sch:drop -e test --force -q
 	@$(PHP) bin/console doc:sch:upd -e test --force -q

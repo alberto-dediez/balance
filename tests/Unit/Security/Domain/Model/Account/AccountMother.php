@@ -22,4 +22,14 @@ class AccountMother
 
         return $account;
     }
+
+    public static function fromNameAndId(string $name, string $id)
+    {
+        $account = new Account(
+            id: new AccountId($id)
+        );
+        $account->register($name, true);
+
+        return $account;
+    }
 }

@@ -14,7 +14,9 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use App\Security\Domain\Model\User\UserRepository;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use App\Security\Domain\Model\Account\AccountRepository;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 
 class SystemContext implements Context
 {
@@ -23,7 +25,7 @@ class SystemContext implements Context
     private ?int $statusCode;
     private ?CommandTester $commandTester;
 
-    public function __construct(private KernelInterface $kernel, private UserRepository $userRepository)
+    public function __construct(private KernelInterface $kernel, private UserRepository $userRepository, private AccountRepository $accountRepository)
     {
         $this->application = new Application($kernel);
     }
@@ -40,6 +42,14 @@ class SystemContext implements Context
         $user = UserMother::fromUsernameAndRole($username, Role::tryFrom($role));
         
         $this->userRepository->add($user);      
+    }
+
+    #[Given('account :name with id :id exists')]
+    public function accountWithIdExists($username, $id): void
+    {
+        $account = AccountMother::fromNameAndId($username, $id);
+        
+        $this->accountRepository->add($account);      
     }
 
     #[When('command :name is executed')]
