@@ -1,0 +1,18 @@
+{% props order, way, value %}
+
+{% set inverseWay = (way == 'DESC') ? 'ASC' : 'DESC' %}
+
+<th>
+    <a class="order-by {{ order == value ? 'ordered blue-text' }}" href="#{{ value }}" 
+        data-controller="filter"
+        data-action="filter#sort:prevent"
+        data-filter-order-param="{{ value }}" 
+		data-filter-direction-param="{{ order == value ? inverseWay : way }}"
+    >
+		{% block content %}{% endblock %}
+
+		{% if order == value %}
+			<twig:Icon name="{{ way == 'DESC' ? 'solar:double-alt-arrow-down-line-duotone' : 'solar:double-alt-arrow-up-line-duotone' }}" />
+		{% endif %}
+	</a>
+</th>

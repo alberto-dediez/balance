@@ -22,4 +22,14 @@ export default class extends Controller {
 
         field.closest('form').submit();
     }
+
+    sort(event) {
+        let orderBy = document.querySelector('input[name*="orderBy"]');
+        let orderWay = document.querySelector('input[name*="orderWay"]');
+
+        orderBy.value = event.params.order;
+        orderWay.value = event.params.direction;
+
+        orderBy.closest('form').submit();
+    }
 }

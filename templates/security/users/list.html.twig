@@ -9,8 +9,20 @@
     <twig:Card>
         <table class="table">
             <tr>
-                <th>{% trans %}Nombre de usuario{% endtrans %}</th>
-                <th>{% trans %}Fecha de registro{% endtrans %}</th>
+                <twig:List:SortableHead 
+                    order="{{ form.vars.value.orderBy }}" 
+                    way="{{ form.vars.value.orderWay }}" 
+                    value="username"
+                >
+                    {% trans %}Nombre de usuario{% endtrans %}
+                </twig:List:SortableHead>
+                <twig:List:SortableHead 
+                    order="{{ form.vars.value.orderBy }}" 
+                    way="{{ form.vars.value.orderWay }}" 
+                    value="registeredAt"
+                >
+                    {% trans %}Fecha de registro{% endtrans %}
+                </twig:List:SortableHead>
                 <th>&nbsp;</th>
             </tr>
             {% for user in users %}
