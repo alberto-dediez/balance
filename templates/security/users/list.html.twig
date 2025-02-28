@@ -4,11 +4,7 @@
 
 {% block content %}
     <twig:Card>
-        <twig:List:FilterBar>
-            {% if form.vars.value.username is not empty %}
-                <twig:Alert type="info">{{ form.vars.value.username }}</twig:Alert>
-            {% endif %}
-        </twig:List:FilterBar>
+        <twig:List:FilterBar :form="form"></twig:List:FilterBar>
     </twig:Card>
     <twig:Card>
         <table class="table">

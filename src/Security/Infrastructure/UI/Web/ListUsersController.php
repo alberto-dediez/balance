@@ -24,14 +24,16 @@ class ListUsersController extends AbstractController
     {   
         $listUsers = $this->listUsers;
 
-        $filter = new ListUsersRequest();
-
-        $form = $this->createForm(UserFilterType::class, $filter);
+        list($filter, $form) = $this->initiateFilter();
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $filter = $form->getData();
+
+            if ($form->getClickedButton() && 'reset' == $form->getClickedButton()->getName()) {
+                list($filter, $form) = $this->initiateFilter();
+            }
         }
 
         $response = $listUsers($filter);
@@ -41,5 +43,14 @@ class ListUsersController extends AbstractController
             'totalResults' => $response->totalResults,
             'form' => $form->createView()
         ]);
+    }
+
+    private function initiateFilter()
+    {
+        $filter = new ListUsersRequest();
+
+        $form = $this->createForm(UserFilterType::class, $filter);
+
+        return [$filter, $form];
     }
 }

@@ -1,7 +1,19 @@
+{% props form %}
+
 <div class="row align-items-center">
     <div class="col-12">
         <div class="d-sm-flex align-items-center justify-space-between">
-            {% block content %}{% endblock %}
+            {% block content %}
+                {% for field in form.vars.value | show_fields %}
+                    {% set formField = attribute(form, field) %}
+
+                    <twig:List:FilterShow 
+                        label="{{ formField.vars.label }}" 
+                        value="{{ attribute(form.vars.value, field) }}" 
+                        id="#{{ formField.vars.id }}"
+                    />
+                {% endfor %}
+            {% endblock %}
             
             <button class="btn btn-secondary d-flex align-items-center justify-content-start ms-auto"
                 type="button" data-bs-toggle="offcanvas" data-bs-target="#right-bar" aria-controls="filter"

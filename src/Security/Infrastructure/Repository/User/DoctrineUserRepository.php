@@ -71,7 +71,7 @@ class DoctrineUserRepository implements UserRepository
                 ->andWhere(
                     $qb->expr()->like('u.roles', ':role')
                 )
-                ->setParameter('role', $filter->role->value)
+                ->setParameter('role', "%" . $filter->role->value . "%")
             ;
         }
 
