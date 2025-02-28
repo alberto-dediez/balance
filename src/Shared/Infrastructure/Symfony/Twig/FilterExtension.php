@@ -2,10 +2,11 @@
 
 namespace App\Shared\Infrastructure\Symfony\Twig;
 
-use Symfony\Component\Translation\TranslatableMessage;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 use Twig\Extension\AbstractExtension;
+use App\Security\Domain\Model\User\Role;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class FilterExtension extends AbstractExtension
 {
@@ -106,6 +107,10 @@ class FilterExtension extends AbstractExtension
 
         if ($value instanceof \DateTimeInterface) {
             return $value->format('d/m/Y');
+        }
+
+        if ($value instanceof Role) {
+            return new TranslatableMessage($value->value, [], 'roles');
         }
 
         if ($value instanceof \UnitEnum) {

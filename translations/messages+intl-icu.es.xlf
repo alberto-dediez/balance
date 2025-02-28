@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="es" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="NHivGAB" resname="Sí">
+        <source>Sí</source>
+        <target>Sí</target>
+      </trans-unit>
+      <trans-unit id="wd1MvZW" resname="No">
+        <source>No</source>
+        <target>No</target>
+      </trans-unit>
+      <trans-unit id="TAjhO07" resname="Nombre de usuario">
+        <source>Nombre de usuario</source>
+        <target>Nombre de usuario</target>
+      </trans-unit>
+      <trans-unit id="1G65xme" resname="Cuenta">
+        <source>Cuenta</source>
+        <target>Cuenta</target>
+      </trans-unit>
+      <trans-unit id="6G5MEIB" resname="Todas las cuentas">
+        <source>Todas las cuentas</source>
+        <target>Todas las cuentas</target>
+      </trans-unit>
+      <trans-unit id="LT3kO0l" resname="Rol de usuario">
+        <source>Rol de usuario</source>
+        <target>Rol de usuario</target>
+      </trans-unit>
+      <trans-unit id="w4agWIZ" resname="Todos los roles de usuario">
+        <source>Todos los roles de usuario</source>
+        <target>Todos los roles de usuario</target>
+      </trans-unit>
+      <trans-unit id="K2Wi.LU" resname="Resetear filtro">
+        <source>Resetear filtro</source>
+        <target>Resetear filtro</target>
+      </trans-unit>
+      <trans-unit id="V2Mw_bu" resname="Filtrar">
+        <source>Filtrar</source>
+        <target>Filtrar</target>
+      </trans-unit>
+      <trans-unit id="wfxgcdT" resname="Perfil del usuario">
+        <source>Perfil del usuario</source>
+        <target>Perfil del usuario</target>
+      </trans-unit>
+      <trans-unit id="oix8GCH" resname="Editar perfil">
+        <source>Editar perfil</source>
+        <target>Editar perfil</target>
+      </trans-unit>
+      <trans-unit id="1abz9lf" resname="Volver a mi usuario">
+        <source>Volver a mi usuario</source>
+        <target>Volver a mi usuario</target>
+      </trans-unit>
+      <trans-unit id="pT4ZQ8S" resname="Cerrar sesión">
+        <source>Cerrar sesión</source>
+        <target>Cerrar sesión</target>
+      </trans-unit>
+      <trans-unit id="5UN.g1g" resname="Idioma">
+        <source>Idioma</source>
+        <target>Idioma</target>
+      </trans-unit>
+      <trans-unit id="aJSgJVx" resname="Cerrar">
+        <source>Cerrar</source>
+        <target>Cerrar</target>
+      </trans-unit>
+      <trans-unit id="5pGvRN8" resname="Paginación">
+        <source>Paginación</source>
+        <target>Paginación</target>
+      </trans-unit>
+      <trans-unit id="i6Y9osD" resname="Filtrar resultados">
+        <source>Filtrar resultados</source>
+        <target>Filtrar resultados</target>
+      </trans-unit>
+      <trans-unit id="rbU_r8w" resname="Elementos por página">
+        <source>Elementos por página</source>
+        <target>Elementos por página</target>
+      </trans-unit>
+      <trans-unit id="fewNgWT" resname="Bienvenido">
+        <source>Bienvenido</source>
+        <target>Bienvenido</target>
+      </trans-unit>
+      <trans-unit id="vsHqef5" resname="Inicio">
+        <source>Inicio</source>
+        <target>Inicio</target>
+      </trans-unit>
+      <trans-unit id="jXYhaHY" resname="Fecha de registro">
+        <source>Fecha de registro</source>
+        <target>Fecha de registro</target>
+      </trans-unit>
+      <trans-unit id="aq2eM8Q" resname="Roles">
+        <source>Roles</source>
+        <target>Roles</target>
+      </trans-unit>
+      <trans-unit id="bh_k3kD" resname="Lista de usuarios">
+        <source>Lista de usuarios</source>
+        <target>Lista de usuarios</target>
+      </trans-unit>
+      <trans-unit id="JZi_tm0" resname="Email">
+        <source>Email</source>
+        <target>Email</target>
+      </trans-unit>
+      <trans-unit id="lkL86AB" resname="Introduce tu email">
+        <source>Introduce tu email</source>
+        <target>Introduce tu email</target>
+      </trans-unit>
+      <trans-unit id="T55wh1j" resname="Contraseña">
+        <source>Contraseña</source>
+        <target>Contraseña</target>
+      </trans-unit>
+      <trans-unit id="WqcEd4z" resname="Introduce tu contraseña">
+        <source>Introduce tu contraseña</source>
+        <target>Introduce tu contraseña</target>
+      </trans-unit>
+      <trans-unit id="BD9oj7j" resname="Mostrar / ocultar contraseña">
+        <source>Mostrar / ocultar contraseña</source>
+        <target>Mostrar / ocultar contraseña</target>
+      </trans-unit>
+      <trans-unit id="5.OG8VU" resname="Recuerdame">
+        <source>Recuerdame</source>
+        <target>Recuerdame</target>
+      </trans-unit>
+      <trans-unit id="KjzATP0" resname="Acceder">
+        <source>Acceder</source>
+        <target>Acceder</target>
+      </trans-unit>
+      <trans-unit id="W0dxA_2" resname="Zona privada">
+        <source>Zona privada</source>
+        <target>Zona privada</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

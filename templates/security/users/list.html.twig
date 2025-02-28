@@ -17,6 +17,9 @@
                     {% trans %}Nombre de usuario{% endtrans %}
                 </twig:List:SortableHead>
                 <th>
+                    {% trans %}Roles{% endtrans %}
+                </th>
+                <th>
                     {% trans %}Cuenta{% endtrans %}
                 </th>
                 <twig:List:SortableHead 
@@ -31,6 +34,7 @@
             {% for user in users %}
                 <tr>
                     <td>{{ user.username }}</td>
+                    <td>{{ user.roles | map(t => t | trans({}, 'roles')) | join(', ') }}</td>
                     <td>{{ user.account }}</td>
                     <td>{{ user.registeredAt | date('d/m/Y') }}</td>
                     <td></td>
