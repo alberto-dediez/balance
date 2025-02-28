@@ -76,7 +76,7 @@ class InMemoryUserRepository implements UserRepository
                 continue;
             }
 
-            if (null !== $filter->accountId && (null == $user->account() || false == $user->account()->equals($filter->accountId))) {
+            if (null !== $filter->account && (null == $user->accountId() || false == $user->accountId()->equals($filter->account->id()))) {
                 continue;
             }
 

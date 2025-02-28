@@ -5,6 +5,7 @@ namespace App\Security\Domain\Model\User;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Model\AggregateRoot;
+use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\User\RoleGranted;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserRegistered;
@@ -18,6 +19,7 @@ class User
         protected string $username = '',
         protected string $password = '',
         protected AccountId|string|null $accountId = null,
+        protected Account|null $account = null, 
         protected array $roles = [],
         protected array $events = [],
         protected ?\DateTimeImmutable $registeredAt = null
@@ -38,6 +40,11 @@ class User
     public function password(): string
     {
         return $this->password;
+    }
+
+    public function account(): ?Account
+    {
+        return $this->account;
     }
 
     public function accountId(): ?AccountId

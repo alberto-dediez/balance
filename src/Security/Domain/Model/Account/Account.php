@@ -58,4 +58,9 @@ class Account
 
         $this->registeredAt = $event->occurredOn();
     }
+
+    public function __toString(): string
+    {
+        return (string) $this->name();
+    }
 }

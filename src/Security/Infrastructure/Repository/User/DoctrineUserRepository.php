@@ -53,8 +53,9 @@ class DoctrineUserRepository implements UserRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $qb->select('u')
+        $qb->select('u, a')
             ->from(User::class, 'u')
+            ->leftJoin('u.account', 'a')
         ;
 
         if (!empty($filter->username)) {
@@ -75,12 +76,12 @@ class DoctrineUserRepository implements UserRepository
             ;
         }
 
-        if (null !== $filter->accountId) {
+        if (null !== $filter->account) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('u.accountId', ':accountId')
                 )
-                ->setParameter('accountId', (string) $filter->accountId)
+                ->setParameter('accountId', (string) $filter->account->id())
             ;
         }
 

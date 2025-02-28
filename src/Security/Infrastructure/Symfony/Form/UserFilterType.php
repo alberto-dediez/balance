@@ -2,12 +2,14 @@
 
 namespace App\Security\Infrastructure\Symfony\Form;
 
-use App\Security\Application\ListUsers\ListUsersRequest;
 use Symfony\Component\Form\AbstractType;
+use App\Security\Domain\Model\Account\Account;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use App\Security\Infrastructure\Symfony\Type\RoleType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
+use App\Security\Application\ListUsers\ListUsersRequest;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -20,6 +22,12 @@ class UserFilterType extends AbstractType
             ->add('username', TextType::class, [
                 'label' => new TranslatableMessage('Nombre de usuario'),
                 'required' => false
+            ])
+            ->add('account', EntityType::class, [
+                'label' => new TranslatableMessage('Cuenta'),
+                'placeholder' => new TranslatableMessage('Todas las cuentas'),
+                'required' => false,
+                'class' => Account::class
             ])
             ->add('role', RoleType::class, [
                 'label' => new TranslatableMessage('Rol de usuario'),
