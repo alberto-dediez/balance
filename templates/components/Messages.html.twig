@@ -2,7 +2,7 @@
 {% for label, messages in app.flashes %}
     <div class="toast-container">
         {% for message in messages %}
-            <twig:ToastMessage type="{{ label }}">{{ message }}</twig:ToastMessage>
+            <twig:ToastMessage type="{{ label }}">{{ message | trans }}</twig:ToastMessage>
         {% endfor %}
     </div>
 {% endfor %}

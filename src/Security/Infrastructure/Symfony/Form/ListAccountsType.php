@@ -10,7 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Security\Infrastructure\Symfony\Form\BaseFilterType;
 use App\Shared\Infrastructure\Symfony\Type\BooleanType;
 
-class ListAccountsRequestType extends BaseFilterType
+class ListAccountsType extends BaseFilterType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -20,7 +20,7 @@ class ListAccountsRequestType extends BaseFilterType
                 'required' => false
             ])
             ->add('active', BooleanType::class, [
-                'label' => new TranslatableMessage('Estado'),
+                'label' => new TranslatableMessage('Activa'),
                 'placeholder' => new TranslatableMessage('Todos los estados'),
                 'required' => false
             ])

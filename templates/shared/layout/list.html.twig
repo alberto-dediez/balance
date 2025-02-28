@@ -1,5 +1,13 @@
 {% extends '@shared/layout/app.html.twig' %}
 
+{% block page_title %}
+    {{ parent() }}
+
+    <div class="ms-auto d-flex gap-2" role="group">
+        {% block list_actions %}{% endblock list_actions %}
+    </div>
+{% endblock %}
+
 {% block content %}{% endblock %}
 
 {% block right_bar %}

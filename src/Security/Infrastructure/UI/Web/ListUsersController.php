@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Security\Application\ListUsers\ListUsersRequest;
 use App\Security\Application\ListUsers\ListUsersService;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Security\Infrastructure\Symfony\Form\ListUsersRequestType;
+use App\Security\Infrastructure\Symfony\Form\ListUsersType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/users', name: 'admin_users')]
@@ -49,7 +49,7 @@ class ListUsersController extends AbstractController
     {
         $filter = new ListUsersRequest();
 
-        $form = $this->createForm(ListUsersRequestType::class, $filter);
+        $form = $this->createForm(ListUsersType::class, $filter);
 
         return [$filter, $form];
     }

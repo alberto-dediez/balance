@@ -21,6 +21,10 @@ use App\Security\Infrastructure\Symfony\Security\SecurityUser;
  */
 final class WebContext implements Context
 {
+    private $crawler = null;
+
+    private ?SecurityUser $user;
+
     public function __construct(private KernelBrowser $client, private UserRepository $userRepository)
     {
     }
@@ -31,15 +35,45 @@ final class WebContext implements Context
     {
         $user = $this->userRepository->findByUsername($username);
 
-        $securityUser = new SecurityUser($user);
+        $this->user = new SecurityUser($user);
 
-        $this->client->loginUser($securityUser);
+        $this->client->disableReboot();
+        $this->client->loginUser($this->user);
     }
 
     #[When('I go to :path')]
     public function iGoTo($path)
     {
-        $this->client->request('GET', $path);
+        $this->crawler = $this->client->request('GET', $path);
+    }
+
+    #[When('I follow redirect')]
+    public function iFollowredirect()
+    {
+        $this->client->followRedirect();
+    }
+
+    #[When('I submit a form with :data and button :text')]
+    public function iSubmitAFormWith($data, $text): void
+    {
+        $crawler = $this->getCrawler();
+
+        $buttonCrawlerNode = $crawler->selectButton($text);
+        $formData = $buttonCrawlerNode->form();
+
+        $form = $crawler->filter('form');
+
+        $arguments = explode('|', $data);
+
+        foreach ($arguments as $argument) {
+            list($name, $value) = explode(':', $argument);
+
+            $key = sprintf("%s[%s]", $form->attr('name'), $name);
+
+            $formData[$key] = $value;
+        }
+
+        $this->crawler = $this->client->submit($formData);
     }
 
     #[Then('the response status should be :code')]
@@ -54,6 +88,16 @@ final class WebContext implements Context
         $this->client->followRedirect();
 
         Assert::assertEquals($path, $this->client->getRequest()->getPathInfo());
+    }
+
+    #[Then('I see a form')]
+    public function iSeeAForm(): void
+    {
+        $crawler = $this->getCrawler();
+
+        $forms = $crawler->filter('form');
+
+        Assert::assertCount(1, $forms);
     }
 
     #[Then('I see a button with name :name')]
@@ -84,6 +128,9 @@ final class WebContext implements Context
 
     private function getCrawler()
     {
-        return new Crawler($this->client->getResponse()->getContent());
+        return null == $this->crawler ? 
+            new Crawler($this->client->getResponse()->getContent())
+            : $this->crawler
+        ;
     }
 }

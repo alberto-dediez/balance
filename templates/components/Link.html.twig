@@ -1,0 +1,21 @@
+{% props path, color = 'primary' %}
+
+{% set link = cva({
+    base: 'btn d-flex',
+    variants: {
+        color: {
+            info: 'btn-info',
+            primary: 'btn-primary',
+            infoSubtle: 'bg-info-subtle text-info',
+            primarySubtle: 'bg-primary-subtle text-primary'
+        }
+    }
+}) %}
+
+<a href="{{ path }}" 
+    class="{{ link.apply({color}, attributes.render('class')) }}"
+    data-bs-toggle="tooltip"
+    {{ attributes.without('class') }} 
+>
+    {% block content %}{% endblock %}
+</a>

@@ -9,7 +9,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Security\Application\ListAccounts\ListAccountsRequest;
 use App\Security\Application\ListAccounts\ListAccountsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Security\Infrastructure\Symfony\Form\ListAccountsRequestType;
+use App\Security\Infrastructure\Symfony\Form\ListAccountsType;
 
 #[Route('/admin/accounts', name: 'admin_accounts')]
 #[IsGranted("ROLE_ADMIN")]
@@ -49,7 +49,7 @@ class ListAccountsController extends AbstractController
     {
         $filter = new ListAccountsRequest();
 
-        $form = $this->createForm(ListAccountsRequestType::class, $filter);
+        $form = $this->createForm(ListAccountsType::class, $filter);
 
         return [$filter, $form];
     }

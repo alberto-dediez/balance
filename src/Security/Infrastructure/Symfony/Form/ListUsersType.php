@@ -12,7 +12,7 @@ use App\Security\Application\ListUsers\ListUsersRequest;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Security\Infrastructure\Symfony\Form\BaseFilterType;
 
-class ListUsersRequestType extends BaseFilterType
+class ListUsersType extends BaseFilterType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
