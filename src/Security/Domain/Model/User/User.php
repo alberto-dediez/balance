@@ -17,7 +17,7 @@ class User
         protected UserId $id, 
         protected string $username = '',
         protected string $password = '',
-        protected ?AccountId $accountId = null,
+        protected AccountId|string|null $accountId = null,
         protected array $roles = [],
         protected array $events = [],
         protected ?\DateTimeImmutable $registeredAt = null
@@ -42,6 +42,10 @@ class User
 
     public function accountId(): ?AccountId
     {
+        if (is_string($this->accountId)) {
+            $this->accountId = new AccountId($this->accountId);
+        }
+
         return $this->accountId;
     }
 
@@ -57,14 +61,14 @@ class User
         return $this->registeredAt;
     }
 
-    public function register(string $username, string $password, ?AccountId $account = null)
+    public function register(string $username, string $password, ?AccountId $accountId = null)
     {
         $this->recordApplyAndPublish(
             new UserRegistered(
                 userId: $this->id(),
                 username: $username,
                 password: $password,
-                accountId: $account
+                accountId: $accountId
             )
         );
     }

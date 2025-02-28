@@ -1,5 +1,9 @@
 twig:
     file_name_pattern: '*.twig'
+    globals:
+        locale_list: '%app.locale_list%'
+    form_themes: 
+        - 'bootstrap_5_layout.html.twig'
     paths:
         'templates/components': 'components' 
         'templates/shared': 'shared'

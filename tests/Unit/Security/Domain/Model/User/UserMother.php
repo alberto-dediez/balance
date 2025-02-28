@@ -41,4 +41,14 @@ class UserMother
 
         return $user;
     }
+
+    public static function random()
+    {
+        $roles = [
+            Role::Admin,
+            Role::User
+        ];
+
+        return self::fromUsernameAndRole('user-' . rand(100, 999), $roles[rand(0, 1)]);
+    }
 }

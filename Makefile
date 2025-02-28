@@ -87,6 +87,10 @@ icon-import:
 icon-lock:
 	@$(PHP) bin/console ux:icons:lock
 
+translation:
+	php ./bin/console trans:extract es --force --prefix="NEW_" -q
+	php ./bin/console trans:extract en --force --prefix="NEW_" -q
+
 ## —— Production ————————————————————————————————————————————————————————————
 production:
 	@$(PHP) bin/console sass:build

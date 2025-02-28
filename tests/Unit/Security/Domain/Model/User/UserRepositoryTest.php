@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Security\Domain\Model\User;
 
+use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -55,6 +56,32 @@ abstract class UserRepositoryTest extends KernelTestCase
 
         $this->assertNotNull($recoverUser);
         $this->assertEquals($user->id(), $recoverUser->id());
+    }
+
+    public function testFindByFilter()
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(UserMother::random());
+        $repository->add(UserMother::random());
+        $repository->add(UserMother::random());
+        $repository->add(UserMother::random());
+        $repository->add(UserMother::random());
+        $repository->add(UserMother::fromUsername('alberto'));
+
+        $filter = new UserFilter();
+
+        $resultUnfiltered = $repository->findByFilter($filter);
+
+        $this->assertCount(6, $resultUnfiltered);
+
+        $filter = new UserFilter(
+            username: 'alberto'
+        );
+
+        $result = $repository->findByFilter($filter);
+
+        $this->assertCount(1, $result);
     }
 
     abstract protected function createSUT(): UserRepository;

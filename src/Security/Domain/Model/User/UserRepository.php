@@ -3,6 +3,7 @@
 namespace App\Security\Domain\Model\User;
 
 use App\Security\Domain\Model\User\UserId;
+use App\Security\Domain\Model\User\UserFilter;
 
 interface UserRepository
 {
@@ -13,4 +14,8 @@ interface UserRepository
     public function find(UserId $userId): ?User;
 
     public function findByUsername(string $username): ?User;
+
+    public function findByFilter(UserFilter $filter): array;
+
+    public function totalResultsByFilter(UserFilter $filter): int;
 }

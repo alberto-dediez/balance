@@ -7,6 +7,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Shared\Infrastructure\UI\Web\Navigation\Node;
 use App\Shared\Infrastructure\UI\Web\Navigation\NodeLister;
 use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeSecurity;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class NodeListerTest extends TestCase
@@ -29,6 +30,10 @@ class NodeListerTest extends TestCase
 
     private function createSUT(AuthorizationCheckerInterface $security): NodeLister
     {
-        return new NodeLister($security);
+        $router = $this->createMock(RouterInterface::class);
+
+        $router->method('generate')->willReturn('/es/admin/users');
+
+        return new NodeLister($security, $router);
     }
 }

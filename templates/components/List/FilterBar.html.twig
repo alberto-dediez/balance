@@ -1,0 +1,15 @@
+<div class="row align-items-center">
+    <div class="col-12">
+        <div class="d-sm-flex align-items-center justify-space-between">
+            {% block content %}{% endblock %}
+            
+            <button class="btn btn-secondary d-flex align-items-center justify-content-start ms-auto"
+                type="button" data-bs-toggle="offcanvas" data-bs-target="#right-bar" aria-controls="filter"
+                title="{% trans -%}Filtrar resultados{%- endtrans %}"
+            >
+                <twig:Icon name="solar:tuning-3-line-duotone" size="lg" class="me-2" />
+                {% trans -%}Filtrar{%- endtrans %}
+            </button>
+        </div>
+    </div>
+</div>

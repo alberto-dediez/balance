@@ -1,0 +1,63 @@
+{% props page = 0, limit = 10, totalResults = 10 %}
+
+{% set maxPages = (totalResults / limit) | round(0, 'ceil') %}
+
+<div class="row" data-controller="pagination">
+    <div class="col-lg-9">
+        {% if maxPages > 1 %}
+            <nav class="mx-3 my-0" aria-label="{% trans from 'backend' -%}Paginación{%- endtrans %}">
+                <ul id="pagination" class="pagination mb-0">
+                    {# `«` arrow  #}
+                    <li class="page-item {{ page == 1 ? 'disabled d-none' }}">
+                        <a class="page-link" data-page="{{ page - 1 }}" href="#{{ page - 1 }}" data-action="pagination#page:prevent">«</a>
+                    </li>
+                        
+                    {% if maxPages > 20 %}
+                        {% if page <= 12 %}
+                            <twig:List:PaginationLinks page="{{ page }}" limmin="1" limmax="8" />
+                            
+                            <li class="page-item disabled">
+                                <a class="page-link">...</a>
+                            </li>
+
+                            <twig:List:PaginationLinks page="{{ page }}" limmin="{{ maxPages-3 }}" limmax="{{ maxPages }}" />
+                        {% elseif (maxPages - page) < 12 %}
+                            <twig:List:PaginationLinks page="{{ page }}" limmin="1" limmax="3" />
+                            
+                            <li class="page-item disabled">
+                                <a class="page-link">...</a>
+                            </li>
+
+                            <twig:List:PaginationLinks page="{{ page }}" limmin="{{ maxPages-8 }}" limmax="{{ maxPages }}" />
+                        {% else %}
+                            <twig:List:PaginationLinks page="{{ page }}" limmin="1" limmax="3" />
+                            
+                            <li class="page-item disabled">
+                                <a class="page-link">...</a>
+                            </li>
+
+                            <twig:List:PaginationLinks page="{{ page }}" limmin="{{ page-3 }}" limmax="{{ page+3 }}" />
+                            
+                            <li class="page-item disabled">
+                                <a class="page-link">...</a>
+                            </li>
+
+                            <twig:List:PaginationLinks page="{{ page }}" limmin="{{ maxPages-3 }}" limmax="{{ maxPages }}" />
+                        {% endif %}
+                    {% else %}
+                        <twig:List:PaginationLinks page="{{ page }}" limmin="1" limmax="{{ maxPages }}" />
+                    {% endif %}
+
+                    {# `»` arrow #}
+                    <li class="page-item {{ page == maxPages ? 'disabled d-none' }}">
+                        <a class="page-link" data-page="{{ page + 1 }}"
+                            href="#{{ page + 1 }}" data-action="pagination#page:prevent">»</a>
+                    </li>
+                </ul>
+            </nav>
+        {% endif %}
+    </div>
+    <div class="col-lg-3">
+        <twig:List:Limit limit="{{ limit }}" />
+    </div>
+</div>

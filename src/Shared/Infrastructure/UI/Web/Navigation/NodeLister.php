@@ -3,12 +3,14 @@
 namespace App\Shared\Infrastructure\UI\Web\Navigation;
 
 use App\Security\Domain\Model\User\Role;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class NodeLister
 {
     public function __construct(
-        private AuthorizationCheckerInterface $checker
+        private AuthorizationCheckerInterface $checker,
+        private RouterInterface $router
     ) {
 
     }
@@ -25,7 +27,7 @@ class NodeLister
                     new Node(
                         label: "Usuarios",
                         icon: "solar:users-group-rounded-line-duotone",
-                        target: "/admin/users/list"
+                        target: $this->router->generate('admin_users')
                     )
                 ]
             );

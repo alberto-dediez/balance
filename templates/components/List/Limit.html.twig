@@ -1,0 +1,17 @@
+{% props limit = 10 %}
+
+<nav class="my-0 mx-3" aria-label="{% trans -%}Elementos por página{%- endtrans %}">
+    <ul id="limit" class="pagination justify-content-end mb-0">
+        {# Render each limit number #}
+        {% for i in [10, 25, 100] %}
+            <li class="limit-item px-1">
+                <a 
+                    class="btn btn-sm px-3 py-2 {{ limit == i ? 'btn-info active' : 'bg-light' }}" 
+                    data-action="pagination#limit:prevent"
+                    data-limit="{{ i }}" 
+                    href="#{{ i }}"
+                >{{ i }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</nav>

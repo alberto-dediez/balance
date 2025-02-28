@@ -1,3 +1,7 @@
+parameters:
+    app.locale_default: '%env(LANGUAGE_DEFAULT)%'
+    app.locale_list: '%env(LANGUAGE_LIST)%'
+
 services:
     _defaults:
         autowire: true

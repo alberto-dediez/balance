@@ -1,0 +1,15 @@
+<div class="p-3" data-controller="filter">
+    {{ form_start(form) }}
+
+    {% block filter_content %}
+        {% for field in form %}
+            {% if field.vars.name != 'filter' and field.vars.name != 'reset' %}
+                {{ form_row(field) }}
+            {% endif %}
+        {% endfor %}
+    {% endblock %}
+
+    {{ form_row(form.filter, {'attr': {'class': 'btn btn-secondary w-100'}}) }}
+    {{ form_row(form.reset, {'attr': {'class': 'btn btn-light w-100'}}) }}
+    {{ form_end(form) }}
+</div>

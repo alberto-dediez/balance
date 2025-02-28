@@ -9,7 +9,6 @@ use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Behat\Behat\Context\Context;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
@@ -22,9 +21,10 @@ use App\Security\Infrastructure\Symfony\Security\SecurityUser;
  */
 final class WebContext implements Context
 {
-    public function __construct(private KernelBrowser $client, private Security $security, private UserRepository $userRepository)
+    public function __construct(private KernelBrowser $client, private UserRepository $userRepository)
     {
     }
+
 
     #[When('I am logged as :username')]
     public function iAmLoggedAs($username)

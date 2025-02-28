@@ -3,6 +3,7 @@
 namespace App\Security\Infrastructure\Repository\User;
 
 use App\Security\Domain\Model\User\User;
+use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -54,5 +55,53 @@ class InMemoryUserRepository implements UserRepository
         }
 
         return null;
+    }
+
+    public function findByFilter(UserFilter $filter): array
+    {
+        $results = [];
+
+        if (count($this->users) == 0) {
+            return $results;
+        }
+
+        $offset = $filter->page * $filter->limit;
+
+        foreach ($this->users as $user) {
+            if (!empty($filter->username) && $filter->username != $user->username()) {
+                continue;
+            }
+
+            if (null !== $filter->role && !in_array($filter->role->value, $user->roles())) {
+                continue;
+            }
+
+            if (null !== $filter->accountId && (null == $user->account() || false == $user->account()->equals($filter->accountId))) {
+                continue;
+            }
+
+            if ($offset > 0) {
+                $offset--;
+
+                continue;
+            }
+
+            if (count($results) >= $filter->limit) {
+                continue;
+            }
+
+            $results[] = $user;
+        }
+
+        return $results;
+    }
+
+    public function totalResultsByFilter(UserFilter $filter): int
+    {
+        $clonedFilter = clone $filter;
+        $clonedFilter->limit = 99999999999999999;
+        $clonedFilter->page = 0;
+
+        return count($this->findByFilter($filter));
     }
 }

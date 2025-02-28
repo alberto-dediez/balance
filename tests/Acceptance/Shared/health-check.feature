@@ -18,6 +18,6 @@ Feature:
         Then I want to see "ok" in command output
 
     Scenario: Route /health-check is loaded without errors
-        When I go to "/health-check"
+        When I go to "/es/health-check"
         Then the response status should be "200"
         Then I see a text "ok"

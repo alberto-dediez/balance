@@ -6,7 +6,10 @@ use Doctrine\ORM\EntityRepository;
 use App\Security\Domain\Model\User\User;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Security\Domain\Model\User\UserId;
+use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\User\UserRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
@@ -44,6 +47,78 @@ class DoctrineUserRepository implements UserRepository
     public function findByUsername(string $username): ?User
     {
         return $this->repository->findOneByUsername($username);
+    }
+
+    private function createQueryBuilderFromFilter(UserFilter $filter): QueryBuilder
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('u')
+            ->from(User::class, 'u')
+        ;
+
+        if (!empty($filter->username)) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->like('u.username', ':username')
+                )
+                ->setParameter('username', "%{$filter->username}%")
+            ;
+        }
+
+        if (null !== $filter->role) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->like('u.roles', ':role')
+                )
+                ->setParameter('role', $filter->role->value)
+            ;
+        }
+
+        if (null !== $filter->accountId) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('u.accountId', ':accountId')
+                )
+                ->setParameter('accountId', (string) $filter->accountId)
+            ;
+        }
+
+        $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
+
+        switch ($filter->orderBy) {
+            case 'registeredAt':
+                $qb->orderBy('u.registeredAt', $way);
+                break;
+            case 'username':
+            default:
+                $qb->orderBy('u.username', $way);        
+                break;
+        }
+
+        return $qb;
+    }
+
+    public function findByFilter(UserFilter $filter): array
+    {
+        $qb = $this->createQueryBuilderFromFilter($filter);
+
+        return (array) $qb
+            ->getQuery()
+            ->setMaxResults($filter->limit)
+            ->setFirstResult($filter->page * $filter->limit)
+            ->getResult()
+        ;
+    }
+
+    public function totalResultsByFilter(UserFilter $filter): int
+    {
+        $qb = $this->createQueryBuilderFromFilter($filter);
+
+        return $qb->select('COUNT(DISTINCT u.username)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
     }
 
     private function getEntityManager()

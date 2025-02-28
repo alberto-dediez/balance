@@ -1,0 +1,7 @@
+{% props limmin, limmax, page %}
+
+{% for i in limmin..limmax %}
+    <li class="page-item {{ page == i ? 'active' }}">
+        <a class="page-link" data-page="{{ i }}" href="#{{ i }}" data-action="pagination#page:prevent">{{ i }}</a>
+    </li>
+{% endfor %}
