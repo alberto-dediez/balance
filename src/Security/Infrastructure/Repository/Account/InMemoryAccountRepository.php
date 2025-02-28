@@ -4,6 +4,7 @@ namespace App\Security\Infrastructure\Repository\Account;
 
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\Account\AccountFilter;
 use App\Security\Domain\Model\Account\AccountRepository;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -54,5 +55,49 @@ class InMemoryAccountRepository implements AccountRepository
         }
 
         return null;
+    }
+
+    public function findByFilter(AccountFilter $filter): array
+    {
+        $results = [];
+
+        if (count($this->accounts) == 0) {
+            return $results;
+        }
+
+        $offset = $filter->page * $filter->limit;
+
+        foreach ($this->accounts as $account) {
+            if (!empty($filter->name) && $filter->name != $account->name()) {
+                continue;
+            }
+
+            if (null !== $filter->active && $filter->active !== $account->isActive()) {
+                continue;
+            }
+
+            if ($offset > 0) {
+                $offset--;
+
+                continue;
+            }
+
+            if (count($results) >= $filter->limit) {
+                continue;
+            }
+
+            $results[] = $account;
+        }
+
+        return $results;
+    }
+
+    public function totalResultsByFilter(AccountFilter $filter): int
+    {
+        $clonedFilter = clone $filter;
+        $clonedFilter->limit = 99999999999999999;
+        $clonedFilter->page = 0;
+
+        return count($this->findByFilter($filter));
     }
 }

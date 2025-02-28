@@ -1,5 +1,5 @@
 <li class="mini-nav-item {% if node.selected %}selected{% endif %}" id="mini-{{ node.id }}">
-    <a href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="right" data-bs-title="{{ node.label }}">
+    <a href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="right" data-bs-title="{{ node.label | trans }}">
         <twig:Icon name="{{ node.icon }}" size="lg" />
     </a>
 </li>

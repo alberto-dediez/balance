@@ -2,10 +2,12 @@
 
 namespace App\Security\Infrastructure\Repository\Account;
 
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
-use App\Security\Domain\Model\Account\Account;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\Account\AccountFilter;
 use App\Security\Domain\Model\Account\AccountRepository;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -44,6 +46,69 @@ class DoctrineAccountRepository implements AccountRepository
     public function findByName(string $name): ?Account
     {
         return $this->repository->findOneByName($name);
+    }
+
+    private function createQueryBuilderFromFilter(AccountFilter $filter): QueryBuilder
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('a')
+            ->from(Account::class, 'a')
+        ;
+
+        if (!empty($filter->name)) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->like('a.name', ':name')
+                )
+                ->setParameter('name', "%{$filter->name}%")
+            ;
+        }
+
+        if (null !== $filter->active) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('a.active', ':active')
+                )
+                ->setParameter('active', $filter->active)
+            ;
+        }
+
+        $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
+
+        switch ($filter->orderBy) {
+            case 'registeredAt':
+                $qb->orderBy('a.registeredAt', $way);
+                break;
+            case 'name':
+            default:
+                $qb->orderBy('a.name', $way);        
+                break;
+        }
+
+        return $qb;
+    }
+
+    public function findByFilter(AccountFilter $filter): array
+    {
+        $qb = $this->createQueryBuilderFromFilter($filter);
+
+        return (array) $qb
+            ->getQuery()
+            ->setMaxResults($filter->limit)
+            ->setFirstResult($filter->page * $filter->limit)
+            ->getResult()
+        ;
+    }
+
+    public function totalResultsByFilter(AccountFilter $filter): int
+    {
+        $qb = $this->createQueryBuilderFromFilter($filter);
+
+        return $qb->select('COUNT(DISTINCT a)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
     }
 
     private function getEntityManager()

@@ -32,4 +32,9 @@ class AccountMother
 
         return $account;
     }
+
+    public static function random()
+    {
+        return self::fromName('account-' . rand(100, 999));
+    }
 }

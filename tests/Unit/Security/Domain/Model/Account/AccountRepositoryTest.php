@@ -2,8 +2,9 @@
 
 namespace App\Tests\Unit\Security\Domain\Model\Account;
 
-use App\Security\Domain\Model\Account\AccountRepository;
+use App\Security\Domain\Model\Account\AccountFilter;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use App\Security\Domain\Model\Account\AccountRepository;
 
 abstract class AccountRepositoryTest extends KernelTestCase
 {
@@ -55,6 +56,32 @@ abstract class AccountRepositoryTest extends KernelTestCase
 
         $this->assertNotNull($recoverAccount);
         $this->assertEquals($account->id(), $recoverAccount->id());
+    }
+
+    public function testFindByFilter()
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(AccountMother::random());
+        $repository->add(AccountMother::random());
+        $repository->add(AccountMother::random());
+        $repository->add(AccountMother::random());
+        $repository->add(AccountMother::random());
+        $repository->add(AccountMother::fromName('Minotour'));
+
+        $filter = new AccountFilter();
+
+        $resultUnfiltered = $repository->findByFilter($filter);
+
+        $this->assertCount(6, $resultUnfiltered);
+
+        $filter = new AccountFilter(
+            name: 'Minotour'
+        );
+
+        $result = $repository->findByFilter($filter);
+
+        $this->assertCount(1, $result);
     }
 
     abstract protected function createSUT(): AccountRepository;

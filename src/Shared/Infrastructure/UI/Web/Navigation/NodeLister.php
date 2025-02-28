@@ -4,6 +4,7 @@ namespace App\Shared\Infrastructure\UI\Web\Navigation;
 
 use App\Security\Domain\Model\User\Role;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class NodeLister
@@ -21,14 +22,19 @@ class NodeLister
 
         if ($this->checker->isGranted(Role::Admin->value)) {
             $nodes [] =  new Node(
-                label: "Seguridad",
+                label: new TranslatableMessage("Seguridad"),
                 icon: "solar:shield-user-line-duotone",
                 items: [
                     new Node(
-                        label: "Usuarios",
+                        label: new TranslatableMessage("Cuentas"),
+                        icon: "solar:buildings-3-line-duotone",
+                        target: $this->router->generate('admin_accounts')
+                    ),
+                    new Node(
+                        label: new TranslatableMessage("Usuarios"),
                         icon: "solar:users-group-rounded-line-duotone",
                         target: $this->router->generate('admin_users')
-                    )
+                    ),
                 ]
             );
         }

@@ -2,7 +2,6 @@
 
 namespace App\Security\Application\ListUsers;
 
-use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\User\UserRepository;
 
 class ListUsersService

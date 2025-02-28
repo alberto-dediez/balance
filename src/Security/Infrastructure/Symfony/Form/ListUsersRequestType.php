@@ -2,7 +2,6 @@
 
 namespace App\Security\Infrastructure\Symfony\Form;
 
-use Symfony\Component\Form\AbstractType;
 use App\Security\Domain\Model\Account\Account;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -11,12 +10,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use App\Security\Application\ListUsers\ListUsersRequest;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use App\Security\Infrastructure\Symfony\Form\BaseFilterType;
 
-class UserFilterType extends AbstractType
+class ListUsersRequestType extends BaseFilterType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('username', TextType::class, [
@@ -34,17 +32,9 @@ class UserFilterType extends AbstractType
                 'placeholder' => new TranslatableMessage('Todos los roles de usuario'),
                 'required' => false
             ])
-            ->add('limit', HiddenType::class)
-            ->add('page', HiddenType::class)
-            ->add('orderBy', HiddenType::class)
-            ->add('orderWay', HiddenType::class)
-            ->add('reset', SubmitType::class, [
-                'label' => new TranslatableMessage('Resetear filtro')
-            ])
-            ->add('filter', SubmitType::class, [
-                'label' => new TranslatableMessage('Filtrar')
-            ])
         ;
+
+        parent::buildForm($builder, $options);
     }
 
     public function configureOptions(OptionsResolver $resolver)

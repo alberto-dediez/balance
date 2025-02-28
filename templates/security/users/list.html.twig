@@ -1,6 +1,6 @@
-{% extends '@shared/layout/app.html.twig' %}
+{% extends '@shared/layout/list.html.twig' %}
 
-{% set page_title = 'Lista de usuarios' | trans %}
+{% set page_title = 'Usuarios' | trans %}
 
 {% block content %}
     <twig:Card>
@@ -43,10 +43,4 @@
         </table>
         <twig:List:Pagination totalResults="{{ totalResults }}" page="{{ form.vars.value.page + 1 }}" limit="{{ form.vars.value.limit }}" />
     </twig:Card>
-{% endblock %}
-
-{% block right_bar %}
-    <twig:Sidebar:Right>
-        <twig:List:Filter title="{{ 'Filtrar resultados' | trans }}"></twig:List:Filter>
-    </twig:Sidebar:Right>
 {% endblock %}

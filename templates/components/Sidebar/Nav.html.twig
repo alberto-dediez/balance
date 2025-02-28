@@ -1,7 +1,7 @@
 <nav class="sidebar-nav {% if node.selected %}d-block simplebar-scrollable-y{% endif %}" id="menu-right-mini-{{ node.id }}" data-simplebar>
     <ul class="sidebar-menu" id="sidebarnav">
         <li class="nav-small-cap">
-            <span class="hide-menu">{{ node.label }}</span>
+            <span class="hide-menu">{{ node.label | trans }}</span>
         </li>
 
         {% for link in node.items %}

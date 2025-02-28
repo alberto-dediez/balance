@@ -5,7 +5,6 @@ namespace App\Security\Infrastructure\Symfony\Type;
 use App\Security\Domain\Model\User\Role;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class RoleType extends AbstractType

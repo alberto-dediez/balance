@@ -1,0 +1,9 @@
+{% extends '@shared/layout/app.html.twig' %}
+
+{% block content %}{% endblock %}
+
+{% block right_bar %}
+    <twig:Sidebar:Right>
+        <twig:List:Filter title="{{ 'Filtrar resultados' | trans }}"></twig:List:Filter>
+    </twig:Sidebar:Right>
+{% endblock %}
