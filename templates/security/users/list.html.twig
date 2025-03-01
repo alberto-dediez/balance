@@ -44,3 +44,7 @@
         <twig:List:Pagination totalResults="{{ totalResults }}" page="{{ form.vars.value.page + 1 }}" limit="{{ form.vars.value.limit }}" />
     </twig:Card>
 {% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('admin_users_register') }}" />
+{% endblock list_actions %}

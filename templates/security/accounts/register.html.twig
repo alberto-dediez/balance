@@ -1,27 +1,5 @@
-{% extends '@shared/layout/app.html.twig' %}
+{% extends '@shared/layout/register.html.twig' %}
 
 {% set page_title = ('Cuentas' | trans) 
     ~ ' > '
     ~ ('Registrar' | trans)  %}
-
-{% block content %}
-    {{ form_start(form) }}
-        <twig:Card>
-            <div class="row">
-                <div class="col-12">
-                    {% for field in form %}
-                        {% if field.vars.name != 'register' %}
-                            {{ form_row(field) }}
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>    
-
-            <div class="row justify-content-end action-bar">
-                <div class="col-sm-6 col-md-3 col-lg-2">
-                    {{ form_widget(form.register, {'attr': {'class': 'w-100 btn btn-primary'}}) }}
-                </div>
-            </div>
-        </twig:Card>
-    {{ form_end(form)}}
-{% endblock %}

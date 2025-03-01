@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\User\UserRepository;
+use App\Security\Infrastructure\Repository\Account\DoctrineAccountRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -20,13 +21,28 @@ class DoctrineUserRepository implements UserRepository
 {
     private EntityRepository $repository;
 
-    public function __construct(private EntityManagerInterface $manager)
+    public function __construct(private EntityManagerInterface $manager, private DoctrineAccountRepository $accountRepository)
     {
         $this->repository = $manager->getRepository(User::class);
     }
 
     public function add(User $user): void
     {
+        if (null == $user->account() && null !== $user->accountId()) {
+            $account = $this->accountRepository->find($user->accountId());
+
+            $user = new User(
+                id: $user->id(),
+                username: $user->username(),
+                password: $user->password(),
+                accountId: $user->accountId(),
+                account: $account,
+                roles: $user->roles(),
+                events: $user->recordedEvents(),
+                registeredAt: $user->registeredAt()
+            );
+        }
+
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
     }

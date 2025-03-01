@@ -18,3 +18,27 @@ Feature:
     Then I want to see "username" in command output
     Then I want to see "an@email.com" in command output
     Then I want to see "6666-6666-6666" in command output
+
+  Scenario: As an admin, I can access to register new users
+    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+    When I am logged as "admin@dediez.software"
+    When I go to "/es/admin/users/register"
+    Then the response status should be 200
+    Then I see a form
+
+  Scenario: As normal user I can't register new users
+    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+    Given user "user1@dediez.software" with role "ROLE_USER" exists
+    When I am logged as "user1@dediez.software"
+    When I go to "/es/admin/users/register"
+    Then the response status should be 403
+
+  Scenario: As an admin, I can register new users
+    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+    Given account "Minotour" with id "6666" exists
+    When I am logged as "admin@dediez.software"
+    When I go to "/es/admin/users/register"
+    When I submit a form with "username:user@dediez.software|password:333|roles:[1,2]" and button "Registrar"
+    When I follow redirect
+    Then the response status should be 200
+    Then I see a text "Usuario creado correctamente"

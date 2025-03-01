@@ -70,6 +70,10 @@ final class WebContext implements Context
 
             $key = sprintf("%s[%s]", $form->attr('name'), $name);
 
+            if ('[' == $value[0]) {
+                $value = explode(',', substr($value, 1, -1));
+            }
+
             $formData[$key] = $value;
         }
 
