@@ -33,7 +33,8 @@ class RegisterUserType extends AbstractType
             ->add('roles', RoleType::class, [
                 'label' => new TranslatableMessage('Rol de usuario'),
                 'required' => false,
-                'multiple' => true
+                'multiple' => true,
+                'expanded' => true
             ])
             ->add('register', SubmitType::class, [
                 'label' => new TranslatableMessage('Registrar')

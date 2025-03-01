@@ -20,7 +20,7 @@ class UserProvider implements UserProviderInterface
     {
         $user = $this->userRepository->findByUsername($identifier);
 
-        if (null == $user) {
+        if (null == $user || false == $user->isActive()) {
             throw new UserNotFoundException(sprintf("User with username %s not found", $identifier));
         }
 
