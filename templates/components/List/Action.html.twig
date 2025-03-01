@@ -1,0 +1,9 @@
+{% props path %}
+
+<a href="{{ path }}" 
+    class="pt-1 px-1 {{ attributes.render('class') }}"
+    data-bs-toggle="tooltip"
+    {{ attributes.without('class') }} 
+>
+    {% block content %}{% endblock %}
+</a>

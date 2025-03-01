@@ -2,17 +2,16 @@
 
 namespace App\Security\Infrastructure\Repository\User;
 
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
 use App\Security\Domain\Model\User\User;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\User\UserRepository;
-use App\Security\Infrastructure\Repository\Account\DoctrineAccountRepository;
-use Doctrine\ORM\Query;
-use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use App\Security\Infrastructure\Repository\Account\DoctrineAccountRepository;
 
 #[AsAlias(id: 'repository.user', public: true)]
 #[When(env: 'dev')]
@@ -39,7 +38,9 @@ class DoctrineUserRepository implements UserRepository
                 account: $account,
                 roles: $user->roles(),
                 events: $user->recordedEvents(),
-                registeredAt: $user->registeredAt()
+                registeredAt: $user->registeredAt(),
+                removed: $user->isRemoved(),
+                removedAt: $user->removedAt()
             );
         }
 
@@ -55,14 +56,30 @@ class DoctrineUserRepository implements UserRepository
 
     public function find(UserId $userId): ?User
     {
-        return $this->repository->findOneBy([
-            'id.id' => (string) $userId
-        ]);
+        $qb = $this->createQueryBuilderFromFilter(new UserFilter());
+
+        return $qb
+            ->andWhere(
+                $qb->expr()->eq('u.id.id', ':id')
+            )
+            ->setParameter('id', (string) $userId)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 
     public function findByUsername(string $username): ?User
     {
-        return $this->repository->findOneByUsername($username);
+        $qb = $this->createQueryBuilderFromFilter(new UserFilter());
+
+        return $qb
+            ->andWhere(
+                $qb->expr()->eq('u.username', ':username')
+            )
+            ->setParameter('username', $username)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 
     private function createQueryBuilderFromFilter(UserFilter $filter): QueryBuilder
@@ -72,6 +89,12 @@ class DoctrineUserRepository implements UserRepository
         $qb->select('u, a')
             ->from(User::class, 'u')
             ->leftJoin('u.account', 'a')
+            ->where(
+                $qb->expr()->orX(
+                    $qb->expr()->isNull('u.removed'),
+                    $qb->expr()->eq('u.removed', $qb->expr()->literal(false))
+                )
+            )
         ;
 
         if (!empty($filter->username)) {

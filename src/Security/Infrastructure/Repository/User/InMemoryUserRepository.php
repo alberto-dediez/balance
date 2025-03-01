@@ -36,7 +36,7 @@ class InMemoryUserRepository implements UserRepository
 
     public function find(UserId $userId): ?User
     {
-        return (isset($this->users[(string) $userId])) 
+        return (isset($this->users[(string) $userId]) && false == $this->users[(string) $userId]->isRemoved()) 
             ? $this->users[(string) $userId]
             : null
         ;
@@ -50,7 +50,7 @@ class InMemoryUserRepository implements UserRepository
 
         foreach ($this->users as $user) {
             if ($user->username() == $username) {
-                return $user;
+                return $this->find($user->id());
             }
         }
 
@@ -77,6 +77,10 @@ class InMemoryUserRepository implements UserRepository
             }
 
             if (null !== $filter->account && (null == $user->accountId() || false == $user->accountId()->equals($filter->account->id()))) {
+                continue;
+            }
+
+            if (true == $user->isRemoved()) {
                 continue;
             }
 

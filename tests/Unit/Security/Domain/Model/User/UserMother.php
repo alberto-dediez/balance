@@ -15,26 +15,25 @@ class UserMother
 
     public static function adminUser()
     {
-        $user = self::registeredUser();
-        $user->grantRole(Role::Admin);
-
-        return $user;
+        return self::fromUsernameAndRole('username', Role::Admin);
     }
 
     public static function fromUsername($username)
     {
         $userId = UserId::generate();
 
-        $user = new User($userId);
-        $user->register($username, 'password');
-
-        return $user;
+        return self::fromUsernameAndRoleAndId($username, Role::User, $userId);
     }
 
     public static function fromUsernameAndRole($username, Role $role)
     {
         $userId = UserId::generate();
 
+        return self::fromUsernameAndRoleAndId($username, $role, $userId);
+    }
+
+    public static function fromUsernameAndRoleAndId($username, Role $role, UserId $userId)
+    {
         $user = new User($userId);
         $user->register($username, 'password');
         $user->grantRole($role);

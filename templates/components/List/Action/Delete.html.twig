@@ -1,0 +1,11 @@
+{% props path %}
+
+<twig:List:Action :path="path" 
+    title="{{ 'Eliminar' | trans }}" 
+    class="text-danger" 
+    data-controller="confirm" 
+    data-confirm-text-param="{{ '¿Esta seguro de que desea eliminar este elemento? Esta acción no se puede deshacer' | trans }}"
+    data-action="confirm#link:prevent"    
+>
+    <twig:Icon name="solar:close-square-line-duotone" size="lg" />
+</twig:List:Action>

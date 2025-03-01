@@ -22,7 +22,9 @@ class User
         protected Account|null $account = null, 
         protected array $roles = [],
         protected array $events = [],
-        protected ?\DateTimeImmutable $registeredAt = null
+        protected bool $removed = false,
+        protected ?\DateTimeImmutable $registeredAt = null,
+        protected ?\DateTimeImmutable $removedAt = null
     ) {
 
     }
@@ -63,6 +65,11 @@ class User
         return array_unique($roles);
     }
 
+    public function isRemoved(): bool
+    {
+        return true == $this->removed;
+    }
+
     public function isActive(): bool
     {
         return null == $this->account() ? true : $this->account()->isActive();
@@ -71,6 +78,11 @@ class User
     public function registeredAt(): \DateTimeImmutable
     {
         return $this->registeredAt;
+    }
+
+    public function removedAt(): \DateTimeImmutable
+    {
+        return $this->removedAt;
     }
 
     public function register(string $username, string $password, ?AccountId $accountId = null)
@@ -105,6 +117,15 @@ class User
         );
     }
 
+    public function remove()
+    {
+        $this->recordApplyAndPublish(
+            new UserRemoved(
+                $this->id()
+            )
+        );
+    }
+
     public function applyUserRegistered(UserRegistered $event)
     {
         $this->username = $event->username();
@@ -132,5 +153,11 @@ class User
         $key = array_search($event->role()->value, $this->roles);
 
         unset($this->roles[$key]);
+    }
+
+    public function applyUserRemoved()
+    {
+        $this->removed = true;
+        $this->removedAt = new \DateTimeImmutable("NOW");
     }
 }

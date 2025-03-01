@@ -41,7 +41,9 @@
                     <td>{{ user.account }}</td>
                     <td>{{ user.active | show_field_value }}</td>
                     <td>{{ user.registeredAt | date('d/m/Y') }}</td>
-                    <td></td>
+                    <td>
+                        <twig:List:Action:Delete path="{{ path('admin_users_remove', {'userId': user.id}) }}" />
+                    </td>
                 </tr>
             {% endfor %}
         </table>

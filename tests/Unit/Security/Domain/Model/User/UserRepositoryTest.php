@@ -84,5 +84,24 @@ abstract class UserRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
+    public function testFindNotRecoverDeletedUser()
+    {
+        $repository = $this->createSUT();
+
+        $user = UserMother::registeredUser();
+
+        $repository->add($user);
+
+        $recoverUser = $repository->find($user->id());
+
+        $this->assertNotNull($recoverUser);
+
+        $recoverUser->remove();
+
+        $repository->add($user);
+
+        $this->assertNull($repository->find($user->id()));
+    }
+
     abstract protected function createSUT(): UserRepository;
 }

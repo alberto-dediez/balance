@@ -7,6 +7,7 @@ namespace App\Tests\Acceptance\Shared;
 use Behat\Step\Given;
 use Behat\Behat\Context\Context;
 use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -24,6 +25,14 @@ final class SecurityContext implements Context
     public function userWithRoleExists($username, $role): void
     {
         $user = UserMother::fromUsernameAndRole($username, Role::tryFrom($role));
+        
+        $this->userRepository->add($user);      
+    }
+
+    #[Given('user :username with id :id exists')]
+    public function userWithIdExists($username, $id): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndId($username, Role::User, new UserId($id));
         
         $this->userRepository->add($user);      
     }
