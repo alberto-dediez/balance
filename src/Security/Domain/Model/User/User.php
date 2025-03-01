@@ -63,6 +63,11 @@ class User
         return array_unique($roles);
     }
 
+    public function isActive(): bool
+    {
+        return null == $this->account() ? true : $this->account()->isActive();
+    }
+
     public function registeredAt(): \DateTimeImmutable
     {
         return $this->registeredAt;

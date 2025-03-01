@@ -35,7 +35,6 @@ class RegisterUserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $account = $form->get('account')->getData();
 
-
             $registerRequest = new RegisterUserRequest(
                 $form->get('username')->getData(),
                 $form->get('password')->getData(),
