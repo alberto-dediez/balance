@@ -26,7 +26,7 @@ class User
         protected ?\DateTimeImmutable $registeredAt = null,
         protected ?\DateTimeImmutable $removedAt = null
     ) {
-
+        
     }
 
     public function id(): UserId
@@ -60,9 +60,22 @@ class User
 
     public function roles(): array
     {
-        $roles = array_merge($this->roles, [Role::User->value]);
+        if (count($this->roles) == 0) {
+            return [Role::User];
+        }
 
-        return array_unique($roles);
+        $roles = $this->roles;
+
+        if (false == $this->hasRole(Role::User)) {
+            $roles[] = Role::User;
+        }
+
+        return array_values($roles);
+    }
+
+    public function hasRole(Role $role)
+    {
+        return false !== in_array($role, $this->roles);
     }
 
     public function isRemoved(): bool
@@ -137,20 +150,20 @@ class User
 
     public function applyRoleGranted(RoleGranted $event)
     {
-        if (in_array($event->role()->value, $this->roles)) {
+        if (in_array($event->role(), $this->roles)) {
             return ;
         }
 
-        $this->roles[] = $event->role()->value;
+        $this->roles[] = $event->role();
     }
 
     public function applyRoleUngranted(RoleUngranted $event)
     {
-        if (!in_array($event->role()->value, $this->roles)) {
+        if (!in_array($event->role(), $this->roles)) {
             return ;
         }
 
-        $key = array_search($event->role()->value, $this->roles);
+        $key = array_search($event->role(), $this->roles);
 
         unset($this->roles[$key]);
     }

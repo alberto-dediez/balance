@@ -12,11 +12,13 @@ class SecurityUser extends User implements UserInterface, PasswordAuthenticatedU
 {
     public function getRoles(): array
     {
-        $roles = $this->roles();
+        $roles = [];
         
-        $roles[] = Role::User->value;
+        foreach ($this->roles() as $role) {
+            $roles[] = $role->value;
+        }
 
-        return array_unique($roles);
+        return $roles;
     }
 
     public function eraseCredentials(): void

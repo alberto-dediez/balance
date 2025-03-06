@@ -56,10 +56,25 @@ class UngrantRoleCommand extends Command
             [
                 ['userId', (string) $response->userId],
                 ['username', $response->username],
-                ['roles', implode(', ', $response->roles)],
+                ['roles', $this->stringifyRoles($response->roles)],
             ]
         );
 
         return Command::SUCCESS;
+    }
+
+    private function stringifyRoles(array $roles)
+    {
+        if (count($roles) == 0) {
+            return '';
+        }
+
+        $result = [];
+
+        foreach ($roles as $role) {
+            $result[] = $role->value;
+        }
+
+        return implode(', ', $result);
     }
 }

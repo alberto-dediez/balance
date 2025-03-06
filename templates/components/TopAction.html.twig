@@ -1,0 +1,8 @@
+{% props path %}
+
+<a href="{{ path }}" 
+    class="dropdown-item d-flex align-items-center {{ attributes.render('class') }}"
+    {{ attributes.without('class') }} 
+>
+    {% block content %}{% endblock %}
+</a>

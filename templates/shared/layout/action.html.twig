@@ -1,0 +1,15 @@
+{% extends '@shared/layout/app.html.twig' %}
+
+{% block page_title %}
+    {{ parent () }}
+
+    <div class="d-print-none ms-auto d-flex gap-2" role="group">
+        <button type="button" class="btn btn-primary dropdown-toggle waves-effect" data-bs-toggle="dropdown" aria-expanded="false">
+            {% trans from 'backend' -%}Acciones{%- endtrans %}
+        </button>
+        
+        <div class="dropdown-menu dropdown-menu-right" style="">
+            {% block top_actions %}{% endblock top_actions %}
+        </div>
+    </div>
+{% endblock %}

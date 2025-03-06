@@ -3,3 +3,7 @@
 {% set page_title = ('Usuarios' | trans) 
     ~ ' > '
     ~ ('Registrar' | trans)  %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_users') }}" />
+{% endblock %}

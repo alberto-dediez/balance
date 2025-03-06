@@ -1,0 +1,11 @@
+{% props label %}
+
+<div class="form-group mb-3">
+    {% if label is defined %}
+	    <label class="form-label">{{ label }}</label>
+    {% endif %}
+
+    <span class="form-control">
+        {% block content %}{% endblock %}
+    </span>
+</div>
