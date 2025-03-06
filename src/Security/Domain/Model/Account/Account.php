@@ -44,9 +44,29 @@ class Account
     {
         $this->recordApplyAndPublish(
             new AccountRegistered(
-                $this->id(),
-                $name,
-                $active
+                accountId: $this->id(),
+                name: $name,
+                active: $active
+            )
+        );
+    }
+
+    public function changeName(string $name)
+    {
+        $this->recordApplyAndPublish(
+            new AccountNameChanged(
+                accountId: $this->id(),
+                name: $name
+            )
+        );
+    }
+
+    public function changeStatus(bool $active)
+    {
+        $this->recordApplyAndPublish(
+            new AccountStatusChanged(
+                accountId: $this->id(),
+                active: $active
             )
         );
     }
@@ -54,6 +74,20 @@ class Account
     public function applyAccountRegistered(AccountRegistered $event)
     {
         $this->name = $event->name();
+        $this->active = $event->active();
+
+        $this->registeredAt = $event->occurredOn();
+    }
+
+    public function applyAccountNameChanged(AccountNameChanged $event)
+    {
+        $this->name = $event->name();
+        
+        $this->registeredAt = $event->occurredOn();
+    }
+
+    public function applyAccountStatusChanged(AccountStatusChanged $event)
+    {
         $this->active = $event->active();
 
         $this->registeredAt = $event->occurredOn();

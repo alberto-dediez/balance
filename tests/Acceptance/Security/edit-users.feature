@@ -27,7 +27,7 @@ Feature:
     Then the response status should be 200
     Then I see a text "Concedido acceso como"
 
-  Scenario: As an admin, I can grant a new role to an user
+  Scenario: As an admin, I can grant a new role to an user and exit
     Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
     Given user "user2@dediez.software" with id "333" exists
     When I am logged as "admin@dediez.software"

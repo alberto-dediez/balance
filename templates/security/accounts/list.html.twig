@@ -33,7 +33,9 @@
                     <td>{{ account.name }}</td>
                     <td>{{ account.active | show_field_value }}</td>
                     <td>{{ account.registeredAt | date('d/m/Y') }}</td>
-                    <td></td>
+                    <td>
+                        <twig:List:Action:Edit path="{{ path('admin_accounts_edit', {'accountId': account.id}) }}" />
+                    </td>
                 </tr>
             {% endfor %}
         </table>
