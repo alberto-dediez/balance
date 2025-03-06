@@ -38,14 +38,30 @@ class DoctrineAccountRepository implements AccountRepository
 
     public function find(AccountId $accountId): ?Account
     {
-        return $this->repository->findOneBy([
-            'id.id' => (string) $accountId
-        ]);
+        $qb = $this->createQueryBuilderFromFilter(new AccountFilter());
+
+        return $qb
+            ->andWhere(
+                $qb->expr()->eq('a.id.id', ':id')
+            )
+            ->setParameter('id', (string) $accountId)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 
     public function findByName(string $name): ?Account
     {
-        return $this->repository->findOneByName($name);
+        $qb = $this->createQueryBuilderFromFilter(new AccountFilter());
+
+        return $qb
+            ->andWhere(
+                $qb->expr()->eq('a.name', ':name')
+            )
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 
     private function createQueryBuilderFromFilter(AccountFilter $filter): QueryBuilder
@@ -54,6 +70,12 @@ class DoctrineAccountRepository implements AccountRepository
 
         $qb->select('a')
             ->from(Account::class, 'a')
+            ->where(
+                $qb->expr()->orX(
+                    $qb->expr()->isNull('a.removed'),
+                    $qb->expr()->eq('a.removed', $qb->expr()->literal(false))
+                )
+            )
         ;
 
         if (!empty($filter->name)) {

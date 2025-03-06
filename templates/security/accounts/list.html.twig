@@ -35,6 +35,7 @@
                     <td>{{ account.registeredAt | date('d/m/Y') }}</td>
                     <td>
                         <twig:List:Action:Edit path="{{ path('admin_accounts_edit', {'accountId': account.id}) }}" />
+                        <twig:List:Action:Delete path="{{ path('admin_accounts_remove', {'accountId': account.id}) }}" />
                     </td>
                 </tr>
             {% endfor %}

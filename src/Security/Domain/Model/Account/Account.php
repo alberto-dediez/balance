@@ -14,8 +14,10 @@ class Account
         protected AccountId $id, 
         protected string $name = '',
         protected bool $active = false,
+        protected bool $removed = false,
         protected array $events = [],
-        protected ?\DateTimeImmutable $registeredAt = null
+        protected ?\DateTimeImmutable $registeredAt = null,
+        protected ?\DateTimeImmutable $removedAt = null
     ) {
 
     }
@@ -35,9 +37,19 @@ class Account
         return $this->active;
     }
 
+    public function isRemoved(): bool
+    {
+        return $this->removed;
+    }
+
     public function registeredAt(): \DateTimeImmutable
     {
         return $this->registeredAt;
+    }
+
+    public function removedAt(): \DateTimeImmutable
+    {
+        return $this->removedAt;
     }
 
     public function register(string $name, bool $active)
@@ -71,6 +83,15 @@ class Account
         );
     }
 
+    public function remove()
+    {
+        $this->recordApplyAndPublish(
+            new AccountRemoved(
+                accountId: $this->id()
+            )
+        );
+    }
+
     public function applyAccountRegistered(AccountRegistered $event)
     {
         $this->name = $event->name();
@@ -82,15 +103,17 @@ class Account
     public function applyAccountNameChanged(AccountNameChanged $event)
     {
         $this->name = $event->name();
-        
-        $this->registeredAt = $event->occurredOn();
     }
 
     public function applyAccountStatusChanged(AccountStatusChanged $event)
     {
         $this->active = $event->active();
+    }
 
-        $this->registeredAt = $event->occurredOn();
+    public function applyAccountRemoved(AccountRemoved $event)
+    {
+        $this->removed = true;
+        $this->removedAt = new \DateTimeImmutable("NOW");
     }
 
     public function __toString(): string

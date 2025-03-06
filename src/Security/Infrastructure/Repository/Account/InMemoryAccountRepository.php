@@ -36,7 +36,7 @@ class InMemoryAccountRepository implements AccountRepository
 
     public function find(AccountId $accountId): ?Account
     {
-        return (isset($this->accounts[(string) $accountId])) 
+        return (isset($this->accounts[(string) $accountId]) && false == $this->accounts[(string) $accountId]->isRemoved()) 
             ? $this->accounts[(string) $accountId]
             : null
         ;
@@ -50,7 +50,7 @@ class InMemoryAccountRepository implements AccountRepository
 
         foreach ($this->accounts as $account) {
             if ($account->name() == $name) {
-                return $account;
+                return $this->find($account->id());
             }
         }
 
@@ -73,6 +73,10 @@ class InMemoryAccountRepository implements AccountRepository
             }
 
             if (null !== $filter->active && $filter->active !== $account->isActive()) {
+                continue;
+            }
+
+            if (true == $account->isRemoved()) {
                 continue;
             }
 
