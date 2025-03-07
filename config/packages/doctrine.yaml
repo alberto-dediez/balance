@@ -24,6 +24,13 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Security/Infrastructure/Symfony/Doctrine'
                 prefix: 'App\Security\Domain\Model'
                 alias: Security
+
+            Waste:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Waste/Infrastructure/Symfony/Doctrine'
+                prefix: 'App\Waste\Domain\Model'
+                alias: Waste
         controller_resolver:
             auto_mapping: false
 

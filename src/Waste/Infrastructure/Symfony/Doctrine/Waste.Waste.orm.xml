@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Waste\Domain\Model\Waste\Waste" table="waste">
+        <embedded name="id" class="App\Waste\Domain\Model\Waste\WasteId" use-column-prefix="false" />
+
+        <field name="name" type="string" length="255" nullable="false"/>
+        <field name="removed" type="boolean" nullable="true"/>
+        <field name="events" type="array" nullable="false"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+    </entity>
+
+</doctrine-mapping>
