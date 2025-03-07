@@ -8,7 +8,18 @@
     </div>
 {% endblock %}
 
-{% block content %}{% endblock %}
+{% block content %}
+    <twig:Card>
+        <twig:List:FilterBar :form="form"></twig:List:FilterBar>
+    </twig:Card>
+
+    <div class="card">
+        <div class="card-body">
+            {% block table %}{% endblock %}
+            <twig:List:Pagination totalResults="{{ totalResults }}" page="{{ form.vars.value.page + 1 }}" limit="{{ form.vars.value.limit }}" />
+        </div>
+    </div>
+{% endblock %}
 
 {% block right_bar %}
     <twig:Sidebar:Right>

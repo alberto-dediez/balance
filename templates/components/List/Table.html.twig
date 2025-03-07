@@ -1,0 +1,24 @@
+{% props elements, columns %}
+
+<table class="table">
+    <tr>
+        {% for column in columns %}
+            {% if column.sortable is defined and column.sortableBy is defined and column.sortable %}
+                <twig:List:SortableHead 
+                    order="{{ form.vars.value.orderBy }}" 
+                    way="{{ form.vars.value.orderWay }}" 
+                    value="{{ column.sortableBy }}"
+                >
+                    {{ column.label }}
+                </twig:List:SortableHead>
+            {% else %}
+                <th>
+                    {{ column.label }}
+                </th>
+            {% endif %}
+        {% endfor %}
+    </tr>
+    {% for element in elements %}
+        {% block content %}{% endblock %}
+    {% endfor %}
+</table>

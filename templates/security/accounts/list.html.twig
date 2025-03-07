@@ -2,46 +2,34 @@
 
 {% set page_title = 'Cuentas' | trans %}
 
-{% block content %}
-    <twig:Card>
-        <twig:List:FilterBar :form="form"></twig:List:FilterBar>
-    </twig:Card>
-    <twig:Card>
-        <table class="table">
-            <tr>
-                <twig:List:SortableHead 
-                    order="{{ form.vars.value.orderBy }}" 
-                    way="{{ form.vars.value.orderWay }}" 
-                    value="name"
-                >
-                    {% trans %}Nombre{% endtrans %}
-                </twig:List:SortableHead>
-                <th>
-                    {% trans %}Activa{% endtrans %}
-                </th>
-                <twig:List:SortableHead 
-                    order="{{ form.vars.value.orderBy }}" 
-                    way="{{ form.vars.value.orderWay }}" 
-                    value="registeredAt"
-                >
-                    {% trans %}Fecha de registro{% endtrans %}
-                </twig:List:SortableHead>
-                <th>&nbsp;</th>
-            </tr>
-            {% for account in accounts %}
-                <tr>
-                    <td>{{ account.name }}</td>
-                    <td>{{ account.active | show_field_value }}</td>
-                    <td>{{ account.registeredAt | date('d/m/Y') }}</td>
-                    <td>
-                        <twig:List:Action:Edit path="{{ path('admin_accounts_edit', {'accountId': account.id}) }}" />
-                        <twig:List:Action:Delete path="{{ path('admin_accounts_remove', {'accountId': account.id}) }}" />
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-        <twig:List:Pagination totalResults="{{ totalResults }}" page="{{ form.vars.value.page + 1 }}" limit="{{ form.vars.value.limit }}" />
-    </twig:Card>
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': 'Activa' | trans
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="accounts">
+        <tr>
+            <td>{{ element.name }}</td>
+            <td>{{ element.active | show_field_value }}</td>
+            <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+            <td>
+                <twig:List:Action:Edit path="{{ path('admin_accounts_edit', {'accountId': element.id}) }}" />
+                <twig:List:Action:Delete path="{{ path('admin_accounts_remove', {'accountId': element.id}) }}" />
+            </td>
+        </tr>
+    </twig:List:Table>
 {% endblock %}
 
 {% block list_actions %}

@@ -2,50 +2,37 @@
 
 {% set page_title = 'Usuarios' | trans %}
 
-{% block content %}
-    <twig:Card>
-        <twig:List:FilterBar :form="form"></twig:List:FilterBar>
-    </twig:Card>
-    <twig:Card>
-        <table class="table">
-            <tr>
-                <twig:List:SortableHead 
-                    order="{{ form.vars.value.orderBy }}" 
-                    way="{{ form.vars.value.orderWay }}" 
-                    value="username"
-                >
-                    {% trans %}Nombre de usuario{% endtrans %}
-                </twig:List:SortableHead>
-                <th>
-                    {% trans %}Roles{% endtrans %}
-                </th>
-                <th>
-                    {% trans %}Activo{% endtrans %}
-                </th>
-                <twig:List:SortableHead 
-                    order="{{ form.vars.value.orderBy }}" 
-                    way="{{ form.vars.value.orderWay }}" 
-                    value="registeredAt"
-                >
-                    {% trans %}Fecha de registro{% endtrans %}
-                </twig:List:SortableHead>
-                <th>&nbsp;</th>
-            </tr>
-            {% for user in users %}
-                <tr>
-                    <td>{{ user.username }}</td>
-                    <td>{{ user.roles | map(t => t.value | trans({}, 'roles')) | join(', ') }}</td>
-                    <td>{{ user.active | show_field_value }}</td>
-                    <td>{{ user.registeredAt | date('d/m/Y') }}</td>
-                    <td>
-                        <twig:List:Action:Edit path="{{ path('users_edit', {'userId': user.id}) }}" />
-                        <twig:List:Action:Delete path="{{ path('users_remove', {'userId': user.id}) }}" />
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-        <twig:List:Pagination totalResults="{{ totalResults }}" page="{{ form.vars.value.page + 1 }}" limit="{{ form.vars.value.limit }}" />
-    </twig:Card>
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Nombre de usuario' | trans,
+            'sortable': true,
+            'sortableBy': 'username'
+        }, {
+            'label': 'Roles' | trans
+        }, {
+            'label': 'Activo' | trans
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="users">
+        <tr>
+            <td>{{ element.username }}</td>
+            <td>{{ element.roles | map(t => t.value | trans({}, 'roles')) | join(', ') }}</td>
+            <td>{{ element.active | show_field_value }}</td>
+            <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+            <td>
+                <twig:List:Action:Edit path="{{ path('users_edit', {'userId': element.id}) }}" />
+                <twig:List:Action:Delete path="{{ path('users_remove', {'userId': element.id}) }}" />
+            </td>
+        </tr>
+    </twig:List:Table>
 {% endblock %}
 
 {% block list_actions %}
