@@ -33,7 +33,7 @@ class ListWastesServiceTest extends TestCase
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof ListWastesResponse);
-        $this->assertCount(4, $result->accounts);
+        $this->assertCount(4, $result->wastes);
         $this->assertEquals(4, $result->totalResults);
     }
 

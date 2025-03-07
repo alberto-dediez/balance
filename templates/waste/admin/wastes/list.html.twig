@@ -1,0 +1,33 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Residuos' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="wastes">
+        <tr>
+            <td>{{ element.name }}</td>
+            <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+            <td>
+                <twig:List:Action:Delete path="{{ path('admin_wastes_remove', {'wasteId': element.id}) }}" />
+            </td>
+        </tr>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('admin_wastes_register') }}" />
+{% endblock list_actions %}

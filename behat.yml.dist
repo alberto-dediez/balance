@@ -8,6 +8,7 @@ default:
                 - App\Tests\Acceptance\Shared\ApiContext
                 - App\Tests\Acceptance\Shared\SystemContext
                 - App\Tests\Acceptance\Shared\SecurityContext
+                - App\Tests\Acceptance\Waste\WasteContext
 
     extensions:
         FriendsOfBehat\SymfonyExtension: 
