@@ -5,7 +5,7 @@ namespace App\Security\Infrastructure\Symfony\Form;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Security\Application\ListAccounts\ListAccountsRequest;
+use App\Security\Application\Account\List\ListAccountsRequest;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Security\Infrastructure\Symfony\Form\BaseFilterType;
 use App\Shared\Infrastructure\Symfony\Type\BooleanType;

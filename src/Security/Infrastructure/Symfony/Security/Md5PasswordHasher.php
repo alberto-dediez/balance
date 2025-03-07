@@ -2,7 +2,7 @@
 
 namespace App\Security\Infrastructure\Symfony\Security;
 
-use App\Security\Application\RegisterUser\PasswordHasher;
+use App\Security\Application\User\Register\PasswordHasher;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]

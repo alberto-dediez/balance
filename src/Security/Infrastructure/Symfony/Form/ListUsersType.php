@@ -6,7 +6,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use App\Security\Infrastructure\Symfony\Type\RoleType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Security\Application\ListUsers\ListUsersRequest;
+use App\Security\Application\User\List\ListUsersRequest;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Security\Infrastructure\Symfony\Form\BaseFilterType;
 

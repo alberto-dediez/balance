@@ -9,7 +9,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 use App\Shared\Infrastructure\Symfony\Type\BooleanType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use App\Security\Application\UpdateAccount\UpdateAccountRequest;
+use App\Security\Application\Account\Update\UpdateAccountRequest;
 
 class UpdateAccountType extends AbstractType
 {

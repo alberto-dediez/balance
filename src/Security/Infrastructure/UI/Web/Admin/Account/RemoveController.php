@@ -8,8 +8,8 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Security\Domain\Model\Account\AccountRepository;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Security\Application\RemoveAccount\RemoveAccountRequest;
-use App\Security\Application\RemoveAccount\RemoveAccountService;
+use App\Security\Application\Account\Remove\RemoveAccountRequest;
+use App\Security\Application\Account\Remove\RemoveAccountService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/accounts/remove/{accountId}', name: 'admin_accounts_remove')]

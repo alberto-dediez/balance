@@ -9,8 +9,8 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use App\Security\Application\RegisterUser\RegisterUserRequest;
-use App\Security\Application\RegisterUser\RegisterUserService;
+use App\Security\Application\User\Register\RegisterUserRequest;
+use App\Security\Application\User\Register\RegisterUserService;
 
 #[AsCommand(
     name: 'security:user:register',

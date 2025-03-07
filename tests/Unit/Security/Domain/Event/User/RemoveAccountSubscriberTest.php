@@ -9,7 +9,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Security\Domain\Model\Account\AccountRemoved;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Security\Application\RemoveUser\RemoveUserService;
+use App\Security\Application\User\Remove\RemoveUserService;
 use App\Security\Domain\Event\User\RemoveAccountSubscriber;
 use App\Security\Infrastructure\Repository\User\InMemoryUserRepository;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
