@@ -1,67 +1,21 @@
 <?php
 
-namespace App\Security\Infrastructure\UI\Web;
+namespace App\Security\Infrastructure\UI\Web\User;
 
-use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
-use App\Security\Domain\Model\User\UserId;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\Request;
-use App\Security\Domain\Model\Account\Account;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use App\Security\Domain\Model\User\UserRepository;
-use App\Security\Infrastructure\Symfony\Form\EditUser;
 use Symfony\Component\Translation\TranslatableMessage;
 use App\Security\Application\GrantRole\GrantRoleRequest;
 use App\Security\Application\GrantRole\GrantRoleService;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Security\Infrastructure\Symfony\Form\EditUserType;
 use App\Security\Application\UngrantRole\UngrantRoleRequest;
 use App\Security\Application\UngrantRole\UngrantRoleService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/users/edit/{userId}', name: 'users_edit')]
-#[IsGranted("ROLE_OWNER")]
-class EditUserController extends AbstractController
+trait EditUserTrait
 {
-    private ?Account $account = null;
-
     public function __construct(
         private GrantRoleService $grantRole, 
-        private UngrantRoleService $ungrantRole,
-        Security $security
+        private UngrantRoleService $ungrantRole
     ) {
-        $this->account = null !== $security->getUser()->accountId()
-            ? new Account($security->getUser()->accountId())
-            : null
-        ;
-    }
-
-    public function __invoke(string $userId, UserRepository $userRepository, Request $request): Response
-    {   
-        $user = $userRepository->find(new UserId($userId));
-
-        if (null == $user || null == $user->accountId() || false == $user->accountId()->equals($this->account->id())) {
-            throw $this->createNotFoundException(new TranslatableMessage("El usuario no existe"));
-        }
-
-        $form = $this->createForm(EditUserType::class, new EditUser($user->roles()));
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->updateRoles($user, $form->get('roles')->getData());
-
-            if ($form->getClickedButton() && 'saveAndReturn' == $form->getClickedButton()->getName()) {
-                return $this->redirectToRoute('users');
-            }
-        }
-
-        return $this->render('@security/users/edit.html.twig', [
-            'user' => $user,
-            'form' => $form->createView()
-        ]);
+        
     }
 
     protected function updateRoles(User $user, array $roles)

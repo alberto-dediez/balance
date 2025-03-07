@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Security\Infrastructure\UI\Web;
+namespace App\Security\Infrastructure\UI\Web\Admin\Account;
 
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,22 +14,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/accounts/remove/{accountId}', name: 'admin_accounts_remove')]
 #[IsGranted("ROLE_ADMIN")]
-class RemoveAccountController extends AbstractController
+class RemoveController extends AbstractController
 {
-    public function __construct(private RemoveAccountService $removeAccount)
-    {
+    use GetAccountFromIdTrait;
 
-    }
-
-    public function __invoke(string $accountId, AccountRepository $accountRepository): Response
+    public function __invoke(
+        string $accountId, 
+        AccountRepository $accountRepository,
+        RemoveAccountService $removeAccount
+    ): Response
     {   
-        $account = $accountRepository->find(new AccountId($accountId));
-
-        if (null == $account) {
-            throw $this->createNotFoundException(new TranslatableMessage("La cuenta no existe"));
-        }
-
-        $removeAccount = $this->removeAccount;
+        $account = $this->getAccountFromId($accountId, $accountRepository);
 
         try {
             $removeAccount(new RemoveAccountRequest($account->id()));

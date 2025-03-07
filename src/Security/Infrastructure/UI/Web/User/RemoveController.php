@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Security\Infrastructure\UI\Web;
+namespace App\Security\Infrastructure\UI\Web\User;
 
 use App\Security\Domain\Model\User\UserId;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,26 +10,26 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Security\Application\RemoveUser\RemoveUserRequest;
 use App\Security\Application\RemoveUser\RemoveUserService;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/admin/users/remove/{userId}', name: 'admin_users_remove')]
-#[IsGranted("ROLE_ADMIN")]
-class AdminRemoveUserController extends AbstractController
+#[Route('/users/remove/{userId}', name: 'users_remove')]
+#[IsGranted("ROLE_OWNER")]
+class RemoveController extends AbstractController
 {
-    public function __construct(private RemoveUserService $removeUser)
-    {
+    use OnlyUsersFromAccountTrait;
 
-    }
-
-    public function __invoke(string $userId, UserRepository $userRepository): Response
+    public function __invoke(
+        string $userId, 
+        UserRepository $userRepository, 
+        LoggedAccount $loggedAccount,
+        RemoveUserService $removeUser
+    ): Response
     {   
         $user = $userRepository->find(new UserId($userId));
+        $account = $loggedAccount();
 
-        if (null == $user) {
-            throw $this->createNotFoundException(new TranslatableMessage("El usuario no existe"));
-        }
-
-        $removeUser = $this->removeUser;
+        $this->onlyUsersFromAccount($user, $account);
 
         try {
             $removeUser(new RemoveUserRequest($user->id()));
@@ -39,6 +39,6 @@ class AdminRemoveUserController extends AbstractController
             $this->addFlash('danger', new TranslatableMessage("No se ha podido eliminar al usuario {user}", ['{user}' => $user->username()]));
         }
 
-        return $this->redirectToRoute('admin_users');
+        return $this->redirectToRoute('users');
     }
 }
