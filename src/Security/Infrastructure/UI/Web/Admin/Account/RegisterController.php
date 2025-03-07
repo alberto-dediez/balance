@@ -10,7 +10,7 @@ use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Security\Infrastructure\Symfony\Form\RegisterAccountType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Security\Application\RegisterAccount\RegisterAccountService;
+use App\Security\Application\Account\Register\RegisterAccountService;
 
 #[Route('/admin/accounts/register', name: 'admin_accounts_register')]
 #[IsGranted("ROLE_ADMIN")]

@@ -7,8 +7,8 @@ use App\Shared\Domain\Event\RegisterTrait;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Security\Domain\Model\Account\AccountRemoved;
-use App\Security\Application\RemoveUser\RemoveUserRequest;
-use App\Security\Application\RemoveUser\RemoveUserService;
+use App\Security\Application\User\Remove\RemoveUserRequest;
+use App\Security\Application\User\Remove\RemoveUserService;
 
 class RemoveAccountSubscriber implements DomainEventSubscriber
 {

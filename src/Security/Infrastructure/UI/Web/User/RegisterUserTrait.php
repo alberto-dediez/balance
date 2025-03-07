@@ -6,11 +6,11 @@ use Symfony\Component\Form\FormError;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\Account\Account;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Security\Application\GrantRole\GrantRoleRequest;
-use App\Security\Application\GrantRole\GrantRoleService;
-use App\Security\Application\RegisterUser\RegisterUserRequest;
-use App\Security\Application\RegisterUser\RegisterUserService;
-use App\Security\Application\RegisterUser\DuplicateUsernameException;
+use App\Security\Application\User\GrantRole\GrantRoleRequest;
+use App\Security\Application\User\GrantRole\GrantRoleService;
+use App\Security\Application\User\Register\RegisterUserRequest;
+use App\Security\Application\User\Register\RegisterUserService;
+use App\Security\Application\User\Register\DuplicateUsernameException;
 
 trait RegisterUserTrait
 {

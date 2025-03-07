@@ -9,7 +9,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 use App\Shared\Infrastructure\Symfony\Type\BooleanType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use App\Security\Application\RegisterAccount\RegisterAccountRequest;
+use App\Security\Application\Account\Register\RegisterAccountRequest;
 
 class RegisterAccountType extends AbstractType
 {

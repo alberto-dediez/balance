@@ -4,10 +4,10 @@ namespace App\Security\Infrastructure\UI\Web\User;
 
 use App\Security\Domain\Model\User\User;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Security\Application\GrantRole\GrantRoleRequest;
-use App\Security\Application\GrantRole\GrantRoleService;
-use App\Security\Application\UngrantRole\UngrantRoleRequest;
-use App\Security\Application\UngrantRole\UngrantRoleService;
+use App\Security\Application\User\GrantRole\GrantRoleRequest;
+use App\Security\Application\User\GrantRole\GrantRoleService;
+use App\Security\Application\User\UngrantRole\UngrantRoleRequest;
+use App\Security\Application\User\UngrantRole\UngrantRoleService;
 
 trait EditUserTrait
 {

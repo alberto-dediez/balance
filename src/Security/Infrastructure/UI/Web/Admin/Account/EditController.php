@@ -10,8 +10,8 @@ use Symfony\Component\Translation\TranslatableMessage;
 use App\Security\Domain\Model\Account\AccountRepository;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Security\Infrastructure\Symfony\Form\UpdateAccountType;
-use App\Security\Application\UpdateAccount\UpdateAccountRequest;
-use App\Security\Application\UpdateAccount\UpdateAccountService;
+use App\Security\Application\Account\Update\UpdateAccountRequest;
+use App\Security\Application\Account\Update\UpdateAccountService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Security\Infrastructure\UI\Web\Admin\Account\GetAccountFromIdTrait;
 

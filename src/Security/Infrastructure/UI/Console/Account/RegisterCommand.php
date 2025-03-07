@@ -8,8 +8,8 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use App\Security\Application\RegisterAccount\RegisterAccountRequest;
-use App\Security\Application\RegisterAccount\RegisterAccountService;
+use App\Security\Application\Account\Register\RegisterAccountRequest;
+use App\Security\Application\Account\Register\RegisterAccountService;
 
 #[AsCommand(
     name: 'security:account:register',

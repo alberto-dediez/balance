@@ -8,8 +8,8 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Security\Domain\Model\User\UserRepository;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Security\Application\RemoveUser\RemoveUserRequest;
-use App\Security\Application\RemoveUser\RemoveUserService;
+use App\Security\Application\User\Remove\RemoveUserRequest;
+use App\Security\Application\User\Remove\RemoveUserService;
 use App\Security\Infrastructure\UI\Web\User\GetUserFromIdTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 

@@ -7,8 +7,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Security\Application\ListAccounts\ListAccountsRequest;
-use App\Security\Application\ListAccounts\ListAccountsService;
+use App\Security\Application\Account\List\ListAccountsRequest;
+use App\Security\Application\Account\List\ListAccountsService;
 use App\Security\Infrastructure\Symfony\Form\ListAccountsType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -18,13 +18,13 @@ class ListController extends AbstractController
 {
     use FilterTrait;
 
-    public function __invoke(ListAccountsService $listUsers, Request $request): Response
+    public function __invoke(ListAccountsService $listAccounts, Request $request): Response
     {   
         list($filter, $form) = $this->filter($request, function () {
             return  new ListAccountsRequest();
         }, ListAccountsType::class);
 
-        $response = $listUsers($filter);
+        $response = $listAccounts($filter);
 
         return $this->render('@security/accounts/list.html.twig', [
             'accounts' => $response->accounts,
