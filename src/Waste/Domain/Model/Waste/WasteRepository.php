@@ -4,6 +4,7 @@ namespace App\Waste\Domain\Model\Waste;
 
 use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\Waste\WasteFilter;
 
 interface WasteRepository
 {
