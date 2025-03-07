@@ -3,8 +3,10 @@
 namespace App\Security\Infrastructure\Repository\User;
 
 use App\Security\Domain\Model\User\User;
-use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\User\UserId;
+use App\Security\Domain\Model\Account\Account;
+use App\Security\Domain\Model\User\UserFilter;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserRepository;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -55,6 +57,20 @@ class InMemoryUserRepository implements UserRepository
         }
 
         return null;
+    }
+
+    public function findByAccountId(AccountId $accountId): array
+    {
+        $account = new Account(
+            id: $accountId
+        );
+
+        $filter = new UserFilter(
+            account: $account
+        );
+        $filter->limit = 9999999999999;
+        
+        return $this->findByFilter($filter);
     }
 
     public function findByFilter(UserFilter $filter): array

@@ -3,18 +3,16 @@
 namespace App\Tests\Unit\Shared\Domain\Event;
 
 use App\Shared\Domain\Event\DomainEvent;
+use App\Shared\Domain\Event\RegisterTrait;
 use App\Shared\Domain\Event\DomainEventSubscriber;
-use App\Shared\Domain\Event\DomainEventPublisher;
 
 class SpyDomainEventSubscriber implements DomainEventSubscriber
 {
+    use RegisterTrait;
+
     public function __construct(private array $events = [])
     {
-        $this->events = $events;
-
-        DomainEventPublisher::instance()->subscribe(
-            $this
-        );
+        $this->register();
     }
 
     public function handle(DomainEvent $event)

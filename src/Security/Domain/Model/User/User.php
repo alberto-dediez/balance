@@ -88,12 +88,12 @@ class User
         return null == $this->account() ? true : $this->account()->isActive();
     }
 
-    public function registeredAt(): \DateTimeImmutable
+    public function registeredAt(): ?\DateTimeImmutable
     {
         return $this->registeredAt;
     }
 
-    public function removedAt(): \DateTimeImmutable
+    public function removedAt(): ?\DateTimeImmutable
     {
         return $this->removedAt;
     }

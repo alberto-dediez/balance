@@ -8,6 +8,7 @@ use App\Security\Domain\Model\User\User;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserFilter;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserRepository;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -79,6 +80,20 @@ class DoctrineUserRepository implements UserRepository
             ->setParameter('username', $username)
             ->getQuery()
             ->getOneOrNullResult()
+        ;
+    }
+
+    public function findByAccountId(AccountId $accountId): array
+    {
+        $qb = $this->createQueryBuilderFromFilter(new UserFilter());
+
+        return $qb
+            ->andWhere(
+                $qb->expr()->eq('u.accountId', ':accountId')
+            )
+            ->setParameter('accountId', (string) $accountId)
+            ->getQuery()
+            ->getResult()
         ;
     }
 

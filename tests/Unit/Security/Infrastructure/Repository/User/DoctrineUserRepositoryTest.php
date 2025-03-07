@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Security\Infrastructure\Repository\User;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\User\UserRepository;
+use App\Security\Domain\Model\Account\AccountRepository;
 use App\Tests\Unit\Security\Domain\Model\User\UserRepositoryTest;
 use App\Security\Infrastructure\Repository\User\DoctrineUserRepository;
 use App\Security\Infrastructure\Repository\Account\DoctrineAccountRepository;

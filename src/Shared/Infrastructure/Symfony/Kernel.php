@@ -5,8 +5,9 @@ namespace App\Shared\Infrastructure\Symfony;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 
-class Kernel extends BaseKernel
+class Kernel extends BaseKernel implements CompilerPassInterface
 {
     use MicroKernelTrait;
 
@@ -18,8 +19,6 @@ class Kernel extends BaseKernel
 
             // prevents Doctrine entities to be detached
             $container->getDefinition('doctrine')->clearTag('kernel.reset');
-
-            // ...
         }
     }
 }

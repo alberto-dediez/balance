@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Security\Domain\Model\User;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
+use App\Security\Domain\Model\Account\Account;
 
 class UserMother
 {
@@ -38,6 +39,16 @@ class UserMother
         $user->register($username, 'password');
         $user->grantRole($role);
 
+        return $user;
+    }
+
+    public static function fromUsernameAndAccount($username, Account $account)
+    {
+        $user = new User(
+            id: UserId::generate()
+        );
+        $user->register($username, 'password', $account->id());
+        
         return $user;
     }
 
