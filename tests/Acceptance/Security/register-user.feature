@@ -42,3 +42,10 @@ Feature:
     When I follow redirect
     Then the response status should be 200
     Then I see a text "Usuario creado correctamente"
+
+  Scenario: As owner I can register users to my account
+      Given account "MyCompany" with id "666" exists
+      Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists  
+      When I am logged as "owner@dediez.software"
+      When I go to "/es/users/register"
+      Then the response status should be 200

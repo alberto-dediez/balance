@@ -5,13 +5,15 @@
         <div class="d-sm-flex align-items-center justify-space-between">
             {% block content %}
                 {% for field in form.vars.value | show_fields %}
-                    {% set formField = attribute(form, field) %}
+                    {% if attribute(form, field) is defined %}
+                        {% set formField = attribute(form, field) %}
 
-                    <twig:List:FilterShow 
-                        label="{{ formField.vars.label }}" 
-                        value="{{ attribute(form.vars.value, field) }}" 
-                        id="#{{ formField.vars.id }}"
-                    />
+                        <twig:List:FilterShow 
+                            label="{{ formField.vars.label }}" 
+                            value="{{ attribute(form.vars.value, field) }}" 
+                            id="#{{ formField.vars.id }}"
+                        />
+                    {% endif %}
                 {% endfor %}
             {% endblock %}
             

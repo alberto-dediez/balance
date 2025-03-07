@@ -47,6 +47,8 @@ class SecurityUser extends User implements UserInterface, PasswordAuthenticatedU
             id: $user->id(), 
             username: $user->username(),
             password: $user->password(),
+            accountId: $user->accountId(),
+            account: $user->account(),
             roles: $user->roles(),
             events: $user->recordedEvents(),
             registeredAt: $user->registeredAt()

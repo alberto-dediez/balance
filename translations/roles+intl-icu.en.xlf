@@ -17,6 +17,10 @@
         <source>ROLE_SUPER_ADMIN</source>
         <target>Super Admin</target>
       </trans-unit>
+      <trans-unit id="7UoXiJx" resname="ROLE_OWNER">
+        <source>ROLE_OWNER</source>
+        <target>Propietario</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

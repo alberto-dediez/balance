@@ -20,9 +20,6 @@
                     {% trans %}Roles{% endtrans %}
                 </th>
                 <th>
-                    {% trans %}Cuenta{% endtrans %}
-                </th>
-                <th>
                     {% trans %}Activo{% endtrans %}
                 </th>
                 <twig:List:SortableHead 
@@ -38,12 +35,11 @@
                 <tr>
                     <td>{{ user.username }}</td>
                     <td>{{ user.roles | map(t => t.value | trans({}, 'roles')) | join(', ') }}</td>
-                    <td>{{ user.account }}</td>
                     <td>{{ user.active | show_field_value }}</td>
                     <td>{{ user.registeredAt | date('d/m/Y') }}</td>
                     <td>
-                        <twig:List:Action:Edit path="{{ path('admin_users_edit', {'userId': user.id}) }}" />
-                        <twig:List:Action:Delete path="{{ path('admin_users_remove', {'userId': user.id}) }}" />
+                        <twig:List:Action:Edit path="{{ path('users_edit', {'userId': user.id}) }}" />
+                        <twig:List:Action:Delete path="{{ path('users_remove', {'userId': user.id}) }}" />
                     </td>
                 </tr>
             {% endfor %}
@@ -53,5 +49,5 @@
 {% endblock %}
 
 {% block list_actions %}
-    <twig:Link:Register path="{{ path('admin_users_register') }}" />
+    <twig:Link:Register path="{{ path('users_register') }}" />
 {% endblock list_actions %}

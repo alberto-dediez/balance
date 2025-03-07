@@ -17,3 +17,13 @@ Feature:
         When I am logged as "user1@dediez.software"
         When I go to "/es/admin/users"
         Then the response status should be 403
+
+    Scenario: As owner I can access a list of users of my account
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists  
+        Given user "user1@dediez.software" with role "ROLE_USER" of account "666" exists
+        Given user "user2@dediez.software" with role "ROLE_USER" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/users"
+        Then the response status should be 200
+        Then I see a table with 3 rows

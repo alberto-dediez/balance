@@ -129,6 +129,134 @@
         <source>Zona privada</source>
         <target>Private area</target>
       </trans-unit>
+      <trans-unit id="lr8U4Rd" resname="Seguridad">
+        <source>Seguridad</source>
+        <target>Security</target>
+      </trans-unit>
+      <trans-unit id="0JhmRr_" resname="Cuentas">
+        <source>Cuentas</source>
+        <target>Accounts</target>
+      </trans-unit>
+      <trans-unit id=".mgkmfW" resname="Usuarios">
+        <source>Usuarios</source>
+        <target>Users</target>
+      </trans-unit>
+      <trans-unit id="396rRbt" resname="Nombre">
+        <source>Nombre</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="kcELu06" resname="Activa">
+        <source>Activa</source>
+        <target>Active</target>
+      </trans-unit>
+      <trans-unit id="dqQvuHD" resname="Todos los estados">
+        <source>Todos los estados</source>
+        <target>All statuses</target>
+      </trans-unit>
+      <trans-unit id="hrL9ZOh" resname="Guardar">
+        <source>Guardar</source>
+        <target>Save</target>
+      </trans-unit>
+      <trans-unit id="0WQ3rNG" resname="Guardar y salir">
+        <source>Guardar y salir</source>
+        <target>Save and exit</target>
+      </trans-unit>
+      <trans-unit id="6H6ZzuL" resname="Registrar">
+        <source>Registrar</source>
+        <target>Register</target>
+      </trans-unit>
+      <trans-unit id="y9G.oa8" resname="Usuario creado correctamente: {username}">
+        <source>Usuario creado correctamente: {username}</source>
+        <target>User created successfully: {username}</target>
+      </trans-unit>
+      <trans-unit id="BeJqJmP" resname="El formulario contiene errores, por favor, reviselos antes de continuar.">
+        <source>El formulario contiene errores, por favor, reviselos antes de continuar.</source>
+        <target>The form contains errors, please review them before continuing.</target>
+      </trans-unit>
+      <trans-unit id="uI7Kwah" resname="Ha ocurrido un error inesperado al intentar registrar al usuario.">
+        <source>Ha ocurrido un error inesperado al intentar registrar al usuario.</source>
+        <target>An unexpected error occurred when trying to register the user.</target>
+      </trans-unit>
+      <trans-unit id="8XiO84w" resname="Concedido acceso como {role}">
+        <source>Concedido acceso como {role}</source>
+        <target>Access granted as {role}</target>
+      </trans-unit>
+      <trans-unit id="GZj63sm" resname="No se ha podido conceder acceso como {role}">
+        <source>No se ha podido conceder acceso como {role}</source>
+        <target>Access could not be granted as {role}</target>
+      </trans-unit>
+      <trans-unit id="uYqSEiY" resname="Debes pertenecer a una cuenta para poder acceder al listado de usuarios">
+        <source>Debes pertenecer a una cuenta para poder acceder al listado de usuarios</source>
+        <target>You must belong to an account to access the user list</target>
+      </trans-unit>
+      <trans-unit id="OE.Waj_" resname="La cuenta no existe">
+        <source>La cuenta no existe</source>
+        <target>The account does not exist</target>
+      </trans-unit>
+      <trans-unit id="nwo_D8G" resname="Se ha eliminado la cuenta {account}">
+        <source>Se ha eliminado la cuenta {account}</source>
+        <target>The account {account} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="RGkWzHR" resname="No se ha podido eliminar la cuenta {account}">
+        <source>No se ha podido eliminar la cuenta {account}</source>
+        <target>The account {account} could not be deleted</target>
+      </trans-unit>
+      <trans-unit id="nWQhPu9" resname="Cuenta creada correctamente: {name}">
+        <source>Cuenta creada correctamente: {name}</source>
+        <target>Account created successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="sKfBFDY" resname="Ha ocurrido un error inesperado al intentar registrar la cuenta.">
+        <source>Ha ocurrido un error inesperado al intentar registrar la cuenta.</source>
+        <target>An unexpected error occurred when trying to register the account.</target>
+      </trans-unit>
+      <trans-unit id="Y969eNN" resname="Cuenta actualizada con éxito">
+        <source>Cuenta actualizada con éxito</source>
+        <target>Account successfully updated</target>
+      </trans-unit>
+      <trans-unit id="iYxSYBV" resname="Error inesperado. No se ha podido actualizar la cuenta">
+        <source>Error inesperado. No se ha podido actualizar la cuenta</source>
+        <target>Unexpected error. Account update failed</target>
+      </trans-unit>
+      <trans-unit id="IidMCo3" resname="El usuario no existe">
+        <source>El usuario no existe</source>
+        <target>User does not exist</target>
+      </trans-unit>
+      <trans-unit id="11cZA2S" resname="Se ha eliminado al usuario {user}">
+        <source>Se ha eliminado al usuario {user}</source>
+        <target>User {user} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="M9oyZS7" resname="No se ha podido eliminar al usuario {user}">
+        <source>No se ha podido eliminar al usuario {user}</source>
+        <target>User {user} could not be deleted</target>
+      </trans-unit>
+      <trans-unit id="gWXOVsW" resname="Retirado acceso como {role}">
+        <source>Retirado acceso como {role}</source>
+        <target>Access as {role} removed</target>
+      </trans-unit>
+      <trans-unit id="oTF9A8j" resname="No se ha podido retirar acceso como {role}">
+        <source>No se ha podido retirar acceso como {role}</source>
+        <target>Access as {role} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="dYwPN5J" resname="Volver">
+        <source>Volver</source>
+        <target>Back</target>
+      </trans-unit>
+      <trans-unit id="q_BYO8S" resname="Eliminar">
+        <source>Eliminar</source>
+        <target>Delete</target>
+      </trans-unit>
+      <trans-unit id="Tj8j4iw" resname="¿Esta seguro de que desea eliminar este elemento? Esta acción no se puede deshacer">
+        <source>¿Esta seguro de que desea eliminar este elemento? Esta acción no se puede deshacer</source>
+        <target>Are you sure you want to delete this item? This action cannot be undone</target>
+      </trans-unit>
+      <trans-unit id="102bb11" resname="Editar">
+        <source>Editar</source>
+        <target>Edit</target>
+      </trans-unit>
+      <trans-unit id="ai4KovW" resname="Activo">
+        <source>Activo</source>
+        <target>Active</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

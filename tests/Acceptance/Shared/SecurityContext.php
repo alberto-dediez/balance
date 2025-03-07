@@ -8,6 +8,7 @@ use Behat\Step\Given;
 use Behat\Behat\Context\Context;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -44,4 +45,26 @@ final class SecurityContext implements Context
         
         $this->accountRepository->add($account);      
     }    
+
+    #[Given('user :username with role :role of account :account exists')]
+    public function userWithRoleOfAccountExists($username, $role, $account): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount($username, Role::tryFrom($role), new AccountId($account));
+        
+        $this->userRepository->add($user);      
+    }
+
+    #[Given('user :username with id :id of account :account exists')]
+    public function userWithIdOfAccountExists($username, $id, $account): void
+    {
+        $user = UserMother::from(
+            username: $username, 
+            role: Role::User, 
+            userId: new UserId($id),
+            accountId: new AccountId($account)
+        );
+        
+        $this->userRepository->add($user);      
+    }
+
 }

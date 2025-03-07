@@ -129,6 +129,134 @@
         <source>Zona privada</source>
         <target>Zona privada</target>
       </trans-unit>
+      <trans-unit id="lr8U4Rd" resname="Seguridad">
+        <source>Seguridad</source>
+        <target>Seguridad</target>
+      </trans-unit>
+      <trans-unit id="0JhmRr_" resname="Cuentas">
+        <source>Cuentas</source>
+        <target>Cuentas</target>
+      </trans-unit>
+      <trans-unit id=".mgkmfW" resname="Usuarios">
+        <source>Usuarios</source>
+        <target>Usuarios</target>
+      </trans-unit>
+      <trans-unit id="396rRbt" resname="Nombre">
+        <source>Nombre</source>
+        <target>Nombre</target>
+      </trans-unit>
+      <trans-unit id="kcELu06" resname="Activa">
+        <source>Activa</source>
+        <target>Activa</target>
+      </trans-unit>
+      <trans-unit id="dqQvuHD" resname="Todos los estados">
+        <source>Todos los estados</source>
+        <target>Todos los estados</target>
+      </trans-unit>
+      <trans-unit id="hrL9ZOh" resname="Guardar">
+        <source>Guardar</source>
+        <target>Guardar</target>
+      </trans-unit>
+      <trans-unit id="0WQ3rNG" resname="Guardar y salir">
+        <source>Guardar y salir</source>
+        <target>Guardar y salir</target>
+      </trans-unit>
+      <trans-unit id="6H6ZzuL" resname="Registrar">
+        <source>Registrar</source>
+        <target>Registrar</target>
+      </trans-unit>
+      <trans-unit id="y9G.oa8" resname="Usuario creado correctamente: {username}">
+        <source>Usuario creado correctamente: {username}</source>
+        <target>Usuario creado correctamente: {username}</target>
+      </trans-unit>
+      <trans-unit id="BeJqJmP" resname="El formulario contiene errores, por favor, reviselos antes de continuar.">
+        <source>El formulario contiene errores, por favor, reviselos antes de continuar.</source>
+        <target>El formulario contiene errores, por favor, reviselos antes de continuar.</target>
+      </trans-unit>
+      <trans-unit id="uI7Kwah" resname="Ha ocurrido un error inesperado al intentar registrar al usuario.">
+        <source>Ha ocurrido un error inesperado al intentar registrar al usuario.</source>
+        <target>Ha ocurrido un error inesperado al intentar registrar al usuario.</target>
+      </trans-unit>
+      <trans-unit id="8XiO84w" resname="Concedido acceso como {role}">
+        <source>Concedido acceso como {role}</source>
+        <target>Concedido acceso como {role}</target>
+      </trans-unit>
+      <trans-unit id="GZj63sm" resname="No se ha podido conceder acceso como {role}">
+        <source>No se ha podido conceder acceso como {role}</source>
+        <target>No se ha podido conceder acceso como {role}</target>
+      </trans-unit>
+      <trans-unit id="uYqSEiY" resname="Debes pertenecer a una cuenta para poder acceder al listado de usuarios">
+        <source>Debes pertenecer a una cuenta para poder acceder al listado de usuarios</source>
+        <target>Debes pertenecer a una cuenta para poder acceder al listado de usuarios</target>
+      </trans-unit>
+      <trans-unit id="OE.Waj_" resname="La cuenta no existe">
+        <source>La cuenta no existe</source>
+        <target>La cuenta no existe</target>
+      </trans-unit>
+      <trans-unit id="nwo_D8G" resname="Se ha eliminado la cuenta {account}">
+        <source>Se ha eliminado la cuenta {account}</source>
+        <target>Se ha eliminado la cuenta {account}</target>
+      </trans-unit>
+      <trans-unit id="RGkWzHR" resname="No se ha podido eliminar la cuenta {account}">
+        <source>No se ha podido eliminar la cuenta {account}</source>
+        <target>No se ha podido eliminar la cuenta {account}</target>
+      </trans-unit>
+      <trans-unit id="nWQhPu9" resname="Cuenta creada correctamente: {name}">
+        <source>Cuenta creada correctamente: {name}</source>
+        <target>Cuenta creada correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="sKfBFDY" resname="Ha ocurrido un error inesperado al intentar registrar la cuenta.">
+        <source>Ha ocurrido un error inesperado al intentar registrar la cuenta.</source>
+        <target>Ha ocurrido un error inesperado al intentar registrar la cuenta.</target>
+      </trans-unit>
+      <trans-unit id="Y969eNN" resname="Cuenta actualizada con éxito">
+        <source>Cuenta actualizada con éxito</source>
+        <target>Cuenta actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id="iYxSYBV" resname="Error inesperado. No se ha podido actualizar la cuenta">
+        <source>Error inesperado. No se ha podido actualizar la cuenta</source>
+        <target>Error inesperado. No se ha podido actualizar la cuenta</target>
+      </trans-unit>
+      <trans-unit id="IidMCo3" resname="El usuario no existe">
+        <source>El usuario no existe</source>
+        <target>El usuario no existe</target>
+      </trans-unit>
+      <trans-unit id="11cZA2S" resname="Se ha eliminado al usuario {user}">
+        <source>Se ha eliminado al usuario {user}</source>
+        <target>Se ha eliminado al usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="M9oyZS7" resname="No se ha podido eliminar al usuario {user}">
+        <source>No se ha podido eliminar al usuario {user}</source>
+        <target>No se ha podido eliminar al usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="gWXOVsW" resname="Retirado acceso como {role}">
+        <source>Retirado acceso como {role}</source>
+        <target>Retirado acceso como {role}</target>
+      </trans-unit>
+      <trans-unit id="oTF9A8j" resname="No se ha podido retirar acceso como {role}">
+        <source>No se ha podido retirar acceso como {role}</source>
+        <target>No se ha podido retirar acceso como {role}</target>
+      </trans-unit>
+      <trans-unit id="dYwPN5J" resname="Volver">
+        <source>Volver</source>
+        <target>Volver</target>
+      </trans-unit>
+      <trans-unit id="q_BYO8S" resname="Eliminar">
+        <source>Eliminar</source>
+        <target>Eliminar</target>
+      </trans-unit>
+      <trans-unit id="Tj8j4iw" resname="¿Esta seguro de que desea eliminar este elemento? Esta acción no se puede deshacer">
+        <source>¿Esta seguro de que desea eliminar este elemento? Esta acción no se puede deshacer</source>
+        <target>¿Esta seguro de que desea eliminar este elemento? Esta acción no se puede deshacer</target>
+      </trans-unit>
+      <trans-unit id="102bb11" resname="Editar">
+        <source>Editar</source>
+        <target>Editar</target>
+      </trans-unit>
+      <trans-unit id="ai4KovW" resname="Activo">
+        <source>Activo</source>
+        <target>Activo</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

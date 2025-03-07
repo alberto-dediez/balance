@@ -3,6 +3,8 @@
 namespace App\Security\Infrastructure\UI\Web;
 
 use App\Security\Domain\Model\User\UserId;
+use Symfony\Bundle\SecurityBundle\Security;
+use App\Security\Domain\Model\Account\Account;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Security\Domain\Model\User\UserRepository;
@@ -12,20 +14,24 @@ use App\Security\Application\RemoveUser\RemoveUserRequest;
 use App\Security\Application\RemoveUser\RemoveUserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/admin/users/remove/{userId}', name: 'admin_users_remove')]
-#[IsGranted("ROLE_ADMIN")]
+#[Route('/users/remove/{userId}', name: 'users_remove')]
+#[IsGranted("ROLE_OWNER")]
 class RemoveUserController extends AbstractController
 {
-    public function __construct(private RemoveUserService $removeUser)
-    {
+    private ?Account $account = null;
 
+    public function __construct(
+        private RemoveUserService $removeUser,
+        Security $security
+    ) {
+        $this->account = new Account($security->getUser()->accountId());
     }
 
     public function __invoke(string $userId, UserRepository $userRepository): Response
     {   
         $user = $userRepository->find(new UserId($userId));
 
-        if (null == $user) {
+        if (null == $user || null == $this->account || null == $user->accountId() || false == $this->account->id()->equals($user->accountId())) {
             throw $this->createNotFoundException(new TranslatableMessage("El usuario no existe"));
         }
 
@@ -39,6 +45,6 @@ class RemoveUserController extends AbstractController
             $this->addFlash('danger', new TranslatableMessage("No se ha podido eliminar al usuario {user}", ['{user}' => $user->username()]));
         }
 
-        return $this->redirectToRoute('admin_users');
+        return $this->redirectToRoute('users');
     }
 }

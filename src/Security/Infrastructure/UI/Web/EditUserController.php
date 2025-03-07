@@ -5,7 +5,9 @@ namespace App\Security\Infrastructure\UI\Web;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
+use App\Security\Domain\Model\Account\Account;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Security\Domain\Model\User\UserRepository;
@@ -19,20 +21,28 @@ use App\Security\Application\UngrantRole\UngrantRoleRequest;
 use App\Security\Application\UngrantRole\UngrantRoleService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/admin/users/edit/{userId}', name: 'admin_users_edit')]
-#[IsGranted("ROLE_ADMIN")]
+#[Route('/users/edit/{userId}', name: 'users_edit')]
+#[IsGranted("ROLE_OWNER")]
 class EditUserController extends AbstractController
 {
-    public function __construct(private GrantRoleService $grantRole, private UngrantRoleService $ungrantRole)
-    {
+    private ?Account $account = null;
 
+    public function __construct(
+        private GrantRoleService $grantRole, 
+        private UngrantRoleService $ungrantRole,
+        Security $security
+    ) {
+        $this->account = null !== $security->getUser()->accountId()
+            ? new Account($security->getUser()->accountId())
+            : null
+        ;
     }
 
     public function __invoke(string $userId, UserRepository $userRepository, Request $request): Response
     {   
         $user = $userRepository->find(new UserId($userId));
 
-        if (null == $user) {
+        if (null == $user || null == $user->accountId() || false == $user->accountId()->equals($this->account->id())) {
             throw $this->createNotFoundException(new TranslatableMessage("El usuario no existe"));
         }
 
@@ -44,7 +54,7 @@ class EditUserController extends AbstractController
             $this->updateRoles($user, $form->get('roles')->getData());
 
             if ($form->getClickedButton() && 'saveAndReturn' == $form->getClickedButton()->getName()) {
-                return $this->redirectToRoute('admin_users');
+                return $this->redirectToRoute('users');
             }
         }
 
@@ -54,13 +64,13 @@ class EditUserController extends AbstractController
         ]);
     }
 
-    private function updateRoles(User $user, array $roles)
+    protected function updateRoles(User $user, array $roles)
     {
         $this->ungrantRoles($user, $roles);
         $this->grantRoles($user, $roles);
     }
 
-    private function grantRoles(User $user, array $roles)
+    protected function grantRoles(User $user, array $roles)
     {
         if (count($roles) == 0) {
             return ;
@@ -87,7 +97,7 @@ class EditUserController extends AbstractController
         }
     }
 
-    private function ungrantRoles(User $user, array $roles)
+    protected function ungrantRoles(User $user, array $roles)
     {
         if (count($roles) == 0) {
             return ;

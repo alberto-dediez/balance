@@ -18,27 +18,62 @@ class NodeLister
 
     public function nodes()
     {
-        $nodes =  [];
-
         if ($this->checker->isGranted(Role::Admin->value)) {
-            $nodes [] =  new Node(
-                label: new TranslatableMessage("Seguridad"),
-                icon: "solar:shield-user-line-duotone",
-                items: [
-                    new Node(
-                        label: new TranslatableMessage("Cuentas"),
-                        icon: "solar:buildings-3-line-duotone",
-                        target: $this->router->generate('admin_accounts')
-                    ),
-                    new Node(
-                        label: new TranslatableMessage("Usuarios"),
-                        icon: "solar:users-group-rounded-line-duotone",
-                        target: $this->router->generate('admin_users')
-                    ),
-                ]
-            );
+            return $this->toAdmins();
+        } 
+        
+        if ($this->checker->isGranted(Role::Owner->value)) {
+            return $this->toOwners();
         }
 
+        return $this->toUsers();
+    }
+
+    private function toAdmins()
+    {
+        $nodes =  [];
+
+        $nodes [] =  new Node(
+            label: new TranslatableMessage("Seguridad"),
+            icon: "solar:shield-user-line-duotone",
+            items: [
+                new Node(
+                    label: new TranslatableMessage("Cuentas"),
+                    icon: "solar:buildings-3-line-duotone",
+                    target: $this->router->generate('admin_accounts')
+                ),
+                new Node(
+                    label: new TranslatableMessage("Usuarios"),
+                    icon: "solar:users-group-rounded-line-duotone",
+                    target: $this->router->generate('admin_users')
+                ),
+            ]
+        );
+
         return $nodes;
+    }
+
+    private function toOwners()
+    {
+        $nodes =  [];
+
+        $nodes [] =  new Node(
+            label: new TranslatableMessage("Seguridad"),
+            icon: "solar:shield-user-line-duotone",
+            items: [
+                new Node(
+                    label: new TranslatableMessage("Usuarios"),
+                    icon: "solar:users-group-rounded-line-duotone",
+                    target: $this->router->generate('users')
+                ),
+            ]
+        );
+
+        return $nodes;
+    }
+
+    private function toUsers()
+    {
+        return [];
     }
 }

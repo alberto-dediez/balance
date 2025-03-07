@@ -6,49 +6,76 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\Account\Account;
+use App\Security\Domain\Model\Account\AccountId;
 
 class UserMother
 {
     public static function registeredUser()
     {   
-        return self::fromUsername('username');
+        return self::from(
+            userId: UserId::generate(), 
+            username: 'username'
+        );
     }
 
     public static function adminUser()
     {
-        return self::fromUsernameAndRole('username', Role::Admin);
+        return self::from(
+            userId: UserId::generate(), 
+            role: Role::Admin
+        );
     }
 
     public static function fromUsername($username)
     {
-        $userId = UserId::generate();
-
-        return self::fromUsernameAndRoleAndId($username, Role::User, $userId);
+        return self::from(
+            userId: UserId::generate(), 
+            username: $username
+        );
     }
 
     public static function fromUsernameAndRole($username, Role $role)
     {
-        $userId = UserId::generate();
-
-        return self::fromUsernameAndRoleAndId($username, $role, $userId);
+        return self::from(
+            userId: UserId::generate(), 
+            role: $role,
+            username: $username
+        );
     }
 
     public static function fromUsernameAndRoleAndId($username, Role $role, UserId $userId)
     {
-        $user = new User($userId);
-        $user->register($username, 'password');
-        $user->grantRole($role);
-
-        return $user;
+        return self::from(
+            userId: $userId, 
+            username: $username
+        );
     }
 
     public static function fromUsernameAndAccount($username, Account $account)
     {
-        $user = new User(
-            id: UserId::generate()
+        return self::from(
+            userId: UserId::generate(), 
+            username: $username, 
+            accountId: $account->id()
         );
-        $user->register($username, 'password', $account->id());
-        
+    }
+
+    public static function fromUsernameAndRoleAndAccount(string $username, Role $role, AccountId $accountId)
+    {
+        return self::from(
+            userId: UserId::generate(), 
+            username: $username, 
+            role: $role, 
+            accountId: $accountId
+        );
+    }
+
+    public static function from(UserId $userId, string $username = 'username', Role $role = Role::User, ?AccountId $accountId = null)
+    {
+        $user = new User($userId);
+        $user->register($username, 'password', $accountId);
+        $user->grantRole($role);
+
         return $user;
     }
 

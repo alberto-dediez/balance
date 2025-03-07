@@ -34,3 +34,22 @@ Feature:
     When I go to "/es/admin/users/edit/333"
     When I submit a form with "roles:[1,2]" and button "Guardar y salir"
     Then I am redirected to "/es/admin/users" 
+
+  Scenario: As owner I can edit users of my account
+      Given account "MyCompany" with id "666" exists
+      Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists  
+      Given user "user1@dediez.software" with id "333" of account "666" exists
+      Given user "user2@dediez.software" with id "4444" exists
+      When I am logged as "owner@dediez.software"
+      When I go to "/es/users/edit/333"
+      Then the response status should be 200
+
+  Scenario: As owner I can't edit users of other accounts
+      Given account "MyCompany" with id "666" exists
+      Given account "OtherCompany" with id "44" exists
+      Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists  
+      Given user "user1@dediez.software" with id "333" of account "666" exists
+      Given user "user2@dediez.software" with id "4444" of account "44" exists
+      When I am logged as "owner@dediez.software"
+      When I go to "/es/users/edit/4444"
+      Then the response status should be 404

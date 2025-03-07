@@ -1,7 +1,7 @@
 {% extends '@shared/layout/edit.html.twig' %}
 
 {% block top_actions %}
-    <twig:TopAction:Return path="{{ path('admin_users') }}" />
+    <twig:TopAction:Return path="{{ path('users') }}" />
 {% endblock %}
 
 {% set page_title = ('Usuarios' | trans) 
@@ -16,7 +16,6 @@
             <div class="row">
                 <div class="col-12">
                     <twig:View:Field label="{{ 'Nombre de usuario' | trans }}">{{ user.username }}</twig:View:Field>
-                    <twig:View:Field label="{{ 'Cuenta' | trans }}">{{ user.account != null ? user.account.name : '---' }}</twig:View:Field>
 
                     {{ form_row(form.roles) }}
                 </div>

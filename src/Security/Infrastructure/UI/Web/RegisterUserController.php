@@ -5,6 +5,7 @@ namespace App\Security\Infrastructure\UI\Web;
 use Symfony\Component\Form\FormError;
 use App\Security\Domain\Model\User\UserId;
 use Symfony\Component\HttpFoundation\Request;
+use App\Security\Domain\Model\Account\Account;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -16,14 +17,20 @@ use App\Security\Application\RegisterUser\RegisterUserService;
 use App\Security\Infrastructure\Symfony\Form\RegisterUserType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Security\Application\RegisterUser\DuplicateUsernameException;
+use Symfony\Bundle\SecurityBundle\Security;
 
-#[Route('/admin/users/register', name: 'admin_users_register')]
-#[IsGranted("ROLE_ADMIN")]
+#[Route('/users/register', name: 'users_register')]
+#[IsGranted("ROLE_OWNER")]
 class RegisterUserController extends AbstractController
 {
-    public function __construct(private RegisterUserService $registerUser, private GrantRoleService $grantRole)
-    {
+    private ?Account $account = null;
 
+    public function __construct(
+        private RegisterUserService $registerUser, 
+        private GrantRoleService $grantRole,
+        Security $security
+    ) {
+        $this->account = new Account($security->getUser()->accountId());
     }
 
     public function __invoke(Request $request): Response
@@ -33,12 +40,10 @@ class RegisterUserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $account = $form->get('account')->getData();
-
             $registerRequest = new RegisterUserRequest(
                 $form->get('username')->getData(),
                 $form->get('password')->getData(),
-                null !== $account ? $account->id() : null
+                null !== $this->account ? $this->account->id() : null
             );
 
             $registerUser = $this->registerUser;
@@ -50,7 +55,7 @@ class RegisterUserController extends AbstractController
 
                 $this->grantRoles($response->userId, $form->get('roles')->getData());
 
-                return $this->redirectToRoute('admin_users');
+                return $this->redirectToRoute('users');
             } catch (DuplicateUsernameException $e) {
                 $form->get('username')->addError(new FormError('El nombre de usuario ya existe'));
 

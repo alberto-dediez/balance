@@ -11,17 +11,9 @@ class RoleType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver)
     {
-        $types = Role::cases();
-
-        $choices = [];
-
-        foreach ($types as $type) {
-            $choices[$type->value] = $type;
-        }
-
         $resolver->setDefaults(array(
-            'choices' => $choices,
-            'translation_domain' => 'roles'
+            'choices' => Role::casesForOwners(),
+            'translation_domain' => 'roles',
         ));
     }
     

@@ -2,6 +2,7 @@
 
 namespace App\Security\Infrastructure\Symfony\Form;
 
+use App\Security\Domain\Model\User\Role;
 use Symfony\Component\Form\AbstractType;
 use App\Security\Domain\Model\Account\Account;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -24,11 +25,6 @@ class RegisterUserType extends AbstractType
             ->add('password', PasswordType::class, [
                 'label' => new TranslatableMessage('Contraseña'),
                 'required' => true
-            ])
-            ->add('account', EntityType::class, [
-                'label' => new TranslatableMessage('Cuenta'),
-                'required' => true,
-                'class' => Account::class
             ])
             ->add('roles', RoleType::class, [
                 'label' => new TranslatableMessage('Rol de usuario'),
