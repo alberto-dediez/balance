@@ -3,8 +3,7 @@ Feature:
 
     Scenario: Home is unreacheable for not logged user
         When I go to "/es/"
-        Then the response status should be 302
-        Then I am redirected to "/es/login"
+        Then the response status should be 403
 
     Scenario: Home is reacheable for logged user
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
