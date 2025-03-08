@@ -7,7 +7,7 @@ default:
                 - App\Tests\Acceptance\Shared\WebContext
                 - App\Tests\Acceptance\Shared\ApiContext
                 - App\Tests\Acceptance\Shared\SystemContext
-                - App\Tests\Acceptance\Shared\SecurityContext
+                - App\Tests\Acceptance\Security\SecurityContext
 
     extensions:
         FriendsOfBehat\SymfonyExtension: 

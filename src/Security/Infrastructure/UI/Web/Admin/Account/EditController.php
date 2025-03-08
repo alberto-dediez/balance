@@ -50,7 +50,7 @@ class EditController extends AbstractController
             return $this->redirectToRoute('admin_accounts');
         }
 
-        return $this->render('@security/accounts/edit.html.twig', [
+        return $this->render('@security/admin/accounts/edit.html.twig', [
             'account' => $account,
             'form' => $form->createView()
         ]);

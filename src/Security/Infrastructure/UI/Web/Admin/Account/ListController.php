@@ -26,7 +26,7 @@ class ListController extends AbstractController
 
         $response = $listAccounts($filter);
 
-        return $this->render('@security/accounts/list.html.twig', [
+        return $this->render('@security/admin/accounts/list.html.twig', [
             'accounts' => $response->accounts,
             'totalResults' => $response->totalResults,
             'form' => $form->createView()
