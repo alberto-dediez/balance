@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Acceptance\Shared;
+namespace App\Tests\Acceptance\Security;
 
 use Behat\Step\Given;
 use Behat\Behat\Context\Context;

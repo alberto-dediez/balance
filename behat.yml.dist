@@ -1,4 +1,6 @@
 default:
+    formatters:
+        progress: true
     suites:
         default:
             paths:
@@ -7,7 +9,7 @@ default:
                 - App\Tests\Acceptance\Shared\WebContext
                 - App\Tests\Acceptance\Shared\ApiContext
                 - App\Tests\Acceptance\Shared\SystemContext
-                - App\Tests\Acceptance\Shared\SecurityContext
+                - App\Tests\Acceptance\Security\SecurityContext
                 - App\Tests\Acceptance\Waste\WasteContext
 
     extensions:

@@ -130,6 +130,16 @@ class User
         );
     }
 
+    public function changePassword(string $password)
+    {
+        $this->recordApplyAndPublish(
+            new PasswordChanged(
+                userId: $this->id(),
+                password: $password
+            )
+        );
+    }
+
     public function remove()
     {
         $this->recordApplyAndPublish(
@@ -168,7 +178,12 @@ class User
         unset($this->roles[$key]);
     }
 
-    public function applyUserRemoved()
+    public function applyPasswordChanged(PasswordChanged $event)
+    {
+        $this->password = $event->password();
+    }
+
+    public function applyUserRemoved(UserRemoved $event)
     {
         $this->removed = true;
         $this->removedAt = new \DateTimeImmutable("NOW");

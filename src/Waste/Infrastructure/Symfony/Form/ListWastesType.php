@@ -7,7 +7,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Waste\Application\Waste\List\ListWastesRequest;
-use App\Security\Infrastructure\Symfony\Form\BaseFilterType;
+use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
 
 class ListWastesType extends BaseFilterType
 {

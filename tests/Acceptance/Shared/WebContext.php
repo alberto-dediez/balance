@@ -12,6 +12,7 @@ use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * This context class contains the definitions of the steps used by the demo
@@ -25,8 +26,11 @@ final class WebContext implements Context
 
     private ?SecurityUser $user;
 
+    private ?\Exception $exception = null;
+
     public function __construct(private KernelBrowser $client, private UserRepository $userRepository)
     {
+        $this->client->catchExceptions(false);        
     }
 
 
@@ -44,7 +48,13 @@ final class WebContext implements Context
     #[When('I go to :path')]
     public function iGoTo($path)
     {
-        $this->crawler = $this->client->request('GET', $path);
+        try {
+            $this->crawler = $this->client->request('GET', $path);
+
+            $this->exception = null;
+        } catch (\Exception $e) {
+            $this->exception = $e;
+        }
     }
 
     #[When('I follow redirect')]
@@ -68,7 +78,11 @@ final class WebContext implements Context
         foreach ($arguments as $argument) {
             list($name, $value) = explode(':', $argument);
 
-            $key = sprintf("%s[%s]", $form->attr('name'), $name);
+            if ('[' == $name[0]) {
+                $key = sprintf("%s%s", $form->attr('name'), $name);    
+            } else {
+                $key = sprintf("%s[%s]", $form->attr('name'), $name);
+            }
 
             if ('[' == $value[0]) {
                 $value = explode(',', substr($value, 1, -1));
@@ -78,12 +92,26 @@ final class WebContext implements Context
         }
 
         $this->crawler = $this->client->submit($formData);
+        $this->exception = null;
     }
 
     #[Then('the response status should be :code')]
-    public function theResponseStatusShouldBe(int $code)
+    public function theResponseStatusShouldBe(int $expectedCode)
     {
-        Assert::assertEquals($code, $this->client->getResponse()->getStatusCode(), $this->client->getResponse()->getContent());
+        if (null == $this->exception) {
+            $code = $this->client->getResponse()->getStatusCode();
+        } else {
+            switch (get_class($this->exception)) {
+                case NotFoundHttpException::class:
+                    $code = 404;
+                    break;
+                default:
+                    $code = $this->exception->getCode();
+                    break;
+            }
+        }
+
+        Assert::assertEquals($expectedCode, $code);
     }
 
     #[Then('I am redirected to :path')]
