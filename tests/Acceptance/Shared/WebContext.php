@@ -78,7 +78,11 @@ final class WebContext implements Context
         foreach ($arguments as $argument) {
             list($name, $value) = explode(':', $argument);
 
-            $key = sprintf("%s[%s]", $form->attr('name'), $name);
+            if ('[' == $name[0]) {
+                $key = sprintf("%s%s", $form->attr('name'), $name);    
+            } else {
+                $key = sprintf("%s[%s]", $form->attr('name'), $name);
+            }
 
             if ('[' == $value[0]) {
                 $value = explode(',', substr($value, 1, -1));

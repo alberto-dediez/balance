@@ -15,6 +15,7 @@ final class UserRegistered extends DomainEvent
     public function __construct(
         private UserId $userId, 
         private string $username, 
+        #[\SensitiveParameter]
         private string $password,
         private ?AccountId $accountId = null,
         ?DomainEventId $id = null,

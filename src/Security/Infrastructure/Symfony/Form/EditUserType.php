@@ -26,8 +26,6 @@ class EditUserType extends AbstractType
                 'label' => new TranslatableMessage('Guardar y salir')
             ])
         ;
-
-        parent::buildForm($builder, $options);
     }
 
     public function configureOptions(OptionsResolver $resolver)

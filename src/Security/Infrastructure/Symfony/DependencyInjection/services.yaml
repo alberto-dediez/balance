@@ -19,3 +19,7 @@ services:
     App\Security\Application\User\Register\RegisterUserService:
         arguments:
             $passwordHasher: '@App\Security\Infrastructure\Symfony\Security\UserPasswordHasher'
+
+    App\Security\Application\User\ChangePassword\ChangePasswordService:
+        arguments:
+            $passwordHasher: '@App\Security\Infrastructure\Symfony\Security\UserPasswordHasher'

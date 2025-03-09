@@ -73,7 +73,7 @@ class UserMother
     public static function from(UserId $userId, string $username = 'username', Role $role = Role::User, ?AccountId $accountId = null)
     {
         $user = new User($userId);
-        $user->register($username, 'password', $accountId);
+        $user->register($username, 'apassword', $accountId);
         $user->grantRole($role);
 
         return $user;
