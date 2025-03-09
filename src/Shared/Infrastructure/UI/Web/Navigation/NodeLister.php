@@ -35,11 +35,11 @@ class NodeLister
 
         $nodes [] = new Node(
             label: new TranslatableMessage("Residuos"),
-            icon: "solar:paper-bin-line-duotone",
+            icon: "ph:recycle-duotone",
             items: [
                 new Node(
-                    label: new TranslatableMessage("Residuos"),
-                    icon: "solar:paper-bin-line-duotone",
+                    label: new TranslatableMessage("Tipologias"),
+                    icon: "solar:folder-with-files-line-duotone",
                     target: $this->router->generate('admin_wastes')
                 )
             ]
