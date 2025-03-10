@@ -5,6 +5,7 @@ namespace App\Security\Infrastructure\UI\Web\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Security\Infrastructure\Symfony\Form\RegisterUserType;
@@ -23,6 +24,14 @@ class RegisterController extends AbstractController
         Request $request
     ): Response
     {   
+        $account = $loggedAccount();
+
+        if (null == $account) {
+            throw $this->createAccessDeniedException(
+                new TranslatableMessage("Debes pertenecer a una cuenta para poder acceder")
+            );
+        }
+
         $form = $this->createForm(RegisterUserType::class);
 
         $needsRedirect = $this->register($request, $form, function ($form) use ($loggedAccount) {
