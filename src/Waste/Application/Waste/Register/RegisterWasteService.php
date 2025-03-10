@@ -8,7 +8,7 @@ use App\Waste\Domain\Model\Waste\WasteRepository;
 
 class RegisterWasteService
 {
-    public function __construct(private WasteRepository $accountRepository)
+    public function __construct(private WasteRepository $wasteRepository)
     {
     }
 
@@ -16,11 +16,11 @@ class RegisterWasteService
     {
         $id = WasteId::generate();
 
-        $account = new Waste($id);
-        $account->register($request->name);
+        $waste = new Waste($id);
+        $waste->register($request->name);
 
-        $this->accountRepository->add($account);
+        $this->wasteRepository->add($waste);
 
-        return new RegisterWasteResponse($account->id(), $account->name());
+        return new RegisterWasteResponse($waste->id(), $waste->name());
     }
 }

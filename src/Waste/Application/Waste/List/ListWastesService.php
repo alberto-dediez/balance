@@ -13,10 +13,10 @@ class ListWastesService
 
     public function __invoke(ListWastesRequest $request): ListWastesResponse
     {
-        $users = $this->repository->findByFilter($request);
+        $wastes = $this->repository->findByFilter($request);
 
         $totalResults = $this->repository->totalResultsByFilter($request);
 
-        return new ListWastesResponse($users, $totalResults);
+        return new ListWastesResponse($wastes, $totalResults);
     }
 }

@@ -39,7 +39,7 @@ class Waste
         return $this->registeredAt;
     }
 
-    public function removedAt(): \DateTimeImmutable
+    public function removedAt(): ?\DateTimeImmutable
     {
         return $this->removedAt;
     }

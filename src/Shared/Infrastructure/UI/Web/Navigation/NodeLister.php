@@ -34,6 +34,18 @@ class NodeLister
         $nodes =  [];
 
         $nodes [] = new Node(
+            label: new TranslatableMessage("Propiedades"),
+            icon: "solar:buildings-2-line-duotone",
+            items: [
+                new Node(
+                    label: new TranslatableMessage("Propiedades"),
+                    icon: "solar:buildings-2-line-duotone",
+                    target: $this->router->generate('admin_properties')
+                )
+            ]
+        );
+
+        $nodes [] = new Node(
             label: new TranslatableMessage("Residuos"),
             icon: "ph:recycle-duotone",
             items: [
@@ -68,6 +80,18 @@ class NodeLister
     private function toOwners()
     {
         $nodes =  [];
+
+        $nodes [] = new Node(
+            label: new TranslatableMessage("Propiedades"),
+            icon: "solar:buildings-2-line-duotone",
+            items: [
+                new Node(
+                    label: new TranslatableMessage("Propiedades"),
+                    icon: "solar:buildings-2-line-duotone",
+                    target: $this->router->generate('properties')
+                )
+            ]
+        );
 
         $nodes [] =  new Node(
             label: new TranslatableMessage("Seguridad"),

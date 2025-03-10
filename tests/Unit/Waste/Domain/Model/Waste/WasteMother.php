@@ -14,22 +14,22 @@ class WasteMother
 
     public static function fromName($name)
     {
-        $accountId = WasteId::generate();
+        $wasteId = WasteId::generate();
 
-        $account = new Waste($accountId);
-        $account->register($name, true);
+        $waste = new Waste($wasteId);
+        $waste->register($name);
 
-        return $account;
+        return $waste;
     }
 
     public static function fromNameAndId(string $name, string $id)
     {
-        $account = new Waste(
+        $waste = new Waste(
             id: new WasteId($id)
         );
-        $account->register($name, true);
+        $waste->register($name);
 
-        return $account;
+        return $waste;
     }
 
     public static function random()
