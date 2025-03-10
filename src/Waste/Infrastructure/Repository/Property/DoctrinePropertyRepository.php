@@ -3,7 +3,6 @@
 namespace App\Waste\Infrastructure\Repository\Property;
 
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Waste\Domain\Model\Property\Property;
 use App\Waste\Domain\Model\Property\PropertyId;
@@ -11,35 +10,22 @@ use App\Waste\Domain\Model\Property\PropertyFilter;
 use App\Waste\Domain\Model\Property\PropertyRepository;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
-use App\Security\Infrastructure\Repository\Account\DoctrineAccountRepository;
 
 #[AsAlias(id: 'repository.property', public: true)]
 #[When(env: 'dev')]
 #[When(env: 'prod')]
 class DoctrinePropertyRepository implements PropertyRepository
 {
-    private EntityRepository $repository;
-
-    public function __construct(private EntityManagerInterface $manager, private DoctrineAccountRepository $accountRepository)
+    public function __construct(private EntityManagerInterface $manager)
     {
-        $this->repository = $manager->getRepository(Property::class);
+        
     }
 
     public function add(Property $property): void
     {
         if (null == $property->account() && null !== $property->accountId()) {
-            $account = $this->accountRepository->find($property->accountId());
-
-            $property = new Property(
-                id: $property->id(),
-                name: $property->name(),
-                accountId: $property->accountId(),
-                account: $account,
-                events: $property->recordedEvents(),
-                registeredAt: $property->registeredAt(),
-                removed: $property->isRemoved(),
-                removedAt: $property->removedAt()
-            );
+            $this->getEntityManager()->persist($property);
+            $this->getEntityManager()->flush();    
         }
 
         $this->getEntityManager()->persist($property);

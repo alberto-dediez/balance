@@ -23,8 +23,6 @@ class RegisterWasteType extends AbstractType
                 'label' => new TranslatableMessage('Registrar')
             ])
         ;
-
-        parent::buildForm($builder, $options);
     }
 
     public function configureOptions(OptionsResolver $resolver)

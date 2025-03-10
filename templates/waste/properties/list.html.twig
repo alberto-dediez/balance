@@ -22,6 +22,7 @@
             <td>{{ element.name }}</td>
             <td>{{ element.registeredAt | date('d/m/Y') }}</td>
             <td>
+                <twig:List:Action:Edit path="{{ path('properties_edit', {'propertyId': element.id}) }}" />
                 <twig:List:Action:Delete path="{{ path('properties_remove', {'propertyId': element.id}) }}" />
             </td>
         </tr>

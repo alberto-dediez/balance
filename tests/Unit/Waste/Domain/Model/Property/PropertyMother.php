@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Waste\Domain\Model\Property;
 
 use App\Waste\Domain\Model\Property\Property;
+use App\Security\Domain\Model\Account\Account;
 use App\Waste\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 
@@ -43,7 +44,10 @@ class PropertyMother
         $property = new Property(
             id: $propertyId
         );
-        $property->register($name, $accountId);
+
+        $account = null !== $accountId ? new Account($accountId) : null;
+
+        $property->register($name, $account);
 
         return $property;
     }

@@ -5,6 +5,7 @@ namespace App\Waste\Domain\Model\Property;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\Account\AccountRepository;
 
 class Property
 {
@@ -62,12 +63,23 @@ class Property
         return $this->removedAt;
     }
 
-    public function register(string $name, ?AccountId $accountId)
+    public function register(string $name, ?Account $account)
     {
         $this->recordApplyAndPublish(
             new PropertyRegistered(
                 propertyId: $this->id(),
-                accountId: $accountId,
+                account: $account,
+                name: $name
+            )
+        );
+    }
+
+    public function update(string $name, ?Account $account)
+    {
+        $this->recordApplyAndPublish(
+            new PropertyUpdated(
+                propertyId: $this->id(),
+                account: $account,
                 name: $name
             )
         );
@@ -85,8 +97,16 @@ class Property
     public function applyPropertyRegistered(PropertyRegistered $event)
     {
         $this->name = $event->name();
-        $this->accountId = $event->accountId();
+        $this->accountId = null !== $event->account() ? $event->account()->id() : null;
+        $this->account = $event->account();
         $this->registeredAt = $event->occurredOn();
+    }
+
+    public function applyPropertyUpdated(PropertyUpdated $event)
+    {
+        $this->name = $event->name();
+        $this->accountId = null !== $event->account() ? $event->account()->id() : null;
+        $this->account = $event->account();
     }
 
     public function applyPropertyRemoved(PropertyRemoved $event)

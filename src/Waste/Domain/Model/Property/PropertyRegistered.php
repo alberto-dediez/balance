@@ -2,11 +2,12 @@
 
 namespace App\Waste\Domain\Model\Property;
 
-use App\Security\Domain\Model\Account\AccountId;
 use DateTimeImmutable;
 use App\Waste\Domain\DomainEvent;
-use App\Waste\Domain\Model\Property\PropertyId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Security\Domain\Model\Account\Account;
+use App\Waste\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
 
 final class PropertyRegistered extends DomainEvent
 {
@@ -15,7 +16,7 @@ final class PropertyRegistered extends DomainEvent
     public function __construct(
         private PropertyId $propertyId, 
         private string $name, 
-        private ?AccountId $accountId = null,
+        private ?Account $account = null,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -32,16 +33,16 @@ final class PropertyRegistered extends DomainEvent
         return $this->name;
     }
 
-    public function accountId(): ?AccountId
+    public function account(): ?Account
     {
-        return $this->accountId;
+        return $this->account;
     }
 
     public function payload(): ?array
     {
         return [
             'propertyId' => (string) $this->propertyId,
-            'accountId' => null !== $this->accountId ? ((string) $this->accountId) : null,
+            'accountId' => null !== $this->account() ? ((string) $this->account()->id()) : null,
             'name' => $this->name
         ];
     }
@@ -53,7 +54,7 @@ final class PropertyRegistered extends DomainEvent
     ): static {
         return new PropertyRegistered(
             propertyId: new PropertyId($payload['propertyId']), 
-            accountId: new AccountId($payload['accountId']), 
+            account: new Account(new AccountId($payload['accountId'])), 
             name: $payload['name'],
             id: $id,
             occurredOn: $occurredOn
