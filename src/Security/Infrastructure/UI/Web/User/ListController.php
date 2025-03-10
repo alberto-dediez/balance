@@ -28,7 +28,7 @@ class ListController extends AbstractController
     {   
         $account = $loggedAccount();
 
-        if (null == $loggedAccount) {
+        if (null == $account) {
             throw $this->createAccessDeniedException(
                 new TranslatableMessage("Debes pertenecer a una cuenta para poder acceder al listado de usuarios")
             );
