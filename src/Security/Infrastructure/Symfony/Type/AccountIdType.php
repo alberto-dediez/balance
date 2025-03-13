@@ -20,8 +20,8 @@ class AccountIdType extends AggregateRootIdType
         $accounts = $this->accountRepository->findByFilter(new AccountFilter());
 
         $resolver->setDefaults(array(
-            'choices' => $this->getChoices($accounts),
-            'class' => AccountId::class
+            'choices' => $this->getChoices($accounts),      
+            'class' => AccountId::class      
         ));
     }
 }
