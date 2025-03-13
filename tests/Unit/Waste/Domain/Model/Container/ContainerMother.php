@@ -2,10 +2,8 @@
 
 namespace App\Tests\Unit\Waste\Domain\Model\Container;
 
-use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\Container\Purpose;
-use App\Waste\Domain\Model\Property\Property;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Property\PropertyId;
 use App\Waste\Domain\Model\Container\ContainerId;
