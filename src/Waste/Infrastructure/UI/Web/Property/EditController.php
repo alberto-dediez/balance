@@ -9,7 +9,6 @@ use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
 use Symfony\Component\Translation\TranslatableMessage;
 use App\Waste\Domain\Model\Property\PropertyRepository;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Waste\Infrastructure\Symfony\Form\UpdateProperty;
 use App\Waste\Infrastructure\Symfony\Form\UpdatePropertyType;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Waste\Application\Property\Update\UpdatePropertyRequest;

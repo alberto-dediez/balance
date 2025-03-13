@@ -257,6 +257,142 @@
         <source>Activo</source>
         <target>Active</target>
       </trans-unit>
+      <trans-unit id="hWeDKhP" resname="Error inesperado">
+        <source>Error inesperado</source>
+        <target>Unexpected error</target>
+      </trans-unit>
+      <trans-unit id="BjsEsAb" resname="Error inesperado. No se ha podido actualizar correctamente.">
+        <source>Error inesperado. No se ha podido actualizar correctamente.</source>
+        <target>Unexpected error. The update could not be successful.</target>
+      </trans-unit>
+      <trans-unit id="FEKO0T5" resname="Propiedades">
+        <source>Propiedades</source>
+        <target>Properties</target>
+      </trans-unit>
+      <trans-unit id="0STCb1o" resname="Residuos">
+        <source>Residuos</source>
+        <target>Waste</target>
+      </trans-unit>
+      <trans-unit id="PphKNpv" resname="Tipologias">
+        <source>Tipologias</source>
+        <target>Types</target>
+      </trans-unit>
+      <trans-unit id="mwNdjwj" resname="Contenedores">
+        <source>Contenedores</source>
+        <target>Containers</target>
+      </trans-unit>
+      <trans-unit id="IpJqp6i" resname="Tipología de residuo">
+        <source>Tipología de residuo</source>
+        <target>Waste type</target>
+      </trans-unit>
+      <trans-unit id="qTnaOkq" resname="Propósito">
+        <source>Propósito</source>
+        <target>Purpose</target>
+      </trans-unit>
+      <trans-unit id="FeWnC08" resname="Método de medida">
+        <source>Método de medida</source>
+        <target>Measurement method</target>
+      </trans-unit>
+      <trans-unit id="1T4wAdT" resname="Propiedad">
+        <source>Propiedad</source>
+        <target>Property</target>
+      </trans-unit>
+      <trans-unit id="jD7D9pi" resname="Todas las propiedades">
+        <source>Todas las propiedades</source>
+        <target>All properties</target>
+      </trans-unit>
+      <trans-unit id="Mg3KJIT" resname="Todas las tipologías">
+        <source>Todas las tipologías</source>
+        <target>All types</target>
+      </trans-unit>
+      <trans-unit id="Lkh7GR8" resname="Todas los propósitos">
+        <source>Todas los propósitos</source>
+        <target>All purposes</target>
+      </trans-unit>
+      <trans-unit id="YHG2xH_" resname="Todos los métodos">
+        <source>Todos los métodos</source>
+        <target>All methods</target>
+      </trans-unit>
+      <trans-unit id="AjWDJWW" resname="Sin cuenta">
+        <source>Sin cuenta</source>
+        <target>No account</target>
+      </trans-unit>
+      <trans-unit id="gBwm9.E" resname="Propiedad actualizada con éxito">
+        <source>Propiedad actualizada con éxito</source>
+        <target>Property updated successfully</target>
+      </trans-unit>
+      <trans-unit id="pps06Tp" resname="Se ha eliminado el contenedor">
+        <source>Se ha eliminado el contenedor</source>
+        <target>Container deleted</target>
+      </trans-unit>
+      <trans-unit id="P0hfzdu" resname="No se ha podido eliminar el contenedor">
+        <source>No se ha podido eliminar el contenedor</source>
+        <target>Container failed to delete</target>
+      </trans-unit>
+      <trans-unit id="9MxJ92I" resname="Debes pertenecer a una cuenta para poder acceder">
+        <source>Debes pertenecer a una cuenta para poder acceder</source>
+        <target>You must have an account to access</target>
+      </trans-unit>
+      <trans-unit id="lvb_5cq" resname="El contenedor no existe">
+        <source>El contenedor no existe</source>
+        <target>Container does not exist</target>
+      </trans-unit>
+      <trans-unit id="U4wD_i." resname="Contenedor creado correctamente">
+        <source>Contenedor creado correctamente</source>
+        <target>Container created successfully</target>
+      </trans-unit>
+      <trans-unit id="LBBG2zr" resname="La propiedad no existe">
+        <source>La propiedad no existe</source>
+        <target>Property does not exist</target>
+      </trans-unit>
+      <trans-unit id=".NWZJFk" resname="Se ha eliminado la propiedad {property}">
+        <source>Se ha eliminado la propiedad {property}</source>
+        <target>Property {property} was deleted</target>
+      </trans-unit>
+      <trans-unit id="kdSLytn" resname="No se ha podido eliminar la propiedad {property}">
+        <source>No se ha podido eliminar la propiedad {property}</source>
+        <target>Property {property} was failed to delete</target>
+      </trans-unit>
+      <trans-unit id="V8ehQ_Q" resname="Propiedad creada correctamente: {name}">
+        <source>Propiedad creada correctamente: {name}</source>
+        <target>Property created successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="lIu.3.r" resname="Se ha eliminado el residuo {waste}">
+        <source>Se ha eliminado el residuo {waste}</source>
+        <target>Waste {waste} was deleted</target>
+      </trans-unit>
+      <trans-unit id="ixdpT3M" resname="No se ha podido eliminar el residuo {waste}">
+        <source>No se ha podido eliminar el residuo {waste}</source>
+        <target>Waste {waste} was failed to delete</target>
+      </trans-unit>
+      <trans-unit id="x1pylpR" resname="El residuo no existe">
+        <source>El residuo no existe</source>
+        <target>Waste does not exist</target>
+      </trans-unit>
+      <trans-unit id="UQdSU_Y" resname="Residuo creado correctamente: {name}">
+        <source>Residuo creado correctamente: {name}</source>
+        <target>Waste created successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="YdAqJ7r" resname="Hay errores en el formulario. No se ha actualizado tu contraseña">
+        <source>Hay errores en el formulario. No se ha actualizado tu contraseña</source>
+        <target>There are errors in the form. Your password has not been updated.</target>
+      </trans-unit>
+      <trans-unit id="._MY2PL" resname="La contraseña se ha actualizado correctamente">
+        <source>La contraseña se ha actualizado correctamente</source>
+        <target>Password has been updated successfully.</target>
+      </trans-unit>
+      <trans-unit id="wlfqMBE" resname="Error inesperado. No se ha actualizado tu contraseña">
+        <source>Error inesperado. No se ha actualizado tu contraseña</source>
+        <target>Unexpected error. Your password has not been updated.</target>
+      </trans-unit>
+      <trans-unit id="evfFBRo" resname="Acciones">
+        <source>Acciones</source>
+        <target>Actions</target>
+      </trans-unit>
+      <trans-unit id="rlww.KL" resname="Mi perfil">
+        <source>Mi perfil</source>
+        <target>My profile</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

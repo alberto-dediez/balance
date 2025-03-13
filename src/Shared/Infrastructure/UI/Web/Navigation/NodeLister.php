@@ -93,6 +93,18 @@ class NodeLister
             ]
         );
 
+        $nodes [] = new Node(
+            label: new TranslatableMessage("Residuos"),
+            icon: "ph:recycle-duotone",
+            items: [
+                new Node(
+                    label: new TranslatableMessage("Contenedores"),
+                    icon: "solar:paper-bin-line-duotone",
+                    target: $this->router->generate('containers')
+                )
+            ]
+        );
+
         $nodes [] =  new Node(
             label: new TranslatableMessage("Seguridad"),
             icon: "solar:shield-user-line-duotone",

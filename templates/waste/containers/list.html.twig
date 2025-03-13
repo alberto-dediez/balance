@@ -1,0 +1,38 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Contenedores' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Propiedad' | trans,
+        }, {
+            'label': 'Tipología de residuo' | trans,
+        }, {
+            'label': 'Propósito' | trans,
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="containers">
+        <tr>
+            <td>{{ element.propertyId }}</td>
+            <td>{{ element.wasteId }}</td>
+            <td>{{ element.purpose.value | trans({}, 'purpose') }}</td>
+            <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+            <td>
+                <twig:List:Action:Edit path="{{ path('containers_edit', {'containerId': element.id}) }}" />
+                <twig:List:Action:Delete path="{{ path('containers_remove', {'containerId': element.id}) }}" />
+            </td>
+        </tr>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('containers_register') }}" />
+{% endblock list_actions %}

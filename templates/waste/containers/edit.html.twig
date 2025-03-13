@@ -1,0 +1,31 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('containers') }}" />
+{% endblock %}
+
+{% set page_title = ('Contenedores' | trans) 
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ container.id %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    <twig:View:Field label="{{ 'Propiedad' | trans }}">{{ container.propertyId }}</twig:View:Field>
+                    {{ form_row(form.wasteId) }}
+                    {{ form_row(form.purpose) }}
+                    {{ form_row(form.measurementMethod) }}
+                </div>
+            </div>    
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

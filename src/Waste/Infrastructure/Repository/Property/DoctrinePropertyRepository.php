@@ -23,11 +23,6 @@ class DoctrinePropertyRepository implements PropertyRepository
 
     public function add(Property $property): void
     {
-        if (null == $property->account() && null !== $property->accountId()) {
-            $this->getEntityManager()->persist($property);
-            $this->getEntityManager()->flush();    
-        }
-
         $this->getEntityManager()->persist($property);
         $this->getEntityManager()->flush();
     }

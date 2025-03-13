@@ -9,13 +9,16 @@ use Behat\Behat\Context\Context;
 use App\Waste\Domain\Model\Waste\WasteRepository;
 use App\Waste\Domain\Model\Property\PropertyRepository;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
+use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Tests\Unit\Waste\Domain\Model\Property\PropertyMother;
+use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
 
 final class WasteContext implements Context
 {
     public function __construct(
         private WasteRepository $wasteRepository,
-        private PropertyRepository $propertyRepository
+        private PropertyRepository $propertyRepository,
+        private ContainerRepository $containerRepository
     ) {
     }
 
@@ -42,4 +45,12 @@ final class WasteContext implements Context
         
         $this->propertyRepository->add($property);      
     }  
+
+    #[Given('container for :waste in :property with id :id exists')]
+    public function containerForInWithIdExists($waste, $property, $id): void
+    {
+        $container = ContainerMother::fromPropertyAndWasteAndId($property, $waste, $id);
+
+        $this->containerRepository->add($container);
+    }
 }

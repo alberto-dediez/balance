@@ -91,8 +91,12 @@ final class WebContext implements Context
             $formData[$key] = $value;
         }
 
-        $this->crawler = $this->client->submit($formData);
-        $this->exception = null;
+        try {
+            $this->crawler = $this->client->submit($formData);
+            $this->exception = null;
+        } catch (\Exception $e) {
+            $this->exception = $e;
+        }
     }
 
     #[Then('the response status should be :code')]
