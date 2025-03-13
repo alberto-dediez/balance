@@ -37,7 +37,7 @@ class RegisterController extends AbstractController
 
         $needsRedirect = $this->register($request, $form, function ($form) use ($registerProperty, $account) {
             $registerRequest = $form->getData();
-            $registerRequest->account = $account;
+            $registerRequest->accountId = $account->id();
 
             $response = $registerProperty($registerRequest);
 

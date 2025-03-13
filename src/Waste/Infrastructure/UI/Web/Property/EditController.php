@@ -37,7 +37,7 @@ class EditController extends AbstractController
         $propertyRequest = new UpdatePropertyRequest(
             propertyId: $property->id(),
             name: $property->name(),
-            account: $property->account()
+            accountId: $property->accountId()
         );
 
         $form = $this->createForm(UpdatePropertyType::class, $propertyRequest); 

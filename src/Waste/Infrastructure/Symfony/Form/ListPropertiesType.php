@@ -6,8 +6,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use App\Security\Infrastructure\Symfony\Type\AccountType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
+use App\Security\Infrastructure\Symfony\Type\AccountIdType;
 use App\Waste\Application\Property\List\ListPropertiesRequest;
 
 class ListPropertiesType extends BaseFilterType
@@ -23,7 +23,7 @@ class ListPropertiesType extends BaseFilterType
 
         if ($options['admin']) {
             $builder
-                ->add('account', AccountType::class, [
+                ->add('accountId', AccountIdType::class, [
                     'label' => new TranslatableMessage('Cuenta'),
                     'required' => false,
                     'placeholder' => new TranslatableMessage('Todas las cuentas')

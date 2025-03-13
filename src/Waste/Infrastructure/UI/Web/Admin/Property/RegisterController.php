@@ -25,12 +25,6 @@ class RegisterController extends AbstractController
         $needsRedirect = $this->register($request, $form, function ($form) use ($registerProperty) {
             $registerRequest = $form->getData();
 
-            $account = $form->get('account')->getData();
-
-            if (null !== $account) {
-                $registerRequest->accountId = $account->id();
-            }
-
             $response = $registerProperty($registerRequest);
 
             $this->addFlash('success', new TranslatableMessage("Propiedad creada correctamente: {name}", ['{name}' => $response->name]));

@@ -3,7 +3,7 @@
 namespace App\Waste\Domain\Model\Property;
 
 use App\Shared\Domain\Model\Filter;
-use App\Security\Domain\Model\Account\Account;
+use App\Security\Domain\Model\Account\AccountId;
 
 class PropertyFilter
 {
@@ -11,7 +11,7 @@ class PropertyFilter
 
     public function __construct(
         public ?string $name = null,
-        public ?Account $account = null
+        public ?AccountId $accountId = null
     ) {
 
     }

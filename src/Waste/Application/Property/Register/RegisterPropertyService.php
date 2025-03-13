@@ -17,10 +17,10 @@ class RegisterPropertyService
         $id = PropertyId::generate();
 
         $property = new Property($id);
-        $property->register($request->name, $request->account);
+        $property->register($request->name, $request->accountId);
 
         $this->propertyRepository->add($property);
 
-        return new RegisterPropertyResponse($property->id(), $property->name(), $property->account());
+        return new RegisterPropertyResponse($property->id(), $property->name(), $property->accountId());
     }
 }

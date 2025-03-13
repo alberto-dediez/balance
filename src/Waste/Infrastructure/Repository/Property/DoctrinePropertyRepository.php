@@ -65,9 +65,8 @@ class DoctrinePropertyRepository implements PropertyRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $qb->select('p, a')
+        $qb->select('p')
             ->from(Property::class, 'p')
-            ->leftJoin('p.account', 'a')
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('p.removed'),
@@ -85,12 +84,12 @@ class DoctrinePropertyRepository implements PropertyRepository
             ;
         }
 
-        if (null !== $filter->account) {
+        if (null !== $filter->accountId) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('p.accountId', ':accountId')
                 )
-                ->setParameter('accountId', (string) $filter->account->id())
+                ->setParameter('accountId', (string) $filter->accountId)
             ;
         }
 

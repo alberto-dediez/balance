@@ -3,6 +3,7 @@
 namespace App\Waste\Infrastructure\UI\Web\Property;
 
 use Symfony\Component\HttpFoundation\Request;
+use App\Security\Domain\Model\Account\Account;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
@@ -35,8 +36,8 @@ class ListController extends AbstractController
         }
 
         list($filter, $form) = $this->filter($request, function () use ($account) {
-            return  new ListPropertiesRequest(
-                account: $account,
+            return new ListPropertiesRequest(
+                accountId: $account->id(),
             );
         }, ListPropertiesType::class);
 

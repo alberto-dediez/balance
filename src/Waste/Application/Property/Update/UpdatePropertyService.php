@@ -20,14 +20,14 @@ class UpdatePropertyService
             throw new InvalidArgumentException("Property not found");
         }
 
-        $property->update($request->name, $request->account);
+        $property->update($request->name, $request->accountId);
 
         $this->repository->add($property);
 
         return new UpdatePropertyResponse(
             propertyId: $property->id(),
             name: $property->name(),
-            account: $property->account()
+            accountId: $property->accountId()
         );
     }
 }

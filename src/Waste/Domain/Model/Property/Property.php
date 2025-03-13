@@ -3,9 +3,7 @@
 namespace App\Waste\Domain\Model\Property;
 
 use App\Shared\Domain\Model\AggregateRoot;
-use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
-use App\Security\Domain\Model\Account\AccountRepository;
 
 class Property
 {
@@ -15,7 +13,6 @@ class Property
         private PropertyId $id, 
         private string $name = '',
         private AccountId|string|null $accountId = null,
-        private Account|null $account = null, 
         private bool $removed = false,
         private array $events = [],
         private ?\DateTimeImmutable $registeredAt = null,
@@ -43,11 +40,6 @@ class Property
         return $this->accountId;
     }
 
-    public function account(): ?Account
-    {
-        return $this->account;
-    }
-
     public function isRemoved(): bool
     {
         return $this->removed;
@@ -63,23 +55,23 @@ class Property
         return $this->removedAt;
     }
 
-    public function register(string $name, ?Account $account)
+    public function register(string $name, ?AccountId $accountId)
     {
         $this->recordApplyAndPublish(
             new PropertyRegistered(
                 propertyId: $this->id(),
-                account: $account,
+                accountId: $accountId,
                 name: $name
             )
         );
     }
 
-    public function update(string $name, ?Account $account)
+    public function update(string $name, ?AccountId $accountId)
     {
         $this->recordApplyAndPublish(
             new PropertyUpdated(
                 propertyId: $this->id(),
-                account: $account,
+                accountId: $accountId,
                 name: $name
             )
         );
@@ -97,16 +89,14 @@ class Property
     public function applyPropertyRegistered(PropertyRegistered $event)
     {
         $this->name = $event->name();
-        $this->accountId = null !== $event->account() ? $event->account()->id() : null;
-        $this->account = $event->account();
+        $this->accountId = $event->accountId();
         $this->registeredAt = $event->occurredOn();
     }
 
     public function applyPropertyUpdated(PropertyUpdated $event)
     {
         $this->name = $event->name();
-        $this->accountId = null !== $event->account() ? $event->account()->id() : null;
-        $this->account = $event->account();
+        $this->accountId = $event->accountId();
     }
 
     public function applyPropertyRemoved(PropertyRemoved $event)

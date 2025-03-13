@@ -45,9 +45,7 @@ class PropertyMother
             id: $propertyId
         );
 
-        $account = null !== $accountId ? new Account($accountId) : null;
-
-        $property->register($name, $account);
+        $property->register($name, $accountId);
 
         return $property;
     }

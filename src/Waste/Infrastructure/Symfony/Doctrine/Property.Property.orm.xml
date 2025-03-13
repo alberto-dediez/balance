@@ -14,11 +14,6 @@
         <field name="events" type="array" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
-
-        <many-to-one field="account" target-entity="App\Security\Domain\Model\Account\Account">
-            <cascade><cascade-remove /></cascade>
-            <join-column name="account_id" referenced-column-name="id" on-delete="CASCADE" />
-        </many-to-one>
     </entity>
 
 </doctrine-mapping>

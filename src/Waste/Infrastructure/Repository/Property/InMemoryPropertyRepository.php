@@ -72,7 +72,7 @@ class InMemoryPropertyRepository implements PropertyRepository
                 continue;
             }
 
-            if (null !== $filter->account && (null == $property->accountId() || false == $filter->account->id()->equals($property->accountId()))) {
+            if (null !== $filter->accountId && (null == $property->accountId() || false == $filter->accountId->equals($property->accountId()))) {
                 continue;
             }
 

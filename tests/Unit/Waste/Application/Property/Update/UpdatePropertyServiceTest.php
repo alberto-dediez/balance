@@ -4,7 +4,6 @@ namespace App\Tests\Unit\Waste\Application\Property\Update;
 
 use PHPUnit\Framework\TestCase;
 use App\Waste\Domain\Model\Property\Property;
-use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Waste\Domain\Model\Property\PropertyUpdated;
@@ -39,7 +38,7 @@ class UpdatePropertyServiceTest extends TestCase
         $request = new UpdatePropertyRequest(
             propertyId: $property->id(),
             name: 'Hotel',
-            account: new Account(new AccountId('6666'))
+            accountId: new AccountId('6666')
         );
 
         $result = $sut($request);
@@ -57,7 +56,7 @@ class UpdatePropertyServiceTest extends TestCase
         $this->assertNotNull($lastEvent);
         $this->assertTrue($lastEvent instanceof PropertyUpdated);
         $this->assertEquals('Hotel', $lastEvent->name());
-        $this->assertEquals('6666', (string) $lastEvent->account()->id());
+        $this->assertEquals('6666', (string) $lastEvent->accountId());
         $this->assertTrue($propertyPersisted->id()->equals($lastEvent->propertyId()));
     }
 

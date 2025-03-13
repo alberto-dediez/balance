@@ -5,7 +5,6 @@ namespace App\Waste\Domain\Model\Property;
 use DateTimeImmutable;
 use App\Waste\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
-use App\Security\Domain\Model\Account\Account;
 use App\Waste\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 
@@ -16,7 +15,7 @@ final class PropertyRegistered extends DomainEvent
     public function __construct(
         private PropertyId $propertyId, 
         private string $name, 
-        private ?Account $account = null,
+        private ?AccountId $accountId = null,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -33,16 +32,16 @@ final class PropertyRegistered extends DomainEvent
         return $this->name;
     }
 
-    public function account(): ?Account
+    public function accountId(): ?AccountId
     {
-        return $this->account;
+        return $this->accountId;
     }
 
     public function payload(): ?array
     {
         return [
             'propertyId' => (string) $this->propertyId,
-            'accountId' => null !== $this->account() ? ((string) $this->account()->id()) : null,
+            'accountId' => null !== $this->accountId() ? ((string) $this->accountId()) : null,
             'name' => $this->name
         ];
     }
@@ -54,7 +53,7 @@ final class PropertyRegistered extends DomainEvent
     ): static {
         return new PropertyRegistered(
             propertyId: new PropertyId($payload['propertyId']), 
-            account: new Account(new AccountId($payload['accountId'])), 
+            accountId: new AccountId($payload['accountId']), 
             name: $payload['name'],
             id: $id,
             occurredOn: $occurredOn

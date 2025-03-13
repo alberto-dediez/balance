@@ -7,8 +7,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use App\Security\Infrastructure\Symfony\Type\AccountType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use App\Security\Infrastructure\Symfony\Type\AccountIdType;
 use App\Waste\Application\Property\Update\UpdatePropertyRequest;
 
 class UpdatePropertyType extends AbstractType
@@ -24,7 +24,7 @@ class UpdatePropertyType extends AbstractType
 
         if ($options['admin']) {
             $builder
-                ->add('account', AccountType::class, [
+                ->add('accountId', AccountIdType::class, [
                     'label' => new TranslatableMessage('Cuenta'),
                     'required' => false,
                     'placeholder' => new TranslatableMessage('Sin cuenta'),
