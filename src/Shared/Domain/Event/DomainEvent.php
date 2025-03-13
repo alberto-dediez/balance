@@ -3,7 +3,6 @@
 namespace App\Shared\Domain\Event;
 
 use DateTimeImmutable;
-use App\Shared\Domain\Message\Message;
 use App\Shared\Domain\Event\DomainEventId;
 
 abstract class DomainEvent
