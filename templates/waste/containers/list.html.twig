@@ -21,8 +21,8 @@
 
     <twig:List:Table :columns="columns" :elements="containers">
         <tr>
-            <td>{{ element.propertyId }}</td>
-            <td>{{ element.wasteId }}</td>
+            <td>{{ element.propertyId | property_name }}</td>
+            <td>{{ element.wasteId | waste_name }}</td>
             <td>{{ element.purpose.value | trans({}, 'purpose') }}</td>
             <td>{{ element.registeredAt | date('d/m/Y') }}</td>
             <td>

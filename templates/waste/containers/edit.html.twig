@@ -15,7 +15,7 @@
         <twig:Card>
             <div class="row">
                 <div class="col-12">
-                    <twig:View:Field label="{{ 'Propiedad' | trans }}">{{ container.propertyId }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Propiedad' | trans }}">{{ container.propertyId | property_name }}</twig:View:Field>
                     {{ form_row(form.wasteId) }}
                     {{ form_row(form.purpose) }}
                     {{ form_row(form.measurementMethod) }}
