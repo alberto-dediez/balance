@@ -16,7 +16,7 @@ export default class extends Controller {
             return ;
         }
 
-        let limit = document.querySelector('input[name*="filter[limit]"]');
+        let limit = document.querySelector('input[name*="limit"]');
         limit.value = link.getAttribute('data-limit');
 
         limit.dispatchEvent(new Event("change"));
@@ -35,7 +35,7 @@ export default class extends Controller {
             return ;
         }
 
-        let page = document.querySelector('input[name*="filter[page]"]');
+        let page = document.querySelector('input[name*="page"]');
         page.value = link.getAttribute('data-page') - 1;
         page.closest('form').submit();
     }

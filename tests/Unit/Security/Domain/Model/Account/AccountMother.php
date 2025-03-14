@@ -2,7 +2,6 @@
 
 namespace App\Tests\Unit\Security\Domain\Model\Account;
 
-use App\Security\Domain\Model\Account\Role;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 

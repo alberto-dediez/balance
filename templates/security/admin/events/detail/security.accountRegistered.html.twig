@@ -1,0 +1,4 @@
+{% trans with {
+    '{account}': element.payload['name'],
+    '{status}': element.payload['active'] ? ('activo' | trans) : ('inactivo' | trans)
+} %}Registrada una nueva cuenta {account} en estado {status}{% endtrans %}

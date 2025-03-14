@@ -10,19 +10,28 @@ class LoggedUser
 {
     private ?User $user = null;
 
-    public function __construct(Security $security, UserRepository $userRepository)
+    public function __construct(private Security $security, private UserRepository $userRepository)
     {
-        $user = $security->getUser();
+        
+    }
+
+    public function __invoke()
+    {
+        if (null == $this->user) {
+            $this->loadUser();
+        }
+
+        return $this->user;   
+    }
+
+    private function loadUser()
+    {
+        $user = $this->security->getUser();
 
         if (null == $user) {
             return ;
         }
 
-        $this->user = $userRepository->find($user->id());
-    }
-
-    public function __invoke()
-    {
-        return $this->user;   
+        $this->user = $this->userRepository->find($user->id());
     }
 }
