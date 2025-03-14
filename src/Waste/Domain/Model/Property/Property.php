@@ -9,12 +9,14 @@ class Property
 {
     use AggregateRoot;
 
+    private array $events = [];
+
     public function __construct(
         private PropertyId $id, 
         private string $name = '',
         private AccountId|string|null $accountId = null,
         private bool $removed = false,
-        private array $events = [],
+        array $events = [],
         private ?\DateTimeImmutable $registeredAt = null,
         private ?\DateTimeImmutable $removedAt = null
     ) {

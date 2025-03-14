@@ -8,11 +8,13 @@ class Waste
 {
     use AggregateRoot;
 
+    protected array $events = [];
+
     public function __construct(
         protected WasteId $id, 
         protected string $name = '',
         protected bool $removed = false,
-        protected array $events = [],
+        array $events = [],
         protected ?\DateTimeImmutable $registeredAt = null,
         protected ?\DateTimeImmutable $removedAt = null
     ) {

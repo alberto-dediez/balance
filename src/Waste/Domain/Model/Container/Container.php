@@ -10,6 +10,8 @@ class Container
 {
     use AggregateRoot;
 
+    private array $events = [];
+
     public function __construct(
         private ContainerId $id, 
         private PropertyId|string|null $propertyId = null,
@@ -17,7 +19,7 @@ class Container
         private ?Purpose $purpose = null,
         private ?MeasurementMethod $measurementMethod = null,
         private bool $removed = false,
-        private array $events = [],
+        array $events = [],
         private ?\DateTimeImmutable $registeredAt = null,
         private ?\DateTimeImmutable $removedAt = null
     ) {
