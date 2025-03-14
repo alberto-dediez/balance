@@ -29,6 +29,11 @@ class User
         
     }
 
+    public function __toString(): string
+    {
+        return $this->username();
+    }
+
     public function id(): UserId
     {
         return $this->id;

@@ -47,6 +47,11 @@ class NodeLister
                     icon: "solar:users-group-rounded-line-duotone",
                     target: $this->router->generate('admin_users')
                 ),
+                new Node(
+                    label: new TranslatableMessage("Registro"),
+                    icon: "solar:record-minimalistic-line-duotone",
+                    target: $this->router->generate('admin_events')
+                ),
             ]
         );
 

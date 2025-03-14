@@ -6,7 +6,7 @@ export default class extends Controller {
 
         for (const input of inputs) {
             input.addEventListener('change', function () {
-                document.querySelector('input[name*="filter[page]"]').value = 0;
+                document.querySelector('input[name*="page"]').value = 0;
             });
         }
     }

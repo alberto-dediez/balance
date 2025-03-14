@@ -8,9 +8,17 @@
                     {% if attribute(form, field) is defined %}
                         {% set formField = attribute(form, field) %}
 
+                        {% set value = attribute(form.vars.value, field) %}
+
+                        {% if field == 'userId' %}
+                            {% set value = value | user_name %}
+                        {% elseif field == 'accountId' %}
+                            {% set value = value | account_name %}
+                        {% endif %}
+
                         <twig:List:FilterShow 
                             label="{{ formField.vars.label }}" 
-                            value="{{ attribute(form.vars.value, field) }}" 
+                            value="{{ value }}" 
                             id="#{{ formField.vars.id }}"
                         />
                     {% endif %}

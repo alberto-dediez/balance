@@ -13,10 +13,10 @@ class ListAccountsService
 
     public function __invoke(ListAccountsRequest $request): ListAccountsResponse
     {
-        $users = $this->repository->findByFilter($request);
+        $accounts = $this->repository->findByFilter($request);
 
         $totalResults = $this->repository->totalResultsByFilter($request);
 
-        return new ListAccountsResponse($users, $totalResults);
+        return new ListAccountsResponse($accounts, $totalResults);
     }
 }

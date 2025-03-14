@@ -10,13 +10,13 @@ class RecordedEvent
 {
     private RecordedEventId $id;
 
-    private ?UserId $userId;
+    private UserId|string|null $userId;
     private DateTimeImmutable $occurredOn;
     private string $eventName;
     private string $context;
     private array $payload;
 
-    public function __construct(?UserId $userId, DomainEvent $event)
+    public function __construct(UserId|string|null $userId, DomainEvent $event)
     {
         $this->id = new RecordedEventId(
             (string) $event->id()
@@ -37,6 +37,10 @@ class RecordedEvent
 
     public function userId(): ?UserId
     {
+        if (is_string($this->userId)) {
+            $this->userId = new UserId($this->userId);
+        }
+
         return $this->userId;
     }
 
