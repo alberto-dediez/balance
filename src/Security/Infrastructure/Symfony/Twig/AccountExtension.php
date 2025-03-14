@@ -21,6 +21,7 @@ class AccountExtension extends AbstractExtension
     {
         return [
             new TwigFilter('account_name', [$this, 'accountName']),
+            new TwigFilter('account_id', [$this, 'accountId']),
         ];
     }
 
@@ -29,6 +30,11 @@ class AccountExtension extends AbstractExtension
         return [
             
         ];
+    }
+
+    public function accountId($accountId): AccountId
+    {
+        return new AccountId((string) $accountId);
     }
 
     public function accountName(AccountId $accountId): ?Account

@@ -20,6 +20,7 @@ class UserExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
+            new TwigFilter('user_id', [$this, 'userId']),
             new TwigFilter('user_name', [$this, 'userName']),
         ];
     }
@@ -29,6 +30,11 @@ class UserExtension extends AbstractExtension
         return [
             
         ];
+    }
+
+    public function userId($userId): UserId
+    {
+        return new UserId((string) $userId);
     }
 
     public function userName(UserId $userId): ?User

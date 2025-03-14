@@ -5,6 +5,10 @@
 {% block table %}
     {% set columns = [
         {
+            'label': 'Detalle' | trans
+        }, {
+            'label': 'Usuario' | trans
+        }, {
             'label': 'Nombre' | trans,
             'sortable': true,
             'sortableBy': 'eventName'
@@ -12,8 +16,6 @@
             'label': 'Contexto' | trans,
             'sortable': true,
             'sortableBy': 'context'
-        }, {
-            'label': 'Usuario' | trans
         }, {
             'label': 'Fecha de registro' | trans,
             'sortable': true,
@@ -25,9 +27,15 @@
 
     <twig:List:Table :columns="columns" :elements="events">
         <tr>
+            <td>
+                {% include [
+                    '@security/admin/events/detail/' ~ element.context ~ '.' ~ element.eventName ~ '.html.twig',
+                    '@security/admin/events/detail/default.html.twig'
+                ] %}
+            </td>
+            <td>{{ element.userId ? (element.userId | user_name) : '' }}</td>
             <td>{{ element.eventName }}</td>
             <td>{{ element.context }}</td>
-            <td>{{ element.userId ? (element.userId | user_name) : '' }}</td>
             <td>{{ element.occurredOn | date('H:i d/m/Y') }}</td>
             <td>
             </td>
