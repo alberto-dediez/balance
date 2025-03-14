@@ -14,6 +14,8 @@ class User
 {
     use AggregateRoot;
 
+    protected array $events = [];
+
     public function __construct(
         protected UserId $id, 
         protected string $username = '',
@@ -21,7 +23,7 @@ class User
         protected AccountId|string|null $accountId = null,
         protected Account|null $account = null, 
         protected array $roles = [],
-        protected array $events = [],
+        array $events = [],
         protected bool $removed = false,
         protected ?\DateTimeImmutable $registeredAt = null,
         protected ?\DateTimeImmutable $removedAt = null

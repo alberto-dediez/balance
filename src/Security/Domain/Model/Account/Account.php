@@ -2,6 +2,7 @@
 
 namespace App\Security\Domain\Model\Account;
 
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRegistered;
@@ -10,12 +11,14 @@ class Account
 {
     use AggregateRoot;
 
+    protected array $events = [];
+
     public function __construct(
         protected AccountId $id, 
         protected string $name = '',
         protected bool $active = false,
         protected bool $removed = false,
-        protected array $events = [],
+        array $events = [],
         protected ?\DateTimeImmutable $registeredAt = null,
         protected ?\DateTimeImmutable $removedAt = null
     ) {
