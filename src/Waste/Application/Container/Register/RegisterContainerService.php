@@ -4,12 +4,14 @@ namespace App\Waste\Application\Container\Register;
 
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\Container\QrCodeGenerator;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 
 class RegisterContainerService
 {
     public function __construct(
-        private ContainerRepository $containerRepository
+        private ContainerRepository $containerRepository,
+        private QrCodeGenerator $qrCodeGenerator
     ) {
 
     }
@@ -28,7 +30,8 @@ class RegisterContainerService
                 propertyId: $request->propertyId,
                 wasteId: $request->wasteId,
                 purpose: $request->purpose,
-                measurementMethod: $request->measurementMethod
+                measurementMethod: $request->measurementMethod,
+                qrCodeGenerator: $this->qrCodeGenerator
             )
         ;
 
@@ -39,7 +42,8 @@ class RegisterContainerService
             propertyId: $container->propertyId(),
             wasteId: $container->wasteId(),
             purpose: $container->purpose(),
-            measurementMethod: $container->measurementMethod()
+            measurementMethod: $container->measurementMethod(),
+            qrCode: $container->qrCode()
         );
     }
 }

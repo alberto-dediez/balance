@@ -18,6 +18,7 @@ class Container
         private WasteId|string|null $wasteId = null,
         private ?Purpose $purpose = null,
         private ?MeasurementMethod $measurementMethod = null,
+        private ?QrCode $qrCode = null,
         private bool $removed = false,
         array $events = [],
         private ?\DateTimeImmutable $registeredAt = null,
@@ -59,6 +60,11 @@ class Container
         return $this->measurementMethod;
     }
 
+    public function qrCode(): ?QrCode
+    {
+        return $this->qrCode;
+    }
+
     public function isRemoved(): bool
     {
         return $this->removed;
@@ -78,7 +84,8 @@ class Container
         PropertyId $propertyId,
         WasteId $wasteId,
         Purpose $purpose,
-        MeasurementMethod $measurementMethod
+        MeasurementMethod $measurementMethod,
+        QrCodeGenerator $qrCodeGenerator
     ) {
         $this->recordApplyAndPublish(
             new ContainerRegistered(
@@ -89,6 +96,8 @@ class Container
                 measurementMethod: $measurementMethod,
             )
         );
+
+        $this->qrCode = $qrCodeGenerator->generate($this->id());
     }
 
     public function update(

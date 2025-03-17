@@ -14,11 +14,14 @@
     {{ form_start(form) }}
         <twig:Card>
             <div class="row">
-                <div class="col-12">
+                <div class="col-8">
                     <twig:View:Field label="{{ 'Propiedad' | trans }}">{{ container.propertyId | property_name }}</twig:View:Field>
                     {{ form_row(form.wasteId) }}
                     {{ form_row(form.purpose) }}
                     {{ form_row(form.measurementMethod) }}
+                </div>
+                <div class="col-4">
+                    <twig:Container:Qr :qrCode="container.qrCode" />
                 </div>
             </div>    
 

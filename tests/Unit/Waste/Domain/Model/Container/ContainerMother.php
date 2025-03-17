@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Waste\Domain\Model\Container;
 
+use App\Tests\Unit\Waste\Infrastructure\QrCodeGenerator\FakeQrCodeGenerator;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Container\Container;
@@ -67,7 +68,8 @@ class ContainerMother
                 propertyId: $propertyId,
                 wasteId: $wasteId,
                 purpose: $purpose,
-                measurementMethod: $measurementMethod
+                measurementMethod: $measurementMethod,
+                qrCodeGenerator: new FakeQrCodeGenerator()
             )
         ;
 

@@ -7,13 +7,13 @@
 
     <entity name="App\Waste\Domain\Model\Container\Container" table="containers">
         <embedded name="id" class="App\Waste\Domain\Model\Container\ContainerId" use-column-prefix="false" />
+        <embedded name="qrCode" class="App\Waste\Domain\Model\Container\QrCode" column-prefix="qr_" />
 
         <field name="purpose" type="object" nullable="false"/>
         <field name="measurementMethod" type="object" nullable="false"/>
         <field name="removed" type="boolean" nullable="true"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
-
 
         <field name="propertyId" type="string" length="36" nullable="true"/>
         <field name="wasteId" type="string" length="36" nullable="true"/>
