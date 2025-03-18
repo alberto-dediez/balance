@@ -10,7 +10,7 @@ use App\Waste\Application\Waste\Remove\RemoveWasteRequest;
 use App\Waste\Application\Waste\Remove\RemoveWasteService;
 use App\Waste\Application\Waste\Remove\RemoveWasteResponse;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Waste\Infrastructure\Repository\Waste\InMemoryWasteRepository;
+use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
 
 class RemoveWasteServiceTest extends TestCase
 {
@@ -25,7 +25,7 @@ class RemoveWasteServiceTest extends TestCase
 
     public function testInvoke()
     {
-        $repository = new InMemoryWasteRepository();
+        $repository = WasteRepositoryMother::inMemory();
 
         $sut = $this->createSUT($repository);
 

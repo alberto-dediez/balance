@@ -5,9 +5,9 @@ namespace App\Tests\Unit\Waste\Application\Waste\List;
 use PHPUnit\Framework\TestCase;
 use App\Waste\Application\Waste\List\ListWastesRequest;
 use App\Waste\Application\Waste\List\ListWastesService;
-use App\Waste\Application\Waste\List\ListWastesResponse;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
-use App\Waste\Infrastructure\Repository\Waste\InMemoryWasteRepository;
+use App\Waste\Application\Waste\List\ListWastesResponse;
+use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
 
 class ListWastesServiceTest extends TestCase
 {
@@ -18,7 +18,7 @@ class ListWastesServiceTest extends TestCase
 
     public function testInvoke()
     {
-        $repository = new InMemoryWasteRepository();
+        $repository = WasteRepositoryMother::inMemory();
 
         $sut = $this->createSUT($repository);
 

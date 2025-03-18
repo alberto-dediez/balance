@@ -10,8 +10,7 @@ use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
 use App\Waste\Application\Container\Remove\RemoveContainerRequest;
 use App\Waste\Application\Container\Remove\RemoveContainerService;
 use App\Waste\Application\Container\Remove\RemoveContainerResponse;
-use App\Waste\Infrastructure\Repository\Property\InMemoryPropertyRepository;
-use App\Waste\Infrastructure\Repository\Container\InMemoryContainerRepository;
+use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 
 class RemoveContainerServiceTest extends TestCase
 {
@@ -26,9 +25,7 @@ class RemoveContainerServiceTest extends TestCase
 
     public function testInvoke()
     {
-        $repository = new InMemoryContainerRepository(
-            new InMemoryPropertyRepository()
-        );
+        $repository = ContainerRepositoryMother::inMemory();
 
         $sut = $this->createSUT($repository);
 

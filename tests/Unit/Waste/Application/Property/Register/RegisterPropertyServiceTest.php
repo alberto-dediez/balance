@@ -6,11 +6,11 @@ use PHPUnit\Framework\TestCase;
 use App\Waste\Domain\Model\Property\Property;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Waste\Domain\Model\Property\PropertyRegistered;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Waste\Application\Property\Register\RegisterPropertyRequest;
 use App\Waste\Application\Property\Register\RegisterPropertyService;
 use App\Waste\Application\Property\Register\RegisterPropertyResponse;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Waste\Infrastructure\Repository\Property\InMemoryPropertyRepository;
+use App\Tests\Unit\Waste\Domain\Model\Property\PropertyRepositoryMother;
 
 class RegisterPropertyServiceTest extends TestCase
 {
@@ -25,7 +25,7 @@ class RegisterPropertyServiceTest extends TestCase
 
     public function testUseCase()
     {
-        $repository = new InMemoryPropertyRepository();
+        $repository = PropertyRepositoryMother::inMemory();
 
         $sut = $this->createSUT($repository);
 

@@ -13,8 +13,7 @@ use App\Tests\Unit\Waste\Domain\Model\Property\PropertyMother;
 use App\Waste\Domain\Event\Container\RemovePropertySubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
 use App\Waste\Application\Container\Remove\RemoveContainerService;
-use App\Waste\Infrastructure\Repository\Property\InMemoryPropertyRepository;
-use App\Waste\Infrastructure\Repository\Container\InMemoryContainerRepository;
+use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 
 class RemovePropertySubscriberTest extends TestCase
 {
@@ -25,9 +24,7 @@ class RemovePropertySubscriberTest extends TestCase
 
     public function isSubscribedToReturnsTrueIfPropertyRemovedEventIsPassed()
     {
-        $repository = new InMemoryContainerRepository(
-            new InMemoryPropertyRepository()
-        );
+        $repository = ContainerRepositoryMother::inMemory();
 
         $sut = $this->createSUT($repository);
 
@@ -42,9 +39,7 @@ class RemovePropertySubscriberTest extends TestCase
 
     public function isSubscribedToReturnsFalseIfNotPropertyRemovedEventIsPassed()
     {
-        $repository = new InMemoryContainerRepository(
-            new InMemoryPropertyRepository()
-        );
+        $repository = ContainerRepositoryMother::inMemory();
 
         $sut = $this->createSUT($repository);
 
@@ -59,9 +54,7 @@ class RemovePropertySubscriberTest extends TestCase
 
     public function testHandleCallsRemoveContainerService()
     {
-        $repository = new InMemoryContainerRepository(
-            new InMemoryPropertyRepository()
-        );
+        $repository = ContainerRepositoryMother::inMemory();
 
         $property = PropertyMother::fromName('Hotel');
         $otherProperty = PropertyMother::fromName('OtherHotel');

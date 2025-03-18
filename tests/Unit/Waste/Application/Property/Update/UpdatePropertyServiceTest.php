@@ -12,7 +12,7 @@ use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Waste\Application\Property\Update\UpdatePropertyRequest;
 use App\Waste\Application\Property\Update\UpdatePropertyService;
 use App\Waste\Application\Property\Update\UpdatePropertyResponse;
-use App\Waste\Infrastructure\Repository\Property\InMemoryPropertyRepository;
+use App\Tests\Unit\Waste\Domain\Model\Property\PropertyRepositoryMother;
 
 class UpdatePropertyServiceTest extends TestCase
 {
@@ -27,7 +27,7 @@ class UpdatePropertyServiceTest extends TestCase
 
     public function testUseCase()
     {
-        $repository = new InMemoryPropertyRepository();
+        $repository = PropertyRepositoryMother::inMemory();
 
         $property = PropertyMother::fromName('MyProperty');
 

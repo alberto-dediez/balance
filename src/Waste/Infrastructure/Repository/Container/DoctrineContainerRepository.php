@@ -48,20 +48,6 @@ class DoctrineContainerRepository implements ContainerRepository
         ;
     }
 
-    public function findByName(string $name): ?Container
-    {
-        $qb = $this->createQueryBuilderFromFilter(new ContainerFilter());
-
-        return $qb
-            ->andWhere(
-                $qb->expr()->eq('c.name', ':name')
-            )
-            ->setParameter('name', $name)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-
     private function createQueryBuilderFromFilter(ContainerFilter $filter): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();

@@ -3,14 +3,14 @@
 namespace App\Tests\Unit\Waste\Application\Property\Remove;
 
 use PHPUnit\Framework\TestCase;
-use App\Waste\Domain\Model\Property\PropertyRemoved;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Waste\Domain\Model\Property\PropertyRemoved;
 use App\Tests\Unit\Waste\Domain\Model\Property\PropertyMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Waste\Application\Property\Remove\RemovePropertyRequest;
 use App\Waste\Application\Property\Remove\RemovePropertyService;
 use App\Waste\Application\Property\Remove\RemovePropertyResponse;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Waste\Infrastructure\Repository\Property\InMemoryPropertyRepository;
+use App\Tests\Unit\Waste\Domain\Model\Property\PropertyRepositoryMother;
 
 class RemovePropertyServiceTest extends TestCase
 {
@@ -25,7 +25,7 @@ class RemovePropertyServiceTest extends TestCase
 
     public function testInvoke()
     {
-        $repository = new InMemoryPropertyRepository();
+        $repository = PropertyRepositoryMother::inMemory();
 
         $sut = $this->createSUT($repository);
 

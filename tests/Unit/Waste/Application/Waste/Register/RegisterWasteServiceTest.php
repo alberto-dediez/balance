@@ -10,7 +10,7 @@ use App\Waste\Application\Waste\Register\RegisterWasteRequest;
 use App\Waste\Application\Waste\Register\RegisterWasteService;
 use App\Waste\Application\Waste\Register\RegisterWasteResponse;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Waste\Infrastructure\Repository\Waste\InMemoryWasteRepository;
+use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
 
 class RegisterWasteServiceTest extends TestCase
 {
@@ -25,7 +25,7 @@ class RegisterWasteServiceTest extends TestCase
 
     public function testUseCase()
     {
-        $repository = new InMemoryWasteRepository();
+        $repository = WasteRepositoryMother::inMemory();
 
         $sut = $this->createSUT($repository);
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Waste\Domain\Model\Measurement\Measurement" table="measurements">
+        <embedded name="id" class="App\Waste\Domain\Model\Measurement\MeasurementId" use-column-prefix="false" />
+
+        <field name="containerId" type="string" length="36" nullable="true" />
+        <field name="wasteId" type="string" length="36" nullable="true" />
+        <field name="purpose" type="object" nullable="false" />
+        <field name="measurementMethod" type="object" nullable="false" />
+
+        <field name="quantity" type="integer" nullable="false" />
+        <field name="load" type="decimal" scale="14" precision="4" nullable="false" />
+        <field name="justification" type="text" nullable="true" />
+
+        <field name="registeredBy" type="string" length="36" nullable="false" />
+        
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+    </entity>
+
+</doctrine-mapping>

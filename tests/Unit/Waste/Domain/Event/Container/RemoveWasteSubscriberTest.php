@@ -4,17 +4,16 @@ namespace App\Tests\Unit\Waste\Domain\Event\Container;
 
 use PHPUnit\Framework\TestCase;
 use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\Waste\WasteRemoved;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Waste\Domain\Model\Container\ContainerId;
-use App\Waste\Domain\Model\Waste\WasteRemoved;
 use App\Waste\Domain\Model\Container\ContainerRemoved;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
-use App\Tests\Unit\Waste\Domain\Model\Property\PropertyMother;
 use App\Waste\Domain\Event\Container\RemoveWasteSubscriber;
+use App\Tests\Unit\Waste\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
 use App\Waste\Application\Container\Remove\RemoveContainerService;
-use App\Waste\Infrastructure\Repository\Property\InMemoryPropertyRepository;
-use App\Waste\Infrastructure\Repository\Container\InMemoryContainerRepository;
+use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 
 class RemoveWasteSubscriberTest extends TestCase
 {
@@ -25,9 +24,7 @@ class RemoveWasteSubscriberTest extends TestCase
 
     public function isSubscribedToReturnsTrueIfWasteRemovedEventIsPassed()
     {
-        $repository = new InMemoryContainerRepository(
-            new InMemoryPropertyRepository()
-        );
+        $repository = ContainerRepositoryMother::inMemory();
 
         $sut = $this->createSUT($repository);
 
@@ -42,9 +39,7 @@ class RemoveWasteSubscriberTest extends TestCase
 
     public function isSubscribedToReturnsFalseIfNotWasteRemovedEventIsPassed()
     {
-        $repository = new InMemoryContainerRepository(
-            new InMemoryPropertyRepository()
-        );
+        $repository = ContainerRepositoryMother::inMemory();
 
         $sut = $this->createSUT($repository);
 
@@ -59,9 +54,7 @@ class RemoveWasteSubscriberTest extends TestCase
 
     public function testHandleCallsRemoveContainerService()
     {
-        $repository = new InMemoryContainerRepository(
-            new InMemoryPropertyRepository()
-        );
+        $repository = ContainerRepositoryMother::inMemory();
 
         $property = PropertyMother::fromName('Hotel');
 

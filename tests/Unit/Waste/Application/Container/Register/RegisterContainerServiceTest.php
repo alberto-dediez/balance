@@ -12,13 +12,11 @@ use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\Container\ContainerRegistered;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Tests\Unit\Waste\Infrastructure\QrCodeGenerator\FakeQrCodeGenerator;
 use App\Waste\Application\Container\Register\RegisterContainerRequest;
 use App\Waste\Application\Container\Register\RegisterContainerService;
 use App\Waste\Application\Container\Register\RegisterContainerResponse;
-use App\Waste\Domain\Model\Container\QrCodeGenerator;
-use App\Waste\Infrastructure\Repository\Property\InMemoryPropertyRepository;
-use App\Waste\Infrastructure\Repository\Container\InMemoryContainerRepository;
+use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
+use App\Tests\Unit\Waste\Infrastructure\QrCodeGenerator\FakeQrCodeGenerator;
 
 class RegisterContainerServiceTest extends TestCase
 {
@@ -33,9 +31,7 @@ class RegisterContainerServiceTest extends TestCase
 
     public function testUseCase()
     {
-        $repository = new InMemoryContainerRepository(
-            new InMemoryPropertyRepository()
-        );
+        $repository = ContainerRepositoryMother::inMemory();
 
         $sut = $this->createSUT($repository);
 

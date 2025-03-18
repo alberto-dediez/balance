@@ -5,10 +5,9 @@ namespace App\Tests\Unit\Waste\Application\Container\List;
 use PHPUnit\Framework\TestCase;
 use App\Waste\Application\Container\List\ListContainersRequest;
 use App\Waste\Application\Container\List\ListContainersService;
-use App\Waste\Application\Container\List\ListContainersResponse;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
-use App\Waste\Infrastructure\Repository\Container\InMemoryContainerRepository;
-use App\Waste\Infrastructure\Repository\Property\InMemoryPropertyRepository;
+use App\Waste\Application\Container\List\ListContainersResponse;
+use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 
 class ListContainersServiceTest extends TestCase
 {
@@ -19,9 +18,7 @@ class ListContainersServiceTest extends TestCase
 
     public function testInvoke()
     {
-        $repository = new InMemoryContainerRepository(
-            new InMemoryPropertyRepository()
-        );
+        $repository = ContainerRepositoryMother::inMemory();
 
         $sut = $this->createSUT($repository);
 

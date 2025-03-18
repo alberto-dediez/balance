@@ -14,8 +14,7 @@ use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
 use App\Waste\Application\Container\Update\UpdateContainerRequest;
 use App\Waste\Application\Container\Update\UpdateContainerService;
 use App\Waste\Application\Container\Update\UpdateContainerResponse;
-use App\Waste\Infrastructure\Repository\Property\InMemoryPropertyRepository;
-use App\Waste\Infrastructure\Repository\Container\InMemoryContainerRepository;
+use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 
 class UpdateContainerServiceTest extends TestCase
 {
@@ -30,9 +29,7 @@ class UpdateContainerServiceTest extends TestCase
 
     public function testUseCase()
     {
-        $repository = new InMemoryContainerRepository(
-            new InMemoryPropertyRepository()
-        );
+        $repository = ContainerRepositoryMother::inMemory();
 
         $container = ContainerMother::random();
 
