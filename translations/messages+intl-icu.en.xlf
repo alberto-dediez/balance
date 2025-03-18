@@ -257,6 +257,118 @@
         <source>Activo</source>
         <target>Active</target>
       </trans-unit>
+      <trans-unit id="hWeDKhP" resname="Error inesperado">
+        <source>Error inesperado</source>
+        <target>Unexpected error</target>
+      </trans-unit>
+      <trans-unit id="BjsEsAb" resname="Error inesperado. No se ha podido actualizar correctamente.">
+        <source>Error inesperado. No se ha podido actualizar correctamente.</source>
+        <target>Unexpected error. The update could not be performed correctly.</target>
+      </trans-unit>
+      <trans-unit id="Q86yj6e" resname="Registro">
+        <source>Registro</source>
+        <target>Record</target>
+      </trans-unit>
+      <trans-unit id="7FzE1Mk" resname="Contexto">
+        <source>Contexto</source>
+        <target>Context</target>
+      </trans-unit>
+      <trans-unit id="PhtswPE" resname="Usuario">
+        <source>Usuario</source>
+        <target>User</target>
+      </trans-unit>
+      <trans-unit id="YdAqJ7r" resname="Hay errores en el formulario. No se ha actualizado tu contraseña">
+        <source>Hay errores en el formulario. No se ha actualizado tu contraseña</source>
+        <target>There are errors in the form. Your password has not been updated.</target>
+      </trans-unit>
+      <trans-unit id="._MY2PL" resname="La contraseña se ha actualizado correctamente">
+        <source>La contraseña se ha actualizado correctamente</source>
+        <target>The password has been updated successfully.</target>
+      </trans-unit>
+      <trans-unit id="wlfqMBE" resname="Error inesperado. No se ha actualizado tu contraseña">
+        <source>Error inesperado. No se ha actualizado tu contraseña</source>
+        <target>Unexpected error. Your password has not been updated.</target>
+      </trans-unit>
+      <trans-unit id="9MxJ92I" resname="Debes pertenecer a una cuenta para poder acceder">
+        <source>Debes pertenecer a una cuenta para poder acceder</source>
+        <target>You must be a member of an account to access.</target>
+      </trans-unit>
+      <trans-unit id="evfFBRo" resname="Acciones">
+        <source>Acciones</source>
+        <target>Actions</target>
+      </trans-unit>
+      <trans-unit id="rlww.KL" resname="Mi perfil">
+        <source>Mi perfil</source>
+        <target>My Profile</target>
+      </trans-unit>
+      <trans-unit id="gIzOsY6" resname="Eliminado el usuario &quot;{user}&quot;">
+        <source>Eliminado el usuario "{user}"</source>
+        <target>User "{user}" deleted.</target>
+      </trans-unit>
+      <trans-unit id="demL2sW" resname="Registrada una nueva cuenta {account} en estado {status}">
+        <source>Registrada una nueva cuenta {account} en estado {status}</source>
+        <target>A new account {account} registered with status {status}.</target>
+      </trans-unit>
+      <trans-unit id="6SYISZa" resname="activo">
+        <source>activo</source>
+        <target>Active</target>
+      </trans-unit>
+      <trans-unit id="LFkY6WK" resname="inactivo">
+        <source>inactivo</source>
+        <target>Inactive</target>
+      </trans-unit>
+      <trans-unit id="rZM4y9N" resname="Registrado el usuario {user} para la cuenta {account}">
+        <source>Registrado el usuario {user} para la cuenta {account}</source>
+        <target>User {user} registered for account {account}.</target>
+      </trans-unit>
+      <trans-unit id="N8LNcr." resname="Registrado el usuario {user} sin cuenta">
+        <source>Registrado el usuario {user} sin cuenta</source>
+        <target>User {user} registered without an account.</target>
+      </trans-unit>
+      <trans-unit id="oyqvcQF" resname="Activada la cuenta {account}">
+        <source>Activada la cuenta {account}</source>
+        <target>Account {account} activated.</target>
+      </trans-unit>
+      <trans-unit id="1OaMllt" resname="Desactivada la cuenta &quot;{account}&quot;">
+        <source>Desactivada la cuenta "{account}"</source>
+        <target>Account "{account}" deactivated.</target>
+      </trans-unit>
+      <trans-unit id="D4BfiJO" resname="El usuario {user} ha entrado en el sistema">
+        <source>El usuario {user} ha entrado en el sistema</source>
+        <target>User {user} logged in.</target>
+      </trans-unit>
+      <trans-unit id="v_skWdx" resname="Intento fallido de login con el usuario {username}">
+        <source>Intento fallido de login con el usuario {username}</source>
+        <target>Login attempt with user {username} failed.</target>
+      </trans-unit>
+      <trans-unit id="rIifooP" resname="El usuario {user} ha salido del sistema">
+        <source>El usuario {user} ha salido del sistema</source>
+        <target>User {user} logged out.</target>
+      </trans-unit>
+      <trans-unit id="PoFfv4r" resname="Eliminada la cuenta &quot;{account}&quot;">
+        <source>Eliminada la cuenta "{account}"</source>
+        <target>Account "{account}" deleted.</target>
+      </trans-unit>
+      <trans-unit id="h5KEY1P" resname="La cuenta {account} ahora se llama {name}">
+        <source>La cuenta {account} ahora se llama {name}</source>
+        <target>Account {account} is now called {name}.</target>
+      </trans-unit>
+      <trans-unit id="QgkN2aD" resname="Concedido permiso &quot;{role}&quot; al usuario {user}">
+        <source>Concedido permiso "{role}" al usuario {user}</source>
+        <target>Permission "{role}" granted to user {user}.</target>
+      </trans-unit>
+      <trans-unit id="ZdviEtQ" resname="Eliminado permiso &quot;{role}&quot; al usuario {user}">
+        <source>Eliminado permiso "{role}" al usuario {user}</source>
+        <target>Permission "{role}" removed from user {user}.</target>
+      </trans-unit>
+      <trans-unit id="Ro.5ud0" resname="Eventos">
+        <source>Eventos</source>
+        <target>Events</target>
+      </trans-unit>
+      <trans-unit id="WPys2XC" resname="Detalle">
+        <source>Detalle</source>
+        <target>Details</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

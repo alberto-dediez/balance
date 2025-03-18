@@ -257,6 +257,118 @@
         <source>Activo</source>
         <target>Activo</target>
       </trans-unit>
+      <trans-unit id="hWeDKhP" resname="Error inesperado">
+        <source>Error inesperado</source>
+        <target>Error inesperado</target>
+      </trans-unit>
+      <trans-unit id="BjsEsAb" resname="Error inesperado. No se ha podido actualizar correctamente.">
+        <source>Error inesperado. No se ha podido actualizar correctamente.</source>
+        <target>Error inesperado. No se ha podido actualizar correctamente.</target>
+      </trans-unit>
+      <trans-unit id="Q86yj6e" resname="Registro">
+        <source>Registro</source>
+        <target>Registro</target>
+      </trans-unit>
+      <trans-unit id="7FzE1Mk" resname="Contexto">
+        <source>Contexto</source>
+        <target>Contexto</target>
+      </trans-unit>
+      <trans-unit id="PhtswPE" resname="Usuario">
+        <source>Usuario</source>
+        <target>Usuario</target>
+      </trans-unit>
+      <trans-unit id="YdAqJ7r" resname="Hay errores en el formulario. No se ha actualizado tu contraseña">
+        <source>Hay errores en el formulario. No se ha actualizado tu contraseña</source>
+        <target>Hay errores en el formulario. No se ha actualizado tu contraseña</target>
+      </trans-unit>
+      <trans-unit id="._MY2PL" resname="La contraseña se ha actualizado correctamente">
+        <source>La contraseña se ha actualizado correctamente</source>
+        <target>La contraseña se ha actualizado correctamente</target>
+      </trans-unit>
+      <trans-unit id="wlfqMBE" resname="Error inesperado. No se ha actualizado tu contraseña">
+        <source>Error inesperado. No se ha actualizado tu contraseña</source>
+        <target>Error inesperado. No se ha actualizado tu contraseña</target>
+      </trans-unit>
+      <trans-unit id="9MxJ92I" resname="Debes pertenecer a una cuenta para poder acceder">
+        <source>Debes pertenecer a una cuenta para poder acceder</source>
+        <target>Debes pertenecer a una cuenta para poder acceder</target>
+      </trans-unit>
+      <trans-unit id="evfFBRo" resname="Acciones">
+        <source>Acciones</source>
+        <target>Acciones</target>
+      </trans-unit>
+      <trans-unit id="rlww.KL" resname="Mi perfil">
+        <source>Mi perfil</source>
+        <target>Mi perfil</target>
+      </trans-unit>
+      <trans-unit id="gIzOsY6" resname="Eliminado el usuario &quot;{user}&quot;">
+        <source>Eliminado el usuario "{user}"</source>
+        <target>Eliminado el usuario "{user}"</target>
+      </trans-unit>
+      <trans-unit id="demL2sW" resname="Registrada una nueva cuenta {account} en estado {status}">
+        <source>Registrada una nueva cuenta {account} en estado {status}</source>
+        <target>Registrada una nueva cuenta {account} en estado {status}</target>
+      </trans-unit>
+      <trans-unit id="6SYISZa" resname="activo">
+        <source>activo</source>
+        <target>activo</target>
+      </trans-unit>
+      <trans-unit id="LFkY6WK" resname="inactivo">
+        <source>inactivo</source>
+        <target>inactivo</target>
+      </trans-unit>
+      <trans-unit id="rZM4y9N" resname="Registrado el usuario {user} para la cuenta {account}">
+        <source>Registrado el usuario {user} para la cuenta {account}</source>
+        <target>Registrado el usuario {user} para la cuenta {account}</target>
+      </trans-unit>
+      <trans-unit id="N8LNcr." resname="Registrado el usuario {user} sin cuenta">
+        <source>Registrado el usuario {user} sin cuenta</source>
+        <target>Registrado el usuario {user} sin cuenta</target>
+      </trans-unit>
+      <trans-unit id="oyqvcQF" resname="Activada la cuenta {account}">
+        <source>Activada la cuenta {account}</source>
+        <target>Activada la cuenta {account}</target>
+      </trans-unit>
+      <trans-unit id="1OaMllt" resname="Desactivada la cuenta &quot;{account}&quot;">
+        <source>Desactivada la cuenta "{account}"</source>
+        <target>Desactivada la cuenta "{account}"</target>
+      </trans-unit>
+      <trans-unit id="D4BfiJO" resname="El usuario {user} ha entrado en el sistema">
+        <source>El usuario {user} ha entrado en el sistema</source>
+        <target>El usuario {user} ha entrado en el sistema</target>
+      </trans-unit>
+      <trans-unit id="v_skWdx" resname="Intento fallido de login con el usuario {username}">
+        <source>Intento fallido de login con el usuario {username}</source>
+        <target>Intento fallido de login con el usuario {username}</target>
+      </trans-unit>
+      <trans-unit id="rIifooP" resname="El usuario {user} ha salido del sistema">
+        <source>El usuario {user} ha salido del sistema</source>
+        <target>El usuario {user} ha salido del sistema</target>
+      </trans-unit>
+      <trans-unit id="PoFfv4r" resname="Eliminada la cuenta &quot;{account}&quot;">
+        <source>Eliminada la cuenta "{account}"</source>
+        <target>Eliminada la cuenta "{account}"</target>
+      </trans-unit>
+      <trans-unit id="h5KEY1P" resname="La cuenta {account} ahora se llama {name}">
+        <source>La cuenta {account} ahora se llama {name}</source>
+        <target>La cuenta {account} ahora se llama {name}</target>
+      </trans-unit>
+      <trans-unit id="QgkN2aD" resname="Concedido permiso &quot;{role}&quot; al usuario {user}">
+        <source>Concedido permiso "{role}" al usuario {user}</source>
+        <target>Concedido permiso "{role}" al usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="ZdviEtQ" resname="Eliminado permiso &quot;{role}&quot; al usuario {user}">
+        <source>Eliminado permiso "{role}" al usuario {user}</source>
+        <target>Eliminado permiso "{role}" al usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="Ro.5ud0" resname="Eventos">
+        <source>Eventos</source>
+        <target>Eventos</target>
+      </trans-unit>
+      <trans-unit id="WPys2XC" resname="Detalle">
+        <source>Detalle</source>
+        <target>Detalle</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
