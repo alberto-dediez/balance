@@ -9,7 +9,7 @@ use App\Shared\Domain\Event\DomainEventId;
 
 final class UserRemoved extends DomainEvent
 {
-    protected string $eventName = 'userRemoved';
+    protected static string $eventName = 'userRemoved';
 
     public function __construct(
         private UserId $userId, 

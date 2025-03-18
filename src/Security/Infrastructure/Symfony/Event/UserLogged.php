@@ -8,7 +8,7 @@ use App\Shared\Domain\Event\DomainEventId;
 
 final class UserLogged extends InfrastructureEvent
 {
-    protected string $eventName = 'userLogged';
+    protected static string $eventName = 'userLogged';
 
     public function __construct(
         private UserId $userId, 
@@ -44,7 +44,7 @@ final class UserLogged extends InfrastructureEvent
     ): static {
         return new UserLogged(
             userId: new UserId($payload['userId']),
-            firewall: $payload['firewall'],
+            firewall: isset($payload['firewall']) ? $payload['firewall'] : '',
             id: $id,
             occurredOn: $occurredOn
         );

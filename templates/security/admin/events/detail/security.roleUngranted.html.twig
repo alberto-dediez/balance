@@ -1,4 +1,4 @@
 {% trans with {
-    '{user}': element.payload['userId'] | user_id | user_name,
-    '{role}': element.payload['role'] | trans({}, 'roles')
+    '{user}': event.userId | user_name,
+    '{role}': event.role.value | trans({}, 'roles')
 } %}Eliminado permiso "{role}" al usuario {user}{% endtrans %}

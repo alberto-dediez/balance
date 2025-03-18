@@ -1,11 +1,11 @@
-{% if element.payload['accountId'] is not empty %}
+{% if event.accountId is not empty %}
     {% trans with {
-        '{user}': element.payload['username'],
-        '{account}': element.payload['accountId'] | account_id | account_name
+        '{user}': event.username,
+        '{account}': event.accountId | account_name
     } %}Registrado el usuario {user} para la cuenta {account}{% endtrans %}
 {% else %}
     {% trans with {
-        '{user}': element.payload['username']
+        '{user}': event.username
     } %}Registrado el usuario {user} sin cuenta{% endtrans %}
 {% endif %}
 

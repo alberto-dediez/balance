@@ -10,7 +10,7 @@ use App\Shared\Domain\Event\DomainEventId;
 
 final class RoleGranted extends DomainEvent
 {
-    protected string $eventName = 'roleGranted';
+    protected static string $eventName = 'roleGranted';
 
     public function __construct(
         private UserId $userId, 

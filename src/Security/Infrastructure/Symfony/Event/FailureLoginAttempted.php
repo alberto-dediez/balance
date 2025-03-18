@@ -8,7 +8,7 @@ use App\Shared\Domain\Event\DomainEventId;
 
 final class FailureLoginAttempted extends InfrastructureEvent
 {
-    protected string $eventName = 'failureLoginAttempted';
+    protected static string $eventName = 'failureLoginAttempted';
 
     public function __construct(
         private string $username, 
@@ -44,7 +44,7 @@ final class FailureLoginAttempted extends InfrastructureEvent
     ): static {
         return new FailureLoginAttempted(
             username: $payload['username'],
-            firewall: $payload['firewall'],
+            firewall: isset($payload['firewall']) ? $payload['firewall'] : '',
             id: $id,
             occurredOn: $occurredOn
         );

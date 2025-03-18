@@ -11,8 +11,8 @@ abstract class DomainEvent
 
     protected DomainEventId $id;
 
-    protected string $eventName = 'generic';
-    protected string $context = 'shared';
+    protected static string $eventName = 'generic';
+    protected static string $context = 'shared';
 
     public function __construct(?DomainEventId $id = null, ?DateTimeImmutable $occuredOn = null)
     {
@@ -33,17 +33,17 @@ abstract class DomainEvent
 
     public function eventName(): string
     {
-        return $this->eventName;
+        return static::$eventName;
     }
 
     public function context(): string
     {
-        return $this->context;
+        return static::$context;
     }
 
-    public function contextName(): string
+    public static function contextName(): string
     {
-        return sprintf("%s.%s", $this->contextName(), $this->eventName());
+        return sprintf("%s.%s", static::$context, static::$eventName);
     }
 
     abstract public function payload(): ?array;

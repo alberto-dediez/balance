@@ -10,7 +10,7 @@ use App\Security\Domain\Model\Account\AccountId;
 
 final class UserRegistered extends DomainEvent
 {
-    protected string $eventName = 'userRegistered';
+    protected static string $eventName = 'userRegistered';
 
     public function __construct(
         private UserId $userId, 
