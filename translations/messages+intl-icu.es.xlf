@@ -393,6 +393,118 @@
         <source>Mi perfil</source>
         <target>Mi perfil</target>
       </trans-unit>
+      <trans-unit id="Q86yj6e" resname="Registro">
+        <source>Registro</source>
+        <target>NRegistro</target>
+      </trans-unit>
+      <trans-unit id="7FzE1Mk" resname="Contexto">
+        <source>Contexto</source>
+        <target>NContexto</target>
+      </trans-unit>
+      <trans-unit id="PhtswPE" resname="Usuario">
+        <source>Usuario</source>
+        <target>NUsuario</target>
+      </trans-unit>
+      <trans-unit id="gIzOsY6" resname="Eliminado el usuario &quot;{user}&quot;">
+        <source>Eliminado el usuario "{user}"</source>
+        <target>NEliminado el usuario "{user}"</target>
+      </trans-unit>
+      <trans-unit id="demL2sW" resname="Registrada una nueva cuenta {account} en estado {status}">
+        <source>Registrada una nueva cuenta {account} en estado {status}</source>
+        <target>NRegistrada una nueva cuenta {account} en estado {status}</target>
+      </trans-unit>
+      <trans-unit id="6SYISZa" resname="activo">
+        <source>activo</source>
+        <target>Nactivo</target>
+      </trans-unit>
+      <trans-unit id="LFkY6WK" resname="inactivo">
+        <source>inactivo</source>
+        <target>Ninactivo</target>
+      </trans-unit>
+      <trans-unit id="T6LvZom" resname="Se ha actualizado la propiedad {property} perteneciente a la cuenta {account}">
+        <source>Se ha actualizado la propiedad {property} perteneciente a la cuenta {account}</source>
+        <target>NSe ha actualizado la propiedad {property} perteneciente a la cuenta {account}</target>
+      </trans-unit>
+      <trans-unit id="t6_8eTh" resname="Se ha actualizado la propiedad {property} sin cuenta asociada">
+        <source>Se ha actualizado la propiedad {property} sin cuenta asociada</source>
+        <target>NSe ha actualizado la propiedad {property} sin cuenta asociada</target>
+      </trans-unit>
+      <trans-unit id="rZM4y9N" resname="Registrado el usuario {user} para la cuenta {account}">
+        <source>Registrado el usuario {user} para la cuenta {account}</source>
+        <target>NRegistrado el usuario {user} para la cuenta {account}</target>
+      </trans-unit>
+      <trans-unit id="N8LNcr." resname="Registrado el usuario {user} sin cuenta">
+        <source>Registrado el usuario {user} sin cuenta</source>
+        <target>NRegistrado el usuario {user} sin cuenta</target>
+      </trans-unit>
+      <trans-unit id="gDelopd" resname="Se ha registrado la propiedad {property} perteneciente a la cuenta {account}">
+        <source>Se ha registrado la propiedad {property} perteneciente a la cuenta {account}</source>
+        <target>NSe ha registrado la propiedad {property} perteneciente a la cuenta {account}</target>
+      </trans-unit>
+      <trans-unit id="2AlJdHW" resname="Se ha registrado la propiedad {property} sin cuenta asociada">
+        <source>Se ha registrado la propiedad {property} sin cuenta asociada</source>
+        <target>NSe ha registrado la propiedad {property} sin cuenta asociada</target>
+      </trans-unit>
+      <trans-unit id="gSfjrLI" resname="Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}">
+        <source>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}</source>
+        <target>NSe ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}</target>
+      </trans-unit>
+      <trans-unit id="oyqvcQF" resname="Activada la cuenta {account}">
+        <source>Activada la cuenta {account}</source>
+        <target>NActivada la cuenta {account}</target>
+      </trans-unit>
+      <trans-unit id="1OaMllt" resname="Desactivada la cuenta &quot;{account}&quot;">
+        <source>Desactivada la cuenta "{account}"</source>
+        <target>NDesactivada la cuenta "{account}"</target>
+      </trans-unit>
+      <trans-unit id="D4BfiJO" resname="El usuario {user} ha entrado en el sistema">
+        <source>El usuario {user} ha entrado en el sistema</source>
+        <target>NEl usuario {user} ha entrado en el sistema</target>
+      </trans-unit>
+      <trans-unit id="v_skWdx" resname="Intento fallido de login con el usuario {username}">
+        <source>Intento fallido de login con el usuario {username}</source>
+        <target>NIntento fallido de login con el usuario {username}</target>
+      </trans-unit>
+      <trans-unit id="rIifooP" resname="El usuario {user} ha salido del sistema">
+        <source>El usuario {user} ha salido del sistema</source>
+        <target>NEl usuario {user} ha salido del sistema</target>
+      </trans-unit>
+      <trans-unit id="PoFfv4r" resname="Eliminada la cuenta &quot;{account}&quot;">
+        <source>Eliminada la cuenta "{account}"</source>
+        <target>NEliminada la cuenta "{account}"</target>
+      </trans-unit>
+      <trans-unit id="kQ3nDVP" resname="Se ha eliminado el contenedor {container}">
+        <source>Se ha eliminado el contenedor {container}</source>
+        <target>NSe ha eliminado el contenedor {container}</target>
+      </trans-unit>
+      <trans-unit id="h5KEY1P" resname="La cuenta {account} ahora se llama {name}">
+        <source>La cuenta {account} ahora se llama {name}</source>
+        <target>NLa cuenta {account} ahora se llama {name}</target>
+      </trans-unit>
+      <trans-unit id="QgkN2aD" resname="Concedido permiso &quot;{role}&quot; al usuario {user}">
+        <source>Concedido permiso "{role}" al usuario {user}</source>
+        <target>NConcedido permiso "{role}" al usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="3T9hrIV" resname="Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}">
+        <source>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}</source>
+        <target>NSe ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}</target>
+      </trans-unit>
+      <trans-unit id="3ThkoYD" resname="Se ha registrado el residuo {waste}">
+        <source>Se ha registrado el residuo {waste}</source>
+        <target>NSe ha registrado el residuo {waste}</target>
+      </trans-unit>
+      <trans-unit id="ZdviEtQ" resname="Eliminado permiso &quot;{role}&quot; al usuario {user}">
+        <source>Eliminado permiso "{role}" al usuario {user}</source>
+        <target>NEliminado permiso "{role}" al usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="Ro.5ud0" resname="Eventos">
+        <source>Eventos</source>
+        <target>NEventos</target>
+      </trans-unit>
+      <trans-unit id="WPys2XC" resname="Detalle">
+        <source>Detalle</source>
+        <target>NDetalle</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
