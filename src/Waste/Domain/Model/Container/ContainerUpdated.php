@@ -10,7 +10,7 @@ use App\Waste\Domain\Model\Container\ContainerId;
 
 final class ContainerUpdated extends DomainEvent
 {
-    protected string $eventName = 'containerUpdated';
+    protected static string $eventName = 'containerUpdated';
 
     public function __construct(
         private ContainerId $containerId, 

@@ -9,7 +9,7 @@ use App\Shared\Domain\Event\DomainEventId;
 
 final class WasteRegistered extends DomainEvent
 {
-    protected string $eventName = 'wasteRegistered';
+    protected static string $eventName = 'wasteRegistered';
 
     public function __construct(
         private WasteId $wasteId, 

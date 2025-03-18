@@ -9,7 +9,7 @@ use App\Shared\Domain\Event\DomainEventId;
 
 final class PropertyRemoved extends DomainEvent
 {
-    protected string $eventName = 'propertyRemoved';
+    protected static string $eventName = 'propertyRemoved';
 
     public function __construct(
         private PropertyId $propertyId, 

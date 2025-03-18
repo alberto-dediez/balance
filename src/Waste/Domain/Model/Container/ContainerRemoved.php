@@ -9,7 +9,7 @@ use App\Shared\Domain\Event\DomainEventId;
 
 final class ContainerRemoved extends DomainEvent
 {
-    protected string $eventName = 'containerRemoved';
+    protected static string $eventName = 'containerRemoved';
 
     public function __construct(
         private ContainerId $containerId, 

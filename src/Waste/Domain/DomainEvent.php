@@ -6,5 +6,5 @@ use App\Shared\Domain\Event\DomainEvent as SharedDomainEvent;
 
 abstract class DomainEvent extends SharedDomainEvent
 {
-    protected string $context = 'waste';
+    protected static string $context = 'waste';
 }

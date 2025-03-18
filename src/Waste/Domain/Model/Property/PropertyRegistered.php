@@ -10,7 +10,7 @@ use App\Security\Domain\Model\Account\AccountId;
 
 final class PropertyRegistered extends DomainEvent
 {
-    protected string $eventName = 'propertyRegistered';
+    protected static string $eventName = 'propertyRegistered';
 
     public function __construct(
         private PropertyId $propertyId, 
