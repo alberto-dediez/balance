@@ -9,7 +9,7 @@ use App\Shared\Domain\Event\DomainEventId;
 
 final class AccountRegistered extends DomainEvent
 {
-    protected string $eventName = 'accountRegistered';
+    protected static string $eventName = 'accountRegistered';
 
     public function __construct(
         private AccountId $accountId, 

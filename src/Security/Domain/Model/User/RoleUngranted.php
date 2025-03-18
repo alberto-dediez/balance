@@ -10,7 +10,7 @@ use App\Shared\Domain\Event\DomainEventId;
 
 final class RoleUngranted extends DomainEvent
 {
-    protected string $eventName = 'roleUngranted';
+    protected static string $eventName = 'roleUngranted';
 
     public function __construct(
         private UserId $userId, 

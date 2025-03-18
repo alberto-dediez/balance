@@ -1,4 +1,4 @@
 {% trans with {
-    '{account}': element.payload['accountId'],
-    '{name}': element.payload['name']
+    '{account}': event.accountId,
+    '{name}': event.name
 } %}La cuenta {account} ahora se llama {name}{% endtrans %}

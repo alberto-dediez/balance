@@ -8,7 +8,7 @@ use App\Shared\Domain\Event\DomainEventId;
 
 final class UserLoggedOut extends InfrastructureEvent
 {
-    protected string $eventName = 'userLoggedOut';
+    protected static string $eventName = 'userLoggedOut';
 
     public function __construct(
         private UserId $userId,

@@ -5,6 +5,9 @@ namespace App\Security\Domain\Model\RecordedEvent;
 use DateTimeImmutable;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Security\Domain\Model\User\UserId;
+use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Shared\Domain\Event\EventRegistry;
 
 class RecordedEvent
 {
@@ -62,5 +65,28 @@ class RecordedEvent
     public function payload(): ?array
     {
         return $this->payload;
+    }
+
+    public function rebuild(): DomainEvent
+    {
+        $class = EventRegistry::instance()
+            ->getEvent(
+                context: $this->context(),
+                eventName: $this->eventName()
+            )
+        ;
+
+        if (null == $class) {
+            throw new EventNotFoundException(
+                $this->context(),
+                $this->eventName()
+            );
+        }
+
+        return $class::rebuildFromPayload(
+            id: new DomainEventId($this->id()),
+            occurredOn: $this->occurredOn(),
+            payload: $this->payload()
+        );
     }
 }

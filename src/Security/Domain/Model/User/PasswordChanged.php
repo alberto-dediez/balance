@@ -9,7 +9,7 @@ use App\Shared\Domain\Event\DomainEventId;
 
 final class PasswordChanged extends DomainEvent
 {
-    protected string $eventName = 'passwordChanged';
+    protected static string $eventName = 'passwordChanged';
 
     public function __construct(
         private UserId $userId, 

@@ -7,10 +7,6 @@ services:
         autowire: true
         autoconfigure: true
 
-    _instanceof:
-        App\Shared\Domain\Event\DomainEventSubscriber:
-            tags: ['domain.event.subscriber']
-
     App\Shared\:
         resource: '../../../'
 

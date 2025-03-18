@@ -1,9 +1,9 @@
-{% if element.payload['active'] %}
+{% if event.active %}
     {% trans with {
-        '{account}': element.payload['accountId'] | account_id | account_name
+        '{account}': event.accountId | account_name
     } %}Activada la cuenta {account}{% endtrans %}
 {% else %}
     {% trans with {
-        '{account}': element.payload['accountId'] | account_id | account_name
+        '{account}': event.accountId | account_name
     } %}Desactivada la cuenta "{account}"{% endtrans %}
 {% endif %}
