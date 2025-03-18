@@ -19,6 +19,7 @@ final class ContainerRegistered extends DomainEvent
         private WasteId $wasteId,
         private MeasurementMethod $measurementMethod,
         private Purpose $purpose,
+        private QrCode $qrCode,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -49,6 +50,11 @@ final class ContainerRegistered extends DomainEvent
     {
         return $this->measurementMethod;
     }
+
+    public function qrCode(): QrCode
+    {
+        return $this->qrCode;
+    }
     
     public function payload(): ?array
     {
@@ -57,7 +63,8 @@ final class ContainerRegistered extends DomainEvent
             'propertyId' => (string) $this->propertyId,
             'waste' => (string) $this->wasteId,
             'purpose' => $this->purpose->value,
-            'measurementMethod' => $this->measurementMethod->value
+            'measurementMethod' => $this->measurementMethod->value,
+            'qrCode' => $this->qrCode->path()
         ];
     }
 
@@ -72,6 +79,7 @@ final class ContainerRegistered extends DomainEvent
             wasteId: new WasteId($payload['waste']), 
             purpose: Purpose::tryFrom($payload['purpose']),
             measurementMethod: MeasurementMethod::tryFrom($payload['measurementMethod']),
+            qrCode: new QrCode($payload['qrCode']),
             id: $id,
             occurredOn: $occurredOn
         );

@@ -63,13 +63,15 @@ class ContainerMother
             id: $containerId
         );
 
+        $qrCode = (new FakeQrCodeGenerator())->generate($containerId);
+
         $container
             ->register(
                 propertyId: $propertyId,
                 wasteId: $wasteId,
                 purpose: $purpose,
                 measurementMethod: $measurementMethod,
-                qrCodeGenerator: new FakeQrCodeGenerator()
+                qrCode: $qrCode
             )
         ;
 

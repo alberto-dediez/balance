@@ -85,7 +85,7 @@ class Container
         WasteId $wasteId,
         Purpose $purpose,
         MeasurementMethod $measurementMethod,
-        QrCodeGenerator $qrCodeGenerator
+        QrCode $qrCode
     ) {
         $this->recordApplyAndPublish(
             new ContainerRegistered(
@@ -94,10 +94,9 @@ class Container
                 wasteId: $wasteId,
                 purpose: $purpose,
                 measurementMethod: $measurementMethod,
+                qrCode: $qrCode
             )
         );
-
-        $this->qrCode = $qrCodeGenerator->generate($this->id());
     }
 
     public function update(
@@ -130,6 +129,7 @@ class Container
         $this->wasteId = $event->wasteId();
         $this->purpose = $event->purpose();
         $this->measurementMethod = $event->measurementMethod();
+        $this->qrCode = $event->qrCode();
         $this->registeredAt = $event->occurredOn();
     }
 

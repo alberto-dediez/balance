@@ -31,7 +31,7 @@ class RegisterContainerService
                 wasteId: $request->wasteId,
                 purpose: $request->purpose,
                 measurementMethod: $request->measurementMethod,
-                qrCodeGenerator: $this->qrCodeGenerator
+                qrCode: $this->qrCodeGenerator->generate($id)
             )
         ;
 
