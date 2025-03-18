@@ -1,0 +1,10 @@
+{% if event.accountId is not null %}
+    {% trans with {
+        '{property}': event.name,
+        '{account}': event.accountId | account_name
+    } %}Se ha registrado la propiedad {property} perteneciente a la cuenta {account} {% endtrans %}
+{% else %}
+    {% trans with {
+        '{property}': event.name,
+    } %}Se ha registrado la propiedad {property} sin cuenta asociada{% endtrans %}
+{% endif %}

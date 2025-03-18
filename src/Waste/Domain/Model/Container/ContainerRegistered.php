@@ -79,7 +79,7 @@ final class ContainerRegistered extends DomainEvent
             wasteId: new WasteId($payload['waste']), 
             purpose: Purpose::tryFrom($payload['purpose']),
             measurementMethod: MeasurementMethod::tryFrom($payload['measurementMethod']),
-            qrCode: new QrCode($payload['qrCode']),
+            qrCode: new QrCode(isset($payload['qrCode']) ? $payload['qrCode'] : ''),
             id: $id,
             occurredOn: $occurredOn
         );
