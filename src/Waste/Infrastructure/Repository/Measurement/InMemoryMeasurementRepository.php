@@ -5,7 +5,6 @@ namespace App\Waste\Infrastructure\Repository\Measurement;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Property\PropertyRepository;
-use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Waste\Domain\Model\Measurement\MeasurementFilter;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
@@ -14,7 +13,6 @@ use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 class InMemoryMeasurementRepository implements MeasurementRepository
 {
     public function __construct(
-        private ContainerRepository $containerRepository, 
         private PropertyRepository $propertyRepository, 
         private array $measurements = []
     ) {
@@ -86,23 +84,17 @@ class InMemoryMeasurementRepository implements MeasurementRepository
                 continue;
             }
 
-            $container = $this->containerRepository->find($measurement->containerId());
-
             if (
                 null !== $filter->propertyId
                 && (
-                    null == $container
-                    || null == $container->propertyId() 
-                    || false == $filter->propertyId->equals($container->propertyId())
+                    null == $measurement->propertyId() 
+                    || false == $filter->propertyId->equals($measurement->propertyId())
                 )
             ) {
                 continue;
             }
 
-            $property = null !== $container
-                ? $this->propertyRepository->find($container->propertyId())
-                : null
-            ;
+            $property = $this->propertyRepository->find($measurement->propertyId());
 
             if (
                 null !== $filter->account 
@@ -110,6 +102,16 @@ class InMemoryMeasurementRepository implements MeasurementRepository
                     null == $property 
                     || null == $property->accountId() 
                     || false == $filter->account->id()->equals($property->accountId())
+                )
+            ) {
+                continue;
+            }
+
+            if (
+                null !== $filter->userId
+                && (
+                    null == $measurement->registeredBy()
+                    || false == $measurement->registeredBy()->equals($filter->userId)
                 )
             ) {
                 continue;

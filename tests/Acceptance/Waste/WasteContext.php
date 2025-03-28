@@ -6,19 +6,25 @@ namespace App\Tests\Acceptance\Waste;
 
 use Behat\Step\Given;
 use Behat\Behat\Context\Context;
+use App\Security\Domain\Model\User\UserId;
+use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Waste\WasteRepository;
+use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Property\PropertyRepository;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
 use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 use App\Tests\Unit\Waste\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
+use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
 
 final class WasteContext implements Context
 {
     public function __construct(
         private WasteRepository $wasteRepository,
         private PropertyRepository $propertyRepository,
-        private ContainerRepository $containerRepository
+        private ContainerRepository $containerRepository,
+        private MeasurementRepository $measurementRepository
     ) {
     }
 
@@ -52,5 +58,25 @@ final class WasteContext implements Context
         $container = ContainerMother::fromPropertyAndWasteAndId($property, $waste, $id);
 
         $this->containerRepository->add($container);
+    }
+
+    #[Given('measurement for container :container from user :user with id :id exists')]
+    public function measurementForContainerFromUserWithIdExists($containerId, $user, $id): void
+    {
+        $container = $this->containerRepository->find(
+            new ContainerId($containerId)
+        );
+
+        $measurement = MeasurementMother::from(
+            containerId: $container->id(),
+            propertyId: $container->propertyId(),
+            wasteId: $container->wasteId(),
+            purpose: $container->purpose(),
+            measurementMethod: $container->measurementMethod(),
+            registeredBy: new UserId($user),
+            measurementId: new MeasurementId($id)
+        );
+
+        $this->measurementRepository->add($measurement);
     }
 }

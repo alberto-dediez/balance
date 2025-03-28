@@ -5,7 +5,6 @@ namespace App\Waste\Infrastructure\Repository\Measurement;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Waste\Domain\Model\Property\Property;
-use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Measurement\MeasurementFilter;
@@ -55,7 +54,6 @@ class DoctrineMeasurementRepository implements MeasurementRepository
 
         $qb->select('m')
             ->from(Measurement::class, 'm')
-            ->leftJoin(Container::class, 'c', 'WITH', 'c.id.id = m.containerId')
         ;
 
         if (null !== $filter->containerId) {
@@ -70,7 +68,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
         if (null !== $filter->propertyId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('c.propertyId', ':property')
+                    $qb->expr()->eq('m.propertyId', ':property')
                 )
                 ->setParameter('property', (string) $filter->propertyId)
             ;
@@ -105,11 +103,20 @@ class DoctrineMeasurementRepository implements MeasurementRepository
 
         if (null !== $filter->account) {
             $qb
-                ->leftJoin(Property::class, 'p', 'WITH', 'p.id.id = c.propertyId')
+                ->leftJoin(Property::class, 'p', 'WITH', 'p.id.id = m.propertyId')
                 ->andWhere(
                     $qb->expr()->eq('p.accountId', ':accountId')
                 )
                 ->setParameter('accountId', (string) $filter->account->id())
+            ;
+        }
+
+        if (null !== $filter->userId) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('m.registeredBy', ':userId')
+                )
+                ->setParameter('userId', (string) $filter->userId)
             ;
         }
 

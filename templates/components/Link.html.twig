@@ -1,6 +1,6 @@
 {% props path, color = 'primary' %}
 
-{% set link = cva({
+{% set link = html_cva(
     base: 'btn d-flex',
     variants: {
         color: {
@@ -10,7 +10,7 @@
             primarySubtle: 'bg-primary-subtle text-primary'
         }
     }
-}) %}
+) %}
 
 <a href="{{ path }}" 
     class="{{ link.apply({color}, attributes.render('class')) }}"

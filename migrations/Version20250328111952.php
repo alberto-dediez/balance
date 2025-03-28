@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250318171308 extends AbstractMigration
+final class Version20250328111952 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -23,11 +23,12 @@ final class Version20250318171308 extends AbstractMigration
         $this->addSql('CREATE TABLE measurements (
           id VARCHAR(36) NOT NULL,
           container_id VARCHAR(36) DEFAULT NULL,
+          property_id VARCHAR(36) DEFAULT NULL,
           waste_id VARCHAR(36) DEFAULT NULL,
           purpose LONGTEXT NOT NULL COMMENT \'(DC2Type:object)\',
           measurement_method LONGTEXT NOT NULL COMMENT \'(DC2Type:object)\',
           quantity INT NOT NULL,
-          `load` NUMERIC(4, 14) NOT NULL,
+          container_load NUMERIC(14, 4) NOT NULL,
           justification LONGTEXT DEFAULT NULL,
           registered_by VARCHAR(36) NOT NULL,
           registered_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\',

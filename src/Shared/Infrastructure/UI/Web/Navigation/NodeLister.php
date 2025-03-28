@@ -106,6 +106,11 @@ class NodeLister
                     label: new TranslatableMessage("Contenedores"),
                     icon: "solar:paper-bin-line-duotone",
                     target: $this->router->generate('containers')
+                ),
+                new Node(
+                    label: new TranslatableMessage("Mediciones"),
+                    icon: "solar:ruler-line-duotone",
+                    target: $this->router->generate('measurements')
                 )
             ]
         );
@@ -127,6 +132,22 @@ class NodeLister
 
     private function toUsers()
     {
-        return [];
+        $nodes = [];
+
+
+
+        $nodes [] = new Node(
+            label: new TranslatableMessage("Residuos"),
+            icon: "ph:recycle-duotone",
+            items: [
+                new Node(
+                    label: new TranslatableMessage("Mediciones"),
+                    icon: "solar:ruler-line-duotone",
+                    target: $this->router->generate('measurements')
+                )
+            ]
+        );
+
+        return $nodes;
     }
 }

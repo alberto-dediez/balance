@@ -43,7 +43,7 @@ class ContainerMother
 
     public static function fromPropertyAndWasteAndId(string $propertyId, string $wasteId, string $containerId)
     {
-        return self::from(
+        $container = self::from(
             containerId: new ContainerId($containerId),
             wasteId: new WasteId($wasteId),
             propertyId: new PropertyId($propertyId)

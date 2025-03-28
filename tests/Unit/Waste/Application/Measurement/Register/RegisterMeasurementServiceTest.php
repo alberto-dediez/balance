@@ -5,7 +5,6 @@ namespace App\Tests\Unit\Waste\Application\Measurement\Register;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementRegistered;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
@@ -37,7 +36,7 @@ class RegisterMeasurementServiceTest extends TestCase
             $container
         );
 
-        $measurementRepository = MeasurementRepositoryMother::fromContainerRepository($containerRepository);
+        $measurementRepository = MeasurementRepositoryMother::inMemory();
 
         $sut = $this->createSUT($containerRepository, $measurementRepository);
 

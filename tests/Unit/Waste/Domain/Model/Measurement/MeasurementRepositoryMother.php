@@ -11,18 +11,8 @@ class MeasurementRepositoryMother
 {
     public static function inMemory(): InMemoryMeasurementRepository
     {
-        return self::fromContainerRepository(
-            ContainerRepositoryMother::inMemory()
-        );
-    }
-
-    public static function fromContainerRepository(ContainerRepository $containerRepository)
-    {
-        $propertyRepository = PropertyRepositoryMother::inMemory();
-
         return new InMemoryMeasurementRepository(
-            containerRepository: $containerRepository,
-            propertyRepository: $propertyRepository
+            propertyRepository: PropertyRepositoryMother::inMemory()
         );
     }
 }

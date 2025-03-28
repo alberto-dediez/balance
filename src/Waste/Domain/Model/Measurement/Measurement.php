@@ -7,6 +7,7 @@ use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Container\Container;
+use App\Waste\Domain\Model\Property\PropertyId;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
@@ -20,13 +21,14 @@ class Measurement
     public function __construct(
         private MeasurementId $id, 
         private ContainerId|string|null $containerId = null,
+        private PropertyId|string|null $propertyId = null,
         private WasteId|string|null $wasteId = null,
         private ?Purpose $purpose = null,
         private ?MeasurementMethod $measurementMethod = null,
         private int $quantity = 0,
         private float $load = 0,
         private ?string $justification = null,
-        private ?UserId $registeredBy = null,
+        private UserId|string|null $registeredBy = null,
         private ?\DateTimeImmutable $registeredAt = null,
         array $events = []
     ) {
@@ -45,6 +47,15 @@ class Measurement
         }
 
         return $this->containerId;
+    }
+
+    public function propertyId() : ?PropertyId
+    {
+        if (is_string($this->propertyId)) {
+            $this->propertyId = new PropertyId($this->propertyId);
+        }
+
+        return $this->propertyId;
     }
 
     public function wasteId() : ?WasteId
@@ -83,6 +94,10 @@ class Measurement
 
     public function registeredBy(): ?UserId
     {
+        if (is_string($this->registeredBy)) {
+            $this->registeredBy = new UserId($this->registeredBy);
+        }
+
         return $this->registeredBy;
     }
 
@@ -102,6 +117,7 @@ class Measurement
             new MeasurementRegistered(
                 measurementId: $this->id(),
                 containerId: $container->id(),
+                propertyId: $container->propertyId(),
                 wasteId: $container->wasteId(),
                 purpose: $container->purpose(),
                 measurementMethod: $container->measurementMethod(),
@@ -140,6 +156,7 @@ class Measurement
     public function applyMeasurementRegistered(MeasurementRegistered $event)
     {
         $this->containerId = $event->containerId();
+        $this->propertyId = $event->propertyId();
         $this->wasteId = $event->wasteId();
         $this->purpose = $event->purpose();
         $this->measurementMethod = $event->measurementMethod();
