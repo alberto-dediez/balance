@@ -3,17 +3,15 @@
 namespace App\Tests\Unit\Waste\Application\Measurement\Register;
 
 use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Waste\Domain\Model\Measurement\Measurement;
-use Symfony\Component\Security\Core\User\InMemoryUser;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Waste\Domain\Model\Measurement\MeasurementRegistered;
 use App\Tests\Unit\Waste\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
-use App\Security\Infrastructure\Repository\User\InMemoryUserRepository;
+use App\Tests\Unit\Security\Domain\Model\User\UserRepositoryMother;
 use App\Tests\Unit\Waste\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 use App\Waste\Application\Measurement\Register\RegisterMeasurementRequest;
@@ -34,7 +32,7 @@ class RegisterMeasurementServiceTest extends TestCase
 
     public function testUseCase()
     {
-        $userRepository = new InMemoryUserRepository();
+        $userRepository = UserRepositoryMother::inMemory();
         $measurementRepository = MeasurementRepositoryMother::inMemory();
         $containerRepository = ContainerRepositoryMother::inMemory();
         $propertyRepository = PropertyRepositoryMother::inMemory();
