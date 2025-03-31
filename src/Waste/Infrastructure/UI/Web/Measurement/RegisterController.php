@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\UI\Web\Measurement;
 
+use App\Security\Application\Action;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -26,7 +27,7 @@ class RegisterController extends AbstractController
         Request $request
     ): Response
     {   
-        $this->denyAccessUnlessGranted('register', new Measurement(MeasurementId::generate()));
+        $this->denyAccessUnlessGranted(Action::Register->value, new Measurement(MeasurementId::generate()));
 
         $form = $this->createForm(RegisterMeasurementType::class);
 

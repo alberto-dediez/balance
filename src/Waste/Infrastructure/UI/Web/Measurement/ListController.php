@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\UI\Web\Measurement;
 
+use App\Security\Application\Action;
 use App\Security\Domain\Model\User\Role;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +29,7 @@ class ListController extends AbstractController
         Request $request
     ): Response
     {   
-        $this->denyAccessUnlessGranted('list', new Measurement(MeasurementId::generate()));
+        $this->denyAccessUnlessGranted(Action::List->value, new Measurement(MeasurementId::generate()));
 
         $account = $loggedAccount();
         $user = $loggedUser();

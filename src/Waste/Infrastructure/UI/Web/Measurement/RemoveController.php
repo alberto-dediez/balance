@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\UI\Web\Measurement;
 
+use App\Security\Application\Action;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -23,7 +24,7 @@ class RemoveController extends AbstractController
     {   
         $measurement = $this->getMeasurementFromId($measurementId, $measurementRepository);
 
-        $this->denyAccessUnlessGranted('remove', $measurement);
+        $this->denyAccessUnlessGranted(Action::Remove->value, $measurement);
 
         try {
             $removeMeasurement(new RemoveMeasurementRequest($measurement->id()));

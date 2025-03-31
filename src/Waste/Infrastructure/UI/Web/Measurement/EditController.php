@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\UI\Web\Measurement;
 
+use App\Security\Application\Action;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -28,7 +29,7 @@ class EditController extends AbstractController
     {   
         $measurement = $this->getMeasurementFromId($measurementId, $measurementRepository);
 
-        $this->denyAccessUnlessGranted('edit', $measurement);
+        $this->denyAccessUnlessGranted(Action::Edit->value, $measurement);
 
         $measurementRequest = new UpdateMeasurementRequest(
             measurementId: $measurement->id(),
