@@ -36,4 +36,4 @@ Feature:
       Given user "user2@dediez.software" with id "4444" of account "44" exists
       When I am logged as "owner@dediez.software"
       When I go to "/es/users/remove/4444"
-      Then the response status should be 404
+      Then the response status should be 403

@@ -2,9 +2,10 @@
 
 namespace App\Shared\Infrastructure\Symfony;
 
+use App\Security\Application\Authorizer;
 use App\Shared\Domain\Event\DomainEvent;
-use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\EventRegistry;
+use App\Shared\Domain\Event\DomainEventSubscriber;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -43,6 +44,10 @@ class Kernel extends BaseKernel implements CompilerPassInterface
 
         $container->registerForAutoconfiguration(DomainEventSubscriber::class)
             ->addTag('domain.event.subscriber')
+        ;
+
+        $container->registerForAutoconfiguration(Authorizer::class)
+            ->addTag('application.authorizer')
         ;
     }
 }

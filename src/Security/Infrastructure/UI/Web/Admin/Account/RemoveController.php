@@ -2,11 +2,12 @@
 
 namespace App\Security\Infrastructure\UI\Web\Admin\Account;
 
-use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Application\Action;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Security\Domain\Model\Account\AccountRepository;
+use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Component\Translation\TranslatableMessage;
+use App\Security\Domain\Model\Account\AccountRepository;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Security\Application\Account\Remove\RemoveAccountRequest;
 use App\Security\Application\Account\Remove\RemoveAccountService;
@@ -25,6 +26,8 @@ class RemoveController extends AbstractController
     ): Response
     {   
         $account = $this->getAccountFromId($accountId, $accountRepository);
+
+        $this->denyAccessUnlessGranted(Action::Remove->value, $account);
 
         try {
             $removeAccount(new RemoveAccountRequest($account->id()));
