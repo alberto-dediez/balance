@@ -25,8 +25,13 @@
             <td>{{ element.active | show_field_value }}</td>
             <td>{{ element.registeredAt | date('d/m/Y') }}</td>
             <td>
-                <twig:List:Action:Edit path="{{ path('admin_accounts_edit', {'accountId': element.id}) }}" />
-                <twig:List:Action:Delete path="{{ path('admin_accounts_remove', {'accountId': element.id}) }}" />
+                {% if element | is_authorized('edit') %}
+                    <twig:List:Action:Edit path="{{ path('admin_accounts_edit', {'accountId': element.id}) }}" />
+                {% endif %}
+
+                {% if element | is_authorized('remove') %}
+                    <twig:List:Action:Delete path="{{ path('admin_accounts_remove', {'accountId': element.id}) }}" />
+                {% endif %}  
             </td>
         </tr>
     </twig:List:Table>

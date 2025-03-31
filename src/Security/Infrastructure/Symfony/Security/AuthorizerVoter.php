@@ -12,8 +12,7 @@ class AuthorizerVoter extends Voter
 {
     public function __construct(
         private LoggedUser $loggedUser, 
-        #[AutowireIterator('application.authorizer')]
-        private iterable $authorizers
+        private AuthorizerFactory $authorizerFactory
     ) {
         
     }
@@ -26,7 +25,7 @@ class AuthorizerVoter extends Voter
             return false; 
         }
 
-        $authorizer = $this->getAuthorizer($subject);
+        $authorizer = $this->authorizerFactory->createFor($subject);
 
         if (null == $authorizer) {
             return false;
@@ -35,24 +34,9 @@ class AuthorizerVoter extends Voter
         return true;
     }
 
-    protected function getAuthorizer(mixed $subject): ?Authorizer
-    {
-        if (count($this->authorizers) == 0) {
-            return null;
-        }
-
-        foreach ($this->authorizers as $authorizer) {
-            if ($authorizer->supports($subject)) {
-                return $authorizer;
-            }
-        }
-
-        return null;
-    }
-
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
-        $authorizer = $this->getAuthorizer($subject);
+        $authorizer = $this->authorizerFactory->createFor($subject);
         
         $action = Action::tryFrom($attribute);
 
