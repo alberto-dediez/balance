@@ -6,7 +6,6 @@ use DateTimeImmutable;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
-use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Event\EventRegistry;
 
 class RecordedEvent

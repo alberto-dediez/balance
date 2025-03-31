@@ -2,6 +2,9 @@
 
 namespace App\Security\Infrastructure\UI\Web\User;
 
+use App\Security\Application\Action;
+use App\Security\Domain\Model\User\User;
+use App\Security\Domain\Model\User\UserId;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -31,6 +34,10 @@ class RegisterController extends AbstractController
                 new TranslatableMessage("Debes pertenecer a una cuenta para poder acceder")
             );
         }
+
+        $user = new User(UserId::generate());
+
+        $this->denyAccessUnlessGranted(Action::Register->value, $user);
 
         $form = $this->createForm(RegisterUserType::class);
 

@@ -2,6 +2,9 @@
 
 namespace App\Security\Infrastructure\UI\Web\Admin\User;
 
+use App\Security\Application\Action;
+use App\Security\Domain\Model\User\User;
+use App\Security\Domain\Model\User\UserId;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -23,6 +26,10 @@ class ListController extends AbstractController
         Request $request
     ): Response
     {   
+        $user = new User(UserId::generate());
+
+        $this->denyAccessUnlessGranted(Action::List->value, $user);
+
         list($filter, $form) = $this->filter($request, function () {
             return  new ListUsersRequest();
         }, AdminListUsersType::class);

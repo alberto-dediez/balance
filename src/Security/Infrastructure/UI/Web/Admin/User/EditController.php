@@ -2,6 +2,7 @@
 
 namespace App\Security\Infrastructure\UI\Web\Admin\User;
 
+use App\Security\Application\Action;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -27,6 +28,8 @@ class EditController extends AbstractController
     ): Response
     {   
         $user = $this->getUserFromId($userId, $userRepository);
+
+        $this->denyAccessUnlessGranted(Action::Edit->value, $user);
 
         $form = $this->createForm(AdminEditUserType::class, new EditUser($user->roles()));
 
