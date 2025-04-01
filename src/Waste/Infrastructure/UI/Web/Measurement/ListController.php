@@ -2,14 +2,12 @@
 
 namespace App\Waste\Infrastructure\UI\Web\Measurement;
 
-use App\Security\Application\Action;
 use App\Security\Domain\Model\User\Role;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Waste\Domain\Model\Measurement\Measurement;
-use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Waste\Infrastructure\Symfony\Form\ListMeasurementsType;
@@ -29,8 +27,6 @@ class ListController extends AbstractController
         Request $request
     ): Response
     {   
-        $this->denyAccessUnlessGranted(Action::List->value, new Measurement(MeasurementId::generate()));
-
         $account = $loggedAccount();
         $user = $loggedUser();
 
@@ -41,12 +37,16 @@ class ListController extends AbstractController
             ;
 
             return  new ListMeasurementsRequest(
-                account: $account,
+                accountId: $account?->id(),
                 userId: $userId
             );
         }, ListMeasurementsType::class);
 
-        $response = $listMeasurements($filter);
+        try {
+            $response = $listMeasurements($filter, $user);
+        } catch (UnauthorizedActionException $exception) {
+            throw $this->createAccessDeniedException($exception->getMessage());
+        }
 
         return $this->render('@waste/measurements/list.html.twig', [
             'measurements' => $response->measurements,

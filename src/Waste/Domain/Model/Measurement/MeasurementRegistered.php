@@ -9,6 +9,7 @@ use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
@@ -25,6 +26,7 @@ final class MeasurementRegistered extends DomainEvent
         private MeasurementMethod $measurementMethod,
         private Purpose $purpose,
         private UserId $registeredBy,
+        private AccountId $accountId,
         private int $quantity = 0,
         private float $load = 0,
         private ?string $justification = null,
@@ -79,6 +81,11 @@ final class MeasurementRegistered extends DomainEvent
         return $this->justification;
     }
 
+    public function accountId(): ?AccountId
+    {
+        return $this->accountId;
+    }
+
     public function registeredBy(): UserId
     {
         return $this->registeredBy;
@@ -96,6 +103,7 @@ final class MeasurementRegistered extends DomainEvent
             'quantity' => $this->quantity,
             'load' => $this->load,
             'justification' => $this->justification,
+            'accountId' => (string) $this->accountId,
             'registeredBy' => (string) $this->registeredBy
         ];
     }
@@ -116,6 +124,7 @@ final class MeasurementRegistered extends DomainEvent
             load: $payload['load'],
             justification: $payload['justification'],
             registeredBy: new UserId($payload['registeredBy']),
+            accountId: new AccountId($payload['accountId']),
             id: $id,
             occurredOn: $occurredOn
         );

@@ -7,6 +7,7 @@ use App\Security\Domain\Model\User\UserId;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
@@ -22,6 +23,7 @@ class MeasurementMother
             wasteId: WasteId::generate(),
             containerId: $containerId,
             registeredBy: UserId::generate(),
+            accountId: AccountId::generate()
         );
     }
 
@@ -31,6 +33,7 @@ class MeasurementMother
         WasteId $wasteId, 
         ContainerId $containerId, 
         UserId $registeredBy,
+        AccountId $accountId,
         Purpose $purpose = Purpose::Waste, 
         MeasurementMethod $measurementMethod = MeasurementMethod::Volume,
         int $quantity = 0,
@@ -55,7 +58,8 @@ class MeasurementMother
                 quantity: $quantity,
                 load: $load,
                 registeredBy: $registeredBy,
-                justification: $justification
+                justification: $justification,
+                accountId: $accountId
             )
         ;
 
@@ -73,6 +77,27 @@ class MeasurementMother
             wasteId: WasteId::generate(),
             containerId: ContainerId::generate(),
             registeredBy: UserId::generate(),
+            accountId: AccountId::generate(),
+            purpose: $purpose,
+            measurementMethod: $measurementMethod,
+            quantity: rand(1, 9),
+            load: rand(0, 100) / 100,
+            justification: null
+        );
+    }
+
+    public static function fromAccount(AccountId $accountId)
+    {
+        $purpose = Purpose::cases()[rand(0, count(Purpose::cases())-1)];
+        $measurementMethod = MeasurementMethod::cases()[rand(0, count(MeasurementMethod::cases())-1)];
+
+        return self::from(
+            measurementId: MeasurementId::generate(),
+            propertyId: PropertyId::generate(),
+            wasteId: WasteId::generate(),
+            containerId: ContainerId::generate(),
+            registeredBy: UserId::generate(),
+            accountId: $accountId,
             purpose: $purpose,
             measurementMethod: $measurementMethod,
             quantity: rand(1, 9),

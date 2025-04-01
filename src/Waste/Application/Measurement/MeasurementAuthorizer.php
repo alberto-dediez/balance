@@ -6,11 +6,10 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Security\Application\AbstractAuthorizer;
 use App\Waste\Domain\Model\Measurement\Measurement;
-use App\Waste\Domain\Model\Property\PropertyRepository;
 
 final class MeasurementAuthorizer extends AbstractAuthorizer
 {
-    public function __construct(private PropertyRepository $propertyRepository)
+    public function __construct()
     {
         
     }
@@ -26,14 +25,12 @@ final class MeasurementAuthorizer extends AbstractAuthorizer
 
     protected function canView(mixed $subject, User $user): bool
     {
-        $property = $this->propertyRepository->find($subject->propertyId());
-
-        if (null == $property || null == $property->accountId()) {
+        if (null == $user->accountId()) {
             return false;
         }
 
         return 
-            $user->accountId()->equals($property->accountId())
+            $user->accountId()->equals($subject->accountId())
             && (
                 $user->hasRole(Role::Owner)
                 || $user->id()->equals($subject->registeredBy())
@@ -43,7 +40,7 @@ final class MeasurementAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        if (null == $user->accountId()) {
+        if (null == $user->accountId() || false == $user->accountId()->equals($subject->accountId())) {
             return false;
         }
         
@@ -52,14 +49,12 @@ final class MeasurementAuthorizer extends AbstractAuthorizer
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        $property = $this->propertyRepository->find($subject->propertyId());
-
-        if (null == $property || null == $property->accountId()) {
+        if (null == $user->accountId() || null == $subject->accountId()) {
             return false;
         }
 
         return 
-            $user->accountId()->equals($property->accountId())
+            $user->accountId()->equals($subject->accountId())
             && (
                 $user->hasRole(Role::Owner)
                 || $user->id()->equals($subject->registeredBy())
@@ -69,14 +64,12 @@ final class MeasurementAuthorizer extends AbstractAuthorizer
 
     protected function canRemove(mixed $subject, User $user): bool
     {
-        $property = $this->propertyRepository->find($subject->propertyId());
-
-        if (null == $property || null == $property->accountId()) {
+        if (null == $user->accountId()) {
             return false;
         }
 
         return 
-            $user->accountId()->equals($property->accountId())
+            $user->accountId()->equals($subject->accountId())
             && (
                 $user->hasRole(Role::Owner)
             )

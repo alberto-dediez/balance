@@ -7,6 +7,7 @@ namespace App\Tests\Acceptance\Waste;
 use Behat\Step\Given;
 use Behat\Behat\Context\Context;
 use App\Security\Domain\Model\User\UserId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Waste\WasteRepository;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
@@ -60,8 +61,8 @@ final class WasteContext implements Context
         $this->containerRepository->add($container);
     }
 
-    #[Given('measurement for container :container from user :user with id :id exists')]
-    public function measurementForContainerFromUserWithIdExists($containerId, $user, $id): void
+    #[Given('measurement for container :container and account :account from user :user with id :id exists')]
+    public function measurementForContainerAndAccountFromUserWithIdExists($containerId, $accountId, $user, $id): void
     {
         $container = $this->containerRepository->find(
             new ContainerId($containerId)
@@ -74,7 +75,8 @@ final class WasteContext implements Context
             purpose: $container->purpose(),
             measurementMethod: $container->measurementMethod(),
             registeredBy: new UserId($user),
-            measurementId: new MeasurementId($id)
+            measurementId: new MeasurementId($id),
+            accountId: new AccountId($accountId)
         );
 
         $this->measurementRepository->add($measurement);

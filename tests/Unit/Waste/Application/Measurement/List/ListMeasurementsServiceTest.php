@@ -3,6 +3,10 @@
 namespace App\Tests\Unit\Waste\Application\Measurement\List;
 
 use PHPUnit\Framework\TestCase;
+use App\Security\Domain\Model\Account\Account;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Application\Measurement\List\ListMeasurementsRequest;
 use App\Waste\Application\Measurement\List\ListMeasurementsService;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
@@ -22,14 +26,19 @@ class ListMeasurementsServiceTest extends TestCase
 
         $sut = $this->createSUT($repository);
 
-        $repository->add(MeasurementMother::random());
-        $repository->add(MeasurementMother::random());
-        $repository->add(MeasurementMother::random());
-        $repository->add(MeasurementMother::random());
+        $account = new Account(AccountId::generate());
+        $user = UserMother::fromUsernameAndAccount('test', $account);
 
-        $request = new ListMeasurementsRequest();
+        $repository->add(MeasurementMother::fromAccount($account->id()));
+        $repository->add(MeasurementMother::fromAccount($account->id()));
+        $repository->add(MeasurementMother::fromAccount($account->id()));
+        $repository->add(MeasurementMother::fromAccount($account->id()));
 
-        $result = $sut($request);
+        $request = new ListMeasurementsRequest(
+            accountId: $account->id()
+        );
+
+        $result = $sut($request, $user);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof ListMeasurementsResponse);
@@ -39,6 +48,6 @@ class ListMeasurementsServiceTest extends TestCase
 
     private function createSUT($repository)
     {
-        return new ListMeasurementsService($repository);
+        return new ListMeasurementsService($repository, new MeasurementAuthorizer());
     }
 }

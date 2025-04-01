@@ -8,10 +8,10 @@ Feature:
         Given waste "Plastico" with id "plastico" exists
         Given property "Hotel" with id "hotel" of account "mycompany" exists
         Given container for "pastico" in "hotel" with id "container" exists
-        Given measurement for container "container" from user "user1" with id "m1" exists
-        Given measurement for container "container" from user "user1" with id "m2" exists
-        Given measurement for container "container" from user "user2" with id "m3" exists
-        Given measurement for container "container" from user "user2" with id "m4" exists
+        Given measurement for container "container" and account "mycompany" from user "user1" with id "m1" exists
+        Given measurement for container "container" and account "mycompany" from user "user1" with id "m2" exists
+        Given measurement for container "container" and account "mycompany" from user "user2" with id "m3" exists
+        Given measurement for container "container" and account "mycompany" from user "user2" with id "m4" exists
         When I am logged as "user1@dediez.software"
         When I go to "/es/measurements"
         Then the response status should be 200
@@ -25,10 +25,10 @@ Feature:
         Given waste "Plastico" with id "plastico" exists
         Given property "Hotel" with id "hotel" of account "mycompany" exists
         Given container for "pastico" in "hotel" with id "container" exists
-        Given measurement for container "container" from user "user1" with id "m1" exists
-        Given measurement for container "container" from user "user1" with id "m2" exists
-        Given measurement for container "container" from user "user2" with id "m3" exists
-        Given measurement for container "container" from user "user2" with id "m4" exists
+        Given measurement for container "container" and account "mycompany" from user "user1" with id "m1" exists
+        Given measurement for container "container" and account "mycompany" from user "user1" with id "m2" exists
+        Given measurement for container "container" and account "mycompany" from user "user2" with id "m3" exists
+        Given measurement for container "container" and account "mycompany" from user "user2" with id "m4" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/measurements"
         Then the response status should be 200

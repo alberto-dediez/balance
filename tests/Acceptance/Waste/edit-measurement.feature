@@ -8,7 +8,7 @@ Feature:
     Given waste "Plastico" with id "plastico" exists
     Given property "Hotel" with id "hotel" of account "mycompany" exists
     Given container for "pastico" in "hotel" with id "container" exists
-    Given measurement for container "container" from user "user1" with id "111" exists
+    Given measurement for container "container" and account "mycompany" from user "user1" with id "111" exists
     When I am logged as "owner@dediez.software"
     When I go to "/es/measurements/edit/111"
     Then the response status should be 200
@@ -21,7 +21,7 @@ Feature:
     Given waste "Plastico" with id "plastico" exists
     Given property "Hotel" with id "hotel" of account "other" exists
     Given container for "pastico" in "hotel" with id "container" exists
-    Given measurement for container "container" from user "user1" with id "111" exists
+    Given measurement for container "container" and account "other" from user "user1" with id "111" exists
     When I am logged as "owner@dediez.software"
     When I go to "/es/measurements/edit/111"
     Then the response status should be 403
@@ -32,7 +32,7 @@ Feature:
     Given waste "Plastico" with id "plastico" exists
     Given property "Hotel" with id "hotel" of account "mycompany" exists
     Given container for "pastico" in "hotel" with id "container" exists
-    Given measurement for container "container" from user "user1" with id "111" exists
+    Given measurement for container "container" and account "mycompany" from user "user1" with id "111" exists
     When I am logged as "user1@dediez.software"
     When I go to "/es/measurements/edit/111"
     Then the response status should be 200
@@ -44,8 +44,8 @@ Feature:
     Given waste "Plastico" with id "plastico" exists
     Given property "Hotel" with id "hotel" of account "mycompany" exists
     Given container for "pastico" in "hotel" with id "container" exists
-    Given measurement for container "container" from user "user1" with id "111" exists
-    Given measurement for container "container" from user "user2" with id "222" exists
+    Given measurement for container "container" and account "mycompany" from user "user1" with id "111" exists
+    Given measurement for container "container" and account "mycompany" from user "user2" with id "222" exists
     When I am logged as "user1@dediez.software"
     When I go to "/es/measurements/edit/222"
     Then the response status should be 403

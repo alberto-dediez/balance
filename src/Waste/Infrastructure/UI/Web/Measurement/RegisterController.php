@@ -39,7 +39,7 @@ class RegisterController extends AbstractController
                 quantity: $form->get('quantity')->getData(),
                 load: $form->get('load')->getData(),
                 registeredBy: $user->id(),
-                justification: $form->get('justification')->getData()      
+                justification: $form->get('justification')->getData()
             );
 
             $response = $registerMeasurement($registerRequest);

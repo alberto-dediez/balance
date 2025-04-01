@@ -26,6 +26,8 @@ class RegisterMeasurementService
 
         $container = $this->containerRepository->find($request->containerId);
 
+        $property = $this->propertyRepository->find($container->propertyId());
+
         $id = MeasurementId::generate();
 
         $measurement = new Measurement($id);
@@ -35,7 +37,8 @@ class RegisterMeasurementService
                 quantity: $request->quantity,
                 load: $request->load,
                 registeredBy: $request->registeredBy,
-                justification: $request->justification
+                justification: $request->justification,
+                accountId: $property->accountId()
             )
         ;
 

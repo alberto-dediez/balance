@@ -4,7 +4,6 @@ namespace App\Waste\Infrastructure\Repository\Measurement;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Waste\Domain\Model\Property\Property;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Measurement\MeasurementFilter;
@@ -101,13 +100,12 @@ class DoctrineMeasurementRepository implements MeasurementRepository
             ;
         }
 
-        if (null !== $filter->account) {
+        if (null !== $filter->accountId) {
             $qb
-                ->leftJoin(Property::class, 'p', 'WITH', 'p.id.id = m.propertyId')
                 ->andWhere(
-                    $qb->expr()->eq('p.accountId', ':accountId')
+                    $qb->expr()->eq('m.accountId', ':accountId')
                 )
-                ->setParameter('accountId', (string) $filter->account->id())
+                ->setParameter('accountId', (string) $filter->accountId)
             ;
         }
 

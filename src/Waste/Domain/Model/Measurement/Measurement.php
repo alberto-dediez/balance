@@ -8,6 +8,7 @@ use App\Shared\Domain\Model\AggregateRoot;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
@@ -28,6 +29,7 @@ class Measurement
         private int $quantity = 0,
         private float $load = 0,
         private ?string $justification = null,
+        private AccountId|string|null $accountId = null,
         private UserId|string|null $registeredBy = null,
         private ?\DateTimeImmutable $registeredAt = null,
         array $events = []
@@ -92,6 +94,15 @@ class Measurement
         return $this->justification;
     }
 
+    public function accountId(): ?AccountId
+    {
+        if (is_string($this->accountId)) {
+            $this->accountId = new AccountId($this->accountId);
+        }
+
+        return $this->accountId;
+    }
+
     public function registeredBy(): ?UserId
     {
         if (is_string($this->registeredBy)) {
@@ -111,6 +122,7 @@ class Measurement
         int $quantity,
         float $load,
         UserId $registeredBy,
+        AccountId $accountId,
         ?string $justification = null
     ) {
         $this->recordApplyAndPublish(
@@ -124,6 +136,7 @@ class Measurement
                 quantity: $quantity,
                 load: $load,
                 justification: $justification,
+                accountId: $accountId,
                 registeredBy: $registeredBy
             )
         );
@@ -163,6 +176,7 @@ class Measurement
         $this->quantity = $event->quantity();
         $this->load = $event->load();
         $this->justification = $event->justification();
+        $this->accountId = $event->accountId();
         $this->registeredBy = $event->registeredBy();
         $this->registeredAt = new \DateTimeImmutable("NOW");
     }
