@@ -2,19 +2,28 @@
 
 namespace App\Security\Application\User\Register;
 
+use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
+use App\Security\Application\User\UserAuthorizer;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Application\User\Register\PasswordHasher;
 
 class RegisterUserService
 {
-    public function __construct(private UserRepository $userRepository, private PasswordHasher $passwordHasher)
+    public function __construct(private UserRepository $userRepository, private PasswordHasher $passwordHasher, private UserAuthorizer $authorizer)
     {
     }
 
-    public function __invoke(RegisterUserRequest $request): RegisterUserResponse
+    public function __invoke(RegisterUserRequest $request, User $performBy): RegisterUserResponse
     {
+        $user = new User(
+            id: UserId::generate(),
+            accountId: $request->accountId
+        );
+
+        $this->authorizer->denyUnlessCanDoThat($user, Action::Register, $performBy);
+
         if (null !== $this->userRepository->findByUsername($request->username)) {
             throw new DuplicateUsernameException($request->username);
         }

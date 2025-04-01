@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use App\Security\Application\Account\Register\RegisterAccountRequest;
 use App\Security\Application\Account\Register\RegisterAccountService;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 
 #[AsCommand(
     name: 'security:account:register',
@@ -37,7 +38,9 @@ class RegisterCommand extends Command
             active: $input->getArgument('active') == 'true'
         );
 
-        $response = $this->registerAccount->__invoke($request);
+        $user = UserMother::systemUser();
+
+        $response = $this->registerAccount->__invoke($request, $user);
 
         $io = new SymfonyStyle($input, $output);
         $io->title('Registro de cuentas');

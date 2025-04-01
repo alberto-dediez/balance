@@ -13,4 +13,6 @@ enum Action: string
     case Register = 'register';
 
     case Remove = 'remove';
+
+    case Admin = 'admin';
 }

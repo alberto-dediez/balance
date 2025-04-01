@@ -11,6 +11,8 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Security\Infrastructure\Symfony\Form\RegisterUserType;
 use App\Security\Infrastructure\UI\Web\User\RegisterUserTrait;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
@@ -23,6 +25,7 @@ class RegisterController extends AbstractController
     use RegisterUserTrait, RegisterTrait;
 
     public function __invoke(
+        LoggedUser $loggedUser,
         LoggedAccount $loggedAccount,
         Request $request
     ): Response
@@ -35,21 +38,31 @@ class RegisterController extends AbstractController
             );
         }
 
-        $user = new User(UserId::generate());
+        $user = new User(
+            id: UserId::generate(),
+            accountId: $account->id()
+        );
+
+        $performBy = $loggedUser();
 
         $this->denyAccessUnlessGranted(Action::Register->value, $user);
 
-        $form = $this->createForm(RegisterUserType::class);
+        try {
+            $form = $this->createForm(RegisterUserType::class);
 
-        $needsRedirect = $this->register($request, $form, function ($form) use ($loggedAccount) {
-            return $this->registerUser(
-                form: $form,
-                account: $loggedAccount()
-            );
-        });
+            $needsRedirect = $this->register($request, $form, function ($form) use ($loggedAccount, $performBy) {
+                return $this->registerUser(
+                    form: $form,
+                    account: $loggedAccount(),
+                    performBy: $performBy
+                );
+            });
 
-        if ($needsRedirect) {
-            return $this->redirectToRoute('users');
+            if ($needsRedirect) {
+                return $this->redirectToRoute('users');
+            }
+        } catch (UnauthorizedActionException $e) {
+            throw $this->createAccessDeniedException($e->getMessage());
         }
 
         return $this->render('@security/users/register.html.twig', [

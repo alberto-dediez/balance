@@ -3,6 +3,7 @@
 namespace App\Security\Infrastructure\UI\Web\Admin\User;
 
 use App\Security\Application\Action;
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,6 +13,7 @@ use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
 use App\Security\Application\User\List\ListUsersRequest;
 use App\Security\Application\User\List\ListUsersService;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Security\Infrastructure\Symfony\Form\AdminListUsersType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -22,19 +24,22 @@ class ListController extends AbstractController
     use FilterTrait;
 
     public function __invoke(
+        LoggedUser $loggedUser,
         ListUsersService $listUsers,
         Request $request
     ): Response
     {   
-        $user = new User(UserId::generate());
-
-        $this->denyAccessUnlessGranted(Action::List->value, $user);
-
         list($filter, $form) = $this->filter($request, function () {
             return  new ListUsersRequest();
         }, AdminListUsersType::class);
 
-        $response = $listUsers($filter);
+        try {
+            $performBy = $loggedUser();
+
+            $response = $listUsers($filter, $performBy);
+        } catch (UnauthorizedActionException $e) {
+            throw $this->createAccessDeniedException($e->getMessage());
+        }
 
         return $this->render('@security/admin/users/list.html.twig', [
             'users' => $response->users,

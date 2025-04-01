@@ -5,14 +5,17 @@ namespace App\Tests\Unit\Security\Application\Account\Update;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\Account\Account;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Security\Domain\Model\Account\AccountNameChanged;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Security\Domain\Model\Account\AccountStatusChanged;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Security\Application\Account\Update\UpdateAccountRequest;
 use App\Security\Application\Account\Update\UpdateAccountService;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Security\Application\Account\Update\UpdateAccountResponse;
-use App\Security\Domain\Model\Account\AccountNameChanged;
-use App\Security\Domain\Model\Account\AccountStatusChanged;
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Repository\Account\InMemoryAccountRepository;
+use App\Tests\Unit\Security\Application\Account\AccountAuthorizerMother;
 
 class UpdateAccountServiceTest extends TestCase
 {
@@ -31,6 +34,8 @@ class UpdateAccountServiceTest extends TestCase
 
         $account = AccountMother::fromName('MyAccount');
 
+        $user = UserMother::adminUser();
+
         $repository->add($account);
 
         $sut = $this->createSUT($repository);
@@ -41,7 +46,7 @@ class UpdateAccountServiceTest extends TestCase
             active: false
         );
 
-        $result = $sut($request);
+        $result = $sut($request, $user);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof UpdateAccountResponse);
@@ -68,6 +73,8 @@ class UpdateAccountServiceTest extends TestCase
 
         $account = AccountMother::fromName('MyAccount');
 
+        $user = UserMother::adminUser();
+
         $repository->add($account);
 
         $sut = $this->createSUT($repository);
@@ -78,7 +85,7 @@ class UpdateAccountServiceTest extends TestCase
             active: true
         );
 
-        $result = $sut($request);
+        $result = $sut($request, $user);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof UpdateAccountResponse);
@@ -102,6 +109,8 @@ class UpdateAccountServiceTest extends TestCase
 
         $account = AccountMother::fromName('MyAccount');
 
+        $user = UserMother::adminUser();
+
         $repository->add($account);
 
         $sut = $this->createSUT($repository);
@@ -112,7 +121,7 @@ class UpdateAccountServiceTest extends TestCase
             active: true
         );
 
-        $result = $sut($request);
+        $result = $sut($request, $user);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof UpdateAccountResponse);
@@ -129,8 +138,33 @@ class UpdateAccountServiceTest extends TestCase
         $this->assertFalse($lastEvent instanceof AccountStatusChanged);
     }
 
+    public function testUnauthorizedAccess()
+    {
+        $this->expectException(UnauthorizedActionException::class);
+
+        $repository = new InMemoryAccountRepository();
+
+        $account = AccountMother::fromName('MyAccount');
+
+        $user = UserMother::ownerUser();
+
+        $repository->add($account);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateAccountRequest(
+            accountId: $account->id(),
+            name: 'MyAccount',
+            active: true
+        );
+
+        $sut($request, $user);
+    }
+
     private function createSUT($repository)
     {
-        return new UpdateAccountService($repository);
+        $authorizer = AccountAuthorizerMother::create();
+
+        return new UpdateAccountService($repository, $authorizer);
     }
 }

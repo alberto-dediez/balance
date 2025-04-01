@@ -2,6 +2,7 @@
 
 namespace App\Security\Infrastructure\UI\Web;
 
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Application\User\ChangePassword\ChangePasswordRequest;
 use App\Security\Application\User\ChangePassword\ChangePasswordService;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,9 +52,11 @@ class ProfileController extends AbstractController
                 $changePassword(new ChangePasswordRequest(
                     userId: $user->id(),
                     password: $form->get('password')->getData()
-                ));
+                ), $user);
 
                 $this->addFlash('success', new TranslatableMessage('La contraseña se ha actualizado correctamente'));
+            } catch (UnauthorizedActionException $e) {
+                throw $this->createAccessDeniedException($e->getMessage());
             } catch (\Exception $e) {
                 $this->addFlash('danger', new TranslatableMessage('Error inesperado. No se ha actualizado tu contraseña'));
             }

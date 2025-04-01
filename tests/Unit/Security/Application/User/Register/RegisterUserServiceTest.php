@@ -2,10 +2,12 @@
 
 namespace App\Tests\Unit\Security\Application\User\Register;
 
+use App\Security\Application\UnauthorizedActionException;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Security\Domain\Model\User\UserRegistered;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Security\Application\User\Register\RegisterUserRequest;
 use App\Security\Application\User\Register\RegisterUserService;
 use App\Security\Application\User\Register\RegisterUserResponse;
@@ -13,6 +15,7 @@ use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Security\Infrastructure\Symfony\Security\Md5PasswordHasher;
 use App\Security\Application\User\Register\DuplicateUsernameException;
 use App\Security\Infrastructure\Repository\User\InMemoryUserRepository;
+use App\Tests\Unit\Security\Application\User\UserAuthorizerMother;
 
 class RegisterUserServiceTest extends TestCase
 {
@@ -36,7 +39,9 @@ class RegisterUserServiceTest extends TestCase
             password: '666'
         );
 
-        $result = $sut($request);
+        $performBy = UserMother::adminUser();
+
+        $result = $sut($request, $performBy);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RegisterUserResponse);
@@ -67,7 +72,9 @@ class RegisterUserServiceTest extends TestCase
             password: '666'
         );
 
-        $result = $sut($request);
+        $performBy = UserMother::adminUser();
+
+        $result = $sut($request, $performBy);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RegisterUserResponse);
@@ -89,12 +96,14 @@ class RegisterUserServiceTest extends TestCase
 
         $sut = $this->createSUT($repository);
 
+        $performBy = UserMother::adminUser();
+
         $request1 = new RegisterUserRequest(
             username: 'an@email.com',
             password: '666'
         );
 
-        $result = $sut($request1);
+        $result = $sut($request1, $performBy);
 
         $this->assertNotNull($result);
 
@@ -103,13 +112,31 @@ class RegisterUserServiceTest extends TestCase
             password: '777'
         );
 
-        $sut($request2);
+        $sut($request2, $performBy);
+    }
+
+    public function testUnauthorizedAccess()
+    {
+        $this->expectException(UnauthorizedActionException::class);
+
+        $repository = new InMemoryUserRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $performBy = UserMother::ownerUser();
+
+        $request1 = new RegisterUserRequest(
+            username: 'an@email.com',
+            password: '666'
+        );
+
+        $sut($request1, $performBy);
     }
 
     private function createSUT($repository)
     {
         $passwordHasher = new Md5PasswordHasher();
 
-        return new RegisterUserService($repository, $passwordHasher);
+        return new RegisterUserService($repository, $passwordHasher, UserAuthorizerMother::create());
     }
 }

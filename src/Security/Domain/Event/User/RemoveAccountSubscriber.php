@@ -9,12 +9,13 @@ use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Security\Domain\Model\Account\AccountRemoved;
 use App\Security\Application\User\Remove\RemoveUserRequest;
 use App\Security\Application\User\Remove\RemoveUserService;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 
 class RemoveAccountSubscriber implements DomainEventSubscriber
 {
     use RegisterTrait;
 
-    public function __construct(private UserRepository $userRepository, private RemoveUserService $removeUser)
+    public function __construct(private UserRepository $userRepository, private RemoveUserService $removeUser, private LoggedUser $loggedUser)
     {
         $this->register();
     }
@@ -36,6 +37,8 @@ class RemoveAccountSubscriber implements DomainEventSubscriber
             return ;
         }
 
+        $performBy = $this->loggedUser->__invoke();
+
         $removeUser = $this->removeUser;
 
         foreach ($users as $user) {
@@ -43,7 +46,7 @@ class RemoveAccountSubscriber implements DomainEventSubscriber
                 $user->id()
             );
 
-            $removeUser($request);
+            $removeUser($request, $performBy);
         }
     }
 
