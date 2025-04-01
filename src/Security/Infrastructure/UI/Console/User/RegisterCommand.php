@@ -9,6 +9,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Security\Application\User\Register\RegisterUserRequest;
 use App\Security\Application\User\Register\RegisterUserService;
 
@@ -42,7 +43,9 @@ class RegisterCommand extends Command
                 : null
         );
 
-        $response = $this->registerUser->__invoke($request);
+        $performBy = UserMother::systemUser();
+
+        $response = $this->registerUser->__invoke($request, $performBy);
 
         $io = new SymfonyStyle($input, $output);
         $io->title('Registro de usuarios');

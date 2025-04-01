@@ -3,6 +3,7 @@
 namespace App\Security\Infrastructure\UI\Web\Admin\User;
 
 use App\Security\Application\Action;
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Security\Infrastructure\UI\Web\User\RegisterUserTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Security\Infrastructure\Symfony\Form\AdminRegisterUserType;
@@ -21,6 +23,7 @@ class RegisterController extends AbstractController
     use RegisterUserTrait, RegisterTrait;
 
     public function __invoke(
+        LoggedUser $loggedUser,
         Request $request
     ): Response
     {   
@@ -30,15 +33,23 @@ class RegisterController extends AbstractController
 
         $form = $this->createForm(AdminRegisterUserType::class);
 
-        $needsRedirect = $this->register($request, $form, function ($form) {
-            return $this->registerUser(
-                form: $form,
-                account: $form->get('account')->getData()
-            );
-        });
+        $performBy = $loggedUser();
 
-        if ($needsRedirect) {
-            return $this->redirectToRoute('admin_users');
+        try {
+
+            $needsRedirect = $this->register($request, $form, function ($form) use ($performBy) {
+                return $this->registerUser(
+                    form: $form,
+                    account: $form->get('account')->getData(),
+                    performBy: $performBy
+                );
+            });
+
+            if ($needsRedirect) {
+                return $this->redirectToRoute('admin_users');
+            }
+        } catch (UnauthorizedActionException $e) {
+            throw $this->createAccessDeniedException($e->getMessage());
         }
 
         return $this->render('@security/admin/users/register.html.twig', [

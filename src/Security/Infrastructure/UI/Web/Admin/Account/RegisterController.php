@@ -9,8 +9,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Component\Translation\TranslatableMessage;
+use App\Security\Application\Account\AccountAuthorizer;
 use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Security\Infrastructure\Symfony\Form\RegisterAccountType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Security\Application\Account\Register\RegisterAccountService;
@@ -21,26 +24,32 @@ class RegisterController extends AbstractController
 {
     use RegisterTrait;
 
-    public function __invoke(RegisterAccountService $registerAccount, Request $request): Response
+    public function __invoke(RegisterAccountService $registerAccount, AccountAuthorizer $authorizer, LoggedUser $loggedUser, Request $request): Response
     {   
-        $account = new Account(AccountId::generate());
-
-        $this->denyAccessUnlessGranted(Action::Register->value, $account);
+        $user = $loggedUser();
 
         $form = $this->createForm(RegisterAccountType::class);
 
-        $needsRedirect = $this->register($request, $form, function ($form) use ($registerAccount) {
-            $registerRequest = $form->getData();
+        try {
+            $account = new Account(AccountId::generate());
 
-            $response = $registerAccount($registerRequest);
+            $authorizer->denyUnlessCanDoThat($account, Action::Register, $user);
 
-            $this->addFlash('success', new TranslatableMessage("Cuenta creada correctamente: {name}", ['{name}' => $response->name]));
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerAccount, $user) {
+                $registerRequest = $form->getData();
 
-            return true;
-        });
+                $response = $registerAccount($registerRequest, $user);
 
-        if ($needsRedirect) {
-            return $this->redirectToRoute('admin_accounts');
+                $this->addFlash('success', new TranslatableMessage("Cuenta creada correctamente: {name}", ['{name}' => $response->name]));
+
+                return true;
+            });
+
+            if ($needsRedirect) {
+                return $this->redirectToRoute('admin_accounts');
+            }
+        } catch (UnauthorizedActionException $e) {
+            throw $this->createAccessDeniedException($e->getMessage());
         }
 
         return $this->render('@security/admin/accounts/register.html.twig', [

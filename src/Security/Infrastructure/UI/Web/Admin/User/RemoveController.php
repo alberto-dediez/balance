@@ -3,6 +3,7 @@
 namespace App\Security\Infrastructure\UI\Web\Admin\User;
 
 use App\Security\Application\Action;
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\UserId;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -11,6 +12,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Security\Application\User\Remove\RemoveUserRequest;
 use App\Security\Application\User\Remove\RemoveUserService;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Security\Infrastructure\UI\Web\User\GetUserFromIdTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -22,18 +24,19 @@ class RemoveController extends AbstractController
 
     public function __invoke(
         string $userId, 
+        LoggedUser $loggedUser,
         UserRepository $userRepository, 
         RemoveUserService $removeUser
     ): Response
     {   
         $user = $this->getUserFromId($userId, $userRepository);
 
-        $this->denyAccessUnlessGranted(Action::Remove->value, $user);
-
         try {
-            $removeUser(new RemoveUserRequest($user->id()));
+            $removeUser(new RemoveUserRequest($user->id()), $loggedUser());
 
             $this->addFlash('success', new TranslatableMessage("Se ha eliminado al usuario {user}", ['{user}' => $user->username()]));
+        } catch (UnauthorizedActionException $e) {
+            throw $this->createAccessDeniedException($e->getMessage());
         } catch (\Exception $e) {
             $this->addFlash('danger', new TranslatableMessage("No se ha podido eliminar al usuario {user}", ['{user}' => $user->username()]));
         }

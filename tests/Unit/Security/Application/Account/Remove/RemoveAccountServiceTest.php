@@ -3,13 +3,16 @@
 namespace App\Tests\Unit\Security\Application\Account\Remove;
 
 use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\Account\AccountRemoved;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Security\Domain\Model\Account\AccountRemoved;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Security\Application\Account\Remove\RemoveAccountRequest;
 use App\Security\Application\Account\Remove\RemoveAccountService;
 use App\Security\Application\Account\Remove\RemoveAccountResponse;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Security\Application\UnauthorizedActionException;
+use App\Tests\Unit\Security\Application\Account\AccountAuthorizerMother;
 use App\Security\Infrastructure\Repository\Account\InMemoryAccountRepository;
 
 class RemoveAccountServiceTest extends TestCase
@@ -27,6 +30,8 @@ class RemoveAccountServiceTest extends TestCase
     {
         $repository = new InMemoryAccountRepository();
 
+        $user = UserMother::adminUser();
+
         $sut = $this->createSUT($repository);
 
         $account = AccountMother::registeredAccount();
@@ -37,7 +42,7 @@ class RemoveAccountServiceTest extends TestCase
             accountId: $account->id()
         );
 
-        $result = $sut($request);
+        $result = $sut($request, $user);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RemoveAccountResponse);
@@ -53,8 +58,31 @@ class RemoveAccountServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof AccountRemoved);
     }
 
+    public function testUnauthorizedAccess()
+    {
+        $this->expectException(UnauthorizedActionException::class);
+
+        $repository = new InMemoryAccountRepository();
+
+        $user = UserMother::ownerUser();
+
+        $sut = $this->createSUT($repository);
+
+        $account = AccountMother::registeredAccount();
+
+        $repository->add($account);
+
+        $request = new RemoveAccountRequest(
+            accountId: $account->id()
+        );
+
+        $sut($request, $user);
+    }
+
     private function createSUT($repository)
     {
-        return new RemoveAccountService($repository);
+        $authorizer = AccountAuthorizerMother::create();
+
+        return new RemoveAccountService($repository, $authorizer);
     }
 }

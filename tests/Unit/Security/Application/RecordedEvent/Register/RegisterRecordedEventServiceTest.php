@@ -4,15 +4,17 @@ namespace App\Tests\Unit\Security\Application\RecordedEvent\Register;
 
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\UserId;
+use App\Security\Domain\Model\User\UserRemoved;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Security\Domain\Model\RecordedEvent\RecordedEvent;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Security\Domain\Model\RecordedEvent\RecordedEventRegistered;
 use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventRequest;
 use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventService;
 use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventResponse;
-use App\Security\Domain\Model\User\UserRemoved;
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Repository\RecordedEvent\InMemoryRecordedEventRepository;
+use App\Tests\Unit\Security\Application\RecordedEvent\RecordedEventAuthorizerMother;
 
 class RegisterRecordedEventServiceTest extends TestCase
 {
@@ -36,7 +38,9 @@ class RegisterRecordedEventServiceTest extends TestCase
             event: new UserRemoved(UserId::generate())
         );
 
-        $result = $sut($request);
+        $performBy = UserMother::registeredUser();
+
+        $result = $sut($request, $performBy);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RegisterRecordedEventResponse);
@@ -51,6 +55,6 @@ class RegisterRecordedEventServiceTest extends TestCase
 
     private function createSUT($repository)
     {
-        return new RegisterRecordedEventService($repository);
+        return new RegisterRecordedEventService($repository, RecordedEventAuthorizerMother::create());
     }
 }

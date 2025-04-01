@@ -13,6 +13,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Security\Infrastructure\Symfony\Form\UpdateAccountType;
 use App\Security\Application\Account\Update\UpdateAccountRequest;
 use App\Security\Application\Account\Update\UpdateAccountService;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Security\Infrastructure\UI\Web\Admin\Account\GetAccountFromIdTrait;
 
@@ -25,13 +27,14 @@ class EditController extends AbstractController
     public function __invoke(
         string $accountId, 
         AccountRepository $accountRepository, 
+        LoggedUser $loggedUser,
         UpdateAccountService $updateAccount, 
         Request $request
     ): Response
     {   
-        $account = $this->getAccountFromId($accountId, $accountRepository);
+        $user = $loggedUser();
 
-        $this->denyAccessUnlessGranted(Action::Edit->value, $account);
+        $account = $this->getAccountFromId($accountId, $accountRepository);
 
         $updateRequest = new UpdateAccountRequest(
             accountId: $account->id(),
@@ -41,16 +44,20 @@ class EditController extends AbstractController
 
         $form = $this->createForm(UpdateAccountType::class, $updateRequest); 
 
-        $needsRedirect = $this->edit($request, $form, function ($form) use ($updateAccount) {
-            $accountRequest = $form->getData();
+        try {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateAccount, $user) {
+                $accountRequest = $form->getData();
 
-            $updateAccount($accountRequest);
+                $updateAccount($accountRequest, $user);
 
-            $this->addFlash('success', new TranslatableMessage('Cuenta actualizada con éxito'));
-        });
+                $this->addFlash('success', new TranslatableMessage('Cuenta actualizada con éxito'));
+            });
 
-        if ($needsRedirect) {
-            return $this->redirectToRoute('admin_accounts');
+            if ($needsRedirect) {
+                return $this->redirectToRoute('admin_accounts');
+            }
+        } catch (UnauthorizedActionException $e) {
+            throw $this->createAccessDeniedException($e->getMessage());
         }
 
         return $this->render('@security/admin/accounts/edit.html.twig', [

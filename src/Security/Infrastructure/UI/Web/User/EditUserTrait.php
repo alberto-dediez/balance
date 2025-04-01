@@ -18,13 +18,13 @@ trait EditUserTrait
         
     }
 
-    protected function updateRoles(User $user, array $roles)
+    protected function updateRoles(User $user, array $roles, User $performBy)
     {
-        $this->ungrantRoles($user, $roles);
-        $this->grantRoles($user, $roles);
+        $this->ungrantRoles($user, $roles, $performBy);
+        $this->grantRoles($user, $roles, $performBy);
     }
 
-    protected function grantRoles(User $user, array $roles)
+    protected function grantRoles(User $user, array $roles, User $performBy)
     {
         if (count($roles) == 0) {
             return ;
@@ -42,7 +42,7 @@ trait EditUserTrait
             $request = new GrantRoleRequest($user->id(), $role);
 
             try {
-                $grantRole($request);
+                $grantRole($request, $performBy);
 
                 $this->addFlash('success', new TranslatableMessage("Concedido acceso como {role}", ['{role}' => new TranslatableMessage($role->value, [], 'roles')]));
             } catch (\Exception $e) {
@@ -51,7 +51,7 @@ trait EditUserTrait
         }
     }
 
-    protected function ungrantRoles(User $user, array $roles)
+    protected function ungrantRoles(User $user, array $roles, User $performBy)
     {
         if (count($roles) == 0) {
             return ;
@@ -69,7 +69,7 @@ trait EditUserTrait
             $request = new UngrantRoleRequest($user->id(), $role);
 
             try {
-                $ungrantRole($request);
+                $ungrantRole($request, $performBy);
 
                 $this->addFlash('warning', new TranslatableMessage("Retirado acceso como {role}", ['{role}' => new TranslatableMessage($role->value, [], 'roles')]));
             } catch (\Exception $e) {

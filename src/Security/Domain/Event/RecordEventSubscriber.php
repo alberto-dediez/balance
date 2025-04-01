@@ -31,7 +31,8 @@ class RecordEventSubscriber implements DomainEventSubscriber
             new RegisterRecordedEventRequest(
                 userId: null !== $loggedUser ? $loggedUser->id() : null,
                 event: $event
-            )
+            ),
+            $loggedUser
         );
     }
 

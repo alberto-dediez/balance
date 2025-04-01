@@ -18,11 +18,28 @@ class UserMother
         );
     }
 
+    public static function systemUser()
+    {
+        return new User(
+            id: UserId::generate(), 
+            username: 'system',
+            roles: [Role::Admin]
+        );
+    }
+
     public static function adminUser()
     {
         return self::from(
             userId: UserId::generate(), 
             role: Role::Admin
+        );
+    }
+
+    public static function ownerUser()
+    {
+        return self::from(
+            userId: UserId::generate(), 
+            role: Role::Owner
         );
     }
 

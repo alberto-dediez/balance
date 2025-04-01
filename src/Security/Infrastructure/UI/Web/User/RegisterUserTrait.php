@@ -3,6 +3,7 @@
 namespace App\Security\Infrastructure\UI\Web\User;
 
 use Symfony\Component\Form\FormError;
+use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\Account\Account;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -21,7 +22,7 @@ trait RegisterUserTrait
         
     }
 
-    private function registerUser($form, ?Account $account = null)
+    private function registerUser($form, ?Account $account = null, User $performBy)
     {
         $registerRequest = new RegisterUserRequest(
             $form->get('username')->getData(),
@@ -32,11 +33,11 @@ trait RegisterUserTrait
         $registerUser = $this->registerUser;
 
         try {
-            $response = $registerUser($registerRequest);
+            $response = $registerUser($registerRequest, $performBy);
 
             $this->addFlash('success', new TranslatableMessage("Usuario creado correctamente: {username}", ['{username}' => $response->username]));
 
-            $this->grantRoles($response->userId, $form->get('roles')->getData());
+            $this->grantRoles($response->userId, $form->get('roles')->getData(), $performBy);
 
             return true;
         } catch (DuplicateUsernameException $e) {
@@ -48,7 +49,7 @@ trait RegisterUserTrait
         return false;
     }
     
-    private function grantRoles(UserId $userId, array $roles)
+    private function grantRoles(UserId $userId, array $roles, User $performBy)
     {
         if (count($roles) == 0) {
             return ;
@@ -60,7 +61,7 @@ trait RegisterUserTrait
             $request = new GrantRoleRequest($userId, $role);
 
             try {
-                $grantRole($request);
+                $grantRole($request, $performBy);
 
                 $this->addFlash('success', new TranslatableMessage("Concedido acceso como {role}", ['{role}' => new TranslatableMessage($role->value, [], 'roles')]));
             } catch (\Exception $e) {

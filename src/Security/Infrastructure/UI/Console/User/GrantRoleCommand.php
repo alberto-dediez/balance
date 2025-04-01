@@ -11,6 +11,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Security\Application\User\GrantRole\GrantRoleRequest;
 use App\Security\Application\User\GrantRole\GrantRoleService;
 
@@ -46,7 +47,9 @@ class GrantRoleCommand extends Command
             Role::tryFrom($input->getArgument('role'))
         );
 
-        $response = $this->grantRoleService->__invoke($request);
+        $performBy = UserMother::systemUser();
+
+        $response = $this->grantRoleService->__invoke($request, $performBy);
 
         $io = new SymfonyStyle($input, $output);
         $io->title('Role concedido');

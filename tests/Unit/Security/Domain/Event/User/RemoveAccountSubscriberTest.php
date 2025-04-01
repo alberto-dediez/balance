@@ -11,8 +11,10 @@ use App\Security\Domain\Model\Account\AccountRemoved;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Security\Application\User\Remove\RemoveUserService;
 use App\Security\Domain\Event\User\RemoveAccountSubscriber;
-use App\Security\Infrastructure\Repository\User\InMemoryUserRepository;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
+use App\Security\Infrastructure\Repository\User\InMemoryUserRepository;
+use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeLoggedUser;
 
 class RemoveAccountSubscriberTest extends TestCase
 {
@@ -89,9 +91,12 @@ class RemoveAccountSubscriberTest extends TestCase
         $removeUser = $this->createMock(RemoveUserService::class);
         $removeUser->expects($this->exactly($usersToRemoved))->method('__invoke');
         
+        /** @var RemoveUserService $removeUser */
+
         return new RemoveAccountSubscriber(
             $repository,
-            $removeUser
+            $removeUser,
+            new FakeLoggedUser(UserMother::adminUser())
         );
     }
 }

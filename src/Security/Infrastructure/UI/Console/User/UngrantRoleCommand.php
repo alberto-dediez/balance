@@ -11,6 +11,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Security\Application\User\UngrantRole\UngrantRoleRequest;
 use App\Security\Application\User\UngrantRole\UngrantRoleService;
 
@@ -46,7 +47,9 @@ class UngrantRoleCommand extends Command
             Role::tryFrom($input->getArgument('role'))
         );
 
-        $response = $this->ungrantRoleService->__invoke($request);
+        $performBy = UserMother::systemUser();
+
+        $response = $this->ungrantRoleService->__invoke($request, $performBy);
 
         $io = new SymfonyStyle($input, $output);
         $io->title('Role eliminado');

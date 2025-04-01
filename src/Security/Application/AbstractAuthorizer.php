@@ -2,6 +2,7 @@
 
 namespace App\Security\Application;
 
+use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 
 abstract class AbstractAuthorizer implements Authorizer
@@ -18,8 +19,23 @@ abstract class AbstractAuthorizer implements Authorizer
             Action::List => $this->canList($subject, $user),
             Action::Edit => $this->canEdit($subject, $user),
             Action::Remove => $this->canRemove($subject, $user),
+            Action::Admin => $this->canAdmin($subject, $user),
             default => throw new \LogicException('Esta acción no está definida')
         };
+    }
+
+    public function denyUnlessCanDoThat(mixed $subject, Action $action, User $user) 
+    {
+        if (!$this->canDoThat($subject, $action, $user)) {
+            throw new UnauthorizedActionException($subject, $action);
+        }
+    }
+
+    protected function canAdmin(mixed $subject, User $user): bool
+    {
+        return $user->hasRole(Role::Admin) 
+            || $user->hasRole(Role::SuperAdmin) 
+        ;
     }
 
     abstract protected function canRegister(mixed $subject, User $user): bool;

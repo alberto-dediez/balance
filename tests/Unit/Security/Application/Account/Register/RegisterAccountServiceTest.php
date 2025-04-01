@@ -6,10 +6,13 @@ use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\Account\Account;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Security\Domain\Model\Account\AccountRegistered;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Security\Application\Account\Register\RegisterAccountRequest;
 use App\Security\Application\Account\Register\RegisterAccountService;
 use App\Security\Application\Account\Register\RegisterAccountResponse;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Security\Application\UnauthorizedActionException;
+use App\Tests\Unit\Security\Application\Account\AccountAuthorizerMother;
 use App\Security\Infrastructure\Repository\Account\InMemoryAccountRepository;
 
 class RegisterAccountServiceTest extends TestCase
@@ -27,6 +30,8 @@ class RegisterAccountServiceTest extends TestCase
     {
         $repository = new InMemoryAccountRepository();
 
+        $user = UserMother::adminUser();
+
         $sut = $this->createSUT($repository);
 
         $request = new RegisterAccountRequest(
@@ -34,7 +39,7 @@ class RegisterAccountServiceTest extends TestCase
             active: true
         );
 
-        $result = $sut($request);
+        $result = $sut($request, $user);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RegisterAccountResponse);
@@ -54,8 +59,28 @@ class RegisterAccountServiceTest extends TestCase
         $this->assertTrue($accountPersisted->id()->equals($lastEvent->accountId()));
     }
 
+    public function testUnauthorizedAccess()
+    {
+        $this->expectException(UnauthorizedActionException::class);
+
+        $repository = new InMemoryAccountRepository();
+
+        $user = UserMother::ownerUser();
+
+        $sut = $this->createSUT($repository);
+
+        $request = new RegisterAccountRequest(
+            name: 'Company ABC',
+            active: true
+        );
+
+        $sut($request, $user);
+    }
+
     private function createSUT($repository)
     {
-        return new RegisterAccountService($repository);
+        $authorizer = AccountAuthorizerMother::create();
+
+        return new RegisterAccountService($repository, $authorizer);
     }
 }

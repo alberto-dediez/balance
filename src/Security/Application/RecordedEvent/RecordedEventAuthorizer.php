@@ -11,7 +11,7 @@ final class RecordedEventAuthorizer extends AbstractAuthorizer
 {
     protected function canRegister(mixed $subject, User $user): bool
     {
-        return false;
+        return true;
     }
 
     protected function canView(mixed $subject, User $user): bool

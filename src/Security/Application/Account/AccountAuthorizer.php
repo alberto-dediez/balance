@@ -11,15 +11,12 @@ final class AccountAuthorizer extends AbstractAuthorizer
 {
     protected function canRegister(mixed $subject, User $user): bool
     {
-        return ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin));
+        return $this->canList($subject, $user);
     }
 
     protected function canView(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::Admin) 
-            || $user->hasRole(Role::SuperAdmin) 
-            || ($user->hasRole(Role::Owner) && $subject->id()->equals($user->accountId()))
-        ;
+        return $this->canEdit($subject, $user);
     }
 
     protected function canList(mixed $subject, User $user): bool
@@ -31,16 +28,13 @@ final class AccountAuthorizer extends AbstractAuthorizer
     {
         return $user->hasRole(Role::Admin) 
             || $user->hasRole(Role::SuperAdmin) 
-            || ($user->hasRole(Role::Owner) && $subject->id()->equals($user->accountId()))
+            || ($user->hasRole(Role::Owner) && (null !== $user->accountId() && $subject->id()->equals($user->accountId())))
         ;
     }
 
     protected function canRemove(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::Admin) 
-            || $user->hasRole(Role::SuperAdmin) 
-            || ($user->hasRole(Role::Owner) && $subject->id()->equals($user->accountId()))
-        ;
+        return $this->canEdit($subject, $user);
     }  
     
     public function supports(mixed $subject): bool

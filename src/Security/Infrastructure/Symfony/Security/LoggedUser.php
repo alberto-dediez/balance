@@ -15,7 +15,7 @@ class LoggedUser
         
     }
 
-    public function __invoke()
+    public function __invoke(): ?User
     {
         if (null == $this->user) {
             $this->loadUser();
@@ -31,6 +31,8 @@ class LoggedUser
         if (null == $user) {
             return ;
         }
+
+        /** @var User $user */
 
         $this->user = $this->userRepository->find($user->id());
     }
