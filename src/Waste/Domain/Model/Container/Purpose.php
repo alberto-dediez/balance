@@ -7,4 +7,6 @@ enum Purpose: string
     case Waste = 'WASTE';
 
     case Recycling = 'RECYCLING';
+
+    case Reuse = 'REUSE';
 }

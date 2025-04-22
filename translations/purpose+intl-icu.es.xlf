@@ -13,6 +13,10 @@
         <source>RECYCLING</source>
         <target>Reciclaje</target>
       </trans-unit>
+      <trans-unit id="bzgitHG" resname="REUSE">
+        <source>REUSE</source>
+        <target>Reutilizar</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

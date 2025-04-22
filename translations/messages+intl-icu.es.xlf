@@ -505,6 +505,58 @@
         <source>Detalle</source>
         <target>NDetalle</target>
       </trans-unit>
+      <trans-unit id="Tug2gG_" resname="Mediciones">
+        <source>Mediciones</source>
+        <target>Mediciones</target>
+      </trans-unit>
+      <trans-unit id="3t62TyH" resname="¿Es peligroso?">
+        <source>¿Es peligroso?</source>
+        <target>¿Es peligroso?</target>
+      </trans-unit>
+      <trans-unit id="ChfIWAg" resname="Cantidad de contenedores">
+        <source>Cantidad de contenedores</source>
+        <target>Cantidad de contenedores</target>
+      </trans-unit>
+      <trans-unit id="N5LC2yx" resname="Carga del contenedor">
+        <source>Carga del contenedor</source>
+        <target>Carga del contenedor</target>
+      </trans-unit>
+      <trans-unit id="GIF0Jom" resname="Justificación">
+        <source>Justificación</source>
+        <target>Justificación</target>
+      </trans-unit>
+      <trans-unit id="vKu1kU7" resname="Contenedor">
+        <source>Contenedor</source>
+        <target>Contenedor</target>
+      </trans-unit>
+      <trans-unit id="9uFwNIS" resname="Todos los contenedores">
+        <source>Todos los contenedores</source>
+        <target>Todos los contenedores</target>
+      </trans-unit>
+      <trans-unit id="kMQqtG1" resname="La medición no existe">
+        <source>La medición no existe</source>
+        <target>La medición no existe</target>
+      </trans-unit>
+      <trans-unit id="TAEF06B" resname="Medición actualizada con éxito">
+        <source>Medición actualizada con éxito</source>
+        <target>Medición actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id="WTS_zFT" resname="Se ha eliminado la medición">
+        <source>Se ha eliminado la medición</source>
+        <target>Se ha eliminado la medición</target>
+      </trans-unit>
+      <trans-unit id="w6amyGa" resname="No se ha podido eliminar la medición">
+        <source>No se ha podido eliminar la medición</source>
+        <target>No se ha podido eliminar la medición</target>
+      </trans-unit>
+      <trans-unit id="SPrx9_0" resname="Medición registrada correctamente">
+        <source>Medición registrada correctamente</source>
+        <target>Medición registrada correctamente</target>
+      </trans-unit>
+      <trans-unit id="aWpxIiE" resname="Carga">
+        <source>Carga</source>
+        <target>Carga</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -22,7 +22,7 @@ trait RegisterUserTrait
         
     }
 
-    private function registerUser($form, ?Account $account = null, User $performBy)
+    private function registerUser($form, Account|null $account, User $performBy)
     {
         $registerRequest = new RegisterUserRequest(
             $form->get('username')->getData(),
