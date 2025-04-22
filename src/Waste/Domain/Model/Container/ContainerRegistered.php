@@ -7,6 +7,7 @@ use App\Waste\Domain\DomainEvent;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Waste\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
 
 final class ContainerRegistered extends DomainEvent
@@ -15,6 +16,7 @@ final class ContainerRegistered extends DomainEvent
 
     public function __construct(
         private ContainerId $containerId, 
+        private AccountId $accountId,
         private PropertyId $propertyId,
         private WasteId $wasteId,
         private MeasurementMethod $measurementMethod,
@@ -29,6 +31,11 @@ final class ContainerRegistered extends DomainEvent
     public function containerId(): ContainerId
     {
         return $this->containerId;
+    }
+
+    public function accountId(): AccountId
+    {
+        return $this->accountId;
     }
 
     public function propertyId(): PropertyId
@@ -60,6 +67,7 @@ final class ContainerRegistered extends DomainEvent
     {
         return [
             'containerId' => (string) $this->containerId,
+            'accountId' => (string) $this->accountId,
             'propertyId' => (string) $this->propertyId,
             'waste' => (string) $this->wasteId,
             'purpose' => $this->purpose->value,
@@ -75,6 +83,7 @@ final class ContainerRegistered extends DomainEvent
     ): static {
         return new ContainerRegistered(
             containerId: new ContainerId($payload['containerId']), 
+            accountId: new AccountId($payload['accountId']),
             propertyId: new PropertyId($payload['propertyId']),
             wasteId: new WasteId($payload['waste']), 
             purpose: Purpose::tryFrom($payload['purpose']),

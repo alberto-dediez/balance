@@ -4,7 +4,6 @@ namespace App\Waste\Infrastructure\Repository\Container;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Waste\Domain\Model\Property\Property;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\ContainerFilter;
@@ -100,9 +99,8 @@ class DoctrineContainerRepository implements ContainerRepository
 
         if (null !== $filter->account) {
             $qb
-                ->leftJoin(Property::class, 'p', 'WITH', 'p.id.id = c.propertyId')
                 ->andWhere(
-                    $qb->expr()->eq('p.accountId', ':accountId')
+                    $qb->expr()->eq('c.accountId', ':accountId')
                 )
                 ->setParameter('accountId', (string) $filter->account->id())
             ;

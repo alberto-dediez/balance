@@ -5,14 +5,13 @@ namespace App\Waste\Infrastructure\Repository\Container;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\ContainerFilter;
-use App\Waste\Domain\Model\Property\PropertyRepository;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]
 class InMemoryContainerRepository implements ContainerRepository
 {
-    public function __construct(private PropertyRepository $propertyRepository, private array $containers = [])
+    public function __construct(private array $containers = [])
     {
 
     }
@@ -82,14 +81,11 @@ class InMemoryContainerRepository implements ContainerRepository
                 continue;
             }
 
-            $property = $this->propertyRepository->find($container->propertyId());
-
             if (
                 null !== $filter->account 
                 && (
-                    null == $property 
-                    || null == $property->accountId() 
-                    || false == $filter->account->id()->equals($property->accountId())
+                    null == $container->accountId()
+                    || false == $filter->account->id()->equals($container->accountId())
                 )
             ) {
                 continue;

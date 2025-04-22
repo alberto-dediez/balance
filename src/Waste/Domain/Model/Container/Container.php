@@ -5,6 +5,7 @@ namespace App\Waste\Domain\Model\Container;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Waste\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
 
 class Container
 {
@@ -14,6 +15,7 @@ class Container
 
     public function __construct(
         private ContainerId $id, 
+        private AccountId|string|null $accountId = null,
         private PropertyId|string|null $propertyId = null,
         private WasteId|string|null $wasteId = null,
         private ?Purpose $purpose = null,
@@ -30,6 +32,15 @@ class Container
     public function id(): ContainerId
     {
         return $this->id;
+    }
+
+    public function accountId() : ?AccountId
+    {
+        if (is_string($this->accountId)) {
+            $this->accountId = new AccountId($this->accountId);
+        }
+
+        return $this->accountId;
     }
 
     public function propertyId() : ?PropertyId
@@ -81,6 +92,7 @@ class Container
     }
 
     public function register(
+        AccountId $accountId,
         PropertyId $propertyId,
         WasteId $wasteId,
         Purpose $purpose,
@@ -90,6 +102,7 @@ class Container
         $this->recordApplyAndPublish(
             new ContainerRegistered(
                 containerId: $this->id(),
+                accountId: $accountId,
                 propertyId: $propertyId,
                 wasteId: $wasteId,
                 purpose: $purpose,
@@ -125,6 +138,7 @@ class Container
 
     public function applyContainerRegistered(ContainerRegistered $event)
     {
+        $this->accountId = $event->accountId();
         $this->propertyId = $event->propertyId();
         $this->wasteId = $event->wasteId();
         $this->purpose = $event->purpose();

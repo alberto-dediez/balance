@@ -8,13 +8,18 @@ use App\Waste\Domain\Model\Container\QrCode;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\Property\PropertyRepository;
 use App\Waste\Domain\Model\Container\ContainerRegistered;
+use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Tests\Unit\Waste\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Waste\Application\Container\Register\RegisterContainerRequest;
 use App\Waste\Application\Container\Register\RegisterContainerService;
 use App\Waste\Application\Container\Register\RegisterContainerResponse;
+use App\Tests\Unit\Waste\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 use App\Tests\Unit\Waste\Infrastructure\QrCodeGenerator\FakeQrCodeGenerator;
 
@@ -31,12 +36,19 @@ class RegisterContainerServiceTest extends TestCase
 
     public function testUseCase()
     {
-        $repository = ContainerRepositoryMother::inMemory();
+        $containerRepository = ContainerRepositoryMother::inMemory();
+        $propertyRepository = PropertyRepositoryMother::inMemory();
 
-        $sut = $this->createSUT($repository);
+        $sut = $this->createSUT($containerRepository, $propertyRepository);
+
+        $accountId = AccountId::generate();
+
+        $property = PropertyMother::fromNameAndAccountAndId('Propiedad', (string) $accountId, 'property');
+
+        $propertyRepository->add($property);
 
         $request = new RegisterContainerRequest(
-            propertyId: new PropertyId('123'),
+            propertyId: $property->id(),
             wasteId: new WasteId('444'),
             purpose: Purpose::Recycling,
             measurementMethod: MeasurementMethod::Weight
@@ -51,7 +63,7 @@ class RegisterContainerServiceTest extends TestCase
         $this->assertNotNull($result->qrCode);
         $this->assertTrue($result->qrCode instanceof QrCode);
 
-        $containerPersisted = $repository->find($result->containerId);
+        $containerPersisted = $containerRepository->find($result->containerId);
 
         $this->assertNotNull($containerPersisted);
         $this->assertTrue($containerPersisted instanceof Container);
@@ -64,10 +76,11 @@ class RegisterContainerServiceTest extends TestCase
         $this->assertTrue($containerPersisted->id()->equals($lastEvent->containerId()));
     }
 
-    private function createSUT($repository)
+    private function createSUT(ContainerRepository $containerRepository, PropertyRepository $propertyRepository)
     {
         return new RegisterContainerService(
-            containerRepository: $repository,
+            containerRepository: $containerRepository,
+            propertyRepository: $propertyRepository,
             qrCodeGenerator: new FakeQrCodeGenerator()
         );
     }

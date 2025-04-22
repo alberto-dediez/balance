@@ -9,11 +9,6 @@ use App\Waste\Domain\Model\Measurement\Measurement;
 
 final class MeasurementAuthorizer extends AbstractAuthorizer
 {
-    public function __construct()
-    {
-        
-    }
-
     protected function canRegister(mixed $subject, User $user): bool
     {
         if (null == $user->accountId()) {

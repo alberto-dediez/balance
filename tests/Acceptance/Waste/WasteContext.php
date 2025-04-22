@@ -7,6 +7,7 @@ namespace App\Tests\Acceptance\Waste;
 use Behat\Step\Given;
 use Behat\Behat\Context\Context;
 use App\Security\Domain\Model\User\UserId;
+use App\Waste\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Waste\WasteRepository;
@@ -53,10 +54,12 @@ final class WasteContext implements Context
         $this->propertyRepository->add($property);      
     }  
 
-    #[Given('container for :waste in :property with id :id exists')]
-    public function containerForInWithIdExists($waste, $property, $id): void
+    #[Given('container for :waste in :propertyId with id :id exists')]
+    public function containerForInWithIdExists($waste, $propertyId, $id): void
     {
-        $container = ContainerMother::fromPropertyAndWasteAndId($property, $waste, $id);
+        $property = $this->propertyRepository->find(new PropertyId($propertyId));
+
+        $container = ContainerMother::fromPropertyAccountAndWasteAndId($propertyId, (string) $property->accountId(), $waste, $id);
 
         $this->containerRepository->add($container);
     }

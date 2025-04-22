@@ -5,12 +5,14 @@ namespace App\Waste\Application\Container\Register;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\QrCodeGenerator;
+use App\Waste\Domain\Model\Property\PropertyRepository;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 
 class RegisterContainerService
 {
     public function __construct(
         private ContainerRepository $containerRepository,
+        private PropertyRepository $propertyRepository,
         private QrCodeGenerator $qrCodeGenerator
     ) {
 
@@ -22,11 +24,18 @@ class RegisterContainerService
             throw new \InvalidArgumentException("Debes especificar una propiedad y tipologia de resiudo");
         }
 
+        $property = $this->propertyRepository->find($request->propertyId);
+
+        if (null == $property) {
+            throw new \InvalidArgumentException("Debes especificar una propiedad válida");
+        }
+
         $id = ContainerId::generate();
 
         $container = new Container($id);
         $container
             ->register(
+                accountId: $property->accountId(),
                 propertyId: $request->propertyId,
                 wasteId: $request->wasteId,
                 purpose: $request->purpose,
