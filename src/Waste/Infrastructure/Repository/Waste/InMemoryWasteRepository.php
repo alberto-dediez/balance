@@ -72,6 +72,10 @@ class InMemoryWasteRepository implements WasteRepository
                 continue;
             }
 
+            if (null !== $filter->isDangerous && $filter->isDangerous !== $waste->isDangerous()) {
+                continue;
+            }
+
             if (true == $waste->isRemoved()) {
                 continue;
             }

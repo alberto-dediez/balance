@@ -37,6 +37,51 @@ class ListWastesServiceTest extends TestCase
         $this->assertEquals(4, $result->totalResults);
     }
 
+    public function testFilterByIsDangerous()
+    {
+        $repository = WasteRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $repository->add(WasteMother::fromIsDangerous(true));
+        $repository->add(WasteMother::fromIsDangerous(false));
+        $repository->add(WasteMother::fromIsDangerous(false));
+        $repository->add(WasteMother::fromIsDangerous(false));
+
+        $request = new ListWastesRequest(
+            isDangerous: true
+        );
+
+        $result = $sut($request);
+
+        $this->assertNotNull($result);
+        $this->assertTrue($result instanceof ListWastesResponse);
+        $this->assertCount(1, $result->wastes);
+        $this->assertEquals(1, $result->totalResults);
+
+        $request = new ListWastesRequest(
+            isDangerous: false
+        );
+
+        $result = $sut($request);
+
+        $this->assertNotNull($result);
+        $this->assertTrue($result instanceof ListWastesResponse);
+        $this->assertCount(3, $result->wastes);
+        $this->assertEquals(3, $result->totalResults);
+
+        $request = new ListWastesRequest(
+            isDangerous: null
+        );
+
+        $result = $sut($request);
+
+        $this->assertNotNull($result);
+        $this->assertTrue($result instanceof ListWastesResponse);
+        $this->assertCount(4, $result->wastes);
+        $this->assertEquals(4, $result->totalResults);
+    }
+
     private function createSUT($repository)
     {
         return new ListWastesService($repository);

@@ -9,7 +9,8 @@ class WasteFilter
     use Filter;
 
     public function __construct(
-        public ?string $name = null
+        public ?string $name = null,
+        public ?bool $isDangerous = null
     ) {
 
     }

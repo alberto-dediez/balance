@@ -13,6 +13,7 @@ class Waste
     public function __construct(
         protected WasteId $id, 
         protected string $name = '',
+        protected bool $isDangerous = false,
         protected bool $removed = false,
         array $events = [],
         protected ?\DateTimeImmutable $registeredAt = null,
@@ -31,6 +32,11 @@ class Waste
         return $this->name;
     }
 
+    public function isDangerous(): bool
+    {
+        return $this->isDangerous;
+    }
+
     public function isRemoved(): bool
     {
         return $this->removed;
@@ -46,12 +52,13 @@ class Waste
         return $this->removedAt;
     }
 
-    public function register(string $name)
+    public function register(string $name, bool $isDangerous = false)
     {
         $this->recordApplyAndPublish(
             new WasteRegistered(
                 wasteId: $this->id(),
-                name: $name
+                name: $name,
+                isDangerous: $isDangerous
             )
         );
     }
@@ -68,6 +75,7 @@ class Waste
     public function applyWasteRegistered(WasteRegistered $event)
     {
         $this->name = $event->name();
+        $this->isDangerous = $event->isDangerous();
         $this->registeredAt = $event->occurredOn();
     }
 

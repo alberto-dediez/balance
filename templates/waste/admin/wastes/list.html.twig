@@ -9,6 +9,9 @@
             'sortable': true,
             'sortableBy': 'name'
         }, {
+            'label': '¿Es peligroso?' | trans,
+            'sortable': false
+        }, {
             'label': 'Fecha de registro' | trans,
             'sortable': true,
             'sortableBy': 'registeredAt'
@@ -20,6 +23,7 @@
     <twig:List:Table :columns="columns" :elements="wastes">
         <tr>
             <td>{{ element.name }}</td>
+            <td>{{ element.isDangerous | show_field_value }}</td>
             <td>{{ element.registeredAt | date('d/m/Y') }}</td>
             <td>
                 <twig:List:Action:Delete path="{{ path('admin_wastes_remove', {'wasteId': element.id}) }}" />

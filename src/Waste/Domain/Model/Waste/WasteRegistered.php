@@ -14,6 +14,7 @@ final class WasteRegistered extends DomainEvent
     public function __construct(
         private WasteId $wasteId, 
         private string $name, 
+        private bool $isDangerous = false,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -30,11 +31,17 @@ final class WasteRegistered extends DomainEvent
         return $this->name;
     }
 
+    public function isDangerous(): bool
+    {
+        return $this->isDangerous;
+    }
+
     public function payload(): ?array
     {
         return [
             'wasteId' => (string) $this->wasteId,
-            'name' => $this->name
+            'name' => $this->name,
+            'isDangerous' => $this->isDangerous
         ];
     }
 
@@ -46,6 +53,7 @@ final class WasteRegistered extends DomainEvent
         return new WasteRegistered(
             wasteId: new WasteId($payload['wasteId']), 
             name: $payload['name'],
+            isDangerous: isset($payload['isDangerous']) ? $payload['isDangerous'] : false,
             id: $id,
             occurredOn: $occurredOn
         );

@@ -9,6 +9,7 @@
         <embedded name="id" class="App\Waste\Domain\Model\Waste\WasteId" use-column-prefix="false" />
 
         <field name="name" type="string" length="255" nullable="false"/>
+        <field name="isDangerous" type="boolean" nullable="false"/>
         <field name="removed" type="boolean" nullable="true"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>

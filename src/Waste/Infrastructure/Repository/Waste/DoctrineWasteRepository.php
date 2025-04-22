@@ -87,6 +87,15 @@ class DoctrineWasteRepository implements WasteRepository
             ;
         }
 
+        if (null !== $filter->isDangerous) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('w.isDangerous', ':isDangerous')
+                )
+                ->setParameter('isDangerous', $filter->isDangerous)
+            ;
+        }
+
         $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
 
         switch ($filter->orderBy) {

@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\Symfony\Form;
 
+use App\Shared\Infrastructure\Symfony\Type\BooleanType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -17,6 +18,10 @@ class RegisterWasteType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('Nombre'),
+                'required' => true
+            ])
+            ->add('isDangerous', BooleanType::class, [
+                'label' => new TranslatableMessage('¿Es peligroso?'),
                 'required' => true
             ])
             ->add('register', SubmitType::class, [

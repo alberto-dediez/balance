@@ -23,3 +23,12 @@ Feature:
     When I follow redirect
     Then the response status should be 200
     Then I see a text "Residuo creado correctamente"
+  
+  Scenario: Puedo indicar si un residuo es peligroso o no
+    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+    When I am logged as "admin@dediez.software"
+    When I go to "/es/admin/wastes/register"
+    When I submit a form with "name:Madera|isDangerous:1" and button "Registrar"
+    When I follow redirect
+    Then the response status should be 200
+    Then I see a text "Residuo creado correctamente"

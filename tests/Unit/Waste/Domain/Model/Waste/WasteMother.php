@@ -14,26 +14,50 @@ class WasteMother
 
     public static function fromName($name)
     {
-        $wasteId = WasteId::generate();
-
-        $waste = new Waste($wasteId);
-        $waste->register($name);
-
-        return $waste;
+        return self::from(
+            name: $name,
+            isDangerous: rand(0, 1) == 1,
+            id: (string) WasteId::generate()
+        );
+    }
+    
+    public static function fromIsDangerous(bool $isDangerous)
+    {
+        return self::from(
+            name: 'waste-' . rand(100, 999),
+            isDangerous: $isDangerous,
+            id: (string) WasteId::generate()
+        );
     }
 
     public static function fromNameAndId(string $name, string $id)
     {
+        return self::from(
+            name: $name, 
+            isDangerous: rand(0, 1) == 1,
+            id: $id
+        );
+    }
+
+    public static function from(
+        string $name, 
+        bool $isDangerous,
+        string $id
+    ) {
         $waste = new Waste(
             id: new WasteId($id)
         );
-        $waste->register($name);
+        $waste->register($name, $isDangerous);
 
         return $waste;
     }
 
     public static function random()
     {
-        return self::fromName('waste-' . rand(100, 999));
+        return self::from(
+            name: 'waste-' . rand(100, 999),
+            isDangerous: rand(0, 1) == 1,
+            id: (string) WasteId::generate()
+        );
     }
 }

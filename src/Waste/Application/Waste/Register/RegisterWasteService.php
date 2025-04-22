@@ -17,10 +17,14 @@ class RegisterWasteService
         $id = WasteId::generate();
 
         $waste = new Waste($id);
-        $waste->register($request->name);
+        $waste->register($request->name, $request->isDangerous);
 
         $this->wasteRepository->add($waste);
 
-        return new RegisterWasteResponse($waste->id(), $waste->name());
+        return new RegisterWasteResponse(
+            wasteId: $waste->id(), 
+            name: $waste->name(),
+            isDangerous: $waste->isDangerous()
+        );
     }
 }

@@ -30,7 +30,8 @@ class RegisterWasteServiceTest extends TestCase
         $sut = $this->createSUT($repository);
 
         $request = new RegisterWasteRequest(
-            name: 'Company ABC'
+            name: 'Company ABC',
+            isDangerous: true
         );
 
         $result = $sut($request);
@@ -39,6 +40,7 @@ class RegisterWasteServiceTest extends TestCase
         $this->assertTrue($result instanceof RegisterWasteResponse);
         $this->assertNotEmpty((string) $result->wasteId);
         $this->assertEquals(36, strlen((string) $result->wasteId));
+        $this->assertTrue($result->isDangerous);
 
         $wastePersisted = $repository->find($result->wasteId);
 
@@ -51,6 +53,7 @@ class RegisterWasteServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof WasteRegistered);
         $this->assertEquals('Company ABC', $lastEvent->name());
         $this->assertTrue($wastePersisted->id()->equals($lastEvent->wasteId()));
+        $this->assertTrue($wastePersisted->isDangerous());
     }
 
     private function createSUT($repository)
