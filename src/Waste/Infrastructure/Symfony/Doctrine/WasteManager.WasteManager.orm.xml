@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Waste\Domain\Model\WasteManager\WasteManager" table="waste_managers">
+        <embedded name="id" class="App\Waste\Domain\Model\WasteManager\WasteManagerId" use-column-prefix="false" />
+        
+        <field name="name" type="string" nullable="false"/>
+        <field name="isPublic" type="boolean" nullable="true"/>
+        <field name="removed" type="boolean" nullable="true"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+
+        <field name="accountId" type="string" length="36" nullable="true"/>
+    </entity>
+
+</doctrine-mapping>
