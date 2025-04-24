@@ -2,11 +2,14 @@
 
 namespace App\Waste\Application\Measurement\Register;
 
+use App\Security\Application\Action;
+use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Property\PropertyRepository;
 use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 
 class RegisterMeasurementService
@@ -15,12 +18,13 @@ class RegisterMeasurementService
         private MeasurementRepository $measurementRepository,
         private ContainerRepository $containerRepository,
         private PropertyRepository $propertyRepository,
-        private UserRepository $userRepository
+        private UserRepository $userRepository,
+        private MeasurementAuthorizer $authorizer
     ) {
 
     }
 
-    public function __invoke(RegisterMeasurementRequest $request): RegisterMeasurementResponse
+    public function __invoke(RegisterMeasurementRequest $request, User $user): RegisterMeasurementResponse
     {
         $this->validateRequest($request);
 
@@ -29,6 +33,18 @@ class RegisterMeasurementService
         $property = $this->propertyRepository->find($container->propertyId());
 
         $id = MeasurementId::generate();
+
+        $this->authorizer->denyUnlessCanDoThat(
+            new Measurement(
+                id: $id,
+                containerId: $container->id(),
+                propertyId: $property->id(),
+                accountId: $property->accountId(),
+                registeredBy: $user->id()
+            ),
+            Action::Register,
+            $user
+        );
 
         $measurement = new Measurement($id);
         $measurement

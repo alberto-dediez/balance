@@ -6,7 +6,6 @@ use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
-use App\Security\Application\UnauthorizedActionException;
 use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 
@@ -30,9 +29,7 @@ class ListMeasurementsService
             registeredBy: $request->userId,
         );
 
-        if (false == $this->authorizer->canDoThat($measurement, Action::List, $user)) {
-            throw new UnauthorizedActionException($measurement, Action::List);
-        }
+        $this->authorizer->denyUnlessCanDoThat($measurement, Action::List, $user);
 
         $measurements = $this->repository->findByFilter($request);
 

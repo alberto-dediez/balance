@@ -18,6 +18,7 @@ use App\Waste\Application\Measurement\Register\RegisterMeasurementRequest;
 use App\Waste\Application\Measurement\Register\RegisterMeasurementService;
 use App\Waste\Application\Measurement\Register\RegisterMeasurementResponse;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
+use App\Waste\Application\Measurement\MeasurementAuthorizer;
 
 class RegisterMeasurementServiceTest extends TestCase
 {
@@ -68,7 +69,7 @@ class RegisterMeasurementServiceTest extends TestCase
             justification: 'Fiesta de pijamas!'
         );
 
-        $result = $sut($request);
+        $result = $sut($request, $user);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RegisterMeasurementResponse);
@@ -94,7 +95,8 @@ class RegisterMeasurementServiceTest extends TestCase
             containerRepository: $containerRepository,
             measurementRepository: $measurementRepository,
             propertyRepository: $propertyRepository,
-            userRepository: $userRepository
+            userRepository: $userRepository,
+            authorizer: new MeasurementAuthorizer()
         );
     }
 }

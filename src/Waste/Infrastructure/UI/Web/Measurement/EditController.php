@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
 use Symfony\Component\Translation\TranslatableMessage;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 use App\Waste\Infrastructure\Symfony\Form\UpdateMeasurementType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,6 +26,7 @@ class EditController extends AbstractController
         string $measurementId, 
         MeasurementRepository $measurementRepository, 
         UpdateMeasurementService $updateMeasurement, 
+        LoggedUser $loggedUser,
         Request $request
     ): Response
     {   
@@ -38,18 +41,22 @@ class EditController extends AbstractController
             justification: $measurement->justification()
         );
 
-        $form = $this->createForm(UpdateMeasurementType::class, $measurementRequest); 
+        try {
+            $form = $this->createForm(UpdateMeasurementType::class, $measurementRequest); 
 
-        $needsRedirect = $this->edit($request, $form, function ($form) use ($updateMeasurement) {
-            $measurementRequest = $form->getData();
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateMeasurement, $loggedUser) {
+                $measurementRequest = $form->getData();
 
-            $updateMeasurement($measurementRequest);
+                $updateMeasurement($measurementRequest, $loggedUser());
 
-            $this->addFlash('success', new TranslatableMessage('Medición actualizada con éxito'));
-        });
+                $this->addFlash('success', new TranslatableMessage('Medición actualizada con éxito'));
+            });
 
-        if ($needsRedirect) {
-            return $this->redirectToRoute('measurements');
+            if ($needsRedirect) {
+                return $this->redirectToRoute('measurements');
+            }
+        } catch (UnauthorizedActionException $exception) {
+            throw $this->createAccessDeniedException($exception->getMessage());
         }
 
         return $this->render('@waste/measurements/edit.html.twig', [

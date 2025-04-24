@@ -11,11 +11,11 @@ final class MeasurementAuthorizer extends AbstractAuthorizer
 {
     protected function canRegister(mixed $subject, User $user): bool
     {
-        if (null == $user->accountId()) {
+        if (null == $user->accountId() || null == $subject->accountId()) {
             return false;
         }
         
-        return true;
+        return $user->accountId()->equals($subject->accountId());
     }
 
     protected function canView(mixed $subject, User $user): bool

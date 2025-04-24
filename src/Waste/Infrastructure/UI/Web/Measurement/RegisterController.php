@@ -10,6 +10,7 @@ use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use Symfony\Component\Translation\TranslatableMessage;
 use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Waste\Infrastructure\Symfony\Form\RegisterMeasurementType;
@@ -27,30 +28,37 @@ class RegisterController extends AbstractController
         Request $request
     ): Response
     {   
-        $this->denyAccessUnlessGranted(Action::Register->value, new Measurement(MeasurementId::generate()));
+        $this->denyAccessUnlessGranted(Action::Register->value, new Measurement(
+            id: MeasurementId::generate(),
+            accountId: $loggedUser()->accountId()
+        ));
 
         $form = $this->createForm(RegisterMeasurementType::class);
 
         $user = $loggedUser();
 
-        $needsRedirect = $this->register($request, $form, function ($form) use ($registerMeasurement, $user) {
-            $registerRequest = new RegisterMeasurementRequest(
-                containerId: $form->get('containerId')->getData(),                
-                quantity: $form->get('quantity')->getData(),
-                load: $form->get('load')->getData(),
-                registeredBy: $user->id(),
-                justification: $form->get('justification')->getData()
-            );
+        try {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerMeasurement, $user) {
+                $registerRequest = new RegisterMeasurementRequest(
+                    containerId: $form->get('containerId')->getData(),                
+                    quantity: $form->get('quantity')->getData(),
+                    load: $form->get('load')->getData(),
+                    registeredBy: $user->id(),
+                    justification: $form->get('justification')->getData()
+                );
 
-            $response = $registerMeasurement($registerRequest);
+                $response = $registerMeasurement($registerRequest, $user);
 
-            $this->addFlash('success', new TranslatableMessage("Medición registrada correctamente"));
+                $this->addFlash('success', new TranslatableMessage("Medición registrada correctamente"));
 
-            return true;
-        });
+                return true;
+            });
 
-        if ($needsRedirect) {
-            return $this->redirectToRoute('measurements');
+            if ($needsRedirect) {
+                return $this->redirectToRoute('measurements');
+            }
+        } catch (UnauthorizedActionException $exception) {
+            throw $this->createAccessDeniedException($exception->getMessage());
         }
 
         return $this->render('@waste/measurements/register.html.twig', [

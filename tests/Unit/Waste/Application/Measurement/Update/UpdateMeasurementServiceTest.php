@@ -3,12 +3,15 @@
 namespace App\Tests\Unit\Waste\Application\Measurement\Update;
 
 use PHPUnit\Framework\TestCase;
+use App\Security\Domain\Model\User\Role;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\Measurement\Purpose;
-use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Waste\Domain\Model\Measurement\MeasurementUpdated;
+use App\Waste\Domain\Model\Measurement\Measurement;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Waste\Domain\Model\Measurement\MeasurementMethod;
+use App\Waste\Domain\Model\Measurement\MeasurementUpdated;
+use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
 use App\Waste\Application\Measurement\Update\UpdateMeasurementRequest;
@@ -35,6 +38,8 @@ class UpdateMeasurementServiceTest extends TestCase
 
         $repository->add($measurement);
 
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $measurement->accountId());
+
         $sut = $this->createSUT($repository);
 
         $request = new UpdateMeasurementRequest(
@@ -44,7 +49,7 @@ class UpdateMeasurementServiceTest extends TestCase
             justification: null
         );
 
-        $result = $sut($request);
+        $result = $sut($request, $user);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof UpdateMeasurementResponse);
@@ -65,7 +70,8 @@ class UpdateMeasurementServiceTest extends TestCase
     private function createSUT($repository)
     {
         return new UpdateMeasurementService(
-            measurementRepository: $repository
+            measurementRepository: $repository,
+            authorizer: new MeasurementAuthorizer()
         );
     }
 }
