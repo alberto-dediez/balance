@@ -5,39 +5,33 @@ namespace App\Waste\Infrastructure\UI\Web\Container;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Waste\Domain\Model\Property\PropertyRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Security\Application\UnauthorizedActionException;
 use App\Waste\Domain\Model\Container\ContainerRepository;
-use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Waste\Application\Container\Remove\RemoveContainerRequest;
 use App\Waste\Application\Container\Remove\RemoveContainerService;
-use App\Waste\Infrastructure\UI\Web\Property\OnlyPropertiesFromAccountTrait;
 
 #[Route('/containers/remove/{containerId}', name: 'containers_remove')]
-#[IsGranted("ROLE_OWNER")]
 class RemoveController extends AbstractController
 {
-    use GetContainerFromIdTrait, OnlyPropertiesFromAccountTrait;
+    use GetContainerFromIdTrait;
 
     public function __invoke(
         string $containerId, 
         ContainerRepository $containerRepository,
-        PropertyRepository $propertyRepository,
-        LoggedAccount $loggedAccount,
-        RemoveContainerService $removeContainer
+        RemoveContainerService $removeContainer,
+        LoggedUser $loggedUser
     ): Response
     {   
         $container = $this->getContainerFromId($containerId, $containerRepository);
 
-        $property = $propertyRepository->find($container->propertyId());
-
-        $this->onlyPropertiesFromAccount($property, $loggedAccount());
-
         try {
-            $removeContainer(new RemoveContainerRequest($container->id()));
+            $removeContainer(new RemoveContainerRequest($container->id()), $loggedUser());
 
             $this->addFlash('success', new TranslatableMessage("Se ha eliminado el contenedor"));
+        } catch (UnauthorizedActionException $e) {
+            throw $this->createAccessDeniedException($e->getMessage());
         } catch (\Exception $e) {
             $this->addFlash('danger', new TranslatableMessage("No se ha podido eliminar el contenedor"));
         }

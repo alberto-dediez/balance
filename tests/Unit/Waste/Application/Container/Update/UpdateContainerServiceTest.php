@@ -3,12 +3,15 @@
 namespace App\Tests\Unit\Waste\Application\Container\Update;
 
 use PHPUnit\Framework\TestCase;
+use App\Security\Domain\Model\User\Role;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Container\Container;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Waste\Domain\Model\Container\ContainerUpdated;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Application\Container\ContainerAuthorizer;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
 use App\Waste\Application\Container\Update\UpdateContainerRequest;
@@ -33,6 +36,8 @@ class UpdateContainerServiceTest extends TestCase
 
         $container = ContainerMother::random();
 
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $container->accountId());
+
         $repository->add($container);
 
         $sut = $this->createSUT($repository);
@@ -44,7 +49,7 @@ class UpdateContainerServiceTest extends TestCase
             measurementMethod: MeasurementMethod::Volume
         );
 
-        $result = $sut($request);
+        $result = $sut($request, $user);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof UpdateContainerResponse);
@@ -65,7 +70,8 @@ class UpdateContainerServiceTest extends TestCase
     private function createSUT($repository)
     {
         return new UpdateContainerService(
-            containerRepository: $repository
+            containerRepository: $repository,
+            authorizer: new ContainerAuthorizer()
         );
     }
 }

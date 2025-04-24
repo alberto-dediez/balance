@@ -69,6 +69,21 @@ class ContainerMother
         return $container;
     }
 
+    public static function fromAccount(AccountId $accountId)
+    {
+        $purpose = Purpose::cases()[rand(0, count(Purpose::cases())-1)];
+        $measurementMethod = MeasurementMethod::cases()[rand(0, count(MeasurementMethod::cases())-1)];
+
+        return self::from(
+            accountId: $accountId,
+            containerId: ContainerId::generate(),
+            wasteId: WasteId::generate(),
+            propertyId: PropertyId::generate(),
+            purpose: $purpose,
+            measurementMethod: $measurementMethod
+        );
+    }
+
     public static function from(
         AccountId $accountId,
         ContainerId $containerId, 

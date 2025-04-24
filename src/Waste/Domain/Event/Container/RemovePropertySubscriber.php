@@ -8,6 +8,7 @@ use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Waste\Domain\Model\Property\PropertyRemoved;
 use App\Waste\Domain\Model\Container\ContainerFilter;
 use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Waste\Application\Container\Remove\RemoveContainerRequest;
 use App\Waste\Application\Container\Remove\RemoveContainerService;
 
@@ -15,7 +16,7 @@ class RemovePropertySubscriber implements DomainEventSubscriber
 {
     use RegisterTrait;
 
-    public function __construct(private ContainerRepository $containerRepository, private RemoveContainerService $removeContainer)
+    public function __construct(private ContainerRepository $containerRepository, private RemoveContainerService $removeContainer, private LoggedUser $loggedUser)
     {
         $this->register();
     }
@@ -41,12 +42,14 @@ class RemovePropertySubscriber implements DomainEventSubscriber
 
         $removeContainer = $this->removeContainer;
 
+        $user = $this->loggedUser->__invoke();
+
         foreach ($containers as $container) {
             $request = new RemoveContainerRequest(
                 $container->id()
             );
 
-            $removeContainer($request);
+            $removeContainer($request, $user);
         }
     }
 

@@ -26,7 +26,7 @@ class ContainerIdType extends AggregateRootIdType
 
         $containers = $this->containerRepository->findByFilter(
             new ContainerFilter(
-                account: null == $account ? null : $account
+                accountId: null == $account ? null : $account->id()
             )
         );
 

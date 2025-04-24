@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Waste\Application\Container\Register;
 
 use PHPUnit\Framework\TestCase;
+use App\Security\Domain\Model\User\Role;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\Container\QrCode;
 use App\Waste\Domain\Model\Container\Purpose;
@@ -12,6 +13,8 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\Property\PropertyRepository;
+use App\Waste\Application\Container\ContainerAuthorizer;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Waste\Domain\Model\Container\ContainerRegistered;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Tests\Unit\Waste\Domain\Model\Property\PropertyMother;
@@ -47,6 +50,8 @@ class RegisterContainerServiceTest extends TestCase
 
         $propertyRepository->add($property);
 
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId);
+
         $request = new RegisterContainerRequest(
             propertyId: $property->id(),
             wasteId: new WasteId('444'),
@@ -54,7 +59,7 @@ class RegisterContainerServiceTest extends TestCase
             measurementMethod: MeasurementMethod::Weight
         );
 
-        $result = $sut($request);
+        $result = $sut($request, $user);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RegisterContainerResponse);
@@ -81,7 +86,8 @@ class RegisterContainerServiceTest extends TestCase
         return new RegisterContainerService(
             containerRepository: $containerRepository,
             propertyRepository: $propertyRepository,
-            qrCodeGenerator: new FakeQrCodeGenerator()
+            qrCodeGenerator: new FakeQrCodeGenerator(),
+            authorizer: new ContainerAuthorizer()
         );
     }
 }

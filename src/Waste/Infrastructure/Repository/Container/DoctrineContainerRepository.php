@@ -97,12 +97,12 @@ class DoctrineContainerRepository implements ContainerRepository
             ;
         }
 
-        if (null !== $filter->account) {
+        if (null !== $filter->accountId) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('c.accountId', ':accountId')
                 )
-                ->setParameter('accountId', (string) $filter->account->id())
+                ->setParameter('accountId', (string) $filter->accountId)
             ;
         }
 

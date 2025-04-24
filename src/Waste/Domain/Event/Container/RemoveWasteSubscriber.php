@@ -2,6 +2,7 @@
 
 namespace App\Waste\Domain\Event\Container;
 
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\RegisterTrait;
 use App\Waste\Domain\Model\Waste\WasteRemoved;
@@ -15,7 +16,7 @@ class RemoveWasteSubscriber implements DomainEventSubscriber
 {
     use RegisterTrait;
 
-    public function __construct(private ContainerRepository $containerRepository, private RemoveContainerService $removeContainer)
+    public function __construct(private ContainerRepository $containerRepository, private RemoveContainerService $removeContainer, private LoggedUser $loggedUser)
     {
         $this->register();
     }
@@ -41,12 +42,14 @@ class RemoveWasteSubscriber implements DomainEventSubscriber
 
         $removeContainer = $this->removeContainer;
 
+        $user = $this->loggedUser->__invoke();
+
         foreach ($containers as $container) {
             $request = new RemoveContainerRequest(
                 $container->id()
             );
 
-            $removeContainer($request);
+            $removeContainer($request, $user);
         }
     }
 

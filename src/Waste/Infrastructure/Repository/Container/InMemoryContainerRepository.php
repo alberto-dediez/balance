@@ -82,10 +82,10 @@ class InMemoryContainerRepository implements ContainerRepository
             }
 
             if (
-                null !== $filter->account 
+                null !== $filter->accountId
                 && (
                     null == $container->accountId()
-                    || false == $filter->account->id()->equals($container->accountId())
+                    || false == $filter->accountId->equals($container->accountId())
                 )
             ) {
                 continue;

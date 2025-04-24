@@ -3,8 +3,11 @@
 namespace App\Tests\Unit\Waste\Application\Container\Remove;
 
 use PHPUnit\Framework\TestCase;
+use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Waste\Domain\Model\Container\ContainerRemoved;
+use App\Waste\Application\Container\ContainerAuthorizer;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
 use App\Waste\Application\Container\Remove\RemoveContainerRequest;
@@ -31,13 +34,15 @@ class RemoveContainerServiceTest extends TestCase
 
         $container = ContainerMother::registeredContainer();
 
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $container->accountId());
+
         $repository->add($container);
 
         $request = new RemoveContainerRequest(
             containerId: $container->id()
         );
 
-        $result = $sut($request);
+        $result = $sut($request, $user);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RemoveContainerResponse);
@@ -55,6 +60,6 @@ class RemoveContainerServiceTest extends TestCase
 
     private function createSUT($repository)
     {
-        return new RemoveContainerService($repository);
+        return new RemoveContainerService($repository, new ContainerAuthorizer());
     }
 }

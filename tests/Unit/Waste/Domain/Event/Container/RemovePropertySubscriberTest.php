@@ -9,11 +9,13 @@ use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Property\PropertyRemoved;
 use App\Waste\Domain\Model\Container\ContainerRemoved;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Waste\Domain\Model\Property\PropertyMother;
 use App\Waste\Domain\Event\Container\RemovePropertySubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
 use App\Waste\Application\Container\Remove\RemoveContainerService;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
+use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeLoggedUser;
 
 class RemovePropertySubscriberTest extends TestCase
 {
@@ -89,9 +91,14 @@ class RemovePropertySubscriberTest extends TestCase
         $removeContainer = $this->createMock(RemoveContainerService::class);
         $removeContainer->expects($this->exactly($containersToRemoved))->method('__invoke');
         
+        /** @var RemoveContainerService $removeContainer **/
+
+        $loggedUser = new FakeLoggedUser(UserMother::random());
+
         return new RemovePropertySubscriber(
             $repository,
-            $removeContainer
+            $removeContainer,
+            $loggedUser
         );
     }
 }

@@ -2,42 +2,37 @@
 
 namespace App\Waste\Infrastructure\UI\Web\Container;
 
+use App\Security\Application\Action;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Waste\Domain\Model\Property\PropertyRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Security\Application\UnauthorizedActionException;
 use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Waste\Infrastructure\Symfony\Form\UpdateContainerType;
-use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Waste\Application\Container\Update\UpdateContainerRequest;
 use App\Waste\Application\Container\Update\UpdateContainerService;
 use App\Waste\Infrastructure\UI\Web\Container\GetContainerFromIdTrait;
-use App\Waste\Infrastructure\UI\Web\Property\OnlyPropertiesFromAccountTrait;
 
 #[Route('/containers/edit/{containerId}', name: 'containers_edit')]
-#[IsGranted("ROLE_OWNER")]
 class EditController extends AbstractController
 {
-    use EditTrait, GetContainerFromIdTrait, OnlyPropertiesFromAccountTrait;
+    use EditTrait, GetContainerFromIdTrait;
 
     public function __invoke(
         string $containerId, 
-        LoggedAccount $loggedAccount,
         ContainerRepository $containerRepository, 
-        PropertyRepository $propertyRepository, 
         UpdateContainerService $updateContainer, 
+        LoggedUser $loggedUser,
         Request $request
     ): Response
     {   
         $container = $this->getContainerFromId($containerId, $containerRepository);
 
-        $property = $propertyRepository->find($container->propertyId());
-
-        $this->onlyPropertiesFromAccount($property, $loggedAccount());
+        $this->denyAccessUnlessGranted(Action::Edit->value, $container);
 
         $containerRequest = new UpdateContainerRequest(
             containerId: $container->id(),
@@ -46,18 +41,22 @@ class EditController extends AbstractController
             measurementMethod: $container->measurementMethod()
         );
 
-        $form = $this->createForm(UpdateContainerType::class, $containerRequest); 
+        try {
+            $form = $this->createForm(UpdateContainerType::class, $containerRequest); 
 
-        $needsRedirect = $this->edit($request, $form, function ($form) use ($updateContainer) {
-            $containerRequest = $form->getData();
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateContainer, $loggedUser) {
+                $containerRequest = $form->getData();
 
-            $updateContainer($containerRequest);
+                $updateContainer($containerRequest, $loggedUser());
 
-            $this->addFlash('success', new TranslatableMessage('Propiedad actualizada con éxito'));
-        });
+                $this->addFlash('success', new TranslatableMessage('Propiedad actualizada con éxito'));
+            });
 
-        if ($needsRedirect) {
-            return $this->redirectToRoute('containers');
+            if ($needsRedirect) {
+                return $this->redirectToRoute('containers');
+            }
+        } catch (UnauthorizedActionException $e) {
+            throw $this->createAccessDeniedException($e->getMessage());
         }
 
         return $this->render('@waste/containers/edit.html.twig', [

@@ -2,10 +2,13 @@
 
 namespace App\Waste\Application\Container\Register;
 
+use App\Security\Application\Action;
+use App\Security\Domain\Model\User\User;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\QrCodeGenerator;
 use App\Waste\Domain\Model\Property\PropertyRepository;
+use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 
 class RegisterContainerService
@@ -13,12 +16,13 @@ class RegisterContainerService
     public function __construct(
         private ContainerRepository $containerRepository,
         private PropertyRepository $propertyRepository,
-        private QrCodeGenerator $qrCodeGenerator
+        private QrCodeGenerator $qrCodeGenerator,
+        private ContainerAuthorizer $authorizer
     ) {
 
     }
 
-    public function __invoke(RegisterContainerRequest $request): RegisterContainerResponse
+    public function __invoke(RegisterContainerRequest $request, User $user): RegisterContainerResponse
     {
         if (null == $request->propertyId || null == $request->wasteId) {
             throw new \InvalidArgumentException("Debes especificar una propiedad y tipologia de resiudo");
@@ -31,6 +35,16 @@ class RegisterContainerService
         }
 
         $id = ContainerId::generate();
+
+        $this->authorizer->denyUnlessCanDoThat(
+            new Container(
+                id: $id, 
+                accountId: $property->accountId(),
+                propertyId: $request->propertyId
+            ), 
+            Action::Register, 
+            $user
+        );
 
         $container = new Container($id);
         $container

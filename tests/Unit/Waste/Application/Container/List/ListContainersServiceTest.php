@@ -3,6 +3,9 @@
 namespace App\Tests\Unit\Waste\Application\Container\List;
 
 use PHPUnit\Framework\TestCase;
+use App\Waste\Application\Container\ContainerAuthorizer;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Waste\Application\Container\List\ListContainersRequest;
 use App\Waste\Application\Container\List\ListContainersService;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
@@ -22,14 +25,19 @@ class ListContainersServiceTest extends TestCase
 
         $sut = $this->createSUT($repository);
 
-        $repository->add(ContainerMother::random());
-        $repository->add(ContainerMother::random());
-        $repository->add(ContainerMother::random());
-        $repository->add(ContainerMother::random());
+        $account = AccountMother::registeredAccount();
+        $user = UserMother::fromUsernameAndAccount('test', $account);
 
-        $request = new ListContainersRequest();
+        $repository->add(ContainerMother::fromAccount($account->id()));
+        $repository->add(ContainerMother::fromAccount($account->id()));
+        $repository->add(ContainerMother::fromAccount($account->id()));
+        $repository->add(ContainerMother::fromAccount($account->id()));
 
-        $result = $sut($request);
+        $request = new ListContainersRequest(
+            accountId: $account->id()
+        );
+
+        $result = $sut($request, $user);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof ListContainersResponse);
@@ -39,6 +47,6 @@ class ListContainersServiceTest extends TestCase
 
     private function createSUT($repository)
     {
-        return new ListContainersService($repository);
+        return new ListContainersService($repository, new ContainerAuthorizer());
     }
 }
