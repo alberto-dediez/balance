@@ -53,6 +53,32 @@ class RegisterRecordedEventServiceTest extends TestCase
         $this->assertTrue($recordedEventPersisted instanceof RecordedEvent);
     }
 
+    public function testNoUserCanRecordEvents()
+    {
+        $repository = new InMemoryRecordedEventRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $request = new RegisterRecordedEventRequest(
+            userId: UserId::generate(),
+            event: new UserRemoved(UserId::generate())
+        );
+
+        $performBy = null;
+
+        $result = $sut($request, $performBy);
+
+        $this->assertNotNull($result);
+        $this->assertTrue($result instanceof RegisterRecordedEventResponse);
+        $this->assertNotEmpty((string) $result->recordedEventId);
+        $this->assertEquals(36, strlen((string) $result->recordedEventId));
+
+        $recordedEventPersisted = $repository->find($result->recordedEventId);
+
+        $this->assertNotNull($recordedEventPersisted);
+        $this->assertTrue($recordedEventPersisted instanceof RecordedEvent);
+    }
+
     private function createSUT($repository)
     {
         return new RegisterRecordedEventService($repository, RecordedEventAuthorizerMother::create());
