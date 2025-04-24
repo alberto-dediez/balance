@@ -3,10 +3,12 @@
 namespace App\Tests\Unit\Waste\Application\Waste\List;
 
 use PHPUnit\Framework\TestCase;
+use App\Waste\Application\Waste\WasteAuthorizer;
 use App\Waste\Application\Waste\List\ListWastesRequest;
 use App\Waste\Application\Waste\List\ListWastesService;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
 use App\Waste\Application\Waste\List\ListWastesResponse;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
 
 class ListWastesServiceTest extends TestCase
@@ -29,7 +31,7 @@ class ListWastesServiceTest extends TestCase
 
         $request = new ListWastesRequest();
 
-        $result = $sut($request);
+        $result = $sut($request, UserMother::adminUser());
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof ListWastesResponse);
@@ -52,7 +54,7 @@ class ListWastesServiceTest extends TestCase
             isDangerous: true
         );
 
-        $result = $sut($request);
+        $result = $sut($request, UserMother::adminUser());
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof ListWastesResponse);
@@ -63,7 +65,7 @@ class ListWastesServiceTest extends TestCase
             isDangerous: false
         );
 
-        $result = $sut($request);
+        $result = $sut($request, UserMother::adminUser());
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof ListWastesResponse);
@@ -74,7 +76,7 @@ class ListWastesServiceTest extends TestCase
             isDangerous: null
         );
 
-        $result = $sut($request);
+        $result = $sut($request, UserMother::adminUser());
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof ListWastesResponse);
@@ -84,6 +86,6 @@ class ListWastesServiceTest extends TestCase
 
     private function createSUT($repository)
     {
-        return new ListWastesService($repository);
+        return new ListWastesService($repository, new WasteAuthorizer());
     }
 }

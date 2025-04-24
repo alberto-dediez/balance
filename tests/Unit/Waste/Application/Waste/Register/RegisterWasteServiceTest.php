@@ -4,8 +4,10 @@ namespace App\Tests\Unit\Waste\Application\Waste\Register;
 
 use PHPUnit\Framework\TestCase;
 use App\Waste\Domain\Model\Waste\Waste;
+use App\Waste\Application\Waste\WasteAuthorizer;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Waste\Domain\Model\Waste\WasteRegistered;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Waste\Application\Waste\Register\RegisterWasteRequest;
 use App\Waste\Application\Waste\Register\RegisterWasteService;
 use App\Waste\Application\Waste\Register\RegisterWasteResponse;
@@ -34,7 +36,7 @@ class RegisterWasteServiceTest extends TestCase
             isDangerous: true
         );
 
-        $result = $sut($request);
+        $result = $sut($request, UserMother::adminUser());
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RegisterWasteResponse);
@@ -58,6 +60,6 @@ class RegisterWasteServiceTest extends TestCase
 
     private function createSUT($repository)
     {
-        return new RegisterWasteService($repository);
+        return new RegisterWasteService($repository, new WasteAuthorizer());
     }
 }

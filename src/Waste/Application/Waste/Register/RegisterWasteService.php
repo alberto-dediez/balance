@@ -2,19 +2,24 @@
 
 namespace App\Waste\Application\Waste\Register;
 
+use App\Security\Application\Action;
 use App\Waste\Domain\Model\Waste\Waste;
+use App\Security\Domain\Model\User\User;
 use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Application\Waste\WasteAuthorizer;
 use App\Waste\Domain\Model\Waste\WasteRepository;
 
 class RegisterWasteService
 {
-    public function __construct(private WasteRepository $wasteRepository)
+    public function __construct(private WasteRepository $wasteRepository, private WasteAuthorizer $authorizer)
     {
     }
 
-    public function __invoke(RegisterWasteRequest $request): RegisterWasteResponse
+    public function __invoke(RegisterWasteRequest $request, User $user): RegisterWasteResponse
     {
         $id = WasteId::generate();
+
+        $this->authorizer->denyUnlessCanDoThat(new Waste(id: $id), Action::List, $user);
 
         $waste = new Waste($id);
         $waste->register($request->name, $request->isDangerous);

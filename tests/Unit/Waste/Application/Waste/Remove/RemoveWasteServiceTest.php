@@ -4,8 +4,10 @@ namespace App\Tests\Unit\Waste\Application\Waste\Remove;
 
 use PHPUnit\Framework\TestCase;
 use App\Waste\Domain\Model\Waste\WasteRemoved;
+use App\Waste\Application\Waste\WasteAuthorizer;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Waste\Application\Waste\Remove\RemoveWasteRequest;
 use App\Waste\Application\Waste\Remove\RemoveWasteService;
 use App\Waste\Application\Waste\Remove\RemoveWasteResponse;
@@ -37,7 +39,7 @@ class RemoveWasteServiceTest extends TestCase
             wasteId: $waste->id()
         );
 
-        $result = $sut($request);
+        $result = $sut($request, UserMother::adminUser());
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RemoveWasteResponse);
@@ -55,6 +57,6 @@ class RemoveWasteServiceTest extends TestCase
 
     private function createSUT($repository)
     {
-        return new RemoveWasteService($repository);
+        return new RemoveWasteService($repository, new WasteAuthorizer());
     }
 }
