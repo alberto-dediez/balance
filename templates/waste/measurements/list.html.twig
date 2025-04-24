@@ -35,8 +35,13 @@
             <td>{{ element.purpose.value | trans({}, 'purpose') }}</td>
             <td>{{ element.registeredAt | date('d/m/Y') }}</td>
             <td>
-                <twig:List:Action:Edit path="{{ path('measurements_edit', {'measurementId': element.id}) }}" />
-                <twig:List:Action:Delete path="{{ path('measurements_remove', {'measurementId': element.id}) }}" />
+                {% if element | is_authorized('edit') %}
+                    <twig:List:Action:Edit path="{{ path('measurements_edit', {'measurementId': element.id}) }}" />
+                {% endif %}
+
+                {% if element | is_authorized('remove') %}
+                    <twig:List:Action:Delete path="{{ path('measurements_remove', {'measurementId': element.id}) }}" />
+                {% endif %}
             </td>
         </tr>
     </twig:List:Table>

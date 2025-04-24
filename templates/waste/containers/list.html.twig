@@ -26,8 +26,13 @@
             <td>{{ element.purpose.value | trans({}, 'purpose') }}</td>
             <td>{{ element.registeredAt | date('d/m/Y') }}</td>
             <td>
-                <twig:List:Action:Edit path="{{ path('containers_edit', {'containerId': element.id}) }}" />
-                <twig:List:Action:Delete path="{{ path('containers_remove', {'containerId': element.id}) }}" />
+                {% if element | is_authorized('edit') %}
+                    <twig:List:Action:Edit path="{{ path('containers_edit', {'containerId': element.id}) }}" />
+                {% endif %}
+
+                {% if element | is_authorized('remove') %}
+                    <twig:List:Action:Delete path="{{ path('containers_remove', {'containerId': element.id}) }}" />
+                {% endif %}
             </td>
         </tr>
     </twig:List:Table>

@@ -22,8 +22,13 @@
             <td>{{ element.name }}</td>
             <td>{{ element.registeredAt | date('d/m/Y') }}</td>
             <td>
-                <twig:List:Action:Edit path="{{ path('properties_edit', {'propertyId': element.id}) }}" />
-                <twig:List:Action:Delete path="{{ path('properties_remove', {'propertyId': element.id}) }}" />
+                {% if element | is_authorized('edit') %}
+                    <twig:List:Action:Edit path="{{ path('properties_edit', {'propertyId': element.id}) }}" />
+                {% endif %}
+
+                {% if element | is_authorized('remove') %}
+                    <twig:List:Action:Delete path="{{ path('properties_remove', {'propertyId': element.id}) }}" />
+                {% endif %}
             </td>
         </tr>
     </twig:List:Table>

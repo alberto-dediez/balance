@@ -25,8 +25,13 @@
             <td>{{ element.accountId ? (element.accountId | account_name) : '' }}</td>
             <td>{{ element.registeredAt | date('d/m/Y') }}</td>
             <td>
-                <twig:List:Action:Edit path="{{ path('admin_properties_edit', {'propertyId': element.id}) }}" />
-                <twig:List:Action:Delete path="{{ path('admin_properties_remove', {'propertyId': element.id}) }}" />
+                {% if element | is_authorized('edit') %}
+                    <twig:List:Action:Edit path="{{ path('admin_properties_edit', {'propertyId': element.id}) }}" />
+                {% endif %}
+                
+                {% if element | is_authorized('remove') %}
+                    <twig:List:Action:Delete path="{{ path('admin_properties_remove', {'propertyId': element.id}) }}" />
+                {% endif %}
             </td>
         </tr>
     </twig:List:Table>
