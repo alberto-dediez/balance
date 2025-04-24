@@ -55,4 +55,4 @@ Feature:
     Given property "Hotel" with id "333" of account "111" exists
     When I am logged as "owner@dediez.software"
     When I go to "/es/properties/edit/333"
-    Then the response status should be 404
+    Then the response status should be 403

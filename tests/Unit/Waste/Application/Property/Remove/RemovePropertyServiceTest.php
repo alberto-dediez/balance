@@ -3,8 +3,11 @@
 namespace App\Tests\Unit\Waste\Application\Property\Remove;
 
 use PHPUnit\Framework\TestCase;
+use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Waste\Domain\Model\Property\PropertyRemoved;
+use App\Waste\Application\Property\PropertyAuthorizer;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Waste\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Waste\Application\Property\Remove\RemovePropertyRequest;
@@ -27,6 +30,8 @@ class RemovePropertyServiceTest extends TestCase
     {
         $repository = PropertyRepositoryMother::inMemory();
 
+        $user = UserMother::fromUsernameAndRole('user', Role::Admin);
+
         $sut = $this->createSUT($repository);
 
         $property = PropertyMother::registeredProperty();
@@ -37,7 +42,7 @@ class RemovePropertyServiceTest extends TestCase
             propertyId: $property->id()
         );
 
-        $result = $sut($request);
+        $result = $sut($request, $user);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RemovePropertyResponse);
@@ -55,6 +60,6 @@ class RemovePropertyServiceTest extends TestCase
 
     private function createSUT($repository)
     {
-        return new RemovePropertyService($repository);
+        return new RemovePropertyService($repository, new PropertyAuthorizer());
     }
 }

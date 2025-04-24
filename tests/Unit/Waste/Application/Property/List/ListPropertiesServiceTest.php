@@ -3,6 +3,9 @@
 namespace App\Tests\Unit\Waste\Application\Property\List;
 
 use PHPUnit\Framework\TestCase;
+use App\Security\Domain\Model\User\Role;
+use App\Waste\Application\Property\PropertyAuthorizer;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Waste\Domain\Model\Property\PropertyMother;
 use App\Waste\Application\Property\List\ListPropertiesRequest;
 use App\Waste\Application\Property\List\ListPropertiesService;
@@ -20,6 +23,8 @@ class ListPropertiesServiceTest extends TestCase
     {
         $repository = PropertyRepositoryMother::inMemory();
 
+        $user = UserMother::fromUsernameAndRole('user', Role::Admin);
+
         $sut = $this->createSUT($repository);
 
         $repository->add(PropertyMother::random());
@@ -29,7 +34,7 @@ class ListPropertiesServiceTest extends TestCase
 
         $request = new ListPropertiesRequest();
 
-        $result = $sut($request);
+        $result = $sut($request, $user);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof ListPropertiesResponse);
@@ -39,6 +44,6 @@ class ListPropertiesServiceTest extends TestCase
 
     private function createSUT($repository)
     {
-        return new ListPropertiesService($repository);
+        return new ListPropertiesService($repository, new PropertyAuthorizer());
     }
 }

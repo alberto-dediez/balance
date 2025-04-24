@@ -3,9 +3,13 @@
 namespace App\Tests\Unit\Waste\Application\Property\Register;
 
 use PHPUnit\Framework\TestCase;
+use App\Security\Domain\Model\User\Role;
 use App\Waste\Domain\Model\Property\Property;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Waste\Application\Property\PropertyAuthorizer;
 use App\Waste\Domain\Model\Property\PropertyRegistered;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Waste\Application\Property\Register\RegisterPropertyRequest;
 use App\Waste\Application\Property\Register\RegisterPropertyService;
@@ -27,13 +31,16 @@ class RegisterPropertyServiceTest extends TestCase
     {
         $repository = PropertyRepositoryMother::inMemory();
 
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, AccountId::generate());
+
         $sut = $this->createSUT($repository);
 
         $request = new RegisterPropertyRequest(
-            name: 'Hotel Abaco'
+            name: 'Hotel Abaco',
+            accountId: $user->accountId()
         );
 
-        $result = $sut($request);
+        $result = $sut($request, $user);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RegisterPropertyResponse);
@@ -55,6 +62,6 @@ class RegisterPropertyServiceTest extends TestCase
 
     private function createSUT($repository)
     {
-        return new RegisterPropertyService($repository);
+        return new RegisterPropertyService($repository, new PropertyAuthorizer());
     }
 }

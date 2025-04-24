@@ -3,10 +3,13 @@
 namespace App\Tests\Unit\Waste\Application\Property\Update;
 
 use PHPUnit\Framework\TestCase;
+use App\Security\Domain\Model\User\Role;
 use App\Waste\Domain\Model\Property\Property;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Waste\Domain\Model\Property\PropertyUpdated;
+use App\Waste\Application\Property\PropertyAuthorizer;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Waste\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Waste\Application\Property\Update\UpdatePropertyRequest;
@@ -41,7 +44,9 @@ class UpdatePropertyServiceTest extends TestCase
             accountId: new AccountId('6666')
         );
 
-        $result = $sut($request);
+        $user = UserMother::fromUsernameAndRole('user', Role::Admin);
+
+        $result = $sut($request, $user);
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof UpdatePropertyResponse);
@@ -62,6 +67,6 @@ class UpdatePropertyServiceTest extends TestCase
 
     private function createSUT($repository)
     {
-        return new UpdatePropertyService($repository);
+        return new UpdatePropertyService($repository, new PropertyAuthorizer());
     }
 }
