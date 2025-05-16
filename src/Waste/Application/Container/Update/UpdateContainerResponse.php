@@ -6,6 +6,7 @@ use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 class UpdateContainerResponse
 {
@@ -13,7 +14,8 @@ class UpdateContainerResponse
         public ContainerId $containerId, 
         public WasteId $wasteId,
         public Purpose $purpose,
-        public MeasurementMethod $measurementMethod
+        public MeasurementMethod $measurementMethod,
+        public WasteManagerId $wasteManagerId
     ) {
         
     }

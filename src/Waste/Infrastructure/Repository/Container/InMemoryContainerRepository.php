@@ -81,6 +81,10 @@ class InMemoryContainerRepository implements ContainerRepository
                 continue;
             }
 
+            if (null !== $filter->wasteManagerId && !$filter->wasteManagerId->equals($container->wasteManagerId())) {
+                continue;
+            }
+
             if (
                 null !== $filter->accountId
                 && (

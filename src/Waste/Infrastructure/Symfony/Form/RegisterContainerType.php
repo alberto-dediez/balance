@@ -10,6 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use App\Waste\Infrastructure\Symfony\Type\PropertyIdType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use App\Waste\Infrastructure\Symfony\Type\WasteManagerIdType;
 use App\Waste\Infrastructure\Symfony\Type\MeasurementMethodType;
 
 class RegisterContainerType extends AbstractType
@@ -31,6 +32,10 @@ class RegisterContainerType extends AbstractType
             ])
             ->add('measurementMethod', MeasurementMethodType::class, [
                 'label' => new TranslatableMessage('Método de medida'),
+                'required' => true
+            ])
+            ->add('wasteManagerId', WasteManagerIdType::class, [
+                'label' => new TranslatableMessage('Gestor de residuos'),
                 'required' => true
             ])
             ->add('register', SubmitType::class, [

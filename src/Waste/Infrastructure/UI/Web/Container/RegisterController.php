@@ -51,7 +51,8 @@ class RegisterController extends AbstractController
                     propertyId: $form->get('propertyId')->getData(),                
                     wasteId: $form->get('wasteId')->getData(),                
                     purpose: $form->get('purpose')->getData(),                
-                    measurementMethod: $form->get('measurementMethod')->getData(),                
+                    measurementMethod: $form->get('measurementMethod')->getData(),         
+                    wasteManagerId: $form->get('wasteManagerId')->getData()       
                 );
 
                 $response = $registerContainer($registerRequest, $loggedUser());

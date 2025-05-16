@@ -9,6 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use App\Waste\Infrastructure\Symfony\Type\PropertyIdType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
+use App\Waste\Infrastructure\Symfony\Type\WasteManagerIdType;
 use App\Waste\Application\Container\List\ListContainersRequest;
 use App\Waste\Infrastructure\Symfony\Type\MeasurementMethodType;
 
@@ -36,6 +37,11 @@ class ListContainersType extends BaseFilterType
                 'label' => new TranslatableMessage('Método de medida'),
                 'required' => false,
                 'placeholder' => new TranslatableMessage('Todos los métodos')
+            ])
+            ->add('wasteManagerId', WasteManagerIdType::class, [
+                'label' => new TranslatableMessage('Gestor de residuos'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Todos los gestores')
             ])
         ;
         

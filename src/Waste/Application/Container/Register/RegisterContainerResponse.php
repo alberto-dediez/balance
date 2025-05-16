@@ -8,6 +8,7 @@ use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Property\PropertyId;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 class RegisterContainerResponse
 {
@@ -17,6 +18,7 @@ class RegisterContainerResponse
         public WasteId $wasteId,
         public Purpose $purpose,
         public MeasurementMethod $measurementMethod,
+        public WasteManagerId $wasteManagerId,
         public QrCode $qrCode
     ) {
         

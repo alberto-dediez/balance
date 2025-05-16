@@ -21,6 +21,7 @@ Feature:
     Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
     Given waste "Madera" with id "madera" exists
     Given property "Hotel" with id "hotel" of account "mycompany" exists
+    Given waste manager "Sadeco" with id "sadeco" of account "mycompany" exists
     When I am logged as "owner@dediez.software"
     When I go to "/es/containers/register"
     Then the response status should be 200

@@ -8,6 +8,7 @@ Feature:
     Given waste "Plastico" with id "plastico" exists
     Given property "Hotel" with id "hotel" of account "mycompany" exists
     Given container for "madera" in "hotel" with id "333" exists
+    Given waste manager "Sadeco" with id "sadeco" of account "mycompany" exists
     When I am logged as "owner@dediez.software"
     When I go to "/es/containers/edit/333"
     When I submit a form with "wasteId:plastico" and button "Guardar"

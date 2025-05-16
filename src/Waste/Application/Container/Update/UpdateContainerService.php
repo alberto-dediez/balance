@@ -35,7 +35,8 @@ class UpdateContainerService
         $container->update(
             wasteId: $request->wasteId,
             purpose: $request->purpose,
-            measurementMethod: $request->measurementMethod
+            measurementMethod: $request->measurementMethod,
+            wasteManagerId: $request->wasteManagerId
         );
 
         $this->containerRepository->add($container);
@@ -44,7 +45,8 @@ class UpdateContainerService
             containerId: $container->id(),
             wasteId: $container->wasteId(),
             purpose: $container->purpose(),
-            measurementMethod: $container->measurementMethod()
+            measurementMethod: $container->measurementMethod(),
+            wasteManagerId: $container->wasteManagerId()
         );
     }
 }

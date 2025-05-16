@@ -13,6 +13,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\Property\PropertyRepository;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Waste\Domain\Model\Container\ContainerRegistered;
@@ -56,7 +57,8 @@ class RegisterContainerServiceTest extends TestCase
             propertyId: $property->id(),
             wasteId: new WasteId('444'),
             purpose: Purpose::Recycling,
-            measurementMethod: MeasurementMethod::Weight
+            measurementMethod: MeasurementMethod::Weight,
+            wasteManagerId: WasteManagerId::generate()
         );
 
         $result = $sut($request, $user);
@@ -79,6 +81,7 @@ class RegisterContainerServiceTest extends TestCase
         $this->assertNotNull($lastEvent);
         $this->assertTrue($lastEvent instanceof ContainerRegistered);
         $this->assertTrue($containerPersisted->id()->equals($lastEvent->containerId()));
+        $this->assertTrue($request->wasteManagerId->equals($lastEvent->wasteManagerId()));
     }
 
     private function createSUT(ContainerRepository $containerRepository, PropertyRepository $propertyRepository)

@@ -38,7 +38,8 @@ class EditController extends AbstractController
             containerId: $container->id(),
             wasteId: $container->wasteId(),
             purpose: $container->purpose(),
-            measurementMethod: $container->measurementMethod()
+            measurementMethod: $container->measurementMethod(),
+            wasteManagerId: $container->wasteManagerId()
         );
 
         try {

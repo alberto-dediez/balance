@@ -9,6 +9,7 @@ use App\Shared\Domain\Event\DomainEventId;
 use App\Waste\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 final class ContainerRegistered extends DomainEvent
 {
@@ -21,6 +22,7 @@ final class ContainerRegistered extends DomainEvent
         private WasteId $wasteId,
         private MeasurementMethod $measurementMethod,
         private Purpose $purpose,
+        private WasteManagerId $wasteManagerId,
         private QrCode $qrCode,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
@@ -58,6 +60,11 @@ final class ContainerRegistered extends DomainEvent
         return $this->measurementMethod;
     }
 
+    public function wasteManagerId(): WasteManagerId
+    {
+        return $this->wasteManagerId;
+    }
+
     public function qrCode(): QrCode
     {
         return $this->qrCode;
@@ -72,6 +79,7 @@ final class ContainerRegistered extends DomainEvent
             'waste' => (string) $this->wasteId,
             'purpose' => $this->purpose->value,
             'measurementMethod' => $this->measurementMethod->value,
+            'wasteManagerId' => (string) $this->wasteManagerId,
             'qrCode' => $this->qrCode->path()
         ];
     }
@@ -88,6 +96,7 @@ final class ContainerRegistered extends DomainEvent
             wasteId: new WasteId($payload['waste']), 
             purpose: Purpose::tryFrom($payload['purpose']),
             measurementMethod: MeasurementMethod::tryFrom($payload['measurementMethod']),
+            wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId($payload['wasteManagerId']) : WasteManagerId::generate(),
             qrCode: new QrCode(isset($payload['qrCode']) ? $payload['qrCode'] : ''),
             id: $id,
             occurredOn: $occurredOn

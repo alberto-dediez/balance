@@ -9,6 +9,7 @@ use App\Waste\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Tests\Unit\Waste\Infrastructure\QrCodeGenerator\FakeQrCodeGenerator;
 
 class ContainerMother
@@ -19,7 +20,8 @@ class ContainerMother
             containerId: ContainerId::generate(),
             wasteId: WasteId::generate(),
             propertyId: PropertyId::generate(),
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
+            wasteManagerId: WasteManagerId::generate()
         );
     }
 
@@ -29,7 +31,8 @@ class ContainerMother
             containerId: new ContainerId($id),
             wasteId: WasteId::generate(),
             propertyId: PropertyId::generate(),
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
+            wasteManagerId: WasteManagerId::generate()
         );
     }
 
@@ -39,7 +42,8 @@ class ContainerMother
             accountId: AccountId::generate(),
             containerId: ContainerId::generate(),
             wasteId: new WasteId($wasteId),
-            propertyId: new PropertyId($propertyId)
+            propertyId: new PropertyId($propertyId),
+            wasteManagerId: WasteManagerId::generate()
         );
 
         return $container;
@@ -51,7 +55,8 @@ class ContainerMother
             accountId: new AccountId($accountId),
             containerId: ContainerId::generate(),
             wasteId: new WasteId($wasteId),
-            propertyId: new PropertyId($propertyId)
+            propertyId: new PropertyId($propertyId),
+            wasteManagerId: WasteManagerId::generate()
         );
 
         return $container;
@@ -63,7 +68,8 @@ class ContainerMother
             accountId: new AccountId($accountId),
             containerId: new ContainerId($containerId),
             wasteId: new WasteId($wasteId),
-            propertyId: new PropertyId($propertyId)
+            propertyId: new PropertyId($propertyId),
+            wasteManagerId: WasteManagerId::generate()
         );
 
         return $container;
@@ -80,7 +86,8 @@ class ContainerMother
             wasteId: WasteId::generate(),
             propertyId: PropertyId::generate(),
             purpose: $purpose,
-            measurementMethod: $measurementMethod
+            measurementMethod: $measurementMethod,
+            wasteManagerId: WasteManagerId::generate()
         );
     }
 
@@ -89,6 +96,7 @@ class ContainerMother
         ContainerId $containerId, 
         WasteId $wasteId, 
         PropertyId $propertyId, 
+        WasteManagerId $wasteManagerId,
         Purpose $purpose = Purpose::Waste, 
         MeasurementMethod $measurementMethod = MeasurementMethod::Volume
     ) {
@@ -105,6 +113,7 @@ class ContainerMother
                 wasteId: $wasteId,
                 purpose: $purpose,
                 measurementMethod: $measurementMethod,
+                wasteManagerId: $wasteManagerId,
                 qrCode: $qrCode
             )
         ;
@@ -123,7 +132,8 @@ class ContainerMother
             wasteId: WasteId::generate(),
             propertyId: PropertyId::generate(),
             purpose: $purpose,
-            measurementMethod: $measurementMethod
+            measurementMethod: $measurementMethod,
+            wasteManagerId: WasteManagerId::generate()
         );
     }
 }

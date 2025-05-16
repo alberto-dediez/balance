@@ -18,6 +18,7 @@
         <field name="accountId" type="string" length="36" nullable="true"/>
         <field name="propertyId" type="string" length="36" nullable="true"/>
         <field name="wasteId" type="string" length="36" nullable="true"/>
+        <field name="wasteManagerId" type="string" length="36" nullable="true"/>
     </entity>
 
 </doctrine-mapping>

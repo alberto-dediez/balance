@@ -6,6 +6,7 @@ use App\Waste\Domain\Model\Waste\WasteId;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Waste\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 class Container
 {
@@ -20,6 +21,7 @@ class Container
         private WasteId|string|null $wasteId = null,
         private ?Purpose $purpose = null,
         private ?MeasurementMethod $measurementMethod = null,
+        private WasteManagerId|string|null $wasteManagerId = null,
         private ?QrCode $qrCode = null,
         private bool $removed = false,
         array $events = [],
@@ -71,6 +73,15 @@ class Container
         return $this->measurementMethod;
     }
 
+    public function wasteManagerId() : ?WasteManagerId
+    {
+        if (is_string($this->wasteManagerId)) {
+            $this->wasteManagerId = new WasteManagerId($this->wasteManagerId);
+        }
+
+        return $this->wasteManagerId;
+    }
+
     public function qrCode(): ?QrCode
     {
         return $this->qrCode;
@@ -97,6 +108,7 @@ class Container
         WasteId $wasteId,
         Purpose $purpose,
         MeasurementMethod $measurementMethod,
+        WasteManagerId $wasteManagerId,
         QrCode $qrCode
     ) {
         $this->recordApplyAndPublish(
@@ -107,6 +119,7 @@ class Container
                 wasteId: $wasteId,
                 purpose: $purpose,
                 measurementMethod: $measurementMethod,
+                wasteManagerId: $wasteManagerId,
                 qrCode: $qrCode
             )
         );
@@ -115,7 +128,8 @@ class Container
     public function update(
         WasteId $wasteId,
         Purpose $purpose,
-        MeasurementMethod $measurementMethod
+        MeasurementMethod $measurementMethod,
+        WasteManagerId $wasteManagerId,
     ) {
         $this->recordApplyAndPublish(
             new ContainerUpdated(
@@ -123,6 +137,7 @@ class Container
                 wasteId: $wasteId,
                 purpose: $purpose,
                 measurementMethod: $measurementMethod,
+                wasteManagerId: $wasteManagerId
             )
         );
     }
@@ -143,6 +158,7 @@ class Container
         $this->wasteId = $event->wasteId();
         $this->purpose = $event->purpose();
         $this->measurementMethod = $event->measurementMethod();
+        $this->wasteManagerId = $event->wasteManagerId();
         $this->qrCode = $event->qrCode();
         $this->registeredAt = $event->occurredOn();
     }
@@ -152,6 +168,7 @@ class Container
         $this->wasteId = $event->wasteId();
         $this->purpose = $event->purpose();
         $this->measurementMethod = $event->measurementMethod();
+        $this->wasteManagerId = $event->wasteManagerId();
     }
 
     public function applyContainerRemoved(ContainerRemoved $event)

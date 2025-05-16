@@ -7,6 +7,7 @@ use App\Waste\Domain\DomainEvent;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 final class ContainerUpdated extends DomainEvent
 {
@@ -17,6 +18,7 @@ final class ContainerUpdated extends DomainEvent
         private WasteId $wasteId,
         private MeasurementMethod $measurementMethod,
         private Purpose $purpose,
+        private WasteManagerId $wasteManagerId,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -43,13 +45,19 @@ final class ContainerUpdated extends DomainEvent
         return $this->measurementMethod;
     }
 
+    public function wasteManagerId(): WasteManagerId
+    {
+        return $this->wasteManagerId;
+    }
+
     public function payload(): ?array
     {
         return [
             'containerId' => (string) $this->containerId,
             'wasteId' => (string) $this->wasteId,
             'purpose' => $this->purpose->value,
-            'measurementMethod' => $this->measurementMethod->value
+            'measurementMethod' => $this->measurementMethod->value,
+            'wasteManagerId' => (string) $this->wasteManagerId
         ];
     }
 
@@ -63,6 +71,7 @@ final class ContainerUpdated extends DomainEvent
             wasteId: new WasteId($payload['wasteId']), 
             purpose: Purpose::tryFrom($payload['purpose']),
             measurementMethod: MeasurementMethod::tryFrom($payload['measurementMethod']),
+            wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId($payload['wasteManagerId']) : WasteManagerId::generate(),
             id: $id,
             occurredOn: $occurredOn
         );

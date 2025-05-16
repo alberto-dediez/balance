@@ -10,6 +10,7 @@ use App\Waste\Domain\Model\Container\Container;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Waste\Domain\Model\Container\ContainerUpdated;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
@@ -46,7 +47,8 @@ class UpdateContainerServiceTest extends TestCase
             containerId: $container->id(),
             wasteId: new WasteId('444'),
             purpose: Purpose::Waste,
-            measurementMethod: MeasurementMethod::Volume
+            measurementMethod: MeasurementMethod::Volume,
+            wasteManagerId: WasteManagerId::generate()
         );
 
         $result = $sut($request, $user);
@@ -65,6 +67,7 @@ class UpdateContainerServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof ContainerUpdated);
         $this->assertEquals('444', (string) $lastEvent->wasteId());
         $this->assertTrue($containerPersisted->id()->equals($lastEvent->containerId()));
+        $this->assertTrue($request->wasteManagerId->equals($containerPersisted->wasteManagerId()));
     }
 
     private function createSUT($repository)

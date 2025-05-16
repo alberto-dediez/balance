@@ -97,6 +97,15 @@ class DoctrineContainerRepository implements ContainerRepository
             ;
         }
 
+        if (null !== $filter->wasteManagerId) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('c.wasteManagerId', ':wasteManagerId')
+                )
+                ->setParameter('wasteManagerId', (string) $filter->wasteManagerId)
+            ;
+        }
+
         if (null !== $filter->accountId) {
             $qb
                 ->andWhere(
