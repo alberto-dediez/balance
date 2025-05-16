@@ -12,6 +12,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 class Measurement
 {
@@ -26,6 +27,7 @@ class Measurement
         private WasteId|string|null $wasteId = null,
         private ?Purpose $purpose = null,
         private ?MeasurementMethod $measurementMethod = null,
+        private WasteManagerId|string|null $wasteManagerId = null,
         private int $quantity = 0,
         private float $load = 0,
         private ?string $justification = null,
@@ -77,6 +79,15 @@ class Measurement
     public function measurementMethod() : ?MeasurementMethod
     {
         return $this->measurementMethod;
+    }
+
+    public function wasteManagerId() : ?WasteManagerId
+    {
+        if (is_string($this->wasteManagerId)) {
+            $this->wasteManagerId = new WasteManagerId($this->wasteManagerId);
+        }
+
+        return $this->wasteManagerId;
     }
 
     public function quantity(): int
@@ -133,6 +144,7 @@ class Measurement
                 wasteId: $container->wasteId(),
                 purpose: $container->purpose(),
                 measurementMethod: $container->measurementMethod(),
+                wasteManagerId: $container->wasteManagerId(),
                 quantity: $quantity,
                 load: $load,
                 justification: $justification,
@@ -173,6 +185,7 @@ class Measurement
         $this->wasteId = $event->wasteId();
         $this->purpose = $event->purpose();
         $this->measurementMethod = $event->measurementMethod();
+        $this->wasteManagerId = $event->wasteManagerId();
         $this->quantity = $event->quantity();
         $this->load = $event->load();
         $this->justification = $event->justification();

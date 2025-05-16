@@ -79,6 +79,7 @@ final class WasteContext implements Context
             containerId: $container->id(),
             propertyId: $container->propertyId(),
             wasteId: $container->wasteId(),
+            wasteManagerId: $container->wasteManagerId(),
             purpose: $container->purpose(),
             measurementMethod: $container->measurementMethod(),
             registeredBy: new UserId($user),

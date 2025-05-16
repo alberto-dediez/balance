@@ -5,7 +5,7 @@
 {% block table %}
     {% set columns = [
         {
-            'label': 'Contenedor' | trans,
+            'label': 'Gestor de residuos' | trans,
         }, {
             'label': 'Propiedad' | trans,
         }, {
@@ -27,7 +27,7 @@
 
     <twig:List:Table :columns="columns" :elements="measurements">
         <tr>
-            <td>{{ element.containerId }}</td>
+            <td>{{ element.wasteManagerId | waste_manager_name }}</td>
             <td>{{ element.propertyId | property_name }}</td>
             <td>{{ element.quantity }}</td>
             <td>{{ element.load }}</td>

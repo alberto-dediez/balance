@@ -12,6 +12,7 @@ use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 class MeasurementMother
 {
@@ -21,6 +22,7 @@ class MeasurementMother
             measurementId: MeasurementId::generate(),
             propertyId: PropertyId::generate(),
             wasteId: WasteId::generate(),
+            wasteManagerId: WasteManagerId::generate(),
             containerId: $containerId,
             registeredBy: UserId::generate(),
             accountId: AccountId::generate()
@@ -31,6 +33,7 @@ class MeasurementMother
         MeasurementId $measurementId, 
         PropertyId $propertyId,
         WasteId $wasteId, 
+        WasteManagerId $wasteManagerId,
         ContainerId $containerId, 
         UserId $registeredBy,
         AccountId $accountId,
@@ -49,7 +52,8 @@ class MeasurementMother
             propertyId: $propertyId,
             wasteId: $wasteId,
             purpose: $purpose,
-            measurementMethod: $measurementMethod
+            measurementMethod: $measurementMethod,
+            wasteManagerId: $wasteManagerId
         );
 
         $measurement
@@ -75,6 +79,7 @@ class MeasurementMother
             measurementId: MeasurementId::generate(),
             propertyId: PropertyId::generate(),
             wasteId: WasteId::generate(),
+            wasteManagerId: WasteManagerId::generate(),
             containerId: ContainerId::generate(),
             registeredBy: UserId::generate(),
             accountId: AccountId::generate(),
@@ -95,6 +100,7 @@ class MeasurementMother
             measurementId: MeasurementId::generate(),
             propertyId: PropertyId::generate(),
             wasteId: WasteId::generate(),
+            wasteManagerId: WasteManagerId::generate(),
             containerId: ContainerId::generate(),
             registeredBy: UserId::generate(),
             accountId: $accountId,

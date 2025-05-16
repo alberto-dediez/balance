@@ -103,6 +103,11 @@ class NodeLister
             icon: "ph:recycle-duotone",
             items: [
                 new Node(
+                    label: new TranslatableMessage("Gestores"),
+                    icon: "hugeicons:garbage-truck",
+                    target: $this->router->generate('waste_managers')
+                ),
+                new Node(
                     label: new TranslatableMessage("Contenedores"),
                     icon: "solar:paper-bin-line-duotone",
                     target: $this->router->generate('containers')
@@ -111,11 +116,6 @@ class NodeLister
                     label: new TranslatableMessage("Mediciones"),
                     icon: "solar:ruler-line-duotone",
                     target: $this->router->generate('measurements')
-                ),
-                new Node(
-                    label: new TranslatableMessage("Gestores"),
-                    icon: "hugeicons:garbage-truck",
-                    target: $this->router->generate('waste_managers')
                 )
             ]
         );

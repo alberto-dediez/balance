@@ -10,6 +10,7 @@ use App\Waste\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 class MeasurementFilter
 {
@@ -20,6 +21,7 @@ class MeasurementFilter
         public ?PropertyId $propertyId = null,
         public ?WasteId $wasteId = null,
         public ?MeasurementMethod $measurementMethod = null,
+        public ?WasteManagerId $wasteManagerId = null,
         public ?Purpose $purpose = null,
         public ?AccountId $accountId = null,
         public ?UserId $userId = null

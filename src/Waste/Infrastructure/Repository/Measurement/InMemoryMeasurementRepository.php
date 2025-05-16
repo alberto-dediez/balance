@@ -83,6 +83,16 @@ class InMemoryMeasurementRepository implements MeasurementRepository
             }
 
             if (
+                null !== $filter->wasteManagerId 
+                && (
+                    null == $measurement->wasteManagerId() 
+                    || false == $filter->wasteManagerId->equals($measurement->wasteManagerId())
+                )
+            ) {
+                continue;
+            }
+
+            if (
                 null !== $filter->propertyId
                 && (
                     null == $measurement->propertyId() 

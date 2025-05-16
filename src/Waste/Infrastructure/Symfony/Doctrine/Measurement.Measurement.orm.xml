@@ -14,6 +14,7 @@
         <field name="wasteId" type="string" length="36" nullable="true" />
         <field name="purpose" type="object" nullable="false" />
         <field name="measurementMethod" type="object" nullable="false" />
+        <field name="wasteManagerId" type="string" length="36" nullable="true" />
 
         <field name="quantity" type="integer" nullable="false" />
         <field name="load" type="decimal" scale="4" precision="14" nullable="false" column="container_load" />

@@ -13,6 +13,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 final class MeasurementRegistered extends DomainEvent
 {
@@ -25,6 +26,7 @@ final class MeasurementRegistered extends DomainEvent
         private WasteId $wasteId,
         private MeasurementMethod $measurementMethod,
         private Purpose $purpose,
+        private WasteManagerId $wasteManagerId,
         private UserId $registeredBy,
         private AccountId $accountId,
         private int $quantity = 0,
@@ -66,6 +68,11 @@ final class MeasurementRegistered extends DomainEvent
         return $this->measurementMethod;
     }
 
+    public function wasteManagerId(): WasteManagerId
+    {
+        return $this->wasteManagerId;
+    }
+
     public function quantity(): int
     {
         return $this->quantity;
@@ -100,6 +107,7 @@ final class MeasurementRegistered extends DomainEvent
             'waste' => (string) $this->wasteId,
             'purpose' => $this->purpose->value,
             'measurementMethod' => $this->measurementMethod->value,
+            'wasteManagerId' => (string) $this->wasteManagerId,
             'quantity' => $this->quantity,
             'load' => $this->load,
             'justification' => $this->justification,
@@ -120,6 +128,7 @@ final class MeasurementRegistered extends DomainEvent
             wasteId: new WasteId($payload['waste']), 
             purpose: Purpose::tryFrom($payload['purpose']),
             measurementMethod: MeasurementMethod::tryFrom($payload['measurementMethod']),
+            wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId($payload['wasteManagerId']) : WasteManagerId::generate(),
             quantity: $payload['quantity'],
             load: $payload['load'],
             justification: $payload['justification'],

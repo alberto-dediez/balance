@@ -100,6 +100,15 @@ class DoctrineMeasurementRepository implements MeasurementRepository
             ;
         }
 
+        if (null !== $filter->wasteManagerId) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('m.wasteManagerId', ':wasteManagerId')
+                )
+                ->setParameter('wasteManagerId', (string) $filter->wasteManagerId)
+            ;
+        }
+
         if (null !== $filter->accountId) {
             $qb
                 ->andWhere(
