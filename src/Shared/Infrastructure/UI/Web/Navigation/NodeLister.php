@@ -111,6 +111,11 @@ class NodeLister
                     label: new TranslatableMessage("Mediciones"),
                     icon: "solar:ruler-line-duotone",
                     target: $this->router->generate('measurements')
+                ),
+                new Node(
+                    label: new TranslatableMessage("Gestores"),
+                    icon: "hugeicons:garbage-truck",
+                    target: $this->router->generate('waste_managers')
                 )
             ]
         );
