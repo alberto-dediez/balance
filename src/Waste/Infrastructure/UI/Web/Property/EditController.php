@@ -12,7 +12,6 @@ use App\Waste\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Waste\Infrastructure\Symfony\Form\UpdatePropertyType;
-use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Waste\Application\Property\Update\UpdatePropertyRequest;
 use App\Waste\Application\Property\Update\UpdatePropertyService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

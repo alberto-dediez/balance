@@ -1,0 +1,43 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Gestores de residuos' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': '¿Es público?' | trans,
+            'sortable': false,
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="wasteManagers">
+        <tr>
+            <td>{{ element.name }}</td>
+            <td>{{ element.isPublic | show_field_value }}</td>
+            <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+            <td>
+                {% if element | is_authorized('edit') %}
+                    <twig:List:Action:Edit path="{{ path('waste_managers_edit', {'wasteManagerId': element.id}) }}" />
+                {% endif %}
+
+                {% if element | is_authorized('remove') %}
+                    <twig:List:Action:Delete path="{{ path('waste_managers_remove', {'wasteManagerId': element.id}) }}" />
+                {% endif %}
+            </td>
+        </tr>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('waste_managers_register') }}" />
+{% endblock list_actions %}

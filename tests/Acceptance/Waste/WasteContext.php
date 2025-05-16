@@ -13,12 +13,15 @@ use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Waste\WasteRepository;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Property\PropertyRepository;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 use App\Tests\Unit\Waste\Domain\Model\Property\PropertyMother;
+use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
+use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
 
 final class WasteContext implements Context
 {
@@ -26,7 +29,8 @@ final class WasteContext implements Context
         private WasteRepository $wasteRepository,
         private PropertyRepository $propertyRepository,
         private ContainerRepository $containerRepository,
-        private MeasurementRepository $measurementRepository
+        private MeasurementRepository $measurementRepository,
+        private WasteManagerRepository $wasteManagerRepository
     ) {
     }
 
@@ -83,5 +87,17 @@ final class WasteContext implements Context
         );
 
         $this->measurementRepository->add($measurement);
+    }
+
+    #[Given('waste manager :name with id :wasteManagerId of account :accountId exists')]
+    public function wasteManagerWithIdOfAccountExists($name, $wasteManagerId, $accountId): void
+    {
+        $wasteManager = WasteManagerMother::fromNameAndIdAndAccount(
+            name: $name,
+            wasteManagerId: new WasteManagerId($wasteManagerId),
+            accountId: new AccountId($accountId)
+        );
+
+        $this->wasteManagerRepository->add($wasteManager);
     }
 }

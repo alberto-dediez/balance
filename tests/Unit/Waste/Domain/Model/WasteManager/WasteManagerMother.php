@@ -48,4 +48,14 @@ class WasteManagerMother
             wasteManagerId: WasteManagerId::generate()
         );
     }
+
+    public static function fromNameAndIdAndAccount(string $name, WasteManagerId $wasteManagerId, AccountId $accountId)
+    {
+        return self::from(
+            name: $name,
+            isPublic: rand(0, 1) == 1,
+            accountId: $accountId,
+            wasteManagerId: $wasteManagerId
+        );
+    }
 }
