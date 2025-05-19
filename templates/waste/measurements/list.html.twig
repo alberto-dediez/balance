@@ -30,7 +30,11 @@
             <td>{{ element.wasteManagerId | waste_manager_name }}</td>
             <td>{{ element.propertyId | property_name }}</td>
             <td>{{ element.quantity }}</td>
-            <td>{{ element.load }}</td>
+            <td>
+                {{ element.load }}
+
+                {{ element.measurementMethod.value == 'VOLUME' ? '%' : 'Kg' }}
+            </td>
             <td>{{ element.wasteId | waste_name }}</td>
             <td>{{ element.purpose.value | trans({}, 'purpose') }}</td>
             <td>{{ element.registeredAt | date('d/m/Y') }}</td>
