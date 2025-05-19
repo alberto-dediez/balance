@@ -146,6 +146,16 @@ final class WebContext implements Context
         Assert::assertCount(1, $button);
     }
 
+    #[Then('I see a link with name :name')]
+    public function iSeeALinkWithName($name)
+    {
+        $crawler = $this->getCrawler();
+
+        $button = $crawler->selectLink($name);
+
+        Assert::assertCount(1, $button);
+    }
+
     #[Then('I see a table with :rows rows')]
     public function iSeeATableWithRows($rows)
     {
