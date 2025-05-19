@@ -5,17 +5,19 @@
 {% block table %}
     {% set columns = [
         {
-            'label': 'Gestor de residuos' | trans,
-        }, {
             'label': 'Propiedad' | trans,
+        }, {
+            'label': 'Tipología de residuo' | trans,
+        }, {
+            'label': 'Gestor de residuos' | trans,
         }, {
             'label': 'Cantidad de contenedores' | trans,
         }, {
             'label': 'Carga' | trans,
         }, {
-            'label': 'Tipología de residuo' | trans,
-        }, {
             'label': 'Propósito' | trans,
+        }, {
+            'label': 'Registrado por' | trans,
         }, {
             'label': 'Fecha de registro' | trans,
             'sortable': true,
@@ -27,17 +29,18 @@
 
     <twig:List:Table :columns="columns" :elements="measurements">
         <tr>
-            <td>{{ element.wasteManagerId | waste_manager_name }}</td>
             <td>{{ element.propertyId | property_name }}</td>
+            <td>{{ element.wasteId | waste_name }}</td>
+            <td>{{ element.wasteManagerId | waste_manager_name }}</td>
             <td>{{ element.quantity }}</td>
             <td>
                 {{ element.load }}
 
                 {{ element.measurementMethod.value == 'VOLUME' ? '%' : 'Kg' }}
             </td>
-            <td>{{ element.wasteId | waste_name }}</td>
             <td>{{ element.purpose.value | trans({}, 'purpose') }}</td>
-            <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+            <td>{{ element.registeredBy | user_name }}</td>
+            <td>{{ element.registeredAt | date('H:i d/m/Y') }}</td>
             <td>
                 {% if element | is_authorized('edit') %}
                     <twig:List:Action:Edit path="{{ path('measurements_edit', {'measurementId': element.id}) }}" />
