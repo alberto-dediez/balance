@@ -1,0 +1,5 @@
+{% trans with {
+    '{measurement}': event.measurementId,
+    '{quantity}': event.quantity,
+    '{load}': event.load
+} %}Se ha actualizado la medición {measurement}: {quantity} contenedores de carga {load}{% endtrans %}
