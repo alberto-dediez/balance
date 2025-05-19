@@ -18,11 +18,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Waste\Infrastructure\Symfony\Form\RegisterMeasurementType;
 use App\Waste\Application\Measurement\Register\RegisterMeasurementRequest;
 use App\Waste\Application\Measurement\Register\RegisterMeasurementService;
-use App\Waste\Infrastructure\UI\Web\Container\GetContainerFromIdTrait;
+use App\Waste\Infrastructure\UI\Web\Container\GetContainerFromIdAndAccountTrait;
 
 class RegisterController extends AbstractController
 {
-    use RegisterTrait, GetContainerFromIdTrait;
+    use RegisterTrait, GetContainerFromIdAndAccountTrait;
 
     #[Route('/measurements/register', name: 'measurements_register')]
     public function chooseContainer(
@@ -56,13 +56,8 @@ class RegisterController extends AbstractController
         Request $request
     ): Response
     {   
-        $container = $this->getContainerFromId($containerId, $containerRepository);
+        $container = $this->getContainerFromIdAndAccount($containerId, $loggedUser()->accountId(), $containerRepository);
 
-        if (!$container->accountId()->equals($loggedUser()->accountId())) {
-            throw $this->createNotFoundException(new TranslatableMessage("El contenedor no existe"));
-        }
-
-        $this->denyAccessUnlessGranted(Action::View->value, $container);
         $this->denyAccessUnlessGranted(Action::Register->value, new Measurement(
             id: MeasurementId::generate(),
             accountId: $loggedUser()->accountId()

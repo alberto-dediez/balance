@@ -17,7 +17,7 @@ Feature:
     When I am logged as "user@dediez.software"
     When I go to "/es/measurements/register"
     Then the response status should be 200
-    #Then I see a link with name "Seleccionar"
+    Then I see a link with name "Seleccionar"
 
   Scenario: As an user, i can register a new measurement after choosing a container
     Given account "MyCompany" with id "mycompany" exists
@@ -28,7 +28,7 @@ Feature:
     When I am logged as "user@dediez.software"
     When I go to "/es/measurements/register/container"
     Then the response status should be 200
-    When I submit a form with "quantity:1|load:12.5" and button "Registrar"
+    When I submit a form with "quantity:1|load:12" and button "Registrar"
     When I follow redirect
     Then the response status should be 200
     Then I see a text "Medición registrada correctamente"
