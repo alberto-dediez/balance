@@ -22,14 +22,21 @@ class RegisterWasteService
         $this->authorizer->denyUnlessCanDoThat(new Waste(id: $id), Action::List, $user);
 
         $waste = new Waste($id);
-        $waste->register($request->name, $request->isDangerous);
+        $waste->register(
+            $request->name, 
+            $request->isDangerous,
+            $request->density,
+            $request->color
+        );
 
         $this->wasteRepository->add($waste);
 
         return new RegisterWasteResponse(
             wasteId: $waste->id(), 
             name: $waste->name(),
-            isDangerous: $waste->isDangerous()
+            isDangerous: $waste->isDangerous(),
+            density: $waste->density(),
+            color: $waste->color()
         );
     }
 }

@@ -12,6 +12,10 @@
             'label': '¿Es peligroso?' | trans,
             'sortable': false
         }, {
+            'label': 'Densidad' | trans
+        }, {
+            'label': 'Color' | trans
+        }, {
             'label': 'Fecha de registro' | trans,
             'sortable': true,
             'sortableBy': 'registeredAt'
@@ -24,6 +28,12 @@
         <tr>
             <td>{{ element.name }}</td>
             <td>{{ element.isDangerous | show_field_value }}</td>
+            <td>{{ element.density }}</td>
+            <td>
+                <span style="color: {{ element.color }}">
+                    {{ element.color }}
+                </span>
+            </td>
             <td>{{ element.registeredAt | date('d/m/Y') }}</td>
             <td>
                 {% if element | is_authorized('remove') %}

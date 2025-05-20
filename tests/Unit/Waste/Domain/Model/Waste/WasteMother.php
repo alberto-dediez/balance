@@ -47,7 +47,7 @@ class WasteMother
         $waste = new Waste(
             id: new WasteId($id)
         );
-        $waste->register($name, $isDangerous);
+        $waste->register($name, $isDangerous, '0.00', '#c3d300');
 
         return $waste;
     }

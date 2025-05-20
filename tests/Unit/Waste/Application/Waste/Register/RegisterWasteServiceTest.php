@@ -33,7 +33,9 @@ class RegisterWasteServiceTest extends TestCase
 
         $request = new RegisterWasteRequest(
             name: 'Company ABC',
-            isDangerous: true
+            isDangerous: true,
+            density: '0.03',
+            color: '#cccddd'
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -54,6 +56,8 @@ class RegisterWasteServiceTest extends TestCase
         $this->assertNotNull($lastEvent);
         $this->assertTrue($lastEvent instanceof WasteRegistered);
         $this->assertEquals('Company ABC', $lastEvent->name());
+        $this->assertEquals('0.03', $lastEvent->density());
+        $this->assertEquals('#cccddd', $lastEvent->color());
         $this->assertTrue($wastePersisted->id()->equals($lastEvent->wasteId()));
         $this->assertTrue($wastePersisted->isDangerous());
     }

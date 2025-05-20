@@ -10,6 +10,8 @@
 
         <field name="name" type="string" length="255" nullable="false"/>
         <field name="isDangerous" type="boolean" nullable="false"/>
+        <field name="density" type="decimal" scale="6" precision="14"  nullable="false"/>
+        <field name="color" type="string" length="7" nullable="false"/>
         <field name="removed" type="boolean" nullable="true"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>

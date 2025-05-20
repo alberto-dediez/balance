@@ -19,16 +19,16 @@ Feature:
     Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
     When I am logged as "admin@dediez.software"
     When I go to "/es/admin/wastes/register"
-    When I submit a form with "name:Madera" and button "Registrar"
+    When I submit a form with "name:Madera|density:0.03|color:#cdcdcd" and button "Registrar"
     When I follow redirect
     Then the response status should be 200
     Then I see a text "Residuo creado correctamente"
   
-  Scenario: Puedo indicar si un residuo es peligroso o no
+  Scenario: As an admin, I can indicate if its dangerous, color and density
     Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
     When I am logged as "admin@dediez.software"
     When I go to "/es/admin/wastes/register"
-    When I submit a form with "name:Madera|isDangerous:1" and button "Registrar"
+    When I submit a form with "name:Madera|isDangerous:1|density:0.03|color:#cdcdcd" and button "Registrar"
     When I follow redirect
     Then the response status should be 200
     Then I see a text "Residuo creado correctamente"

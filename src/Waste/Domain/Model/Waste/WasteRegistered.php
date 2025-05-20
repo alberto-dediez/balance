@@ -15,6 +15,8 @@ final class WasteRegistered extends DomainEvent
         private WasteId $wasteId, 
         private string $name, 
         private bool $isDangerous = false,
+        private string $density = '0.00',
+        private string $color = '#000000',
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -36,12 +38,24 @@ final class WasteRegistered extends DomainEvent
         return $this->isDangerous;
     }
 
+    public function density(): string
+    {
+        return $this->density;
+    }
+
+    public function color(): string
+    {
+        return $this->color;
+    }
+
     public function payload(): ?array
     {
         return [
             'wasteId' => (string) $this->wasteId,
             'name' => $this->name,
-            'isDangerous' => $this->isDangerous
+            'isDangerous' => $this->isDangerous,
+            'density' => $this->density,
+            'color' => $this->color
         ];
     }
 
@@ -54,6 +68,8 @@ final class WasteRegistered extends DomainEvent
             wasteId: new WasteId($payload['wasteId']), 
             name: $payload['name'],
             isDangerous: isset($payload['isDangerous']) ? $payload['isDangerous'] : false,
+            density: isset($payload['density']) ? $payload['density'] : '0',
+            color: isset($payload['color']) ? $payload['color'] : '#c3d300',
             id: $id,
             occurredOn: $occurredOn
         );

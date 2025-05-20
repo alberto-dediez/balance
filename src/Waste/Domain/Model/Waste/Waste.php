@@ -14,6 +14,8 @@ class Waste
         protected WasteId $id, 
         protected string $name = '',
         protected bool $isDangerous = false,
+        protected string $density = '0.00',
+        protected string $color = '#c3d300',
         protected bool $removed = false,
         array $events = [],
         protected ?\DateTimeImmutable $registeredAt = null,
@@ -37,6 +39,16 @@ class Waste
         return $this->isDangerous;
     }
 
+    public function density(): string
+    {
+        return $this->density;
+    }
+
+    public function color(): string
+    {
+        return $this->color;
+    }
+
     public function isRemoved(): bool
     {
         return $this->removed;
@@ -52,13 +64,19 @@ class Waste
         return $this->removedAt;
     }
 
-    public function register(string $name, bool $isDangerous = false)
-    {
+    public function register(
+        string $name, 
+        bool $isDangerous = false,
+        string $density = '0.00',
+        string $color = '#c3d300'
+    ) {
         $this->recordApplyAndPublish(
             new WasteRegistered(
                 wasteId: $this->id(),
                 name: $name,
-                isDangerous: $isDangerous
+                isDangerous: $isDangerous,
+                density: $density,
+                color: $color
             )
         );
     }
@@ -76,13 +94,15 @@ class Waste
     {
         $this->name = $event->name();
         $this->isDangerous = $event->isDangerous();
+        $this->density = $event->density();
+        $this->color = $event->color();
         $this->registeredAt = $event->occurredOn();
     }
 
     public function applyWasteRemoved(WasteRemoved $event)
     {
         $this->removed = true;
-        $this->removedAt = new \DateTimeImmutable("NOW");
+        $this->removedAt = $event->occurredOn();
     }
 
     public function __toString(): string
