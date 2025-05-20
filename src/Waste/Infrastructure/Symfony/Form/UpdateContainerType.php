@@ -8,7 +8,7 @@ use App\Waste\Infrastructure\Symfony\Type\PurposeType;
 use App\Waste\Infrastructure\Symfony\Type\WasteIdType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use App\Waste\Infrastructure\Symfony\Form\Type\VolumeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Waste\Infrastructure\Symfony\Type\WasteManagerIdType;
 use App\Waste\Infrastructure\Symfony\Type\MeasurementMethodType;
@@ -31,8 +31,8 @@ class UpdateContainerType extends AbstractType
                 'label' => new TranslatableMessage('Método de medida'),
                 'required' => true
             ])
-            ->add('volume', NumberType::class, [
-                'label' => new TranslatableMessage('Volumen'),
+            ->add('volume', VolumeType::class, [
+                'label' => new TranslatableMessage('Volumen (l)'),
                 'required' => false
             ])
             ->add('wasteManagerId', WasteManagerIdType::class, [

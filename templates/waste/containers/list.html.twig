@@ -13,6 +13,8 @@
         }, {
             'label': 'Gestor de residuos' | trans,
         }, {
+            'label': 'Volumen (l)' | trans,
+        }, {
             'label': 'Fecha de registro' | trans,
             'sortable': true,
             'sortableBy': 'registeredAt'
@@ -27,6 +29,7 @@
             <td>{{ element.wasteId | waste_name }}</td>
             <td>{{ element.purpose.value | trans({}, 'purpose') }}</td>
             <td>{{ element.wasteManagerId | waste_manager_name }}</td>
+            <td>{{ element.volume }} l</td>
             <td>{{ element.registeredAt | date('d/m/Y') }}</td>
             <td>
                 {% if element | is_authorized('edit') %}

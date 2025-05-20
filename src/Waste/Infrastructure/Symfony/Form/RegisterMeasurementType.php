@@ -7,12 +7,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use App\Waste\Infrastructure\Symfony\Form\Type\WeightType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\PercentType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use App\Waste\Application\Measurement\Register\RegisterMeasurementRequest;
-use Symfony\Component\Form\Extension\Core\Type\PercentType;
 
 class RegisterMeasurementType extends AbstractType
 {
@@ -34,7 +34,7 @@ class RegisterMeasurementType extends AbstractType
                 'type' => 'integer'
             ]);
         } else {
-            $builder->add('load', NumberType::class , [
+            $builder->add('load', WeightType::class , [
                 'label' => new TranslatableMessage('Peso del contenedor (Kg)'),
                 'required' => true
             ]);
