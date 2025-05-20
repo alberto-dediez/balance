@@ -35,7 +35,7 @@
                     'event': element.rebuild()
                 } %}
             </td>
-            <td>{{ element.userId ? (element.userId | user_name) : '' }}</td>
+            <td>{{ element.userId | user_name | trans | raw }}</td>
             <td>{{ element.eventName }}</td>
             <td>{{ element.context }}</td>
             <td>{{ element.occurredOn | date('H:i d/m/Y') }}</td>

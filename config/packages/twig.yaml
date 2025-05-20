@@ -4,6 +4,7 @@ twig:
         locale_list: '%app.locale_list%'
     form_themes: 
         - 'bootstrap_5_layout.html.twig'
+        - '@shared/form/custom_types.html.twig'
     paths:
         'templates/components': 'components' 
         'templates/shared': 'shared'
