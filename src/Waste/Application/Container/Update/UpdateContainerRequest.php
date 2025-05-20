@@ -15,6 +15,7 @@ class UpdateContainerRequest
         public WasteId $wasteId,
         public Purpose $purpose,
         public MeasurementMethod $measurementMethod,
+        public string $volume,
         public WasteManagerId $wasteManagerId
     ) {
 

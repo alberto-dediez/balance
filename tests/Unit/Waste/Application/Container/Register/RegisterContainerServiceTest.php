@@ -58,7 +58,8 @@ class RegisterContainerServiceTest extends TestCase
             wasteId: new WasteId('444'),
             purpose: Purpose::Recycling,
             measurementMethod: MeasurementMethod::Weight,
-            wasteManagerId: WasteManagerId::generate()
+            wasteManagerId: WasteManagerId::generate(),
+            volume: 50
         );
 
         $result = $sut($request, $user);
@@ -67,6 +68,7 @@ class RegisterContainerServiceTest extends TestCase
         $this->assertTrue($result instanceof RegisterContainerResponse);
         $this->assertNotEmpty((string) $result->containerId);
         $this->assertEquals(36, strlen((string) $result->containerId));
+        $this->assertEquals(50, $result->volume);
         $this->assertNotNull($result->qrCode);
         $this->assertTrue($result->qrCode instanceof QrCode);
 
@@ -75,6 +77,7 @@ class RegisterContainerServiceTest extends TestCase
         $this->assertNotNull($containerPersisted);
         $this->assertTrue($containerPersisted instanceof Container);
         $this->assertNotNull($containerPersisted->qrCode());
+        $this->assertEquals(50, $containerPersisted->volume());
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -82,6 +85,7 @@ class RegisterContainerServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof ContainerRegistered);
         $this->assertTrue($containerPersisted->id()->equals($lastEvent->containerId()));
         $this->assertTrue($request->wasteManagerId->equals($lastEvent->wasteManagerId()));
+        $this->assertEquals(50, $lastEvent->volume());
     }
 
     private function createSUT(ContainerRepository $containerRepository, PropertyRepository $propertyRepository)

@@ -25,7 +25,7 @@ Feature:
     When I am logged as "owner@dediez.software"
     When I go to "/es/containers/register"
     Then the response status should be 200
-    When I submit a form with "wasteId:madera|propertyId:hotel" and button "Registrar"
+    When I submit a form with "wasteId:madera|propertyId:hotel|volume:50" and button "Registrar"
     When I follow redirect
     Then the response status should be 200
     Then I see a text "Contenedor creado correctamente"

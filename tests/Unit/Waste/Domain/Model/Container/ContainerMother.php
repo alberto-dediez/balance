@@ -98,7 +98,8 @@ class ContainerMother
         PropertyId $propertyId, 
         WasteManagerId $wasteManagerId,
         Purpose $purpose = Purpose::Waste, 
-        MeasurementMethod $measurementMethod = MeasurementMethod::Volume
+        MeasurementMethod $measurementMethod = MeasurementMethod::Volume,
+        string $volume = '0'
     ) {
         $container = new Container(
             id: $containerId
@@ -113,6 +114,7 @@ class ContainerMother
                 wasteId: $wasteId,
                 purpose: $purpose,
                 measurementMethod: $measurementMethod,
+                volume: $volume,
                 wasteManagerId: $wasteManagerId,
                 qrCode: $qrCode
             )
@@ -133,6 +135,7 @@ class ContainerMother
             propertyId: PropertyId::generate(),
             purpose: $purpose,
             measurementMethod: $measurementMethod,
+            volume: rand(10, 100),
             wasteManagerId: WasteManagerId::generate()
         );
     }

@@ -48,7 +48,8 @@ class UpdateContainerServiceTest extends TestCase
             wasteId: new WasteId('444'),
             purpose: Purpose::Waste,
             measurementMethod: MeasurementMethod::Volume,
-            wasteManagerId: WasteManagerId::generate()
+            wasteManagerId: WasteManagerId::generate(),
+            volume: 46
         );
 
         $result = $sut($request, $user);
@@ -60,6 +61,7 @@ class UpdateContainerServiceTest extends TestCase
 
         $this->assertNotNull($containerPersisted);
         $this->assertTrue($containerPersisted instanceof Container);
+        $this->assertEquals(46, $containerPersisted->volume());
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -68,6 +70,7 @@ class UpdateContainerServiceTest extends TestCase
         $this->assertEquals('444', (string) $lastEvent->wasteId());
         $this->assertTrue($containerPersisted->id()->equals($lastEvent->containerId()));
         $this->assertTrue($request->wasteManagerId->equals($containerPersisted->wasteManagerId()));
+        $this->assertEquals(46, $lastEvent->volume());
     }
 
     private function createSUT($repository)

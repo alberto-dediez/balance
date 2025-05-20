@@ -11,6 +11,7 @@
 
         <field name="purpose" type="object" nullable="false"/>
         <field name="measurementMethod" type="object" nullable="false"/>
+        <field name="volume" type="decimal" scale="2" precision="12"  nullable="false"/>
         <field name="removed" type="boolean" nullable="true"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>

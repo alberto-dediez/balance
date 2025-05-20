@@ -48,11 +48,12 @@ class RegisterController extends AbstractController
 
             $needsRedirect = $this->register($request, $form, function ($form) use ($registerContainer, $loggedUser) {
                 $registerRequest = new RegisterContainerRequest(
-                    propertyId: $form->get('propertyId')->getData(),                
-                    wasteId: $form->get('wasteId')->getData(),                
-                    purpose: $form->get('purpose')->getData(),                
-                    measurementMethod: $form->get('measurementMethod')->getData(),         
-                    wasteManagerId: $form->get('wasteManagerId')->getData()       
+                    propertyId: $form->get('propertyId')->getData(),
+                    wasteId: $form->get('wasteId')->getData(),
+                    purpose: $form->get('purpose')->getData(),
+                    measurementMethod: $form->get('measurementMethod')->getData(),
+                    volume: $form->get('volume')->getData(),
+                    wasteManagerId: $form->get('wasteManagerId')->getData()
                 );
 
                 $response = $registerContainer($registerRequest, $loggedUser());

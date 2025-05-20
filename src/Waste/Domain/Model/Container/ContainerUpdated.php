@@ -17,6 +17,7 @@ final class ContainerUpdated extends DomainEvent
         private ContainerId $containerId, 
         private WasteId $wasteId,
         private MeasurementMethod $measurementMethod,
+        private $volume,
         private Purpose $purpose,
         private WasteManagerId $wasteManagerId,
         ?DomainEventId $id = null,
@@ -45,6 +46,11 @@ final class ContainerUpdated extends DomainEvent
         return $this->measurementMethod;
     }
 
+    public function volume(): string
+    {
+        return $this->volume;
+    }
+
     public function wasteManagerId(): WasteManagerId
     {
         return $this->wasteManagerId;
@@ -57,7 +63,8 @@ final class ContainerUpdated extends DomainEvent
             'wasteId' => (string) $this->wasteId,
             'purpose' => $this->purpose->value,
             'measurementMethod' => $this->measurementMethod->value,
-            'wasteManagerId' => (string) $this->wasteManagerId
+            'wasteManagerId' => (string) $this->wasteManagerId,
+            'volume' => $this->volume
         ];
     }
 
@@ -71,6 +78,7 @@ final class ContainerUpdated extends DomainEvent
             wasteId: new WasteId($payload['wasteId']), 
             purpose: Purpose::tryFrom($payload['purpose']),
             measurementMethod: MeasurementMethod::tryFrom($payload['measurementMethod']),
+            volume: isset($payload['volume']) ? $payload['volume'] : '0',
             wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId($payload['wasteManagerId']) : WasteManagerId::generate(),
             id: $id,
             occurredOn: $occurredOn

@@ -11,7 +11,7 @@ Feature:
     Given waste manager "Sadeco" with id "sadeco" of account "mycompany" exists
     When I am logged as "owner@dediez.software"
     When I go to "/es/containers/edit/333"
-    When I submit a form with "wasteId:plastico" and button "Guardar"
+    When I submit a form with "wasteId:plastico|volume:50" and button "Guardar"
     When I follow redirect
     Then the response status should be 200
     Then I see a text "Propiedad actualizada"

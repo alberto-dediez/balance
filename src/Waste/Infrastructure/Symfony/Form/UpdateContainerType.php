@@ -8,6 +8,7 @@ use App\Waste\Infrastructure\Symfony\Type\PurposeType;
 use App\Waste\Infrastructure\Symfony\Type\WasteIdType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Waste\Infrastructure\Symfony\Type\WasteManagerIdType;
 use App\Waste\Infrastructure\Symfony\Type\MeasurementMethodType;
@@ -29,6 +30,10 @@ class UpdateContainerType extends AbstractType
             ->add('measurementMethod', MeasurementMethodType::class, [
                 'label' => new TranslatableMessage('Método de medida'),
                 'required' => true
+            ])
+            ->add('volume', NumberType::class, [
+                'label' => new TranslatableMessage('Volumen'),
+                'required' => false
             ])
             ->add('wasteManagerId', WasteManagerIdType::class, [
                 'label' => new TranslatableMessage('Gestor de residuos'),

@@ -21,6 +21,7 @@ class Container
         private WasteId|string|null $wasteId = null,
         private ?Purpose $purpose = null,
         private ?MeasurementMethod $measurementMethod = null,
+        private string $volume = '0',
         private WasteManagerId|string|null $wasteManagerId = null,
         private ?QrCode $qrCode = null,
         private bool $removed = false,
@@ -73,6 +74,11 @@ class Container
         return $this->measurementMethod;
     }
 
+    public function volume(): string
+    {
+        return $this->volume;
+    }
+
     public function wasteManagerId() : ?WasteManagerId
     {
         if (is_string($this->wasteManagerId)) {
@@ -108,6 +114,7 @@ class Container
         WasteId $wasteId,
         Purpose $purpose,
         MeasurementMethod $measurementMethod,
+        string $volume,
         WasteManagerId $wasteManagerId,
         QrCode $qrCode
     ) {
@@ -119,6 +126,7 @@ class Container
                 wasteId: $wasteId,
                 purpose: $purpose,
                 measurementMethod: $measurementMethod,
+                volume: $volume,
                 wasteManagerId: $wasteManagerId,
                 qrCode: $qrCode
             )
@@ -130,6 +138,7 @@ class Container
         Purpose $purpose,
         MeasurementMethod $measurementMethod,
         WasteManagerId $wasteManagerId,
+        string $volume
     ) {
         $this->recordApplyAndPublish(
             new ContainerUpdated(
@@ -137,6 +146,7 @@ class Container
                 wasteId: $wasteId,
                 purpose: $purpose,
                 measurementMethod: $measurementMethod,
+                volume: $volume,
                 wasteManagerId: $wasteManagerId
             )
         );
@@ -158,6 +168,7 @@ class Container
         $this->wasteId = $event->wasteId();
         $this->purpose = $event->purpose();
         $this->measurementMethod = $event->measurementMethod();
+        $this->volume = $event->volume();
         $this->wasteManagerId = $event->wasteManagerId();
         $this->qrCode = $event->qrCode();
         $this->registeredAt = $event->occurredOn();
@@ -168,6 +179,7 @@ class Container
         $this->wasteId = $event->wasteId();
         $this->purpose = $event->purpose();
         $this->measurementMethod = $event->measurementMethod();
+        $this->volume = $event->volume();
         $this->wasteManagerId = $event->wasteManagerId();
     }
 
