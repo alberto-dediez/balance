@@ -4,9 +4,9 @@ namespace App\Security\Infrastructure\Symfony\Twig;
 
 use Twig\TwigFilter;
 use Twig\Extension\AbstractExtension;
-use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class UserExtension extends AbstractExtension
 {
@@ -21,7 +21,7 @@ class UserExtension extends AbstractExtension
     {
         return [
             new TwigFilter('user_id', [$this, 'userId']),
-            new TwigFilter('user_name', [$this, 'userName']),
+            new TwigFilter('user_name', [$this, 'userName'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -37,12 +37,16 @@ class UserExtension extends AbstractExtension
         return new UserId((string) $userId);
     }
 
-    public function userName(UserId $userId): ?User
+    public function userName(UserId $userId): string|TranslatableMessage
     {
         if (!isset($users[(string) $userId])) {
-            $users[(string) $userId] = $this->userRepository->find($userId);
+            $user = $this->userRepository->find($userId);
+
+            $username = null == $user ? new TranslatableMessage('<s>{userId}</s>', ['{userId}' => (string) $userId]) : (string) $user;
+
+            $this->users[(string) $userId] = $username;
         }
 
-        return $users[(string) $userId];
+        return $this->users[(string) $userId];
     }
 }

@@ -1,0 +1,10 @@
+{% block number_unit_widget -%}
+    {%- if symbol -%}
+        <div class="input-group">
+            {{- block('form_widget_simple') -}}
+            <span class="input-group-text">{{ symbol|default('%') }}</span>
+        </div>
+    {%- else -%}
+        {{- block('form_widget_simple') -}}
+    {%- endif -%}
+{%- endblock number_unit_widget %}
