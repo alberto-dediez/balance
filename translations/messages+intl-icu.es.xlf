@@ -395,115 +395,115 @@
       </trans-unit>
       <trans-unit id="Q86yj6e" resname="Registro">
         <source>Registro</source>
-        <target>NRegistro</target>
+        <target>Registro</target>
       </trans-unit>
       <trans-unit id="7FzE1Mk" resname="Contexto">
         <source>Contexto</source>
-        <target>NContexto</target>
+        <target>Contexto</target>
       </trans-unit>
       <trans-unit id="PhtswPE" resname="Usuario">
         <source>Usuario</source>
-        <target>NUsuario</target>
+        <target>Usuario</target>
       </trans-unit>
       <trans-unit id="gIzOsY6" resname="Eliminado el usuario &quot;{user}&quot;">
         <source>Eliminado el usuario "{user}"</source>
-        <target>NEliminado el usuario "{user}"</target>
+        <target>Eliminado el usuario "{user}"</target>
       </trans-unit>
       <trans-unit id="demL2sW" resname="Registrada una nueva cuenta {account} en estado {status}">
         <source>Registrada una nueva cuenta {account} en estado {status}</source>
-        <target>NRegistrada una nueva cuenta {account} en estado {status}</target>
+        <target>Registrada una nueva cuenta {account} en estado {status}</target>
       </trans-unit>
       <trans-unit id="6SYISZa" resname="activo">
         <source>activo</source>
-        <target>Nactivo</target>
+        <target>activo</target>
       </trans-unit>
       <trans-unit id="LFkY6WK" resname="inactivo">
         <source>inactivo</source>
-        <target>Ninactivo</target>
+        <target>inactivo</target>
       </trans-unit>
       <trans-unit id="T6LvZom" resname="Se ha actualizado la propiedad {property} perteneciente a la cuenta {account}">
         <source>Se ha actualizado la propiedad {property} perteneciente a la cuenta {account}</source>
-        <target>NSe ha actualizado la propiedad {property} perteneciente a la cuenta {account}</target>
+        <target>Se ha actualizado la propiedad {property} perteneciente a la cuenta {account}</target>
       </trans-unit>
       <trans-unit id="t6_8eTh" resname="Se ha actualizado la propiedad {property} sin cuenta asociada">
         <source>Se ha actualizado la propiedad {property} sin cuenta asociada</source>
-        <target>NSe ha actualizado la propiedad {property} sin cuenta asociada</target>
+        <target>Se ha actualizado la propiedad {property} sin cuenta asociada</target>
       </trans-unit>
       <trans-unit id="rZM4y9N" resname="Registrado el usuario {user} para la cuenta {account}">
         <source>Registrado el usuario {user} para la cuenta {account}</source>
-        <target>NRegistrado el usuario {user} para la cuenta {account}</target>
+        <target>Registrado el usuario {user} para la cuenta {account}</target>
       </trans-unit>
       <trans-unit id="N8LNcr." resname="Registrado el usuario {user} sin cuenta">
         <source>Registrado el usuario {user} sin cuenta</source>
-        <target>NRegistrado el usuario {user} sin cuenta</target>
+        <target>Registrado el usuario {user} sin cuenta</target>
       </trans-unit>
       <trans-unit id="gDelopd" resname="Se ha registrado la propiedad {property} perteneciente a la cuenta {account}">
         <source>Se ha registrado la propiedad {property} perteneciente a la cuenta {account}</source>
-        <target>NSe ha registrado la propiedad {property} perteneciente a la cuenta {account}</target>
+        <target>Se ha registrado la propiedad {property} perteneciente a la cuenta {account}</target>
       </trans-unit>
       <trans-unit id="2AlJdHW" resname="Se ha registrado la propiedad {property} sin cuenta asociada">
         <source>Se ha registrado la propiedad {property} sin cuenta asociada</source>
-        <target>NSe ha registrado la propiedad {property} sin cuenta asociada</target>
+        <target>Se ha registrado la propiedad {property} sin cuenta asociada</target>
       </trans-unit>
       <trans-unit id="gSfjrLI" resname="Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}">
         <source>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}</source>
-        <target>NSe ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}</target>
+        <target>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}</target>
       </trans-unit>
       <trans-unit id="oyqvcQF" resname="Activada la cuenta {account}">
         <source>Activada la cuenta {account}</source>
-        <target>NActivada la cuenta {account}</target>
+        <target>Activada la cuenta {account}</target>
       </trans-unit>
       <trans-unit id="1OaMllt" resname="Desactivada la cuenta &quot;{account}&quot;">
         <source>Desactivada la cuenta "{account}"</source>
-        <target>NDesactivada la cuenta "{account}"</target>
+        <target>Desactivada la cuenta "{account}"</target>
       </trans-unit>
       <trans-unit id="D4BfiJO" resname="El usuario {user} ha entrado en el sistema">
         <source>El usuario {user} ha entrado en el sistema</source>
-        <target>NEl usuario {user} ha entrado en el sistema</target>
+        <target>El usuario {user} ha entrado en el sistema</target>
       </trans-unit>
       <trans-unit id="v_skWdx" resname="Intento fallido de login con el usuario {username}">
         <source>Intento fallido de login con el usuario {username}</source>
-        <target>NIntento fallido de login con el usuario {username}</target>
+        <target>Intento fallido de login con el usuario {username}</target>
       </trans-unit>
       <trans-unit id="rIifooP" resname="El usuario {user} ha salido del sistema">
         <source>El usuario {user} ha salido del sistema</source>
-        <target>NEl usuario {user} ha salido del sistema</target>
+        <target>El usuario {user} ha salido del sistema</target>
       </trans-unit>
       <trans-unit id="PoFfv4r" resname="Eliminada la cuenta &quot;{account}&quot;">
         <source>Eliminada la cuenta "{account}"</source>
-        <target>NEliminada la cuenta "{account}"</target>
+        <target>Eliminada la cuenta "{account}"</target>
       </trans-unit>
       <trans-unit id="kQ3nDVP" resname="Se ha eliminado el contenedor {container}">
         <source>Se ha eliminado el contenedor {container}</source>
-        <target>NSe ha eliminado el contenedor {container}</target>
+        <target>Se ha eliminado el contenedor {container}</target>
       </trans-unit>
       <trans-unit id="h5KEY1P" resname="La cuenta {account} ahora se llama {name}">
         <source>La cuenta {account} ahora se llama {name}</source>
-        <target>NLa cuenta {account} ahora se llama {name}</target>
+        <target>La cuenta {account} ahora se llama {name}</target>
       </trans-unit>
       <trans-unit id="QgkN2aD" resname="Concedido permiso &quot;{role}&quot; al usuario {user}">
         <source>Concedido permiso "{role}" al usuario {user}</source>
-        <target>NConcedido permiso "{role}" al usuario {user}</target>
+        <target>Concedido permiso "{role}" al usuario {user}</target>
       </trans-unit>
       <trans-unit id="3T9hrIV" resname="Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}">
         <source>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}</source>
-        <target>NSe ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}</target>
+        <target>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}</target>
       </trans-unit>
       <trans-unit id="3ThkoYD" resname="Se ha registrado el residuo {waste}">
         <source>Se ha registrado el residuo {waste}</source>
-        <target>NSe ha registrado el residuo {waste}</target>
+        <target>Se ha registrado el residuo {waste}</target>
       </trans-unit>
       <trans-unit id="ZdviEtQ" resname="Eliminado permiso &quot;{role}&quot; al usuario {user}">
         <source>Eliminado permiso "{role}" al usuario {user}</source>
-        <target>NEliminado permiso "{role}" al usuario {user}</target>
+        <target>Eliminado permiso "{role}" al usuario {user}</target>
       </trans-unit>
       <trans-unit id="Ro.5ud0" resname="Eventos">
         <source>Eventos</source>
-        <target>NEventos</target>
+        <target>Eventos</target>
       </trans-unit>
       <trans-unit id="WPys2XC" resname="Detalle">
         <source>Detalle</source>
-        <target>NDetalle</target>
+        <target>Detalle</target>
       </trans-unit>
       <trans-unit id="Tug2gG_" resname="Mediciones">
         <source>Mediciones</source>
@@ -556,6 +556,90 @@
       <trans-unit id="aWpxIiE" resname="Carga">
         <source>Carga</source>
         <target>Carga</target>
+      </trans-unit>
+      <trans-unit id="BjvdtYl" resname="Gestores">
+        <source>Gestores</source>
+        <target>Gestores</target>
+      </trans-unit>
+      <trans-unit id="BRp_EDK" resname="¿Es público?">
+        <source>¿Es público?</source>
+        <target>¿Es público?</target>
+      </trans-unit>
+      <trans-unit id="zrSJFGz" resname="Volumen del contenedor (%)">
+        <source>Volumen del contenedor (%)</source>
+        <target>Volumen del contenedor (%)</target>
+      </trans-unit>
+      <trans-unit id="rGN5PRk" resname="Peso del contenedor (Kg)">
+        <source>Peso del contenedor (Kg)</source>
+        <target>Peso del contenedor (Kg)</target>
+      </trans-unit>
+      <trans-unit id="fZg3BZC" resname="Gestor de residuos">
+        <source>Gestor de residuos</source>
+        <target>Gestor de residuos</target>
+      </trans-unit>
+      <trans-unit id="K8cOz.c" resname="Todos los gestores">
+        <source>Todos los gestores</source>
+        <target>Todos los gestores</target>
+      </trans-unit>
+      <trans-unit id="DHOrJji" resname="Densidad">
+        <source>Densidad</source>
+        <target>Densidad</target>
+      </trans-unit>
+      <trans-unit id="VjYOput" resname="Color">
+        <source>Color</source>
+        <target>Color</target>
+      </trans-unit>
+      <trans-unit id="qDQwn.7" resname="Gestor de residuos actualizado con éxito">
+        <source>Gestor de residuos actualizado con éxito</source>
+        <target>Gestor de residuos actualizado con éxito</target>
+      </trans-unit>
+      <trans-unit id="hk7eAFb" resname="Se ha eliminado el gestor de residuos {wasteManager}">
+        <source>Se ha eliminado el gestor de residuos {wasteManager}</source>
+        <target>Se ha eliminado el gestor de residuos {wasteManager}</target>
+      </trans-unit>
+      <trans-unit id="gdHvF9X" resname="No se ha podido eliminar el gestor de residuos {wasteManager}">
+        <source>No se ha podido eliminar el gestor de residuos {wasteManager}</source>
+        <target>No se ha podido eliminar el gestor de residuos {wasteManager}</target>
+      </trans-unit>
+      <trans-unit id="v.JDlHS" resname="El gestor de residuos no existe">
+        <source>El gestor de residuos no existe</source>
+        <target>El gestor de residuos no existe</target>
+      </trans-unit>
+      <trans-unit id="EJjda4J" resname="Gestor de residuos creado correctamente: {name}">
+        <source>Gestor de residuos creado correctamente: {name}</source>
+        <target>Gestor de residuos creado correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="ttK8k4Q" resname="Se ha actualizado la medición {measurement}: {quantity} contenedores de carga {load}">
+        <source>Se ha actualizado la medición {measurement}: {quantity} contenedores de carga {load}</source>
+        <target>Se ha actualizado la medición {measurement}: {quantity} contenedores de carga {load}</target>
+      </trans-unit>
+      <trans-unit id="jt8tUSu" resname="Eliminada la medición &quot;{measurement}&quot;">
+        <source>Eliminada la medición "{measurement}"</source>
+        <target>Eliminada la medición "{measurement}"</target>
+      </trans-unit>
+      <trans-unit id="w7cLMb4" resname="Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propósito {purpose} y sistema de medición {measurementMethod}">
+        <source>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propósito {purpose} y sistema de medición {measurementMethod}</source>
+        <target>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propósito {purpose} y sistema de medición {measurementMethod}</target>
+      </trans-unit>
+      <trans-unit id="eQqlSBE" resname="Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}">
+        <source>Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}</source>
+        <target>Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}</target>
+      </trans-unit>
+      <trans-unit id="ZxrhvCr" resname="Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propósito {purpose} y sistema de medición {measurementMethod}">
+        <source>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propósito {purpose} y sistema de medición {measurementMethod}</source>
+        <target>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propósito {purpose} y sistema de medición {measurementMethod}</target>
+      </trans-unit>
+      <trans-unit id="77cKa6C" resname="Gestores de residuos">
+        <source>Gestores de residuos</source>
+        <target>Gestores de residuos</target>
+      </trans-unit>
+      <trans-unit id="HC2bbm2" resname="Seleccionar">
+        <source>Seleccionar</source>
+        <target>Seleccionar</target>
+      </trans-unit>
+      <trans-unit id="n4e6UQn" resname="Registrado por">
+        <source>Registrado por</source>
+        <target>Registrado por</target>
       </trans-unit>
     </body>
   </file>

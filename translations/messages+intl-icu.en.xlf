@@ -557,6 +557,90 @@
         <source>Carga</source>
         <target>Load</target>
       </trans-unit>
+      <trans-unit id="BjvdtYl" resname="Gestores">
+        <source>Gestores</source>
+        <target>Managers</target>
+      </trans-unit>
+      <trans-unit id="BRp_EDK" resname="¿Es público?">
+        <source>¿Es público?</source>
+        <target>Is it public?</target>
+      </trans-unit>
+      <trans-unit id="zrSJFGz" resname="Volumen del contenedor (%)">
+        <source>Volumen del contenedor (%)</source>
+        <target>Container Volume (%)</target>
+      </trans-unit>
+      <trans-unit id="rGN5PRk" resname="Peso del contenedor (Kg)">
+        <source>Peso del contenedor (Kg)</source>
+        <target>Container Weight (kg)</target>
+      </trans-unit>
+      <trans-unit id="fZg3BZC" resname="Gestor de residuos">
+        <source>Gestor de residuos</source>
+        <target>Waste Manager</target>
+      </trans-unit>
+      <trans-unit id="K8cOz.c" resname="Todos los gestores">
+        <source>Todos los gestores</source>
+        <target>All Managers</target>
+      </trans-unit>
+      <trans-unit id="DHOrJji" resname="Densidad">
+        <source>Densidad</source>
+        <target>Density</target>
+      </trans-unit>
+      <trans-unit id="VjYOput" resname="Color">
+        <source>Color</source>
+        <target>Color</target>
+      </trans-unit>
+      <trans-unit id="qDQwn.7" resname="Gestor de residuos actualizado con éxito">
+        <source>Gestor de residuos actualizado con éxito</source>
+        <target>Waste Manager Updated Successfully</target>
+      </trans-unit>
+      <trans-unit id="hk7eAFb" resname="Se ha eliminado el gestor de residuos {wasteManager}">
+        <source>Se ha eliminado el gestor de residuos {wasteManager}</source>
+        <target>Waste Manager {wasteManager} Deleted</target>
+      </trans-unit>
+      <trans-unit id="gdHvF9X" resname="No se ha podido eliminar el gestor de residuos {wasteManager}">
+        <source>No se ha podido eliminar el gestor de residuos {wasteManager}</source>
+        <target>Waste Manager {wasteManager} Failed to Delete</target>
+      </trans-unit>
+      <trans-unit id="v.JDlHS" resname="El gestor de residuos no existe">
+        <source>El gestor de residuos no existe</source>
+        <target>Waste Manager Does Not Exist</target>
+      </trans-unit>
+      <trans-unit id="EJjda4J" resname="Gestor de residuos creado correctamente: {name}">
+        <source>Gestor de residuos creado correctamente: {name}</source>
+        <target>Waste Manager Created Successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="ttK8k4Q" resname="Se ha actualizado la medición {measurement}: {quantity} contenedores de carga {load}">
+        <source>Se ha actualizado la medición {measurement}: {quantity} contenedores de carga {load}</source>
+        <target>Measurement {measurement} Updated: {quantity} Load Containers {load}</target>
+      </trans-unit>
+      <trans-unit id="jt8tUSu" resname="Eliminada la medición &quot;{measurement}&quot;">
+        <source>Eliminada la medición "{measurement}"</source>
+        <target>Measurement "{measurement}" Deleted</target>
+      </trans-unit>
+      <trans-unit id="w7cLMb4" resname="Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propósito {purpose} y sistema de medición {measurementMethod}">
+        <source>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propósito {purpose} y sistema de medición {measurementMethod}</source>
+        <target>A new container has been registered for {property} for waste registration of type {waste}, purpose {purpose}, and measurement system {measurementMethod}</target>
+      </trans-unit>
+      <trans-unit id="eQqlSBE" resname="Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}">
+        <source>Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}</source>
+        <target>A new measurement has been registered for {property}: {quantity} Load Containers {load}</target>
+      </trans-unit>
+      <trans-unit id="ZxrhvCr" resname="Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propósito {purpose} y sistema de medición {measurementMethod}">
+        <source>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propósito {purpose} y sistema de medición {measurementMethod}</source>
+        <target>The container {container} has been updated for waste registration of type {waste}, purpose {purpose}, and measurement system {measurementMethod}</target>
+      </trans-unit>
+      <trans-unit id="77cKa6C" resname="Gestores de residuos">
+        <source>Gestores de residuos</source>
+        <target>Waste Managers</target>
+      </trans-unit>
+      <trans-unit id="HC2bbm2" resname="Seleccionar">
+        <source>Seleccionar</source>
+        <target>Select</target>
+      </trans-unit>
+      <trans-unit id="n4e6UQn" resname="Registrado por">
+        <source>Registrado por</source>
+        <target>Registered by</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
