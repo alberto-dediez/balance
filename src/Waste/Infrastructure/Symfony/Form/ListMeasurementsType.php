@@ -19,11 +19,6 @@ class ListMeasurementsType extends BaseFilterType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('containerId', ContainerIdType::class, [
-                'label' => new TranslatableMessage('Contenedor'),
-                'required' => false,
-                'placeholder' => new TranslatableMessage('Todos los contenedores')
-            ])            
             ->add('propertyId', PropertyIdType::class, [
                 'label' => new TranslatableMessage('Propiedad'),
                 'required' => false,

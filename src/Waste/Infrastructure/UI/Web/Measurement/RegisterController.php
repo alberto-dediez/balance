@@ -93,7 +93,8 @@ class RegisterController extends AbstractController
         }
 
         return $this->render('@waste/measurements/register.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'container' => $container
         ]);
     }
 }

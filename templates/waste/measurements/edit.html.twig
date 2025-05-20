@@ -14,7 +14,6 @@
     {{ form_start(form) }}
         <twig:Card>
             <div class="row">
-                <twig:View:Field label="{{ 'Contenedor' | trans }}">{{ measurement.containerId }}</twig:View:Field>
                 <twig:View:Field label="{{ 'Propiedad' | trans }}">{{ measurement.propertyId | property_name }}</twig:View:Field>
                 <twig:View:Field label="{{ 'Tipología de residuo' | trans }}">{{ measurement.wasteId | waste_name }}</twig:View:Field>
                 <twig:View:Field label="{{ 'Propósito' | trans }}">{{ measurement.purpose.value | trans({}, 'purpose') }}</twig:View:Field>
