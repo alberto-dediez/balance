@@ -9,8 +9,8 @@
         <embedded name="id" class="App\Waste\Domain\Model\Container\ContainerId" use-column-prefix="false" />
         <embedded name="qrCode" class="App\Waste\Domain\Model\Container\QrCode" column-prefix="qr_" />
 
-        <field name="purpose" type="object" nullable="false"/>
-        <field name="measurementMethod" type="object" nullable="false"/>
+        <field name="purpose" type="string" enum-type="App\Waste\Domain\Model\Container\Purpose" nullable="false"/>
+        <field name="measurementMethod" type="string" enum-type="App\Waste\Domain\Model\Container\MeasurementMethod" nullable="false"/>
         <field name="volume" type="decimal" scale="2" precision="12"  nullable="false"/>
         <field name="removed" type="boolean" nullable="true"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>

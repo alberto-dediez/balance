@@ -12,8 +12,8 @@
         <field name="propertyId" type="string" length="36" nullable="true" />
         <field name="accountId" type="string" length="36" nullable="true" />
         <field name="wasteId" type="string" length="36" nullable="true" />
-        <field name="purpose" type="object" nullable="false" />
-        <field name="measurementMethod" type="object" nullable="false" />
+        <field name="purpose" type="string" enum-type="App\Waste\Domain\Model\Container\Purpose" nullable="false" />
+        <field name="measurementMethod" type="string" enum-type="App\Waste\Domain\Model\Container\MeasurementMethod" nullable="false" />
         <field name="wasteManagerId" type="string" length="36" nullable="true" />
 
         <field name="quantity" type="integer" nullable="false" />

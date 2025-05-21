@@ -139,8 +139,6 @@ class NodeLister
     {
         $nodes = [];
 
-
-
         $nodes [] = new Node(
             label: new TranslatableMessage("Residuos"),
             icon: "ph:recycle-duotone",
