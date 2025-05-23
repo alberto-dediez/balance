@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Infrastructure\Symfony\Type;
+namespace App\Shared\Infrastructure\Symfony\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Security\Infrastructure\Symfony\Type;
+namespace App\Security\Infrastructure\Symfony\Form\Type;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityRepository;

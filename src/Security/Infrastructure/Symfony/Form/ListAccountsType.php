@@ -8,7 +8,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 use App\Security\Application\Account\List\ListAccountsRequest;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
-use App\Shared\Infrastructure\Symfony\Type\BooleanType;
+use App\Shared\Infrastructure\Symfony\Form\Type\BooleanType;
 
 class ListAccountsType extends BaseFilterType
 {

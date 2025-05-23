@@ -5,10 +5,10 @@ namespace App\Security\Infrastructure\Symfony\Form;
 use App\Security\Domain\Model\User\Role;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use App\Security\Infrastructure\Symfony\Type\RoleType;
+use App\Security\Infrastructure\Symfony\Form\Type\RoleType;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use App\Security\Infrastructure\Symfony\Type\AccountType;
+use App\Security\Infrastructure\Symfony\Form\Type\AccountType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 

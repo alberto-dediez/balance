@@ -7,7 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use App\Security\Domain\Model\Account\Account;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use App\Security\Infrastructure\Symfony\Type\RoleType;
+use App\Security\Infrastructure\Symfony\Form\Type\RoleType;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;

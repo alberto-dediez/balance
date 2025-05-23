@@ -6,7 +6,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\Account\Account;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use App\Security\Infrastructure\Symfony\Type\RoleType;
+use App\Security\Infrastructure\Symfony\Form\Type\RoleType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use App\Security\Application\User\List\ListUsersRequest;
