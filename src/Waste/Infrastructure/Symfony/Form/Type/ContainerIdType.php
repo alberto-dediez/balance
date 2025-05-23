@@ -7,7 +7,7 @@ use App\Waste\Domain\Model\Container\ContainerFilter;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
-use App\Shared\Infrastructure\Symfony\Type\AggregateRootIdType;
+use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdType;
 
 class ContainerIdType extends AggregateRootIdType
 {

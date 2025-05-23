@@ -2,7 +2,7 @@
 
 namespace App\Waste\Infrastructure\Symfony\Form\Type;
 
-use App\Shared\Infrastructure\Symfony\Type\AggregateRootIdType;
+use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdType;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerFilter;
 use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;

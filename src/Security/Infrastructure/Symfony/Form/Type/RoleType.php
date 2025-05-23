@@ -1,20 +1,19 @@
 <?php
 
-namespace App\Shared\Infrastructure\Symfony\Type;
+namespace App\Security\Infrastructure\Symfony\Form\Type;
 
+use App\Security\Domain\Model\User\Role;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
-class BooleanType extends AbstractType
+class RoleType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'choices' => [
-                'No' => false,
-                'Sí' => true
-            ]
+            'choices' => Role::casesForOwners(),
+            'translation_domain' => 'roles',
         ));
     }
     

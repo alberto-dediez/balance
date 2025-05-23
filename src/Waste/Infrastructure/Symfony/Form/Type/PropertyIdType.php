@@ -7,7 +7,7 @@ use App\Waste\Domain\Model\Property\PropertyFilter;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Waste\Domain\Model\Property\PropertyRepository;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
-use App\Shared\Infrastructure\Symfony\Type\AggregateRootIdType;
+use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdType;
 
 class PropertyIdType extends AggregateRootIdType
 {

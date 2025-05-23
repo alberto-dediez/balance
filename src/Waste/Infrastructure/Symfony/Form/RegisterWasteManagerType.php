@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use App\Shared\Infrastructure\Symfony\Type\BooleanType;
+use App\Shared\Infrastructure\Symfony\Form\Type\BooleanType;
 use App\Waste\Application\WasteManager\Register\RegisterWasteManagerRequest;
 
 class RegisterWasteManagerType extends AbstractType

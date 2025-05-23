@@ -5,7 +5,7 @@ namespace App\Security\Infrastructure\Symfony\Form;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Security\Infrastructure\Symfony\Type\UserIdType;
+use App\Security\Infrastructure\Symfony\Form\Type\UserIdType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
 use App\Security\Application\RecordedEvent\List\ListRecordedEventsRequest;
