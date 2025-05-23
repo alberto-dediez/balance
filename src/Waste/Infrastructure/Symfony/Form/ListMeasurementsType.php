@@ -3,15 +3,15 @@
 namespace App\Waste\Infrastructure\Symfony\Form;
 
 use Symfony\Component\Form\FormBuilderInterface;
-use App\Waste\Infrastructure\Symfony\Type\PurposeType;
-use App\Waste\Infrastructure\Symfony\Type\WasteIdType;
+use App\Waste\Infrastructure\Symfony\Form\Type\PurposeType;
+use App\Waste\Infrastructure\Symfony\Form\Type\WasteIdType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Waste\Infrastructure\Symfony\Type\PropertyIdType;
+use App\Waste\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
-use App\Waste\Infrastructure\Symfony\Type\ContainerIdType;
-use App\Waste\Infrastructure\Symfony\Type\WasteManagerIdType;
-use App\Waste\Infrastructure\Symfony\Type\MeasurementMethodType;
+use App\Waste\Infrastructure\Symfony\Form\Type\ContainerIdType;
+use App\Waste\Infrastructure\Symfony\Form\Type\WasteManagerIdType;
+use App\Waste\Infrastructure\Symfony\Form\Type\MeasurementMethodType;
 use App\Waste\Application\Measurement\List\ListMeasurementsRequest;
 
 class ListMeasurementsType extends BaseFilterType

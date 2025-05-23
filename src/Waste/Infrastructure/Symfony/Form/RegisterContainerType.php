@@ -4,15 +4,15 @@ namespace App\Waste\Infrastructure\Symfony\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use App\Waste\Infrastructure\Symfony\Type\PurposeType;
-use App\Waste\Infrastructure\Symfony\Type\WasteIdType;
+use App\Waste\Infrastructure\Symfony\Form\Type\PurposeType;
+use App\Waste\Infrastructure\Symfony\Form\Type\WasteIdType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Waste\Infrastructure\Symfony\Type\PropertyIdType;
+use App\Waste\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use App\Waste\Infrastructure\Symfony\Form\Type\VolumeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use App\Waste\Infrastructure\Symfony\Type\WasteManagerIdType;
-use App\Waste\Infrastructure\Symfony\Type\MeasurementMethodType;
+use App\Waste\Infrastructure\Symfony\Form\Type\WasteManagerIdType;
+use App\Waste\Infrastructure\Symfony\Form\Type\MeasurementMethodType;
 
 class RegisterContainerType extends AbstractType
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Waste\Infrastructure\Symfony\Type;
+namespace App\Waste\Infrastructure\Symfony\Form\Type;
 
 use App\Shared\Infrastructure\Symfony\Type\AggregateRootIdType;
 use App\Waste\Domain\Model\Waste\WasteId;

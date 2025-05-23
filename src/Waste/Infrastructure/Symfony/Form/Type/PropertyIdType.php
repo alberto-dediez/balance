@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Waste\Infrastructure\Symfony\Type;
+namespace App\Waste\Infrastructure\Symfony\Form\Type;
 
 use App\Waste\Domain\Model\Property\PropertyId;
 use App\Waste\Domain\Model\Property\PropertyFilter;
