@@ -21,7 +21,7 @@ class UserMother
     public static function systemUser()
     {
         return new User(
-            id: UserId::generate(), 
+            id: new UserId('system'), 
             username: 'system',
             roles: [Role::Admin]
         );

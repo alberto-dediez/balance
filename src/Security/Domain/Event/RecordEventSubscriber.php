@@ -2,12 +2,13 @@
 
 namespace App\Security\Domain\Event;
 
-use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventRequest;
-use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventService;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\RegisterTrait;
 use App\Shared\Domain\Event\DomainEventSubscriber;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventRequest;
+use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventService;
 
 class RecordEventSubscriber implements DomainEventSubscriber
 {
@@ -29,7 +30,7 @@ class RecordEventSubscriber implements DomainEventSubscriber
 
         $registerRecordedEvent(
             new RegisterRecordedEventRequest(
-                userId: null !== $loggedUser ? $loggedUser->id() : null,
+                userId: null !== $loggedUser ? $loggedUser->id() : UserMother::systemUser()->id(),
                 event: $event
             ),
             $loggedUser
