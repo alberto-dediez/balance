@@ -12,6 +12,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^3.3",
         "nelmio/api-doc-bundle": "^5.3",
+        "runtime/frankenphp-symfony": "*",
         "symfony/asset": "7.2.*",
         "symfony/asset-mapper": "7.2.*",
         "symfony/console": "7.2.*",
@@ -85,7 +86,7 @@
         "symfony": {
             "allow-contrib": false,
             "require": "7.2.*",
-            "docker": false
+            "docker": true
         }
     },
     "require-dev": {
