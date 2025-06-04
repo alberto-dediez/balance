@@ -43,9 +43,11 @@ bash: ## Connect to the FrankenPHP container via bash so up and down arrows go t
 trust: 
 	docker cp $(docker compose ps -q php):/data/caddy/pki/authorities/local/root.crt /usr/local/share/ca-certificates/root.crt && sudo update-ca-certificates
 
-# test: ## Start tests with phpunit, pass the parameter "c=" to add options to phpunit, example: make test c="--group e2e --stop-on-failure"
-# 	@$(eval c ?=)
-# 	@$(DOCKER_COMP) exec -e APP_ENV=test php bin/phpunit $(c)
+build-prod:
+	@$(DOCKER_COMP) -f compose.yaml -f compose.prod.yaml build --pull --no-cache
+
+up-prod:
+	@$(DOCKER_COMP) -f compose.yaml -f compose.prod.yaml up --wait
 
 ## —— Composer 🧙 ——————————————————————————————————————————————————————————————
 composer: ## Run composer, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'
@@ -127,6 +129,6 @@ translation:
 	php ./bin/console trans:extract en --force --prefix="NEW_" -q
 
 ## —— Production ————————————————————————————————————————————————————————————
-production:
+assets:
 	@$(PHP) bin/console sass:build
 	@$(PHP) bin/console asset-map:compile
