@@ -23,7 +23,7 @@ help: ## Outputs this help screen
 build: ## Builds the Docker images
 	@$(DOCKER_COMP) build --pull --no-cache
 
-up: ## Start the docker hub in detached mode (no logs)
+up: ## Start the docker hub in detached mode (no logs) || For development: MYSQL_USER=app MYSQL_PASSWORD=123 MYSQL_DATABASE=hydra MYSQL_ROOT_PASSWORD=1234 docker compose up --detach
 	@$(DOCKER_COMP) up --detach
 
 start: build up ## Build and start the containers
