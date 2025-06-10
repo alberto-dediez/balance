@@ -10,8 +10,11 @@ use PHPUnit\Framework\Assert;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use App\Security\Domain\Model\User\UserRepository;
 use Behat\Behat\Tester\Exception\PendingException;
+use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 
 /**
  * This context class contains the definitions of the steps used by the demo
@@ -21,11 +24,31 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 final class ApiContext implements Context
 {
+    private ?SecurityUser $user;
+    
     private ?\Exception $exception = null;
 
-    public function __construct(private KernelBrowser $client)
+    public function __construct(private KernelBrowser $client, private UserRepository $userRepository)
     {
         $this->client->catchExceptions(false);        
+    }
+
+    #[When('I am authenticated in API as :username')]
+    public function iAmAuthenticatedInApiAs($username): void
+    {
+        $user = $this->userRepository->findByUsername($username);
+
+        $this->user = new SecurityUser($user);
+
+        $this->client->disableReboot();
+
+        $encoder = $this->client->getContainer()->get(JWTEncoderInterface::class);
+
+        $this->client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $encoder->encode([
+            'username' => $user->username(),
+            'roles' => $user->roles()
+        ])));
+
     }
 
     #[When('I send a :method request to :path')]
