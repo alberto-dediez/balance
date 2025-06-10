@@ -27,6 +27,13 @@ security-web:
     defaults:
         _locale: '%app.locale_default%'
 
+security-api:
+    resource:
+        path: ../src/Security/Infrastructure/UI/Api/
+        namespace: App\Security\Infrastructure\UI\Api
+    type: attribute
+    prefix: '/api'
+
 waste-web:
     resource:
         path: ../src/Waste/Infrastructure/UI/Web/

@@ -10,7 +10,11 @@ use PHPUnit\Framework\Assert;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use App\Security\Domain\Model\User\UserRepository;
 use Behat\Behat\Tester\Exception\PendingException;
+use App\Security\Infrastructure\Symfony\Security\SecurityUser;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 
 /**
  * This context class contains the definitions of the steps used by the demo
@@ -20,20 +24,58 @@ use Behat\Behat\Tester\Exception\PendingException;
  */
 final class ApiContext implements Context
 {
-    public function __construct(private KernelBrowser $client)
+    private ?SecurityUser $user;
+    
+    private ?\Exception $exception = null;
+
+    public function __construct(private KernelBrowser $client, private UserRepository $userRepository)
     {
+        $this->client->catchExceptions(false);        
+    }
+
+    #[When('I am authenticated in API as :username')]
+    public function iAmAuthenticatedInApiAs($username): void
+    {
+        $user = $this->userRepository->findByUsername($username);
+
+        $this->user = new SecurityUser($user);
+
+        $this->client->disableReboot();
+
+        $encoder = $this->client->getContainer()->get(JWTEncoderInterface::class);
+
+        $this->client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $encoder->encode([
+            'username' => $user->username(),
+            'roles' => $user->roles()
+        ])));
+
     }
 
     #[When('I send a :method request to :path')]
     public function iSendARequestTo($method, $path)
     {
-        $this->client->request($method, $path);
+        try {
+            $this->client->request($method, $path);
+
+            $this->exception = null;
+        } catch (\Exception $e) {
+            $this->exception = $e;
+        }
     }
 
     #[When('I send a :method request to :path with body:')]
     public function iSendARequestToWithBody($method, $path, PyStringNode $content)
     { 
-        $this->client->request($method, $path, [], [], [], (string) $content);
+        try {
+            $this->client->request($method, $path, [], [], [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_ACCEPT' => 'application/json',
+            ], (string) $content);
+
+            $this->exception = null;
+        } catch (\Exception $e) {
+            $this->exception = $e;
+        }
     }
 
     #[Then('the response JSON should be equal to:')]
@@ -57,8 +99,21 @@ final class ApiContext implements Context
     }
 
     #[Then('the status code should be :code')]
-    public function theStatusCodeShouldBe(int $code)
+    public function theStatusCodeShouldBe(int $expectedCode)
     {
-        Assert::assertEquals($code, $this->client->getResponse()->getStatusCode());
+        if (null == $this->exception) {
+            $code = $this->client->getResponse()->getStatusCode();
+        } else {
+            switch (get_class($this->exception)) {
+                case NotFoundHttpException::class:
+                    $code = 404;
+                    break;
+                default:
+                    $code = $this->exception->getCode();
+                    break;
+            }
+        }
+
+        Assert::assertEquals($expectedCode, $code);
     }
 }

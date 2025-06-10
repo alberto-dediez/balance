@@ -9,7 +9,26 @@ security:
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
+            security: false        
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+        api_login: 
+            pattern: ^/api/login
+            provider: app_user_provider
+            user_checker: App\Security\Infrastructure\Symfony\Security\UserChecker
+            json_login:
+                check_path: /api/login
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            login_throttling:
+                max_attempts: 3    
+
+        api:
+            pattern:   ^/api
+            provider: app_user_provider
+            jwt: ~
+
         main:
             lazy: true
             provider: app_user_provider
@@ -22,22 +41,25 @@ security:
                 path: app_logout
                 # where to redirect after logout
                 # target: app_any_route
+                
+            login_throttling:
+                max_attempts: 3    
 
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 604800
 
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: /health-check$, roles: PUBLIC_ACCESS }
-        - { path: ^/api, roles: PUBLIC_ACCESS }
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/openapi/documentation, roles: ROLE_ADMIN }
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         - { path: /login, roles: PUBLIC_ACCESS }
         - { path: /logout, role: PUBLIC_ACCESS }
         - { path: ^/, roles: ROLE_USER }
+        
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER

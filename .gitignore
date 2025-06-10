@@ -7,6 +7,7 @@
 /public/bundles/
 /var/
 /vendor/
+/config/secrets
 ###< symfony/framework-bundle ###
 
 ###> symfony/phpunit-bridge ###
@@ -27,3 +28,11 @@
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
+
+###> docker ###
+docker/
+###< docker ###
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###

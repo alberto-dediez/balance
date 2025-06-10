@@ -12,6 +12,9 @@
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^3.3",
         "endroid/qr-code": "^6.0",
+        "lexik/jwt-authentication-bundle": "^3.1",
+        "nelmio/api-doc-bundle": "^5.3",
+        "runtime/frankenphp-symfony": "*",
         "symfony/asset": "7.2.*",
         "symfony/asset-mapper": "7.2.*",
         "symfony/console": "7.2.*",
@@ -20,6 +23,7 @@
         "symfony/form": "7.2.*",
         "symfony/framework-bundle": "7.2.*",
         "symfony/http-client": "7.2.*",
+        "symfony/rate-limiter": "7.2.*",
         "symfony/runtime": "7.2.*",
         "symfony/security-bundle": "7.2.*",
         "symfony/stimulus-bundle": "^2.23",
@@ -86,7 +90,7 @@
         "symfony": {
             "allow-contrib": false,
             "require": "7.2.*",
-            "docker": false
+            "docker": true
         }
     },
     "require-dev": {
