@@ -10,6 +10,6 @@
 #    defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
 
 app.redocly:
-    path: /api/doc
+    path: /openapi/documentation
     methods: GET
     defaults: { _controller: nelmio_api_doc.controller.redocly }

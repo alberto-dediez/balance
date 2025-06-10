@@ -49,6 +49,11 @@ build-prod:
 up-prod:
 	@$(DOCKER_COMP) -f compose.yaml -f compose.prod.yaml up --wait
 
+init: 
+	@$(SYMFONY) lexik:jwt:generate-keypair
+	@$(SYMFONY) doctrine:database:create
+	@$(SYMFONY) doctrine:migrations:migrate
+
 ## —— Composer 🧙 ——————————————————————————————————————————————————————————————
 composer: ## Run composer, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'
 	@$(eval c ?=)
