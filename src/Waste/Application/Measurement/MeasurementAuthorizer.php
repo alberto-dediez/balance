@@ -35,7 +35,7 @@ final class MeasurementAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        if (null == $user->accountId() || false == $user->accountId()->equals($subject->accountId())) {
+        if (null == $user->accountId() || null == $subject->accountId() || false == $user->accountId()->equals($subject->accountId())) {
             return false;
         }
         

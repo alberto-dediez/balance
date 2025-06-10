@@ -9,6 +9,8 @@ nelmio_api_doc:
               description: 'Endpoints related to verifying the status and availability of the service.'
             - name: 'Security'
               description: 'Endpoints related to security, login and session.'
+            - name: 'Waste'
+              description: 'Endpoints related to waste management'
         components:
             securitySchemes:
                 Bearer:
