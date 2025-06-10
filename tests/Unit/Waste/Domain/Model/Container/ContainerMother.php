@@ -75,6 +75,19 @@ class ContainerMother
         return $container;
     }
 
+    public static function fromPropertyAccountAndWasteAndIdAndManager(string $propertyId, string $accountId, string $wasteId, string $containerId, string $managerId)
+    {
+        $container = self::from(
+            accountId: new AccountId($accountId),
+            containerId: new ContainerId($containerId),
+            wasteId: new WasteId($wasteId),
+            propertyId: new PropertyId($propertyId),
+            wasteManagerId: new WasteManagerId($managerId)
+        );
+
+        return $container;
+    }
+
     public static function fromAccount(AccountId $accountId)
     {
         $purpose = Purpose::cases()[rand(0, count(Purpose::cases())-1)];

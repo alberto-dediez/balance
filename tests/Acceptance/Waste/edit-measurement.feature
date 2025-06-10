@@ -7,7 +7,7 @@ Feature:
     Given user "user1@dediez.software" with role "ROLE_USER" with id "user1" of account "mycompany" exists
     Given waste "Plastico" with id "plastico" exists
     Given property "Hotel" with id "hotel" of account "mycompany" exists
-    Given container for "pastico" in "hotel" with id "container" exists
+    Given container for "plastico" in "hotel" with id "container" exists
     Given measurement for container "container" and account "mycompany" from user "user1" with id "111" exists
     When I am logged as "owner@dediez.software"
     When I go to "/es/measurements/edit/111"
@@ -20,7 +20,7 @@ Feature:
     Given user "user1@dediez.software" with role "ROLE_USER" with id "user1" of account "other" exists
     Given waste "Plastico" with id "plastico" exists
     Given property "Hotel" with id "hotel" of account "other" exists
-    Given container for "pastico" in "hotel" with id "container" exists
+    Given container for "plastico" in "hotel" with id "container" exists
     Given measurement for container "container" and account "other" from user "user1" with id "111" exists
     When I am logged as "owner@dediez.software"
     When I go to "/es/measurements/edit/111"
@@ -31,7 +31,7 @@ Feature:
     Given user "user1@dediez.software" with role "ROLE_USER" with id "user1" of account "mycompany" exists
     Given waste "Plastico" with id "plastico" exists
     Given property "Hotel" with id "hotel" of account "mycompany" exists
-    Given container for "pastico" in "hotel" with id "container" exists
+    Given container for "plastico" in "hotel" with id "container" exists
     Given measurement for container "container" and account "mycompany" from user "user1" with id "111" exists
     When I am logged as "user1@dediez.software"
     When I go to "/es/measurements/edit/111"
@@ -43,7 +43,7 @@ Feature:
     Given user "user2@dediez.software" with role "ROLE_USER" with id "user2" of account "mycompany" exists
     Given waste "Plastico" with id "plastico" exists
     Given property "Hotel" with id "hotel" of account "mycompany" exists
-    Given container for "pastico" in "hotel" with id "container" exists
+    Given container for "plastico" in "hotel" with id "container" exists
     Given measurement for container "container" and account "mycompany" from user "user1" with id "111" exists
     Given measurement for container "container" and account "mycompany" from user "user2" with id "222" exists
     When I am logged as "user1@dediez.software"

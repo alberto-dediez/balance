@@ -33,10 +33,10 @@ class WasteExtension extends AbstractExtension
 
     public function wasteName(WasteId $wasteId): ?Waste
     {
-        if (!isset($wastes[(string) $wasteId])) {
-            $wastes[(string) $wasteId] = $this->wasteRepository->find($wasteId);
+        if (!isset($this->wastes[(string) $wasteId])) {
+            $this->wastes[(string) $wasteId] = $this->wasteRepository->find($wasteId);
         }
 
-        return $wastes[(string) $wasteId];
+        return $this->wastes[(string) $wasteId];
     }
 }

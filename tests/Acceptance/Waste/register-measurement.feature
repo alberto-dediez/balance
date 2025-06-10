@@ -13,7 +13,7 @@ Feature:
     Given user "user@dediez.software" with role "ROLE_USER" of account "mycompany" exists
     Given waste "Plastico" with id "plastico" exists
     Given property "Hotel" with id "hotel" of account "mycompany" exists
-    Given container for "pastico" in "hotel" with id "container" exists
+    Given container for "plastico" in "hotel" with id "container" exists
     When I am logged as "user@dediez.software"
     When I go to "/es/measurements/register"
     Then the response status should be 200
@@ -24,7 +24,7 @@ Feature:
     Given user "user@dediez.software" with role "ROLE_USER" of account "mycompany" exists
     Given waste "Plastico" with id "plastico" exists
     Given property "Hotel" with id "hotel" of account "mycompany" exists
-    Given container for "pastico" in "hotel" with id "container" exists
+    Given container for "plastico" in "hotel" with id "container" exists
     When I am logged as "user@dediez.software"
     When I go to "/es/measurements/register/container"
     Then the response status should be 200

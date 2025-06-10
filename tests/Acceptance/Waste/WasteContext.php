@@ -68,6 +68,16 @@ final class WasteContext implements Context
         $this->containerRepository->add($container);
     }
 
+    #[Given('container for :waste in :propertyId and managed by :manager with id :id exists')]
+    public function containerForInAndManagedByWithIdExists($waste, $propertyId, $managerId, $id): void
+    {
+        $property = $this->propertyRepository->find(new PropertyId($propertyId));
+
+        $container = ContainerMother::fromPropertyAccountAndWasteAndIdAndManager($propertyId, (string) $property->accountId(), $waste, $id, $managerId);
+
+        $this->containerRepository->add($container);
+    }
+
     #[Given('measurement for container :container and account :account from user :user with id :id exists')]
     public function measurementForContainerAndAccountFromUserWithIdExists($containerId, $accountId, $user, $id): void
     {

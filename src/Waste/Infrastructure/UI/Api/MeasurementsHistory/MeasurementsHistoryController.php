@@ -14,6 +14,7 @@ use App\Waste\Infrastructure\Symfony\Twig\WasteManagerExtension;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Waste\Application\Measurement\List\ListMeasurementsRequest;
 use App\Waste\Application\Measurement\List\ListMeasurementsService;
+use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Infrastructure\UI\Api\MeasurementsHistory\Measurement;
 use App\Waste\Infrastructure\UI\Api\MeasurementsHistory\MeasurementHistoryResponse;
 
@@ -60,8 +61,8 @@ class MeasurementsHistoryController extends AbstractController
                     property: $propertyExtension->propertyName($measurement->propertyId()),
                     waste: $wasteExtension->wasteName($measurement->wasteId()),
                     wasteManager: $wasteManagerExtension->wasteManagerName($measurement->wasteManagerId()),
-                    containers: $measurement->containers(),
-                    load: $measurement->load(),
+                    quantity: $measurement->quantity(),
+                    load: $measurement->load() . ($measurement->measurementMethod() == MeasurementMethod::Volume ? ' %' : ' Kg'),
                     purpose: $translator->trans($measurement->purpose()->value, [], 'purpose'),
                     registeredAt: $measurement->registeredAt()->format('Y-m-d H:i:s')
                 );

@@ -29,7 +29,7 @@ class Measurement
             type: 'string',
             example: 1
         )]
-        public int $containers,
+        public int $quantity,
 
         #[OA\Property(
             type: 'string',
