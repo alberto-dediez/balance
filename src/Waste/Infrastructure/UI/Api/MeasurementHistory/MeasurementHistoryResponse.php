@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Waste\Infrastructure\UI\Api\MeasurementsHistory;
+namespace App\Waste\Infrastructure\UI\Api\MeasurementHistory;
 
 use OpenApi\Attributes as OA;
 use Nelmio\ApiDocBundle\Attribute\Model;
-use App\Waste\Infrastructure\UI\Api\MeasurementsHistory\Measurement;
+use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponse;
 
 class MeasurementHistoryResponse
 {
@@ -17,7 +17,7 @@ class MeasurementHistoryResponse
         
         #[OA\Property(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Measurement::class))
+            items: new OA\Items(ref: new Model(type: MeasurementResponse::class))
         )]
         public array $measurements
     )

@@ -8,11 +8,11 @@ use App\Waste\Domain\Model\Measurement\MeasurementFilter;
 
 interface MeasurementRepository
 {
-    public function add(Measurement $container): void;
+    public function add(Measurement $measurement): void;
 
-    public function remove(Measurement $container): void;
+    public function remove(Measurement $measurement): void;
 
-    public function find(MeasurementId $containerId): ?Measurement;
+    public function find(MeasurementId $measurementId): ?Measurement;
 
     public function findByFilter(MeasurementFilter $filter): array;
 

@@ -18,12 +18,14 @@ Feature:
             "username": "user@dediez.software",
             "measurements": [
                 {
+                    "measurement_id": "8de87304-f72e-4a62-bca9-313b27d068f3",
                     "property": "Hotel Abaco",
                     "waste": "Material Nuclear",
                     "waste_manager": "Sadeco",
                     "quantity": 3,
                     "load": "50 %",
                     "purpose": "Deshecho",
+                    "justification": "",
                     "registered_at": "2025-06-10 15:12:04"
                 }
             ]

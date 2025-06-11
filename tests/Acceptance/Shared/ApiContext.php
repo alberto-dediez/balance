@@ -94,7 +94,7 @@ final class ApiContext implements Context
         $actual = json_decode($this->client->getResponse()->getContent(), true);
 
         foreach ($expected as $attr => $value) {
-            Assert::assertTrue(isset($actual->$attr) || isset($actual[$attr]));
+            Assert::assertTrue(isset($actual->$attr) || isset($actual[$attr]), $attr);
         }
     }
 

@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Waste\Infrastructure\UI\Api\MeasurementHistory;
+
+use OpenApi\Attributes as OA;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Security\Infrastructure\Symfony\Security\SecurityUser;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Waste\Application\Measurement\List\ListMeasurementsRequest;
+use App\Waste\Application\Measurement\List\ListMeasurementsService;
+use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponseGenerator;
+use App\Waste\Infrastructure\UI\Api\MeasurementHistory\MeasurementHistoryResponse;
+
+#[Route('/measurements/history', name: 'api_measurements_history', methods: ['GET'])]
+#[OA\Get( 
+    summary: "Get history of measurements",
+    description: "Return last measurements registered by logged user",
+    tags: ['Waste']
+)]
+#[OA\Response(
+    response: 200,
+    description: 'Returns list of measurements',
+    content: new Model(type: MeasurementHistoryResponse::class)
+)]
+class MeasurementHistoryController extends AbstractController
+{
+    public function __invoke(
+        ListMeasurementsService $listMeasurements,
+        MeasurementResponseGenerator $measurementGenerator
+    ): JsonResponse
+    {
+        /**
+         * @var SecurityUser $user
+         */
+        $user = $this->getUser();
+
+        $response = $listMeasurements(
+            new ListMeasurementsRequest(
+                userId: $user->id(),
+                accountId: $user->accountId()
+            ),
+            $user
+        );
+
+        $username = $user->username();
+        $measurements = [];
+
+        if ($response->totalResults > 0) {
+            foreach ($response->measurements as $measurement) {
+                $measurements[] = $measurementGenerator->generate($measurement);
+            }
+        }
+
+        return $this->json(
+            new MeasurementHistoryResponse($username, $measurements)
+        );
+    }
+}

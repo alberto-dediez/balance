@@ -1,12 +1,18 @@
 <?php
 
-namespace App\Waste\Infrastructure\UI\Api\MeasurementsHistory;
+namespace App\Waste\Infrastructure\UI\Api\Measurement;
 
 use OpenApi\Attributes as OA;
 
-class Measurement
+class MeasurementResponse
 {
     public function __construct(
+        #[OA\Property(
+            type: 'string',
+            example: '8de87304-f72e-4a62-bca9-313b27d068f3'
+        )]
+        public string $measurementId,
+
         #[OA\Property(
             type: 'string',
             example: 'Hotel Abaco'
@@ -42,6 +48,12 @@ class Measurement
             example: "Deshecho"
         )]
         public string $purpose,
+
+        #[OA\Property(
+            type: 'string',
+            example: 'Renovación de la planta superior'
+        )]
+        public string $justification,
 
         #[OA\Property(
             type: 'string',
