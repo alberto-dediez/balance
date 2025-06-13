@@ -29,7 +29,8 @@ class MeasurementResponseGenerator
             waste: $this->wasteExtension->wasteName($modelMeasurement->wasteId()),
             wasteManager: $this->wasteManagerExtension->wasteManagerName($modelMeasurement->wasteManagerId()),
             quantity: $modelMeasurement->quantity(),
-            load: $modelMeasurement->load() . ($modelMeasurement->measurementMethod() == MeasurementMethod::Volume ? ' %' : ' Kg'),
+            load: $modelMeasurement->load(),
+            unit: ($modelMeasurement->measurementMethod() == MeasurementMethod::Volume ? '%' : 'Kg'),
             purpose: $this->translator->trans($modelMeasurement->purpose()->value, [], 'purpose'),
             justification: (string) $modelMeasurement->justification(),
             registeredAt: $modelMeasurement->registeredAt()->format('Y-m-d H:i:s')

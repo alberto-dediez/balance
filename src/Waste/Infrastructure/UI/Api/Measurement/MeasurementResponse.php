@@ -39,9 +39,15 @@ class MeasurementResponse
 
         #[OA\Property(
             type: 'string',
-            example: '50 %'
+            example: '50'
         )]
         public string $load,
+
+        #[OA\Property(
+            type: 'string',
+            example: '%'
+        )]
+        public string $unit,
 
         #[OA\Property(
             type: 'string',
