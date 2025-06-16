@@ -17,7 +17,7 @@ use App\Waste\Application\Measurement\Update\UpdateMeasurementService;
 use App\Waste\Infrastructure\UI\Api\MeasurementEdit\MeasurementEditRequest;
 use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponseGenerator;
 
-#[Route('/measurements/{measurementId}', name: 'api_measurements_edit', methods: ['POST'])]
+#[Route('/measurements/{measurementId}', name: 'api_measurements_edit', methods: ['PUT'])]
 #[OA\Get(
     summary: "Edit Measurement",
     description: "Edit an owned measurement",
