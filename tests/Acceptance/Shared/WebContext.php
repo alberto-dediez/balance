@@ -33,7 +33,6 @@ final class WebContext implements Context
         $this->client->catchExceptions(false);        
     }
 
-
     #[When('I am logged as :username')]
     public function iAmLoggedAs($username)
     {

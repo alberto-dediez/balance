@@ -23,6 +23,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	gettext \
 	git \
 	make \
+	libgd-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libwebp-dev \
+    libfreetype6-dev \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN set -eux; \
@@ -33,6 +38,9 @@ RUN set -eux; \
 		opcache \
 		zip \
 	;
+
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install -j$(nproc) gd
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
 ENV COMPOSER_ALLOW_SUPERUSER=1

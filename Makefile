@@ -50,8 +50,8 @@ up-prod:
 	@$(DOCKER_COMP) -f compose.yaml -f compose.prod.yaml up --wait
 
 init: 
-	@$(SYMFONY) lexik:jwt:generate-keypair
-	@$(SYMFONY) doctrine:database:create
+	@$(SYMFONY) lexik:jwt:generate-keypair --skip-if-exists
+	@$(SYMFONY) doctrine:database:create --if-not-exists
 	@$(SYMFONY) doctrine:migrations:migrate
 
 ## —— Composer 🧙 ——————————————————————————————————————————————————————————————
