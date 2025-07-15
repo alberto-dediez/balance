@@ -3,6 +3,7 @@ DOCKER_COMP = docker compose
 
 # Docker containers
 PHP_CONT = $(DOCKER_COMP) exec php
+DATABASE_CONT = $(DOCKER_COMP) exec database
 TEST_CONT     = $(DOCKER_COMP) exec -e APP_ENV=test -e DATABASE_URL="sqlite:///./var/data.db" -e SYMFONY_DEPRECATIONS_HELPER="disabled=1" php
 
 # Executables
@@ -39,6 +40,12 @@ sh: ## Connect to the FrankenPHP container
 
 bash: ## Connect to the FrankenPHP container via bash so up and down arrows go to previous commands
 	@$(PHP_CONT) bash
+	
+db-sh: ## Connect to the FrankenPHP Database container
+	@$(DATABASE_CONT) sh
+
+db-bash: ## Connect to the FrankenPHP Database container via bash so up and down arrows go to previous commands
+	@$(DATABASE_CONT) bash
 
 trust: 
 	docker cp $(docker compose ps -q php):/data/caddy/pki/authorities/local/root.crt /usr/local/share/ca-certificates/root.crt && sudo update-ca-certificates
