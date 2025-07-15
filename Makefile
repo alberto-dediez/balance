@@ -3,7 +3,7 @@ DOCKER_COMP = docker compose
 
 # Docker containers
 PHP_CONT = $(DOCKER_COMP) exec php
-TEST_CONT     = $(DOCKER_COMP) exec -e APP_ENV=test -e DATABASE_URL="sqlite:///./var/data.db" php
+TEST_CONT     = $(DOCKER_COMP) exec -e APP_ENV=test -e DATABASE_URL="sqlite:///./var/data.db" -e SYMFONY_DEPRECATIONS_HELPER="disabled=1" php
 
 # Executables
 PHP      = $(PHP_CONT) php
