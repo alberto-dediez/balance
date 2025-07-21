@@ -79,5 +79,4 @@ final class SecurityContext implements Context
         
         $this->userRepository->add($user);      
     }
-
 }

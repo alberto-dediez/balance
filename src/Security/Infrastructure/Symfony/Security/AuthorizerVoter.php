@@ -4,6 +4,7 @@ namespace App\Security\Infrastructure\Symfony\Security;
 
 use App\Security\Application\Action;
 use App\Security\Application\Authorizer;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -34,7 +35,7 @@ class AuthorizerVoter extends Voter
         return true;
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $authorizer = $this->authorizerFactory->createFor($subject);
         

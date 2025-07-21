@@ -33,6 +33,21 @@ final class ApiContext implements Context
         $this->client->catchExceptions(false);        
     }
 
+    #[When('I make a preflight CORS request to :path from :origin')]
+    public function iMakeAPreflightCORSRquestToFrom($path, $origin): void
+    {
+        try {
+            $this->client->request('OPTIONS', $path, [], [], [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_ACCEPT' => 'application/json',
+                'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'GET',
+                'HTTP_ORIGIN' => $origin,
+            ]);
+        } catch (\Exception $e) {
+            $this->exception = $e;
+        }        
+    }
+
     #[When('I am authenticated in API as :username')]
     public function iAmAuthenticatedInApiAs($username): void
     {
@@ -49,6 +64,27 @@ final class ApiContext implements Context
             'roles' => $user->roles()
         ])));
 
+    }
+
+    #[When('I have an expired token for :username')]
+    public function iHaveAnExpiredTokenFor($username): void
+    {
+        $user = $this->userRepository->findByUsername($username);
+
+        $this->user = new SecurityUser($user);
+
+        $this->client->disableReboot();
+
+        $encoder = $this->client->getContainer()->get(JWTEncoderInterface::class);
+
+        $token = $encoder->encode([
+            'username' => $user->username(),
+            'roles' => $user->roles(),
+            'iat' => 1516239022, // 18/01/2018 00:30:22
+            'exp' => 1516239022 // 18/01/2018 00:30:22
+        ]);
+
+        $this->client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $token));
     }
 
     #[When('I send a :method request to :path')]
@@ -115,5 +151,21 @@ final class ApiContext implements Context
         }
 
         Assert::assertEquals($expectedCode, $code);
+    }
+
+    #[Then('the response header :header should be :value')]
+    public function theResponseHeaderShouldBe($header, $value)
+    {
+        $actual = $this->client->getResponse()->headers->get($header);
+
+        Assert::assertEquals($value, $actual);
+    }
+    
+    #[Then('the response header :header should exist')]
+    public function theResponseHeaderShouldExist($header)
+    {
+        $actual = $this->client->getResponse()->headers->has($header);
+
+        Assert::assertTrue($actual, sprintf('The header "%s" does not exist in the response.', $header));
     }
 }

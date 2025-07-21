@@ -3,7 +3,8 @@ DOCKER_COMP = docker compose
 
 # Docker containers
 PHP_CONT = $(DOCKER_COMP) exec php
-TEST_CONT     = $(DOCKER_COMP) exec -e APP_ENV=test -e DATABASE_URL="sqlite:///./var/data.db" php
+DATABASE_CONT = $(DOCKER_COMP) exec database
+TEST_CONT     = $(DOCKER_COMP) exec -e APP_ENV=test -e DATABASE_URL="sqlite:///./var/data.db" -e SYMFONY_DEPRECATIONS_HELPER="disabled=1" php
 
 # Executables
 PHP      = $(PHP_CONT) php
@@ -39,6 +40,12 @@ sh: ## Connect to the FrankenPHP container
 
 bash: ## Connect to the FrankenPHP container via bash so up and down arrows go to previous commands
 	@$(PHP_CONT) bash
+	
+db-sh: ## Connect to the FrankenPHP Database container
+	@$(DATABASE_CONT) sh
+
+db-bash: ## Connect to the FrankenPHP Database container via bash so up and down arrows go to previous commands
+	@$(DATABASE_CONT) bash
 
 trust: 
 	docker cp $(docker compose ps -q php):/data/caddy/pki/authorities/local/root.crt /usr/local/share/ca-certificates/root.crt && sudo update-ca-certificates
@@ -50,8 +57,8 @@ up-prod:
 	@$(DOCKER_COMP) -f compose.yaml -f compose.prod.yaml up --wait
 
 init: 
-	@$(SYMFONY) lexik:jwt:generate-keypair
-	@$(SYMFONY) doctrine:database:create
+	@$(SYMFONY) lexik:jwt:generate-keypair --skip-if-exists
+	@$(SYMFONY) doctrine:database:create --if-not-exists
 	@$(SYMFONY) doctrine:migrations:migrate
 
 ## —— Composer 🧙 ——————————————————————————————————————————————————————————————

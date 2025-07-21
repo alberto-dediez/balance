@@ -12,6 +12,10 @@ class LoginFailureEventListener
 {
     public function __invoke(LoginFailureEvent $event)
     {
+        if (null == $event->getPassport()) {
+            return ;
+        }
+        
         DomainEventPublisher::instance()
             ->publish(
                 new FailureLoginAttempted(
