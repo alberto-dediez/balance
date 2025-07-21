@@ -30,7 +30,9 @@ class MeasurementResponseGenerator
             wasteManager: $this->wasteManagerExtension->wasteManagerName($modelMeasurement->wasteManagerId()),
             quantity: $modelMeasurement->quantity(),
             load: $modelMeasurement->load(),
-            unit: ($modelMeasurement->measurementMethod() == MeasurementMethod::Volume ? '%' : 'Kg'),
+            unit: null !== $modelMeasurement->measurementMethod() 
+                ? $modelMeasurement->measurementMethod()->unit() 
+                : '',
             purpose: $this->translator->trans($modelMeasurement->purpose()->value, [], 'purpose'),
             justification: (string) $modelMeasurement->justification(),
             registeredAt: $modelMeasurement->registeredAt()->format('Y-m-d H:i:s')

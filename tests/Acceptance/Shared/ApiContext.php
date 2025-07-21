@@ -150,6 +150,10 @@ final class ApiContext implements Context
             }
         }
 
+        if ($expectedCode !== $code && null !== $this->exception) {
+            dump($this->exception->getMessage());
+        }
+
         Assert::assertEquals($expectedCode, $code);
     }
 

@@ -28,7 +28,6 @@ final class ContainerAuthorizer extends AbstractAuthorizer
 
         return 
             $user->accountId()->equals($subject->accountId())
-            && $user->hasRole(Role::Owner)
         ;
     }
 
@@ -43,12 +42,12 @@ final class ContainerAuthorizer extends AbstractAuthorizer
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        return $this->canView($subject, $user);
+        return $this->canRegister($subject, $user);
     }
 
     protected function canRemove(mixed $subject, User $user): bool
     {
-        return $this->canView($subject, $user);
+        return $this->canRegister($subject, $user);
     }  
     
     public function supports(mixed $subject): bool

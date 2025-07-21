@@ -20,7 +20,8 @@ Feature:
       "waste": "Plastico",
       "waste_manager": "Sadeco",
       "quantity": 3,
-      "load": "35 %",
+      "load": "35",
+      "unit": "%",
       "purpose": "Deshecho",
       "justification": "Ninguna",
       "registered_at": "2025-06-10 15:12:04"
