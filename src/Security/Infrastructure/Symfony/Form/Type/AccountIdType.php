@@ -17,7 +17,7 @@ class AccountIdType extends AggregateRootIdType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $accounts = $this->accountRepository->findByFilter(new AccountFilter());
+        $accounts = $this->accountRepository->findByFilter(new AccountFilter(limit: 0));
 
         $resolver->setDefaults(array(
             'choices' => $this->getChoices($accounts),      
