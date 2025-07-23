@@ -110,7 +110,7 @@ final class WebContext implements Context
             }
         }
 
-        Assert::assertEquals($expectedCode, $code);
+        Assert::assertEquals($expectedCode, $code, null !== $this->exception ? $this->exception->getMessage() : 'Sin excepcion');
     }
 
     #[Then('I am redirected to :path')]
