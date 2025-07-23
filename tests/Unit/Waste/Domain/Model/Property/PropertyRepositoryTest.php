@@ -84,6 +84,32 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
+    public function testFindByFilterWithLimitZeroReturnAllElements()
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(PropertyMother::random());
+        $repository->add(PropertyMother::random());
+        $repository->add(PropertyMother::random());
+        $repository->add(PropertyMother::random());
+        $repository->add(PropertyMother::random());
+        $repository->add(PropertyMother::fromName('Hotel'));
+
+        $filter = new PropertyFilter();
+
+        $resultUnfiltered = $repository->findByFilter($filter);
+
+        $this->assertCount(6, $resultUnfiltered);
+
+        $filter = new PropertyFilter(
+            limit: 0
+        );
+
+        $result = $repository->findByFilter($filter);
+
+        $this->assertCount(6, $result);
+    }
+
     public function testFindNotRecoverRemoved()
     {
         $repository = $this->createSUT();

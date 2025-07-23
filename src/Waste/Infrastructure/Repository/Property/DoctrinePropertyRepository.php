@@ -112,12 +112,16 @@ class DoctrinePropertyRepository implements PropertyRepository
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return (array) $qb
-            ->getQuery()
-            ->setMaxResults($filter->limit)
-            ->setFirstResult($filter->page * $filter->limit)
-            ->getResult()
-        ;
+        $query = $qb->getQuery();
+        
+        if ($filter->limit > 0) {
+            $query
+                ->setMaxResults($filter->limit)
+                ->setFirstResult($filter->page * $filter->limit)
+            ;
+        }
+
+        return (array) $query->getResult();
     }
 
     public function totalResultsByFilter(PropertyFilter $filter): int

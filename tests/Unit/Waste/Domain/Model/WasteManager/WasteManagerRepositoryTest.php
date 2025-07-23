@@ -85,6 +85,46 @@ abstract class WasteManagerRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
+    public function testFindByFilterWithLimitZeroReturnAllElements()
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+
+        $repository->add(
+            WasteManagerMother::random()
+        );
+        $repository->add(
+            WasteManagerMother::random()
+        );
+        $repository->add(
+            WasteManagerMother::random()
+        );
+        $repository->add(
+            WasteManagerMother::random()
+        );
+        $repository->add(
+            WasteManagerMother::random()
+        );
+        $repository->add(
+            WasteManagerMother::fromAccount($accountId)
+        );
+
+        $filter = new WasteManagerFilter();
+
+        $resultUnfiltered = $repository->findByFilter($filter);
+
+        $this->assertCount(6, $resultUnfiltered);
+
+        $filter = new WasteManagerFilter(
+            limit: 0
+        );
+
+        $result = $repository->findByFilter($filter);
+
+        $this->assertCount(6, $result);
+    }
+
     public function testFindNotRecoverRemoved()
     {
         $repository = $this->createSUT();

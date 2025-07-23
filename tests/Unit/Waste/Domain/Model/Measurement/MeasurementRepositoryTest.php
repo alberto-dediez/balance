@@ -85,5 +85,47 @@ abstract class MeasurementRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
+    public function testFindByFilterWithLimitZeroReturnAllElements()
+    {
+        $repository = $this->createSUT();
+
+        $containerId = ContainerId::generate();
+
+        $repository->add(
+            MeasurementMother::random()
+        );
+        $repository->add(
+            MeasurementMother::random()
+        );
+        $repository->add(
+            MeasurementMother::random()
+        );
+        $repository->add(
+            MeasurementMother::random()
+        );
+        $repository->add(
+            MeasurementMother::random()
+        );
+        $repository->add(
+            MeasurementMother::fromContainer(
+                $containerId
+            )
+        );
+
+        $filter = new MeasurementFilter();
+
+        $resultUnfiltered = $repository->findByFilter($filter);
+
+        $this->assertCount(6, $resultUnfiltered);
+
+        $filter = new MeasurementFilter(
+            limit: 0
+        );
+
+        $result = $repository->findByFilter($filter);
+
+        $this->assertCount(6, $result);
+    }
+
     abstract protected function createSUT(): MeasurementRepository;
 }

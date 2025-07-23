@@ -91,7 +91,7 @@ class InMemoryWasteManagerRepository implements WasteManagerRepository
                 continue;
             }
 
-            if (count($results) >= $filter->limit) {
+            if (count($results) >= $filter->limit && $filter->limit > 0) {
                 continue;
             }
 

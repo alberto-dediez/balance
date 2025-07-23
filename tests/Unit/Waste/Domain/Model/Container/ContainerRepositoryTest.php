@@ -88,6 +88,49 @@ abstract class ContainerRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
+    public function testFindByFilterWithLimitZeroReturnAllElements()
+    {
+        $repository = $this->createSUT();
+
+        $property = PropertyMother::fromName('Hotel');
+        $waste = WasteMother::fromName('Plastico');
+
+        $repository->add(
+            ContainerMother::random()
+        );
+        $repository->add(
+            ContainerMother::random()
+        );
+        $repository->add(
+            ContainerMother::random()
+        );
+        $repository->add(
+            ContainerMother::random()
+        );
+        $repository->add(
+            ContainerMother::random()
+        );
+        $repository->add(
+            ContainerMother::fromPropertyAndWaste(
+                (string) $property->id(), (string) $waste->id()
+            )
+        );
+
+        $filter = new ContainerFilter();
+
+        $resultUnfiltered = $repository->findByFilter($filter);
+
+        $this->assertCount(6, $resultUnfiltered);
+
+        $filter = new ContainerFilter(
+            limit: 0
+        );
+
+        $result = $repository->findByFilter($filter);
+
+        $this->assertCount(6, $result);
+    }
+
     public function testFindNotRecoverRemoved()
     {
         $repository = $this->createSUT();
