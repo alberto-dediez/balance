@@ -71,5 +71,33 @@ abstract class RecordedEventRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
+    public function testFindByFilterWithLimitZeroReturnAllElements()
+    {
+        $repository = $this->createSUT();
+
+        $userId = UserId::generate();
+
+        $repository->add(RecordedEventMother::random());
+        $repository->add(RecordedEventMother::random());
+        $repository->add(RecordedEventMother::random());
+        $repository->add(RecordedEventMother::random());
+        $repository->add(RecordedEventMother::random());
+        $repository->add(RecordedEventMother::fromUser($userId));
+
+        $filter = new RecordedEventFilter();
+
+        $resultUnfiltered = $repository->findByFilter($filter);
+
+        $this->assertCount(6, $resultUnfiltered);
+
+        $filter = new RecordedEventFilter(
+            limit: 0
+        );
+
+        $result = $repository->findByFilter($filter);
+
+        $this->assertCount(6, $result);
+    }
+
     abstract protected function createSUT(): RecordedEventRepository;
 }

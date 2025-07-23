@@ -12,8 +12,10 @@ class RecordedEventFilter
     public function __construct(
         public ?UserId $userId = null,
         public ?string $eventName = null,
-        public ?string $context = null
+        public ?string $context = null,
+        int $limit = 10
     ) {
+        $this->limit = $limit;
         $this->orderWay = 'DESC';
     }
 }

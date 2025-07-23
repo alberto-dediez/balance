@@ -6,8 +6,8 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use App\Security\Domain\Model\Account\Account;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteEntityType;
 
 class AccountType extends AbstractType
 {
@@ -34,6 +34,6 @@ class AccountType extends AbstractType
     
     public function getParent()
     {
-        return EntityType::class;
+        return AutocompleteEntityType::class;
     }
 }

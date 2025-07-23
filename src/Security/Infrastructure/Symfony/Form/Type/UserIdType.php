@@ -17,7 +17,7 @@ class UserIdType extends AggregateRootIdType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $users = $this->userRepository->findByFilter(new UserFilter());
+        $users = $this->userRepository->findByFilter(new UserFilter(limit: 0));
 
         $resolver->setDefaults(array(
             'choices' => $this->getChoices($users),      

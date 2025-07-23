@@ -84,6 +84,32 @@ abstract class UserRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
+    public function testFindByFilterWithLimitZeroReturnAllElements()
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(UserMother::random());
+        $repository->add(UserMother::random());
+        $repository->add(UserMother::random());
+        $repository->add(UserMother::random());
+        $repository->add(UserMother::random());
+        $repository->add(UserMother::fromUsername('alberto'));
+
+        $filter = new UserFilter();
+
+        $resultUnfiltered = $repository->findByFilter($filter);
+
+        $this->assertCount(6, $resultUnfiltered);
+
+        $filter = new UserFilter(
+            limit: 0
+        );
+
+        $result = $repository->findByFilter($filter);
+
+        $this->assertCount(6, $result);
+    }
+
     public function testFindNotRecoverDeletedUser()
     {
         $repository = $this->createSUT();
