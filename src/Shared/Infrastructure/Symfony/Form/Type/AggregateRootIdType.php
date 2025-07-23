@@ -7,6 +7,7 @@ use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
 
 class AggregateRootIdType extends AbstractType
 {
@@ -37,7 +38,7 @@ class AggregateRootIdType extends AbstractType
     
     public function getParent()
     {
-        return ChoiceType::class;
+        return AutocompleteType::class;
     }
 
     protected function getChoices(array $aggregateRootElements): array

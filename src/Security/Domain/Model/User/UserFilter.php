@@ -13,8 +13,9 @@ class UserFilter
     public function __construct(
         public ?string $username = null,
         public ?Role $role = null,
-        public ?Account $account = null
+        public ?Account $account = null,
+        int $limit = 10
     ) {
-
+        $this->limit = $limit;
     }
 }
