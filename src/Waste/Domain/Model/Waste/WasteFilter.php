@@ -10,8 +10,9 @@ class WasteFilter
 
     public function __construct(
         public ?string $name = null,
-        public ?bool $isDangerous = null
+        public ?bool $isDangerous = null,
+        int $limit = 10
     ) {
-
+        $this->limit = $limit;
     }
 }

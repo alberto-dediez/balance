@@ -24,8 +24,9 @@ class MeasurementFilter
         public ?WasteManagerId $wasteManagerId = null,
         public ?Purpose $purpose = null,
         public ?AccountId $accountId = null,
-        public ?UserId $userId = null
+        public ?UserId $userId = null,
+        int $limit = 10
     ) {
-
+        $this->limit = $limit;
     }
 }

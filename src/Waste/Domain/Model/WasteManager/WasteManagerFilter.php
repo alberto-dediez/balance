@@ -12,8 +12,9 @@ class WasteManagerFilter
     public function __construct(
         public ?string $name = null,
         public ?bool $isPublic = null,
-        public ?AccountId $accountId = null
+        public ?AccountId $accountId = null,
+        int $limit = 10
     ) {
-
+        $this->limit = $limit;
     }
 }

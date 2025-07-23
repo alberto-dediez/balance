@@ -18,8 +18,9 @@ class ContainerFilter
         public ?MeasurementMethod $measurementMethod = null,
         public ?Purpose $purpose = null,
         public ?WasteManagerId $wasteManagerId = null,
-        public ?AccountId $accountId = null
+        public ?AccountId $accountId = null,
+        int $limit = 10
     ) {
-
+        $this->limit = $limit;
     }
 }
