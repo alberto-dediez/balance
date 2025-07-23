@@ -5,7 +5,7 @@ namespace App\Security\Infrastructure\Symfony\Form\Type;
 use App\Security\Domain\Model\User\Role;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
 
 class RoleType extends AbstractType
 {
@@ -19,6 +19,6 @@ class RoleType extends AbstractType
     
     public function getParent()
     {
-        return ChoiceType::class;
+        return AutocompleteType::class;
     }
 }
