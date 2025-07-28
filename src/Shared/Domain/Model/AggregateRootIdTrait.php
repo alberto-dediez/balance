@@ -3,7 +3,6 @@
 namespace App\Shared\Domain\Model;
 
 use Symfony\Component\Uid\Uuid;
-use App\Shared\Domain\Model\AggregateRootId;
 
 trait AggregateRootIdTrait
 {

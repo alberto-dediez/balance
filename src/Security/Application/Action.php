@@ -4,6 +4,8 @@ namespace App\Security\Application;
 
 enum Action: string
 {
+    case Autocomplete = 'autocomplete';
+
     case List = 'list';
 
     case Edit = 'edit';

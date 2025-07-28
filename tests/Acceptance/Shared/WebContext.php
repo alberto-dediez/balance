@@ -8,6 +8,7 @@ use Behat\Step\Then;
 use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Behat\Behat\Context\Context;
+use Behat\Gherkin\Node\PyStringNode;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use App\Security\Domain\Model\User\UserRepository;
@@ -159,6 +160,26 @@ final class WebContext implements Context
         $nodes = $crawler->filter('table tr');
 
         Assert::assertCount((int) $rows, $nodes);
+    }
+
+    #[Then('I see a JSON that should be equal to:')]
+    public function iSeeAJsonThatShouldBeEqualTo(PyStringNode $content)
+    {
+        $expected = json_encode(json_decode((string) $content), JSON_PRETTY_PRINT);
+        $actual = json_encode(json_decode($this->client->getResponse()->getContent(), true), JSON_PRETTY_PRINT);
+
+        Assert::assertEquals($expected, $actual);
+    }
+
+    #[Then('I see a JSON that should be similar to:')]
+    public function iSeeAJsonThatShouldBeSimilarTo(PyStringNode $content)
+    {
+        $expected = json_decode((string) $content);
+        $actual = json_decode($this->client->getResponse()->getContent(), true);
+
+        foreach ($expected as $attr => $value) {
+            Assert::assertTrue(isset($actual->$attr) || isset($actual[$attr]));
+        }
     }
 
     #[Then('I see a text :text')]

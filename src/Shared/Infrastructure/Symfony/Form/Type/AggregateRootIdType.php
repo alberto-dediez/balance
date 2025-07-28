@@ -3,37 +3,25 @@
 namespace App\Shared\Infrastructure\Symfony\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
+use App\Shared\Infrastructure\Symfony\Form\DataTransformer\AggregateRootIdTransformer;
 
 class AggregateRootIdType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(
-            new CallbackTransformer(
-                //AggregateRootId a string
-                function ($propertyId): string {
-                    return $propertyId ? (string) $propertyId : '';
-                },
-                //string to AggregateRootId
-                function (?string $propertyId) use ($options) {
-                    $class = $options['class'];
-
-                    return (null == $propertyId || empty($propertyId)) ? null : new $class($propertyId);
-                }
-            )
+            new AggregateRootIdTransformer($options['class'])
         );
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => []
-        ));
+        ]);
     }
     
     public function getParent()

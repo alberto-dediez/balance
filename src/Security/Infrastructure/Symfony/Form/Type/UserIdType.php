@@ -3,25 +3,26 @@
 namespace App\Security\Infrastructure\Symfony\Form\Type;
 
 use App\Security\Domain\Model\User\UserId;
-use App\Security\Domain\Model\User\UserFilter;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\RouterInterface;
 use App\Security\Domain\Model\User\UserRepository;
-use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdRemoteType;
 
-class UserIdType extends AggregateRootIdType
+class UserIdType extends AggregateRootIdRemoteType
 {
-    public function __construct(private UserRepository $userRepository)
+    public function __construct(private RouterInterface $router, private UserRepository $repository)
     {
 
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $users = $this->userRepository->findByFilter(new UserFilter(limit: 0));
-
         $resolver->setDefaults(array(
-            'choices' => $this->getChoices($users),      
+            'autocomplete-path' => $this->router->generate('admin_users_autocomplete'),
+            'repository' => $this->repository,
             'class' => UserId::class      
         ));
+
+        parent::configureOptions($resolver);
     }
 }
