@@ -19,7 +19,7 @@ class WasteManagerIdType extends AggregateRootIdType
     public function configureOptions(OptionsResolver $resolver)
     {
         $wastes = $this->wasteRepository->findByFilter(
-            new WasteManagerFilter()
+            new WasteManagerFilter(limit: 0)
         );
 
         $resolver->setDefaults(array(

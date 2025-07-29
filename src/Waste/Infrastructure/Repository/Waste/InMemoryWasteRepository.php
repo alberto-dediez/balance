@@ -68,7 +68,10 @@ class InMemoryWasteRepository implements WasteRepository
         $offset = $filter->page * $filter->limit;
 
         foreach ($this->wastes as $waste) {
-            if (!empty($filter->name) && $filter->name != $waste->name()) {
+            if (
+                !empty($filter->name) 
+                && false === strpos(strtolower($waste->name()), strtolower($filter->name))
+            ) {
                 continue;
             }
 
