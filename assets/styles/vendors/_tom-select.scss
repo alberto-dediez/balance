@@ -1,0 +1,19 @@
+.ts-wrapper {
+    .ts-control {
+        .item {
+            padding: 2px 5px;
+            border-radius: 5px;
+            border: 1px solid transparent;
+        }
+    }
+
+    &.input-active {
+        .ts-control {
+            .item {
+                background-color: $gray-100;
+                border-color: $gray-200;
+            }
+        }   
+    }
+
+}
