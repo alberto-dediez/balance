@@ -10,6 +10,7 @@ twig:
         'templates/shared': 'shared'
         'templates/security': 'security'
         'templates/waste': 'waste'
+        'templates/property': 'property'
 
 when@test:
     twig:

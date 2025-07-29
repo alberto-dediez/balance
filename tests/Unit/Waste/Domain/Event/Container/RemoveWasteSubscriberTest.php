@@ -11,7 +11,7 @@ use App\Waste\Domain\Model\Container\ContainerRemoved;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Waste\Domain\Event\Container\RemoveWasteSubscriber;
-use App\Tests\Unit\Waste\Domain\Model\Property\PropertyMother;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
 use App\Waste\Application\Container\Remove\RemoveContainerService;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;

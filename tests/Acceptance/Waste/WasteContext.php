@@ -7,17 +7,16 @@ namespace App\Tests\Acceptance\Waste;
 use Behat\Step\Given;
 use Behat\Behat\Context\Context;
 use App\Security\Domain\Model\User\UserId;
-use App\Waste\Domain\Model\Property\PropertyId;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Waste\WasteRepository;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
-use App\Waste\Domain\Model\Property\PropertyRepository;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
-use App\Tests\Unit\Waste\Domain\Model\Property\PropertyMother;
 use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
@@ -27,8 +26,8 @@ final class WasteContext implements Context
 {
     public function __construct(
         private WasteRepository $wasteRepository,
-        private PropertyRepository $propertyRepository,
         private ContainerRepository $containerRepository,
+        private PropertyRepository $propertyRepository,
         private MeasurementRepository $measurementRepository,
         private WasteManagerRepository $wasteManagerRepository
     ) {
@@ -41,22 +40,6 @@ final class WasteContext implements Context
         
         $this->wasteRepository->add($waste);      
     }    
-
-    #[Given('property :name with id :id exists')]
-    public function propertyWithIdExists($name, $id): void
-    {
-        $property = PropertyMother::fromNameAndId($name, $id);
-        
-        $this->propertyRepository->add($property);      
-    }    
-
-    #[Given('property :name with id :id of account :account exists')]
-    public function propertyWithIdOfAccountExists($name, $id, $account): void
-    {
-        $property = PropertyMother::fromNameAndAccountAndId($name, $account, $id);
-        
-        $this->propertyRepository->add($property);      
-    }  
 
     #[Given('container for :waste in :propertyId with id :id exists')]
     public function containerForInWithIdExists($waste, $propertyId, $id): void

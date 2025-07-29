@@ -9,7 +9,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Security\Infrastructure\Symfony\Form\Type\AccountIdType;
-use App\Waste\Application\Property\Update\UpdatePropertyRequest;
+use App\Property\Application\Property\Update\UpdatePropertyRequest;
 
 class UpdatePropertyType extends AbstractType
 {

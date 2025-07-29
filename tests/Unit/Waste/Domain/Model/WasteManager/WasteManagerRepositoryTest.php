@@ -7,7 +7,7 @@ use App\Waste\Domain\Model\WasteManager\WasteManagerFilter;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
 use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;
-use App\Tests\Unit\Waste\Domain\Model\Property\PropertyMother;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 
 abstract class WasteManagerRepositoryTest extends KernelTestCase
 {

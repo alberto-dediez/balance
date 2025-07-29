@@ -41,7 +41,27 @@ class NodeLister
                     label: new TranslatableMessage("Propiedades"),
                     icon: "solar:buildings-2-line-duotone",
                     target: $this->router->generate('admin_properties')
-                )
+                ),
+                new Node(
+                    label: new TranslatableMessage("Categorías"),
+                    icon: "solar:folder-favourite-star-line-duotone",
+                    target: $this->router->generate('admin_categories')
+                ),
+                new Node(
+                    label: new TranslatableMessage("Marcas"),
+                    icon: "solar:tag-line-duotone",
+                    target: $this->router->generate('admin_brands')
+                ),
+                new Node(
+                    label: new TranslatableMessage("Países"),
+                    icon: "solar:globus-line-duotone",
+                    target: $this->router->generate('admin_countries')
+                ),
+                new Node(
+                    label: new TranslatableMessage("Destinos"),
+                    icon: "solar:map-point-line-duotone",
+                    target: $this->router->generate('admin_destinations')
+                ),
             ]
         );
 

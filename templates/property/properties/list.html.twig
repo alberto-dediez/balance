@@ -1,0 +1,45 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Propiedades' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': 'Destino' | trans
+        }, {
+            'label': 'País' | trans
+        },  {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="properties">
+        <tr>
+            <td>{{ element.name }}</td>
+            <td>{{ element.info.destinationId | destination_name }}</td>
+            <td>{{ element.info.countryId | country_name }}</td>
+            <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+            <td>
+                {% if element | is_authorized('edit') %}
+                    <twig:List:Action:Edit path="{{ path('properties_edit', {'propertyId': element.id}) }}" />
+                {% endif %}
+
+                {% if element | is_authorized('remove') %}
+                    <twig:List:Action:Delete path="{{ path('properties_remove', {'propertyId': element.id}) }}" />
+                {% endif %}
+            </td>
+        </tr>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('properties_register') }}" />
+{% endblock list_actions %}

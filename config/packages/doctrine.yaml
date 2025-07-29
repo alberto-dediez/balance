@@ -32,6 +32,13 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Waste/Infrastructure/Symfony/Doctrine'
                 prefix: 'App\Waste\Domain\Model'
                 alias: Waste
+
+            Property:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Property/Infrastructure/Symfony/Doctrine'
+                prefix: 'App\Property\Domain\Model'
+                alias: Property
         controller_resolver:
             auto_mapping: false
 

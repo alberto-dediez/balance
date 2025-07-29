@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Tests\Unit\Property\Application\Destination\Remove;
+
+use PHPUnit\Framework\TestCase;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Property\Domain\Model\Destination\DestinationRemoved;
+use App\Property\Application\Destination\DestinationAuthorizer;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Property\Domain\Model\Destination\DestinationMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Property\Application\Destination\Remove\RemoveDestinationRequest;
+use App\Property\Application\Destination\Remove\RemoveDestinationService;
+use App\Property\Application\Destination\Remove\RemoveDestinationResponse;
+use App\Tests\Unit\Property\Domain\Model\Destination\DestinationRepositoryMother;
+
+class RemoveDestinationServiceTest extends TestCase
+{
+    private $spySubscriber;
+
+    protected function setUp(): void
+    {
+        DomainEventPublisher::instance()->reset();
+
+        $this->spySubscriber = new SpyDomainEventSubscriber();
+    }
+
+    public function testInvoke()
+    {
+        $repository = DestinationRepositoryMother::inMemory();
+
+        $user = UserMother::fromUsernameAndRole('user', Role::Admin);
+
+        $sut = $this->createSUT($repository);
+
+        $destination = DestinationMother::random();
+
+        $repository->add($destination);
+
+        $request = new RemoveDestinationRequest(
+            destinationId: $destination->id()
+        );
+
+        $result = $sut($request, $user);
+
+        $this->assertNotNull($result);
+        $this->assertTrue($result instanceof RemoveDestinationResponse);
+        $this->assertTrue($destination->id()->equals($result->destinationId));
+        
+        $destinationPersisted = $repository->find($result->destinationId);
+
+        $this->assertNull($destinationPersisted);
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertNotNull($lastEvent);
+        $this->assertTrue($lastEvent instanceof DestinationRemoved);
+    }
+
+    private function createSUT($repository)
+    {
+        return new RemoveDestinationService($repository, new DestinationAuthorizer());
+    }
+}

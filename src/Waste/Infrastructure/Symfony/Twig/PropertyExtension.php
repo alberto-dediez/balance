@@ -4,9 +4,9 @@ namespace App\Waste\Infrastructure\Symfony\Twig;
 
 use Twig\TwigFilter;
 use Twig\Extension\AbstractExtension;
-use App\Waste\Domain\Model\Property\Property;
-use App\Waste\Domain\Model\Property\PropertyId;
-use App\Waste\Domain\Model\Property\PropertyRepository;
+use App\Property\Domain\Model\Property\Property;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Property\Domain\Model\Property\PropertyRepository;
 
 class PropertyExtension extends AbstractExtension
 {

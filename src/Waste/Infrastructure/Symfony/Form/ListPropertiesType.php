@@ -8,7 +8,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
 use App\Security\Infrastructure\Symfony\Form\Type\AccountIdType;
-use App\Waste\Application\Property\List\ListPropertiesRequest;
+use App\Property\Application\Property\List\ListPropertiesRequest;
 
 class ListPropertiesType extends BaseFilterType
 {

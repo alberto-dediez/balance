@@ -7,7 +7,7 @@ use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
-use App\Waste\Domain\Model\Property\PropertyRepository;
+use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;

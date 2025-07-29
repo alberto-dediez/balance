@@ -3,7 +3,7 @@
 namespace App\Waste\Infrastructure\Symfony\Form;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use App\Waste\Application\Property\Register\RegisterPropertyRequest;
+use App\Property\Application\Property\Register\RegisterPropertyRequest;
 
 class AdminRegisterPropertyType extends RegisterPropertyType
 {

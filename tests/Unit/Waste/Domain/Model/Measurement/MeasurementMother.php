@@ -6,7 +6,7 @@ use App\Waste\Domain\Model\Waste\WasteId;
 use App\Security\Domain\Model\User\UserId;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Container\Container;
-use App\Waste\Domain\Model\Property\PropertyId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Measurement\Measurement;

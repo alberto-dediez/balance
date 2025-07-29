@@ -2,10 +2,10 @@
 
 namespace App\Waste\Infrastructure\Symfony\Form\Type;
 
-use App\Waste\Domain\Model\Property\PropertyId;
-use App\Waste\Domain\Model\Property\PropertyFilter;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Property\Domain\Model\Property\PropertyFilter;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use App\Waste\Domain\Model\Property\PropertyRepository;
+use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdType;
 

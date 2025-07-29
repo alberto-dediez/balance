@@ -7,7 +7,7 @@ use App\Security\Domain\Model\User\User;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\QrCodeGenerator;
-use App\Waste\Domain\Model\Property\PropertyRepository;
+use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 

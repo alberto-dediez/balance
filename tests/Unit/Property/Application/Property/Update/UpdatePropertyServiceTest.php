@@ -1,0 +1,72 @@
+<?php
+
+namespace App\Tests\Unit\Property\Application\Property\Update;
+
+use PHPUnit\Framework\TestCase;
+use App\Security\Domain\Model\User\Role;
+use App\Property\Domain\Model\Property\Property;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Property\Domain\Model\Property\PropertyUpdated;
+use App\Property\Application\Property\PropertyAuthorizer;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Property\Application\Property\Update\UpdatePropertyRequest;
+use App\Property\Application\Property\Update\UpdatePropertyService;
+use App\Property\Application\Property\Update\UpdatePropertyResponse;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
+
+class UpdatePropertyServiceTest extends TestCase
+{
+    private $spySubscriber;
+
+    protected function setUp(): void
+    {
+        DomainEventPublisher::instance()->reset();
+
+        $this->spySubscriber = new SpyDomainEventSubscriber();
+    }
+
+    public function testUseCase()
+    {
+        $repository = PropertyRepositoryMother::inMemory();
+
+        $property = PropertyMother::fromName('MyProperty');
+
+        $repository->add($property);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdatePropertyRequest(
+            propertyId: $property->id(),
+            name: 'Hotel',
+            accountId: new AccountId('6666')
+        );
+
+        $user = UserMother::fromUsernameAndRole('user', Role::Admin);
+
+        $result = $sut($request, $user);
+
+        $this->assertNotNull($result);
+        $this->assertTrue($result instanceof UpdatePropertyResponse);
+
+        $propertyPersisted = $repository->find($result->propertyId);
+
+        $this->assertNotNull($propertyPersisted);
+        $this->assertTrue($propertyPersisted instanceof Property);
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertNotNull($lastEvent);
+        $this->assertTrue($lastEvent instanceof PropertyUpdated);
+        $this->assertEquals('Hotel', $lastEvent->name());
+        $this->assertEquals('6666', (string) $lastEvent->accountId());
+        $this->assertTrue($propertyPersisted->id()->equals($lastEvent->propertyId()));
+    }
+
+    private function createSUT($repository)
+    {
+        return new UpdatePropertyService($repository, new PropertyAuthorizer());
+    }
+}

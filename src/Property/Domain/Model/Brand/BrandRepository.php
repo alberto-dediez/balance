@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Property\Domain\Model\Brand;
+
+use App\Property\Domain\Model\Brand\Brand;
+use App\Property\Domain\Model\Brand\BrandId;
+use App\Property\Domain\Model\Brand\BrandFilter;
+use App\Property\Domain\Model\Property\ExternalId;
+use App\Property\Domain\Model\Property\ExternalSource;
+
+interface BrandRepository
+{
+    public function add(Brand $brand): void;
+
+    public function remove(Brand $brand): void;
+
+    public function find(BrandId $brandId): ?Brand;
+
+    public function findByName(string $name): ?Brand;
+
+    public function findBySourceAndExternalId(ExternalSource $source, ExternalId $externalId): ?Brand;
+
+    public function findByFilter(BrandFilter $filter): array;
+
+    public function totalResultsByFilter(BrandFilter $filter): int;
+}

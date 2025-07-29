@@ -1,0 +1,28 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = ('Propiedades' | trans) 
+    ~ ' > '
+    ~ ('Registrar' | trans)  %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('properties') }}" />
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.name) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.info) }}
+                </div>
+            </div>    
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="primary" :button="form.register" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

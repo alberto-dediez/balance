@@ -5,7 +5,7 @@ namespace App\Waste\Domain\Event\Container;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\RegisterTrait;
 use App\Shared\Domain\Event\DomainEventSubscriber;
-use App\Waste\Domain\Model\Property\PropertyRemoved;
+use App\Property\Domain\Model\Property\PropertyRemoved;
 use App\Waste\Domain\Model\Container\ContainerFilter;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;

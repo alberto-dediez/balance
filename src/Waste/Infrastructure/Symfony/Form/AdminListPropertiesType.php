@@ -3,7 +3,7 @@
 namespace App\Waste\Infrastructure\Symfony\Form;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use App\Waste\Application\Property\List\ListPropertiesRequest;
+use App\Property\Application\Property\List\ListPropertiesRequest;
 
 class AdminListPropertiesType extends ListPropertiesType
 {

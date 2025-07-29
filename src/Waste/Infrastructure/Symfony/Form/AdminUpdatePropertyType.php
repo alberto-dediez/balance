@@ -3,7 +3,7 @@
 namespace App\Waste\Infrastructure\Symfony\Form;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use App\Waste\Application\Property\Update\UpdatePropertyRequest;
+use App\Property\Application\Property\Update\UpdatePropertyRequest;
 
 class AdminUpdatePropertyType extends UpdatePropertyType
 {

@@ -1,0 +1,35 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_properties') }}" />
+{% endblock %}
+
+{% set page_title = ('Propiedades' | trans) 
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ property.name %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.name) }}
+                    {{ form_row(form.accountId) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.info) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.externalId) }}
+                </div>
+            </div>    
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

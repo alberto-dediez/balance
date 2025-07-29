@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Property\Application\Property\Import;
+
+use App\Property\Application\Property\Import\Field;
+use App\Property\Domain\Model\Property\ExternalId;
+
+class ExternalIdExtractor
+{
+    public function __construct()
+    {
+
+    }
+
+    public function extract(FieldExtractor $fieldExtractor, array $row): ExternalId
+    {
+        $restel = $fieldExtractor->extract(Field::ExternalRestel, $row);
+        $bioscore = $fieldExtractor->extract(Field::ExternalBioscore, $row);
+        $hotelbeds = $fieldExtractor->extract(Field::ExternalHotelbeds, $row);
+
+        return new ExternalId(
+            restel: (null !== $restel && !empty($restel)) ? $restel : null,
+            bioscore: (null !== $bioscore && !empty($bioscore)) ? $bioscore : null,
+            hotelbeds: (null !== $hotelbeds && !empty($hotelbeds)) ? $hotelbeds : null,
+        );
+    }
+}
