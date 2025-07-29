@@ -20,6 +20,7 @@ abstract class AbstractAuthorizer implements Authorizer
             Action::Edit => $this->canEdit($subject, $user),
             Action::Remove => $this->canRemove($subject, $user),
             Action::Admin => $this->canAdmin($subject, $user),
+            Action::Autocomplete => $this->canAutocomplete($subject, $user),
             default => throw new \LogicException('Esta acción no está definida')
         };
     }
@@ -36,6 +37,11 @@ abstract class AbstractAuthorizer implements Authorizer
         return $user->hasRole(Role::Admin) 
             || $user->hasRole(Role::SuperAdmin) 
         ;
+    }
+
+    protected function canAutocomplete(mixed $subject, User $user): bool
+    {
+        return true;
     }
 
     abstract protected function canRegister(mixed $subject, User $user): bool;

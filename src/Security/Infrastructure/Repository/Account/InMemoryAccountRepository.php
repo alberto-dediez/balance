@@ -68,7 +68,10 @@ class InMemoryAccountRepository implements AccountRepository
         $offset = $filter->page * $filter->limit;
 
         foreach ($this->accounts as $account) {
-            if (!empty($filter->name) && $filter->name != $account->name()) {
+            if (
+                !empty($filter->name) 
+                && false === strpos(strtolower($account->name()), strtolower($filter->name))
+            ) {
                 continue;
             }
 

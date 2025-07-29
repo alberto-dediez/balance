@@ -84,7 +84,10 @@ class InMemoryUserRepository implements UserRepository
         $offset = $filter->page * $filter->limit;
 
         foreach ($this->users as $user) {
-            if (!empty($filter->username) && $filter->username != $user->username()) {
+            if (
+                !empty($filter->username)
+                && false === strpos(strtolower($user->username()), strtolower($filter->username))
+            ) {
                 continue;
             }
 

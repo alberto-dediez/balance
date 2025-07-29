@@ -8,3 +8,21 @@
         {{- block('form_widget_simple') -}}
     {%- endif -%}
 {%- endblock number_unit_widget %}
+
+{% block autocomplete_remote_widget -%}
+    <select {{ block('widget_attributes') }}>
+        {% if placeholder is defined and placeholder is not empty %}
+            <option value="">{{ placeholder | trans }}</option>
+        {% endif %}
+
+        {% if value is not empty %}
+            <option value="{{ value }}" selected="selected">
+                {% if valueLabel is defined and valueLabel is not empty %}
+                    {{ valueLabel }}
+                {% else %}
+                    {{ value }}
+                {% endif %}
+            </option>
+        {% endif %}
+    </select>
+{%- endblock autocomplete_remote_widget %}

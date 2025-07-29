@@ -150,11 +150,7 @@ final class ApiContext implements Context
             }
         }
 
-        if ($expectedCode !== $code && null !== $this->exception) {
-            dump($this->exception->getMessage());
-        }
-
-        Assert::assertEquals($expectedCode, $code);
+        Assert::assertEquals($expectedCode, $code, null !== $this->exception ? $this->exception->getMessage() : 'Sin excepcion');
     }
 
     #[Then('the response header :header should be :value')]

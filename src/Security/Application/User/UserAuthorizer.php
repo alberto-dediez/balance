@@ -38,6 +38,13 @@ final class UserAuthorizer extends AbstractAuthorizer
     {
         return $this->canEdit($subject, $user);
     }  
+
+    protected function canAutocomplete(mixed $subject, User $user): bool
+    {
+        return $user->hasRole(Role::Admin) 
+            || $user->hasRole(Role::SuperAdmin) 
+        ;
+    }  
     
     public function supports(mixed $subject): bool
     {
