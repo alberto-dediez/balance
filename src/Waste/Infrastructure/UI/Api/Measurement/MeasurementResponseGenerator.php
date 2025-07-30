@@ -25,9 +25,9 @@ class MeasurementResponseGenerator
     {
         return new ApiMeasurement(
             measurementId: (string) $modelMeasurement->id(),
-            property: $this->propertyExtension->propertyName($modelMeasurement->propertyId()),
-            waste: $this->wasteExtension->wasteName($modelMeasurement->wasteId()),
-            wasteManager: $this->wasteManagerExtension->wasteManagerName($modelMeasurement->wasteManagerId()),
+            property: (string) $this->propertyExtension->propertyName($modelMeasurement->propertyId()),
+            waste: (string) $this->wasteExtension->wasteName($modelMeasurement->wasteId()),
+            wasteManager: (string) $this->wasteManagerExtension->wasteManagerName($modelMeasurement->wasteManagerId()),
             quantity: $modelMeasurement->quantity(),
             load: $modelMeasurement->load(),
             unit: null !== $modelMeasurement->measurementMethod() 
