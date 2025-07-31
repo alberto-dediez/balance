@@ -21,7 +21,7 @@ final class ContainerRegistered extends DomainEvent
         private PropertyId $propertyId,
         private WasteId $wasteId,
         private MeasurementMethod $measurementMethod,
-        private string $volume,
+        private ?string $volume,
         private Purpose $purpose,
         private WasteManagerId $wasteManagerId,
         private QrCode $qrCode,
@@ -61,7 +61,7 @@ final class ContainerRegistered extends DomainEvent
         return $this->measurementMethod;
     }
 
-    public function volume(): string
+    public function volume(): ?string
     {
         return $this->volume;
     }

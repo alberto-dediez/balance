@@ -88,6 +88,53 @@ class RegisterContainerServiceTest extends TestCase
         $this->assertEquals(50, $lastEvent->volume());
     }
 
+    public function testRegisterWeightContainer()
+    {
+        $containerRepository = ContainerRepositoryMother::inMemory();
+        $propertyRepository = PropertyRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($containerRepository, $propertyRepository);
+
+        $accountId = AccountId::generate();
+
+        $property = PropertyMother::fromNameAndAccountAndId('Propiedad', (string) $accountId, 'property');
+
+        $propertyRepository->add($property);
+
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId);
+
+        $request = new RegisterContainerRequest(
+            propertyId: $property->id(),
+            wasteId: new WasteId('444'),
+            purpose: Purpose::Recycling,
+            measurementMethod: MeasurementMethod::Weight,
+            wasteManagerId: WasteManagerId::generate(),
+            volume: null
+        );
+
+        $result = $sut($request, $user);
+
+        $this->assertNotNull($result);
+        $this->assertTrue($result instanceof RegisterContainerResponse);
+        $this->assertNotEmpty((string) $result->containerId);
+        $this->assertEquals(36, strlen((string) $result->containerId));
+        $this->assertNotNull($result->qrCode);
+        $this->assertTrue($result->qrCode instanceof QrCode);
+
+        $containerPersisted = $containerRepository->find($result->containerId);
+
+        $this->assertNotNull($containerPersisted);
+        $this->assertTrue($containerPersisted instanceof Container);
+        $this->assertNotNull($containerPersisted->qrCode());
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertNotNull($lastEvent);
+        $this->assertTrue($lastEvent instanceof ContainerRegistered);
+        $this->assertTrue($containerPersisted->id()->equals($lastEvent->containerId()));
+        $this->assertTrue($request->wasteManagerId->equals($lastEvent->wasteManagerId()));
+    }
+
     private function createSUT(ContainerRepository $containerRepository, PropertyRepository $propertyRepository)
     {
         return new RegisterContainerService(

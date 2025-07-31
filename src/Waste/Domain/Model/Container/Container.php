@@ -21,7 +21,7 @@ class Container
         private WasteId|string|null $wasteId = null,
         private ?Purpose $purpose = null,
         private ?MeasurementMethod $measurementMethod = null,
-        private string $volume = '0',
+        private ?string $volume = '0',
         private WasteManagerId|string|null $wasteManagerId = null,
         private ?QrCode $qrCode = null,
         private bool $removed = false,
@@ -74,7 +74,7 @@ class Container
         return $this->measurementMethod;
     }
 
-    public function volume(): string
+    public function volume(): ?string
     {
         return $this->volume;
     }
@@ -114,7 +114,7 @@ class Container
         WasteId $wasteId,
         Purpose $purpose,
         MeasurementMethod $measurementMethod,
-        string $volume,
+        ?string $volume,
         WasteManagerId $wasteManagerId,
         QrCode $qrCode
     ) {
