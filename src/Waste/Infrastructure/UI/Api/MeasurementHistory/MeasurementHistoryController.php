@@ -39,7 +39,10 @@ class MeasurementHistoryController extends AbstractController
         $response = $listMeasurements(
             new ListMeasurementsRequest(
                 userId: $user->id(),
-                accountId: $user->accountId()
+                accountId: $user->accountId(),
+                limit: 10,
+                orderBy: 'registeredAt',
+                orderWay: 'DESC'
             ),
             $user
         );

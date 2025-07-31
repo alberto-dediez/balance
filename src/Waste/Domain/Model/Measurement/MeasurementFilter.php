@@ -25,8 +25,13 @@ class MeasurementFilter
         public ?Purpose $purpose = null,
         public ?AccountId $accountId = null,
         public ?UserId $userId = null,
-        int $limit = 10
+        int $limit = 10,
+        string $orderBy = 'default',
+        string $orderWay = 'ASC',
+
     ) {
         $this->limit = $limit;
+        $this->orderBy = $orderBy;
+        $this->orderWay = $orderWay;
     }
 }

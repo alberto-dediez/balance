@@ -144,7 +144,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
         $qb = $this->createQueryBuilderFromFilter($filter);
 
         $query = $qb->getQuery();
-        
+
         if ($filter->limit > 0) {
             $query
                 ->setMaxResults($filter->limit)
