@@ -20,6 +20,9 @@ class MeasurementMethodType extends AbstractType
         $resolver->setDefaults(array(
             'choices' => $choices,
             'translation_domain' => 'measurementMethod',
+            'choice_attr' => function (?MeasurementMethod $method): array {
+                return $method ? ['data-value' => $method->value] : [];
+            }
         ));
     }
     
