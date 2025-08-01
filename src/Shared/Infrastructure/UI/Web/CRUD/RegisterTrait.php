@@ -15,6 +15,7 @@ trait RegisterTrait
             try {
                 return $register($form);
             } catch (\Exception $e) {
+                throw $e;
                 $this->addFlash('danger', new TranslatableMessage('Error inesperado'));
             }
         }

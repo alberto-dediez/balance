@@ -13,6 +13,7 @@ use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Waste\Domain\Model\Container\NotValidVolumeException;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
 use App\Waste\Application\Container\Update\UpdateContainerRequest;
@@ -71,6 +72,59 @@ class UpdateContainerServiceTest extends TestCase
         $this->assertTrue($containerPersisted->id()->equals($lastEvent->containerId()));
         $this->assertTrue($request->wasteManagerId->equals($containerPersisted->wasteManagerId()));
         $this->assertEquals(46, $lastEvent->volume());
+    }
+
+    public function testUpdateWeightContainer()
+    {
+        $repository = ContainerRepositoryMother::inMemory();
+
+        $container = ContainerMother::random();
+
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $container->accountId());
+
+        $repository->add($container);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateContainerRequest(
+            containerId: $container->id(),
+            wasteId: new WasteId('444'),
+            purpose: Purpose::Waste,
+            measurementMethod: MeasurementMethod::Weight,
+            wasteManagerId: WasteManagerId::generate(),
+            volume: null
+        );
+
+        $result = $sut($request, $user);
+
+        $this->assertNotNull($result);
+        $this->assertTrue($result instanceof UpdateContainerResponse);
+    }
+
+    public function testUpdateVolumeContainerWithoutVolume()
+    {
+        $this->expectException(NotValidVolumeException::class);
+
+        $repository = ContainerRepositoryMother::inMemory();
+
+        $container = ContainerMother::random();
+
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $container->accountId());
+
+        $repository->add($container);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateContainerRequest(
+            containerId: $container->id(),
+            wasteId: new WasteId('444'),
+            purpose: Purpose::Waste,
+            measurementMethod: MeasurementMethod::Volume,
+            wasteManagerId: WasteManagerId::generate(),
+            volume: null
+        );
+
+        $result = $sut($request, $user);
     }
 
     private function createSUT($repository)

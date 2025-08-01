@@ -17,7 +17,7 @@ final class ContainerUpdated extends DomainEvent
         private ContainerId $containerId, 
         private WasteId $wasteId,
         private MeasurementMethod $measurementMethod,
-        private $volume,
+        private ?string $volume,
         private Purpose $purpose,
         private WasteManagerId $wasteManagerId,
         ?DomainEventId $id = null,
@@ -46,7 +46,7 @@ final class ContainerUpdated extends DomainEvent
         return $this->measurementMethod;
     }
 
-    public function volume(): string
+    public function volume(): ?string
     {
         return $this->volume;
     }

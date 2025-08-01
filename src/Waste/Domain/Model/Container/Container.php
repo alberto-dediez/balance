@@ -118,6 +118,10 @@ class Container
         WasteManagerId $wasteManagerId,
         QrCode $qrCode
     ) {
+        if ($measurementMethod == MeasurementMethod::Volume && (null === $volume || $volume < 0)) {
+            throw new NotValidVolumeException($volume);
+        }
+
         $this->recordApplyAndPublish(
             new ContainerRegistered(
                 containerId: $this->id(),
@@ -138,8 +142,12 @@ class Container
         Purpose $purpose,
         MeasurementMethod $measurementMethod,
         WasteManagerId $wasteManagerId,
-        string $volume
+        ?string $volume
     ) {
+        if ($measurementMethod == MeasurementMethod::Volume && (null === $volume || $volume < 0)) {
+            throw new NotValidVolumeException($volume);
+        }
+
         $this->recordApplyAndPublish(
             new ContainerUpdated(
                 containerId: $this->id(),
