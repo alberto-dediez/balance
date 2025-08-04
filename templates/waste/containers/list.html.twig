@@ -60,5 +60,11 @@
 {% endblock %}
 
 {% block list_actions %}
+    <twig:Link path="{{ path('containers_print_all') }}" color="info" target="_blank">
+        <twig:Icon name="solar:printer-line-duotone" size="lg" class="me-2" />
+        
+        {% trans %}Imprimir QRs{% endtrans %}
+    </twig:Link>
+
     <twig:Link:Register path="{{ path('containers_register') }}" />
 {% endblock list_actions %}

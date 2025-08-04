@@ -23,3 +23,15 @@ Feature:
     When I am logged as "owner@dediez.software"
     When I go to "/es/containers/print/333"
     Then the response status should be 403
+
+  Scenario: As an owner, I can access to print all containers of my account
+    Given account "MyCompany" with id "mycompany" exists
+    Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
+    Given waste "Madera" with id "madera" exists
+    Given waste "Plastico" with id "plastico" exists
+    Given property "Hotel" with id "hotel" of account "mycompany" exists
+    Given container for "madera" in "hotel" with id "333" exists
+    Given waste manager "Sadeco" with id "sadeco" of account "mycompany" exists
+    When I am logged as "owner@dediez.software"
+    When I go to "/es/containers/print-all"
+    Then the response status should be 200
