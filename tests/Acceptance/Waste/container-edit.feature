@@ -1,5 +1,5 @@
 Feature:
-  I want to make sure that the system is allow to access the details of a property
+  I want to make sure that the system is allow to access the details of a container
 
   Scenario: As an owner, I can access to edit containers of my account
     Given account "MyCompany" with id "mycompany" exists

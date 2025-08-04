@@ -27,6 +27,7 @@ class Container
         private bool $removed = false,
         array $events = [],
         private ?\DateTimeImmutable $registeredAt = null,
+        private ?\DateTimeImmutable $printedAt = null,
         private ?\DateTimeImmutable $removedAt = null
     ) {
 
@@ -103,6 +104,11 @@ class Container
         return $this->registeredAt;
     }
 
+    public function printedAt(): \DateTimeImmutable
+    {
+        return $this->printedAt;
+    }
+
     public function removedAt(): ?\DateTimeImmutable
     {
         return $this->removedAt;
@@ -160,6 +166,20 @@ class Container
         );
     }
 
+    public function printQr(QrPdfGenerator $pdfGenerator): string
+    {
+        $path = $pdfGenerator->generate($this, $this->qrCode());
+
+        $this->recordApplyAndPublish(
+            new ContainerQrPrinted(
+                containerId: $this->id(),
+                path: $path
+            )
+        );
+
+        return $path;
+    }
+
     public function remove()
     {
         $this->recordApplyAndPublish(
@@ -189,6 +209,11 @@ class Container
         $this->measurementMethod = $event->measurementMethod();
         $this->volume = $event->volume();
         $this->wasteManagerId = $event->wasteManagerId();
+    }
+
+    public function applyContainerQrPrinted(ContainerQrPrinted $event)
+    {
+        $this->printedAt = new \DateTimeImmutable("NOW");
     }
 
     public function applyContainerRemoved(ContainerRemoved $event)

@@ -38,6 +38,15 @@
             </td>
             <td>{{ element.registeredAt | date('d/m/Y') }}</td>
             <td>
+                {% if element | is_authorized('view') %}
+                    <twig:List:Action path="{{ path('containers_print', {'containerId': element.id}) }}" 
+                        title="{{ 'Imprimir QR' | trans }}" 
+                        target="_blank"
+                    >
+                        <twig:Icon name="solar:printer-line-duotone" size="lg" />
+                    </twig:List:Action>
+                {% endif %}
+
                 {% if element | is_authorized('edit') %}
                     <twig:List:Action:Edit path="{{ path('containers_edit', {'containerId': element.id}) }}" />
                 {% endif %}
