@@ -10,8 +10,8 @@ use App\Waste\Domain\Model\Container\QrPdfGenerator;
 use App\Waste\Domain\Model\Container\ContainerFilter;
 use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Waste\Domain\Model\Container\NotValidContainersForPrintException;
 use App\Waste\Domain\Model\Container\QrPdfMerger;
-use Symfony\Component\Translation\TranslatableMessage;
 
 class PrintAllQrContainerService
 {
@@ -35,7 +35,7 @@ class PrintAllQrContainerService
         $containers = $this->repository->findByFilter($filter);
 
         if (null === $containers || count($containers) === 0) {
-            throw new \RuntimeException(new TranslatableMessage("No hay contenedores disponibles para impresión"));
+            throw new NotValidContainersForPrintException();
         }
 
         $pdf = null;

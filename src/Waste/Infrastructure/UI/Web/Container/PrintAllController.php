@@ -13,6 +13,7 @@ use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Waste\Application\Container\PrintAllQr\PrintAllQrContainerRequest;
 use App\Waste\Application\Container\PrintAllQr\PrintAllQrContainerService;
+use App\Waste\Domain\Model\Container\NotValidContainersForPrintException;
 
 #[Route('/containers/print-all', name: 'containers_print_all')]
 class PrintAllController extends AbstractController
@@ -38,9 +39,9 @@ class PrintAllController extends AbstractController
             return $this->file($response->path, "print_all.pdf", ResponseHeaderBag::DISPOSITION_INLINE);            
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
+        } catch (NotValidContainersForPrintException $e) {
+            $this->addFlash('danger', new TranslatableMessage("No hay contenedores disponibles para impresión"));
         } catch (\Exception $e) {
-            dump($e);die();
-
             $this->addFlash('danger', new TranslatableMessage("No se ha podido generar los carteles de los contenedores de la cuenta"));
         }
 
