@@ -15,7 +15,7 @@ use App\Waste\Application\Container\PrintQr\PrintQrContainerRequest;
 use App\Waste\Application\Container\PrintQr\PrintQrContainerService;
 use App\Waste\Application\Container\PrintQr\PrintQrContainerResponse;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
-use App\Tests\Unit\Waste\Infrastructure\QrPdfGenerator\FakeQrPdfGenerator;
+use App\Tests\Unit\Waste\Infrastructure\QrCode\FakeQrPdfGenerator;
 
 class PrintQrContainerServiceTest extends TestCase
 {

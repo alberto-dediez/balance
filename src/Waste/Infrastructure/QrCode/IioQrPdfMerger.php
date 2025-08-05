@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Waste\Infrastructure\QrPdfMerger;
+namespace App\Waste\Infrastructure\QrCode;
 
 use iio\libmergepdf\Merger;
 use iio\libmergepdf\Driver\TcpdiDriver;

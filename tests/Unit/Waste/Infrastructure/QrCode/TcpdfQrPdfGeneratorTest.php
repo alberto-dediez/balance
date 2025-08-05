@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Tests\Unit\Waste\Infrastructure\QrPdfGenerator;
+namespace App\Tests\Unit\Waste\Infrastructure\QrCode;
 
 use PHPUnit\Framework\TestCase;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
-use App\Waste\Infrastructure\QrPdfGenerator\TcpdfQrPdfGenerator;
+use App\Waste\Infrastructure\QrCode\TcpdfQrPdfGenerator;
 use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
 

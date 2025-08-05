@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Waste\Infrastructure\QrCodeGenerator;
+namespace App\Tests\Unit\Waste\Infrastructure\QrCode;
 
 use App\Waste\Domain\Model\Container\QrCode;
 use App\Waste\Domain\Model\Container\ContainerId;

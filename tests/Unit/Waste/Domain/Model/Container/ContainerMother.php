@@ -10,7 +10,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
-use App\Tests\Unit\Waste\Infrastructure\QrCodeGenerator\FakeQrCodeGenerator;
+use App\Tests\Unit\Waste\Infrastructure\QrCode\FakeQrCodeGenerator;
 
 class ContainerMother
 {

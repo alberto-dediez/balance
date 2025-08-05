@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Waste\Infrastructure\QrCodeGenerator;
+namespace App\Waste\Infrastructure\QrCode;
 
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Writer\PngWriter;

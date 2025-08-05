@@ -26,7 +26,7 @@ use App\Waste\Application\Container\Register\RegisterContainerService;
 use App\Waste\Application\Container\Register\RegisterContainerResponse;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
-use App\Tests\Unit\Waste\Infrastructure\QrCodeGenerator\FakeQrCodeGenerator;
+use App\Tests\Unit\Waste\Infrastructure\QrCode\FakeQrCodeGenerator;
 
 class RegisterContainerServiceTest extends TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Waste\Infrastructure\QrPdfGenerator;
+namespace App\Waste\Infrastructure\QrCode;
 
 use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\Container\QrCode;
