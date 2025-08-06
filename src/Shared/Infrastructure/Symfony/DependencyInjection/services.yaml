@@ -13,3 +13,7 @@ services:
     App\Shared\Infrastructure\UI\Console\:
         resource: '../../../Infrastructure/UI/Console/'
         tags: ['console.command']
+
+    App\Shared\Infrastructure\Locale\RequestStackLocaleGetter:
+        arguments:
+            $defaultLocale: '%app.locale_default%'
