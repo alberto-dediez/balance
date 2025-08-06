@@ -8,6 +8,12 @@ doctrine:
 
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
+        types:
+            locale: App\Shared\Infrastructure\Symfony\Doctrine\Type\LocaleType
+            user_id: App\Security\Infrastructure\Symfony\Doctrine\Type\UserIdType
+            account_id: App\Security\Infrastructure\Symfony\Doctrine\Type\AccountIdType
+            recorded_event_id: App\Security\Infrastructure\Symfony\Doctrine\Type\RecordedEventIdType
+
     orm:
         auto_generate_proxy_classes: true
         enable_native_lazy_objects: true

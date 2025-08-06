@@ -10,7 +10,9 @@
             <unique-constraint columns="username" name="search_idx" />
         </unique-constraints>
 
-        <embedded name="id" class="App\Security\Domain\Model\User\UserId" use-column-prefix="false" />
+        <id name="id" type="user_id" column="id">
+            <generator strategy="NONE" />
+        </id>
 
         <field name="username" type="string" length="255" nullable="false"/>
         <field name="password" type="string" length="1024" nullable="false"/>
@@ -18,7 +20,7 @@
         <field name="removed" type="boolean" nullable="true"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
-        <field name="accountId" type="string" length="36" nullable="true"/>
+        <field name="accountId" type="account_id" nullable="true"/>
 
         <many-to-one field="account" target-entity="App\Security\Domain\Model\Account\Account">
             <cascade><cascade-remove /></cascade>

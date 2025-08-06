@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Infrastructure\Doctrine\Type;
+namespace App\Shared\Infrastructure\Symfony\Doctrine\Type;
 
 use Doctrine\DBAL\Types\Type;
 use App\Shared\Domain\Model\Locale\Locale;

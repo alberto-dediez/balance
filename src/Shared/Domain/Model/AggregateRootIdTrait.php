@@ -11,7 +11,12 @@ trait AggregateRootIdTrait
 
     }
 
-    public static function generate(): self
+    public static function fromString(string $id): AggregateRootId
+    {
+        return new self($id);
+    }
+
+    public static function generate(): AggregateRootId
     {
         $id = Uuid::v4();
 
@@ -23,7 +28,7 @@ trait AggregateRootIdTrait
         return $this->id;
     }
 
-    public function equals(self $anotherId): bool
+    public function equals(AggregateRootId $anotherId): bool
     {
         return $this->id() === $anotherId->id();
     }

@@ -61,9 +61,9 @@ class DoctrineUserRepository implements UserRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('u.id.id', ':id')
+                $qb->expr()->eq('u.id', ':id')
             )
-            ->setParameter('id', (string) $userId)
+            ->setParameter('id', $userId)
             ->getQuery()
             ->getOneOrNullResult()
         ;
@@ -91,7 +91,7 @@ class DoctrineUserRepository implements UserRepository
             ->andWhere(
                 $qb->expr()->eq('u.accountId', ':accountId')
             )
-            ->setParameter('accountId', (string) $accountId)
+            ->setParameter('accountId', $accountId)
             ->getQuery()
             ->getResult()
         ;
