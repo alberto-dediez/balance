@@ -33,7 +33,7 @@ class RegisterController extends AbstractController
 
                 $response = $registerWaste($registerRequest, $loggedUser());
 
-                $this->addFlash('success', new TranslatableMessage("Residuo creado correctamente: {name}", ['{name}' => $response->name]));
+                $this->addFlash('success', new TranslatableMessage("Tipología creada correctamente: {name}", ['{name}' => $response->name]));
 
                 return true;
             });

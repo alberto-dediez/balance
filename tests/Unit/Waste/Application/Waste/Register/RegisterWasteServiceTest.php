@@ -4,14 +4,17 @@ namespace App\Tests\Unit\Waste\Application\Waste\Register;
 
 use PHPUnit\Framework\TestCase;
 use App\Waste\Domain\Model\Waste\Waste;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Waste\Application\Waste\WasteAuthorizer;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Waste\Domain\Model\Waste\WasteRegistered;
+use App\Waste\Domain\Model\Waste\WasteTranslated;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Waste\Application\Waste\Register\RegisterWasteRequest;
 use App\Waste\Application\Waste\Register\RegisterWasteService;
 use App\Waste\Application\Waste\Register\RegisterWasteResponse;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleGetter;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
 
 class RegisterWasteServiceTest extends TestCase
@@ -29,7 +32,7 @@ class RegisterWasteServiceTest extends TestCase
     {
         $repository = WasteRepositoryMother::inMemory();
 
-        $sut = $this->createSUT($repository);
+        $sut = $this->createSUT($repository, Locale::Spanish);
 
         $request = new RegisterWasteRequest(
             name: 'Company ABC',
@@ -62,8 +65,47 @@ class RegisterWasteServiceTest extends TestCase
         $this->assertTrue($wastePersisted->isDangerous());
     }
 
-    private function createSUT($repository)
+    public function testRegisterWithLocaleTranslate()
     {
-        return new RegisterWasteService($repository, new WasteAuthorizer());
+        $repository = WasteRepositoryMother::inMemory(Locale::Spanish);
+
+        $sut = $this->createSUT($repository, Locale::English);
+
+        $request = new RegisterWasteRequest(
+            name: 'changedName',
+            isDangerous: true,
+            density: '0.03',
+            color: '#cccddd'
+        );
+
+        $result = $sut($request, UserMother::adminUser());
+
+        $this->assertNotNull($result);
+        $this->assertTrue($result instanceof RegisterWasteResponse);
+
+        $wastePersisted = $repository->find($result->wasteId);
+
+        $this->assertNotNull($wastePersisted);
+        $this->assertTrue($wastePersisted instanceof Waste);
+        $this->assertEquals('changedName', $wastePersisted->name());
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertNotNull($lastEvent);
+        $this->assertTrue($lastEvent instanceof WasteTranslated);
+        $this->assertEquals('changedName', $lastEvent->name());
+        $this->assertEquals(Locale::English, $lastEvent->locale());
+        $this->assertTrue($wastePersisted->id()->equals($lastEvent->wasteId()));
+    }
+
+    private function createSUT($repository, Locale $locale)
+    {
+        return new RegisterWasteService(
+            wasteRepository: $repository, 
+            localeGetter: new FakeLocaleGetter(
+                locale: $locale
+            ),
+            authorizer: new WasteAuthorizer()
+        );
     }
 }

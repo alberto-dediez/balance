@@ -36,6 +36,10 @@
             </td>
             <td>{{ element.registeredAt | date('d/m/Y') }}</td>
             <td>
+                {% if element | is_authorized('edit') %}
+                    <twig:List:Action:Edit path="{{ path('admin_wastes_edit', {'wasteId': element.id}) }}" />
+                {% endif %}
+
                 {% if element | is_authorized('remove') %}
                     <twig:List:Action:Delete path="{{ path('admin_wastes_remove', {'wasteId': element.id}) }}" />
                 {% endif %}

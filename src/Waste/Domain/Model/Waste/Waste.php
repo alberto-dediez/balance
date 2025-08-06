@@ -3,12 +3,18 @@
 namespace App\Waste\Domain\Model\Waste;
 
 use App\Shared\Domain\Model\AggregateRoot;
+use App\Shared\Domain\Model\Locale\Locale;
+use App\Waste\Domain\Model\Waste\WasteUpdated;
+use App\Shared\Domain\Model\Locale\Translatable;
+use App\Shared\Domain\Model\Locale\Translations;
 
-class Waste
+class Waste implements Translatable
 {
     use AggregateRoot;
 
     protected array $events = [];
+
+    private ?Translations $translations = null;
 
     public function __construct(
         protected WasteId $id, 
@@ -21,7 +27,7 @@ class Waste
         protected ?\DateTimeImmutable $registeredAt = null,
         protected ?\DateTimeImmutable $removedAt = null
     ) {
-
+        $this->translations = new Translations();
     }
 
     public function id(): WasteId
@@ -31,7 +37,10 @@ class Waste
 
     public function name(): string
     {
-        return $this->name;
+        /** @var WasteTranslation $translation */
+        $translation = $this->translations()->currentTranslation();
+
+        return null !== $translation ? $translation->name() : $this->name;
     }
 
     public function isDangerous(): bool
@@ -47,6 +56,15 @@ class Waste
     public function color(): string
     {
         return $this->color;
+    }
+
+    public function translations(): Translations
+    {
+        if (null === $this->translations) {
+            $this->translations = new Translations();
+        }
+
+        return $this->translations;
     }
 
     public function isRemoved(): bool
@@ -68,7 +86,8 @@ class Waste
         string $name, 
         bool $isDangerous = false,
         string $density = '0.00',
-        string $color = '#c3d300'
+        string $color = '#c3d300',
+        ?Locale $locale = null
     ) {
         $this->recordApplyAndPublish(
             new WasteRegistered(
@@ -77,6 +96,43 @@ class Waste
                 isDangerous: $isDangerous,
                 density: $density,
                 color: $color
+            )
+        );
+
+        if (null !== $locale) {
+            $this->translate($name, $locale);
+        }
+    }
+
+    public function update(
+        string $name, 
+        bool $isDangerous,
+        string $density,
+        string $color,
+        ?Locale $locale = null
+    ) {
+        $this->recordApplyAndPublish(
+            new WasteUpdated(
+                wasteId: $this->id(),
+                name: null === $locale ? $name : $this->name,
+                isDangerous: $isDangerous,
+                density: $density,
+                color: $color
+            )
+        );
+
+        if (null !== $locale) {
+            $this->translate($name, $locale);
+        }
+    }
+
+    public function translate(string $name, Locale $locale)
+    {
+        $this->recordApplyAndPublish(
+            new WasteTranslated(
+                wasteId: $this->id(),
+                name: $name,
+                locale: $locale
             )
         );
     }
@@ -97,6 +153,25 @@ class Waste
         $this->density = $event->density();
         $this->color = $event->color();
         $this->registeredAt = $event->occurredOn();
+    }
+
+    public function applyWasteUpdated(WasteUpdated $event)
+    {
+        $this->name = $event->name();
+        $this->isDangerous = $event->isDangerous();
+        $this->density = $event->density();
+        $this->color = $event->color();
+    }
+
+    public function applyWasteTranslated(WasteTranslated $event)
+    {
+        $wasteTranslation = new WasteTranslation(
+            name: $event->name(),
+            locale: $event->locale(),
+            translatableId: $this->id()
+        );
+
+        $this->translations()->add($wasteTranslation);
     }
 
     public function applyWasteRemoved(WasteRemoved $event)

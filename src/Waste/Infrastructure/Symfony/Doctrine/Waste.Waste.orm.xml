@@ -16,5 +16,4 @@
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
     </entity>
-
 </doctrine-mapping>

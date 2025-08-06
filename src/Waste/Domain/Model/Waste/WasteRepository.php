@@ -14,8 +14,6 @@ interface WasteRepository
 
     public function find(WasteId $accountId): ?Waste;
 
-    public function findByName(string $name): ?Waste;
-
     public function findByFilter(WasteFilter $filter): array;
 
     public function totalResultsByFilter(WasteFilter $filter): int;

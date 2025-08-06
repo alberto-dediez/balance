@@ -4,11 +4,14 @@ namespace App\Waste\Infrastructure\Repository\Waste;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Waste\Domain\Model\Waste\Waste;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\Waste\WasteFilter;
+use App\Shared\Domain\Model\Locale\LocaleGetter;
+use App\Shared\Infrastructure\Repository\Locale\DoctrineTranslatableRepositoryTrait;
 use App\Waste\Domain\Model\Waste\WasteRepository;
+use App\Waste\Domain\Model\Waste\WasteTranslation;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
@@ -17,9 +20,11 @@ use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 #[When(env: 'prod')]
 class DoctrineWasteRepository implements WasteRepository
 {
+    use DoctrineTranslatableRepositoryTrait;
+
     private EntityRepository $repository;
 
-    public function __construct(private EntityManagerInterface $manager)
+    public function __construct(private EntityManagerInterface $manager, private LocaleGetter $localeGetter)
     {
         $this->repository = $manager->getRepository(Waste::class);
     }
@@ -27,6 +32,9 @@ class DoctrineWasteRepository implements WasteRepository
     public function add(Waste $waste): void
     {
         $this->getEntityManager()->persist($waste);
+
+        $this->addTranslations($waste, $this->getEntityManager()->getRepository(WasteTranslation::class));
+
         $this->getEntityManager()->flush();
     }
 
@@ -40,7 +48,7 @@ class DoctrineWasteRepository implements WasteRepository
     {
         $qb = $this->createQueryBuilderFromFilter(new WasteFilter());
 
-        return $qb
+        $waste = $qb
             ->andWhere(
                 $qb->expr()->eq('w.id.id', ':id')
             )
@@ -48,20 +56,10 @@ class DoctrineWasteRepository implements WasteRepository
             ->getQuery()
             ->getOneOrNullResult()
         ;
-    }
 
-    public function findByName(string $name): ?Waste
-    {
-        $qb = $this->createQueryBuilderFromFilter(new WasteFilter());
+        $this->loadTranslations($waste, $this->getEntityManager()->getRepository(WasteTranslation::class));
 
-        return $qb
-            ->andWhere(
-                $qb->expr()->eq('w.name', ':name')
-            )
-            ->setParameter('name', $name)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        return $waste;
     }
 
     private function createQueryBuilderFromFilter(WasteFilter $filter): QueryBuilder
@@ -70,18 +68,26 @@ class DoctrineWasteRepository implements WasteRepository
 
         $qb->select('w')
             ->from(Waste::class, 'w')
+            ->leftJoin(WasteTranslation::class, 'trans', 'WITH', 'trans.translatableId.id = w.id.id AND trans.locale = :locale')
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('w.removed'),
                     $qb->expr()->eq('w.removed', $qb->expr()->literal(false))
                 )
             )
+            ->setParameter('locale', $this->localeGetter->locale())
         ;
 
         if (!empty($filter->name)) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('w.name', ':name')
+                    $qb->expr()->orX(
+                        $qb->expr()->andX(
+                            $qb->expr()->like('w.name', ':name'),
+                            $qb->expr()->isNull('trans.name')
+                        ),
+                        $qb->expr()->like('trans.name', ':name')
+                    )
                 )
                 ->setParameter('name', "%{$filter->name}%")
             ;
@@ -124,7 +130,17 @@ class DoctrineWasteRepository implements WasteRepository
             ;
         }
 
-        return (array) $query->getResult();
+        $wastes = (array) $query->getResult();
+
+        if (count($wastes) == 0) {
+            return [];
+        }
+
+        foreach ($wastes as $waste) {
+            $this->loadTranslations($waste, $this->getEntityManager()->getRepository(WasteTranslation::class));
+        }
+
+        return $wastes;
     }
 
     public function totalResultsByFilter(WasteFilter $filter): int

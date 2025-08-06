@@ -4,12 +4,9 @@ namespace App\Tests\Unit\Waste\Application\Measurement\Update;
 
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Waste\Domain\Model\Measurement\Purpose;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Waste\Domain\Model\Measurement\MeasurementMethod;
 use App\Waste\Domain\Model\Measurement\MeasurementUpdated;
 use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;

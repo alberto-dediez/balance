@@ -22,7 +22,7 @@ Feature:
     When I submit a form with "name:Madera|density:0.03|color:#cdcdcd" and button "Registrar"
     When I follow redirect
     Then the response status should be 200
-    Then I see a text "Residuo creado correctamente"
+    Then I see a text "Tipología creada correctamente"
   
   Scenario: As an admin, I can indicate if its dangerous, color and density
     Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
@@ -31,4 +31,4 @@ Feature:
     When I submit a form with "name:Madera|isDangerous:1|density:0.03|color:#cdcdcd" and button "Registrar"
     When I follow redirect
     Then the response status should be 200
-    Then I see a text "Residuo creado correctamente"
+    Then I see a text "Tipología creada correctamente"

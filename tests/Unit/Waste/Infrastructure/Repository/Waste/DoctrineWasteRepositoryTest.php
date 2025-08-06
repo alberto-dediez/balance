@@ -2,17 +2,19 @@
 
 namespace App\Tests\Unit\Waste\Infrastructure\Repository\Waste;
 
+use Doctrine\ORM\EntityManagerInterface;
+use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleGetter;
 use App\Waste\Domain\Model\Waste\WasteRepository;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryTest;
 use App\Waste\Infrastructure\Repository\Waste\DoctrineWasteRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
 class DoctrineWasteRepositoryTest extends WasteRepositoryTest
 {
-    public function createSUT(): WasteRepository
+    public function createSUT(Locale $locale = Locale::Spanish): WasteRepository
     {
         $manager = $this->getContainer()->get(EntityManagerInterface::class);
 
-        return new DoctrineWasteRepository($manager);
+        return new DoctrineWasteRepository($manager, new FakeLocaleGetter($locale));
     }
 }

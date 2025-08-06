@@ -8,6 +8,8 @@ doctrine:
 
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
+        types:
+            locale: App\Shared\Infrastructure\Doctrine\Type\LocaleType
     orm:
         auto_generate_proxy_classes: true
         enable_native_lazy_objects: true
