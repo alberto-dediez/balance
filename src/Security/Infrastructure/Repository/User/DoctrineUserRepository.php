@@ -135,7 +135,7 @@ class DoctrineUserRepository implements UserRepository
                 ->andWhere(
                     $qb->expr()->eq('u.accountId', ':accountId')
                 )
-                ->setParameter('accountId', (string) $filter->account->id())
+                ->setParameter('accountId', $filter->account->id())
             ;
         }
 

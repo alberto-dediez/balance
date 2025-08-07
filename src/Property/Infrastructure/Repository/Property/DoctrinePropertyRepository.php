@@ -178,7 +178,7 @@ class DoctrinePropertyRepository implements PropertyRepository
                 ->andWhere(
                     $qb->expr()->eq('p.info.destinationId', ':destinationId')
                 )
-                ->setParameter('destinationId', (string) $filter->destinationId)
+                ->setParameter('destinationId', $filter->destinationId)
             ;
         }
 
@@ -187,7 +187,7 @@ class DoctrinePropertyRepository implements PropertyRepository
                 ->andWhere(
                     $qb->expr()->eq('p.info.countryId', ':countryId')
                 )
-                ->setParameter('countryId', (string) $filter->countryId)
+                ->setParameter('countryId', $filter->countryId)
             ;
         }
 
@@ -196,7 +196,7 @@ class DoctrinePropertyRepository implements PropertyRepository
                 ->andWhere(
                     $qb->expr()->eq('p.accountId', ':accountId')
                 )
-                ->setParameter('accountId', (string) $filter->accountId)
+                ->setParameter('accountId', $filter->accountId)
             ;
         }
 

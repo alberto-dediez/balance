@@ -66,7 +66,7 @@ class DoctrineContainerRepository implements ContainerRepository
                 ->andWhere(
                     $qb->expr()->eq('c.propertyId', ':property')
                 )
-                ->setParameter('property', (string) $filter->propertyId)
+                ->setParameter('property', $filter->propertyId)
             ;
         }
 
@@ -75,7 +75,7 @@ class DoctrineContainerRepository implements ContainerRepository
                 ->andWhere(
                     $qb->expr()->eq('c.wasteId', ':wasteId')
                 )
-                ->setParameter('wasteId', (string) $filter->wasteId)
+                ->setParameter('wasteId', $filter->wasteId)
             ;
         }
 
@@ -102,7 +102,7 @@ class DoctrineContainerRepository implements ContainerRepository
                 ->andWhere(
                     $qb->expr()->eq('c.wasteManagerId', ':wasteManagerId')
                 )
-                ->setParameter('wasteManagerId', (string) $filter->wasteManagerId)
+                ->setParameter('wasteManagerId', $filter->wasteManagerId)
             ;
         }
 
@@ -111,7 +111,7 @@ class DoctrineContainerRepository implements ContainerRepository
                 ->andWhere(
                     $qb->expr()->eq('c.accountId', ':accountId')
                 )
-                ->setParameter('accountId', (string) $filter->accountId)
+                ->setParameter('accountId', $filter->accountId)
             ;
         }
 

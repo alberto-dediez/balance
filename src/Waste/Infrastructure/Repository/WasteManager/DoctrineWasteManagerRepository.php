@@ -84,7 +84,7 @@ class DoctrineWasteManagerRepository implements WasteManagerRepository
                 ->andWhere(
                     $qb->expr()->eq('wm.accountId', ':accountId')
                 )
-                ->setParameter('accountId', (string) $filter->accountId)
+                ->setParameter('accountId', $filter->accountId)
             ;
         }
 

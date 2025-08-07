@@ -60,7 +60,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
                 ->andWhere(
                     $qb->expr()->eq('m.containerId', ':container')
                 )
-                ->setParameter('container', (string) $filter->containerId)
+                ->setParameter('container', $filter->containerId)
             ;
         }
 
@@ -69,7 +69,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
                 ->andWhere(
                     $qb->expr()->eq('m.propertyId', ':property')
                 )
-                ->setParameter('property', (string) $filter->propertyId)
+                ->setParameter('property', $filter->propertyId)
             ;
         }
 
@@ -78,7 +78,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
                 ->andWhere(
                     $qb->expr()->eq('m.wasteId', ':wasteId')
                 )
-                ->setParameter('wasteId', (string) $filter->wasteId)
+                ->setParameter('wasteId', $filter->wasteId)
             ;
         }
 
@@ -105,7 +105,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
                 ->andWhere(
                     $qb->expr()->eq('m.wasteManagerId', ':wasteManagerId')
                 )
-                ->setParameter('wasteManagerId', (string) $filter->wasteManagerId)
+                ->setParameter('wasteManagerId', $filter->wasteManagerId)
             ;
         }
 
@@ -114,7 +114,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
                 ->andWhere(
                     $qb->expr()->eq('m.accountId', ':accountId')
                 )
-                ->setParameter('accountId', (string) $filter->accountId)
+                ->setParameter('accountId', $filter->accountId)
             ;
         }
 
@@ -123,7 +123,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
                 ->andWhere(
                     $qb->expr()->eq('m.registeredBy', ':userId')
                 )
-                ->setParameter('userId', (string) $filter->userId)
+                ->setParameter('userId', $filter->userId)
             ;
         }
 
