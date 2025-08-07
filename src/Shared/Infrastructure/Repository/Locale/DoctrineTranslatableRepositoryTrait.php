@@ -17,7 +17,7 @@ trait DoctrineTranslatableRepositoryTrait
 
         $storedTranslations = $translationRepository
             ->findBy([
-                'translatableId' => (string) $translatable->id()
+                'translatableId' => $translatable->id()
             ])
         ;
 
@@ -39,7 +39,7 @@ trait DoctrineTranslatableRepositoryTrait
         }
 
         $storedTranslations = $translationRepository->findBy([
-            'translatableId' => (string) $translatable->id()
+            'translatableId' => $translatable->id()
         ]);
 
         if (count($storedTranslations) > 0) {
