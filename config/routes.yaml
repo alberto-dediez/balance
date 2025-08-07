@@ -50,7 +50,11 @@ waste-api:
         path: ../src/Waste/Infrastructure/UI/Api/
         namespace: App\Waste\Infrastructure\UI\Api
     type: attribute
-    prefix: '/api'
+    prefix: /api/{_locale}
+    requirements:
+        _locale: '%app.locale_list%'
+    defaults:
+        _locale: '%app.locale_default%'
 
 property-web:
     resource:
