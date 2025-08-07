@@ -20,7 +20,7 @@ class User
         protected UserId $id, 
         protected string $username = '',
         protected string $password = '',
-        protected AccountId|string|null $accountId = null,
+        protected AccountId|null $accountId = null,
         protected Account|null $account = null, 
         protected array $roles = [],
         array $events = [],
@@ -58,10 +58,6 @@ class User
 
     public function accountId(): ?AccountId
     {
-        if (is_string($this->accountId)) {
-            $this->accountId = new AccountId($this->accountId);
-        }
-
         return $this->accountId;
     }
 

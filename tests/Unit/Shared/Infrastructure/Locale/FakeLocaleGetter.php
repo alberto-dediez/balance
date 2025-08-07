@@ -8,8 +8,7 @@ use App\Shared\Domain\Model\Locale\LocaleGetter;
 class FakeLocaleGetter implements LocaleGetter
 {
     public function __construct(
-        private Locale $locale = Locale::Spanish,
-        private Locale $default = Locale::Spanish,
+        private Locale $locale = Locale::Spanish
     ) {
 
     }
@@ -21,6 +20,6 @@ class FakeLocaleGetter implements LocaleGetter
 
     public function default(): Locale
     {
-        return $this->default;
+        return $this->locale;
     }
 }

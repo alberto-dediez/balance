@@ -42,9 +42,9 @@ class DoctrineRecordedEventRepository implements RecordedEventRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('e.id.id', ':id')
+                $qb->expr()->eq('e.id', ':id')
             )
-            ->setParameter('id', (string) $accountId)
+            ->setParameter('id', $accountId)
             ->getQuery()
             ->getOneOrNullResult()
         ;
@@ -81,7 +81,7 @@ class DoctrineRecordedEventRepository implements RecordedEventRepository
                 ->andWhere(
                     $qb->expr()->eq('e.userId', ':userId')
                 )
-                ->setParameter('userId', (string) $filter->userId)
+                ->setParameter('userId', $filter->userId)
             ;
         }
 

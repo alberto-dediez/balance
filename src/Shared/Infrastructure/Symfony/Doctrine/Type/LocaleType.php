@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Infrastructure\Doctrine\Type;
+namespace App\Shared\Infrastructure\Symfony\Doctrine\Type;
 
 use Doctrine\DBAL\Types\Type;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -12,7 +12,7 @@ class LocaleType extends Type
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
     {
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getStringTypeDeclarationSQL($fieldDeclaration);
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?Locale

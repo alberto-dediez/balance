@@ -12,7 +12,7 @@ class RecordedEvent
 {
     private RecordedEventId $id;
 
-    private UserId|string|null $userId;
+    private UserId|null $userId;
     private DateTimeImmutable $occurredOn;
     private string $eventName;
     private string $context;
@@ -39,10 +39,6 @@ class RecordedEvent
 
     public function userId(): ?UserId
     {
-        if (is_string($this->userId)) {
-            $this->userId = new UserId($this->userId);
-        }
-
         return $this->userId;
     }
 

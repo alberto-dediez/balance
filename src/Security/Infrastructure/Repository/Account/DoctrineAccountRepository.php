@@ -42,9 +42,9 @@ class DoctrineAccountRepository implements AccountRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('a.id.id', ':id')
+                $qb->expr()->eq('a.id', ':id')
             )
-            ->setParameter('id', (string) $accountId)
+            ->setParameter('id', $accountId)
             ->getQuery()
             ->getOneOrNullResult()
         ;
