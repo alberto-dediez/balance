@@ -20,6 +20,14 @@
                             {% set value = value | waste_name %}
                         {% elseif field == 'wasteManagerId' %}
                             {% set value = value | waste_manager_name %}
+                        {% elseif field == 'destinationId' %}
+                            {% set value = value | destination_name %}
+                        {% elseif field == 'countryId' %}
+                            {% set value = value | country_name %}
+                        {% elseif field == 'brandId' %}
+                            {% set value = value | brand_name %}
+                        {% elseif field == 'categoryId' %}
+                            {% set value = value | category_name %}
                         {% endif %}
 
                         <twig:List:FilterShow 
