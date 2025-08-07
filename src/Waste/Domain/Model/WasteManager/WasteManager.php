@@ -14,7 +14,7 @@ class WasteManager
     public function __construct(
         private WasteManagerId $id, 
         private ?string $name = null,
-        private AccountId|string|null $accountId = null,
+        private AccountId|null $accountId = null,
         private bool $isPublic = true,
         private bool $removed = false,
         array $events = [],
@@ -36,10 +36,6 @@ class WasteManager
 
     public function accountId(): ?AccountId
     {
-        if (is_string($this->accountId)) {
-            $this->accountId = new AccountId($this->accountId);
-        }
-
         return $this->accountId;
     }
 

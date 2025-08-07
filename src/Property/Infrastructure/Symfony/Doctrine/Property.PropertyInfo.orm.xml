@@ -7,8 +7,8 @@
 
     <embeddable name="App\Property\Domain\Model\Property\PropertyInfo">
         <field name="propertyType" type="string" enum-type="App\Property\Domain\Model\Property\PropertyType" nullable="true"/>
-        <field name="categoryId" type="string" length="36" nullable="true"/>
-        <field name="brandId" type="string" length="36" nullable="true"/>
+        <field name="categoryId" type="category_id" nullable="true"/>
+        <field name="brandId" type="brand_id" nullable="true"/>
         <field name="address" type="string" length="1024" nullable="true"/>
         <field name="postalCode" type="string" length="20" nullable="true"/>
         <field name="longitude" type="decimal" scale="10" precision="14" nullable="true"/>
@@ -16,7 +16,7 @@
         <field name="rooms" type="integer" nullable="true"/>
         <field name="zone" type="string" length="512" nullable="true" />
         <field name="web" type="string" length="1024" nullable="true" />
-        <field name="destinationId" type="string" length="36" nullable="true"/>
-        <field name="countryId" type="string" length="36" nullable="true"/>
+        <field name="destinationId" type="destination_id" nullable="true"/>
+        <field name="countryId" type="country_id" nullable="true"/>
     </embeddable>
 </doctrine-mapping>

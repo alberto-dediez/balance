@@ -16,13 +16,13 @@ class Container
 
     public function __construct(
         private ContainerId $id, 
-        private AccountId|string|null $accountId = null,
-        private PropertyId|string|null $propertyId = null,
-        private WasteId|string|null $wasteId = null,
+        private AccountId|null $accountId = null,
+        private PropertyId|null $propertyId = null,
+        private WasteId|null $wasteId = null,
         private ?Purpose $purpose = null,
         private ?MeasurementMethod $measurementMethod = null,
         private ?string $volume = '0',
-        private WasteManagerId|string|null $wasteManagerId = null,
+        private WasteManagerId|null $wasteManagerId = null,
         private ?QrCode $qrCode = null,
         private bool $removed = false,
         array $events = [],
@@ -40,28 +40,16 @@ class Container
 
     public function accountId() : ?AccountId
     {
-        if (is_string($this->accountId)) {
-            $this->accountId = new AccountId($this->accountId);
-        }
-
         return $this->accountId;
     }
 
     public function propertyId() : ?PropertyId
     {
-        if (is_string($this->propertyId)) {
-            $this->propertyId = new PropertyId($this->propertyId);
-        }
-
         return $this->propertyId;
     }
 
     public function wasteId() : ?WasteId
     {
-        if (is_string($this->wasteId)) {
-            $this->wasteId = new WasteId($this->wasteId);
-        }
-
         return $this->wasteId;
     }
 
@@ -82,10 +70,6 @@ class Container
 
     public function wasteManagerId() : ?WasteManagerId
     {
-        if (is_string($this->wasteManagerId)) {
-            $this->wasteManagerId = new WasteManagerId($this->wasteManagerId);
-        }
-
         return $this->wasteManagerId;
     }
 

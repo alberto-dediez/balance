@@ -11,7 +11,7 @@ class WasteTranslation implements Translation
     public function __construct(
         private string $name,
         private Locale $locale,
-        private WasteId|string $translatableId
+        private WasteId $translatableId
     )
     {
         
@@ -29,10 +29,6 @@ class WasteTranslation implements Translation
 
     public function translatableId(): WasteId
     {
-        if (is_string($this->translatableId)) {
-            $this->translatableId = new WasteId($this->translatableId);
-        }
-
         return $this->translatableId;
     }
 }

@@ -17,7 +17,7 @@ class Property
         private string $name = '',
         private ?PropertyInfo $info = null,
         private ?ExternalId $externalId = null,
-        private AccountId|string|null $accountId = null,
+        private AccountId|null $accountId = null,
         private bool $removed = false,
         array $events = [],
         private ?\DateTimeImmutable $registeredAt = null,
@@ -56,10 +56,6 @@ class Property
 
     public function accountId(): ?AccountId
     {
-        if (is_string($this->accountId)) {
-            $this->accountId = new AccountId($this->accountId);
-        }
-
         return $this->accountId;
     }
 

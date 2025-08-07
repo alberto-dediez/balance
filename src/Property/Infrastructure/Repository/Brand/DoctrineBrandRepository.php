@@ -41,7 +41,7 @@ class DoctrineBrandRepository implements BrandRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('b.id.id', ':id')
+                $qb->expr()->eq('b.id', ':id')
             )
             ->setParameter('id', (string) $brandId)
             ->getQuery()

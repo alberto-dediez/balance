@@ -13,6 +13,15 @@ doctrine:
             user_id: App\Security\Infrastructure\Symfony\Doctrine\Type\UserIdType
             account_id: App\Security\Infrastructure\Symfony\Doctrine\Type\AccountIdType
             recorded_event_id: App\Security\Infrastructure\Symfony\Doctrine\Type\RecordedEventIdType
+            country_id: App\Property\Infrastructure\Symfony\Doctrine\Type\CountryIdType
+            destination_id: App\Property\Infrastructure\Symfony\Doctrine\Type\DestinationIdType
+            property_id: App\Property\Infrastructure\Symfony\Doctrine\Type\PropertyIdType
+            category_id: App\Property\Infrastructure\Symfony\Doctrine\Type\CategoryIdType
+            brand_id: App\Property\Infrastructure\Symfony\Doctrine\Type\BrandIdType
+            container_id: App\Waste\Infrastructure\Symfony\Doctrine\Type\ContainerIdType
+            measurement_id: App\Waste\Infrastructure\Symfony\Doctrine\Type\MeasurementIdType
+            waste_id: App\Waste\Infrastructure\Symfony\Doctrine\Type\WasteIdType
+            waste_manager_id: App\Waste\Infrastructure\Symfony\Doctrine\Type\WasteManagerIdType
 
     orm:
         auto_generate_proxy_classes: true

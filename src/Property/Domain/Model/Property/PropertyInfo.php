@@ -11,9 +11,9 @@ use App\Property\Domain\Model\Destination\DestinationId;
 class PropertyInfo
 {
     public function __construct(
-        private string|PropertyType $propertyType = PropertyType::Hotel,
-        private string|CategoryId|null $categoryId = null,
-        private string|BrandId|null $brandId = null,
+        private PropertyType $propertyType = PropertyType::Hotel,
+        private CategoryId|null $categoryId = null,
+        private BrandId|null $brandId = null,
         private ?string $address = null,
         private ?string $postalCode = null,
         private ?string $longitude = null,
@@ -21,8 +21,8 @@ class PropertyInfo
         private ?int $rooms = 0,
         private ?string $zone = null,
         private ?string $web = null,
-        private DestinationId|string|null $destinationId = null,
-        private CountryId|string|null $countryId = null
+        private DestinationId|null $destinationId = null,
+        private CountryId|null $countryId = null
     ) {
 
     }
@@ -47,28 +47,16 @@ class PropertyInfo
 
     public function propertyType(): PropertyType
     {
-        if (is_string($this->propertyType)) {
-            $this->propertyType = PropertyType::tryFrom($this->propertyType);
-        }
-
         return $this->propertyType;
     }
 
     public function categoryId(): ?CategoryId
     {
-        if (is_string($this->categoryId)) {
-            $this->categoryId = new CategoryId($this->categoryId);
-        }
-
         return $this->categoryId;
     }
 
     public function brandId(): ?BrandId
     {
-        if (is_string($this->brandId)) {
-            $this->brandId = new BrandId($this->brandId);
-        }
-
         return $this->brandId;
     }
 
@@ -109,19 +97,11 @@ class PropertyInfo
 
     public function destinationId(): ?DestinationId
     {
-        if (is_string($this->destinationId)) {
-            $this->destinationId = new DestinationId($this->destinationId);
-        }
-
         return $this->destinationId;
     }
 
     public function countryId(): ?CountryId
     {
-        if (is_string($this->countryId)) {
-            $this->countryId = new CountryId($this->countryId);
-        }
-
         return $this->countryId;
     }
 

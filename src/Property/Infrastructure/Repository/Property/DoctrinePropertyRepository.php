@@ -43,7 +43,7 @@ class DoctrinePropertyRepository implements PropertyRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('p.id.id', ':id')
+                $qb->expr()->eq('p.id', ':id')
             )
             ->setParameter('id', (string) $propertyId)
             ->getQuery()

@@ -2,9 +2,10 @@
 
 namespace App\Waste\Domain\Model\Container;
 
+use App\Shared\Domain\Model\AggregateRootId;
 use App\Shared\Domain\Model\AggregateRootIdTrait;
 
-class ContainerId
+class ContainerId implements AggregateRootId
 {
     use AggregateRootIdTrait;
 }

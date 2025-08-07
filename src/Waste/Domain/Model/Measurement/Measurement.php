@@ -22,17 +22,17 @@ class Measurement
 
     public function __construct(
         private MeasurementId $id, 
-        private ContainerId|string|null $containerId = null,
-        private PropertyId|string|null $propertyId = null,
-        private WasteId|string|null $wasteId = null,
+        private ContainerId|null $containerId = null,
+        private PropertyId|null $propertyId = null,
+        private WasteId|null $wasteId = null,
         private ?Purpose $purpose = null,
         private ?MeasurementMethod $measurementMethod = null,
-        private WasteManagerId|string|null $wasteManagerId = null,
+        private WasteManagerId|null $wasteManagerId = null,
         private int $quantity = 0,
         private float $load = 0,
         private ?string $justification = null,
-        private AccountId|string|null $accountId = null,
-        private UserId|string|null $registeredBy = null,
+        private AccountId|null $accountId = null,
+        private UserId|null $registeredBy = null,
         private ?\DateTimeImmutable $registeredAt = null,
         array $events = []
     ) {
@@ -46,28 +46,16 @@ class Measurement
 
     public function containerId() : ?ContainerId
     {
-        if (is_string($this->containerId)) {
-            $this->containerId = new ContainerId($this->containerId);
-        }
-
         return $this->containerId;
     }
 
     public function propertyId() : ?PropertyId
     {
-        if (is_string($this->propertyId)) {
-            $this->propertyId = new PropertyId($this->propertyId);
-        }
-
         return $this->propertyId;
     }
 
     public function wasteId() : ?WasteId
     {
-        if (is_string($this->wasteId)) {
-            $this->wasteId = new WasteId($this->wasteId);
-        }
-
         return $this->wasteId;
     }
 
@@ -83,10 +71,6 @@ class Measurement
 
     public function wasteManagerId() : ?WasteManagerId
     {
-        if (is_string($this->wasteManagerId)) {
-            $this->wasteManagerId = new WasteManagerId($this->wasteManagerId);
-        }
-
         return $this->wasteManagerId;
     }
 
@@ -107,19 +91,11 @@ class Measurement
 
     public function accountId(): ?AccountId
     {
-        if (is_string($this->accountId)) {
-            $this->accountId = new AccountId($this->accountId);
-        }
-
         return $this->accountId;
     }
 
     public function registeredBy(): ?UserId
     {
-        if (is_string($this->registeredBy)) {
-            $this->registeredBy = new UserId($this->registeredBy);
-        }
-
         return $this->registeredBy;
     }
 

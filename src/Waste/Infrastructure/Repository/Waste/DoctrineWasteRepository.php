@@ -50,7 +50,7 @@ class DoctrineWasteRepository implements WasteRepository
 
         $waste = $qb
             ->andWhere(
-                $qb->expr()->eq('w.id.id', ':id')
+                $qb->expr()->eq('w.id', ':id')
             )
             ->setParameter('id', (string) $wasteId)
             ->getQuery()
@@ -68,7 +68,7 @@ class DoctrineWasteRepository implements WasteRepository
 
         $qb->select('w')
             ->from(Waste::class, 'w')
-            ->leftJoin(WasteTranslation::class, 'trans', 'WITH', 'trans.translatableId.id = w.id.id AND trans.locale = :locale')
+            ->leftJoin(WasteTranslation::class, 'trans', 'WITH', 'trans.translatableId = w.id AND trans.locale = :locale')
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('w.removed'),

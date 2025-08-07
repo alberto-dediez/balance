@@ -39,7 +39,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('m.id.id', ':id')
+                $qb->expr()->eq('m.id', ':id')
             )
             ->setParameter('id', (string) $measurementId)
             ->getQuery()

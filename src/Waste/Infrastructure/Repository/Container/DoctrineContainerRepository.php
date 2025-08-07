@@ -39,7 +39,7 @@ class DoctrineContainerRepository implements ContainerRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('c.id.id', ':id')
+                $qb->expr()->eq('c.id', ':id')
             )
             ->setParameter('id', (string) $containerId)
             ->getQuery()

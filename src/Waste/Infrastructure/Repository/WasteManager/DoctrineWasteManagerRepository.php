@@ -39,7 +39,7 @@ class DoctrineWasteManagerRepository implements WasteManagerRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('wm.id.id', ':id')
+                $qb->expr()->eq('wm.id', ':id')
             )
             ->setParameter('id', (string) $wasteManagerId)
             ->getQuery()

@@ -15,7 +15,7 @@ class Destination
     public function __construct(
         private DestinationId $id, 
         private string $name = '',
-        private CountryId|string|null $countryId = null,
+        private CountryId|null $countryId = null,
         private ?ExternalId $externalId = null,
         private bool $removed = false,
         array $events = [],
@@ -37,10 +37,6 @@ class Destination
 
     public function countryId(): CountryId
     {
-        if (is_string($this->countryId)) {
-            $this->countryId = new CountryId($this->countryId);
-        }
-        
         return $this->countryId;
     }
 

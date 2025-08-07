@@ -42,7 +42,7 @@ class DoctrineDestinationRepository implements DestinationRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('d.id.id', ':id')
+                $qb->expr()->eq('d.id', ':id')
             )
             ->setParameter('id', (string) $destinationId)
             ->getQuery()

@@ -41,7 +41,7 @@ class DoctrineCategoryRepository implements CategoryRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('c.id.id', ':id')
+                $qb->expr()->eq('c.id', ':id')
             )
             ->setParameter('id', (string) $categoryId)
             ->getQuery()
