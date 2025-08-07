@@ -4,8 +4,10 @@ namespace App\Property\Infrastructure\Symfony\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
+use App\Property\Domain\Model\Brand\BrandId;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
+use App\Property\Domain\Model\Category\CategoryId;
 use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Domain\Model\Property\PropertyType;
 use App\Property\Domain\Model\Destination\Destination;
@@ -41,6 +43,15 @@ class PropertyInfoType extends AbstractType
             $countryId = $info->countryId();
 
             foreach ($changes as $name => $value) {
+                switch ($name) {
+                    case 'categoryId':
+                        $value = is_string($value) && !empty($value) ? new CategoryId($value) : $value;
+                        break;
+                    case 'brandId':
+                        $value = is_string($value) && !empty($value) ? new BrandId($value) : $value;
+                        break;
+                }
+
                 $$name = $value;
             }
 
