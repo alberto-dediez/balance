@@ -18,7 +18,7 @@ trait AggregateRootIdTrait
 
     public static function generate(): AggregateRootId
     {
-        $id = UuidGenerator::v4();
+        $id = UuidGenerator::v7();
 
         return new self($id);
     }

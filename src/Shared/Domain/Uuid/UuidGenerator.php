@@ -13,6 +13,6 @@ class UuidGenerator
 
     public static function v7(): string
     {
-        return Uuid::v4();
+        return Uuid::v7();
     }
 }

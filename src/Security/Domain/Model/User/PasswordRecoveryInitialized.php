@@ -54,7 +54,7 @@ final class PasswordRecoveryInitialized extends DomainEvent
     ): static {
         return new PasswordRecoveryInitialized(
             userId: new UserId($payload['userId']),
-            username: $payload['username'],
+            username: isset($payload['username']) ? $payload['username'] : '',
             token: new RecoverToken($payload['token'], new \DateTimeImmutable($payload['expirateAt'])),
             id: $id,
             occurredOn: $occurredOn

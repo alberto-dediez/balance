@@ -13,7 +13,7 @@ trait UuidTrait
 
     public static function generate(): self
     {
-        $id = UuidGenerator::v4();
+        $id = UuidGenerator::v7();
 
         return new self($id);
     }
