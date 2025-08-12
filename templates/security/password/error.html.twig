@@ -1,0 +1,17 @@
+{% extends '@security/layout.html.twig' %}
+
+{% block form_title %}
+    <h4 class="text-uppercase mt-0">{% trans -%}Contraseña no modificada{%- endtrans %}</h4>
+{% endblock %}
+
+{% block form %}
+    <p>
+        {% trans -%}El email indicado o el código de recuperación no es correcto. ¿Puede que haya pasado demasiado tiempo?{%- endtrans %}
+    </p>
+    <p>
+        {% trans -%}Puede solicitar un nuevo código en el siguiente enlace.{%- endtrans %}
+    </p>
+    <a href="{{ path('app_recover_password') }}" class="btn btn-danger w-100 py-8 mb-4 rounded-2">
+        {% trans -%}Recuperar contraseña{%- endtrans %}
+    </a>
+{% endblock form %}

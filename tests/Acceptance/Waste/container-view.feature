@@ -9,7 +9,7 @@ Feature:
     Given waste manager "Sadeco" with id "sadeco" of account "mycompany" exists
     Given container for "plastico" in "hotel" and managed by "sadeco" with id "container" exists
     When I am authenticated in API as "user@dediez.software"
-    And I send a GET request to "/api/containers/container"
+    And I send a GET request to "/api/es/containers/container"
     Then the status code should be 200
     And the response JSON should be similar to:
     """
@@ -30,5 +30,5 @@ Feature:
     Given property "Hotel" with id "hotel" of account "mycompany" exists
     Given waste manager "Sadeco" with id "sadeco" of account "mycompany" exists
     Given container for "plastico" in "hotel" and managed by "sadeco" with id "container" exists
-    When I send a GET request to "/api/containers/container"
+    When I send a GET request to "/api/es/containers/container"
     Then the status code should be 403

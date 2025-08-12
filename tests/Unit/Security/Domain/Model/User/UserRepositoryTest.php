@@ -58,6 +58,26 @@ abstract class UserRepositoryTest extends KernelTestCase
         $this->assertEquals($user->id(), $recoverUser->id());
     }
 
+    public function testFindByRecoverToken()
+    {
+        $repository = $this->createSUT();
+
+        $user = UserMother::registeredUser();
+
+        $this->assertNull($repository->findByUsername($user->username()));
+
+        $user->initPasswordRecovery();
+
+        $repository->add($user);
+
+        $token = $user->recoverToken();
+
+        $recoverUser = $repository->findByRecoverToken($token);
+
+        $this->assertNotNull($recoverUser);
+        $this->assertEquals($user->id(), $recoverUser->id());
+    }
+
     public function testFindByFilter()
     {
         $repository = $this->createSUT();

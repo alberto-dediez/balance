@@ -9,9 +9,9 @@ use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
+use App\Tests\Acceptance\Shared\AcceptanceClient;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use App\Security\Domain\Model\User\UserRepository;
-use Behat\Behat\Tester\Exception\PendingException;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
@@ -24,56 +24,43 @@ use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
  */
 final class ApiContext implements Context
 {
-    private ?SecurityUser $user;
-    
-    private ?\Exception $exception = null;
+    private AcceptanceClient $client;
 
-    public function __construct(private KernelBrowser $client, private UserRepository $userRepository)
+    public function __construct(KernelBrowser $kernel)
     {
-        $this->client->catchExceptions(false);        
+        $this->client = AcceptanceClient::instance($kernel);
+    }
+
+    private function getUserRepository(): UserRepository
+    {
+        return $this->client->getContainer()->get(UserRepository::class);
     }
 
     #[When('I make a preflight CORS request to :path from :origin')]
     public function iMakeAPreflightCORSRquestToFrom($path, $origin): void
     {
-        try {
-            $this->client->request('OPTIONS', $path, [], [], [
-                'CONTENT_TYPE' => 'application/json',
-                'HTTP_ACCEPT' => 'application/json',
-                'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'GET',
-                'HTTP_ORIGIN' => $origin,
-            ]);
-        } catch (\Exception $e) {
-            $this->exception = $e;
-        }        
+        $this->client->request('OPTIONS', $path, [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_ACCEPT' => 'application/json',
+            'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'POST',
+            'HTTP_ORIGIN' => $origin,
+        ]);
     }
 
     #[When('I am authenticated in API as :username')]
     public function iAmAuthenticatedInApiAs($username): void
     {
-        $user = $this->userRepository->findByUsername($username);
+        $user = $this->getUserRepository()->findByUsername($username);
 
-        $this->user = new SecurityUser($user);
-
-        $this->client->disableReboot();
-
-        $encoder = $this->client->getContainer()->get(JWTEncoderInterface::class);
-
-        $this->client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $encoder->encode([
-            'username' => $user->username(),
-            'roles' => $user->roles()
-        ])));
-
+        $this->client->loginUserInApi(
+            new SecurityUser($user)
+        );
     }
 
     #[When('I have an expired token for :username')]
     public function iHaveAnExpiredTokenFor($username): void
     {
-        $user = $this->userRepository->findByUsername($username);
-
-        $this->user = new SecurityUser($user);
-
-        $this->client->disableReboot();
+        $user = $this->getUserRepository()->findByUsername($username);
 
         $encoder = $this->client->getContainer()->get(JWTEncoderInterface::class);
 
@@ -84,34 +71,22 @@ final class ApiContext implements Context
             'exp' => 1516239022 // 18/01/2018 00:30:22
         ]);
 
-        $this->client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $token));
+        $this->client->setBearerToken($token);
     }
 
     #[When('I send a :method request to :path')]
     public function iSendARequestTo($method, $path)
     {
-        try {
-            $this->client->request($method, $path);
-
-            $this->exception = null;
-        } catch (\Exception $e) {
-            $this->exception = $e;
-        }
+        $this->client->request($method, $path);
     }
 
     #[When('I send a :method request to :path with body:')]
     public function iSendARequestToWithBody($method, $path, PyStringNode $content)
     { 
-        try {
-            $this->client->request($method, $path, [], [], [
-                'CONTENT_TYPE' => 'application/json',
-                'HTTP_ACCEPT' => 'application/json',
-            ], (string) $content);
-
-            $this->exception = null;
-        } catch (\Exception $e) {
-            $this->exception = $e;
-        }
+        $this->client->request($method, $path, [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_ACCEPT' => 'application/json',
+        ], (string) $content);
     }
 
     #[Then('the response JSON should be equal to:')]
@@ -137,20 +112,22 @@ final class ApiContext implements Context
     #[Then('the status code should be :code')]
     public function theStatusCodeShouldBe(int $expectedCode)
     {
-        if (null == $this->exception) {
+        $exception = $this->client->getException();
+
+        if (null == $exception) {
             $code = $this->client->getResponse()->getStatusCode();
         } else {
-            switch (get_class($this->exception)) {
+            switch (get_class($exception)) {
                 case NotFoundHttpException::class:
                     $code = 404;
                     break;
                 default:
-                    $code = $this->exception->getCode();
+                    $code = $exception->getCode();
                     break;
             }
         }
 
-        Assert::assertEquals($expectedCode, $code, null !== $this->exception ? $this->exception->getMessage() : 'Sin excepcion');
+        Assert::assertEquals($expectedCode, $code, null !== $exception ? $exception->getMessage() : 'Sin excepcion');
     }
 
     #[Then('the response header :header should be :value')]

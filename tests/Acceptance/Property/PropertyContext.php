@@ -6,6 +6,8 @@ namespace App\Tests\Acceptance\Property;
 
 use Behat\Step\Given;
 use Behat\Behat\Context\Context;
+use App\Tests\Acceptance\Shared\AcceptanceClient;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use App\Property\Domain\Model\Brand\BrandRepository;
 use App\Property\Domain\Model\Country\CountryRepository;
 use App\Property\Domain\Model\Category\CategoryRepository;
@@ -19,13 +21,37 @@ use App\Tests\Unit\Property\Domain\Model\Destination\DestinationMother;
 
 final class PropertyContext implements Context
 {
+    private AcceptanceClient $client;
+
     public function __construct(
-        private PropertyRepository $propertyRepository,
-        private CountryRepository $countryRepository,
-        private DestinationRepository $destinationRepository,
-        private CategoryRepository $categoryRepository,
-        private BrandRepository $brandRepository,
+        KernelBrowser $kernelBrowser
     ) {
+        $this->client = AcceptanceClient::instance($kernelBrowser);
+    }
+
+    private function getPropertyRepository(): PropertyRepository
+    {
+        return $this->client->getContainer()->get(PropertyRepository::class);
+    }
+
+    private function getDestinationRepository(): DestinationRepository
+    {
+        return $this->client->getContainer()->get(DestinationRepository::class);
+    }
+
+    private function getCountryRepository(): CountryRepository
+    {
+        return $this->client->getContainer()->get(CountryRepository::class);
+    }
+
+    private function getCategoryRepository(): CategoryRepository
+    {
+        return $this->client->getContainer()->get(CategoryRepository::class);
+    }
+
+    private function getBrandRepository(): BrandRepository
+    {
+        return $this->client->getContainer()->get(BrandRepository::class);
     }
 
     #[Given('property :name with id :id exists')]
@@ -33,7 +59,7 @@ final class PropertyContext implements Context
     {
         $property = PropertyMother::fromNameAndId($name, $id);
         
-        $this->propertyRepository->add($property);      
+        $this->getPropertyRepository()->add($property);      
     }    
 
     #[Given('property :name with id :id of account :account exists')]
@@ -41,7 +67,7 @@ final class PropertyContext implements Context
     {
         $property = PropertyMother::fromNameAndAccountAndId($name, $account, $id);
         
-        $this->propertyRepository->add($property);      
+        $this->getPropertyRepository()->add($property);      
     }
 
     #[Given('country :name with id :id exists')]
@@ -49,7 +75,7 @@ final class PropertyContext implements Context
     {
         $country = CountryMother::fromNameAndId($name, $id);
         
-        $this->countryRepository->add($country);      
+        $this->getCountryRepository()->add($country);      
     } 
 
     #[Given('destination :name with id :id exists')]
@@ -57,7 +83,7 @@ final class PropertyContext implements Context
     {
         $destination = DestinationMother::fromNameAndId($name, $id);
         
-        $this->destinationRepository->add($destination);      
+        $this->getDestinationRepository()->add($destination);      
     } 
 
     #[Given('destination :name of country :country with id :id exists')]
@@ -65,7 +91,7 @@ final class PropertyContext implements Context
     {
         $destination = DestinationMother::fromNameAndCountryAndId($name, $country, $id);
         
-        $this->destinationRepository->add($destination);      
+        $this->getDestinationRepository()->add($destination);      
     } 
 
     #[Given('category :name with id :id exists')]
@@ -73,7 +99,7 @@ final class PropertyContext implements Context
     {
         $category = CategoryMother::fromNameAndId($name, $id);
         
-        $this->categoryRepository->add($category);      
+        $this->getCategoryRepository()->add($category);      
     } 
 
     #[Given('brand :name with id :id exists')]
@@ -81,6 +107,6 @@ final class PropertyContext implements Context
     {
         $brand = BrandMother::fromNameAndId($name, $id);
         
-        $this->brandRepository->add($brand);
+        $this->getBrandRepository()->add($brand);
     }
 }

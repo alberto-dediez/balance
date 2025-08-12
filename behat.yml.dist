@@ -7,6 +7,7 @@ default:
                 features: tests/Acceptance
             contexts:
                 - App\Tests\Acceptance\Shared\WebContext
+                - App\Tests\Acceptance\Shared\MailContext
                 - App\Tests\Acceptance\Shared\ApiContext
                 - App\Tests\Acceptance\Shared\SystemContext
                 - App\Tests\Acceptance\Security\SecurityContext

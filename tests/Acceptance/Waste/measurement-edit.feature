@@ -59,7 +59,7 @@ Feature:
     Given container for "plastico" in "hotel" and managed by "sadeco" with id "container" exists
     Given measurement for container "container" and account "mycompany" from user "user" with id "111" exists
     When I am authenticated in API as "user@dediez.software"
-    And I send a PUT request to "/api/measurements/111" with body:
+    And I send a PUT request to "/api/es/measurements/111" with body:
     """
     {
       "quantity": 3,
@@ -91,7 +91,7 @@ Feature:
     Given waste manager "Sadeco" with id "sadeco" of account "mycompany" exists
     Given container for "plastico" in "hotel" and managed by "sadeco" with id "container" exists
     Given measurement for container "container" and account "mycompany" from user "user" with id "111" exists
-    When I send a PUT request to "/api/measurements/111" with body:
+    When I send a PUT request to "/api/es/measurements/111" with body:
     """
     {
       "quantity": 3,

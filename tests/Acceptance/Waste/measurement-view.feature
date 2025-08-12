@@ -10,7 +10,7 @@ Feature:
     Given container for "plastico" in "hotel" and managed by "sadeco" with id "container" exists
     Given measurement for container "container" and account "mycompany" from user "user" with id "111" exists
     When I am authenticated in API as "user@dediez.software"
-    And I send a GET request to "/api/measurements/111"
+    And I send a GET request to "/api/es/measurements/111"
     Then the status code should be 200
     And the response JSON should be similar to:
     """
@@ -36,5 +36,5 @@ Feature:
     Given waste manager "Sadeco" with id "sadeco" of account "mycompany" exists
     Given container for "plastico" in "hotel" and managed by "sadeco" with id "container" exists
     Given measurement for container "container" and account "mycompany" from user "user" with id "111" exists
-    When I send a GET request to "/api/measurements/111"
+    When I send a GET request to "/api/es/measurements/111"
     Then the status code should be 403

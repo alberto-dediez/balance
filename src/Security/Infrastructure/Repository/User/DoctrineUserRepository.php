@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\RecoverToken;
 use App\Security\Domain\Model\User\UserRepository;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -78,6 +79,20 @@ class DoctrineUserRepository implements UserRepository
                 $qb->expr()->eq('u.username', ':username')
             )
             ->setParameter('username', $username)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    public function findByRecoverToken(RecoverToken $recoverToken): ?User
+    {
+        $qb = $this->createQueryBuilderFromFilter(new UserFilter());
+
+        return $qb
+            ->andWhere(
+                $qb->expr()->eq('u.recoverToken.token', ':token')
+            )
+            ->setParameter('token', $recoverToken->token())
             ->getQuery()
             ->getOneOrNullResult()
         ;

@@ -1,0 +1,15 @@
+{% extends '@security/layout.html.twig' %}
+
+{% block form_title %}
+    <h4 class="text-uppercase mt-0">{% trans -%}Modificar contraseña{%- endtrans %}</h4>
+{% endblock %}
+
+{% block form %}
+    {{ form_start(form, {'attr': {'class': 'px-30'}}) }}
+        {{ form_row(form.password) }}
+        
+        <div class="form-group mb-0 text-center">
+            <button class="btn btn-primary w-100 py-8 mb-4 rounded-2" name="submit" type="submit">{% trans -%}Modificar contraseña{%- endtrans %}</button>
+        </div>
+    {{ form_end(form) }}
+{% endblock form %}

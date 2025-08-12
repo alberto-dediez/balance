@@ -10,7 +10,7 @@ Feature:
         Given container for "plastico" in "hotel" and managed by "sadeco" with id "container" exists
         Given measurement for container "container" and account "mycompany" from user "user" with id "111" exists
         When I am authenticated in API as "user@dediez.software"
-        When I send a GET request to "/api/measurements/history"
+        When I send a GET request to "/api/es/measurements/history"
         Then the status code should be 200
         And the response JSON should be similar to:
         """
@@ -33,5 +33,5 @@ Feature:
         """
 
     Scenario: Not authenticated user
-        When I send a GET request to "/api/measurements/history"
+        When I send a GET request to "/api/es/measurements/history"
         Then the status code should be 403

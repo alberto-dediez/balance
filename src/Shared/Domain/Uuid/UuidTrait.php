@@ -2,7 +2,7 @@
 
 namespace App\Shared\Domain\Uuid;
 
-use Symfony\Component\Uid\Uuid;
+use App\Shared\Domain\Uuid\UuidGenerator;
 
 trait UuidTrait
 {
@@ -13,7 +13,7 @@ trait UuidTrait
 
     public static function generate(): self
     {
-        $id = Uuid::v4();
+        $id = UuidGenerator::v7();
 
         return new self($id);
     }

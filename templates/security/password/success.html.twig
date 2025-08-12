@@ -1,0 +1,14 @@
+{% extends '@security/layout.html.twig' %}
+
+{% block form_title %}
+    <h4 class="text-uppercase mt-0">{% trans -%}Contraseña modificada{%- endtrans %}</h4>
+{% endblock %}
+
+{% block form %}
+    <p>
+        {% trans -%}Se ha establecido la nueva contraseña. Pulsa en el siguiente enlace para acceder:{%- endtrans %}
+    </p>
+    <a href="{{ path('app_login') }}" class="btn btn-success w-100 py-8 mb-4 rounded-2">
+        {% trans -%}Acceder{%- endtrans %}
+    </a>
+{% endblock form %}

@@ -7,6 +7,7 @@ use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\RecoverToken;
 
 class UserMother
 {
@@ -87,9 +88,21 @@ class UserMother
         );
     }
 
-    public static function from(UserId $userId, string $username = 'username', Role $role = Role::User, ?AccountId $accountId = null)
+    public static function fromUsernameAndRecoverToken(string $username, string $recoverToken)
     {
-        $user = new User($userId);
+        return self::from(
+            userId: UserId::generate(), 
+            username: $username, 
+            recoverToken: new RecoverToken($recoverToken, new \DateTimeImmutable('NOW +1 HOUR'))
+        );
+    }
+
+    public static function from(UserId $userId, string $username = 'username', Role $role = Role::User, ?AccountId $accountId = null, ?RecoverToken $recoverToken = null)
+    {
+        $user = new User(
+            id: $userId,
+            recoverToken: $recoverToken
+        );
         $user->register($username, 'apassword', $accountId);
         $user->grantRole($role);
 

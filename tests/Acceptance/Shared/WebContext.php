@@ -9,7 +9,6 @@ use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
@@ -23,38 +22,34 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 final class WebContext implements Context
 {
-    private $crawler = null;
+    private AcceptanceClient $client;
 
-    private ?SecurityUser $user;
-
-    private ?\Exception $exception = null;
-
-    public function __construct(private KernelBrowser $client, private UserRepository $userRepository)
+    public function __construct(KernelBrowser $client)
     {
-        $this->client->catchExceptions(false);        
+        $this->client = AcceptanceClient::instance($client);
+    }
+
+    private function getUserRepository(): UserRepository
+    {
+        return $this->client->getContainer()->get(UserRepository::class);
     }
 
     #[When('I am logged as :username')]
     public function iAmLoggedAs($username)
     {
-        $user = $this->userRepository->findByUsername($username);
+        $user = $this->getUserRepository()->findByUsername($username);
+        
+        Assert::assertNotNull($user, 'Usuario no encontrado');
 
-        $this->user = new SecurityUser($user);
-
-        $this->client->disableReboot();
-        $this->client->loginUser($this->user);
+        $this->client->loginUser(
+            new SecurityUser($user)
+        );
     }
 
     #[When('I go to :path')]
     public function iGoTo($path)
     {
-        try {
-            $this->crawler = $this->client->request('GET', $path);
-
-            $this->exception = null;
-        } catch (\Exception $e) {
-            $this->exception = $e;
-        }
+        $this->client->request('GET', $path);
     }
 
     #[When('I follow redirect')]
@@ -66,7 +61,7 @@ final class WebContext implements Context
     #[When('I submit a form with :data and button :text')]
     public function iSubmitAFormWith($data, $text): void
     {
-        $crawler = $this->getCrawler();
+        $crawler = $this->client->getCrawler();
 
         $buttonCrawlerNode = $crawler->selectButton($text);
         $formData = $buttonCrawlerNode->form();
@@ -91,31 +86,28 @@ final class WebContext implements Context
             $formData[$key] = $value;
         }
 
-        try {
-            $this->crawler = $this->client->submit($formData);
-            $this->exception = null;
-        } catch (\Exception $e) {
-            $this->exception = $e;
-        }
+        $this->client->submit($formData);
     }
 
     #[Then('the response status should be :code')]
     public function theResponseStatusShouldBe(int $expectedCode)
     {
-        if (null == $this->exception) {
+        $exception = $this->client->getException();
+
+        if (null == $exception) {
             $code = $this->client->getResponse()->getStatusCode();
         } else {
-            switch (get_class($this->exception)) {
+            switch (get_class($exception)) {
                 case NotFoundHttpException::class:
                     $code = 404;
                     break;
                 default:
-                    $code = $this->exception->getCode();
+                    $code = $exception->getCode();
                     break;
             }
         }
 
-        Assert::assertEquals($expectedCode, $code, null !== $this->exception ? $this->exception->getMessage() : 'Sin excepcion');
+        Assert::assertEquals($expectedCode, $code, null !== $exception ? $exception->getMessage() : 'Sin excepcion');
     }
 
     #[Then('I am redirected to :path')]
@@ -129,7 +121,7 @@ final class WebContext implements Context
     #[Then('I see a form')]
     public function iSeeAForm(): void
     {
-        $crawler = $this->getCrawler();
+        $crawler = $this->client->getCrawler();
 
         $forms = $crawler->filter('form');
 
@@ -139,7 +131,7 @@ final class WebContext implements Context
     #[Then('I see a button with name :name')]
     public function iSeeAButtonWithName($name)
     {
-        $crawler = $this->getCrawler();
+        $crawler = $this->client->getCrawler();
 
         $button = $crawler->selectButton($name);
 
@@ -149,7 +141,7 @@ final class WebContext implements Context
     #[Then('I see a link with name :name')]
     public function iSeeALinkWithName($name)
     {
-        $crawler = $this->getCrawler();
+        $crawler = $this->client->getCrawler();
 
         $button = $crawler->selectLink($name);
 
@@ -159,7 +151,7 @@ final class WebContext implements Context
     #[Then('I see a table with :rows rows')]
     public function iSeeATableWithRows($rows)
     {
-        $crawler = $this->getCrawler();
+        $crawler = $this->client->getCrawler();
 
         $nodes = $crawler->filter('table tr');
 
@@ -190,13 +182,5 @@ final class WebContext implements Context
     public function iSeeAText($text)
     {
         Assert::assertStringContainsString($text, $this->client->getResponse()->getContent());
-    }
-
-    private function getCrawler()
-    {
-        return null == $this->crawler ? 
-            new Crawler($this->client->getResponse()->getContent())
-            : $this->crawler
-        ;
     }
 }

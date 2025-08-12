@@ -7,6 +7,7 @@ use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\RecoverToken;
 use App\Security\Domain\Model\User\UserRepository;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -52,6 +53,21 @@ class InMemoryUserRepository implements UserRepository
 
         foreach ($this->users as $user) {
             if ($user->username() == $username) {
+                return $this->find($user->id());
+            }
+        }
+
+        return null;
+    }
+
+    public function findByRecoverToken(RecoverToken $recoverToken): ?User
+    {
+        if (count($this->users) == 0) {
+            return null;
+        }
+
+        foreach ($this->users as $user) {
+            if ($user->recoverToken()->equals($recoverToken)) {
                 return $this->find($user->id());
             }
         }

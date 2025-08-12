@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace App\Tests\Acceptance\Security;
 
 use Behat\Step\Given;
+use Behat\Hook\AfterScenario;
 use Behat\Behat\Context\Context;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
+use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Tests\Acceptance\Shared\AcceptanceClient;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -16,10 +20,30 @@ use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 
 final class SecurityContext implements Context
 {
+    private AcceptanceClient $client;
+
     public function __construct(
-        private UserRepository $userRepository, 
-        private AccountRepository $accountRepository
+        KernelBrowser $kernelBrowser
     ) {
+        $this->client = AcceptanceClient::instance($kernelBrowser);
+    }
+
+    #[AfterScenario]
+    public function after(AfterScenarioScope $scope)
+    {
+        if (null !== $this->client){
+            $this->client->reset();
+        }
+    }
+
+    private function getUserRepository(): UserRepository
+    {
+        return $this->client->getContainer()->get(UserRepository::class);
+    }
+
+    private function getAccountRepository(): AccountRepository
+    {
+        return $this->client->getContainer()->get(AccountRepository::class);
     }
 
     #[Given('user :username with role :role exists')]
@@ -27,7 +51,7 @@ final class SecurityContext implements Context
     {
         $user = UserMother::fromUsernameAndRole($username, Role::tryFrom($role));
         
-        $this->userRepository->add($user);      
+        $this->getUserRepository()->add($user);      
     }
 
     #[Given('user :username with id :id exists')]
@@ -35,7 +59,7 @@ final class SecurityContext implements Context
     {
         $user = UserMother::fromUsernameAndRoleAndId($username, Role::User, new UserId($id));
         
-        $this->userRepository->add($user);      
+        $this->getUserRepository()->add($user);
     }
 
     #[Given('account :name with id :id exists')]
@@ -43,7 +67,7 @@ final class SecurityContext implements Context
     {
         $account = AccountMother::fromNameAndId($username, $id);
         
-        $this->accountRepository->add($account);      
+        $this->getAccountRepository()->add($account);      
     }    
 
     #[Given('user :username with role :role of account :account exists')]
@@ -51,7 +75,7 @@ final class SecurityContext implements Context
     {
         $user = UserMother::fromUsernameAndRoleAndAccount($username, Role::tryFrom($role), new AccountId($account));
         
-        $this->userRepository->add($user);      
+        $this->getUserRepository()->add($user);      
     }
 
     #[Given('user :username with id :id of account :account exists')]
@@ -64,7 +88,7 @@ final class SecurityContext implements Context
             accountId: new AccountId($account)
         );
         
-        $this->userRepository->add($user);      
+        $this->getUserRepository()->add($user);      
     }
 
     #[Given('user :username with role :role with id :id of account :account exists')]
@@ -77,6 +101,14 @@ final class SecurityContext implements Context
             accountId: new AccountId($account)
         );
         
-        $this->userRepository->add($user);      
+        $this->getUserRepository()->add($user);      
+    }
+
+    #[Given('user :username with recover token :token exists')]
+    public function userWithRecoverTokenExists($username, $token): void
+    {
+        $user = UserMother::fromUsernameAndRecoverToken($username, $token);
+        
+        $this->getUserRepository()->add($user);
     }
 }

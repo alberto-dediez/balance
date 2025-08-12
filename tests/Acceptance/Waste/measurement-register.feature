@@ -41,7 +41,7 @@ Feature:
     Given waste manager "Sadeco" with id "sadeco" of account "mycompany" exists
     Given container for "plastico" in "hotel" and managed by "sadeco" with id "container" exists
     When I am authenticated in API as "user@dediez.software"
-    And I send a POST request to "/api/measurements" with body:
+    And I send a POST request to "/api/es/measurements" with body:
     """
     {
       "container_id": "container",
@@ -74,7 +74,7 @@ Feature:
     Given waste manager "Sadeco" with id "sadeco" of account "mycompany" exists
     Given container for "plastico" in "hotel" and managed by "sadeco" with id "container" exists
     Given measurement for container "container" and account "mycompany" from user "user" with id "111" exists
-    When I send a POST request to "/api/measurements" with body:
+    When I send a POST request to "/api/es/measurements" with body:
     """
     {
       "container_id": "container",
