@@ -38,7 +38,7 @@ final class AcceptanceClient
 
     public function request(string $method, string $path, ?array $server = null, $body = null): void
     {
-        $server = null == $server ? ($this->server) : $server;
+        $server = null == $server ? ($this->server) : array_merge($server, $this->server);
 
         try {
             $this->crawler = $this->client->request($method, $path, [], [], $server, $body);            
@@ -121,7 +121,7 @@ final class AcceptanceClient
 
     public function setBearerToken($token) 
     {
-        $this->server['HTTP_Authorization'] = sprintf('Bearer %s', $token);
+        $this->server['HTTP_AUTHORIZATION'] = sprintf('Bearer %s', $token);
     }
 
     public function reset()
@@ -129,5 +129,8 @@ final class AcceptanceClient
         $this->apiUser = null;
         $this->server = [];
         $this->user = null;
+
+        $this->client->getCookieJar()->clear();
+        $this->client->getHistory()->clear();
     }
 }
