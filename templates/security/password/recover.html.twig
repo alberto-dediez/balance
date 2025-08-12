@@ -1,0 +1,24 @@
+{% extends '@security/layout.html.twig' %}
+
+{% block form_title %}
+    <h4 class="text-uppercase mt-0">{% trans -%}Recuperar contraseña{%- endtrans %}</h4>
+{% endblock %}
+
+{% block form %}
+    {{ form_start(form, {'attr': {'class': 'px-30'}}) }}
+        {{ form_row(form.username, {'label': 'Email' | trans}) }}
+        
+        <div class="form-group mb-0 text-center">
+            <button class="btn btn-primary w-100 py-8 mb-4 rounded-2" name="submit" type="submit">{% trans -%}Recuperar contraseña{%- endtrans %}</button>
+        </div>
+    {{ form_end(form) }}
+
+    <div class="row">
+        <div class="col-12 text-center">
+            <a href="{{ path('home') }}" class="text-muted ms-1 d-flex justify-content-center">
+                <iconify-icon icon="solar:user-line-duotone" class="fs-5 me-2"></iconify-icon>
+                {% trans -%}Acceder{%- endtrans %}
+            </a>
+        </div>
+    </div>
+{% endblock form %}

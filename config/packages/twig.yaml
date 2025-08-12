@@ -9,6 +9,7 @@ twig:
         'templates/components': 'components' 
         'templates/shared': 'shared'
         'templates/security': 'security'
+        '%kernel.project_dir%/assets': assets        
 
 when@test:
     twig:

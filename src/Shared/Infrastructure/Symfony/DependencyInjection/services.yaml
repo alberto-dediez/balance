@@ -1,6 +1,7 @@
 parameters:
     app.locale_default: '%env(LANGUAGE_DEFAULT)%'
     app.locale_list: '%env(LANGUAGE_LIST)%'
+    mailer.from: '%env(MAILER_FROM)%'
 
 services:
     _defaults:
@@ -17,3 +18,12 @@ services:
     App\Shared\Infrastructure\Locale\RequestStackLocaleGetter:
         arguments:
             $defaultLocale: '%app.locale_default%'
+
+    App\Shared\Infrastructure\Email\SymfonyEmailSender:
+        public: true
+        arguments:
+            $mailerFrom: '%mailer.from%'
+
+    App\Shared\Infrastructure\Symfony\Event\EmailListener:
+        public: true
+        shared: true

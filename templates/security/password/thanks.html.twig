@@ -1,0 +1,14 @@
+{% extends '@security/layout.html.twig' %}
+
+{% block form_title %}
+    <h4 class="text-uppercase mt-0">{% trans -%}Gracias{%- endtrans %}</h4>
+{% endblock %}
+
+{% block form %}
+    <p>
+        {% trans -%}Si el email indicado corresponde a un usuario del sistema, deberías recibir un mensaje con las instrucciones para modificar tu contraseña.{%- endtrans %}
+    </p>
+    <p>
+        {% trans -%}En caso contrario, contacta con un administrador.{%- endtrans %}
+    </p>
+{% endblock form %}

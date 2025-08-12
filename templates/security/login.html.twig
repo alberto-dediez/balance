@@ -56,7 +56,15 @@
             value="{{ csrf_token('authenticate') }}"
         >
     </form>
-    <!-- end row -->
+
+    <div class="row">
+        <div class="col-12 text-center">
+            <a href="{{ path('app_recover_password') }}" class="text-muted ms-1 d-flex justify-content-center">
+                <iconify-icon icon="solar:lock-keyhole-minimalistic-line-duotone" class="fs-5 me-2"></iconify-icon>
+                {% trans -%}¿Ha olvidado su contraseña?{%- endtrans %}
+            </a>
+        </div>
+    </div>
 {% endblock form %}
 
 {% block javascripts %}

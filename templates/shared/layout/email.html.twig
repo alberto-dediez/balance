@@ -1,0 +1,45 @@
+{% apply inline_css(source(('@assets/styles/email.scss'))) -%}
+	<!DOCTYPE html>
+	<html lang="en">
+	    <head>
+	        <meta charset="utf-8" />
+	        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	        <!-- App favicon -->
+	        <link rel="shortcut icon" href="{{ absolute_url(asset('images/favicon.png')) }}">
+	    </head>
+
+	    <body itemscope itemtype="http://schema.org/EmailMessage">
+	        <table class="body-wrap">
+	            <tr>
+	                <td class="top">
+	                    <a href="{{ url('home') }}"> 
+	                        <img src="{{ absolute_url(asset('images/logo-dark.png')) }}" height="40" alt="logo"/>
+	                    </a>
+	                </td>
+	            </tr>
+	            <tr>
+	                <td class="container" valign="top">
+	                    <div class="content">
+	                        {% block content %}{% endblock %}
+	                    </div>
+	                </td>
+	            </tr>
+	            <tr>
+	                <td class="footer">
+	                    {% block footer %}
+	                        <p>
+	                            {% trans with {
+	                                '{year}': 'now' | date('Y')
+	                            } -%}
+	                                &copy; {year}
+	                            {%- endtrans %}
+	                        </p>
+	                    {% endblock %}
+	                </td>
+	            </tr>
+	        </table>
+	    </body>
+	</html>
+{%- endapply %}

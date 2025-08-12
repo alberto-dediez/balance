@@ -2,7 +2,7 @@
 
 namespace App\Shared\Domain\Model;
 
-use Symfony\Component\Uid\Uuid;
+use App\Shared\Domain\Uuid\UuidGenerator;
 
 trait AggregateRootIdTrait
 {
@@ -18,7 +18,7 @@ trait AggregateRootIdTrait
 
     public static function generate(): AggregateRootId
     {
-        $id = Uuid::v4();
+        $id = UuidGenerator::v4();
 
         return new self($id);
     }

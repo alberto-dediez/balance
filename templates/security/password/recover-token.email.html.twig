@@ -1,0 +1,14 @@
+{% extends '@shared/layout/email.html.twig' %}
+
+{% block content %}
+    <h3>{% trans -%}Se ha solicitado recuperar la contraseña:{%- endtrans -%}</h3>
+    <p>
+        {% trans with {
+            '{user}': username
+        } -%}Se ha solicitado la recuperación de la contraseña para la cuenta de {user}.{%- endtrans %}
+    </p>
+    <p>{% trans -%}Puede recuperar su contraseña visitando el siguiente enlace:{%- endtrans %}</p>
+    <a href="{{ url('app_modify_password', {'token': token}) }}" class="btn btn-primary">
+        {% trans -%}Modificar contraseña{%- endtrans -%}
+    </a>
+{% endblock %}

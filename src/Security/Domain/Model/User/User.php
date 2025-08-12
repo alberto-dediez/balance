@@ -8,7 +8,9 @@ use App\Shared\Domain\Model\AggregateRoot;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\User\RoleGranted;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\RecoverToken;
 use App\Security\Domain\Model\User\UserRegistered;
+use App\Security\Domain\Model\User\PasswordRecovered;
 
 class User
 {
@@ -23,6 +25,7 @@ class User
         protected AccountId|null $accountId = null,
         protected Account|null $account = null, 
         protected array $roles = [],
+        protected RecoverToken|null $recoverToken = null,
         array $events = [],
         protected bool $removed = false,
         protected ?\DateTimeImmutable $registeredAt = null,
@@ -59,6 +62,16 @@ class User
     public function accountId(): ?AccountId
     {
         return $this->accountId;
+    }
+
+    public function recoverToken(): ?RecoverToken
+    {
+        return $this->recoverToken;
+    }
+
+    public function isRecoverTokenValid(RecoverToken $token): bool
+    {
+        return $this->recoverToken()->equals($token) && !$this->recoverToken()->isExpired();
     }
 
     public function roles(): array
@@ -143,6 +156,32 @@ class User
         );
     }
 
+    public function initPasswordRecovery()
+    {
+        $this->recordApplyAndPublish(
+            new PasswordRecoveryInitialized(
+                userId: $this->id(),
+                username: $this->username(),
+                token: RecoverToken::generate()
+            )
+        );
+    }
+
+    public function recoverPassword(RecoverToken $token, string $password) 
+    {
+        if (!$this->isRecoverTokenValid($token)) {
+            throw new RecoverTokenInvalidException($token);
+        }
+
+        $this->recordApplyAndPublish(
+            new PasswordRecovered(
+                userId: $this->id(),
+                password: $password,
+                token: $this->recoverToken()
+            )
+        );
+    }
+
     public function remove()
     {
         $this->recordApplyAndPublish(
@@ -184,6 +223,17 @@ class User
     public function applyPasswordChanged(PasswordChanged $event)
     {
         $this->password = $event->password();
+    }
+
+    public function applyPasswordRecoveryInitialized(PasswordRecoveryInitialized $event)
+    {
+        $this->recoverToken = $event->token();
+    }
+
+    public function applyPasswordRecovered(PasswordRecovered $event)
+    {
+        $this->password = $event->password();
+        $this->recoverToken = null;
     }
 
     public function applyUserRemoved(UserRemoved $event)
