@@ -4,8 +4,13 @@ namespace App\Waste\Domain\Model\Measurement;
 
 use DateTimeImmutable;
 use App\Waste\Domain\DomainEvent;
-use App\Waste\Domain\Model\Measurement\MeasurementId;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Waste\Domain\Model\Measurement\MeasurementId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 final class MeasurementRemoved extends DomainEvent
 {
@@ -13,6 +18,12 @@ final class MeasurementRemoved extends DomainEvent
 
     public function __construct(
         private MeasurementId $measurementId, 
+        private PropertyId $propertyId,
+        private WasteId $wasteId,
+        private Purpose $purpose,
+        private WasteManagerId $wasteManagerId,
+        private AccountId $accountId,
+        private \DateTimeImmutable $day,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -24,10 +35,46 @@ final class MeasurementRemoved extends DomainEvent
         return $this->measurementId;
     }
 
+    public function propertyId(): PropertyId
+    {
+        return $this->propertyId;
+    }
+
+    public function wasteId(): WasteId
+    {
+        return $this->wasteId;
+    }
+
+    public function purpose(): Purpose
+    {
+        return $this->purpose;
+    }
+    
+    public function wasteManagerId(): WasteManagerId
+    {
+        return $this->wasteManagerId;
+    }
+
+    public function accountId(): ?AccountId
+    {
+        return $this->accountId;
+    }
+
+    public function day(): \DateTimeImmutable
+    {
+        return $this->day;
+    }
+
     public function payload(): ?array
     {
         return [
-            'measurementId' => (string) $this->measurementId
+            'measurementId' => (string) $this->measurementId,
+            'propertyId' => (string) $this->propertyId,
+            'waste' => (string) $this->wasteId,
+            'purpose' => $this->purpose->value,          
+            'wasteManagerId' => (string) $this->wasteManagerId,                        
+            'accountId' => (string) $this->accountId,
+            'day' => $this->day->format('Y-m-d'),                        
         ];
     }
 
@@ -38,6 +85,12 @@ final class MeasurementRemoved extends DomainEvent
     ): static {
         return new MeasurementRemoved(
             measurementId: new MeasurementId($payload['measurementId']),
+            propertyId: new PropertyId($payload['propertyId']),
+            wasteId: new WasteId($payload['waste']), 
+            purpose: Purpose::tryFrom($payload['purpose']),
+            wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId($payload['wasteManagerId']) : WasteManagerId::generate(),
+            day: new \DateTimeImmutable($payload['day']),
+            accountId: new AccountId($payload['accountId']),
             id: $id,
             occurredOn: $occurredOn
         );

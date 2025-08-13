@@ -29,6 +29,7 @@ final class MeasurementRegistered extends DomainEvent
         private WasteManagerId $wasteManagerId,
         private UserId $registeredBy,
         private AccountId $accountId,
+        private \DateTimeImmutable $day,
         private int $quantity = 0,
         private float $load = 0,
         private ?string $justification = null,
@@ -98,6 +99,11 @@ final class MeasurementRegistered extends DomainEvent
         return $this->registeredBy;
     }
 
+    public function day(): \DateTimeImmutable
+    {
+        return $this->day;
+    }
+
     public function payload(): ?array
     {
         return [
@@ -112,7 +118,8 @@ final class MeasurementRegistered extends DomainEvent
             'load' => $this->load,
             'justification' => $this->justification,
             'accountId' => (string) $this->accountId,
-            'registeredBy' => (string) $this->registeredBy
+            'registeredBy' => (string) $this->registeredBy,
+            'day' => (string) $this->day->format('Y-m-d'),
         ];
     }
 
@@ -133,6 +140,7 @@ final class MeasurementRegistered extends DomainEvent
             load: $payload['load'],
             justification: $payload['justification'],
             registeredBy: new UserId($payload['registeredBy']),
+            day: isset($payload['day']) ? new \DateTimeImmutable($payload['day']): $occurredOn,
             accountId: new AccountId($payload['accountId']),
             id: $id,
             occurredOn: $occurredOn

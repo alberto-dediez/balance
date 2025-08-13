@@ -130,7 +130,8 @@ class Measurement
                 load: $load,
                 justification: $justification,
                 accountId: $accountId,
-                registeredBy: $registeredBy
+                registeredBy: $registeredBy,
+                day: new \DateTimeImmutable("NOW")
             )
         );
     }
@@ -154,7 +155,13 @@ class Measurement
     {
         $this->recordApplyAndPublish(
             new MeasurementRemoved(
-                measurementId: $this->id()
+                measurementId: $this->id(),
+                propertyId: $this->propertyId(),
+                wasteId: $this->wasteId(),
+                purpose: $this->purpose(),
+                wasteManagerId: $this->wasteManagerId(),
+                accountId: $this->accountId(),
+                day: $this->day()
             )
         );
     }
