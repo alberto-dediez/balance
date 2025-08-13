@@ -75,13 +75,13 @@ class RegisterMeasurementService
         $container = $this->containerRepository->find($request->containerId);
 
         if (null == $container) {
-            throw new \InvalidArgumentException("Debes especificar una contenedor válido");
+            throw new \InvalidArgumentException("Debes especificar un contenedor válido");
         }
 
         $property = $this->propertyRepository->find($container->propertyId());
 
         if (null == $property) {
-            throw new \InvalidArgumentException("Debes especificar una contenedor válido");
+            throw new \InvalidArgumentException("Debes especificar una propiedad válida");
         }
 
         $user = $this->userRepository->find($request->registeredBy);

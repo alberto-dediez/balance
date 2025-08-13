@@ -4,9 +4,14 @@ namespace App\Waste\Infrastructure\Repository\Measurement;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\DailyWaste\DailyWaste;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Waste\Domain\Model\Measurement\MeasurementFilter;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -48,16 +53,16 @@ class DoctrineMeasurementRepository implements MeasurementRepository
         ;
     }
 
-    public function findByDay(DailyWaste $dailyWaste): array
+    public function findByDay(\DateTimeImmutable $day, PropertyId $propertyId, WasteId $wasteId, Purpose $purpose, WasteManagerId $wasteManagerId, AccountId $accountId): array
     {
         $filter = new MeasurementFilter(
             limit: 0,
-            propertyId: $dailyWaste->propertyId(),
-            wasteId: $dailyWaste->wasteId(),
-            wasteManagerId: $dailyWaste->wasteManagerId(),
-            purpose: $dailyWaste->purpose(),
-            accountId: $dailyWaste->accountId(),
-            registeredAt: $dailyWaste->day()
+            propertyId: $propertyId,
+            wasteId: $wasteId,
+            wasteManagerId: $wasteManagerId,
+            purpose: $purpose,
+            accountId: $accountId,
+            registeredAt: $day
         );
 
         return $this->findByFilter($filter);

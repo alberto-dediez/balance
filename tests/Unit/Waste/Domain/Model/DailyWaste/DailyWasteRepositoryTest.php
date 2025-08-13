@@ -87,6 +87,50 @@ abstract class DailyWasteRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
+    public function testFindByDay()
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+
+        $dailyFromAccount = DailyWasteMother::fromAccount(
+            $accountId
+        );
+
+        $repository->add(
+            DailyWasteMother::random()
+        );
+        $repository->add(
+            DailyWasteMother::random()
+        );
+        $repository->add(
+            DailyWasteMother::random()
+        );
+        $repository->add(
+            DailyWasteMother::random()
+        );
+        $repository->add(
+            DailyWasteMother::random()
+        );
+        $repository->add(
+            $dailyFromAccount
+        );
+
+        $filter = new DailyWasteFilter();
+
+        $result = $repository->findByDay(
+            day: $dailyFromAccount->day(),
+            propertyId: $dailyFromAccount->propertyId(),
+            wasteId: $dailyFromAccount->wasteId(),
+            purpose: $dailyFromAccount->purpose(),
+            wasteManagerId: $dailyFromAccount->wasteManagerId(),
+            accountId: $dailyFromAccount->accountId()
+        );
+
+        $this->assertNotNull($result);
+        $this->assertTrue($result->id()->equals($dailyFromAccount->id()));
+    }
+
     public function testFindByFilterWithLimitZeroReturnAllElements()
     {
         $repository = $this->createSUT();

@@ -3,16 +3,16 @@
 namespace App\Waste\Infrastructure\Symfony\Form;
 
 use Symfony\Component\Form\FormBuilderInterface;
-use App\Waste\Infrastructure\Symfony\Form\Type\PurposeType;
-use App\Waste\Infrastructure\Symfony\Form\Type\WasteIdType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Waste\Infrastructure\Symfony\Form\Type\PropertyIdType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
-use App\Waste\Infrastructure\Symfony\Form\Type\ContainerIdType;
+use App\Waste\Infrastructure\Symfony\Form\Type\PurposeType;
+use App\Waste\Infrastructure\Symfony\Form\Type\WasteIdType;
+use App\Waste\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use App\Waste\Infrastructure\Symfony\Form\Type\WasteManagerIdType;
-use App\Waste\Infrastructure\Symfony\Form\Type\MeasurementMethodType;
 use App\Waste\Application\Measurement\List\ListMeasurementsRequest;
+use App\Waste\Infrastructure\Symfony\Form\Type\MeasurementMethodType;
 
 class ListMeasurementsType extends BaseFilterType
 {
@@ -43,6 +43,11 @@ class ListMeasurementsType extends BaseFilterType
                 'label' => new TranslatableMessage('Gestor de residuos'),
                 'required' => false,
                 'placeholder' => new TranslatableMessage('Todos los gestores')
+            ])
+            ->add('registeredAt', DateType::class, [
+                'label' => new TranslatableMessage('Fecha de registro'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Todas las fechas')
             ])
         ;
         

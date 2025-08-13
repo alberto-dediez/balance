@@ -39,15 +39,27 @@ class WasteMother
         );
     }
 
+    public static function fromDensityAndId(string $density, string $id)
+    {
+        return self::from(
+            name: 'waste-' . rand(100, 999),
+            isDangerous: rand(0, 1) == 1,
+            density: $density,
+            id: $id
+        );
+    }
+
     public static function from(
         string $name, 
         bool $isDangerous,
-        string $id
+        string $id,
+        string $density = '1.00', 
+        string $color = '#c3d300',
     ) {
         $waste = new Waste(
             id: new WasteId($id)
         );
-        $waste->register($name, $isDangerous, '0.00', '#c3d300');
+        $waste->register($name, $isDangerous, $density, $color);
 
         return $waste;
     }
@@ -57,6 +69,7 @@ class WasteMother
         return self::from(
             name: 'waste-' . rand(100, 999),
             isDangerous: rand(0, 1) == 1,
+            density: rand(1, 100) / 100,
             id: (string) WasteId::generate()
         );
     }
