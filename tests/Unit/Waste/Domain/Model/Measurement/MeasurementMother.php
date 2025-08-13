@@ -6,9 +6,10 @@ use App\Waste\Domain\Model\Waste\WasteId;
 use App\Security\Domain\Model\User\UserId;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Container\Container;
-use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\DailyWaste\DailyWaste;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
@@ -29,6 +30,27 @@ class MeasurementMother
         );
     }
 
+    public static function fromDay(DailyWaste $dailyWaste): Measurement
+    {
+        $measurementMethod = MeasurementMethod::cases()[rand(0, count(MeasurementMethod::cases())-1)];
+
+        return self::from(
+            measurementId: MeasurementId::generate(),
+            propertyId: $dailyWaste->propertyId(),
+            wasteId: $dailyWaste->wasteId(),
+            wasteManagerId: $dailyWaste->wasteManagerId(),
+            containerId: ContainerId::generate(),
+            registeredBy: UserId::generate(),
+            accountId: $dailyWaste->accountId(),
+            purpose: $dailyWaste->purpose(),
+            measurementMethod: $measurementMethod,
+            quantity: rand(1, 9),
+            load: rand(0, 100) / 100,
+            justification: null,
+            registeredAt: $dailyWaste->day()
+        );
+    }
+
     public static function from(
         MeasurementId $measurementId, 
         PropertyId $propertyId,
@@ -41,8 +63,28 @@ class MeasurementMother
         MeasurementMethod $measurementMethod = MeasurementMethod::Volume,
         int $quantity = 0,
         float $load = 0,
-        ?string $justification = null
+        ?string $justification = null,
+        ?\DateTimeImmutable $registeredAt = null
     ) {
+
+        if (null !== $registeredAt) {
+            return new Measurement(
+                id: $measurementId,
+                containerId: $containerId,
+                propertyId: $propertyId,
+                wasteId: $wasteId,
+                purpose: $purpose,
+                measurementMethod: $measurementMethod,
+                wasteManagerId: $wasteManagerId,
+                quantity: $quantity, 
+                load: $load,
+                justification: $justification,
+                accountId: $accountId, 
+                registeredBy: $registeredBy,
+                registeredAt: $registeredAt
+            );
+        }
+
         $measurement = new Measurement(
             id: $measurementId
         );

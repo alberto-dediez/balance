@@ -25,6 +25,7 @@ class MeasurementFilter
         public ?Purpose $purpose = null,
         public ?AccountId $accountId = null,
         public ?UserId $userId = null,
+        public ?\DateTimeImmutable $registeredAt = null,
         int $limit = 10,
         string $orderBy = 'default',
         string $orderWay = 'ASC',

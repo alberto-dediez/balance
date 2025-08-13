@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\Repository\Measurement;
 
+use App\Waste\Domain\Model\DailyWaste\DailyWaste;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Measurement\MeasurementFilter;
@@ -41,6 +42,21 @@ class InMemoryMeasurementRepository implements MeasurementRepository
             ? $this->measurements[(string) $measurementId]
             : null
         ;
+    }
+
+    public function findByDay(DailyWaste $dailyWaste): array
+    {
+        $filter = new MeasurementFilter(
+            limit: 0,
+            propertyId: $dailyWaste->propertyId(),
+            wasteId: $dailyWaste->wasteId(),
+            wasteManagerId: $dailyWaste->wasteManagerId(),
+            purpose: $dailyWaste->purpose(),
+            accountId: $dailyWaste->accountId(),
+            registeredAt: $dailyWaste->day()
+        );
+
+        return $this->findByFilter($filter);
     }
 
     public function findByFilter(MeasurementFilter $filter): array
@@ -117,6 +133,16 @@ class InMemoryMeasurementRepository implements MeasurementRepository
                 && (
                     null == $measurement->registeredBy()
                     || false == $measurement->registeredBy()->equals($filter->userId)
+                )
+            ) {
+                continue;
+            }
+
+            if (
+                null !== $filter->registeredAt
+                && (
+                    null == $measurement->registeredAt()
+                    || $measurement->registeredAt()->format('Y-m-d') !== $filter->registeredAt->format('Y-m-d')
                 )
             ) {
                 continue;

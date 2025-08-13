@@ -4,6 +4,7 @@ namespace App\Waste\Infrastructure\Repository\Measurement;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Waste\Domain\Model\DailyWaste\DailyWaste;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Measurement\MeasurementFilter;
@@ -45,6 +46,21 @@ class DoctrineMeasurementRepository implements MeasurementRepository
             ->getQuery()
             ->getOneOrNullResult()
         ;
+    }
+
+    public function findByDay(DailyWaste $dailyWaste): array
+    {
+        $filter = new MeasurementFilter(
+            limit: 0,
+            propertyId: $dailyWaste->propertyId(),
+            wasteId: $dailyWaste->wasteId(),
+            wasteManagerId: $dailyWaste->wasteManagerId(),
+            purpose: $dailyWaste->purpose(),
+            accountId: $dailyWaste->accountId(),
+            registeredAt: $dailyWaste->day()
+        );
+
+        return $this->findByFilter($filter);
     }
 
     private function createQueryBuilderFromFilter(MeasurementFilter $filter): QueryBuilder
@@ -124,6 +140,15 @@ class DoctrineMeasurementRepository implements MeasurementRepository
                     $qb->expr()->eq('m.registeredBy', ':userId')
                 )
                 ->setParameter('userId', $filter->userId)
+            ;
+        }
+
+        if (null !== $filter->registeredAt) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->like('m.registeredAt', ':registeredAt')
+                )
+                ->setParameter('registeredAt', sprintf("%s%%", $filter->registeredAt->format('Y-m-d')))
             ;
         }
 

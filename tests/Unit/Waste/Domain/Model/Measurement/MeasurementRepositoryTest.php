@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Waste\Domain\Model\Measurement;
 
+use App\Tests\Unit\Waste\Domain\Model\DailyWaste\DailyWasteMother;
 use App\Waste\Domain\Model\Container\ContainerId;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Waste\Domain\Model\Measurement\MeasurementFilter;
@@ -83,6 +84,38 @@ abstract class MeasurementRepositoryTest extends KernelTestCase
         $result = $repository->findByFilter($filter);
 
         $this->assertCount(1, $result);
+    }
+
+    public function testFindByDay()
+    {
+        $dailyWaste = DailyWasteMother::random();
+
+        $repository = $this->createSUT();
+
+        $containerId = ContainerId::generate();
+
+        $repository->add(
+            MeasurementMother::fromDay($dailyWaste)
+        );
+        $repository->add(
+            MeasurementMother::fromDay($dailyWaste)
+        );
+        $repository->add(
+            MeasurementMother::fromDay($dailyWaste)
+        );
+        $repository->add(
+            MeasurementMother::fromDay($dailyWaste)
+        );
+        $repository->add(
+            MeasurementMother::random()
+        );
+        $repository->add(
+            MeasurementMother::random()
+        );
+
+        $result = $repository->findByDay($dailyWaste);
+
+        $this->assertCount(4, $result);
     }
 
     public function testFindByFilterWithLimitZeroReturnAllElements()

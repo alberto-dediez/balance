@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Waste\Domain\Model\DailyWaste;
+
+use App\Shared\Domain\Model\Filter;
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
+
+class DailyWasteFilter
+{
+    use Filter;
+
+    public function __construct(
+        public ?PropertyId $propertyId = null,
+        public ?WasteId $wasteId = null,
+        public ?WasteManagerId $wasteManagerId = null,
+        public ?Purpose $purpose = null,
+        public ?AccountId $accountId = null,
+        public ?\DateTimeImmutable $day = null,
+        int $limit = 10,
+        string $orderBy = 'default',
+        string $orderWay = 'ASC',
+
+    ) {
+        $this->limit = $limit;
+        $this->orderBy = $orderBy;
+        $this->orderWay = $orderWay;
+    }
+}

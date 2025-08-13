@@ -22,6 +22,7 @@ doctrine:
             measurement_id: App\Waste\Infrastructure\Symfony\Doctrine\Type\MeasurementIdType
             waste_id: App\Waste\Infrastructure\Symfony\Doctrine\Type\WasteIdType
             waste_manager_id: App\Waste\Infrastructure\Symfony\Doctrine\Type\WasteManagerIdType
+            daily_waste_id: App\Waste\Infrastructure\Symfony\Doctrine\Type\DailyWasteIdType
 
     orm:
         auto_generate_proxy_classes: true

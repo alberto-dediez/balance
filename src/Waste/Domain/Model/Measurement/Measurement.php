@@ -84,6 +84,11 @@ class Measurement
         return $this->load;
     }
 
+    public function day(): \DateTimeImmutable
+    {
+        return $this->registeredAt();
+    }
+
     public function justification(): ?string
     {
         return $this->justification;

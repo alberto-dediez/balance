@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Waste\Domain\Model\DailyWaste\DailyWaste" table="daily_wastes">
+        <id name="id" type="daily_waste_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="propertyId" type="property_id" nullable="true" />
+        <field name="accountId" type="account_id" nullable="true" />
+        <field name="wasteId" type="waste_id" nullable="true" />
+        <field name="purpose" type="string" enum-type="App\Waste\Domain\Model\Container\Purpose" nullable="false" />
+        <field name="wasteManagerId" type="waste_manager_id" nullable="true" />
+
+        <field name="load" type="decimal" scale="4" precision="14" nullable="false" column="container_load" />
+        
+        <field name="day" type="datetime_immutable" column="registered_at" nullable="false"/>
+
+        <unique-constraints>
+            <unique-constraint columns="property_id,account_id,waste_id,purpose,waste_manager_id" name="daily_wastes_search_idx" />
+        </unique-constraints>
+    </entity>
+
+</doctrine-mapping>
