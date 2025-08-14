@@ -18,10 +18,10 @@
 
         <field name="load" type="decimal" scale="4" precision="14" nullable="false" column="container_load" />
         
-        <field name="day" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="day" type="datetime_immutable" column="day" nullable="false"/>
 
         <unique-constraints>
-            <unique-constraint columns="property_id,account_id,waste_id,purpose,waste_manager_id" name="daily_wastes_search_idx" />
+            <unique-constraint columns="property_id,account_id,waste_id,purpose,waste_manager_id,day" name="daily_wastes_search_idx" />
         </unique-constraints>
     </entity>
 

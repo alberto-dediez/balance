@@ -75,4 +75,20 @@ class DailyWasteMother
             day: new \DateTimeImmutable(sprintf("NOW -%s DAYS", rand(0, 500)))
         );
     }
+
+    public static function fromDayAndIdAndAccount(string $day, string $dailyWasteId, string $accountId)
+    {
+        $purpose = Purpose::cases()[rand(0, count(Purpose::cases())-1)];
+        
+        return self::from(
+            dailyWasteId: new DailyWasteId($dailyWasteId),
+            propertyId: PropertyId::generate(),
+            wasteId: WasteId::generate(),
+            wasteManagerId: WasteManagerId::generate(),
+            accountId: new AccountId($accountId),
+            purpose: $purpose,
+            load: rand(0, 100) / 100,
+            day: new \DateTimeImmutable($day)
+        );
+    }
 }

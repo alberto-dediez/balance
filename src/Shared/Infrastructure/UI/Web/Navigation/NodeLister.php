@@ -136,6 +136,11 @@ class NodeLister
                     label: new TranslatableMessage("Mediciones"),
                     icon: "solar:ruler-line-duotone",
                     target: $this->router->generate('measurements')
+                ),
+                new Node(
+                    label: new TranslatableMessage("Totales diarios"),
+                    icon: "solar:calculator-line-duotone",
+                    target: $this->router->generate('daily_wastes')
                 )
             ]
         );

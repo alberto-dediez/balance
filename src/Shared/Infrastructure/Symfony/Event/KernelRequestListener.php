@@ -2,6 +2,7 @@
 
 namespace App\Shared\Infrastructure\Symfony\Event;
 
+use App\Shared\Domain\Event\DomainEventPublisher;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
@@ -20,6 +21,7 @@ class KernelRequestListener
 
     public function __invoke(RequestEvent $event): void
     {
-        
+        $domainEventPublisher = DomainEventPublisher::instance()
+            ->lock();    
     }
 }

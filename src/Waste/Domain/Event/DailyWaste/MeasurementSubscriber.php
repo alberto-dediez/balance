@@ -39,6 +39,9 @@ class MeasurementSubscriber implements DomainEventSubscriber
                 case MeasurementUpdated::class:
                     $this->handleUpdated($event);
                     break;
+                default: 
+                    throw new \RuntimeException("No handler for event!");
+                    break;
             }
         } catch (\InvalidArgumentException $e) {
 

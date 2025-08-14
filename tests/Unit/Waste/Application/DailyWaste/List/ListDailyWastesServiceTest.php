@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Waste\Application\DailyWaste\List;
 
 use PHPUnit\Framework\TestCase;
+use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -27,7 +28,7 @@ class ListDailyWastesServiceTest extends TestCase
         $sut = $this->createSUT($repository);
 
         $account = new Account(AccountId::generate());
-        $user = UserMother::fromUsernameAndAccount('test', $account);
+        $user = UserMother::fromUsernameAndRoleAndAccount('test', Role::Owner, $account->id());
 
         $repository->add(DailyWasteMother::fromAccount($account->id()));
         $repository->add(DailyWasteMother::fromAccount($account->id()));

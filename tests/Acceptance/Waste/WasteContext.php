@@ -18,9 +18,11 @@ use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
+use App\Tests\Unit\Waste\Domain\Model\DailyWaste\DailyWasteMother;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
 use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
 
@@ -57,6 +59,11 @@ final class WasteContext implements Context
     public function getWasteManagerRepository() : WasteManagerRepository
     {
         return $this->client->getContainer()->get(WasteManagerRepository::class);
+    }    
+
+    public function getDailyWasteRepository() : DailyWasteRepository
+    {
+        return $this->client->getContainer()->get(DailyWasteRepository::class);
     }    
 
     #[Given('waste :name with id :id exists')]
@@ -119,5 +126,13 @@ final class WasteContext implements Context
         );
 
         $this->getWasteManagerRepository()->add($wasteManager);
+    }
+
+    #[Given('daily waste for day :day with id :dailyWasteId of account :accountId exists')]
+    public function dailyWasteForDayWithIdOfAccountExists($day, $dailyWasteId, $accountId): void
+    {
+        $dailyWaste = DailyWasteMother::fromDayAndIdAndAccount($day, $dailyWasteId, $accountId);
+
+        $this->getDailyWasteRepository()->add($dailyWaste);
     }
 }

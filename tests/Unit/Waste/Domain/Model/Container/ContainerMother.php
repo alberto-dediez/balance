@@ -112,7 +112,7 @@ class ContainerMother
         WasteManagerId $wasteManagerId,
         Purpose $purpose = Purpose::Waste, 
         MeasurementMethod $measurementMethod = MeasurementMethod::Volume,
-        string $volume = '0'
+        string $volume = '10'
     ) {
         $container = new Container(
             id: $containerId

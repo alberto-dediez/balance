@@ -22,7 +22,7 @@ class DailyWasteFilter
         public ?\DateTimeImmutable $day = null,
         int $limit = 10,
         string $orderBy = 'default',
-        string $orderWay = 'ASC',
+        string $orderWay = 'DESC',
 
     ) {
         $this->limit = $limit;

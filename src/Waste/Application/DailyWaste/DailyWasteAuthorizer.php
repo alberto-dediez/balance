@@ -36,7 +36,7 @@ final class DailyWasteAuthorizer extends AbstractAuthorizer
             return false;
         }
         
-        return true;
+        return $user->hasRole(Role::Owner);
     }
 
     protected function canEdit(mixed $subject, User $user): bool

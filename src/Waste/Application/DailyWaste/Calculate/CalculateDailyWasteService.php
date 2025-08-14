@@ -121,7 +121,7 @@ class CalculateDailyWasteService
                 $load = $measurement->load();
             }
 
-            return $totalLoad + $load;
+            return $totalLoad + $load * $measurement->quantity();
         }, 0.0);
     }
 }
