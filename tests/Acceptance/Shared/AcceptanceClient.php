@@ -97,7 +97,7 @@ final class AcceptanceClient
     {
         $container = $this->client->getContainer();
 
-        return $container->has('test.service_container') ? $container->get('test.service_container') : $container;
+        return $container;
     }
 
     public function loginUser(SecurityUser $user)
