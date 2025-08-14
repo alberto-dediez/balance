@@ -3,7 +3,7 @@
 <table class="table">
     <tr>
         {% for column in columns %}
-            {% if column.sortable is defined and column.sortableBy is defined and column.sortable %}
+            {% if column.sortable is defined and column.sortableBy is defined and column.sortable and form is defined %}
                 <twig:List:SortableHead 
                     order="{{ form.vars.value.orderBy }}" 
                     way="{{ form.vars.value.orderWay }}" 

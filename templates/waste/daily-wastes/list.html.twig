@@ -33,7 +33,11 @@
             </td>
             <td>{{ element.purpose.value | trans({}, 'purpose') }}</td>
             <td>{{ element.day | date('d/m/Y') }}</td>
-            <td></td>
+            <td>
+                {% if element | is_authorized('view') %}
+                    <twig:List:Action:View path="{{ path('daily_wastes_view', {'dailyWasteId': element.id}) }}" />
+                {% endif %}
+            </td>
         </tr>
     </twig:List:Table>
 {% endblock %}
