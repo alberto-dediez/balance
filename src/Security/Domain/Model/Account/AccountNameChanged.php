@@ -4,8 +4,9 @@ namespace App\Security\Domain\Model\Account;
 
 use DateTimeImmutable;
 use App\Security\Domain\DomainEvent;
-use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
+use App\Security\Domain\Model\Account\AccountId;
 
 final class AccountNameChanged extends DomainEvent
 {
@@ -28,6 +29,11 @@ final class AccountNameChanged extends DomainEvent
     public function name(): string
     {
         return $this->name;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->accountId();
     }
 
     public function payload(): ?array

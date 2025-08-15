@@ -13,6 +13,7 @@ class RecordedEventFilter
         public ?UserId $userId = null,
         public ?string $eventName = null,
         public ?string $context = null,
+        public ?string $aggregateRootId = null,
         int $limit = 10
     ) {
         $this->limit = $limit;

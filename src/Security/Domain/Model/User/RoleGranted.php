@@ -7,6 +7,7 @@ use App\Security\Domain\DomainEvent;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 
 final class RoleGranted extends DomainEvent
 {
@@ -29,6 +30,11 @@ final class RoleGranted extends DomainEvent
     public function role(): Role
     {
         return $this->role;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->userId();
     }
 
     public function payload(): ?array

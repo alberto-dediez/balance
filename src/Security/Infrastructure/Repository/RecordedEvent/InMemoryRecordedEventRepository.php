@@ -57,11 +57,15 @@ class InMemoryRecordedEventRepository implements RecordedEventRepository
                 continue;
             }
 
-            if (!empty($filter->eventName) && $filter->eventName == $event->eventName()) {
+            if (!empty($filter->eventName) && $filter->eventName !== $event->eventName()) {
                 continue;
             }
 
-            if (!empty($filter->context) && $filter->context == $event->context()) {
+            if (!empty($filter->context) && $filter->context !== $event->context()) {
+                continue;
+            }
+
+            if (!empty($filter->aggregateRootId) && $filter->aggregateRootId !== $event->aggregateRootId()) {
                 continue;
             }
 

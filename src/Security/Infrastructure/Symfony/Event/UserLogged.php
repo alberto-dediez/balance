@@ -5,6 +5,7 @@ namespace App\Security\Infrastructure\Symfony\Event;
 use DateTimeImmutable;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 
 final class UserLogged extends InfrastructureEvent
 {
@@ -27,6 +28,11 @@ final class UserLogged extends InfrastructureEvent
     public function firewall(): string
     {
         return $this->firewall;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->userId();
     }
 
     public function payload(): ?array

@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Shared\Domain\Event;
 use PHPUnit\Framework\TestCase;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 
 class DomainEventPublisherTest extends TestCase
@@ -52,6 +53,11 @@ class DomainEventPublisherTest extends TestCase
 class FakeEvent extends DomainEvent
 {
     public function payload(): ?array
+    {
+        return null;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
     {
         return null;
     }
