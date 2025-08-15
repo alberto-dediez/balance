@@ -369,6 +369,90 @@
         <source>Detalle</source>
         <target>Detalle</target>
       </trans-unit>
+      <trans-unit id="BWmiYyq" resname="Instrucciones para recuperar contraseña">
+        <source>Instrucciones para recuperar contraseña</source>
+        <target>Instrucciones para recuperar contraseña</target>
+      </trans-unit>
+      <trans-unit id="1fa2tNs" resname="&lt;s&gt;{userId}&lt;/s&gt;">
+        <source>&lt;s&gt;{userId}&lt;/s&gt;</source>
+        <target><![CDATA[<s>{userId}</s>]]></target>
+      </trans-unit>
+      <trans-unit id="ikQf2pj" resname="Entidad">
+        <source>Entidad</source>
+        <target>Entidad</target>
+      </trans-unit>
+      <trans-unit id="ovSSGz4" resname="Repetir Contraseña">
+        <source>Repetir Contraseña</source>
+        <target>Repetir Contraseña</target>
+      </trans-unit>
+      <trans-unit id="eASLQUc" resname="Las contraseñas no coinciden.">
+        <source>Las contraseñas no coinciden.</source>
+        <target>Las contraseñas no coinciden.</target>
+      </trans-unit>
+      <trans-unit id="oaO4qOc" resname="&amp;copy; {year}">
+        <source>&amp;copy; {year}</source>
+        <target><![CDATA[&copy; {year}]]></target>
+      </trans-unit>
+      <trans-unit id="__KqZ1F" resname="¿Ha olvidado su contraseña?">
+        <source>¿Ha olvidado su contraseña?</source>
+        <target>¿Ha olvidado su contraseña?</target>
+      </trans-unit>
+      <trans-unit id="86Bl9iH" resname="Se ha modificado la contraseña del usuario &quot;{user}&quot;">
+        <source>Se ha modificado la contraseña del usuario "{user}"</source>
+        <target>Se ha modificado la contraseña del usuario "{user}"</target>
+      </trans-unit>
+      <trans-unit id="41PaaAu" resname="Recuperar contraseña">
+        <source>Recuperar contraseña</source>
+        <target>Recuperar contraseña</target>
+      </trans-unit>
+      <trans-unit id="IZPle9z" resname="Contraseña no modificada">
+        <source>Contraseña no modificada</source>
+        <target>Contraseña no modificada</target>
+      </trans-unit>
+      <trans-unit id="iz7645h" resname="El email indicado o el código de recuperación no es correcto. ¿Puede que haya pasado demasiado tiempo?">
+        <source>El email indicado o el código de recuperación no es correcto. ¿Puede que haya pasado demasiado tiempo?</source>
+        <target>El email indicado o el código de recuperación no es correcto. ¿Puede que haya pasado demasiado tiempo?</target>
+      </trans-unit>
+      <trans-unit id="GCKbwF1" resname="Puede solicitar un nuevo código en el siguiente enlace.">
+        <source>Puede solicitar un nuevo código en el siguiente enlace.</source>
+        <target>Puede solicitar un nuevo código en el siguiente enlace.</target>
+      </trans-unit>
+      <trans-unit id="oBfBIUj" resname="Contraseña modificada">
+        <source>Contraseña modificada</source>
+        <target>Contraseña modificada</target>
+      </trans-unit>
+      <trans-unit id="5RtaHwu" resname="Se ha establecido la nueva contraseña. Pulsa en el siguiente enlace para acceder:">
+        <source>Se ha establecido la nueva contraseña. Pulsa en el siguiente enlace para acceder:</source>
+        <target>Se ha establecido la nueva contraseña. Pulsa en el siguiente enlace para acceder:</target>
+      </trans-unit>
+      <trans-unit id="dQ4ftj4" resname="Modificar contraseña">
+        <source>Modificar contraseña</source>
+        <target>Modificar contraseña</target>
+      </trans-unit>
+      <trans-unit id="2mP7Qaf" resname="Se ha solicitado recuperar la contraseña:">
+        <source>Se ha solicitado recuperar la contraseña:</source>
+        <target>Se ha solicitado recuperar la contraseña:</target>
+      </trans-unit>
+      <trans-unit id="EixoCzu" resname="Se ha solicitado la recuperación de la contraseña para la cuenta de {user}.">
+        <source>Se ha solicitado la recuperación de la contraseña para la cuenta de {user}.</source>
+        <target>Se ha solicitado la recuperación de la contraseña para la cuenta de {user}.</target>
+      </trans-unit>
+      <trans-unit id="e3s0v3I" resname="Puede recuperar su contraseña visitando el siguiente enlace:">
+        <source>Puede recuperar su contraseña visitando el siguiente enlace:</source>
+        <target>Puede recuperar su contraseña visitando el siguiente enlace:</target>
+      </trans-unit>
+      <trans-unit id="MvjyNik" resname="Gracias">
+        <source>Gracias</source>
+        <target>Gracias</target>
+      </trans-unit>
+      <trans-unit id="uAnRzZS" resname="Si el email indicado corresponde a un usuario del sistema, deberías recibir un mensaje con las instrucciones para modificar tu contraseña.">
+        <source>Si el email indicado corresponde a un usuario del sistema, deberías recibir un mensaje con las instrucciones para modificar tu contraseña.</source>
+        <target>Si el email indicado corresponde a un usuario del sistema, deberías recibir un mensaje con las instrucciones para modificar tu contraseña.</target>
+      </trans-unit>
+      <trans-unit id="L7nVIYX" resname="En caso contrario, contacta con un administrador.">
+        <source>En caso contrario, contacta con un administrador.</source>
+        <target>En caso contrario, contacta con un administrador.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
