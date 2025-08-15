@@ -5,6 +5,7 @@ namespace App\Property\Domain\Model\Property;
 use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
@@ -36,6 +37,11 @@ final class PropertyUnmatched extends DomainEvent
     public function externalId(): ?ExternalId
     {
         return $this->externalId;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return null;
     }
 
     public function payload(): ?array

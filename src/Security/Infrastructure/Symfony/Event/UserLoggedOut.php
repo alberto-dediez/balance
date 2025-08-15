@@ -5,6 +5,7 @@ namespace App\Security\Infrastructure\Symfony\Event;
 use DateTimeImmutable;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 
 final class UserLoggedOut extends InfrastructureEvent
 {
@@ -21,6 +22,11 @@ final class UserLoggedOut extends InfrastructureEvent
     public function userId(): UserId
     {
         return $this->userId;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->userId();
     }
 
     public function payload(): ?array

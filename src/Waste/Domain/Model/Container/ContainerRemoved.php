@@ -4,8 +4,9 @@ namespace App\Waste\Domain\Model\Container;
 
 use DateTimeImmutable;
 use App\Waste\Domain\DomainEvent;
-use App\Waste\Domain\Model\Container\ContainerId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
+use App\Waste\Domain\Model\Container\ContainerId;
 
 final class ContainerRemoved extends DomainEvent
 {
@@ -22,6 +23,11 @@ final class ContainerRemoved extends DomainEvent
     public function containerId(): ContainerId
     {
         return $this->containerId;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->containerId();
     }
 
     public function payload(): ?array

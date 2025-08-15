@@ -7,6 +7,7 @@ use App\Waste\Domain\DomainEvent;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Shared\Domain\Model\AggregateRootId;
 
 final class WasteTranslated extends DomainEvent
 {
@@ -35,6 +36,11 @@ final class WasteTranslated extends DomainEvent
     public function locale(): Locale
     {
         return $this->locale;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->wasteId();
     }
 
     public function payload(): ?array

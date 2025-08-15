@@ -4,8 +4,9 @@ namespace App\Property\Domain\Model\Destination;
 
 use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
-use App\Property\Domain\Model\Destination\DestinationId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
+use App\Property\Domain\Model\Destination\DestinationId;
 
 final class DestinationRemoved extends DomainEvent
 {
@@ -22,6 +23,11 @@ final class DestinationRemoved extends DomainEvent
     public function destinationId(): DestinationId
     {
         return $this->destinationId;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->destinationId();
     }
 
     public function payload(): ?array

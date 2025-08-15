@@ -5,6 +5,7 @@ namespace App\Property\Domain\Model\Category;
 use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 use App\Property\Domain\Model\Category\CategoryId;
 use App\Property\Domain\Model\Property\ExternalId;
 
@@ -35,6 +36,11 @@ final class CategoryRegistered extends DomainEvent
     public function externalId(): ?ExternalId
     {
         return $this->externalId;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->categoryId();
     }
 
     public function payload(): ?array

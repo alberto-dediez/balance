@@ -4,8 +4,9 @@ namespace App\Property\Domain\Model\Brand;
 
 use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
-use App\Property\Domain\Model\Brand\BrandId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Property\Domain\Model\Brand\BrandId;
+use App\Shared\Domain\Model\AggregateRootId;
 
 final class BrandRemoved extends DomainEvent
 {
@@ -22,6 +23,11 @@ final class BrandRemoved extends DomainEvent
     public function brandId(): BrandId
     {
         return $this->brandId;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->brandId();
     }
 
     public function payload(): ?array

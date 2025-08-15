@@ -6,9 +6,10 @@ use DateTimeImmutable;
 use App\Waste\Domain\DomainEvent;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Shared\Domain\Event\DomainEventId;
-use App\Property\Domain\Model\Property\PropertyId;
+use App\Shared\Domain\Model\AggregateRootId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 final class ContainerRegistered extends DomainEvent
@@ -74,6 +75,11 @@ final class ContainerRegistered extends DomainEvent
     public function qrCode(): QrCode
     {
         return $this->qrCode;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->containerId();
     }
     
     public function payload(): ?array

@@ -4,8 +4,9 @@ namespace App\Property\Domain\Model\Country;
 
 use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
-use App\Property\Domain\Model\Country\CountryId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
+use App\Property\Domain\Model\Country\CountryId;
 
 final class CountryRemoved extends DomainEvent
 {
@@ -24,6 +25,10 @@ final class CountryRemoved extends DomainEvent
         return $this->countryId;
     }
 
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->countryId();
+    }
     public function payload(): ?array
     {
         return [

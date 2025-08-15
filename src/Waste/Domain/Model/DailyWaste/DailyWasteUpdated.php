@@ -5,6 +5,7 @@ namespace App\Waste\Domain\Model\DailyWaste;
 use DateTimeImmutable;
 use App\Waste\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteId;
 
 final class DailyWasteUpdated extends DomainEvent
@@ -28,6 +29,11 @@ final class DailyWasteUpdated extends DomainEvent
     public function load(): float
     {
         return $this->load;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->dailyWasteId();
     }
 
     public function payload(): ?array

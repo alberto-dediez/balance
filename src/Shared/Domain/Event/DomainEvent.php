@@ -4,6 +4,7 @@ namespace App\Shared\Domain\Event;
 
 use DateTimeImmutable;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 
 abstract class DomainEvent
 {
@@ -45,6 +46,8 @@ abstract class DomainEvent
     {
         return sprintf("%s.%s", static::$context, static::$eventName);
     }
+
+    abstract public function aggregateRootId(): ?AggregateRootId;
 
     abstract public function payload(): ?array;
 

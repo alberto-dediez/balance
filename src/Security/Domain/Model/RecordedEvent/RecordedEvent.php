@@ -7,12 +7,14 @@ use App\Shared\Domain\Event\DomainEvent;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Event\EventRegistry;
+use App\Shared\Domain\Model\AggregateRootId;
 
 class RecordedEvent
 {
     private RecordedEventId $id;
 
     private UserId|null $userId;
+    private string|null $aggregateRootId;
     private DateTimeImmutable $occurredOn;
     private string $eventName;
     private string $context;
@@ -26,6 +28,7 @@ class RecordedEvent
 
         $this->userId = $userId;
 
+        $this->aggregateRootId = null !== $event->aggregateRootId() ? (string) $event->aggregateRootId() : null;
         $this->occurredOn = $event->occurredOn();
         $this->eventName = $event->eventName();
         $this->context = $event->context();
@@ -40,6 +43,11 @@ class RecordedEvent
     public function userId(): ?UserId
     {
         return $this->userId;
+    }
+
+    public function aggregateRootId(): ?string
+    {
+        return $this->aggregateRootId;
     }
 
     public function occurredOn(): DateTimeImmutable

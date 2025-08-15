@@ -4,8 +4,9 @@ namespace App\Property\Domain\Model\Category;
 
 use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
-use App\Property\Domain\Model\Category\CategoryId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
+use App\Property\Domain\Model\Category\CategoryId;
 
 final class CategoryRemoved extends DomainEvent
 {
@@ -22,6 +23,11 @@ final class CategoryRemoved extends DomainEvent
     public function categoryId(): CategoryId
     {
         return $this->categoryId;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->categoryId();
     }
 
     public function payload(): ?array

@@ -5,6 +5,7 @@ namespace App\Waste\Domain\Model\Measurement;
 use DateTimeImmutable;
 use App\Waste\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 
 final class MeasurementUpdated extends DomainEvent
@@ -40,6 +41,11 @@ final class MeasurementUpdated extends DomainEvent
     public function justification(): ?string
     {
         return $this->justification;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->measurementId();
     }
 
     public function payload(): ?array

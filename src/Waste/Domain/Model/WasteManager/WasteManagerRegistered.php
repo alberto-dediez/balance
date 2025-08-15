@@ -5,6 +5,7 @@ namespace App\Waste\Domain\Model\WasteManager;
 use DateTimeImmutable;
 use App\Waste\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
@@ -41,6 +42,11 @@ final class WasteManagerRegistered extends DomainEvent
     public function accountId(): AccountId
     {
         return $this->accountId;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->wasteManagerId();
     }
     
     public function payload(): ?array

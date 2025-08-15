@@ -6,6 +6,7 @@ use DateTimeImmutable;
 use App\Security\Domain\DomainEvent;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 use App\Security\Domain\Model\Account\AccountId;
 
 final class UserRegistered extends DomainEvent
@@ -42,6 +43,11 @@ final class UserRegistered extends DomainEvent
     public function accountId(): ?AccountId
     {
         return $this->accountId;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->userId();
     }
 
     public function payload(): ?array

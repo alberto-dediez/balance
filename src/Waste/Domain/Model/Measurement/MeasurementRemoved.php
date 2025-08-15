@@ -6,6 +6,7 @@ use DateTimeImmutable;
 use App\Waste\Domain\DomainEvent;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -63,6 +64,11 @@ final class MeasurementRemoved extends DomainEvent
     public function day(): \DateTimeImmutable
     {
         return $this->day;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->measurementId();
     }
 
     public function payload(): ?array

@@ -4,8 +4,9 @@ namespace App\Property\Domain\Model\Property;
 
 use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
-use App\Property\Domain\Model\Property\PropertyId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
+use App\Property\Domain\Model\Property\PropertyId;
 
 final class PropertyRemoved extends DomainEvent
 {
@@ -22,6 +23,11 @@ final class PropertyRemoved extends DomainEvent
     public function propertyId(): PropertyId
     {
         return $this->propertyId;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->propertyId();
     }
 
     public function payload(): ?array

@@ -7,10 +7,11 @@ use App\Waste\Domain\DomainEvent;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 use App\Waste\Domain\Model\Container\Purpose;
-use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
@@ -102,6 +103,11 @@ final class MeasurementRegistered extends DomainEvent
     public function day(): \DateTimeImmutable
     {
         return $this->day;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->measurementId();
     }
 
     public function payload(): ?array

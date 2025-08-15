@@ -4,8 +4,9 @@ namespace App\Waste\Domain\Model\Container;
 
 use DateTimeImmutable;
 use App\Waste\Domain\DomainEvent;
-use App\Waste\Domain\Model\Container\ContainerId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
+use App\Waste\Domain\Model\Container\ContainerId;
 
 final class ContainerQrPrinted extends DomainEvent
 {
@@ -28,6 +29,11 @@ final class ContainerQrPrinted extends DomainEvent
     public function path(): string
     {
         return $this->path;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->containerId();
     }
 
     public function payload(): ?array

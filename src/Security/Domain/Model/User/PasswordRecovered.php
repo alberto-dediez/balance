@@ -6,6 +6,7 @@ use DateTimeImmutable;
 use App\Security\Domain\DomainEvent;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 use App\Security\Domain\Model\User\RecoverToken;
 
 final class PasswordRecovered extends DomainEvent
@@ -36,6 +37,11 @@ final class PasswordRecovered extends DomainEvent
     public function token(): RecoverToken
     {
         return $this->token;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->userId();
     }
 
     public function payload(): ?array

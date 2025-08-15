@@ -6,6 +6,7 @@ use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Property\Domain\Model\Brand\BrandId;
+use App\Shared\Domain\Model\AggregateRootId;
 use App\Property\Domain\Model\Property\ExternalId;
 
 final class BrandRegistered extends DomainEvent
@@ -35,6 +36,11 @@ final class BrandRegistered extends DomainEvent
     public function externalId(): ?ExternalId
     {
         return $this->externalId;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->brandId();
     }
 
     public function payload(): ?array

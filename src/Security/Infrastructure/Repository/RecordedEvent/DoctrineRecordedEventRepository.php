@@ -85,6 +85,15 @@ class DoctrineRecordedEventRepository implements RecordedEventRepository
             ;
         }
 
+        if (!empty($filter->aggregateRootId)) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->like('e.aggregateRootId', ':aggregateRootId')
+                )
+                ->setParameter('aggregateRootId', "%{$filter->aggregateRootId}%")
+            ;
+        }
+
         $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
 
         switch ($filter->orderBy) {

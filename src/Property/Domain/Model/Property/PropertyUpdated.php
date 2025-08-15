@@ -5,6 +5,7 @@ namespace App\Property\Domain\Model\Property;
 use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -49,6 +50,11 @@ final class PropertyUpdated extends DomainEvent
     public function accountId(): ?AccountId
     {
         return $this->accountId;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->propertyId();
     }
 
     public function payload(): ?array

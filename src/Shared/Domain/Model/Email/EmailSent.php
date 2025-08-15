@@ -5,6 +5,7 @@ namespace App\Shared\Domain\Model\Email;
 use DateTimeImmutable;
 use App\Security\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 
 final class EmailSent extends DomainEvent
 {
@@ -33,6 +34,11 @@ final class EmailSent extends DomainEvent
     public function content(): string
     {
         return $this->content;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return null;
     }
 
     public function payload(): ?array

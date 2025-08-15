@@ -5,6 +5,7 @@ namespace App\Property\Domain\Model\Country;
 use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Property\ExternalId;
 
@@ -41,6 +42,11 @@ final class CountryRegistered extends DomainEvent
     public function externalId(): ?ExternalId
     {
         return $this->externalId;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->countryId();
     }
 
     public function payload(): ?array

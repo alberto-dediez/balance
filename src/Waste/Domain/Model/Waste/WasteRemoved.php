@@ -6,6 +6,7 @@ use DateTimeImmutable;
 use App\Waste\Domain\DomainEvent;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 
 final class WasteRemoved extends DomainEvent
 {
@@ -22,6 +23,11 @@ final class WasteRemoved extends DomainEvent
     public function wasteId(): WasteId
     {
         return $this->wasteId;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->wasteId();
     }
 
     public function payload(): ?array

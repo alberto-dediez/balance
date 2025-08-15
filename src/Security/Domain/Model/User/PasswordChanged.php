@@ -6,6 +6,7 @@ use DateTimeImmutable;
 use App\Security\Domain\DomainEvent;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 
 final class PasswordChanged extends DomainEvent
 {
@@ -29,6 +30,11 @@ final class PasswordChanged extends DomainEvent
     public function password(): string
     {
         return $this->password;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->userId();
     }
 
     public function payload(): ?array

@@ -27,6 +27,10 @@ class ListRecordedEventsType extends BaseFilterType
                 'label' => new TranslatableMessage('Usuario'),
                 'required' => false
             ])
+            ->add('aggregateRootId', TextType::class, [
+                'label' => new TranslatableMessage('Entidad'),
+                'required' => false
+            ])
         ;
 
         parent::buildForm($builder, $options);

@@ -6,6 +6,7 @@ use DateTimeImmutable;
 use App\Security\Domain\DomainEvent;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 
 final class UserRemoved extends DomainEvent
 {
@@ -22,6 +23,11 @@ final class UserRemoved extends DomainEvent
     public function userId(): UserId
     {
         return $this->userId;
+    }
+
+    public function aggregateRootId(): ?AggregateRootId
+    {
+        return $this->userId();
     }
 
     public function payload(): ?array

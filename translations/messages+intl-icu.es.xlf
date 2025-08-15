@@ -653,6 +653,322 @@
         <source>Se ha modificado la contraseña del usuario "{user}"</source>
         <target>Se ha modificado la contraseña del usuario "{user}"</target>
       </trans-unit>
+      <trans-unit id="KGKa4jq" resname="Categorías">
+        <source>Categorías</source>
+        <target>Categorías</target>
+      </trans-unit>
+      <trans-unit id="JtBXpvI" resname="Marcas">
+        <source>Marcas</source>
+        <target>Marcas</target>
+      </trans-unit>
+      <trans-unit id="1KMTGV1" resname="Países">
+        <source>Países</source>
+        <target>Países</target>
+      </trans-unit>
+      <trans-unit id="zzcPDy." resname="Destinos">
+        <source>Destinos</source>
+        <target>Destinos</target>
+      </trans-unit>
+      <trans-unit id="_LOa0UY" resname="Totales diarios">
+        <source>Totales diarios</source>
+        <target>Totales diarios</target>
+      </trans-unit>
+      <trans-unit id="WzkdjFZ" resname="Debes especificar un volumen válido para este contenedor">
+        <source>Debes especificar un volumen válido para este contenedor</source>
+        <target>Debes especificar un volumen válido para este contenedor</target>
+      </trans-unit>
+      <trans-unit id="nMhu5Wv" resname="Todas las fechas">
+        <source>Todas las fechas</source>
+        <target>Todas las fechas</target>
+      </trans-unit>
+      <trans-unit id="ZizSr6s" resname="Contenedor {containerId}">
+        <source>Contenedor {containerId}</source>
+        <target>Contenedor {containerId}</target>
+      </trans-unit>
+      <trans-unit id="3mO2ZHk" resname="{volume} LITROS">
+        <source>{volume} LITROS</source>
+        <target>{volume} LITROS</target>
+      </trans-unit>
+      <trans-unit id="v2iDkEY" resname="FECHA EMISIÓN QR">
+        <source>FECHA EMISIÓN QR</source>
+        <target>FECHA EMISIÓN QR</target>
+      </trans-unit>
+      <trans-unit id="2RgOMg5" resname="bioscore.info">
+        <source>bioscore.info</source>
+        <target>bioscore.info</target>
+      </trans-unit>
+      <trans-unit id="KuBojp0" resname="No se ha podido generar el cartel del contenedor escogido">
+        <source>No se ha podido generar el cartel del contenedor escogido</source>
+        <target>No se ha podido generar el cartel del contenedor escogido</target>
+      </trans-unit>
+      <trans-unit id="XDIjNpr" resname="No hay contenedores disponibles para impresión">
+        <source>No hay contenedores disponibles para impresión</source>
+        <target>No hay contenedores disponibles para impresión</target>
+      </trans-unit>
+      <trans-unit id="EV0CwcZ" resname="No se ha podido generar los carteles de los contenedores de la cuenta">
+        <source>No se ha podido generar los carteles de los contenedores de la cuenta</source>
+        <target>No se ha podido generar los carteles de los contenedores de la cuenta</target>
+      </trans-unit>
+      <trans-unit id="YJsuJR7" resname="Tipología actualizada con éxito">
+        <source>Tipología actualizada con éxito</source>
+        <target>Tipología actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id="SN7PltV" resname="Tipología creada correctamente: {name}">
+        <source>Tipología creada correctamente: {name}</source>
+        <target>Tipología creada correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="z_EeVDq" resname="ISO">
+        <source>ISO</source>
+        <target>ISO</target>
+      </trans-unit>
+      <trans-unit id="VGKzIKB" resname="Identificadores externos">
+        <source>Identificadores externos</source>
+        <target>Identificadores externos</target>
+      </trans-unit>
+      <trans-unit id="0SZHsl5" resname="Hotelbeds ID">
+        <source>Hotelbeds ID</source>
+        <target>Hotelbeds ID</target>
+      </trans-unit>
+      <trans-unit id="qmKS9Da" resname="Restel ID">
+        <source>Restel ID</source>
+        <target>Restel ID</target>
+      </trans-unit>
+      <trans-unit id="2vr28qr" resname="Bioscore ID">
+        <source>Bioscore ID</source>
+        <target>Bioscore ID</target>
+      </trans-unit>
+      <trans-unit id="a_Trx3v" resname="Tipo de propiedad">
+        <source>Tipo de propiedad</source>
+        <target>Tipo de propiedad</target>
+      </trans-unit>
+      <trans-unit id="gu6issl" resname="Categoría">
+        <source>Categoría</source>
+        <target>Categoría</target>
+      </trans-unit>
+      <trans-unit id="4qEgKNS" resname="Marca">
+        <source>Marca</source>
+        <target>Marca</target>
+      </trans-unit>
+      <trans-unit id="BvlrmlV" resname="Dirección">
+        <source>Dirección</source>
+        <target>Dirección</target>
+      </trans-unit>
+      <trans-unit id="sml34K." resname="Código postal">
+        <source>Código postal</source>
+        <target>Código postal</target>
+      </trans-unit>
+      <trans-unit id="eQ8eyl8" resname="Longitud">
+        <source>Longitud</source>
+        <target>Longitud</target>
+      </trans-unit>
+      <trans-unit id="_grJJIp" resname="Latitud">
+        <source>Latitud</source>
+        <target>Latitud</target>
+      </trans-unit>
+      <trans-unit id="9rlBSxd" resname="Habitaciones">
+        <source>Habitaciones</source>
+        <target>Habitaciones</target>
+      </trans-unit>
+      <trans-unit id="XjvvlPc" resname="Web">
+        <source>Web</source>
+        <target>Web</target>
+      </trans-unit>
+      <trans-unit id="IFpbEWO" resname="Zone">
+        <source>Zone</source>
+        <target>Zone</target>
+      </trans-unit>
+      <trans-unit id="CYjDz35" resname="Destino">
+        <source>Destino</source>
+        <target>Destino</target>
+      </trans-unit>
+      <trans-unit id="4m.VV3Y" resname="País">
+        <source>País</source>
+        <target>País</target>
+      </trans-unit>
+      <trans-unit id="N2BY8Cc" resname="Todos los destinos">
+        <source>Todos los destinos</source>
+        <target>Todos los destinos</target>
+      </trans-unit>
+      <trans-unit id="w2bgSWD" resname="Todos los países">
+        <source>Todos los países</source>
+        <target>Todos los países</target>
+      </trans-unit>
+      <trans-unit id="ltSGShh" resname="Información">
+        <source>Información</source>
+        <target>Información</target>
+      </trans-unit>
+      <trans-unit id="IYPzrmi" resname="Categoría actualizada con éxito">
+        <source>Categoría actualizada con éxito</source>
+        <target>Categoría actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id="H5N9b9D" resname="La categoría no existe">
+        <source>La categoría no existe</source>
+        <target>La categoría no existe</target>
+      </trans-unit>
+      <trans-unit id="Y4d3l5i" resname="Se ha eliminado la categoría {category}">
+        <source>Se ha eliminado la categoría {category}</source>
+        <target>Se ha eliminado la categoría {category}</target>
+      </trans-unit>
+      <trans-unit id="Fos1KtJ" resname="No se ha podido eliminar la categoría {category}">
+        <source>No se ha podido eliminar la categoría {category}</source>
+        <target>No se ha podido eliminar la categoría {category}</target>
+      </trans-unit>
+      <trans-unit id="nylhCg0" resname="Categoría creada correctamente: {name}">
+        <source>Categoría creada correctamente: {name}</source>
+        <target>Categoría creada correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="TZAI1eq" resname="Marca actualizada con éxito">
+        <source>Marca actualizada con éxito</source>
+        <target>Marca actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id="2QKem0h" resname="Se ha eliminado la marca {brand}">
+        <source>Se ha eliminado la marca {brand}</source>
+        <target>Se ha eliminado la marca {brand}</target>
+      </trans-unit>
+      <trans-unit id="2mcekp0" resname="No se ha podido eliminar la marca {brand}">
+        <source>No se ha podido eliminar la marca {brand}</source>
+        <target>No se ha podido eliminar la marca {brand}</target>
+      </trans-unit>
+      <trans-unit id="_QfaRp8" resname="La marca no existe">
+        <source>La marca no existe</source>
+        <target>La marca no existe</target>
+      </trans-unit>
+      <trans-unit id="OO9DDVv" resname="Marca creada correctamente: {name}">
+        <source>Marca creada correctamente: {name}</source>
+        <target>Marca creada correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="runTJyx" resname="País actualizado con éxito">
+        <source>País actualizado con éxito</source>
+        <target>País actualizado con éxito</target>
+      </trans-unit>
+      <trans-unit id="Dyg58SB" resname="Se ha eliminado el país {country}">
+        <source>Se ha eliminado el país {country}</source>
+        <target>Se ha eliminado el país {country}</target>
+      </trans-unit>
+      <trans-unit id="nuMmeX4" resname="No se ha podido eliminar el país {country}">
+        <source>No se ha podido eliminar el país {country}</source>
+        <target>No se ha podido eliminar el país {country}</target>
+      </trans-unit>
+      <trans-unit id="rfc4XsD" resname="El país no existe">
+        <source>El país no existe</source>
+        <target>El país no existe</target>
+      </trans-unit>
+      <trans-unit id="KM5QfVP" resname="País creado correctamente: {name}">
+        <source>País creado correctamente: {name}</source>
+        <target>País creado correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="12DNpH5" resname="Destino actualizado con éxito">
+        <source>Destino actualizado con éxito</source>
+        <target>Destino actualizado con éxito</target>
+      </trans-unit>
+      <trans-unit id="BQJ.6IG" resname="Se ha eliminado el destino {destination}">
+        <source>Se ha eliminado el destino {destination}</source>
+        <target>Se ha eliminado el destino {destination}</target>
+      </trans-unit>
+      <trans-unit id="_oktkiv" resname="No se ha podido eliminar el destino {destination}">
+        <source>No se ha podido eliminar el destino {destination}</source>
+        <target>No se ha podido eliminar el destino {destination}</target>
+      </trans-unit>
+      <trans-unit id="osTbyKU" resname="El destino no existe">
+        <source>El destino no existe</source>
+        <target>El destino no existe</target>
+      </trans-unit>
+      <trans-unit id="d8pC_oo" resname="Destino creado correctamente: {name}">
+        <source>Destino creado correctamente: {name}</source>
+        <target>Destino creado correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="BWmiYyq" resname="Instrucciones para recuperar contraseña">
+        <source>Instrucciones para recuperar contraseña</source>
+        <target>Instrucciones para recuperar contraseña</target>
+      </trans-unit>
+      <trans-unit id="ikQf2pj" resname="Entidad">
+        <source>Entidad</source>
+        <target>Entidad</target>
+      </trans-unit>
+      <trans-unit id="ovSSGz4" resname="Repetir Contraseña">
+        <source>Repetir Contraseña</source>
+        <target>Repetir Contraseña</target>
+      </trans-unit>
+      <trans-unit id="eASLQUc" resname="Las contraseñas no coinciden.">
+        <source>Las contraseñas no coinciden.</source>
+        <target>Las contraseñas no coinciden.</target>
+      </trans-unit>
+      <trans-unit id="FmcpbUN" resname="Detalles">
+        <source>Detalles</source>
+        <target>Detalles</target>
+      </trans-unit>
+      <trans-unit id="oaO4qOc" resname="&amp;copy; {year}">
+        <source>&amp;copy; {year}</source>
+        <target><![CDATA[&copy; {year}]]></target>
+      </trans-unit>
+      <trans-unit id="__KqZ1F" resname="¿Ha olvidado su contraseña?">
+        <source>¿Ha olvidado su contraseña?</source>
+        <target>¿Ha olvidado su contraseña?</target>
+      </trans-unit>
+      <trans-unit id="41PaaAu" resname="Recuperar contraseña">
+        <source>Recuperar contraseña</source>
+        <target>Recuperar contraseña</target>
+      </trans-unit>
+      <trans-unit id="IZPle9z" resname="Contraseña no modificada">
+        <source>Contraseña no modificada</source>
+        <target>Contraseña no modificada</target>
+      </trans-unit>
+      <trans-unit id="iz7645h" resname="El email indicado o el código de recuperación no es correcto. ¿Puede que haya pasado demasiado tiempo?">
+        <source>El email indicado o el código de recuperación no es correcto. ¿Puede que haya pasado demasiado tiempo?</source>
+        <target>El email indicado o el código de recuperación no es correcto. ¿Puede que haya pasado demasiado tiempo?</target>
+      </trans-unit>
+      <trans-unit id="GCKbwF1" resname="Puede solicitar un nuevo código en el siguiente enlace.">
+        <source>Puede solicitar un nuevo código en el siguiente enlace.</source>
+        <target>Puede solicitar un nuevo código en el siguiente enlace.</target>
+      </trans-unit>
+      <trans-unit id="oBfBIUj" resname="Contraseña modificada">
+        <source>Contraseña modificada</source>
+        <target>Contraseña modificada</target>
+      </trans-unit>
+      <trans-unit id="5RtaHwu" resname="Se ha establecido la nueva contraseña. Pulsa en el siguiente enlace para acceder:">
+        <source>Se ha establecido la nueva contraseña. Pulsa en el siguiente enlace para acceder:</source>
+        <target>Se ha establecido la nueva contraseña. Pulsa en el siguiente enlace para acceder:</target>
+      </trans-unit>
+      <trans-unit id="dQ4ftj4" resname="Modificar contraseña">
+        <source>Modificar contraseña</source>
+        <target>Modificar contraseña</target>
+      </trans-unit>
+      <trans-unit id="2mP7Qaf" resname="Se ha solicitado recuperar la contraseña:">
+        <source>Se ha solicitado recuperar la contraseña:</source>
+        <target>Se ha solicitado recuperar la contraseña:</target>
+      </trans-unit>
+      <trans-unit id="EixoCzu" resname="Se ha solicitado la recuperación de la contraseña para la cuenta de {user}.">
+        <source>Se ha solicitado la recuperación de la contraseña para la cuenta de {user}.</source>
+        <target>Se ha solicitado la recuperación de la contraseña para la cuenta de {user}.</target>
+      </trans-unit>
+      <trans-unit id="e3s0v3I" resname="Puede recuperar su contraseña visitando el siguiente enlace:">
+        <source>Puede recuperar su contraseña visitando el siguiente enlace:</source>
+        <target>Puede recuperar su contraseña visitando el siguiente enlace:</target>
+      </trans-unit>
+      <trans-unit id="MvjyNik" resname="Gracias">
+        <source>Gracias</source>
+        <target>Gracias</target>
+      </trans-unit>
+      <trans-unit id="uAnRzZS" resname="Si el email indicado corresponde a un usuario del sistema, deberías recibir un mensaje con las instrucciones para modificar tu contraseña.">
+        <source>Si el email indicado corresponde a un usuario del sistema, deberías recibir un mensaje con las instrucciones para modificar tu contraseña.</source>
+        <target>Si el email indicado corresponde a un usuario del sistema, deberías recibir un mensaje con las instrucciones para modificar tu contraseña.</target>
+      </trans-unit>
+      <trans-unit id="L7nVIYX" resname="En caso contrario, contacta con un administrador.">
+        <source>En caso contrario, contacta con un administrador.</source>
+        <target>En caso contrario, contacta con un administrador.</target>
+      </trans-unit>
+      <trans-unit id="F5gDcaj" resname="Imprimir QR">
+        <source>Imprimir QR</source>
+        <target>Imprimir QR</target>
+      </trans-unit>
+      <trans-unit id="5XYaWe0" resname="Imprimir QRs">
+        <source>Imprimir QRs</source>
+        <target>Imprimir QRs</target>
+      </trans-unit>
+      <trans-unit id="ePG.vUe" resname="Fecha">
+        <source>Fecha</source>
+        <target>Fecha</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
