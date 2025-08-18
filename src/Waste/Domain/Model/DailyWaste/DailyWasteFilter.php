@@ -20,6 +20,8 @@ class DailyWasteFilter
         public ?Purpose $purpose = null,
         public ?AccountId $accountId = null,
         public ?\DateTimeImmutable $day = null,
+        public ?\DateTimeImmutable $dayFrom = null,
+        public ?\DateTimeImmutable $dayTo = null,
         int $limit = 10,
         string $orderBy = 'default',
         string $orderWay = 'DESC',

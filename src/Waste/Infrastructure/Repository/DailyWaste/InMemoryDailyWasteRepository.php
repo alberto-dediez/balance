@@ -130,6 +130,26 @@ class InMemoryDailyWasteRepository implements DailyWasteRepository
                 continue;
             }
 
+            if (
+                null !== $filter->dayFrom
+                && (
+                    null == $dailyWaste->day()
+                    || $dailyWaste->day()->format('Y-m-d') <= $filter->dayFrom->format('Y-m-d')
+                )
+            ) {
+                continue;
+            }
+
+            if (
+                null !== $filter->dayTo
+                && (
+                    null == $dailyWaste->day()
+                    || $dailyWaste->day()->format('Y-m-d') >= $filter->dayTo->format('Y-m-d')
+                )
+            ) {
+                continue;
+            }
+
             if ($offset > 0) {
                 $offset--;
 

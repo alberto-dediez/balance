@@ -93,9 +93,10 @@ migrate:
 test: | test-acceptance test-unit
 
 test-unit: ## Execute unit tests
+	@$(eval options ?=)
 	@$(PHP_TEST) bin/console doc:sch:drop -e test --force -q
 	@$(PHP_TEST) bin/console doc:sch:upd -e test --force -q
-	@$(PHP_TEST) bin/phpunit
+	@$(PHP_TEST) bin/phpunit $(options)
 
 test-acceptance: ## Execute acceptance tests
 	@$(eval options ?=)

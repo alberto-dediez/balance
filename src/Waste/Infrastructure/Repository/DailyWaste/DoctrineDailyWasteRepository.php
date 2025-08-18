@@ -132,6 +132,24 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
             ;
         }
 
+        if (null !== $filter->dayFrom) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->gte('m.day', ':dayFrom')
+                )
+                ->setParameter('dayFrom', $filter->dayFrom->format('Y-m-d'))
+            ;
+        }
+
+        if (null !== $filter->dayTo) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->lte('m.day', ':dayTo')
+                )
+                ->setParameter('dayTo', $filter->dayTo->format('Y-m-d'))
+            ;
+        }
+
         $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
 
         switch ($filter->orderBy) {
