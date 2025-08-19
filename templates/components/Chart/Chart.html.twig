@@ -1,0 +1,11 @@
+<div 
+    data-controller="charts" 
+    data-charts-title-value="{{ title }}"
+    data-charts-type-value="{{ chartType }}"
+    data-charts-formatter-unit-value=" {{ unit }}"
+    data-charts-data-value="{{ values | json_encode }}" 
+    data-charts-categories-value="{{ categories | json_encode }}"
+    data-charts-colors-value="{{ colors | json_encode }}"
+    data-charts-legend-value="{{ legend ? 1 : 0 }}"
+    data-charts-data-labels-value="{{ dataLabels ? 1 : 0 }}"
+></div>
