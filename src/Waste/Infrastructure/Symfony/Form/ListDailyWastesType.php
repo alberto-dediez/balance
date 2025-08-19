@@ -39,7 +39,7 @@ class ListDailyWastesType extends BaseFilterType
                 'placeholder' => new TranslatableMessage('Todos los gestores')
             ])
             ->add('day', DateType::class, [
-                'label' => new TranslatableMessage('Fecha de registro'),
+                'label' => new TranslatableMessage('Fecha'),
                 'required' => false,
                 'placeholder' => new TranslatableMessage('Todas las fechas')
             ])

@@ -28,6 +28,8 @@
                             {% set value = value | brand_name %}
                         {% elseif field == 'categoryId' %}
                             {% set value = value | category_name %}
+                        {% elseif field == 'purpose' %}
+                            {% set value = value.value | trans({}, 'purpose') %}
                         {% endif %}
 
                         <twig:List:FilterShow 

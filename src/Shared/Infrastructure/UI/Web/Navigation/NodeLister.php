@@ -141,6 +141,11 @@ class NodeLister
                     label: new TranslatableMessage("Totales diarios"),
                     icon: "solar:calculator-line-duotone",
                     target: $this->router->generate('daily_wastes')
+                ),
+                new Node(
+                    label: new TranslatableMessage("Estadísticas"),
+                    icon: "solar:chart-square-line-duotone",
+                    target: $this->router->generate('daily_wastes_statistics')
                 )
             ]
         );

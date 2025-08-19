@@ -969,6 +969,42 @@
         <source>Fecha</source>
         <target>Fecha</target>
       </trans-unit>
+      <trans-unit id="oqeQruJ" resname="Estadísticas">
+        <source>Estadísticas</source>
+        <target>Estadísticas</target>
+      </trans-unit>
+      <trans-unit id="aE2zlZ5" resname="Fecha desde">
+        <source>Fecha desde</source>
+        <target>Fecha desde</target>
+      </trans-unit>
+      <trans-unit id="wPCYMqC" resname="Fecha hasta">
+        <source>Fecha hasta</source>
+        <target>Fecha hasta</target>
+      </trans-unit>
+      <trans-unit id="HHxDAWi" resname="Tipo de residuo">
+        <source>Tipo de residuo</source>
+        <target>Tipo de residuo</target>
+      </trans-unit>
+      <trans-unit id="xGmP_4c" resname="Residuos por propósito">
+        <source>Residuos por propósito</source>
+        <target>Residuos por propósito</target>
+      </trans-unit>
+      <trans-unit id="h5Erb3t" resname="Residuos diarios">
+        <source>Residuos diarios</source>
+        <target>Residuos diarios</target>
+      </trans-unit>
+      <trans-unit id="mIIzC2w" resname="Porcentaje por propósito">
+        <source>Porcentaje por propósito</source>
+        <target>Porcentaje por propósito</target>
+      </trans-unit>
+      <trans-unit id="h9BDOI_" resname="Porcentaje por gestor">
+        <source>Porcentaje por gestor</source>
+        <target>Porcentaje por gestor</target>
+      </trans-unit>
+      <trans-unit id="1priXlr" resname="Residuo por propiedad">
+        <source>Residuo por propiedad</source>
+        <target>Residuo por propiedad</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

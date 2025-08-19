@@ -42,4 +42,6 @@
     </twig:List:Table>
 {% endblock %}
 
-{% block list_actions %}{% endblock list_actions %}
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('admin_brands_register') }}" />
+{% endblock list_actions %}

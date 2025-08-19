@@ -40,13 +40,13 @@ class StatisticsDailyWasteResponseTest extends TestCase
         );
 
         $byDates[] = new ByDate(
-            new \DateTimeImmutable("2025-06-05"),
+            new \DateTimeImmutable("2025-06-04"),
             19.05,
             0.12
         );
 
         $byDates[] = new ByDate(
-            new \DateTimeImmutable("2025-06-04"),
+            new \DateTimeImmutable("2025-06-05"),
             19.05,
             0.12
         );
@@ -109,13 +109,13 @@ class StatisticsDailyWasteResponseTest extends TestCase
         $byWaste = [];
 
         $byWaste[] = new ByWaste(
-            WasteMother::fromName('Papel'),
+            WasteMother::fromName('Carton'),
             19.05,
             0.12
         );
 
         $byWaste[] = new ByWaste(
-            WasteMother::fromName('Carton'),
+            WasteMother::fromName('Papel'),
             19.05,
             0.12
         );
@@ -148,7 +148,7 @@ class StatisticsDailyWasteResponseTest extends TestCase
         $byWasteManager = [];
 
         $byWasteManager[] = new ByWasteManager(
-            WasteManagerMother::fromName('Sadeco'),
+            WasteManagerMother::fromName('Private'),
             19.05,
             0.12
         );
@@ -160,7 +160,7 @@ class StatisticsDailyWasteResponseTest extends TestCase
         );
 
         $byWasteManager[] = new ByWasteManager(
-            WasteManagerMother::fromName('Private'),
+            WasteManagerMother::fromName('Sadeco'),
             19.05,
             0.12
         );
@@ -193,13 +193,13 @@ class StatisticsDailyWasteResponseTest extends TestCase
         );
 
         $byProperty[] = new ByProperty(
-            PropertyMother::fromName('Hotel C'),
+            PropertyMother::fromName('Hotel B'),
             19.05,
             0.12
         );
 
         $byProperty[] = new ByProperty(
-            PropertyMother::fromName('Hotel B'),
+            PropertyMother::fromName('Hotel C'),
             19.05,
             0.12
         );

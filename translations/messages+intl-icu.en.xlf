@@ -969,6 +969,42 @@
         <source>Fecha</source>
         <target>Date</target>
       </trans-unit>
+      <trans-unit id="oqeQruJ" resname="Estadísticas">
+        <source>Estadísticas</source>
+        <target>Statistics</target>
+      </trans-unit>
+      <trans-unit id="aE2zlZ5" resname="Fecha desde">
+        <source>Fecha desde</source>
+        <target>Date from</target>
+      </trans-unit>
+      <trans-unit id="wPCYMqC" resname="Fecha hasta">
+        <source>Fecha hasta</source>
+        <target>Date to</target>
+      </trans-unit>
+      <trans-unit id="HHxDAWi" resname="Tipo de residuo">
+        <source>Tipo de residuo</source>
+        <target>Waste type</target>
+      </trans-unit>
+      <trans-unit id="xGmP_4c" resname="Residuos por propósito">
+        <source>Residuos por propósito</source>
+        <target>Waste by purpose</target>
+      </trans-unit>
+      <trans-unit id="h5Erb3t" resname="Residuos diarios">
+        <source>Residuos diarios</source>
+        <target>Daily waste</target>
+      </trans-unit>
+      <trans-unit id="mIIzC2w" resname="Porcentaje por propósito">
+        <source>Porcentaje por propósito</source>
+        <target>Percentage by purpose</target>
+      </trans-unit>
+      <trans-unit id="h9BDOI_" resname="Porcentaje por gestor">
+        <source>Porcentaje por gestor</source>
+        <target>Percentage by manager</target>
+      </trans-unit>
+      <trans-unit id="1priXlr" resname="Residuo por propiedad">
+        <source>Residuo por propiedad</source>
+        <target>Waste by property</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
