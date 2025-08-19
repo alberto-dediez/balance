@@ -7,3 +7,7 @@ services:
         resource: '../../../'
         exclude:
             - '../../../Infrastructure/Symfony/DependencyInjection/'
+
+    App\Waste\Infrastructure\UI\Console\:
+        resource: '../../../Infrastructure/UI/Console/'
+        tags: ['console.command']
