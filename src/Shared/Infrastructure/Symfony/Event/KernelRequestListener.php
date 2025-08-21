@@ -12,10 +12,16 @@ class KernelRequestListener
 {
     public function __construct(
         #[AutowireIterator('domain.event.subscriber')]
-        private iterable $subscribers
+        private iterable $subscribers,
+         #[AutowireIterator('application.command.handler')]
+        private iterable $handlers
     ) {
         foreach ($subscribers as $subscriber) {
             $subscriber->register();
+        }
+
+        foreach ($handlers as $handler) {
+            $handler->register();
         }
     }
 

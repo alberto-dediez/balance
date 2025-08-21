@@ -21,22 +21,20 @@
         }
     ] %}
 
-    <twig:List:Table :columns="columns" :elements="users">
-        <tr>
-            <td>{{ element.username }}</td>
-            <td>{{ element.roles | map(t => t.value | trans({}, 'roles')) | join(', ') }}</td>
-            <td>{{ element.active | show_field_value }}</td>
-            <td>{{ element.registeredAt | date('d/m/Y') }}</td>
-            <td>
-                {% if element | is_authorized('edit') %}
-                    <twig:List:Action:Edit path="{{ path('users_edit', {'userId': element.id}) }}" />
-                {% endif %}
+    <twig:List:Table :columns="columns" :elements="users" :bulkForm="bulkForm">
+        <td>{{ element.username }}</td>
+        <td>{{ element.roles | map(t => t.value | trans({}, 'roles')) | join(', ') }}</td>
+        <td>{{ element.active | show_field_value }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('users_edit', {'userId': element.id}) }}" />
+            {% endif %}
 
-                {% if element | is_authorized('remove') %}
-                    <twig:List:Action:Delete path="{{ path('users_remove', {'userId': element.id}) }}" />
-                {% endif %}                
-            </td>
-        </tr>
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('users_remove', {'userId': element.id}) }}" />
+            {% endif %}                
+        </td>
     </twig:List:Table>
 {% endblock %}
 

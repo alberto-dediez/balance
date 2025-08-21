@@ -453,6 +453,70 @@
         <source>En caso contrario, contacta con un administrador.</source>
         <target>En caso contrario, contacta con un administrador.</target>
       </trans-unit>
+      <trans-unit id="4wVKnvn" resname="Acción a realizar">
+        <source>Acción a realizar</source>
+        <target>Acción a realizar</target>
+      </trans-unit>
+      <trans-unit id="4aG1PV3" resname="Realizar">
+        <source>Realizar</source>
+        <target>Realizar</target>
+      </trans-unit>
+      <trans-unit id="thhXFc5" resname="Debes seleccionar algún elemento sobre el que poder realizar la acción">
+        <source>Debes seleccionar algún elemento sobre el que poder realizar la acción</source>
+        <target>Debes seleccionar algún elemento sobre el que poder realizar la acción</target>
+      </trans-unit>
+      <trans-unit id="8BZPY16" resname="Eliminar rol">
+        <source>Eliminar rol</source>
+        <target>Eliminar rol</target>
+      </trans-unit>
+      <trans-unit id="o0nlpma" resname="Se ha eliminado el rol seleccionado al usuario {id}">
+        <source>Se ha eliminado el rol seleccionado al usuario {id}</source>
+        <target>Se ha eliminado el rol seleccionado al usuario {id}</target>
+      </trans-unit>
+      <trans-unit id="R2XRcZ6" resname="No se ha podido eliminar el rol seleccionado al usuario {id}">
+        <source>No se ha podido eliminar el rol seleccionado al usuario {id}</source>
+        <target>No se ha podido eliminar el rol seleccionado al usuario {id}</target>
+      </trans-unit>
+      <trans-unit id="q8yh3.F" resname="Se ha eliminado el usuario {id}">
+        <source>Se ha eliminado el usuario {id}</source>
+        <target>Se ha eliminado el usuario {id}</target>
+      </trans-unit>
+      <trans-unit id="LxWfMYN" resname="No se ha podido eliminar el usuario {id}">
+        <source>No se ha podido eliminar el usuario {id}</source>
+        <target>No se ha podido eliminar el usuario {id}</target>
+      </trans-unit>
+      <trans-unit id="iUbgb7n" resname="Asignar rol">
+        <source>Asignar rol</source>
+        <target>Asignar rol</target>
+      </trans-unit>
+      <trans-unit id="ekEmsFL" resname="Se ha añadido el rol seleccionado al usuario {id}">
+        <source>Se ha añadido el rol seleccionado al usuario {id}</source>
+        <target>Se ha añadido el rol seleccionado al usuario {id}</target>
+      </trans-unit>
+      <trans-unit id="IkXibvV" resname="No se ha podido añadir el rol seleccionado al usuario {id}">
+        <source>No se ha podido añadir el rol seleccionado al usuario {id}</source>
+        <target>No se ha podido añadir el rol seleccionado al usuario {id}</target>
+      </trans-unit>
+      <trans-unit id="fxWYBxa" resname="Se ha eliminado la cuenta {id}">
+        <source>Se ha eliminado la cuenta {id}</source>
+        <target>Se ha eliminado la cuenta {id}</target>
+      </trans-unit>
+      <trans-unit id="7kYPmWS" resname="No se ha podido eliminar la cuenta {id}">
+        <source>No se ha podido eliminar la cuenta {id}</source>
+        <target>No se ha podido eliminar la cuenta {id}</target>
+      </trans-unit>
+      <trans-unit id="oqeQruJ" resname="Estadísticas">
+        <source>Estadísticas</source>
+        <target>Estadísticas</target>
+      </trans-unit>
+      <trans-unit id="FmcpbUN" resname="Detalles">
+        <source>Detalles</source>
+        <target>Detalles</target>
+      </trans-unit>
+      <trans-unit id="J6Nx4aQ" resname="Marcar / desmarcar todos">
+        <source>Marcar / desmarcar todos</source>
+        <target>Marcar / desmarcar todos</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
