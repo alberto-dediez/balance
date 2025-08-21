@@ -85,6 +85,22 @@ class GrantRoleServiceTest extends TestCase
         $result = $sut($request, $performBy);
     }
 
+    public function testIsHandle()
+    {
+        $repository = new InMemoryUserRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $user = UserMother::random();
+
+        $result = $sut->isHandled(new GrantRoleRequest(
+            userId: $user->id(),
+            role: Role::Admin
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         $authorizer = UserAuthorizerMother::create();

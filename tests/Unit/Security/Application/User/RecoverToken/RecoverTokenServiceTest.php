@@ -64,6 +64,19 @@ class RecoverTokenServiceTest extends TestCase
         $sut($request);
     }
 
+    public function testIsHandle()
+    {
+        $repository = new InMemoryUserRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $result = $sut->isHandled(new RecoverTokenRequest(
+            username: 'unknown username',
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new RecoverTokenService($repository);

@@ -79,6 +79,21 @@ class RemoveAccountServiceTest extends TestCase
         $sut($request, $user);
     }
 
+    public function testIsHandle()
+    {
+        $repository = new InMemoryAccountRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $account = AccountMother::fromName('MyAccount');
+
+        $result = $sut->isHandled(new RemoveAccountRequest(
+            accountId: $account->id()
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         $authorizer = AccountAuthorizerMother::create();

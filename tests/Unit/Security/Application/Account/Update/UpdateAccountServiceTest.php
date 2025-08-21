@@ -161,6 +161,23 @@ class UpdateAccountServiceTest extends TestCase
         $sut($request, $user);
     }
 
+    public function testIsHandle()
+    {
+        $repository = new InMemoryAccountRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $account = AccountMother::fromName('MyAccount');
+
+        $result = $sut->isHandled(new UpdateAccountRequest(
+            accountId: $account->id(),
+            name: 'MyAccount',
+            active: true
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         $authorizer = AccountAuthorizerMother::create();

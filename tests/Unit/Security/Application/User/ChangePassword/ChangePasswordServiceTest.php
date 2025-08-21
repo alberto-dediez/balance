@@ -82,6 +82,22 @@ class ChangePasswordServiceTest extends TestCase
         $sut($request, $otherUser);
     }
 
+    public function testIsHandle()
+    {
+        $repository = new InMemoryUserRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $user = UserMother::random();
+
+        $result = $sut->isHandled(new ChangePasswordRequest(
+            userId: $user->id(),
+            password: '333'
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         $passwordHasher = new Md5PasswordHasher();
