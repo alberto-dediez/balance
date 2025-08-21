@@ -5,11 +5,17 @@ namespace App\Property\Application\Category\Update;
 use InvalidArgumentException;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CommandBus\Command;
+use App\Shared\Application\CommandBus\CommandHandler;
 use App\Property\Application\Category\CategoryAuthorizer;
 use App\Property\Domain\Model\Category\CategoryRepository;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 
-class UpdateCategoryService
+class UpdateCategoryService implements CommandHandler
 {
+    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+
     public function __construct(private CategoryRepository $repository, private CategoryAuthorizer $authorizer)
     {
 
@@ -33,5 +39,10 @@ class UpdateCategoryService
             categoryId: $category->id(),
             name: $category->name()
         );
+    }
+
+    public function isHandled(Command $command): bool
+    {
+        return $command instanceof UpdateCategoryRequest;
     }
 }

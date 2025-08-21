@@ -58,6 +58,21 @@ class RemoveBrandServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof BrandRemoved);
     }
 
+    public function testIsHandle()
+    {
+        $repository = BrandRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $brand = BrandMother::random();
+
+        $result = $sut->isHandled(new RemoveBrandRequest(
+            brandId: $brand->id()
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new RemoveBrandService($repository, new BrandAuthorizer());

@@ -64,6 +64,24 @@ class UpdateMeasurementServiceTest extends TestCase
         $this->assertTrue($measurementPersisted->id()->equals($lastEvent->measurementId()));
     }
 
+    public function testIsHandle()
+    {
+        $repository = MeasurementRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $measurement = MeasurementMother::random();
+
+        $result = $sut->isHandled(new UpdateMeasurementRequest(
+            measurementId: $measurement->id(),
+            quantity: 2,
+            load: 0.26,
+            justification: null
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new UpdateMeasurementService(

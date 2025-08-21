@@ -60,6 +60,20 @@ class RegisterPropertyServiceTest extends TestCase
         $this->assertTrue($propertyPersisted->id()->equals($lastEvent->propertyId()));
     }
 
+    public function testIsHandle()
+    {
+        $repository = PropertyRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $result = $sut->isHandled(new RegisterPropertyRequest(
+            name: 'A Property',
+            accountId: AccountId::generate()
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new RegisterPropertyService($repository, new PropertyAuthorizer());

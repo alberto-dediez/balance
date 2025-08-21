@@ -5,11 +5,17 @@ namespace App\Property\Application\Brand\Update;
 use InvalidArgumentException;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CommandBus\Command;
 use App\Property\Application\Brand\BrandAuthorizer;
 use App\Property\Domain\Model\Brand\BrandRepository;
+use App\Shared\Application\CommandBus\CommandHandler;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 
-class UpdateBrandService
+class UpdateBrandService implements CommandHandler
 {
+    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+
     public function __construct(private BrandRepository $repository, private BrandAuthorizer $authorizer)
     {
 
@@ -33,5 +39,10 @@ class UpdateBrandService
             brandId: $brand->id(),
             name: $brand->name()
         );
+    }
+
+    public function isHandled(Command $command): bool
+    {
+        return $command instanceof UpdateBrandRequest;
     }
 }

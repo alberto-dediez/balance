@@ -55,6 +55,21 @@ class RemoveWasteServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof WasteRemoved);
     }
 
+    public function testIsHandle()
+    {
+        $repository = WasteRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $waste = WasteMother::random();
+
+        $result = $sut->isHandled(new RemoveWasteRequest(
+            wasteId: $waste->id()
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new RemoveWasteService($repository, new WasteAuthorizer());

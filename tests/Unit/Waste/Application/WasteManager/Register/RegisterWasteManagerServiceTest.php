@@ -60,6 +60,22 @@ class RegisterWasteManagerServiceTest extends TestCase
         $this->assertTrue($wasteManagerPersisted->id()->equals($lastEvent->wasteManagerId()));
     }
 
+    public function testIsHandle()
+    {
+        $repository = WasteManagerRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $user = UserMother::random();
+
+        $result = $sut->isHandled(new RegisterWasteManagerRequest(
+            name: 'Hotel Abaco',
+            accountId: $user->accountId()
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new RegisterWasteManagerService($repository, new WasteManagerAuthorizer());

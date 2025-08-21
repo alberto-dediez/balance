@@ -58,6 +58,19 @@ class RegisterBrandServiceTest extends TestCase
         $this->assertTrue($brandPersisted->id()->equals($lastEvent->brandId()));
     }
 
+    public function testIsHandle()
+    {
+        $repository = BrandRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $result = $sut->isHandled(new RegisterBrandRequest(
+            name: 'Travelplan'
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new RegisterBrandService($repository, new BrandAuthorizer());

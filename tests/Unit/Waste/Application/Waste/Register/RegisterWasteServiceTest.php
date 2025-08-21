@@ -98,6 +98,22 @@ class RegisterWasteServiceTest extends TestCase
         $this->assertTrue($wastePersisted->id()->equals($lastEvent->wasteId()));
     }
 
+    public function testIsHandle()
+    {
+        $repository = WasteRepositoryMother::inMemory(Locale::Spanish);
+
+        $sut = $this->createSUT($repository, Locale::Spanish);
+
+        $result = $sut->isHandled(new RegisterWasteRequest(
+            name: 'changedName',
+            isDangerous: true,
+            density: '0.03',
+            color: '#cccddd'
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository, Locale $locale)
     {
         return new RegisterWasteService(

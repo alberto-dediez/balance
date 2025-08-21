@@ -5,12 +5,13 @@ namespace App\Waste\Application\Container\Register;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\Container\QrCode;
 use App\Waste\Domain\Model\Container\Purpose;
-use App\Property\Domain\Model\Property\PropertyId;
 use App\Waste\Domain\Model\Container\ContainerId;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Shared\Application\CommandBus\CommandResponse;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
-class RegisterContainerResponse
+class RegisterContainerResponse implements CommandResponse
 {
     public function __construct(
         public ContainerId $containerId, 

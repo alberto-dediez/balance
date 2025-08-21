@@ -5,11 +5,17 @@ namespace App\Waste\Application\Container\Update;
 use InvalidArgumentException;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CommandBus\Command;
+use App\Shared\Application\CommandBus\CommandHandler;
 use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 
-class UpdateContainerService
+class UpdateContainerService implements CommandHandler
 {
+    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+
     public function __construct(
         private ContainerRepository $containerRepository,
         private ContainerAuthorizer $authorizer
@@ -49,5 +55,10 @@ class UpdateContainerService
             volume: $container->volume(),
             wasteManagerId: $container->wasteManagerId()
         );
+    }
+
+    public function isHandled(Command $command): bool
+    {
+        return $command instanceof UpdateContainerRequest;
     }
 }

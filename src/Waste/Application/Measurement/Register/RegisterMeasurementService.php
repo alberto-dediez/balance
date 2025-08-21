@@ -4,16 +4,22 @@ namespace App\Waste\Application\Measurement\Register;
 
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CommandBus\Command;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Waste\Domain\Model\Measurement\Measurement;
+use App\Shared\Application\CommandBus\CommandHandler;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
-use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
+use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 
-class RegisterMeasurementService
+class RegisterMeasurementService implements CommandHandler
 {
+    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+
     public function __construct(
         private MeasurementRepository $measurementRepository,
         private ContainerRepository $containerRepository,
@@ -89,5 +95,10 @@ class RegisterMeasurementService
         if (null == $user || null == $user->accountId() || false == $user->accountId()->equals($property->accountId())) {
             throw new \InvalidArgumentException("El usuario que registra la medición no es válido");
         }
+    }
+
+    public function isHandled(Command $command): bool
+    {
+        return $command instanceof RegisterMeasurementRequest;
     }
 }

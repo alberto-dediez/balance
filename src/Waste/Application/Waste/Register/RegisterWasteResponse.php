@@ -3,8 +3,9 @@
 namespace App\Waste\Application\Waste\Register;
 
 use App\Waste\Domain\Model\Waste\WasteId;
+use App\Shared\Application\CommandBus\CommandResponse;
 
-class RegisterWasteResponse
+class RegisterWasteResponse implements CommandResponse
 {
     public function __construct(
         public WasteId $wasteId, 

@@ -108,6 +108,25 @@ class UpdateWasteServiceTest extends TestCase
         $this->assertTrue($wastePersisted->id()->equals($lastEvent->wasteId()));
     }
 
+    public function testIsHandle()
+    {
+        $repository = WasteRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository, Locale::English);
+
+        $waste = WasteMother::random();
+
+        $result = $sut->isHandled(new UpdateWasteRequest(
+            wasteId: $waste->id(),
+            name: 'changedName',
+            isDangerous: false,
+            density: '0.112',
+            color: '#fff333',
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository, Locale $locale)
     {
         return new UpdateWasteService(

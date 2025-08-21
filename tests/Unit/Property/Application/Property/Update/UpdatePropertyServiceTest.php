@@ -65,6 +65,23 @@ class UpdatePropertyServiceTest extends TestCase
         $this->assertTrue($propertyPersisted->id()->equals($lastEvent->propertyId()));
     }
 
+    public function testIsHandle()
+    {
+        $repository = PropertyRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $property = PropertyMother::random();
+
+        $result = $sut->isHandled(new UpdatePropertyRequest(
+            propertyId: $property->id(),
+            name: 'Restaurante',
+            accountId: AccountId::generate()
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new UpdatePropertyService($repository, new PropertyAuthorizer());

@@ -58,6 +58,21 @@ class RemoveContainerServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof ContainerRemoved);
     }
 
+    public function testIsHandle()
+    {
+        $repository = ContainerRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $container = ContainerMother::random();
+
+        $result = $sut->isHandled(new RemoveContainerRequest(
+            containerId: $container->id()
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new RemoveContainerService($repository, new ContainerAuthorizer());

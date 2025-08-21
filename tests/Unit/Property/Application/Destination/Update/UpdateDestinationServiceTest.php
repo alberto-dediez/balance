@@ -65,6 +65,23 @@ class UpdateDestinationServiceTest extends TestCase
         $this->assertTrue($destinationPersisted->id()->equals($lastEvent->destinationId()));
     }
 
+    public function testIsHandle()
+    {
+        $repository = DestinationRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $destination = DestinationMother::random();
+
+        $result = $sut->isHandled(new UpdateDestinationRequest(
+            destinationId: $destination->id(),
+            name: 'Barcelona',
+            countryId: CountryId::generate()
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new UpdateDestinationService($repository, new DestinationAuthorizer());

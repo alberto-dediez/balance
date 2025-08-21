@@ -2,10 +2,11 @@
 
 namespace App\Waste\Application\WasteManager\Register;
 
-use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Application\CommandBus\CommandResponse;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
-class RegisterWasteManagerResponse
+class RegisterWasteManagerResponse implements CommandResponse
 {
     public function __construct(
         public WasteManagerId $wasteManagerId, 

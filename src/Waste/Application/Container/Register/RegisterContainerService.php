@@ -4,15 +4,21 @@ namespace App\Waste\Application\Container\Register;
 
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CommandBus\Command;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerId;
+use App\Shared\Application\CommandBus\CommandHandler;
 use App\Waste\Domain\Model\Container\QrCodeGenerator;
-use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 
-class RegisterContainerService
+class RegisterContainerService implements CommandHandler
 {
+    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+
     public function __construct(
         private ContainerRepository $containerRepository,
         private PropertyRepository $propertyRepository,
@@ -72,5 +78,10 @@ class RegisterContainerService
             wasteManagerId: $container->wasteManagerId(),
             qrCode: $container->qrCode()
         );
+    }
+
+    public function isHandled(Command $command): bool
+    {
+        return $command instanceof RegisterContainerRequest;
     }
 }

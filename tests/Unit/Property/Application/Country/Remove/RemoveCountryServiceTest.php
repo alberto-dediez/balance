@@ -58,6 +58,21 @@ class RemoveCountryServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof CountryRemoved);
     }
 
+    public function testIsHandle()
+    {
+        $repository = CountryRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $country = CountryMother::random();
+
+        $result = $sut->isHandled(new RemoveCountryRequest(
+            countryId: $country->id()
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new RemoveCountryService($repository, new CountryAuthorizer());

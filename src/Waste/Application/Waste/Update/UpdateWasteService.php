@@ -5,12 +5,19 @@ namespace App\Waste\Application\Waste\Update;
 use InvalidArgumentException;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CommandBus\Command;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
 use App\Waste\Application\Waste\WasteAuthorizer;
 use App\Waste\Domain\Model\Waste\WasteRepository;
+use App\Shared\Application\CommandBus\CommandHandler;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
+use App\Security\Application\Account\Register\RegisterAccountRequest;
 
-class UpdateWasteService
+class UpdateWasteService implements CommandHandler
 {
+    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+
     public function __construct(
         private WasteRepository $wasteRepository,
         private LocaleGetter $localeGetter,
@@ -49,5 +56,10 @@ class UpdateWasteService
             density: $waste->density(),
             color: $waste->color()
         );
+    }
+
+    public function isHandled(Command $command): bool
+    {
+        return $command instanceof UpdateWasteRequest;
     }
 }

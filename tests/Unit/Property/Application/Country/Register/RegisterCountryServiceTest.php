@@ -5,7 +5,6 @@ namespace App\Tests\Unit\Property\Application\Country\Register;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Property\Domain\Model\Country\Country;
-use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Property\Application\Country\CountryAuthorizer;
 use App\Property\Domain\Model\Country\CountryRegistered;
@@ -58,6 +57,20 @@ class RegisterCountryServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof CountryRegistered);
         $this->assertEquals('Spain', $lastEvent->name());
         $this->assertTrue($countryPersisted->id()->equals($lastEvent->countryId()));
+    }
+
+    public function testIsHandle()
+    {
+        $repository = CountryRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $result = $sut->isHandled(new RegisterCountryRequest(
+            name: 'Country',
+            iso: '123'
+        ));
+
+        $this->assertTrue($result);
     }
 
     private function createSUT($repository)

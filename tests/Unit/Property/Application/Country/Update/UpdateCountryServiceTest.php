@@ -65,6 +65,23 @@ class UpdateCountryServiceTest extends TestCase
         $this->assertTrue($countryPersisted->id()->equals($lastEvent->countryId()));
     }
 
+    public function testIsHandle()
+    {
+        $repository = CountryRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $country = CountryMother::random();
+
+        $result = $sut->isHandled(new UpdateCountryRequest(
+            countryId: $country->id(),
+            name: 'Country',
+            iso: '123'
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new UpdateCountryService($repository, new CountryAuthorizer());

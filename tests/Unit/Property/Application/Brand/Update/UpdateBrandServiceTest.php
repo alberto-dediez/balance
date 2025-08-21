@@ -62,6 +62,22 @@ class UpdateBrandServiceTest extends TestCase
         $this->assertTrue($brandPersisted->id()->equals($lastEvent->brandId()));
     }
 
+    public function testIsHandle()
+    {
+        $repository = BrandRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $brand = BrandMother::random();
+
+        $result = $sut->isHandled(new UpdateBrandRequest(
+            brandId: $brand->id(),
+            name: '2 Stars'
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new UpdateBrandService($repository, new BrandAuthorizer());

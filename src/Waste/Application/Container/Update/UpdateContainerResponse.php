@@ -5,10 +5,11 @@ namespace App\Waste\Application\Container\Update;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Container\ContainerId;
+use App\Shared\Application\CommandBus\CommandResponse;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
-class UpdateContainerResponse
+class UpdateContainerResponse implements CommandResponse
 {
     public function __construct(
         public ContainerId $containerId, 

@@ -58,6 +58,21 @@ class RemoveDestinationServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof DestinationRemoved);
     }
 
+    public function testIsHandle()
+    {
+        $repository = DestinationRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $destination = DestinationMother::random();
+
+        $result = $sut->isHandled(new RemoveDestinationRequest(
+            destinationId: $destination->id()
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new RemoveDestinationService($repository, new DestinationAuthorizer());

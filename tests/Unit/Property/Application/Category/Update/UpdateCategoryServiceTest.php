@@ -62,6 +62,22 @@ class UpdateCategoryServiceTest extends TestCase
         $this->assertTrue($categoryPersisted->id()->equals($lastEvent->categoryId()));
     }
 
+    public function testIsHandle()
+    {
+        $repository = CategoryRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $category = CategoryMother::random();
+
+        $result = $sut->isHandled(new UpdateCategoryRequest(
+            categoryId: $category->id(),
+            name: '***'
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new UpdateCategoryService($repository, new CategoryAuthorizer());

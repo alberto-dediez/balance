@@ -5,11 +5,17 @@ namespace App\Waste\Application\Waste\Remove;
 use InvalidArgumentException;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CommandBus\Command;
 use App\Waste\Application\Waste\WasteAuthorizer;
 use App\Waste\Domain\Model\Waste\WasteRepository;
+use App\Shared\Application\CommandBus\CommandHandler;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 
-class RemoveWasteService
+class RemoveWasteService implements CommandHandler
 {
+    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+
     public function __construct(private WasteRepository $repository, private WasteAuthorizer $authorizer)
     {
 
@@ -32,5 +38,10 @@ class RemoveWasteService
         return new RemoveWasteResponse(
             wasteId: $waste->id()
         );
+    }
+
+    public function isHandled(Command $command): bool
+    {
+        return $command instanceof RemoveWasteRequest;
     }
 }

@@ -58,6 +58,19 @@ class RegisterCategoryServiceTest extends TestCase
         $this->assertTrue($categoryPersisted->id()->equals($lastEvent->categoryId()));
     }
 
+    public function testIsHandle()
+    {
+        $repository = CategoryRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $result = $sut->isHandled(new RegisterCategoryRequest(
+            name: '2 stars'
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new RegisterCategoryService($repository, new CategoryAuthorizer());

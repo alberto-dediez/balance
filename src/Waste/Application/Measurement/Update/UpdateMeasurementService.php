@@ -5,11 +5,17 @@ namespace App\Waste\Application\Measurement\Update;
 use InvalidArgumentException;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CommandBus\Command;
+use App\Shared\Application\CommandBus\CommandHandler;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
+use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 
-class UpdateMeasurementService
+class UpdateMeasurementService implements CommandHandler
 {
+    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+
     public function __construct(
         private MeasurementRepository $measurementRepository,
         private MeasurementAuthorizer $authorizer
@@ -41,5 +47,10 @@ class UpdateMeasurementService
             load: $measurement->load(),
             justification: $measurement->justification()
         );
+    }
+
+    public function isHandled(Command $command): bool
+    {
+        return $command instanceof UpdateMeasurementRequest;
     }
 }

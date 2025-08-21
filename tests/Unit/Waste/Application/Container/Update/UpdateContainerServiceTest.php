@@ -127,6 +127,26 @@ class UpdateContainerServiceTest extends TestCase
         $result = $sut($request, $user);
     }
 
+    public function testIsHandle()
+    {
+        $repository = ContainerRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $container = ContainerMother::random();
+
+        $result = $sut->isHandled(new UpdateContainerRequest(
+            containerId: $container->id(),
+            wasteId: new WasteId('444'),
+            purpose: Purpose::Waste,
+            measurementMethod: MeasurementMethod::Volume,
+            wasteManagerId: WasteManagerId::generate(),
+            volume: null
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new UpdateContainerService(

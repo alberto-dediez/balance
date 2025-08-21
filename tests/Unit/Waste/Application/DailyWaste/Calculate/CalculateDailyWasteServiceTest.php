@@ -183,6 +183,36 @@ class CalculateDailyWasteServiceTest extends TestCase
         $this->assertTrue($dailyWastePersisted->id()->equals($lastEvent->dailyWasteId()));
     }
 
+    public function testIsHandle()
+    {
+        $dailyWasteRepository = DailyWasteRepositoryMother::inMemory();
+        $measurementRepository = MeasurementRepositoryMother::inMemory();
+        $propertyRepository = PropertyRepositoryMother::inMemory();
+        $wasteRepository = WasteRepositoryMother::inMemory();
+        $containerRepository = ContainerRepositoryMother::inMemory();
+
+        $sut = $this->createSUT(
+            measurementRepository: $measurementRepository,
+            dailyWasteRepository: $dailyWasteRepository,
+            propertyRepository: $propertyRepository,
+            wasteRepository: $wasteRepository,
+            containerRepository: $containerRepository
+        );
+
+        $measurement = MeasurementMother::random();
+
+        $result = $sut->isHandled(new CalculateDailyWasteRequest(
+            propertyId: $measurement->propertyId(),
+            wasteId: $measurement->wasteId(),
+            wasteManagerId: $measurement->wasteManagerId(),
+            accountId: $measurement->accountId(),
+            purpose: $measurement->purpose(),
+            day: $measurement->day()
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT(
         MeasurementRepository $measurementRepository, 
         DailyWasteRepository $dailyWasteRepository, 

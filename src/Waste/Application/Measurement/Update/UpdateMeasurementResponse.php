@@ -3,8 +3,9 @@
 namespace App\Waste\Application\Measurement\Update;
 
 use App\Waste\Domain\Model\Measurement\MeasurementId;
+use App\Shared\Application\CommandBus\CommandResponse;
 
-class UpdateMeasurementResponse
+class UpdateMeasurementResponse implements CommandResponse
 {
     public function __construct(
         public MeasurementId $measurementId, 

@@ -3,22 +3,24 @@
 namespace App\Tests\Unit\Waste\Application\Measurement\Register;
 
 use PHPUnit\Framework\TestCase;
+use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Domain\Model\Measurement\MeasurementRegistered;
-use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserRepositoryMother;
-use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 use App\Waste\Application\Measurement\Register\RegisterMeasurementRequest;
 use App\Waste\Application\Measurement\Register\RegisterMeasurementService;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Waste\Application\Measurement\Register\RegisterMeasurementResponse;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
-use App\Waste\Application\Measurement\MeasurementAuthorizer;
 
 class RegisterMeasurementServiceTest extends TestCase
 {
@@ -87,6 +89,31 @@ class RegisterMeasurementServiceTest extends TestCase
         $this->assertNotNull($lastEvent);
         $this->assertTrue($lastEvent instanceof MeasurementRegistered);
         $this->assertTrue($measurementPersisted->id()->equals($lastEvent->measurementId()));
+    }
+
+    public function testIsHandle()
+    {
+        $userRepository = UserRepositoryMother::inMemory();
+        $measurementRepository = MeasurementRepositoryMother::inMemory();
+        $containerRepository = ContainerRepositoryMother::inMemory();
+        $propertyRepository = PropertyRepositoryMother::inMemory();
+
+        $sut = $this->createSUT(
+            containerRepository: $containerRepository,
+            measurementRepository: $measurementRepository,
+            propertyRepository: $propertyRepository,
+            userRepository: $userRepository
+        );
+
+        $result = $sut->isHandled(new RegisterMeasurementRequest(
+            containerId: ContainerId::generate(),
+            quantity: 1,
+            load: 0.5,
+            registeredBy: UserId::generate(),
+            justification: 'Fiesta de pijamas!'
+        ));
+
+        $this->assertTrue($result);
     }
 
     private function createSUT($containerRepository, $measurementRepository, $propertyRepository, $userRepository)

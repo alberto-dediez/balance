@@ -61,6 +61,20 @@ class RegisterDestinationServiceTest extends TestCase
         $this->assertTrue($request->countryId->equals($lastEvent->countryId()));
     }
 
+    public function testIsHandle()
+    {
+        $repository = DestinationRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $result = $sut->isHandled(new RegisterDestinationRequest(
+            name: 'Destination',
+            countryId: CountryId::generate()
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new RegisterDestinationService($repository, new DestinationAuthorizer());

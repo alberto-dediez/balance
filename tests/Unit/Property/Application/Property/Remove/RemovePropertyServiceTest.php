@@ -58,6 +58,21 @@ class RemovePropertyServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof PropertyRemoved);
     }
 
+    public function testIsHandle()
+    {
+        $repository = PropertyRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $property = PropertyMother::random();
+
+        $result = $sut->isHandled(new RemovePropertyRequest(
+            propertyId: $property->id()
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new RemovePropertyService($repository, new PropertyAuthorizer());

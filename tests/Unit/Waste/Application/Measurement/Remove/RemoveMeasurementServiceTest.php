@@ -58,6 +58,21 @@ class RemoveMeasurementServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof MeasurementRemoved);
     }
 
+    public function testIsHandle()
+    {
+        $repository = MeasurementRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $measurement = MeasurementMother::random();
+
+        $result = $sut->isHandled(new RemoveMeasurementRequest(
+            measurementId: $measurement->id()
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new RemoveMeasurementService($repository, new MeasurementAuthorizer());

@@ -65,6 +65,23 @@ class UpdateWasteManagerServiceTest extends TestCase
         $this->assertTrue($wasteManagerPersisted->id()->equals($lastEvent->wasteManagerId()));
     }
 
+    public function testIsHandle()
+    {
+        $repository = WasteManagerRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $wasteManager = WasteManagerMother::random();
+
+        $result = $sut->isHandled(new UpdateWasteManagerRequest(
+            wasteManagerId: $wasteManager->id(),
+            name: 'Hotel',
+            isPublic: true
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new UpdateWasteManagerService($repository, new WasteManagerAuthorizer());

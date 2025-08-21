@@ -58,6 +58,21 @@ class RemoveCategoryServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof CategoryRemoved);
     }
 
+    public function testIsHandle()
+    {
+        $repository = CategoryRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $category = CategoryMother::random();
+
+        $result = $sut->isHandled(new RemoveCategoryRequest(
+            categoryId: $category->id()
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new RemoveCategoryService($repository, new CategoryAuthorizer());

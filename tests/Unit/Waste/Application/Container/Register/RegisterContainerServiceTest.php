@@ -165,6 +165,25 @@ class RegisterContainerServiceTest extends TestCase
         $result = $sut($request, $user);
     }
 
+    public function testIsHandle()
+    {
+        $propertyRepository = PropertyRepositoryMother::inMemory();
+        $containerRepository = ContainerRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($containerRepository, $propertyRepository);
+
+        $result = $sut->isHandled(new RegisterContainerRequest(
+            propertyId: PropertyId::generate(),
+            wasteId: WasteId::generate(),
+            purpose: Purpose::Reuse,
+            measurementMethod: MeasurementMethod::Volume,
+            wasteManagerId: WasteManagerId::generate(),
+            volume: 10
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT(ContainerRepository $containerRepository, PropertyRepository $propertyRepository)
     {
         return new RegisterContainerService(

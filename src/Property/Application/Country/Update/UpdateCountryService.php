@@ -5,11 +5,17 @@ namespace App\Property\Application\Country\Update;
 use InvalidArgumentException;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CommandBus\Command;
+use App\Shared\Application\CommandBus\CommandHandler;
 use App\Property\Application\Country\CountryAuthorizer;
 use App\Property\Domain\Model\Country\CountryRepository;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 
-class UpdateCountryService
+class UpdateCountryService implements CommandHandler
 {
+    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+
     public function __construct(private CountryRepository $repository, private CountryAuthorizer $authorizer)
     {
 
@@ -34,5 +40,10 @@ class UpdateCountryService
             name: $country->name(),
             iso: $country->iso()
         );
+    }
+
+    public function isHandled(Command $command): bool
+    {
+        return $command instanceof UpdateCountryRequest;
     }
 }

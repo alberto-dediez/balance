@@ -2,7 +2,9 @@
 
 namespace App\Waste\Application\Waste\Register;
 
-class RegisterWasteRequest
+use App\Shared\Application\CommandBus\Command;
+
+class RegisterWasteRequest implements Command
 {
     public function __construct(
         public string $name = '', 
