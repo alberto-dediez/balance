@@ -77,6 +77,20 @@ class RegisterAccountServiceTest extends TestCase
         $sut($request, $user);
     }
 
+    public function testIsHandle()
+    {
+        $repository = new InMemoryAccountRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $result = $sut->isHandled(new RegisterAccountRequest(
+            name: 'Company ABCDE',
+            active: true
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         $authorizer = AccountAuthorizerMother::create();

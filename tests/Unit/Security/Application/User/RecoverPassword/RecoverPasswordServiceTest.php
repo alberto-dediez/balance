@@ -62,6 +62,23 @@ class RecoverPasswordServiceTest extends TestCase
         $this->assertNotEquals($request->password, $userPersisted->password());
     }
 
+    public function testIsHandle()
+    {
+        $repository = new InMemoryUserRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $user = UserMother::random();
+        $user->initPasswordRecovery();
+
+        $result = $sut->isHandled(new RecoverPasswordRequest(
+            token: $user->recoverToken(),
+            password: '333'
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         $passwordHasher = new Md5PasswordHasher();

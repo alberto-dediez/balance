@@ -78,6 +78,21 @@ class RemoveUserServiceTest extends TestCase
         $sut($request, $performBy);
     }
 
+    public function testIsHandle()
+    {
+        $repository = new InMemoryUserRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $user = UserMother::random();
+
+        $result = $sut->isHandled(new RemoveUserRequest(
+            userId: $user->id()
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         return new RemoveUserService($repository, UserAuthorizerMother::create());

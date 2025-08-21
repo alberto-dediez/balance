@@ -133,6 +133,20 @@ class RegisterUserServiceTest extends TestCase
         $sut($request1, $performBy);
     }
 
+    public function testIsHandle()
+    {
+        $repository = new InMemoryUserRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $result = $sut->isHandled(new RegisterUserRequest(
+            username: 'another@email.com',
+            password: '123'
+        ));
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT($repository)
     {
         $passwordHasher = new Md5PasswordHasher();
