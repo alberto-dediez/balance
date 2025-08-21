@@ -3,11 +3,17 @@
 namespace App\Security\Application\User\RecoverPassword;
 
 use InvalidArgumentException;
+use App\Shared\Application\CommandBus\Command;
 use App\Security\Domain\Model\User\UserRepository;
+use App\Shared\Application\CommandBus\CommandHandler;
 use App\Security\Application\User\Register\PasswordHasher;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 
-class RecoverPasswordService
+class RecoverPasswordService implements CommandHandler
 {
+    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+
     public function __construct(private UserRepository $repository, private PasswordHasher $passwordHasher)
     {
 
@@ -30,5 +36,10 @@ class RecoverPasswordService
         return new RecoverPasswordResponse(
             userId: $user->id()
         );
+    }
+    
+    public function isHandled(Command $command): bool
+    {
+        return $command instanceof RecoverPasswordRequest;
     }
 }

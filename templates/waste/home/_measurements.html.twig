@@ -12,23 +12,21 @@
 ] %}
 
 <twig:List:Table :columns="columns" :elements="measurements">
-    <tr>
-        <td>
-            {{ element.propertyId | property_name }}
-        </td>
-        <td>
-            {{ element.wasteId | waste_name }}
-            <small class="d-block">{{ element.purpose.value | trans({}, 'purpose') }}</small>                            
-        </td>
-        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
-        <td>
-            {% if element | is_authorized('edit') %}
-                <twig:List:Action:Edit path="{{ path('measurements_edit', {'measurementId': element.id}) }}" />
-            {% endif %}
+    <td>
+        {{ element.propertyId | property_name }}
+    </td>
+    <td>
+        {{ element.wasteId | waste_name }}
+        <small class="d-block">{{ element.purpose.value | trans({}, 'purpose') }}</small>                            
+    </td>
+    <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+    <td>
+        {% if element | is_authorized('edit') %}
+            <twig:List:Action:Edit path="{{ path('measurements_edit', {'measurementId': element.id}) }}" />
+        {% endif %}
 
-            {% if element | is_authorized('remove') %}
-                <twig:List:Action:Delete path="{{ path('measurements_remove', {'measurementId': element.id}) }}" />
-            {% endif %}
-        </td>
-    </tr>
+        {% if element | is_authorized('remove') %}
+            <twig:List:Action:Delete path="{{ path('measurements_remove', {'measurementId': element.id}) }}" />
+        {% endif %}
+    </td>
 </twig:List:Table>

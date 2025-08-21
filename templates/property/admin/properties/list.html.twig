@@ -24,22 +24,20 @@
     ] %}
 
     <twig:List:Table :columns="columns" :elements="properties">
-        <tr>
-            <td>{{ element.name }}</td>
-            <td>{{ element.info.destinationId | destination_name }}</td>
-            <td>{{ element.info.countryId | country_name }}</td>
-            <td>{{ element.accountId ? (element.accountId | account_name) : '' }}</td>
-            <td>{{ element.registeredAt | date('d/m/Y') }}</td>
-            <td>
-                {% if element | is_authorized('edit') %}
-                    <twig:List:Action:Edit path="{{ path('admin_properties_edit', {'propertyId': element.id}) }}" />
-                {% endif %}
-                
-                {% if element | is_authorized('remove') %}
-                    <twig:List:Action:Delete path="{{ path('admin_properties_remove', {'propertyId': element.id}) }}" />
-                {% endif %}
-            </td>
-        </tr>
+        <td>{{ element.name }}</td>
+        <td>{{ element.info.destinationId | destination_name }}</td>
+        <td>{{ element.info.countryId | country_name }}</td>
+        <td>{{ element.accountId ? (element.accountId | account_name) : '' }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('admin_properties_edit', {'propertyId': element.id}) }}" />
+            {% endif %}
+            
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('admin_properties_remove', {'propertyId': element.id}) }}" />
+            {% endif %}
+        </td>
     </twig:List:Table>
 {% endblock %}
 

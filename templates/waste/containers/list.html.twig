@@ -24,38 +24,36 @@
     ] %}
 
     <twig:List:Table :columns="columns" :elements="containers">
-        <tr>
-            <td>{{ element.propertyId | property_name }}</td>
-            <td>{{ element.wasteId | waste_name }}</td>
-            <td>{{ element.purpose.value | trans({}, 'purpose') }}</td>
-            <td>{{ element.wasteManagerId | waste_manager_name }}</td>
-            <td>
-                {% if element.volume > 0 %}
-                    {{ element.volume }} l
-                {% else %}
-                    ---
-                {% endif %}
-            </td>
-            <td>{{ element.registeredAt | date('d/m/Y') }}</td>
-            <td>
-                {% if element | is_authorized('view') %}
-                    <twig:List:Action path="{{ path('containers_print', {'containerId': element.id}) }}" 
-                        title="{{ 'Imprimir QR' | trans }}" 
-                        target="_blank"
-                    >
-                        <twig:Icon name="solar:printer-line-duotone" size="lg" />
-                    </twig:List:Action>
-                {% endif %}
+        <td>{{ element.propertyId | property_name }}</td>
+        <td>{{ element.wasteId | waste_name }}</td>
+        <td>{{ element.purpose.value | trans({}, 'purpose') }}</td>
+        <td>{{ element.wasteManagerId | waste_manager_name }}</td>
+        <td>
+            {% if element.volume > 0 %}
+                {{ element.volume }} l
+            {% else %}
+                ---
+            {% endif %}
+        </td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            {% if element | is_authorized('view') %}
+                <twig:List:Action path="{{ path('containers_print', {'containerId': element.id}) }}" 
+                    title="{{ 'Imprimir QR' | trans }}" 
+                    target="_blank"
+                >
+                    <twig:Icon name="solar:printer-line-duotone" size="lg" />
+                </twig:List:Action>
+            {% endif %}
 
-                {% if element | is_authorized('edit') %}
-                    <twig:List:Action:Edit path="{{ path('containers_edit', {'containerId': element.id}) }}" />
-                {% endif %}
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('containers_edit', {'containerId': element.id}) }}" />
+            {% endif %}
 
-                {% if element | is_authorized('remove') %}
-                    <twig:List:Action:Delete path="{{ path('containers_remove', {'containerId': element.id}) }}" />
-                {% endif %}
-            </td>
-        </tr>
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('containers_remove', {'containerId': element.id}) }}" />
+            {% endif %}
+        </td>
     </twig:List:Table>
 {% endblock %}
 

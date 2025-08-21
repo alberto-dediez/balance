@@ -13,8 +13,12 @@ class AutocompleteType extends AbstractType
     {
         $attr = isset($options['attr']) ? $options['attr'] : [];
 
-
-        $view->vars['attr'] = array_merge($attr, ['data-controller' => 'autocomplete']);
+        if (!isset($attr['data-controller'])) {
+            $view->vars['attr'] = array_merge($attr, ['data-controller' => 'autocomplete']);
+        } else {
+            $view->vars['attr']['data-controller'] .= ' autocomplete';
+        }
+        
     }
 
     public function getParent()

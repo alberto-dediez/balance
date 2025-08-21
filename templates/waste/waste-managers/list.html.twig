@@ -21,20 +21,18 @@
     ] %}
 
     <twig:List:Table :columns="columns" :elements="wasteManagers">
-        <tr>
-            <td>{{ element.name }}</td>
-            <td>{{ element.isPublic | show_field_value }}</td>
-            <td>{{ element.registeredAt | date('d/m/Y') }}</td>
-            <td>
-                {% if element | is_authorized('edit') %}
-                    <twig:List:Action:Edit path="{{ path('waste_managers_edit', {'wasteManagerId': element.id}) }}" />
-                {% endif %}
+        <td>{{ element.name }}</td>
+        <td>{{ element.isPublic | show_field_value }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('waste_managers_edit', {'wasteManagerId': element.id}) }}" />
+            {% endif %}
 
-                {% if element | is_authorized('remove') %}
-                    <twig:List:Action:Delete path="{{ path('waste_managers_remove', {'wasteManagerId': element.id}) }}" />
-                {% endif %}
-            </td>
-        </tr>
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('waste_managers_remove', {'wasteManagerId': element.id}) }}" />
+            {% endif %}
+        </td>
     </twig:List:Table>
 {% endblock %}
 

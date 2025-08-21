@@ -2,7 +2,9 @@
 
 namespace App\Security\Application\User\RecoverToken;
 
-class RecoverTokenRequest
+use App\Shared\Application\CommandBus\Command;
+
+class RecoverTokenRequest implements Command
 {
     public function __construct(public string $username)
     {

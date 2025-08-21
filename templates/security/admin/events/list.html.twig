@@ -26,21 +26,19 @@
     ] %}
 
     <twig:List:Table :columns="columns" :elements="events">
-        <tr>
-            <td>
-                {% include [
-                    '@security/admin/events/detail/' ~ element.context ~ '.' ~ element.eventName ~ '.html.twig',
-                    '@security/admin/events/detail/default.html.twig'
-                ] with {
-                    'event': element.rebuild()
-                } %}
-            </td>
-            <td>{{ element.userId | user_name | trans | raw }}</td>
-            <td>{{ element.eventName }}</td>
-            <td>{{ element.context }}</td>
-            <td>{{ element.occurredOn | date('H:i d/m/Y') }}</td>
-            <td>
-            </td>
-        </tr>
+        <td>
+            {% include [
+                '@security/admin/events/detail/' ~ element.context ~ '.' ~ element.eventName ~ '.html.twig',
+                '@security/admin/events/detail/default.html.twig'
+            ] with {
+                'event': element.rebuild()
+            } %}
+        </td>
+        <td>{{ element.userId | user_name | trans | raw }}</td>
+        <td>{{ element.eventName }}</td>
+        <td>{{ element.context }}</td>
+        <td>{{ element.occurredOn | date('H:i d/m/Y') }}</td>
+        <td>
+        </td>
     </twig:List:Table>
 {% endblock %}

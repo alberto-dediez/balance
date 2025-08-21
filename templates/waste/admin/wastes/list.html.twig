@@ -25,26 +25,24 @@
     ] %}
 
     <twig:List:Table :columns="columns" :elements="wastes">
-        <tr>
-            <td>{{ element.name }}</td>
-            <td>{{ element.isDangerous | show_field_value }}</td>
-            <td>{{ element.density }}</td>
-            <td>
-                <span style="color: {{ element.color }}">
-                    {{ element.color }}
-                </span>
-            </td>
-            <td>{{ element.registeredAt | date('d/m/Y') }}</td>
-            <td>
-                {% if element | is_authorized('edit') %}
-                    <twig:List:Action:Edit path="{{ path('admin_wastes_edit', {'wasteId': element.id}) }}" />
-                {% endif %}
+        <td>{{ element.name }}</td>
+        <td>{{ element.isDangerous | show_field_value }}</td>
+        <td>{{ element.density }}</td>
+        <td>
+            <span style="color: {{ element.color }}">
+                {{ element.color }}
+            </span>
+        </td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('admin_wastes_edit', {'wasteId': element.id}) }}" />
+            {% endif %}
 
-                {% if element | is_authorized('remove') %}
-                    <twig:List:Action:Delete path="{{ path('admin_wastes_remove', {'wasteId': element.id}) }}" />
-                {% endif %}
-            </td>
-        </tr>
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('admin_wastes_remove', {'wasteId': element.id}) }}" />
+            {% endif %}
+        </td>
     </twig:List:Table>
 {% endblock %}
 

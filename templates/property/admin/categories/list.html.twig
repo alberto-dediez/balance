@@ -18,19 +18,17 @@
     ] %}
 
     <twig:List:Table :columns="columns" :elements="categories">
-        <tr>
-            <td>{{ element.name }}</td>
-            <td>{{ element.registeredAt | date('d/m/Y') }}</td>
-            <td>
-                {% if element | is_authorized('edit') %}
-                    <twig:List:Action:Edit path="{{ path('admin_categories_edit', {'categoryId': element.id}) }}" />
-                {% endif %}
-                
-                {% if element | is_authorized('remove') %}
-                    <twig:List:Action:Delete path="{{ path('admin_categories_remove', {'categoryId': element.id}) }}" />
-                {% endif %}
-            </td>
-        </tr>
+        <td>{{ element.name }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('admin_categories_edit', {'categoryId': element.id}) }}" />
+            {% endif %}
+            
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('admin_categories_remove', {'categoryId': element.id}) }}" />
+            {% endif %}
+        </td>
     </twig:List:Table>
 {% endblock %}
 

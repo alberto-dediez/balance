@@ -13,7 +13,11 @@ class AutocompleteRemoteType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $attr = isset($options['attr']) ? $options['attr'] : [];
-        $attr = array_merge($attr, ['data-controller' => 'autocomplete']);
+        if (!isset($attr['data-controller'])) {
+            $attr = array_merge($attr, ['data-controller' => 'autocomplete']);
+        } else {
+            $attr['data-controller'] .= ' autocomplete';
+        }
 
         if (null !== $options['autocomplete-path'] && !empty($options['autocomplete-path'])) {
             $attr = array_merge($attr, [

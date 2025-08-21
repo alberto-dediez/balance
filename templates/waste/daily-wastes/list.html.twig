@@ -24,21 +24,19 @@
     ] %}
 
     <twig:List:Table :columns="columns" :elements="dailyWastes">
-        <tr>
-            <td>{{ element.propertyId | property_name }}</td>
-            <td>{{ element.wasteId | waste_name }}</td>
-            <td>{{ element.wasteManagerId | waste_manager_name }}</td>
-            <td>
-                {{ element.load }} Kg
-            </td>
-            <td>{{ element.purpose.value | trans({}, 'purpose') }}</td>
-            <td>{{ element.day | date('d/m/Y') }}</td>
-            <td>
-                {% if element | is_authorized('view') %}
-                    <twig:List:Action:View path="{{ path('daily_wastes_view', {'dailyWasteId': element.id}) }}" />
-                {% endif %}
-            </td>
-        </tr>
+        <td>{{ element.propertyId | property_name }}</td>
+        <td>{{ element.wasteId | waste_name }}</td>
+        <td>{{ element.wasteManagerId | waste_manager_name }}</td>
+        <td>
+            {{ element.load }} Kg
+        </td>
+        <td>{{ element.purpose.value | trans({}, 'purpose') }}</td>
+        <td>{{ element.day | date('d/m/Y') }}</td>
+        <td>
+            {% if element | is_authorized('view') %}
+                <twig:List:Action:View path="{{ path('daily_wastes_view', {'dailyWasteId': element.id}) }}" />
+            {% endif %}
+        </td>
     </twig:List:Table>
 {% endblock %}
 

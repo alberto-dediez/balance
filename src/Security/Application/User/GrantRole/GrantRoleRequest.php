@@ -4,8 +4,9 @@ namespace App\Security\Application\User\GrantRole;
 
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
+use App\Shared\Application\CommandBus\Command;
 
-class GrantRoleRequest
+class GrantRoleRequest implements Command
 {
     public function __construct(public UserId $userId, public Role $role)
     {

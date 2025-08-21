@@ -969,6 +969,58 @@
         <source>Fecha</source>
         <target>Date</target>
       </trans-unit>
+      <trans-unit id="4wVKnvn" resname="Acción a realizar">
+        <source>Acción a realizar</source>
+        <target>Action to perform</target>
+      </trans-unit>
+      <trans-unit id="4aG1PV3" resname="Realizar">
+        <source>Realizar</source>
+        <target>Perform</target>
+      </trans-unit>
+      <trans-unit id="thhXFc5" resname="Debes seleccionar algún elemento sobre el que poder realizar la acción">
+        <source>Debes seleccionar algún elemento sobre el que poder realizar la acción</source>
+        <target>You must select an item to perform the action on.</target>
+      </trans-unit>
+      <trans-unit id="8BZPY16" resname="Eliminar rol">
+        <source>Eliminar rol</source>
+        <target>Delete role</target>
+      </trans-unit>
+      <trans-unit id="o0nlpma" resname="Se ha eliminado el rol seleccionado al usuario {id}">
+        <source>Se ha eliminado el rol seleccionado al usuario {id}</source>
+        <target>The selected role has been deleted from user {id}</target>
+      </trans-unit>
+      <trans-unit id="R2XRcZ6" resname="No se ha podido eliminar el rol seleccionado al usuario {id}">
+        <source>No se ha podido eliminar el rol seleccionado al usuario {id}</source>
+        <target>The selected role could not be deleted from user {id}</target>
+      </trans-unit>
+      <trans-unit id="q8yh3.F" resname="Se ha eliminado el usuario {id}">
+        <source>Se ha eliminado el usuario {id}</source>
+        <target>The user {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="LxWfMYN" resname="No se ha podido eliminar el usuario {id}">
+        <source>No se ha podido eliminar el usuario {id}</source>
+        <target>The user {id} could not be deleted</target>
+      </trans-unit>
+      <trans-unit id="iUbgb7n" resname="Asignar rol">
+        <source>Asignar rol</source>
+        <target>Assign role</target>
+      </trans-unit>
+      <trans-unit id="ekEmsFL" resname="Se ha añadido el rol seleccionado al usuario {id}">
+        <source>Se ha añadido el rol seleccionado al usuario {id}</source>
+        <target>The selected role has been added to user {id}</target>
+      </trans-unit>
+      <trans-unit id="IkXibvV" resname="No se ha podido añadir el rol seleccionado al usuario {id}">
+        <source>No se ha podido añadir el rol seleccionado al usuario {id}</source>
+        <target>The selected role could not be added to user {id}</target>
+      </trans-unit>
+      <trans-unit id="fxWYBxa" resname="Se ha eliminado la cuenta {id}">
+        <source>Se ha eliminado la cuenta {id}</source>
+        <target>The account {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="7kYPmWS" resname="No se ha podido eliminar la cuenta {id}">
+        <source>No se ha podido eliminar la cuenta {id}</source>
+        <target>The account {id} could not be deleted</target>
+      </trans-unit>
       <trans-unit id="oqeQruJ" resname="Estadísticas">
         <source>Estadísticas</source>
         <target>Statistics</target>
@@ -1004,6 +1056,10 @@
       <trans-unit id="1priXlr" resname="Residuo por propiedad">
         <source>Residuo por propiedad</source>
         <target>Waste by property</target>
+      </trans-unit>
+      <trans-unit id="J6Nx4aQ" resname="Marcar / desmarcar todos">
+        <source>Marcar / desmarcar todos</source>
+        <target>check / uncheck all</target>
       </trans-unit>
     </body>
   </file>

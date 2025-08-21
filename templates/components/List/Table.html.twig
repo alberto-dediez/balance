@@ -1,7 +1,15 @@
-{% props elements, columns %}
+{% props elements, columns, bulkForm = null %}
+
+{% if bulkForm is defined and bulkForm is not null %}
+    {{ form_start(bulkForm) }}
+{% endif %}
 
 <table class="table">
     <tr>
+        {% if bulkForm is defined and bulkForm is not null %}
+            <td style="width: 1px;" class="px-0">&nbsp;</td>
+        {% endif %}
+        
         {% for column in columns %}
             {% if column.sortable is defined and column.sortableBy is defined and column.sortable and form is defined %}
                 <twig:List:SortableHead 
@@ -19,6 +27,44 @@
         {% endfor %}
     </tr>
     {% for element in elements %}
-        {% block content %}{% endblock %}
+        <tr>
+            {% if bulkForm is defined and bulkForm is not null %}
+                <td class="px-0">{{ form_widget(bulkForm.elements[loop.index0], {'label': false}) }}</td>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </tr>        
     {% endfor %}
+
+    {% if bulkForm is defined and bulkForm is not null %}
+        <tr>
+            <td class="px-0">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" data-controller="mass-check">
+                </div>
+            </td>
+            <td>{% trans %}Marcar / desmarcar todos{% endtrans %}</td>
+            <td colspan="{{ (columns | length) - 1 }}">
+                <div class="row">
+                    <div class="col-3">
+                        {{ form_widget(bulkForm.action) }}
+                    </div>
+
+                    {% for field in bulkForm %}
+                        {% if field.vars.name not in ['action', 'execute', 'elements', '_token'] %}
+                            <div class="col-3">
+                                {{ form_widget(field) }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <div class="col-2">
+                        {{ form_widget(bulkForm.execute) }}
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        {{ form_end(bulkForm) }}
+    {% endif %}
 </table>

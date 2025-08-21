@@ -28,29 +28,27 @@
     ] %}
 
     <twig:List:Table :columns="columns" :elements="measurements">
-        <tr>
-            <td>{{ element.propertyId | property_name }}</td>
-            <td>{{ element.wasteId | waste_name }}</td>
-            <td>{{ element.wasteManagerId | waste_manager_name }}</td>
-            <td>{{ element.quantity }}</td>
-            <td>
-                {{ element.load }}
+        <td>{{ element.propertyId | property_name }}</td>
+        <td>{{ element.wasteId | waste_name }}</td>
+        <td>{{ element.wasteManagerId | waste_manager_name }}</td>
+        <td>{{ element.quantity }}</td>
+        <td>
+            {{ element.load }}
 
-                {{ element.measurementMethod.value == 'VOLUME' ? '%' : 'Kg' }}
-            </td>
-            <td>{{ element.purpose.value | trans({}, 'purpose') }}</td>
-            <td>{{ element.registeredBy | user_name }}</td>
-            <td>{{ element.registeredAt | date('H:i d/m/Y') }}</td>
-            <td>
-                {% if element | is_authorized('edit') %}
-                    <twig:List:Action:Edit path="{{ path('measurements_edit', {'measurementId': element.id}) }}" />
-                {% endif %}
+            {{ element.measurementMethod.value == 'VOLUME' ? '%' : 'Kg' }}
+        </td>
+        <td>{{ element.purpose.value | trans({}, 'purpose') }}</td>
+        <td>{{ element.registeredBy | user_name }}</td>
+        <td>{{ element.registeredAt | date('H:i d/m/Y') }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('measurements_edit', {'measurementId': element.id}) }}" />
+            {% endif %}
 
-                {% if element | is_authorized('remove') %}
-                    <twig:List:Action:Delete path="{{ path('measurements_remove', {'measurementId': element.id}) }}" />
-                {% endif %}
-            </td>
-        </tr>
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('measurements_remove', {'measurementId': element.id}) }}" />
+            {% endif %}
+        </td>
     </twig:List:Table>
 {% endblock %}
 
