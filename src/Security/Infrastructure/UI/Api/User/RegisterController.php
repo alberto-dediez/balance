@@ -17,8 +17,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/users', name: 'api_users_register', methods: ['POST'])]
 #[OA\Post( 
-    summary: "Generate a new user",
-    description: "[Only for admins] Generate a new user",
+    summary: "Register a new user",
+    description: "[Only for admins] Register a new user",
     tags: ['Security']
 )]
 #[OA\Response(

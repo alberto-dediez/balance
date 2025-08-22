@@ -15,7 +15,7 @@ class UserResponse
 
         #[OA\Property(
             type: 'string',
-            example: 'Bioscore'
+            example: 'user@dediez.software'
         )]
         public string $username,
 

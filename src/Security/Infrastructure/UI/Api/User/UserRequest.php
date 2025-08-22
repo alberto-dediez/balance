@@ -9,7 +9,7 @@ class UserRequest
     public function __construct(
         #[OA\Property(
             type: 'string',
-            example: 'Bioscore'
+            example: 'user@dediez.software'
         )]
         public string $username,
 

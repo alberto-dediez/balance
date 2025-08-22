@@ -3,6 +3,7 @@
 namespace App\Security\Infrastructure\UI\Api\Account;
 
 use OpenApi\Attributes as OA;
+use App\Security\Domain\Model\User\Role;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,8 +15,8 @@ use App\Security\Application\Account\Register\RegisterAccountService;
 
 #[Route('/accounts', name: 'api_accounts_register', methods: ['POST'])]
 #[OA\Post( 
-    summary: "Generate a new account",
-    description: "[Only for admins] Generate a new account",
+    summary: "Register a new account",
+    description: "[Only for admins] Register a new account",
     tags: ['Security']
 )]
 #[OA\Response(
@@ -32,6 +33,8 @@ class RegisterController extends AbstractController
         LoggedUser $loggedUser
     ): JsonResponse
     {
+        $this->denyAccessUnlessGranted(Role::Admin->value);
+        
         $response = $register($request, $loggedUser());
 
         return $this->json(new AccountResponse(
