@@ -15,7 +15,7 @@ Feature:
         When I am logged as "user1@dediez.software"
         When I go to "/es/measurements"
         Then the response status should be 200
-        Then I see a table with 3 rows
+        Then I see a table with 4 rows
 
     Scenario: As owner I can access a list of all measurements of my account
         Given account "MyCompany" with id "mycompany" exists
@@ -32,4 +32,4 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/measurements"
         Then the response status should be 200
-        Then I see a table with 5 rows
+        Then I see a table with 6 rows

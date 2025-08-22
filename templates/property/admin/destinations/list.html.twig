@@ -19,7 +19,7 @@
         }
     ] %}
 
-    <twig:List:Table :columns="columns" :elements="destinations">
+    <twig:List:Table :columns="columns" :elements="destinations" :bulkForm="bulkForm">
         <td>{{ element.name }}</td>
         <td>{{ element.countryId | country_name }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>

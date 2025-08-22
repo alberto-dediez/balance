@@ -17,7 +17,7 @@
         }
     ] %}
 
-    <twig:List:Table :columns="columns" :elements="categories">
+    <twig:List:Table :columns="columns" :elements="categories" :bulkForm="bulkForm">
         <td>{{ element.name }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>

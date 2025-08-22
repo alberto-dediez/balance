@@ -8,7 +8,7 @@ Feature:
         When I am logged as "admin@dediez.software"
         When I go to "/es/admin/properties"
         Then the response status should be 200
-        Then I see a table with 3 rows
+        Then I see a table with 4 rows
 
     Scenario: As normal user I can't access a list of all properties
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
@@ -28,4 +28,4 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/properties"
         Then the response status should be 200
-        Then I see a table with 3 rows
+        Then I see a table with 4 rows

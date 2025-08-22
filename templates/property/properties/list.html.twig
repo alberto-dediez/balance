@@ -21,7 +21,7 @@
         }
     ] %}
 
-    <twig:List:Table :columns="columns" :elements="properties">
+    <twig:List:Table :columns="columns" :elements="properties" :bulkForm="bulkForm">
         <td>{{ element.name }}</td>
         <td>{{ element.info.destinationId | destination_name }}</td>
         <td>{{ element.info.countryId | country_name }}</td>

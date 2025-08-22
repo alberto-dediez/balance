@@ -23,7 +23,7 @@
         }
     ] %}
 
-    <twig:List:Table :columns="columns" :elements="containers">
+    <twig:List:Table :columns="columns" :elements="containers" :bulkForm="bulkForm">
         <td>{{ element.propertyId | property_name }}</td>
         <td>{{ element.wasteId | waste_name }}</td>
         <td>{{ element.purpose.value | trans({}, 'purpose') }}</td>

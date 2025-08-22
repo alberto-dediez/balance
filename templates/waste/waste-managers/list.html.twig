@@ -20,7 +20,7 @@
         }
     ] %}
 
-    <twig:List:Table :columns="columns" :elements="wasteManagers">
+    <twig:List:Table :columns="columns" :elements="wasteManagers" :bulkForm="bulkForm">
         <td>{{ element.name }}</td>
         <td>{{ element.isPublic | show_field_value }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>

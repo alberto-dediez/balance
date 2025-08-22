@@ -27,7 +27,7 @@
         }
     ] %}
 
-    <twig:List:Table :columns="columns" :elements="measurements">
+    <twig:List:Table :columns="columns" :elements="measurements" :bulkForm="bulkForm ?? null">
         <td>{{ element.propertyId | property_name }}</td>
         <td>{{ element.wasteId | waste_name }}</td>
         <td>{{ element.wasteManagerId | waste_manager_name }}</td>

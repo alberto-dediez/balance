@@ -22,4 +22,4 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/containers"
         Then the response status should be 200
-        Then I see a table with 3 rows
+        Then I see a table with 4 rows
