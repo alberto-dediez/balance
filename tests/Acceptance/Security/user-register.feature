@@ -49,3 +49,24 @@ Feature:
       When I am logged as "owner@dediez.software"
       When I go to "/es/users/register"
       Then the response status should be 200
+  
+  Scenario: As an admin, I can register new users by API
+    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+    Given account "MyCompany" with id "123" exists
+    When I am authenticated in API as "admin@dediez.software"
+    When I send a POST request to "/api/users" with body:
+    """
+    {
+      "username": "user@dediez.software",
+      "account_id": "123"
+    }
+    """
+    Then the status code should be 200
+    And the response JSON should be similar to:
+    """
+    {
+      "user_id": "1123-0136-456544465464-465446566",
+      "username": "user@dediez.software",
+      "account_id": "123"
+    }
+    """
