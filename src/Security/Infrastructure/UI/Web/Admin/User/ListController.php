@@ -47,8 +47,6 @@ class ListController extends AbstractController
             'elements' => $response->users
         ]);
 
-        $this->bulkActions($request, $bulkForm, $loggedUser());
-
         $needsRedirect = $this->bulkActions($request, $bulkForm, $loggedUser());
 
         if ($needsRedirect) {
