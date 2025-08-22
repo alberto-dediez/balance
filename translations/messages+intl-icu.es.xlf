@@ -1061,6 +1061,106 @@
         <source>Marcar / desmarcar todos</source>
         <target>Marcar / desmarcar todos</target>
       </trans-unit>
+      <trans-unit id="CEyVzKY" resname="Se ha eliminado la medición {id}">
+        <source>Se ha eliminado la medición {id}</source>
+        <target>Se ha eliminado la medición {id}</target>
+      </trans-unit>
+      <trans-unit id="e.iyYnz" resname="No se ha podido eliminar la medición {id}">
+        <source>No se ha podido eliminar la medición {id}</source>
+        <target>No se ha podido eliminar la medición {id}</target>
+      </trans-unit>
+      <trans-unit id="1MkwyZ7" resname="Se ha eliminado el contenedor {id}">
+        <source>Se ha eliminado el contenedor {id}</source>
+        <target>Se ha eliminado el contenedor {id}</target>
+      </trans-unit>
+      <trans-unit id="JybpvgC" resname="No se ha podido eliminar el contenedor {id}">
+        <source>No se ha podido eliminar el contenedor {id}</source>
+        <target>No se ha podido eliminar el contenedor {id}</target>
+      </trans-unit>
+      <trans-unit id="MLDkYG." resname="Se ha eliminado el gestor {id}">
+        <source>Se ha eliminado el gestor {id}</source>
+        <target>Se ha eliminado el gestor {id}</target>
+      </trans-unit>
+      <trans-unit id="5A6qIzI" resname="No se ha podido eliminar el gestor {id}">
+        <source>No se ha podido eliminar el gestor {id}</source>
+        <target>No se ha podido eliminar el gestor {id}</target>
+      </trans-unit>
+      <trans-unit id="4NIBy_1" resname="Se ha eliminado el tipo de residuo {id}">
+        <source>Se ha eliminado el tipo de residuo {id}</source>
+        <target>Se ha eliminado el tipo de residuo {id}</target>
+      </trans-unit>
+      <trans-unit id="mwLhGji" resname="No se ha podido eliminar el tipo de residuo {id}">
+        <source>No se ha podido eliminar el tipo de residuo {id}</source>
+        <target>No se ha podido eliminar el tipo de residuo {id}</target>
+      </trans-unit>
+      <trans-unit id="9C_6ig." resname="Se ha eliminado la categoría {id}">
+        <source>Se ha eliminado la categoría {id}</source>
+        <target>Se ha eliminado la categoría {id}</target>
+      </trans-unit>
+      <trans-unit id="_H1vk6y" resname="No se ha podido eliminar la categoría {id}">
+        <source>No se ha podido eliminar la categoría {id}</source>
+        <target>No se ha podido eliminar la categoría {id}</target>
+      </trans-unit>
+      <trans-unit id="chRKHBH" resname="Asignar cuenta">
+        <source>Asignar cuenta</source>
+        <target>Asignar cuenta</target>
+      </trans-unit>
+      <trans-unit id="KHUrBAA" resname="Se ha asignado la cuenta seleccionada a la propiedad {id}">
+        <source>Se ha asignado la cuenta seleccionada a la propiedad {id}</source>
+        <target>Se ha asignado la cuenta seleccionada a la propiedad {id}</target>
+      </trans-unit>
+      <trans-unit id="kGiXazz" resname="Se ha eliminado la cuenta de la propiedad {id}">
+        <source>Se ha eliminado la cuenta de la propiedad {id}</source>
+        <target>Se ha eliminado la cuenta de la propiedad {id}</target>
+      </trans-unit>
+      <trans-unit id="78iRgdD" resname="No se ha podido modificar la propiedad {id}">
+        <source>No se ha podido modificar la propiedad {id}</source>
+        <target>No se ha podido modificar la propiedad {id}</target>
+      </trans-unit>
+      <trans-unit id="pHeK_TK" resname="Se ha eliminado la propiedad {id}">
+        <source>Se ha eliminado la propiedad {id}</source>
+        <target>Se ha eliminado la propiedad {id}</target>
+      </trans-unit>
+      <trans-unit id="qvczJw3" resname="No se ha podido eliminar la propiedad {id}">
+        <source>No se ha podido eliminar la propiedad {id}</source>
+        <target>No se ha podido eliminar la propiedad {id}</target>
+      </trans-unit>
+      <trans-unit id="IxTU9cy" resname="Se ha eliminado la marca {id}">
+        <source>Se ha eliminado la marca {id}</source>
+        <target>Se ha eliminado la marca {id}</target>
+      </trans-unit>
+      <trans-unit id="S.PQYgo" resname="No se ha podido eliminar la marca {id}">
+        <source>No se ha podido eliminar la marca {id}</source>
+        <target>No se ha podido eliminar la marca {id}</target>
+      </trans-unit>
+      <trans-unit id="HNTWrpA" resname="Se ha eliminado el país {id}">
+        <source>Se ha eliminado el país {id}</source>
+        <target>Se ha eliminado el país {id}</target>
+      </trans-unit>
+      <trans-unit id="8VmMHaJ" resname="No se ha podido eliminar el país {id}">
+        <source>No se ha podido eliminar el país {id}</source>
+        <target>No se ha podido eliminar el país {id}</target>
+      </trans-unit>
+      <trans-unit id="Q.F5kZu" resname="Se ha eliminado el destino {id}">
+        <source>Se ha eliminado el destino {id}</source>
+        <target>Se ha eliminado el destino {id}</target>
+      </trans-unit>
+      <trans-unit id="wIuKPIL" resname="No se ha podido eliminar el destino {id}">
+        <source>No se ha podido eliminar el destino {id}</source>
+        <target>No se ha podido eliminar el destino {id}</target>
+      </trans-unit>
+      <trans-unit id="5xEP3iD" resname="Residuos por propiedad">
+        <source>Residuos por propiedad</source>
+        <target>Residuos por propiedad</target>
+      </trans-unit>
+      <trans-unit id="iYhZhUc" resname="Últimas mediciones">
+        <source>Últimas mediciones</source>
+        <target>Últimas mediciones</target>
+      </trans-unit>
+      <trans-unit id="EwptmCw" resname="Tipología">
+        <source>Tipología</source>
+        <target>Tipología</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
