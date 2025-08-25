@@ -1161,6 +1161,26 @@
         <source>Tipología</source>
         <target>Tipología</target>
       </trans-unit>
+      <trans-unit id="CnMwVmK" resname="Bienvenido {user}">
+        <source>Bienvenido {user}</source>
+        <target>Bienvenido {user}</target>
+      </trans-unit>
+      <trans-unit id="9pFS2nJ" resname="Se ha dado de alta un usuario con el email {user} en la cuenta {account}.">
+        <source>Se ha dado de alta un usuario con el email {user} en la cuenta {account}.</source>
+        <target>Se ha dado de alta un usuario con el email {user} en la cuenta {account}.</target>
+      </trans-unit>
+      <trans-unit id="HDTYqtE" resname="Se ha dado de alta un usuario con el email {user} sin cuenta asignada.">
+        <source>Se ha dado de alta un usuario con el email {user} sin cuenta asignada.</source>
+        <target>Se ha dado de alta un usuario con el email {user} sin cuenta asignada.</target>
+      </trans-unit>
+      <trans-unit id="m42u3Y1" resname="Si no dispone de la contraseña para acceder puede generar una nueva contraseña visitando el siguiente enlace:">
+        <source>Si no dispone de la contraseña para acceder puede generar una nueva contraseña visitando el siguiente enlace:</source>
+        <target>Si no dispone de la contraseña para acceder puede generar una nueva contraseña visitando el siguiente enlace:</target>
+      </trans-unit>
+      <trans-unit id="XmT7AbV" resname="Generar nueva contraseña">
+        <source>Generar nueva contraseña</source>
+        <target>Generar nueva contraseña</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
