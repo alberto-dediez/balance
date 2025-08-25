@@ -9,11 +9,11 @@
             {% trans with {
                 '{user}': username,
                 '{account}': account | account_name
-            } -%}Se ha dado de alta una cuenta con el email {user} en la cuenta {account}.{%- endtrans %}
+            } -%}Se ha dado de alta un usuario con el email {user} en la cuenta {account}.{%- endtrans %}
         {% else %}
             {% trans with {
                 '{user}': username,
-            } -%}Se ha dado de alta una cuenta con el email {user} sin cuenta asignada.{%- endtrans %}
+            } -%}Se ha dado de alta un usuario con el email {user} sin cuenta asignada.{%- endtrans %}
         {% endif %}
     </p>
     <p>{% trans -%}Si no dispone de la contraseña para acceder puede generar una nueva contraseña visitando el siguiente enlace:{%- endtrans %}</p>
