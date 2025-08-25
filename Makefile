@@ -138,8 +138,8 @@ icon-lock:
 	@$(PHP) bin/console ux:icons:lock
 
 translation:
-	php ./bin/console trans:extract es --force --prefix="NEW_" -q
-	php ./bin/console trans:extract en --force --prefix="NEW_" -q
+	@$(PHP) ./bin/console trans:extract es --force --prefix="NEW_" -q
+	@$(PHP) ./bin/console trans:extract en --force --prefix="NEW_" -q
 
 ## —— Production ————————————————————————————————————————————————————————————
 assets:

@@ -517,6 +517,26 @@
         <source>Marcar / desmarcar todos</source>
         <target>check / uncheck all</target>
       </trans-unit>
+      <trans-unit id="CnMwVmK" resname="Bienvenido {user}">
+        <source>Bienvenido {user}</source>
+        <target>Welcome {user}</target>
+      </trans-unit>
+      <trans-unit id="9pFS2nJ" resname="Se ha dado de alta un usuario con el email {user} en la cuenta {account}.">
+        <source>Se ha dado de alta un usuario con el email {user} en la cuenta {account}.</source>
+        <target>A user with the email address {user} has been registered for the account {account}.</target>
+      </trans-unit>
+      <trans-unit id="HDTYqtE" resname="Se ha dado de alta un usuario con el email {user} sin cuenta asignada.">
+        <source>Se ha dado de alta un usuario con el email {user} sin cuenta asignada.</source>
+        <target>A user with the email address {user} has been registered without an assigned account.</target>
+      </trans-unit>
+      <trans-unit id="m42u3Y1" resname="Si no dispone de la contraseña para acceder puede generar una nueva contraseña visitando el siguiente enlace:">
+        <source>Si no dispone de la contraseña para acceder puede generar una nueva contraseña visitando el siguiente enlace:</source>
+        <target>If you don't have the password to log in, you can generate a new password by visiting the following link:</target>
+      </trans-unit>
+      <trans-unit id="XmT7AbV" resname="Generar nueva contraseña">
+        <source>Generar nueva contraseña</source>
+        <target>Generate new password</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
