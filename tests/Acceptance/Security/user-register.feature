@@ -42,6 +42,7 @@ Feature:
     When I follow redirect
     Then the response status should be 200
     Then I see a text "Usuario creado correctamente"
+    Then I received an email with subject "Bienvenido user@dediez.software" to "user@dediez.software"
 
   Scenario: As owner I can register users to my account
       Given account "MyCompany" with id "666" exists
