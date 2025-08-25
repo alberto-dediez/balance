@@ -101,10 +101,15 @@ class UserMother
     {
         $user = new User(
             id: $userId,
-            recoverToken: $recoverToken
+            recoverToken: $recoverToken,
+            username: $username,
+            password: 'apassword',
+            accountId: $accountId,
+            registeredAt: new \DateTimeImmutable("NOW"),
+            roles: [
+                $role
+            ]
         );
-        $user->register($username, 'apassword', $accountId);
-        $user->grantRole($role);
 
         return $user;
     }

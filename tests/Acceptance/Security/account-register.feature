@@ -40,3 +40,23 @@ Feature:
     When I follow redirect
     Then the response status should be 200
     Then I see a text "Cuenta creada correctamente"
+  
+  Scenario: As an admin, I can register new accounts by API
+    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+    When I am authenticated in API as "admin@dediez.software"
+    When I send a POST request to "/api/accounts" with body:
+    """
+    {
+      "name": "Minotour",
+      "active": true
+    }
+    """
+    Then the status code should be 200
+    And the response JSON should be similar to:
+    """
+    {
+      "name": "Minotour",
+      "account_id": "1123-0136-456544465464-465446566",
+      "active": true
+    }
+    """
