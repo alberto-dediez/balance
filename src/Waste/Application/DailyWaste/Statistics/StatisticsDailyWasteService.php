@@ -66,6 +66,14 @@ class StatisticsDailyWasteService
         $total = 0;
 
         foreach ($dailyWastes as $dailyWaste) {
+            $property = $this->propertyRepository->find($dailyWaste->propertyId());
+            $waste = $this->wasteRepository->find($dailyWaste->wasteId());
+            $wasteManager = $this->wasteManagerRepository->find($dailyWaste->wasteManagerId());
+
+            if (null === $property || null === $waste || null === $wasteManager) {
+                continue;
+            }
+
             $total += $dailyWaste->load();
 
             //ByDate
@@ -77,21 +85,21 @@ class StatisticsDailyWasteService
 
             //ByProperty
             if (!isset($byProperty[(string) $dailyWaste->propertyId()])) {
-                $byProperty[(string) $dailyWaste->propertyId()] = new ByProperty($this->propertyRepository->find($dailyWaste->propertyId()), 0, 0);
+                $byProperty[(string) $dailyWaste->propertyId()] = new ByProperty($property, 0, 0);
             }
 
             $byProperty[(string) $dailyWaste->propertyId()]->load += $dailyWaste->load();
 
             //ByWaste
             if (!isset($byWaste[(string) $dailyWaste->wasteId()])) {
-                $byWaste[(string) $dailyWaste->wasteId()] = new ByWaste($this->wasteRepository->find($dailyWaste->wasteId()), 0, 0);
+                $byWaste[(string) $dailyWaste->wasteId()] = new ByWaste($waste, 0, 0);
             }
 
             $byWaste[(string) $dailyWaste->wasteId()]->load += $dailyWaste->load();
 
             //ByWasteManager
             if (!isset($byWasteManager[(string) $dailyWaste->wasteManagerId()])) {
-                $byWasteManager[(string) $dailyWaste->wasteManagerId()] = new ByWasteManager($this->wasteManagerRepository->find($dailyWaste->wasteManagerId()), 0, 0);
+                $byWasteManager[(string) $dailyWaste->wasteManagerId()] = new ByWasteManager($wasteManager, 0, 0);
             }
 
             $byWasteManager[(string) $dailyWaste->wasteManagerId()]->load += $dailyWaste->load();
