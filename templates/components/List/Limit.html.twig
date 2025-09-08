@@ -5,10 +5,10 @@
         {# Render each limit number #}
         {% for i in [10, 25, 100] %}
             <li class="limit-item px-1">
-                <a 
-                    class="btn btn-sm px-3 py-2 {{ limit == i ? 'btn-info active' : 'bg-light' }}" 
+                <a
+                    class="btn btn-sm px-3 py-2 {{ limit == i ? 'btn-secondary active' : 'bg-light' }}"
                     data-action="pagination#limit:prevent"
-                    data-limit="{{ i }}" 
+                    data-limit="{{ i }}"
                     href="#{{ i }}"
                 >{{ i }}</a>
             </li>

@@ -4,7 +4,7 @@ var userSettings = {
   BoxedLayout: false, // true | false
   Direction: "ltr", // ltr | rtl
   Theme: "light", // light | dark
-  ColorTheme: "Bioscore", // Blue_Theme | Aqua_Theme | Purple_Theme | Green_Theme | Cyan_Theme | Orange_Theme
+  ColorTheme: "Hydra", // Blue_Theme | Aqua_Theme | Purple_Theme | Green_Theme | Cyan_Theme | Orange_Theme
   cardBorder: false, // true | false
 };
 
@@ -272,7 +272,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
   handleTheme();
-  
+
   //****************************
   // Toggle sidebar
   //****************************
@@ -370,7 +370,7 @@ if ((at = "vertical")) {
       // This is for show menu
       //****************************
 
-      
+
       function findMatchingElement() {
         var elements = document.querySelector('#sidebarnav a.active');
 
@@ -408,10 +408,10 @@ if ((at = "vertical")) {
           document
               .getElementById("menu-right-mini-" + menu)
               .classList.add("d-block");
-          document.getElementById("mini-" + menu).classList.add("selected");  
+          document.getElementById("mini-" + menu).classList.add("selected");
         }
     }
-      
+
 
       //****************************
       // This is for mini sidebar
