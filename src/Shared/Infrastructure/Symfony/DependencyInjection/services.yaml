@@ -1,6 +1,7 @@
 parameters:
     app.locale_default: '%env(LANGUAGE_DEFAULT)%'
     app.locale_list: '%env(LANGUAGE_LIST)%'
+    company.name: '%env(COMPANY_NAME)%'
     mailer.from: '%env(MAILER_FROM)%'
 
 services:

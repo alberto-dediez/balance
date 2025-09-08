@@ -4,12 +4,12 @@
 
 // colors
 $white: #fff;
-$gray-100: #f6f9fc;
-$gray-200: #eff4fa;
-$gray-300: #dfe5ef;
-$gray-400: #7c8fac;
-$gray-500: #5a6a85;
-$gray-600: #111c2d;
+$gray-100: #f9f9f9;
+$gray-200: #f4f4f4;
+$gray-300: #e5e5e5;
+$gray-400: #7c7c7c;
+$gray-500: #5a5a5a;
+$gray-600: #1c1c1c;
 $black: #000;
 
 // Color
@@ -25,10 +25,10 @@ $teal: #20c997;
 $cyan: #539bff;
 
 // Main Colors
-$primary: #3e7490;
-$secondary: #c3d300;
-$success: #00ceb6;
-$info: #46caeb;
+$primary: #f08023;
+$secondary: #333333;
+$success: $teal;
+$info: $cyan;
 $warning: $yellow;
 $danger: $red;
 $light: $gray-300;
@@ -56,10 +56,10 @@ $theme-colors: (
 );
 
 // light colors
-$primary-bg-subtle: #d9f1ff;
-$secondary-bg-subtle: #e7e2f3;
-$success-bg-subtle: #d2f9f4;
-$info-bg-subtle: #e1f5fa;
+$primary-bg-subtle: #ffe6d9;
+$secondary-bg-subtle: #e6e6e6;
+$success-bg-subtle: #d0f7ee;
+$info-bg-subtle: #d3efff;
 $warning-bg-subtle: #fff1cc;
 $danger-bg-subtle: #ffe4ec;
 $light-bg-subtle: $gray-100;

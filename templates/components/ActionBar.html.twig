@@ -1,3 +1,5 @@
-<div class="row justify-content-end action-bar">
+{% props justify = 'end' %}
+
+<div {{ attributes.defaults({'class': 'row action-bar justify-content-' ~ justify}) }}>
     {% block content %}{% endblock %}
 </div>

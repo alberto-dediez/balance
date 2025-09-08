@@ -57,6 +57,11 @@ input::file-selector-button {
     color: $body-color-dark;
 }
 
+input.form-control:focus {
+    background-color: $input-focus-bg-dark;
+    color: $input-focus-color-dark;
+}
+
 .border-white {
     border-color: $border-color-dark !important;
 }
@@ -106,7 +111,7 @@ input::file-selector-button {
 .card {
     --bs-card-title-color: rgba(255, 255, 255, 0.85);
     --bs-card-subtitle-color: rgba(255, 255, 255, 0.6);
-    --bs-card-bg: #1f2a3d;
+    --bs-card-bg: $card-bg-dark;
     --bs-card-box-shadow: rgba(145, 158, 171, 0.3) 0px 0px 2px 0px,
         rgba(145, 158, 171, 0.02) 0px 12px 24px -4px;
 }
@@ -122,7 +127,7 @@ input::file-selector-button {
 
 .table {
     --bs-table-border-color: #313e54;
-    --bs-table-bg: #1f2a3d;
+    --bs-table-bg: $card-bg-dark;
 }
 
 .table> :not(caption)>*>* {
