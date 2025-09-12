@@ -40,14 +40,14 @@ sh: ## Connect to the FrankenPHP container
 
 bash: ## Connect to the FrankenPHP container via bash so up and down arrows go to previous commands
 	@$(PHP_CONT) bash
-	
+
 db-sh: ## Connect to the FrankenPHP Database container
 	@$(DATABASE_CONT) sh
 
 db-bash: ## Connect to the FrankenPHP Database container via bash so up and down arrows go to previous commands
 	@$(DATABASE_CONT) bash
 
-trust: 
+trust:
 	docker cp $(docker compose ps -q php):/data/caddy/pki/authorities/local/root.crt /usr/local/share/ca-certificates/root.crt && sudo update-ca-certificates
 
 build-prod:
@@ -56,7 +56,7 @@ build-prod:
 up-prod:
 	@$(DOCKER_COMP) -f compose.yaml -f compose.prod.yaml up --wait
 
-init: 
+init:
 	@$(SYMFONY) lexik:jwt:generate-keypair --skip-if-exists
 	@$(SYMFONY) doctrine:database:create --if-not-exists
 	@$(SYMFONY) doctrine:migrations:migrate
@@ -100,7 +100,7 @@ test-unit: ## Execute unit tests
 
 test-acceptance: ## Execute acceptance tests
 	@$(eval options ?=)
-	@$(PHP_TEST) bin/console doc:sch:drop -e test --force -q 
+	@$(PHP_TEST) bin/console doc:sch:drop -e test --force -q
 	@$(PHP_TEST) bin/console doc:sch:upd -e test --force -q
 	@$(PHP_TEST) vendor/bin/behat $(options)
 
@@ -142,6 +142,6 @@ translation:
 	@$(PHP) ./bin/console trans:extract en --force --prefix="NEW_" -q
 
 ## —— Production ————————————————————————————————————————————————————————————
-assets:
+asset-prod:
 	@$(PHP) bin/console sass:build
 	@$(PHP) bin/console asset-map:compile
