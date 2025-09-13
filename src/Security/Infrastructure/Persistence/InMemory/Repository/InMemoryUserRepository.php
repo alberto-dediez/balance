@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Security\Infrastructure\Repository\User;
+namespace App\Security\Infrastructure\Persistence\InMemory\Repository;
 
-use App\Security\Domain\Model\User\User;
-use App\Security\Domain\Model\User\DuplicatedUsernameException;
-use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\Account\Account;
-use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\DuplicatedUsernameException;
 use App\Security\Domain\Model\User\RecoverToken;
+use App\Security\Domain\Model\User\User;
+use App\Security\Domain\Model\User\UserFilter;
+use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use Symfony\Component\DependencyInjection\Attribute\When;
 

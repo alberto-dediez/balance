@@ -2,18 +2,18 @@
 
 namespace App\Tests\Unit\Security\Application\Account\Register;
 
-use PHPUnit\Framework\TestCase;
+use App\Security\Application\Account\Register\RegisterAccountRequest;
+use App\Security\Application\Account\Register\RegisterAccountResponse;
+use App\Security\Application\Account\Register\RegisterAccountService;
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\Account;
-use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Security\Domain\Model\Account\AccountRegistered;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Security\Application\Account\AccountAuthorizerMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Security\Application\Account\Register\RegisterAccountRequest;
-use App\Security\Application\Account\Register\RegisterAccountService;
-use App\Security\Application\Account\Register\RegisterAccountResponse;
-use App\Security\Application\UnauthorizedActionException;
-use App\Tests\Unit\Security\Application\Account\AccountAuthorizerMother;
-use App\Security\Infrastructure\Repository\Account\InMemoryAccountRepository;
+use PHPUnit\Framework\TestCase;
 
 class RegisterAccountServiceTest extends TestCase
 {

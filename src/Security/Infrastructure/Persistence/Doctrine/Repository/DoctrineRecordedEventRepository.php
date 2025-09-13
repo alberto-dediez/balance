@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Security\Infrastructure\Repository\RecordedEvent;
+namespace App\Security\Infrastructure\Persistence\Doctrine\Repository;
 
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Security\Domain\Model\RecordedEvent\RecordedEvent;
-use App\Security\Domain\Model\RecordedEvent\RecordedEventId;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventFilter;
+use App\Security\Domain\Model\RecordedEvent\RecordedEventId;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventRepository;
-use Symfony\Component\DependencyInjection\Attribute\When;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[AsAlias(id: 'repository.recordedEvents', public: true)]
 #[When(env: 'dev')]
@@ -98,10 +98,10 @@ class DoctrineRecordedEventRepository implements RecordedEventRepository
 
         switch ($filter->orderBy) {
             case 'context':
-                $qb->orderBy('e.context', $way);        
+                $qb->orderBy('e.context', $way);
                 break;
             case 'eventName':
-                $qb->orderBy('e.eventName', $way);        
+                $qb->orderBy('e.eventName', $way);
                 break;
             case 'occurredOn':
             default:
@@ -117,7 +117,7 @@ class DoctrineRecordedEventRepository implements RecordedEventRepository
         $qb = $this->createQueryBuilderFromFilter($filter);
 
         $query = $qb->getQuery();
-        
+
         if ($filter->limit > 0) {
             $query
                 ->setMaxResults($filter->limit)

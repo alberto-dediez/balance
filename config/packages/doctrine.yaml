@@ -9,10 +9,10 @@ doctrine:
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
         types:
-            locale: App\Shared\Infrastructure\Symfony\Doctrine\Type\LocaleType
-            user_id: App\Security\Infrastructure\Symfony\Doctrine\Type\UserIdType
-            account_id: App\Security\Infrastructure\Symfony\Doctrine\Type\AccountIdType
-            recorded_event_id: App\Security\Infrastructure\Symfony\Doctrine\Type\RecordedEventIdType
+            locale: App\Shared\Infrastructure\Persistence\Doctrine\Type\LocaleType
+            user_id: App\Security\Infrastructure\Persistence\Doctrine\Type\UserIdType
+            account_id: App\Security\Infrastructure\Persistence\Doctrine\Type\AccountIdType
+            recorded_event_id: App\Security\Infrastructure\Persistence\Doctrine\Type\RecordedEventIdType
 
     orm:
         auto_generate_proxy_classes: true
@@ -28,7 +28,7 @@ doctrine:
             Security:
                 type: xml
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Security/Infrastructure/Symfony/Doctrine'
+                dir: '%kernel.project_dir%/src/Security/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Security\Domain\Model'
                 alias: Security
         controller_resolver:

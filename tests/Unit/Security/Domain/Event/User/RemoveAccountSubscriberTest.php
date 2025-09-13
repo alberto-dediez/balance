@@ -2,19 +2,18 @@
 
 namespace App\Tests\Unit\Security\Domain\Event\User;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\UserId;
-use App\Security\Domain\Model\User\UserRemoved;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Security\Domain\Model\Account\AccountRemoved;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Security\Application\User\Remove\RemoveUserService;
 use App\Security\Domain\Event\User\RemoveAccountSubscriber;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\Account\AccountRemoved;
+use App\Security\Domain\Model\User\UserId;
+use App\Security\Domain\Model\User\UserRemoved;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
+use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
-use App\Security\Infrastructure\Repository\User\InMemoryUserRepository;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeLoggedUser;
+use PHPUnit\Framework\TestCase;
 
 class RemoveAccountSubscriberTest extends TestCase
 {
@@ -80,7 +79,7 @@ class RemoveAccountSubscriberTest extends TestCase
         );
 
         $sut = $this->createSUT(
-            repository: $repository, 
+            repository: $repository,
             usersToRemoved: 3
         );
         $sut->handle($event);
@@ -90,7 +89,7 @@ class RemoveAccountSubscriberTest extends TestCase
     {
         $removeUser = $this->createMock(RemoveUserService::class);
         $removeUser->expects($this->exactly($usersToRemoved))->method('__invoke');
-        
+
         /** @var RemoveUserService $removeUser */
 
         return new RemoveAccountSubscriber(

@@ -1,20 +1,19 @@
 <?php
 
-namespace App\Security\Infrastructure\Repository\User;
+namespace App\Security\Infrastructure\Persistence\Doctrine\Repository;
 
-use App\Security\Domain\Model\User\DuplicatedUsernameException;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\EntityRepository;
-use App\Security\Domain\Model\User\User;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Security\Domain\Model\User\UserId;
-use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\DuplicatedUsernameException;
 use App\Security\Domain\Model\User\RecoverToken;
+use App\Security\Domain\Model\User\User;
+use App\Security\Domain\Model\User\UserFilter;
+use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
-use Symfony\Component\DependencyInjection\Attribute\When;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
-use App\Security\Infrastructure\Repository\Account\DoctrineAccountRepository;
+use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[AsAlias(id: 'repository.user', public: true)]
 #[When(env: 'dev')]

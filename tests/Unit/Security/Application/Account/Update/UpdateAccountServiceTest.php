@@ -2,20 +2,20 @@
 
 namespace App\Tests\Unit\Security\Application\Account\Update;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\Account\Account;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Security\Domain\Model\Account\AccountNameChanged;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Security\Domain\Model\Account\AccountStatusChanged;
-use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Security\Application\Account\Update\UpdateAccountRequest;
-use App\Security\Application\Account\Update\UpdateAccountService;
 use App\Security\Application\Account\Update\UpdateAccountResponse;
+use App\Security\Application\Account\Update\UpdateAccountService;
 use App\Security\Application\UnauthorizedActionException;
-use App\Security\Infrastructure\Repository\Account\InMemoryAccountRepository;
+use App\Security\Domain\Model\Account\Account;
+use App\Security\Domain\Model\Account\AccountNameChanged;
+use App\Security\Domain\Model\Account\AccountStatusChanged;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
+use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Security\Application\Account\AccountAuthorizerMother;
+use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class UpdateAccountServiceTest extends TestCase
 {

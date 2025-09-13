@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Security\Infrastructure\Repository\Account;
+namespace App\Security\Infrastructure\Persistence\Doctrine\Repository;
 
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Security\Domain\Model\Account\Account;
-use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountFilter;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
-use Symfony\Component\DependencyInjection\Attribute\When;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[AsAlias(id: 'repository.account', public: true)]
 #[When(env: 'dev')]
@@ -104,7 +104,7 @@ class DoctrineAccountRepository implements AccountRepository
                 break;
             case 'name':
             default:
-                $qb->orderBy('a.name', $way);        
+                $qb->orderBy('a.name', $way);
                 break;
         }
 
@@ -116,7 +116,7 @@ class DoctrineAccountRepository implements AccountRepository
         $qb = $this->createQueryBuilderFromFilter($filter);
 
         $query = $qb->getQuery();
-        
+
         if ($filter->limit > 0) {
             $query
                 ->setMaxResults($filter->limit)

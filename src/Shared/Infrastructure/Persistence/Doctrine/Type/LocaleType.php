@@ -1,42 +1,45 @@
 <?php
 
-namespace App\Shared\Infrastructure\Symfony\Doctrine\Type;
+namespace App\Shared\Infrastructure\Persistence\Doctrine\Type;
 
+use App\Shared\Domain\Model\Locale\Locale;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use App\Shared\Domain\Model\AggregateRootId;
+use Doctrine\DBAL\Types\Type;
 
-trait AggregateRootIdTypeTrait
+class LocaleType extends Type
 {
+    public const NAME = 'locale';
+
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
     {
-        if (!isset($fieldDeclaration['length'])) {
-            $fieldDeclaration['length'] = 36;
-        }
-
         return $platform->getStringTypeDeclarationSQL($fieldDeclaration);
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?AggregateRootId
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?Locale
     {
         if ($value === null) {
             return null;
         }
 
-        return new ($this->getClassName())($value);
+        return Locale::tryFrom($value);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        if ($value instanceof AggregateRootId) {
-            return (string) $value;
+        if ($value instanceof Locale) {
+            return $value->value;
         }
 
         return null;
+    }
+
+    public function getName(): string
+    {
+        return self::NAME;
     }
 
     public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
         return true;
     }
-    
 }

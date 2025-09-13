@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Security\Infrastructure\Repository\Account;
+namespace App\Security\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Security\Domain\Model\Account\Account;
-use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountFilter;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -36,7 +36,7 @@ class InMemoryAccountRepository implements AccountRepository
 
     public function find(AccountId $accountId): ?Account
     {
-        return (isset($this->accounts[(string) $accountId]) && false == $this->accounts[(string) $accountId]->isRemoved()) 
+        return (isset($this->accounts[(string) $accountId]) && false == $this->accounts[(string) $accountId]->isRemoved())
             ? $this->accounts[(string) $accountId]
             : null
         ;
@@ -69,7 +69,7 @@ class InMemoryAccountRepository implements AccountRepository
 
         foreach ($this->accounts as $account) {
             if (
-                !empty($filter->name) 
+                !empty($filter->name)
                 && false === strpos(strtolower($account->name()), strtolower($filter->name))
             ) {
                 continue;

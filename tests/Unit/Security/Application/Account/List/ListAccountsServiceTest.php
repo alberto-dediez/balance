@@ -2,21 +2,21 @@
 
 namespace App\Tests\Unit\Security\Application\Account\List;
 
-use PHPUnit\Framework\TestCase;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Security\Application\Account\List\ListAccountsRequest;
-use App\Security\Application\Account\List\ListAccountsService;
 use App\Security\Application\Account\List\ListAccountsResponse;
+use App\Security\Application\Account\List\ListAccountsService;
 use App\Security\Application\UnauthorizedActionException;
-use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
-use App\Security\Infrastructure\Repository\Account\InMemoryAccountRepository;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
 use App\Tests\Unit\Security\Application\Account\AccountAuthorizerMother;
+use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\TestCase;
 
 class ListAccountsServiceTest extends TestCase
 {
     protected function setUp(): void
     {
-        
+
     }
 
     public function testInvoke()

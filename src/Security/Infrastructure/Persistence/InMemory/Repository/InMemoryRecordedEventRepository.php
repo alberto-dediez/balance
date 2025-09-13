@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Security\Infrastructure\Repository\RecordedEvent;
+namespace App\Security\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Security\Domain\Model\RecordedEvent\RecordedEvent;
-use App\Security\Domain\Model\RecordedEvent\RecordedEventId;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventFilter;
+use App\Security\Domain\Model\RecordedEvent\RecordedEventId;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventRepository;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -36,7 +36,7 @@ class InMemoryRecordedEventRepository implements RecordedEventRepository
 
     public function find(RecordedEventId $eventId): ?RecordedEvent
     {
-        return (isset($this->events[(string) $eventId])) 
+        return (isset($this->events[(string) $eventId]))
             ? $this->events[(string) $eventId]
             : null
         ;
