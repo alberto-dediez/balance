@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Security\Domain\Model\User;
+
+class DuplicatedUsernameException extends \RuntimeException
+{
+    public function __construct(string $username)
+    {
+        parent::__construct(
+            sprintf("El username %s ya está registrado", $username),
+            500
+        );
+    }
+}

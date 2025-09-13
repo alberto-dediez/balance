@@ -2,17 +2,17 @@
 
 namespace App\Tests\Unit\Security\Application\User\RecoverPassword;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\User;
-use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Security\Application\User\RecoverPassword\RecoverPasswordRequest;
+use App\Security\Application\User\RecoverPassword\RecoverPasswordResponse;
+use App\Security\Application\User\RecoverPassword\RecoverPasswordService;
 use App\Security\Domain\Model\User\PasswordRecovered;
+use App\Security\Domain\Model\User\User;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
+use App\Security\Infrastructure\Symfony\Security\Md5PasswordHasher;
+use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Security\Infrastructure\Symfony\Security\Md5PasswordHasher;
-use App\Security\Infrastructure\Repository\User\InMemoryUserRepository;
-use App\Security\Application\User\RecoverPassword\RecoverPasswordRequest;
-use App\Security\Application\User\RecoverPassword\RecoverPasswordService;
-use App\Security\Application\User\RecoverPassword\RecoverPasswordResponse;
+use PHPUnit\Framework\TestCase;
 
 class RecoverPasswordServiceTest extends TestCase
 {

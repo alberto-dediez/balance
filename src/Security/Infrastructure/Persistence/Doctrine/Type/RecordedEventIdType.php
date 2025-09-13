@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Security\Infrastructure\Symfony\Doctrine\Type;
+namespace App\Security\Infrastructure\Persistence\Doctrine\Type;
 
-use Doctrine\DBAL\Types\Type;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventId;
-use App\Shared\Infrastructure\Symfony\Doctrine\Type\AggregateRootIdTypeTrait;
+use App\Shared\Infrastructure\Persistence\Doctrine\Type\AggregateRootIdTypeTrait;
+use Doctrine\DBAL\Types\Type;
 
 class RecordedEventIdType extends Type
 {

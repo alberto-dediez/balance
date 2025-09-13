@@ -2,18 +2,18 @@
 
 namespace App\Tests\Unit\Security\Application\Account\Remove;
 
-use PHPUnit\Framework\TestCase;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Security\Domain\Model\Account\AccountRemoved;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Security\Application\Account\Remove\RemoveAccountRequest;
-use App\Security\Application\Account\Remove\RemoveAccountService;
 use App\Security\Application\Account\Remove\RemoveAccountResponse;
+use App\Security\Application\Account\Remove\RemoveAccountService;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\AccountRemoved;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
+use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Security\Application\Account\AccountAuthorizerMother;
-use App\Security\Infrastructure\Repository\Account\InMemoryAccountRepository;
+use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class RemoveAccountServiceTest extends TestCase
 {
@@ -47,7 +47,7 @@ class RemoveAccountServiceTest extends TestCase
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RemoveAccountResponse);
         $this->assertTrue($account->id()->equals($result->accountId));
-        
+
         $accountPersisted = $repository->find($result->accountId);
 
         $this->assertNull($accountPersisted);

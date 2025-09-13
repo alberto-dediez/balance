@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Security\Domain\Model\User;
 
-use App\Security\Infrastructure\Repository\User\InMemoryUserRepository;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 
 class UserRepositoryMother
 {

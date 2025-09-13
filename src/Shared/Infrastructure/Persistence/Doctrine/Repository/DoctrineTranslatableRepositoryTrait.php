@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Shared\Infrastructure\Repository\Locale;
+namespace App\Shared\Infrastructure\Persistence\Doctrine\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use App\Shared\Domain\Model\Locale\Translatable;
+use Doctrine\ORM\EntityRepository;
 
 trait DoctrineTranslatableRepositoryTrait
 {
@@ -24,7 +24,7 @@ trait DoctrineTranslatableRepositoryTrait
         if (count($storedTranslations) == 0) {
             return ;
         }
-        
+
         foreach ($storedTranslations as $translation) {
             $translatable->translations()->add($translation);
         }

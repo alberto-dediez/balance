@@ -9,10 +9,10 @@ doctrine:
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
         types:
-            locale: App\Shared\Infrastructure\Symfony\Doctrine\Type\LocaleType
-            user_id: App\Security\Infrastructure\Symfony\Doctrine\Type\UserIdType
-            account_id: App\Security\Infrastructure\Symfony\Doctrine\Type\AccountIdType
-            recorded_event_id: App\Security\Infrastructure\Symfony\Doctrine\Type\RecordedEventIdType
+            locale: App\Shared\Infrastructure\Persistence\Doctrine\Type\LocaleType
+            user_id: App\Security\Infrastructure\Persistence\Doctrine\Type\UserIdType
+            account_id: App\Security\Infrastructure\Persistence\Doctrine\Type\AccountIdType
+            recorded_event_id: App\Security\Infrastructure\Persistence\Doctrine\Type\RecordedEventIdType
             country_id: App\Property\Infrastructure\Symfony\Doctrine\Type\CountryIdType
             destination_id: App\Property\Infrastructure\Symfony\Doctrine\Type\DestinationIdType
             property_id: App\Property\Infrastructure\Symfony\Doctrine\Type\PropertyIdType
@@ -23,7 +23,6 @@ doctrine:
             waste_id: App\Waste\Infrastructure\Symfony\Doctrine\Type\WasteIdType
             waste_manager_id: App\Waste\Infrastructure\Symfony\Doctrine\Type\WasteManagerIdType
             daily_waste_id: App\Waste\Infrastructure\Symfony\Doctrine\Type\DailyWasteIdType
-
     orm:
         auto_generate_proxy_classes: true
         enable_native_lazy_objects: true
@@ -38,7 +37,7 @@ doctrine:
             Security:
                 type: xml
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Security/Infrastructure/Symfony/Doctrine'
+                dir: '%kernel.project_dir%/src/Security/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Security\Domain\Model'
                 alias: Security
 

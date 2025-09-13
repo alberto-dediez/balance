@@ -2,19 +2,19 @@
 
 namespace App\Tests\Unit\Security\Application\User\ChangePassword;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\User;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Security\Domain\Model\User\PasswordChanged;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Application\User\ChangePassword\ChangePasswordRequest;
+use App\Security\Application\User\ChangePassword\ChangePasswordResponse;
+use App\Security\Application\User\ChangePassword\ChangePasswordService;
+use App\Security\Domain\Model\User\PasswordChanged;
+use App\Security\Domain\Model\User\User;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
+use App\Security\Infrastructure\Symfony\Security\Md5PasswordHasher;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Security\Application\User\UserAuthorizerMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Tests\Unit\Security\Application\User\UserAuthorizerMother;
-use App\Security\Infrastructure\Symfony\Security\Md5PasswordHasher;
-use App\Security\Application\User\ChangePassword\ChangePasswordRequest;
-use App\Security\Application\User\ChangePassword\ChangePasswordService;
-use App\Security\Infrastructure\Repository\User\InMemoryUserRepository;
-use App\Security\Application\User\ChangePassword\ChangePasswordResponse;
+use PHPUnit\Framework\TestCase;
 
 class ChangePasswordServiceTest extends TestCase
 {

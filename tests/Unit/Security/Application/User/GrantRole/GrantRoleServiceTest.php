@@ -3,18 +3,18 @@
 namespace App\Tests\Unit\Security\Application\User\GrantRole;
 
 use App\Security\Application\UnauthorizedActionException;
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Security\Domain\Model\User\User;
-use App\Security\Domain\Model\User\RoleGranted;
-use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Security\Application\User\GrantRole\GrantRoleRequest;
-use App\Security\Application\User\GrantRole\GrantRoleService;
 use App\Security\Application\User\GrantRole\GrantRoleResponse;
+use App\Security\Application\User\GrantRole\GrantRoleService;
+use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\RoleGranted;
+use App\Security\Domain\Model\User\User;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Security\Application\User\UserAuthorizerMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Security\Infrastructure\Repository\User\InMemoryUserRepository;
-use App\Tests\Unit\Security\Application\User\UserAuthorizerMother;
+use PHPUnit\Framework\TestCase;
 
 class GrantRoleServiceTest extends TestCase
 {

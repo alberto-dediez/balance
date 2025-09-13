@@ -2,14 +2,14 @@
 
 namespace App\Tests\Unit\Security\Application\User\RecoverToken;
 
-use PHPUnit\Framework\TestCase;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Security\Infrastructure\Repository\User\InMemoryUserRepository;
 use App\Security\Application\User\RecoverToken\RecoverTokenRequest;
 use App\Security\Application\User\RecoverToken\RecoverTokenService;
 use App\Security\Domain\Model\User\PasswordRecoveryInitialized;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class RecoverTokenServiceTest extends TestCase
 {

@@ -3,8 +3,8 @@
 namespace App\Tests\Unit\Security\Infrastructure\Repository\RecordedEvent;
 
 use App\Security\Domain\Model\RecordedEvent\RecordedEventRepository;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryRecordedEventRepository;
 use App\Tests\Unit\Security\Domain\Model\RecordedEvent\RecordedEventRepositoryTest;
-use App\Security\Infrastructure\Repository\RecordedEvent\InMemoryRecordedEventRepository;
 
 class InMemoryRecordedEventRepositoryTest extends RecordedEventRepositoryTest
 {

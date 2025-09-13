@@ -3,21 +3,21 @@
 namespace App\Tests\Unit\Security\Application\User\List;
 
 use App\Security\Application\UnauthorizedActionException;
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
 use App\Security\Application\User\List\ListUsersRequest;
-use App\Security\Application\User\List\ListUsersService;
 use App\Security\Application\User\List\ListUsersResponse;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
-use App\Security\Infrastructure\Repository\User\InMemoryUserRepository;
+use App\Security\Application\User\List\ListUsersService;
+use App\Security\Domain\Model\User\Role;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use App\Tests\Unit\Security\Application\User\UserAuthorizerMother;
+use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\TestCase;
 
 class ListUsersServiceTest extends TestCase
 {
     protected function setUp(): void
     {
-        
+
     }
 
     public function testInvoke()
@@ -73,7 +73,7 @@ class ListUsersServiceTest extends TestCase
     public function testUnauthorizedAccess()
     {
         $this->expectException(UnauthorizedActionException::class);
-        
+
         $repository = new InMemoryUserRepository();
 
         $account = AccountMother::random();

@@ -2,12 +2,12 @@
 
 namespace App\Tests\Unit\Security\Infrastructure\Repository\User;
 
-use Doctrine\ORM\EntityManagerInterface;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\User\UserRepository;
+use App\Security\Infrastructure\Persistence\Doctrine\Repository\DoctrineAccountRepository;
+use App\Security\Infrastructure\Persistence\Doctrine\Repository\DoctrineUserRepository;
 use App\Tests\Unit\Security\Domain\Model\User\UserRepositoryTest;
-use App\Security\Infrastructure\Repository\User\DoctrineUserRepository;
-use App\Security\Infrastructure\Repository\Account\DoctrineAccountRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class DoctrineUserRepositoryTest extends UserRepositoryTest
 {

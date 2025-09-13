@@ -2,19 +2,19 @@
 
 namespace App\Tests\Unit\Security\Application\User\UngrantRole;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Security\Domain\Model\User\User;
-use App\Security\Domain\Model\User\RoleUngranted;
-use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Application\User\UngrantRole\UngrantRoleRequest;
+use App\Security\Application\User\UngrantRole\UngrantRoleResponse;
+use App\Security\Application\User\UngrantRole\UngrantRoleService;
+use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\RoleUngranted;
+use App\Security\Domain\Model\User\User;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Security\Application\User\UserAuthorizerMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Security\Application\User\UngrantRole\UngrantRoleRequest;
-use App\Security\Application\User\UngrantRole\UngrantRoleService;
-use App\Security\Application\User\UngrantRole\UngrantRoleResponse;
-use App\Tests\Unit\Security\Application\User\UserAuthorizerMother;
-use App\Security\Infrastructure\Repository\User\InMemoryUserRepository;
+use PHPUnit\Framework\TestCase;
 
 class UngrantRoleServiceTest extends TestCase
 {

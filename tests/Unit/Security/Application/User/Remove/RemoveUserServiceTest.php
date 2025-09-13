@@ -3,16 +3,16 @@
 namespace App\Tests\Unit\Security\Application\User\Remove;
 
 use App\Security\Application\UnauthorizedActionException;
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\UserRemoved;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Security\Application\User\Remove\RemoveUserRequest;
-use App\Security\Application\User\Remove\RemoveUserService;
 use App\Security\Application\User\Remove\RemoveUserResponse;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Security\Infrastructure\Repository\User\InMemoryUserRepository;
+use App\Security\Application\User\Remove\RemoveUserService;
+use App\Security\Domain\Model\User\UserRemoved;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
+use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Security\Application\User\UserAuthorizerMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class RemoveUserServiceTest extends TestCase
 {
@@ -46,7 +46,7 @@ class RemoveUserServiceTest extends TestCase
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RemoveUserResponse);
         $this->assertTrue($user->id()->equals($result->userId));
-        
+
         $userPersisted = $repository->find($result->userId);
 
         $this->assertNull($userPersisted);

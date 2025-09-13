@@ -2,21 +2,21 @@
 
 namespace App\Tests\Unit\Security\Application\RecordedEvent\List;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Application\UnauthorizedActionException;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Security\Application\RecordedEvent\List\ListRecordedEventsRequest;
-use App\Security\Application\RecordedEvent\List\ListRecordedEventsService;
 use App\Security\Application\RecordedEvent\List\ListRecordedEventsResponse;
-use App\Tests\Unit\Security\Domain\Model\RecordedEvent\RecordedEventMother;
+use App\Security\Application\RecordedEvent\List\ListRecordedEventsService;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryRecordedEventRepository;
 use App\Tests\Unit\Security\Application\RecordedEvent\RecordedEventAuthorizerMother;
-use App\Security\Infrastructure\Repository\RecordedEvent\InMemoryRecordedEventRepository;
+use App\Tests\Unit\Security\Domain\Model\RecordedEvent\RecordedEventMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\TestCase;
 
 class ListRecordedEventsServiceTest extends TestCase
 {
     protected function setUp(): void
     {
-        
+
     }
 
     public function testInvoke()

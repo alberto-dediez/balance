@@ -2,6 +2,7 @@
 
 namespace App\Security\Infrastructure\UI\Web\User;
 
+use App\Security\Domain\Model\User\DuplicatedUsernameException;
 use Symfony\Component\Form\FormError;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
@@ -11,15 +12,14 @@ use App\Security\Application\User\GrantRole\GrantRoleRequest;
 use App\Security\Application\User\GrantRole\GrantRoleService;
 use App\Security\Application\User\Register\RegisterUserRequest;
 use App\Security\Application\User\Register\RegisterUserService;
-use App\Security\Application\User\Register\DuplicateUsernameException;
 
 trait RegisterUserTrait
 {
     public function __construct(
-        private RegisterUserService $registerUser, 
+        private RegisterUserService $registerUser,
         private GrantRoleService $grantRole
     ) {
-        
+
     }
 
     private function registerUser($form, ?Account $account, User $performBy)
@@ -40,7 +40,7 @@ trait RegisterUserTrait
             $this->grantRoles($response->userId, $form->get('roles')->getData(), $performBy);
 
             return true;
-        } catch (DuplicateUsernameException $e) {
+        } catch (DuplicatedUsernameException $e) {
             $form->get('username')->addError(new FormError('El nombre de usuario ya existe'));
 
             $this->addFlash('danger', new TranslatableMessage("El formulario contiene errores, por favor, reviselos antes de continuar."));
@@ -48,7 +48,7 @@ trait RegisterUserTrait
 
         return false;
     }
-    
+
     private function grantRoles(UserId $userId, array $roles, User $performBy)
     {
         if (count($roles) == 0) {

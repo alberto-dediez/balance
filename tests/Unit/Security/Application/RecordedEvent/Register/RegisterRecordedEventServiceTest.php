@@ -2,19 +2,18 @@
 
 namespace App\Tests\Unit\Security\Application\RecordedEvent\Register;
 
-use PHPUnit\Framework\TestCase;
+use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventRequest;
+use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventResponse;
+use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventService;
+use App\Security\Domain\Model\RecordedEvent\RecordedEvent;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRemoved;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryRecordedEventRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Security\Domain\Model\RecordedEvent\RecordedEvent;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventRequest;
-use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventService;
-use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventResponse;
-use App\Security\Application\UnauthorizedActionException;
-use App\Security\Infrastructure\Repository\RecordedEvent\InMemoryRecordedEventRepository;
 use App\Tests\Unit\Security\Application\RecordedEvent\RecordedEventAuthorizerMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class RegisterRecordedEventServiceTest extends TestCase
 {
