@@ -16,14 +16,12 @@ class User
 {
     use AggregateRoot;
 
-    protected array $events = [];
-
     public function __construct(
-        protected UserId $id, 
+        protected UserId $id,
         protected string $username = '',
         protected string $password = '',
         protected AccountId|null $accountId = null,
-        protected Account|null $account = null, 
+        protected Account|null $account = null,
         protected array $roles = [],
         protected RecoverToken|null $recoverToken = null,
         array $events = [],
@@ -31,7 +29,7 @@ class User
         protected ?\DateTimeImmutable $registeredAt = null,
         protected ?\DateTimeImmutable $removedAt = null
     ) {
-        
+
     }
 
     public function __toString(): string
@@ -167,7 +165,7 @@ class User
         );
     }
 
-    public function recoverPassword(RecoverToken $token, string $password) 
+    public function recoverPassword(RecoverToken $token, string $password)
     {
         if (!$this->isRecoverTokenValid($token)) {
             throw new RecoverTokenInvalidException($token);

@@ -11,10 +11,8 @@ class Account
 {
     use AggregateRoot;
 
-    protected array $events = [];
-
     public function __construct(
-        protected AccountId $id, 
+        protected AccountId $id,
         protected string $name = '',
         protected bool $active = false,
         protected bool $removed = false,

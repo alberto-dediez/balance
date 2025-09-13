@@ -12,12 +12,10 @@ class Waste implements Translatable
 {
     use AggregateRoot;
 
-    protected array $events = [];
-
     private ?Translations $translations = null;
 
     public function __construct(
-        protected WasteId $id, 
+        protected WasteId $id,
         protected string $name = '',
         protected bool $isDangerous = false,
         protected string $density = '0.00',
@@ -83,7 +81,7 @@ class Waste implements Translatable
     }
 
     public function register(
-        string $name, 
+        string $name,
         bool $isDangerous = false,
         string $density = '0.00',
         string $color = '#c3d300',
@@ -105,7 +103,7 @@ class Waste implements Translatable
     }
 
     public function update(
-        string $name, 
+        string $name,
         bool $isDangerous,
         string $density,
         string $color,
