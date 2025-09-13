@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Infrastructure\Persistence\Doctrine\Locale;
+namespace App\Shared\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Shared\Domain\Model\Locale\Translatable;
 use Doctrine\ORM\EntityRepository;
