@@ -7,6 +7,7 @@ use App\Shared\Domain\Event\DomainEventPublisher;
 
 trait AggregateRoot
 {
+    protected array $events = [];
     protected function recordApplyAndPublish(DomainEvent $event)
     {
         $this->record($event);
