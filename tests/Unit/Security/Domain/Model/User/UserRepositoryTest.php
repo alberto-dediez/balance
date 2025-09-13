@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Security\Domain\Model\User;
 
+use App\Security\Domain\Model\User\DuplicatedUsernameException;
 use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -9,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 abstract class UserRepositoryTest extends KernelTestCase
 {
     public function testAddUserToRepository()
-    {   
+    {
         $repository = $this->createSUT();
 
         $user = UserMother::registeredUser();
@@ -25,7 +26,7 @@ abstract class UserRepositoryTest extends KernelTestCase
     }
 
     public function testRemoveUserToRepository()
-    {   
+    {
         $repository = $this->createSUT();
 
         $user = UserMother::registeredUser();
@@ -147,6 +148,43 @@ abstract class UserRepositoryTest extends KernelTestCase
         $repository->add($user);
 
         $this->assertNull($repository->find($user->id()));
+    }
+
+    public function testRegisterSameUsernameAfterUserIsDeleted()
+    {
+        $repository = $this->createSUT();
+
+        $user = UserMother::registeredUser();
+
+        $repository->add($user);
+
+        $recoverUser = $repository->find($user->id());
+        $recoverUser->remove();
+
+        $repository->add($user);
+
+        $newUser = UserMother::fromUsername($user->username());
+
+        $repository->add($newUser);
+
+        $recoverUser = $repository->findByUsername($newUser->username());
+        $this->assertNotNull($recoverUser);
+        $this->assertTrue($recoverUser->id()->equals($newUser->id()));
+    }
+
+    public function testRegisterSameUsernameTwiceThrowException()
+    {
+        $this->expectException(DuplicatedUsernameException::class);
+
+        $repository = $this->createSUT();
+
+        $user = UserMother::random();
+
+        $repository->add($user);
+
+        $newUser = UserMother::fromUsername($user->username());
+
+        $repository->add($newUser);
     }
 
     abstract protected function createSUT(): UserRepository;

@@ -2,6 +2,7 @@
 
 namespace App\Security\Infrastructure\Repository\User;
 
+use App\Security\Domain\Model\User\DuplicatedUsernameException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
 use App\Security\Domain\Model\User\User;
@@ -29,6 +30,12 @@ class DoctrineUserRepository implements UserRepository
 
     public function add(User $user): void
     {
+        $savedUser = $this->find($user->id());
+
+        if (null === $savedUser && null !== $this->findByUsername($user->username())) {
+            throw new DuplicatedUsernameException($user->username());
+        }
+
         if (null == $user->account() && null !== $user->accountId()) {
             $account = $this->accountRepository->find($user->accountId());
 
@@ -162,7 +169,7 @@ class DoctrineUserRepository implements UserRepository
                 break;
             case 'username':
             default:
-                $qb->orderBy('u.username', $way);        
+                $qb->orderBy('u.username', $way);
                 break;
         }
 
@@ -174,7 +181,7 @@ class DoctrineUserRepository implements UserRepository
         $qb = $this->createQueryBuilderFromFilter($filter);
 
         $query = $qb->getQuery();
-        
+
         if ($filter->limit > 0) {
             $query
                 ->setMaxResults($filter->limit)

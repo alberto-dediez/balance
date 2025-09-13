@@ -3,6 +3,7 @@
 namespace App\Security\Application\User\Register;
 
 use App\Security\Application\Action;
+use App\Security\Domain\Model\User\DuplicatedUsernameException;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Application\CommandBus\Command;
@@ -31,7 +32,7 @@ class RegisterUserService implements CommandHandler
         $this->authorizer->denyUnlessCanDoThat($user, Action::Register, $performBy);
 
         if (null !== $this->userRepository->findByUsername($request->username)) {
-            throw new DuplicateUsernameException($request->username);
+            throw new DuplicatedUsernameException($request->username);
         }
 
         $id = UserId::generate();
@@ -45,7 +46,7 @@ class RegisterUserService implements CommandHandler
 
         return new RegisterUserResponse($user->id(), $user->username(), $user->accountId());
     }
-    
+
     public function isHandled(Command $command): bool
     {
         return $command instanceof RegisterUserRequest;

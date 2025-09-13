@@ -6,10 +6,6 @@
                                       http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
     <entity name="App\Security\Domain\Model\User\User" table="user">
-        <unique-constraints>
-            <unique-constraint columns="username" name="search_idx" />
-        </unique-constraints>
-
         <id name="id" type="user_id" column="id">
             <generator strategy="NONE" />
         </id>

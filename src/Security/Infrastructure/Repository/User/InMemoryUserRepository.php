@@ -3,6 +3,7 @@
 namespace App\Security\Infrastructure\Repository\User;
 
 use App\Security\Domain\Model\User\User;
+use App\Security\Domain\Model\User\DuplicatedUsernameException;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\User\UserFilter;
@@ -25,6 +26,14 @@ class InMemoryUserRepository implements UserRepository
             return ;
         }
 
+        $usernameInUse = array_filter($this->users, function (User $savedUser) use ($user): bool {
+            return $user->username() === $savedUser->username() && !$savedUser->isRemoved();
+        });
+
+        if ($usernameInUse) {
+            throw new DuplicatedUsernameException($user->username());
+        }
+
         $this->users[(string) $user->id()] = $user;
     }
 
@@ -39,7 +48,7 @@ class InMemoryUserRepository implements UserRepository
 
     public function find(UserId $userId): ?User
     {
-        return (isset($this->users[(string) $userId]) && false == $this->users[(string) $userId]->isRemoved()) 
+        return (isset($this->users[(string) $userId]) && false == $this->users[(string) $userId]->isRemoved())
             ? $this->users[(string) $userId]
             : null
         ;
@@ -52,7 +61,7 @@ class InMemoryUserRepository implements UserRepository
         }
 
         foreach ($this->users as $user) {
-            if ($user->username() == $username) {
+            if ($user->username() == $username && !$user->isRemoved()) {
                 return $this->find($user->id());
             }
         }
@@ -85,7 +94,7 @@ class InMemoryUserRepository implements UserRepository
             account: $account
         );
         $filter->limit = 9999999999999;
-        
+
         return $this->findByFilter($filter);
     }
 

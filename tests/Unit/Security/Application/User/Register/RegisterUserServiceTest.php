@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Security\Application\User\Register;
 
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\User\DuplicatedUsernameException;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -13,7 +14,6 @@ use App\Security\Application\User\Register\RegisterUserService;
 use App\Security\Application\User\Register\RegisterUserResponse;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Security\Infrastructure\Symfony\Security\Md5PasswordHasher;
-use App\Security\Application\User\Register\DuplicateUsernameException;
 use App\Security\Infrastructure\Repository\User\InMemoryUserRepository;
 use App\Tests\Unit\Security\Application\User\UserAuthorizerMother;
 
@@ -90,7 +90,7 @@ class RegisterUserServiceTest extends TestCase
 
     public function testUsernameIsUnique()
     {
-        $this->expectException(DuplicateUsernameException::class);
+        $this->expectException(DuplicatedUsernameException::class);
 
         $repository = new InMemoryUserRepository();
 
