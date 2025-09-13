@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Security\Infrastructure\Repository\Account;
+namespace App\Tests\Unit\Security\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Infrastructure\Persistence\Doctrine\Repository\DoctrineAccountRepository;
