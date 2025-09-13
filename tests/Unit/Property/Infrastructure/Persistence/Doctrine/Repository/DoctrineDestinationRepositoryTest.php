@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Tests\Unit\Property\Infrastructure\Repository\Destination;
+namespace App\Tests\Unit\Property\Infrastructure\Persistence\Doctrine\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
 use App\Property\Domain\Model\Destination\DestinationRepository;
-use App\Tests\Unit\Property\Domain\Model\Destination\DestinationRepositoryTest;
 use App\Property\Infrastructure\Repository\Destination\DoctrineDestinationRepository;
+use App\Tests\Unit\Property\Domain\Model\Destination\DestinationRepositoryTest;
+use Doctrine\ORM\EntityManagerInterface;
 
 class DoctrineDestinationRepositoryTest extends DestinationRepositoryTest
 {

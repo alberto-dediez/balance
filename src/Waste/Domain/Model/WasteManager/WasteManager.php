@@ -9,10 +9,8 @@ class WasteManager
 {
     use AggregateRoot;
 
-    private array $events = [];
-
     public function __construct(
-        private WasteManagerId $id, 
+        private WasteManagerId $id,
         private ?string $name = null,
         private AccountId|null $accountId = null,
         private bool $isPublic = true,

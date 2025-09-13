@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Tests\Unit\Waste\Infrastructure\Repository\Waste;
+namespace App\Tests\Unit\Waste\Infrastructure\Persistence\Doctrine\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleGetter;
-use App\Waste\Domain\Model\Waste\WasteRepository;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryTest;
+use App\Waste\Domain\Model\Waste\WasteRepository;
 use App\Waste\Infrastructure\Repository\Waste\DoctrineWasteRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class DoctrineWasteRepositoryTest extends WasteRepositoryTest
 {

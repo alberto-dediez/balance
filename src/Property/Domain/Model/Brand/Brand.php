@@ -9,10 +9,8 @@ class Brand
 {
     use AggregateRoot;
 
-    private array $events = [];
-
     public function __construct(
-        private BrandId $id, 
+        private BrandId $id,
         private string $name = '',
         private ?ExternalId $externalId = null,
         private bool $removed = false,

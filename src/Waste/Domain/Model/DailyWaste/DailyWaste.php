@@ -14,10 +14,8 @@ class DailyWaste
 {
     use AggregateRoot;
 
-    private array $events = [];
-
     public function __construct(
-        private DailyWasteId $id, 
+        private DailyWasteId $id,
         private PropertyId|null $propertyId = null,
         private WasteId|null $wasteId = null,
         private ?Purpose $purpose = null,

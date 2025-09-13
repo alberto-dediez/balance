@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Tests\Unit\Property\Infrastructure\Repository\Brand;
+namespace App\Tests\Unit\Property\Infrastructure\Persistence\Doctrine\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
 use App\Property\Domain\Model\Brand\BrandRepository;
-use App\Tests\Unit\Property\Domain\Model\Brand\BrandRepositoryTest;
 use App\Property\Infrastructure\Repository\Brand\DoctrineBrandRepository;
+use App\Tests\Unit\Property\Domain\Model\Brand\BrandRepositoryTest;
+use Doctrine\ORM\EntityManagerInterface;
 
 class DoctrineBrandRepositoryTest extends BrandRepositoryTest
 {

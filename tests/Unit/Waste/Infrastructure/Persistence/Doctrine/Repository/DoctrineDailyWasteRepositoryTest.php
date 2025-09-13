@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Tests\Unit\Waste\Infrastructure\Repository\DailyWaste;
+namespace App\Tests\Unit\Waste\Infrastructure\Persistence\Doctrine\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
-use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
 use App\Tests\Unit\Waste\Domain\Model\DailyWaste\DailyWasteRepositoryTest;
+use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
 use App\Waste\Infrastructure\Repository\DailyWaste\DoctrineDailyWasteRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class DoctrineDailyWasteRepositoryTest extends DailyWasteRepositoryTest
 {

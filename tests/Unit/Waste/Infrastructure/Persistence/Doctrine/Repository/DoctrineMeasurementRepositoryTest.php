@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Tests\Unit\Waste\Infrastructure\Repository\Measurement;
+namespace App\Tests\Unit\Waste\Infrastructure\Persistence\Doctrine\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
-use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryTest;
+use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 use App\Waste\Infrastructure\Repository\Measurement\DoctrineMeasurementRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class DoctrineMeasurementRepositoryTest extends MeasurementRepositoryTest
 {

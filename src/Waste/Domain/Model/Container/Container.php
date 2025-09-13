@@ -12,10 +12,8 @@ class Container
 {
     use AggregateRoot;
 
-    private array $events = [];
-
     public function __construct(
-        private ContainerId $id, 
+        private ContainerId $id,
         private AccountId|null $accountId = null,
         private PropertyId|null $propertyId = null,
         private WasteId|null $wasteId = null,

@@ -18,10 +18,8 @@ class Measurement
 {
     use AggregateRoot;
 
-    private array $events = [];
-
     public function __construct(
-        private MeasurementId $id, 
+        private MeasurementId $id,
         private ContainerId|null $containerId = null,
         private PropertyId|null $propertyId = null,
         private WasteId|null $wasteId = null,
@@ -191,7 +189,7 @@ class Measurement
 
     public function applyMeasurementRemoved(MeasurementRemoved $event)
     {
-        
+
     }
 
     public function __toString(): string

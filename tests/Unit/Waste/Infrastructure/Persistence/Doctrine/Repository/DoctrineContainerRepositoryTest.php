@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Tests\Unit\Waste\Infrastructure\Repository\Container;
+namespace App\Tests\Unit\Waste\Infrastructure\Persistence\Doctrine\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
-use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryTest;
+use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Waste\Infrastructure\Repository\Container\DoctrineContainerRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class DoctrineContainerRepositoryTest extends ContainerRepositoryTest
 {

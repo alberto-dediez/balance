@@ -10,10 +10,8 @@ class Property
 {
     use AggregateRoot;
 
-    private array $events = [];
-
     public function __construct(
-        private PropertyId $id, 
+        private PropertyId $id,
         private string $name = '',
         private ?PropertyInfo $info = null,
         private ?ExternalId $externalId = null,
@@ -128,7 +126,7 @@ class Property
 
         $this->info = null === $event->info() ? new PropertyInfo() : $event->info();
         $this->externalId = null === $event->externalId() ? new ExternalId() : $event->externalId();
-        
+
         $this->registeredAt = $event->occurredOn();
     }
 

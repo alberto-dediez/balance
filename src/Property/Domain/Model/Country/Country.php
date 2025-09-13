@@ -9,10 +9,8 @@ class Country
 {
     use AggregateRoot;
 
-    private array $events = [];
-
     public function __construct(
-        private CountryId $id, 
+        private CountryId $id,
         private string $name = '',
         private string|null $iso = null,
         private ?ExternalId $externalId = null,

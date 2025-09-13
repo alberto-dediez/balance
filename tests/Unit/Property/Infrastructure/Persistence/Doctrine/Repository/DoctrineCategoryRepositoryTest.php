@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Tests\Unit\Property\Infrastructure\Repository\Category;
+namespace App\Tests\Unit\Property\Infrastructure\Persistence\Doctrine\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
 use App\Property\Domain\Model\Category\CategoryRepository;
-use App\Tests\Unit\Property\Domain\Model\Category\CategoryRepositoryTest;
 use App\Property\Infrastructure\Repository\Category\DoctrineCategoryRepository;
+use App\Tests\Unit\Property\Domain\Model\Category\CategoryRepositoryTest;
+use Doctrine\ORM\EntityManagerInterface;
 
 class DoctrineCategoryRepositoryTest extends CategoryRepositoryTest
 {

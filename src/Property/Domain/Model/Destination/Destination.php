@@ -10,10 +10,8 @@ class Destination
 {
     use AggregateRoot;
 
-    private array $events = [];
-
     public function __construct(
-        private DestinationId $id, 
+        private DestinationId $id,
         private string $name = '',
         private CountryId|null $countryId = null,
         private ?ExternalId $externalId = null,

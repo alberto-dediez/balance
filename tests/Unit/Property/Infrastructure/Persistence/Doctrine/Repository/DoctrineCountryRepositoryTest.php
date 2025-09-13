@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Tests\Unit\Property\Infrastructure\Repository\Country;
+namespace App\Tests\Unit\Property\Infrastructure\Persistence\Doctrine\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
 use App\Property\Domain\Model\Country\CountryRepository;
-use App\Tests\Unit\Property\Domain\Model\Country\CountryRepositoryTest;
 use App\Property\Infrastructure\Repository\Country\DoctrineCountryRepository;
+use App\Tests\Unit\Property\Domain\Model\Country\CountryRepositoryTest;
+use Doctrine\ORM\EntityManagerInterface;
 
 class DoctrineCountryRepositoryTest extends CountryRepositoryTest
 {

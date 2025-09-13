@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Tests\Unit\Waste\Infrastructure\Repository\Measurement;
+namespace App\Tests\Unit\Waste\Infrastructure\Persistence\InMemory\Repository;
 
-use App\Waste\Domain\Model\Measurement\MeasurementRepository;
-use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryTest;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
+use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryTest;
+use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 
 class InMemoryMeasurementRepositoryTest extends MeasurementRepositoryTest
 {

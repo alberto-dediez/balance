@@ -9,10 +9,8 @@ class Category
 {
     use AggregateRoot;
 
-    private array $events = [];
-
     public function __construct(
-        private CategoryId $id, 
+        private CategoryId $id,
         private string $name = '',
         private ?ExternalId $externalId = null,
         private bool $removed = false,

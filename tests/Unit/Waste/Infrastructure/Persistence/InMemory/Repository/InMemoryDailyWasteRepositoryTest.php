@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Tests\Unit\Waste\Infrastructure\Repository\DailyWaste;
+namespace App\Tests\Unit\Waste\Infrastructure\Persistence\InMemory\Repository;
 
-use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
-use App\Tests\Unit\Waste\Domain\Model\DailyWaste\DailyWasteRepositoryTest;
 use App\Tests\Unit\Waste\Domain\Model\DailyWaste\DailyWasteRepositoryMother;
+use App\Tests\Unit\Waste\Domain\Model\DailyWaste\DailyWasteRepositoryTest;
+use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
 
 class InMemoryDailyWasteRepositoryTest extends DailyWasteRepositoryTest
 {

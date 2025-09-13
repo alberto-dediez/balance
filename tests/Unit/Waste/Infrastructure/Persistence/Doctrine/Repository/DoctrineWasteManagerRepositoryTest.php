@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Tests\Unit\Waste\Infrastructure\Repository\WasteManager;
+namespace App\Tests\Unit\Waste\Infrastructure\Persistence\Doctrine\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
-use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;
 use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryTest;
+use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;
 use App\Waste\Infrastructure\Repository\WasteManager\DoctrineWasteManagerRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class DoctrineWasteManagerRepositoryTest extends WasteManagerRepositoryTest
 {

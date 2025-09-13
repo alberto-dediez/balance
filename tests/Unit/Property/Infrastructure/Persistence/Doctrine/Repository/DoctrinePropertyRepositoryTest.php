@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Tests\Unit\Property\Infrastructure\Repository\Property;
+namespace App\Tests\Unit\Property\Infrastructure\Persistence\Doctrine\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
-use App\Security\Domain\Model\Account\Account;
 use App\Property\Domain\Model\Property\PropertyRepository;
-use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryTest;
 use App\Property\Infrastructure\Repository\Property\DoctrinePropertyRepository;
+use App\Security\Domain\Model\Account\Account;
 use App\Security\Infrastructure\Persistence\Doctrine\Repository\DoctrineAccountRepository;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryTest;
+use Doctrine\ORM\EntityManagerInterface;
 
 class DoctrinePropertyRepositoryTest extends PropertyRepositoryTest
 {

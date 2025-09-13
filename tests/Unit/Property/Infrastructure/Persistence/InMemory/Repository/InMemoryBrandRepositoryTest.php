@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Tests\Unit\Property\Infrastructure\Repository\Brand;
+namespace App\Tests\Unit\Property\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Property\Domain\Model\Brand\BrandRepository;
-use App\Tests\Unit\Property\Domain\Model\Brand\BrandRepositoryTest;
 use App\Tests\Unit\Property\Domain\Model\Brand\BrandRepositoryMother;
+use App\Tests\Unit\Property\Domain\Model\Brand\BrandRepositoryTest;
 
 class InMemoryBrandRepositoryTest extends BrandRepositoryTest
 {
