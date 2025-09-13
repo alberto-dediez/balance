@@ -7,7 +7,7 @@ use App\Security\Domain\Model\Account\Account;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryTest;
 use App\Property\Infrastructure\Repository\Property\DoctrinePropertyRepository;
-use App\Security\Infrastructure\Repository\Account\DoctrineAccountRepository;
+use App\Security\Infrastructure\Persistence\Doctrine\Repository\DoctrineAccountRepository;
 
 class DoctrinePropertyRepositoryTest extends PropertyRepositoryTest
 {

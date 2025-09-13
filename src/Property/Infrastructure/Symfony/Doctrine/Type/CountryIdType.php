@@ -4,7 +4,7 @@ namespace App\Property\Infrastructure\Symfony\Doctrine\Type;
 
 use Doctrine\DBAL\Types\Type;
 use App\Property\Domain\Model\Country\CountryId;
-use App\Shared\Infrastructure\Symfony\Doctrine\Type\AggregateRootIdTypeTrait;
+use App\Shared\Infrastructure\Persistence\Doctrine\Type\AggregateRootIdTypeTrait;
 
 class CountryIdType extends Type
 {

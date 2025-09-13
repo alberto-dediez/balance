@@ -4,7 +4,7 @@ namespace App\Waste\Infrastructure\Symfony\Doctrine\Type;
 
 use Doctrine\DBAL\Types\Type;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteId;
-use App\Shared\Infrastructure\Symfony\Doctrine\Type\AggregateRootIdTypeTrait;
+use App\Shared\Infrastructure\Persistence\Doctrine\Type\AggregateRootIdTypeTrait;
 
 class DailyWasteIdType extends Type
 {

@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\Waste\WasteFilter;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
-use App\Shared\Infrastructure\Repository\Locale\DoctrineTranslatableRepositoryTrait;
+use App\Shared\Infrastructure\Persistence\Doctrine\Repository\DoctrineTranslatableRepositoryTrait;
 use App\Waste\Domain\Model\Waste\WasteRepository;
 use App\Waste\Domain\Model\Waste\WasteTranslation;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -110,7 +110,7 @@ class DoctrineWasteRepository implements WasteRepository
                 break;
             case 'name':
             default:
-                $qb->orderBy('w.name', $way);        
+                $qb->orderBy('w.name', $way);
                 break;
         }
 
@@ -122,7 +122,7 @@ class DoctrineWasteRepository implements WasteRepository
         $qb = $this->createQueryBuilderFromFilter($filter);
 
         $query = $qb->getQuery();
-        
+
         if ($filter->limit > 0) {
             $query
                 ->setMaxResults($filter->limit)
