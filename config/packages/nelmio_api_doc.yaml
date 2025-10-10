@@ -57,6 +57,10 @@ nelmio_api_doc:
             path_patterns:
                 - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
             with_attribute: true
+        mobile:
+            path_patterns:
+                - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+            with_attribute: true
         admin:
             path_patterns:
                 - ^/api(?!/doc$) # Accepts routes under /api except /api/doc

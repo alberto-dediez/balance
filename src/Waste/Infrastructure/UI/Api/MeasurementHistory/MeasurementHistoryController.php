@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\UI\Api\MeasurementHistory;
 
+use Nelmio\ApiDocBundle\Attribute\Areas;
 use OpenApi\Attributes as OA;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Symfony\Component\Routing\Attribute\Route;
@@ -11,10 +12,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Waste\Application\Measurement\List\ListMeasurementsRequest;
 use App\Waste\Application\Measurement\List\ListMeasurementsService;
 use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponseGenerator;
-use App\Waste\Infrastructure\UI\Api\MeasurementHistory\MeasurementHistoryResponse;
 
 #[Route('/measurements/history', name: 'api_measurements_history', methods: ['GET'])]
-#[OA\Get( 
+#[Areas(['mobile', 'admin'])]
+#[OA\Get(
     summary: "Get history of measurements",
     description: "Return last measurements registered by logged user",
     tags: ['Waste']

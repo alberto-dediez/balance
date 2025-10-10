@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\UI\Api\MeasurementRegister;
 
+use Nelmio\ApiDocBundle\Attribute\Areas;
 use OpenApi\Attributes as OA;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,6 +19,7 @@ use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponseGenerator;
 use App\Waste\Infrastructure\UI\Api\MeasurementRegister\MeasurementRegisterRequest as ApiRequest;
 
 #[Route('/measurements', name: 'api_measurements_register', methods: ['POST'])]
+#[Areas(['mobile', 'admin'])]
 #[OA\Post(
     summary: "Register Measurement",
     description: "Register a measurement in an owned container",
@@ -54,7 +56,7 @@ class MeasurementRegisterController extends AbstractController
         );
 
         $measurement = $measurementRepository->find($registerResponse->measurementId);
-        
+
         return $this->json(
             $measurementGenerator->generate($measurement)
         );

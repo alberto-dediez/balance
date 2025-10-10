@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\UI\Api\MeasurementEdit;
 
+use Nelmio\ApiDocBundle\Attribute\Areas;
 use OpenApi\Attributes as OA;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Symfony\Component\Routing\Attribute\Route;
@@ -14,10 +15,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponse;
 use App\Waste\Application\Measurement\Update\UpdateMeasurementRequest;
 use App\Waste\Application\Measurement\Update\UpdateMeasurementService;
-use App\Waste\Infrastructure\UI\Api\MeasurementEdit\MeasurementEditRequest;
 use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponseGenerator;
 
 #[Route('/measurements/{measurementId}', name: 'api_measurements_edit', methods: ['PUT'])]
+#[Areas(['mobile', 'admin'])]
 #[OA\Put(
     summary: "Edit Measurement",
     description: "Edit an owned measurement",
@@ -54,7 +55,7 @@ class MeasurementEditController extends AbstractController
         );
 
         $measurement = $measurementRepository->find($updateResponse->measurementId);
-        
+
         return $this->json(
             $measurementGenerator->generate($measurement)
         );

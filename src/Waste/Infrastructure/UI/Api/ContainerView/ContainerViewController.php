@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\UI\Api\ContainerView;
 
+use Nelmio\ApiDocBundle\Attribute\Areas;
 use OpenApi\Attributes as OA;
 use App\Security\Application\Action;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -16,6 +17,7 @@ use App\Waste\Infrastructure\UI\Api\Container\ContainerResponse;
 use App\Waste\Infrastructure\UI\Api\Container\ContainerResponseGenerator;
 
 #[Route('/containers/{containerId}', name: 'api_containers_view', methods: ['GET'])]
+#[Areas(['mobile', 'admin'])]
 #[OA\Get(
     summary: "View Container",
     description: "View an owned container",
@@ -44,7 +46,7 @@ class ContainerViewController extends AbstractController
         );
 
         $containerAuthorizer->denyUnlessCanDoThat($container, Action::View, $user);
-        
+
         return $this->json(
             $containerGenerator->generate($container)
         );

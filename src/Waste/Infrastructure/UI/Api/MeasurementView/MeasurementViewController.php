@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\UI\Api\MeasurementView;
 
+use Nelmio\ApiDocBundle\Attribute\Areas;
 use OpenApi\Attributes as OA;
 use App\Security\Application\Action;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -16,6 +17,7 @@ use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponse;
 use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponseGenerator;
 
 #[Route('/measurements/{measurementId}', name: 'api_measurements_view', methods: ['GET'])]
+#[Areas(['mobile', 'admin'])]
 #[OA\Get(
     summary: "View Measurement",
     description: "View an owned measurement",
@@ -44,7 +46,7 @@ class MeasurementViewController extends AbstractController
         );
 
         $measurementAuthorizer->denyUnlessCanDoThat($measurement, Action::View, $user);
-        
+
         return $this->json(
             $measurementGenerator->generate($measurement)
         );
