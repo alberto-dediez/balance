@@ -7,11 +7,11 @@ use App\Security\Domain\Model\RecordedEvent\RecordedEventId;
 
 interface RecordedEventRepository
 {
-    public function add(RecordedEvent $account): void;
+    public function add(RecordedEvent $event): void;
 
-    public function remove(RecordedEvent $account): void;
+    public function remove(RecordedEvent $event): void;
 
-    public function find(RecordedEventId $accountId): ?RecordedEvent;
+    public function find(RecordedEventId $eventId): ?RecordedEvent;
 
     public function findByFilter(RecordedEventFilter $filter): array;
 

@@ -2,13 +2,15 @@
 
 namespace App\Shared\Infrastructure\UI\Api;
 
+use Nelmio\ApiDocBundle\Attribute\Areas;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 
 #[Route('/health-check', name: 'api_health_check', methods: ['GET'])]
-#[OA\Get( 
+#[Areas(['admin'])]
+#[OA\Get(
     summary: "Verify system status",
     description: "Check if the system is up and running. Returns status: 'ok' if everything is cool.",
     tags: ['Health Check']

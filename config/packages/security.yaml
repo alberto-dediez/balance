@@ -55,6 +55,7 @@ security:
         - { path: /health-check$, roles: PUBLIC_ACCESS }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/openapi/documentation, roles: ROLE_ADMIN }
+        - { path: ^/openapi/admin/documentation, roles: ROLE_ADMIN }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         - { path: /recover-password, roles: PUBLIC_ACCESS }
         - { path: /login, roles: PUBLIC_ACCESS }

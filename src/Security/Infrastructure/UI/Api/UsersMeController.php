@@ -2,6 +2,7 @@
 
 namespace App\Security\Infrastructure\UI\Api;
 
+use Nelmio\ApiDocBundle\Attribute\Areas;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -10,7 +11,8 @@ use App\Security\Infrastructure\Symfony\Twig\AccountExtension;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/users/me', name: 'api_users_me', methods: ['GET'])]
-#[OA\Get( 
+#[Areas(['default', 'admin'])]
+#[OA\Get(
     summary: "Get info about me",
     description: "Return information about logged user",
     tags: ['Security']

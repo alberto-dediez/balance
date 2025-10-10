@@ -24,19 +24,19 @@ class DoctrineRecordedEventRepository implements RecordedEventRepository
         $this->repository = $manager->getRepository(RecordedEvent::class);
     }
 
-    public function add(RecordedEvent $account): void
+    public function add(RecordedEvent $event): void
     {
-        $this->getEntityManager()->persist($account);
+        $this->getEntityManager()->persist($event);
         $this->getEntityManager()->flush();
     }
 
-    public function remove(RecordedEvent $account): void
+    public function remove(RecordedEvent $event): void
     {
-        $this->getEntityManager()->remove($account);
+        $this->getEntityManager()->remove($event);
         $this->getEntityManager()->flush();
     }
 
-    public function find(RecordedEventId $accountId): ?RecordedEvent
+    public function find(RecordedEventId $eventId): ?RecordedEvent
     {
         $qb = $this->createQueryBuilderFromFilter(new RecordedEventFilter());
 
@@ -44,7 +44,7 @@ class DoctrineRecordedEventRepository implements RecordedEventRepository
             ->andWhere(
                 $qb->expr()->eq('e.id', ':id')
             )
-            ->setParameter('id', $accountId)
+            ->setParameter('id', $eventId)
             ->getQuery()
             ->getOneOrNullResult()
         ;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Security\Infrastructure\Repository\RecordedEvent;
+namespace App\Tests\Unit\Security\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Security\Domain\Model\RecordedEvent\RecordedEventRepository;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryRecordedEventRepository;

@@ -2,6 +2,7 @@
 
 namespace App\Security\Infrastructure\UI\Api\UserFind;
 
+use Nelmio\ApiDocBundle\Attribute\Areas;
 use OpenApi\Attributes as OA;
 use App\Security\Domain\Model\User\Role;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -13,7 +14,8 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/users/find', name: 'api_users_find', methods: ['GET'])]
-#[OA\Get( 
+#[Areas(['admin'])]
+#[OA\Get(
     summary: "Find a user by username",
     description: "[Only for admins] Find users by username",
     tags: ['Security']

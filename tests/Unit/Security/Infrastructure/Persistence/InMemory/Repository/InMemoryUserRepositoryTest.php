@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Security\Infrastructure\Repository\User;
+namespace App\Tests\Unit\Security\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
