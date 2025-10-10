@@ -12,4 +12,13 @@
 app.redocly:
     path: /openapi/documentation
     methods: GET
-    defaults: { _controller: nelmio_api_doc.controller.redocly }
+    defaults:
+        _controller: nelmio_api_doc.controller.redocly
+        area: default
+
+app.redocly.admin:
+    path: /openapi/admin/documentation
+    methods: GET
+    defaults:
+        _controller: nelmio_api_doc.controller.redocly
+        area: admin

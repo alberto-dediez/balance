@@ -51,5 +51,11 @@ nelmio_api_doc:
                             description: 'Invalid credentials.'
                             
     areas: # to filter documented areas
-        path_patterns:
-            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+        default:
+            path_patterns:
+                - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+            with_attribute: true
+        admin:
+            path_patterns:
+                - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+            with_attribute: true

@@ -2,6 +2,7 @@
 
 namespace App\Security\Infrastructure\UI\Api\Account;
 
+use Nelmio\ApiDocBundle\Attribute\Areas;
 use OpenApi\Attributes as OA;
 use App\Security\Domain\Model\User\Role;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -14,7 +15,8 @@ use App\Security\Application\Account\Register\RegisterAccountRequest;
 use App\Security\Application\Account\Register\RegisterAccountService;
 
 #[Route('/accounts', name: 'api_accounts_register', methods: ['POST'])]
-#[OA\Post( 
+#[Areas(['admin'])]
+#[OA\Post(
     summary: "Register a new account",
     description: "[Only for admins] Register a new account",
     tags: ['Security']
@@ -34,7 +36,7 @@ class RegisterController extends AbstractController
     ): JsonResponse
     {
         $this->denyAccessUnlessGranted(Role::Admin->value);
-        
+
         $response = $register($request, $loggedUser());
 
         return $this->json(new AccountResponse(

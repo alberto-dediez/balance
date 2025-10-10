@@ -2,6 +2,7 @@
 
 namespace App\Security\Infrastructure\UI\Api\User;
 
+use Nelmio\ApiDocBundle\Attribute\Areas;
 use OpenApi\Attributes as OA;
 use App\Security\Domain\Model\User\Role;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -16,7 +17,8 @@ use App\Security\Application\User\Register\RegisterUserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/users', name: 'api_users_register', methods: ['POST'])]
-#[OA\Post( 
+#[Areas(['admin'])]
+#[OA\Post(
     summary: "Register a new user",
     description: "[Only for admins] Register a new user",
     tags: ['Security']
@@ -46,7 +48,7 @@ class RegisterController extends AbstractController
             username: $request->username,
             password: UuidGenerator::v4(),
             accountId: $accountId
-        ), $loggedUser()); 
+        ), $loggedUser());
 
         return $this->json(new UserResponse(
             accountId: (string) $response->accountId,
