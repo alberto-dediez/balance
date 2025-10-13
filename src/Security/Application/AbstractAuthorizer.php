@@ -6,7 +6,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 
 abstract class AbstractAuthorizer implements Authorizer
-{   
+{
     public function canDoThat(mixed $subject, Action $action, User $user): bool
     {
         if (!$this->supports($subject)) {
@@ -21,11 +21,13 @@ abstract class AbstractAuthorizer implements Authorizer
             Action::Remove => $this->canRemove($subject, $user),
             Action::Admin => $this->canAdmin($subject, $user),
             Action::Autocomplete => $this->canAutocomplete($subject, $user),
+            Action::Import => $this->canImport($subject, $user),
+            Action::Export => $this->canExport($subject, $user),
             default => throw new \LogicException('Esta acción no está definida')
         };
     }
 
-    public function denyUnlessCanDoThat(mixed $subject, Action $action, User $user) 
+    public function denyUnlessCanDoThat(mixed $subject, Action $action, User $user)
     {
         if (!$this->canDoThat($subject, $action, $user)) {
             throw new UnauthorizedActionException($subject, $action);
@@ -34,14 +36,24 @@ abstract class AbstractAuthorizer implements Authorizer
 
     protected function canAdmin(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::Admin) 
-            || $user->hasRole(Role::SuperAdmin) 
+        return $user->hasRole(Role::Admin)
+            || $user->hasRole(Role::SuperAdmin)
         ;
     }
 
     protected function canAutocomplete(mixed $subject, User $user): bool
     {
         return true;
+    }
+
+    protected function canImport(mixed $subject, User $user): bool
+    {
+        return false;
+    }
+
+    protected function canExport(mixed $subject, User $user): bool
+    {
+        return false;
     }
 
     abstract protected function canRegister(mixed $subject, User $user): bool;
