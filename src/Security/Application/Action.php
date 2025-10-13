@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Security\Application;
 
@@ -15,6 +15,10 @@ enum Action: string
     case Register = 'register';
 
     case Remove = 'remove';
+
+    case Import = 'import';
+
+    case Export = 'export';
 
     case Admin = 'admin';
 }
