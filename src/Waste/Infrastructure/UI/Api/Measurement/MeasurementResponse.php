@@ -51,7 +51,7 @@ class MeasurementResponse
 
         #[OA\Property(
             type: 'string',
-            example: "Deshecho"
+            example: "Desecho"
         )]
         public string $purpose,
 
@@ -68,6 +68,6 @@ class MeasurementResponse
         public string $registeredAt
     )
     {
-        
+
     }
 }

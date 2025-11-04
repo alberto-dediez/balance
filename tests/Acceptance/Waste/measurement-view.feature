@@ -22,7 +22,7 @@ Feature:
       "quantity": 3,
       "load": "35",
       "unit": "%",
-      "purpose": "Deshecho",
+      "purpose": "Desecho",
       "justification": "Ninguna",
       "registered_at": "2025-06-10 15:12:04"
     }

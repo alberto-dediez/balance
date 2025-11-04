@@ -7,7 +7,7 @@
     <body>
       <trans-unit id="s.ZXNYJ" resname="WASTE">
         <source>WASTE</source>
-        <target>Deshecho</target>
+        <target>Desecho</target>
       </trans-unit>
       <trans-unit id="OH3s_p8" resname="RECYCLING">
         <source>RECYCLING</source>

@@ -19,7 +19,7 @@ Feature:
       "waste": "Plastico",
       "waste_manager": "Sadeco",
       "unit": "%",
-      "purpose": "Deshecho"
+      "purpose": "Desecho"
     }
     """
 

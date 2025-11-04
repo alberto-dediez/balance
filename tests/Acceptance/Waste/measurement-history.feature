@@ -24,7 +24,7 @@ Feature:
                     "waste_manager": "Sadeco",
                     "quantity": 3,
                     "load": "50 %",
-                    "purpose": "Deshecho",
+                    "purpose": "Desecho",
                     "justification": "",
                     "registered_at": "2025-06-10 15:12:04"
                 }

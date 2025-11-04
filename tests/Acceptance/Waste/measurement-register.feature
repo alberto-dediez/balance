@@ -60,12 +60,12 @@ Feature:
       "waste_manager": "Sadeco",
       "quantity": 3,
       "load": "35 %",
-      "purpose": "Deshecho",
+      "purpose": "Desecho",
       "justification": "Ninguna",
       "registered_at": "2025-06-10 15:12:04"
     }
     """
-    
+
   Scenario: Not authenticated user
     Given account "MyCompany" with id "mycompany" exists
     Given user "user@dediez.software" with role "ROLE_USER" with id "user" of account "mycompany" exists

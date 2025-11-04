@@ -39,11 +39,11 @@ class ContainerResponse
 
         #[OA\Property(
             type: 'string',
-            example: "Deshecho"
+            example: "Desecho"
         )]
         public string $purpose
     )
     {
-        
+
     }
 }
