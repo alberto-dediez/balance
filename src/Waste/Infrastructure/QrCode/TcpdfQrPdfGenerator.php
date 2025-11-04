@@ -39,7 +39,7 @@ class TcpdfQrPdfGenerator implements QrPdfGenerator
         $pdf->setXY(10, 84);
         $this->setFont($pdf, 60, self::FONT_STYLE_BOLD, self::COLOR_NEUTRAL_100);
         $pdf->setFontSpacing(1);
-        $pdf->MultiCell(w: 190, h: 30, txt: strtoupper((string) $waste?->name()), border: 0, align: 'C', maxh: 30, valign: 'B', fitcell: true);
+        $pdf->MultiCell(w: 190, h: 30, txt: mb_strtoupper((string) $waste?->name()), border: 0, align: 'C', maxh: 30, valign: 'B', fitcell: true);
 
         //Capacidad del contenedor
         if ($container->volume() > 0) {
@@ -52,7 +52,7 @@ class TcpdfQrPdfGenerator implements QrPdfGenerator
         $pdf->setXY(0, 150);
         $this->setFont($pdf, 42, self::FONT_STYLE_REGULAR, $wasteColor);
         $pdf->setFontSpacing(1);
-        $pdf->MultiCell(w: 210, h: 30, txt: strtoupper($this->translator->trans($container->purpose()->value, [], 'purpose')), border: 0, align: 'C');
+        $pdf->MultiCell(w: 210, h: 30, txt: mb_strtoupper($this->translator->trans($container->purpose()->value, [], 'purpose')), border: 0, align: 'C');
 
         //Fecha de emision
         $pdf->setXY(0, 175);
@@ -74,7 +74,7 @@ class TcpdfQrPdfGenerator implements QrPdfGenerator
         $pdf->setXY(0, 275);
         $this->setFont($pdf, 16, self::FONT_STYLE_SEMIBOLD, self::COLOR_PRIMARY);
         $pdf->MultiCell(w: 210, h: 30, txt: $this->translator->trans('bioscore.info', []), border: 0, align: 'C');
-        
+
 
         $path = "/tmp/" . (string) $container->id() . '.pdf';
 
