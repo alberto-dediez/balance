@@ -20,8 +20,8 @@ class NodeLister
     {
         if ($this->checker->isGranted(Role::Admin->value)) {
             return $this->toAdmins();
-        } 
-        
+        }
+
         if ($this->checker->isGranted(Role::Owner->value)) {
             return $this->toOwners();
         }
@@ -78,7 +78,7 @@ class NodeLister
         );
 
         $nodes [] =  new Node(
-            label: new TranslatableMessage("Seguridad"),
+            label: new TranslatableMessage("Administración"),
             icon: "solar:shield-user-line-duotone",
             items: [
                 new Node(
@@ -151,7 +151,7 @@ class NodeLister
         );
 
         $nodes [] =  new Node(
-            label: new TranslatableMessage("Seguridad"),
+            label: new TranslatableMessage("Administración"),
             icon: "solar:shield-user-line-duotone",
             items: [
                 new Node(
