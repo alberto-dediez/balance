@@ -537,6 +537,10 @@
         <source>Generar nueva contraseña</source>
         <target>Generate new password</target>
       </trans-unit>
+      <trans-unit id="XjDlcMX" resname="{number} resultados">
+        <source>{number} resultados</source>
+        <target>{number} results</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
