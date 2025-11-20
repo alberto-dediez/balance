@@ -1,0 +1,15 @@
+parameters:
+    storage.path: '%kernel.project_dir%/var/sqlite/'
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\DataExchange\:
+        resource: '../../../'
+        exclude:
+            - '../../../Infrastructure/Symfony/DependencyInjection/'
+                
+    App\DataExchange\Infrastructure\Persistence\PDO\Repository\SqliteImportationDataRepository:
+        arguments:
+            $storagePath: '%storage.path%'

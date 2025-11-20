@@ -1,0 +1,81 @@
+<?php
+
+namespace App\DataExchange\Infrastructure\Persistence\Doctrine\Repository;
+
+use App\DataExchange\Domain\Model\Importation\Importation;
+use App\DataExchange\Domain\Model\Importation\ImportationDataRepository;
+use App\DataExchange\Domain\Model\Importation\ImportationId;
+use App\DataExchange\Domain\Model\Importation\ImportationRepository;
+use App\DataExchange\Domain\Model\Importation\NotImportedException;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\DependencyInjection\Attribute\When;
+
+#[AsAlias(id: 'repository.importation', public: true)]
+#[When(env: 'dev')]
+#[When(env: 'prod')]
+class DoctrineImportationRepository implements ImportationRepository
+{
+    public function __construct(private EntityManagerInterface $manager, private ImportationDataRepository $dataRepository)
+    {
+
+    }
+
+    public function save(Importation $importation): void
+    {
+        try {
+            $this->dataRepository->create($importation);
+
+            $this->getEntityManager()->persist($importation);
+            $this->getEntityManager()->flush();
+        } catch (\Throwable $exception) {
+            throw new NotImportedException();
+        }
+    }
+
+    public function find(ImportationId $importationId): Importation
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('i')
+            ->from(Importation::class, 'i')
+        ;
+
+        return $qb
+            ->andWhere(
+                $qb->expr()->eq('i.id', ':id')
+            )
+            ->setParameter('id', $importationId)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    public function getColumns(ImportationId $importationId): array
+    {
+        return $this->dataRepository->getColumns($importationId);
+    }
+
+    public function getValues(ImportationId $importationId, int $column): array
+    {
+        return $this->dataRepository->getValues($importationId, $column);
+    }
+
+    public function getData(ImportationId $importationId, int $rowNumber): array
+    {
+        return $this->dataRepository->getData($importationId, $rowNumber);
+    }
+
+    public function remove(Importation $importation): void
+    {
+        $this->dataRepository->remove($importation->id());
+
+        $this->getEntityManager()->remove($importation);
+        $this->getEntityManager()->flush();
+    }
+
+    private function getEntityManager()
+    {
+        return $this->manager;
+    }
+}

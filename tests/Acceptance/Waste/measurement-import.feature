@@ -1,0 +1,17 @@
+Feature:
+    Ability to import measurements of external platforms
+
+    Scenario: As user I can't access to import measurements
+        Given account "MyCompany" with id "mycompany" exists
+        Given user "user1@dediez.software" with role "ROLE_USER" with id "user1" of account "mycompany" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/measurements/import"
+        Then the response status should be 403
+
+    Scenario: As owner I can access measurement importer
+        Given account "MyCompany" with id "mycompany" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/measurements/import"
+        Then the response status should be 200
+        Then I see a form

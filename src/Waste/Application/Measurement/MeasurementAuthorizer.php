@@ -14,7 +14,7 @@ final class MeasurementAuthorizer extends AbstractAuthorizer
         if (null == $user->accountId() || null == $subject->accountId()) {
             return false;
         }
-        
+
         return $user->accountId()->equals($subject->accountId());
     }
 
@@ -24,7 +24,7 @@ final class MeasurementAuthorizer extends AbstractAuthorizer
             return false;
         }
 
-        return 
+        return
             $user->accountId()->equals($subject->accountId())
             && (
                 $user->hasRole(Role::Owner)
@@ -38,7 +38,7 @@ final class MeasurementAuthorizer extends AbstractAuthorizer
         if (null == $user->accountId() || null == $subject->accountId() || false == $user->accountId()->equals($subject->accountId())) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -48,7 +48,7 @@ final class MeasurementAuthorizer extends AbstractAuthorizer
             return false;
         }
 
-        return 
+        return
             $user->accountId()->equals($subject->accountId())
             && (
                 $user->hasRole(Role::Owner)
@@ -63,14 +63,28 @@ final class MeasurementAuthorizer extends AbstractAuthorizer
             return false;
         }
 
-        return 
+        return
             $user->accountId()->equals($subject->accountId())
             && (
                 $user->hasRole(Role::Owner)
             )
         ;
-    }  
-    
+    }
+
+    protected function canImport(mixed $subject, User $user): bool
+    {
+        if (null == $user->accountId() || null == $subject->accountId()) {
+            return false;
+        }
+
+        return
+            $user->accountId()->equals($subject->accountId())
+            && (
+                $user->hasRole(Role::Owner)
+            )
+        ;
+    }
+
     public function supports(mixed $subject): bool
     {
         return $subject instanceof Measurement;

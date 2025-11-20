@@ -1,4 +1,4 @@
-@import "email/fonts";
+@import "./email/fonts";
 
 $font-family-secondary: 'Karla', sans-serif;
 
@@ -9,21 +9,21 @@ $font-family-secondary: 'Karla', sans-serif;
 @import '../../vendor/twbs/bootstrap/scss/bootstrap';
 
 //Components
-@import "email/reboot";
-@import "email/tables";
-@import "email/type";
+@import "./email/reboot";
+@import "./email/tables";
+@import "./email/type";
 
 body {
-	background-color: $gray-200; 
+	background-color: $gray-200;
 }
 
 table.body-wrap {
-	box-sizing: border-box; 
-	background-color: $white; 
-	box-sizing: border-box; 
-	display: block !important; 
-	max-width: 600px !important; 
-	clear: both !important; 
+	box-sizing: border-box;
+	background-color: $white;
+	box-sizing: border-box;
+	display: block !important;
+	max-width: 600px !important;
+	clear: both !important;
 	margin: 0 auto;
 }
 
