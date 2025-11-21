@@ -7,8 +7,13 @@ use App\Shared\Application\CommandBus\Command;
 
 class RegisterImportationRequest implements Command
 {
-    public function __construct(public string $name, public AccountId $accountId)
-    {
+    public function __construct(
+        public string $name,
+        public string $path,
+        public int $offset,
+        public string $extension,
+        public ?AccountId $accountId
+    ) {
 
     }
 }

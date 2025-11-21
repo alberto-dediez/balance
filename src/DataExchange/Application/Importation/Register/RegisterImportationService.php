@@ -2,11 +2,12 @@
 
 namespace App\DataExchange\Application\Importation\Register;
 
-use App\Security\Application\Account\Register\RegisterAccountRequest;
-use App\Security\Application\Account\Register\RegisterAccountResponse;
+use App\DataExchange\Application\Importation\ImportationAuthorizer;
+use App\DataExchange\Domain\Model\Importation\Importation;
+use App\DataExchange\Domain\Model\Importation\ImportationFile;
+use App\DataExchange\Domain\Model\Importation\ImportationId;
+use App\DataExchange\Domain\Model\Importation\ImportationRepository;
 use App\Security\Application\Action;
-use App\Security\Domain\Model\Account\Account;
-use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
@@ -17,27 +18,44 @@ class RegisterImportationService implements CommandHandler
 {
     use RegisterHandlerTrait, CommandInvokeHandlerTrait;
 
-    /*public function __construct(private ImportationRepository $importationRepository, private AccountAuthorizer $authorizer)
+    public function __construct(private ImportationRepository $importationRepository, private ImportationAuthorizer $authorizer)
     {
-    }*/
+    }
 
-    public function __invoke(RegisterAccountRequest $request, User $user): RegisterAccountResponse
+    public function __invoke(RegisterImportationRequest $request, User $user): RegisterImportationResponse
     {
-        $id = AccountId::generate();
+        $id = ImportationId::generate();
 
-        $account = new Account($id);
+        $file = new ImportationFile(
+            path: $request->path,
+            extension: $request->extension,
+            offset: $request->offset
+        );
 
-        $this->authorizer->denyUnlessCanDoThat($account, Action::Register, $user);
+        $importation = new Importation(
+            id: $id,
+            file: $file,
+            accountId: $request->accountId,
+        );
 
-        $account->register($request->name, $request->active);
+        $this->authorizer->denyUnlessCanDoThat($importation, Action::Register, $user);
 
-        $this->accountRepository->add($account);
+        $importation->register(
+            name: $request->name,
+            accountId: $request->accountId
+        );
 
-        return new RegisterAccountResponse($account->id(), $account->name(), $account->isActive());
+        $this->importationRepository->add($importation);
+
+        return new RegisterImportationResponse(
+            importationId: $importation->id(),
+            name: $importation->name(),
+            accountId: $importation->accountId()
+        );
     }
 
     public function isHandled(Command $command): bool
     {
-        return $command instanceof RegisterAccountRequest;
+        return $command instanceof RegisterImportationRequest;
     }
 }

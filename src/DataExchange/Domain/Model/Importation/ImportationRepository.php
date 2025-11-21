@@ -4,9 +4,9 @@ namespace App\DataExchange\Domain\Model\Importation;
 
 interface ImportationRepository
 {
-    public function save(Importation $importation): void;
+    public function add(Importation $importation): void;
 
-    public function find(ImportationId $importationId): Importation;
+    public function find(ImportationId $importationId): ?Importation;
 
     public function getColumns(ImportationId $importationId): array;
 

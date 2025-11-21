@@ -21,7 +21,7 @@ class DoctrineImportationRepository implements ImportationRepository
 
     }
 
-    public function save(Importation $importation): void
+    public function add(Importation $importation): void
     {
         try {
             $this->dataRepository->create($importation);
@@ -29,11 +29,11 @@ class DoctrineImportationRepository implements ImportationRepository
             $this->getEntityManager()->persist($importation);
             $this->getEntityManager()->flush();
         } catch (\Throwable $exception) {
-            throw new NotImportedException();
+            throw new NotImportedException($exception->getMessage());
         }
     }
 
-    public function find(ImportationId $importationId): Importation
+    public function find(ImportationId $importationId): ?Importation
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 

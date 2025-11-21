@@ -38,28 +38,46 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         );
 
         $insertSql = sprintf(
-            'INSERT INTO %s (%s) VALUES (%s)',
+            'INSERT INTO %s (%s) VALUES ',
             self::TABLE_NAME,
-            implode(', ', array_map(fn($col) => "\"{$col}\"", $extractor->getColumns())),
-            implode(', ', array_fill(0, count($extractor->getColumns()), '?'))
+            implode(', ', array_map(fn($col) => "\"{$col}\"", $extractor->getColumns()))
         );
 
         try {
             $connection = $this->connect($importation->id());
             $connection->exec($createTableSql);
 
-            $connection->beginTransaction();
+            $query = $insertSql;
 
-            $statement = $connection->prepare($insertSql);
+            $toInsert = 0;
+            $toInsertValues = [];
 
             while (null !== ($row = $extractor->getRow())) {
-                $statement->execute(array_values($row));
+                $query .= sprintf(
+                    "(%s),",
+                    implode(', ', array_map(fn($col) => ":{$col}_{$toInsert}", $extractor->getColumns()))
+                );
+
+                foreach ($extractor->getColumns() as $col) {
+                    $toInsertValues[":{$col}_{$toInsert}"] = $row[$col];
+                }
+
+                $toInsert++;
             }
 
-            $connection->commit();
-        } catch (\PDOException $e) {
-            $connection->rollBack();
+            if ($toInsert === 0) {
+                return ;
+            }
 
+            $query = substr($query, 0, -1);
+            $statement = $connection->prepare($query);
+
+            foreach ($toInsertValues as $attr => $value) {
+                $statement->bindValue($attr, $value);
+            }
+
+            $statement->execute();
+        } catch (\PDOException $e) {
             throw new IOException($e->getMessage(), (int) $e->getCode(), $e);
         }
     }

@@ -2,9 +2,11 @@
 
 namespace App\Waste\Infrastructure\UI\Web\Measurement\Import;
 
+use App\DataExchange\Application\Importation\Register\RegisterImportationRequest;
 use App\Security\Application\Action;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
@@ -13,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * Proceso completo:
@@ -28,6 +31,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/measurements/import', name: 'measurements_import')]
 class ImportController extends AbstractController
 {
+    const IMPORTATION_TYPE = 'measurements';
+
     public function __invoke(
         LoggedUser $loggedUser,
         LoggedAccount $loggedAccount,
@@ -53,12 +58,25 @@ class ImportController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            //Crear proceso de importacion
-            //Almacenar fichero pasado en formato sqlite propio
-            // - Crear fichero con nombre (id importacion)
-            // - Obtener columnas en base a la cabecera
-            // - Importar datos a esta base de datos
-            //Redireccionar al siguiente paso
+            $response = CommandBusDispatcher::instance()->dispatch(
+                new RegisterImportationRequest(
+                    name: $data->file->getClientOriginalName(),
+                    path: $data->file->getRealPath(),
+                    offset: $data->offset,
+                    extension: $data->file->guessExtension(),
+                    accountId: $loggedAccount()?->id()
+                ), $loggedUser()
+            );
+
+            if (null === $response) {
+                $this->addFlash('danger', new TranslatableMessage('Error importando el fichero {file}', ['{file}' => $data->file->getClientOriginalName()]));
+
+                return $this->redirectToRoute('measurements');
+            }
+
+            $this->addFlash('success', new TranslatableMessage('Fichero {file} subido con éxito', ['{file}' => $data->file->getClientOriginalName()]));
+
+            return $this->redirectToRoute('measurements');
         }
 
         return $this->render('@waste/measurements/import.html.twig', [

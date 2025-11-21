@@ -1,0 +1,68 @@
+<?php
+
+namespace App\DataExchange\Infrastructure\Persistence\InMemory\Repository;
+
+use App\DataExchange\Domain\Model\Importation\Importation;
+use App\DataExchange\Domain\Model\Importation\ImportationDataRepository;
+use App\DataExchange\Domain\Model\Importation\ImportationId;
+use App\DataExchange\Domain\Model\Importation\ImportationRepository;
+use App\DataExchange\Infrastructure\Persistence\PDO\Repository\SqliteImportationDataRepository;
+use Symfony\Component\DependencyInjection\Attribute\When;
+
+#[When(env: 'test')]
+class InMemoryImportationRepository implements ImportationRepository
+{
+    private ImportationDataRepository $dataRepository;
+
+    public function __construct(private array $importations = [])
+    {
+        $this->dataRepository = new SqliteImportationDataRepository(
+            __DIR__ . '/../../../../../../var/sqlite-test/'
+        );
+    }
+
+    public function add(Importation $importation): void
+    {
+        if (isset($this->importations[(string) $importation->id()])) {
+            return ;
+        }
+
+        $this->dataRepository->create($importation);
+
+        $this->importations[(string) $importation->id()] = $importation;
+    }
+
+    public function remove(Importation $importation): void
+    {
+        if (!isset($this->importations[(string) $importation->id()])) {
+            return ;
+        }
+
+        $this->dataRepository->remove($importation->id());
+
+        unset($this->importations[(string) $importation->id()]);
+    }
+
+    public function find(ImportationId $importationId): ?Importation
+    {
+        return isset($this->importations[(string) $importationId])
+            ? $this->importations[(string) $importationId]
+            : null
+        ;
+    }
+
+    public function getColumns(ImportationId $importationId): array
+    {
+        return $this->dataRepository->getColumns($importationId);
+    }
+
+    public function getValues(ImportationId $importationId, int $column): array
+    {
+        return $this->dataRepository->getValues($importationId, $column);
+    }
+
+    public function getData(ImportationId $importationId, int $rowNumber): array
+    {
+        return $this->dataRepository->getData($importationId, $rowNumber);
+    }
+}

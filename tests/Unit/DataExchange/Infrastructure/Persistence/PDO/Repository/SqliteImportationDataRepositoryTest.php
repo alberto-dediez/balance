@@ -15,7 +15,7 @@ class SqliteImportationDataRepositoryTest extends TestCase
     {
         $path = __DIR__ . '/file-to-import.csv';
 
-        $importation = ImportationMother::fromNameAndFile('superheroes.csv', new ImportationFile($path, 0));
+        $importation = ImportationMother::fromNameAndFile('superheroes.csv', new ImportationFile(path: $path, offset: 0));
 
         $sut = $this->createSUT();
 
@@ -34,7 +34,7 @@ class SqliteImportationDataRepositoryTest extends TestCase
     {
         $path = __DIR__ . '/file-to-import-with-offset.csv';
 
-        $importation = ImportationMother::fromNameAndFile('superheroes.csv', new ImportationFile($path, 3));
+        $importation = ImportationMother::fromNameAndFile('superheroes.csv', new ImportationFile(path: $path, offset: 3));
 
         $sut = $this->createSUT();
 

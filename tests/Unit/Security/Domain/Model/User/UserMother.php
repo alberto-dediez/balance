@@ -12,9 +12,9 @@ use App\Security\Domain\Model\User\RecoverToken;
 class UserMother
 {
     public static function registeredUser()
-    {   
+    {
         return self::from(
-            userId: UserId::generate(), 
+            userId: UserId::generate(),
             username: 'username'
         );
     }
@@ -22,7 +22,7 @@ class UserMother
     public static function systemUser()
     {
         return new User(
-            id: new UserId('system'), 
+            id: new UserId('system'),
             username: 'system',
             roles: [Role::Admin]
         );
@@ -31,7 +31,7 @@ class UserMother
     public static function adminUser()
     {
         return self::from(
-            userId: UserId::generate(), 
+            userId: UserId::generate(),
             role: Role::Admin
         );
     }
@@ -39,7 +39,7 @@ class UserMother
     public static function ownerUser()
     {
         return self::from(
-            userId: UserId::generate(), 
+            userId: UserId::generate(),
             role: Role::Owner
         );
     }
@@ -47,7 +47,7 @@ class UserMother
     public static function fromUsername($username)
     {
         return self::from(
-            userId: UserId::generate(), 
+            userId: UserId::generate(),
             username: $username
         );
     }
@@ -55,7 +55,7 @@ class UserMother
     public static function fromUsernameAndRole($username, Role $role)
     {
         return self::from(
-            userId: UserId::generate(), 
+            userId: UserId::generate(),
             role: $role,
             username: $username
         );
@@ -64,7 +64,7 @@ class UserMother
     public static function fromUsernameAndRoleAndId($username, Role $role, UserId $userId)
     {
         return self::from(
-            userId: $userId, 
+            userId: $userId,
             username: $username
         );
     }
@@ -72,8 +72,8 @@ class UserMother
     public static function fromUsernameAndAccount($username, Account $account)
     {
         return self::from(
-            userId: UserId::generate(), 
-            username: $username, 
+            userId: UserId::generate(),
+            username: $username,
             accountId: $account->id()
         );
     }
@@ -81,9 +81,9 @@ class UserMother
     public static function fromUsernameAndRoleAndAccount(string $username, Role $role, AccountId $accountId)
     {
         return self::from(
-            userId: UserId::generate(), 
-            username: $username, 
-            role: $role, 
+            userId: UserId::generate(),
+            username: $username,
+            role: $role,
             accountId: $accountId
         );
     }
@@ -91,8 +91,8 @@ class UserMother
     public static function fromUsernameAndRecoverToken(string $username, string $recoverToken)
     {
         return self::from(
-            userId: UserId::generate(), 
-            username: $username, 
+            userId: UserId::generate(),
+            username: $username,
             recoverToken: new RecoverToken($recoverToken, new \DateTimeImmutable('NOW +1 HOUR'))
         );
     }
@@ -118,9 +118,10 @@ class UserMother
     {
         $roles = [
             Role::Admin,
+            Role::Owner,
             Role::User
         ];
 
-        return self::fromUsernameAndRole('user-' . rand(100, 999), $roles[rand(0, 1)]);
+        return self::fromUsernameAndRole('user-' . rand(100, 999), $roles[rand(0, 2)]);
     }
 }

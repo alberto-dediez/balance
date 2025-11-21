@@ -24,7 +24,7 @@ abstract class ImportationRepositoryTest extends KernelTestCase
 
         $repository = $this->createSUT();
 
-        $repository->save($importation);
+        $repository->add($importation);
 
         $columns = $repository->getColumns($importation->id());
 
