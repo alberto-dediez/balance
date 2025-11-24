@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\QrCode;
 
+use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\Container\QrCode;
 use App\Waste\Domain\Model\Container\Container;
@@ -14,14 +15,22 @@ class TcpdfQrPdfGenerator implements QrPdfGenerator
 {
     use GenericGenerator;
 
-    public function __construct(private TranslatorInterface $translator, private WasteRepository $wasteRepository)
-    {
+    public function __construct(
+        private TranslatorInterface $translator,
+        private WasteRepository $wasteRepository,
+        private PropertyRepository $propertyRepository
+    ) {
 
     }
 
     public function generate(Container $container, QrCode $qrCode): string
     {
         $waste = $this->wasteRepository->find($container->wasteId());
+        $property = $this->propertyRepository->find($container->propertyId());
+
+        if (null === $property) {
+            throw new \RuntimeException('Property not found');
+        }
 
         $wasteColor = $this->getBackgroundColor($waste);
 
@@ -41,25 +50,29 @@ class TcpdfQrPdfGenerator implements QrPdfGenerator
         $pdf->setFontSpacing(1);
         $pdf->MultiCell(w: 190, h: 30, txt: mb_strtoupper((string) $waste?->name()), border: 0, align: 'C', maxh: 30, valign: 'B', fitcell: true);
 
+        $pdf->setXY(0, 125);
+        $this->setFont($pdf, 35, self::FONT_STYLE_SEMIBOLD, $wasteColor);
+        $pdf->MultiCell(w: 210, h: 30, txt: $property->name() , border: 0, align: 'C');
+
         //Capacidad del contenedor
         if ($container->volume() > 0) {
-            $pdf->setXY(0, 125);
+            $pdf->setXY(0, 143);
             $this->setFont($pdf, 30, self::FONT_STYLE_SEMIBOLD, $wasteColor);
             $pdf->MultiCell(w: 210, h: 30, txt: $this->translator->trans('{volume} LITROS', ['{volume}' => number_format($container->volume(), 0)]), border: 0, align: 'C');
         }
 
         //Propostio
-        $pdf->setXY(0, 150);
+        $pdf->setXY(0, 160);
         $this->setFont($pdf, 42, self::FONT_STYLE_REGULAR, $wasteColor);
         $pdf->setFontSpacing(1);
         $pdf->MultiCell(w: 210, h: 30, txt: mb_strtoupper($this->translator->trans($container->purpose()->value, [], 'purpose')), border: 0, align: 'C');
 
         //Fecha de emision
-        $pdf->setXY(0, 175);
+        $pdf->setXY(0, 185);
         $this->setFont($pdf, 24, self::FONT_STYLE_REGULAR, $wasteColor);
         $pdf->MultiCell(w: 105, h: 10, txt: $this->translator->trans('FECHA EMISIÓN QR', []), border: 0, align: 'R');
 
-        $pdf->setXY(115, 175);
+        $pdf->setXY(115, 185);
         $this->setFont($pdf, 24, self::FONT_STYLE_BOLD, $wasteColor);
         $pdf->MultiCell(w: 100, h: 10, txt: date("d.m.Y", strtotime('NOW')), border: 0, align: 'L');
 

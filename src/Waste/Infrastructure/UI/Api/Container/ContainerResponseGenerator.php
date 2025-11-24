@@ -2,10 +2,9 @@
 
 namespace App\Waste\Infrastructure\UI\Api\Container;
 
+use App\Property\Infrastructure\Symfony\Twig\PropertyExtension;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Infrastructure\Symfony\Twig\WasteExtension;
-use App\Waste\Infrastructure\Symfony\Twig\PropertyExtension;
 use App\Waste\Infrastructure\Symfony\Twig\WasteManagerExtension;
 use App\Waste\Domain\Model\Container\Container as ModelContainer;
 use App\Waste\Infrastructure\UI\Api\Container\ContainerResponse as ApiContainer;
@@ -18,7 +17,7 @@ class ContainerResponseGenerator
         private WasteManagerExtension $wasteManagerExtension,
         private TranslatorInterface $translator
     ) {
-        
+
     }
 
     public function generate(ModelContainer $modelContainer)
@@ -28,8 +27,8 @@ class ContainerResponseGenerator
             property: $this->propertyExtension->propertyName($modelContainer->propertyId()),
             waste: $this->wasteExtension->wasteName($modelContainer->wasteId()),
             wasteManager: $this->wasteManagerExtension->wasteManagerName($modelContainer->wasteManagerId()),
-            unit: null !== $modelContainer->measurementMethod() 
-                ? $modelContainer->measurementMethod()->unit() 
+            unit: null !== $modelContainer->measurementMethod()
+                ? $modelContainer->measurementMethod()->unit()
                 : '',
             purpose: $this->translator->trans($modelContainer->purpose()->value, [], 'purpose'),
         );
