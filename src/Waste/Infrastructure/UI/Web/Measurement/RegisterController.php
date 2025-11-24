@@ -30,7 +30,7 @@ class RegisterController extends AbstractController
         ContainerRepository $containerRepository,
         Request $request
     ): Response
-    {   
+    {
         $this->denyAccessUnlessGranted(Action::Register->value, new Measurement(
             id: MeasurementId::generate(),
             accountId: $loggedUser()->accountId()
@@ -38,7 +38,8 @@ class RegisterController extends AbstractController
 
         $containers = $containerRepository->findByFilter(
             new ContainerFilter(
-                accountId: $loggedUser()->accountId()
+                accountId: $loggedUser()->accountId(),
+                limit: 0
             )
         );
 
@@ -52,10 +53,10 @@ class RegisterController extends AbstractController
         string $containerId,
         ContainerRepository $containerRepository,
         LoggedUser $loggedUser,
-        RegisterMeasurementService $registerMeasurement, 
+        RegisterMeasurementService $registerMeasurement,
         Request $request
     ): Response
-    {   
+    {
         $container = $this->getContainerFromIdAndAccount($containerId, $loggedUser()->accountId(), $containerRepository);
 
         $this->denyAccessUnlessGranted(Action::Register->value, new Measurement(
@@ -64,7 +65,7 @@ class RegisterController extends AbstractController
         ));
 
         $registerRequest = new RegisterMeasurementRequest(
-            containerId: $container->id(),                
+            containerId: $container->id(),
             quantity: 1,
             load: 0,
             registeredBy: $loggedUser()->id()
