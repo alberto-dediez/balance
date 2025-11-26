@@ -1237,6 +1237,10 @@
         <source>Emparejar campos</source>
         <target>Emparejar campos</target>
       </trans-unit>
+      <trans-unit id="XjDlcMX" resname="{number} resultados">
+        <source>{number} resultados</source>
+        <target>{number} resultados</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -2,6 +2,7 @@
 
 namespace App\Security\Application\User\GrantRole;
 
+use App\Security\Application\UnauthorizedActionException;
 use InvalidArgumentException;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
@@ -29,7 +30,9 @@ class GrantRoleService implements CommandHandler
             throw new InvalidArgumentException("User not found");
         }
 
-        $this->authorizer->denyUnlessCanDoThat($user, Action::Admin, $performBy);
+        if (!$this->authorizer->canChangeRole($user, $request->role, $performBy)) {
+            throw new UnauthorizedActionException($user, Action::Admin);
+        }
 
         $user->grantRole($request->role);
 
@@ -41,7 +44,7 @@ class GrantRoleService implements CommandHandler
             roles: $user->roles()
         );
     }
-    
+
     public function isHandled(Command $command): bool
     {
         return $command instanceof GrantRoleRequest;
