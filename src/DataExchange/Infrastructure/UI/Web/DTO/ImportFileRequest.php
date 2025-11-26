@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Waste\Infrastructure\UI\Web\Measurement\Import;
+namespace App\DataExchange\Infrastructure\UI\Web\DTO;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class ImportMeasurementRequest
+class ImportFileRequest
 {
     public ?UploadedFile $file = null;
 

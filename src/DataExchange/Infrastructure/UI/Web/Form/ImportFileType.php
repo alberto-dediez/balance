@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Waste\Infrastructure\Symfony\Form;
+namespace App\DataExchange\Infrastructure\UI\Web\Form;
 
-use App\Waste\Infrastructure\UI\Web\Measurement\Import\ImportMeasurementRequest;
+use App\DataExchange\Infrastructure\UI\Web\DTO\ImportFileRequest;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -13,7 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotNull;
 
-class ImportMeasurementType extends AbstractType
+class ImportFileType extends AbstractType
 {
     private const MAX_FILE_SIZE = '4096k';
 
@@ -56,7 +56,7 @@ class ImportMeasurementType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => ImportMeasurementRequest::class,
+            'data_class' => ImportFileRequest::class,
         ]);
     }
 }

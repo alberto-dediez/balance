@@ -4,6 +4,8 @@ namespace App\Waste\Infrastructure\UI\Web\Measurement\Import;
 
 use App\DataExchange\Application\Importation\Register\RegisterImportationRequest;
 use App\DataExchange\Application\Importation\Register\RegisterImportationResponse;
+use App\DataExchange\Infrastructure\UI\Web\DTO\ImportFileRequest;
+use App\DataExchange\Infrastructure\UI\Web\Form\ImportFileType;
 use App\Security\Application\Action;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
@@ -11,7 +13,6 @@ use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
-use App\Waste\Infrastructure\Symfony\Form\ImportMeasurementType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,7 +51,7 @@ class ImportController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $form = $this->createForm(ImportMeasurementType::class, new ImportMeasurementRequest());
+        $form = $this->createForm(ImportFileType::class, new ImportFileRequest());
 
         $form->handleRequest($request);
 
