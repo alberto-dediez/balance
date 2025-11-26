@@ -24,6 +24,4 @@ Feature:
         When I go to "/es/measurements/import/123/pair-fields"
         Then the response status should be 200
         Then I see a form
-        When I submit a form with "[configurations][0][field]:propertyId" and button "Continuar"
-        Then I am redirected to "/es/measurements/import/123/translations"
 

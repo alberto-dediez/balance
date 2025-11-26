@@ -40,7 +40,7 @@ class AdminBulkPropertyType extends BulkType
                 new AssignAccount(),
                 new RemoveProperty(),
             ],
-            'class' => BulkPropertyRequest::class
+            'data_class' => BulkPropertyRequest::class
         ]);
     }
 }

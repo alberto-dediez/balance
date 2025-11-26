@@ -48,7 +48,7 @@ class BulkType extends AbstractType
         $resolver->setDefaults([
             'elements' => [],
             'actions' => [],
-            'class' => BulkRequest::class
+            'data_class' => BulkRequest::class
         ]);
     }
 }

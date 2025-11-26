@@ -39,7 +39,7 @@ class RegisterMeasurementType extends AbstractType
                 'required' => true
             ]);
         }
-        
+
         $builder
             ->add('justification', TextareaType::class, [
                 'label' => new TranslatableMessage('Justificación'),
@@ -54,7 +54,7 @@ class RegisterMeasurementType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'class' => RegisterMeasurementRequest::class,
+            'data_class' => RegisterMeasurementRequest::class,
             'measurementMethod' => MeasurementMethod::Volume
         ]);
     }

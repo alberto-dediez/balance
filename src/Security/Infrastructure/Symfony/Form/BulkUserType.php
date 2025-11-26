@@ -38,7 +38,7 @@ class BulkUserType extends BulkType
             'actions' => [
                 new RemoveUser(),
             ],
-            'class' => BulkUserRequest::class
+            'data_class' => BulkUserRequest::class
         ]);
     }
 }

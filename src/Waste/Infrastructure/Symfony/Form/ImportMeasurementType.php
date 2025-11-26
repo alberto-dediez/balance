@@ -56,7 +56,7 @@ class ImportMeasurementType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'class' => ImportMeasurementRequest::class,
+            'data_class' => ImportMeasurementRequest::class,
         ]);
     }
 }

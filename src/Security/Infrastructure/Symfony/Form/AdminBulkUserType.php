@@ -44,7 +44,7 @@ class AdminBulkUserType extends BulkType
                 new GrantRole(),
                 new UngrantRole()
             ],
-            'class' => BulkUserRequest::class
+            'data_class' => BulkUserRequest::class
         ]);
     }
 }
