@@ -3,7 +3,7 @@
 namespace App\Tests\Unit\Property\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Property\Domain\Model\Country\CountryRepository;
-use App\Property\Infrastructure\Repository\Country\DoctrineCountryRepository;
+use App\Property\Infrastructure\Persistence\Doctrine\Repository\DoctrineCountryRepository;
 use App\Tests\Unit\Property\Domain\Model\Country\CountryRepositoryTest;
 use Doctrine\ORM\EntityManagerInterface;
 

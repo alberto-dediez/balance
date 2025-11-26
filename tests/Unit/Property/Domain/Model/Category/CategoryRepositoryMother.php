@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Property\Domain\Model\Category;
 
-use App\Property\Infrastructure\Repository\Category\InMemoryCategoryRepository;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCategoryRepository;
 
 class CategoryRepositoryMother
 {

@@ -14,16 +14,16 @@ doctrine:
             user_id: App\Security\Infrastructure\Persistence\Doctrine\Type\UserIdType
             account_id: App\Security\Infrastructure\Persistence\Doctrine\Type\AccountIdType
             recorded_event_id: App\Security\Infrastructure\Persistence\Doctrine\Type\RecordedEventIdType
-            country_id: App\Property\Infrastructure\Symfony\Doctrine\Type\CountryIdType
-            destination_id: App\Property\Infrastructure\Symfony\Doctrine\Type\DestinationIdType
-            property_id: App\Property\Infrastructure\Symfony\Doctrine\Type\PropertyIdType
-            category_id: App\Property\Infrastructure\Symfony\Doctrine\Type\CategoryIdType
-            brand_id: App\Property\Infrastructure\Symfony\Doctrine\Type\BrandIdType
-            container_id: App\Waste\Infrastructure\Symfony\Doctrine\Type\ContainerIdType
-            measurement_id: App\Waste\Infrastructure\Symfony\Doctrine\Type\MeasurementIdType
-            waste_id: App\Waste\Infrastructure\Symfony\Doctrine\Type\WasteIdType
-            waste_manager_id: App\Waste\Infrastructure\Symfony\Doctrine\Type\WasteManagerIdType
-            daily_waste_id: App\Waste\Infrastructure\Symfony\Doctrine\Type\DailyWasteIdType
+            country_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CountryIdType
+            destination_id: App\Property\Infrastructure\Persistence\Doctrine\Type\DestinationIdType
+            property_id: App\Property\Infrastructure\Persistence\Doctrine\Type\PropertyIdType
+            category_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CategoryIdType
+            brand_id: App\Property\Infrastructure\Persistence\Doctrine\Type\BrandIdType
+            container_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\ContainerIdType
+            measurement_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\MeasurementIdType
+            waste_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\WasteIdType
+            waste_manager_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\WasteManagerIdType
+            daily_waste_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\DailyWasteIdType
     orm:
         auto_generate_proxy_classes: true
         enable_native_lazy_objects: true
@@ -45,14 +45,14 @@ doctrine:
             Waste:
                 type: xml
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Waste/Infrastructure/Symfony/Doctrine'
+                dir: '%kernel.project_dir%/src/Waste/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Waste\Domain\Model'
                 alias: Waste
 
             Property:
                 type: xml
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Property/Infrastructure/Symfony/Doctrine'
+                dir: '%kernel.project_dir%/src/Property/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Property\Domain\Model'
                 alias: Property
                 

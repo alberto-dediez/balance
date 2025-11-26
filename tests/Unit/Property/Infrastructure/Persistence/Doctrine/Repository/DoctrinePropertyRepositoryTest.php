@@ -3,7 +3,7 @@
 namespace App\Tests\Unit\Property\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Property\Domain\Model\Property\PropertyRepository;
-use App\Property\Infrastructure\Repository\Property\DoctrinePropertyRepository;
+use App\Property\Infrastructure\Persistence\Doctrine\Repository\DoctrinePropertyRepository;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Infrastructure\Persistence\Doctrine\Repository\DoctrineAccountRepository;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryTest;

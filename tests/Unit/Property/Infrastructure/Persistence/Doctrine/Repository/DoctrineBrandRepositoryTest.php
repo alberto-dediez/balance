@@ -3,7 +3,7 @@
 namespace App\Tests\Unit\Property\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Property\Domain\Model\Brand\BrandRepository;
-use App\Property\Infrastructure\Repository\Brand\DoctrineBrandRepository;
+use App\Property\Infrastructure\Persistence\Doctrine\Repository\DoctrineBrandRepository;
 use App\Tests\Unit\Property\Domain\Model\Brand\BrandRepositoryTest;
 use Doctrine\ORM\EntityManagerInterface;
 

@@ -4,7 +4,7 @@ namespace App\Tests\Unit\Waste\Domain\Model\Waste;
 
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleGetter;
-use App\Waste\Infrastructure\Repository\Waste\InMemoryWasteRepository;
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteRepository;
 
 class WasteRepositoryMother
 {

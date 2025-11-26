@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Property\Domain\Model\Country;
 
-use App\Property\Infrastructure\Repository\Country\InMemoryCountryRepository;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
 
 class CountryRepositoryMother
 {

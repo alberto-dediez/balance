@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Property\Domain\Model\Destination;
 
-use App\Property\Infrastructure\Repository\Destination\InMemoryDestinationRepository;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
 
 class DestinationRepositoryMother
 {

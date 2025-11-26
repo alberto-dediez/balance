@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Waste\Domain\Model\Measurement;
 
-use App\Waste\Infrastructure\Repository\Measurement\InMemoryMeasurementRepository;
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
 
 class MeasurementRepositoryMother
 {

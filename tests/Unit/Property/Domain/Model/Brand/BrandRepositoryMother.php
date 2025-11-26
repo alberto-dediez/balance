@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Property\Domain\Model\Brand;
 
-use App\Property\Infrastructure\Repository\Brand\InMemoryBrandRepository;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
 
 class BrandRepositoryMother
 {

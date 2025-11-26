@@ -4,7 +4,7 @@ namespace App\Tests\Unit\Waste\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Tests\Unit\Waste\Domain\Model\DailyWaste\DailyWasteRepositoryTest;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
-use App\Waste\Infrastructure\Repository\DailyWaste\DoctrineDailyWasteRepository;
+use App\Waste\Infrastructure\Persistence\Doctrine\Repository\DoctrineDailyWasteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class DoctrineDailyWasteRepositoryTest extends DailyWasteRepositoryTest

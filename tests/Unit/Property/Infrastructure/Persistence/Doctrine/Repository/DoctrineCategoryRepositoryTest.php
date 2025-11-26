@@ -3,7 +3,7 @@
 namespace App\Tests\Unit\Property\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Property\Domain\Model\Category\CategoryRepository;
-use App\Property\Infrastructure\Repository\Category\DoctrineCategoryRepository;
+use App\Property\Infrastructure\Persistence\Doctrine\Repository\DoctrineCategoryRepository;
 use App\Tests\Unit\Property\Domain\Model\Category\CategoryRepositoryTest;
 use Doctrine\ORM\EntityManagerInterface;
 

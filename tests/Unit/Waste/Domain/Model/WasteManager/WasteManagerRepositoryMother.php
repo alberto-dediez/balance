@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Waste\Domain\Model\WasteManager;
 
-use App\Waste\Infrastructure\Repository\WasteManager\InMemoryWasteManagerRepository;
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteManagerRepository;
 
 class WasteManagerRepositoryMother
 {
