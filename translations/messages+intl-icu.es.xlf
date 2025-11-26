@@ -1181,6 +1181,62 @@
         <source>Generar nueva contraseña</source>
         <target>Generar nueva contraseña</target>
       </trans-unit>
+      <trans-unit id="7hGVql5" resname="Hay errores en el emparejamiento. Por favor, revise el formulario.">
+        <source>Hay errores en el emparejamiento. Por favor, revise el formulario.</source>
+        <target>Hay errores en el emparejamiento. Por favor, revise el formulario.</target>
+      </trans-unit>
+      <trans-unit id="Jv0nOp1" resname="Error importando el fichero {file}">
+        <source>Error importando el fichero {file}</source>
+        <target>Error importando el fichero {file}</target>
+      </trans-unit>
+      <trans-unit id="yzfqoSM" resname="Fichero {file} subido con éxito">
+        <source>Fichero {file} subido con éxito</source>
+        <target>Fichero {file} subido con éxito</target>
+      </trans-unit>
+      <trans-unit id="CmihYJr" resname="Fichero a importar">
+        <source>Fichero a importar</source>
+        <target>Fichero a importar</target>
+      </trans-unit>
+      <trans-unit id="hLmVPgJ" resname="Por favor, selecciona un fichero.">
+        <source>Por favor, selecciona un fichero.</source>
+        <target>Por favor, selecciona un fichero.</target>
+      </trans-unit>
+      <trans-unit id="OTuR23r" resname="El fichero es demasiado grande ({{ size }} {{ suffix }}). El tamaño máximo permitido es {{ limit }} {{ suffix }}.">
+        <source>El fichero es demasiado grande ({{ size }} {{ suffix }}). El tamaño máximo permitido es {{ limit }} {{ suffix }}.</source>
+        <target>El fichero es demasiado grande ({{ size }} {{ suffix }}). El tamaño máximo permitido es {{ limit }} {{ suffix }}.</target>
+      </trans-unit>
+      <trans-unit id="GbvRix2" resname="Por favor, sube un fichero CSV o Excel válido.">
+        <source>Por favor, sube un fichero CSV o Excel válido.</source>
+        <target>Por favor, sube un fichero CSV o Excel válido.</target>
+      </trans-unit>
+      <trans-unit id="GkdmIqv" resname="Líneas a ignorar del inicio del fichero">
+        <source>Líneas a ignorar del inicio del fichero</source>
+        <target>Líneas a ignorar del inicio del fichero</target>
+      </trans-unit>
+      <trans-unit id="v2d6aJR" resname="Importar">
+        <source>Importar</source>
+        <target>Importar</target>
+      </trans-unit>
+      <trans-unit id="2CzITS8" resname="Ignorar">
+        <source>Ignorar</source>
+        <target>Ignorar</target>
+      </trans-unit>
+      <trans-unit id="Lm0PXyJ" resname="Continuar">
+        <source>Continuar</source>
+        <target>Continuar</target>
+      </trans-unit>
+      <trans-unit id="oHGi0.j" resname="Administración">
+        <source>Administración</source>
+        <target>Administración</target>
+      </trans-unit>
+      <trans-unit id="Shuo4D2" resname="Ejemplos">
+        <source>Ejemplos</source>
+        <target>Ejemplos</target>
+      </trans-unit>
+      <trans-unit id="5zYTrOq" resname="Emparejar campos">
+        <source>Emparejar campos</source>
+        <target>Emparejar campos</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

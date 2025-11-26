@@ -3,6 +3,7 @@
 namespace App\Waste\Infrastructure\UI\Web\Measurement\Import;
 
 use App\DataExchange\Application\Importation\Register\RegisterImportationRequest;
+use App\DataExchange\Application\Importation\Register\RegisterImportationResponse;
 use App\Security\Application\Action;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
@@ -31,8 +32,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 #[Route('/measurements/import', name: 'measurements_import')]
 class ImportController extends AbstractController
 {
-    const IMPORTATION_TYPE = 'measurements';
-
     public function __invoke(
         LoggedUser $loggedUser,
         LoggedAccount $loggedAccount,
@@ -58,6 +57,7 @@ class ImportController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
+            /** @var RegisterImportationResponse|null $response */
             $response = CommandBusDispatcher::instance()->dispatch(
                 new RegisterImportationRequest(
                     name: $data->file->getClientOriginalName(),
@@ -68,7 +68,7 @@ class ImportController extends AbstractController
                 ), $loggedUser()
             );
 
-            if (null === $response) {
+            if (null === $response || null === $response->importationId) {
                 $this->addFlash('danger', new TranslatableMessage('Error importando el fichero {file}', ['{file}' => $data->file->getClientOriginalName()]));
 
                 return $this->redirectToRoute('measurements');
@@ -76,7 +76,7 @@ class ImportController extends AbstractController
 
             $this->addFlash('success', new TranslatableMessage('Fichero {file} subido con éxito', ['{file}' => $data->file->getClientOriginalName()]));
 
-            return $this->redirectToRoute('measurements');
+            return $this->redirectToRoute('measurements_import_pair_fields', ['id' => (string) $response->importationId]);
         }
 
         return $this->render('@waste/measurements/import.html.twig', [

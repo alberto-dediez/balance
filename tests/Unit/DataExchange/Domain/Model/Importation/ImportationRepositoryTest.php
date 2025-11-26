@@ -26,13 +26,11 @@ abstract class ImportationRepositoryTest extends KernelTestCase
 
         $repository->add($importation);
 
-        $columns = $repository->getColumns($importation->id());
+        $importation = $repository->find($importation->id());
 
-        $this->assertCount(4, $columns);
-        $this->assertEquals('nombre', $columns[0]);
-        $this->assertEquals('edad', $columns[1]);
-        $this->assertEquals('clase', $columns[2]);
-        $this->assertEquals('superpoder', $columns[3]);
+        $configurations = $importation->configurations();
+
+        $this->assertCount(4, $configurations);
 
         $data = $repository->getData($importation->id(), 2);
 
@@ -41,7 +39,7 @@ abstract class ImportationRepositoryTest extends KernelTestCase
         $this->assertEquals('Clase Beta', $data['clase']);
         $this->assertEquals('Invisibilidad', $data['superpoder']);
 
-        $values = $repository->getValues($importation->id(), 2);
+        $values = $configurations[2]->values;
 
         $this->assertCount(4, $values);
         $this->assertTrue(in_array('Clase Alpha', $values));

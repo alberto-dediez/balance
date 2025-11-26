@@ -1,0 +1,45 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% if page_title is not defined %}
+    {% set page_title = ('Importar' | trans)
+        ~ ' > '
+        ~ ('Emparejar campos' | trans)
+    %}
+{% endif %}
+
+{% block content %}
+    {{ form_start(form) }}
+    <twig:Card>
+        {% set columns = [
+            {
+                'label': 'Columna' | trans,
+            }, {
+                'label': 'Campo' | trans,
+            }, {
+                'label': 'Ejemplos' | trans,
+            }
+        ] %}
+
+        <twig:List:Table :columns="columns" :elements="form.configurations">
+            <td>{{ element.vars.value.name }}</td>
+            <td>
+                {{ form_widget(element.field) }}
+                {{ form_errors(element.field) }}
+            </td>
+            <td>
+                <small>
+                    <ul>
+                        {% for value in element.vars.value.values | slice(0, 3) %}
+                            <li>{{ value }}</li>
+                        {% endfor %}
+                    </ul>
+                </small>
+            </td>
+        </twig:List:Table>
+
+        <twig:ActionBar>
+            <twig:ActionBar:Button type="outline-primary" :button="form.continue" />
+        </twig:ActionBar>
+    </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

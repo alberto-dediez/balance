@@ -59,20 +59,20 @@ final class WasteContext implements Context
     public function getWasteManagerRepository() : WasteManagerRepository
     {
         return $this->client->getContainer()->get(WasteManagerRepository::class);
-    }    
+    }
 
     public function getDailyWasteRepository() : DailyWasteRepository
     {
         return $this->client->getContainer()->get(DailyWasteRepository::class);
-    }    
+    }
 
     #[Given('waste :name with id :id exists')]
     public function wasteWithIdExists($name, $id): void
     {
         $waste = WasteMother::fromNameAndId($name, $id);
-        
-        $this->getWasteRepository()->add($waste);      
-    }    
+
+        $this->getWasteRepository()->add($waste);
+    }
 
     #[Given('container for :waste in :propertyId with id :id exists')]
     public function containerForInWithIdExists($waste, $propertyId, $id): void

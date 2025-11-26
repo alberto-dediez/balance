@@ -12,6 +12,7 @@ twig:
         'templates/security': 'security'
         'templates/waste': 'waste'
         'templates/property': 'property'
+        'templates/data_exchange': 'data_exchange'
         '%kernel.project_dir%/assets': assets        
 
 when@test:

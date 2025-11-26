@@ -13,9 +13,10 @@ default:
                 - App\Tests\Acceptance\Security\SecurityContext
                 - App\Tests\Acceptance\Waste\WasteContext
                 - App\Tests\Acceptance\Property\PropertyContext
+                - App\Tests\Acceptance\DataExchange\DataExchangeContext
 
     extensions:
-        FriendsOfBehat\SymfonyExtension: 
+        FriendsOfBehat\SymfonyExtension:
             bootstrap: tests/bootstrap.php
             kernel:
                 class: App\Shared\Infrastructure\Symfony\Kernel

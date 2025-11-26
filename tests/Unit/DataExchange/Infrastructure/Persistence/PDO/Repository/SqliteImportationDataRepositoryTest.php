@@ -2,6 +2,8 @@
 
 namespace App\Tests\Unit\DataExchange\Infrastructure\Persistence\PDO\Repository;
 
+use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
+use App\DataExchange\Domain\Model\Importation\ImportationDataRepository;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Infrastructure\Persistence\PDO\Repository\SqliteImportationDataRepository;
 use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
@@ -53,14 +55,59 @@ class SqliteImportationDataRepositoryTest extends TestCase
         $this->assertEquals('superpoder', $columns[3]);
     }
 
-    private function createSUT()
+    public function testGivenAnImportationWhenICreateAnImportationDataThenIGetConfigurationOfEveryColumn(): void
+    {
+        $path = __DIR__ . '/file-to-import.csv';
+
+        $importation = ImportationMother::fromNameAndFile('superheroes.csv', new ImportationFile(path: $path, offset: 0));
+
+        $sut = $this->createSUT();
+
+        $sut->create($importation);
+
+        $configuration = $sut->getConfiguration($importation->id(), 1);
+
+        $orderedValues = $configuration->values;
+        sort($orderedValues);
+
+        $this->assertNotNull($configuration);
+        $this->assertEquals(1, $configuration->column);
+        $this->assertEquals('edad', $configuration->name);
+        $this->assertEquals(null, $configuration->field);
+        $this->assertEquals(['14','15','16','17','18'], $orderedValues);
+        $this->assertEquals(['14' => null,'15' => null,'16' => null,'17' => null,'18' => null], $configuration->translations);
+    }
+
+    public function testGivenAnImportationColumnConfigurationWhenISaveItThenICanRecoverIt(): void
+    {
+        $path = __DIR__ . '/file-to-import.csv';
+
+        $importation = ImportationMother::fromNameAndFile('superheroes.csv', new ImportationFile(path: $path, offset: 0));
+
+        $sut = $this->createSUT();
+
+        $sut->create($importation);
+
+        $configuration = $sut->getConfiguration($importation->id(), 1);
+        $configuration->field = 'ageOfHeroe';
+        $configuration->translations = ['14' => 'Infantil','15' => 'Junior','16' => null,'17' => null,'18' => null];
+
+        $sut->saveConfiguration($importation->id(), $configuration);
+
+        $recoverConfiguration = $sut->getConfiguration($importation->id(), 1);
+
+        $this->assertEquals('ageOfHeroe', $recoverConfiguration->field);
+        $this->assertEquals('Infantil', $recoverConfiguration->translations['14']);
+    }
+
+    private function createSUT(): ImportationDataRepository
     {
         return new SqliteImportationDataRepository(
             storagePath: self::STORAGE_PATH,
         );
     }
 
-    private function cleanStorage()
+    private function cleanStorage(): void
     {
         if (!file_exists(self::STORAGE_PATH)) {
             mkdir(self::STORAGE_PATH);

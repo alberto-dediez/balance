@@ -473,6 +473,90 @@
         <source>This value is not a valid Twig template.</source>
         <target state="needs-review-translation">Este valor no es una plantilla Twig válida.</target>
       </trans-unit>
+      <trans-unit id="ZuGpyhA" resname="This file is not a valid video.">
+        <source>This file is not a valid video.</source>
+        <target state="needs-review-translation">Este archivo no es un video válido.</target>
+      </trans-unit>
+      <trans-unit id="7ZjICRC" resname="The size of the video could not be detected.">
+        <source>The size of the video could not be detected.</source>
+        <target state="needs-review-translation">No se pudo detectar el tamaño del video.</target>
+      </trans-unit>
+      <trans-unit id="WS2rIIU" resname="The video width is too big ({{ width }}px). Allowed maximum width is {{ max_width }}px.">
+        <source>The video width is too big ({{ width }}px). Allowed maximum width is {{ max_width }}px.</source>
+        <target state="needs-review-translation">El ancho del vídeo es demasiado grande ({{ width }}px). El ancho máximo permitido es {{ max_width }}px.</target>
+      </trans-unit>
+      <trans-unit id="Ey8lNRo" resname="The video width is too small ({{ width }}px). Minimum width expected is {{ min_width }}px.">
+        <source>The video width is too small ({{ width }}px). Minimum width expected is {{ min_width }}px.</source>
+        <target state="needs-review-translation">El ancho del video es demasiado pequeño ({{ width }}px). El ancho mínimo esperado es {{ min_width }}px.</target>
+      </trans-unit>
+      <trans-unit id="Liu7sjp" resname="The video height is too big ({{ height }}px). Allowed maximum height is {{ max_height }}px.">
+        <source>The video height is too big ({{ height }}px). Allowed maximum height is {{ max_height }}px.</source>
+        <target state="needs-review-translation">La altura del video es demasiado grande ({{ height }}px). La altura máxima permitida es {{ max_height }}px.</target>
+      </trans-unit>
+      <trans-unit id="2FkdfHN" resname="The video height is too small ({{ height }}px). Minimum height expected is {{ min_height }}px.">
+        <source>The video height is too small ({{ height }}px). Minimum height expected is {{ min_height }}px.</source>
+        <target state="needs-review-translation">La altura del video es demasiado pequeña ({{ height }}px). La altura mínima esperada es {{ min_height }}px.</target>
+      </trans-unit>
+      <trans-unit id="Dp2k5ge" resname="The video has too few pixels ({{ pixels }} pixels). Minimum amount expected is {{ min_pixels }} pixels.">
+        <source>The video has too few pixels ({{ pixels }} pixels). Minimum amount expected is {{ min_pixels }} pixels.</source>
+        <target state="needs-review-translation">El vídeo tiene muy pocos píxeles ({{ pixels }}). La cantidad mínima esperada es {{ min_pixels }}.</target>
+      </trans-unit>
+      <trans-unit id="IDGrrj_" resname="The video has too many pixels ({{ pixels }} pixels). Maximum amount expected is {{ max_pixels }} pixels.">
+        <source>The video has too many pixels ({{ pixels }} pixels). Maximum amount expected is {{ max_pixels }} pixels.</source>
+        <target state="needs-review-translation">El vídeo tiene demasiados píxeles ({{ pixels }}). La cantidad máxima esperada es {{ max_pixels }}.</target>
+      </trans-unit>
+      <trans-unit id="J1cZmuA" resname="The video ratio is too big ({{ ratio }}). Allowed maximum ratio is {{ max_ratio }}.">
+        <source>The video ratio is too big ({{ ratio }}). Allowed maximum ratio is {{ max_ratio }}.</source>
+        <target state="needs-review-translation">La relación del video es demasiado grande ({{ ratio }}). La relación máxima permitida es {{ max_ratio }}.</target>
+      </trans-unit>
+      <trans-unit id="WQTwvFh" resname="The video ratio is too small ({{ ratio }}). Minimum ratio expected is {{ min_ratio }}.">
+        <source>The video ratio is too small ({{ ratio }}). Minimum ratio expected is {{ min_ratio }}.</source>
+        <target state="needs-review-translation">La relación del video es demasiado pequeña ({{ ratio }}). La relación mínima esperada es {{ min_ratio }}.</target>
+      </trans-unit>
+      <trans-unit id="OT6Evve" resname="The video is square ({{ width }}x{{ height }}px). Square videos are not allowed.">
+        <source>The video is square ({{ width }}x{{ height }}px). Square videos are not allowed.</source>
+        <target state="needs-review-translation">El video es cuadrado ({{ width }}x{{ height }}px). No se permiten videos cuadrados.</target>
+      </trans-unit>
+      <trans-unit id="mXgOwd4" resname="The video is landscape oriented ({{ width }}x{{ height }}px). Landscape oriented videos are not allowed.">
+        <source>The video is landscape oriented ({{ width }}x{{ height }}px). Landscape oriented videos are not allowed.</source>
+        <target state="needs-review-translation">El video tiene orientación horizontal ({{ width }}x{{ height }} px). No se permiten videos en formato horizontal.</target>
+      </trans-unit>
+      <trans-unit id="VrsdBNF" resname="The video is portrait oriented ({{ width }}x{{ height }}px). Portrait oriented videos are not allowed.">
+        <source>The video is portrait oriented ({{ width }}x{{ height }}px). Portrait oriented videos are not allowed.</source>
+        <target state="needs-review-translation">El video tiene orientación vertical ({{ width }}x{{ height }} px). No se permiten videos en orientación vertical.</target>
+      </trans-unit>
+      <trans-unit id="x8fsjeI" resname="The video file is corrupted.">
+        <source>The video file is corrupted.</source>
+        <target state="needs-review-translation">El archivo de video está dañado.</target>
+      </trans-unit>
+      <trans-unit id="nzXY1iu" resname="The video contains multiple streams. Only one stream is allowed.">
+        <source>The video contains multiple streams. Only one stream is allowed.</source>
+        <target state="needs-review-translation">El video contiene múltiples flujos. Solo se permite un flujo.</target>
+      </trans-unit>
+      <trans-unit id="hCzL7Mv" resname="Unsupported video codec &quot;{{ codec }}&quot;.">
+        <source>Unsupported video codec "{{ codec }}".</source>
+        <target state="needs-review-translation">Códec de vídeo no compatible «{{ codec }}».</target>
+      </trans-unit>
+      <trans-unit id="nTnX6nj" resname="Unsupported video container &quot;{{ container }}&quot;.">
+        <source>Unsupported video container "{{ container }}".</source>
+        <target state="needs-review-translation">Contenedor de vídeo no compatible "{{ container }}".</target>
+      </trans-unit>
+      <trans-unit id="jAJTV_I" resname="The image file is corrupted.">
+        <source>The image file is corrupted.</source>
+        <target state="needs-review-translation">El archivo de imagen está dañado.</target>
+      </trans-unit>
+      <trans-unit id="aw1rRIE" resname="The image has too few pixels ({{ pixels }} pixels). Minimum amount expected is {{ min_pixels }} pixels.">
+        <source>The image has too few pixels ({{ pixels }} pixels). Minimum amount expected is {{ min_pixels }} pixels.</source>
+        <target state="needs-review-translation">La imagen tiene muy pocos píxeles ({{ pixels }}). La cantidad mínima esperada es {{ min_pixels }}.</target>
+      </trans-unit>
+      <trans-unit id="KbWb1FD" resname="The image has too many pixels ({{ pixels }} pixels). Maximum amount expected is {{ max_pixels }} pixels.">
+        <source>The image has too many pixels ({{ pixels }} pixels). Maximum amount expected is {{ max_pixels }} pixels.</source>
+        <target state="needs-review-translation">La imagen tiene demasiados píxeles ({{ pixels }}). La cantidad máxima esperada es {{ max_pixels }}.</target>
+      </trans-unit>
+      <trans-unit id="tPeCNvN" resname="This filename does not match the expected charset.">
+        <source>This filename does not match the expected charset.</source>
+        <target state="needs-review-translation">Este nombre de archivo no coincide con el conjunto de caracteres esperado.</target>
+      </trans-unit>
       <trans-unit id="tDkL4Jc" resname="This form should not contain extra fields.">
         <source>This form should not contain extra fields.</source>
         <target>Este formulario no debería contener campos adicionales.</target>

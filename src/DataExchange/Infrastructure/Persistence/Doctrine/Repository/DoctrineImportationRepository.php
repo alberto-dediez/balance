@@ -24,10 +24,22 @@ class DoctrineImportationRepository implements ImportationRepository
     public function add(Importation $importation): void
     {
         try {
-            $this->dataRepository->create($importation);
+            $recoverImportation = $this->find($importation->id());
+
+            if (null === $recoverImportation) {
+                $this->dataRepository->create($importation);
+            }
 
             $this->getEntityManager()->persist($importation);
             $this->getEntityManager()->flush();
+
+            if (count($importation->configurations()) === 0) {
+                return ;
+            }
+
+            foreach ($importation->configurations() as $configuration) {
+                $this->dataRepository->saveConfiguration($importation->id(), $configuration);
+            }
         } catch (\Throwable $exception) {
             throw new NotImportedException($exception->getMessage());
         }
@@ -41,7 +53,7 @@ class DoctrineImportationRepository implements ImportationRepository
             ->from(Importation::class, 'i')
         ;
 
-        return $qb
+        $importation = $qb
             ->andWhere(
                 $qb->expr()->eq('i.id', ':id')
             )
@@ -49,16 +61,18 @@ class DoctrineImportationRepository implements ImportationRepository
             ->getQuery()
             ->getOneOrNullResult()
         ;
-    }
 
-    public function getColumns(ImportationId $importationId): array
-    {
-        return $this->dataRepository->getColumns($importationId);
-    }
+        if (null === $importation) {
+            return null;
+        }
 
-    public function getValues(ImportationId $importationId, int $column): array
-    {
-        return $this->dataRepository->getValues($importationId, $column);
+        if (count($importation->configurations()) === 0) {
+            $importation->loadConfigurations(
+                $this->dataRepository->getAllConfigurations($importation->id())
+            );
+        }
+
+        return $importation;
     }
 
     public function getData(ImportationId $importationId, int $rowNumber): array

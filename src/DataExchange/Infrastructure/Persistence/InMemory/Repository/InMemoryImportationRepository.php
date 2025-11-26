@@ -24,6 +24,15 @@ class InMemoryImportationRepository implements ImportationRepository
     public function add(Importation $importation): void
     {
         if (isset($this->importations[(string) $importation->id()])) {
+            $importation = $this->importations[(string) $importation->id()];
+            if (count($importation->configurations()) === 0) {
+                return ;
+            }
+
+            foreach ($importation->configurations() as $configuration) {
+                $this->dataRepository->saveConfiguration($importation->id(), $configuration);
+            }
+
             return ;
         }
 
@@ -34,31 +43,38 @@ class InMemoryImportationRepository implements ImportationRepository
 
     public function remove(Importation $importation): void
     {
+        $this->dataRepository->remove($importation->id());
+
         if (!isset($this->importations[(string) $importation->id()])) {
             return ;
         }
-
-        $this->dataRepository->remove($importation->id());
 
         unset($this->importations[(string) $importation->id()]);
     }
 
     public function find(ImportationId $importationId): ?Importation
     {
-        return isset($this->importations[(string) $importationId])
+        $importation = isset($this->importations[(string) $importationId])
             ? $this->importations[(string) $importationId]
             : null
         ;
+
+        if ($importation === null) {
+            return null;
+        }
+
+        if (count($importation->configurations()) === 0) {
+            $importation->loadConfigurations(
+                $this->dataRepository->getAllConfigurations($importation->id())
+            );
+        }
+
+        return $importation;
     }
 
     public function getColumns(ImportationId $importationId): array
     {
         return $this->dataRepository->getColumns($importationId);
-    }
-
-    public function getValues(ImportationId $importationId, int $column): array
-    {
-        return $this->dataRepository->getValues($importationId, $column);
     }
 
     public function getData(ImportationId $importationId, int $rowNumber): array
