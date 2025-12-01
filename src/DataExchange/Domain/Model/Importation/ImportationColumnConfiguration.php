@@ -9,6 +9,7 @@ class ImportationColumnConfiguration
         public string $name,
         public ?string $field,
         public array $values,
+        /** @var ColumnValueTranslation[] $translations */
         public array $translations
     ) {
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Acceptance\DataExchange;
 
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
+use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
 use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
 use Behat\Step\Given;
@@ -38,6 +39,27 @@ final class DataExchangeContext implements Context
 
         $repository = $this->getImportationRepository();
         $repository->remove($importation);
+
+        $repository->add($importation);
+    }
+
+    #[Given('importation :importationId has paired fields :fields')]
+    public function importationHasPairedFields($importationId, $fields): void
+    {
+        $repository = $this->getImportationRepository();
+        $importation = $repository->find(new ImportationId($importationId));
+
+        foreach (explode('|', $fields) as $field) {
+            list($name, $value) = explode(':', $field);
+
+            $configuration = $importation->configurationFor($name);
+
+            if (null === $configuration) {
+                continue;
+            }
+
+            $configuration->field = $value;
+        }
 
         $repository->add($importation);
     }

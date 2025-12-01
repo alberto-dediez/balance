@@ -6,6 +6,7 @@ use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Waste\Domain\Model\DailyWaste\DailyWaste;
+use App\Waste\Domain\Model\Measurement\Unit;
 use App\Waste\Domain\Model\Waste\WasteRepository;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteId;
 use App\Waste\Domain\Model\Measurement\Measurement;
@@ -115,14 +116,18 @@ class CalculateDailyWasteService implements CommandHandler
         $containerRepository = $this->containerRepository;
 
         return array_reduce($measurements, function (float $totalLoad, Measurement $measurement) use ($wasteRepository, $containerRepository) {
-            if ($measurement->measurementMethod() === MeasurementMethod::Volume) {
+            if ($measurement->unit() !== Unit::Kilogram) {
                 $container = $containerRepository->find($measurement->containerId());
                 $containerVolume = null === $container ? 0 : $container->volume();
 
                 $waste = $wasteRepository->find($measurement->wasteId());
                 $wasteDensity = null === $waste ? 0 : $waste->density();
 
-                $load = ($measurement->load() / 100) * ($containerVolume * $wasteDensity);
+                $load = $measurement->unit()->calculateLoadInKilograms(
+                    load: $measurement->load(),
+                    volume: $containerVolume,
+                    density: $wasteDensity
+                );
             } else {
                 $load = $measurement->load();
             }

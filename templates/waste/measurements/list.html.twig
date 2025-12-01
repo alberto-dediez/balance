@@ -35,7 +35,7 @@
         <td>
             {{ element.load }}
 
-            {{ element.measurementMethod.value == 'VOLUME' ? '%' : 'Kg' }}
+            {{ element.unit.value }}
         </td>
         <td>{{ element.purpose.value | trans({}, 'purpose') }}</td>
         <td>{{ element.registeredBy | user_name }}</td>

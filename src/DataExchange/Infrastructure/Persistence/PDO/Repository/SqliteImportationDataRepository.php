@@ -2,11 +2,13 @@
 
 namespace App\DataExchange\Infrastructure\Persistence\PDO\Repository;
 
+use App\DataExchange\Domain\Model\Importation\ColumnValueTranslation;
 use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
 use App\DataExchange\Domain\Model\Importation\ImportationDataRepository;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Infrastructure\Persistence\PDO\Tools\FileExtractor;
+use Doctrine\DBAL\Schema\Column;
 use Symfony\Component\Filesystem\Exception\IOException;
 
 class SqliteImportationDataRepository implements ImportationDataRepository
@@ -182,9 +184,14 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         );
     }
 
+    /**
+     * @return ColumnValueTranslation[]
+     */
     private function getTranslations(ImportationId $importationId, string $columnName, array $values): array
     {
-        $translations = array_combine($values, array_fill(0, count($values), null));
+        $translations = array_map(function ($value) {
+            return new ColumnValueTranslation(value: $value, translation: null);
+        }, array_filter($values, fn($value) => $value !== null));
 
         $connection = $this->connect($importationId);
 
@@ -193,7 +200,10 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         $statement->execute();
 
         while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
-            $translations[$row['column_value']] = $row['column_translation'];
+            $found = array_filter($translations, fn (ColumnValueTranslation $translation) => $translation->value == $row['column_value']);
+
+            $translation = count($found) > 0 ? array_pop($found) : new ColumnValueTranslation(value: $row['column_value'], translation: null);
+            $translation->translation = $row['column_translation'];
         }
 
         return $translations;
@@ -216,11 +226,11 @@ class SqliteImportationDataRepository implements ImportationDataRepository
 
         $statement = $connection->prepare($sql);
 
-        foreach ($configuration->translations as $originalValue => $translatedValue) {
+        foreach ($configuration->translations as $translation) {
             $statement->execute([
                 ':name'  => $configuration->name,
-                ':val'   => $originalValue,
-                ':trans' => $translatedValue
+                ':val'   => $translation->value,
+                ':trans' => $translation->translation,
             ]);
         }
     }

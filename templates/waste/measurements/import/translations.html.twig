@@ -1,4 +1,4 @@
-{% extends '@data_exchange/import/pair_fields.html.twig' %}
+{% extends '@data_exchange/import/translations.html.twig' %}
 
 {% set page_title = ('Mediciones' | trans)
     ~ ' > '
@@ -10,5 +10,3 @@
 {% block top_actions %}
     <twig:TopAction:Return path="{{ path('measurements') }}" />
 {% endblock %}
-
-{% block body %}{% endblock %}

@@ -45,6 +45,21 @@ class Importation
         return $this->configurations ?? [];
     }
 
+    public function configurationFor(string $columnName): ?ImportationColumnConfiguration
+    {
+        if (count($this->configurations()) === 0) {
+            return null;
+        }
+
+        foreach ($this->configurations() as $configuration) {
+            if ($configuration->name === $columnName) {
+                return $configuration;
+            }
+        }
+
+        return null;
+    }
+
     public function accountId(): ?AccountId
     {
         return $this->accountId;

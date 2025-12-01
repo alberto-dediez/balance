@@ -23,13 +23,13 @@ class EditController extends AbstractController
     use EditTrait, GetMeasurementFromIdTrait;
 
     public function __invoke(
-        string $measurementId, 
-        MeasurementRepository $measurementRepository, 
-        UpdateMeasurementService $updateMeasurement, 
+        string $measurementId,
+        MeasurementRepository $measurementRepository,
+        UpdateMeasurementService $updateMeasurement,
         LoggedUser $loggedUser,
         Request $request
     ): Response
-    {   
+    {
         $measurement = $this->getMeasurementFromId($measurementId, $measurementRepository);
 
         $this->denyAccessUnlessGranted(Action::Edit->value, $measurement);
@@ -42,7 +42,7 @@ class EditController extends AbstractController
         );
 
         try {
-            $form = $this->createForm(UpdateMeasurementType::class, $measurementRequest, ['measurementMethod' => $measurement->measurementMethod()]); 
+            $form = $this->createForm(UpdateMeasurementType::class, $measurementRequest, ['unit' => $measurement->unit()]);
 
             $needsRedirect = $this->edit($request, $form, function ($form) use ($updateMeasurement, $loggedUser) {
                 $measurementRequest = $form->getData();

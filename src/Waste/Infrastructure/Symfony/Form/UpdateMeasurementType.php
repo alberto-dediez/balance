@@ -2,7 +2,11 @@
 
 namespace App\Waste\Infrastructure\Symfony\Form;
 
+use App\Shared\Infrastructure\Symfony\Form\Type\NumberUnitType;
+use App\Waste\Domain\Model\Measurement\Unit;
+use BcMath\Number;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -18,7 +22,7 @@ class UpdateMeasurementType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $measurementMethod = $options['measurementMethod'];
+        $unit = $options['unit'];
 
         $builder
             ->add('quantity', IntegerType::class, [
@@ -27,16 +31,22 @@ class UpdateMeasurementType extends AbstractType
             ])
         ;
 
-        if ($measurementMethod == MeasurementMethod::Volume) {
+        if ($unit === Unit::Percentage) {
             $builder->add('load', PercentType::class , [
                 'label' => new TranslatableMessage('Volumen del contenedor (%)'),
                 'required' => true,
                 'type' => 'integer'
             ]);
-        } else {
+        } elseif ($unit === Unit::Kilogram) {
             $builder->add('load', WeightType::class , [
                 'label' => new TranslatableMessage('Peso del contenedor (Kg)'),
                 'required' => true
+            ]);
+        } else {
+            $builder->add('load', NumberUnitType::class , [
+                'label' => new TranslatableMessage('Carga del contenedor ({unit})', ['{unit}' => $unit->value]),
+                'required' => true,
+                'symbol' => $unit->value
             ]);
         }
 
@@ -58,7 +68,7 @@ class UpdateMeasurementType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => UpdateMeasurementRequest::class,
-            'measurementMethod' => MeasurementMethod::Volume
+            'unit' => Unit::Percentage
         ]);
     }
 }

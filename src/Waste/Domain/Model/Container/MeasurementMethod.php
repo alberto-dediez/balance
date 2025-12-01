@@ -2,6 +2,8 @@
 
 namespace App\Waste\Domain\Model\Container;
 
+use App\Waste\Domain\Model\Measurement\Unit;
+
 enum MeasurementMethod: string
 {
     case Volume = 'VOLUME';
@@ -11,8 +13,8 @@ enum MeasurementMethod: string
     public function unit(): string
     {
         return match ($this) {
-            self::Volume => '%',
-            self::Weight => 'Kg',
+            self::Volume => Unit::Percentage->value,
+            self::Weight => Unit::Kilogram->value,
         };
     }
 }

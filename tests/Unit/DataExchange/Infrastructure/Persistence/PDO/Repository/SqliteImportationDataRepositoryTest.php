@@ -2,11 +2,13 @@
 
 namespace App\Tests\Unit\DataExchange\Infrastructure\Persistence\PDO\Repository;
 
+use App\DataExchange\Domain\Model\Importation\ColumnValueTranslation;
 use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
 use App\DataExchange\Domain\Model\Importation\ImportationDataRepository;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Infrastructure\Persistence\PDO\Repository\SqliteImportationDataRepository;
 use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
+use Doctrine\DBAL\Schema\Column;
 use PHPUnit\Framework\TestCase;
 
 class SqliteImportationDataRepositoryTest extends TestCase
@@ -75,7 +77,8 @@ class SqliteImportationDataRepositoryTest extends TestCase
         $this->assertEquals('edad', $configuration->name);
         $this->assertEquals(null, $configuration->field);
         $this->assertEquals(['14','15','16','17','18'], $orderedValues);
-        $this->assertEquals(['14' => null,'15' => null,'16' => null,'17' => null,'18' => null], $configuration->translations);
+        $this->assertCount(5, $configuration->translations);
+        $this->assertNotNull(array_filter($configuration->translations, fn (ColumnValueTranslation $translation) => $translation->value == '14'));
     }
 
     public function testGivenAnImportationColumnConfigurationWhenISaveItThenICanRecoverIt(): void
@@ -90,14 +93,26 @@ class SqliteImportationDataRepositoryTest extends TestCase
 
         $configuration = $sut->getConfiguration($importation->id(), 1);
         $configuration->field = 'ageOfHeroe';
-        $configuration->translations = ['14' => 'Infantil','15' => 'Junior','16' => null,'17' => null,'18' => null];
+        $configuration->translations = [
+            new ColumnValueTranslation(value: '14', translation: 'Infantil'),
+            new ColumnValueTranslation(value: '15', translation: 'Junior'),
+            new ColumnValueTranslation(value: '16', translation: null),
+            new ColumnValueTranslation(value: '17', translation: null),
+            new ColumnValueTranslation(value: '18', translation: null),
+        ];
 
         $sut->saveConfiguration($importation->id(), $configuration);
 
         $recoverConfiguration = $sut->getConfiguration($importation->id(), 1);
 
         $this->assertEquals('ageOfHeroe', $recoverConfiguration->field);
-        $this->assertEquals('Infantil', $recoverConfiguration->translations['14']);
+
+        /** @var ?ColumnValueTranslation $foundTranslation */
+        $foundTranslations = array_filter($recoverConfiguration->translations, fn (ColumnValueTranslation $translation) => $translation->value == '14');
+        $this->assertCount(1, $foundTranslations);
+
+        $foundTranslation = array_pop($foundTranslations);
+        $this->assertEquals('Infantil', $foundTranslation->translation);
     }
 
     private function createSUT(): ImportationDataRepository

@@ -1,0 +1,10 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% if page_title is not defined %}
+    {% set page_title = ('Importar' | trans)
+        ~ ' > '
+        ~ ('Asignar valores' | trans)
+    %}
+{% endif %}
+
+{% block content %}{% endblock %}

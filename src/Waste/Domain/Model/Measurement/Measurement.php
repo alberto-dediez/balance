@@ -10,7 +10,6 @@ use App\Waste\Domain\Model\Container\Container;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\ContainerId;
-use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
@@ -28,6 +27,7 @@ class Measurement
         private WasteManagerId|null $wasteManagerId = null,
         private int $quantity = 0,
         private float $load = 0,
+        private Unit $unit = Unit::Kilogram,
         private ?string $justification = null,
         private AccountId|null $accountId = null,
         private UserId|null $registeredBy = null,
@@ -82,6 +82,11 @@ class Measurement
         return $this->load;
     }
 
+    public function unit(): ?Unit
+    {
+        return $this->unit;
+    }
+
     public function day(): \DateTimeImmutable
     {
         return $this->registeredAt();
@@ -113,7 +118,8 @@ class Measurement
         float $load,
         UserId $registeredBy,
         AccountId $accountId,
-        ?string $justification = null
+        ?string $justification = null,
+        ?Unit $unit = null,
     ) {
         $this->recordApplyAndPublish(
             new MeasurementRegistered(
@@ -121,15 +127,16 @@ class Measurement
                 containerId: $container->id(),
                 propertyId: $container->propertyId(),
                 wasteId: $container->wasteId(),
-                purpose: $container->purpose(),
                 measurementMethod: $container->measurementMethod(),
+                purpose: $container->purpose(),
                 wasteManagerId: $container->wasteManagerId(),
+                registeredBy: $registeredBy,
+                accountId: $accountId,
+                day: new \DateTimeImmutable("NOW"),
                 quantity: $quantity,
                 load: $load,
-                justification: $justification,
-                accountId: $accountId,
-                registeredBy: $registeredBy,
-                day: new \DateTimeImmutable("NOW")
+                unit: $unit ?? $container->unit(),
+                justification: $justification
             )
         );
     }
@@ -174,6 +181,7 @@ class Measurement
         $this->wasteManagerId = $event->wasteManagerId();
         $this->quantity = $event->quantity();
         $this->load = $event->load();
+        $this->unit = $event->unit();
         $this->justification = $event->justification();
         $this->accountId = $event->accountId();
         $this->registeredBy = $event->registeredBy();

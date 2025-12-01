@@ -2,6 +2,7 @@
 
 namespace App\Waste\Domain\Model\Container;
 
+use App\Waste\Domain\Model\Measurement\Unit;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -64,6 +65,11 @@ class Container
     public function volume(): ?string
     {
         return $this->volume;
+    }
+
+    public function unit(): Unit
+    {
+        return Unit::tryFrom($this->measurementMethod->unit());
     }
 
     public function wasteManagerId() : ?WasteManagerId
