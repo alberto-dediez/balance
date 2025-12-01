@@ -1241,6 +1241,46 @@
         <source>{number} resultados</source>
         <target>{number} results</target>
       </trans-unit>
+      <trans-unit id="3uQmFLV" resname="Hay errores en la configuración de los distintos campos. Por favor, revise el formulario.">
+        <source>Hay errores en la configuración de los distintos campos. Por favor, revise el formulario.</source>
+        <target>There are errors in the configuration of the different fields. Please check the form.</target>
+      </trans-unit>
+      <trans-unit id="KMyT1mh" resname="Referencia">
+        <source>Referencia</source>
+        <target>Reference</target>
+      </trans-unit>
+      <trans-unit id="aiu6WNf" resname="Carga del contenedor ({unit})">
+        <source>Carga del contenedor ({unit})</source>
+        <target>Container load ({unit})</target>
+      </trans-unit>
+      <trans-unit id="RiJxmO2" resname="Todas las referencias">
+        <source>Todas las referencias</source>
+        <target>All references</target>
+      </trans-unit>
+      <trans-unit id="Z5jNTXt" resname="Traducir valores">
+        <source>Traducir valores</source>
+        <target>Translate values</target>
+      </trans-unit>
+      <trans-unit id="z8TXQN1" resname="Asignar valores">
+        <source>Asignar valores</source>
+        <target>Assign values</target>
+      </trans-unit>
+      <trans-unit id="L7a_5lL" resname="Valor original">
+        <source>Valor original</source>
+        <target>Original value</target>
+      </trans-unit>
+      <trans-unit id="TUO0uXy" resname="Asignar valor">
+        <source>Asignar valor</source>
+        <target>Assign value</target>
+      </trans-unit>
+      <trans-unit id="F6fPFql" resname="Columna">
+        <source>Columna</source>
+        <target>Column</target>
+      </trans-unit>
+      <trans-unit id="uk97hXA" resname="Campo">
+        <source>Campo</source>
+        <target>Field</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
