@@ -13,10 +13,11 @@ final class MeasurementUpdated extends DomainEvent
     protected static string $eventName = 'measurementUpdated';
 
     public function __construct(
-        private MeasurementId $measurementId, 
+        private MeasurementId $measurementId,
         private int $quantity = 0,
         private float $load = 0,
         private ?string $justification = null,
+        private ?string $reference = null,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -43,6 +44,11 @@ final class MeasurementUpdated extends DomainEvent
         return $this->justification;
     }
 
+    public function reference(): ?string
+    {
+        return $this->reference;
+    }
+
     public function aggregateRootId(): ?AggregateRootId
     {
         return $this->measurementId();
@@ -54,7 +60,8 @@ final class MeasurementUpdated extends DomainEvent
             'measurementId' => (string) $this->measurementId,
             'quantity' => $this->quantity,
             'load' => $this->load,
-            'justification' => $this->justification
+            'justification' => $this->justification,
+            '$this->reference' => $this->reference
         ];
     }
 
@@ -64,10 +71,11 @@ final class MeasurementUpdated extends DomainEvent
         ?array $payload
     ): static {
         return new MeasurementUpdated(
-            measurementId: new MeasurementId($payload['measurementId']), 
+            measurementId: new MeasurementId($payload['measurementId']),
             quantity: $payload['quantity'],
             load: $payload['load'],
             justification: $payload['justification'],
+            reference: $payload['reference'] ?? null,
             id: $id,
             occurredOn: $occurredOn
         );

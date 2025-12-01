@@ -68,7 +68,8 @@ class RegisterMeasurementServiceTest extends TestCase
             quantity: 1,
             load: 0.5,
             registeredBy: $user->id(),
-            justification: 'Fiesta de pijamas!'
+            justification: 'Fiesta de pijamas!',
+            reference: '123'
         );
 
         $result = $sut($request, $user);
@@ -77,13 +78,14 @@ class RegisterMeasurementServiceTest extends TestCase
         $this->assertTrue($result instanceof RegisterMeasurementResponse);
         $this->assertNotEmpty((string) $result->measurementId);
         $this->assertEquals(36, strlen((string) $result->measurementId));
-        
+        $this->assertEquals('123', $result->reference);
+
 
         $measurementPersisted = $measurementRepository->find($result->measurementId);
 
         $this->assertNotNull($measurementPersisted);
         $this->assertTrue($measurementPersisted instanceof Measurement);
-        
+
         $lastEvent = $this->spySubscriber->lastEvent();
 
         $this->assertNotNull($lastEvent);

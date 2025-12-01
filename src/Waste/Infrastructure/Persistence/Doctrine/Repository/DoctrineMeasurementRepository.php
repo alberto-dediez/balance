@@ -55,13 +55,13 @@ class DoctrineMeasurementRepository implements MeasurementRepository
     public function findByDay(\DateTimeImmutable $day, PropertyId $propertyId, WasteId $wasteId, Purpose $purpose, WasteManagerId $wasteManagerId, AccountId $accountId): array
     {
         $filter = new MeasurementFilter(
-            limit: 0,
             propertyId: $propertyId,
             wasteId: $wasteId,
             wasteManagerId: $wasteManagerId,
             purpose: $purpose,
             accountId: $accountId,
-            registeredAt: $day
+            registeredAt: $day,
+            limit: 0
         );
 
         return $this->findByFilter($filter);
@@ -144,6 +144,15 @@ class DoctrineMeasurementRepository implements MeasurementRepository
                     $qb->expr()->eq('m.registeredBy', ':userId')
                 )
                 ->setParameter('userId', $filter->userId)
+            ;
+        }
+
+        if (!empty($filter->reference)) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('m.reference', ':reference')
+                )
+                ->setParameter('reference', $filter->reference)
             ;
         }
 

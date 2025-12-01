@@ -8,12 +8,12 @@ use App\Shared\Application\CommandBus\CommandResponse;
 class UpdateMeasurementResponse implements CommandResponse
 {
     public function __construct(
-        public MeasurementId $measurementId, 
+        public MeasurementId $measurementId,
         public int $quantity,
         public float $load,
-        public ?string $justification
-        
+        public ?string $justification,
+        public ?string $reference
     ) {
-        
+
     }
 }

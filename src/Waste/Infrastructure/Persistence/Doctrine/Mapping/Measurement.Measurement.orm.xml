@@ -22,6 +22,7 @@
         <field name="load" type="decimal" scale="4" precision="14" nullable="false" column="container_load" />
         <field name="unit" type="string" enum-type="App\Waste\Domain\Model\Measurement\Unit" nullable="false" />
         <field name="justification" type="text" nullable="true" />
+        <field name="reference" type="string" length="255" nullable="true"/>
 
         <field name="registeredBy" type="user_id" nullable="false" />
 

@@ -26,7 +26,7 @@ class UpdateMeasurementService implements CommandHandler
     public function __invoke(UpdateMeasurementRequest $request, User $user): UpdateMeasurementResponse
     {
         $measurement = $this->measurementRepository->find($request->measurementId);
-        
+
         if (null == $measurement) {
             throw new InvalidArgumentException("Measurement not found");
         }
@@ -36,7 +36,8 @@ class UpdateMeasurementService implements CommandHandler
         $measurement->update(
             quantity: $request->quantity,
             load: $request->load,
-            justification: $request->justification
+            justification: $request->justification,
+            reference: $request->reference
         );
 
         $this->measurementRepository->add($measurement);
@@ -45,7 +46,8 @@ class UpdateMeasurementService implements CommandHandler
             measurementId: $measurement->id(),
             quantity: $measurement->quantity(),
             load: $measurement->load(),
-            justification: $measurement->justification()
+            justification: $measurement->justification(),
+            reference: $measurement->reference()
         );
     }
 

@@ -13,8 +13,9 @@ class RegisterMeasurementRequest implements Command
         public int $quantity,
         public float $load,
         public UserId $registeredBy,
-        public ?string $justification = null
+        public ?string $justification = null,
+        public ?string $reference = null
     ) {
-        
+
     }
 }

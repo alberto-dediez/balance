@@ -60,6 +60,7 @@ class RegisterMeasurementService implements CommandHandler
                 load: $request->load,
                 registeredBy: $request->registeredBy,
                 justification: $request->justification,
+                reference: $request->reference,
                 accountId: $property->accountId()
             )
         ;
@@ -72,7 +73,8 @@ class RegisterMeasurementService implements CommandHandler
             quantity: $measurement->quantity(),
             load: $measurement->load(),
             registeredBy: $measurement->registeredBy(),
-            justification: $measurement->justification()
+            justification: $measurement->justification(),
+            reference: $measurement->reference(),
         );
     }
 

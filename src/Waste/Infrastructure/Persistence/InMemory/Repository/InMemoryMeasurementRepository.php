@@ -51,13 +51,13 @@ class InMemoryMeasurementRepository implements MeasurementRepository
     public function findByDay(\DateTimeImmutable $day, PropertyId $propertyId, WasteId $wasteId, Purpose $purpose, WasteManagerId $wasteManagerId, AccountId $accountId): array
     {
         $filter = new MeasurementFilter(
-            limit: 0,
             propertyId: $propertyId,
             wasteId: $wasteId,
             wasteManagerId: $wasteManagerId,
             purpose: $purpose,
             accountId: $accountId,
-            registeredAt: $day
+            registeredAt: $day,
+            limit: 0
         );
 
         return $this->findByFilter($filter);
@@ -138,6 +138,13 @@ class InMemoryMeasurementRepository implements MeasurementRepository
                     null == $measurement->registeredBy()
                     || false == $measurement->registeredBy()->equals($filter->userId)
                 )
+            ) {
+                continue;
+            }
+
+            if (
+                !empty($filter->reference)
+                && $filter->reference !== $measurement->reference()
             ) {
                 continue;
             }

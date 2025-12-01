@@ -7,6 +7,7 @@ use App\Waste\Domain\Model\Measurement\Unit;
 use BcMath\Number;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -53,6 +54,10 @@ class UpdateMeasurementType extends AbstractType
         $builder
             ->add('justification', TextareaType::class, [
                 'label' => new TranslatableMessage('Justificación'),
+                'required' => false
+            ])
+            ->add('reference', TextType::class, [
+                'label' => new TranslatableMessage('Referencia'),
                 'required' => false
             ])
             ->add('save', SubmitType::class, [

@@ -1,6 +1,6 @@
 {% extends '@shared/layout/register.html.twig' %}
 
-{% set page_title = ('Mediciones' | trans) 
+{% set page_title = ('Mediciones' | trans)
     ~ ' > '
     ~ ('Registrar' | trans)  %}
 
@@ -19,7 +19,8 @@
                 {{ form_row(form.quantity) }}
                 {{ form_row(form.load) }}
                 {{ form_row(form.justification) }}
-            </div>    
+                {{ form_row(form.reference) }}
+            </div>
 
             <twig:ActionBar>
                 <twig:ActionBar:Button type="outline-primary" :button="form.register" />

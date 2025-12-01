@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\Symfony\Form;
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -44,13 +45,20 @@ class ListMeasurementsType extends BaseFilterType
                 'required' => false,
                 'placeholder' => new TranslatableMessage('Todos los gestores')
             ])
+            ->add('reference', TextType::class, [
+                'label' => new TranslatableMessage('Referencia'),
+                'required' => false,
+                'attr' => [
+                    'placeholder' => new TranslatableMessage('Todas las referencias')
+                ]
+            ])
             ->add('registeredAt', DateType::class, [
                 'label' => new TranslatableMessage('Fecha de registro'),
                 'required' => false,
                 'placeholder' => new TranslatableMessage('Todas las fechas')
             ])
         ;
-        
+
         parent::buildForm($builder, $options);
     }
 

@@ -34,6 +34,7 @@ final class MeasurementRegistered extends DomainEvent
         private float $load = 0,
         private Unit $unit = Unit::Kilogram,
         private ?string $justification = null,
+        private ?string $reference = null,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -95,6 +96,11 @@ final class MeasurementRegistered extends DomainEvent
         return $this->justification;
     }
 
+    public function reference(): ?string
+    {
+        return $this->reference;
+    }
+
     public function accountId(): ?AccountId
     {
         return $this->accountId;
@@ -129,6 +135,7 @@ final class MeasurementRegistered extends DomainEvent
             'load' => $this->load,
             'unit' => $this->unit->value,
             'justification' => $this->justification,
+            'reference' => $this->reference,
             'accountId' => (string) $this->accountId,
             'registeredBy' => (string) $this->registeredBy,
             'day' => $this->day->format('Y-m-d'),
@@ -158,6 +165,7 @@ final class MeasurementRegistered extends DomainEvent
             load: $payload['load'],
             unit: isset($payload['unit']) && !empty($payload['unit']) ? $payload['unit'] : $guessedUnit,
             justification: $payload['justification'],
+            reference: $payload['reference'],
             id: $id,
             occurredOn: $occurredOn
         );

@@ -29,6 +29,7 @@ class Measurement
         private float $load = 0,
         private Unit $unit = Unit::Kilogram,
         private ?string $justification = null,
+        private ?string $reference = null,
         private AccountId|null $accountId = null,
         private UserId|null $registeredBy = null,
         private ?\DateTimeImmutable $registeredAt = null,
@@ -97,6 +98,11 @@ class Measurement
         return $this->justification;
     }
 
+    public function reference(): ?string
+    {
+        return $this->reference;
+    }
+
     public function accountId(): ?AccountId
     {
         return $this->accountId;
@@ -119,6 +125,7 @@ class Measurement
         UserId $registeredBy,
         AccountId $accountId,
         ?string $justification = null,
+        ?string $reference = null,
         ?Unit $unit = null,
     ) {
         $this->recordApplyAndPublish(
@@ -136,7 +143,8 @@ class Measurement
                 quantity: $quantity,
                 load: $load,
                 unit: $unit ?? $container->unit(),
-                justification: $justification
+                justification: $justification,
+                reference: $reference
             )
         );
     }
@@ -144,14 +152,16 @@ class Measurement
     public function update(
         int $quantity,
         float $load,
-        ?string $justification = null
+        ?string $justification = null,
+        ?string $reference = null,
     ) {
         $this->recordApplyAndPublish(
             new MeasurementUpdated(
                 measurementId: $this->id(),
                 quantity: $quantity,
                 load: $load,
-                justification: $justification
+                justification: $justification,
+                reference: $reference
             )
         );
     }
@@ -183,6 +193,7 @@ class Measurement
         $this->load = $event->load();
         $this->unit = $event->unit();
         $this->justification = $event->justification();
+        $this->reference = $event->reference();
         $this->accountId = $event->accountId();
         $this->registeredBy = $event->registeredBy();
         $this->registeredAt = new \DateTimeImmutable("NOW");
@@ -193,6 +204,7 @@ class Measurement
         $this->quantity = $event->quantity();
         $this->load = $event->load();
         $this->justification = $event->justification();
+        $this->reference = $event->reference();
     }
 
     public function applyMeasurementRemoved(MeasurementRemoved $event)

@@ -38,7 +38,8 @@ class EditController extends AbstractController
             measurementId: $measurement->id(),
             quantity: $measurement->quantity(),
             load: $measurement->load(),
-            justification: $measurement->justification()
+            justification: $measurement->justification(),
+            reference: $measurement->reference(),
         );
 
         try {

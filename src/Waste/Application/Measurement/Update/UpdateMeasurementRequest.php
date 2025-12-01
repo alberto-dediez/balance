@@ -8,10 +8,11 @@ use App\Waste\Domain\Model\Measurement\MeasurementId;
 class UpdateMeasurementRequest implements Command
 {
     public function __construct(
-        public MeasurementId $measurementId, 
+        public MeasurementId $measurementId,
         public int $quantity,
         public float $load,
-        public ?string $justification
+        public ?string $justification,
+        public ?string $reference = null
     ) {
 
     }
