@@ -2,6 +2,7 @@
 
 namespace App\DataExchange\Infrastructure\UI\Web\DTO;
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class TranslationDefinition
@@ -11,6 +12,12 @@ class TranslationDefinition
         public array $options = []
     ) {
         $this->options['required'] = $this->options['required'] ?? false;
-        $this->options['placeholder'] = $this->options['placeholder'] ?? new TranslatableMessage('Ignorar');
+
+        if ($this->fieldType === TextType::class) {
+            $this->options['attr']['placeholder'] = $this->options['attr']['placeholder'] ?? new TranslatableMessage('Ignorar');
+        } else {
+            $this->options['placeholder'] = $this->options['placeholder'] ?? new TranslatableMessage('Ignorar');
+        }
+
     }
 }

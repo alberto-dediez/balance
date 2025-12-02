@@ -13,6 +13,8 @@
         <field name="name" type="string" length="255" nullable="false" />
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
         <field name="accountId" type="account_id" nullable="true" />
+        <field name="registeredBy" type="user_id" nullable="true" />
+        <field name="defaultValues" type="array" nullable="true" />
     </entity>
 
 </doctrine-mapping>

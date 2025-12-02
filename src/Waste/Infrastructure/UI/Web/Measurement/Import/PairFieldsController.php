@@ -43,6 +43,7 @@ class PairFieldsController extends AbstractController
                 'justification' => 'justification',
                 'unit' => 'unit',
                 'day' => 'day',
+                'reference' => 'reference',
             ]
         ]);
 

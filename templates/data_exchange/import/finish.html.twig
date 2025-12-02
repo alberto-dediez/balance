@@ -1,0 +1,16 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% if page_title is not defined %}
+    {% set page_title = ('Importar' | trans)
+        ~ ' > '
+        ~ ('Finalizar' | trans)
+    %}
+{% endif %}
+
+{% block content %}
+    <twig:Card>
+        <h4 class="mb-3">{% trans %}Proceso de configuración finalizado{% endtrans %}</h4>
+        <p class="card-subtitle">{% trans %}El proceso de configuración de la importación a finalizado. Vamos a procesar el fichero y le avisaremos cuando hayamos finalizado.{% endtrans %}</p>
+        <p class="card-subtitle">{% trans %}Muchas gracias por su confianza.{% endtrans %}</p>
+    </twig:Card>
+{% endblock %}

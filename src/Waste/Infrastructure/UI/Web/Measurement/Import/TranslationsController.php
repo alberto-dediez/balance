@@ -9,6 +9,7 @@ use App\DataExchange\Infrastructure\UI\Web\DTO\TranslationDefinition;
 use App\DataExchange\Infrastructure\UI\Web\Form\TranslationsType;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Waste\Domain\Model\Measurement\Unit;
+use App\Waste\Infrastructure\Symfony\Form\Type\ContainerIdType;
 use App\Waste\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use App\Waste\Infrastructure\Symfony\Form\Type\PurposeType;
 use App\Waste\Infrastructure\Symfony\Form\Type\WasteIdType;
@@ -72,7 +73,9 @@ class TranslationsController extends AbstractController
         $unitChoicesForImportation = array_filter(Unit::cases(), fn ($unit) => $unit !== Unit::Percentage);
 
         return [
-            'containerId' => null,
+            'containerId' => new TranslationDefinition(
+                fieldType: ContainerIdType::class
+            ),
             'propertyId' =>  new TranslationDefinition(
                 fieldType: PropertyIdType::class
             ),
@@ -100,6 +103,7 @@ class TranslationsController extends AbstractController
                 ]
             ),
             'day' => null,
+            'reference' => null,
         ];
     }
 }

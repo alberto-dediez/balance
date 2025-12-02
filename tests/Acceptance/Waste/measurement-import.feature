@@ -44,3 +44,19 @@ Feature:
         Then the response status should be 302
         Then I am redirected to "/es/measurements/import/123/assign-values"
 
+    Scenario: As owner I can assign default values in a importation
+        Given account "MyCompany" with id "mycompany" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
+        Given an importation with id "123" from account "mycompany" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/measurements/import/123/assign-values"
+        Then the response status should be 200
+        Then I see a form
+
+    Scenario: As owner I can finish a importation
+        Given account "MyCompany" with id "mycompany" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
+        Given an importation with id "123" from account "mycompany" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/measurements/import/123/finish"
+        Then the response status should be 200

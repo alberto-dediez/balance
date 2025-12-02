@@ -34,15 +34,16 @@ class RegisterImportationService implements CommandHandler
 
         $importation = new Importation(
             id: $id,
-            file: $file,
             accountId: $request->accountId,
+            file: $file
         );
 
         $this->authorizer->denyUnlessCanDoThat($importation, Action::Register, $user);
 
         $importation->register(
             name: $request->name,
-            accountId: $request->accountId
+            accountId: $request->accountId,
+            registeredBy: $user->id()
         );
 
         $this->importationRepository->add($importation);
@@ -50,7 +51,8 @@ class RegisterImportationService implements CommandHandler
         return new RegisterImportationResponse(
             importationId: $importation->id(),
             name: $importation->name(),
-            accountId: $importation->accountId()
+            accountId: $importation->accountId(),
+            registeredBy: $importation->registeredBy()
         );
     }
 

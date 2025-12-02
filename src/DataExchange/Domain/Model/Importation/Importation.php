@@ -3,6 +3,7 @@
 namespace App\DataExchange\Domain\Model\Importation;
 
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Model\AggregateRoot;
 
 class Importation
@@ -16,7 +17,9 @@ class Importation
         protected ?ImportationFile $file = null,
         array $events = [],
         protected array $configurations = [],
+        protected array $defaultValues = [],
         protected ?\DateTimeImmutable $registeredAt = null,
+        protected ?UserId $registeredBy = null,
     ) {
 
     }
@@ -60,6 +63,26 @@ class Importation
         return null;
     }
 
+    public function configurationForField(string $field): ?ImportationColumnConfiguration
+    {
+        if (count($this->configurations()) === 0) {
+            return null;
+        }
+
+        foreach ($this->configurations() as $configuration) {
+            if ($configuration->field === $field) {
+                return $configuration;
+            }
+        }
+
+        return null;
+    }
+
+    public function defaultValues(): array
+    {
+        return $this->defaultValues ?? [];
+    }
+
     public function accountId(): ?AccountId
     {
         return $this->accountId;
@@ -75,13 +98,19 @@ class Importation
         return $this->registeredAt;
     }
 
-    public function register(string $name, ?AccountId $accountId)
+    public function registeredBy(): ?UserId
+    {
+        return $this->registeredBy ?? null;
+    }
+
+    public function register(string $name, ?AccountId $accountId, ?UserId $registeredBy = null)
     {
         $this->recordApplyAndPublish(
             new ImportationRegistered(
                 importationId: $this->id(),
                 name: $name,
-                accountId: $accountId
+                accountId: $accountId,
+                registeredBy: $registeredBy,
             )
         );
     }
@@ -96,16 +125,32 @@ class Importation
         );
     }
 
+    public function setDefaultValues(array $defaultValues): void
+    {
+        $this->recordApplyAndPublish(
+            new ImportationDefaultValuesUpdated(
+                importationId: $this->id(),
+                defaultValues: $defaultValues
+            )
+        );
+    }
+
     public function applyImportationRegistered(ImportationRegistered $event)
     {
         $this->accountId = $event->accountId();
         $this->name = $event->name();
         $this->registeredAt = $event->occurredOn();
+        $this->registeredBy = $event->registeredBy();
     }
 
     public function applyImportationConfigurationUpdated(ImportationConfigurationUpdated $event)
     {
         $this->configurations = $event->configurations();
+    }
+
+    public function applyImportationDefaultValuesUpdated(ImportationDefaultValuesUpdated $event)
+    {
+        $this->defaultValues = $event->defaultValues();
     }
 
     public function __toString(): string

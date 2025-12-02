@@ -3,6 +3,7 @@
 namespace App\DataExchange\Domain\Model\Importation;
 
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
@@ -16,6 +17,7 @@ final class ImportationRegistered extends DomainEvent
         private ImportationId $importationId,
         private string $name,
         private ?AccountId $accountId,
+        private ?UserId $registeredBy,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -37,6 +39,11 @@ final class ImportationRegistered extends DomainEvent
         return $this->accountId;
     }
 
+    public function registeredBy(): ?UserId
+    {
+        return $this->registeredBy;
+    }
+
     public function aggregateRootId(): ?AggregateRootId
     {
         return $this->importationId();
@@ -47,6 +54,7 @@ final class ImportationRegistered extends DomainEvent
         return [
             'importationId' => (string) $this->importationId,
             'accountId' => null === $this->accountId ? null : (string) $this->accountId,
+            'registeredBy' => null === $this->registeredBy ? null : (string) $this->registeredBy,
             'name' => (string) $this->name,
         ];
     }
@@ -60,6 +68,7 @@ final class ImportationRegistered extends DomainEvent
             importationId: new ImportationId($payload['importationId']),
             name: $payload['name'],
             accountId: null !== $payload['accountId'] ? new AccountId($payload['accountId']) : null,
+            registeredBy: null !== $payload['registeredBy'] ? new UserId($payload['registeredBy']) : null,
             id: $id,
             occurredOn: $occurredOn
         );

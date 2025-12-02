@@ -8,7 +8,6 @@ use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
 use App\DataExchange\Domain\Model\Importation\ImportationDataRepository;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Infrastructure\Persistence\PDO\Tools\FileExtractor;
-use Doctrine\DBAL\Schema\Column;
 use Symfony\Component\Filesystem\Exception\IOException;
 
 class SqliteImportationDataRepository implements ImportationDataRepository
