@@ -8,7 +8,7 @@ interface ImportationRepository
 
     public function find(ImportationId $importationId): ?Importation;
 
-    public function getData(ImportationId $importationId, int $rowNumber): array;
+    public function getData(ImportationId $importationId, int $rowNumber): ?array;
 
     public function remove(Importation $importation): void;
 }

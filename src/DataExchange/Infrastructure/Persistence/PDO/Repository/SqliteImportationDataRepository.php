@@ -234,7 +234,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         }
     }
 
-    public function getData(ImportationId $importationId, int $rowNumber): array
+    public function getData(ImportationId $importationId, int $rowNumber): ?array
     {
         $connection = $this->connect($importationId);
 
@@ -248,9 +248,11 @@ class SqliteImportationDataRepository implements ImportationDataRepository
 
         if (is_array($row)) {
             unset($row['row_id']);
+
+            return $row;
         }
 
-        return $row;
+        return null;
     }
 
     public function totalRows(ImportationId $importationId): int

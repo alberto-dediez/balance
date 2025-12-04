@@ -16,6 +16,7 @@ final class ImportationRegistered extends DomainEvent
     public function __construct(
         private ImportationId $importationId,
         private string $name,
+        private string $type,
         private ?AccountId $accountId,
         private ?UserId $registeredBy,
         ?DomainEventId $id = null,
@@ -32,6 +33,11 @@ final class ImportationRegistered extends DomainEvent
     public function name(): string
     {
         return $this->name;
+    }
+
+    public function type(): string
+    {
+        return $this->type;
     }
 
     public function accountId(): ?AccountId
@@ -56,6 +62,7 @@ final class ImportationRegistered extends DomainEvent
             'accountId' => null === $this->accountId ? null : (string) $this->accountId,
             'registeredBy' => null === $this->registeredBy ? null : (string) $this->registeredBy,
             'name' => (string) $this->name,
+            'type' => (string) $this->type,
         ];
     }
 
@@ -67,6 +74,7 @@ final class ImportationRegistered extends DomainEvent
         return new ImportationRegistered(
             importationId: new ImportationId($payload['importationId']),
             name: $payload['name'],
+            type: $payload['type'],
             accountId: null !== $payload['accountId'] ? new AccountId($payload['accountId']) : null,
             registeredBy: null !== $payload['registeredBy'] ? new UserId($payload['registeredBy']) : null,
             id: $id,

@@ -16,7 +16,10 @@ final class ImportationAuthorizer extends AbstractAuthorizer
 
     protected function canView(mixed $subject, User $user): bool
     {
-        return $this->canEdit($subject, $user);
+        return $user->hasRole(Role::Admin)
+            || $user->hasRole(Role::SuperAdmin)
+            || ($user->hasRole(Role::Owner) && (null !== $user->accountId() && $subject->accountId()->equals($user->accountId())))
+        ;
     }
 
     protected function canList(mixed $subject, User $user): bool
@@ -26,15 +29,17 @@ final class ImportationAuthorizer extends AbstractAuthorizer
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::Admin)
-            || $user->hasRole(Role::SuperAdmin)
-            || ($user->hasRole(Role::Owner) && (null !== $user->accountId() && $subject->accountId()->equals($user->accountId())))
-        ;
+        /** @var Importation $subject */
+        if ($subject->isExecuted()) {
+            return false;
+        }
+
+        return $this->canView($subject, $user);
     }
 
     protected function canRemove(mixed $subject, User $user): bool
     {
-        return $this->canEdit($subject, $user);
+        return $this->canView($subject, $user);
     }
 
     public function supports(mixed $subject): bool

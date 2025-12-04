@@ -77,7 +77,7 @@ class InMemoryImportationRepository implements ImportationRepository
         return $this->dataRepository->getColumns($importationId);
     }
 
-    public function getData(ImportationId $importationId, int $rowNumber): array
+    public function getData(ImportationId $importationId, int $rowNumber): ?array
     {
         return $this->dataRepository->getData($importationId, $rowNumber);
     }

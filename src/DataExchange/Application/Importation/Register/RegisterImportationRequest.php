@@ -9,6 +9,7 @@ class RegisterImportationRequest implements Command
 {
     public function __construct(
         public string $name,
+        public string $type,
         public string $path,
         public int $offset,
         public string $extension,

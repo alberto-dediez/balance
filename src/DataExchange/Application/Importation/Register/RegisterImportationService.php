@@ -42,6 +42,7 @@ class RegisterImportationService implements CommandHandler
 
         $importation->register(
             name: $request->name,
+            type: $request->type,
             accountId: $request->accountId,
             registeredBy: $user->id()
         );
@@ -51,6 +52,7 @@ class RegisterImportationService implements CommandHandler
         return new RegisterImportationResponse(
             importationId: $importation->id(),
             name: $importation->name(),
+            type: $importation->type(),
             accountId: $importation->accountId(),
             registeredBy: $importation->registeredBy()
         );

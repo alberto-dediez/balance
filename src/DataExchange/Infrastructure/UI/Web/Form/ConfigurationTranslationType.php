@@ -4,7 +4,7 @@ namespace App\DataExchange\Infrastructure\UI\Web\Form;
 
 use App\DataExchange\Domain\Model\Importation\ColumnValueTranslation;
 use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
-use App\DataExchange\Infrastructure\UI\Web\DTO\TranslationDefinition;
+use App\DataExchange\Infrastructure\UI\Web\DTO\FieldDefinition;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -24,7 +24,7 @@ class ConfigurationTranslationType extends AbstractType
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($definitions) {
                 $configuration = $event->getData();
 
-                /** @var ?TranslationDefinition $definition */
+                /** @var ?FieldDefinition $definition */
                 $definition = $definitions[$configuration->field] ?? null;
 
                 if (null === $definition) {

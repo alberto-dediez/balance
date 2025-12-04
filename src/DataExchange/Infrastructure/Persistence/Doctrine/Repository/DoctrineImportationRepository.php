@@ -75,7 +75,7 @@ class DoctrineImportationRepository implements ImportationRepository
         return $importation;
     }
 
-    public function getData(ImportationId $importationId, int $rowNumber): array
+    public function getData(ImportationId $importationId, int $rowNumber): ?array
     {
         return $this->dataRepository->getData($importationId, $rowNumber);
     }

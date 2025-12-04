@@ -42,6 +42,7 @@ class RegisterImportationServiceTest extends TestCase
 
         $request = new RegisterImportationRequest(
             name: 'superheroes.csv',
+            type: 'heroes',
             path: __DIR__ . '/superheroes.csv',
             offset: 0,
             extension: 'csv',
@@ -84,6 +85,7 @@ class RegisterImportationServiceTest extends TestCase
 
         $request = new RegisterImportationRequest(
             name: 'superheroes.csv',
+            type: 'heroes',
             path: __DIR__ . '/superheroes.csv',
             offset: 0,
             extension: 'csv',
@@ -101,6 +103,7 @@ class RegisterImportationServiceTest extends TestCase
 
         $result = $sut->isHandled(new RegisterImportationRequest(
             name: 'superheroes.csv',
+            type: 'heroes',
             path: __DIR__ . '/superheroes.csv',
             offset: 0,
             extension: 'csv',

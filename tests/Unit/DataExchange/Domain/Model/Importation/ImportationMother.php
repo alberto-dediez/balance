@@ -14,6 +14,7 @@ class ImportationMother
         return self::from(
             importationId: ImportationId::generate(),
             name: $name,
+            type: 'measurements',
             importationFile: $file,
             accountId: AccountId::generate(),
         );
@@ -26,16 +27,18 @@ class ImportationMother
         return self::from(
             importationId: new ImportationId($id),
             name: $parts[count($parts) - 1],
+            type: 'measurements',
             importationFile: $file,
             accountId: new AccountId($accountId),
         );
     }
 
-    public static function from(ImportationId $importationId, string $name, ImportationFile $importationFile, AccountId $accountId): Importation
+    public static function from(ImportationId $importationId, string $name, string $type, ImportationFile $importationFile, AccountId $accountId): Importation
     {
         return new Importation(
             id: $importationId,
             name: $name,
+            type: $type,
             accountId: $accountId,
             file: $importationFile,
             registeredAt: new \DateTimeImmutable('NOW'),
@@ -47,6 +50,7 @@ class ImportationMother
         return self::from(
             importationId: ImportationId::generate(),
             name: 'importation-' . rand(100, 999),
+            type: 'measurements',
             importationFile: new ImportationFile(__DIR__ . '/file-to-import.csv', 0),
             accountId: AccountId::generate(),
         );

@@ -5,7 +5,7 @@ namespace App\DataExchange\Infrastructure\UI\Web\DTO;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class TranslationDefinition
+class FieldDefinition
 {
     public function __construct(
         public string $fieldType,

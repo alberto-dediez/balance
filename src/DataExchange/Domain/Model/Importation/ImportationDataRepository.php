@@ -18,7 +18,7 @@ interface ImportationDataRepository
 
     public function saveConfiguration(ImportationId $importationId, ImportationColumnConfiguration $configuration): void;
 
-    public function getData(ImportationId $importationId, int $rowNumber): array;
+    public function getData(ImportationId $importationId, int $rowNumber): ?array;
 
     public function remove(ImportationId $importationId): void;
 }

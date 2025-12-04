@@ -1,11 +1,15 @@
 {% extends '@shared/layout/register.html.twig' %}
 
-{% if page_title is not defined %}
-    {% set page_title = ('Importar' | trans)
-        ~ ' > '
-        ~ ('Finalizar' | trans)
-    %}
-{% endif %}
+{% set page_title = importationType.name
+    ~ ' > '
+    ~ ('Importar' | trans)
+    ~ ' > '
+    ~ ('Finalizar' | trans)
+%}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path(importationType.returnRoute) }}" />
+{% endblock %}
 
 {% block content %}
     <twig:Card>

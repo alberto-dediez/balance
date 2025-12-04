@@ -13,12 +13,15 @@ class Importation
     public function __construct(
         protected ImportationId $id,
         protected string $name = '',
+        protected string $type = '',
+        protected ImportationStatus $status = ImportationStatus::InProgress,
         protected ?AccountId $accountId = null,
         protected ?ImportationFile $file = null,
         array $events = [],
         protected array $configurations = [],
         protected array $defaultValues = [],
         protected ?\DateTimeImmutable $registeredAt = null,
+        protected ?\DateTimeImmutable $executedAt = null,
         protected ?UserId $registeredBy = null,
     ) {
 
@@ -32,6 +35,16 @@ class Importation
     public function name(): string
     {
         return $this->name;
+    }
+
+    public function type(): string
+    {
+        return $this->type;
+    }
+
+    public function isExecuted(): bool
+    {
+        return ImportationStatus::Executed === $this->status;
     }
 
     public function loadConfigurations(array $configurations): void
@@ -83,6 +96,11 @@ class Importation
         return $this->defaultValues ?? [];
     }
 
+    public function defaultValueForField(string $field): ?string
+    {
+        return $this->defaultValues[$field] ?? null;
+    }
+
     public function accountId(): ?AccountId
     {
         return $this->accountId;
@@ -103,12 +121,13 @@ class Importation
         return $this->registeredBy ?? null;
     }
 
-    public function register(string $name, ?AccountId $accountId, ?UserId $registeredBy = null)
+    public function register(string $name, string $type, ?AccountId $accountId, ?UserId $registeredBy = null)
     {
         $this->recordApplyAndPublish(
             new ImportationRegistered(
                 importationId: $this->id(),
                 name: $name,
+                type: $type,
                 accountId: $accountId,
                 registeredBy: $registeredBy,
             )
@@ -135,10 +154,21 @@ class Importation
         );
     }
 
+    public function execute(): void
+    {
+        $this->recordApplyAndPublish(
+            new ImportationExecuted(
+                importationId: $this->id()
+            )
+        );
+    }
+
     public function applyImportationRegistered(ImportationRegistered $event)
     {
         $this->accountId = $event->accountId();
         $this->name = $event->name();
+        $this->type = $event->type();
+        $this->status = ImportationStatus::InProgress;
         $this->registeredAt = $event->occurredOn();
         $this->registeredBy = $event->registeredBy();
     }
@@ -151,6 +181,12 @@ class Importation
     public function applyImportationDefaultValuesUpdated(ImportationDefaultValuesUpdated $event)
     {
         $this->defaultValues = $event->defaultValues();
+    }
+
+    public function applyImportationExecuted(ImportationExecuted $event)
+    {
+        $this->status = ImportationStatus::Executed;
+        $this->executedAt = $event->occurredOn();
     }
 
     public function __toString(): string

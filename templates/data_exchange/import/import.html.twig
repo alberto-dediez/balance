@@ -1,11 +1,11 @@
 {% extends '@shared/layout/register.html.twig' %}
 
-{% set page_title = ('Mediciones' | trans)
+{% set page_title = importationType.name
     ~ ' > '
     ~ ('Importar' | trans)  %}
 
 {% block top_actions %}
-    <twig:TopAction:Return path="{{ path('measurements') }}" />
+    <twig:TopAction:Return path="{{ path(importationType.returnRoute) }}" />
 {% endblock %}
 
 {% block content %}
