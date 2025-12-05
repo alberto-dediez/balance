@@ -123,7 +123,7 @@ class SqliteImportationDataRepositoryTest extends TestCase
 
         $sut->create($importation);
 
-        $sut->saveError($importation->id(), 3, 'Error message');
+        $sut->saveResult($importation->id(), 3, 'Error message');
 
         $result = $sut->getResult($importation->id(), 3);
 

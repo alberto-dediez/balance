@@ -66,7 +66,7 @@ class ImportMeasurementService implements CommandHandler
             ->register(
                 container: $container,
                 quantity: $request->quantity ?? 1,
-                load: $request->load,
+                load: empty($request->load) ? 0 : ((float) $request->load),
                 registeredBy: $user->id(),
                 accountId: $property->accountId(),
                 justification: $request->justification,

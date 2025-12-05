@@ -47,11 +47,15 @@ class ExecuteImportationService implements CommandHandler
 
             $command = $importationType->commandBuilder($data);
 
+            $errorMessage = null;
+
             try {
                 $response = CommandBusDispatcher::instance()->dispatch($command, $user);
             } catch (\Throwable $exception) {
-                $this->importationRepository->saveError($importation->id(), $rowNumber, $exception->getMessage());
+                $errorMessage = $exception->getMessage();
             }
+
+            $this->importationRepository->saveResult($importation->id(), $rowNumber, $errorMessage);
 
             $rowNumber++;
         }

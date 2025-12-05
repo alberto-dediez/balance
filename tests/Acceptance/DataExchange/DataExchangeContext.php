@@ -80,6 +80,6 @@ final class DataExchangeContext implements Context
 
         $repository->add($importation);
 
-        $repository->saveError($importation->id(), 3, 'Powerless');
+        $repository->saveResult($importation->id(), 3, 'Powerless');
     }
 }

@@ -256,7 +256,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         return null;
     }
 
-    public function saveError(ImportationId $importationId, int $rowNumber, ?string $error): void
+    public function saveResult(ImportationId $importationId, int $rowNumber, ?string $error): void
     {
         $connection = $this->connect($importationId);
 
