@@ -285,7 +285,7 @@
         <source>Tipología de residuo</source>
         <target>Tipología de residuo</target>
       </trans-unit>
-      <trans-unit id="qTnaOkq" resname="Destino">
+      <trans-unit id="CYjDz35" resname="Destino">
         <source>Destino</source>
         <target>Destino</target>
       </trans-unit>
@@ -305,7 +305,7 @@
         <source>Todas las tipologías</source>
         <target>Todas las tipologías</target>
       </trans-unit>
-      <trans-unit id="Lkh7GR8" resname="Todos los destinos">
+      <trans-unit id="N2BY8Cc" resname="Todos los destinos">
         <source>Todos los destinos</source>
         <target>Todos los destinos</target>
       </trans-unit>
@@ -565,7 +565,7 @@
         <source>¿Es público?</source>
         <target>¿Es público?</target>
       </trans-unit>
-      <trans-unit id="zrSJFGz" resname="Capacidad del contenedor (%)">
+      <trans-unit id="6GPAM5E" resname="Capacidad del contenedor (%)">
         <source>Capacidad del contenedor (%)</source>
         <target>Capacidad del contenedor (%)</target>
       </trans-unit>
@@ -617,7 +617,7 @@
         <source>Eliminada la medición "{measurement}"</source>
         <target>Eliminada la medición "{measurement}"</target>
       </trans-unit>
-      <trans-unit id="w7cLMb4" resname="Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
+      <trans-unit id="KSPRggE" resname="Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
         <source>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</source>
         <target>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</target>
       </trans-unit>
@@ -625,7 +625,7 @@
         <source>Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}</source>
         <target>Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}</target>
       </trans-unit>
-      <trans-unit id="ZxrhvCr" resname="Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
+      <trans-unit id="laa3xhA" resname="Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
         <source>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</source>
         <target>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</target>
       </trans-unit>
@@ -641,7 +641,7 @@
         <source>Registrado por</source>
         <target>Registrado por</target>
       </trans-unit>
-      <trans-unit id=".AqEwSK" resname="Capacidad (l)">
+      <trans-unit id="KVklRqL" resname="Capacidad (l)">
         <source>Capacidad (l)</source>
         <target>Capacidad (l)</target>
       </trans-unit>
@@ -669,7 +669,7 @@
         <source>Destinos</source>
         <target>Destinos</target>
       </trans-unit>
-      <trans-unit id="_LOa0UY" resname="Cantidades totales">
+      <trans-unit id="Up1JIXN" resname="Cantidades totales">
         <source>Cantidades totales</source>
         <target>Cantidades totales</target>
       </trans-unit>
@@ -777,17 +777,9 @@
         <source>Zone</source>
         <target>Zone</target>
       </trans-unit>
-      <trans-unit id="CYjDz35" resname="Destino">
-        <source>Destino</source>
-        <target>Destino</target>
-      </trans-unit>
       <trans-unit id="4m.VV3Y" resname="País">
         <source>País</source>
         <target>País</target>
-      </trans-unit>
-      <trans-unit id="N2BY8Cc" resname="Todos los destinos">
-        <source>Todos los destinos</source>
-        <target>Todos los destinos</target>
       </trans-unit>
       <trans-unit id="w2bgSWD" resname="Todos los países">
         <source>Todos los países</source>
@@ -1037,7 +1029,7 @@
         <source>Tipo de residuo</source>
         <target>Tipo de residuo</target>
       </trans-unit>
-      <trans-unit id="xGmP_4c" resname="Residuos por destino">
+      <trans-unit id="JC348u7" resname="Residuos por destino">
         <source>Residuos por destino</source>
         <target>Residuos por destino</target>
       </trans-unit>
@@ -1045,7 +1037,7 @@
         <source>Residuos diarios</source>
         <target>Residuos diarios</target>
       </trans-unit>
-      <trans-unit id="mIIzC2w" resname="Porcentaje por destino">
+      <trans-unit id="MPTOGeX" resname="Porcentaje por destino">
         <source>Porcentaje por destino</source>
         <target>Porcentaje por destino</target>
       </trans-unit>
@@ -1280,6 +1272,58 @@
       <trans-unit id="uk97hXA" resname="Campo">
         <source>Campo</source>
         <target>Campo</target>
+      </trans-unit>
+      <trans-unit id="QABy2kN" resname="Debe indicar una propiedad para la medición">
+        <source>Debe indicar una propiedad para la medición</source>
+        <target>Debe indicar una propiedad para la medición</target>
+      </trans-unit>
+      <trans-unit id="mkNRyGX" resname="Debe indicar el residuo para la medición">
+        <source>Debe indicar el residuo para la medición</source>
+        <target>Debe indicar el residuo para la medición</target>
+      </trans-unit>
+      <trans-unit id="1el8ykH" resname="Debe indicar el gestor de residuos para la medición">
+        <source>Debe indicar el gestor de residuos para la medición</source>
+        <target>Debe indicar el gestor de residuos para la medición</target>
+      </trans-unit>
+      <trans-unit id="3L4nRWg" resname="Debe indicar el destino de la medición">
+        <source>Debe indicar el destino de la medición</source>
+        <target>Debe indicar el destino de la medición</target>
+      </trans-unit>
+      <trans-unit id="16g2JfX" resname="El contenedor indicado no existe">
+        <source>El contenedor indicado no existe</source>
+        <target>El contenedor indicado no existe</target>
+      </trans-unit>
+      <trans-unit id="7_4Cva_" resname="Debe indicar la unidad de la medición">
+        <source>Debe indicar la unidad de la medición</source>
+        <target>Debe indicar la unidad de la medición</target>
+      </trans-unit>
+      <trans-unit id="wVuBAIJ" resname="No se ha importado el fichero correctamente. Revise la configuración o contacte con un administrador.">
+        <source>No se ha importado el fichero correctamente. Revise la configuración o contacte con un administrador.</source>
+        <target>No se ha importado el fichero correctamente. Revise la configuración o contacte con un administrador.</target>
+      </trans-unit>
+      <trans-unit id="81ybIPy" resname="Cantidad">
+        <source>Cantidad</source>
+        <target>Cantidad</target>
+      </trans-unit>
+      <trans-unit id="nw4FBBq" resname="Campo no emparejado">
+        <source>Campo no emparejado</source>
+        <target>Campo no emparejado</target>
+      </trans-unit>
+      <trans-unit id="iwbPOhm" resname="Proceso de configuración finalizado">
+        <source>Proceso de configuración finalizado</source>
+        <target>Proceso de configuración finalizado</target>
+      </trans-unit>
+      <trans-unit id="NOKifaA" resname="El proceso de configuración de la importación a finalizado. Vamos a procesar el fichero y le avisaremos cuando hayamos finalizado.">
+        <source>El proceso de configuración de la importación a finalizado. Vamos a procesar el fichero y le avisaremos cuando hayamos finalizado.</source>
+        <target>El proceso de configuración de la importación a finalizado. Vamos a procesar el fichero y le avisaremos cuando hayamos finalizado.</target>
+      </trans-unit>
+      <trans-unit id="NHXmWvu" resname="Muchas gracias por su confianza.">
+        <source>Muchas gracias por su confianza.</source>
+        <target>Muchas gracias por su confianza.</target>
+      </trans-unit>
+      <trans-unit id="zWHq_8K" resname="Finalizar">
+        <source>Finalizar</source>
+        <target>Finalizar</target>
       </trans-unit>
     </body>
   </file>

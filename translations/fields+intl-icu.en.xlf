@@ -49,6 +49,10 @@
         <source>day</source>
         <target>Date of registration</target>
       </trans-unit>
+      <trans-unit id="_fCqpMa" resname="reference">
+        <source>reference</source>
+        <target>Reference</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
