@@ -24,15 +24,15 @@ class RegisterController extends AbstractController
     use RegisterTrait;
 
     public function __invoke(
-        LoggedAccount $loggedAccount,
         LoggedUser $loggedUser,
-        RegisterContainerService $registerContainer, 
+        LoggedAccount $loggedAccount,
+        RegisterContainerService $registerContainer,
         Request $request
     ): Response
-    {   
+    {
         $account = $loggedAccount();
 
-        if (null == $account) {
+        if (null === $account) {
             throw $this->createAccessDeniedException(
                 new TranslatableMessage("Debes pertenecer a una cuenta para poder acceder")
             );

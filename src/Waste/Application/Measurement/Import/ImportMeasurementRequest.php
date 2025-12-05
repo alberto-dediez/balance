@@ -3,6 +3,7 @@
 namespace App\Waste\Application\Measurement\Import;
 
 use App\Shared\Application\CommandBus\Command;
+use App\Waste\Domain\Model\Container\Purpose;
 
 class ImportMeasurementRequest implements Command
 {
@@ -10,7 +11,7 @@ class ImportMeasurementRequest implements Command
         public ?string $containerId,
         public ?string $propertyId,
         public ?string $wasteId,
-        public ?string $purpose,
+        public Purpose|string|null $purpose,
         public ?string $wasteManagerId,
         public ?string $quantity,
         public ?string $load,

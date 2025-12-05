@@ -81,4 +81,14 @@ class InMemoryImportationRepository implements ImportationRepository
     {
         return $this->dataRepository->getData($importationId, $rowNumber);
     }
+
+    public function saveError(ImportationId $importationId, int $rowNumber, ?string $error): void
+    {
+        $this->dataRepository->saveError($importationId, $rowNumber, $error);
+    }
+
+    public function getResult(ImportationId $importationId, int $rowNumber): ?array
+    {
+        return $this->dataRepository->getResult($importationId, $rowNumber);
+    }
 }

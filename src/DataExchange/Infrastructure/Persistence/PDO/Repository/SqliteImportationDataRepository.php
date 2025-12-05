@@ -43,7 +43,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
     private function createData(Importation $importation, FileExtractor $extractor): void
     {
         $createTableSql = sprintf(
-            'CREATE TABLE importation_data (row_id INTEGER PRIMARY KEY AUTOINCREMENT, %s)',
+            'CREATE TABLE importation_data (row_id INTEGER PRIMARY KEY AUTOINCREMENT, %s, `error` TEXT DEFAULT NULL)',
             implode(', ', array_map(fn($col) => "\"{$col}\" TEXT", $extractor->getColumns()))
         );
 
@@ -130,7 +130,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
     {
         $connection = $this->connect($importationId);
 
-        return $connection->query("SELECT name FROM pragma_table_info('importation_data') WHERE name != 'row_id';")->fetchAll(\PDO::FETCH_COLUMN);
+        return $connection->query("SELECT name FROM pragma_table_info('importation_data') WHERE name != 'row_id' AND name != 'error';")->fetchAll(\PDO::FETCH_COLUMN);
     }
 
     public function getValues(ImportationId $importationId, int $column): array
@@ -248,7 +248,39 @@ class SqliteImportationDataRepository implements ImportationDataRepository
 
         if (is_array($row)) {
             unset($row['row_id']);
+            unset($row['error']);
 
+            return $row;
+        }
+
+        return null;
+    }
+
+    public function saveError(ImportationId $importationId, int $rowNumber, ?string $error): void
+    {
+        $connection = $this->connect($importationId);
+
+        $sql = "UPDATE importation_data SET `error` = ? WHERE row_id = ?";
+
+        $statement = $connection->prepare($sql);
+        $statement->bindValue(2, $error);
+        $statement->bindValue(1, $rowNumber+1);
+        $statement->execute();
+    }
+
+    public function getResult(ImportationId $importationId, int $rowNumber): ?array
+    {
+        $connection = $this->connect($importationId);
+
+        $sql = "SELECT * FROM importation_data WHERE row_id = ?";
+
+        $statement = $connection->prepare($sql);
+        $statement->bindValue(1, $rowNumber+1);
+        $statement->execute();
+
+        $row = $statement->fetch(\PDO::FETCH_ASSOC);
+
+        if (is_array($row)) {
             return $row;
         }
 

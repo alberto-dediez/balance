@@ -10,19 +10,33 @@ class LoggedAccount
 {
     private ?Account $account = null;
 
-    public function __construct(Security $security, AccountRepository $accountRepository)
+    private bool $loaded = false;
+
+    public function __construct(private Security $security, private AccountRepository $accountRepository)
     {
-        $user = $security->getUser();
+
+    }
+
+    private function load(): void
+    {
+        if ($this->loaded) {
+            return;
+        }
+
+        $user = $this->security->getUser();
 
         if (null == $user || null == $user->accountId()) {
             return ;
         }
 
-        $this->account = $accountRepository->find($user->accountId());
+        $this->account = $this->accountRepository->find($user->accountId());
+        $this->loaded = true;
     }
 
     public function __invoke()
     {
-        return $this->account;   
+        $this->load();
+
+        return $this->account;
     }
 }
