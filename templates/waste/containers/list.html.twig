@@ -9,11 +9,11 @@
         }, {
             'label': 'Tipología de residuo' | trans,
         }, {
-            'label': 'Propósito' | trans,
+            'label': 'Destino' | trans,
         }, {
             'label': 'Gestor de residuos' | trans,
         }, {
-            'label': 'Volumen (l)' | trans,
+            'label': 'Capacidad (l)' | trans,
         }, {
             'label': 'Fecha de registro' | trans,
             'sortable': true,
@@ -38,8 +38,8 @@
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
             {% if element | is_authorized('view') %}
-                <twig:List:Action path="{{ path('containers_print', {'containerId': element.id}) }}" 
-                    title="{{ 'Imprimir QR' | trans }}" 
+                <twig:List:Action path="{{ path('containers_print', {'containerId': element.id}) }}"
+                    title="{{ 'Imprimir QR' | trans }}"
                     target="_blank"
                 >
                     <twig:Icon name="solar:printer-line-duotone" size="lg" />
@@ -60,7 +60,7 @@
 {% block list_actions %}
     <twig:Link path="{{ path('containers_print_all') }}" color="info" target="_blank">
         <twig:Icon name="solar:printer-line-duotone" size="lg" class="me-2" />
-        
+
         {% trans %}Imprimir QRs{% endtrans %}
     </twig:Link>
 

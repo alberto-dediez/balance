@@ -285,9 +285,9 @@
         <source>Tipología de residuo</source>
         <target>Tipología de residuo</target>
       </trans-unit>
-      <trans-unit id="qTnaOkq" resname="Propósito">
-        <source>Propósito</source>
-        <target>Propósito</target>
+      <trans-unit id="qTnaOkq" resname="Destino">
+        <source>Destino</source>
+        <target>Destino</target>
       </trans-unit>
       <trans-unit id="FeWnC08" resname="Método de medida">
         <source>Método de medida</source>
@@ -305,9 +305,9 @@
         <source>Todas las tipologías</source>
         <target>Todas las tipologías</target>
       </trans-unit>
-      <trans-unit id="Lkh7GR8" resname="Todas los propósitos">
-        <source>Todas los propósitos</source>
-        <target>Todas los propósitos</target>
+      <trans-unit id="Lkh7GR8" resname="Todos los destinos">
+        <source>Todos los destinos</source>
+        <target>Todos los destinos</target>
       </trans-unit>
       <trans-unit id="YHG2xH_" resname="Todos los métodos">
         <source>Todos los métodos</source>
@@ -565,9 +565,9 @@
         <source>¿Es público?</source>
         <target>¿Es público?</target>
       </trans-unit>
-      <trans-unit id="zrSJFGz" resname="Volumen del contenedor (%)">
-        <source>Volumen del contenedor (%)</source>
-        <target>Volumen del contenedor (%)</target>
+      <trans-unit id="zrSJFGz" resname="Capacidad del contenedor (%)">
+        <source>Capacidad del contenedor (%)</source>
+        <target>Capacidad del contenedor (%)</target>
       </trans-unit>
       <trans-unit id="rGN5PRk" resname="Peso del contenedor (Kg)">
         <source>Peso del contenedor (Kg)</source>
@@ -617,17 +617,17 @@
         <source>Eliminada la medición "{measurement}"</source>
         <target>Eliminada la medición "{measurement}"</target>
       </trans-unit>
-      <trans-unit id="w7cLMb4" resname="Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propósito {purpose} y sistema de medición {measurementMethod}">
-        <source>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propósito {purpose} y sistema de medición {measurementMethod}</source>
-        <target>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propósito {purpose} y sistema de medición {measurementMethod}</target>
+      <trans-unit id="w7cLMb4" resname="Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
+        <source>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</source>
+        <target>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</target>
       </trans-unit>
       <trans-unit id="eQqlSBE" resname="Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}">
         <source>Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}</source>
         <target>Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}</target>
       </trans-unit>
-      <trans-unit id="ZxrhvCr" resname="Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propósito {purpose} y sistema de medición {measurementMethod}">
-        <source>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propósito {purpose} y sistema de medición {measurementMethod}</source>
-        <target>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propósito {purpose} y sistema de medición {measurementMethod}</target>
+      <trans-unit id="ZxrhvCr" resname="Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
+        <source>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</source>
+        <target>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</target>
       </trans-unit>
       <trans-unit id="77cKa6C" resname="Gestores de residuos">
         <source>Gestores de residuos</source>
@@ -641,9 +641,9 @@
         <source>Registrado por</source>
         <target>Registrado por</target>
       </trans-unit>
-      <trans-unit id=".AqEwSK" resname="Volumen (l)">
-        <source>Volumen (l)</source>
-        <target>Volumen (l)</target>
+      <trans-unit id=".AqEwSK" resname="Capacidad (l)">
+        <source>Capacidad (l)</source>
+        <target>Capacidad (l)</target>
       </trans-unit>
       <trans-unit id="1fa2tNs" resname="&lt;s&gt;{userId}&lt;/s&gt;">
         <source>&lt;s&gt;{userId}&lt;/s&gt;</source>
@@ -669,9 +669,9 @@
         <source>Destinos</source>
         <target>Destinos</target>
       </trans-unit>
-      <trans-unit id="_LOa0UY" resname="Totales diarios">
-        <source>Totales diarios</source>
-        <target>Totales diarios</target>
+      <trans-unit id="_LOa0UY" resname="Cantidades totales">
+        <source>Cantidades totales</source>
+        <target>Cantidades totales</target>
       </trans-unit>
       <trans-unit id="WzkdjFZ" resname="Debes especificar un volumen válido para este contenedor">
         <source>Debes especificar un volumen válido para este contenedor</source>
@@ -1037,17 +1037,17 @@
         <source>Tipo de residuo</source>
         <target>Tipo de residuo</target>
       </trans-unit>
-      <trans-unit id="xGmP_4c" resname="Residuos por propósito">
-        <source>Residuos por propósito</source>
-        <target>Residuos por propósito</target>
+      <trans-unit id="xGmP_4c" resname="Residuos por destino">
+        <source>Residuos por destino</source>
+        <target>Residuos por destino</target>
       </trans-unit>
       <trans-unit id="h5Erb3t" resname="Residuos diarios">
         <source>Residuos diarios</source>
         <target>Residuos diarios</target>
       </trans-unit>
-      <trans-unit id="mIIzC2w" resname="Porcentaje por propósito">
-        <source>Porcentaje por propósito</source>
-        <target>Porcentaje por propósito</target>
+      <trans-unit id="mIIzC2w" resname="Porcentaje por destino">
+        <source>Porcentaje por destino</source>
+        <target>Porcentaje por destino</target>
       </trans-unit>
       <trans-unit id="h9BDOI_" resname="Porcentaje por gestor">
         <source>Porcentaje por gestor</source>

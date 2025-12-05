@@ -7,7 +7,7 @@
     <body>
       <trans-unit id="YlfiWSq" resname="VOLUME">
         <source>VOLUME</source>
-        <target>Volumen</target>
+        <target>Capacidad</target>
       </trans-unit>
       <trans-unit id="XSltyL_" resname="WEIGHT">
         <source>WEIGHT</source>

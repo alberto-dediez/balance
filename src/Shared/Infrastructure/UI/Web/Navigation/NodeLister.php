@@ -138,7 +138,7 @@ class NodeLister
                     target: $this->router->generate('measurements')
                 ),
                 new Node(
-                    label: new TranslatableMessage("Totales diarios"),
+                    label: new TranslatableMessage("Cantidades totales"),
                     icon: "solar:calculator-line-duotone",
                     target: $this->router->generate('daily_wastes')
                 ),

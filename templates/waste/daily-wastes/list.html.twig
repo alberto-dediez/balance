@@ -1,6 +1,6 @@
 {% extends '@shared/layout/list.html.twig' %}
 
-{% set page_title = 'Totales diarios' | trans %}
+{% set page_title = 'Cantidades totales' | trans %}
 
 {% block table %}
     {% set columns = [
@@ -11,9 +11,9 @@
         }, {
             'label': 'Gestor de residuos' | trans,
         }, {
-            'label': 'Carga' | trans,
+            'label': 'Cantidad' | trans,
         }, {
-            'label': 'Propósito' | trans,
+            'label': 'Destino' | trans,
         }, {
             'label': 'Fecha' | trans,
             'sortable': true,

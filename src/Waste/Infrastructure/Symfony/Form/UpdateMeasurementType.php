@@ -34,7 +34,7 @@ class UpdateMeasurementType extends AbstractType
 
         if ($unit === Unit::Percentage) {
             $builder->add('load', PercentType::class , [
-                'label' => new TranslatableMessage('Volumen del contenedor (%)'),
+                'label' => new TranslatableMessage('Capacidad del contenedor (%)'),
                 'required' => true,
                 'type' => 'integer'
             ]);

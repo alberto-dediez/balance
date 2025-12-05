@@ -16,7 +16,7 @@
             <div class="row">
                 <twig:View:Field label="{{ 'Propiedad' | trans }}">{{ measurement.propertyId | property_name }}</twig:View:Field>
                 <twig:View:Field label="{{ 'Tipología de residuo' | trans }}">{{ measurement.wasteId | waste_name }}</twig:View:Field>
-                <twig:View:Field label="{{ 'Propósito' | trans }}">{{ measurement.purpose.value | trans({}, 'purpose') }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Destino' | trans }}">{{ measurement.purpose.value | trans({}, 'purpose') }}</twig:View:Field>
                 <twig:View:Field label="{{ 'Método de medida' | trans }}">{{ measurement.measurementMethod.value | trans({}, 'measurementMethod') }}</twig:View:Field>
                 {{ form_row(form.quantity) }}
                 {{ form_row(form.load) }}

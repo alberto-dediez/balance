@@ -29,9 +29,9 @@ class ListContainersType extends BaseFilterType
                 'placeholder' => new TranslatableMessage('Todas las tipologías')
             ])
             ->add('purpose', PurposeType::class, [
-                'label' => new TranslatableMessage('Propósito'),
+                'label' => new TranslatableMessage('Destino'),
                 'required' => false,
-                'placeholder' => new TranslatableMessage('Todas los propósitos')
+                'placeholder' => new TranslatableMessage('Todos los destinos')
             ])
             ->add('measurementMethod', MeasurementMethodType::class, [
                 'label' => new TranslatableMessage('Método de medida'),
@@ -44,7 +44,7 @@ class ListContainersType extends BaseFilterType
                 'placeholder' => new TranslatableMessage('Todos los gestores')
             ])
         ;
-        
+
         parent::buildForm($builder, $options);
     }
 

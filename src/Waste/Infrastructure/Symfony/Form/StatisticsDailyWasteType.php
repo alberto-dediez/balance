@@ -29,9 +29,9 @@ class StatisticsDailyWasteType extends BaseFilterType
                 'placeholder' => new TranslatableMessage('Todas las tipologías')
             ])
             ->add('purpose', PurposeType::class, [
-                'label' => new TranslatableMessage('Propósito'),
+                'label' => new TranslatableMessage('Destino'),
                 'required' => false,
-                'placeholder' => new TranslatableMessage('Todas los propósitos')
+                'placeholder' => new TranslatableMessage('Todos los destinos')
             ])
             ->add('wasteManagerId', WasteManagerIdType::class, [
                 'label' => new TranslatableMessage('Gestor de residuos'),
@@ -49,7 +49,7 @@ class StatisticsDailyWasteType extends BaseFilterType
                 'placeholder' => new TranslatableMessage('Todas las fechas')
             ])
         ;
-        
+
         parent::buildForm($builder, $options);
     }
 

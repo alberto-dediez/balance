@@ -28,7 +28,7 @@ class RegisterContainerType extends AbstractType
                 'required' => true
             ])
             ->add('purpose', PurposeType::class, [
-                'label' => new TranslatableMessage('Propósito'),
+                'label' => new TranslatableMessage('Destino'),
                 'required' => true
             ])
             ->add('measurementMethod', MeasurementMethodType::class, [
@@ -49,7 +49,7 @@ class RegisterContainerType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            
+
         ]);
     }
 }

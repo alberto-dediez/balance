@@ -15,7 +15,7 @@ class ContainerVolumeType extends AbstractType
     {
         $resolver->setDefaults([
             'symbol' => 'l',
-            'label' => new TranslatableMessage('Volumen (l)'),
+            'label' => new TranslatableMessage('Capacidad (l)'),
             'required' => false,
             'constraints' => [
                 new Assert\Callback(
@@ -40,7 +40,7 @@ class ContainerVolumeType extends AbstractType
             ]
         ]);
 
-        
+
     }
 
     public function getParent(): string

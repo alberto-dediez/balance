@@ -1,6 +1,6 @@
 {% extends '@shared/layout/app.html.twig' %}
 
-{% set page_title = ('Totales diarios' | trans) 
+{% set page_title = ('Cantidades totales' | trans)
     ~ ' > '
     ~ ('Estadísticas' | trans)
 %}
@@ -23,8 +23,8 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="fs-4 mb-1 card-title">{% trans -%}Tipo de residuo{%- endtrans %}</h4>
-                    <twig:Chart:Bar 
-                        title="{{ 'Residuos por propósito' | trans }}"
+                    <twig:Chart:Bar
+                        title="{{ 'Residuos por destino' | trans }}"
                         unit="kg"
                         values="{{ statistics.byWaste | map(e => e.load) }}"
                         categories="{{ statistics.byWaste | map(e => e.waste.name) }}"
@@ -43,7 +43,7 @@
                     ] %}
 
                     <h4 class="fs-4 mb-1 card-title">{% trans -%}Residuos diarios{%- endtrans %}</h4>
-                    <twig:Chart:Line 
+                    <twig:Chart:Line
                         title="{{ 'Residuos diarios' | trans }}"
                         unit="kg"
                         values="{{ statistics.byDate | map(e => e.load) }}"
@@ -60,9 +60,9 @@
         <div class="col-12 col-lg-3 d-grid">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="fs-4 mb-1 card-title">{% trans -%}Propósito{%- endtrans %}</h4>
-                    <twig:Chart:Donut 
-                        title="{{ 'Porcentaje por propósito' | trans }}"
+                    <h4 class="fs-4 mb-1 card-title">{% trans -%}Destino{%- endtrans %}</h4>
+                    <twig:Chart:Donut
+                        title="{{ 'Porcentaje por destino' | trans }}"
                         unit="%"
                         values="{{ statistics.byPurpose | map(e => 100 * e.percentage) }}"
                         categories="{{ statistics.byPurpose | map(e => e.purpose.value | trans({}, 'purpose')) }}"
@@ -77,7 +77,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="fs-4 mb-1 card-title">{% trans -%}Gestor de residuos{%- endtrans %}</h4>
-                    <twig:Chart:Donut 
+                    <twig:Chart:Donut
                         title="{{ 'Porcentaje por gestor' | trans }}"
                         unit="%"
                         values="{{ statistics.byWasteManager | map(e => 100 * e.percentage) }}"
@@ -93,7 +93,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="fs-4 mb-1 card-title">{% trans -%}Propiedades{%- endtrans %}</h4>
-                    <twig:Chart:Bar 
+                    <twig:Chart:Bar
                         title="{{ 'Residuo por propiedad' | trans }}"
                         unit="kg"
                         values="{{ statistics.byProperty | map(e => e.load) }}"

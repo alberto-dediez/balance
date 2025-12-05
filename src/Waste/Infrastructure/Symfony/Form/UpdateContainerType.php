@@ -24,7 +24,7 @@ class UpdateContainerType extends AbstractType
                 'required' => true
             ])
             ->add('purpose', PurposeType::class, [
-                'label' => new TranslatableMessage('Propósito'),
+                'label' => new TranslatableMessage('Destino'),
                 'required' => true
             ])
             ->add('measurementMethod', MeasurementMethodType::class, [
