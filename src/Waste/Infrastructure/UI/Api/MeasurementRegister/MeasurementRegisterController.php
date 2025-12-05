@@ -47,9 +47,9 @@ class MeasurementRegisterController extends AbstractController
         $registerResponse = $registerMeasurement(
             new RegisterMeasurementRequest(
                 containerId: new ContainerId($request->containerId),
-                registeredBy: $user->id(),
                 quantity: $request->quantity,
                 load: (float) $request->load,
+                registeredBy: $user->id(),
                 justification: $request->justification
             ),
             $user

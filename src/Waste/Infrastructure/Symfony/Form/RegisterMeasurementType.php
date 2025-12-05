@@ -3,6 +3,7 @@
 namespace App\Waste\Infrastructure\Symfony\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -49,6 +50,11 @@ class RegisterMeasurementType extends AbstractType
             ->add('reference', TextType::class, [
                 'label' => new TranslatableMessage('Referencia'),
                 'required' => false
+            ])
+            ->add('day', DateType::class, [
+                'label' => new TranslatableMessage('Fecha de registro'),
+                'input' => 'datetime_immutable',
+                'required' => true
             ])
             ->add('register', SubmitType::class, [
                 'label' => new TranslatableMessage('Registrar')

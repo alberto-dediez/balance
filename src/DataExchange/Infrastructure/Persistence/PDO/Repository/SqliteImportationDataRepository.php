@@ -263,8 +263,8 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         $sql = "UPDATE importation_data SET `error` = ? WHERE row_id = ?";
 
         $statement = $connection->prepare($sql);
-        $statement->bindValue(2, $error);
-        $statement->bindValue(1, $rowNumber+1);
+        $statement->bindValue(1, $error);
+        $statement->bindValue(2, $rowNumber+1);
         $statement->execute();
     }
 

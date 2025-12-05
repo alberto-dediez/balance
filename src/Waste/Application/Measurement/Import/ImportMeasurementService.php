@@ -72,6 +72,7 @@ class ImportMeasurementService implements CommandHandler
                 justification: $request->justification,
                 reference: $request->reference,
                 unit: $unit,
+                day: !empty($request->day) ? \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $request->day) : null,
             )
         ;
 
@@ -93,7 +94,7 @@ class ImportMeasurementService implements CommandHandler
             $property = !empty($request->propertyId) ? $this->propertyRepository->find(new PropertyId($request->propertyId)) : null;
             $waste = !empty($request->wasteId) ? $this->wasteRepository->find(new WasteId($request->wasteId)) : null;
             $wasteManager = !empty($request->wasteManagerId) ? $this->wasteManagerRepository->find(new WasteManagerId($request->wasteManagerId)) : null;
-            $purpose = is_string($request->purpose) && !empty($request->purpose) ? Purpose::tryFrom($request->purpose) : $request->purpose;
+            $purpose = !empty($request->purpose) ? Purpose::tryFrom($request->purpose) : null;
 
             if (null === $property) {
                 throw new \InvalidArgumentException(new TranslatableMessage("Debe indicar una propiedad para la medición"));

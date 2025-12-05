@@ -68,7 +68,8 @@ class RegisterController extends AbstractController
             containerId: $container->id(),
             quantity: 1,
             load: 0,
-            registeredBy: $loggedUser()->id()
+            registeredBy: $loggedUser()->id(),
+            day: new \DateTimeImmutable('NOW')
         );
 
         $form = $this->createForm(RegisterMeasurementType::class, $registerRequest, ['measurementMethod' => $container->measurementMethod()]);

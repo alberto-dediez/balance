@@ -46,7 +46,7 @@ class RegisterMeasurementService implements CommandHandler
                 containerId: $container->id(),
                 propertyId: $property->id(),
                 accountId: $property->accountId(),
-                registeredBy: $user->id()
+                registeredBy: $user->id(),
             ),
             Action::Register,
             $user
@@ -59,9 +59,10 @@ class RegisterMeasurementService implements CommandHandler
                 quantity: $request->quantity,
                 load: $request->load,
                 registeredBy: $request->registeredBy,
+                accountId: $property->accountId(),
                 justification: $request->justification,
                 reference: $request->reference,
-                accountId: $property->accountId()
+                day: $request->day,
             )
         ;
 

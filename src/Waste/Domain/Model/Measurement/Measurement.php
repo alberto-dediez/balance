@@ -127,6 +127,7 @@ class Measurement
         ?string $justification = null,
         ?string $reference = null,
         ?Unit $unit = null,
+        ?\DateTimeImmutable $day = null
     ) {
         $this->recordApplyAndPublish(
             new MeasurementRegistered(
@@ -139,7 +140,7 @@ class Measurement
                 wasteManagerId: $container->wasteManagerId(),
                 registeredBy: $registeredBy,
                 accountId: $accountId,
-                day: new \DateTimeImmutable("NOW"),
+                day: $day ?? new \DateTimeImmutable("NOW"),
                 quantity: $quantity,
                 load: $load,
                 unit: $unit ?? $container->unit(),
@@ -196,7 +197,7 @@ class Measurement
         $this->reference = $event->reference();
         $this->accountId = $event->accountId();
         $this->registeredBy = $event->registeredBy();
-        $this->registeredAt = new \DateTimeImmutable("NOW");
+        $this->registeredAt = $event->day();
     }
 
     public function applyMeasurementUpdated(MeasurementUpdated $event)

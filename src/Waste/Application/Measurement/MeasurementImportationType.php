@@ -19,7 +19,7 @@ use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Measurement\Unit;
 use App\Waste\Infrastructure\Symfony\Form\Type\ContainerIdType;
 use App\Waste\Infrastructure\Symfony\Form\Type\PropertyIdType;
-use App\Waste\Infrastructure\Symfony\Form\Type\PurposeType;
+use App\Waste\Infrastructure\Symfony\Form\Type\PurposeValueType;
 use App\Waste\Infrastructure\Symfony\Form\Type\WasteIdType;
 use App\Waste\Infrastructure\Symfony\Form\Type\WasteManagerIdType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -66,10 +66,10 @@ class MeasurementImportationType implements ImportationType
             ],
             'purpose' => [
                 'translationDefinition' => new FieldDefinition(
-                    fieldType: PurposeType::class
+                    fieldType: PurposeValueType::class
                 ),
                 'assignValueDefinition' =>  new FieldDefinition(
-                    fieldType: PurposeType::class
+                    fieldType: PurposeValueType::class
                 ),
             ],
             'wasteManagerId' => [

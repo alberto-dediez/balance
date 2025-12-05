@@ -11,7 +11,7 @@ class ImportMeasurementRequest implements Command
         public ?string $containerId,
         public ?string $propertyId,
         public ?string $wasteId,
-        public Purpose|string|null $purpose,
+        public ?string $purpose,
         public ?string $wasteManagerId,
         public ?string $quantity,
         public ?string $load,

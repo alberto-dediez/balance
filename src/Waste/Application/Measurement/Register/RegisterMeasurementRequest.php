@@ -14,7 +14,8 @@ class RegisterMeasurementRequest implements Command
         public float $load,
         public UserId $registeredBy,
         public ?string $justification = null,
-        public ?string $reference = null
+        public ?string $reference = null,
+        public ?\DateTimeInterface $day = null
     ) {
 
     }

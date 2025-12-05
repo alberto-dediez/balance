@@ -3,12 +3,10 @@
 namespace App\Tests\Unit\DataExchange\Infrastructure\Persistence\PDO\Repository;
 
 use App\DataExchange\Domain\Model\Importation\ColumnValueTranslation;
-use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
 use App\DataExchange\Domain\Model\Importation\ImportationDataRepository;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Infrastructure\Persistence\PDO\Repository\SqliteImportationDataRepository;
 use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
-use Doctrine\DBAL\Schema\Column;
 use PHPUnit\Framework\TestCase;
 
 class SqliteImportationDataRepositoryTest extends TestCase
@@ -113,6 +111,28 @@ class SqliteImportationDataRepositoryTest extends TestCase
 
         $foundTranslation = array_pop($foundTranslations);
         $this->assertEquals('Infantil', $foundTranslation->translation);
+    }
+
+    public function testGivenAnImportationWhenISaveAnErrorMessageThenICanRecoverIt(): void
+    {
+        $path = __DIR__ . '/file-to-import.csv';
+
+        $importation = ImportationMother::fromNameAndFile('superheroes.csv', new ImportationFile(path: $path, offset: 0));
+
+        $sut = $this->createSUT();
+
+        $sut->create($importation);
+
+        $sut->saveError($importation->id(), 3, 'Error message');
+
+        $result = $sut->getResult($importation->id(), 3);
+
+        $this->assertTrue(is_array($result));
+        $this->assertEquals('Error message', $result['error']);
+
+        $otherResult = $sut->getResult($importation->id(), 1);
+
+        $this->assertEmpty($otherResult['error']);
     }
 
     private function createSUT(): ImportationDataRepository
