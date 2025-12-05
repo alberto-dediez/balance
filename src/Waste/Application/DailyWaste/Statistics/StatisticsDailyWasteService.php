@@ -114,7 +114,7 @@ class StatisticsDailyWasteService
 
         //ByDate
         array_walk($byDate, function (ByDate $byDate) use ($total) {
-            $byDate->percentage = $byDate->load / $total;
+            $byDate->percentage = $total == 0 ? 0 : $byDate->load / $total;
         });
 
         usort($byDate, function (ByDate $byDateA, ByDate $byDateB) {
@@ -123,7 +123,7 @@ class StatisticsDailyWasteService
 
         //ByProperty
         array_walk($byProperty, function (ByProperty $byProperty) use ($total) {
-            $byProperty->percentage = $byProperty->load / $total;
+            $byProperty->percentage = $total == 0 ? 0 : $byProperty->load / $total;
         });
 
         usort($byProperty, function (ByProperty $byPropertyA, ByProperty $byPropertyB) {
@@ -132,7 +132,7 @@ class StatisticsDailyWasteService
 
         //ByWaste
         array_walk($byWaste, function (ByWaste $byWaste) use ($total) {
-            $byWaste->percentage = $byWaste->load / $total;
+            $byWaste->percentage = $total == 0 ? 0 : $byWaste->load / $total;
         });
 
         usort($byWaste, function (ByWaste $byWasteA, ByWaste $byWasteB) {
@@ -141,7 +141,7 @@ class StatisticsDailyWasteService
 
         //ByWasteManager
         array_walk($byWasteManager, function (ByWasteManager $byWasteManager) use ($total) {
-            $byWasteManager->percentage = $byWasteManager->load / $total;
+            $byWasteManager->percentage = $total == 0 ? 0 : $byWasteManager->load / $total;
         });
 
         usort($byWasteManager, function (ByWasteManager $byWasteManagerA, ByWasteManager $byWasteManagerB) {
@@ -150,7 +150,7 @@ class StatisticsDailyWasteService
 
         //ByPurpose
         array_walk($byPurpose, function (ByPurpose $byPurpose) use ($total) {
-            $byPurpose->percentage = $byPurpose->load / $total;
+            $byPurpose->percentage = $total == 0 ? 0 : $byPurpose->load / $total;
         });
 
         return [

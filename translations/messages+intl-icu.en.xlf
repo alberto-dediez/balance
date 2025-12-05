@@ -1309,14 +1309,6 @@
         <source>Campo no emparejado</source>
         <target>Unmatched field</target>
       </trans-unit>
-      <trans-unit id="iwbPOhm" resname="Proceso de configuración finalizado">
-        <source>Proceso de configuración finalizado</source>
-        <target>Configuration process completed</target>
-      </trans-unit>
-      <trans-unit id="NOKifaA" resname="El proceso de configuración de la importación a finalizado. Vamos a procesar el fichero y le avisaremos cuando hayamos finalizado.">
-        <source>El proceso de configuración de la importación a finalizado. Vamos a procesar el fichero y le avisaremos cuando hayamos finalizado.</source>
-        <target>The import configuration process is complete. We will process the file and notify you when we are finished.</target>
-      </trans-unit>
       <trans-unit id="NHXmWvu" resname="Muchas gracias por su confianza.">
         <source>Muchas gracias por su confianza.</source>
         <target>Thank you very much for your trust.</target>

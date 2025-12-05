@@ -59,4 +59,12 @@ Feature:
         Given an importation with id "123" from account "mycompany" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/measurements/import/123/finish"
+        Then the response status should be 302
+
+    Scenario: As owner I can view an executed importation
+        Given account "MyCompany" with id "mycompany" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
+        Given an executed importation with id "123" from account "mycompany" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/measurements/import/123/results"
         Then the response status should be 200

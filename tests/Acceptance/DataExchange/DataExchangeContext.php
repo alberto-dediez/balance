@@ -63,4 +63,23 @@ final class DataExchangeContext implements Context
 
         $repository->add($importation);
     }
+
+    #[Given('an executed importation with id :importationId from account :accountId exists')]
+    public function anExecutedImportationWithIdFromAccountExists($importationId, $accountId): void
+    {
+        $filename = __DIR__ . '/file-to-import.csv';
+
+        $importationFile = new ImportationFile(path: $filename);
+
+        $importation = ImportationMother::fromIdAndAccountAndFile(id: $importationId, accountId: $accountId, file: $importationFile);
+
+        $repository = $this->getImportationRepository();
+        $repository->remove($importation);
+
+        $importation->execute();
+
+        $repository->add($importation);
+
+        $repository->saveError($importation->id(), 3, 'Powerless');
+    }
 }

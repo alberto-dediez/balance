@@ -38,9 +38,6 @@ class FinishController extends AbstractController
             return $this->redirectToRoute($importationType->returnRoute());
         }
 
-        return $this->render('@data_exchange/import/finish.html.twig', [
-            'importation' => $importation,
-            'importationType' => $importationType,
-        ]);
+        return $this->redirectToRoute('import_view', ['code' => $code, 'id' => $id]);
     }
 }

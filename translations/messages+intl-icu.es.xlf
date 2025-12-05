@@ -1309,14 +1309,6 @@
         <source>Campo no emparejado</source>
         <target>Campo no emparejado</target>
       </trans-unit>
-      <trans-unit id="iwbPOhm" resname="Proceso de configuración finalizado">
-        <source>Proceso de configuración finalizado</source>
-        <target>Proceso de configuración finalizado</target>
-      </trans-unit>
-      <trans-unit id="NOKifaA" resname="El proceso de configuración de la importación a finalizado. Vamos a procesar el fichero y le avisaremos cuando hayamos finalizado.">
-        <source>El proceso de configuración de la importación a finalizado. Vamos a procesar el fichero y le avisaremos cuando hayamos finalizado.</source>
-        <target>El proceso de configuración de la importación a finalizado. Vamos a procesar el fichero y le avisaremos cuando hayamos finalizado.</target>
-      </trans-unit>
       <trans-unit id="NHXmWvu" resname="Muchas gracias por su confianza.">
         <source>Muchas gracias por su confianza.</source>
         <target>Muchas gracias por su confianza.</target>

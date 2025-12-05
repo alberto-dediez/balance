@@ -7,19 +7,19 @@
     <body>
       <trans-unit id="8oki9qX" resname="m3">
         <source>m3</source>
-        <target>NEW_m3</target>
+        <target>m3</target>
       </trans-unit>
       <trans-unit id="yJ8W4BO" resname="l">
         <source>l</source>
-        <target>NEW_l</target>
+        <target>l</target>
       </trans-unit>
       <trans-unit id="LX809d6" resname="kg">
         <source>kg</source>
-        <target>NEW_kg</target>
+        <target>kg</target>
       </trans-unit>
       <trans-unit id="ZdI9KrC" resname="%">
         <source>%</source>
-        <target>NEW_%</target>
+        <target>%</target>
       </trans-unit>
     </body>
   </file>
