@@ -5,6 +5,7 @@ namespace App\Tests\Unit\DataExchange\Application\Importation\Execute;
 use App\DataExchange\Application\Importation\Execute\ExecuteImportationRequest;
 use App\DataExchange\Application\Importation\Execute\ExecuteImportationResponse;
 use App\DataExchange\Application\Importation\Execute\ExecuteImportationService;
+use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleRequest;
 use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationExecuted;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
@@ -16,6 +17,7 @@ use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
+use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\DataExchange\Application\Importation\ImportationAuthorizerMother;
 use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
@@ -79,7 +81,8 @@ class ExecuteImportationServiceTest extends TestCase
         $commands = $this->spyCommandBus->commands();
 
         $this->assertCount(3, $commands);
-        $this->assertTrue($commands[0]['command'] instanceof ImportMeasurementRequest);
+        $this->assertTrue($commands[0]['command'] instanceof DeferredCommand);
+        $this->assertTrue($commands[0]['command']->command() instanceof ExecuteSingleRequest);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

@@ -141,6 +141,10 @@ translation:
 	@$(PHP) ./bin/console trans:extract es --force --prefix="NEW_" -q
 	@$(PHP) ./bin/console trans:extract en --force --prefix="NEW_" -q
 
+## —— Messages ————————————————————————————————————————————————————————————
+queues:
+	@$(PHP) bin/console messenger:consume async -vv
+
 ## —— Production ————————————————————————————————————————————————————————————
 asset-prod:
 	@$(PHP) bin/console sass:build

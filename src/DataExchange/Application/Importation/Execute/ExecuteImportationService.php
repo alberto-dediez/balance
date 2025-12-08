@@ -2,6 +2,7 @@
 
 namespace App\DataExchange\Application\Importation\Execute;
 
+use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleRequest;
 use App\DataExchange\Application\Importation\ImportationAuthorizer;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
 use App\DataExchange\Domain\Model\Importation\ImportationTypeFactory;
@@ -11,6 +12,7 @@ use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
+use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 
 class ExecuteImportationService implements CommandHandler
@@ -50,7 +52,16 @@ class ExecuteImportationService implements CommandHandler
             $errorMessage = null;
 
             try {
-                $response = CommandBusDispatcher::instance()->dispatch($command, $user);
+                $response = CommandBusDispatcher::instance()->dispatch(
+                    new DeferredCommand(
+                        new ExecuteSingleRequest(
+                            importationId: $importation->id(),
+                            rowNumber: $rowNumber,
+                            command: $command
+                        ),
+                    ),
+                    $user
+                );
             } catch (\Throwable $exception) {
                 $errorMessage = $exception->getMessage();
             }

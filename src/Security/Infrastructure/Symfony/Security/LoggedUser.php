@@ -10,25 +10,36 @@ class LoggedUser
 {
     private ?User $user = null;
 
+    private ?User $forcedUser = null;
+
     public function __construct(private Security $security, private UserRepository $userRepository)
     {
-        
+
     }
 
     public function __invoke(): ?User
     {
+        if (null !== $this->forcedUser) {
+            return $this->forcedUser;
+        }
+
         if (null == $this->user) {
             $this->loadUser();
         }
 
-        return $this->user;   
+        return $this->user;
+    }
+
+    public function forceUser(?User $user): void
+    {
+        $this->forcedUser = $user;
     }
 
     private function loadUser()
     {
         $user = $this->security->getUser();
 
-        if (null == $user) {
+        if (null === $user) {
             return ;
         }
 

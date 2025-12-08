@@ -2,41 +2,29 @@
 
 namespace App\Security\Infrastructure\Symfony\Security;
 
-use Symfony\Bundle\SecurityBundle\Security;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountRepository;
 
 class LoggedAccount
 {
-    private ?Account $account = null;
-
-    private bool $loaded = false;
-
-    public function __construct(private Security $security, private AccountRepository $accountRepository)
+    private array $accounts = [];
+    public function __construct(private LoggedUser $loggedUser, private AccountRepository $accountRepository)
     {
 
     }
 
-    private function load(): void
+    public function __invoke(): ?Account
     {
-        if ($this->loaded) {
-            return;
+        $user = $this->loggedUser->__invoke();
+
+        if (null === $user || null === $user->accountId()) {
+            return null;
         }
 
-        $user = $this->security->getUser();
-
-        if (null == $user || null == $user->accountId()) {
-            return ;
+        if (!isset($this->accounts[(string) $user->id()])) {
+            $this->accounts[(string) $user->id()] = $this->accountRepository->find($user->accountId());
         }
 
-        $this->account = $this->accountRepository->find($user->accountId());
-        $this->loaded = true;
-    }
-
-    public function __invoke()
-    {
-        $this->load();
-
-        return $this->account;
+        return $this->accounts[(string) $user->id()];
     }
 }

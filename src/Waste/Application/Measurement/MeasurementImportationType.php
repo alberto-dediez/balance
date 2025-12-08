@@ -11,7 +11,6 @@ use App\DataExchange\Domain\Model\Importation\ImportationType;
 use App\DataExchange\Infrastructure\UI\Web\DTO\FieldDefinition;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
-use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Shared\Application\CommandBus\Command;
 use App\Waste\Application\Measurement\Import\ImportMeasurementRequest;
 use App\Waste\Domain\Model\Measurement\Measurement;
@@ -33,7 +32,6 @@ class MeasurementImportationType implements ImportationType
     private array $fields;
 
     public function __construct(
-        private LoggedAccount $loggedAccount,
         private MeasurementAuthorizer $measurementAuthorizer,
         TranslatorInterface $translator,
     ) {
@@ -220,7 +218,7 @@ class MeasurementImportationType implements ImportationType
         return $this->measurementAuthorizer->canDoThat(
             new Measurement(
                 id: MeasurementId::generate(),
-                accountId: $this->loggedAccount->__invoke()?->id()
+                accountId: $user->accountId()
             ),
             Action::Import,
             $user
