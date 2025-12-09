@@ -1317,6 +1317,38 @@
         <source>Finalizar</source>
         <target>Finish</target>
       </trans-unit>
+      <trans-unit id="NamIU1s" resname="Importación de {file} finalizada">
+        <source>Importación de {file} finalizada</source>
+        <target>Import of {file} completed</target>
+      </trans-unit>
+      <trans-unit id="rpLRMsp" resname="El proceso de importación ha finalizado. Puede comprobar el resultado en el siguiente enlace:">
+        <source>El proceso de importación ha finalizado. Puede comprobar el resultado en el siguiente enlace:</source>
+        <target>The import process is now complete. You can check the result at the following link:</target>
+      </trans-unit>
+      <trans-unit id="g8qj0jz" resname="Ver resultado">
+        <source>Ver resultado</source>
+        <target>View result</target>
+      </trans-unit>
+      <trans-unit id="p2Nc5Bg" resname="Resultado de la importación">
+        <source>Resultado de la importación</source>
+        <target>Import result</target>
+      </trans-unit>
+      <trans-unit id="WkGlyGK" resname="Resultados">
+        <source>Resultados</source>
+        <target>Results</target>
+      </trans-unit>
+      <trans-unit id="MFkbtIu" resname="Importación en curso">
+        <source>Importación en curso</source>
+        <target>Import in progress</target>
+      </trans-unit>
+      <trans-unit id="ElKrQyQ" resname="El proceso de importación ha comenzado en segundo plano, por lo que puedes seguir trabajando en otras cosas mientras tanto. Le enviaremos un correo electrónico en cuanto finalice.">
+        <source>El proceso de importación ha comenzado en segundo plano, por lo que puedes seguir trabajando en otras cosas mientras tanto. Le enviaremos un correo electrónico en cuanto finalice.</source>
+        <target>The import process has started in the background, so you can continue working on other things in the meantime. We will send you an email as soon as it is complete.</target>
+      </trans-unit>
+      <trans-unit id="kgyeLBr" resname="En curso">
+        <source>En curso</source>
+        <target>In progress</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

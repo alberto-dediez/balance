@@ -1317,6 +1317,38 @@
         <source>Finalizar</source>
         <target>Finalizar</target>
       </trans-unit>
+      <trans-unit id="NamIU1s" resname="Importación de {file} finalizada">
+        <source>Importación de {file} finalizada</source>
+        <target>Importación de {file} finalizada</target>
+      </trans-unit>
+      <trans-unit id="rpLRMsp" resname="El proceso de importación ha finalizado. Puede comprobar el resultado en el siguiente enlace:">
+        <source>El proceso de importación ha finalizado. Puede comprobar el resultado en el siguiente enlace:</source>
+        <target>El proceso de importación ha finalizado. Puede comprobar el resultado en el siguiente enlace:</target>
+      </trans-unit>
+      <trans-unit id="g8qj0jz" resname="Ver resultado">
+        <source>Ver resultado</source>
+        <target>Ver resultado</target>
+      </trans-unit>
+      <trans-unit id="p2Nc5Bg" resname="Resultado de la importación">
+        <source>Resultado de la importación</source>
+        <target>Resultado de la importación</target>
+      </trans-unit>
+      <trans-unit id="WkGlyGK" resname="Resultados">
+        <source>Resultados</source>
+        <target>Resultados</target>
+      </trans-unit>
+      <trans-unit id="MFkbtIu" resname="Importación en curso">
+        <source>Importación en curso</source>
+        <target>Importación en curso</target>
+      </trans-unit>
+      <trans-unit id="ElKrQyQ" resname="El proceso de importación ha comenzado en segundo plano, por lo que puedes seguir trabajando en otras cosas mientras tanto. Le enviaremos un correo electrónico en cuanto finalice.">
+        <source>El proceso de importación ha comenzado en segundo plano, por lo que puedes seguir trabajando en otras cosas mientras tanto. Le enviaremos un correo electrónico en cuanto finalice.</source>
+        <target>El proceso de importación ha comenzado en segundo plano, por lo que puedes seguir trabajando en otras cosas mientras tanto. Le enviaremos un correo electrónico en cuanto finalice.</target>
+      </trans-unit>
+      <trans-unit id="kgyeLBr" resname="En curso">
+        <source>En curso</source>
+        <target>En curso</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

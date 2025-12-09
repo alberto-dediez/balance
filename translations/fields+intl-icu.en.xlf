@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="J8QYRL_" resname="purpose">
         <source>purpose</source>
-        <target>Purpose</target>
+        <target>Destination</target>
       </trans-unit>
       <trans-unit id="QXdJ4jR" resname="measurementMethod">
         <source>measurementMethod</source>

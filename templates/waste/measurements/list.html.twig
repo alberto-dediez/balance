@@ -53,5 +53,6 @@
 {% endblock %}
 
 {% block list_actions %}
+    <twig:Link:Import path="{{ path('import', {'code': 'measurements'}) }}" />
     <twig:Link:Register path="{{ path('measurements_register') }}" />
 {% endblock list_actions %}

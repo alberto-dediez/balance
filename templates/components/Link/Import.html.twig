@@ -1,0 +1,7 @@
+{% props path, color = 'info' %}
+
+<twig:Link :path="path" :color="color">
+    <twig:Icon name="solar:upload-square-line-duotone" size="lg" class="me-2" />
+
+    {% trans %}Importar{% endtrans %}
+</twig:Link>
