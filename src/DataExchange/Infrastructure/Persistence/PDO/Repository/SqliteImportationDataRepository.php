@@ -292,7 +292,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
     {
         $connection = $this->connect($importationId);
 
-        return $connection->query("SELECT COUNT(*) FROM importation_data WHERE `executed` = 0")->fetchColumn();
+        return $connection->query("SELECT COUNT(*) FROM importation_data WHERE `executed` != 1")->fetchColumn();
     }
 
     public function remove(ImportationId $importationId): void

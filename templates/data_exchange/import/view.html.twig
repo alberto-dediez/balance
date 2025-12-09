@@ -13,15 +13,19 @@
 
 {% block content %}
     <twig:Card>
-        {% set columns = results | first | keys | map(v => {'label': v | capitalize}) | merge([{'label': 'Resultado'}]) %}
+        {% set columns = results | first | keys | map(v => {'label': v | capitalize}) %}
 
         <h4 class="ps-4 mt-0">{% trans %}Resultado de la importación{% endtrans %}</h4>
         <twig:List:Table :columns="columns" :elements="results">
             {% for attr,value in element %}
-                <td>{{ value }}</td>
+                {% if attr != 'executed' %}
+                    <td>{{ value }}</td>
+                {% elseif value %}
+                    <td class="text-{{ element.error is empty ? 'success' : 'danger' }}">{{ element.error is empty ? 'OK' : 'ERROR' }}</td>
+                {% else %}
+                    <td>---</td>
+                {% endif %}
             {% endfor %}
-
-            <td class="text-{{ element.error is empty ? 'success' : 'danger' }}">{{ element.error is empty ? 'OK' : 'ERROR' }}</td>
         </twig:List:Table>
     </twig:Card>
 {% endblock %}
