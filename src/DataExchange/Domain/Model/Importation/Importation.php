@@ -14,7 +14,7 @@ class Importation
         protected ImportationId $id,
         protected string $name = '',
         protected string $type = '',
-        protected ImportationStatus $status = ImportationStatus::InProgress,
+        protected ImportationStatus $status = ImportationStatus::Started,
         protected ?AccountId $accountId = null,
         protected ?ImportationFile $file = null,
         array $events = [],
@@ -45,6 +45,11 @@ class Importation
     public function isExecuted(): bool
     {
         return ImportationStatus::Executed === $this->status;
+    }
+
+    public function isInProgress(): bool
+    {
+        return ImportationStatus::InProgress === $this->status;
     }
 
     public function loadConfigurations(array $configurations): void
@@ -154,7 +159,16 @@ class Importation
         );
     }
 
-    public function execute(): void
+    public function startExecution(): void
+    {
+        $this->recordApplyAndPublish(
+            new ImportationExecutionStarted(
+                importationId: $this->id()
+            )
+        );
+    }
+
+    public function finishExecution(): void
     {
         $this->recordApplyAndPublish(
             new ImportationExecuted(
@@ -168,7 +182,7 @@ class Importation
         $this->accountId = $event->accountId();
         $this->name = $event->name();
         $this->type = $event->type();
-        $this->status = ImportationStatus::InProgress;
+        $this->status = ImportationStatus::Started;
         $this->registeredAt = $event->occurredOn();
         $this->registeredBy = $event->registeredBy();
     }
@@ -181,6 +195,11 @@ class Importation
     public function applyImportationDefaultValuesUpdated(ImportationDefaultValuesUpdated $event)
     {
         $this->defaultValues = $event->defaultValues();
+    }
+
+    public function applyImportationExecutionStarted(ImportationExecutionStarted $event)
+    {
+        $this->status = ImportationStatus::InProgress;
     }
 
     public function applyImportationExecuted(ImportationExecuted $event)

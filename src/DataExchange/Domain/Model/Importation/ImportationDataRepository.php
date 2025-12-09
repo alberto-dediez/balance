@@ -6,7 +6,7 @@ interface ImportationDataRepository
 {
     public function create(Importation $importation): void;
 
-    public function totalRows(ImportationId $importationId): int;
+    public function pendingRows(ImportationId $importationId): int;
 
     public function getColumns(ImportationId $importationId): array;
 

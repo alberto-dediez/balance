@@ -91,4 +91,9 @@ class InMemoryImportationRepository implements ImportationRepository
     {
         return $this->dataRepository->getResult($importationId, $rowNumber);
     }
+
+    public function pendingRows(ImportationId $importationId): int
+    {
+        return $this->dataRepository->pendingRows($importationId);
+    }
 }

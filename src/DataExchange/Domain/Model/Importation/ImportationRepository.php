@@ -13,4 +13,6 @@ interface ImportationRepository
     public function getResult(ImportationId $importationId, int $rowNumber): ?array;
 
     public function remove(Importation $importation): void;
+
+    public function pendingRows(ImportationId $importationId): int;
 }

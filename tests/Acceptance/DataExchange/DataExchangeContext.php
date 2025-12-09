@@ -76,7 +76,7 @@ final class DataExchangeContext implements Context
         $repository = $this->getImportationRepository();
         $repository->remove($importation);
 
-        $importation->execute();
+        $importation->finishExecution();
 
         $repository->add($importation);
 

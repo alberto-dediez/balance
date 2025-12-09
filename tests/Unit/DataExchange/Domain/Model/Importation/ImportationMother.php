@@ -5,6 +5,7 @@ namespace App\Tests\Unit\DataExchange\Domain\Model\Importation;
 use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
+use App\DataExchange\Domain\Model\Importation\ImportationStatus;
 use App\Security\Domain\Model\Account\AccountId;
 
 class ImportationMother
@@ -16,6 +17,18 @@ class ImportationMother
             name: $name,
             type: 'measurements',
             importationFile: $file,
+            accountId: AccountId::generate(),
+        );
+    }
+
+    public static function fromNameAndFileAndStatus(string $name, ImportationFile $file, ImportationStatus $status): Importation
+    {
+        return self::from(
+            importationId: ImportationId::generate(),
+            name: $name,
+            type: 'measurements',
+            importationFile: $file,
+            status: $status,
             accountId: AccountId::generate(),
         );
     }
@@ -33,7 +46,7 @@ class ImportationMother
         );
     }
 
-    public static function from(ImportationId $importationId, string $name, string $type, ImportationFile $importationFile, AccountId $accountId): Importation
+    public static function from(ImportationId $importationId, string $name, string $type, ImportationFile $importationFile, AccountId $accountId, ImportationStatus $status = ImportationStatus::Started): Importation
     {
         return new Importation(
             id: $importationId,
@@ -41,6 +54,7 @@ class ImportationMother
             type: $type,
             accountId: $accountId,
             file: $importationFile,
+            status: $status,
             registeredAt: new \DateTimeImmutable('NOW'),
         );
     }

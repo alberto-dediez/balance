@@ -43,7 +43,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
     private function createData(Importation $importation, FileExtractor $extractor): void
     {
         $createTableSql = sprintf(
-            'CREATE TABLE importation_data (row_id INTEGER PRIMARY KEY AUTOINCREMENT, %s, `error` TEXT DEFAULT NULL)',
+            'CREATE TABLE importation_data (row_id INTEGER PRIMARY KEY AUTOINCREMENT, %s, `executed` BOOLEAN DEFAULT 0, `error` TEXT DEFAULT NULL)',
             implode(', ', array_map(fn($col) => "\"{$col}\" TEXT", $extractor->getColumns()))
         );
 
@@ -130,7 +130,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
     {
         $connection = $this->connect($importationId);
 
-        return $connection->query("SELECT name FROM pragma_table_info('importation_data') WHERE name != 'row_id' AND name != 'error';")->fetchAll(\PDO::FETCH_COLUMN);
+        return $connection->query("SELECT name FROM pragma_table_info('importation_data') WHERE name != 'row_id' AND name != 'error' and name != 'executed';")->fetchAll(\PDO::FETCH_COLUMN);
     }
 
     public function getValues(ImportationId $importationId, int $column): array
@@ -238,7 +238,11 @@ class SqliteImportationDataRepository implements ImportationDataRepository
     {
         $connection = $this->connect($importationId);
 
-        $sql = "SELECT * FROM importation_data WHERE row_id = ?";
+        $columns = $this->getColumns($importationId);
+        $sql = sprintf(
+            "SELECT %s FROM importation_data WHERE row_id = ?",
+            implode(', ', array_map(fn($col) => "\"{$col}\"", $columns))
+        );
 
         $statement = $connection->prepare($sql);
         $statement->bindValue(1, $rowNumber+1);
@@ -246,21 +250,18 @@ class SqliteImportationDataRepository implements ImportationDataRepository
 
         $row = $statement->fetch(\PDO::FETCH_ASSOC);
 
-        if (is_array($row)) {
-            unset($row['row_id']);
-            unset($row['error']);
-
-            return $row;
+        if (!is_array($row)) {
+            return null;
         }
 
-        return null;
+        return $row;
     }
 
     public function saveResult(ImportationId $importationId, int $rowNumber, ?string $error): void
     {
         $connection = $this->connect($importationId);
 
-        $sql = "UPDATE importation_data SET `error` = ? WHERE row_id = ?";
+        $sql = "UPDATE importation_data SET `error` = ?, `executed` = 1 WHERE row_id = ?";
 
         $statement = $connection->prepare($sql);
         $statement->bindValue(1, $error);
@@ -287,11 +288,11 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         return null;
     }
 
-    public function totalRows(ImportationId $importationId): int
+    public function pendingRows(ImportationId $importationId): int
     {
         $connection = $this->connect($importationId);
 
-        return $connection->query("SELECT COUNT(*) FROM importation_data")->fetchColumn();
+        return $connection->query("SELECT COUNT(*) FROM importation_data WHERE `executed` = 0")->fetchColumn();
     }
 
     public function remove(ImportationId $importationId): void

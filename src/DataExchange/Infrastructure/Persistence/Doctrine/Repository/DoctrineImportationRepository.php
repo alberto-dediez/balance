@@ -98,6 +98,11 @@ class DoctrineImportationRepository implements ImportationRepository
         $this->getEntityManager()->flush();
     }
 
+    public function pendingRows(ImportationId $importationId): int
+    {
+        return $this->dataRepository->pendingRows($importationId);
+    }
+
     private function getEntityManager()
     {
         return $this->manager;

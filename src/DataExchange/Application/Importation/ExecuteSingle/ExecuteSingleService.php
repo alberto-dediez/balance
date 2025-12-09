@@ -32,6 +32,8 @@ class ExecuteSingleService implements CommandHandler
             throw new \RuntimeException('Importation not found');
         }
 
+        $this->authorizer->denyUnlessCanDoThat($importation, Action::View, $user);
+
         $importationType = $this->importationTypeFactory->createFromCode($importation->type());
 
         if (null === $importationType) {
@@ -54,6 +56,14 @@ class ExecuteSingleService implements CommandHandler
         }
 
         $this->importationRepository->saveResult($importation->id(), $request->rowNumber, $errorMessage);
+
+        $pending = $this->importationRepository->pendingRows($importation->id());
+
+        if (0 === $pending) {
+            $importation->finishExecution();
+
+            $this->importationRepository->add($importation);
+        }
 
         return new ExecuteSingleResponse(
             importationId: $importation->id(),

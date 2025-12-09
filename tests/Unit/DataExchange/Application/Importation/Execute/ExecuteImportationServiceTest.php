@@ -8,6 +8,7 @@ use App\DataExchange\Application\Importation\Execute\ExecuteImportationService;
 use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleRequest;
 use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationExecuted;
+use App\DataExchange\Domain\Model\Importation\ImportationExecutionStarted;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Domain\Model\Importation\ImportationType;
@@ -76,7 +77,7 @@ class ExecuteImportationServiceTest extends TestCase
 
         $this->assertNotNull($importationPersisted);
         $this->assertTrue($importationPersisted instanceof Importation);
-        $this->assertTrue($importationPersisted->isExecuted());
+        $this->assertTrue($importationPersisted->isInProgress());
 
         $commands = $this->spyCommandBus->commands();
 
@@ -87,7 +88,7 @@ class ExecuteImportationServiceTest extends TestCase
         $lastEvent = $this->spySubscriber->lastEvent();
 
         $this->assertNotNull($lastEvent);
-        $this->assertTrue($lastEvent instanceof ImportationExecuted);
+        $this->assertTrue($lastEvent instanceof ImportationExecutionStarted);
         $this->assertTrue($importationPersisted->id()->equals($lastEvent->importationId()));
     }
 

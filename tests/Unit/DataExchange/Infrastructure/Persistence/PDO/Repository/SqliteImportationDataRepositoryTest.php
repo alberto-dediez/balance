@@ -27,7 +27,7 @@ class SqliteImportationDataRepositoryTest extends TestCase
 
         $this->assertFileExists($file);
 
-        $totalRows = $sut->totalRows($importation->id());
+        $totalRows = $sut->pendingRows($importation->id());
 
         $this->assertEquals(22, $totalRows);
     }

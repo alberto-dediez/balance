@@ -42,6 +42,8 @@ class ExecuteImportationService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($importation, Action::Edit, $user);
 
+        $importation->startExecution();
+
         $rowNumber = 0;
         $rowExtractor = $importationType->buildRowExtractor($importation);
         while (null !== ($row = $this->importationRepository->getData($importation->id(), $rowNumber))) {
@@ -70,8 +72,6 @@ class ExecuteImportationService implements CommandHandler
 
             $rowNumber++;
         }
-
-        $importation->execute();
 
         $this->importationRepository->add($importation);
 

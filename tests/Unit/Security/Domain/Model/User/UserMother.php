@@ -122,6 +122,6 @@ class UserMother
             Role::User
         ];
 
-        return self::fromUsernameAndRole('user-' . rand(100, 999), $roles[rand(0, 2)]);
+        return self::fromUsernameAndRole('user-' . rand(100, 9999999), $roles[rand(0, 2)]);
     }
 }

@@ -17,7 +17,7 @@ final class ImportationAuthorizer extends AbstractAuthorizer
     protected function canView(mixed $subject, User $user): bool
     {
         /** @var Importation $subject */
-        if (!$subject->isExecuted()) {
+        if (!$subject->isExecuted() && !$subject->isInProgress()) {
             return false;
         }
 
@@ -32,7 +32,7 @@ final class ImportationAuthorizer extends AbstractAuthorizer
     protected function canEdit(mixed $subject, User $user): bool
     {
         /** @var Importation $subject */
-        if ($subject->isExecuted()) {
+        if ($subject->isExecuted() || $subject->isInProgress()) {
             return false;
         }
 
