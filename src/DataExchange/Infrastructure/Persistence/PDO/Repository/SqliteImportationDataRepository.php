@@ -12,6 +12,8 @@ use Symfony\Component\Filesystem\Exception\IOException;
 
 class SqliteImportationDataRepository implements ImportationDataRepository
 {
+    const BATCH_SIZE = 100;
+
     public function __construct(private string $storagePath)
     {
         if (!is_dir($this->storagePath) && mkdir($this->storagePath, 0755, true)) {
@@ -77,6 +79,21 @@ class SqliteImportationDataRepository implements ImportationDataRepository
             }
 
             $toInsert++;
+
+            if ($toInsert >= self::BATCH_SIZE) {
+                $query = substr($query, 0, -1);
+                $statement = $connection->prepare($query);
+
+                foreach ($toInsertValues as $attr => $value) {
+                    $statement->bindValue($attr, $value);
+                }
+
+                $statement->execute();
+
+                $toInsertValues = [];
+                $toInsert = 0;
+                $query = $insertSql;
+            }
         }
 
         if ($toInsert === 0) {
