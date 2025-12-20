@@ -14,7 +14,7 @@ class DailyWasteFilter
     use Filter;
 
     public function __construct(
-        public ?PropertyId $propertyId = null,
+        public array $properties = [],
         public ?WasteId $wasteId = null,
         public ?WasteManagerId $wasteManagerId = null,
         public ?Purpose $purpose = null,

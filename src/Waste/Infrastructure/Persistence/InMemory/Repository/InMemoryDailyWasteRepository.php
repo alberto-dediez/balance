@@ -52,7 +52,7 @@ class InMemoryDailyWasteRepository implements DailyWasteRepository
     {
         $filter = new DailyWasteFilter(
             limit: 0,
-            propertyId: $propertyId,
+            properties: [$propertyId],
             wasteId: $wasteId,
             wasteManagerId: $wasteManagerId,
             purpose: $purpose,
@@ -101,10 +101,10 @@ class InMemoryDailyWasteRepository implements DailyWasteRepository
             }
 
             if (
-                null !== $filter->propertyId
+                count($filter->properties) > 0
                 && (
                     null == $dailyWaste->propertyId()
-                    || false == $filter->propertyId->equals($dailyWaste->propertyId())
+                    || false == array_reduce($filter->properties, function ($carry, $value) use ($dailyWaste) { return $carry || $value->equals($dailyWaste->propertyId()); }, false)
                 )
             ) {
                 continue;

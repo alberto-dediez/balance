@@ -1349,6 +1349,18 @@
         <source>En curso</source>
         <target>En curso</target>
       </trans-unit>
+      <trans-unit id="6pwORPG" resname="Total residuos">
+        <source>Total residuos</source>
+        <target>Total residuos</target>
+      </trans-unit>
+      <trans-unit id="wzQ6dbG" resname="Mes">
+        <source>Mes</source>
+        <target>Mes</target>
+      </trans-unit>
+      <trans-unit id="dB_UXWH" resname="Residuos generados">
+        <source>Residuos generados</source>
+        <target>Residuos generados</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

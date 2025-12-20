@@ -56,7 +56,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
     {
         $filter = new DailyWasteFilter(
             limit: 0,
-            propertyId: $propertyId,
+            properties: [$propertyId],
             wasteId: $wasteId,
             wasteManagerId: $wasteManagerId,
             purpose: $purpose,
@@ -78,12 +78,12 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
             ->from(DailyWaste::class, 'm')
         ;
 
-        if (null !== $filter->propertyId) {
+        if (count($filter->properties) > 0) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.propertyId', ':property')
+                    $qb->expr()->in('m.propertyId', ':properties')
                 )
-                ->setParameter('property', $filter->propertyId)
+                ->setParameter('properties', array_map(function (PropertyId $propertyId) { return (string) $propertyId; }, $filter->properties))
             ;
         }
 

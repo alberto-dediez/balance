@@ -18,10 +18,13 @@ class ListDailyWastesType extends BaseFilterType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('propertyId', PropertyIdType::class, [
-                'label' => new TranslatableMessage('Propiedad'),
+            ->add('properties', PropertyIdType::class, [
+                'label' => new TranslatableMessage('Propiedades'),
                 'required' => false,
-                'placeholder' => new TranslatableMessage('Todas las propiedades')
+                'multiple' => true,
+                'attr' => [
+                    'placeholder' => new TranslatableMessage('Todas las propiedades')
+                ]
             ])
             ->add('wasteId', WasteIdType::class, [
                 'label' => new TranslatableMessage('Tipología de residuo'),

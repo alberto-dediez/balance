@@ -31,7 +31,7 @@ class StatisticsDailyWasteService
         $this->authorizer->denyUnlessCanDoThat(
             new DailyWaste(
                 id: DailyWasteId::generate(),
-                propertyId: $request->propertyId,
+                propertyId: null,
                 accountId: $request->accountId,
             ),
             Action::List,

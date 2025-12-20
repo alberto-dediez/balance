@@ -20,7 +20,7 @@ class ListDailyWastesService
     {
         $dailyWaste = new DailyWaste(
             id: DailyWasteId::generate(),
-            propertyId: $request->propertyId,
+            propertyId: null,
             wasteId: $request->wasteId,
             purpose: $request->purpose,
             accountId: $request->accountId,
