@@ -19,6 +19,8 @@ class Chart
 
     public ?array $colors = [];
 
+    public ?array $series = [];
+
     public bool $legend = false;
 
     public bool $dataLabels = false;

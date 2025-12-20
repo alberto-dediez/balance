@@ -9,20 +9,32 @@ class AggregateRootIdTransformer implements DataTransformerInterface
     public function __construct(
         private string $class
     ) {
-        
+
     }
 
-    public function transform($rootId): string
+    public function transform($rootId): string|array
     {
         if (null === $rootId) {
             return '';
         }
 
-        return (string) $rootId;
+        return is_array($rootId) ? array_map(function ($id) { return (string) $id; }, $rootId) : (string) $rootId;
     }
 
     public function reverseTransform($value): mixed
     {
-        return (null == $value || empty($value)) ? null : new ($this->class)($value);
+        if (is_array($value) && count($value) === 0) {
+            return [];
+        }
+
+        if (null === $value || empty($value)) {
+            return null;
+        }
+
+        if (!is_array($value)) {
+            return new ($this->class)($value);
+        }
+
+        return array_map(function ($id) { return new ($this->class)($id); }, $value);
     }
 }

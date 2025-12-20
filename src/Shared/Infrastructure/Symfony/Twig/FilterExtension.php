@@ -32,7 +32,7 @@ class FilterExtension extends AbstractExtension
     {
         return is_string($value) || (is_object($value) && method_exists($value, '__toString'));
     }
-    
+
     public function isOpen($filter)
     {
         $fields = $this->getShowFields($filter);
@@ -45,7 +45,8 @@ class FilterExtension extends AbstractExtension
         return (
             null !== $value && (
                 (is_string($value) && strlen($value) > 0)
-                || !is_string($value)
+                || (is_array($value) && count($value) > 0)
+                || (!is_string($value) && !is_array($value))
             )
         );
     }
@@ -77,7 +78,7 @@ class FilterExtension extends AbstractExtension
         if (null == $fields || count($fields) == 0) {
             return $result;
         }
-        
+
         foreach ($fields as $field) {
             if (in_array($field, $ignoreFields)) {
                 continue;

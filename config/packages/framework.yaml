@@ -10,6 +10,10 @@ framework:
     #fragments: true
     serializer:
         name_converter: 'serializer.name_converter.camel_case_to_snake_case'
+    
+    router:
+        utf8: true
+        default_uri: '%env(BASE_URL)%'
 
 when@test:
     framework:
