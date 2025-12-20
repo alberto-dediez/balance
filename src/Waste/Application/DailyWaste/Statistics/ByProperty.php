@@ -10,8 +10,9 @@ class ByProperty
         public Property $property,
         public float $load,
         public float $percentage,
+        /** @var ByMonth[] */
+        public array $months = []
     )
     {
-        
     }
 }

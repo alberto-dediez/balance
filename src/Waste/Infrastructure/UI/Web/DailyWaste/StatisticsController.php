@@ -22,16 +22,16 @@ class StatisticsController extends AbstractController
     public function __invoke(
         LoggedAccount $loggedAccount,
         LoggedUser $loggedUser,
-        StatisticsDailyWasteService $statisticsDailyWastes, 
+        StatisticsDailyWasteService $statisticsDailyWastes,
         Request $request
     ): Response
-    {   
+    {
         $account = $loggedAccount();
         $user = $loggedUser();
 
         list($filter, $form) = $this->filter($request, function () use ($account) {
-            return  new StatisticsDailyWasteRequest(
-                dayFrom: new \DateTimeImmutable("NOW -1 MONTH"),
+            return new StatisticsDailyWasteRequest(
+                dayFrom: (new \DateTimeImmutable("NOW -11 MONTHS"))->modify('first day of this month'),
                 dayTo: new \DateTimeImmutable("NOW"),
                 accountId: $account?->id()
             );

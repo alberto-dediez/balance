@@ -20,7 +20,7 @@ class StatisticsDailyWasteResponseTest extends TestCase
 {
     protected function setUp(): void
     {
-        
+
     }
 
     public function testDates()
@@ -52,13 +52,14 @@ class StatisticsDailyWasteResponseTest extends TestCase
         );
 
         $sut = new StatisticsDailyWasteResponse(
+            byMonth: [],
             byDate: $byDates,
             byPurpose: [],
             byWaste: [],
             byWasteManager: [],
             byProperty: []
         );
-        
+
         $result = $sut->dates();
 
         $this->assertCount(4, $result);
@@ -92,13 +93,14 @@ class StatisticsDailyWasteResponseTest extends TestCase
         );
 
         $sut = new StatisticsDailyWasteResponse(
+            byMonth: [],
             byDate: [],
             byPurpose: $byPurpose,
             byWaste: [],
             byWasteManager: [],
             byProperty: []
         );
-        
+
         $result = $sut->purposes();
 
         $this->assertCount(3, $result);
@@ -127,13 +129,14 @@ class StatisticsDailyWasteResponseTest extends TestCase
         );
 
         $sut = new StatisticsDailyWasteResponse(
+            byMonth: [],
             byDate: [],
             byPurpose: [],
             byWaste: $byWaste,
             byWasteManager: [],
             byProperty: []
         );
-        
+
         $result = $sut->wastes();
 
         $this->assertCount(3, $result);
@@ -166,13 +169,14 @@ class StatisticsDailyWasteResponseTest extends TestCase
         );
 
         $sut = new StatisticsDailyWasteResponse(
+            byMonth: [],
             byDate: [],
             byPurpose: [],
             byWaste: [],
             byWasteManager: $byWasteManager,
             byProperty: []
         );
-        
+
         $result = $sut->wasteManagers();
 
         $this->assertCount(3, $result);
@@ -205,13 +209,14 @@ class StatisticsDailyWasteResponseTest extends TestCase
         );
 
         $sut = new StatisticsDailyWasteResponse(
+            byMonth: [],
             byDate: [],
             byPurpose: [],
             byWaste: [],
             byWasteManager: [],
             byProperty: $byProperty
         );
-        
+
         $result = $sut->properties();
 
         $this->assertCount(3, $result);

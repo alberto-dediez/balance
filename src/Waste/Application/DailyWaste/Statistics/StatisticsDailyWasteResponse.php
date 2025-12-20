@@ -9,7 +9,10 @@ use App\Waste\Domain\Model\WasteManager\WasteManager;
 
 class StatisticsDailyWasteResponse
 {
-    public function __construct(
+     public function __construct(
+        /** @var ByMonth[] */
+        public array $byMonth,
+
         /** @var ByDate[] */
         public array $byDate,
 
@@ -25,21 +28,32 @@ class StatisticsDailyWasteResponse
         /** @var ByProperty[] */
         public array $byProperty
     ) {
-        
+
     }
 
-    /** @var \DateTimeImmutable[] */
+    /** @return \DateTimeImmutable[] */
     public function dates(): array
     {
         return array_map(
             function (ByDate $element) {
                 return $element->date;
-            }, 
+            },
             $this->byDate
         );
     }
 
-    /** @var Purpose[] */
+    /** @return \DateTimeImmutable[] */
+    public function months(): array
+    {
+        return array_map(
+            function (ByMonth $element) {
+                return $element->month;
+            },
+            $this->byMonth
+        );
+    }
+
+    /** @return Purpose[] */
     public function purposes(): array
     {
         return array_map(function (ByPurpose $element) {
@@ -47,7 +61,7 @@ class StatisticsDailyWasteResponse
         }, $this->byPurpose);
     }
 
-    /** @var Waste[] */
+    /** @return Waste[] */
     public function wastes(): array
     {
         return array_map(function (ByWaste $element) {
@@ -55,7 +69,7 @@ class StatisticsDailyWasteResponse
         }, $this->byWaste);
     }
 
-    /** @var WasteManager[] */
+    /** @return WasteManager[] */
     public function wasteManagers(): array
     {
         return array_map(function (ByWasteManager $element) {
@@ -63,11 +77,29 @@ class StatisticsDailyWasteResponse
         }, $this->byWasteManager);
     }
 
-    /** @var Property[] */
+    /** @return Property[] */
     public function properties(): array
     {
         return array_map(function (ByProperty $element) {
             return $element->property;
         }, $this->byProperty);
+    }
+
+    /** @return float[][] */
+    public function byPropertyAndMonths(): array
+    {
+        $result = [];
+
+        if (0 === count($this->byProperty)) {
+            return $result;
+        }
+
+        foreach ($this->byProperty as $property) {
+            $result[] = array_map(function (ByMonth $byMonth) {
+                return $byMonth->load;
+            }, $property->months);
+        }
+
+        return $result;
     }
 }

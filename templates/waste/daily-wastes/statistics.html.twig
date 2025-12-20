@@ -19,7 +19,88 @@
     </twig:Card>
 
     <div class="row">
+        <div class="col-12 col-lg-3 d-grid">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="fs-4 mb-1 card-title text-muted">{% trans -%}Total residuos{%- endtrans %}</h4>
+                    <h2>{{ statistics.byPurpose | reduce((carry, value, key) => carry + value.load) }} <span class="fs-4">{{ 'kg' | trans({}, 'unit') }}</span></h2>
+                </div>
+            </div>
+        </div>
+
+        {% for purpose in statistics.byPurpose %}
+            <div class="col-12 col-lg-3 d-grid">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="fs-4 mb-1 card-title text-muted">{{ purpose.purpose.value | trans({}, 'purpose') }}</h4>
+                        <h2>{{ purpose.load }} <span class="fs-4">{{ 'kg' | trans({}, 'unit') }}</span></h2>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="row">
         <div class="col-12 col-lg-4 d-grid">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>{% trans %}Mes{% endtrans %}</th>
+                            <th>{% trans %}Residuos{% endtrans %}</th>
+                        </tr>
+                        {% for month in statistics.byMonth %}
+                            <tr>
+                                <td>{{ month.month | format_datetime(pattern="MMM y", locale=app.locale) | capitalize }}</td>
+                                <td>
+                                    {{ month.load | number_format(2) }} {% trans from 'unit' %}kg{% endtrans %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-8 d-grid">
+            <div class="card">
+                <div class="card-body">
+                    {% set colors = [
+                        "var(--bs-primary)",
+                    ] %}
+
+                    <h4 class="fs-4 mb-1 card-title">{% trans -%}Residuos generados{%- endtrans %}</h4>
+                    <twig:Chart:Line
+                        title="{{ 'Residuos generados' | trans }}"
+                        unit="kg"
+                        values="{{ statistics.byMonth | map(e => e.load) }}"
+                        categories="{{ statistics.byMonth | map(e => e.month | format_datetime(pattern="MMM y", locale=app.locale) | capitalize) }}"
+                        colors="{{ colors }}"
+                        dataLabels="0"
+                    ></twig:Chart:Line>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="fs-4 mb-1 card-title">{% trans -%}Residuo por propiedad{%- endtrans %}</h4>
+                    <twig:Chart:Line
+                        title="{{ 'Residuo por propiedad' | trans }}"
+                        unit="kg"
+                        series="{{ statistics.byProperty | map(e => {
+                            'name': e.property.name,
+                            'data': (e.months | map(f => f.load))
+                        }) }}"
+                        categories="{{ statistics.byMonth | map(e => e.month | format_datetime(pattern="MMM y", locale=app.locale) | capitalize) }}"
+                        dataLabels="0"
+                        legend="{{ (statistics.byProperty | length) < 11 }}"
+                    ></twig:Chart:Line>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 col-lg-8 d-grid">
             <div class="card">
                 <div class="card-body">
                     <h4 class="fs-4 mb-1 card-title">{% trans -%}Tipo de residuo{%- endtrans %}</h4>
@@ -35,29 +116,7 @@
             </div>
         </div>
 
-        <div class="col-12 col-lg-8 d-grid">
-            <div class="card">
-                <div class="card-body">
-                    {% set colors = [
-                        "var(--bs-primary)",
-                    ] %}
-
-                    <h4 class="fs-4 mb-1 card-title">{% trans -%}Residuos diarios{%- endtrans %}</h4>
-                    <twig:Chart:Line
-                        title="{{ 'Residuos diarios' | trans }}"
-                        unit="kg"
-                        values="{{ statistics.byDate | map(e => e.load) }}"
-                        categories="{{ statistics.byDate | map(e => e.date | date('d/m/Y')) }}"
-                        colors="{{ colors }}"
-                        dataLabels="1"
-                    ></twig:Chart:Line>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-12 col-lg-3 d-grid">
+        <div class="col-12 col-lg-4 d-grid">
             <div class="card">
                 <div class="card-body">
                     <h4 class="fs-4 mb-1 card-title">{% trans -%}Destino{%- endtrans %}</h4>
@@ -69,37 +128,6 @@
                         dataLabels="1"
                         legend="1"
                     ></twig:Chart:Donut>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-lg-3 d-grid">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="fs-4 mb-1 card-title">{% trans -%}Gestor de residuos{%- endtrans %}</h4>
-                    <twig:Chart:Donut
-                        title="{{ 'Porcentaje por gestor' | trans }}"
-                        unit="%"
-                        values="{{ statistics.byWasteManager | map(e => 100 * e.percentage) }}"
-                        categories="{{ statistics.byWasteManager | map(e => e.wasteManager.name) }}"
-                        dataLabels="1"
-                        legend="1"
-                    ></twig:Chart:Donut>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-lg-6 d-grid">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="fs-4 mb-1 card-title">{% trans -%}Propiedades{%- endtrans %}</h4>
-                    <twig:Chart:Bar
-                        title="{{ 'Residuo por propiedad' | trans }}"
-                        unit="kg"
-                        values="{{ statistics.byProperty | map(e => e.load) }}"
-                        categories="{{ statistics.byProperty | map(e => e.property.name) }}"
-                        dataLabels="1"
-                    ></twig:Chart:Bar>
                 </div>
             </div>
         </div>

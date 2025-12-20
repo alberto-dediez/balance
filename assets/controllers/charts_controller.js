@@ -113,7 +113,7 @@ export default class extends Controller {
                 },
                 y: {
                     title: {
-                        formatter: (title) => { 
+                        formatter: (title) => {
                             return title + ': ';
                         }
                     }

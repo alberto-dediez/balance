@@ -11,6 +11,8 @@ use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Waste\Application\DailyWaste\DailyWasteAuthorizer;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
 use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;
+use DatePeriod;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\iterator;
 
 class StatisticsDailyWasteService
 {
@@ -36,11 +38,12 @@ class StatisticsDailyWasteService
             $user
         );
 
-        $dailyWastes = $this->dailyWasteRepository->findByFilter($request);
+        $dailyWastes = $this->dailyWasteRepository->findByFilter($request->filter());
 
-        list($byDate, $byPurpose, $byWaste, $byWasteManager, $byProperty) = $this->calculateStatistics($dailyWastes);
+        list($byMonth, $byDate, $byPurpose, $byWaste, $byWasteManager, $byProperty) = $this->calculateStatistics($dailyWastes);
 
         return new StatisticsDailyWasteResponse(
+            byMonth: $byMonth,
             byDate: $byDate,
             byPurpose: $byPurpose,
             byWaste: $byWaste,
@@ -51,10 +54,11 @@ class StatisticsDailyWasteService
 
     private function calculateStatistics(array $dailyWastes)
     {
-        $byDate = $byPurpose = $byWaste = $byWasteManager = $byProperty = [];
+        $byMonth = $byDate = $byPurpose = $byWaste = $byWasteManager = $byProperty = [];
 
         if (count($dailyWastes) == 0) {
             return [
+                $byMonth,
                 $byDate,
                 $byPurpose,
                 $byWaste,
@@ -62,6 +66,18 @@ class StatisticsDailyWasteService
                 $byProperty
             ];
         }
+
+        $months = $this->getMonths($dailyWastes);
+
+        $byMonth = array_reduce($months, function ($result, \DateTimeImmutable $month) {
+           $result[$month->format('Ym')] = new ByMonth(
+               month: $month,
+               load: 0,
+               percentage: 0
+           );
+
+           return $result;
+        }, []);
 
         $total = 0;
 
@@ -76,6 +92,9 @@ class StatisticsDailyWasteService
 
             $total += $dailyWaste->load();
 
+            //ByMonth
+            $byMonth[$dailyWaste->day()->format('Ym')]->load += $dailyWaste->load();
+
             //ByDate
             if (!isset($byDate[$dailyWaste->day()->format('Ymd')])) {
                 $byDate[$dailyWaste->day()->format('Ymd')] = new ByDate($dailyWaste->day(), 0, 0);
@@ -85,10 +104,24 @@ class StatisticsDailyWasteService
 
             //ByProperty
             if (!isset($byProperty[(string) $dailyWaste->propertyId()])) {
-                $byProperty[(string) $dailyWaste->propertyId()] = new ByProperty($property, 0, 0);
+                $byProperty[(string) $dailyWaste->propertyId()] = new ByProperty(
+                    property: $property,
+                    load: 0,
+                    percentage: 0,
+                    months: array_reduce($months, function ($result, \DateTimeImmutable $month) {
+                        $result[$month->format('Ym')] = new ByMonth(
+                            month: $month,
+                            load: 0,
+                            percentage: 0
+                        );
+
+                        return $result;
+                    }, [])
+                );
             }
 
             $byProperty[(string) $dailyWaste->propertyId()]->load += $dailyWaste->load();
+            $byProperty[(string) $dailyWaste->propertyId()]->months[$dailyWaste->day()->format('Ym')]->load += $dailyWaste->load();
 
             //ByWaste
             if (!isset($byWaste[(string) $dailyWaste->wasteId()])) {
@@ -112,6 +145,15 @@ class StatisticsDailyWasteService
             $byPurpose[$dailyWaste->purpose()->value]->load += $dailyWaste->load();
         }
 
+        //ByMonth
+        array_walk($byMonth, function (ByMonth $byMonth) use ($total) {
+            $byMonth->percentage = $total == 0 ? 0 : $byMonth->load / $total;
+        });
+
+        usort($byMonth, function (ByMonth $byMonthA, ByMonth $byMonthB) {
+            return $byMonthA->month <=> $byMonthB->month;
+        });
+
         //ByDate
         array_walk($byDate, function (ByDate $byDate) use ($total) {
             $byDate->percentage = $total == 0 ? 0 : $byDate->load / $total;
@@ -124,6 +166,16 @@ class StatisticsDailyWasteService
         //ByProperty
         array_walk($byProperty, function (ByProperty $byProperty) use ($total) {
             $byProperty->percentage = $total == 0 ? 0 : $byProperty->load / $total;
+
+            $totalOfProperty = $byProperty->load;
+
+            array_walk($byProperty->months, function (ByMonth $byMonth) use ($totalOfProperty) {
+                $byMonth->percentage = $totalOfProperty == 0 ? 0 : $byMonth->load / $totalOfProperty;
+            });
+
+            usort($byProperty->months, function (ByMonth $byMonthA, ByMonth $byMonthB) {
+                return $byMonthA->month <=> $byMonthB->month;
+            });
         });
 
         usort($byProperty, function (ByProperty $byPropertyA, ByProperty $byPropertyB) {
@@ -154,11 +206,37 @@ class StatisticsDailyWasteService
         });
 
         return [
+            array_values($byMonth),
             array_values($byDate),
             array_values($byPurpose),
             array_values($byWaste),
             array_values($byWasteManager),
             array_values($byProperty)
         ];
+    }
+
+    /**
+     * @param DailyWaste[] $dailyWastes
+     * @return \DateTimeImmutable[]
+     */
+    private function getMonths(array $dailyWastes): array
+    {
+        $startDate = array_reduce($dailyWastes, function ($start, $dailyWaste) {
+            return (null === $start || $start > $dailyWaste->day()) ? $dailyWaste->day() : $start;
+        }, null);
+
+        $startDate = (new \DateTimeImmutable($startDate->format('Y-m-01')));
+
+        $endDate = array_reduce($dailyWastes, function ($start, $dailyWaste) {
+            return (null === $start || $start < $dailyWaste->day()) ? $dailyWaste->day() : $start;
+        }, null);
+
+        $endDate = (new \DateTimeImmutable($endDate->format('Y-m-t')));
+
+        return iterator_to_array(
+            new \DatePeriod(
+                $startDate, new \DateInterval('P1M'), $endDate
+            )
+        );
     }
 }
