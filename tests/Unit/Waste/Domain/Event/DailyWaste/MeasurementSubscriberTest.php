@@ -2,31 +2,36 @@
 
 namespace App\Tests\Unit\Waste\Domain\Event\DailyWaste;
 
+use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleRequest;
+use App\Shared\Application\CommandBus\CommandBusDispatcher;
+use App\Shared\Application\CommandBus\DeferredCommand;
+use App\Tests\Unit\Shared\Application\CommandBus\SluttyCommandHandler;
+use App\Waste\Application\DailyWaste\Calculate\CalculateDailyWasteRequest;
 use PHPUnit\Framework\TestCase;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Property\Domain\Model\Property\PropertyId;
-use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Property\Domain\Model\Property\PropertyRemoved;
-use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Waste\Domain\Model\Measurement\MeasurementRemoved;
 use App\Waste\Domain\Model\Measurement\MeasurementUpdated;
 use App\Waste\Domain\Event\DailyWaste\MeasurementSubscriber;
 use App\Waste\Domain\Model\Measurement\MeasurementRegistered;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
-use App\Waste\Domain\Event\Measurement\RemovePropertySubscriber;
-use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
-use App\Waste\Application\Measurement\Remove\RemoveMeasurementService;
 use App\Waste\Application\DailyWaste\Calculate\CalculateDailyWasteService;
 use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeLoggedUser;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
 
 class MeasurementSubscriberTest extends TestCase
 {
+    private SluttyCommandHandler $spyCommandBus;
+
     protected function setUp(): void
     {
         DomainEventPublisher::instance()->reset();
+        CommandBusDispatcher::instance()->reset();
+
+        $this->spyCommandBus = new SluttyCommandHandler();
     }
 
     public function isSubscribedToReturnsTrueIfMeasurementRemovedEventIsPassed()
@@ -88,15 +93,15 @@ class MeasurementSubscriberTest extends TestCase
             containerId: $measurement->containerId(),
             propertyId: $measurement->propertyId(),
             wasteId: $measurement->wasteId(),
-            purpose: $measurement->purpose(),
             measurementMethod: $measurement->measurementMethod(),
+            purpose: $measurement->purpose(),
             wasteManagerId: $measurement->wasteManagerId(),
+            registeredBy: $measurement->registeredBy(),
+            accountId: $measurement->accountId(),
+            day: $measurement->day(),
             quantity: $measurement->quantity(),
             load: $measurement->load(),
-            justification: $measurement->justification(),
-            accountId: $measurement->accountId(),
-            registeredBy: $measurement->registeredBy(),
-            day: $measurement->day()
+            justification: $measurement->justification()
         );
 
         $result = $sut->isSubscribedTo($event);
@@ -127,8 +132,7 @@ class MeasurementSubscriberTest extends TestCase
         $repository->add($measurement);
 
         $sut = $this->createSUT(
-            repository: $repository, 
-            calculateCalls: 1
+            repository: $repository
         );
 
         $event = new MeasurementRemoved(
@@ -143,7 +147,11 @@ class MeasurementSubscriberTest extends TestCase
 
         $sut->handle($event);
 
-        $this->assertTrue(true);
+        $commands = $this->spyCommandBus->commands();
+
+        $this->assertCount(1, $commands);
+        $this->assertTrue($commands[0]['command'] instanceof DeferredCommand);
+        $this->assertTrue($commands[0]['command']->command() instanceof CalculateDailyWasteRequest);
     }
 
     public function testHandleUpdate()
@@ -154,8 +162,7 @@ class MeasurementSubscriberTest extends TestCase
         $repository->add($measurement);
 
         $sut = $this->createSUT(
-            repository: $repository, 
-            calculateCalls: 1
+            repository: $repository
         );
 
         $event = new MeasurementUpdated(
@@ -167,7 +174,11 @@ class MeasurementSubscriberTest extends TestCase
 
         $sut->handle($event);
 
-        $this->assertTrue(true);
+        $commands = $this->spyCommandBus->commands();
+
+        $this->assertCount(1, $commands);
+        $this->assertTrue($commands[0]['command'] instanceof DeferredCommand);
+        $this->assertTrue($commands[0]['command']->command() instanceof CalculateDailyWasteRequest);
     }
 
     public function testHandleRegister()
@@ -178,8 +189,7 @@ class MeasurementSubscriberTest extends TestCase
         $repository->add($measurement);
 
         $sut = $this->createSUT(
-            repository: $repository, 
-            calculateCalls: 1
+            repository: $repository
         );
 
         $event = new MeasurementRegistered(
@@ -187,34 +197,32 @@ class MeasurementSubscriberTest extends TestCase
             containerId: $measurement->containerId(),
             propertyId: $measurement->propertyId(),
             wasteId: $measurement->wasteId(),
-            purpose: $measurement->purpose(),
             measurementMethod: $measurement->measurementMethod(),
+            purpose: $measurement->purpose(),
             wasteManagerId: $measurement->wasteManagerId(),
+            registeredBy: $measurement->registeredBy(),
+            accountId: $measurement->accountId(),
+            day: $measurement->day(),
             quantity: $measurement->quantity(),
             load: $measurement->load(),
-            justification: $measurement->justification(),
-            accountId: $measurement->accountId(),
-            registeredBy: $measurement->registeredBy(),
-            day: $measurement->day()
+            justification: $measurement->justification()
         );
 
         $sut->handle($event);
 
-        $this->assertTrue(true);
+        $commands = $this->spyCommandBus->commands();
+
+        $this->assertCount(1, $commands);
+        $this->assertTrue($commands[0]['command'] instanceof DeferredCommand);
+        $this->assertTrue($commands[0]['command']->command() instanceof CalculateDailyWasteRequest);
     }
 
-    private function createSUT(MeasurementRepository $repository, int $calculateCalls = 0)
+    private function createSUT(MeasurementRepository $repository)
     {
-        $calculateService = $this->createMock(CalculateDailyWasteService::class);
-        $calculateService->expects($this->exactly($calculateCalls))->method('__invoke');
-        
-        /** @var CalculateDailyWasteService $calculateService **/
-
         $loggedUser = new FakeLoggedUser(UserMother::random());
 
         return new MeasurementSubscriber(
             $repository,
-            $calculateService,
             $loggedUser
         );
     }

@@ -163,7 +163,7 @@ final class MeasurementRegistered extends DomainEvent
             day: isset($payload['day']) ? new \DateTimeImmutable($payload['day']): $occurredOn,
             quantity: $payload['quantity'],
             load: $payload['load'],
-            unit: isset($payload['unit']) && !empty($payload['unit']) ? $payload['unit'] : $guessedUnit,
+            unit: isset($payload['unit']) && !empty($payload['unit']) ? Unit::tryFrom($payload['unit']) : $guessedUnit,
             justification: $payload['justification'],
             reference: $payload['reference'],
             id: $id,
