@@ -63,6 +63,13 @@ doctrine:
                 prefix: 'App\DataExchange\Domain\Model'
                 alias: DataExchange
 
+            FoodLoss:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/FoodLoss/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\FoodLoss\Domain\Model'
+                alias: FoodLoss
+
         controller_resolver:
             auto_mapping: false
 

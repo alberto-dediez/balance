@@ -1,0 +1,13 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\FoodLoss\:
+        resource: '../../../'
+        exclude:
+            - '../../../Infrastructure/Symfony/DependencyInjection/'
+
+    App\FoodLoss\Infrastructure\UI\Console\:
+        resource: '../../../Infrastructure/UI/Console/'
+        tags: ['console.command']

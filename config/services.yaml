@@ -4,3 +4,4 @@ imports:
     - { resource: '../src/DataExchange/Infrastructure/Symfony/DependencyInjection/services.yaml' }
     - { resource: '../src/Waste/Infrastructure/Symfony/DependencyInjection/services.yaml' }
     - { resource: '../src/Property/Infrastructure/Symfony/DependencyInjection/services.yaml' }
+    - { resource: '../src/FoodLoss/Infrastructure/Symfony/DependencyInjection/services.yaml' }
