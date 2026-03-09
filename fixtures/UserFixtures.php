@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DataFixtures;
+namespace App\Fixtures;
 
 use Doctrine\Persistence\ObjectManager;
 use App\Security\Domain\Model\User\Role;

@@ -48,7 +48,7 @@ services:
       - path: ./.env.local
         required: false
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-hydra}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-food-loss}
       # You should definitely change the password in production
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-1234}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-123}
