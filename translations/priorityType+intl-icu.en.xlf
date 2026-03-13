@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="07zEwCE" resname="Prevention">
+        <source>Prevention</source>
+        <target>Prevention</target>
+      </trans-unit>
+      <trans-unit id="zpAkQiV" resname="Transformation">
+        <source>Transformation</source>
+        <target>Transformation</target>
+      </trans-unit>
+      <trans-unit id="dujaGye" resname="HumanDonation">
+        <source>HumanDonation</source>
+        <target>Human Donation</target>
+      </trans-unit>
+      <trans-unit id="zZUYY32" resname="AnimalFeed">
+        <source>AnimalFeed</source>
+        <target>Animal Feed</target>
+      </trans-unit>
+      <trans-unit id="kvP8Rc_" resname="Composting">
+        <source>Composting</source>
+        <target>Composting</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

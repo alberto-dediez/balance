@@ -14,6 +14,7 @@ doctrine:
             user_id: App\Security\Infrastructure\Persistence\Doctrine\Type\UserIdType
             account_id: App\Security\Infrastructure\Persistence\Doctrine\Type\AccountIdType
             recorded_event_id: App\Security\Infrastructure\Persistence\Doctrine\Type\RecordedEventIdType
+            action_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ActionIdType
             country_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CountryIdType
             destination_id: App\Property\Infrastructure\Persistence\Doctrine\Type\DestinationIdType
             property_id: App\Property\Infrastructure\Persistence\Doctrine\Type\PropertyIdType

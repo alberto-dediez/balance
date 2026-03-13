@@ -77,6 +77,18 @@ class NodeLister
             ]
         );
 
+        $nodes [] = new Node(
+            label: new TranslatableMessage("Puntos críticos"),
+            icon: "solar:map-point-wave-bold-duotone",
+            items: [
+                new Node(
+                    label: new TranslatableMessage("Acciones"),
+                    icon: "solar:bolt-linear",
+                    target: $this->router->generate('admin_actions')
+                )
+            ]
+        );
+
         $nodes [] =  new Node(
             label: new TranslatableMessage("Administración"),
             icon: "solar:shield-user-line-duotone",
