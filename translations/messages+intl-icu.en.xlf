@@ -1363,7 +1363,7 @@
       </trans-unit>
       <trans-unit id="240TF6R" resname="Puntos críticos">
         <source>Puntos críticos</source>
-        <target>Puntos críticos</target>
+        <target>Critial points</target>
       </trans-unit>
       <trans-unit id="PFvFnoX" resname="Descripción">
         <source>Descripción</source>
@@ -1403,7 +1403,7 @@
       </trans-unit>
       <trans-unit id="BD9F8EL" resname="Fecha de actualización">
         <source>Fecha de actualización</source>
-        <target>Date of update</target>
+        <target>Update date</target>
       </trans-unit>
     </body>
   </file>

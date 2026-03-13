@@ -17,11 +17,11 @@ class ListActionsType extends BaseFilterType
         $builder
             ->add('description', TextType::class, [
                 'label' => new TranslatableMessage('Descripción'),
-                'required' => true
+                'required' => false
             ])
             ->add('priority', PriorityType::class, [
                 'label' => new TranslatableMessage('Prioridad'),
-                'required' => true
+                'required' => false
             ])
         ;
 

@@ -15,11 +15,11 @@
       </trans-unit>
       <trans-unit id="dujaGye" resname="HumanDonation">
         <source>HumanDonation</source>
-        <target>HumanDonation</target>
+        <target>Human Donation</target>
       </trans-unit>
       <trans-unit id="zZUYY32" resname="AnimalFeed">
         <source>AnimalFeed</source>
-        <target>AnimalFeed</target>
+        <target>Animal Feed</target>
       </trans-unit>
       <trans-unit id="kvP8Rc_" resname="Composting">
         <source>Composting</source>
