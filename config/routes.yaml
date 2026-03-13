@@ -55,6 +55,17 @@ waste-api:
         _locale: '%app.locale_list%'
     defaults:
         _locale: '%app.locale_default%'
+    
+food-loss-web:
+    resource:
+        path: ../src/FoodLoss/Infrastructure/UI/Web/
+        namespace: App\FoodLoss\Infrastructure\UI\Web
+    type: attribute
+    prefix: /{_locale}
+    requirements:
+        _locale: '%app.locale_list%'
+    defaults:
+        _locale: '%app.locale_default%'
 
 property-web:
     resource:
