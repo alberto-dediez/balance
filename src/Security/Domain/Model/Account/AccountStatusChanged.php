@@ -13,8 +13,8 @@ final class AccountStatusChanged extends DomainEvent
     protected static string $eventName = 'accountStatusChanged';
 
     public function __construct(
-        private AccountId $accountId, 
-        private bool $active, 
+        private AccountId $accountId,
+        private bool $active,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -26,7 +26,7 @@ final class AccountStatusChanged extends DomainEvent
         return $this->accountId;
     }
 
-    public function active(): string
+    public function active(): bool
     {
         return $this->active;
     }
@@ -50,7 +50,7 @@ final class AccountStatusChanged extends DomainEvent
         ?array $payload
     ): static {
         return new AccountStatusChanged(
-            accountId: new AccountId($payload['accountId']), 
+            accountId: new AccountId($payload['accountId']),
             active: $payload['active'],
             id: $id,
             occurredOn: $occurredOn

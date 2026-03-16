@@ -18,7 +18,7 @@ class DomainEventPublisherTest extends TestCase
         DomainEventPublisher::instance()->reset();
 
         $this->spySubscriber = new SpyDomainEventSubscriber();
-        $this->veryPickySubscriber = new VeryPickyDomainEventSubscriber();      
+        $this->veryPickySubscriber = new VeryPickyDomainEventSubscriber();
     }
 
     public function testPublishSendMessageToAllSubscribersWhoIsSubscribedToThatMessage()
@@ -26,8 +26,8 @@ class DomainEventPublisherTest extends TestCase
         $publisher = DomainEventPublisher::instance();
 
         $this->assertCount(0, $this->spySubscriber->events());
-        $this->assertCount(0, $this->veryPickySubscriber->events());  
-        
+        $this->assertCount(0, $this->veryPickySubscriber->events());
+
         $publisher->publish(new FakeEvent());
 
         $this->assertCount(1, $this->spySubscriber->events());
@@ -50,7 +50,7 @@ class DomainEventPublisherTest extends TestCase
     }
 }
 
-class FakeEvent extends DomainEvent
+final class FakeEvent extends DomainEvent
 {
     public function payload(): ?array
     {
