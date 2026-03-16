@@ -19,6 +19,7 @@ class BulkType extends AbstractType
         $builder
             ->add('elements', ChoiceType::class, [
                 'required' => false,
+                'label' => false,
                 'multiple' => true,
                 'expanded' => true,
                 'choices' => $options['elements'],
