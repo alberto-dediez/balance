@@ -8,6 +8,7 @@ use App\Security\Infrastructure\Persistence\Doctrine\Repository\DoctrineAccountR
 use App\Security\Infrastructure\Persistence\Doctrine\Repository\DoctrineUserRepository;
 use App\Tests\Unit\Security\Domain\Model\User\UserRepositoryTest;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class DoctrineUserRepositoryTest extends UserRepositoryTest
 {
@@ -20,7 +21,7 @@ class DoctrineUserRepositoryTest extends UserRepositoryTest
             return null !== $id ? new Account($id) : null;
         });
 
-        /** @var DoctrineAccountRepository $accountRepository */
+        /** @var DoctrineAccountRepository&MockObject $accountRepository */
 
         return new DoctrineUserRepository($manager, $accountRepository);
     }

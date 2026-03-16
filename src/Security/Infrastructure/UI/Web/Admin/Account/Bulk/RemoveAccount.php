@@ -43,11 +43,15 @@ class RemoveAccount implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
+        assert($command instanceof RemoveAccountRequest);
+
         return new TranslatableMessage("Se ha eliminado la cuenta {id}", ['{id}' => $command->accountId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
+        assert($command instanceof RemoveAccountRequest);
+
         return new TranslatableMessage("No se ha podido eliminar la cuenta {id}", ['{id}' => $command->accountId]);
     }
 }

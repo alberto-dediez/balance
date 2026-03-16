@@ -40,14 +40,18 @@ class RemoveUser implements BulkAction
 
         return $commands;
     }
-    
+
     public function success(Command $command): TranslatableMessage
     {
+        assert($command instanceof RemoveUserRequest);
+
         return new TranslatableMessage("Se ha eliminado el usuario {id}", ['{id}' => $command->userId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
+        assert($command instanceof RemoveUserRequest);
+
         return new TranslatableMessage("No se ha podido eliminar el usuario {id}", ['{id}' => $command->userId]);
     }
 }

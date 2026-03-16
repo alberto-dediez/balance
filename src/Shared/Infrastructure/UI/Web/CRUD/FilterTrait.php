@@ -2,6 +2,7 @@
 
 namespace App\Shared\Infrastructure\UI\Web\CRUD;
 
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 
 trait FilterTrait
@@ -16,10 +17,12 @@ trait FilterTrait
         if ($session->has($key)) {
             $filter = $session->get($key);
         } else {
-            $filter = $createFilter();    
-        }        
+            $filter = $createFilter();
+        }
 
         $form = $this->createForm($formClass, $filter);
+
+        assert($form instanceof Form);
 
         $form->handleRequest($request);
 
@@ -32,7 +35,7 @@ trait FilterTrait
                 $form = $this->createForm($formClass, $filter);
             }
 
-            $session->set($key, $filter);      
+            $session->set($key, $filter);
         }
 
         return [$filter, $form];

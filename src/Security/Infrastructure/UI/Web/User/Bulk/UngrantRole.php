@@ -49,11 +49,15 @@ class UngrantRole implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
+        assert($command instanceof UngrantRoleRequest);
+
         return new TranslatableMessage("Se ha eliminado el rol seleccionado al usuario {id}", ['{id}' => $command->userId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
+        assert($command instanceof UngrantRoleRequest);
+
         return new TranslatableMessage("No se ha podido eliminar el rol seleccionado al usuario {id}", ['{id}' => $command->userId]);
     }
 }

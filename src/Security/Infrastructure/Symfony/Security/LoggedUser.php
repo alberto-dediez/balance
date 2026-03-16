@@ -12,7 +12,7 @@ class LoggedUser
 
     public function __construct(private Security $security, private UserRepository $userRepository)
     {
-        
+
     }
 
     public function __invoke(): ?User
@@ -21,10 +21,10 @@ class LoggedUser
             $this->loadUser();
         }
 
-        return $this->user;   
+        return $this->user;
     }
 
-    private function loadUser()
+    private function loadUser(): void
     {
         $user = $this->security->getUser();
 
@@ -32,7 +32,7 @@ class LoggedUser
             return ;
         }
 
-        /** @var User $user */
+        /** @var SecurityUser $user */
 
         $this->user = $this->userRepository->find($user->id());
     }

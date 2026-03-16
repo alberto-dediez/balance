@@ -114,7 +114,7 @@ class FilterExtension extends AbstractExtension
             return new TranslatableMessage($value->value, [], 'roles');
         }
 
-        if ($value instanceof \UnitEnum) {
+        if ($value instanceof \BackedEnum) {
             return $value->value;
         }
 

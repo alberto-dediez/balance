@@ -2,6 +2,7 @@
 
 namespace App\Security\Infrastructure\UI\Web\User\Bulk;
 
+use App\Security\Application\User\Remove\RemoveUserRequest;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkAction;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
@@ -49,11 +50,15 @@ class GrantRole implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
+        assert($command instanceof GrantRoleRequest);
+
         return new TranslatableMessage("Se ha añadido el rol seleccionado al usuario {id}", ['{id}' => $command->userId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
+        assert($command instanceof GrantRoleRequest);
+
         return new TranslatableMessage("No se ha podido añadir el rol seleccionado al usuario {id}", ['{id}' => $command->userId]);
     }
 }

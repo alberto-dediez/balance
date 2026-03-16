@@ -25,7 +25,7 @@ class LoggedAccount
 
         $user = $this->security->getUser();
 
-        if (null == $user || null == $user->accountId()) {
+        if (!$user instanceof SecurityUser || null === $user->accountId()) {
             return ;
         }
 

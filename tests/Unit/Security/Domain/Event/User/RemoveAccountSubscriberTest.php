@@ -13,6 +13,7 @@ use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeLoggedUser;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class RemoveAccountSubscriberTest extends TestCase
@@ -90,7 +91,7 @@ class RemoveAccountSubscriberTest extends TestCase
         $removeUser = $this->createMock(RemoveUserService::class);
         $removeUser->expects($this->exactly($usersToRemoved))->method('__invoke');
 
-        /** @var RemoveUserService $removeUser */
+        /** @var RemoveUserService&MockObject $removeUser */
 
         return new RemoveAccountSubscriber(
             $repository,
