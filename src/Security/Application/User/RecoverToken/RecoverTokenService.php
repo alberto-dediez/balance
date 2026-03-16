@@ -2,6 +2,7 @@
 
 namespace App\Security\Application\User\RecoverToken;
 
+use App\Security\Domain\Model\User\User;
 use InvalidArgumentException;
 use App\Shared\Application\CommandBus\Command;
 use App\Security\Domain\Model\User\UserRepository;
@@ -18,7 +19,7 @@ class RecoverTokenService implements CommandHandler
 
     }
 
-    public function __invoke(RecoverTokenRequest $request): null
+    public function __invoke(RecoverTokenRequest $request, ?User $user = null): null
     {
         $user = $this->repository->findByUsername($request->username);
 

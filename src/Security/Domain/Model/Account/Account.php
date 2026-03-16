@@ -20,7 +20,7 @@ class Account
         protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         protected ?\DateTimeImmutable $removedAt = null
     ) {
-
+        $this->events = $events;
     }
 
     public function id(): AccountId

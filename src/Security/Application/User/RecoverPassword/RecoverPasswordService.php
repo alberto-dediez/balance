@@ -2,6 +2,7 @@
 
 namespace App\Security\Application\User\RecoverPassword;
 
+use App\Security\Domain\Model\User\User;
 use InvalidArgumentException;
 use App\Shared\Application\CommandBus\Command;
 use App\Security\Domain\Model\User\UserRepository;
@@ -19,25 +20,25 @@ class RecoverPasswordService implements CommandHandler
 
     }
 
-    public function __invoke(RecoverPasswordRequest $request): RecoverPasswordResponse
+    public function __invoke(RecoverPasswordRequest $request, ?User $user = null): RecoverPasswordResponse
     {
         $user = $this->repository->findByRecoverToken($request->token);
 
-        if (null == $user) {
+        if (null === $user) {
             throw new InvalidArgumentException("User not found");
         }
 
         $hashedPassword = $this->passwordHasher->hashPassword($request->password);
 
         $user->recoverPassword($request->token, $hashedPassword);
-        
+
         $this->repository->add($user);
 
         return new RecoverPasswordResponse(
             userId: $user->id()
         );
     }
-    
+
     public function isHandled(Command $command): bool
     {
         return $command instanceof RecoverPasswordRequest;

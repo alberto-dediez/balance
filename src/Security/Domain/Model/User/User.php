@@ -29,7 +29,7 @@ class User
         protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         protected ?\DateTimeImmutable $removedAt = null
     ) {
-
+        $this->events = $events;
     }
 
     public function __toString(): string

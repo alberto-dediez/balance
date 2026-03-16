@@ -28,7 +28,7 @@ class UserExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            
+
         ];
     }
 
@@ -39,7 +39,7 @@ class UserExtension extends AbstractExtension
 
     public function userName(UserId $userId): string|TranslatableMessage
     {
-        if (!isset($users[(string) $userId])) {
+        if (!isset($this->users[(string) $userId])) {
             $user = $this->userRepository->find($userId);
 
             $username = null == $user ? new TranslatableMessage('<s>{userId}</s>', ['{userId}' => (string) $userId]) : (string) $user;

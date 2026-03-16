@@ -28,7 +28,7 @@ class AccountExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            
+
         ];
     }
 
@@ -39,10 +39,10 @@ class AccountExtension extends AbstractExtension
 
     public function accountName(AccountId $accountId): ?Account
     {
-        if (!isset($accounts[(string) $accountId])) {
-            $accounts[(string) $accountId] = $this->accountRepository->find($accountId);
+        if (!isset($this->accounts[(string) $accountId])) {
+            $this->accounts[(string) $accountId] = $this->accountRepository->find($accountId);
         }
 
-        return $accounts[(string) $accountId];
+        return $this->accounts[(string) $accountId];
     }
 }

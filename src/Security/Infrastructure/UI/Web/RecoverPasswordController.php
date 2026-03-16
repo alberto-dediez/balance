@@ -61,7 +61,7 @@ class RecoverPasswordController extends AbstractController
         $form = $this->createFormBuilder()
             ->add('password', RepeatedType::class, [
                 'first_options'  => [
-                    'label' => new TranslatableMessage('Contraseña'), 
+                    'label' => new TranslatableMessage('Contraseña'),
                 ],
                 'second_options' => [
                     'label' => new TranslatableMessage('Repetir Contraseña')
@@ -81,7 +81,7 @@ class RecoverPasswordController extends AbstractController
                     new RecoverPasswordRequest(
                         token: new RecoverToken($token),
                         password: $form->get('password')->getData()
-                    )
+                    ),
                 );
             } catch (\InvalidArgumentException $exception) {
                 return $this->render('@security/password/error.html.twig');
