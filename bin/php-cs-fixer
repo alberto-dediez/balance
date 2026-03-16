@@ -1,0 +1,32 @@
+#!/usr/bin/env php
+<?php
+
+$autoloaders = [
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/../../../vendor/autoload.php',
+];
+
+foreach ($autoloaders as $autoloader) {
+    if (file_exists($autoloader)) {
+        require_once $autoloader;
+        break;
+    }
+}
+
+$csFixerBin = __DIR__ . '/../vendor/bin/php-cs-fixer';
+
+if (!file_exists($csFixerBin)) {
+    echo "Error: PHP-CS-Fixer no está instalado. Ejecuta: composer require --dev friendsofphp/php-cs-fixer" . PHP_EOL;
+    exit(1);
+}
+
+$args = array_slice($argv, 1);
+$command = [PHP_BINARY, $csFixerBin, ...$args];
+
+if (function_exists('pcntl_exec')) {
+    pcntl_exec(PHP_BINARY, [$csFixerBin, ...$args]);
+} else {
+    $escapedArgs = implode(' ', array_map('escapeshellarg', $args));
+    passthru(PHP_BINARY . " $csFixerBin $escapedArgs", $exitCode);
+    exit($exitCode);
+}

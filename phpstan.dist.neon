@@ -1,0 +1,17 @@
+parameters:
+    level: 0
+    paths:
+        - src/
+        - tests/
+    symfony:
+        # You have to provide a path to srcDevDebugProjectContainer.xml or similar XML file describing your container.
+        containerXmlPath: var/cache/dev/App_Shared_Infrastructure_Symfony_KernelDevDebugContainer.xml
+    # If you're using PHP config files for Symfony 5.3+, you also need this for auto-loading of `Symfony\Config`:
+    scanDirectories:
+        - var/cache/dev/Symfony/Config
+    # If you're using PHP config files (including the ones under packages/*.php) for Symfony 5.3+,
+    # you need this to load the helper functions (i.e. service(), env()):
+    scanFiles:
+        - vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php
+    doctrine:
+        objectManagerLoader: tests/object-manager.php

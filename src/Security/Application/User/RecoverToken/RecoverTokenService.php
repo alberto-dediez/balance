@@ -12,13 +12,13 @@ use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 class RecoverTokenService implements CommandHandler
 {
     use RegisterHandlerTrait, CommandInvokeHandlerTrait;
-    
+
     public function __construct(private UserRepository $repository)
     {
 
     }
 
-    public function __invoke(RecoverTokenRequest $request): void
+    public function __invoke(RecoverTokenRequest $request): null
     {
         $user = $this->repository->findByUsername($request->username);
 
@@ -27,10 +27,12 @@ class RecoverTokenService implements CommandHandler
         }
 
         $user->initPasswordRecovery();
-        
+
         $this->repository->add($user);
+
+        return null;
     }
-    
+
     public function isHandled(Command $command): bool
     {
         return $command instanceof RecoverTokenRequest;

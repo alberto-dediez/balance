@@ -8,7 +8,7 @@ class RecoverToken
 {
     private const EXPIRATION_CALCULATOR = 'NOW +1 HOUR';
 
-    public function __construct(private string $token, private ?\DateTimeImmutable $expirateAt = null)
+    public function __construct(private ?string $token, private ?\DateTimeImmutable $expirateAt = null)
     {
 
     }

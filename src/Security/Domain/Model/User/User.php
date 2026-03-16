@@ -26,7 +26,7 @@ class User
         protected RecoverToken|null $recoverToken = null,
         array $events = [],
         protected bool $removed = false,
-        protected ?\DateTimeImmutable $registeredAt = null,
+        protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         protected ?\DateTimeImmutable $removedAt = null
     ) {
 

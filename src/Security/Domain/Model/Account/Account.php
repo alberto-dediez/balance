@@ -17,7 +17,7 @@ class Account
         protected bool $active = false,
         protected bool $removed = false,
         array $events = [],
-        protected ?\DateTimeImmutable $registeredAt = null,
+        protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         protected ?\DateTimeImmutable $removedAt = null
     ) {
 
@@ -40,7 +40,7 @@ class Account
 
     public function isRemoved(): bool
     {
-        return $this->removed;
+        return true == $this->removed;
     }
 
     public function registeredAt(): \DateTimeImmutable
