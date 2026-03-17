@@ -22,11 +22,9 @@ use Symfony\Component\HttpKernel\KernelInterface;
  */
 final class MailContext implements Context
 {
-    private AcceptanceClient $client;
-
-    public function __construct(KernelBrowser $client, private KernelInterface $kernel)
+    public function __construct(private KernelInterface $kernel)
     {
-        $this->client = AcceptanceClient::instance($client);
+
     }
 
     #[BeforeScenario]

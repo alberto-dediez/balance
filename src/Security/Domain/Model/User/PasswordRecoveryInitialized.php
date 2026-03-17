@@ -14,7 +14,7 @@ final class PasswordRecoveryInitialized extends DomainEvent
     protected static string $eventName = 'passwordRecoveryInitialized';
 
     public function __construct(
-        private UserId $userId, 
+        private UserId $userId,
         private string $username,
         private RecoverToken $token,
         ?DomainEventId $id = null,
@@ -38,12 +38,12 @@ final class PasswordRecoveryInitialized extends DomainEvent
         return $this->token;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
         return $this->userId();
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'userId' => (string) $this->userId,

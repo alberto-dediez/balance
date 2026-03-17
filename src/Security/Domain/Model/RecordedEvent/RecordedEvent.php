@@ -65,7 +65,7 @@ class RecordedEvent
         return $this->context;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return $this->payload;
     }

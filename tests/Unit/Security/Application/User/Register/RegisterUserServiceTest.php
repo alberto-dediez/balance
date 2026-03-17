@@ -44,14 +44,12 @@ class RegisterUserServiceTest extends TestCase
         $result = $sut($request, $performBy);
 
         $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterUserResponse);
         $this->assertNotEmpty((string) $result->userId);
         $this->assertEquals(36, strlen((string) $result->userId));
 
         $userPersisted = $repository->find($result->userId);
 
         $this->assertNotNull($userPersisted);
-        $this->assertTrue($userPersisted instanceof User);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -77,14 +75,12 @@ class RegisterUserServiceTest extends TestCase
         $result = $sut($request, $performBy);
 
         $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterUserResponse);
         $this->assertNotEmpty((string) $result->userId);
         $this->assertEquals(36, strlen((string) $result->userId));
 
         $userPersisted = $repository->find($result->userId);
 
         $this->assertNotNull($userPersisted);
-        $this->assertTrue($userPersisted instanceof User);
         $this->assertNotEquals($request->password, $userPersisted->password());
     }
 

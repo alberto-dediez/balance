@@ -48,14 +48,12 @@ class UngrantRoleServiceTest extends TestCase
         $result = $sut($request, $performBy);
 
         $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UngrantRoleResponse);
         $this->assertTrue($user->id()->equals($result->userId));
         $this->assertCount(1, $result->roles);
 
         $userPersisted = $repository->find($result->userId);
 
         $this->assertNotNull($userPersisted);
-        $this->assertTrue($userPersisted instanceof User);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -84,14 +82,12 @@ class UngrantRoleServiceTest extends TestCase
         $result = $sut($request, $owner);
 
         $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UngrantRoleResponse);
         $this->assertTrue($user->id()->equals($result->userId));
         $this->assertCount(1, $result->roles);
 
         $userPersisted = $repository->find($result->userId);
 
         $this->assertNotNull($userPersisted);
-        $this->assertTrue($userPersisted instanceof User);
         $this->assertCount(1, $userPersisted->roles());
 
         $lastEvent = $this->spySubscriber->lastEvent();

@@ -31,9 +31,7 @@ final class SecurityContext implements Context
     #[AfterScenario]
     public function after(AfterScenarioScope $scope)
     {
-        if (null !== $this->client){
-            $this->client->reset();
-        }
+        $this->client->reset();
     }
 
     private function getUserRepository(): UserRepository
@@ -50,15 +48,15 @@ final class SecurityContext implements Context
     public function userWithRoleExists($username, $role): void
     {
         $user = UserMother::fromUsernameAndRole($username, Role::tryFrom($role));
-        
-        $this->getUserRepository()->add($user);      
+
+        $this->getUserRepository()->add($user);
     }
 
     #[Given('user :username with id :id exists')]
     public function userWithIdExists($username, $id): void
     {
         $user = UserMother::fromUsernameAndRoleAndId($username, Role::User, new UserId($id));
-        
+
         $this->getUserRepository()->add($user);
     }
 
@@ -66,49 +64,49 @@ final class SecurityContext implements Context
     public function accountWithIdExists($username, $id): void
     {
         $account = AccountMother::fromNameAndId($username, $id);
-        
-        $this->getAccountRepository()->add($account);      
-    }    
+
+        $this->getAccountRepository()->add($account);
+    }
 
     #[Given('user :username with role :role of account :account exists')]
     public function userWithRoleOfAccountExists($username, $role, $account): void
     {
         $user = UserMother::fromUsernameAndRoleAndAccount($username, Role::tryFrom($role), new AccountId($account));
-        
-        $this->getUserRepository()->add($user);      
+
+        $this->getUserRepository()->add($user);
     }
 
     #[Given('user :username with id :id of account :account exists')]
     public function userWithIdOfAccountExists($username, $id, $account): void
     {
         $user = UserMother::from(
-            username: $username, 
-            role: Role::User, 
+            username: $username,
+            role: Role::User,
             userId: new UserId($id),
             accountId: new AccountId($account)
         );
-        
-        $this->getUserRepository()->add($user);      
+
+        $this->getUserRepository()->add($user);
     }
 
     #[Given('user :username with role :role with id :id of account :account exists')]
     public function userWithRoleWithIdOfAccountExists($username, $id, $role, $account): void
     {
         $user = UserMother::from(
-            username: $username, 
-            role: Role::tryFrom($role), 
+            username: $username,
+            role: Role::tryFrom($role),
             userId: new UserId($id),
             accountId: new AccountId($account)
         );
-        
-        $this->getUserRepository()->add($user);      
+
+        $this->getUserRepository()->add($user);
     }
 
     #[Given('user :username with recover token :token exists')]
     public function userWithRecoverTokenExists($username, $token): void
     {
         $user = UserMother::fromUsernameAndRecoverToken($username, $token);
-        
+
         $this->getUserRepository()->add($user);
     }
 }

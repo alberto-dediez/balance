@@ -49,12 +49,10 @@ class UpdateAccountServiceTest extends TestCase
         $result = $sut($request, $user);
 
         $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateAccountResponse);
 
         $accountPersisted = $repository->find($result->accountId);
 
         $this->assertNotNull($accountPersisted);
-        $this->assertTrue($accountPersisted instanceof Account);
 
         $events = $this->spySubscriber->events();
 
@@ -88,12 +86,10 @@ class UpdateAccountServiceTest extends TestCase
         $result = $sut($request, $user);
 
         $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateAccountResponse);
 
         $accountPersisted = $repository->find($result->accountId);
 
         $this->assertNotNull($accountPersisted);
-        $this->assertTrue($accountPersisted instanceof Account);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -124,12 +120,10 @@ class UpdateAccountServiceTest extends TestCase
         $result = $sut($request, $user);
 
         $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateAccountResponse);
 
         $accountPersisted = $repository->find($result->accountId);
 
         $this->assertNotNull($accountPersisted);
-        $this->assertTrue($accountPersisted instanceof Account);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

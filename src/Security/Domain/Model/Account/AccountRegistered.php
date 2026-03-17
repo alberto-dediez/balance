@@ -13,8 +13,8 @@ final class AccountRegistered extends DomainEvent
     protected static string $eventName = 'accountRegistered';
 
     public function __construct(
-        private AccountId $accountId, 
-        private string $name, 
+        private AccountId $accountId,
+        private string $name,
         private bool $active,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
@@ -37,12 +37,12 @@ final class AccountRegistered extends DomainEvent
         return $this->active;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
         return $this->accountId();
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'accountId' => (string) $this->accountId,
@@ -57,7 +57,7 @@ final class AccountRegistered extends DomainEvent
         ?array $payload
     ): static {
         return new AccountRegistered(
-            accountId: new AccountId($payload['accountId']), 
+            accountId: new AccountId($payload['accountId']),
             name: $payload['name'],
             active: $payload['active'],
             id: $id,

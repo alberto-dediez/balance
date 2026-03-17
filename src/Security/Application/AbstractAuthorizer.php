@@ -23,7 +23,6 @@ abstract class AbstractAuthorizer implements Authorizer
             Action::Autocomplete => $this->canAutocomplete($subject, $user),
             Action::Import => $this->canImport($subject, $user),
             Action::Export => $this->canExport($subject, $user),
-            default => throw new \LogicException('Esta acción no está definida')
         };
     }
 

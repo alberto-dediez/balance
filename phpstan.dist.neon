@@ -1,5 +1,5 @@
 parameters:
-    level: 3
+    level: 4
     paths:
         - src/
         - tests/
@@ -15,3 +15,8 @@ parameters:
         - vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php
     doctrine:
         objectManagerLoader: tests/object-manager.php
+    ignoreErrors:
+        -
+            message: '#Trait App\\Shared\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineTranslatableRepositoryTrait is used zero times and is not analysed\.#'
+        -
+            message: '#Trait App\\Security\\Infrastructure\\UI\\Web\\User\\OnlyUsersFromAccountTrait is used zero times and is not analysed\.#'

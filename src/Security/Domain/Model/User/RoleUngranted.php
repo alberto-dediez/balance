@@ -14,8 +14,8 @@ final class RoleUngranted extends DomainEvent
     protected static string $eventName = 'roleUngranted';
 
     public function __construct(
-        private UserId $userId, 
-        private Role $role, 
+        private UserId $userId,
+        private Role $role,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -32,12 +32,12 @@ final class RoleUngranted extends DomainEvent
         return $this->role;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
         return $this->userId();
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'userId' => (string) $this->userId,
@@ -51,7 +51,7 @@ final class RoleUngranted extends DomainEvent
         ?array $payload
     ): static {
         return new RoleUngranted(
-            userId: new UserId($payload['userId']), 
+            userId: new UserId($payload['userId']),
             role: Role::tryFrom($payload['role']),
             id: $id,
             occurredOn: $occurredOn

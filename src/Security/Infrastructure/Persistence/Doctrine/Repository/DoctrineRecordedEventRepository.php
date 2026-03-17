@@ -17,11 +17,9 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineRecordedEventRepository implements RecordedEventRepository
 {
-    private EntityRepository $repository;
-
     public function __construct(private EntityManagerInterface $manager)
     {
-        $this->repository = $manager->getRepository(RecordedEvent::class);
+
     }
 
     public function add(RecordedEvent $event): void

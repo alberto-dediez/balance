@@ -31,12 +31,12 @@ final class AccountStatusChanged extends DomainEvent
         return $this->active;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
         return $this->accountId();
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'accountId' => (string) $this->accountId,

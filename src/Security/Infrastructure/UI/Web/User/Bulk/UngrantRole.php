@@ -27,7 +27,7 @@ class UngrantRole implements BulkAction
             return [];
         }
 
-        if (!$request instanceof BulkUserRequest || null === $request->role) {
+        if (!$request instanceof BulkUserRequest) {
             throw new \RuntimeException("Invalid BulkRequest sent!");
         }
 

@@ -39,11 +39,7 @@ trait AggregateRoot
 
     public function rebuild()
     {
-        if (null !== $this->events) {
-            return ;
-        }
-
-        if (count($this->events) == 0) {
+        if (empty($this->events)) {
             return ;
         }
 

@@ -42,14 +42,12 @@ class RegisterAccountServiceTest extends TestCase
         $result = $sut($request, $user);
 
         $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterAccountResponse);
         $this->assertNotEmpty((string) $result->accountId);
         $this->assertEquals(36, strlen((string) $result->accountId));
 
         $accountPersisted = $repository->find($result->accountId);
 
         $this->assertNotNull($accountPersisted);
-        $this->assertTrue($accountPersisted instanceof Account);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

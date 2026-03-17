@@ -13,7 +13,7 @@ final class UserRemoved extends DomainEvent
     protected static string $eventName = 'userRemoved';
 
     public function __construct(
-        private UserId $userId, 
+        private UserId $userId,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -25,12 +25,12 @@ final class UserRemoved extends DomainEvent
         return $this->userId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
         return $this->userId();
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'userId' => (string) $this->userId

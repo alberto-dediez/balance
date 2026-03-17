@@ -14,8 +14,8 @@ final class UserRegistered extends DomainEvent
     protected static string $eventName = 'userRegistered';
 
     public function __construct(
-        private UserId $userId, 
-        private string $username, 
+        private UserId $userId,
+        private string $username,
         #[\SensitiveParameter]
         private string $password,
         private ?AccountId $accountId = null,
@@ -45,12 +45,12 @@ final class UserRegistered extends DomainEvent
         return $this->accountId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
         return $this->userId();
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'userId' => (string) $this->userId,
@@ -66,11 +66,11 @@ final class UserRegistered extends DomainEvent
         ?array $payload
     ): static {
         return new UserRegistered(
-            userId: new UserId($payload['userId']), 
+            userId: new UserId($payload['userId']),
             username: $payload['username'],
             password: $payload['password'],
             accountId: (isset($payload['accountId']) && !empty($payload['accountId']))
-                ? new AccountId($payload['accountId']) 
+                ? new AccountId($payload['accountId'])
                 : null,
             id: $id,
             occurredOn: $occurredOn

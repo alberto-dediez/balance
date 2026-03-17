@@ -12,9 +12,9 @@ class KernelRequestListener
 {
     public function __construct(
         #[AutowireIterator('domain.event.subscriber')]
-        private iterable $subscribers,
+        iterable $subscribers,
          #[AutowireIterator('application.command.handler')]
-        private iterable $handlers
+        iterable $handlers
     ) {
         foreach ($subscribers as $subscriber) {
             $subscriber->register();
@@ -27,7 +27,6 @@ class KernelRequestListener
 
     public function __invoke(RequestEvent $event): void
     {
-        $domainEventPublisher = DomainEventPublisher::instance()
-            ->lock(); 
+        DomainEventPublisher::instance()->lock();
     }
 }

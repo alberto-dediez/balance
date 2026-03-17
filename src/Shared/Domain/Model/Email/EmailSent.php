@@ -12,8 +12,8 @@ final class EmailSent extends DomainEvent
     protected static string $eventName = 'emailSended';
 
     public function __construct(
-        private EmailRecipient $recipient, 
-        private string $subject, 
+        private EmailRecipient $recipient,
+        private string $subject,
         private string $content,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
@@ -41,7 +41,7 @@ final class EmailSent extends DomainEvent
         return null;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'recipient' => $this->recipient,

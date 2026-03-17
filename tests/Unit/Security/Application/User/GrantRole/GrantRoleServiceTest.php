@@ -48,14 +48,12 @@ class GrantRoleServiceTest extends TestCase
         $result = $sut($request, $admin);
 
         $this->assertNotNull($result);
-        $this->assertTrue($result instanceof GrantRoleResponse);
         $this->assertTrue($user->id()->equals($result->userId));
         $this->assertCount(2, $result->roles);
 
         $userPersisted = $repository->find($result->userId);
 
         $this->assertNotNull($userPersisted);
-        $this->assertTrue($userPersisted instanceof User);
         $this->assertCount(2, $userPersisted->roles());
 
         $lastEvent = $this->spySubscriber->lastEvent();
@@ -85,14 +83,12 @@ class GrantRoleServiceTest extends TestCase
         $result = $sut($request, $owner);
 
         $this->assertNotNull($result);
-        $this->assertTrue($result instanceof GrantRoleResponse);
         $this->assertTrue($user->id()->equals($result->userId));
         $this->assertCount(2, $result->roles);
 
         $userPersisted = $repository->find($result->userId);
 
         $this->assertNotNull($userPersisted);
-        $this->assertTrue($userPersisted instanceof User);
         $this->assertCount(2, $userPersisted->roles());
 
         $lastEvent = $this->spySubscriber->lastEvent();

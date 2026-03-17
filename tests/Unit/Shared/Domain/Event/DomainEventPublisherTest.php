@@ -52,9 +52,9 @@ class DomainEventPublisherTest extends TestCase
 
 final class FakeEvent extends DomainEvent
 {
-    public function payload(): ?array
+    public function payload(): array
     {
-        return null;
+        return [];
     }
 
     public function aggregateRootId(): ?AggregateRootId

@@ -12,7 +12,7 @@ final class UserLogged extends InfrastructureEvent
     protected static string $eventName = 'userLogged';
 
     public function __construct(
-        private UserId $userId, 
+        private UserId $userId,
         private string $firewall,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
@@ -30,12 +30,12 @@ final class UserLogged extends InfrastructureEvent
         return $this->firewall;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
         return $this->userId();
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'userId' => (string) $this->userId,

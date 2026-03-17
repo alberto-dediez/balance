@@ -45,7 +45,6 @@ class ChangePasswordServiceTest extends TestCase
         $result = $sut($request, $user);
 
         $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ChangePasswordResponse);
         $this->assertTrue($user->id()->equals($result->userId));
 
         $lastEvent = $this->spySubscriber->lastEvent();
@@ -57,7 +56,6 @@ class ChangePasswordServiceTest extends TestCase
         $userPersisted = $repository->find($result->userId);
 
         $this->assertNotNull($userPersisted);
-        $this->assertTrue($userPersisted instanceof User);
         $this->assertNotEquals($request->password, $userPersisted->password());
     }
 

@@ -20,11 +20,9 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineUserRepository implements UserRepository
 {
-    private EntityRepository $repository;
-
     public function __construct(private EntityManagerInterface $manager, private DoctrineAccountRepository $accountRepository)
     {
-        $this->repository = $manager->getRepository(User::class);
+
     }
 
     public function add(User $user): void

@@ -17,15 +17,6 @@ use PHPUnit\Framework\TestCase;
 
 class RegisterRecordedEventServiceTest extends TestCase
 {
-    private $spySubscriber;
-
-    protected function setUp(): void
-    {
-        DomainEventPublisher::instance()->reset();
-
-        $this->spySubscriber = new SpyDomainEventSubscriber();
-    }
-
     public function testUseCase()
     {
         $repository = new InMemoryRecordedEventRepository();
@@ -42,14 +33,12 @@ class RegisterRecordedEventServiceTest extends TestCase
         $result = $sut($request, $performBy);
 
         $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterRecordedEventResponse);
         $this->assertNotEmpty((string) $result->recordedEventId);
         $this->assertEquals(36, strlen((string) $result->recordedEventId));
 
         $recordedEventPersisted = $repository->find($result->recordedEventId);
 
         $this->assertNotNull($recordedEventPersisted);
-        $this->assertTrue($recordedEventPersisted instanceof RecordedEvent);
     }
 
     public function testNoUserCanRecordEvents()
@@ -68,14 +57,12 @@ class RegisterRecordedEventServiceTest extends TestCase
         $result = $sut($request, $performBy);
 
         $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterRecordedEventResponse);
         $this->assertNotEmpty((string) $result->recordedEventId);
         $this->assertEquals(36, strlen((string) $result->recordedEventId));
 
         $recordedEventPersisted = $repository->find($result->recordedEventId);
 
         $this->assertNotNull($recordedEventPersisted);
-        $this->assertTrue($recordedEventPersisted instanceof RecordedEvent);
     }
 
     public function testIsHandle()

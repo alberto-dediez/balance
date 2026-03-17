@@ -11,7 +11,7 @@ final class FailureLoginAttempted extends InfrastructureEvent
     protected static string $eventName = 'failureLoginAttempted';
 
     public function __construct(
-        private string $username, 
+        private string $username,
         private string $firewall,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
@@ -34,7 +34,7 @@ final class FailureLoginAttempted extends InfrastructureEvent
         return null;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'username' => $this->username,

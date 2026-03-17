@@ -39,7 +39,7 @@ class RegisterController extends AbstractController
     {
         $this->denyAccessUnlessGranted(Role::Admin->value);
 
-        $accountId = (null === $request->accountId || empty($request->accountId))
+        $accountId = empty($request->accountId)
             ? null
             : new AccountId($request->accountId)
         ;

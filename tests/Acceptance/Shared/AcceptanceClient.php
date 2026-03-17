@@ -17,13 +17,12 @@ final class AcceptanceClient
     private array $server = [];
 
     private ?SecurityUser $user = null;
-    private ?SecurityUser $apiUser = null;
 
-    private ?\Exception $exception = null;  
-    
+    private ?\Exception $exception = null;
+
     private function __construct(private KernelBrowser $client)
     {
-        $this->client->catchExceptions(false);     
+        $this->client->catchExceptions(false);
         $this->client->disableReboot();
     }
 
@@ -41,7 +40,7 @@ final class AcceptanceClient
         $server = null == $server ? ($this->server) : array_merge($server, $this->server);
 
         try {
-            $this->crawler = $this->client->request($method, $path, [], [], $server, $body);            
+            $this->crawler = $this->client->request($method, $path, [], [], $server, $body);
 
             $this->exception = null;
         } catch (\Exception $e) {
@@ -53,7 +52,7 @@ final class AcceptanceClient
     {
         try {
             $this->crawler = $this->client->submit($formData);
-        
+
             $this->exception = null;
         } catch (\Exception $e) {
             $this->exception = $e;
@@ -70,14 +69,14 @@ final class AcceptanceClient
         return $this->client->getRequest();
     }
 
-    public function getResponse(): ?Response
+    public function getResponse(): Response
     {
         return $this->client->getResponse();
     }
 
     public function getCrawler()
     {
-        return null == $this->crawler ? 
+        return null == $this->crawler ?
             new Crawler($this->client->getResponse()->getContent())
             : $this->crawler
         ;
@@ -109,7 +108,7 @@ final class AcceptanceClient
 
     public function loginUserInApi(SecurityUser $user)
     {
-        $this->apiUser = $user;
+        $this->user = $user;
 
         $encoder = $this->getContainer()->get(JWTEncoderInterface::class);
 
@@ -119,14 +118,13 @@ final class AcceptanceClient
         ]));
     }
 
-    public function setBearerToken($token) 
+    public function setBearerToken($token)
     {
         $this->server['HTTP_AUTHORIZATION'] = sprintf('Bearer %s', $token);
     }
 
     public function reset()
     {
-        $this->apiUser = null;
         $this->server = [];
         $this->user = null;
 

@@ -16,11 +16,11 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 class SystemContext implements Context
 {
     private Application $application;
-    private ?string $output;
-    private ?int $statusCode;
-    private ?CommandTester $commandTester;
+    private ?string $output = null;
+    private ?int $statusCode = null;
+    private ?CommandTester $commandTester = null;
 
-    public function __construct(private KernelInterface $kernel)
+    public function __construct(KernelInterface $kernel)
     {
         $this->application = new Application($kernel);
     }
@@ -61,12 +61,10 @@ class SystemContext implements Context
 
         $arguments = explode(' ', $argument);
 
-        if (count($arguments) > 0) {
-            foreach ($arguments as $part) {
-                list($attr, $value) = explode(':', $part);
+        foreach ($arguments as $part) {
+            list($attr, $value) = explode(':', $part);
 
-                $parameters[$attr] = $value;
-            }
+            $parameters[$attr] = $value;
         }
 
         $command = $this->application->find($name);

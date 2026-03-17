@@ -11,9 +11,9 @@ class ConsoleCommandListener
 {
     public function __construct(
         #[AutowireIterator('domain.event.subscriber')]
-        private iterable $subscribers,
+        iterable $subscribers,
          #[AutowireIterator('application.command.handler')]
-        private iterable $handlers
+        iterable $handlers
     ) {
         foreach ($subscribers as $subscriber) {
             $subscriber->register();
@@ -26,6 +26,6 @@ class ConsoleCommandListener
 
     public function __invoke(ConsoleCommandEvent $event): void
     {
-        
+
     }
 }
