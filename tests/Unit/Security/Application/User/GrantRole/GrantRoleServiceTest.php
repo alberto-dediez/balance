@@ -4,11 +4,9 @@ namespace App\Tests\Unit\Security\Application\User\GrantRole;
 
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Application\User\GrantRole\GrantRoleRequest;
-use App\Security\Application\User\GrantRole\GrantRoleResponse;
 use App\Security\Application\User\GrantRole\GrantRoleService;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\RoleGranted;
-use App\Security\Domain\Model\User\User;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Security\Application\User\UserAuthorizerMother;
@@ -19,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 
 class GrantRoleServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -28,7 +26,7 @@ class GrantRoleServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -47,7 +45,6 @@ class GrantRoleServiceTest extends TestCase
 
         $result = $sut($request, $admin);
 
-        $this->assertNotNull($result);
         $this->assertTrue($user->id()->equals($result->userId));
         $this->assertCount(2, $result->roles);
 
@@ -62,7 +59,7 @@ class GrantRoleServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof RoleGranted);
     }
 
-    public function testOwnerCanGrantRoleForUserOfSameAccount()
+    public function testOwnerCanGrantRoleForUserOfSameAccount(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -82,7 +79,6 @@ class GrantRoleServiceTest extends TestCase
 
         $result = $sut($request, $owner);
 
-        $this->assertNotNull($result);
         $this->assertTrue($user->id()->equals($result->userId));
         $this->assertCount(2, $result->roles);
 
@@ -97,7 +93,7 @@ class GrantRoleServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof RoleGranted);
     }
 
-    public function testOwnerCannotGrantRoleAdmin()
+    public function testOwnerCannotGrantRoleAdmin(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -120,7 +116,7 @@ class GrantRoleServiceTest extends TestCase
         $sut($request, $owner);
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -139,10 +135,10 @@ class GrantRoleServiceTest extends TestCase
             role: Role::Admin
         );
 
-        $result = $sut($request, $performBy);
+        $sut($request, $performBy);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -158,7 +154,7 @@ class GrantRoleServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryUserRepository $repository): GrantRoleService
     {
         $authorizer = UserAuthorizerMother::create();
 

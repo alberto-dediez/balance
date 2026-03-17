@@ -3,10 +3,12 @@
 namespace App\Security\Infrastructure\UI\Web\User;
 
 use App\Security\Domain\Model\User\DuplicatedUsernameException;
+use App\Security\Domain\Model\User\Role;
 use Symfony\Component\Form\FormError;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\Account\Account;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 use App\Security\Application\User\GrantRole\GrantRoleRequest;
 use App\Security\Application\User\GrantRole\GrantRoleService;
@@ -22,12 +24,15 @@ trait RegisterUserTrait
 
     }
 
-    private function registerUser($form, ?Account $account, User $performBy)
+    /**
+     * @param FormInterface<mixed> $form
+     */
+    private function registerUser(FormInterface $form, ?Account $account, User $performBy): bool
     {
         $registerRequest = new RegisterUserRequest(
             $form->get('username')->getData(),
             $form->get('password')->getData(),
-            null !== $account ? $account->id() : null
+            $account instanceof Account ? $account->id() : null
         );
 
         $registerUser = $this->registerUser;
@@ -40,7 +45,7 @@ trait RegisterUserTrait
             $this->grantRoles($response->userId, $form->get('roles')->getData(), $performBy);
 
             return true;
-        } catch (DuplicatedUsernameException $e) {
+        } catch (DuplicatedUsernameException) {
             $form->get('username')->addError(new FormError('El nombre de usuario ya existe'));
 
             $this->addFlash('danger', new TranslatableMessage("El formulario contiene errores, por favor, reviselos antes de continuar."));
@@ -49,9 +54,12 @@ trait RegisterUserTrait
         return false;
     }
 
-    private function grantRoles(UserId $userId, array $roles, User $performBy)
+    /**
+     * @param Role[] $roles
+     */
+    private function grantRoles(UserId $userId, array $roles, User $performBy): void
     {
-        if (count($roles) == 0) {
+        if (count($roles) === 0) {
             return ;
         }
 
@@ -64,7 +72,7 @@ trait RegisterUserTrait
                 $grantRole($request, $performBy);
 
                 $this->addFlash('success', new TranslatableMessage("Concedido acceso como {role}", ['{role}' => new TranslatableMessage($role->value, [], 'roles')]));
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 $this->addFlash('danger', new TranslatableMessage("No se ha podido conceder acceso como {role}", ['{role}' => new TranslatableMessage($role->value, [], 'roles')]));
             }
         }

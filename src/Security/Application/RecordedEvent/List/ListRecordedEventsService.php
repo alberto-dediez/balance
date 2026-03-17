@@ -12,7 +12,7 @@ use App\Security\Domain\Model\RecordedEvent\RecordedEventRepository;
 
 class ListRecordedEventsService
 {
-    public function __construct(private RecordedEventRepository $repository, private RecordedEventAuthorizer $authorizer)
+    public function __construct(private readonly RecordedEventRepository $repository, private readonly RecordedEventAuthorizer $authorizer)
     {
 
     }

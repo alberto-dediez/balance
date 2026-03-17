@@ -2,7 +2,6 @@
 
 namespace App\Security\Infrastructure\UI\Web\User\Bulk;
 
-use App\Security\Application\User\Remove\RemoveUserRequest;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkAction;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
@@ -24,7 +23,7 @@ class GrantRole implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) == 0) {
+        if (count($request->elements) === 0) {
             return [];
         }
 
@@ -35,10 +34,12 @@ class GrantRole implements BulkAction
         $commands = [];
 
         foreach ($request->elements as $user) {
-            if (null === $user || null === $user->id()) {
+            if (null === $user) {
                 continue;
             }
-
+            if (null === $user->id()) {
+                continue;
+            }
             $commands[] = new GrantRoleRequest(
                 userId: $user->id(),
                 role: $request->role

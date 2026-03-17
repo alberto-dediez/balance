@@ -8,6 +8,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
+/** @extends AbstractType<mixed> */
 class BaseFilterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

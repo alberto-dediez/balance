@@ -13,9 +13,9 @@ final class PasswordChanged extends DomainEvent
     protected static string $eventName = 'passwordChanged';
 
     public function __construct(
-        private UserId $userId,
+        private readonly UserId $userId,
         #[\SensitiveParameter]
-        private string $password,
+        private readonly string $password,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -34,7 +34,7 @@ final class PasswordChanged extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->userId();
+        return $this->userId;
     }
 
     public function payload(): array

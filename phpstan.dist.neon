@@ -1,5 +1,5 @@
 parameters:
-    level: 5
+    level: 6
     paths:
         - src/
         - tests/
@@ -23,3 +23,15 @@ parameters:
         -
             message: '#Parameter \#1 .* of method .*::__invoke\(\) expects .*, .*Command given\.#'
             path: src/Shared/Application/CommandBus/CommandInvokeHandlerTrait.php
+        -
+            message: '#Service ".*" is private\.#'
+            paths:
+                - tests/*
+#        -
+#            message: '#Call to method PHPUnit\\Framework\\Assert::assert(NotNull|True)\(\) .* will always evaluate to true\.#'
+#            paths:
+#                - tests/*
+#        -
+#            message: '#Instanceof between .* and .* will always evaluate to true\.#'
+#            paths:
+#                - tests/*

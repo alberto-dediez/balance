@@ -2,6 +2,7 @@
 
 namespace App\Security\Infrastructure\Symfony\Security;
 
+use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Bundle\SecurityBundle\Security;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountRepository;
@@ -12,7 +13,7 @@ class LoggedAccount
 
     private bool $loaded = false;
 
-    public function __construct(private Security $security, private AccountRepository $accountRepository)
+    public function __construct(private readonly Security $security, private readonly AccountRepository $accountRepository)
     {
 
     }
@@ -25,7 +26,7 @@ class LoggedAccount
 
         $user = $this->security->getUser();
 
-        if (!$user instanceof SecurityUser || null === $user->accountId()) {
+        if (!$user instanceof SecurityUser || !$user->accountId() instanceof AccountId) {
             return ;
         }
 
@@ -33,7 +34,7 @@ class LoggedAccount
         $this->loaded = true;
     }
 
-    public function __invoke()
+    public function __invoke(): ?Account
     {
         $this->load();
 

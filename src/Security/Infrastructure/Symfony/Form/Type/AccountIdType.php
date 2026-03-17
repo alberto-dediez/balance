@@ -10,18 +10,18 @@ use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdType;
 
 class AccountIdType extends AggregateRootIdType
 {
-    public function __construct(private AccountRepository $accountRepository)
+    public function __construct(private readonly AccountRepository $accountRepository)
     {
 
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $accounts = $this->accountRepository->findByFilter(new AccountFilter(limit: 0));
 
-        $resolver->setDefaults(array(
-            'choices' => $this->getChoices($accounts),      
-            'class' => AccountId::class      
-        ));
+        $resolver->setDefaults([
+            'choices' => $this->getChoices($accounts),
+            'class' => AccountId::class
+        ]);
     }
 }

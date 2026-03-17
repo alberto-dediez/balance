@@ -2,17 +2,18 @@
 
 namespace App\Security\Infrastructure\Symfony\Form;
 
-use App\Security\Domain\Model\User\Role;
+use App\Security\Application\User\Register\RegisterUserRequest;
 use Symfony\Component\Form\AbstractType;
-use App\Security\Domain\Model\Account\Account;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use App\Security\Infrastructure\Symfony\Form\Type\RoleType;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
+/**
+ * @extends AbstractType<RegisterUserRequest>
+ */
 class RegisterUserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -35,7 +36,5 @@ class RegisterUserType extends AbstractType
                 'label' => new TranslatableMessage('Registrar')
             ])
         ;
-
-        parent::buildForm($builder, $options);
     }
 }

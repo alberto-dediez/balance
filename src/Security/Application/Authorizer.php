@@ -6,7 +6,7 @@ use App\Security\Domain\Model\User\User;
 
 interface Authorizer
 {
-    public function denyUnlessCanDoThat(mixed $subject, Action $action, User $user);
+    public function denyUnlessCanDoThat(mixed $subject, Action $action, User $user): void;
     public function canDoThat(mixed $subject, Action $action, User $user): bool;
     public function supports(mixed $subject): bool;
 }

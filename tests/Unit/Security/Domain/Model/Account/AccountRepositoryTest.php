@@ -8,7 +8,7 @@ use App\Security\Domain\Model\Account\AccountRepository;
 
 abstract class AccountRepositoryTest extends KernelTestCase
 {
-    public function testAddAccountToRepository()
+    public function testAddAccountToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -24,7 +24,7 @@ abstract class AccountRepositoryTest extends KernelTestCase
         $this->assertEquals($account->id(), $recoverAccount->id());
     }
 
-    public function testRemoveAccountToRepository()
+    public function testRemoveAccountToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -42,7 +42,7 @@ abstract class AccountRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($account->id()));
     }
 
-    public function testFindByName()
+    public function testFindByName(): void
     {
         $repository = $this->createSUT();
 
@@ -58,7 +58,7 @@ abstract class AccountRepositoryTest extends KernelTestCase
         $this->assertEquals($account->id(), $recoverAccount->id());
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -84,7 +84,7 @@ abstract class AccountRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
@@ -110,7 +110,7 @@ abstract class AccountRepositoryTest extends KernelTestCase
         $this->assertCount(6, $result);
     }
 
-    public function testFindNotRecoverDeletedUser()
+    public function testFindNotRecoverDeletedUser(): void
     {
         $repository = $this->createSUT();
 

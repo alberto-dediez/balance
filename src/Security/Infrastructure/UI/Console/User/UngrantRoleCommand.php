@@ -21,7 +21,7 @@ use App\Security\Application\User\UngrantRole\UngrantRoleService;
 )]
 class UngrantRoleCommand extends Command
 {
-    public function __construct(private UngrantRoleService $ungrantRoleService, private UserRepository $userRepository)
+    public function __construct(private readonly UngrantRoleService $ungrantRoleService, private readonly UserRepository $userRepository)
     {
         parent::__construct();
     }
@@ -43,7 +43,7 @@ class UngrantRoleCommand extends Command
         }
 
         $request = new UngrantRoleRequest(
-            $user->id(), 
+            $user->id(),
             Role::tryFrom($input->getArgument('role'))
         );
 
@@ -66,9 +66,12 @@ class UngrantRoleCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function stringifyRoles(array $roles)
+    /**
+     * @param Role[] $roles
+     */
+    private function stringifyRoles(array $roles): string
     {
-        if (count($roles) == 0) {
+        if (count($roles) === 0) {
             return '';
         }
 

@@ -9,8 +9,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class RequestStackLocaleGetter implements LocaleGetter
 {
     public function __construct(
-        private RequestStack $requestStack, 
-        private string $defaultLocale
+        private readonly RequestStack $requestStack, 
+        private readonly string $defaultLocale
     ) {
         
     }

@@ -12,8 +12,8 @@ use Doctrine\Migrations\Query\Exception\InvalidArguments;
 class AuthorizerExtension extends AbstractExtension
 {
     public function __construct(
-        private AuthorizerFactory $authorizerFactory, 
-        private LoggedUser $loggedUser
+        private readonly AuthorizerFactory $authorizerFactory, 
+        private readonly LoggedUser $loggedUser
     ) {
 
     }
@@ -21,7 +21,7 @@ class AuthorizerExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('is_authorized', [$this, 'isAuthorized']),
+            new TwigFilter('is_authorized', $this->isAuthorized(...)),
         ];
     }
 
@@ -32,7 +32,7 @@ class AuthorizerExtension extends AbstractExtension
         ];
     }
 
-    public function isAuthorized(mixed $subject, Action|string $action)
+    public function isAuthorized(mixed $subject, Action|string $action): bool
     {
         $action = is_string($action) ? Action::tryFrom($action) : $action;
 

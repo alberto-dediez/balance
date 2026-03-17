@@ -23,7 +23,7 @@ class UngrantRole implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) == 0) {
+        if (count($request->elements) === 0) {
             return [];
         }
 
@@ -34,10 +34,12 @@ class UngrantRole implements BulkAction
         $commands = [];
 
         foreach ($request->elements as $user) {
-            if (null === $user || null === $user->id()) {
+            if (null === $user) {
                 continue;
             }
-
+            if (null === $user->id()) {
+                continue;
+            }
             $commands[] = new UngrantRoleRequest(
                 userId: $user->id(),
                 role: $request->role

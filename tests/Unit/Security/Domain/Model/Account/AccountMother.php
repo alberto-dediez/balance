@@ -7,12 +7,12 @@ use App\Security\Domain\Model\Account\AccountId;
 
 class AccountMother
 {
-    public static function registeredAccount()
+    public static function registeredAccount(): Account
     {   
         return self::fromName('name');
     }
 
-    public static function fromName($name)
+    public static function fromName(string $name): Account
     {
         $accountId = AccountId::generate();
 
@@ -22,7 +22,7 @@ class AccountMother
         return $account;
     }
 
-    public static function fromNameAndId(string $name, string $id)
+    public static function fromNameAndId(string $name, string $id): Account
     {
         $account = new Account(
             id: new AccountId($id)
@@ -32,8 +32,8 @@ class AccountMother
         return $account;
     }
 
-    public static function random()
+    public static function random(): Account
     {
-        return self::fromName('account-' . rand(100, 999));
+        return self::fromName('account-' . random_int(100, 999));
     }
 }

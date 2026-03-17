@@ -11,6 +11,9 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryAccountRepository implements AccountRepository
 {
+    /**
+     * @param Account[] $accounts
+     */
     public function __construct(private array $accounts = [])
     {
 
@@ -44,7 +47,7 @@ class InMemoryAccountRepository implements AccountRepository
 
     public function findByName(string $name): ?Account
     {
-        if (count($this->accounts) == 0) {
+        if (count($this->accounts) === 0) {
             return null;
         }
 
@@ -57,11 +60,14 @@ class InMemoryAccountRepository implements AccountRepository
         return null;
     }
 
+    /**
+     * @return list<Account>
+     */
     public function findByFilter(AccountFilter $filter): array
     {
         $results = [];
 
-        if (count($this->accounts) == 0) {
+        if (count($this->accounts) === 0) {
             return $results;
         }
 
@@ -69,8 +75,8 @@ class InMemoryAccountRepository implements AccountRepository
 
         foreach ($this->accounts as $account) {
             if (
-                !empty($filter->name)
-                && false === strpos(strtolower($account->name()), strtolower($filter->name))
+                !in_array($filter->name, [null, '', '0'], true)
+                && !str_contains(strtolower((string) $account->name()), strtolower($filter->name))
             ) {
                 continue;
             }

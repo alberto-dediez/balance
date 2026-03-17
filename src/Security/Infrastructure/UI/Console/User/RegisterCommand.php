@@ -19,7 +19,7 @@ use App\Security\Application\User\Register\RegisterUserService;
 )]
 class RegisterCommand extends Command
 {
-    public function __construct(private RegisterUserService $registerUser)
+    public function __construct(private readonly RegisterUserService $registerUser)
     {
         parent::__construct();
     }

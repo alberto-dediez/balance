@@ -12,6 +12,9 @@ enum Role: string
 
     case SuperAdmin = 'ROLE_SUPER_ADMIN';
 
+    /**
+     * @return Role[]
+     */
     public static function casesForAdmins(): array
     {
         $result = [];
@@ -27,15 +30,20 @@ enum Role: string
         return $result;
     }
 
+    /**
+     * @return Role[]
+     */
     public static function casesForOwners(): array
     {
         $result = [];
 
         foreach (self::cases() as $role) {
-            if ($role == self::Admin || $role == self::SuperAdmin) {
+            if ($role == self::Admin) {
                 continue;
             }
-
+            if ($role == self::SuperAdmin) {
+                continue;
+            }
             $result[$role->value] = $role;
         }
 

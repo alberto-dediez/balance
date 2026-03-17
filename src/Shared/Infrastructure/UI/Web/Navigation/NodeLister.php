@@ -10,18 +10,21 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class NodeLister
 {
     public function __construct(
-        private AuthorizationCheckerInterface $checker,
-        private RouterInterface $router
+        private readonly AuthorizationCheckerInterface $checker,
+        private readonly RouterInterface $router
     ) {
 
     }
 
-    public function nodes()
+    /**
+     * @return list<Node>
+     */
+    public function nodes(): array
     {
         if ($this->checker->isGranted(Role::Admin->value)) {
             return $this->toAdmins();
-        } 
-        
+        }
+
         if ($this->checker->isGranted(Role::Owner->value)) {
             return $this->toOwners();
         }
@@ -29,7 +32,10 @@ class NodeLister
         return $this->toUsers();
     }
 
-    private function toAdmins()
+    /**
+     * @return list<Node>
+     */
+    private function toAdmins(): array
     {
         $nodes =  [];
 
@@ -58,7 +64,10 @@ class NodeLister
         return $nodes;
     }
 
-    private function toOwners()
+    /**
+     * @return list<Node>
+     */
+    private function toOwners(): array
     {
         $nodes =  [];
 
@@ -77,7 +86,10 @@ class NodeLister
         return $nodes;
     }
 
-    private function toUsers()
+    /**
+     * @return list<Node>
+     */
+    private function toUsers(): array
     {
         return [];
     }

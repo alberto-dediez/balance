@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class UserRepositoryTest extends KernelTestCase
 {
-    public function testAddUserToRepository()
+    public function testAddUserToRepository(): void
     {
         $repository = $this->createSUT();
 
@@ -25,7 +25,7 @@ abstract class UserRepositoryTest extends KernelTestCase
         $this->assertEquals($user->id(), $recoverUser->id());
     }
 
-    public function testRemoveUserToRepository()
+    public function testRemoveUserToRepository(): void
     {
         $repository = $this->createSUT();
 
@@ -43,7 +43,7 @@ abstract class UserRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($user->id()));
     }
 
-    public function testFindByUsername()
+    public function testFindByUsername(): void
     {
         $repository = $this->createSUT();
 
@@ -59,7 +59,7 @@ abstract class UserRepositoryTest extends KernelTestCase
         $this->assertEquals($user->id(), $recoverUser->id());
     }
 
-    public function testFindByRecoverToken()
+    public function testFindByRecoverToken(): void
     {
         $repository = $this->createSUT();
 
@@ -79,7 +79,7 @@ abstract class UserRepositoryTest extends KernelTestCase
         $this->assertEquals($user->id(), $recoverUser->id());
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -105,7 +105,7 @@ abstract class UserRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
@@ -131,7 +131,7 @@ abstract class UserRepositoryTest extends KernelTestCase
         $this->assertCount(6, $result);
     }
 
-    public function testFindNotRecoverDeletedUser()
+    public function testFindNotRecoverDeletedUser(): void
     {
         $repository = $this->createSUT();
 
@@ -150,7 +150,7 @@ abstract class UserRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($user->id()));
     }
 
-    public function testRegisterSameUsernameAfterUserIsDeleted()
+    public function testRegisterSameUsernameAfterUserIsDeleted(): void
     {
         $repository = $this->createSUT();
 
@@ -172,7 +172,7 @@ abstract class UserRepositoryTest extends KernelTestCase
         $this->assertTrue($recoverUser->id()->equals($newUser->id()));
     }
 
-    public function testRegisterSameUsernameTwiceThrowException()
+    public function testRegisterSameUsernameTwiceThrowException(): void
     {
         $this->expectException(DuplicatedUsernameException::class);
 

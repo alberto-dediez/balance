@@ -10,5 +10,5 @@ interface CommandHandler
 
     public function handle(Command $command, User $user): ?CommandResponse;
 
-    public function register();
+    public function register(): void;
 }

@@ -4,11 +4,9 @@ namespace App\Tests\Unit\Security\Application\User\UngrantRole;
 
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Application\User\UngrantRole\UngrantRoleRequest;
-use App\Security\Application\User\UngrantRole\UngrantRoleResponse;
 use App\Security\Application\User\UngrantRole\UngrantRoleService;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\RoleUngranted;
-use App\Security\Domain\Model\User\User;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Security\Application\User\UserAuthorizerMother;
@@ -19,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 
 class UngrantRoleServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -28,7 +26,7 @@ class UngrantRoleServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -47,7 +45,6 @@ class UngrantRoleServiceTest extends TestCase
 
         $result = $sut($request, $performBy);
 
-        $this->assertNotNull($result);
         $this->assertTrue($user->id()->equals($result->userId));
         $this->assertCount(1, $result->roles);
 
@@ -61,7 +58,7 @@ class UngrantRoleServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof RoleUngranted);
     }
 
-    public function testOwnerCanGrantRoleForUserOfSameAccount()
+    public function testOwnerCanGrantRoleForUserOfSameAccount(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -81,7 +78,6 @@ class UngrantRoleServiceTest extends TestCase
 
         $result = $sut($request, $owner);
 
-        $this->assertNotNull($result);
         $this->assertTrue($user->id()->equals($result->userId));
         $this->assertCount(1, $result->roles);
 
@@ -96,7 +92,7 @@ class UngrantRoleServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof RoleUngranted);
     }
 
-    public function testOwnerCannotGrantRoleAdmin()
+    public function testOwnerCannotGrantRoleAdmin(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -119,7 +115,7 @@ class UngrantRoleServiceTest extends TestCase
         $sut($request, $owner);
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -139,7 +135,7 @@ class UngrantRoleServiceTest extends TestCase
         $sut($request, $user);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -155,7 +151,7 @@ class UngrantRoleServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryUserRepository $repository): UngrantRoleService
     {
         return new UngrantRoleService($repository, UserAuthorizerMother::create());
     }

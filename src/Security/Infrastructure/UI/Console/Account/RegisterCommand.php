@@ -18,7 +18,7 @@ use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 )]
 class RegisterCommand extends Command
 {
-    public function __construct(private RegisterAccountService $registerAccount)
+    public function __construct(private readonly RegisterAccountService $registerAccount)
     {
         parent::__construct();
     }

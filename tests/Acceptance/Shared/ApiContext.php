@@ -22,7 +22,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
  *
  * @see http://behat.org/en/latest/quick_start.html
  */
-final class ApiContext implements Context
+final readonly class ApiContext implements Context
 {
     private AcceptanceClient $client;
 
@@ -37,7 +37,7 @@ final class ApiContext implements Context
     }
 
     #[When('I make a preflight CORS request to :path from :origin')]
-    public function iMakeAPreflightCORSRquestToFrom($path, $origin): void
+    public function iMakeAPreflightCORSRquestToFrom(string $path, string $origin): void
     {
         $this->client->request('OPTIONS', $path, [
             'CONTENT_TYPE' => 'application/json',
@@ -48,7 +48,7 @@ final class ApiContext implements Context
     }
 
     #[When('I am authenticated in API as :username')]
-    public function iAmAuthenticatedInApiAs($username): void
+    public function iAmAuthenticatedInApiAs(string $username): void
     {
         $user = $this->getUserRepository()->findByUsername($username);
 
@@ -58,7 +58,7 @@ final class ApiContext implements Context
     }
 
     #[When('I have an expired token for :username')]
-    public function iHaveAnExpiredTokenFor($username): void
+    public function iHaveAnExpiredTokenFor(string $username): void
     {
         $user = $this->getUserRepository()->findByUsername($username);
 
@@ -75,14 +75,14 @@ final class ApiContext implements Context
     }
 
     #[When('I send a :method request to :path')]
-    public function iSendARequestTo($method, $path)
+    public function iSendARequestTo(string $method, string $path): void
     {
         $this->client->request($method, $path);
     }
 
     #[When('I send a :method request to :path with body:')]
-    public function iSendARequestToWithBody($method, $path, PyStringNode $content)
-    { 
+    public function iSendARequestToWithBody(string $method, string $path, PyStringNode $content): void
+    {
         $this->client->request($method, $path, [
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
@@ -90,7 +90,7 @@ final class ApiContext implements Context
     }
 
     #[Then('the response JSON should be equal to:')]
-    public function theResponseJsonShouldBeEqualTo(PyStringNode $content)
+    public function theResponseJsonShouldBeEqualTo(PyStringNode $content): void
     {
         $expected = json_encode(json_decode((string) $content), JSON_PRETTY_PRINT);
         $actual = json_encode(json_decode($this->client->getResponse()->getContent(), true), JSON_PRETTY_PRINT);
@@ -99,7 +99,7 @@ final class ApiContext implements Context
     }
 
     #[Then('the response JSON should be similar to:')]
-    public function theResponseJsonShouldBeSimilarTo(PyStringNode $content)
+    public function theResponseJsonShouldBeSimilarTo(PyStringNode $content): void
     {
         $expected = json_decode((string) $content);
         $actual = json_decode($this->client->getResponse()->getContent(), true);
@@ -110,36 +110,32 @@ final class ApiContext implements Context
     }
 
     #[Then('the status code should be :code')]
-    public function theStatusCodeShouldBe(int $expectedCode)
+    public function theStatusCodeShouldBe(int $expectedCode): void
     {
         $exception = $this->client->getException();
 
         if (null == $exception) {
             $code = $this->client->getResponse()->getStatusCode();
         } else {
-            switch (get_class($exception)) {
-                case NotFoundHttpException::class:
-                    $code = 404;
-                    break;
-                default:
-                    $code = $exception->getCode();
-                    break;
-            }
+            $code = match ($exception::class) {
+                NotFoundHttpException::class => 404,
+                default => $exception->getCode(),
+            };
         }
 
-        Assert::assertEquals($expectedCode, $code, null !== $exception ? $exception->getMessage() : 'Sin excepcion');
+        Assert::assertEquals($expectedCode, $code, $exception instanceof \Exception ? $exception->getMessage() : 'Sin excepcion');
     }
 
     #[Then('the response header :header should be :value')]
-    public function theResponseHeaderShouldBe($header, $value)
+    public function theResponseHeaderShouldBe(string $header, string $value): void
     {
         $actual = $this->client->getResponse()->headers->get($header);
 
         Assert::assertEquals($value, $actual);
     }
-    
+
     #[Then('the response header :header should exist')]
-    public function theResponseHeaderShouldExist($header)
+    public function theResponseHeaderShouldExist(string $header): void
     {
         $actual = $this->client->getResponse()->headers->has($header);
 

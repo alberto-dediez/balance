@@ -25,14 +25,12 @@ class ListController extends AbstractController
 
     public function __invoke(ListRecordedEventsService $listEvents, LoggedUser $loggedUser, Request $request): Response
     {   
-        $event = new RecordedEvent(
+        new RecordedEvent(
             UserId::generate(), 
             new UserRemoved(UserId::generate())
         );
 
-        list($filter, $form) = $this->filter($request, function () {
-            return  new ListRecordedEventsRequest();
-        }, ListRecordedEventsType::class);
+        [$filter, $form] = $this->filter($request, fn(): ListRecordedEventsRequest => new ListRecordedEventsRequest(), ListRecordedEventsType::class);
 
         try {
             $response = $listEvents($filter, $loggedUser());

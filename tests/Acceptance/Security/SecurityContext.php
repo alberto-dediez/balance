@@ -18,7 +18,7 @@ use App\Security\Domain\Model\Account\AccountRepository;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 
-final class SecurityContext implements Context
+final readonly class SecurityContext implements Context
 {
     private AcceptanceClient $client;
 
@@ -29,7 +29,7 @@ final class SecurityContext implements Context
     }
 
     #[AfterScenario]
-    public function after(AfterScenarioScope $scope)
+    public function after(AfterScenarioScope $scope): void
     {
         $this->client->reset();
     }
@@ -45,7 +45,7 @@ final class SecurityContext implements Context
     }
 
     #[Given('user :username with role :role exists')]
-    public function userWithRoleExists($username, $role): void
+    public function userWithRoleExists(string $username, string $role): void
     {
         $user = UserMother::fromUsernameAndRole($username, Role::tryFrom($role));
 
@@ -53,7 +53,7 @@ final class SecurityContext implements Context
     }
 
     #[Given('user :username with id :id exists')]
-    public function userWithIdExists($username, $id): void
+    public function userWithIdExists(string $username, string $id): void
     {
         $user = UserMother::fromUsernameAndRoleAndId($username, Role::User, new UserId($id));
 
@@ -61,7 +61,7 @@ final class SecurityContext implements Context
     }
 
     #[Given('account :name with id :id exists')]
-    public function accountWithIdExists($username, $id): void
+    public function accountWithIdExists(string $username, string $id): void
     {
         $account = AccountMother::fromNameAndId($username, $id);
 
@@ -69,7 +69,7 @@ final class SecurityContext implements Context
     }
 
     #[Given('user :username with role :role of account :account exists')]
-    public function userWithRoleOfAccountExists($username, $role, $account): void
+    public function userWithRoleOfAccountExists(string $username, string $role, string $account): void
     {
         $user = UserMother::fromUsernameAndRoleAndAccount($username, Role::tryFrom($role), new AccountId($account));
 
@@ -77,12 +77,12 @@ final class SecurityContext implements Context
     }
 
     #[Given('user :username with id :id of account :account exists')]
-    public function userWithIdOfAccountExists($username, $id, $account): void
+    public function userWithIdOfAccountExists(string $username, string $id, string $account): void
     {
         $user = UserMother::from(
+            userId: new UserId($id),
             username: $username,
             role: Role::User,
-            userId: new UserId($id),
             accountId: new AccountId($account)
         );
 
@@ -90,12 +90,12 @@ final class SecurityContext implements Context
     }
 
     #[Given('user :username with role :role with id :id of account :account exists')]
-    public function userWithRoleWithIdOfAccountExists($username, $id, $role, $account): void
+    public function userWithRoleWithIdOfAccountExists(string $username, string $id, string $role, string $account): void
     {
         $user = UserMother::from(
+            userId: new UserId($id),
             username: $username,
             role: Role::tryFrom($role),
-            userId: new UserId($id),
             accountId: new AccountId($account)
         );
 
@@ -103,7 +103,7 @@ final class SecurityContext implements Context
     }
 
     #[Given('user :username with recover token :token exists')]
-    public function userWithRecoverTokenExists($username, $token): void
+    public function userWithRecoverTokenExists(string $username, string $token): void
     {
         $user = UserMother::fromUsernameAndRecoverToken($username, $token);
 

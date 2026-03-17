@@ -12,8 +12,12 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
 
+/** @extends AbstractType<mixed> */
 class BulkType extends AbstractType
 {
+    /**
+     * @param array<string,mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -23,20 +27,14 @@ class BulkType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'choices' => $options['elements'],
-                'choice_value' => function ($element) {
-                    return (string) $element->id();
-                }
+                'choice_value' => fn($element): string => (string) $element->id()
             ])
             ->add('action', AutocompleteType::class, [
                 'label' => new TranslatableMessage('Acción a realizar'),
                 'required' => true,
                 'choices' => $options['actions'],
-                'choice_label' => function (?BulkAction $action) {
-                    return $action?->name();
-                },
-                'choice_value' => function (?BulkAction $action) {
-                    return $action?->id();
-                }
+                'choice_label' => fn(?BulkAction $action): ?string => $action?->name(),
+                'choice_value' => fn(?BulkAction $action): ?string => $action?->id()
             ])
             ->add('execute', SubmitType::class, [
                 'label' => new TranslatableMessage('Realizar')
@@ -44,7 +42,7 @@ class BulkType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'elements' => [],

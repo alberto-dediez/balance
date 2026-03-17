@@ -14,8 +14,8 @@ final class RoleGranted extends DomainEvent
     protected static string $eventName = 'roleGranted';
 
     public function __construct(
-        private UserId $userId,
-        private Role $role,
+        private readonly UserId $userId,
+        private readonly Role $role,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -34,7 +34,7 @@ final class RoleGranted extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->userId();
+        return $this->userId;
     }
 
     public function payload(): array

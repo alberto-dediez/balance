@@ -10,7 +10,7 @@ use App\Security\Domain\Model\User\UserRepository;
 
 class ListUsersService
 {
-    public function __construct(private UserRepository $repository, private UserAuthorizer $authorizer)
+    public function __construct(private readonly UserRepository $repository, private readonly UserAuthorizer $authorizer)
     {
 
     }

@@ -21,7 +21,7 @@ use App\Security\Application\User\GrantRole\GrantRoleService;
 )]
 class GrantRoleCommand extends Command
 {
-    public function __construct(private GrantRoleService $grantRoleService, private UserRepository $userRepository)
+    public function __construct(private readonly GrantRoleService $grantRoleService, private readonly UserRepository $userRepository)
     {
         parent::__construct();
     }
@@ -43,7 +43,7 @@ class GrantRoleCommand extends Command
         }
 
         $request = new GrantRoleRequest(
-            $user->id(), 
+            $user->id(),
             Role::tryFrom($input->getArgument('role'))
         );
 
@@ -66,9 +66,12 @@ class GrantRoleCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function stringifyRoles(array $roles)
+    /**
+     * @param Role[] $roles
+     */
+    private function stringifyRoles(array $roles): string
     {
-        if (count($roles) == 0) {
+        if (count($roles) === 0) {
             return '';
         }
 

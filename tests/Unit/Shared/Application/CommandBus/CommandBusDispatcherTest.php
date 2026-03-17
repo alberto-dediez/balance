@@ -9,8 +9,8 @@ use App\Shared\Application\CommandBus\CommandBusDispatcher;
 
 class CommandBusDispatcherTest extends TestCase
 {
-    private $spyHandler;
-    private $sluttyHandler;
+    private SluttyCommandHandler $spyHandler;
+    private VeryPickyCommandHandler $sluttyHandler;
 
     protected function setUp(): void
     {
@@ -20,7 +20,7 @@ class CommandBusDispatcherTest extends TestCase
         $this->sluttyHandler = new VeryPickyCommandHandler();      
     }
 
-    public function testDispatchReturnsFirstHandlerResponse()
+    public function testDispatchReturnsFirstHandlerResponse(): void
     {
         $dispatcher = CommandBusDispatcher::instance();
 
@@ -33,7 +33,7 @@ class CommandBusDispatcherTest extends TestCase
         $this->assertCount(0, $this->sluttyHandler->commands());
     }
 
-    public function testSubscribeNotAddSameSubscriberTwice()
+    public function testSubscribeNotAddSameSubscriberTwice(): void
     {
         $anotherSpy = new SluttyCommandHandler();
 

@@ -31,7 +31,7 @@ class RegisterUserService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($user, Action::Register, $performBy);
 
-        if (null !== $this->userRepository->findByUsername($request->username)) {
+        if ($this->userRepository->findByUsername($request->username) instanceof User) {
             throw new DuplicatedUsernameException($request->username);
         }
 

@@ -15,11 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/users/find', name: 'api_users_find', methods: ['GET'])]
 #[Areas(['admin'])]
-#[OA\Get(
-    summary: "Find a user by username",
-    description: "[Only for admins] Find users by username",
-    tags: ['Security']
-)]
+#[OA\Get(description: "[Only for admins] Find users by username", summary: "Find a user by username", tags: ['Security'])]
 #[OA\Response(
     response: 200,
     description: 'Returns info about a registered user',
@@ -38,9 +34,9 @@ class FindController extends AbstractController
         $user = $repository->findByUsername($request->username);
 
         return $this->json(new UserResponse(
-            accountId: (string) $user->accountId(),
+            userId: (string) $user->id(),
             username: $user->username(),
-            userId: (string) $user->id()
+            accountId: (string) $user->accountId()
         ));
     }
 }

@@ -39,7 +39,7 @@ class EditController extends AbstractController
         $form = $this->createForm(AdminEditUserType::class, new EditUser($user->roles()));
 
         try {
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($user, $performBy) {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($user, $performBy): void {
                 $this->updateRoles($user, $form->get('roles')->getData(), $performBy);
             });
 

@@ -15,17 +15,19 @@ class RemoveAccount implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) == 0) {
+        if (count($request->elements) === 0) {
             return [];
         }
 
         $commands = [];
 
         foreach ($request->elements as $account) {
-            if (null === $account || null === $account->id()) {
+            if (null === $account) {
                 continue;
             }
-
+            if (null === $account->id()) {
+                continue;
+            }
             $commands[] = new RemoveAccountRequest(
                 accountId: $account->id()
             );

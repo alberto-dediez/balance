@@ -9,11 +9,14 @@ use App\Security\Domain\Model\Account\Account;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteEntityType;
 
+/**
+ * @extends AbstractType<Account>
+ */
 class AccountType extends AbstractType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'class' => Account::class,
             'query_builder' => function (EntityRepository $er): QueryBuilder {
                 $qb = $er->createQueryBuilder('u');
@@ -29,10 +32,10 @@ class AccountType extends AbstractType
 
                 return $qb;
             }
-        ));
+        ]);
     }
-    
-    public function getParent()
+
+    public function getParent(): string
     {
         return AutocompleteEntityType::class;
     }

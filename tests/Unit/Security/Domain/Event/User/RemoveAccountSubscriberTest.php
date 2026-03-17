@@ -23,7 +23,7 @@ class RemoveAccountSubscriberTest extends TestCase
         DomainEventPublisher::instance()->reset();
     }
 
-    public function isSubscribedToReturnsTrueIfAccountRemovedEventIsPassed()
+    public function isSubscribedToReturnsTrueIfAccountRemovedEventIsPassed(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -38,7 +38,7 @@ class RemoveAccountSubscriberTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function isSubscribedToReturnsFalseIfNotAccountRemovedEventIsPassed()
+    public function isSubscribedToReturnsFalseIfNotAccountRemovedEventIsPassed(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -53,7 +53,7 @@ class RemoveAccountSubscriberTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testHandleCallsRemoveUserService()
+    public function testHandleCallsRemoveUserService(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -86,7 +86,7 @@ class RemoveAccountSubscriberTest extends TestCase
         $sut->handle($event);
     }
 
-    private function createSUT($repository, int $usersToRemoved = 0)
+    private function createSUT(InMemoryUserRepository $repository, int $usersToRemoved = 0): RemoveAccountSubscriber
     {
         $removeUser = $this->createMock(RemoveUserService::class);
         $removeUser->expects($this->exactly($usersToRemoved))->method('__invoke');

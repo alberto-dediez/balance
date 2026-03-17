@@ -11,24 +11,23 @@ use App\Shared\Domain\Model\AggregateRootId;
 
 class RecordedEvent
 {
-    private RecordedEventId $id;
+    private readonly RecordedEventId $id;
+    private readonly string|null $aggregateRootId;
+    private readonly DateTimeImmutable $occurredOn;
+    private readonly string $eventName;
+    private readonly string $context;
+    /**
+     * @var array<string, mixed> $payload
+     */
+    private readonly array $payload;
 
-    private UserId|null $userId;
-    private string|null $aggregateRootId;
-    private DateTimeImmutable $occurredOn;
-    private string $eventName;
-    private string $context;
-    private array $payload;
-
-    public function __construct(UserId|string|null $userId, DomainEvent $event)
+    public function __construct(private readonly UserId|null $userId, DomainEvent $event)
     {
         $this->id = new RecordedEventId(
             (string) $event->id()
         );
 
-        $this->userId = $userId;
-
-        $this->aggregateRootId = null !== $event->aggregateRootId() ? (string) $event->aggregateRootId() : null;
+        $this->aggregateRootId = $event->aggregateRootId() instanceof AggregateRootId ? (string) $event->aggregateRootId() : null;
         $this->occurredOn = $event->occurredOn();
         $this->eventName = $event->eventName();
         $this->context = $event->context();
@@ -65,6 +64,9 @@ class RecordedEvent
         return $this->context;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function payload(): array
     {
         return $this->payload;

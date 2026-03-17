@@ -10,8 +10,8 @@ use App\Shared\Domain\Event\DomainEventPublisher;
 
 class DomainEventPublisherTest extends TestCase
 {
-    private $spySubscriber;
-    private $veryPickySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
+    private VeryPickyDomainEventSubscriber $veryPickySubscriber;
 
     protected function setUp(): void
     {
@@ -21,7 +21,7 @@ class DomainEventPublisherTest extends TestCase
         $this->veryPickySubscriber = new VeryPickyDomainEventSubscriber();
     }
 
-    public function testPublishSendMessageToAllSubscribersWhoIsSubscribedToThatMessage()
+    public function testPublishSendMessageToAllSubscribersWhoIsSubscribedToThatMessage(): void
     {
         $publisher = DomainEventPublisher::instance();
 
@@ -34,7 +34,7 @@ class DomainEventPublisherTest extends TestCase
         $this->assertCount(0, $this->veryPickySubscriber->events());
     }
 
-    public function testSubscribeNotAddSameSubscriberTwice()
+    public function testSubscribeNotAddSameSubscriberTwice(): void
     {
         $anotherSpy = new SpyDomainEventSubscriber();
 
@@ -52,6 +52,7 @@ class DomainEventPublisherTest extends TestCase
 
 final class FakeEvent extends DomainEvent
 {
+    /** @return array<string, mixed> */
     public function payload(): array
     {
         return [];
@@ -62,6 +63,7 @@ final class FakeEvent extends DomainEvent
         return null;
     }
 
+    /** @param array<string, mixed> $payload */
     public static function rebuildFromPayload(DomainEventId $id, \DateTimeImmutable $occurredOn, ?array $payload): static
     {
         return new FakeEvent($id, $occurredOn);

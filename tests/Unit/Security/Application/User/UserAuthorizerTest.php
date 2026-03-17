@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class UserAuthorizerTest extends TestCase
 {
-    public function testOwnerCanGrantRoleToNotAdminRoles()
+    public function testOwnerCanGrantRoleToNotAdminRoles(): void
     {
         $account = AccountMother::random();
 
@@ -24,7 +24,7 @@ class UserAuthorizerTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testOwnerCannotGrantRoleToAdminRoles()
+    public function testOwnerCannotGrantRoleToAdminRoles(): void
     {
         $account = AccountMother::random();
 
@@ -38,7 +38,7 @@ class UserAuthorizerTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testOwnerCannotGrantRoleToUserFromOtherAccounts()
+    public function testOwnerCannotGrantRoleToUserFromOtherAccounts(): void
     {
         $account = AccountMother::random();
 

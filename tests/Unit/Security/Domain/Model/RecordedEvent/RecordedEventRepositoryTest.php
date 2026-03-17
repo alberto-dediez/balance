@@ -9,7 +9,7 @@ use App\Security\Domain\Model\RecordedEvent\RecordedEventRepository;
 
 abstract class RecordedEventRepositoryTest extends KernelTestCase
 {
-    public function testAddRecordedEventToRepository()
+    public function testAddRecordedEventToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -25,7 +25,7 @@ abstract class RecordedEventRepositoryTest extends KernelTestCase
         $this->assertEquals($event->id(), $recoverRecordedEvent->id());
     }
 
-    public function testRemoveRecordedEventToRepository()
+    public function testRemoveRecordedEventToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -43,7 +43,7 @@ abstract class RecordedEventRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($event->id()));
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -71,7 +71,7 @@ abstract class RecordedEventRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 

@@ -14,10 +14,10 @@ final class PasswordRecovered extends DomainEvent
     protected static string $eventName = 'passwordRecovered';
 
     public function __construct(
-        private UserId $userId,
+        private readonly UserId $userId,
         #[\SensitiveParameter]
-        private string $password,
-        private RecoverToken $token,
+        private readonly string $password,
+        private readonly RecoverToken $token,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -41,7 +41,7 @@ final class PasswordRecovered extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->userId();
+        return $this->userId;
     }
 
     public function payload(): array

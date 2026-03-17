@@ -57,7 +57,7 @@ class ProfileController extends AbstractController
                 $this->addFlash('success', new TranslatableMessage('La contraseña se ha actualizado correctamente'));
             } catch (UnauthorizedActionException $e) {
                 throw $this->createAccessDeniedException($e->getMessage());
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 $this->addFlash('danger', new TranslatableMessage('Error inesperado. No se ha actualizado tu contraseña'));
             }
         }

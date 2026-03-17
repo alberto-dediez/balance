@@ -20,7 +20,7 @@ class RemoveAccountSubscriber implements DomainEventSubscriber
         $this->register();
     }
 
-    public function handle(DomainEvent $event)
+    public function handle(DomainEvent $event): void
     {
         if (!$this->isSubscribedTo($event)) {
             throw new \RuntimeException("Incorrect event!");
@@ -31,11 +31,11 @@ class RemoveAccountSubscriber implements DomainEventSubscriber
         $this->handleAccountRemoved($event);
     }
 
-    private function handleAccountRemoved(AccountRemoved $event)
+    private function handleAccountRemoved(AccountRemoved $event): void
     {
         $users = $this->userRepository->findByAccountId($event->accountId());
 
-        if (count($users) == 0) {
+        if (count($users) === 0) {
             return ;
         }
 
@@ -52,7 +52,7 @@ class RemoveAccountSubscriber implements DomainEventSubscriber
         }
     }
 
-    public function isSubscribedTo(DomainEvent $event)
+    public function isSubscribedTo(DomainEvent $event): bool
     {
         return $event instanceof AccountRemoved;
     }

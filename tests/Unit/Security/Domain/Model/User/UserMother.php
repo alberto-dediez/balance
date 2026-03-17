@@ -8,11 +8,10 @@ use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\RecoverToken;
-use App\Shared\Domain\Model\AggregateRootId;
 
 class UserMother
 {
-    public static function registeredUser()
+    public static function registeredUser(): User
     {
         return self::from(
             userId: UserId::generate(),
@@ -20,7 +19,7 @@ class UserMother
         );
     }
 
-    public static function systemUser()
+    public static function systemUser(): User
     {
         return new User(
             id: new UserId('system'),
@@ -29,7 +28,7 @@ class UserMother
         );
     }
 
-    public static function adminUser()
+    public static function adminUser(): User
     {
         return self::from(
             userId: UserId::generate(),
@@ -37,7 +36,7 @@ class UserMother
         );
     }
 
-    public static function ownerUser()
+    public static function ownerUser(): User
     {
         return self::from(
             userId: UserId::generate(),
@@ -45,7 +44,7 @@ class UserMother
         );
     }
 
-    public static function fromUsername($username)
+    public static function fromUsername(string $username): User
     {
         return self::from(
             userId: UserId::generate(),
@@ -53,16 +52,16 @@ class UserMother
         );
     }
 
-    public static function fromUsernameAndRole($username, Role $role)
+    public static function fromUsernameAndRole(string $username, Role $role): User
     {
         return self::from(
             userId: UserId::generate(),
-            role: $role,
-            username: $username
+            username: $username,
+            role: $role
         );
     }
 
-    public static function fromUsernameAndRoleAndId($username, Role $role, UserId $userId)
+    public static function fromUsernameAndRoleAndId(string $username, Role $role, UserId $userId): User
     {
         return self::from(
             userId: $userId,
@@ -70,7 +69,7 @@ class UserMother
         );
     }
 
-    public static function fromUsernameAndAccount($username, Account $account)
+    public static function fromUsernameAndAccount(string $username, Account $account): User
     {
         return self::from(
             userId: UserId::generate(),
@@ -79,7 +78,7 @@ class UserMother
         );
     }
 
-    public static function fromUsernameAndRoleAndAccount(string $username, Role $role, AccountId $accountId)
+    public static function fromUsernameAndRoleAndAccount(string $username, Role $role, AccountId $accountId): User
     {
         return self::from(
             userId: UserId::generate(),
@@ -89,7 +88,7 @@ class UserMother
         );
     }
 
-    public static function fromUsernameAndRecoverToken(string $username, string $recoverToken)
+    public static function fromUsernameAndRecoverToken(string $username, string $recoverToken): User
     {
         return self::from(
             userId: UserId::generate(),
@@ -98,30 +97,28 @@ class UserMother
         );
     }
 
-    public static function from(UserId $userId, string $username = 'username', Role $role = Role::User, ?AccountId $accountId = null, ?RecoverToken $recoverToken = null)
+    public static function from(UserId $userId, string $username = 'username', Role $role = Role::User, ?AccountId $accountId = null, ?RecoverToken $recoverToken = null): User
     {
-        $user = new User(
+        return new User(
             id: $userId,
-            recoverToken: $recoverToken,
             username: $username,
             password: 'apassword',
             accountId: $accountId,
-            registeredAt: new \DateTimeImmutable("NOW"),
             roles: [
                 $role
-            ]
+            ],
+            recoverToken: $recoverToken,
+            registeredAt: new \DateTimeImmutable("NOW")
         );
-
-        return $user;
     }
 
-    public static function random()
+    public static function random(): User
     {
         $roles = [
             Role::Admin,
             Role::User
         ];
 
-        return self::fromUsernameAndRole('user-' . rand(100, 9999999), $roles[rand(0, 1)]);
+        return self::fromUsernameAndRole('user-' . random_int(100, 9999999), $roles[random_int(0, 1)]);
     }
 }

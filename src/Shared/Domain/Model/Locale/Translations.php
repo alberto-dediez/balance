@@ -9,9 +9,12 @@ class Translations implements \Countable
 {
     private ?Locale $locale = null;
 
+    /**
+     * @param list<Translation> $translations
+     */
     public function __construct(private array $translations = [])
     {
-        
+
     }
 
     public function setLocale(Locale $locale): void
@@ -21,7 +24,7 @@ class Translations implements \Countable
 
     public function currentTranslation(): ?Translation
     {
-        if (null === $this->locale) {
+        if (!$this->locale instanceof Locale) {
             return null;
         }
 
@@ -33,13 +36,13 @@ class Translations implements \Countable
         if ($this->contains($translation)) {
             $this->remove($translation);
         }
-        
+
         $this->translations[] = $translation;
     }
 
     public function remove(Translation $translation): void
     {
-        if (count($this->translations) == 0) {
+        if (count($this->translations) === 0) {
             return ;
         }
 
@@ -52,7 +55,7 @@ class Translations implements \Countable
 
     public function get(Locale $locale): ?Translation
     {
-        if (count($this->translations) == 0) {
+        if (count($this->translations) === 0) {
             return null;
         }
 
@@ -67,14 +70,17 @@ class Translations implements \Countable
 
     public function contains(Translation $translation): bool
     {
-        return null !== $this->get($translation->locale());
+        return $this->get($translation->locale()) instanceof Translation;
     }
 
+    /**
+     * @return Translation[]
+     */
     public function toArray(): array
     {
         return $this->translations;
     }
-    
+
     public function count(): int
     {
         return count($this->translations);

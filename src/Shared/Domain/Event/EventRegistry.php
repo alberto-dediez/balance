@@ -6,10 +6,13 @@ use BadMethodCallException;
 
 class EventRegistry
 {
-    private string $pathToFile;
+    private readonly string $pathToFile;
 
-    protected static $instance;
+    protected static ?EventRegistry $instance = null;
 
+    /**
+     * @param array<string,string> $events
+     */
     private function __construct(
         protected array $events = []
     ) {
@@ -23,7 +26,7 @@ class EventRegistry
 
             static::$instance->load();
         }
-        
+
         return static::$instance;
     }
 
@@ -32,19 +35,16 @@ class EventRegistry
         throw new BadMethodCallException("Clone is not supported");
     }
 
-    public function registerEvent(string $fullName, string $class)
+    public function registerEvent(string $fullName, string $class): void
     {
         $this->events[$fullName] = $class;
     }
 
     public function getEvent(string $context, string $eventName): ?string
     {
-        $fullname = sprintf("%s.%s", $context, $eventName);
+        $fullName = sprintf("%s.%s", $context, $eventName);
 
-        return isset($this->events[$fullname]) 
-            ? $this->events[$fullname]
-            : null
-        ;
+        return $this->events[$fullName] ?? null;
     }
 
     public function save(): void
@@ -60,6 +60,6 @@ class EventRegistry
             if (is_array($events)) {
                 $this->events = $events;
             }
-        }       
+        }
     }
 }

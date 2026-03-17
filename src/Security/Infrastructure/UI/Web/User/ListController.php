@@ -43,11 +43,9 @@ class ListController extends AbstractController
         $performBy = $loggedUser();
 
         try {
-            list($filter, $form) = $this->filter($request, function () use ($account) {
-                return new ListUsersRequest(
-                    account: $account
-                );
-            }, ListUsersType::class);
+            [$filter, $form] = $this->filter($request, fn(): ListUsersRequest => new ListUsersRequest(
+                account: $account
+            ), ListUsersType::class);
 
             $response = $listUsers($filter, $performBy);
         } catch (UnauthorizedActionException $e) {

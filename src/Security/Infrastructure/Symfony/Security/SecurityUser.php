@@ -2,7 +2,6 @@
 
 namespace App\Security\Infrastructure\Symfony\Security;
 
-use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
@@ -28,7 +27,7 @@ class SecurityUser extends User implements UserInterface, PasswordAuthenticatedU
 
     public function getUserIdentifier(): string
     {
-        return (string) $this->username;
+        return $this->username;
     }
 
     public function getPassword(): ?string
@@ -38,7 +37,7 @@ class SecurityUser extends User implements UserInterface, PasswordAuthenticatedU
     
     public function isEqualTo(UserInterface $user): bool
     {
-        return $user->getUserIdentifier() == $this->getUserIdentifier() && $user->getRoles() == $this->getRoles();
+        return $user->getUserIdentifier() === $this->getUserIdentifier() && $user->getRoles() == $this->getRoles();
     }
 
     public function __construct(User $user)

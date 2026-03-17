@@ -2,6 +2,7 @@
 
 namespace App\Security\Domain\Event;
 
+use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\RegisterTrait;
 use App\Shared\Domain\Event\DomainEventSubscriber;
@@ -19,7 +20,7 @@ class RecordEventSubscriber implements DomainEventSubscriber
         $this->register();
     }
 
-    public function handle(DomainEvent $event)
+    public function handle(DomainEvent $event): void
     {
         if (!$this->isSubscribedTo($event)) {
             throw new \RuntimeException("Incorrect event!");
@@ -30,14 +31,14 @@ class RecordEventSubscriber implements DomainEventSubscriber
 
         $registerRecordedEvent(
             new RegisterRecordedEventRequest(
-                userId: null !== $loggedUser ? $loggedUser->id() : UserMother::systemUser()->id(),
+                userId: $loggedUser instanceof User ? $loggedUser->id() : UserMother::systemUser()->id(),
                 event: $event
             ),
             $loggedUser
         );
     }
 
-    public function isSubscribedTo(DomainEvent $event)
+    public function isSubscribedTo(DomainEvent $event): bool
     {
         return true;
     }

@@ -28,7 +28,7 @@ class Kernel extends BaseKernel implements CompilerPassInterface
 
         $taggedServices = $container->findTaggedServiceIds('domain.event');
 
-        foreach ($taggedServices as $class => $tags) {
+        foreach (array_keys($taggedServices) as $class) {
             EventRegistry::instance()
                 ->registerEvent($class::contextName(), $class)
             ;

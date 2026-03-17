@@ -6,12 +6,11 @@ use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use Symfony\Component\Security\Http\Event\LogoutEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
-use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 
 #[AsEventListener]
 class LogoutEventListener
 {
-    public function __invoke(LogoutEvent $event)
+    public function __invoke(LogoutEvent $event): void
     {
         $user = $event->getToken()->getUser();
 

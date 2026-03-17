@@ -2,6 +2,8 @@
 
 namespace App\Security\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\DuplicatedUsernameException;
 use App\Security\Domain\Model\User\RecoverToken;
@@ -10,7 +12,6 @@ use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -20,7 +21,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineUserRepository implements UserRepository
 {
-    public function __construct(private EntityManagerInterface $manager, private DoctrineAccountRepository $accountRepository)
+    public function __construct(private readonly EntityManagerInterface $manager, private readonly DoctrineAccountRepository $accountRepository)
     {
 
     }
@@ -29,11 +30,11 @@ class DoctrineUserRepository implements UserRepository
     {
         $savedUser = $this->find($user->id());
 
-        if (null === $savedUser && null !== $this->findByUsername($user->username())) {
+        if (!$savedUser instanceof User && $this->findByUsername($user->username()) instanceof User) {
             throw new DuplicatedUsernameException($user->username());
         }
 
-        if (null == $user->account() && null !== $user->accountId()) {
+        if (null == $user->account() && $user->accountId() instanceof AccountId) {
             $account = $this->accountRepository->find($user->accountId());
 
             $user = new User(
@@ -44,20 +45,20 @@ class DoctrineUserRepository implements UserRepository
                 account: $account,
                 roles: $user->roles(),
                 events: $user->recordedEvents(),
-                registeredAt: $user->registeredAt(),
                 removed: $user->isRemoved(),
+                registeredAt: $user->registeredAt(),
                 removedAt: $user->removedAt()
             );
         }
 
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
+        $this->manager->persist($user);
+        $this->manager->flush();
     }
 
     public function remove(User $user): void
     {
-        $this->getEntityManager()->remove($user);
-        $this->getEntityManager()->flush();
+        $this->manager->remove($user);
+        $this->manager->flush();
     }
 
     public function find(UserId $userId): ?User
@@ -102,6 +103,9 @@ class DoctrineUserRepository implements UserRepository
         ;
     }
 
+    /**
+     * @return list<User>
+     */
     public function findByAccountId(AccountId $accountId): array
     {
         $qb = $this->createQueryBuilderFromFilter(new UserFilter());
@@ -118,7 +122,7 @@ class DoctrineUserRepository implements UserRepository
 
     private function createQueryBuilderFromFilter(UserFilter $filter): QueryBuilder
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb = $this->manager->createQueryBuilder();
 
         $qb->select('u, a')
             ->from(User::class, 'u')
@@ -131,7 +135,7 @@ class DoctrineUserRepository implements UserRepository
             )
         ;
 
-        if (!empty($filter->username)) {
+        if (!in_array($filter->username, [null, '', '0'], true)) {
             $qb
                 ->andWhere(
                     $qb->expr()->like('u.username', ':username')
@@ -140,7 +144,7 @@ class DoctrineUserRepository implements UserRepository
             ;
         }
 
-        if (null !== $filter->role) {
+        if ($filter->role instanceof Role) {
             $qb
                 ->andWhere(
                     $qb->expr()->like('u.roles', ':role')
@@ -149,7 +153,7 @@ class DoctrineUserRepository implements UserRepository
             ;
         }
 
-        if (null !== $filter->account) {
+        if ($filter->account instanceof Account) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('u.accountId', ':accountId')
@@ -158,21 +162,19 @@ class DoctrineUserRepository implements UserRepository
             ;
         }
 
-        $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
+        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
 
-        switch ($filter->orderBy) {
-            case 'registeredAt':
-                $qb->orderBy('u.registeredAt', $way);
-                break;
-            case 'username':
-            default:
-                $qb->orderBy('u.username', $way);
-                break;
-        }
+        match ($filter->orderBy) {
+            'registeredAt' => $qb->orderBy('u.registeredAt', $way),
+            default => $qb->orderBy('u.username', $way),
+        };
 
         return $qb;
     }
 
+    /**
+     * @return list<User>
+     */
     public function findByFilter(UserFilter $filter): array
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
@@ -197,10 +199,5 @@ class DoctrineUserRepository implements UserRepository
             ->getQuery()
             ->getSingleScalarResult()
         ;
-    }
-
-    private function getEntityManager()
-    {
-        return $this->manager;
     }
 }

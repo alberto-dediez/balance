@@ -11,8 +11,8 @@ final class FailureLoginAttempted extends InfrastructureEvent
     protected static string $eventName = 'failureLoginAttempted';
 
     public function __construct(
-        private string $username,
-        private string $firewall,
+        private readonly string $username,
+        private readonly string $firewall,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -49,7 +49,7 @@ final class FailureLoginAttempted extends InfrastructureEvent
     ): static {
         return new FailureLoginAttempted(
             username: $payload['username'],
-            firewall: isset($payload['firewall']) ? $payload['firewall'] : '',
+            firewall: $payload['firewall'] ?? '',
             id: $id,
             occurredOn: $occurredOn
         );

@@ -13,7 +13,7 @@ final class AccountRemoved extends DomainEvent
     protected static string $eventName = 'accountRemoved';
 
     public function __construct(
-        private AccountId $accountId,
+        private readonly AccountId $accountId,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -27,7 +27,7 @@ final class AccountRemoved extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->accountId();
+        return $this->accountId;
     }
 
     public function payload(): array

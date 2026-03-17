@@ -13,6 +13,7 @@ interface RecordedEventRepository
 
     public function find(RecordedEventId $eventId): ?RecordedEvent;
 
+    /** @return list<RecordedEvent> */
     public function findByFilter(RecordedEventFilter $filter): array;
 
     public function totalResultsByFilter(RecordedEventFilter $filter): int;

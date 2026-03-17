@@ -10,7 +10,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 #[AsEventListener]
 class LoginFailureEventListener
 {
-    public function __invoke(LoginFailureEvent $event)
+    public function __invoke(LoginFailureEvent $event): void
     {
         if (null == $event->getPassport()) {
             return ;

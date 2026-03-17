@@ -39,7 +39,7 @@ class RecoverPasswordController extends AbstractController
                         username: $form->get('username')->getData()
                     )
                 );
-            } catch (\InvalidArgumentException $exception) {
+            } catch (\InvalidArgumentException) {
                 //No hacemos nada cuando el usuario no se encuentre
             }
 
@@ -83,7 +83,7 @@ class RecoverPasswordController extends AbstractController
                         password: $form->get('password')->getData()
                     ),
                 );
-            } catch (\InvalidArgumentException $exception) {
+            } catch (\InvalidArgumentException) {
                 return $this->render('@security/password/error.html.twig');
             }
 

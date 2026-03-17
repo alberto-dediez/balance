@@ -11,6 +11,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Security\Application\Account\Update\UpdateAccountRequest;
 
+/**
+ * @extends AbstractType<UpdateAccountRequest>
+ */
 class UpdateAccountType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -31,11 +34,9 @@ class UpdateAccountType extends AbstractType
                 'label' => new TranslatableMessage('Guardar y salir')
             ])
         ;
-
-        parent::buildForm($builder, $options);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => UpdateAccountRequest::class

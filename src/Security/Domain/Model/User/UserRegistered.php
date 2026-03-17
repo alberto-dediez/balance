@@ -14,11 +14,11 @@ final class UserRegistered extends DomainEvent
     protected static string $eventName = 'userRegistered';
 
     public function __construct(
-        private UserId $userId,
-        private string $username,
+        private readonly UserId $userId,
+        private readonly string $username,
         #[\SensitiveParameter]
-        private string $password,
-        private ?AccountId $accountId = null,
+        private readonly string $password,
+        private readonly ?AccountId $accountId = null,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -47,7 +47,7 @@ final class UserRegistered extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->userId();
+        return $this->userId;
     }
 
     public function payload(): array

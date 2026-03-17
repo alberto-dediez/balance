@@ -10,22 +10,24 @@ class VeryPickyDomainEventSubscriber implements DomainEventSubscriber
 {
     use RegisterTrait;
 
+    /** @param DomainEvent[] $events  */
     public function __construct(private array $events = [])
     {
         $this->register();
     }
 
-    public function handle(DomainEvent $event)
+    public function handle(DomainEvent $event): void
     {
         $this->events[] = $event;
     }
 
-    public function isSubscribedTo(DomainEvent $event)
+    public function isSubscribedTo(DomainEvent $event): bool
     {
         return false;
     }
 
-    public function events()
+    /** @return DomainEvent[] $events  */
+    public function events(): array
     {
         return $this->events;
     }

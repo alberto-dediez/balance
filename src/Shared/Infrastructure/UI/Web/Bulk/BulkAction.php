@@ -11,6 +11,7 @@ interface BulkAction
 
     public function name(): string;
 
+    /** @return list<Command>  */
     public function commands(BulkRequest $request): array;
 
     public function success(Command $command): TranslatableMessage;

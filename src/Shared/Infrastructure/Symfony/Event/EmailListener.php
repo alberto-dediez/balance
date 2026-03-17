@@ -11,6 +11,7 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 #[AsEventListener(event: SentMessageEvent::class)]
 class EmailListener
 {
+    /** @var RawMessage[] $messages */
     private static array $messages = [];
 
     public function __invoke(SentMessageEvent $event): void

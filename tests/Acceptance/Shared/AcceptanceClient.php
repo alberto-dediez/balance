@@ -2,6 +2,9 @@
 
 namespace App\Tests\Acceptance\Shared;
 
+use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\HttpKernel\Profiler\Profile;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -10,17 +13,18 @@ use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 
 final class AcceptanceClient
 {
-    protected static $instance;
+    private static ?AcceptanceClient $instance = null;
 
-    private $crawler = null;
+    private ?Crawler $crawler = null;
 
+    /** @var array<string, string> $server  */
     private array $server = [];
 
     private ?SecurityUser $user = null;
 
     private ?\Exception $exception = null;
 
-    private function __construct(private KernelBrowser $client)
+    private function __construct(private readonly KernelBrowser $client)
     {
         $this->client->catchExceptions(false);
         $this->client->disableReboot();
@@ -28,14 +32,15 @@ final class AcceptanceClient
 
     public static function instance(KernelBrowser $client): AcceptanceClient
     {
-        if (null === static::$instance) {
-            static::$instance = new self($client);
+        if (null === self::$instance) {
+            self::$instance = new self($client);
         }
 
-        return static::$instance;
+        return self::$instance;
     }
 
-    public function request(string $method, string $path, ?array $server = null, $body = null): void
+    /** @param array<string, string> $server  */
+    public function request(string $method, string $path, ?array $server = null, ?string $body = null): void
     {
         $server = null == $server ? ($this->server) : array_merge($server, $this->server);
 
@@ -48,7 +53,7 @@ final class AcceptanceClient
         }
     }
 
-    public function submit($formData)
+    public function submit(Form $formData): void
     {
         try {
             $this->crawler = $this->client->submit($formData);
@@ -59,12 +64,12 @@ final class AcceptanceClient
         }
     }
 
-    public function followRedirect()
+    public function followRedirect(): void
     {
         $this->client->followRedirect();
     }
 
-    public function getRequest()
+    public function getRequest(): object
     {
         return $this->client->getRequest();
     }
@@ -74,7 +79,7 @@ final class AcceptanceClient
         return $this->client->getResponse();
     }
 
-    public function getCrawler()
+    public function getCrawler(): Crawler
     {
         return null == $this->crawler ?
             new Crawler($this->client->getResponse()->getContent())
@@ -87,26 +92,24 @@ final class AcceptanceClient
         return $this->exception;
     }
 
-    public function getProfile()
+    public function getProfile(): Profile|false|null
     {
         return $this->client->getProfile();
     }
 
-    public function getContainer()
+    public function getContainer(): ContainerInterface
     {
-        $container = $this->client->getContainer();
-
-        return $container;
+        return $this->client->getContainer();
     }
 
-    public function loginUser(SecurityUser $user)
+    public function loginUser(SecurityUser $user): void
     {
         $this->user = $user;
 
         $this->client->loginUser($this->user);
     }
 
-    public function loginUserInApi(SecurityUser $user)
+    public function loginUserInApi(SecurityUser $user): void
     {
         $this->user = $user;
 
@@ -118,12 +121,12 @@ final class AcceptanceClient
         ]));
     }
 
-    public function setBearerToken($token)
+    public function setBearerToken(string $token): void
     {
         $this->server['HTTP_AUTHORIZATION'] = sprintf('Bearer %s', $token);
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->server = [];
         $this->user = null;

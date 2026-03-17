@@ -10,13 +10,15 @@ use App\Shared\Application\CommandBus\CommandResponse;
 
 class CommandBusDispatcher
 {
-    protected static $instance;
-    
-    protected array $handlers; 
+    protected static ?CommandBusDispatcher $instance = null;
+
+    /**
+     * @var CommandHandler[] $handlers
+     */
+    protected array $handlers = [];
 
     private function __construct()
     {
-        $this->handlers = [];
     }
 
     public static function instance(): CommandBusDispatcher
@@ -24,7 +26,7 @@ class CommandBusDispatcher
         if (null === static::$instance) {
             static::$instance = new self();
         }
-        
+
         return static::$instance;
     }
 
@@ -33,21 +35,21 @@ class CommandBusDispatcher
         throw new BadMethodCallException("Clone is not supported");
     }
 
-    public function subscribe(CommandHandler $handler) 
+    public function subscribe(CommandHandler $handler): void
     {
-        if (!isset($this->handlers[get_class($handler)])) {
-            $this->handlers[get_class($handler)] = $handler;    
-        }        
+        if (!isset($this->handlers[$handler::class])) {
+            $this->handlers[$handler::class] = $handler;
+        }
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->handlers = [];
     }
 
     public function dispatch(Command $command, User $user): ?CommandResponse
     {
-        if (count($this->handlers) == 0) {
+        if (count($this->handlers) === 0) {
             return null;
         }
 

@@ -4,11 +4,11 @@ namespace App\Security\Domain\Model\User;
 
 use App\Shared\Domain\Uuid\UuidGenerator;
 
-class RecoverToken
+class RecoverToken implements \Stringable
 {
     private const EXPIRATION_CALCULATOR = 'NOW +1 HOUR';
 
-    public function __construct(private ?string $token, private ?\DateTimeImmutable $expirateAt = null)
+    public function __construct(private readonly ?string $token, private readonly ?\DateTimeImmutable $expirateAt = null)
     {
 
     }

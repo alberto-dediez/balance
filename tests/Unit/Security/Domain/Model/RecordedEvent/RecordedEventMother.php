@@ -2,7 +2,6 @@
 
 namespace App\Tests\Unit\Security\Domain\Model\RecordedEvent;
 
-use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRemoved;
@@ -12,7 +11,7 @@ use App\Security\Domain\Model\RecordedEvent\RecordedEvent;
 
 class RecordedEventMother
 {
-    public static function from(UserId $userId, DomainEvent $event)
+    public static function from(UserId $userId, DomainEvent $event): RecordedEvent
     {
         return new RecordedEvent(
             userId: $userId,
@@ -20,7 +19,7 @@ class RecordedEventMother
         );
     }
 
-    public static function fromUser(UserId $userId)
+    public static function fromUser(UserId $userId): RecordedEvent
     {
         return self::from(
             userId: $userId, 
@@ -30,7 +29,7 @@ class RecordedEventMother
         );
     }
 
-    public static function random()
+    public static function random(): RecordedEvent
     {
         return self::from(
             userId: UserId::generate(),

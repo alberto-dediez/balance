@@ -4,10 +4,8 @@ namespace App\Tests\Unit\Security\Application\User\Register;
 
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Application\User\Register\RegisterUserRequest;
-use App\Security\Application\User\Register\RegisterUserResponse;
 use App\Security\Application\User\Register\RegisterUserService;
 use App\Security\Domain\Model\User\DuplicatedUsernameException;
-use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserRegistered;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use App\Security\Infrastructure\Symfony\Security\Md5PasswordHasher;
@@ -19,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 
 class RegisterUserServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -28,7 +26,7 @@ class RegisterUserServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -43,7 +41,6 @@ class RegisterUserServiceTest extends TestCase
 
         $result = $sut($request, $performBy);
 
-        $this->assertNotNull($result);
         $this->assertNotEmpty((string) $result->userId);
         $this->assertEquals(36, strlen((string) $result->userId));
 
@@ -59,7 +56,7 @@ class RegisterUserServiceTest extends TestCase
         $this->assertTrue($userPersisted->id()->equals($lastEvent->userId()));
     }
 
-    public function testPasswordIsEncoded()
+    public function testPasswordIsEncoded(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -74,7 +71,6 @@ class RegisterUserServiceTest extends TestCase
 
         $result = $sut($request, $performBy);
 
-        $this->assertNotNull($result);
         $this->assertNotEmpty((string) $result->userId);
         $this->assertEquals(36, strlen((string) $result->userId));
 
@@ -84,7 +80,7 @@ class RegisterUserServiceTest extends TestCase
         $this->assertNotEquals($request->password, $userPersisted->password());
     }
 
-    public function testUsernameIsUnique()
+    public function testUsernameIsUnique(): void
     {
         $this->expectException(DuplicatedUsernameException::class);
 
@@ -99,9 +95,7 @@ class RegisterUserServiceTest extends TestCase
             password: '666'
         );
 
-        $result = $sut($request1, $performBy);
-
-        $this->assertNotNull($result);
+        $sut($request1, $performBy);
 
         $request2 = new RegisterUserRequest(
             username: 'an@email.com',
@@ -111,7 +105,7 @@ class RegisterUserServiceTest extends TestCase
         $sut($request2, $performBy);
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -129,7 +123,7 @@ class RegisterUserServiceTest extends TestCase
         $sut($request1, $performBy);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -143,7 +137,7 @@ class RegisterUserServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryUserRepository $repository): RegisterUserService
     {
         $passwordHasher = new Md5PasswordHasher();
 

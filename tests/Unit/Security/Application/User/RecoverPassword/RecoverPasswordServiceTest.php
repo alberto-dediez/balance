@@ -3,10 +3,8 @@
 namespace App\Tests\Unit\Security\Application\User\RecoverPassword;
 
 use App\Security\Application\User\RecoverPassword\RecoverPasswordRequest;
-use App\Security\Application\User\RecoverPassword\RecoverPasswordResponse;
 use App\Security\Application\User\RecoverPassword\RecoverPasswordService;
 use App\Security\Domain\Model\User\PasswordRecovered;
-use App\Security\Domain\Model\User\User;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use App\Security\Infrastructure\Symfony\Security\Md5PasswordHasher;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -16,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class RecoverPasswordServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -25,7 +23,7 @@ class RecoverPasswordServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -45,7 +43,6 @@ class RecoverPasswordServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
         $this->assertTrue($user->id()->equals($result->userId));
 
         $lastEvent = $this->spySubscriber->lastEvent();
@@ -60,7 +57,7 @@ class RecoverPasswordServiceTest extends TestCase
         $this->assertNotEquals($request->password, $userPersisted->password());
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -77,7 +74,7 @@ class RecoverPasswordServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryUserRepository $repository): RecoverPasswordService
     {
         $passwordHasher = new Md5PasswordHasher();
 

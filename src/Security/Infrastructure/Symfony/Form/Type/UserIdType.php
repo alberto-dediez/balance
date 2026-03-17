@@ -10,18 +10,18 @@ use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdRemoteType;
 
 class UserIdType extends AggregateRootIdRemoteType
 {
-    public function __construct(private RouterInterface $router, private UserRepository $repository)
+    public function __construct(private readonly RouterInterface $router, private readonly UserRepository $repository)
     {
 
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'autocomplete-path' => $this->router->generate('admin_users_autocomplete'),
             'repository' => $this->repository,
             'class' => UserId::class      
-        ));
+        ]);
 
         parent::configureOptions($resolver);
     }

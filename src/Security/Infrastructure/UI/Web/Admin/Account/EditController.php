@@ -2,7 +2,6 @@
 
 namespace App\Security\Infrastructure\UI\Web\Admin\Account;
 
-use App\Security\Application\Action;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -45,7 +44,7 @@ class EditController extends AbstractController
         $form = $this->createForm(UpdateAccountType::class, $updateRequest); 
 
         try {
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateAccount, $user) {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateAccount, $user): void {
                 $accountRequest = $form->getData();
 
                 $updateAccount($accountRequest, $user);

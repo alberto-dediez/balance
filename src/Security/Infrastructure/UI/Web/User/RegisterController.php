@@ -50,13 +50,11 @@ class RegisterController extends AbstractController
         try {
             $form = $this->createForm(RegisterUserType::class);
 
-            $needsRedirect = $this->register($request, $form, function ($form) use ($loggedAccount, $performBy) {
-                return $this->registerUser(
-                    form: $form,
-                    account: $loggedAccount(),
-                    performBy: $performBy
-                );
-            });
+            $needsRedirect = $this->register($request, $form, fn($form) => $this->registerUser(
+                form: $form,
+                account: $loggedAccount(),
+                performBy: $performBy
+            ));
 
             if ($needsRedirect) {
                 return $this->redirectToRoute('users');

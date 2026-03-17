@@ -115,7 +115,12 @@ behat-snippets:
 
 ## —— Code Quality ——————————————————————————————————————————————————————————
 phpstan:
-	@$(PHP) bin/phpstan
+	@$(eval c ?=)
+	@$(PHP) bin/phpstan $(c)
+
+rector:
+	@$(eval c ?=)
+	$(PHP_CONT) ./vendor/bin/rector $(c)
 
 cs:
 	@$(PHP) bin/php-cs-fixer fix --dry-run --diff -v

@@ -6,26 +6,31 @@ use BadMethodCallException;
 
 final class DomainEventPublisher
 {
-    protected static $instance;
+    private static ?DomainEventPublisher $instance = null;
 
-    protected array $subscribers; 
+    /**
+     * @var DomainEventSubscriber[] $subscribers
+     */
+    private array $subscribers = [];
 
-    protected array $queue = [];
+    /**
+     * @var DomainEvent[] $queue
+     */
+    private array $queue = [];
 
-    protected bool $isLock = false;
-    
+    private bool $isLock = false;
+
     private function __construct()
     {
-        $this->subscribers = [];
     }
 
     public static function instance(): DomainEventPublisher
     {
-        if (null === static::$instance) {
-            static::$instance = new self();
+        if (null === self::$instance) {
+            self::$instance = new self();
         }
-        
-        return static::$instance;
+
+        return self::$instance;
     }
 
     public function __clone()
@@ -33,50 +38,46 @@ final class DomainEventPublisher
         throw new BadMethodCallException("Clone is not supported");
     }
 
-    public function subscribe(DomainEventSubscriber $subscriber) 
+    public function subscribe(DomainEventSubscriber $subscriber): void
     {
-        if (!isset($this->subscribers[get_class($subscriber)])) {
-            $this->subscribers[get_class($subscriber)] = $subscriber;    
-        }        
+        if (!isset($this->subscribers[$subscriber::class])) {
+            $this->subscribers[$subscriber::class] = $subscriber;
+        }
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->subscribers = [];
     }
 
-    public function publish(DomainEvent $event)
-    { 
+    public function publish(DomainEvent $event): void
+    {
         if ($this->isLock) {
             $this->queue[] = $event;
 
             return ;
         }
 
-        if (count($this->subscribers) > 0)  {
-            foreach ($this->subscribers as $subscriber) {
-                if ($subscriber->isSubscribedTo($event)) {
-                    $subscriber->handle($event);
-                }
+        foreach ($this->subscribers as $subscriber) {
+            if ($subscriber->isSubscribedTo($event)) {
+                $subscriber->handle($event);
             }
         }
     }
 
-    public function lock()
+    public function lock(): void
     {
         $this->isLock = true;
     }
 
-    public function unlock()
+    public function unlock(): void
     {
         $this->isLock = false;
 
-        if (count($this->queue) > 0) {
-            foreach ($this->queue as $i => $event) {
-                $this->publish($event);
+        foreach ($this->queue as $i => $event) {
+            $this->publish($event);
 
-                unset($this->queue[$i]);
-            }
+            unset($this->queue[$i]);
         }
     }
 }

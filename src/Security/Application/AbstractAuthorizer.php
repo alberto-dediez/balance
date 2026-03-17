@@ -26,7 +26,7 @@ abstract class AbstractAuthorizer implements Authorizer
         };
     }
 
-    public function denyUnlessCanDoThat(mixed $subject, Action $action, User $user)
+    public function denyUnlessCanDoThat(mixed $subject, Action $action, User $user): void
     {
         if (!$this->canDoThat($subject, $action, $user)) {
             throw new UnauthorizedActionException($subject, $action);
@@ -35,9 +35,10 @@ abstract class AbstractAuthorizer implements Authorizer
 
     protected function canAdmin(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::Admin)
-            || $user->hasRole(Role::SuperAdmin)
-        ;
+        if ($user->hasRole(Role::Admin)) {
+            return true;
+        }
+        return $user->hasRole(Role::SuperAdmin);
     }
 
     protected function canAutocomplete(mixed $subject, User $user): bool

@@ -8,8 +8,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
 use App\Shared\Infrastructure\Symfony\Form\DataTransformer\AggregateRootIdTransformer;
 
+/** @extends AbstractType<mixed> */
 class AggregateRootIdType extends AbstractType
 {
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(
@@ -17,21 +21,25 @@ class AggregateRootIdType extends AbstractType
         );
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'choices' => []
         ]);
     }
-    
+
     public function getParent()
     {
         return AutocompleteType::class;
     }
 
+    /**
+     * @param array<int, mixed> $aggregateRootElements
+     * @return array<string, mixed>
+     */
     protected function getChoices(array $aggregateRootElements): array
     {
-        if (count($aggregateRootElements) == 0) {
+        if (count($aggregateRootElements) === 0) {
             return [];
         }
 

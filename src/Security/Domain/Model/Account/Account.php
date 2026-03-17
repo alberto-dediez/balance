@@ -7,10 +7,13 @@ use App\Shared\Domain\Model\AggregateRoot;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRegistered;
 
-class Account
+class Account implements \Stringable
 {
     use AggregateRoot;
 
+    /**
+     * @param DomainEvent[] $events
+     */
     public function __construct(
         protected AccountId $id,
         protected string $name = '',
@@ -40,7 +43,7 @@ class Account
 
     public function isRemoved(): bool
     {
-        return true == $this->removed;
+        return $this->removed;
     }
 
     public function registeredAt(): \DateTimeImmutable
@@ -53,7 +56,7 @@ class Account
         return $this->removedAt;
     }
 
-    public function register(string $name, bool $active)
+    public function register(string $name, bool $active): void
     {
         $this->recordApplyAndPublish(
             new AccountRegistered(
@@ -64,7 +67,7 @@ class Account
         );
     }
 
-    public function changeName(string $name)
+    public function changeName(string $name): void
     {
         $this->recordApplyAndPublish(
             new AccountNameChanged(
@@ -74,7 +77,7 @@ class Account
         );
     }
 
-    public function changeStatus(bool $active)
+    public function changeStatus(bool $active): void
     {
         $this->recordApplyAndPublish(
             new AccountStatusChanged(
@@ -84,7 +87,7 @@ class Account
         );
     }
 
-    public function remove()
+    public function remove(): void
     {
         $this->recordApplyAndPublish(
             new AccountRemoved(
@@ -93,7 +96,7 @@ class Account
         );
     }
 
-    public function applyAccountRegistered(AccountRegistered $event)
+    public function applyAccountRegistered(AccountRegistered $event): void
     {
         $this->name = $event->name();
         $this->active = $event->active();
@@ -101,17 +104,17 @@ class Account
         $this->registeredAt = $event->occurredOn();
     }
 
-    public function applyAccountNameChanged(AccountNameChanged $event)
+    public function applyAccountNameChanged(AccountNameChanged $event): void
     {
         $this->name = $event->name();
     }
 
-    public function applyAccountStatusChanged(AccountStatusChanged $event)
+    public function applyAccountStatusChanged(AccountStatusChanged $event): void
     {
         $this->active = $event->active();
     }
 
-    public function applyAccountRemoved(AccountRemoved $event)
+    public function applyAccountRemoved(AccountRemoved $event): void
     {
         $this->removed = true;
         $this->removedAt = new \DateTimeImmutable("NOW");
@@ -119,6 +122,6 @@ class Account
 
     public function __toString(): string
     {
-        return (string) $this->name();
+        return $this->name();
     }
 }

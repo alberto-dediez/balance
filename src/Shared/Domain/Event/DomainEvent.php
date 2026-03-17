@@ -49,7 +49,13 @@ abstract class DomainEvent
 
     abstract public function aggregateRootId(): ?AggregateRootId;
 
+    /**
+     * @return array<string,mixed>
+     */
     abstract public function payload(): array;
 
+    /**
+     * @param array<string,mixed>|null $payload
+     */
     abstract public static function rebuildFromPayload(DomainEventId $id, \DateTimeImmutable $occurredOn, ?array $payload): static;
 }

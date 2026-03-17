@@ -18,11 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/users', name: 'api_users_register', methods: ['POST'])]
 #[Areas(['admin'])]
-#[OA\Post(
-    summary: "Register a new user",
-    description: "[Only for admins] Register a new user",
-    tags: ['Security']
-)]
+#[OA\Post(description: "[Only for admins] Register a new user", summary: "Register a new user", tags: ['Security'])]
 #[OA\Response(
     response: 200,
     description: 'Returns info about new registered user',
@@ -39,7 +35,7 @@ class RegisterController extends AbstractController
     {
         $this->denyAccessUnlessGranted(Role::Admin->value);
 
-        $accountId = empty($request->accountId)
+        $accountId = $request->accountId === '' || $request->accountId === '0'
             ? null
             : new AccountId($request->accountId)
         ;
@@ -51,9 +47,9 @@ class RegisterController extends AbstractController
         ), $loggedUser());
 
         return $this->json(new UserResponse(
-            accountId: (string) $response->accountId,
+            userId: (string) $response->userId,
             username: $response->username,
-            userId: (string) $response->userId
+            accountId: (string) $response->accountId
         ));
     }
 }

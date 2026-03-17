@@ -10,6 +10,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
+/**
+ * @extends AbstractType<EditUser>
+ */
 class AdminEditUserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -28,11 +31,9 @@ class AdminEditUserType extends AbstractType
                 'label' => new TranslatableMessage('Guardar y salir')
             ])
         ;
-
-        parent::buildForm($builder, $options);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => EditUser::class

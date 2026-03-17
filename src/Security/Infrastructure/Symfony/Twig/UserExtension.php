@@ -2,29 +2,40 @@
 
 namespace App\Security\Infrastructure\Symfony\Twig;
 
+use App\Security\Domain\Model\User\User;
 use Twig\TwigFilter;
 use Twig\Extension\AbstractExtension;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use Symfony\Component\Translation\TranslatableMessage;
+use Twig\TwigFunction;
 
 class UserExtension extends AbstractExtension
 {
+    /**
+     * @var User[] $users
+     */
     private array $users = [];
 
-    public function __construct(private UserRepository $userRepository)
+    public function __construct(private readonly UserRepository $userRepository)
     {
 
     }
 
+    /**
+     * @return TwigFilter[]
+     */
     public function getFilters(): array
     {
         return [
-            new TwigFilter('user_id', [$this, 'userId']),
-            new TwigFilter('user_name', [$this, 'userName'], ['is_safe' => ['html']]),
+            new TwigFilter('user_id', $this->userId(...)),
+            new TwigFilter('user_name', $this->userName(...), ['is_safe' => ['html']]),
         ];
     }
 
+    /**
+     * @return TwigFunction[]
+     */
     public function getFunctions(): array
     {
         return [
@@ -32,7 +43,7 @@ class UserExtension extends AbstractExtension
         ];
     }
 
-    public function userId($userId): UserId
+    public function userId(mixed $userId): UserId
     {
         return new UserId((string) $userId);
     }

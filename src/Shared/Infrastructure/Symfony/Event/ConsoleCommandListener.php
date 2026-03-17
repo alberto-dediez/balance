@@ -2,6 +2,8 @@
 
 namespace App\Shared\Infrastructure\Symfony\Event;
 
+use App\Shared\Application\CommandBus\CommandHandler;
+use App\Shared\Domain\Event\DomainEventSubscriber;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
@@ -9,6 +11,10 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 #[AsEventListener]
 class ConsoleCommandListener
 {
+    /**
+     * @param iterable<DomainEventSubscriber> $subscribers
+     * @param iterable<CommandHandler> $handlers
+     */
     public function __construct(
         #[AutowireIterator('domain.event.subscriber')]
         iterable $subscribers,

@@ -4,6 +4,7 @@ namespace App\Security\Domain\Model\User;
 
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\User\RoleGranted;
@@ -12,10 +13,14 @@ use App\Security\Domain\Model\User\RecoverToken;
 use App\Security\Domain\Model\User\UserRegistered;
 use App\Security\Domain\Model\User\PasswordRecovered;
 
-class User
+class User implements \Stringable
 {
     use AggregateRoot;
 
+    /**
+     * @param Role[] $roles
+     * @param DomainEvent[] $events
+     */
     public function __construct(
         protected UserId $id,
         protected string $username = '',
@@ -72,29 +77,32 @@ class User
         return $this->recoverToken()->equals($token) && !$this->recoverToken()->isExpired();
     }
 
+    /**
+     * @return Role[]
+     */
     public function roles(): array
     {
-        if (count($this->roles) == 0) {
+        if (count($this->roles) === 0) {
             return [Role::User];
         }
 
         $roles = $this->roles;
 
-        if (false == $this->hasRole(Role::User)) {
+        if (false === $this->hasRole(Role::User)) {
             $roles[] = Role::User;
         }
 
         return array_values($roles);
     }
 
-    public function hasRole(Role $role)
+    public function hasRole(Role $role): bool
     {
-        return false !== in_array($role, $this->roles);
+        return in_array($role, $this->roles);
     }
 
     public function isRemoved(): bool
     {
-        return true == $this->removed;
+        return $this->removed;
     }
 
     public function isActive(): bool
@@ -112,7 +120,7 @@ class User
         return $this->removedAt;
     }
 
-    public function register(string $username, string $password, ?AccountId $accountId = null)
+    public function register(string $username, string $password, ?AccountId $accountId = null): void
     {
         $this->recordApplyAndPublish(
             new UserRegistered(
@@ -124,7 +132,7 @@ class User
         );
     }
 
-    public function grantRole(Role $role)
+    public function grantRole(Role $role): void
     {
         $this->recordApplyAndPublish(
             new RoleGranted(
@@ -134,7 +142,7 @@ class User
         );
     }
 
-    public function ungrantRole(Role $role)
+    public function ungrantRole(Role $role): void
     {
         $this->recordApplyAndPublish(
             new RoleUngranted(
@@ -144,7 +152,7 @@ class User
         );
     }
 
-    public function changePassword(string $password)
+    public function changePassword(string $password): void
     {
         $this->recordApplyAndPublish(
             new PasswordChanged(
@@ -154,7 +162,7 @@ class User
         );
     }
 
-    public function initPasswordRecovery()
+    public function initPasswordRecovery(): void
     {
         $this->recordApplyAndPublish(
             new PasswordRecoveryInitialized(
@@ -165,7 +173,7 @@ class User
         );
     }
 
-    public function recoverPassword(RecoverToken $token, string $password)
+    public function recoverPassword(RecoverToken $token, string $password): void
     {
         if (!$this->isRecoverTokenValid($token)) {
             throw new RecoverTokenInvalidException($token);
@@ -180,7 +188,7 @@ class User
         );
     }
 
-    public function remove()
+    public function remove(): void
     {
         $this->recordApplyAndPublish(
             new UserRemoved(
@@ -189,7 +197,7 @@ class User
         );
     }
 
-    public function applyUserRegistered(UserRegistered $event)
+    public function applyUserRegistered(UserRegistered $event): void
     {
         $this->username = $event->username();
         $this->password = $event->password();
@@ -198,7 +206,7 @@ class User
         $this->registeredAt = $event->occurredOn();
     }
 
-    public function applyRoleGranted(RoleGranted $event)
+    public function applyRoleGranted(RoleGranted $event): void
     {
         if (in_array($event->role(), $this->roles)) {
             return ;
@@ -207,7 +215,7 @@ class User
         $this->roles[] = $event->role();
     }
 
-    public function applyRoleUngranted(RoleUngranted $event)
+    public function applyRoleUngranted(RoleUngranted $event): void
     {
         if (!in_array($event->role(), $this->roles)) {
             return ;
@@ -218,23 +226,23 @@ class User
         unset($this->roles[$key]);
     }
 
-    public function applyPasswordChanged(PasswordChanged $event)
+    public function applyPasswordChanged(PasswordChanged $event): void
     {
         $this->password = $event->password();
     }
 
-    public function applyPasswordRecoveryInitialized(PasswordRecoveryInitialized $event)
+    public function applyPasswordRecoveryInitialized(PasswordRecoveryInitialized $event): void
     {
         $this->recoverToken = $event->token();
     }
 
-    public function applyPasswordRecovered(PasswordRecovered $event)
+    public function applyPasswordRecovered(PasswordRecovered $event): void
     {
         $this->password = $event->password();
         $this->recoverToken = null;
     }
 
-    public function applyUserRemoved(UserRemoved $event)
+    public function applyUserRemoved(UserRemoved $event): void
     {
         $this->removed = true;
         $this->removedAt = new \DateTimeImmutable("NOW");

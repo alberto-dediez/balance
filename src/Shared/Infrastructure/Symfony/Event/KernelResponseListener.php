@@ -11,7 +11,7 @@ class KernelResponseListener
 {
     public function __invoke(ResponseEvent $event): void
     {
-        $domainEventPublisher = DomainEventPublisher::instance()
+        DomainEventPublisher::instance()
             ->unlock();    
     }
 }

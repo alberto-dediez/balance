@@ -35,7 +35,7 @@ class RegisterController extends AbstractController
 
             $authorizer->denyUnlessCanDoThat($account, Action::Register, $user);
 
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerAccount, $user) {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerAccount, $user): true {
                 $registerRequest = $form->getData();
 
                 $response = $registerAccount($registerRequest, $user);

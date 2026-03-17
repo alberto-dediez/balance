@@ -12,9 +12,9 @@ final class EmailSent extends DomainEvent
     protected static string $eventName = 'emailSended';
 
     public function __construct(
-        private EmailRecipient $recipient,
-        private string $subject,
-        private string $content,
+        private readonly EmailRecipient $recipient,
+        private readonly string $subject,
+        private readonly string $content,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -41,6 +41,9 @@ final class EmailSent extends DomainEvent
         return null;
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function payload(): array
     {
         return [
@@ -50,6 +53,9 @@ final class EmailSent extends DomainEvent
         ];
     }
 
+    /**
+     * @param array<string,mixed>|null $payload
+     */
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,

@@ -15,6 +15,7 @@ interface AccountRepository
 
     public function findByName(string $name): ?Account;
 
+    /** @return list<Account> */
     public function findByFilter(AccountFilter $filter): array;
 
     public function totalResultsByFilter(AccountFilter $filter): int;

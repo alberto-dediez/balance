@@ -12,6 +12,7 @@ class VeryPickyCommandHandler implements CommandHandler
 {
     use RegisterHandlerTrait;
 
+    /** @param array<int, Command> $commands */
     public function __construct(private array $commands = [])
     {
         $this->register();
@@ -20,7 +21,7 @@ class VeryPickyCommandHandler implements CommandHandler
     public function handle(Command $command, User $user): ?CommandResponse
     {
         $this->commands[] = [
-            'command' => $command, 
+            'command' => $command,
             'user' => $user
         ];
 
@@ -32,16 +33,14 @@ class VeryPickyCommandHandler implements CommandHandler
         return false;
     }
 
-    public function commands()
+    /** @return array<int, Command> */
+    public function commands(): array
     {
         return $this->commands;
     }
 
     public function lastCommand(): ?Command
     {
-        return isset($this->commands[count($this->commands)-1])
-            ? $this->commands[count($this->commands)-1]
-            : null
-        ;
+        return $this->commands[count($this->commands) - 1] ?? null;
     }
 }

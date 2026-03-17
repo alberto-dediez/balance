@@ -19,8 +19,10 @@ interface UserRepository
 
     public function findByRecoverToken(RecoverToken $recoverToken): ?User;
 
+    /** @return list<User> */
     public function findByAccountId(AccountId $accountId): array;
 
+    /** @return list<User> */
     public function findByFilter(UserFilter $filter): array;
 
     public function totalResultsByFilter(UserFilter $filter): int;

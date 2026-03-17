@@ -26,9 +26,7 @@ class ListController extends AbstractController
 
     public function __invoke(ListAccountsService $listAccounts, LoggedUser $loggedUser, Request $request): Response
     {   
-        list($filter, $form) = $this->filter($request, function () {
-            return  new ListAccountsRequest();
-        }, ListAccountsType::class);
+        [$filter, $form] = $this->filter($request, fn(): ListAccountsRequest => new ListAccountsRequest(), ListAccountsType::class);
 
         try {
             $response = $listAccounts($filter, $loggedUser());

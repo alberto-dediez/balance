@@ -7,18 +7,17 @@ use Symfony\Component\HttpFoundation\Request;
 
 trait FilterTrait
 {
-    public function filter(Request $request, \Closure $createFilter, string $formClass)
+    /**
+     * @return list<mixed>
+     */
+    public function filter(Request $request, \Closure $createFilter, string $formClass): array
     {
         $session = $request->getSession();
         $route = $request->attributes->get('_route');
 
         $key = sprintf("%s-%s", $route, md5($formClass));
 
-        if ($session->has($key)) {
-            $filter = $session->get($key);
-        } else {
-            $filter = $createFilter();
-        }
+        $filter = $session->has($key) ? $session->get($key) : $createFilter();
 
         $form = $this->createForm($formClass, $filter);
 
@@ -29,7 +28,7 @@ trait FilterTrait
         if ($form->isSubmitted() && $form->isValid()) {
             $filter = $form->getData();
 
-            if ($form->getClickedButton() && 'reset' == $form->getClickedButton()->getName()) {
+            if ($form->getClickedButton() && 'reset' === $form->getClickedButton()->getName()) {
                 $filter = $createFilter();
 
                 $form = $this->createForm($formClass, $filter);

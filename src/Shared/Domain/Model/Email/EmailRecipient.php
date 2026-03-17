@@ -2,7 +2,7 @@
 
 namespace App\Shared\Domain\Model\Email;
 
-class EmailRecipient
+class EmailRecipient implements \Stringable
 {
     public function __construct(
         public string $name,
@@ -12,8 +12,8 @@ class EmailRecipient
         
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return (string) $this->email;
+        return $this->email;
     }
 }

@@ -19,7 +19,7 @@ class ListRecordedEventsServiceTest extends TestCase
 
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = new InMemoryRecordedEventRepository();
 
@@ -36,13 +36,11 @@ class ListRecordedEventsServiceTest extends TestCase
 
         $result = $sut($request, $performBy);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListRecordedEventsResponse);
         $this->assertCount(4, $result->events);
         $this->assertEquals(4, $result->totalResults);
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -59,10 +57,10 @@ class ListRecordedEventsServiceTest extends TestCase
 
         $request = new ListRecordedEventsRequest();
 
-        $result = $sut($request, $performBy);
+        $sut($request, $performBy);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryRecordedEventRepository $repository): ListRecordedEventsService
     {
         return new ListRecordedEventsService($repository, RecordedEventAuthorizerMother::create());
     }

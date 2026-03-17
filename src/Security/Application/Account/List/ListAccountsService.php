@@ -11,7 +11,7 @@ use App\Security\Domain\Model\Account\AccountRepository;
 
 class ListAccountsService
 {
-    public function __construct(private AccountRepository $repository, private AccountAuthorizer $authorizer)
+    public function __construct(private readonly AccountRepository $repository, private readonly AccountAuthorizer $authorizer)
     {
 
     }

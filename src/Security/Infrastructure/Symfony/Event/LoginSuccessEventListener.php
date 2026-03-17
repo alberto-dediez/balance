@@ -2,7 +2,6 @@
 
 namespace App\Security\Infrastructure\Symfony\Event;
 
-use App\Security\Domain\Model\User\User;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
@@ -11,7 +10,7 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 #[AsEventListener]
 class LoginSuccessEventListener
 {
-    public function __invoke(LoginSuccessEvent $event)
+    public function __invoke(LoginSuccessEvent $event): void
     {
         $user = $event->getUser();
 

@@ -9,6 +9,9 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class ProfileType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -21,7 +24,7 @@ class ProfileType extends AbstractType
             ])
             ->add('password', RepeatedType::class, [
                 'first_options'  => [
-                    'label' => 'Contraseña nueva', 
+                    'label' => 'Contraseña nueva',
                 ],
                 'second_options' => [
                     'label' => 'Repetir Contraseña'
@@ -30,7 +33,7 @@ class ProfileType extends AbstractType
                 'invalid_message' => 'Las contraseñas no coinciden.',
                 'required' => true,
                 'mapped' => false,
-            ]) 
+            ])
             ->add('save', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar')
             ])

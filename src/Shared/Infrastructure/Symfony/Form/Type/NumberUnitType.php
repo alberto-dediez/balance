@@ -8,8 +8,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
+/** @extends AbstractType<int|float|string|null> */
 class NumberUnitType extends AbstractType
 {
+    /** @param FormInterface<int|float|string|null> $form */
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['symbol'] = $options['symbol'];

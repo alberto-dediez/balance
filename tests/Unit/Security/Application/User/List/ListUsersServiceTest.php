@@ -20,7 +20,7 @@ class ListUsersServiceTest extends TestCase
 
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -37,13 +37,11 @@ class ListUsersServiceTest extends TestCase
 
         $result = $sut($request, $performBy);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListUsersResponse);
         $this->assertCount(4, $result->users);
         $this->assertEquals(4, $result->totalResults);
     }
 
-    public function testAccessByOwner()
+    public function testAccessByOwner(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -64,13 +62,11 @@ class ListUsersServiceTest extends TestCase
 
         $result = $sut($request, $performBy);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListUsersResponse);
         $this->assertCount(4, $result->users);
         $this->assertEquals(4, $result->totalResults);
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -95,7 +91,7 @@ class ListUsersServiceTest extends TestCase
         $sut($request, $performBy);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryUserRepository $repository): ListUsersService
     {
         return new ListUsersService($repository, UserAuthorizerMother::create());
     }

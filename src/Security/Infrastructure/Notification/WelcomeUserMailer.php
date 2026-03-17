@@ -21,7 +21,7 @@ class WelcomeUserMailer implements DomainEventSubscriber
         $this->register();
     }
 
-    public function handle(DomainEvent $event)
+    public function handle(DomainEvent $event): void
     {
         if (!$this->isSubscribedTo($event)) {
             throw new \RuntimeException("Incorrect event!");
@@ -32,7 +32,7 @@ class WelcomeUserMailer implements DomainEventSubscriber
         $this->handlePasswordRecoveryInitialized($event);
     }
 
-    private function handlePasswordRecoveryInitialized(UserRegistered $event)
+    private function handlePasswordRecoveryInitialized(UserRegistered $event): void
     {
         $this->emailSender->__invoke(
             recipient: new EmailRecipient(name: $event->username(), email: $event->username()),
@@ -45,7 +45,7 @@ class WelcomeUserMailer implements DomainEventSubscriber
         );
     }
 
-    public function isSubscribedTo(DomainEvent $event)
+    public function isSubscribedTo(DomainEvent $event): bool
     {
         return $event instanceof UserRegistered;
     }

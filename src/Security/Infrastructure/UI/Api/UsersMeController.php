@@ -12,11 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/users/me', name: 'api_users_me', methods: ['GET'])]
 #[Areas(['default', 'admin'])]
-#[OA\Get(
-    summary: "Get info about me",
-    description: "Return information about logged user",
-    tags: ['Security']
-)]
+#[OA\Get(description: "Return information about logged user", summary: "Get info about me", tags: ['Security'])]
 #[OA\Response(
     response: 200,
     description: 'Returns info about user',

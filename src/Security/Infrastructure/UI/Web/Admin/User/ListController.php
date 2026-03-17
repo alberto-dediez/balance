@@ -6,12 +6,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
-use Symfony\Component\Translation\TranslatableMessage;
 use App\Security\Application\User\List\ListUsersRequest;
 use App\Security\Application\User\List\ListUsersService;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Security\Application\UnauthorizedActionException;
-use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Security\Infrastructure\Symfony\Form\AdminBulkUserType;
 use App\Security\Infrastructure\Symfony\Form\AdminListUsersType;
@@ -31,9 +29,7 @@ class ListController extends AbstractController
         Request $request
     ): Response
     {   
-        list($filter, $form) = $this->filter($request, function () {
-            return  new ListUsersRequest();
-        }, AdminListUsersType::class);
+        [$filter, $form] = $this->filter($request, fn(): ListUsersRequest => new ListUsersRequest(), AdminListUsersType::class);
 
         try {
             $performBy = $loggedUser();

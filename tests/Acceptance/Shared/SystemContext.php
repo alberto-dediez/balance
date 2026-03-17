@@ -15,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 
 class SystemContext implements Context
 {
-    private Application $application;
+    private readonly Application $application;
     private ?string $output = null;
     private ?int $statusCode = null;
     private ?CommandTester $commandTester = null;
@@ -26,13 +26,13 @@ class SystemContext implements Context
     }
 
     #[Given('I am the system')]
-    public function iAmTheSystem()
+    public function iAmTheSystem(): void
     {
         Assert::assertEquals('cli', php_sapi_name());
     }
 
     #[When('command :name is executed')]
-    public function commandIsExecuted(string $name)
+    public function commandIsExecuted(string $name): void
     {
         $command = $this->application->find($name);
 
@@ -43,26 +43,26 @@ class SystemContext implements Context
     }
 
     #[Then('I want to see :text in command output')]
-    public function iWantToSeeInCommandOutput(string $text)
+    public function iWantToSeeInCommandOutput(string $text): void
     {
         Assert::assertStringContainsString($text, $this->output);
     }
 
     #[Then("I don't want to see :text in command output")]
-    public function iDontWantToSeeInCommandOutput($text)
+    public function iDontWantToSeeInCommandOutput(string $text): void
     {
         Assert::assertStringNotContainsString($text, $this->output);
     }
 
     #[When('command :name is executed with argument :argument')]
-    public function commandIsExecutedWithArgument(string $name, string $argument)
+    public function commandIsExecutedWithArgument(string $name, string $argument): void
     {
         $parameters = [];
 
         $arguments = explode(' ', $argument);
 
         foreach ($arguments as $part) {
-            list($attr, $value) = explode(':', $part);
+            [$attr, $value] = explode(':', $part);
 
             $parameters[$attr] = $value;
         }
@@ -76,13 +76,13 @@ class SystemContext implements Context
     }
 
     #[Then("Is Executed Successfully")]
-    public function isExecutedSuccessfully()
+    public function isExecutedSuccessfully(): void
     {
         $this->commandTester->assertCommandIsSuccessful();
     }
 
     #[Then("I expect status code :code")]
-    public function iExpectStatusCode(int $code)
+    public function iExpectStatusCode(int $code): void
     {
         Assert::assertEquals($code, $this->statusCode);
     }

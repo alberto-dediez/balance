@@ -11,6 +11,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Security\Application\Account\Register\RegisterAccountRequest;
 
+/**
+ * @extends AbstractType<RegisterAccountRequest>
+ */
 class RegisterAccountType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -28,11 +31,9 @@ class RegisterAccountType extends AbstractType
                 'label' => new TranslatableMessage('Registrar')
             ])
         ;
-
-        parent::buildForm($builder, $options);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => RegisterAccountRequest::class

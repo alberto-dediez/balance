@@ -11,7 +11,7 @@ use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 
 abstract class EmailSenderTest extends KernelTestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -20,7 +20,7 @@ abstract class EmailSenderTest extends KernelTestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $sut = $this->createSUT();
 

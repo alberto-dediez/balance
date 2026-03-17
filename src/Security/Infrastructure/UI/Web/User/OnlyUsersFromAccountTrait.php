@@ -10,7 +10,7 @@ trait OnlyUsersFromAccountTrait
 {
     protected function onlyUsersFromAccount(?User $user, ?Account $account)
     {
-        if (null == $user || null == $account || null == $user->accountId() || false == $account->id()->equals($user->accountId())) {
+        if (in_array(null, [$user, $account, $user->accountId()]) || false === $account->id()->equals($user->accountId())) {
             throw $this->createNotFoundException(new TranslatableMessage("El usuario no existe"));
         }
     }

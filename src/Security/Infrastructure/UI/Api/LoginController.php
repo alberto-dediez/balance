@@ -8,9 +8,9 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class LoginController extends AbstractController
 {
-    #[Route(path: '/login', methods: ['POST'], name: 'api_login_check')]
-    public function login(AuthenticationUtils $authenticationUtils)
+    #[Route(path: '/login', name: 'api_login_check', methods: ['POST'])]
+    public function login(AuthenticationUtils $authenticationUtils): void
     {
-        
+
     }
 }

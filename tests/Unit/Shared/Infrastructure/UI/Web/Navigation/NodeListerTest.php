@@ -20,12 +20,7 @@ class NodeListerTest extends TestCase
 
         $result = $sut->nodes();
 
-        $this->assertNotNull($result);
-        $this->assertTrue(is_array($result));
         $this->assertGreaterThanOrEqual(1, count($result));
-
-        $this->assertTrue($result[0] instanceof Node);
-        $this->assertTrue($result[0]->items[0] instanceof Node);
     }
 
     private function createSUT(AuthorizationCheckerInterface $security): NodeLister

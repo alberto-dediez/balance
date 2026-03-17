@@ -24,7 +24,7 @@ class RecoverPasswordService implements CommandHandler
     {
         $user = $this->repository->findByRecoverToken($request->token);
 
-        if (null === $user) {
+        if (!$user instanceof User) {
             throw new InvalidArgumentException("User not found");
         }
 

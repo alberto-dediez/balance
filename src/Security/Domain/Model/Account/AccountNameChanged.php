@@ -13,8 +13,8 @@ final class AccountNameChanged extends DomainEvent
     protected static string $eventName = 'accountNameChanged';
 
     public function __construct(
-        private AccountId $accountId,
-        private string $name,
+        private readonly AccountId $accountId,
+        private readonly string $name,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -33,7 +33,7 @@ final class AccountNameChanged extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->accountId();
+        return $this->accountId;
     }
 
     public function payload(): array

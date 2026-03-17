@@ -13,13 +13,16 @@ use App\Shared\Domain\Model\Email\EmailRecipient;
 class SymfonyEmailSender implements EmailSender
 {
     public function __construct(
-        private MailerInterface $mailer,
-        private string $mailerFrom
+        private readonly MailerInterface $mailer,
+        private readonly string $mailerFrom
     )
     {
-        
+
     }
 
+    /**
+     * @param array<string,mixed>|null $params
+     */
     public function __invoke(EmailRecipient $recipient, string $subject, string $template, ?array $params = null): void
     {
         $email = (new TemplatedEmail())
@@ -37,8 +40,8 @@ class SymfonyEmailSender implements EmailSender
 
         DomainEventPublisher::instance()->publish(
             new EmailSent(
-                recipient: $recipient, 
-                subject: $subject, 
+                recipient: $recipient,
+                subject: $subject,
                 content: $template
             )
         );

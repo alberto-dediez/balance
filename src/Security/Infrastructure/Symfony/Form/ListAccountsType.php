@@ -29,7 +29,7 @@ class ListAccountsType extends BaseFilterType
         parent::buildForm($builder, $options);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => ListAccountsRequest::class

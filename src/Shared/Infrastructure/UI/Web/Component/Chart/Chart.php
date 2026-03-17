@@ -11,14 +11,27 @@ class Chart
 
     public ?string $title = null;
 
+
+    /**
+     * @var array<int, mixed> $values
+     */
     public array $values = [];
 
+    /**
+     * @var array<int, mixed> $categories
+     */
     public array $categories = [];
 
     public ?string $unit = '';
 
+    /**
+     * @var array<int, mixed> $colors
+     */
     public ?array $colors = [];
 
+    /**
+     * @var array<int, mixed> $series
+     */
     public ?array $series = [];
 
     public bool $legend = false;

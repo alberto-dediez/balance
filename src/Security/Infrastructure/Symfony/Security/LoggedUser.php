@@ -10,7 +10,7 @@ class LoggedUser
 {
     private ?User $user = null;
 
-    public function __construct(private Security $security, private UserRepository $userRepository)
+    public function __construct(private readonly Security $security, private readonly UserRepository $userRepository)
     {
 
     }

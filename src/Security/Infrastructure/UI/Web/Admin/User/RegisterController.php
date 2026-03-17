@@ -37,13 +37,11 @@ class RegisterController extends AbstractController
 
         try {
 
-            $needsRedirect = $this->register($request, $form, function ($form) use ($performBy) {
-                return $this->registerUser(
-                    form: $form,
-                    account: $form->get('account')->getData(),
-                    performBy: $performBy
-                );
-            });
+            $needsRedirect = $this->register($request, $form, fn($form) => $this->registerUser(
+                form: $form,
+                account: $form->get('account')->getData(),
+                performBy: $performBy
+            ));
 
             if ($needsRedirect) {
                 return $this->redirectToRoute('admin_users');

@@ -16,11 +16,7 @@ use App\Security\Application\Account\Register\RegisterAccountService;
 
 #[Route('/accounts', name: 'api_accounts_register', methods: ['POST'])]
 #[Areas(['admin'])]
-#[OA\Post(
-    summary: "Register a new account",
-    description: "[Only for admins] Register a new account",
-    tags: ['Security']
-)]
+#[OA\Post(description: "[Only for admins] Register a new account", summary: "Register a new account", tags: ['Security'])]
 #[OA\Response(
     response: 200,
     description: 'Returns info about new registered account',

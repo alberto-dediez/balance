@@ -31,11 +31,11 @@ class UpdateAccountService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($account, Action::Edit, $user);
 
-        if ($request->name != $account->name()) {
+        if ($request->name !== $account->name()) {
             $account->changeName($request->name);
         }
 
-        if ($request->active != $account->isActive()) {
+        if ($request->active !== $account->isActive()) {
             $account->changeStatus($request->active);
         }
 

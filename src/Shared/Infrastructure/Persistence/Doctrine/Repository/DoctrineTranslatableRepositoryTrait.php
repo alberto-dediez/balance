@@ -7,9 +7,9 @@ use Doctrine\ORM\EntityRepository;
 
 trait DoctrineTranslatableRepositoryTrait
 {
-    private function loadTranslations(?Translatable $translatable, EntityRepository $translationRepository)
+    private function loadTranslations(?Translatable $translatable, EntityRepository $translationRepository): void
     {
-        if (null === $translatable) {
+        if (!$translatable instanceof Translatable) {
             return ;
         }
 
@@ -21,7 +21,7 @@ trait DoctrineTranslatableRepositoryTrait
             ])
         ;
 
-        if (count($storedTranslations) == 0) {
+        if (count($storedTranslations) === 0) {
             return ;
         }
 
@@ -30,11 +30,11 @@ trait DoctrineTranslatableRepositoryTrait
         }
     }
 
-    private function addTranslations(Translatable $translatable, EntityRepository $translationRepository)
+    private function addTranslations(Translatable $translatable, EntityRepository $translationRepository): void
     {
         $translations = $translatable->translations();
 
-        if (count($translations) == 0) {
+        if (count($translations) === 0) {
             return ;
         }
 
@@ -42,11 +42,9 @@ trait DoctrineTranslatableRepositoryTrait
             'translatableId' => $translatable->id()
         ]);
 
-        if (count($storedTranslations) > 0) {
-            foreach ($storedTranslations as $storedTranslation) {
-                if (!$translations->contains($storedTranslation)) {
-                    $this->getEntityManager()->remove($storedTranslation);
-                }
+        foreach ($storedTranslations as $storedTranslation) {
+            if (!$translations->contains($storedTranslation)) {
+                $this->getEntityManager()->remove($storedTranslation);
             }
         }
 

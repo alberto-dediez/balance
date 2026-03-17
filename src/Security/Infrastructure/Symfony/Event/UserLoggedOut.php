@@ -12,7 +12,7 @@ final class UserLoggedOut extends InfrastructureEvent
     protected static string $eventName = 'userLoggedOut';
 
     public function __construct(
-        private UserId $userId,
+        private readonly UserId $userId,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -26,7 +26,7 @@ final class UserLoggedOut extends InfrastructureEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->userId();
+        return $this->userId;
     }
 
     public function payload(): array

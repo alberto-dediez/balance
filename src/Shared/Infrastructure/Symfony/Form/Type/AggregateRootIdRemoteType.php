@@ -8,8 +8,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteRemoteType;
 use App\Shared\Infrastructure\Symfony\Form\DataTransformer\AggregateRootIdTransformer;
 
+/** @extends AbstractType<mixed> */
 class AggregateRootIdRemoteType extends AbstractType
 {
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(
@@ -17,14 +21,14 @@ class AggregateRootIdRemoteType extends AbstractType
         );
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'choices' => []
         ]);
     }
-    
-    public function getParent()
+
+    public function getParent(): string
     {
         return AutocompleteRemoteType::class;
     }
