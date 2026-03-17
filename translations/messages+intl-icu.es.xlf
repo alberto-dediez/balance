@@ -1405,6 +1405,42 @@
         <source>Fecha de actualización</source>
         <target>Fecha de actualización</target>
       </trans-unit>
+      <trans-unit id="wbMeKOh" resname="Name">
+        <source>Name</source>
+        <target>Nombre</target>
+      </trans-unit>
+      <trans-unit id="etiPcw8" resname="Categoría de servicio actualizada con éxito">
+        <source>Categoría de servicio actualizada con éxito</source>
+        <target>Categoría de servicio actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id="BLl8D3G" resname="Se ha eliminado la categoría de servicios {id}">
+        <source>Se ha eliminado la categoría de servicios {id}</source>
+        <target>Se ha eliminado la categoría de servicios {id}</target>
+      </trans-unit>
+      <trans-unit id="VF1XC05" resname="No se ha podido eliminar la categoría de servicios {id}">
+        <source>No se ha podido eliminar la categoría de servicios {id}</source>
+        <target>No se ha podido eliminar la categoría de servicios {id}</target>
+      </trans-unit>
+      <trans-unit id="eEv.eCn" resname="Se ha eliminado la categoría de servicio {serviceCategory}">
+        <source>Se ha eliminado la categoría de servicio {serviceCategory}</source>
+        <target>Se ha eliminado la categoría de servicio {serviceCategory}</target>
+      </trans-unit>
+      <trans-unit id="Nmaj2N8" resname="No se ha podido eliminar la categoría de servicio {serviceCategory}">
+        <source>No se ha podido eliminar la categoría de servicio {serviceCategory}</source>
+        <target>No se ha podido eliminar la categoría de servicio {serviceCategory}</target>
+      </trans-unit>
+      <trans-unit id="S04v0eZ" resname="La categoría de servicio no existe">
+        <source>La categoría de servicio no existe</source>
+        <target>La categoría de servicio no existe</target>
+      </trans-unit>
+      <trans-unit id="3VcA2qY" resname="Categoría de servicio creada correctamente: {name}">
+        <source>Categoría de servicio creada correctamente: {name}</source>
+        <target>Categoría de servicio creada correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="AshtmGf" resname="Categorías de servicio">
+        <source>Categorías de servicio</source>
+        <target>Categorías de servicio</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
