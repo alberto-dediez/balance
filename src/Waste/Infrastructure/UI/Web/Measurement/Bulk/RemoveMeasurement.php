@@ -5,20 +5,13 @@ namespace App\Waste\Infrastructure\UI\Web\Measurement\Bulk;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkAction;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
+use App\Shared\Infrastructure\UI\Web\Bulk\RemoveAction;
 use Symfony\Component\Translation\TranslatableMessage;
 use App\Waste\Application\Measurement\Remove\RemoveMeasurementRequest;
 
 class RemoveMeasurement implements BulkAction
 {
-    public function id(): string
-    {
-        return 'remove';
-    }
-
-    public function name(): string
-    {
-        return new TranslatableMessage('Eliminar');
-    }
+    use RemoveAction;
 
     public function commands(BulkRequest $request): array
     {
