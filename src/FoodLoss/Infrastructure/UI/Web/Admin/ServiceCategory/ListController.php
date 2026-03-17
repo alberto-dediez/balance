@@ -17,7 +17,7 @@ use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\FoodLoss\Infrastructure\UI\Web\Admin\ServiceCategory\Bulk\RemoveServiceCategory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/admin/service_categories', name: 'admin_service_categories')]
+#[Route('/admin/service-categories', name: 'admin_service_categories')]
 class ListController extends AbstractController
 {
     use FilterTrait, BulkTrait;

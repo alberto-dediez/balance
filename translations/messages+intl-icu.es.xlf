@@ -1405,10 +1405,6 @@
         <source>Fecha de actualización</source>
         <target>Fecha de actualización</target>
       </trans-unit>
-      <trans-unit id="wbMeKOh" resname="Name">
-        <source>Name</source>
-        <target>Nombre</target>
-      </trans-unit>
       <trans-unit id="etiPcw8" resname="Categoría de servicio actualizada con éxito">
         <source>Categoría de servicio actualizada con éxito</source>
         <target>Categoría de servicio actualizada con éxito</target>

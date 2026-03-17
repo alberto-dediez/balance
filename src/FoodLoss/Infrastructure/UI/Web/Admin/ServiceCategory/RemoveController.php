@@ -12,7 +12,7 @@ use App\FoodLoss\Application\ServiceCategory\Remove\RemoveServiceCategoryService
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/admin/service_categories/remove/{serviceCategoryId}', name: 'admin_service_categories_remove')]
+#[Route('/admin/service-categories/remove/{serviceCategoryId}', name: 'admin_service_categories_remove')]
 class RemoveController extends AbstractController
 {
     use GetServiceCategoryFromIdTrait;

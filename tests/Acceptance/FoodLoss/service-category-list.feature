@@ -6,7 +6,7 @@ Feature:
         Given service category "Service category 1" with id "1111" exists
         Given service category "Service category 2" with id "2222" exists
         When I am logged as "admin@dediez.software"
-        When I go to "/es/admin/service_categories"
+        When I go to "/es/admin/service-categories"
         Then the response status should be 200
         Then I see a table with 4 rows
 
@@ -16,5 +16,5 @@ Feature:
         Given service category "Service category 1" with id "1111" exists
         Given service category "Service category 2" with id "2222" exists
         When I am logged as "user1@dediez.software"
-        When I go to "/es/admin/service_categories"
+        When I go to "/es/admin/service-categories"
         Then the response status should be 403

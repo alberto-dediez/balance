@@ -17,7 +17,7 @@ use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\FoodLoss\Infrastructure\UI\Web\Admin\ServiceCategory\GetServiceCategoryFromIdTrait;
 
-#[Route('/admin/service_categories/edit/{serviceCategoryId}', name: 'admin_service_categories_edit')]
+#[Route('/admin/service-categories/edit/{serviceCategoryId}', name: 'admin_service_categories_edit')]
 class EditController extends AbstractController
 {
     use EditTrait, GetServiceCategoryFromIdTrait;

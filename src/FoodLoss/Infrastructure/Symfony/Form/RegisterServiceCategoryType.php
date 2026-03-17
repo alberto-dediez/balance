@@ -16,7 +16,7 @@ class RegisterServiceCategoryType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => new TranslatableMessage('Name'),
+                'label' => new TranslatableMessage('Nombre'),
                 'required' => true
             ]) 
             ->add('register', SubmitType::class, [

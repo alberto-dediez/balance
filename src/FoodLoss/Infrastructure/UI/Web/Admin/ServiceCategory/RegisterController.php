@@ -16,7 +16,7 @@ use App\FoodLoss\Infrastructure\Symfony\Form\RegisterServiceCategoryType;
 use App\FoodLoss\Application\ServiceCategory\Register\RegisterServiceCategoryService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/admin/service_categories/register', name: 'admin_service_categories_register')]
+#[Route('/admin/service-categories/register', name: 'admin_service_categories_register')]
 class RegisterController extends AbstractController
 {
     use RegisterTrait;
