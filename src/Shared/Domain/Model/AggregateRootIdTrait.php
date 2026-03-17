@@ -11,12 +11,12 @@ trait AggregateRootIdTrait
 
     }
 
-    public static function fromString(string $id): AggregateRootId
+    public static function fromString(string $id): self
     {
         return new self($id);
     }
 
-    public static function generate(): AggregateRootId
+    public static function generate(): self
     {
         $id = UuidGenerator::v7();
 

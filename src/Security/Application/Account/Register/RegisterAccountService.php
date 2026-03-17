@@ -28,7 +28,7 @@ class RegisterAccountService implements CommandHandler
         $account = new Account($id);
 
         $this->authorizer->denyUnlessCanDoThat($account, Action::Register, $user);
-        
+
         $account->register($request->name, $request->active);
 
         $this->accountRepository->add($account);

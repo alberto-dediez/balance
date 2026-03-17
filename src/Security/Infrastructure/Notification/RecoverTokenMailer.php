@@ -15,7 +15,7 @@ class RecoverTokenMailer implements DomainEventSubscriber
     use RegisterTrait;
 
     public function __construct(
-        private EmailSender $emailSender, 
+        private EmailSender $emailSender,
         private TranslatorInterface $translator
     ) {
         $this->register();
@@ -26,6 +26,8 @@ class RecoverTokenMailer implements DomainEventSubscriber
         if (!$this->isSubscribedTo($event)) {
             throw new \RuntimeException("Incorrect event!");
         }
+
+        assert($event instanceof PasswordRecoveryInitialized);
 
         $this->handlePasswordRecoveryInitialized($event);
     }

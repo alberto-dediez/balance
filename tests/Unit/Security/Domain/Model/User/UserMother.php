@@ -8,6 +8,7 @@ use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\RecoverToken;
+use App\Shared\Domain\Model\AggregateRootId;
 
 class UserMother
 {

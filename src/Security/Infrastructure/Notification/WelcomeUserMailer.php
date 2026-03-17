@@ -15,7 +15,7 @@ class WelcomeUserMailer implements DomainEventSubscriber
     use RegisterTrait;
 
     public function __construct(
-        private EmailSender $emailSender, 
+        private EmailSender $emailSender,
         private TranslatorInterface $translator
     ) {
         $this->register();
@@ -26,6 +26,8 @@ class WelcomeUserMailer implements DomainEventSubscriber
         if (!$this->isSubscribedTo($event)) {
             throw new \RuntimeException("Incorrect event!");
         }
+
+        assert($event instanceof UserRegistered);
 
         $this->handlePasswordRecoveryInitialized($event);
     }

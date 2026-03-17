@@ -26,6 +26,8 @@ class RemoveAccountSubscriber implements DomainEventSubscriber
             throw new \RuntimeException("Incorrect event!");
         }
 
+        assert($event instanceof AccountRemoved);
+
         $this->handleAccountRemoved($event);
     }
 

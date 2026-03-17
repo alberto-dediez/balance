@@ -11,11 +11,11 @@ trait UuidTrait
 
     }
 
-    public static function generate(): self
+    public static function generate(): static
     {
         $id = UuidGenerator::v7();
 
-        return new self($id);
+        return new static($id);
     }
 
     public function id(): string
