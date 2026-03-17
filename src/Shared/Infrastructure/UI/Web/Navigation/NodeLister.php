@@ -87,7 +87,7 @@ class NodeLister
                     target: $this->router->generate('admin_actions')
                 ),
                 new Node(
-                    label: new TranslatableMessage("Categorías de servicios"),
+                    label: new TranslatableMessage("Categorías de servicio"),
                     icon: "solar:folder-with-files-line-duotone",
                     target: $this->router->generate('admin_service_categories')
                 )
