@@ -1405,6 +1405,38 @@
         <source>Fecha de actualización</source>
         <target>Update date</target>
       </trans-unit>
+      <trans-unit id="etiPcw8" resname="Categoría de servicio actualizada con éxito">
+        <source>Categoría de servicio actualizada con éxito</source>
+        <target>Service category successfully updated</target>
+      </trans-unit>
+      <trans-unit id="BLl8D3G" resname="Se ha eliminado la categoría de servicios {id}">
+        <source>Se ha eliminado la categoría de servicios {id}</source>
+        <target>The service category {id} has been removed</target>
+      </trans-unit>
+      <trans-unit id="VF1XC05" resname="No se ha podido eliminar la categoría de servicios {id}">
+        <source>No se ha podido eliminar la categoría de servicios {id}</source>
+        <target>The service category {id} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="eEv.eCn" resname="Se ha eliminado la categoría de servicio {serviceCategory}">
+        <source>Se ha eliminado la categoría de servicio {serviceCategory}</source>
+        <target>The service category {serviceCategory} has been removed</target>
+      </trans-unit>
+      <trans-unit id="Nmaj2N8" resname="No se ha podido eliminar la categoría de servicio {serviceCategory}">
+        <source>No se ha podido eliminar la categoría de servicio {serviceCategory}</source>
+        <target>The service category {serviceCategory} could not be deleted</target>
+      </trans-unit>
+      <trans-unit id="S04v0eZ" resname="La categoría de servicio no existe">
+        <source>La categoría de servicio no existe</source>
+        <target>The service category does not exist</target>
+      </trans-unit>
+      <trans-unit id="3VcA2qY" resname="Categoría de servicio creada correctamente: {name}">
+        <source>Categoría de servicio creada correctamente: {name}</source>
+        <target>Service category created successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="AshtmGf" resname="Categorías de servicio">
+        <source>Categorías de servicio</source>
+        <target>Service categories</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
