@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Unit\Shared\Infrastructure\UI\Web\Navigation;
 
-use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
-use App\Shared\Infrastructure\UI\Web\Navigation\Node;
 use App\Shared\Infrastructure\UI\Web\Navigation\NodeLister;
 use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeSecurity;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 

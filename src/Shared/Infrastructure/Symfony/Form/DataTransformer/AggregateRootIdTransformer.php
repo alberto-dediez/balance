@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Symfony\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
@@ -11,13 +13,10 @@ readonly class AggregateRootIdTransformer implements DataTransformerInterface
      * @param class-string $class
      */
     public function __construct(
-        private string $class
-    ) {
-
-    }
+        private string $class,
+    ) {}
 
     /**
-     * @param mixed $value
      * @return string|array<int,string>
      */
     public function transform(mixed $value): string|array
@@ -31,7 +30,7 @@ readonly class AggregateRootIdTransformer implements DataTransformerInterface
 
     public function reverseTransform($value): mixed
     {
-        if (is_array($value) && count($value) === 0) {
+        if (is_array($value) && 0 === count($value)) {
             return [];
         }
 

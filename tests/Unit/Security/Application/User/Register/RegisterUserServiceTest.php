@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\User\Register;
 
 use App\Security\Application\UnauthorizedActionException;
@@ -34,7 +36,7 @@ class RegisterUserServiceTest extends TestCase
 
         $request = new RegisterUserRequest(
             username: 'an@email.com',
-            password: '666'
+            password: '666',
         );
 
         $performBy = UserMother::adminUser();
@@ -64,7 +66,7 @@ class RegisterUserServiceTest extends TestCase
 
         $request = new RegisterUserRequest(
             username: 'an@email.com',
-            password: '666'
+            password: '666',
         );
 
         $performBy = UserMother::adminUser();
@@ -92,14 +94,14 @@ class RegisterUserServiceTest extends TestCase
 
         $request1 = new RegisterUserRequest(
             username: 'an@email.com',
-            password: '666'
+            password: '666',
         );
 
         $sut($request1, $performBy);
 
         $request2 = new RegisterUserRequest(
             username: 'an@email.com',
-            password: '777'
+            password: '777',
         );
 
         $sut($request2, $performBy);
@@ -117,7 +119,7 @@ class RegisterUserServiceTest extends TestCase
 
         $request1 = new RegisterUserRequest(
             username: 'an@email.com',
-            password: '666'
+            password: '666',
         );
 
         $sut($request1, $performBy);
@@ -131,7 +133,7 @@ class RegisterUserServiceTest extends TestCase
 
         $result = $sut->isHandled(new RegisterUserRequest(
             username: 'another@email.com',
-            password: '123'
+            password: '123',
         ));
 
         $this->assertTrue($result);

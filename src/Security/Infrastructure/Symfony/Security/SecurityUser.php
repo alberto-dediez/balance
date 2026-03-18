@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Security;
 
 use App\Security\Domain\Model\User\User;
-use Symfony\Component\Security\Core\User\UserInterface;
+
+use function PHPUnit\Framework\assertNotEmpty;
+
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use function PHPUnit\Framework\assertNotEmpty;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class SecurityUser extends User implements UserInterface, PasswordAuthenticatedUserInterface, EquatableInterface
 {
@@ -53,7 +57,7 @@ class SecurityUser extends User implements UserInterface, PasswordAuthenticatedU
             account: $user->account(),
             roles: $user->roles(),
             events: $user->recordedEvents(),
-            registeredAt: $user->registeredAt() ?? new \DateTimeImmutable('NOW')
+            registeredAt: $user->registeredAt() ?? new \DateTimeImmutable('NOW'),
         );
     }
 }

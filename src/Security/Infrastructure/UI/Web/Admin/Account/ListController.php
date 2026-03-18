@@ -1,31 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\UI\Web\Admin\Account;
 
+use App\Security\Application\Account\List\ListAccountsRequest;
+use App\Security\Application\Account\List\ListAccountsService;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Form\ListAccountsType;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Security\Infrastructure\UI\Web\Admin\Account\Bulk\RemoveAccount;
+use App\Shared\Infrastructure\Symfony\Form\BulkType;
+use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
+use App\Shared\Infrastructure\UI\Web\CRUD\BulkTrait;
+use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Shared\Infrastructure\Symfony\Form\BulkType;
-use App\Shared\Infrastructure\UI\Web\CRUD\BulkTrait;
-use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
-use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Security\Application\UnauthorizedActionException;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use App\Security\Application\Account\List\ListAccountsRequest;
-use App\Security\Application\Account\List\ListAccountsService;
-use App\Security\Infrastructure\Symfony\Form\ListAccountsType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Security\Infrastructure\UI\Web\Admin\Account\Bulk\RemoveAccount;
 
 #[Route('/admin/accounts', name: 'admin_accounts')]
-#[IsGranted("ROLE_ADMIN")]
+#[IsGranted('ROLE_ADMIN')]
 class ListController extends AbstractController
 {
-    use FilterTrait, BulkTrait;
+    use FilterTrait;
+    use BulkTrait;
 
     public function __invoke(ListAccountsService $listAccounts, LoggedUser $loggedUser, Request $request): Response
-    {   
+    {
         [$filter, $form] = $this->filter($request, fn(): ListAccountsRequest => new ListAccountsRequest(), ListAccountsType::class);
 
         try {
@@ -34,11 +37,11 @@ class ListController extends AbstractController
             throw $this->createAccessDeniedException($exception->getMessage());
         }
 
-        $bulkForm = $this->createForm(BulkType::class, new BulkRequest, [
+        $bulkForm = $this->createForm(BulkType::class, new BulkRequest(), [
             'elements' => $response->accounts,
             'actions' => [
-                new RemoveAccount()
-            ]
+                new RemoveAccount(),
+            ],
         ]);
 
         $needsRedirect = $this->bulkActions($request, $bulkForm, $loggedUser());
@@ -51,7 +54,7 @@ class ListController extends AbstractController
             'bulkForm' => $bulkForm,
             'accounts' => $response->accounts,
             'totalResults' => $response->totalResults,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

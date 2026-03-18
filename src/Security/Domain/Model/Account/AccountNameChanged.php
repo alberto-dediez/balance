@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Domain\Model\Account;
 
-use DateTimeImmutable;
 use App\Security\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
-use App\Security\Domain\Model\Account\AccountId;
 
 final class AccountNameChanged extends DomainEvent
 {
@@ -16,7 +16,7 @@ final class AccountNameChanged extends DomainEvent
         private readonly AccountId $accountId,
         private readonly string $name,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -40,20 +40,20 @@ final class AccountNameChanged extends DomainEvent
     {
         return [
             'accountId' => (string) $this->accountId,
-            'name' => $this->name
+            'name' => $this->name,
         ];
     }
 
     public static function rebuildFromPayload(
-        DomainEventId     $id,
-        DateTimeImmutable $occurredOn,
-        array             $payload = []
+        DomainEventId $id,
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new AccountNameChanged(
             accountId: new AccountId($payload['accountId']),
             name: $payload['name'],
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

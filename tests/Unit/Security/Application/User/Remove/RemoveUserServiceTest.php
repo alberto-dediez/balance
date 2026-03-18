@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\User\Remove;
 
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Application\User\Remove\RemoveUserRequest;
-use App\Security\Application\User\Remove\RemoveUserResponse;
 use App\Security\Application\User\Remove\RemoveUserService;
 use App\Security\Domain\Model\User\UserRemoved;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
@@ -38,7 +39,7 @@ class RemoveUserServiceTest extends TestCase
         $repository->add($user);
 
         $request = new RemoveUserRequest(
-            userId: $user->id()
+            userId: $user->id(),
         );
 
         $result = $sut($request, $performBy);
@@ -70,7 +71,7 @@ class RemoveUserServiceTest extends TestCase
         $repository->add($user);
 
         $request = new RemoveUserRequest(
-            userId: $user->id()
+            userId: $user->id(),
         );
 
         $sut($request, $performBy);
@@ -85,7 +86,7 @@ class RemoveUserServiceTest extends TestCase
         $user = UserMother::random();
 
         $result = $sut->isHandled(new RemoveUserRequest(
-            userId: $user->id()
+            userId: $user->id(),
         ));
 
         $this->assertTrue($result);

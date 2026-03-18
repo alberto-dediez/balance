@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * @extends AbstractType<mixed>
@@ -20,14 +22,14 @@ class ProfileType extends AbstractType
             ->add('oldPassword', PasswordType::class, [
                 'label' => 'Contraseña antigua',
                 'required' => true,
-                'mapped' => false
+                'mapped' => false,
             ])
             ->add('password', RepeatedType::class, [
                 'first_options'  => [
                     'label' => 'Contraseña nueva',
                 ],
                 'second_options' => [
-                    'label' => 'Repetir Contraseña'
+                    'label' => 'Repetir Contraseña',
                 ],
                 'type' => PasswordType::class,
                 'invalid_message' => 'Las contraseñas no coinciden.',
@@ -35,7 +37,7 @@ class ProfileType extends AbstractType
                 'mapped' => false,
             ])
             ->add('save', SubmitType::class, [
-                'label' => new TranslatableMessage('Guardar')
+                'label' => new TranslatableMessage('Guardar'),
             ])
         ;
     }

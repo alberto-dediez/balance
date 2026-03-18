@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Shared\Domain\Model\Locale;
+declare(strict_types=1);
 
-use App\Shared\Domain\Model\Locale\Locale;
+namespace App\Shared\Domain\Model\Locale;
 
 interface Translation
 {

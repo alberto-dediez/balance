@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Domain\Model\Email;
 
-use DateTimeImmutable;
 use App\Security\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
@@ -16,7 +17,7 @@ final class EmailSent extends DomainEvent
         private readonly string $subject,
         private readonly string $content,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -49,7 +50,7 @@ final class EmailSent extends DomainEvent
         return [
             'recipient' => $this->recipient,
             'subject' => $this->subject,
-            'content' => $this->content
+            'content' => $this->content,
         ];
     }
 
@@ -57,16 +58,16 @@ final class EmailSent extends DomainEvent
      * @param array<string, mixed> $payload
      */
     public static function rebuildFromPayload(
-        DomainEventId     $id,
-        DateTimeImmutable $occurredOn,
-        array             $payload = []
+        DomainEventId $id,
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new EmailSent(
             recipient: $payload['recipient'] ?? new EmailRecipient('', ''),
             subject: $payload['subject'] ?? '',
             content: $payload['content'] ?? '',
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

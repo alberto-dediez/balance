@@ -1,25 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Twig;
 
-use Twig\TwigFilter;
-use Twig\Extension\AbstractExtension;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class AccountExtension extends AbstractExtension
 {
     /**
-     * @var array<string, ?Account> $accounts
+     * @var array<string, ?Account>
      */
     private array $accounts = [];
 
-    public function __construct(private readonly AccountRepository $accountRepository)
-    {
-
-    }
+    public function __construct(private readonly AccountRepository $accountRepository) {}
 
     /**
      * @return TwigFilter[]

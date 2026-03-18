@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Unit\Shared\Infrastructure\UI\Web\Component\Sidebar;
 
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Shared\Infrastructure\UI\Web\Component\Sidebar\Left;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\UX\TwigComponent\Test\InteractsWithTwigComponents;
 
 class LeftTest extends KernelTestCase

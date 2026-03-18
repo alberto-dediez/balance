@@ -1,19 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Infrastructure\Symfony\Security;
 
 use App\Security\Domain\Model\User\Role;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Symfony\Component\Security\Core\Authorization\AccessDecision;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class FakeSecurity implements AuthorizationCheckerInterface
 {
-    public function __construct(private readonly SecurityUser $user)
-    {
-
-    }
+    public function __construct(private readonly SecurityUser $user) {}
 
     public function isGranted(mixed $attribute, mixed $subject = null, ?AccessDecision $accessDecision = null): bool
     {

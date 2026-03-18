@@ -4,27 +4,29 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Security;
 
-use Behat\Step\Given;
-use Behat\Hook\AfterScenario;
-use Behat\Behat\Context\Context;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
-use Behat\Behat\Hook\Scope\AfterScenarioScope;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Tests\Acceptance\Shared\AcceptanceClient;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use App\Security\Domain\Model\User\UserRepository;
-use App\Security\Domain\Model\Account\AccountRepository;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use Behat\Behat\Context\Context;
+use Behat\Behat\Hook\Scope\AfterScenarioScope;
+use Behat\Hook\AfterScenario;
+use Behat\Step\Given;
+
 use function PHPUnit\Framework\assertNotEmpty;
+
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 final readonly class SecurityContext implements Context
 {
     private AcceptanceClient $client;
 
     public function __construct(
-        KernelBrowser $kernelBrowser
+        KernelBrowser $kernelBrowser,
     ) {
         $this->client = AcceptanceClient::instance($kernelBrowser);
     }
@@ -88,7 +90,7 @@ final readonly class SecurityContext implements Context
             userId: new UserId($id),
             username: $username,
             role: Role::User,
-            accountId: new AccountId($account)
+            accountId: new AccountId($account),
         );
 
         $this->getUserRepository()->add($user);
@@ -103,7 +105,7 @@ final readonly class SecurityContext implements Context
             userId: new UserId($id),
             username: $username,
             role: Role::tryFrom($role),
-            accountId: new AccountId($account)
+            accountId: new AccountId($account),
         );
 
         $this->getUserRepository()->add($user);

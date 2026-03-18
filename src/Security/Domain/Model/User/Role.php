@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Domain\Model\User;
 
 enum Role: string
@@ -20,7 +22,7 @@ enum Role: string
         $result = [];
 
         foreach (self::cases() as $role) {
-            if ($role == self::SuperAdmin) {
+            if (self::SuperAdmin == $role) {
                 continue;
             }
 
@@ -38,10 +40,10 @@ enum Role: string
         $result = [];
 
         foreach (self::cases() as $role) {
-            if ($role == self::Admin) {
+            if (self::Admin == $role) {
                 continue;
             }
-            if ($role == self::SuperAdmin) {
+            if (self::SuperAdmin == $role) {
                 continue;
             }
             $result[$role->value] = $role;

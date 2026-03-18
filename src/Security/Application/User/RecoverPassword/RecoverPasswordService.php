@@ -1,31 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Application\User\RecoverPassword;
 
-use App\Security\Domain\Model\User\User;
-use InvalidArgumentException;
-use App\Shared\Application\CommandBus\Command;
-use App\Security\Domain\Model\User\UserRepository;
-use App\Shared\Application\CommandBus\CommandHandler;
 use App\Security\Application\User\Register\PasswordHasher;
-use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Security\Domain\Model\User\User;
+use App\Security\Domain\Model\User\UserRepository;
+use App\Shared\Application\CommandBus\Command;
+use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 
 class RecoverPasswordService implements CommandHandler
 {
-    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+    use RegisterHandlerTrait;
+    use CommandInvokeHandlerTrait;
 
-    public function __construct(private UserRepository $repository, private PasswordHasher $passwordHasher)
-    {
-
-    }
+    public function __construct(private UserRepository $repository, private PasswordHasher $passwordHasher) {}
 
     public function __invoke(RecoverPasswordRequest $request, ?User $user = null): RecoverPasswordResponse
     {
         $user = $this->repository->findByRecoverToken($request->token);
 
         if (!$user instanceof User) {
-            throw new InvalidArgumentException("User not found");
+            throw new \InvalidArgumentException('User not found');
         }
 
         $hashedPassword = $this->passwordHasher->hashPassword($request->password);
@@ -35,7 +34,7 @@ class RecoverPasswordService implements CommandHandler
         $this->repository->add($user);
 
         return new RecoverPasswordResponse(
-            userId: $user->id()
+            userId: $user->id(),
         );
     }
 

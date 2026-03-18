@@ -1,13 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Domain\Model\User;
 
-use DateTimeImmutable;
 use App\Security\Domain\DomainEvent;
-use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
-use App\Security\Domain\Model\User\RecoverToken;
 
 final class PasswordRecovered extends DomainEvent
 {
@@ -19,7 +18,7 @@ final class PasswordRecovered extends DomainEvent
         private readonly string $password,
         private readonly RecoverToken $token,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -61,16 +60,16 @@ final class PasswordRecovered extends DomainEvent
      * @param array<string, mixed> $payload
      */
     public static function rebuildFromPayload(
-        DomainEventId     $id,
-        DateTimeImmutable $occurredOn,
-        array             $payload = []
+        DomainEventId $id,
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new PasswordRecovered(
             userId: new UserId($payload['userId'] ?? ''),
             password: $payload['password'] ?? '',
             token: new RecoverToken($payload['token'] ?? '', new \DateTimeImmutable($payload['expirateAt'] ?? 'NOW')),
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

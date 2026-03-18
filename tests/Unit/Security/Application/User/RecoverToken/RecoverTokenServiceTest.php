@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\User\RecoverToken;
 
 use App\Security\Application\User\RecoverToken\RecoverTokenRequest;
@@ -33,7 +35,7 @@ class RecoverTokenServiceTest extends TestCase
         $sut = $this->createSUT($repository);
 
         $request = new RecoverTokenRequest(
-            username: $user->username()
+            username: $user->username(),
         );
 
         $sut($request);

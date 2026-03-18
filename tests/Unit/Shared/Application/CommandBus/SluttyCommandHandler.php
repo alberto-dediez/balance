@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Shared\Application\CommandBus;
 
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
-use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandResponse;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 
 class SluttyCommandHandler implements CommandHandler
 {
@@ -22,7 +24,7 @@ class SluttyCommandHandler implements CommandHandler
     {
         $this->commands[] = [
             'command' => $command,
-            'user' => $user
+            'user' => $user,
         ];
 
         return null;

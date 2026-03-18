@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Domain\Event\User;
 
 use App\Security\Application\User\Remove\RemoveUserService;
@@ -13,7 +15,6 @@ use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeLoggedUser;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class RemoveAccountSubscriberTest extends TestCase
@@ -30,7 +31,7 @@ class RemoveAccountSubscriberTest extends TestCase
         $sut = $this->createSUT($repository);
 
         $event = new AccountRemoved(
-            AccountId::generate()
+            AccountId::generate(),
         );
 
         $result = $sut->isSubscribedTo($event);
@@ -45,7 +46,7 @@ class RemoveAccountSubscriberTest extends TestCase
         $sut = $this->createSUT($repository);
 
         $event = new UserRemoved(
-            UserId::generate()
+            UserId::generate(),
         );
 
         $result = $sut->isSubscribedTo($event);
@@ -76,12 +77,12 @@ class RemoveAccountSubscriberTest extends TestCase
         $repository->add($user);
 
         $event = new AccountRemoved(
-            $account->id()
+            $account->id(),
         );
 
         $sut = $this->createSUT(
             repository: $repository,
-            usersToRemoved: 3
+            usersToRemoved: 3,
         );
         $sut->handle($event);
     }
@@ -91,12 +92,12 @@ class RemoveAccountSubscriberTest extends TestCase
         $removeUser = $this->createMock(RemoveUserService::class);
         $removeUser->expects($this->exactly($usersToRemoved))->method('__invoke');
 
-        /** @var RemoveUserService&MockObject $removeUser */
+        /* @var RemoveUserService&MockObject $removeUser */
 
         return new RemoveAccountSubscriber(
             $repository,
             $removeUser,
-            new FakeLoggedUser(UserMother::adminUser())
+            new FakeLoggedUser(UserMother::adminUser()),
         );
     }
 }

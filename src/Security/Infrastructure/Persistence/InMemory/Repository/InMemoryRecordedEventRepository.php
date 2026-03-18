@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Persistence\InMemory\Repository;
 
-use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\RecordedEvent\RecordedEvent;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventFilter;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventId;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventRepository;
+use App\Security\Domain\Model\User\UserId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]
@@ -15,15 +17,12 @@ class InMemoryRecordedEventRepository implements RecordedEventRepository
     /**
      * @param RecordedEvent[] $events
      */
-    public function __construct(private array $events = [])
-    {
-
-    }
+    public function __construct(private array $events = []) {}
 
     public function add(RecordedEvent $event): void
     {
         if (isset($this->events[(string) $event->id()])) {
-            return ;
+            return;
         }
 
         $this->events[(string) $event->id()] = $event;
@@ -32,7 +31,7 @@ class InMemoryRecordedEventRepository implements RecordedEventRepository
     public function remove(RecordedEvent $event): void
     {
         if (!isset($this->events[(string) $event->id()])) {
-            return ;
+            return;
         }
 
         unset($this->events[(string) $event->id()]);
@@ -51,7 +50,7 @@ class InMemoryRecordedEventRepository implements RecordedEventRepository
     {
         $results = [];
 
-        if (count($this->events) === 0) {
+        if (0 === count($this->events)) {
             return $results;
         }
 
@@ -75,7 +74,7 @@ class InMemoryRecordedEventRepository implements RecordedEventRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Shared\Infrastructure\Symfony\Kernel;
 use Symfony\Component\Dotenv\Dotenv;
 

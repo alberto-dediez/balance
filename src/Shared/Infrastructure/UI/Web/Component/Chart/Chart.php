@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\UI\Web\Component\Chart;
 
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -13,24 +15,24 @@ class Chart
 
 
     /**
-     * @var array<int, mixed> $values
+     * @var array<int, mixed>
      */
     public array $values = [];
 
     /**
-     * @var array<int, mixed> $categories
+     * @var array<int, mixed>
      */
     public array $categories = [];
 
     public ?string $unit = '';
 
     /**
-     * @var array<int, mixed> $colors
+     * @var array<int, mixed>
      */
     public ?array $colors = [];
 
     /**
-     * @var array<int, mixed> $series
+     * @var array<int, mixed>
      */
     public ?array $series = [];
 

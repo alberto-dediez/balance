@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\RecordedEvent\Register;
 
 use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventRequest;
@@ -21,7 +23,7 @@ class RegisterRecordedEventServiceTest extends TestCase
 
         $request = new RegisterRecordedEventRequest(
             userId: UserId::generate(),
-            event: new UserRemoved(UserId::generate())
+            event: new UserRemoved(UserId::generate()),
         );
 
         $performBy = UserMother::registeredUser();
@@ -44,7 +46,7 @@ class RegisterRecordedEventServiceTest extends TestCase
 
         $request = new RegisterRecordedEventRequest(
             userId: UserId::generate(),
-            event: new UserRemoved(UserId::generate())
+            event: new UserRemoved(UserId::generate()),
         );
 
         $performBy = null;
@@ -69,7 +71,7 @@ class RegisterRecordedEventServiceTest extends TestCase
 
         $result = $sut->isHandled(new RegisterRecordedEventRequest(
             userId: $user->id(),
-            event: new UserRemoved(UserId::generate())
+            event: new UserRemoved(UserId::generate()),
         ));
 
         $this->assertTrue($result);

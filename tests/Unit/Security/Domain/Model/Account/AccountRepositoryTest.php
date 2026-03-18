@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Domain\Model\Account;
 
 use App\Security\Domain\Model\Account\AccountFilter;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Security\Domain\Model\Account\AccountRepository;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class AccountRepositoryTest extends KernelTestCase
 {
     public function testAddAccountToRepository(): void
-    {   
+    {
         $repository = $this->createSUT();
 
         $account = AccountMother::registeredAccount();
@@ -25,7 +27,7 @@ abstract class AccountRepositoryTest extends KernelTestCase
     }
 
     public function testRemoveAccountToRepository(): void
-    {   
+    {
         $repository = $this->createSUT();
 
         $account = AccountMother::registeredAccount();
@@ -76,7 +78,7 @@ abstract class AccountRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new AccountFilter(
-            name: 'Minotour'
+            name: 'Minotour',
         );
 
         $result = $repository->findByFilter($filter);
@@ -102,7 +104,7 @@ abstract class AccountRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new AccountFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);

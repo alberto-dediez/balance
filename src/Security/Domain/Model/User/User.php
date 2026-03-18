@@ -1,38 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Domain\Model\User;
 
-use App\Security\Domain\Model\User\Role;
-use App\Security\Domain\Model\User\UserId;
+use App\Security\Domain\Model\Account\Account;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
-use App\Security\Domain\Model\Account\Account;
-use App\Security\Domain\Model\User\RoleGranted;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Security\Domain\Model\User\RecoverToken;
-use App\Security\Domain\Model\User\UserRegistered;
-use App\Security\Domain\Model\User\PasswordRecovered;
 
 class User implements \Stringable
 {
     use AggregateRoot;
 
     /**
-     * @param Role[] $roles
+     * @param Role[]        $roles
      * @param DomainEvent[] $events
      */
     public function __construct(
         protected UserId $id,
         protected string $username = '',
         protected string $password = '',
-        protected AccountId|null $accountId = null,
-        protected Account|null $account = null,
+        protected ?AccountId $accountId = null,
+        protected ?Account $account = null,
         protected array $roles = [],
-        protected RecoverToken|null $recoverToken = null,
+        protected ?RecoverToken $recoverToken = null,
         array $events = [],
         protected bool $removed = false,
         protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
-        protected ?\DateTimeImmutable $removedAt = null
+        protected ?\DateTimeImmutable $removedAt = null,
     ) {
         $this->events = $events;
     }
@@ -74,7 +70,7 @@ class User implements \Stringable
 
     public function isRecoverTokenValid(RecoverToken $token): bool
     {
-        return null !== $this->recoverToken() && $this->recoverToken()->equals($token) && !$this->recoverToken()->isExpired();
+        return $this->recoverToken() instanceof RecoverToken && $this->recoverToken()->equals($token) && !$this->recoverToken()->isExpired();
     }
 
     /**
@@ -82,7 +78,7 @@ class User implements \Stringable
      */
     public function roles(): array
     {
-        if (count($this->roles) === 0) {
+        if (0 === count($this->roles)) {
             return [Role::User];
         }
 
@@ -127,8 +123,8 @@ class User implements \Stringable
                 userId: $this->id(),
                 username: $username,
                 password: $password,
-                accountId: $accountId
-            )
+                accountId: $accountId,
+            ),
         );
     }
 
@@ -137,8 +133,8 @@ class User implements \Stringable
         $this->recordApplyAndPublish(
             new RoleGranted(
                 $this->id(),
-                $role
-            )
+                $role,
+            ),
         );
     }
 
@@ -147,8 +143,8 @@ class User implements \Stringable
         $this->recordApplyAndPublish(
             new RoleUngranted(
                 $this->id(),
-                $role
-            )
+                $role,
+            ),
         );
     }
 
@@ -157,8 +153,8 @@ class User implements \Stringable
         $this->recordApplyAndPublish(
             new PasswordChanged(
                 userId: $this->id(),
-                password: $password
-            )
+                password: $password,
+            ),
         );
     }
 
@@ -168,8 +164,8 @@ class User implements \Stringable
             new PasswordRecoveryInitialized(
                 userId: $this->id(),
                 username: $this->username(),
-                token: RecoverToken::generate()
-            )
+                token: RecoverToken::generate(),
+            ),
         );
     }
 
@@ -183,8 +179,8 @@ class User implements \Stringable
             new PasswordRecovered(
                 userId: $this->id(),
                 password: $password,
-                token: $token
-            )
+                token: $token,
+            ),
         );
     }
 
@@ -192,8 +188,8 @@ class User implements \Stringable
     {
         $this->recordApplyAndPublish(
             new UserRemoved(
-                $this->id()
-            )
+                $this->id(),
+            ),
         );
     }
 
@@ -209,7 +205,7 @@ class User implements \Stringable
     public function applyRoleGranted(RoleGranted $event): void
     {
         if (in_array($event->role(), $this->roles)) {
-            return ;
+            return;
         }
 
         $this->roles[] = $event->role();
@@ -218,7 +214,7 @@ class User implements \Stringable
     public function applyRoleUngranted(RoleUngranted $event): void
     {
         if (!in_array($event->role(), $this->roles)) {
-            return ;
+            return;
         }
 
         $key = array_search($event->role(), $this->roles);
@@ -245,6 +241,6 @@ class User implements \Stringable
     public function applyUserRemoved(UserRemoved $event): void
     {
         $this->removed = true;
-        $this->removedAt = new \DateTimeImmutable("NOW");
+        $this->removedAt = new \DateTimeImmutable('NOW');
     }
 }

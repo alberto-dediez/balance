@@ -1,29 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Security;
 
 use App\Security\Domain\Model\User\UserRepository;
+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Core\Exception\UserNotFoundException;
-use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 
 /**
  * @implements UserProviderInterface<SecurityUser>
  */
 class UserProvider implements UserProviderInterface
 {
-    public function __construct(private readonly UserRepository $userRepository)
-    {
-
-    }
+    public function __construct(private readonly UserRepository $userRepository) {}
 
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
         $user = $this->userRepository->findByUsername($identifier);
 
         if (null == $user || false === $user->isActive()) {
-            throw new UserNotFoundException(sprintf("User with username %s not found", $identifier));
+            throw new UserNotFoundException(sprintf('User with username %s not found', $identifier));
         }
 
         return new SecurityUser($user);

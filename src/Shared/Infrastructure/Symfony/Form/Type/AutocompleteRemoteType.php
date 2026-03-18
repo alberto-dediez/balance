@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Symfony\Form\Type;
 
-use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /** @extends AbstractType<mixed> */
 class AutocompleteRemoteType extends AbstractType
@@ -26,7 +28,7 @@ class AutocompleteRemoteType extends AbstractType
 
         if (!empty($options['autocomplete-path'])) {
             $attr = array_merge($attr, [
-                'data-autocomplete-path-value' => $options['autocomplete-path']
+                'data-autocomplete-path-value' => $options['autocomplete-path'],
             ]);
         }
 
@@ -39,7 +41,7 @@ class AutocompleteRemoteType extends AbstractType
     {
         $resolver->setDefaults([
             'autocomplete-path' => '',
-            'placeholder' => null
+            'placeholder' => null,
         ]);
     }
 

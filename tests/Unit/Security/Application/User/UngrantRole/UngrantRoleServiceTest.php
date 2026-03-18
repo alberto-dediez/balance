@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\User\UngrantRole;
 
 use App\Security\Application\UnauthorizedActionException;
@@ -40,7 +42,7 @@ class UngrantRoleServiceTest extends TestCase
 
         $request = new UngrantRoleRequest(
             userId: $user->id(),
-            role: Role::Admin
+            role: Role::Admin,
         );
 
         $result = $sut($request, $performBy);
@@ -73,7 +75,7 @@ class UngrantRoleServiceTest extends TestCase
 
         $request = new UngrantRoleRequest(
             userId: $user->id(),
-            role: Role::Owner
+            role: Role::Owner,
         );
 
         $result = $sut($request, $owner);
@@ -109,7 +111,7 @@ class UngrantRoleServiceTest extends TestCase
 
         $request = new UngrantRoleRequest(
             userId: $user->id(),
-            role: Role::Admin
+            role: Role::Admin,
         );
 
         $sut($request, $owner);
@@ -129,7 +131,7 @@ class UngrantRoleServiceTest extends TestCase
 
         $request = new UngrantRoleRequest(
             userId: $user->id(),
-            role: Role::Admin
+            role: Role::Admin,
         );
 
         $sut($request, $user);
@@ -145,7 +147,7 @@ class UngrantRoleServiceTest extends TestCase
 
         $result = $sut->isHandled(new UngrantRoleRequest(
             userId: $user->id(),
-            role: Role::Admin
+            role: Role::Admin,
         ));
 
         $this->assertTrue($result);

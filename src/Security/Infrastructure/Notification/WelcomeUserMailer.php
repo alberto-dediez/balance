@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Notification;
 
-use App\Shared\Domain\Event\DomainEvent;
-use App\Shared\Domain\Event\RegisterTrait;
-use App\Shared\Domain\Model\Email\EmailSender;
-use App\Shared\Domain\Model\Email\EmailRecipient;
 use App\Security\Domain\Model\User\UserRegistered;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
+use App\Shared\Domain\Event\RegisterTrait;
+use App\Shared\Domain\Model\Email\EmailRecipient;
+use App\Shared\Domain\Model\Email\EmailSender;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WelcomeUserMailer implements DomainEventSubscriber
@@ -16,7 +18,7 @@ class WelcomeUserMailer implements DomainEventSubscriber
 
     public function __construct(
         private EmailSender $emailSender,
-        private TranslatorInterface $translator
+        private TranslatorInterface $translator,
     ) {
         $this->register();
     }
@@ -24,7 +26,7 @@ class WelcomeUserMailer implements DomainEventSubscriber
     public function handle(DomainEvent $event): void
     {
         if (!$this->isSubscribedTo($event)) {
-            throw new \RuntimeException("Incorrect event!");
+            throw new \RuntimeException('Incorrect event!');
         }
 
         assert($event instanceof UserRegistered);
@@ -40,8 +42,8 @@ class WelcomeUserMailer implements DomainEventSubscriber
             template: '@security/users/welcome.email.html.twig',
             params: [
                 'username' => $event->username(),
-                'account' => $event->accountId()
-            ]
+                'account' => $event->accountId(),
+            ],
         );
     }
 

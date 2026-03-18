@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\Account\Register;
 
 use App\Security\Application\Account\Register\RegisterAccountRequest;
@@ -34,7 +36,7 @@ class RegisterAccountServiceTest extends TestCase
 
         $request = new RegisterAccountRequest(
             name: 'Company ABC',
-            active: true
+            active: true,
         );
 
         $result = $sut($request, $user);
@@ -66,7 +68,7 @@ class RegisterAccountServiceTest extends TestCase
 
         $request = new RegisterAccountRequest(
             name: 'Company ABC',
-            active: true
+            active: true,
         );
 
         $sut($request, $user);
@@ -80,7 +82,7 @@ class RegisterAccountServiceTest extends TestCase
 
         $result = $sut->isHandled(new RegisterAccountRequest(
             name: 'Company ABCDE',
-            active: true
+            active: true,
         ));
 
         $this->assertTrue($result);

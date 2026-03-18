@@ -1,32 +1,30 @@
 <?php
 
-namespace App\Shared\Domain\Event;
+declare(strict_types=1);
 
-use BadMethodCallException;
+namespace App\Shared\Domain\Event;
 
 final class DomainEventPublisher
 {
     private static ?DomainEventPublisher $instance = null;
 
     /**
-     * @var DomainEventSubscriber[] $subscribers
+     * @var DomainEventSubscriber[]
      */
     private array $subscribers = [];
 
     /**
-     * @var DomainEvent[] $queue
+     * @var DomainEvent[]
      */
     private array $queue = [];
 
     private bool $isLock = false;
 
-    private function __construct()
-    {
-    }
+    private function __construct() {}
 
     public static function instance(): DomainEventPublisher
     {
-        if (null === self::$instance) {
+        if (!self::$instance instanceof DomainEventPublisher) {
             self::$instance = new self();
         }
 
@@ -35,7 +33,7 @@ final class DomainEventPublisher
 
     public function __clone()
     {
-        throw new BadMethodCallException("Clone is not supported");
+        throw new \BadMethodCallException('Clone is not supported');
     }
 
     public function subscribe(DomainEventSubscriber $subscriber): void
@@ -55,7 +53,7 @@ final class DomainEventPublisher
         if ($this->isLock) {
             $this->queue[] = $event;
 
-            return ;
+            return;
         }
 
         foreach ($this->subscribers as $subscriber) {

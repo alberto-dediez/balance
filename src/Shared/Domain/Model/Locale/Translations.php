@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Shared\Domain\Model\Locale;
+declare(strict_types=1);
 
-use App\Shared\Domain\Model\Locale\Locale;
-use App\Shared\Domain\Model\Locale\Translation;
+namespace App\Shared\Domain\Model\Locale;
 
 class Translations implements \Countable
 {
@@ -12,10 +11,7 @@ class Translations implements \Countable
     /**
      * @param Translation[] $translations
      */
-    public function __construct(private array $translations = [])
-    {
-
-    }
+    public function __construct(private array $translations = []) {}
 
     public function setLocale(Locale $locale): void
     {
@@ -42,8 +38,8 @@ class Translations implements \Countable
 
     public function remove(Translation $translation): void
     {
-        if (count($this->translations) === 0) {
-            return ;
+        if (0 === count($this->translations)) {
+            return;
         }
 
         foreach ($this->translations as $i => $savedTranslation) {
@@ -55,7 +51,7 @@ class Translations implements \Countable
 
     public function get(Locale $locale): ?Translation
     {
-        if (count($this->translations) === 0) {
+        if (0 === count($this->translations)) {
             return null;
         }
 

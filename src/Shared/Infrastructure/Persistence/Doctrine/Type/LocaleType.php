@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Persistence\Doctrine\Type;
 
 use App\Shared\Domain\Model\Locale\Locale;
@@ -17,7 +19,7 @@ class LocaleType extends Type
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?Locale
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 

@@ -1,21 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Locale;
 
-use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
-use Symfony\Component\HttpFoundation\RequestStack;
+
 use function PHPUnit\Framework\assertNotEmpty;
+
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class RequestStackLocaleGetter implements LocaleGetter
 {
     public function __construct(
         private readonly RequestStack $requestStack,
-        private readonly string $defaultLocale
-    ) {
-
-    }
+        private readonly string $defaultLocale,
+    ) {}
 
     public function locale(): ?Locale
     {

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Shared;
 
+use Behat\Behat\Context\Context;
+use Behat\Step\Given;
 use Behat\Step\Then;
 use Behat\Step\When;
-use Behat\Step\Given;
 use PHPUnit\Framework\Assert;
-use Behat\Behat\Context\Context;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class SystemContext implements Context
 {
@@ -79,7 +79,7 @@ class SystemContext implements Context
         $this->output = $this->commandTester->getDisplay();
     }
 
-    #[Then("Is Executed Successfully")]
+    #[Then('Is Executed Successfully')]
     public function isExecutedSuccessfully(): void
     {
         Assert::assertNotNull($this->commandTester);
@@ -87,7 +87,7 @@ class SystemContext implements Context
         $this->commandTester->assertCommandIsSuccessful();
     }
 
-    #[Then("I expect status code :code")]
+    #[Then('I expect status code :code')]
     public function iExpectStatusCode(int $code): void
     {
         Assert::assertEquals($code, $this->statusCode);

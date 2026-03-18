@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Symfony\Form\Type;
 
-use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 /** @extends AbstractType<mixed> */
 class AutocompleteType extends AbstractType

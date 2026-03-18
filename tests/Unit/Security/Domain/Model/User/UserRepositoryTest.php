@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Domain\Model\User;
 
 use App\Security\Domain\Model\User\DuplicatedUsernameException;
@@ -99,7 +101,7 @@ abstract class UserRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new UserFilter(
-            username: 'alberto'
+            username: 'alberto',
         );
 
         $result = $repository->findByFilter($filter);
@@ -125,7 +127,7 @@ abstract class UserRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new UserFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);

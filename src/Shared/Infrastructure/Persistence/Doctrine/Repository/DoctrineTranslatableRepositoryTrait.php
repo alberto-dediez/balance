@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Shared\Domain\Model\Locale\Translatable;
@@ -10,19 +12,19 @@ trait DoctrineTranslatableRepositoryTrait
     private function loadTranslations(?Translatable $translatable, EntityRepository $translationRepository): void
     {
         if (!$translatable instanceof Translatable) {
-            return ;
+            return;
         }
 
         $translatable->translations()->setLocale($this->localeGetter->locale());
 
         $storedTranslations = $translationRepository
             ->findBy([
-                'translatableId' => $translatable->id()
+                'translatableId' => $translatable->id(),
             ])
         ;
 
-        if (count($storedTranslations) === 0) {
-            return ;
+        if (0 === count($storedTranslations)) {
+            return;
         }
 
         foreach ($storedTranslations as $translation) {
@@ -34,12 +36,12 @@ trait DoctrineTranslatableRepositoryTrait
     {
         $translations = $translatable->translations();
 
-        if (count($translations) === 0) {
-            return ;
+        if (0 === count($translations)) {
+            return;
         }
 
         $storedTranslations = $translationRepository->findBy([
-            'translatableId' => $translatable->id()
+            'translatableId' => $translatable->id(),
         ]);
 
         foreach ($storedTranslations as $storedTranslation) {

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Persistence\Doctrine\Repository;
 
-use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\RecordedEvent\RecordedEvent;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventFilter;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventId;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventRepository;
+use App\Security\Domain\Model\User\UserId;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -17,10 +19,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineRecordedEventRepository implements RecordedEventRepository
 {
-    public function __construct(private readonly EntityManagerInterface $manager)
-    {
-
-    }
+    public function __construct(private readonly EntityManagerInterface $manager) {}
 
     public function add(RecordedEvent $event): void
     {
@@ -40,7 +39,7 @@ class DoctrineRecordedEventRepository implements RecordedEventRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('e.id', ':id')
+                $qb->expr()->eq('e.id', ':id'),
             )
             ->setParameter('id', $eventId)
             ->getQuery()
@@ -59,7 +58,7 @@ class DoctrineRecordedEventRepository implements RecordedEventRepository
         if (!in_array($filter->eventName, [null, '', '0'], true)) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('e.eventName', ':eventName')
+                    $qb->expr()->like('e.eventName', ':eventName'),
                 )
                 ->setParameter('eventName', "%{$filter->eventName}%")
             ;
@@ -68,7 +67,7 @@ class DoctrineRecordedEventRepository implements RecordedEventRepository
         if (!in_array($filter->context, [null, '', '0'], true)) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('e.context', ':context')
+                    $qb->expr()->like('e.context', ':context'),
                 )
                 ->setParameter('context', "%{$filter->context}%")
             ;
@@ -77,7 +76,7 @@ class DoctrineRecordedEventRepository implements RecordedEventRepository
         if ($filter->userId instanceof UserId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('e.userId', ':userId')
+                    $qb->expr()->eq('e.userId', ':userId'),
                 )
                 ->setParameter('userId', $filter->userId)
             ;
@@ -86,13 +85,13 @@ class DoctrineRecordedEventRepository implements RecordedEventRepository
         if (!in_array($filter->aggregateRootId, [null, '', '0'], true)) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('e.aggregateRootId', ':aggregateRootId')
+                    $qb->expr()->like('e.aggregateRootId', ':aggregateRootId'),
                 )
                 ->setParameter('aggregateRootId', "%{$filter->aggregateRootId}%")
             ;
         }
 
-        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
             'context' => $qb->orderBy('e.context', $way),

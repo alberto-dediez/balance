@@ -1,26 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Symfony\Event;
 
 use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Event\DomainEventSubscriber;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 
 #[AsEventListener]
 class KernelRequestListener
 {
     /**
      * @param iterable<DomainEventSubscriber> $subscribers
-     * @param iterable<CommandHandler> $handlers
+     * @param iterable<CommandHandler>        $handlers
      */
     public function __construct(
         #[AutowireIterator('domain.event.subscriber')]
         iterable $subscribers,
-         #[AutowireIterator('application.command.handler')]
-        iterable $handlers
+        #[AutowireIterator('application.command.handler')]
+        iterable $handlers,
     ) {
         foreach ($subscribers as $subscriber) {
             $subscriber->register();

@@ -1,11 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Domain\Model\Account;
 
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Security\Domain\Model\Account\AccountRegistered;
 
 class Account implements \Stringable
 {
@@ -21,7 +21,7 @@ class Account implements \Stringable
         protected bool $removed = false,
         array $events = [],
         protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
-        protected ?\DateTimeImmutable $removedAt = null
+        protected ?\DateTimeImmutable $removedAt = null,
     ) {
         $this->events = $events;
     }
@@ -62,8 +62,8 @@ class Account implements \Stringable
             new AccountRegistered(
                 accountId: $this->id(),
                 name: $name,
-                active: $active
-            )
+                active: $active,
+            ),
         );
     }
 
@@ -72,8 +72,8 @@ class Account implements \Stringable
         $this->recordApplyAndPublish(
             new AccountNameChanged(
                 accountId: $this->id(),
-                name: $name
-            )
+                name: $name,
+            ),
         );
     }
 
@@ -82,8 +82,8 @@ class Account implements \Stringable
         $this->recordApplyAndPublish(
             new AccountStatusChanged(
                 accountId: $this->id(),
-                active: $active
-            )
+                active: $active,
+            ),
         );
     }
 
@@ -91,8 +91,8 @@ class Account implements \Stringable
     {
         $this->recordApplyAndPublish(
             new AccountRemoved(
-                accountId: $this->id()
-            )
+                accountId: $this->id(),
+            ),
         );
     }
 
@@ -117,7 +117,7 @@ class Account implements \Stringable
     public function applyAccountRemoved(AccountRemoved $event): void
     {
         $this->removed = true;
-        $this->removedAt = new \DateTimeImmutable("NOW");
+        $this->removedAt = new \DateTimeImmutable('NOW');
     }
 
     public function __toString(): string

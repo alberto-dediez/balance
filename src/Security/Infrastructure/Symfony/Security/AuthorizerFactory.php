@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Security;
 
 use App\Security\Application\Authorizer;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
-
 
 class AuthorizerFactory
 {
@@ -13,14 +14,12 @@ class AuthorizerFactory
      */
     public function __construct(
         #[AutowireIterator('application.authorizer')]
-        private readonly iterable $authorizers
-    ) {
-
-    }
+        private readonly iterable $authorizers,
+    ) {}
 
     public function createFor(mixed $subject): ?Authorizer
     {
-        if (count($this->authorizers) === 0) {
+        if (0 === count($this->authorizers)) {
             return null;
         }
 

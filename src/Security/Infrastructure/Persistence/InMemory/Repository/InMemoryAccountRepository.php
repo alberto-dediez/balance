@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Security\Domain\Model\Account\Account;
@@ -14,15 +16,12 @@ class InMemoryAccountRepository implements AccountRepository
     /**
      * @param Account[] $accounts
      */
-    public function __construct(private array $accounts = [])
-    {
-
-    }
+    public function __construct(private array $accounts = []) {}
 
     public function add(Account $account): void
     {
         if (isset($this->accounts[(string) $account->id()])) {
-            return ;
+            return;
         }
 
         $this->accounts[(string) $account->id()] = $account;
@@ -31,7 +30,7 @@ class InMemoryAccountRepository implements AccountRepository
     public function remove(Account $account): void
     {
         if (!isset($this->accounts[(string) $account->id()])) {
-            return ;
+            return;
         }
 
         unset($this->accounts[(string) $account->id()]);
@@ -47,7 +46,7 @@ class InMemoryAccountRepository implements AccountRepository
 
     public function findByName(string $name): ?Account
     {
-        if (count($this->accounts) === 0) {
+        if (0 === count($this->accounts)) {
             return null;
         }
 
@@ -67,7 +66,7 @@ class InMemoryAccountRepository implements AccountRepository
     {
         $results = [];
 
-        if (count($this->accounts) === 0) {
+        if (0 === count($this->accounts)) {
             return $results;
         }
 
@@ -90,7 +89,7 @@ class InMemoryAccountRepository implements AccountRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

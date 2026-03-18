@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Security\Domain\Model\RecordedEvent;
+declare(strict_types=1);
 
-use App\Security\Domain\Model\RecordedEvent\RecordedEvent;
-use App\Security\Domain\Model\RecordedEvent\RecordedEventId;
+namespace App\Security\Domain\Model\RecordedEvent;
 
 interface RecordedEventRepository
 {

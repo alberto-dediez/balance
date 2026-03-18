@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Form;
 
+use App\Security\Application\RecordedEvent\List\ListRecordedEventsRequest;
+use App\Security\Infrastructure\Symfony\Form\Type\UserIdType;
+use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Security\Infrastructure\Symfony\Form\Type\UserIdType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
-use App\Security\Application\RecordedEvent\List\ListRecordedEventsRequest;
 
 class ListRecordedEventsType extends BaseFilterType
 {
@@ -17,19 +19,19 @@ class ListRecordedEventsType extends BaseFilterType
         $builder
             ->add('eventName', TextType::class, [
                 'label' => new TranslatableMessage('Nombre'),
-                'required' => false
+                'required' => false,
             ])
             ->add('context', TextType::class, [
                 'label' => new TranslatableMessage('Contexto'),
-                'required' => false
+                'required' => false,
             ])
             ->add('userId', UserIdType::class, [
                 'label' => new TranslatableMessage('Usuario'),
-                'required' => false
+                'required' => false,
             ])
             ->add('aggregateRootId', TextType::class, [
                 'label' => new TranslatableMessage('Entidad'),
-                'required' => false
+                'required' => false,
             ])
         ;
 
@@ -39,7 +41,7 @@ class ListRecordedEventsType extends BaseFilterType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ListRecordedEventsRequest::class
+            'data_class' => ListRecordedEventsRequest::class,
         ]);
     }
 }

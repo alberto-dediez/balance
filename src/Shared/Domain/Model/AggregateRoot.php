@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Domain\Model;
 
 use App\Shared\Domain\Event\DomainEvent;
@@ -11,6 +13,7 @@ trait AggregateRoot
      * @var DomainEvent[]
      */
     protected array $events = [];
+
     protected function recordApplyAndPublish(DomainEvent $event): void
     {
         $this->record($event);
@@ -25,7 +28,7 @@ trait AggregateRoot
 
     protected function apply(DomainEvent $event): void
     {
-        $method = 'apply' .  ucfirst($event->eventName());
+        $method = 'apply' . ucfirst($event->eventName());
 
         $this->$method($event);
     }
@@ -46,7 +49,7 @@ trait AggregateRoot
     public function rebuild(): void
     {
         if (empty($this->events)) {
-            return ;
+            return;
         }
 
         foreach ($this->events as $event) {

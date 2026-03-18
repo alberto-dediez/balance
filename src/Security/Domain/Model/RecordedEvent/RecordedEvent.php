@@ -1,30 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Domain\Model\RecordedEvent;
 
-use DateTimeImmutable;
-use App\Shared\Domain\Event\DomainEvent;
 use App\Security\Domain\Model\User\UserId;
-use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\EventRegistry;
 use App\Shared\Domain\Model\AggregateRootId;
 
 class RecordedEvent
 {
     private readonly RecordedEventId $id;
-    private readonly string|null $aggregateRootId;
-    private readonly DateTimeImmutable $occurredOn;
+    private readonly ?string $aggregateRootId;
+    private readonly \DateTimeImmutable $occurredOn;
     private readonly string $eventName;
     private readonly string $context;
     /**
-     * @var array<string, mixed> $payload
+     * @var array<string, mixed>
      */
     private readonly array $payload;
 
-    public function __construct(private readonly UserId|null $userId, DomainEvent $event)
+    public function __construct(private readonly ?UserId $userId, DomainEvent $event)
     {
         $this->id = new RecordedEventId(
-            (string) $event->id()
+            (string) $event->id(),
         );
 
         $this->aggregateRootId = $event->aggregateRootId() instanceof AggregateRootId ? (string) $event->aggregateRootId() : null;
@@ -49,7 +49,7 @@ class RecordedEvent
         return $this->aggregateRootId;
     }
 
-    public function occurredOn(): DateTimeImmutable
+    public function occurredOn(): \DateTimeImmutable
     {
         return $this->occurredOn;
     }
@@ -77,21 +77,19 @@ class RecordedEvent
         $class = EventRegistry::instance()
             ->getEvent(
                 context: $this->context(),
-                eventName: $this->eventName()
+                eventName: $this->eventName(),
             )
         ;
 
-        if (null == $class) {
-            throw new EventNotFoundException(
-                $this->context(),
-                $this->eventName()
-            );
+        if (null === $class) {
+            throw new EventNotFoundException($this->context(), $this->eventName());
         }
 
+        /* @var class-string $class */
         return $class::rebuildFromPayload(
-            id: new DomainEventId($this->id()),
+            id: $this->id(),
             occurredOn: $this->occurredOn(),
-            payload: $this->payload()
+            payload: $this->payload(),
         );
     }
 }

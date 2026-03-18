@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\Account\Update;
 
 use App\Security\Application\Account\Update\UpdateAccountRequest;
@@ -41,7 +43,7 @@ class UpdateAccountServiceTest extends TestCase
         $request = new UpdateAccountRequest(
             accountId: $account->id(),
             name: 'Company ABC',
-            active: false
+            active: false,
         );
 
         $result = $sut($request, $user);
@@ -54,8 +56,8 @@ class UpdateAccountServiceTest extends TestCase
 
         $this->assertGreaterThanOrEqual(2, count($events));
 
-        $eventFirst = $events[count($events)-2];
-        $eventLast = $events[count($events)-1];
+        $eventFirst = $events[count($events) - 2];
+        $eventLast = $events[count($events) - 1];
 
         $this->assertTrue($eventFirst instanceof AccountNameChanged);
         $this->assertTrue($eventLast instanceof AccountStatusChanged);
@@ -76,7 +78,7 @@ class UpdateAccountServiceTest extends TestCase
         $request = new UpdateAccountRequest(
             accountId: $account->id(),
             name: 'Company ABC',
-            active: true
+            active: true,
         );
 
         $result = $sut($request, $user);
@@ -108,7 +110,7 @@ class UpdateAccountServiceTest extends TestCase
         $request = new UpdateAccountRequest(
             accountId: $account->id(),
             name: 'MyAccount',
-            active: true
+            active: true,
         );
 
         $result = $sut($request, $user);
@@ -141,7 +143,7 @@ class UpdateAccountServiceTest extends TestCase
         $request = new UpdateAccountRequest(
             accountId: $account->id(),
             name: 'MyAccount',
-            active: true
+            active: true,
         );
 
         $sut($request, $user);
@@ -158,7 +160,7 @@ class UpdateAccountServiceTest extends TestCase
         $result = $sut->isHandled(new UpdateAccountRequest(
             accountId: $account->id(),
             name: 'MyAccount',
-            active: true
+            active: true,
         ));
 
         $this->assertTrue($result);

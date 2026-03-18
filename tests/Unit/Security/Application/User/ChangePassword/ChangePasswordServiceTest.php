@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\User\ChangePassword;
 
 use App\Security\Application\UnauthorizedActionException;
@@ -37,7 +39,7 @@ class ChangePasswordServiceTest extends TestCase
 
         $request = new ChangePasswordRequest(
             userId: $user->id(),
-            password: '666'
+            password: '666',
         );
 
         $result = $sut($request, $user);
@@ -71,7 +73,7 @@ class ChangePasswordServiceTest extends TestCase
 
         $request = new ChangePasswordRequest(
             userId: $user->id(),
-            password: '666'
+            password: '666',
         );
 
         $sut($request, $otherUser);
@@ -87,7 +89,7 @@ class ChangePasswordServiceTest extends TestCase
 
         $result = $sut->isHandled(new ChangePasswordRequest(
             userId: $user->id(),
-            password: '333'
+            password: '333',
         ));
 
         $this->assertTrue($result);

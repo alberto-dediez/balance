@@ -1,28 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\UI\Api\User;
 
-use Nelmio\ApiDocBundle\Attribute\Areas;
-use OpenApi\Attributes as OA;
-use App\Security\Domain\Model\User\Role;
-use Nelmio\ApiDocBundle\Attribute\Model;
-use App\Shared\Domain\Uuid\UuidGenerator;
-use Symfony\Component\Routing\Attribute\Route;
-use App\Security\Domain\Model\Account\AccountId;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use App\Security\Application\User\Register\RegisterUserRequest;
 use App\Security\Application\User\Register\RegisterUserService;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Domain\Uuid\UuidGenerator;
+use Nelmio\ApiDocBundle\Attribute\Areas;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/users', name: 'api_users_register', methods: ['POST'])]
 #[Areas(['admin'])]
-#[OA\Post(description: "[Only for admins] Register a new user", summary: "Register a new user", tags: ['Security'])]
+#[OA\Post(description: '[Only for admins] Register a new user', summary: 'Register a new user', tags: ['Security'])]
 #[OA\Response(
     response: 200,
     description: 'Returns info about new registered user',
-    content: new Model(type: UserResponse::class)
+    content: new Model(type: UserResponse::class),
 )]
 class RegisterController extends AbstractController
 {
@@ -30,12 +32,11 @@ class RegisterController extends AbstractController
         #[MapRequestPayload()]
         UserRequest $request,
         RegisterUserService $register,
-        LoggedUser $loggedUser
-    ): JsonResponse
-    {
+        LoggedUser $loggedUser,
+    ): JsonResponse {
         $this->denyAccessUnlessGranted(Role::Admin->value);
 
-        $accountId = $request->accountId === '' || $request->accountId === '0'
+        $accountId = '' === $request->accountId || '0' === $request->accountId
             ? null
             : new AccountId($request->accountId)
         ;
@@ -43,13 +44,13 @@ class RegisterController extends AbstractController
         $response = $register(new RegisterUserRequest(
             username: $request->username,
             password: UuidGenerator::v4(),
-            accountId: $accountId
+            accountId: $accountId,
         ), $loggedUser());
 
         return $this->json(new UserResponse(
             userId: (string) $response->userId,
             username: $response->username,
-            accountId: (string) $response->accountId
+            accountId: (string) $response->accountId,
         ));
     }
 }

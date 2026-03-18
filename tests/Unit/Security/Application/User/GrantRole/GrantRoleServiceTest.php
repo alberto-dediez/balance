@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\User\GrantRole;
 
 use App\Security\Application\UnauthorizedActionException;
@@ -40,7 +42,7 @@ class GrantRoleServiceTest extends TestCase
 
         $request = new GrantRoleRequest(
             userId: $user->id(),
-            role: Role::Admin
+            role: Role::Admin,
         );
 
         $result = $sut($request, $admin);
@@ -74,7 +76,7 @@ class GrantRoleServiceTest extends TestCase
 
         $request = new GrantRoleRequest(
             userId: $user->id(),
-            role: Role::Owner
+            role: Role::Owner,
         );
 
         $result = $sut($request, $owner);
@@ -110,7 +112,7 @@ class GrantRoleServiceTest extends TestCase
 
         $request = new GrantRoleRequest(
             userId: $user->id(),
-            role: Role::Admin
+            role: Role::Admin,
         );
 
         $sut($request, $owner);
@@ -132,7 +134,7 @@ class GrantRoleServiceTest extends TestCase
 
         $request = new GrantRoleRequest(
             userId: $user->id(),
-            role: Role::Admin
+            role: Role::Admin,
         );
 
         $sut($request, $performBy);
@@ -148,7 +150,7 @@ class GrantRoleServiceTest extends TestCase
 
         $result = $sut->isHandled(new GrantRoleRequest(
             userId: $user->id(),
-            role: Role::Admin
+            role: Role::Admin,
         ));
 
         $this->assertTrue($result);

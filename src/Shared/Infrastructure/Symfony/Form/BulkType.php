@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Symfony\Form;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
+use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkAction;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatableMessage;
 
 /** @extends AbstractType<mixed> */
 class BulkType extends AbstractType
@@ -27,17 +29,17 @@ class BulkType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'choices' => $options['elements'],
-                'choice_value' => fn($element): string => (string) $element->id()
+                'choice_value' => fn($element): string => (string) $element->id(),
             ])
             ->add('action', AutocompleteType::class, [
                 'label' => new TranslatableMessage('Acción a realizar'),
                 'required' => true,
                 'choices' => $options['actions'],
-                'choice_label' => fn(?BulkAction $action): ?string => $action?->name(),
-                'choice_value' => fn(?BulkAction $action): ?string => $action?->id()
+                'choice_label' => fn(?BulkAction $action): string|TranslatableMessage|null => $action?->name(),
+                'choice_value' => fn(?BulkAction $action): ?string => $action?->id(),
             ])
             ->add('execute', SubmitType::class, [
-                'label' => new TranslatableMessage('Realizar')
+                'label' => new TranslatableMessage('Realizar'),
             ])
         ;
     }
@@ -47,7 +49,7 @@ class BulkType extends AbstractType
         $resolver->setDefaults([
             'elements' => [],
             'actions' => [],
-            'data_class' => BulkRequest::class
+            'data_class' => BulkRequest::class,
         ]);
     }
 }

@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Acceptance\Shared;
 
-use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Profiler\Profile;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Profiler\Profile;
 
 final class AcceptanceClient
 {
@@ -18,7 +20,7 @@ final class AcceptanceClient
 
     private ?Crawler $crawler = null;
 
-    /** @var array<string, string> $server  */
+    /** @var array<string, string> */
     private array $server = [];
 
     private ?SecurityUser $user = null;
@@ -33,7 +35,7 @@ final class AcceptanceClient
 
     public static function instance(KernelBrowser $client): AcceptanceClient
     {
-        if (null === self::$instance) {
+        if (!self::$instance instanceof AcceptanceClient) {
             self::$instance = new self($client);
         }
 

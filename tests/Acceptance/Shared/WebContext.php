@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Shared;
 
+use App\Security\Domain\Model\User\UserRepository;
+use App\Security\Infrastructure\Symfony\Security\SecurityUser;
+use Behat\Behat\Context\Context;
+use Behat\Gherkin\Node\PyStringNode;
 use Behat\Step\Then;
 use Behat\Step\When;
 use PHPUnit\Framework\Assert;
-use Behat\Behat\Context\Context;
-use Behat\Gherkin\Node\PyStringNode;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use App\Security\Domain\Model\User\UserRepository;
-use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -42,7 +42,7 @@ final readonly class WebContext implements Context
         Assert::assertNotNull($user, 'Usuario no encontrado');
 
         $this->client->loginUser(
-            new SecurityUser($user)
+            new SecurityUser($user),
         );
     }
 
@@ -73,7 +73,7 @@ final readonly class WebContext implements Context
         foreach ($arguments as $argument) {
             [$name, $value] = explode(':', $argument);
 
-            $key = '[' == $name[0] ? sprintf("%s%s", $form->attr('name'), $name) : sprintf("%s[%s]", $form->attr('name'), $name);
+            $key = '[' == $name[0] ? sprintf('%s%s', $form->attr('name'), $name) : sprintf('%s[%s]', $form->attr('name'), $name);
 
             if ('[' == $value[0]) {
                 $value = explode(',', substr($value, 1, -1));

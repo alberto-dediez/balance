@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\User\List;
 
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Application\User\List\ListUsersRequest;
-use App\Security\Application\User\List\ListUsersResponse;
 use App\Security\Application\User\List\ListUsersService;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
@@ -15,10 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class ListUsersServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
-
-    }
+    protected function setUp(): void {}
 
     public function testInvoke(): void
     {
@@ -57,7 +55,7 @@ class ListUsersServiceTest extends TestCase
         $repository->add(UserMother::fromUsernameAndAccount('user4', $account));
 
         $request = new ListUsersRequest(
-            account: $account
+            account: $account,
         );
 
         $result = $sut($request, $performBy);
@@ -85,7 +83,7 @@ class ListUsersServiceTest extends TestCase
         $repository->add(UserMother::fromUsernameAndAccount('user4', $account));
 
         $request = new ListUsersRequest(
-            account: $account
+            account: $account,
         );
 
         $sut($request, $performBy);

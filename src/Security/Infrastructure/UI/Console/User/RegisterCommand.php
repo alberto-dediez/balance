@@ -1,21 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\UI\Console\User;
 
-use Symfony\Component\Console\Command\Command;
+use App\Security\Application\User\Register\RegisterUserRequest;
+use App\Security\Application\User\Register\RegisterUserService;
 use App\Security\Domain\Model\Account\AccountId;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Security\Application\User\Register\RegisterUserRequest;
-use App\Security\Application\User\Register\RegisterUserService;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'security:user:register',
-    description: 'Register a new user in the system'
+    description: 'Register a new user in the system',
 )]
 class RegisterCommand extends Command
 {
@@ -36,11 +38,11 @@ class RegisterCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $request = new RegisterUserRequest(
-            username: $input->getArgument('username'), 
+            username: $input->getArgument('username'),
             password: $input->getArgument('password'),
-            accountId: ($input->hasArgument('accountId') && null !== $input->getArgument('accountId')) 
-                ? new AccountId($input->getArgument('accountId')) 
-                : null
+            accountId: ($input->hasArgument('accountId') && null !== $input->getArgument('accountId'))
+                ? new AccountId($input->getArgument('accountId'))
+                : null,
         );
 
         $performBy = UserMother::systemUser();
@@ -56,7 +58,7 @@ class RegisterCommand extends Command
                 ['userId', (string) $response->userId],
                 ['username', $response->username],
                 ['cuenta', (string) $response->accountId],
-            ]
+            ],
         );
 
         return Command::SUCCESS;

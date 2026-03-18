@@ -1,11 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Domain\Model\User;
 
-use DateTimeImmutable;
 use App\Security\Domain\DomainEvent;
-use App\Security\Domain\Model\User\Role;
-use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
@@ -17,7 +16,7 @@ final class RoleGranted extends DomainEvent
         private readonly UserId $userId,
         private readonly Role $role,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -44,7 +43,7 @@ final class RoleGranted extends DomainEvent
     {
         return [
             'userId' => (string) $this->userId,
-            'role' => $this->role->value
+            'role' => $this->role->value,
         ];
     }
 
@@ -52,9 +51,9 @@ final class RoleGranted extends DomainEvent
      * @param array<string, mixed> $payload
      */
     public static function rebuildFromPayload(
-        DomainEventId     $id,
-        DateTimeImmutable $occurredOn,
-        array             $payload = []
+        DomainEventId $id,
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         $role = Role::tryFrom($payload['role'] ?? '');
 
@@ -64,7 +63,7 @@ final class RoleGranted extends DomainEvent
             userId: new UserId($payload['userId'] ?? ''),
             role: $role,
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

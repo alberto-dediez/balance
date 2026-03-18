@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\UI\Web\Bulk;
 
 use App\Shared\Application\CommandBus\Command;
 
 class BulkRequest
 {
-    /** @var array<int, mixed> $elements  */
+    /** @var array<int, mixed> */
     public array $elements;
 
     public BulkAction $action;

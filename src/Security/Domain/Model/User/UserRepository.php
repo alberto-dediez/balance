@@ -1,11 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Domain\Model\User;
 
-use App\Security\Domain\Model\User\UserId;
-use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\Account\AccountId;
-use App\Security\Domain\Model\User\RecoverToken;
 
 interface UserRepository
 {

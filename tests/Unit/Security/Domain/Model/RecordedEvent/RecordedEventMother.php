@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Domain\Model\RecordedEvent;
 
-use App\Shared\Domain\Event\DomainEvent;
-use App\Security\Domain\Model\User\UserId;
-use App\Security\Domain\Model\User\UserRemoved;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRemoved;
 use App\Security\Domain\Model\RecordedEvent\RecordedEvent;
+use App\Security\Domain\Model\User\UserId;
+use App\Security\Domain\Model\User\UserRemoved;
+use App\Shared\Domain\Event\DomainEvent;
 
 class RecordedEventMother
 {
@@ -15,17 +17,17 @@ class RecordedEventMother
     {
         return new RecordedEvent(
             userId: $userId,
-            event: $event
+            event: $event,
         );
     }
 
     public static function fromUser(UserId $userId): RecordedEvent
     {
         return self::from(
-            userId: $userId, 
+            userId: $userId,
             event: new AccountRemoved(
-                AccountId::generate()
-            )
+                AccountId::generate(),
+            ),
         );
     }
 
@@ -34,8 +36,8 @@ class RecordedEventMother
         return self::from(
             userId: UserId::generate(),
             event: new UserRemoved(
-                userId: UserId::generate()
-            )
+                userId: UserId::generate(),
+            ),
         );
     }
 }

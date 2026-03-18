@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\Account\Remove;
 
 use App\Security\Application\Account\Remove\RemoveAccountRequest;
-use App\Security\Application\Account\Remove\RemoveAccountResponse;
 use App\Security\Application\Account\Remove\RemoveAccountService;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountRemoved;
@@ -39,7 +40,7 @@ class RemoveAccountServiceTest extends TestCase
         $repository->add($account);
 
         $request = new RemoveAccountRequest(
-            accountId: $account->id()
+            accountId: $account->id(),
         );
 
         $result = $sut($request, $user);
@@ -71,7 +72,7 @@ class RemoveAccountServiceTest extends TestCase
         $repository->add($account);
 
         $request = new RemoveAccountRequest(
-            accountId: $account->id()
+            accountId: $account->id(),
         );
 
         $sut($request, $user);
@@ -86,7 +87,7 @@ class RemoveAccountServiceTest extends TestCase
         $account = AccountMother::fromName('MyAccount');
 
         $result = $sut->isHandled(new RemoveAccountRequest(
-            accountId: $account->id()
+            accountId: $account->id(),
         ));
 
         $this->assertTrue($result);

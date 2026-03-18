@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\UI\Web\User\Bulk;
 
+use App\Security\Application\User\UngrantRole\UngrantRoleRequest;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkAction;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Security\Application\User\UngrantRole\UngrantRoleRequest;
-use App\Security\Infrastructure\UI\Web\User\Bulk\BulkUserRequest;
 
 class UngrantRole implements BulkAction
 {
@@ -16,19 +17,19 @@ class UngrantRole implements BulkAction
         return 'ungrant-role';
     }
 
-    public function name(): string
+    public function name(): string|TranslatableMessage
     {
         return new TranslatableMessage('Eliminar rol');
     }
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) === 0) {
+        if (0 === count($request->elements)) {
             return [];
         }
 
         if (!$request instanceof BulkUserRequest) {
-            throw new \RuntimeException("Invalid BulkRequest sent!");
+            throw new \RuntimeException('Invalid BulkRequest sent!');
         }
 
         $commands = [];
@@ -42,7 +43,7 @@ class UngrantRole implements BulkAction
             }
             $commands[] = new UngrantRoleRequest(
                 userId: $user->id(),
-                role: $request->role
+                role: $request->role,
             );
         }
 
@@ -53,13 +54,13 @@ class UngrantRole implements BulkAction
     {
         assert($command instanceof UngrantRoleRequest);
 
-        return new TranslatableMessage("Se ha eliminado el rol seleccionado al usuario {id}", ['{id}' => $command->userId]);
+        return new TranslatableMessage('Se ha eliminado el rol seleccionado al usuario {id}', ['{id}' => $command->userId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
         assert($command instanceof UngrantRoleRequest);
 
-        return new TranslatableMessage("No se ha podido eliminar el rol seleccionado al usuario {id}", ['{id}' => $command->userId]);
+        return new TranslatableMessage('No se ha podido eliminar el rol seleccionado al usuario {id}', ['{id}' => $command->userId]);
     }
 }

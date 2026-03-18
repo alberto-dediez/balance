@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\UI\Web\User;
 
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
-use Symfony\Component\Translation\TranslatableMessage;
 
 trait GetUserFromIdTrait
 {
@@ -13,8 +14,8 @@ trait GetUserFromIdTrait
     {
         $user = $userRepository->find(new UserId($userId));
 
-        if (null === $user) {
-            throw $this->createNotFoundException(new TranslatableMessage("El usuario no existe"));
+        if (!$user instanceof User) {
+            throw $this->createNotFoundException('User not found');
         }
 
         return $user;

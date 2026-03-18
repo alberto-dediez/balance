@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Security\Domain\Model\Account\Account;
@@ -8,7 +10,6 @@ use App\Security\Infrastructure\Persistence\Doctrine\Repository\DoctrineAccountR
 use App\Security\Infrastructure\Persistence\Doctrine\Repository\DoctrineUserRepository;
 use App\Tests\Unit\Security\Domain\Model\User\UserRepositoryTest;
 use Doctrine\ORM\EntityManagerInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 
 class DoctrineUserRepositoryTest extends UserRepositoryTest
 {
@@ -19,7 +20,7 @@ class DoctrineUserRepositoryTest extends UserRepositoryTest
         $accountRepository = $this->createMock(DoctrineAccountRepository::class);
         $accountRepository->method('find')->willReturnCallback(fn($id): ?Account => null !== $id ? new Account($id) : null);
 
-        /** @var DoctrineAccountRepository&MockObject $accountRepository */
+        /* @var DoctrineAccountRepository&MockObject $accountRepository */
 
         return new DoctrineUserRepository($manager, $accountRepository);
     }

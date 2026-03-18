@@ -14,9 +14,10 @@ return (new PhpCsFixer\Config())
     ->setRules([
         '@Symfony' => true,
         '@PER-CS' => true,
-        'array_syntax' => ['syntax' => 'short'],
         'concat_space' => ['spacing' => 'one'],
         'declare_strict_types' => true,
+        'ordered_imports' => ['sort_algorithm' => 'alpha'],
+        'trailing_comma_in_multiline' => ['elements' => ['arrays', 'arguments', 'parameters']],
     ])
     ->setFinder($finder)
     ->setRiskyAllowed(true)

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\UI\Web\CRUD;
 
 use Symfony\Component\Form\Form;
@@ -11,6 +13,7 @@ trait FilterTrait
 {
     /**
      * @param class-string<FormTypeInterface<mixed>> $formClass
+     *
      * @return list<mixed>
      */
     public function filter(Request $request, \Closure $createFilter, string $formClass): array
@@ -18,7 +21,7 @@ trait FilterTrait
         $session = $request->getSession();
         $route = $request->attributes->get('_route');
 
-        $key = sprintf("%s-%s", $route, md5($formClass));
+        $key = sprintf('%s-%s', $route, md5($formClass));
 
         $filter = $session->has($key) ? $session->get($key) : $createFilter();
 

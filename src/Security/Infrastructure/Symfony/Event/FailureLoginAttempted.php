@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Event;
 
-use DateTimeImmutable;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
@@ -14,7 +15,7 @@ final class FailureLoginAttempted extends InfrastructureEvent
         private readonly string $username,
         private readonly string $firewall,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -39,7 +40,7 @@ final class FailureLoginAttempted extends InfrastructureEvent
     {
         return [
             'username' => $this->username,
-            'firewall' => $this->firewall
+            'firewall' => $this->firewall,
         ];
     }
 
@@ -47,15 +48,15 @@ final class FailureLoginAttempted extends InfrastructureEvent
      * @param array<string, mixed> $payload
      */
     public static function rebuildFromPayload(
-        DomainEventId     $id,
-        DateTimeImmutable $occurredOn,
-        array             $payload = []
+        DomainEventId $id,
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new FailureLoginAttempted(
             username: $payload['username'] ?? '',
             firewall: $payload['firewall'] ?? '',
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

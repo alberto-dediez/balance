@@ -1,36 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\UI\Web\User;
 
 use App\Security\Application\Action;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
+use App\Security\Domain\Model\User\UserRepository;
+use App\Security\Infrastructure\Symfony\Form\EditUser;
+use App\Security\Infrastructure\Symfony\Form\EditUserType;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Security\Domain\Model\User\UserRepository;
-use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
-use App\Security\Infrastructure\Symfony\Form\EditUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Security\Application\UnauthorizedActionException;
-use App\Security\Infrastructure\Symfony\Form\EditUserType;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/users/edit/{userId}', name: 'users_edit')]
-#[IsGranted("ROLE_OWNER")]
+#[IsGranted('ROLE_OWNER')]
 class EditController extends AbstractController
 {
-    use EditUserTrait, EditTrait;
+    use EditUserTrait;
+    use EditTrait;
+
     public function __invoke(
         string $userId,
         LoggedUser $loggedUser,
         UserRepository $userRepository,
-        Request $request
-    ): Response
-    {
+        Request $request,
+    ): Response {
         $user = $userRepository->find(new UserId($userId));
 
-        if (null === $user) {
+        if (!$user instanceof User) {
             throw $this->createNotFoundException();
         }
 
@@ -54,9 +58,7 @@ class EditController extends AbstractController
 
         return $this->render('@security/users/edit.html.twig', [
             'user' => $user,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
-
-
 }

@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Domain\Model\User;
 
-use DateTimeImmutable;
 use App\Security\Domain\DomainEvent;
-use App\Security\Domain\Model\User\UserId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
-use App\Security\Domain\Model\Account\AccountId;
 
 final class UserRegistered extends DomainEvent
 {
@@ -20,7 +20,7 @@ final class UserRegistered extends DomainEvent
         private readonly string $password,
         private readonly ?AccountId $accountId = null,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -59,7 +59,7 @@ final class UserRegistered extends DomainEvent
             'userId' => (string) $this->userId,
             'username' => $this->username,
             'password' => $this->password,
-            'accountId' => (string) $this->accountId
+            'accountId' => (string) $this->accountId,
         ];
     }
 
@@ -67,19 +67,19 @@ final class UserRegistered extends DomainEvent
      * @param array<string, mixed> $payload
      */
     public static function rebuildFromPayload(
-        DomainEventId     $id,
-        DateTimeImmutable $occurredOn,
-        array             $payload = []
+        DomainEventId $id,
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new UserRegistered(
             userId: new UserId($payload['userId'] ?? ''),
             username: $payload['username'] ?? '',
             password: $payload['password'] ?? '',
-            accountId: (!empty($payload['accountId']))
-                ? new AccountId($payload['accountId'])
-                : null,
+            accountId: (empty($payload['accountId']))
+                ? null
+                : new AccountId($payload['accountId']),
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

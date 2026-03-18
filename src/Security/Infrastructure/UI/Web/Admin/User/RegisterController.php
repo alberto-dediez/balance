@@ -1,32 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\UI\Web\Admin\User;
 
 use App\Security\Application\Action;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
+use App\Security\Infrastructure\Symfony\Form\AdminRegisterUserType;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Security\Infrastructure\UI\Web\User\RegisterUserTrait;
+use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use App\Security\Infrastructure\UI\Web\User\RegisterUserTrait;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Security\Infrastructure\Symfony\Form\AdminRegisterUserType;
 
 #[Route('/admin/users/register', name: 'admin_users_register')]
-#[IsGranted("ROLE_ADMIN")]
+#[IsGranted('ROLE_ADMIN')]
 class RegisterController extends AbstractController
 {
-    use RegisterUserTrait, RegisterTrait;
+    use RegisterUserTrait;
+    use RegisterTrait;
 
     public function __invoke(
         LoggedUser $loggedUser,
-        Request $request
-    ): Response
-    {   
+        Request $request,
+    ): Response {
         $user = new User(UserId::generate());
 
         $this->denyAccessUnlessGranted(Action::Register->value, $user);
@@ -37,10 +40,10 @@ class RegisterController extends AbstractController
 
         try {
 
-            $needsRedirect = $this->register($request, $form, fn($form) => $this->registerUser(
+            $needsRedirect = $this->register($request, $form, fn(FormInterface $form): bool => $this->registerUser(
                 form: $form,
                 account: $form->get('account')->getData(),
-                performBy: $performBy
+                performBy: $performBy,
             ));
 
             if ($needsRedirect) {
@@ -51,7 +54,7 @@ class RegisterController extends AbstractController
         }
 
         return $this->render('@security/admin/users/register.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Shared;
 
-use Behat\Step\Then;
-use Behat\Step\When;
-use PHPUnit\Framework\Assert;
-use Behat\Behat\Context\Context;
-use Behat\Gherkin\Node\PyStringNode;
-use App\Tests\Acceptance\Shared\AcceptanceClient;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Behat\Behat\Context\Context;
+use Behat\Gherkin\Node\PyStringNode;
+use Behat\Step\Then;
+use Behat\Step\When;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
+use PHPUnit\Framework\Assert;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * This context class contains the definitions of the steps used by the demo
@@ -55,7 +54,7 @@ final readonly class ApiContext implements Context
         Assert::assertNotNull($user);
 
         $this->client->loginUserInApi(
-            new SecurityUser($user)
+            new SecurityUser($user),
         );
     }
 
@@ -72,7 +71,7 @@ final readonly class ApiContext implements Context
             'username' => $user->username(),
             'roles' => $user->roles(),
             'iat' => 1516239022, // 18/01/2018 00:30:22
-            'exp' => 1516239022 // 18/01/2018 00:30:22
+            'exp' => 1516239022, // 18/01/2018 00:30:22
         ]);
 
         $this->client->setBearerToken($token);

@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Form;
 
 use App\Security\Domain\Model\User\Role;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use App\Security\Infrastructure\Symfony\Form\Type\RoleType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 /**
  * @extends AbstractType<EditUser>
@@ -22,13 +24,13 @@ class AdminEditUserType extends AbstractType
                 'label' => new TranslatableMessage('Rol de usuario'),
                 'choices' => Role::casesForAdmins(),
                 'required' => false,
-                'multiple' => true
+                'multiple' => true,
             ])
             ->add('save', SubmitType::class, [
-                'label' => new TranslatableMessage('Guardar')
+                'label' => new TranslatableMessage('Guardar'),
             ])
             ->add('saveAndReturn', SubmitType::class, [
-                'label' => new TranslatableMessage('Guardar y salir')
+                'label' => new TranslatableMessage('Guardar y salir'),
             ])
         ;
     }
@@ -36,7 +38,7 @@ class AdminEditUserType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => EditUser::class
+            'data_class' => EditUser::class,
         ]);
     }
 }

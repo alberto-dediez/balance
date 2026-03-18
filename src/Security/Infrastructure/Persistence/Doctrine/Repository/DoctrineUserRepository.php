@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Persistence\Doctrine\Repository;
 
-use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\DuplicatedUsernameException;
 use App\Security\Domain\Model\User\RecoverToken;
+use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\User\UserId;
@@ -21,10 +23,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineUserRepository implements UserRepository
 {
-    public function __construct(private readonly EntityManagerInterface $manager, private readonly DoctrineAccountRepository $accountRepository)
-    {
-
-    }
+    public function __construct(private readonly EntityManagerInterface $manager, private readonly DoctrineAccountRepository $accountRepository) {}
 
     public function add(User $user): void
     {
@@ -47,7 +46,7 @@ class DoctrineUserRepository implements UserRepository
                 events: $user->recordedEvents(),
                 removed: $user->isRemoved(),
                 registeredAt: $user->registeredAt() ?? new \DateTimeImmutable(),
-                removedAt: $user->removedAt()
+                removedAt: $user->removedAt(),
             );
         }
 
@@ -67,7 +66,7 @@ class DoctrineUserRepository implements UserRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('u.id', ':id')
+                $qb->expr()->eq('u.id', ':id'),
             )
             ->setParameter('id', $userId)
             ->getQuery()
@@ -81,7 +80,7 @@ class DoctrineUserRepository implements UserRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('u.username', ':username')
+                $qb->expr()->eq('u.username', ':username'),
             )
             ->setParameter('username', $username)
             ->getQuery()
@@ -95,7 +94,7 @@ class DoctrineUserRepository implements UserRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('u.recoverToken.token', ':token')
+                $qb->expr()->eq('u.recoverToken.token', ':token'),
             )
             ->setParameter('token', $recoverToken->token())
             ->getQuery()
@@ -112,7 +111,7 @@ class DoctrineUserRepository implements UserRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('u.accountId', ':accountId')
+                $qb->expr()->eq('u.accountId', ':accountId'),
             )
             ->setParameter('accountId', $accountId)
             ->getQuery()
@@ -130,15 +129,15 @@ class DoctrineUserRepository implements UserRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('u.removed'),
-                    $qb->expr()->eq('u.removed', $qb->expr()->literal(false))
-                )
+                    $qb->expr()->eq('u.removed', $qb->expr()->literal(false)),
+                ),
             )
         ;
 
         if (!in_array($filter->username, [null, '', '0'], true)) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('u.username', ':username')
+                    $qb->expr()->like('u.username', ':username'),
                 )
                 ->setParameter('username', "%{$filter->username}%")
             ;
@@ -147,22 +146,22 @@ class DoctrineUserRepository implements UserRepository
         if ($filter->role instanceof Role) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('u.roles', ':role')
+                    $qb->expr()->like('u.roles', ':role'),
                 )
-                ->setParameter('role', "%" . $filter->role->value . "%")
+                ->setParameter('role', '%' . $filter->role->value . '%')
             ;
         }
 
         if ($filter->account instanceof Account) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('u.accountId', ':accountId')
+                    $qb->expr()->eq('u.accountId', ':accountId'),
                 )
                 ->setParameter('accountId', $filter->account->id())
             ;
         }
 
-        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
             'registeredAt' => $qb->orderBy('u.registeredAt', $way),

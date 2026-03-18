@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Application\Account;
 
+use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
-use App\Security\Domain\Model\Account\Account;
-use App\Security\Application\AbstractAuthorizer;
 
 final class AccountAuthorizer extends AbstractAuthorizer
 {
@@ -25,6 +27,7 @@ final class AccountAuthorizer extends AbstractAuthorizer
         if ($user->hasRole(Role::SuperAdmin)) {
             return true;
         }
+
         return $user->hasRole(Role::Admin);
     }
 
@@ -36,14 +39,15 @@ final class AccountAuthorizer extends AbstractAuthorizer
         if ($user->hasRole(Role::SuperAdmin)) {
             return true;
         }
+
         return $user->hasRole(Role::Owner) && ($user->accountId() instanceof AccountId && $subject->id()->equals($user->accountId()));
     }
 
     protected function canRemove(mixed $subject, User $user): bool
     {
         return $this->canEdit($subject, $user);
-    }  
-    
+    }
+
     public function supports(mixed $subject): bool
     {
         return $subject instanceof Account;

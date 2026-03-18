@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\Account\List;
 
 use App\Security\Application\Account\List\ListAccountsRequest;
-use App\Security\Application\Account\List\ListAccountsResponse;
 use App\Security\Application\Account\List\ListAccountsService;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
@@ -14,10 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class ListAccountsServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
-
-    }
+    protected function setUp(): void {}
 
     public function testInvoke(): void
     {

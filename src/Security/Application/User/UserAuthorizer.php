@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Application\User;
 
+use App\Security\Application\AbstractAuthorizer;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
-use App\Security\Application\AbstractAuthorizer;
 
 final class UserAuthorizer extends AbstractAuthorizer
 {
@@ -28,6 +30,7 @@ final class UserAuthorizer extends AbstractAuthorizer
         if ($user->hasRole(Role::Admin)) {
             return true;
         }
+
         return $user->hasRole(Role::Owner) && $isFromSameAccount;
     }
 
@@ -50,6 +53,7 @@ final class UserAuthorizer extends AbstractAuthorizer
         if ($user->hasRole(Role::Admin)) {
             return true;
         }
+
         return $user->hasRole(Role::SuperAdmin);
     }
 
@@ -61,6 +65,7 @@ final class UserAuthorizer extends AbstractAuthorizer
         if ($user->hasRole(Role::Admin)) {
             return true;
         }
+
         return $user->hasRole(Role::Owner)
         && $user->accountId() instanceof AccountId
         && $subject->accountId() instanceof AccountId

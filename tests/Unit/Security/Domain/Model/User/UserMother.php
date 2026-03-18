@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Domain\Model\User;
 
-use App\Security\Domain\Model\User\Role;
-use App\Security\Domain\Model\User\User;
-use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\RecoverToken;
+use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\User;
+use App\Security\Domain\Model\User\UserId;
 
 class UserMother
 {
@@ -15,7 +17,7 @@ class UserMother
     {
         return self::from(
             userId: UserId::generate(),
-            username: 'username'
+            username: 'username',
         );
     }
 
@@ -24,7 +26,7 @@ class UserMother
         return new User(
             id: new UserId('system'),
             username: 'system',
-            roles: [Role::Admin]
+            roles: [Role::Admin],
         );
     }
 
@@ -32,7 +34,7 @@ class UserMother
     {
         return self::from(
             userId: UserId::generate(),
-            role: Role::Admin
+            role: Role::Admin,
         );
     }
 
@@ -40,7 +42,7 @@ class UserMother
     {
         return self::from(
             userId: UserId::generate(),
-            role: Role::Owner
+            role: Role::Owner,
         );
     }
 
@@ -48,7 +50,7 @@ class UserMother
     {
         return self::from(
             userId: UserId::generate(),
-            username: $username
+            username: $username,
         );
     }
 
@@ -57,7 +59,7 @@ class UserMother
         return self::from(
             userId: UserId::generate(),
             username: $username,
-            role: $role
+            role: $role,
         );
     }
 
@@ -65,7 +67,7 @@ class UserMother
     {
         return self::from(
             userId: $userId,
-            username: $username
+            username: $username,
         );
     }
 
@@ -74,7 +76,7 @@ class UserMother
         return self::from(
             userId: UserId::generate(),
             username: $username,
-            accountId: $account->id()
+            accountId: $account->id(),
         );
     }
 
@@ -84,7 +86,7 @@ class UserMother
             userId: UserId::generate(),
             username: $username,
             role: $role,
-            accountId: $accountId
+            accountId: $accountId,
         );
     }
 
@@ -93,7 +95,7 @@ class UserMother
         return self::from(
             userId: UserId::generate(),
             username: $username,
-            recoverToken: new RecoverToken($recoverToken, new \DateTimeImmutable('NOW +1 HOUR'))
+            recoverToken: new RecoverToken($recoverToken, new \DateTimeImmutable('NOW +1 HOUR')),
         );
     }
 
@@ -105,10 +107,10 @@ class UserMother
             password: 'apassword',
             accountId: $accountId,
             roles: [
-                $role
+                $role,
             ],
             recoverToken: $recoverToken,
-            registeredAt: new \DateTimeImmutable("NOW")
+            registeredAt: new \DateTimeImmutable('NOW'),
         );
     }
 
@@ -116,7 +118,7 @@ class UserMother
     {
         $roles = [
             Role::Admin,
-            Role::User
+            Role::User,
         ];
 
         return self::fromUsernameAndRole('user-' . random_int(100, 9999999), $roles[random_int(0, 1)]);

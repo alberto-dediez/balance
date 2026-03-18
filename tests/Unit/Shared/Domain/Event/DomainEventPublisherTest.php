@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Shared\Domain\Event;
 
-use PHPUnit\Framework\TestCase;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
-use App\Shared\Domain\Model\AggregateRootId;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Shared\Domain\Model\AggregateRootId;
+use PHPUnit\Framework\TestCase;
 
 class DomainEventPublisherTest extends TestCase
 {

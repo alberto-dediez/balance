@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Security\Domain\Model\Account\Account;
@@ -16,10 +18,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineAccountRepository implements AccountRepository
 {
-    public function __construct(private readonly EntityManagerInterface $manager)
-    {
-
-    }
+    public function __construct(private readonly EntityManagerInterface $manager) {}
 
     public function add(Account $account): void
     {
@@ -39,7 +38,7 @@ class DoctrineAccountRepository implements AccountRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('a.id', ':id')
+                $qb->expr()->eq('a.id', ':id'),
             )
             ->setParameter('id', $accountId)
             ->getQuery()
@@ -53,7 +52,7 @@ class DoctrineAccountRepository implements AccountRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('a.name', ':name')
+                $qb->expr()->eq('a.name', ':name'),
             )
             ->setParameter('name', $name)
             ->getQuery()
@@ -70,15 +69,15 @@ class DoctrineAccountRepository implements AccountRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('a.removed'),
-                    $qb->expr()->eq('a.removed', $qb->expr()->literal(false))
-                )
+                    $qb->expr()->eq('a.removed', $qb->expr()->literal(false)),
+                ),
             )
         ;
 
         if (!in_array($filter->name, [null, '', '0'], true)) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('a.name', ':name')
+                    $qb->expr()->like('a.name', ':name'),
                 )
                 ->setParameter('name', "%{$filter->name}%")
             ;
@@ -87,13 +86,13 @@ class DoctrineAccountRepository implements AccountRepository
         if (null !== $filter->active) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('a.active', ':active')
+                    $qb->expr()->eq('a.active', ':active'),
                 )
                 ->setParameter('active', $filter->active)
             ;
         }
 
-        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
             'registeredAt' => $qb->orderBy('a.registeredAt', $way),

@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Shared\Domain\Event;
 
 use App\Shared\Domain\Event\DomainEvent;
-use App\Shared\Domain\Event\RegisterTrait;
 use App\Shared\Domain\Event\DomainEventSubscriber;
+use App\Shared\Domain\Event\RegisterTrait;
 
 class VeryPickyDomainEventSubscriber implements DomainEventSubscriber
 {

@@ -1,15 +1,12 @@
 <?php
 
-namespace App\Shared\Domain\Uuid;
+declare(strict_types=1);
 
-use App\Shared\Domain\Uuid\UuidGenerator;
+namespace App\Shared\Domain\Uuid;
 
 trait UuidTrait
 {
-    public function __construct(private string $id)
-    {
-
-    }
+    public function __construct(private string $id) {}
 
     public static function generate(): static
     {

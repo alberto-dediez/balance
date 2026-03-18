@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Fixtures;
 
-use Doctrine\Persistence\ObjectManager;
 use App\Security\Domain\Model\User\Role;
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Persistence\ObjectManager;
 
 class UserFixtures extends Fixture
 {

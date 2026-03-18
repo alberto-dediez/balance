@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Shared\Domain\Event;
 
 use App\Shared\Domain\Event\DomainEvent;
-use App\Shared\Domain\Event\RegisterTrait;
 use App\Shared\Domain\Event\DomainEventSubscriber;
+use App\Shared\Domain\Event\RegisterTrait;
 
 class SpyDomainEventSubscriber implements DomainEventSubscriber
 {
@@ -34,7 +36,7 @@ class SpyDomainEventSubscriber implements DomainEventSubscriber
 
     public function lastEvent(): ?DomainEvent
     {
-        return $this->events[count($this->events)-1] ?? null
+        return $this->events[count($this->events) - 1] ?? null
         ;
     }
 }

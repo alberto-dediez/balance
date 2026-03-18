@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\User\RecoverPassword;
 
 use App\Security\Application\User\RecoverPassword\RecoverPasswordRequest;
@@ -40,7 +42,7 @@ class RecoverPasswordServiceTest extends TestCase
 
         $request = new RecoverPasswordRequest(
             token: $token,
-            password: '666'
+            password: '666',
         );
 
         $result = $sut($request, $user);
@@ -72,7 +74,7 @@ class RecoverPasswordServiceTest extends TestCase
 
         $result = $sut->isHandled(new RecoverPasswordRequest(
             token: $user->recoverToken(),
-            password: '333'
+            password: '333',
         ));
 
         $this->assertTrue($result);

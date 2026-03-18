@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Event;
 
-use DateTimeImmutable;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
@@ -14,7 +15,7 @@ final class UserLoggedOut extends InfrastructureEvent
     public function __construct(
         private readonly UserId $userId,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -35,7 +36,7 @@ final class UserLoggedOut extends InfrastructureEvent
     public function payload(): array
     {
         return [
-            'userId' => (string) $this->userId
+            'userId' => (string) $this->userId,
         ];
     }
 
@@ -43,14 +44,14 @@ final class UserLoggedOut extends InfrastructureEvent
      * @param array<string, mixed> $payload
      */
     public static function rebuildFromPayload(
-        DomainEventId     $id,
-        DateTimeImmutable $occurredOn,
-        array             $payload = []
+        DomainEventId $id,
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new UserLoggedOut(
             userId: new UserId($payload['userId'] ?? ''),
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Shared\Application\CommandBus;
 
-use PHPUnit\Framework\TestCase;
 use App\Shared\Application\CommandBus\Command;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\TestCase;
 
 class CommandBusDispatcherTest extends TestCase
 {
@@ -17,7 +19,7 @@ class CommandBusDispatcherTest extends TestCase
         CommandBusDispatcher::instance()->reset();
 
         $this->spyHandler = new SluttyCommandHandler();
-        $this->sluttyHandler = new VeryPickyCommandHandler();      
+        $this->sluttyHandler = new VeryPickyCommandHandler();
     }
 
     public function testDispatchReturnsFirstHandlerResponse(): void
@@ -25,8 +27,8 @@ class CommandBusDispatcherTest extends TestCase
         $dispatcher = CommandBusDispatcher::instance();
 
         $this->assertCount(0, $this->spyHandler->commands());
-        $this->assertCount(0, $this->sluttyHandler->commands());  
-        
+        $this->assertCount(0, $this->sluttyHandler->commands());
+
         $dispatcher->dispatch(new FakeCommand(), UserMother::random());
 
         $this->assertCount(1, $this->spyHandler->commands());
@@ -49,7 +51,4 @@ class CommandBusDispatcherTest extends TestCase
     }
 }
 
-class FakeCommand implements Command
-{
-    
-}
+class FakeCommand implements Command {}

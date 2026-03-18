@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\UI\Web\CRUD;
 
 use App\Security\Domain\Model\User\User;
-use Symfony\Component\Form\Form;
+use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Shared\Application\CommandBus\CommandBusDispatcher;
 
 trait BulkTrait
 {
@@ -23,7 +24,7 @@ trait BulkTrait
 
             $commands = $bulkRequest->commands();
 
-            if (count($commands) === 0) {
+            if (0 === count($commands)) {
                 $this->addFlash('danger', new TranslatableMessage('Debes seleccionar algún elemento sobre el que poder realizar la acción'));
 
                 return true;

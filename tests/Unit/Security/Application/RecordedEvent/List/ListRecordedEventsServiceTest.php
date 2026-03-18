@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\RecordedEvent\List;
 
 use App\Security\Application\RecordedEvent\List\ListRecordedEventsRequest;
-use App\Security\Application\RecordedEvent\List\ListRecordedEventsResponse;
 use App\Security\Application\RecordedEvent\List\ListRecordedEventsService;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryRecordedEventRepository;
@@ -14,10 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class ListRecordedEventsServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
-
-    }
+    protected function setUp(): void {}
 
     public function testInvoke(): void
     {

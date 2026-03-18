@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Symfony\Twig;
 
-use Twig\TwigFilter;
-use Twig\TwigFunction;
-use Twig\Extension\AbstractExtension;
 use App\Security\Domain\Model\User\Role;
 use Symfony\Component\Translation\TranslatableMessage;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 class FilterExtension extends AbstractExtension
 {
@@ -44,13 +46,13 @@ class FilterExtension extends AbstractExtension
 
     public function isValued(mixed $value): bool
     {
-        return (
+        return
             null !== $value && (
-                (is_string($value) && $value !== '')
+                (is_string($value) && '' !== $value)
                 || (is_array($value) && count($value) > 0)
                 || (!is_string($value) && !is_array($value))
             )
-        );
+        ;
     }
 
     /**
@@ -83,7 +85,7 @@ class FilterExtension extends AbstractExtension
 
         $fields = $this->getFields($filter);
 
-        if (empty($fields)) {
+        if ([] === $fields) {
             return $result;
         }
 

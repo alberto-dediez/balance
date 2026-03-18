@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Persistence\InMemory\Repository;
 
-use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\DuplicatedUsernameException;
 use App\Security\Domain\Model\User\RecoverToken;
+use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\User\UserId;
@@ -19,20 +21,17 @@ class InMemoryUserRepository implements UserRepository
     /**
      * @param User[] $users
      */
-    public function __construct(private array $users = [])
-    {
-
-    }
+    public function __construct(private array $users = []) {}
 
     public function add(User $user): void
     {
         if (isset($this->users[(string) $user->id()])) {
-            return ;
+            return;
         }
 
         $usernameInUse = array_filter($this->users, fn(User $savedUser): bool => $user->username() === $savedUser->username() && !$savedUser->isRemoved());
 
-        if ($usernameInUse !== []) {
+        if ([] !== $usernameInUse) {
             throw new DuplicatedUsernameException($user->username());
         }
 
@@ -42,7 +41,7 @@ class InMemoryUserRepository implements UserRepository
     public function remove(User $user): void
     {
         if (!isset($this->users[(string) $user->id()])) {
-            return ;
+            return;
         }
 
         unset($this->users[(string) $user->id()]);
@@ -58,7 +57,7 @@ class InMemoryUserRepository implements UserRepository
 
     public function findByUsername(string $username): ?User
     {
-        if (count($this->users) === 0) {
+        if (0 === count($this->users)) {
             return null;
         }
 
@@ -73,7 +72,7 @@ class InMemoryUserRepository implements UserRepository
 
     public function findByRecoverToken(RecoverToken $recoverToken): ?User
     {
-        if (count($this->users) === 0) {
+        if (0 === count($this->users)) {
             return null;
         }
 
@@ -92,11 +91,11 @@ class InMemoryUserRepository implements UserRepository
     public function findByAccountId(AccountId $accountId): array
     {
         $account = new Account(
-            id: $accountId
+            id: $accountId,
         );
 
         $filter = new UserFilter(
-            account: $account
+            account: $account,
         );
         $filter->limit = 9999999999999;
 
@@ -110,7 +109,7 @@ class InMemoryUserRepository implements UserRepository
     {
         $results = [];
 
-        if (count($this->users) === 0) {
+        if (0 === count($this->users)) {
             return $results;
         }
 
@@ -137,7 +136,7 @@ class InMemoryUserRepository implements UserRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

@@ -1,26 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Twig;
 
-use App\Security\Domain\Model\User\User;
-use Twig\TwigFilter;
-use Twig\Extension\AbstractExtension;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use Symfony\Component\Translation\TranslatableMessage;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class UserExtension extends AbstractExtension
 {
     /**
-     * @var array<string, string|TranslatableMessage> $users
+     * @var array<string, string|TranslatableMessage>
      */
     private array $users = [];
 
-    public function __construct(private readonly UserRepository $userRepository)
-    {
-
-    }
+    public function __construct(private readonly UserRepository $userRepository) {}
 
     /**
      * @return TwigFilter[]
