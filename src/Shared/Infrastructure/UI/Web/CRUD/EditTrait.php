@@ -25,7 +25,9 @@ trait EditTrait
 
             assert($form instanceof Form);
 
-            if ($form->getClickedButton() && 'saveAndReturn' == $form->getClickedButton()->getName()) {
+            $clickedButton = $form->getClickedButton();
+
+            if ($clickedButton instanceof FormInterface && 'saveAndReturn' === $clickedButton->getName()) {
                 return true;
             }
         }

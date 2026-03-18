@@ -6,13 +6,14 @@ use App\Security\Domain\Model\User\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use function PHPUnit\Framework\assertNotEmpty;
 
 class SecurityUser extends User implements UserInterface, PasswordAuthenticatedUserInterface, EquatableInterface
 {
     public function getRoles(): array
     {
         $roles = [];
-        
+
         foreach ($this->roles() as $role) {
             $roles[] = $role->value;
         }
@@ -27,6 +28,8 @@ class SecurityUser extends User implements UserInterface, PasswordAuthenticatedU
 
     public function getUserIdentifier(): string
     {
+        assertNotEmpty($this->username);
+
         return $this->username;
     }
 
@@ -34,7 +37,7 @@ class SecurityUser extends User implements UserInterface, PasswordAuthenticatedU
     {
         return $this->password();
     }
-    
+
     public function isEqualTo(UserInterface $user): bool
     {
         return $user->getUserIdentifier() === $this->getUserIdentifier() && $user->getRoles() == $this->getRoles();
@@ -43,7 +46,7 @@ class SecurityUser extends User implements UserInterface, PasswordAuthenticatedU
     public function __construct(User $user)
     {
         parent::__construct(
-            id: $user->id(), 
+            id: $user->id(),
             username: $user->username(),
             password: $user->password(),
             accountId: $user->accountId(),

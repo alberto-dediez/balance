@@ -126,9 +126,11 @@ class DoctrineRecordedEventRepository implements RecordedEventRepository
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return $qb->select('COUNT(DISTINCT e)')
+        $count = $qb->select('COUNT(DISTINCT e)')
             ->getQuery()
             ->getSingleScalarResult()
         ;
+
+        return intval($count);
     }
 }

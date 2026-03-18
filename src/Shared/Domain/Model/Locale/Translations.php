@@ -10,7 +10,7 @@ class Translations implements \Countable
     private ?Locale $locale = null;
 
     /**
-     * @param list<Translation> $translations
+     * @param Translation[] $translations
      */
     public function __construct(private array $translations = [])
     {

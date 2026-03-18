@@ -154,7 +154,16 @@ final readonly class WebContext implements Context
     public function iSeeAJsonThatShouldBeEqualTo(PyStringNode $content): void
     {
         $expected = json_encode(json_decode((string) $content), JSON_PRETTY_PRINT);
-        $actual = json_encode(json_decode($this->client->getResponse()->getContent(), true), JSON_PRETTY_PRINT);
+
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        $jsonResponse = json_decode($response, true);
+
+        Assert::assertNotFalse($jsonResponse);
+
+        $actual = json_encode($jsonResponse, JSON_PRETTY_PRINT);
 
         Assert::assertEquals($expected, $actual);
     }
@@ -163,7 +172,11 @@ final readonly class WebContext implements Context
     public function iSeeAJsonThatShouldBeSimilarTo(PyStringNode $content): void
     {
         $expected = json_decode((string) $content);
-        $actual = json_decode($this->client->getResponse()->getContent(), true);
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        $actual = json_decode($response, true);
 
         foreach ($expected as $attr => $value) {
             Assert::assertTrue(isset($actual->$attr) || isset($actual[$attr]));
@@ -173,6 +186,10 @@ final readonly class WebContext implements Context
     #[Then('I see a text :text')]
     public function iSeeAText(string $text): void
     {
-        Assert::assertStringContainsString($text, $this->client->getResponse()->getContent());
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        Assert::assertStringContainsString($text, $response);
     }
 }

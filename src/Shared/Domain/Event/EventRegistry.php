@@ -54,12 +54,23 @@ class EventRegistry
 
     protected function load(): void
     {
-        if (file_exists($this->pathToFile)) {
-            $events = @json_decode(file_get_contents($this->pathToFile), true);
-
-            if (is_array($events)) {
-                $this->events = $events;
-            }
+        if (!file_exists($this->pathToFile)) {
+            return;
         }
+
+        $content = file_get_contents($this->pathToFile);
+
+        if (false === $content) {
+            return;
+        }
+
+
+        $events = @json_decode($content, true);
+
+        if (!is_array($events)) {
+            return;
+        }
+
+        $this->events = $events;
     }
 }

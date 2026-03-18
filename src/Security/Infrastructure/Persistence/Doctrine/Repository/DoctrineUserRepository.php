@@ -195,9 +195,11 @@ class DoctrineUserRepository implements UserRepository
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return $qb->select('COUNT(DISTINCT u.username)')
+        $count = $qb->select('COUNT(DISTINCT u.username)')
             ->getQuery()
             ->getSingleScalarResult()
         ;
+
+        return intval($count);
     }
 }

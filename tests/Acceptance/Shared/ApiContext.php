@@ -93,7 +93,15 @@ final readonly class ApiContext implements Context
     public function theResponseJsonShouldBeEqualTo(PyStringNode $content): void
     {
         $expected = json_encode(json_decode((string) $content), JSON_PRETTY_PRINT);
-        $actual = json_encode(json_decode($this->client->getResponse()->getContent(), true), JSON_PRETTY_PRINT);
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        $jsonResponse = json_decode($response, true);
+
+        Assert::assertNotFalse($jsonResponse);
+
+        $actual = json_encode($jsonResponse, JSON_PRETTY_PRINT);
 
         Assert::assertEquals($expected, $actual);
     }
@@ -102,7 +110,11 @@ final readonly class ApiContext implements Context
     public function theResponseJsonShouldBeSimilarTo(PyStringNode $content): void
     {
         $expected = json_decode((string) $content);
-        $actual = json_decode($this->client->getResponse()->getContent(), true);
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        $actual = json_decode($response, true);
 
         foreach ($expected as $attr => $value) {
             Assert::assertTrue(isset($actual->$attr) || isset($actual[$attr]));

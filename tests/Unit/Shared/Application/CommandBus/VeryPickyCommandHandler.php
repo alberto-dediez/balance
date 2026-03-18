@@ -12,7 +12,7 @@ class VeryPickyCommandHandler implements CommandHandler
 {
     use RegisterHandlerTrait;
 
-    /** @param array<int, Command> $commands */
+    /** @param array<int, mixed> $commands */
     public function __construct(private array $commands = [])
     {
         $this->register();
@@ -33,7 +33,7 @@ class VeryPickyCommandHandler implements CommandHandler
         return false;
     }
 
-    /** @return array<int, Command> */
+    /** @return array<int, mixed> */
     public function commands(): array
     {
         return $this->commands;

@@ -126,9 +126,11 @@ class DoctrineAccountRepository implements AccountRepository
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return $qb->select('COUNT(DISTINCT a)')
+        $count = $qb->select('COUNT(DISTINCT a)')
             ->getQuery()
             ->getSingleScalarResult()
         ;
+
+        return intval($count);
     }
 }

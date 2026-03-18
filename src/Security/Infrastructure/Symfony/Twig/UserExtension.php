@@ -13,7 +13,7 @@ use Twig\TwigFunction;
 class UserExtension extends AbstractExtension
 {
     /**
-     * @var User[] $users
+     * @var array<string, string|TranslatableMessage> $users
      */
     private array $users = [];
 

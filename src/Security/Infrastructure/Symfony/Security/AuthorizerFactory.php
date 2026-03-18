@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 class AuthorizerFactory
 {
     /**
-     * @param Authorizer[] $authorizers
+     * @param list<Authorizer> $authorizers
      */
     public function __construct(
         #[AutowireIterator('application.authorizer')]

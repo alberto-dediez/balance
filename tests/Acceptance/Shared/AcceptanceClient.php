@@ -3,6 +3,7 @@
 namespace App\Tests\Acceptance\Shared;
 
 use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Profiler\Profile;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DomCrawler\Crawler;
@@ -69,7 +70,7 @@ final class AcceptanceClient
         $this->client->followRedirect();
     }
 
-    public function getRequest(): object
+    public function getRequest(): Request
     {
         return $this->client->getRequest();
     }
@@ -81,10 +82,13 @@ final class AcceptanceClient
 
     public function getCrawler(): Crawler
     {
-        return null == $this->crawler ?
-            new Crawler($this->client->getResponse()->getContent())
-            : $this->crawler
-        ;
+        $response = $this->client->getResponse()->getContent();
+
+        if (null === $this->crawler && false !== $response) {
+            return new Crawler($response);
+        }
+
+        return $this->crawler;
     }
 
     public function getException(): ?\Exception

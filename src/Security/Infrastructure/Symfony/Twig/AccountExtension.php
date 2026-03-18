@@ -12,7 +12,7 @@ use Twig\TwigFunction;
 class AccountExtension extends AbstractExtension
 {
     /**
-     * @var Account[] $accounts
+     * @var array<string, ?Account> $accounts
      */
     private array $accounts = [];
 
