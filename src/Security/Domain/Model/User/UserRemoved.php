@@ -30,6 +30,9 @@ final class UserRemoved extends DomainEvent
         return $this->userId;
     }
 
+    /**
+     * @return array{userId:string}
+     */
     public function payload(): array
     {
         return [
@@ -37,13 +40,16 @@ final class UserRemoved extends DomainEvent
         ];
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public static function rebuildFromPayload(
-        DomainEventId $id,
+        DomainEventId     $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array             $payload = []
     ): static {
         return new UserRemoved(
-            userId: new UserId($payload['userId']),
+            userId: new UserId($payload['userId'] ?? ''),
             id: $id,
             occurredOn: $occurredOn
         );

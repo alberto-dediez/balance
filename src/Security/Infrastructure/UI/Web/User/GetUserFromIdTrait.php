@@ -9,11 +9,11 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 trait GetUserFromIdTrait
 {
-    protected function getUserFromId(string $userId, UserRepository $userRepository): ?User
+    protected function getUserFromId(string $userId, UserRepository $userRepository): User
     {
         $user = $userRepository->find(new UserId($userId));
 
-        if (null == $user) {
+        if (null === $user) {
             throw $this->createNotFoundException(new TranslatableMessage("El usuario no existe"));
         }
 

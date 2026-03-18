@@ -12,14 +12,14 @@ class LoginFailureEventListener
 {
     public function __invoke(LoginFailureEvent $event): void
     {
-        if (null == $event->getPassport()) {
+        if (null === $event->getPassport()) {
             return ;
         }
-        
+
         DomainEventPublisher::instance()
             ->publish(
                 new FailureLoginAttempted(
-                    username: $event->getPassport()->getBadge(UserBadge::class)->getUserIdentifier(),
+                    username: $event->getPassport()->getBadge(UserBadge::class)?->getUserIdentifier() ?? '',
                     firewall: $event->getFirewallName()
                 )
             )

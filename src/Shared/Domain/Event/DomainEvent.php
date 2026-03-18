@@ -55,7 +55,7 @@ abstract class DomainEvent
     abstract public function payload(): array;
 
     /**
-     * @param array<string,mixed>|null $payload
+     * @param array<string,mixed> $payload
      */
-    abstract public static function rebuildFromPayload(DomainEventId $id, \DateTimeImmutable $occurredOn, ?array $payload): static;
+    abstract public static function rebuildFromPayload(DomainEventId $id, \DateTimeImmutable $occurredOn, array $payload = []): static;
 }

@@ -37,6 +37,9 @@ final class PasswordChanged extends DomainEvent
         return $this->userId;
     }
 
+    /**
+     * @return array{userId: string, password: string}
+     */
     public function payload(): array
     {
         return [
@@ -45,14 +48,17 @@ final class PasswordChanged extends DomainEvent
         ];
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public static function rebuildFromPayload(
-        DomainEventId $id,
+        DomainEventId     $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array             $payload = []
     ): static {
         return new PasswordChanged(
-            userId: new UserId($payload['userId']),
-            password: $payload['password'],
+            userId: new UserId($payload['userId'] ?? ''),
+            password: $payload['password'] ?? '',
             id: $id,
             occurredOn: $occurredOn
         );

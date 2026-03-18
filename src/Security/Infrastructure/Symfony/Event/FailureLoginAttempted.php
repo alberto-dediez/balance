@@ -34,6 +34,7 @@ final class FailureLoginAttempted extends InfrastructureEvent
         return null;
     }
 
+    /** @return array{username: string, firewall: string} */
     public function payload(): array
     {
         return [
@@ -42,13 +43,16 @@ final class FailureLoginAttempted extends InfrastructureEvent
         ];
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public static function rebuildFromPayload(
-        DomainEventId $id,
+        DomainEventId     $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array             $payload = []
     ): static {
         return new FailureLoginAttempted(
-            username: $payload['username'],
+            username: $payload['username'] ?? '',
             firewall: $payload['firewall'] ?? '',
             id: $id,
             occurredOn: $occurredOn

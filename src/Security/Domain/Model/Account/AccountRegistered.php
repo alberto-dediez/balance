@@ -52,9 +52,9 @@ final class AccountRegistered extends DomainEvent
     }
 
     public static function rebuildFromPayload(
-        DomainEventId $id,
+        DomainEventId     $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array             $payload = []
     ): static {
         return new AccountRegistered(
             accountId: new AccountId($payload['accountId']),

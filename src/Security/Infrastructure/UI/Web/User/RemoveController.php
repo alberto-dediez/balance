@@ -19,13 +19,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class RemoveController extends AbstractController
 {
     public function __invoke(
-        string $userId, 
-        UserRepository $userRepository, 
+        string $userId,
+        UserRepository $userRepository,
         LoggedUser $loggedUser,
         RemoveUserService $removeUser
     ): Response
-    {   
+    {
         $user = $userRepository->find(new UserId($userId));
+
+        if (null === $user) {
+            throw $this->createNotFoundException();
+        }
 
         $performBy = $loggedUser();
 

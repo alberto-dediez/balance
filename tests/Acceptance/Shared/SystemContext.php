@@ -45,12 +45,16 @@ class SystemContext implements Context
     #[Then('I want to see :text in command output')]
     public function iWantToSeeInCommandOutput(string $text): void
     {
+        Assert::assertNotEmpty($this->output);
+
         Assert::assertStringContainsString($text, $this->output);
     }
 
     #[Then("I don't want to see :text in command output")]
     public function iDontWantToSeeInCommandOutput(string $text): void
     {
+        Assert::assertNotEmpty($this->output);
+
         Assert::assertStringNotContainsString($text, $this->output);
     }
 
@@ -78,6 +82,8 @@ class SystemContext implements Context
     #[Then("Is Executed Successfully")]
     public function isExecutedSuccessfully(): void
     {
+        Assert::assertNotNull($this->commandTester);
+
         $this->commandTester->assertCommandIsSuccessful();
     }
 

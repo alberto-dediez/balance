@@ -17,6 +17,7 @@ use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
+use function PHPUnit\Framework\assertNotEmpty;
 
 final readonly class SecurityContext implements Context
 {
@@ -47,6 +48,8 @@ final readonly class SecurityContext implements Context
     #[Given('user :username with role :role exists')]
     public function userWithRoleExists(string $username, string $role): void
     {
+        assertNotEmpty(Role::tryFrom($role));
+
         $user = UserMother::fromUsernameAndRole($username, Role::tryFrom($role));
 
         $this->getUserRepository()->add($user);
@@ -71,6 +74,8 @@ final readonly class SecurityContext implements Context
     #[Given('user :username with role :role of account :account exists')]
     public function userWithRoleOfAccountExists(string $username, string $role, string $account): void
     {
+        assertNotEmpty(Role::tryFrom($role));
+
         $user = UserMother::fromUsernameAndRoleAndAccount($username, Role::tryFrom($role), new AccountId($account));
 
         $this->getUserRepository()->add($user);
@@ -92,6 +97,8 @@ final readonly class SecurityContext implements Context
     #[Given('user :username with role :role with id :id of account :account exists')]
     public function userWithRoleWithIdOfAccountExists(string $username, string $id, string $role, string $account): void
     {
+        assertNotEmpty(Role::tryFrom($role));
+
         $user = UserMother::from(
             userId: new UserId($id),
             username: $username,

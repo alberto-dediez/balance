@@ -52,6 +52,8 @@ final readonly class ApiContext implements Context
     {
         $user = $this->getUserRepository()->findByUsername($username);
 
+        Assert::assertNotNull($user);
+
         $this->client->loginUserInApi(
             new SecurityUser($user)
         );
@@ -61,6 +63,8 @@ final readonly class ApiContext implements Context
     public function iHaveAnExpiredTokenFor(string $username): void
     {
         $user = $this->getUserRepository()->findByUsername($username);
+
+        Assert::assertNotNull($user);
 
         $encoder = $this->client->getContainer()->get(JWTEncoderInterface::class);
 

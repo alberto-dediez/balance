@@ -37,6 +37,9 @@ final class RoleGranted extends DomainEvent
         return $this->userId;
     }
 
+    /**
+     * @return array{userId: string, role: string}
+     */
     public function payload(): array
     {
         return [
@@ -45,14 +48,21 @@ final class RoleGranted extends DomainEvent
         ];
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public static function rebuildFromPayload(
-        DomainEventId $id,
+        DomainEventId     $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array             $payload = []
     ): static {
+        $role = Role::tryFrom($payload['role'] ?? '');
+
+        assert($role instanceof Role);
+
         return new RoleGranted(
-            userId: new UserId($payload['userId']),
-            role: Role::tryFrom($payload['role']),
+            userId: new UserId($payload['userId'] ?? ''),
+            role: $role,
             id: $id,
             occurredOn: $occurredOn
         );

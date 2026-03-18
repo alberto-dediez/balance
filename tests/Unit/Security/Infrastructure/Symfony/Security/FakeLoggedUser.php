@@ -12,8 +12,10 @@ class FakeLoggedUser extends LoggedUser
 
     }
 
-    public function __invoke(): ?User
+    public function __invoke(): User
     {
+        assert($this->user instanceof User);
+
         return $this->user;
     }
 }

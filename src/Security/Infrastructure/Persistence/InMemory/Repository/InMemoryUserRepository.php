@@ -78,7 +78,7 @@ class InMemoryUserRepository implements UserRepository
         }
 
         foreach ($this->users as $user) {
-            if ($user->recoverToken()->equals($recoverToken)) {
+            if ($user->recoverToken()?->equals($recoverToken)) {
                 return $this->find($user->id());
             }
         }

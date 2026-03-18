@@ -84,11 +84,7 @@ final class AcceptanceClient
     {
         $response = $this->client->getResponse()->getContent();
 
-        if (null === $this->crawler && false !== $response) {
-            return new Crawler($response);
-        }
-
-        return $this->crawler;
+        return $this->crawler ?? new Crawler(false !== $response ? $response : '');
     }
 
     public function getException(): ?\Exception

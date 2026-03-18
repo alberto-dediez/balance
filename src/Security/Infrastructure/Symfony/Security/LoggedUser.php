@@ -15,10 +15,23 @@ class LoggedUser
 
     }
 
-    public function __invoke(): ?User
+    public function getLoggedUserOrNull(): ?User
     {
-        if (null == $this->user) {
+        if (null === $this->user) {
             $this->loadUser();
+        }
+
+        return $this->user;
+    }
+
+    public function __invoke(): User
+    {
+        if (null === $this->user) {
+            $this->loadUser();
+        }
+
+        if (null === $this->user) {
+            throw new \RuntimeException("Call to LoggedUser in a non authenticated environment");
         }
 
         return $this->user;
@@ -28,7 +41,7 @@ class LoggedUser
     {
         $user = $this->security->getUser();
 
-        if (null == $user) {
+        if (null === $user) {
             return ;
         }
 

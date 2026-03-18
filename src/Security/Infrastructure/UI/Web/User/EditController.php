@@ -21,15 +21,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class EditController extends AbstractController
 {
     use EditUserTrait, EditTrait;
-
     public function __invoke(
-        string $userId, 
+        string $userId,
         LoggedUser $loggedUser,
-        UserRepository $userRepository, 
+        UserRepository $userRepository,
         Request $request
     ): Response
-    {   
+    {
         $user = $userRepository->find(new UserId($userId));
+
+        if (null === $user) {
+            throw $this->createNotFoundException();
+        }
 
         $performBy = $loggedUser();
 
@@ -55,5 +58,5 @@ class EditController extends AbstractController
         ]);
     }
 
-    
+
 }

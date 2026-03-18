@@ -43,25 +43,31 @@ final class PasswordRecoveryInitialized extends DomainEvent
         return $this->userId;
     }
 
+    /**
+     * @return array{userId: string, username: string, token: string, expirateAt: string}
+     */
     public function payload(): array
     {
         return [
             'userId' => (string) $this->userId,
             'username' => $this->username,
             'token' => $this->token->token(),
-            'expirateAt' => $this->token->expirateAt()->format('Y-m-d H:i:s'),
+            'expirateAt' => $this->token->expirateAt()?->format('Y-m-d H:i:s') ?? 'NOW',
         ];
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public static function rebuildFromPayload(
-        DomainEventId $id,
+        DomainEventId     $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array             $payload = []
     ): static {
         return new PasswordRecoveryInitialized(
-            userId: new UserId($payload['userId']),
+            userId: new UserId($payload['userId'] ?? ''),
             username: $payload['username'] ?? '',
-            token: new RecoverToken($payload['token'], new \DateTimeImmutable($payload['expirateAt'])),
+            token: new RecoverToken($payload['token'] ?? '', new \DateTimeImmutable($payload['expirateAt'] ?? 'NOW')),
             id: $id,
             occurredOn: $occurredOn
         );

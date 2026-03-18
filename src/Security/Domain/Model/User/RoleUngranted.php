@@ -4,8 +4,6 @@ namespace App\Security\Domain\Model\User;
 
 use DateTimeImmutable;
 use App\Security\Domain\DomainEvent;
-use App\Security\Domain\Model\User\Role;
-use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
@@ -37,6 +35,7 @@ final class RoleUngranted extends DomainEvent
         return $this->userId;
     }
 
+    /** @return array{userId: string, role: string} */
     public function payload(): array
     {
         return [
@@ -45,14 +44,21 @@ final class RoleUngranted extends DomainEvent
         ];
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public static function rebuildFromPayload(
-        DomainEventId $id,
+        DomainEventId     $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array             $payload = []
     ): static {
+        $role = Role::tryFrom($payload['role'] ?? '');
+
+        assert($role instanceof Role);
+
         return new RoleUngranted(
-            userId: new UserId($payload['userId']),
-            role: Role::tryFrom($payload['role']),
+            userId: new UserId($payload['userId'] ?? ''),
+            role: $role,
             id: $id,
             occurredOn: $occurredOn
         );

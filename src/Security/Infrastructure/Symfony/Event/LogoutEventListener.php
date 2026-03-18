@@ -12,7 +12,7 @@ class LogoutEventListener
 {
     public function __invoke(LogoutEvent $event): void
     {
-        $user = $event->getToken()->getUser();
+        $user = $event->getToken()?->getUser();
 
         if (!$user instanceof SecurityUser) {
             return ;

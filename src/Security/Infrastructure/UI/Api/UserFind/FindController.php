@@ -33,6 +33,10 @@ class FindController extends AbstractController
 
         $user = $repository->findByUsername($request->username);
 
+        if (null === $user) {
+            throw $this->createNotFoundException();
+        }
+
         return $this->json(new UserResponse(
             userId: (string) $user->id(),
             username: $user->username(),

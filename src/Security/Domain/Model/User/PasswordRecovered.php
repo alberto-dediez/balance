@@ -44,25 +44,31 @@ final class PasswordRecovered extends DomainEvent
         return $this->userId;
     }
 
+    /**
+     * @return array{userId: string, password: string, token: string, expirateAt: string}
+     */
     public function payload(): array
     {
         return [
             'userId' => (string) $this->userId,
             'password' => $this->password,
             'token' => $this->token->token(),
-            'expirateAt' => $this->token->expirateAt()?->format('Y-m-d H:i:s'),
+            'expirateAt' => $this->token->expirateAt()?->format('Y-m-d H:i:s') ?? 'NOW',
         ];
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public static function rebuildFromPayload(
-        DomainEventId $id,
+        DomainEventId     $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array             $payload = []
     ): static {
         return new PasswordRecovered(
-            userId: new UserId($payload['userId']),
-            password: $payload['password'],
-            token: new RecoverToken($payload['token'], new \DateTimeImmutable($payload['expirateAt'])),
+            userId: new UserId($payload['userId'] ?? ''),
+            password: $payload['password'] ?? '',
+            token: new RecoverToken($payload['token'] ?? '', new \DateTimeImmutable($payload['expirateAt'] ?? 'NOW')),
             id: $id,
             occurredOn: $occurredOn
         );

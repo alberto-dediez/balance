@@ -64,7 +64,7 @@ final class FakeEvent extends DomainEvent
     }
 
     /** @param array<string, mixed> $payload */
-    public static function rebuildFromPayload(DomainEventId $id, \DateTimeImmutable $occurredOn, ?array $payload): static
+    public static function rebuildFromPayload(DomainEventId $id, \DateTimeImmutable $occurredOn, array $payload = []): static
     {
         return new FakeEvent($id, $occurredOn);
     }

@@ -26,7 +26,7 @@ class RecordEventSubscriber implements DomainEventSubscriber
             throw new \RuntimeException("Incorrect event!");
         }
 
-        $loggedUser = $this->loggedUser->__invoke();
+        $loggedUser = $this->loggedUser->getLoggedUserOrNull();
         $registerRecordedEvent = $this->registerRecordedEvent;
 
         $registerRecordedEvent(

@@ -42,7 +42,7 @@ final class EmailSent extends DomainEvent
     }
 
     /**
-     * @return array<string,mixed>
+     * @return array{recipient: EmailRecipient, subject: string, content: string}
      */
     public function payload(): array
     {
@@ -54,17 +54,17 @@ final class EmailSent extends DomainEvent
     }
 
     /**
-     * @param array<string,mixed>|null $payload
+     * @param array<string, mixed> $payload
      */
     public static function rebuildFromPayload(
-        DomainEventId $id,
+        DomainEventId     $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array             $payload = []
     ): static {
         return new EmailSent(
-            recipient: $payload['recipient'],
-            subject: $payload['subject'],
-            content: $payload['content'],
+            recipient: $payload['recipient'] ?? new EmailRecipient('', ''),
+            subject: $payload['subject'] ?? '',
+            content: $payload['content'] ?? '',
             id: $id,
             occurredOn: $occurredOn
         );

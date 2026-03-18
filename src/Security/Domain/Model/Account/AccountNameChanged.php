@@ -45,9 +45,9 @@ final class AccountNameChanged extends DomainEvent
     }
 
     public static function rebuildFromPayload(
-        DomainEventId $id,
+        DomainEventId     $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array             $payload = []
     ): static {
         return new AccountNameChanged(
             accountId: new AccountId($payload['accountId']),

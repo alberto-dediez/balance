@@ -22,6 +22,8 @@ class RecoverToken implements \Stringable
 
     public function token(): string
     {
+        assert(null !== $this->token);
+
         return $this->token;
     }
 

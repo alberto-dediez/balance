@@ -46,7 +46,7 @@ class DoctrineUserRepository implements UserRepository
                 roles: $user->roles(),
                 events: $user->recordedEvents(),
                 removed: $user->isRemoved(),
-                registeredAt: $user->registeredAt(),
+                registeredAt: $user->registeredAt() ?? new \DateTimeImmutable(),
                 removedAt: $user->removedAt()
             );
         }

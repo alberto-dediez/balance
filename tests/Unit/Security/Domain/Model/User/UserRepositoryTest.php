@@ -73,6 +73,8 @@ abstract class UserRepositoryTest extends KernelTestCase
 
         $token = $user->recoverToken();
 
+        $this->assertNotNull($token);
+
         $recoverUser = $repository->findByRecoverToken($token);
 
         $this->assertNotNull($recoverUser);
@@ -159,6 +161,9 @@ abstract class UserRepositoryTest extends KernelTestCase
         $repository->add($user);
 
         $recoverUser = $repository->find($user->id());
+
+        $this->assertNotNull($recoverUser);
+
         $recoverUser->remove();
 
         $repository->add($user);

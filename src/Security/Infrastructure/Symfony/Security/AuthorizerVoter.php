@@ -28,6 +28,7 @@ class AuthorizerVoter extends Voter
         }
 
         $authorizer = $this->authorizerFactory->createFor($subject);
+
         return null != $authorizer;
     }
 
@@ -35,7 +36,15 @@ class AuthorizerVoter extends Voter
     {
         $authorizer = $this->authorizerFactory->createFor($subject);
 
+        if (null === $authorizer) {
+            return false;
+        }
+
         $action = Action::tryFrom($attribute);
+
+        if (null === $action) {
+            return false;
+        }
 
         $user = $this->loggedUser->__invoke();
 

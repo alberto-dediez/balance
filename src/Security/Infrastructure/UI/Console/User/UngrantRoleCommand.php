@@ -38,13 +38,19 @@ class UngrantRoleCommand extends Command
     {
         $user = $this->userRepository->findByUsername($input->getArgument('username'));
 
-        if (null == $user) {
+        if (null === $user) {
             throw new InvalidArgumentException("User not found");
+        }
+
+        $role = Role::tryFrom($input->getArgument('role'));
+
+        if (null === $role) {
+            throw new InvalidArgumentException("Role not found");
         }
 
         $request = new UngrantRoleRequest(
             $user->id(),
-            Role::tryFrom($input->getArgument('role'))
+            $role
         );
 
         $performBy = UserMother::systemUser();

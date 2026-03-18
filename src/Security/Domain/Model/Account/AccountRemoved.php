@@ -38,9 +38,9 @@ final class AccountRemoved extends DomainEvent
     }
 
     public static function rebuildFromPayload(
-        DomainEventId $id,
+        DomainEventId     $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array             $payload = []
     ): static {
         return new AccountRemoved(
             accountId: new AccountId($payload['accountId']),

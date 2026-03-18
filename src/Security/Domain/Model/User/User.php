@@ -74,7 +74,7 @@ class User implements \Stringable
 
     public function isRecoverTokenValid(RecoverToken $token): bool
     {
-        return $this->recoverToken()->equals($token) && !$this->recoverToken()->isExpired();
+        return null !== $this->recoverToken() && $this->recoverToken()->equals($token) && !$this->recoverToken()->isExpired();
     }
 
     /**
@@ -183,7 +183,7 @@ class User implements \Stringable
             new PasswordRecovered(
                 userId: $this->id(),
                 password: $password,
-                token: $this->recoverToken()
+                token: $token
             )
         );
     }

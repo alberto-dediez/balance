@@ -53,7 +53,7 @@ class SecurityUser extends User implements UserInterface, PasswordAuthenticatedU
             account: $user->account(),
             roles: $user->roles(),
             events: $user->recordedEvents(),
-            registeredAt: $user->registeredAt()
+            registeredAt: $user->registeredAt() ?? new \DateTimeImmutable('NOW')
         );
     }
 }

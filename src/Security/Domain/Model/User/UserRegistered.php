@@ -50,6 +50,9 @@ final class UserRegistered extends DomainEvent
         return $this->userId;
     }
 
+    /**
+     * @return array{userId:string, username: string, password: string, accountId: string}
+     */
     public function payload(): array
     {
         return [
@@ -60,16 +63,19 @@ final class UserRegistered extends DomainEvent
         ];
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public static function rebuildFromPayload(
-        DomainEventId $id,
+        DomainEventId     $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array             $payload = []
     ): static {
         return new UserRegistered(
-            userId: new UserId($payload['userId']),
-            username: $payload['username'],
-            password: $payload['password'],
-            accountId: (isset($payload['accountId']) && !empty($payload['accountId']))
+            userId: new UserId($payload['userId'] ?? ''),
+            username: $payload['username'] ?? '',
+            password: $payload['password'] ?? '',
+            accountId: (!empty($payload['accountId']))
                 ? new AccountId($payload['accountId'])
                 : null,
             id: $id,

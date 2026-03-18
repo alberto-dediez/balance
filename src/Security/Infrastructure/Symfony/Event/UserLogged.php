@@ -35,6 +35,7 @@ final class UserLogged extends InfrastructureEvent
         return $this->userId;
     }
 
+    /** @return array{userId: string, firewall: string} */
     public function payload(): array
     {
         return [
@@ -43,13 +44,16 @@ final class UserLogged extends InfrastructureEvent
         ];
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public static function rebuildFromPayload(
-        DomainEventId $id,
+        DomainEventId     $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array             $payload = []
     ): static {
         return new UserLogged(
-            userId: new UserId($payload['userId']),
+            userId: new UserId($payload['userId'] ?? ''),
             firewall: $payload['firewall'] ?? '',
             id: $id,
             occurredOn: $occurredOn

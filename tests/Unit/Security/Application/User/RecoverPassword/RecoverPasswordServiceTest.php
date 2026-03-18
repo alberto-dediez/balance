@@ -32,6 +32,8 @@ class RecoverPasswordServiceTest extends TestCase
 
         $token = $user->recoverToken();
 
+        $this->assertNotNull($token);
+
         $repository->add($user);
 
         $sut = $this->createSUT($repository);
@@ -65,6 +67,8 @@ class RecoverPasswordServiceTest extends TestCase
 
         $user = UserMother::random();
         $user->initPasswordRecovery();
+
+        $this->assertNotNull($user->recoverToken());
 
         $result = $sut->isHandled(new RecoverPasswordRequest(
             token: $user->recoverToken(),
