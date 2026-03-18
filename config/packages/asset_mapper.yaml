@@ -7,7 +7,7 @@ framework:
         excluded_patterns:
             - '*/assets/styles/_*.scss'
             - '*/assets/styles/**/_*.scss'
-        missing_import_mode: strict
+        missing_import_mode: warn
 
 when@prod:
     framework:
