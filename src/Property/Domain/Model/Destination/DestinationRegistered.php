@@ -15,10 +15,10 @@ final class DestinationRegistered extends DomainEvent
     protected static string $eventName = 'destinationRegistered';
 
     public function __construct(
-        private DestinationId $destinationId, 
-        private string $name, 
-        private ?CountryId $countryId = null,
-        private ?ExternalId $externalId = null,
+        private readonly DestinationId $destinationId,
+        private readonly string $name,
+        private readonly ?CountryId $countryId = null,
+        private readonly ?ExternalId $externalId = null,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -45,16 +45,16 @@ final class DestinationRegistered extends DomainEvent
         return $this->externalId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->destinationId();
+        return $this->destinationId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'destinationId' => (string) $this->destinationId,
-            'countryId' => (string) $this->countryId(),
+            'countryId' => (string) $this->countryId,
             'name' => $this->name,
             'externalId' => $this->externalId
         ];
@@ -63,13 +63,13 @@ final class DestinationRegistered extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new DestinationRegistered(
-            destinationId: new DestinationId($payload['destinationId']), 
-            countryId: null == $payload['countryId'] ? CountryId::generate() : new CountryId($payload['countryId']), 
+            destinationId: new DestinationId($payload['destinationId']),
             name: $payload['name'],
-            externalId: isset($payload['externalId']) ? $payload['externalId'] : null,
+            countryId: null == $payload['countryId'] ? CountryId::generate() : new CountryId($payload['countryId']),
+            externalId: $payload['externalId'] ?? null,
             id: $id,
             occurredOn: $occurredOn
         );

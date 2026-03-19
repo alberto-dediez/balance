@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\User\ChangePassword;
 
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Application\User\ChangePassword\ChangePasswordRequest;
-use App\Security\Application\User\ChangePassword\ChangePasswordResponse;
 use App\Security\Application\User\ChangePassword\ChangePasswordService;
 use App\Security\Domain\Model\User\PasswordChanged;
-use App\Security\Domain\Model\User\User;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use App\Security\Infrastructure\Symfony\Security\Md5PasswordHasher;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 class ChangePasswordServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -27,7 +27,7 @@ class ChangePasswordServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -39,13 +39,11 @@ class ChangePasswordServiceTest extends TestCase
 
         $request = new ChangePasswordRequest(
             userId: $user->id(),
-            password: '666'
+            password: '666',
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ChangePasswordResponse);
         $this->assertTrue($user->id()->equals($result->userId));
 
         $lastEvent = $this->spySubscriber->lastEvent();
@@ -57,11 +55,10 @@ class ChangePasswordServiceTest extends TestCase
         $userPersisted = $repository->find($result->userId);
 
         $this->assertNotNull($userPersisted);
-        $this->assertTrue($userPersisted instanceof User);
         $this->assertNotEquals($request->password, $userPersisted->password());
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -76,13 +73,13 @@ class ChangePasswordServiceTest extends TestCase
 
         $request = new ChangePasswordRequest(
             userId: $user->id(),
-            password: '666'
+            password: '666',
         );
 
         $sut($request, $otherUser);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -92,13 +89,13 @@ class ChangePasswordServiceTest extends TestCase
 
         $result = $sut->isHandled(new ChangePasswordRequest(
             userId: $user->id(),
-            password: '333'
+            password: '333',
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryUserRepository $repository): ChangePasswordService
     {
         $passwordHasher = new Md5PasswordHasher();
 

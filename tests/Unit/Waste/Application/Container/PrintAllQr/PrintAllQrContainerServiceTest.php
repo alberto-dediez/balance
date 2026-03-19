@@ -21,7 +21,7 @@ use App\Waste\Application\Container\PrintAllQr\PrintAllQrContainerResponse;
 
 class PrintAllQrContainerServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -30,7 +30,7 @@ class PrintAllQrContainerServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $containerRepository = ContainerRepositoryMother::inMemory();
 
@@ -57,7 +57,7 @@ class PrintAllQrContainerServiceTest extends TestCase
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof PrintAllQrContainerResponse);
-        $this->assertNotEmpty((string) $result->path);
+        $this->assertNotEmpty($result->path);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -66,7 +66,7 @@ class PrintAllQrContainerServiceTest extends TestCase
         $this->assertEquals($result->path, $lastEvent->path());
     }
 
-    private function createSUT(ContainerRepository $containerRepository)
+    private function createSUT(ContainerRepository $containerRepository): PrintAllQrContainerService
     {
         return new PrintAllQrContainerService(
             repository: $containerRepository,

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Country\Remove;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -17,7 +18,7 @@ use App\Tests\Unit\Property\Domain\Model\Country\CountryRepositoryMother;
 
 class RemoveCountryServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -26,7 +27,7 @@ class RemoveCountryServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = CountryRepositoryMother::inMemory();
 
@@ -58,7 +59,7 @@ class RemoveCountryServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof CountryRemoved);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = CountryRepositoryMother::inMemory();
 
@@ -73,7 +74,7 @@ class RemoveCountryServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryCountryRepository $repository): RemoveCountryService
     {
         return new RemoveCountryService($repository, new CountryAuthorizer());
     }

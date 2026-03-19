@@ -32,7 +32,7 @@ class MeasurementMother
 
     public static function fromDay(DailyWaste $dailyWaste): Measurement
     {
-        $measurementMethod = MeasurementMethod::cases()[rand(0, count(MeasurementMethod::cases())-1)];
+        $measurementMethod = MeasurementMethod::cases()[random_int(0, count(MeasurementMethod::cases())-1)];
 
         return self::from(
             measurementId: MeasurementId::generate(),
@@ -44,8 +44,8 @@ class MeasurementMother
             accountId: $dailyWaste->accountId(),
             purpose: $dailyWaste->purpose(),
             measurementMethod: $measurementMethod,
-            quantity: rand(1, 9),
-            load: rand(0, 100) / 100,
+            quantity: random_int(1, 9),
+            load: random_int(0, 100) / 100,
             justification: null,
             registeredAt: $dailyWaste->day()
         );
@@ -67,7 +67,7 @@ class MeasurementMother
         ?\DateTimeImmutable $registeredAt = null
     ) {
 
-        if (null !== $registeredAt) {
+        if ($registeredAt instanceof \DateTimeImmutable) {
             return new Measurement(
                 id: $measurementId,
                 containerId: $containerId,
@@ -104,8 +104,8 @@ class MeasurementMother
                 quantity: $quantity,
                 load: $load,
                 registeredBy: $registeredBy,
-                justification: $justification,
-                accountId: $accountId
+                accountId: $accountId,
+                justification: $justification
             )
         ;
 
@@ -114,8 +114,8 @@ class MeasurementMother
 
     public static function random()
     {
-        $purpose = Purpose::cases()[rand(0, count(Purpose::cases())-1)];
-        $measurementMethod = MeasurementMethod::cases()[rand(0, count(MeasurementMethod::cases())-1)];
+        $purpose = Purpose::cases()[random_int(0, count(Purpose::cases())-1)];
+        $measurementMethod = MeasurementMethod::cases()[random_int(0, count(MeasurementMethod::cases())-1)];
 
         return self::from(
             measurementId: MeasurementId::generate(),
@@ -127,16 +127,15 @@ class MeasurementMother
             accountId: AccountId::generate(),
             purpose: $purpose,
             measurementMethod: $measurementMethod,
-            quantity: rand(1, 9),
-            load: rand(0, 100) / 100,
-            justification: null
+            quantity: random_int(1, 9),
+            load: random_int(0, 100) / 100
         );
     }
 
     public static function fromAccount(AccountId $accountId)
     {
-        $purpose = Purpose::cases()[rand(0, count(Purpose::cases())-1)];
-        $measurementMethod = MeasurementMethod::cases()[rand(0, count(MeasurementMethod::cases())-1)];
+        $purpose = Purpose::cases()[random_int(0, count(Purpose::cases())-1)];
+        $measurementMethod = MeasurementMethod::cases()[random_int(0, count(MeasurementMethod::cases())-1)];
 
         return self::from(
             measurementId: MeasurementId::generate(),
@@ -148,9 +147,8 @@ class MeasurementMother
             accountId: $accountId,
             purpose: $purpose,
             measurementMethod: $measurementMethod,
-            quantity: rand(1, 9),
-            load: rand(0, 100) / 100,
-            justification: null
+            quantity: random_int(1, 9),
+            load: random_int(0, 100) / 100
         );
     }
 }

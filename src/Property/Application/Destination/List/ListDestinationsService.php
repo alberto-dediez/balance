@@ -11,7 +11,7 @@ use App\Property\Domain\Model\Destination\DestinationRepository;
 
 class ListDestinationsService
 {
-    public function __construct(private DestinationRepository $repository, private DestinationAuthorizer $authorizer)
+    public function __construct(private readonly DestinationRepository $repository, private readonly DestinationAuthorizer $authorizer)
     {
 
     }

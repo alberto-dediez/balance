@@ -21,14 +21,14 @@ use App\Property\Infrastructure\Symfony\Form\Type\PropertyTypeType;
 
 class PropertyInfoType extends AbstractType
 {
-    public function __construct(private DestinationRepository $destinationRepository)
+    public function __construct(private readonly DestinationRepository $destinationRepository)
     {
 
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $changePropertyInfo = function (PropertyInfo $info, array $changes) {
+        $changePropertyInfo = function (PropertyInfo $info, array $changes): PropertyInfo {
             $propertyType = $info->propertyType();
             $categoryId = $info->categoryId();
             $brandId = $info->brandId();
@@ -52,7 +52,7 @@ class PropertyInfoType extends AbstractType
                         break;
                 }
 
-                $$name = $value;
+                ${$name} = $value;
             }
 
             return new PropertyInfo(
@@ -166,8 +166,8 @@ class PropertyInfoType extends AbstractType
                 'label' => new TranslatableMessage('Destino'),
                 'setter' => function (PropertyInfo &$info, ?Destination $value, FormInterface $form) use ($changePropertyInfo): void {
                     $info = $changePropertyInfo($info, [
-                        'destinationId' => null !== $value ? $value->id() : null,
-                        'countryId' => null !== $value ? $value->countryId() : null
+                        'destinationId' => $value instanceof Destination ? $value->id() : null,
+                        'countryId' => $value instanceof Destination ? $value->countryId() : null
                     ]);
                 },
                 'required' => true
@@ -185,14 +185,12 @@ class PropertyInfoType extends AbstractType
 
                     return $repository->find($idToDestination);
                 },
-                function ($destinationToId): ?Destination {
-                    return $destinationToId;
-                }
+                fn($destinationToId): ?Destination => $destinationToId
             ))
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => PropertyInfo::class,

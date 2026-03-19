@@ -1,27 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\UI\Console\User;
 
-use InvalidArgumentException;
+use App\Security\Application\User\UngrantRole\UngrantRoleRequest;
+use App\Security\Application\User\UngrantRole\UngrantRoleService;
 use App\Security\Domain\Model\User\Role;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserRepository;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Security\Application\User\UngrantRole\UngrantRoleRequest;
-use App\Security\Application\User\UngrantRole\UngrantRoleService;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'security:user:ungrant-role',
-    description: 'Ungrant roles to an user'
+    description: 'Ungrant roles to an user',
 )]
 class UngrantRoleCommand extends Command
 {
-    public function __construct(private UngrantRoleService $ungrantRoleService, private UserRepository $userRepository)
+    public function __construct(private readonly UngrantRoleService $ungrantRoleService, private readonly UserRepository $userRepository)
     {
         parent::__construct();
     }
@@ -38,13 +40,19 @@ class UngrantRoleCommand extends Command
     {
         $user = $this->userRepository->findByUsername($input->getArgument('username'));
 
-        if (null == $user) {
-            throw new InvalidArgumentException("User not found");
+        if (!$user instanceof User) {
+            throw new \InvalidArgumentException('User not found');
+        }
+
+        $role = Role::tryFrom($input->getArgument('role'));
+
+        if (null === $role) {
+            throw new \InvalidArgumentException('Role not found');
         }
 
         $request = new UngrantRoleRequest(
-            $user->id(), 
-            Role::tryFrom($input->getArgument('role'))
+            $user->id(),
+            $role,
         );
 
         $performBy = UserMother::systemUser();
@@ -60,15 +68,18 @@ class UngrantRoleCommand extends Command
                 ['userId', (string) $response->userId],
                 ['username', $response->username],
                 ['roles', $this->stringifyRoles($response->roles)],
-            ]
+            ],
         );
 
         return Command::SUCCESS;
     }
 
-    private function stringifyRoles(array $roles)
+    /**
+     * @param Role[] $roles
+     */
+    private function stringifyRoles(array $roles): string
     {
-        if (count($roles) == 0) {
+        if (0 === count($roles)) {
             return '';
         }
 

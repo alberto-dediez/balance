@@ -113,6 +113,21 @@ behat-init:
 behat-snippets:
 	@$(PHP) vendor/bin/behat --dry-run --append-snippets
 
+## —— Code Quality ——————————————————————————————————————————————————————————
+phpstan:
+	@$(eval c ?=)
+	@$(PHP) bin/phpstan $(c)
+
+rector:
+	@$(eval c ?=)
+	$(PHP_CONT) ./vendor/bin/rector $(c)
+
+cs:
+	@$(PHP) bin/php-cs-fixer fix --dry-run --diff -v
+
+cs-fix:
+	@$(PHP) bin/php-cs-fixer fix
+
 ## —— Develop ———————————————————————————————————————————————————————————————
 develop:
 	rm ./public/assets/ -rf

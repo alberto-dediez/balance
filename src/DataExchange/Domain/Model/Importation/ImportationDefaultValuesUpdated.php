@@ -12,8 +12,8 @@ final class ImportationDefaultValuesUpdated extends DomainEvent
     protected static string $eventName = 'importationDefaultValuesUpdated';
 
     public function __construct(
-        private ImportationId $importationId,
-        private array $defaultValues = [],
+        private readonly ImportationId $importationId,
+        private readonly array $defaultValues = [],
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -30,12 +30,12 @@ final class ImportationDefaultValuesUpdated extends DomainEvent
         return $this->defaultValues;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->importationId();
+        return $this->importationId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'importationId' => (string) $this->importationId,
@@ -46,7 +46,7 @@ final class ImportationDefaultValuesUpdated extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new ImportationDefaultValuesUpdated(
             importationId: new ImportationId($payload['importationId']),

@@ -2,6 +2,8 @@
 
 namespace App\Waste\Application\DailyWaste\Calculate;
 
+use App\Waste\Domain\Model\Container\Container;
+use App\Waste\Domain\Model\Waste\Waste;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -11,7 +13,6 @@ use App\Waste\Domain\Model\Waste\WasteRepository;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteId;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Shared\Application\CommandBus\CommandHandler;
-use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Waste\Application\DailyWaste\DailyWasteAuthorizer;
@@ -63,17 +64,17 @@ class CalculateDailyWasteService implements CommandHandler
             accountId: $request->accountId
         );
 
-        if (null === $dailyWaste) {
+        if (!$dailyWaste instanceof DailyWaste) {
             $dailyWaste = new DailyWaste($id);
             $dailyWaste
                 ->register(
-                    day: $request->day,
                     propertyId: $request->propertyId,
                     wasteId: $request->wasteId,
                     purpose: $request->purpose,
                     wasteManagerId: $request->wasteManagerId,
-                    accountId: $request->accountId,
-                    load: $load
+                    day: $request->day,
+                    load: $load,
+                    accountId: $request->accountId
                 )
             ;
         } else {
@@ -88,7 +89,7 @@ class CalculateDailyWasteService implements CommandHandler
         );
     }
 
-    private function validateRequest(CalculateDailyWasteRequest $request)
+    private function validateRequest(CalculateDailyWasteRequest $request): void
     {
         $property = $this->propertyRepository->find($request->propertyId);
 
@@ -108,20 +109,20 @@ class CalculateDailyWasteService implements CommandHandler
             accountId: $request->accountId
         );
 
-        if (null === $measurements || 0 === count($measurements)) {
+        if (0 === count($measurements)) {
             return 0.0;
         }
 
         $wasteRepository = $this->wasteRepository;
         $containerRepository = $this->containerRepository;
 
-        return array_reduce($measurements, function (float $totalLoad, Measurement $measurement) use ($wasteRepository, $containerRepository) {
+        return array_reduce($measurements, function (float $totalLoad, Measurement $measurement) use ($wasteRepository, $containerRepository): float {
             if ($measurement->unit() !== Unit::Kilogram) {
                 $container = $containerRepository->find($measurement->containerId());
-                $containerVolume = null === $container ? 0 : $container->volume();
+                $containerVolume = $container instanceof Container ? $container->volume() : 0;
 
                 $waste = $wasteRepository->find($measurement->wasteId());
-                $wasteDensity = null === $waste ? 0 : $waste->density();
+                $wasteDensity = $waste instanceof Waste ? $waste->density() : 0;
 
                 $load = $measurement->unit()->calculateLoadInKilograms(
                     load: $measurement->load(),

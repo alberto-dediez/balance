@@ -32,7 +32,7 @@ class FinishController extends AbstractController
 
         try {
             $executeImportation(new ExecuteImportationRequest(importationId: $importation->id()), $loggedUser());
-        } catch (\Throwable $throwable) {
+        } catch (\Throwable) {
             $this->addFlash('danger', new TranslatableMessage('No se ha importado el fichero correctamente. Revise la configuración o contacte con un administrador.'));
 
             return $this->redirectToRoute($importationType->returnRoute());

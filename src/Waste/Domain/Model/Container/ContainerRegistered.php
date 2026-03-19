@@ -17,15 +17,15 @@ final class ContainerRegistered extends DomainEvent
     protected static string $eventName = 'containerRegistered';
 
     public function __construct(
-        private ContainerId $containerId, 
-        private AccountId $accountId,
-        private PropertyId $propertyId,
-        private WasteId $wasteId,
-        private MeasurementMethod $measurementMethod,
-        private ?string $volume,
-        private Purpose $purpose,
-        private WasteManagerId $wasteManagerId,
-        private QrCode $qrCode,
+        private readonly ContainerId $containerId,
+        private readonly AccountId $accountId,
+        private readonly PropertyId $propertyId,
+        private readonly WasteId $wasteId,
+        private readonly MeasurementMethod $measurementMethod,
+        private readonly ?string $volume,
+        private readonly Purpose $purpose,
+        private readonly WasteManagerId $wasteManagerId,
+        private readonly QrCode $qrCode,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -77,12 +77,12 @@ final class ContainerRegistered extends DomainEvent
         return $this->qrCode;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->containerId();
+        return $this->containerId;
     }
-    
-    public function payload(): ?array
+
+    public function payload(): array
     {
         return [
             'containerId' => (string) $this->containerId,
@@ -100,18 +100,18 @@ final class ContainerRegistered extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new ContainerRegistered(
-            containerId: new ContainerId($payload['containerId']), 
+            containerId: new ContainerId($payload['containerId']),
             accountId: new AccountId($payload['accountId']),
             propertyId: new PropertyId($payload['propertyId']),
-            wasteId: new WasteId($payload['waste']), 
-            purpose: Purpose::tryFrom($payload['purpose']),
+            wasteId: new WasteId($payload['waste']),
             measurementMethod: MeasurementMethod::tryFrom($payload['measurementMethod']),
-            volume: isset($payload['volume']) ? $payload['volume'] : '0',
+            volume: $payload['volume'] ?? '0',
+            purpose: Purpose::tryFrom($payload['purpose']),
             wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId($payload['wasteManagerId']) : WasteManagerId::generate(),
-            qrCode: new QrCode(isset($payload['qrCode']) ? $payload['qrCode'] : ''),
+            qrCode: new QrCode($payload['qrCode'] ?? ''),
             id: $id,
             occurredOn: $occurredOn
         );

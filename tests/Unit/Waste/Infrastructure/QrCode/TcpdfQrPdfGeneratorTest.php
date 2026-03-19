@@ -15,7 +15,7 @@ use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
 
 class TcpdfQrPdfGeneratorTest extends TestCase
 {
-    public function testGenerateReturnsPath()
+    public function testGenerateReturnsPath(): void
     {
         $waste = WasteMother::random();
         $wasteRepository = WasteRepositoryMother::inMemory();
@@ -35,7 +35,7 @@ class TcpdfQrPdfGeneratorTest extends TestCase
         $this->assertNotEmpty($path);
     }
 
-    private function createSUT(WasteRepository $wasteRepository, PropertyRepository $propertyRepository)
+    private function createSUT(WasteRepository $wasteRepository, PropertyRepository $propertyRepository): TcpdfQrPdfGenerator
     {
         return new TcpdfQrPdfGenerator(
             translator: new FakeTranslator(),

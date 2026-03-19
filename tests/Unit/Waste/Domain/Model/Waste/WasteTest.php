@@ -9,7 +9,7 @@ use App\Shared\Domain\Model\Locale\Locale;
 
 class WasteTest extends TestCase
 {
-    public function testTranslateAddTranslation()
+    public function testTranslateAddTranslation(): void
     {
         $waste = new Waste(
             id: WasteId::generate(),
@@ -23,7 +23,7 @@ class WasteTest extends TestCase
         $this->assertCount(1, $waste->translations());
     }
 
-    public function testTranslateReturnOriginalNameIfNoLocaleIsSetted()
+    public function testTranslateReturnOriginalNameIfNoLocaleIsSetted(): void
     {
         $waste = new Waste(
             id: WasteId::generate(),
@@ -36,7 +36,7 @@ class WasteTest extends TestCase
         $this->assertEquals('waste-name', $waste->name());
     }
 
-    public function testTranslateReturnTranslatedName()
+    public function testTranslateReturnTranslatedName(): void
     {
         $waste = new Waste(
             id: WasteId::generate(),

@@ -23,7 +23,7 @@ class SqliteImportationDataRepositoryTest extends TestCase
 
         $sut->create($importation);
 
-        $file = self::STORAGE_PATH . ((string) $importation->id()) . '.sqlite';
+        $file = self::STORAGE_PATH . ($importation->id()) . '.sqlite';
 
         $this->assertFileExists($file);
 
@@ -42,7 +42,7 @@ class SqliteImportationDataRepositoryTest extends TestCase
 
         $sut->create($importation);
 
-        $file = self::STORAGE_PATH . ((string) $importation->id()) . '.sqlite';
+        $file = self::STORAGE_PATH . ($importation->id()) . '.sqlite';
 
         $this->assertFileExists($file);
 
@@ -76,7 +76,7 @@ class SqliteImportationDataRepositoryTest extends TestCase
         $this->assertEquals(null, $configuration->field);
         $this->assertEquals(['14','15','16','17','18'], $orderedValues);
         $this->assertCount(5, $configuration->translations);
-        $this->assertNotNull(array_filter($configuration->translations, fn (ColumnValueTranslation $translation) => $translation->value == '14'));
+        $this->assertNotNull(array_filter($configuration->translations, fn (ColumnValueTranslation $translation): bool => $translation->value === '14'));
     }
 
     public function testGivenAnImportationColumnConfigurationWhenISaveItThenICanRecoverIt(): void
@@ -106,7 +106,7 @@ class SqliteImportationDataRepositoryTest extends TestCase
         $this->assertEquals('ageOfHeroe', $recoverConfiguration->field);
 
         /** @var ?ColumnValueTranslation $foundTranslation */
-        $foundTranslations = array_filter($recoverConfiguration->translations, fn (ColumnValueTranslation $translation) => $translation->value == '14');
+        $foundTranslations = array_filter($recoverConfiguration->translations, fn (ColumnValueTranslation $translation): bool => $translation->value === '14');
         $this->assertCount(1, $foundTranslations);
 
         $foundTranslation = array_pop($foundTranslations);
@@ -149,10 +149,12 @@ class SqliteImportationDataRepositoryTest extends TestCase
         }
 
         foreach (scandir(self::STORAGE_PATH) as $file) {
-            if ($file === '.' || $file === '..') {
+            if ($file === '.') {
                 continue;
             }
-
+            if ($file === '..') {
+                continue;
+            }
             unlink(self::STORAGE_PATH . $file);
         }
     }

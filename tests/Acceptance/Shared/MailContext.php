@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Shared;
 
-use Behat\Step\Then;
-use Behat\Hook\BeforeScenario;
-use PHPUnit\Framework\Assert;
-use Behat\Behat\Context\Context;
-use Symfony\Component\Mime\Email;
-use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use App\Shared\Infrastructure\Symfony\Event\EmailListener;
+use Behat\Behat\Context\Context;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Hook\BeforeScenario;
+use Behat\Step\Then;
+use PHPUnit\Framework\Assert;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Mime\Email;
 
 /**
  * This context class contains the definitions of the steps used by the demo
@@ -20,17 +19,12 @@ use Symfony\Component\HttpKernel\KernelInterface;
  *
  * @see http://behat.org/en/latest/quick_start.html
  */
-final class MailContext implements Context
+final readonly class MailContext implements Context
 {
-    private AcceptanceClient $client;
-
-    public function __construct(KernelBrowser $client, private KernelInterface $kernel)
-    {
-        $this->client = AcceptanceClient::instance($client);
-    }
+    public function __construct(private KernelInterface $kernel) {}
 
     #[BeforeScenario]
-    public function after(BeforeScenarioScope $scope)
+    public function after(BeforeScenarioScope $scope): void
     {
         $this->getEmailListener()->reset();
     }
@@ -41,7 +35,7 @@ final class MailContext implements Context
     }
 
     #[Then('I received an email with subject :subject to :address')]
-    public function iReceivedAnEmailWithSubjectTo($subject, $address): void
+    public function iReceivedAnEmailWithSubjectTo(string $subject, string $address): void
     {
         $messages = $this->getEmailListener()->getMessages();
 

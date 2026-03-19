@@ -5,7 +5,7 @@ namespace App\Waste\Domain\Model\WasteManager;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Security\Domain\Model\Account\AccountId;
 
-class WasteManager
+class WasteManager implements \Stringable
 {
     use AggregateRoot;
 
@@ -61,7 +61,7 @@ class WasteManager
         string $name,
         bool $isPublic,
         AccountId $accountId
-    ) {
+    ): void {
         $this->recordApplyAndPublish(
             new WasteManagerRegistered(
                 wasteManagerId: $this->id(),
@@ -75,7 +75,7 @@ class WasteManager
     public function update(
         string $name,
         bool $isPublic
-    ) {
+    ): void {
         $this->recordApplyAndPublish(
             new WasteManagerUpdated(
                 wasteManagerId: $this->id(),
@@ -85,7 +85,7 @@ class WasteManager
         );
     }
 
-    public function remove()
+    public function remove(): void
     {
         $this->recordApplyAndPublish(
             new WasteManagerRemoved(
@@ -94,7 +94,7 @@ class WasteManager
         );
     }
 
-    public function applyWasteManagerRegistered(WasteManagerRegistered $event)
+    public function applyWasteManagerRegistered(WasteManagerRegistered $event): void
     {
         $this->name = $event->name();
         $this->isPublic = $event->isPublic();
@@ -102,13 +102,13 @@ class WasteManager
         $this->registeredAt = $event->occurredOn();
     }
 
-    public function applyWasteManagerUpdated(WasteManagerUpdated $event)
+    public function applyWasteManagerUpdated(WasteManagerUpdated $event): void
     {
         $this->name = $event->name();
         $this->isPublic = $event->isPublic();
     }
 
-    public function applyWasteManagerRemoved(WasteManagerRemoved $event)
+    public function applyWasteManagerRemoved(WasteManagerRemoved $event): void
     {
         $this->removed = true;
         $this->removedAt = new \DateTimeImmutable("NOW");

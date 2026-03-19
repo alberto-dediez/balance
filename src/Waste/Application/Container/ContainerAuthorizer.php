@@ -33,11 +33,7 @@ final class ContainerAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        if (null == $user->accountId() || null == $subject->accountId() || false == $user->accountId()->equals($subject->accountId())) {
-            return false;
-        }
-        
-        return true;
+        return !(null == $user->accountId() || null == $subject->accountId() || false === $user->accountId()->equals($subject->accountId()));
     }
 
     protected function canEdit(mixed $subject, User $user): bool

@@ -15,11 +15,7 @@ use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponseGenerator;
 
 #[Route('/measurements/history', name: 'api_measurements_history', methods: ['GET'])]
 #[Areas(['mobile', 'admin'])]
-#[OA\Get(
-    summary: "Get history of measurements",
-    description: "Return last measurements registered by logged user",
-    tags: ['Waste']
-)]
+#[OA\Get(description: "Return last measurements registered by logged user", summary: "Get history of measurements", tags: ['Waste'])]
 #[OA\Response(
     response: 200,
     description: 'Returns list of measurements',
@@ -39,8 +35,8 @@ class MeasurementHistoryController extends AbstractController
 
         $response = $listMeasurements(
             new ListMeasurementsRequest(
-                userId: $user->id(),
                 accountId: $user->accountId(),
+                userId: $user->id(),
                 limit: 10,
                 orderBy: 'registeredAt',
                 orderWay: 'DESC'

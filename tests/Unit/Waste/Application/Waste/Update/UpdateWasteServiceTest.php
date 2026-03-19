@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Waste\Application\Waste\Update;
 
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteRepository;
 use PHPUnit\Framework\TestCase;
 use App\Waste\Domain\Model\Waste\Waste;
 use App\Security\Domain\Model\User\Role;
@@ -21,7 +22,7 @@ use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
 
 class UpdateWasteServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -30,7 +31,7 @@ class UpdateWasteServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = WasteRepositoryMother::inMemory();
 
@@ -68,7 +69,7 @@ class UpdateWasteServiceTest extends TestCase
         $this->assertTrue($wastePersisted->id()->equals($lastEvent->wasteId()));
     }
 
-    public function testUpdateWithLocaleTranslate()
+    public function testUpdateWithLocaleTranslate(): void
     {
         $repository = WasteRepositoryMother::inMemory(Locale::Spanish);
 
@@ -108,7 +109,7 @@ class UpdateWasteServiceTest extends TestCase
         $this->assertTrue($wastePersisted->id()->equals($lastEvent->wasteId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = WasteRepositoryMother::inMemory();
 
@@ -127,7 +128,7 @@ class UpdateWasteServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository, Locale $locale)
+    private function createSUT(InMemoryWasteRepository $repository, Locale $locale): UpdateWasteService
     {
         return new UpdateWasteService(
             wasteRepository: $repository,

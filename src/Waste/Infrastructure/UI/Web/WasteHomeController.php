@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\UI\Web;
 
+use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\User\Role;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -26,7 +27,7 @@ class WasteHomeController extends AbstractController
         $user = $loggedUser();
         $account = $loggedAccount();
 
-        if (null === $account) {
+        if (!$account instanceof Account) {
             return $this->render('@shared/home.html.twig', []);
         }
 
@@ -36,12 +37,12 @@ class WasteHomeController extends AbstractController
         ;
 
         $result = $listService(new ListMeasurementsRequest(
-            userId: $userId,
             accountId: $account?->id(),
+            userId: $userId,
             limit: 9
         ), $user);
 
-        if ($this->isGranted(Role::Owner->value) && null !== $account) {
+        if ($this->isGranted(Role::Owner->value) && $account instanceof Account) {
             $statistics = $statisticsService(new StatisticsDailyWasteRequest(
                 accountId: $account?->id(),
                 dayFrom: new \DateTimeImmutable("NOW -1 MONTH"),

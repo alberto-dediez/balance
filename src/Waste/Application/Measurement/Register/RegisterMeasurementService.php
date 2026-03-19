@@ -79,7 +79,7 @@ class RegisterMeasurementService implements CommandHandler
         );
     }
 
-    private function validateRequest(RegisterMeasurementRequest $request)
+    private function validateRequest(RegisterMeasurementRequest $request): void
     {
         $container = $this->containerRepository->find($request->containerId);
 
@@ -95,7 +95,7 @@ class RegisterMeasurementService implements CommandHandler
 
         $user = $this->userRepository->find($request->registeredBy);
 
-        if (null == $user || null == $user->accountId() || false == $user->accountId()->equals($property->accountId())) {
+        if (null == $user || null == $user->accountId() || false === $user->accountId()->equals($property->accountId())) {
             throw new \InvalidArgumentException("El usuario que registra la medición no es válido");
         }
     }

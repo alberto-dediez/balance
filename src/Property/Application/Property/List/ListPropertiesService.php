@@ -11,7 +11,7 @@ use App\Property\Domain\Model\Property\PropertyRepository;
 
 class ListPropertiesService
 {
-    public function __construct(private PropertyRepository $repository, private PropertyAuthorizer $authorizer)
+    public function __construct(private readonly PropertyRepository $repository, private readonly PropertyAuthorizer $authorizer)
     {
 
     }

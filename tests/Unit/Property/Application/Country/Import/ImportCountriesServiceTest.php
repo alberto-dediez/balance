@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Country\Import;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Property\Domain\Model\Country\CountryId;
@@ -26,7 +27,7 @@ class ImportCountriesServiceTest extends TestCase
         
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = CountryRepositoryMother::inMemory();
 
@@ -48,28 +49,28 @@ class ImportCountriesServiceTest extends TestCase
         $request = new ImportCountriesRequest(
             [
                 new CountryRequest(
-                    name: 'españa', 
-                    createIfNotExists: false,
+                    name: 'españa',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '1234')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '1234'),
+                    createIfNotExists: false
                 ),
                 new CountryRequest(
-                    name: 'INGLATERRA', 
-                    createIfNotExists: false,
+                    name: 'INGLATERRA',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '234')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '234'),
+                    createIfNotExists: false
                 ),
                 new CountryRequest(
-                    name: 'Irlanda', 
-                    createIfNotExists: false,
+                    name: 'Irlanda',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '34')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '34'),
+                    createIfNotExists: false
                 ),
                 new CountryRequest(
-                    name: 'Argentina', 
-                    createIfNotExists: true,
+                    name: 'Argentina',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '4')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '4'),
+                    createIfNotExists: true
                 ),
             ]
         );
@@ -91,10 +92,10 @@ class ImportCountriesServiceTest extends TestCase
         $this->assertEquals('234', $england->externalId()->bioscore());
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryCountryRepository $repository): ImportCountriesService
     {
         $registerService = $this->createMock(RegisterCountryService::class);
-        $registerService->method('__invoke')->willReturn(new RegisterCountryResponse(CountryId::generate(), '', null));
+        $registerService->method('__invoke')->willReturn(new RegisterCountryResponse(CountryId::generate(), ''));
 
         /** @var RegisterCountryService $registerService */
 

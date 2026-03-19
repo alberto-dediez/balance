@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Property\Register;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Property\Domain\Model\Property\Property;
@@ -18,7 +19,7 @@ use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 
 class RegisterPropertyServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -27,7 +28,7 @@ class RegisterPropertyServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = PropertyRepositoryMother::inMemory();
 
@@ -60,7 +61,7 @@ class RegisterPropertyServiceTest extends TestCase
         $this->assertTrue($propertyPersisted->id()->equals($lastEvent->propertyId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = PropertyRepositoryMother::inMemory();
 
@@ -74,7 +75,7 @@ class RegisterPropertyServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryPropertyRepository $repository): RegisterPropertyService
     {
         return new RegisterPropertyService($repository, new PropertyAuthorizer());
     }

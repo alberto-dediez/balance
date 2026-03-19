@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Waste\Application\DailyWaste\List;
 
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryDailyWasteRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\Account\Account;
@@ -21,7 +22,7 @@ class ListDailyWastesServiceTest extends TestCase
         
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = DailyWasteRepositoryMother::inMemory();
 
@@ -47,7 +48,7 @@ class ListDailyWastesServiceTest extends TestCase
         $this->assertEquals(4, $result->totalResults);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryDailyWasteRepository $repository): ListDailyWastesService
     {
         return new ListDailyWastesService($repository, new DailyWasteAuthorizer());
     }

@@ -12,11 +12,11 @@ class WasteMother
         return self::fromName('name');
     }
 
-    public static function fromName($name)
+    public static function fromName(string $name)
     {
         return self::from(
             name: $name,
-            isDangerous: rand(0, 1) == 1,
+            isDangerous: random_int(0, 1) === 1,
             id: (string) WasteId::generate()
         );
     }
@@ -24,7 +24,7 @@ class WasteMother
     public static function fromIsDangerous(bool $isDangerous)
     {
         return self::from(
-            name: 'waste-' . rand(100, 999),
+            name: 'waste-' . random_int(100, 999),
             isDangerous: $isDangerous,
             id: (string) WasteId::generate()
         );
@@ -34,7 +34,7 @@ class WasteMother
     {
         return self::from(
             name: $name, 
-            isDangerous: rand(0, 1) == 1,
+            isDangerous: random_int(0, 1) === 1,
             id: $id
         );
     }
@@ -42,10 +42,10 @@ class WasteMother
     public static function fromDensityAndId(string $density, string $id)
     {
         return self::from(
-            name: 'waste-' . rand(100, 999),
-            isDangerous: rand(0, 1) == 1,
-            density: $density,
-            id: $id
+            name: 'waste-' . random_int(100, 999),
+            isDangerous: random_int(0, 1) === 1,
+            id: $id,
+            density: $density
         );
     }
 
@@ -55,7 +55,7 @@ class WasteMother
         string $id,
         string $density = '1.00', 
         string $color = '#c3d300',
-    ) {
+    ): Waste {
         $waste = new Waste(
             id: new WasteId($id)
         );
@@ -67,10 +67,10 @@ class WasteMother
     public static function random()
     {
         return self::from(
-            name: 'waste-' . rand(100, 999),
-            isDangerous: rand(0, 1) == 1,
-            density: rand(1, 100) / 100,
-            id: (string) WasteId::generate()
+            name: 'waste-' . random_int(100, 999),
+            isDangerous: random_int(0, 1) === 1,
+            id: (string) WasteId::generate(),
+            density: random_int(1, 100) / 100
         );
     }
 }

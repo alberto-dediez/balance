@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineImportationRepository implements ImportationRepository
 {
-    public function __construct(private EntityManagerInterface $manager, private ImportationDataRepository $dataRepository)
+    public function __construct(private readonly EntityManagerInterface $manager, private readonly ImportationDataRepository $dataRepository)
     {
 
     }
@@ -26,12 +26,12 @@ class DoctrineImportationRepository implements ImportationRepository
         try {
             $recoverImportation = $this->find($importation->id());
 
-            if (null === $recoverImportation) {
+            if (!$recoverImportation instanceof Importation) {
                 $this->dataRepository->create($importation);
             }
 
-            $this->getEntityManager()->persist($importation);
-            $this->getEntityManager()->flush();
+            $this->manager->persist($importation);
+            $this->manager->flush();
 
             if (count($importation->configurations()) === 0) {
                 return ;
@@ -47,7 +47,7 @@ class DoctrineImportationRepository implements ImportationRepository
 
     public function find(ImportationId $importationId): ?Importation
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb = $this->manager->createQueryBuilder();
 
         $qb->select('i')
             ->from(Importation::class, 'i')
@@ -94,17 +94,12 @@ class DoctrineImportationRepository implements ImportationRepository
     {
         $this->dataRepository->remove($importation->id());
 
-        $this->getEntityManager()->remove($importation);
-        $this->getEntityManager()->flush();
+        $this->manager->remove($importation);
+        $this->manager->flush();
     }
 
     public function pendingRows(ImportationId $importationId): int
     {
         return $this->dataRepository->pendingRows($importationId);
-    }
-
-    private function getEntityManager()
-    {
-        return $this->manager;
     }
 }

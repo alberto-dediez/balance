@@ -11,18 +11,18 @@ use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdType;
 class CountryIdType extends AggregateRootIdType
 {
     public function __construct(
-        private CountryRepository $countryRepository
+        private readonly CountryRepository $countryRepository
     ) {
 
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $countries = $this->countryRepository->findByFilter(new CountryFilter(limit: 0));
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => $this->getChoices($countries),
             'class' => CountryId::class
-        ));
+        ]);
     }
 }

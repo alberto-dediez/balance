@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Brand\Update;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Property\Domain\Model\Brand\Brand;
@@ -18,7 +19,7 @@ use App\Tests\Unit\Property\Domain\Model\Brand\BrandRepositoryMother;
 
 class UpdateBrandServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -27,7 +28,7 @@ class UpdateBrandServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = BrandRepositoryMother::inMemory();
 
@@ -62,7 +63,7 @@ class UpdateBrandServiceTest extends TestCase
         $this->assertTrue($brandPersisted->id()->equals($lastEvent->brandId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = BrandRepositoryMother::inMemory();
 
@@ -78,7 +79,7 @@ class UpdateBrandServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryBrandRepository $repository): UpdateBrandService
     {
         return new UpdateBrandService($repository, new BrandAuthorizer());
     }

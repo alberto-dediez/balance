@@ -15,7 +15,7 @@ use App\Waste\Domain\Model\Container\QrPdfMerger;
 
 class PrintAllQrContainerService
 {
-    public function __construct(private ContainerRepository $repository, private QrPdfGenerator $pdfGenerator, private QrPdfMerger $pdfMerger, private ContainerAuthorizer $authorizer)
+    public function __construct(private readonly ContainerRepository $repository, private readonly QrPdfGenerator $pdfGenerator, private readonly QrPdfMerger $pdfMerger, private readonly ContainerAuthorizer $authorizer)
     {
 
     }
@@ -34,7 +34,7 @@ class PrintAllQrContainerService
 
         $containers = $this->repository->findByFilter($filter);
 
-        if (null === $containers || count($containers) === 0) {
+        if (count($containers) === 0) {
             throw new NotValidContainersForPrintException();
         }
 
@@ -45,11 +45,7 @@ class PrintAllQrContainerService
 
             $pathToNewPdf = $container->printQr($this->pdfGenerator);
 
-            if (null === $pdf) {
-                $pdf = $pathToNewPdf;
-            } else {
-                $pdf = $this->pdfMerger->merge($pdf, $pathToNewPdf);
-            }
+            $pdf = null === $pdf ? $pathToNewPdf : $this->pdfMerger->merge($pdf, $pathToNewPdf);
         }
 
         return new PrintAllQrContainerResponse(path: $pdf);

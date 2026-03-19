@@ -41,8 +41,8 @@ class UpdateContainerService implements CommandHandler
             wasteId: $request->wasteId,
             purpose: $request->purpose,
             measurementMethod: $request->measurementMethod,
-            volume: $request->volume,
-            wasteManagerId: $request->wasteManagerId
+            wasteManagerId: $request->wasteManagerId,
+            volume: $request->volume
         );
 
         $this->containerRepository->add($container);

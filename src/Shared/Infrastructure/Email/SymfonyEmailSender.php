@@ -1,25 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Email;
 
-use Symfony\Component\Mime\Address;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mailer\MailerInterface;
-use App\Shared\Domain\Model\Email\EmailSent;
-use App\Shared\Domain\Model\Email\EmailSender;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Email\EmailRecipient;
+use App\Shared\Domain\Model\Email\EmailSender;
+use App\Shared\Domain\Model\Email\EmailSent;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 
 class SymfonyEmailSender implements EmailSender
 {
     public function __construct(
-        private MailerInterface $mailer,
-        private string $mailerFrom
-    )
-    {
-        
-    }
+        private readonly MailerInterface $mailer,
+        private readonly string $mailerFrom,
+    ) {}
 
+    /**
+     * @param array<string,mixed>|null $params
+     */
     public function __invoke(EmailRecipient $recipient, string $subject, string $template, ?array $params = null): void
     {
         $email = (new TemplatedEmail())
@@ -37,10 +39,10 @@ class SymfonyEmailSender implements EmailSender
 
         DomainEventPublisher::instance()->publish(
             new EmailSent(
-                recipient: $recipient, 
-                subject: $subject, 
-                content: $template
-            )
+                recipient: $recipient,
+                subject: $subject,
+                content: $template,
+            ),
         );
     }
 }

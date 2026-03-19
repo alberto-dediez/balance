@@ -1,24 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\UI\Web\CRUD;
 
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatableMessage;
 
 trait EditTrait
 {
-    public function edit(Request $request, $form, \Closure $edit)
+    /**
+     * @param FormInterface<mixed> $form
+     */
+    public function edit(Request $request, FormInterface $form, \Closure $edit): bool
     {
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $edit($form);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 $this->addFlash('danger', new TranslatableMessage('Error inesperado. No se ha podido actualizar correctamente.'));
             }
 
-            if ($form->getClickedButton() && 'saveAndReturn' == $form->getClickedButton()->getName()) {
+            assert($form instanceof Form);
+
+            $clickedButton = $form->getClickedButton();
+
+            if ($clickedButton instanceof FormInterface && 'saveAndReturn' === $clickedButton->getName()) {
                 return true;
             }
         }

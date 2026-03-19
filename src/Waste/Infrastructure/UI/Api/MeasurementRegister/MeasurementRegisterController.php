@@ -20,11 +20,7 @@ use App\Waste\Infrastructure\UI\Api\MeasurementRegister\MeasurementRegisterReque
 
 #[Route('/measurements', name: 'api_measurements_register', methods: ['POST'])]
 #[Areas(['mobile', 'admin'])]
-#[OA\Post(
-    summary: "Register Measurement",
-    description: "Register a measurement in an owned container",
-    tags: ['Waste']
-)]
+#[OA\Post(description: "Register a measurement in an owned container", summary: "Register Measurement", tags: ['Waste'])]
 #[OA\Response(
     response: 200,
     description: 'Returns data of registered measurement',

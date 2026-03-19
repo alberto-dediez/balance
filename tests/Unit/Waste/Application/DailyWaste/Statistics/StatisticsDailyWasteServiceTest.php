@@ -5,8 +5,6 @@ namespace App\Tests\Unit\Waste\Application\DailyWaste\Statistics;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Waste\Domain\Model\Container\Purpose;
-use App\Security\Domain\Model\Account\Account;
-use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Waste\WasteRepository;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteId;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
@@ -34,7 +32,7 @@ class StatisticsDailyWasteServiceTest extends TestCase
         
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $dailyWasteRepository = DailyWasteRepositoryMother::inMemory();
         $propertyRepository = PropertyRepositoryMother::inMemory();
@@ -67,12 +65,12 @@ class StatisticsDailyWasteServiceTest extends TestCase
         $dailyWasteRepository->add(
             DailyWasteMother::from(
                 dailyWasteId: DailyWasteId::generate(),
-                day: new \DateTimeImmutable("2025-06-01"),
                 propertyId: $propertyB->id(),
                 wasteId: $wasteB->id(),
                 wasteManagerId: $wasteManagerA->id(),
                 purpose: Purpose::Recycling,
                 accountId: $account->id(),
+                day: new \DateTimeImmutable("2025-06-01"),
                 load: 100
             )
         );
@@ -80,12 +78,12 @@ class StatisticsDailyWasteServiceTest extends TestCase
         $dailyWasteRepository->add(
             DailyWasteMother::from(
                 dailyWasteId: DailyWasteId::generate(),
-                day: new \DateTimeImmutable("2025-06-02"),
                 propertyId: $propertyA->id(),
                 wasteId: $wasteA->id(),
                 wasteManagerId: $wasteManagerA->id(),
                 purpose: Purpose::Waste,
                 accountId: $account->id(),
+                day: new \DateTimeImmutable("2025-06-02"),
                 load: 25.5
             )
         );
@@ -93,12 +91,12 @@ class StatisticsDailyWasteServiceTest extends TestCase
         $dailyWasteRepository->add(
             DailyWasteMother::from(
                 dailyWasteId: DailyWasteId::generate(),
-                day: new \DateTimeImmutable("2025-06-02"),
                 propertyId: $propertyA->id(),
                 wasteId: $wasteA->id(),
                 wasteManagerId: $wasteManagerA->id(),
                 purpose: Purpose::Reuse,
                 accountId: $account->id(),
+                day: new \DateTimeImmutable("2025-06-02"),
                 load: 25.5
             )
         );
@@ -106,12 +104,12 @@ class StatisticsDailyWasteServiceTest extends TestCase
         $dailyWasteRepository->add(
             DailyWasteMother::from(
                 dailyWasteId: DailyWasteId::generate(),
-                day: new \DateTimeImmutable("2025-06-03"),
                 propertyId: $propertyC->id(),
                 wasteId: $wasteB->id(),
                 wasteManagerId: $wasteManagerA->id(),
                 purpose: Purpose::Recycling,
                 accountId: $account->id(),
+                day: new \DateTimeImmutable("2025-06-03"),
                 load: 100
             )
         );
@@ -158,12 +156,12 @@ class StatisticsDailyWasteServiceTest extends TestCase
         PropertyRepository $propertyRepository,
         WasteRepository $wasteRepository,
         WasteManagerRepository $wasteManagerRepository
-    ) {
+    ): StatisticsDailyWasteService {
         return new StatisticsDailyWasteService(
-            dailyWasteRepository: $dailyWasteRepository, 
+            dailyWasteRepository: $dailyWasteRepository,
+            wasteManagerRepository: $wasteManagerRepository, 
             propertyRepository: $propertyRepository, 
             wasteRepository: $wasteRepository, 
-            wasteManagerRepository: $wasteManagerRepository, 
             authorizer: new DailyWasteAuthorizer()
         );
     }

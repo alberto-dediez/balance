@@ -9,7 +9,7 @@ use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
-class Container
+class Container implements \Stringable
 {
     use AggregateRoot;
 
@@ -111,7 +111,7 @@ class Container
         ?string $volume,
         WasteManagerId $wasteManagerId,
         QrCode $qrCode
-    ) {
+    ): void {
         if ($measurementMethod == MeasurementMethod::Volume && (null === $volume || $volume < 0)) {
             throw new NotValidVolumeException($volume);
         }
@@ -122,9 +122,9 @@ class Container
                 accountId: $accountId,
                 propertyId: $propertyId,
                 wasteId: $wasteId,
-                purpose: $purpose,
                 measurementMethod: $measurementMethod,
                 volume: $volume,
+                purpose: $purpose,
                 wasteManagerId: $wasteManagerId,
                 qrCode: $qrCode
             )
@@ -137,7 +137,7 @@ class Container
         MeasurementMethod $measurementMethod,
         WasteManagerId $wasteManagerId,
         ?string $volume
-    ) {
+    ): void {
         if ($measurementMethod == MeasurementMethod::Volume && (null === $volume || $volume < 0)) {
             throw new NotValidVolumeException($volume);
         }
@@ -146,9 +146,9 @@ class Container
             new ContainerUpdated(
                 containerId: $this->id(),
                 wasteId: $wasteId,
-                purpose: $purpose,
                 measurementMethod: $measurementMethod,
                 volume: $volume,
+                purpose: $purpose,
                 wasteManagerId: $wasteManagerId
             )
         );
@@ -168,7 +168,7 @@ class Container
         return $path;
     }
 
-    public function remove()
+    public function remove(): void
     {
         $this->recordApplyAndPublish(
             new ContainerRemoved(
@@ -177,7 +177,7 @@ class Container
         );
     }
 
-    public function applyContainerRegistered(ContainerRegistered $event)
+    public function applyContainerRegistered(ContainerRegistered $event): void
     {
         $this->accountId = $event->accountId();
         $this->propertyId = $event->propertyId();
@@ -190,7 +190,7 @@ class Container
         $this->registeredAt = $event->occurredOn();
     }
 
-    public function applyContainerUpdated(ContainerUpdated $event)
+    public function applyContainerUpdated(ContainerUpdated $event): void
     {
         $this->wasteId = $event->wasteId();
         $this->purpose = $event->purpose();
@@ -199,12 +199,12 @@ class Container
         $this->wasteManagerId = $event->wasteManagerId();
     }
 
-    public function applyContainerQrPrinted(ContainerQrPrinted $event)
+    public function applyContainerQrPrinted(ContainerQrPrinted $event): void
     {
         $this->printedAt = new \DateTimeImmutable("NOW");
     }
 
-    public function applyContainerRemoved(ContainerRemoved $event)
+    public function applyContainerRemoved(ContainerRemoved $event): void
     {
         $this->removed = true;
         $this->removedAt = new \DateTimeImmutable("NOW");

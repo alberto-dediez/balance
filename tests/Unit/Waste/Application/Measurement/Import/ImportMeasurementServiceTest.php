@@ -3,7 +3,6 @@
 namespace App\Tests\Unit\Waste\Application\Measurement\Import;
 
 use App\Property\Domain\Model\Property\PropertyRepository;
-use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
@@ -22,8 +21,6 @@ use App\Waste\Application\Measurement\Import\ImportMeasurementRequest;
 use App\Waste\Application\Measurement\Import\ImportMeasurementResponse;
 use App\Waste\Application\Measurement\Import\ImportMeasurementService;
 use App\Waste\Application\Measurement\MeasurementAuthorizer;
-use App\Waste\Application\Measurement\Register\RegisterMeasurementRequest;
-use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Measurement\Measurement;
@@ -36,7 +33,7 @@ use PHPUnit\Framework\TestCase;
 
 class ImportMeasurementServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -45,7 +42,7 @@ class ImportMeasurementServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $data = $this->createData();
 
@@ -115,7 +112,7 @@ class ImportMeasurementServiceTest extends TestCase
         $this->assertTrue($measurementPersisted->id()->equals($lastEvent->measurementId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $userRepository = UserRepositoryMother::inMemory();
         $measurementRepository = MeasurementRepositoryMother::inMemory();
@@ -160,7 +157,7 @@ class ImportMeasurementServiceTest extends TestCase
         WasteRepository $wasteRepository,
         WasteManagerRepository $wasteManagerRepository,
         UserRepository $userRepository
-    ) {
+    ): ImportMeasurementService {
         return new ImportMeasurementService(
             measurementRepository: $measurementRepository,
             containerRepository: $containerRepository,

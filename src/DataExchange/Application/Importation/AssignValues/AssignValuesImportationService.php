@@ -2,6 +2,7 @@
 
 namespace App\DataExchange\Application\Importation\AssignValues;
 
+use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Application\Importation\ImportationAuthorizer;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
 use App\Security\Application\Action;
@@ -23,7 +24,7 @@ class AssignValuesImportationService implements CommandHandler
     {
         $importation = $this->importationRepository->find($request->importationId);
 
-        if (null === $importation) {
+        if (!$importation instanceof Importation) {
             throw new \RuntimeException('Importation not found');
         }
 

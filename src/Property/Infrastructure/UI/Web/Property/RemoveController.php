@@ -36,7 +36,7 @@ class RemoveController extends AbstractController
         
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->addFlash('danger', new TranslatableMessage("No se ha podido eliminar la propiedad {property}", ['{property}' => $property->name()]));
         }
 

@@ -47,12 +47,12 @@ class InMemoryDestinationRepository implements DestinationRepository
 
     public function findByNameAndCountry(string $name, CountryId $countryId): ?Destination
     {
-        if (count($this->destinations) == 0) {
+        if (count($this->destinations) === 0) {
             return null;
         }
 
         foreach ($this->destinations as $destination) {
-            if (null !== $destination->name() && strtolower($destination->name()) == strtolower($name) && $destination->countryId()->equals($countryId)) {
+            if (null !== $destination->name() && strtolower($destination->name()) === strtolower($name) && $destination->countryId()->equals($countryId)) {
                 return $this->find($destination->id());
             }
         }
@@ -62,7 +62,7 @@ class InMemoryDestinationRepository implements DestinationRepository
 
     public function findBySourceAndExternalId(ExternalSource $source, ExternalId $externalId): ?Destination
     {
-        if (count($this->destinations) == 0) {
+        if (count($this->destinations) === 0) {
             return null;
         }
 
@@ -86,7 +86,7 @@ class InMemoryDestinationRepository implements DestinationRepository
     {
         $results = [];
 
-        if (count($this->destinations) == 0) {
+        if (count($this->destinations) === 0) {
             return $results;
         }
 
@@ -95,12 +95,12 @@ class InMemoryDestinationRepository implements DestinationRepository
         foreach ($this->destinations as $destination) {
             if (
                 !empty($filter->name)
-                && false === strpos(strtolower($destination->name()), strtolower($filter->name))
+                && !str_contains(strtolower((string) $destination->name()), strtolower($filter->name))
             ) {
                 continue;
             }
 
-            if (null !== $filter->countryId && null !== $destination->countryId() && !$filter->countryId->equals($destination->countryId())) {
+            if ($filter->countryId instanceof CountryId && null !== $destination->countryId() && !$filter->countryId->equals($destination->countryId())) {
                 continue;
             }
 

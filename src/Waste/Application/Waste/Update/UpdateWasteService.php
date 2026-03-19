@@ -12,7 +12,6 @@ use App\Waste\Domain\Model\Waste\WasteRepository;
 use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
-use App\Security\Application\Account\Register\RegisterAccountRequest;
 
 class UpdateWasteService implements CommandHandler
 {

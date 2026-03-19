@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Waste\Application\Measurement\Remove;
 
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -17,7 +18,7 @@ use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
 
 class RemoveMeasurementServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -26,7 +27,7 @@ class RemoveMeasurementServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = MeasurementRepositoryMother::inMemory();
 
@@ -58,7 +59,7 @@ class RemoveMeasurementServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof MeasurementRemoved);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = MeasurementRepositoryMother::inMemory();
 
@@ -73,7 +74,7 @@ class RemoveMeasurementServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryMeasurementRepository $repository): RemoveMeasurementService
     {
         return new RemoveMeasurementService($repository, new MeasurementAuthorizer());
     }

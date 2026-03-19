@@ -14,10 +14,10 @@ final class WasteManagerRegistered extends DomainEvent
     protected static string $eventName = 'wasteManagerRegistered';
 
     public function __construct(
-        private WasteManagerId $wasteManagerId, 
-        private string $name,
-        private bool $isPublic,
-        private AccountId $accountId,
+        private readonly WasteManagerId $wasteManagerId,
+        private readonly string $name,
+        private readonly bool $isPublic,
+        private readonly AccountId $accountId,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -44,12 +44,12 @@ final class WasteManagerRegistered extends DomainEvent
         return $this->accountId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->wasteManagerId();
+        return $this->wasteManagerId;
     }
-    
-    public function payload(): ?array
+
+    public function payload(): array
     {
         return [
             'wasteManagerId' => (string) $this->wasteManagerId,
@@ -62,13 +62,13 @@ final class WasteManagerRegistered extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new WasteManagerRegistered(
-            wasteManagerId: new WasteManagerId($payload['wasteManagerId']), 
-            accountId: new AccountId($payload['accountId']),
+            wasteManagerId: new WasteManagerId($payload['wasteManagerId']),
             name: $payload['name'],
             isPublic: $payload['isPublic'],
+            accountId: new AccountId($payload['accountId']),
             id: $id,
             occurredOn: $occurredOn
         );

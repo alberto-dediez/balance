@@ -8,7 +8,7 @@ class MapExtractor implements FieldExtractor
 {
     private array $translations = [];
 
-    private string $columnName;
+    private readonly string $columnName;
 
     public function __construct(ImportationColumnConfiguration $columnConfiguration)
     {

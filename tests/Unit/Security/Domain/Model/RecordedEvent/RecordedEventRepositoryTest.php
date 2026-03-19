@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Domain\Model\RecordedEvent;
 
-use App\Security\Domain\Model\User\UserId;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventFilter;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventRepository;
+use App\Security\Domain\Model\User\UserId;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class RecordedEventRepositoryTest extends KernelTestCase
 {
-    public function testAddRecordedEventToRepository()
-    {   
+    public function testAddRecordedEventToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $event = RecordedEventMother::random();
@@ -25,8 +27,8 @@ abstract class RecordedEventRepositoryTest extends KernelTestCase
         $this->assertEquals($event->id(), $recoverRecordedEvent->id());
     }
 
-    public function testRemoveRecordedEventToRepository()
-    {   
+    public function testRemoveRecordedEventToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $event = RecordedEventMother::random();
@@ -43,7 +45,7 @@ abstract class RecordedEventRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($event->id()));
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -63,7 +65,7 @@ abstract class RecordedEventRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new RecordedEventFilter(
-            userId: $userId
+            userId: $userId,
         );
 
         $result = $repository->findByFilter($filter);
@@ -71,7 +73,7 @@ abstract class RecordedEventRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
@@ -91,7 +93,7 @@ abstract class RecordedEventRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new RecordedEventFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);

@@ -6,7 +6,6 @@ use PHPUnit\Framework\TestCase;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Waste\Domain\Model\DailyWaste\DailyWaste;
 use App\Waste\Domain\Model\Waste\WasteRepository;
-use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteUpdated;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -33,7 +32,7 @@ use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
 
 class CalculateDailyWasteServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -42,7 +41,7 @@ class CalculateDailyWasteServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCaseNewDailyWaste()
+    public function testUseCaseNewDailyWaste(): void
     {
         $dailyWasteRepository = DailyWasteRepositoryMother::inMemory();
         $measurementRepository = MeasurementRepositoryMother::inMemory();
@@ -111,7 +110,7 @@ class CalculateDailyWasteServiceTest extends TestCase
         $this->assertTrue($dailyWastePersisted->id()->equals($lastEvent->dailyWasteId()));
     }
 
-    public function testUseCaseUpdateDailyWaste()
+    public function testUseCaseUpdateDailyWaste(): void
     {
         $dailyWasteRepository = DailyWasteRepositoryMother::inMemory();
         $measurementRepository = MeasurementRepositoryMother::inMemory();
@@ -183,7 +182,7 @@ class CalculateDailyWasteServiceTest extends TestCase
         $this->assertTrue($dailyWastePersisted->id()->equals($lastEvent->dailyWasteId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $dailyWasteRepository = DailyWasteRepositoryMother::inMemory();
         $measurementRepository = MeasurementRepositoryMother::inMemory();
@@ -219,12 +218,12 @@ class CalculateDailyWasteServiceTest extends TestCase
         PropertyRepository $propertyRepository, 
         WasteRepository $wasteRepository,
         ContainerRepository $containerRepository
-    ) {
+    ): CalculateDailyWasteService {
         return new CalculateDailyWasteService(
-            measurementRepository: $measurementRepository,
             dailyWasteRepository: $dailyWasteRepository,
-            propertyRepository: $propertyRepository,
             containerRepository: $containerRepository,
+            measurementRepository: $measurementRepository,
+            propertyRepository: $propertyRepository,
             wasteRepository: $wasteRepository,
             authorizer: new DailyWasteAuthorizer()
         );

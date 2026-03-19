@@ -13,7 +13,7 @@ final class BrandRemoved extends DomainEvent
     protected static string $eventName = 'brandRemoved';
 
     public function __construct(
-        private BrandId $brandId, 
+        private readonly BrandId $brandId,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -25,12 +25,12 @@ final class BrandRemoved extends DomainEvent
         return $this->brandId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->brandId();
+        return $this->brandId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'brandId' => (string) $this->brandId
@@ -40,7 +40,7 @@ final class BrandRemoved extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new BrandRemoved(
             brandId: new BrandId($payload['brandId']),

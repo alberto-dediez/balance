@@ -2,34 +2,24 @@
 
 namespace App\DataExchange\Infrastructure\Persistence\PDO\Tools;
 
+use OpenSpout\Reader\XLSX\Reader;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\NotImportedException;
-use OpenSpout\Reader\Common\Creator\ReaderFactory;
-use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class FileExtractor
 {
-    private iterable $iterator;
+    private readonly iterable $iterator;
 
     private array $columns = [];
 
-    public function __construct(private ImportationFile $importationFile)
+    public function __construct(private readonly ImportationFile $importationFile)
     {
-        switch ($this->importationFile->extension()) {
-            case 'xlsx':
-            case 'xls':
-                $reader = new \OpenSpout\Reader\XLSX\Reader();
-                break;
-            case 'csv':
-                $reader = new \OpenSpout\Reader\CSV\Reader();
-                break;
-            case 'ods':
-                $reader = new \OpenSpout\Reader\ODS\Reader();
-                break;
-            default:
-                throw new NotImportedException('Invalid file extension');
-        }
+        $reader = match ($this->importationFile->extension()) {
+            'xlsx', 'xls' => new Reader(),
+            'csv' => new \OpenSpout\Reader\CSV\Reader(),
+            'ods' => new \OpenSpout\Reader\ODS\Reader(),
+            default => throw new NotImportedException('Invalid file extension'),
+        };
 
         $reader->open($this->importationFile->path());
 

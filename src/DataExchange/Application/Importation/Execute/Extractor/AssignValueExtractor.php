@@ -4,7 +4,7 @@ namespace App\DataExchange\Application\Importation\Execute\Extractor;
 
 class AssignValueExtractor implements FieldExtractor
 {
-    public function __construct(private mixed $value)
+    public function __construct(private readonly mixed $value)
     {
 
     }

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Property\Remove;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -17,7 +18,7 @@ use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 
 class RemovePropertyServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -26,7 +27,7 @@ class RemovePropertyServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = PropertyRepositoryMother::inMemory();
 
@@ -58,7 +59,7 @@ class RemovePropertyServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof PropertyRemoved);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = PropertyRepositoryMother::inMemory();
 
@@ -73,7 +74,7 @@ class RemovePropertyServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryPropertyRepository $repository): RemovePropertyService
     {
         return new RemovePropertyService($repository, new PropertyAuthorizer());
     }

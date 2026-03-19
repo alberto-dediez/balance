@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryImportationRepository implements ImportationRepository
 {
-    private ImportationDataRepository $dataRepository;
+    private readonly ImportationDataRepository $dataRepository;
 
     public function __construct(private array $importations = [])
     {
@@ -54,9 +54,7 @@ class InMemoryImportationRepository implements ImportationRepository
 
     public function find(ImportationId $importationId): ?Importation
     {
-        $importation = isset($this->importations[(string) $importationId])
-            ? $this->importations[(string) $importationId]
-            : null
+        $importation = $this->importations[(string) $importationId] ?? null
         ;
 
         if ($importation === null) {

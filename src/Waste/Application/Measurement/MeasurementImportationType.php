@@ -2,6 +2,7 @@
 
 namespace App\Waste\Application\Measurement;
 
+use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
 use App\DataExchange\Application\Importation\Execute\Extractor\AssignValueExtractor;
 use App\DataExchange\Application\Importation\Execute\Extractor\DirectExtractor;
 use App\DataExchange\Application\Importation\Execute\Extractor\MapExtractor;
@@ -29,13 +30,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MeasurementImportationType implements ImportationType
 {
-    private array $fields;
+    private readonly array $fields;
 
     public function __construct(
-        private MeasurementAuthorizer $measurementAuthorizer,
+        private readonly MeasurementAuthorizer $measurementAuthorizer,
         TranslatorInterface $translator,
     ) {
-        $unitChoicesForImportation = array_filter(Unit::cases(), fn ($unit) => $unit !== Unit::Percentage);
+        $unitChoicesForImportation = array_filter(Unit::cases(), fn (Unit $unit): bool => $unit !== Unit::Percentage);
 
         $this->fields = [
             'containerId' => [
@@ -97,7 +98,7 @@ class MeasurementImportationType implements ImportationType
                     fieldType: ChoiceType::class,
                     options: [
                         'choices' => array_combine(
-                            array_map(fn (Unit $unit) => $unit->label($translator), $unitChoicesForImportation),
+                            array_map(fn (Unit $unit): string => $unit->label($translator), $unitChoicesForImportation),
                             array_map(fn (Unit $unit) => $unit->value, $unitChoicesForImportation),
                         )
                     ]
@@ -175,7 +176,7 @@ class MeasurementImportationType implements ImportationType
         foreach ($this->fields() as $field) {
             $configuration = $importation->configurationForField($field);
 
-            if (null !== $configuration) {
+            if ($configuration instanceof ImportationColumnConfiguration) {
                 switch ($field) {
                     case 'containerId':
                     case 'propertyId':

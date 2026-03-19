@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Waste\Application\Waste\Register;
 
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteRepository;
 use PHPUnit\Framework\TestCase;
 use App\Waste\Domain\Model\Waste\Waste;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -19,7 +20,7 @@ use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
 
 class RegisterWasteServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -28,7 +29,7 @@ class RegisterWasteServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = WasteRepositoryMother::inMemory();
 
@@ -65,7 +66,7 @@ class RegisterWasteServiceTest extends TestCase
         $this->assertTrue($wastePersisted->isDangerous());
     }
 
-    public function testRegisterWithLocaleTranslate()
+    public function testRegisterWithLocaleTranslate(): void
     {
         $repository = WasteRepositoryMother::inMemory(Locale::Spanish);
 
@@ -98,7 +99,7 @@ class RegisterWasteServiceTest extends TestCase
         $this->assertTrue($wastePersisted->id()->equals($lastEvent->wasteId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = WasteRepositoryMother::inMemory(Locale::Spanish);
 
@@ -114,7 +115,7 @@ class RegisterWasteServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository, Locale $locale)
+    private function createSUT(InMemoryWasteRepository $repository, Locale $locale): RegisterWasteService
     {
         return new RegisterWasteService(
             wasteRepository: $repository, 

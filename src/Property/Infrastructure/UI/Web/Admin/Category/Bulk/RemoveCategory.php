@@ -15,17 +15,19 @@ class RemoveCategory implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) == 0) {
+        if (count($request->elements) === 0) {
             return [];
         }
 
         $commands = [];
 
         foreach ($request->elements as $category) {
-            if (null === $category || null === $category->id()) {
+            if (null === $category) {
                 continue;
             }
-
+            if (null === $category->id()) {
+                continue;
+            }
             $commands[] = new RemoveCategoryRequest(
                 categoryId: $category->id()
             );

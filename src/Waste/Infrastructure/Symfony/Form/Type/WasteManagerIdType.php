@@ -12,13 +12,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class WasteManagerIdType extends AggregateRootIdType
 {
     public function __construct(
-        private WasteManagerRepository $wasteRepository,
-        private LoggedAccount $loggedAccount,
+        private readonly WasteManagerRepository $wasteRepository,
+        private readonly LoggedAccount $loggedAccount,
     ) {
 
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $account = $this->loggedAccount->__invoke();
 
@@ -29,9 +29,9 @@ class WasteManagerIdType extends AggregateRootIdType
             )
         );
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => $this->getChoices($wastes),
             'class' => WasteManagerId::class
-        ));
+        ]);
     }
 }

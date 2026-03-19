@@ -15,17 +15,19 @@ class RemoveWasteManager implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) == 0) {
+        if (count($request->elements) === 0) {
             return [];
         }
 
         $commands = [];
 
         foreach ($request->elements as $wasteManager) {
-            if (null === $wasteManager || null === $wasteManager->id()) {
+            if (null === $wasteManager) {
                 continue;
             }
-
+            if (null === $wasteManager->id()) {
+                continue;
+            }
             $commands[] = new RemoveWasteManagerRequest(
                 wasteManagerId: $wasteManager->id()
             );

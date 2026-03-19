@@ -2,11 +2,8 @@
 
 namespace App\Tests\Unit\DataExchange\Domain\Model\Importation;
 
-use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
-use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
-use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class ImportationRepositoryTest extends KernelTestCase

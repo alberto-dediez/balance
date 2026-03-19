@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Category\Register;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCategoryRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Property\Domain\Model\Category\Category;
@@ -17,7 +18,7 @@ use App\Tests\Unit\Property\Domain\Model\Category\CategoryRepositoryMother;
 
 class RegisterCategoryServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -26,7 +27,7 @@ class RegisterCategoryServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = CategoryRepositoryMother::inMemory();
 
@@ -58,7 +59,7 @@ class RegisterCategoryServiceTest extends TestCase
         $this->assertTrue($categoryPersisted->id()->equals($lastEvent->categoryId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = CategoryRepositoryMother::inMemory();
 
@@ -71,7 +72,7 @@ class RegisterCategoryServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryCategoryRepository $repository): RegisterCategoryService
     {
         return new RegisterCategoryService($repository, new CategoryAuthorizer());
     }

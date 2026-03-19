@@ -13,8 +13,8 @@ final class DailyWasteUpdated extends DomainEvent
     protected static string $eventName = 'dailyWasteUpdated';
 
     public function __construct(
-        private DailyWasteId $dailyWasteId, 
-        private float $load = 0,
+        private readonly DailyWasteId $dailyWasteId,
+        private readonly float $load = 0,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -31,12 +31,12 @@ final class DailyWasteUpdated extends DomainEvent
         return $this->load;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->dailyWasteId();
+        return $this->dailyWasteId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'dailyWasteId' => (string) $this->dailyWasteId,
@@ -47,10 +47,10 @@ final class DailyWasteUpdated extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new DailyWasteUpdated(
-            dailyWasteId: new DailyWasteId($payload['dailyWasteId']), 
+            dailyWasteId: new DailyWasteId($payload['dailyWasteId']),
             load: $payload['load'],
             id: $id,
             occurredOn: $occurredOn

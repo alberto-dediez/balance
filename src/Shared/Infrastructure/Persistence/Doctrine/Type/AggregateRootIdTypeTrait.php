@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Persistence\Doctrine\Type;
 
 use App\Shared\Domain\Model\AggregateRootId;
@@ -18,7 +20,7 @@ trait AggregateRootIdTypeTrait
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?AggregateRootId
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
@@ -38,5 +40,4 @@ trait AggregateRootIdTypeTrait
     {
         return true;
     }
-
 }

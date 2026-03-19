@@ -16,10 +16,10 @@ use App\Property\Application\Category\Register\RegisterCategoryService;
 class ImportCategoriesService
 {
     public function __construct(
-        private CategoryRepository $repository, 
-        private RegisterCategoryService $registerCategory, 
-        private UpdateCategoryService $updateCategory, 
-        private CategoryAuthorizer $authorizer
+        private readonly CategoryRepository $repository, 
+        private readonly RegisterCategoryService $registerCategory, 
+        private readonly UpdateCategoryService $updateCategory, 
+        private readonly CategoryAuthorizer $authorizer
     ) {
 
     }
@@ -33,9 +33,7 @@ class ImportCategoriesService
         $categoriesMatch = $this->matchCategories($request->categories, $user);
 
         $totalResults = array_sum(
-            array_map(function (CategoryResponse $response) {
-                return null !== $response->categoryId ? 1 : 0;
-            }, $categoriesMatch)
+            array_map(fn(CategoryResponse $response) => $response->categoryId instanceof CategoryId ? 1 : 0, $categoriesMatch)
         );
 
         return new ImportCategoriesResponse($categoriesMatch, $totalResults);
@@ -43,7 +41,7 @@ class ImportCategoriesService
 
     private function matchCategories(array $categoryRequests, User $user): array
     {
-        if (count($categoryRequests) == 0) {
+        if (count($categoryRequests) === 0) {
             return [];
         }
 
@@ -58,7 +56,7 @@ class ImportCategoriesService
             if (null == $categoryMatch) {
                 $categoryMatch = $this->repository->findByName($request->name);
 
-                if (null !== $categoryMatch) {
+                if ($categoryMatch instanceof Category) {
                     $this->updateCategory->__invoke(new UpdateCategoryRequest(
                         $categoryMatch->id(),
                         $categoryMatch->name(),

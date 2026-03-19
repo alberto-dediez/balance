@@ -11,7 +11,7 @@ use App\Property\Domain\Model\Country\CountryRepository;
 
 class ListCountriesService
 {
-    public function __construct(private CountryRepository $repository, private CountryAuthorizer $authorizer)
+    public function __construct(private readonly CountryRepository $repository, private readonly CountryAuthorizer $authorizer)
     {
 
     }

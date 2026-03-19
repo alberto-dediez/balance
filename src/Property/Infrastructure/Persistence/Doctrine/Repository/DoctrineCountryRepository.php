@@ -18,21 +18,21 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineCountryRepository implements CountryRepository
 {
-    public function __construct(private EntityManagerInterface $manager)
+    public function __construct(private readonly EntityManagerInterface $manager)
     {
 
     }
 
     public function add(Country $country): void
     {
-        $this->getEntityManager()->persist($country);
-        $this->getEntityManager()->flush();
+        $this->manager->persist($country);
+        $this->manager->flush();
     }
 
     public function remove(Country $country): void
     {
-        $this->getEntityManager()->remove($country);
-        $this->getEntityManager()->flush();
+        $this->manager->remove($country);
+        $this->manager->flush();
     }
 
     public function find(CountryId $countryId): ?Country
@@ -101,7 +101,7 @@ class DoctrineCountryRepository implements CountryRepository
 
     private function createQueryBuilderFromFilter(CountryFilter $filter): QueryBuilder
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb = $this->manager->createQueryBuilder();
 
         $qb->select('c')
             ->from(Country::class, 'c')
@@ -131,20 +131,13 @@ class DoctrineCountryRepository implements CountryRepository
             ;
         }
 
-        $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
+        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
 
-        switch ($filter->orderBy) {
-            case 'registeredAt':
-                $qb->orderBy('c.registeredAt', $way);
-                break;
-            case 'name':
-                $qb->orderBy('c.name', $way);
-                break;
-            case 'iso':
-            default:
-                $qb->orderBy('c.iso', $way);
-                break;
-        }
+        match ($filter->orderBy) {
+            'registeredAt' => $qb->orderBy('c.registeredAt', $way),
+            'name' => $qb->orderBy('c.name', $way),
+            default => $qb->orderBy('c.iso', $way),
+        };
 
         return $qb;
     }
@@ -173,10 +166,5 @@ class DoctrineCountryRepository implements CountryRepository
             ->getQuery()
             ->getSingleScalarResult()
         ;
-    }
-
-    private function getEntityManager()
-    {
-        return $this->manager;
     }
 }

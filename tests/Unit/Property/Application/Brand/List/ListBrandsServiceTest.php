@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Brand\List;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Property\Application\Brand\BrandAuthorizer;
@@ -19,7 +20,7 @@ class ListBrandsServiceTest extends TestCase
         
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = BrandRepositoryMother::inMemory();
 
@@ -42,7 +43,7 @@ class ListBrandsServiceTest extends TestCase
         $this->assertEquals(4, $result->totalResults);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryBrandRepository $repository): ListBrandsService
     {
         return new ListBrandsService($repository, new BrandAuthorizer());
     }

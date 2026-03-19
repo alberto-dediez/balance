@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Shared\Infrastructure\Locale;
 
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
 
-class FakeLocaleGetter implements LocaleGetter
+readonly class FakeLocaleGetter implements LocaleGetter
 {
     public function __construct(
         private Locale $locale = Locale::Spanish,

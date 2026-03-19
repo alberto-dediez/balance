@@ -19,7 +19,7 @@ class FieldExtractor
 
         $index = $this->config[$field->value];
 
-        return isset($row[$index]) ? $row[$index] : null;
+        return $row[$index] ?? null;
     }
 
     public function hasField(Field $field): bool

@@ -46,12 +46,12 @@ class InMemoryCountryRepository implements CountryRepository
 
     public function findByName(string $name): ?Country
     {
-        if (count($this->countries) == 0) {
+        if (count($this->countries) === 0) {
             return null;
         }
 
         foreach ($this->countries as $country) {
-            if (null !== $country->name() && strtolower($country->name()) == strtolower($name)) {
+            if (null !== $country->name() && strtolower($country->name()) === strtolower($name)) {
                 return $this->find($country->id());
             }
         }
@@ -61,12 +61,12 @@ class InMemoryCountryRepository implements CountryRepository
 
     public function findByIso(string $iso): ?Country
     {
-        if (count($this->countries) == 0) {
+        if (count($this->countries) === 0) {
             return null;
         }
 
         foreach ($this->countries as $country) {
-            if (null !== $country->iso() && strtolower($country->iso()) == strtolower($iso)) {
+            if (null !== $country->iso() && strtolower($country->iso()) === strtolower($iso)) {
                 return $this->find($country->id());
             }
         }
@@ -76,7 +76,7 @@ class InMemoryCountryRepository implements CountryRepository
 
     public function findBySourceAndExternalId(ExternalSource $source, ExternalId $externalId): ?Country
     {
-        if (count($this->countries) == 0) {
+        if (count($this->countries) === 0) {
             return null;
         }
 
@@ -100,7 +100,7 @@ class InMemoryCountryRepository implements CountryRepository
     {
         $results = [];
 
-        if (count($this->countries) == 0) {
+        if (count($this->countries) === 0) {
             return $results;
         }
 
@@ -109,7 +109,7 @@ class InMemoryCountryRepository implements CountryRepository
         foreach ($this->countries as $country) {
             if (
                 !empty($filter->name)
-                && false === strpos(strtolower($country->name()), strtolower($filter->name))
+                && !str_contains(strtolower((string) $country->name()), strtolower($filter->name))
             ) {
                 continue;
             }

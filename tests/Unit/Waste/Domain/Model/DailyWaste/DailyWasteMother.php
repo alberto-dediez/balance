@@ -21,9 +21,9 @@ class DailyWasteMother
         ?AccountId $accountId = null,
         ?\DateTimeImmutable $day = null,
         float $load = 0
-    ) {
-        $day = null === $day ? new \DateTimeImmutable("NOW") : $day;
-        $accountId = null === $accountId ? AccountId::generate() : $accountId;
+    ): DailyWaste {
+        $day ??= new \DateTimeImmutable("NOW");
+        $accountId ??= AccountId::generate();
 
         $dailyWaste = new DailyWaste(
             id: $dailyWasteId
@@ -35,9 +35,9 @@ class DailyWasteMother
                 wasteId: $wasteId,
                 purpose: $purpose,
                 wasteManagerId: $wasteManagerId,
-                accountId: $accountId,
                 day: $day,
-                load: $load
+                load: $load,
+                accountId: $accountId
             )
         ;
 
@@ -46,49 +46,49 @@ class DailyWasteMother
 
     public static function random()
     {
-        $purpose = Purpose::cases()[rand(0, count(Purpose::cases())-1)];
+        $purpose = Purpose::cases()[random_int(0, count(Purpose::cases())-1)];
         
         return self::from(
             dailyWasteId: DailyWasteId::generate(),
             propertyId: PropertyId::generate(),
             wasteId: WasteId::generate(),
             wasteManagerId: WasteManagerId::generate(),
-            accountId: AccountId::generate(),
             purpose: $purpose,
-            load: rand(0, 100) / 100,
-            day: new \DateTimeImmutable(sprintf("NOW -%s DAYS", rand(0, 500)))
+            accountId: AccountId::generate(),
+            day: new \DateTimeImmutable(sprintf("NOW -%s DAYS", random_int(0, 500))),
+            load: random_int(0, 100) / 100
         );
     }
 
     public static function fromAccount(AccountId $accountId)
     {
-        $purpose = Purpose::cases()[rand(0, count(Purpose::cases())-1)];
+        $purpose = Purpose::cases()[random_int(0, count(Purpose::cases())-1)];
         
         return self::from(
             dailyWasteId: DailyWasteId::generate(),
             propertyId: PropertyId::generate(),
             wasteId: WasteId::generate(),
             wasteManagerId: WasteManagerId::generate(),
-            accountId: $accountId,
             purpose: $purpose,
-            load: rand(0, 100) / 100,
-            day: new \DateTimeImmutable(sprintf("NOW -%s DAYS", rand(0, 500)))
+            accountId: $accountId,
+            day: new \DateTimeImmutable(sprintf("NOW -%s DAYS", random_int(0, 500))),
+            load: random_int(0, 100) / 100
         );
     }
 
     public static function fromDayAndIdAndAccount(string $day, string $dailyWasteId, string $accountId)
     {
-        $purpose = Purpose::cases()[rand(0, count(Purpose::cases())-1)];
+        $purpose = Purpose::cases()[random_int(0, count(Purpose::cases())-1)];
         
         return self::from(
             dailyWasteId: new DailyWasteId($dailyWasteId),
             propertyId: PropertyId::generate(),
             wasteId: WasteId::generate(),
             wasteManagerId: WasteManagerId::generate(),
-            accountId: new AccountId($accountId),
             purpose: $purpose,
-            load: rand(0, 100) / 100,
-            day: new \DateTimeImmutable($day)
+            accountId: new AccountId($accountId),
+            day: new \DateTimeImmutable($day),
+            load: random_int(0, 100) / 100
         );
     }
 }

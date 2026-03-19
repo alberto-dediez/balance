@@ -7,12 +7,10 @@ use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Application\DailyWaste\Statistics\ByDate;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
 use App\Waste\Application\DailyWaste\Statistics\ByWaste;
-use App\Waste\Application\DailyWaste\DailyWasteAuthorizer;
 use App\Waste\Application\DailyWaste\Statistics\ByPurpose;
 use App\Waste\Application\DailyWaste\Statistics\ByProperty;
 use App\Waste\Application\DailyWaste\Statistics\ByWasteManager;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
-use App\Waste\Application\DailyWaste\List\ListDailyWastesService;
 use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
 use App\Waste\Application\DailyWaste\Statistics\StatisticsDailyWasteResponse;
 
@@ -23,7 +21,7 @@ class StatisticsDailyWasteResponseTest extends TestCase
 
     }
 
-    public function testDates()
+    public function testDates(): void
     {
         $byDates = [];
 
@@ -70,7 +68,7 @@ class StatisticsDailyWasteResponseTest extends TestCase
         $this->assertEquals("2025-06-05", $result[3]->format("Y-m-d"));
     }
 
-    public function testPurposes()
+    public function testPurposes(): void
     {
         $byPurpose = [];
 
@@ -106,7 +104,7 @@ class StatisticsDailyWasteResponseTest extends TestCase
         $this->assertCount(3, $result);
     }
 
-    public function testWastes()
+    public function testWastes(): void
     {
         $byWaste = [];
 
@@ -146,7 +144,7 @@ class StatisticsDailyWasteResponseTest extends TestCase
         $this->assertEquals("Plastico", $result[2]->name());
     }
 
-    public function testWasteManagers()
+    public function testWasteManagers(): void
     {
         $byWasteManager = [];
 
@@ -186,7 +184,7 @@ class StatisticsDailyWasteResponseTest extends TestCase
         $this->assertEquals("Sadeco", $result[2]->name());
     }
 
-    public function testProperties()
+    public function testProperties(): void
     {
         $byProperty = [];
 
@@ -224,10 +222,5 @@ class StatisticsDailyWasteResponseTest extends TestCase
         $this->assertEquals("Hotel A", $result[0]->name());
         $this->assertEquals("Hotel B", $result[1]->name());
         $this->assertEquals("Hotel C", $result[2]->name());
-    }
-
-    private function createSUT($repository)
-    {
-        return new ListDailyWastesService($repository, new DailyWasteAuthorizer());
     }
 }

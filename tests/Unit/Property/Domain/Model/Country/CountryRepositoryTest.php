@@ -8,7 +8,7 @@ use App\Property\Domain\Model\Country\CountryRepository;
 
 abstract class CountryRepositoryTest extends KernelTestCase
 {
-    public function testAddCountryToRepository()
+    public function testAddCountryToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -24,7 +24,7 @@ abstract class CountryRepositoryTest extends KernelTestCase
         $this->assertEquals($country->id(), $recoverCountry->id());
     }
 
-    public function testRemoveCountryToRepository()
+    public function testRemoveCountryToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -42,7 +42,7 @@ abstract class CountryRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($country->id()));
     }
 
-    public function testFindByName()
+    public function testFindByName(): void
     {
         $repository = $this->createSUT();
 
@@ -58,7 +58,7 @@ abstract class CountryRepositoryTest extends KernelTestCase
         $this->assertEquals($country->id(), $recoverCountry->id());
     }
 
-    public function testFindByIso()
+    public function testFindByIso(): void
     {
         $repository = $this->createSUT();
 
@@ -74,7 +74,7 @@ abstract class CountryRepositoryTest extends KernelTestCase
         $this->assertTrue($country->id()->equals($recoverCountry->id()));
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -100,7 +100,7 @@ abstract class CountryRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
@@ -126,7 +126,7 @@ abstract class CountryRepositoryTest extends KernelTestCase
         $this->assertCount(6, $result);
     }
 
-    public function testFindNotRecoverRemoved()
+    public function testFindNotRecoverRemoved(): void
     {
         $repository = $this->createSUT();
 

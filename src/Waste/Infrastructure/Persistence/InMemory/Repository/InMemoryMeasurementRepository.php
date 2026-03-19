@@ -2,6 +2,9 @@
 
 namespace App\Waste\Infrastructure\Persistence\InMemory\Repository;
 
+use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Security\Domain\Model\User\UserId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\Purpose;
@@ -42,9 +45,7 @@ class InMemoryMeasurementRepository implements MeasurementRepository
 
     public function find(MeasurementId $measurementId): ?Measurement
     {
-        return (isset($this->measurements[(string) $measurementId]))
-            ? $this->measurements[(string) $measurementId]
-            : null
+        return $this->measurements[(string) $measurementId] ?? null
         ;
     }
 
@@ -67,7 +68,7 @@ class InMemoryMeasurementRepository implements MeasurementRepository
     {
         $results = [];
 
-        if (count($this->measurements) == 0) {
+        if (count($this->measurements) === 0) {
             return $results;
         }
 
@@ -75,65 +76,65 @@ class InMemoryMeasurementRepository implements MeasurementRepository
 
         foreach ($this->measurements as $measurement) {
             if (
-                null !== $filter->containerId
+                $filter->containerId instanceof ContainerId
                 && (
                     null == $measurement->containerId()
-                    || false == $filter->containerId->equals($measurement->containerId())
+                    || false === $filter->containerId->equals($measurement->containerId())
                 )
             ) {
                 continue;
             }
 
             if (
-                null !== $filter->wasteId
+                $filter->wasteId instanceof WasteId
                 && (
                     null == $measurement->wasteId()
-                    || false == $filter->wasteId->equals($measurement->wasteId())
+                    || false === $filter->wasteId->equals($measurement->wasteId())
                 )
             ) {
                 continue;
             }
 
-            if (null !== $filter->purpose && $filter->purpose !== $measurement->purpose()) {
+            if ($filter->purpose instanceof Purpose && $filter->purpose !== $measurement->purpose()) {
                 continue;
             }
 
-            if (null !== $filter->measurementMethod && $filter->measurementMethod !== $measurement->measurementMethod()) {
+            if ($filter->measurementMethod instanceof MeasurementMethod && $filter->measurementMethod !== $measurement->measurementMethod()) {
                 continue;
             }
 
             if (
-                null !== $filter->wasteManagerId
+                $filter->wasteManagerId instanceof WasteManagerId
                 && (
                     null == $measurement->wasteManagerId()
-                    || false == $filter->wasteManagerId->equals($measurement->wasteManagerId())
+                    || false === $filter->wasteManagerId->equals($measurement->wasteManagerId())
                 )
             ) {
                 continue;
             }
 
             if (
-                null !== $filter->propertyId
+                $filter->propertyId instanceof PropertyId
                 && (
                     null == $measurement->propertyId()
-                    || false == $filter->propertyId->equals($measurement->propertyId())
+                    || false === $filter->propertyId->equals($measurement->propertyId())
                 )
             ) {
                 continue;
             }
 
             if (
-                null !== $filter->accountId
+                $filter->accountId instanceof AccountId
                 && (
                     null == $measurement->accountId()
-                    || false == $filter->accountId->equals($measurement->accountId())
+                    || false === $filter->accountId->equals($measurement->accountId())
                 )
             ) {
                 continue;
             }
 
             if (
-                null !== $filter->userId
+                $filter->userId instanceof UserId
                 && (
                     null == $measurement->registeredBy()
                     || false == $measurement->registeredBy()->equals($filter->userId)
@@ -150,7 +151,7 @@ class InMemoryMeasurementRepository implements MeasurementRepository
             }
 
             if (
-                null !== $filter->registeredAt
+                $filter->registeredAt instanceof \DateTimeImmutable
                 && (
                     null == $measurement->registeredAt()
                     || $measurement->registeredAt()->format('Y-m-d') !== $filter->registeredAt->format('Y-m-d')

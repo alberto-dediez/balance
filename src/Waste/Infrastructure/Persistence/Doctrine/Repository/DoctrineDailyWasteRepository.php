@@ -21,21 +21,21 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineDailyWasteRepository implements DailyWasteRepository
 {
-    public function __construct(private EntityManagerInterface $manager)
+    public function __construct(private readonly EntityManagerInterface $manager)
     {
 
     }
 
     public function add(DailyWaste $dailyWaste): void
     {
-        $this->getEntityManager()->persist($dailyWaste);
-        $this->getEntityManager()->flush();
+        $this->manager->persist($dailyWaste);
+        $this->manager->flush();
     }
 
     public function remove(DailyWaste $dailyWaste): void
     {
-        $this->getEntityManager()->remove($dailyWaste);
-        $this->getEntityManager()->flush();
+        $this->manager->remove($dailyWaste);
+        $this->manager->flush();
     }
 
     public function find(DailyWasteId $dailyWasteId): ?DailyWaste
@@ -55,13 +55,13 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
     public function findByDay(\DateTimeImmutable $day, PropertyId $propertyId, WasteId $wasteId, Purpose $purpose, WasteManagerId $wasteManagerId, AccountId $accountId): ?DailyWaste
     {
         $filter = new DailyWasteFilter(
-            limit: 0,
             properties: [$propertyId],
             wasteId: $wasteId,
             wasteManagerId: $wasteManagerId,
             purpose: $purpose,
             accountId: $accountId,
-            day: $day
+            day: $day,
+            limit: 0
         );
 
         return $this->createQueryBuilderFromFilter($filter)
@@ -72,7 +72,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
 
     private function createQueryBuilderFromFilter(DailyWasteFilter $filter): QueryBuilder
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb = $this->manager->createQueryBuilder();
 
         $qb->select('m')
             ->from(DailyWaste::class, 'm')
@@ -83,11 +83,11 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
                 ->andWhere(
                     $qb->expr()->in('m.propertyId', ':properties')
                 )
-                ->setParameter('properties', array_map(function (PropertyId $propertyId) { return (string) $propertyId; }, $filter->properties))
+                ->setParameter('properties', array_map(fn(PropertyId $propertyId) => (string) $propertyId, $filter->properties))
             ;
         }
 
-        if (null !== $filter->wasteId) {
+        if ($filter->wasteId instanceof WasteId) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('m.wasteId', ':wasteId')
@@ -96,7 +96,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
             ;
         }
 
-        if (null !== $filter->purpose) {
+        if ($filter->purpose instanceof Purpose) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('m.purpose', ':purpose')
@@ -105,7 +105,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
             ;
         }
 
-        if (null !== $filter->wasteManagerId) {
+        if ($filter->wasteManagerId instanceof WasteManagerId) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('m.wasteManagerId', ':wasteManagerId')
@@ -114,7 +114,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
             ;
         }
 
-        if (null !== $filter->accountId) {
+        if ($filter->accountId instanceof AccountId) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('m.accountId', ':accountId')
@@ -123,7 +123,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
             ;
         }
 
-        if (null !== $filter->day) {
+        if ($filter->day instanceof \DateTimeImmutable) {
             $qb
                 ->andWhere(
                     $qb->expr()->like('m.day', ':day')
@@ -132,7 +132,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
             ;
         }
 
-        if (null !== $filter->dayFrom) {
+        if ($filter->dayFrom instanceof \DateTimeImmutable) {
             $qb
                 ->andWhere(
                     $qb->expr()->gte('m.day', ':dayFrom')
@@ -141,7 +141,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
             ;
         }
 
-        if (null !== $filter->dayTo) {
+        if ($filter->dayTo instanceof \DateTimeImmutable) {
             $qb
                 ->andWhere(
                     $qb->expr()->lte('m.day', ':dayTo')
@@ -150,14 +150,11 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
             ;
         }
 
-        $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
+        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
 
-        switch ($filter->orderBy) {
-            case 'day':
-            default:
-                $qb->orderBy('m.day', $way);
-                break;
-        }
+        match ($filter->orderBy) {
+            default => $qb->orderBy('m.day', $way),
+        };
 
         return $qb;
     }
@@ -186,10 +183,5 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
             ->getQuery()
             ->getSingleScalarResult()
         ;
-    }
-
-    private function getEntityManager()
-    {
-        return $this->manager;
     }
 }

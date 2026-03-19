@@ -3,7 +3,6 @@
 namespace App\Waste\Application\Measurement\Import;
 
 use App\Shared\Application\CommandBus\Command;
-use App\Waste\Domain\Model\Container\Purpose;
 
 class ImportMeasurementRequest implements Command
 {

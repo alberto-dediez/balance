@@ -15,17 +15,19 @@ class RemoveMeasurement implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) == 0) {
+        if (count($request->elements) === 0) {
             return [];
         }
 
         $commands = [];
 
         foreach ($request->elements as $measurement) {
-            if (null === $measurement || null === $measurement->id()) {
+            if (null === $measurement) {
                 continue;
             }
-
+            if (null === $measurement->id()) {
+                continue;
+            }
             $commands[] = new RemoveMeasurementRequest(
                 measurementId: $measurement->id()
             );

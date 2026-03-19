@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Waste\Application\Measurement\List;
 
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
@@ -20,7 +21,7 @@ class ListMeasurementsServiceTest extends TestCase
         
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = MeasurementRepositoryMother::inMemory();
 
@@ -46,7 +47,7 @@ class ListMeasurementsServiceTest extends TestCase
         $this->assertEquals(4, $result->totalResults);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryMeasurementRepository $repository): ListMeasurementsService
     {
         return new ListMeasurementsService($repository, new MeasurementAuthorizer());
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\User\RecoverToken;
 
 use App\Security\Application\User\RecoverToken\RecoverTokenRequest;
@@ -13,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class RecoverTokenServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -22,7 +24,7 @@ class RecoverTokenServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -33,7 +35,7 @@ class RecoverTokenServiceTest extends TestCase
         $sut = $this->createSUT($repository);
 
         $request = new RecoverTokenRequest(
-            username: $user->username()
+            username: $user->username(),
         );
 
         $sut($request);
@@ -45,7 +47,7 @@ class RecoverTokenServiceTest extends TestCase
         $this->assertTrue($user->id()->equals($lastEvent->userId()));
     }
 
-    public function testNotFoundUser()
+    public function testNotFoundUser(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -64,7 +66,7 @@ class RecoverTokenServiceTest extends TestCase
         $sut($request);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -77,7 +79,7 @@ class RecoverTokenServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryUserRepository $repository): RecoverTokenService
     {
         return new RecoverTokenService($repository);
     }

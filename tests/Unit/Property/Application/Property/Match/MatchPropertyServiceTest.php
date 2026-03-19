@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Property\Match;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -21,7 +22,7 @@ use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 
 class MatchPropertyServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -30,7 +31,7 @@ class MatchPropertyServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testFindByName()
+    public function testFindByName(): void
     {
         $destination = DestinationMother::random();
 
@@ -81,7 +82,7 @@ class MatchPropertyServiceTest extends TestCase
         $this->assertEquals('Hotel Abaco & Spa', $lastEvent->name());
     }
 
-    public function testFindByExternalId()
+    public function testFindByExternalId(): void
     {
         $destination = DestinationMother::random();
 
@@ -133,7 +134,7 @@ class MatchPropertyServiceTest extends TestCase
         $this->assertEquals('Hotel Abaco & Spa', $lastEvent->name());
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryPropertyRepository $repository): MatchPropertyService
     {
         return new MatchPropertyService($repository, new PropertyAuthorizer());
     }

@@ -15,17 +15,19 @@ class RemoveDestination implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) == 0) {
+        if (count($request->elements) === 0) {
             return [];
         }
 
         $commands = [];
 
         foreach ($request->elements as $destination) {
-            if (null === $destination || null === $destination->id()) {
+            if (null === $destination) {
                 continue;
             }
-
+            if (null === $destination->id()) {
+                continue;
+            }
             $commands[] = new RemoveDestinationRequest(
                 destinationId: $destination->id()
             );

@@ -2,6 +2,10 @@
 
 namespace App\Tests\Unit\Waste\Application\Measurement\Register;
 
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryContainerRepository;
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -24,7 +28,7 @@ use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
 
 class RegisterMeasurementServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -33,7 +37,7 @@ class RegisterMeasurementServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $userRepository = UserRepositoryMother::inMemory();
         $measurementRepository = MeasurementRepositoryMother::inMemory();
@@ -93,7 +97,7 @@ class RegisterMeasurementServiceTest extends TestCase
         $this->assertTrue($measurementPersisted->id()->equals($lastEvent->measurementId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $userRepository = UserRepositoryMother::inMemory();
         $measurementRepository = MeasurementRepositoryMother::inMemory();
@@ -118,11 +122,11 @@ class RegisterMeasurementServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($containerRepository, $measurementRepository, $propertyRepository, $userRepository)
+    private function createSUT(InMemoryContainerRepository $containerRepository, InMemoryMeasurementRepository $measurementRepository, InMemoryPropertyRepository $propertyRepository, InMemoryUserRepository $userRepository): RegisterMeasurementService
     {
         return new RegisterMeasurementService(
-            containerRepository: $containerRepository,
             measurementRepository: $measurementRepository,
+            containerRepository: $containerRepository,
             propertyRepository: $propertyRepository,
             userRepository: $userRepository,
             authorizer: new MeasurementAuthorizer()

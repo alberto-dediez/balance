@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Waste\Application\Waste\List;
 
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteRepository;
 use PHPUnit\Framework\TestCase;
 use App\Waste\Application\Waste\WasteAuthorizer;
 use App\Waste\Application\Waste\List\ListWastesRequest;
@@ -18,7 +19,7 @@ class ListWastesServiceTest extends TestCase
         
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = WasteRepositoryMother::inMemory();
 
@@ -39,7 +40,7 @@ class ListWastesServiceTest extends TestCase
         $this->assertEquals(4, $result->totalResults);
     }
 
-    public function testFilterByIsDangerous()
+    public function testFilterByIsDangerous(): void
     {
         $repository = WasteRepositoryMother::inMemory();
 
@@ -84,7 +85,7 @@ class ListWastesServiceTest extends TestCase
         $this->assertEquals(4, $result->totalResults);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryWasteRepository $repository): ListWastesService
     {
         return new ListWastesService($repository, new WasteAuthorizer());
     }

@@ -2,7 +2,7 @@
 
 namespace App\DataExchange\Domain\Model\Importation;
 
-class ColumnValueTranslation
+class ColumnValueTranslation implements \Stringable
 {
     public function __construct(
         public string $value,

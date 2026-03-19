@@ -46,12 +46,12 @@ class InMemoryBrandRepository implements BrandRepository
 
     public function findByName(string $name): ?Brand
     {
-        if (count($this->brands) == 0) {
+        if (count($this->brands) === 0) {
             return null;
         }
 
         foreach ($this->brands as $brand) {
-            if (null !== $brand->name() && strtolower($brand->name()) == strtolower($name)) {
+            if (null !== $brand->name() && strtolower($brand->name()) === strtolower($name)) {
                 return $this->find($brand->id());
             }
         }
@@ -61,7 +61,7 @@ class InMemoryBrandRepository implements BrandRepository
 
     public function findBySourceAndExternalId(ExternalSource $source, ExternalId $externalId): ?Brand
     {
-        if (count($this->brands) == 0) {
+        if (count($this->brands) === 0) {
             return null;
         }
 
@@ -85,7 +85,7 @@ class InMemoryBrandRepository implements BrandRepository
     {
         $results = [];
 
-        if (count($this->brands) == 0) {
+        if (count($this->brands) === 0) {
             return $results;
         }
 
@@ -94,7 +94,7 @@ class InMemoryBrandRepository implements BrandRepository
         foreach ($this->brands as $brand) {
             if (
                 !empty($filter->name)
-                && false === strpos(strtolower($brand->name()), strtolower($filter->name))
+                && !str_contains(strtolower((string) $brand->name()), strtolower($filter->name))
             ) {
                 continue;
             }

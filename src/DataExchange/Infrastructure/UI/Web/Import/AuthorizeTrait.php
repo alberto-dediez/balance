@@ -60,13 +60,8 @@ trait AuthorizeTrait
         if (false === $importationType->isAuthorized($user)) {
             return false;
         }
-
-        if (false === $this->importationAuthorizer->canDoThat(
+        return false !== $this->importationAuthorizer->canDoThat(
                 $importation, Action::Edit, $user
-            )) {
-            return false;
-        }
-
-        return true;
+            );
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Waste\Application\Measurement\Update;
 
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -18,7 +19,7 @@ use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
 
 class UpdateMeasurementServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -27,7 +28,7 @@ class UpdateMeasurementServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = MeasurementRepositoryMother::inMemory();
 
@@ -64,7 +65,7 @@ class UpdateMeasurementServiceTest extends TestCase
         $this->assertTrue($measurementPersisted->id()->equals($lastEvent->measurementId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = MeasurementRepositoryMother::inMemory();
 
@@ -82,7 +83,7 @@ class UpdateMeasurementServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryMeasurementRepository $repository): UpdateMeasurementService
     {
         return new UpdateMeasurementService(
             measurementRepository: $repository,

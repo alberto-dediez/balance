@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Destination\List;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Property\Application\Destination\DestinationAuthorizer;
@@ -19,7 +20,7 @@ class ListDestinationsServiceTest extends TestCase
         
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = DestinationRepositoryMother::inMemory();
 
@@ -42,7 +43,7 @@ class ListDestinationsServiceTest extends TestCase
         $this->assertEquals(4, $result->totalResults);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryDestinationRepository $repository): ListDestinationsService
     {
         return new ListDestinationsService($repository, new DestinationAuthorizer());
     }

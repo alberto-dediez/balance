@@ -2,6 +2,7 @@
 
 namespace App\DataExchange\Infrastructure\Persistence\PDO\Repository;
 
+use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ColumnValueTranslation;
 use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
@@ -14,7 +15,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
 {
     const BATCH_SIZE = 100;
 
-    public function __construct(private string $storagePath)
+    public function __construct(private readonly string $storagePath)
     {
         if (!is_dir($this->storagePath) && mkdir($this->storagePath, 0755, true)) {
             throw new IOException(
@@ -27,7 +28,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
 
     public function create(Importation $importation): void
     {
-        if (null === $importation->file()) {
+        if (!$importation->file() instanceof ImportationFile) {
             throw new \RuntimeException("You must provide a file to import");
         }
 
@@ -36,7 +37,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         try {
             $this->createData($importation, $extractor);
             $this->createFields($importation, $extractor);
-            $this->createTranslations($importation, $extractor);
+            $this->createTranslations($importation);
         } catch (\PDOException $e) {
             throw new IOException($e->getMessage(), (int) $e->getCode(), $e);
         }
@@ -46,12 +47,12 @@ class SqliteImportationDataRepository implements ImportationDataRepository
     {
         $createTableSql = sprintf(
             'CREATE TABLE importation_data (row_id INTEGER PRIMARY KEY AUTOINCREMENT, %s, `executed` BOOLEAN DEFAULT 0, `error` TEXT DEFAULT NULL)',
-            implode(', ', array_map(fn($col) => "\"{$col}\" TEXT", $extractor->getColumns()))
+            implode(', ', array_map(fn($col): string => "\"{$col}\" TEXT", $extractor->getColumns()))
         );
 
         $insertSql = sprintf(
             'INSERT INTO importation_data (%s) VALUES ',
-            implode(', ', array_map(fn($col) => "\"{$col}\"", $extractor->getColumns()))
+            implode(', ', array_map(fn($col): string => "\"{$col}\"", $extractor->getColumns()))
         );
 
         $connection = $this->connect($importation->id());
@@ -65,7 +66,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         while (null !== ($row = $extractor->getRow())) {
             $query .= sprintf(
                 "(%s),",
-                implode(', ', array_map(fn($col) => ":{$col}_{$toInsert}", $extractor->getColumns()))
+                implode(', ', array_map(fn($col): string => ":{$col}_{$toInsert}", $extractor->getColumns()))
             );
 
             foreach ($extractor->getColumns() as $col) {
@@ -114,13 +115,13 @@ class SqliteImportationDataRepository implements ImportationDataRepository
     {
         $createTableForFieldsSql = sprintf(
             'CREATE TABLE importation_fields (row_id INTEGER PRIMARY KEY AUTOINCREMENT, %s)',
-            implode(', ', array_map(fn($col) => "\"{$col}\" VARCHAR(100)", $extractor->getColumns()))
+            implode(', ', array_map(fn($col): string => "\"{$col}\" VARCHAR(100)", $extractor->getColumns()))
         );
 
         $insertForFieldsSql = sprintf(
             'INSERT INTO importation_fields (%s) VALUES (%s)',
-            implode(', ', array_map(fn($col) => "\"{$col}\"", $extractor->getColumns())),
-            implode(', ', array_map(fn($col) => "NULL", $extractor->getColumns()))
+            implode(', ', array_map(fn($col): string => "\"{$col}\"", $extractor->getColumns())),
+            implode(', ', array_map(fn($col): string => "NULL", $extractor->getColumns()))
         );
 
         $connection = $this->connect($importation->id());
@@ -129,7 +130,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         $connection->exec($insertForFieldsSql);
     }
 
-    private function createTranslations(Importation $importation, FileExtractor $extractor): void
+    private function createTranslations(Importation $importation): void
     {
         $createTableSql = 'CREATE TABLE importation_translations (
             column_name TEXT NOT NULL,
@@ -172,7 +173,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
 
         $result = [];
 
-        foreach ($columns as $column => $columnName) {
+        foreach (array_keys($columns) as $column) {
             $result[] = $this->getConfiguration($importationId, $column);
         }
 
@@ -205,9 +206,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
      */
     private function getTranslations(ImportationId $importationId, string $columnName, array $values): array
     {
-        $translations = array_map(function ($value) {
-            return new ColumnValueTranslation(value: $value, translation: null);
-        }, array_filter($values, fn($value) => $value !== null));
+        $translations = array_map(fn($value) => new ColumnValueTranslation(value: $value, translation: null), array_filter($values, fn($value): bool => $value !== null));
 
         $connection = $this->connect($importationId);
 
@@ -216,7 +215,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         $statement->execute();
 
         while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
-            $found = array_filter($translations, fn (ColumnValueTranslation $translation) => $translation->value == $row['column_value']);
+            $found = array_filter($translations, fn (ColumnValueTranslation $translation): bool => $translation->value == $row['column_value']);
 
             $translation = count($found) > 0 ? array_pop($found) : new ColumnValueTranslation(value: $row['column_value'], translation: null);
             $translation->translation = $row['column_translation'];
@@ -258,7 +257,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         $columns = $this->getColumns($importationId);
         $sql = sprintf(
             "SELECT %s FROM importation_data WHERE row_id = ?",
-            implode(', ', array_map(fn($col) => "\"{$col}\"", $columns))
+            implode(', ', array_map(fn($col): string => "\"{$col}\"", $columns))
         );
 
         $statement = $connection->prepare($sql);
@@ -346,7 +345,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
 
             return $pdo;
         } catch (\PDOException $e) {
-            throw new IOException(message: "Error creating connection: " . $e->getMessage(), code: 503);
+            throw new IOException(message: "Error creating connection: " . $e->getMessage(), code: 503, previous: $e);
         }
     }
 }

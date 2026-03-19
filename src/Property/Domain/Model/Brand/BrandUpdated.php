@@ -14,9 +14,9 @@ final class BrandUpdated extends DomainEvent
     protected static string $eventName = 'brandUpdated';
 
     public function __construct(
-        private BrandId $brandId, 
-        private string $name, 
-        private ?ExternalId $externalId = null,
+        private readonly BrandId $brandId,
+        private readonly string $name,
+        private readonly ?ExternalId $externalId = null,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -38,12 +38,12 @@ final class BrandUpdated extends DomainEvent
         return $this->externalId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->brandId();
+        return $this->brandId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'brandId' => (string) $this->brandId,
@@ -55,12 +55,12 @@ final class BrandUpdated extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new BrandUpdated(
-            brandId: new BrandId($payload['brandId']), 
+            brandId: new BrandId($payload['brandId']),
             name: $payload['name'],
-            externalId: isset($payload['externalId']) ? $payload['externalId'] : null,
+            externalId: $payload['externalId'] ?? null,
             id: $id,
             occurredOn: $occurredOn
         );

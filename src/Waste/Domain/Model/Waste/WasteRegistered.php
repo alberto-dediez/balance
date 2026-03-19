@@ -13,11 +13,11 @@ final class WasteRegistered extends DomainEvent
     protected static string $eventName = 'wasteRegistered';
 
     public function __construct(
-        private WasteId $wasteId, 
-        private string $name, 
-        private bool $isDangerous = false,
-        private string $density = '0.00',
-        private string $color = '#000000',
+        private readonly WasteId $wasteId,
+        private readonly string $name,
+        private readonly bool $isDangerous = false,
+        private readonly string $density = '0.00',
+        private readonly string $color = '#000000',
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -49,12 +49,12 @@ final class WasteRegistered extends DomainEvent
         return $this->color;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->wasteId();
+        return $this->wasteId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'wasteId' => (string) $this->wasteId,
@@ -68,14 +68,14 @@ final class WasteRegistered extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new WasteRegistered(
-            wasteId: new WasteId($payload['wasteId']), 
+            wasteId: new WasteId($payload['wasteId']),
             name: $payload['name'],
-            isDangerous: isset($payload['isDangerous']) ? $payload['isDangerous'] : false,
-            density: isset($payload['density']) ? $payload['density'] : '0',
-            color: isset($payload['color']) ? $payload['color'] : '#c3d300',
+            isDangerous: $payload['isDangerous'] ?? false,
+            density: $payload['density'] ?? '0',
+            color: $payload['color'] ?? '#c3d300',
             id: $id,
             occurredOn: $occurredOn
         );

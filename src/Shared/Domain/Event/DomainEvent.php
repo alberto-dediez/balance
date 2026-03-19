@@ -1,25 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Domain\Event;
 
-use DateTimeImmutable;
-use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
 abstract class DomainEvent
 {
-    protected DateTimeImmutable $occurredOn;
+    protected \DateTimeImmutable $occurredOn;
 
     protected DomainEventId $id;
 
     protected static string $eventName = 'generic';
     protected static string $context = 'shared';
 
-    public function __construct(?DomainEventId $id = null, ?DateTimeImmutable $occuredOn = null)
+    public function __construct(?DomainEventId $id = null, ?\DateTimeImmutable $occuredOn = null)
     {
         $this->id = null == $id ? DomainEventId::generate() : $id;
 
-        $this->occurredOn = null == $occuredOn ? new DateTimeImmutable("NOW") : $occuredOn;
+        $this->occurredOn = null == $occuredOn ? new \DateTimeImmutable('NOW') : $occuredOn;
     }
 
     public function id(): DomainEventId
@@ -27,7 +27,7 @@ abstract class DomainEvent
         return $this->id;
     }
 
-    public function occurredOn(): DateTimeImmutable
+    public function occurredOn(): \DateTimeImmutable
     {
         return $this->occurredOn;
     }
@@ -44,12 +44,18 @@ abstract class DomainEvent
 
     public static function contextName(): string
     {
-        return sprintf("%s.%s", static::$context, static::$eventName);
+        return sprintf('%s.%s', static::$context, static::$eventName);
     }
 
     abstract public function aggregateRootId(): ?AggregateRootId;
 
-    abstract public function payload(): ?array;
+    /**
+     * @return array<string,mixed>
+     */
+    abstract public function payload(): array;
 
-    abstract public static function rebuildFromPayload(DomainEventId $id, \DateTimeImmutable $occurredOn, ?array $payload): static;
+    /**
+     * @param array<string,mixed> $payload
+     */
+    abstract public static function rebuildFromPayload(DomainEventId $id, \DateTimeImmutable $occurredOn, array $payload = []): static;
 }

@@ -2,7 +2,6 @@
 
 namespace App\DataExchange\Domain\Model\Importation;
 
-use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
@@ -13,7 +12,7 @@ final class ImportationExecuted extends DomainEvent
     protected static string $eventName = 'importationExecuted';
 
     public function __construct(
-        private ImportationId $importationId,
+        private readonly ImportationId $importationId,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -25,12 +24,12 @@ final class ImportationExecuted extends DomainEvent
         return $this->importationId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->importationId();
+        return $this->importationId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'importationId' => (string) $this->importationId,
@@ -40,7 +39,7 @@ final class ImportationExecuted extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new ImportationExecuted(
             importationId: new ImportationId($payload['importationId']),

@@ -12,7 +12,7 @@ class WasteExtension extends AbstractExtension
 {
     private array $wastes = [];
 
-    public function __construct(private WasteRepository $wasteRepository)
+    public function __construct(private readonly WasteRepository $wasteRepository)
     {
 
     }
@@ -20,7 +20,7 @@ class WasteExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('waste_name', [$this, 'wasteName']),
+            new TwigFilter('waste_name', $this->wasteName(...)),
         ];
     }
 

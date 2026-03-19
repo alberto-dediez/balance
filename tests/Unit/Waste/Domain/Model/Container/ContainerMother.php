@@ -17,10 +17,10 @@ class ContainerMother
     public static function registeredContainer()
     {   
         return self::from(
+            accountId: AccountId::generate(),
             containerId: ContainerId::generate(),
             wasteId: WasteId::generate(),
             propertyId: PropertyId::generate(),
-            accountId: AccountId::generate(),
             wasteManagerId: WasteManagerId::generate()
         );
     }
@@ -28,10 +28,10 @@ class ContainerMother
     public static function fromId(string $id)
     {
         return self::from(
+            accountId: AccountId::generate(),
             containerId: new ContainerId($id),
             wasteId: WasteId::generate(),
             propertyId: PropertyId::generate(),
-            accountId: AccountId::generate(),
             wasteManagerId: WasteManagerId::generate()
         );
     }
@@ -45,8 +45,6 @@ class ContainerMother
             propertyId: new PropertyId($propertyId),
             wasteManagerId: WasteManagerId::generate()
         );
-
-        return $container;
     }
 
     public static function fromPropertyAccountAndWaste(string $propertyId, string $accountId, string $wasteId)
@@ -58,49 +56,43 @@ class ContainerMother
             propertyId: new PropertyId($propertyId),
             wasteManagerId: WasteManagerId::generate()
         );
-
-        return $container;
     }
 
     public static function fromPropertyAccountAndWasteAndId(string $propertyId, string $accountId, string $wasteId, string $containerId)
     {
-        $container = self::from(
+        return self::from(
             accountId: new AccountId($accountId),
             containerId: new ContainerId($containerId),
             wasteId: new WasteId($wasteId),
             propertyId: new PropertyId($propertyId),
             wasteManagerId: WasteManagerId::generate()
         );
-
-        return $container;
     }
 
     public static function fromPropertyAccountAndWasteAndIdAndManager(string $propertyId, string $accountId, string $wasteId, string $containerId, string $managerId)
     {
-        $container = self::from(
+        return self::from(
             accountId: new AccountId($accountId),
             containerId: new ContainerId($containerId),
             wasteId: new WasteId($wasteId),
             propertyId: new PropertyId($propertyId),
             wasteManagerId: new WasteManagerId($managerId)
         );
-
-        return $container;
     }
 
     public static function fromAccount(AccountId $accountId)
     {
-        $purpose = Purpose::cases()[rand(0, count(Purpose::cases())-1)];
-        $measurementMethod = MeasurementMethod::cases()[rand(0, count(MeasurementMethod::cases())-1)];
+        $purpose = Purpose::cases()[random_int(0, count(Purpose::cases())-1)];
+        $measurementMethod = MeasurementMethod::cases()[random_int(0, count(MeasurementMethod::cases())-1)];
 
         return self::from(
             accountId: $accountId,
             containerId: ContainerId::generate(),
             wasteId: WasteId::generate(),
             propertyId: PropertyId::generate(),
+            wasteManagerId: WasteManagerId::generate(),
             purpose: $purpose,
-            measurementMethod: $measurementMethod,
-            wasteManagerId: WasteManagerId::generate()
+            measurementMethod: $measurementMethod
         );
     }
 
@@ -113,7 +105,7 @@ class ContainerMother
         Purpose $purpose = Purpose::Waste, 
         MeasurementMethod $measurementMethod = MeasurementMethod::Volume,
         string $volume = '10'
-    ) {
+    ): Container {
         $container = new Container(
             id: $containerId
         );
@@ -138,18 +130,18 @@ class ContainerMother
 
     public static function random()
     {
-        $purpose = Purpose::cases()[rand(0, count(Purpose::cases())-1)];
-        $measurementMethod = MeasurementMethod::cases()[rand(0, count(MeasurementMethod::cases())-1)];
+        $purpose = Purpose::cases()[random_int(0, count(Purpose::cases())-1)];
+        $measurementMethod = MeasurementMethod::cases()[random_int(0, count(MeasurementMethod::cases())-1)];
 
         return self::from(
             accountId: AccountId::generate(),
             containerId: ContainerId::generate(),
             wasteId: WasteId::generate(),
             propertyId: PropertyId::generate(),
+            wasteManagerId: WasteManagerId::generate(),
             purpose: $purpose,
             measurementMethod: $measurementMethod,
-            volume: rand(10, 100),
-            wasteManagerId: WasteManagerId::generate()
+            volume: random_int(10, 100)
         );
     }
 }

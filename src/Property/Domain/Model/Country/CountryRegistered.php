@@ -14,10 +14,10 @@ final class CountryRegistered extends DomainEvent
     protected static string $eventName = 'countryRegistered';
 
     public function __construct(
-        private CountryId $countryId, 
-        private string $name, 
-        private ?string $iso = null, 
-        private ?ExternalId $externalId = null,
+        private readonly CountryId $countryId,
+        private readonly string $name,
+        private readonly ?string $iso = null,
+        private readonly ?ExternalId $externalId = null,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -44,16 +44,16 @@ final class CountryRegistered extends DomainEvent
         return $this->externalId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->countryId();
+        return $this->countryId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'countryId' => (string) $this->countryId,
-            'iso' => $this->iso(),
+            'iso' => $this->iso,
             'name' => $this->name,
             'externalId' => $this->externalId
         ];
@@ -62,13 +62,13 @@ final class CountryRegistered extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new CountryRegistered(
-            countryId: new CountryId($payload['countryId']), 
-            iso:$payload['iso'], 
+            countryId: new CountryId($payload['countryId']),
             name: $payload['name'],
-            externalId: isset($payload['externalId']) ? $payload['externalId'] : null,
+            iso:$payload['iso'],
+            externalId: $payload['externalId'] ?? null,
             id: $id,
             occurredOn: $occurredOn
         );

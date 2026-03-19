@@ -19,7 +19,7 @@ use App\Tests\Unit\Property\Domain\Model\Category\CategoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Property\Domain\Model\Destination\DestinationMother;
 
-final class PropertyContext implements Context
+final readonly class PropertyContext implements Context
 {
     private AcceptanceClient $client;
 
@@ -55,7 +55,7 @@ final class PropertyContext implements Context
     }
 
     #[Given('property :name with id :id exists')]
-    public function propertyWithIdExists($name, $id): void
+    public function propertyWithIdExists(string $name, string $id): void
     {
         $property = PropertyMother::fromNameAndId($name, $id);
         
@@ -63,7 +63,7 @@ final class PropertyContext implements Context
     }    
 
     #[Given('property :name with id :id of account :account exists')]
-    public function propertyWithIdOfAccountExists($name, $id, $account): void
+    public function propertyWithIdOfAccountExists(string $name, string $id, string $account): void
     {
         $property = PropertyMother::fromNameAndAccountAndId($name, $account, $id);
         
@@ -71,7 +71,7 @@ final class PropertyContext implements Context
     }
 
     #[Given('country :name with id :id exists')]
-    public function countryWithIdExists($name, $id): void
+    public function countryWithIdExists(string $name, string $id): void
     {
         $country = CountryMother::fromNameAndId($name, $id);
         
@@ -79,7 +79,7 @@ final class PropertyContext implements Context
     } 
 
     #[Given('destination :name with id :id exists')]
-    public function destinationWithIdExists($name, $id): void
+    public function destinationWithIdExists(string $name, string $id): void
     {
         $destination = DestinationMother::fromNameAndId($name, $id);
         
@@ -87,7 +87,7 @@ final class PropertyContext implements Context
     } 
 
     #[Given('destination :name of country :country with id :id exists')]
-    public function destinationOfCountryWithIdExists($name, $country, $id): void
+    public function destinationOfCountryWithIdExists(string $name, string $country, string $id): void
     {
         $destination = DestinationMother::fromNameAndCountryAndId($name, $country, $id);
         
@@ -95,7 +95,7 @@ final class PropertyContext implements Context
     } 
 
     #[Given('category :name with id :id exists')]
-    public function categoryWithIdExists($name, $id): void
+    public function categoryWithIdExists(string $name, string $id): void
     {
         $category = CategoryMother::fromNameAndId($name, $id);
         
@@ -103,7 +103,7 @@ final class PropertyContext implements Context
     } 
 
     #[Given('brand :name with id :id exists')]
-    public function brandWithIdExists($name, $id): void
+    public function brandWithIdExists(string $name, string $id): void
     {
         $brand = BrandMother::fromNameAndId($name, $id);
         

@@ -13,7 +13,7 @@ final class CountryRemoved extends DomainEvent
     protected static string $eventName = 'countryRemoved';
 
     public function __construct(
-        private CountryId $countryId, 
+        private readonly CountryId $countryId,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -25,11 +25,11 @@ final class CountryRemoved extends DomainEvent
         return $this->countryId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->countryId();
+        return $this->countryId;
     }
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'countryId' => (string) $this->countryId
@@ -39,7 +39,7 @@ final class CountryRemoved extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new CountryRemoved(
             countryId: new CountryId($payload['countryId']),

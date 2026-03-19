@@ -11,7 +11,7 @@ use App\Waste\Domain\Model\Waste\WasteRepository;
 
 class ListWastesService
 {
-    public function __construct(private WasteRepository $repository, private WasteAuthorizer $authorizer)
+    public function __construct(private readonly WasteRepository $repository, private readonly WasteAuthorizer $authorizer)
     {
 
     }

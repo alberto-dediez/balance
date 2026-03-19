@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\UI\Api\Measurement;
 
+use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Property\Infrastructure\Symfony\Twig\PropertyExtension;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Waste\Infrastructure\Symfony\Twig\WasteExtension;
@@ -12,15 +13,15 @@ use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponse as ApiMeasur
 class MeasurementResponseGenerator
 {
     public function __construct(
-        private PropertyExtension $propertyExtension,
-        private WasteExtension $wasteExtension,
-        private WasteManagerExtension $wasteManagerExtension,
-        private TranslatorInterface $translator
+        private readonly PropertyExtension $propertyExtension,
+        private readonly WasteExtension $wasteExtension,
+        private readonly WasteManagerExtension $wasteManagerExtension,
+        private readonly TranslatorInterface $translator
     ) {
 
     }
 
-    public function generate(ModelMeasurement $modelMeasurement)
+    public function generate(ModelMeasurement $modelMeasurement): ApiMeasurement
     {
         return new ApiMeasurement(
             measurementId: (string) $modelMeasurement->id(),
@@ -29,7 +30,7 @@ class MeasurementResponseGenerator
             wasteManager: (string) $this->wasteManagerExtension->wasteManagerName($modelMeasurement->wasteManagerId()),
             quantity: $modelMeasurement->quantity(),
             load: $modelMeasurement->load(),
-            unit: null !== $modelMeasurement->measurementMethod()
+            unit: $modelMeasurement->measurementMethod() instanceof MeasurementMethod
                 ? $modelMeasurement->measurementMethod()->unit()
                 : '',
             purpose: $this->translator->trans($modelMeasurement->purpose()->value, [], 'purpose'),

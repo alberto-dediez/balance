@@ -10,7 +10,7 @@ use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 
 abstract class ContainerRepositoryTest extends KernelTestCase
 {
-    public function testAddContainerToRepository()
+    public function testAddContainerToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -26,7 +26,7 @@ abstract class ContainerRepositoryTest extends KernelTestCase
         $this->assertEquals($container->id(), $recoverContainer->id());
     }
 
-    public function testRemoveContainerToRepository()
+    public function testRemoveContainerToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -44,7 +44,7 @@ abstract class ContainerRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($container->id()));
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -79,8 +79,8 @@ abstract class ContainerRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new ContainerFilter(
-            wasteId: $waste->id(),
-            propertyId: $property->id()
+            propertyId: $property->id(),
+            wasteId: $waste->id()
         );
 
         $result = $repository->findByFilter($filter);
@@ -88,7 +88,7 @@ abstract class ContainerRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
@@ -131,7 +131,7 @@ abstract class ContainerRepositoryTest extends KernelTestCase
         $this->assertCount(6, $result);
     }
 
-    public function testFindNotRecoverRemoved()
+    public function testFindNotRecoverRemoved(): void
     {
         $repository = $this->createSUT();
 

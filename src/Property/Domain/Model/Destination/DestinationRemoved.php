@@ -13,7 +13,7 @@ final class DestinationRemoved extends DomainEvent
     protected static string $eventName = 'destinationRemoved';
 
     public function __construct(
-        private DestinationId $destinationId, 
+        private readonly DestinationId $destinationId,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -25,12 +25,12 @@ final class DestinationRemoved extends DomainEvent
         return $this->destinationId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->destinationId();
+        return $this->destinationId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'destinationId' => (string) $this->destinationId
@@ -40,7 +40,7 @@ final class DestinationRemoved extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new DestinationRemoved(
             destinationId: new DestinationId($payload['destinationId']),

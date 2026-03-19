@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryWasteRepository implements WasteRepository
 {
-    public function __construct(private LocaleGetter $localeGetter, private array $wastes = [])
+    public function __construct(private readonly LocaleGetter $localeGetter, private array $wastes = [])
     {
 
     }
@@ -49,7 +49,7 @@ class InMemoryWasteRepository implements WasteRepository
     {
         $results = [];
 
-        if (count($this->wastes) == 0) {
+        if (count($this->wastes) === 0) {
             return $results;
         }
 
@@ -58,7 +58,7 @@ class InMemoryWasteRepository implements WasteRepository
         foreach ($this->wastes as $waste) {
             if (
                 !empty($filter->name)
-                && false === strpos(strtolower($waste->name()), strtolower($filter->name))
+                && !str_contains(strtolower((string) $waste->name()), strtolower($filter->name))
             ) {
                 continue;
             }

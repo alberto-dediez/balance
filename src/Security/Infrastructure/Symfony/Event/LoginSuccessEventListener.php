@@ -1,26 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Event;
 
-use App\Security\Domain\Model\User\User;
+use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 
 #[AsEventListener]
 class LoginSuccessEventListener
 {
-    public function __invoke(LoginSuccessEvent $event)
+    public function __invoke(LoginSuccessEvent $event): void
     {
-        /** @var User $user */
         $user = $event->getUser();
+
+        if (!$user instanceof SecurityUser) {
+            return;
+        }
 
         DomainEventPublisher::instance()
             ->publish(
                 new UserLogged(
                     userId: $user->id(),
-                    firewall: $event->getFirewallName()
-                )
+                    firewall: $event->getFirewallName(),
+                ),
             )
         ;
     }

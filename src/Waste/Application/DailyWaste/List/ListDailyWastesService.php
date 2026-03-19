@@ -11,7 +11,7 @@ use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
 
 class ListDailyWastesService
 {
-    public function __construct(private DailyWasteRepository $repository, private DailyWasteAuthorizer $authorizer)
+    public function __construct(private readonly DailyWasteRepository $repository, private readonly DailyWasteAuthorizer $authorizer)
     {
 
     }

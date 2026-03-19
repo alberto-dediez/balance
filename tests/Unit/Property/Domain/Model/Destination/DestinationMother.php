@@ -42,7 +42,7 @@ class DestinationMother
         );
     }
 
-    public static function from(DestinationId $destinationId, string $name = 'name', ?string $countryId = null)
+    public static function from(DestinationId $destinationId, string $name = 'name', ?string $countryId = null): Destination
     {
         $destination = new Destination(
             id: $destinationId
@@ -57,7 +57,7 @@ class DestinationMother
     {
         return self::from(
             destinationId: DestinationId::generate(),
-            name: 'destination-' . rand(100, 999)
+            name: 'destination-' . random_int(100, 999)
         );
     }
 }

@@ -13,7 +13,7 @@ use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
-class Measurement
+class Measurement implements \Stringable
 {
     use AggregateRoot;
 
@@ -32,8 +32,7 @@ class Measurement
         private ?string $reference = null,
         private AccountId|null $accountId = null,
         private UserId|null $registeredBy = null,
-        private ?\DateTimeImmutable $registeredAt = null,
-        array $events = []
+        private ?\DateTimeImmutable $registeredAt = null
     ) {
 
     }
@@ -128,7 +127,7 @@ class Measurement
         ?string $reference = null,
         ?Unit $unit = null,
         ?\DateTimeImmutable $day = null
-    ) {
+    ): void {
         $this->recordApplyAndPublish(
             new MeasurementRegistered(
                 measurementId: $this->id(),
@@ -155,7 +154,7 @@ class Measurement
         float $load,
         ?string $justification = null,
         ?string $reference = null,
-    ) {
+    ): void {
         $this->recordApplyAndPublish(
             new MeasurementUpdated(
                 measurementId: $this->id(),
@@ -167,7 +166,7 @@ class Measurement
         );
     }
 
-    public function remove()
+    public function remove(): void
     {
         $this->recordApplyAndPublish(
             new MeasurementRemoved(
@@ -182,7 +181,7 @@ class Measurement
         );
     }
 
-    public function applyMeasurementRegistered(MeasurementRegistered $event)
+    public function applyMeasurementRegistered(MeasurementRegistered $event): void
     {
         $this->containerId = $event->containerId();
         $this->propertyId = $event->propertyId();
@@ -200,7 +199,7 @@ class Measurement
         $this->registeredAt = $event->day();
     }
 
-    public function applyMeasurementUpdated(MeasurementUpdated $event)
+    public function applyMeasurementUpdated(MeasurementUpdated $event): void
     {
         $this->quantity = $event->quantity();
         $this->load = $event->load();

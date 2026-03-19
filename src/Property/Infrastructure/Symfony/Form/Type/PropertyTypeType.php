@@ -9,7 +9,7 @@ use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
 
 class PropertyTypeType extends AbstractType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $choices = [];
 
@@ -17,10 +17,10 @@ class PropertyTypeType extends AbstractType
             $choices[$propertyType->value] = $propertyType;
         }
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => $choices,
             'translation_domain' => 'propertyType',
-        ));
+        ]);
     }
     
     public function getParent()

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Domain\Model\User;
 
 enum Role: string
@@ -12,12 +14,15 @@ enum Role: string
 
     case SuperAdmin = 'ROLE_SUPER_ADMIN';
 
+    /**
+     * @return Role[]
+     */
     public static function casesForAdmins(): array
     {
         $result = [];
 
         foreach (self::cases() as $role) {
-            if ($role == self::SuperAdmin) {
+            if (self::SuperAdmin == $role) {
                 continue;
             }
 
@@ -27,15 +32,20 @@ enum Role: string
         return $result;
     }
 
+    /**
+     * @return Role[]
+     */
     public static function casesForOwners(): array
     {
         $result = [];
 
         foreach (self::cases() as $role) {
-            if ($role == self::Admin || $role == self::SuperAdmin) {
+            if (self::Admin == $role) {
                 continue;
             }
-
+            if (self::SuperAdmin == $role) {
+                continue;
+            }
             $result[$role->value] = $role;
         }
 

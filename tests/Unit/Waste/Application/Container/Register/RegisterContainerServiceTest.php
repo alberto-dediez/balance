@@ -30,7 +30,7 @@ use App\Tests\Unit\Waste\Infrastructure\QrCode\FakeQrCodeGenerator;
 
 class RegisterContainerServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -39,7 +39,7 @@ class RegisterContainerServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $containerRepository = ContainerRepositoryMother::inMemory();
         $propertyRepository = PropertyRepositoryMother::inMemory();
@@ -59,8 +59,8 @@ class RegisterContainerServiceTest extends TestCase
             wasteId: new WasteId('444'),
             purpose: Purpose::Recycling,
             measurementMethod: MeasurementMethod::Weight,
-            wasteManagerId: WasteManagerId::generate(),
-            volume: 50
+            volume: 50,
+            wasteManagerId: WasteManagerId::generate()
         );
 
         $result = $sut($request, $user);
@@ -89,7 +89,7 @@ class RegisterContainerServiceTest extends TestCase
         $this->assertEquals(50, $lastEvent->volume());
     }
 
-    public function testRegisterWeightContainer()
+    public function testRegisterWeightContainer(): void
     {
         $containerRepository = ContainerRepositoryMother::inMemory();
         $propertyRepository = PropertyRepositoryMother::inMemory();
@@ -109,8 +109,8 @@ class RegisterContainerServiceTest extends TestCase
             wasteId: new WasteId('444'),
             purpose: Purpose::Recycling,
             measurementMethod: MeasurementMethod::Weight,
-            wasteManagerId: WasteManagerId::generate(),
-            volume: null
+            volume: null,
+            wasteManagerId: WasteManagerId::generate()
         );
 
         $result = $sut($request, $user);
@@ -136,7 +136,7 @@ class RegisterContainerServiceTest extends TestCase
         $this->assertTrue($request->wasteManagerId->equals($lastEvent->wasteManagerId()));
     }
 
-    public function testRegisterVolumeContainerWithoutVolume()
+    public function testRegisterVolumeContainerWithoutVolume(): void
     {
         $this->expectException(NotValidVolumeException::class);
 
@@ -158,14 +158,14 @@ class RegisterContainerServiceTest extends TestCase
             wasteId: new WasteId('444'),
             purpose: Purpose::Recycling,
             measurementMethod: MeasurementMethod::Volume,
-            wasteManagerId: WasteManagerId::generate(),
-            volume: null
+            volume: null,
+            wasteManagerId: WasteManagerId::generate()
         );
 
-        $result = $sut($request, $user);
+        $sut($request, $user);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $propertyRepository = PropertyRepositoryMother::inMemory();
         $containerRepository = ContainerRepositoryMother::inMemory();
@@ -177,14 +177,14 @@ class RegisterContainerServiceTest extends TestCase
             wasteId: WasteId::generate(),
             purpose: Purpose::Reuse,
             measurementMethod: MeasurementMethod::Volume,
-            wasteManagerId: WasteManagerId::generate(),
-            volume: 10
+            volume: 10,
+            wasteManagerId: WasteManagerId::generate()
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT(ContainerRepository $containerRepository, PropertyRepository $propertyRepository)
+    private function createSUT(ContainerRepository $containerRepository, PropertyRepository $propertyRepository): RegisterContainerService
     {
         return new RegisterContainerService(
             containerRepository: $containerRepository,

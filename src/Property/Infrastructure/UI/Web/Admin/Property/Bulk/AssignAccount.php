@@ -23,7 +23,7 @@ class AssignAccount implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) == 0) {
+        if (count($request->elements) === 0) {
             return [];
         }
 
@@ -34,10 +34,12 @@ class AssignAccount implements BulkAction
         $commands = [];
 
         foreach ($request->elements as $property) {
-            if (null === $property || null === $property->id()) {
+            if (null === $property) {
                 continue;
             }
-
+            if (null === $property->id()) {
+                continue;
+            }
             $commands[] = new UpdatePropertyRequest(
                 propertyId: $property->id(),
                 name: $property->name(),

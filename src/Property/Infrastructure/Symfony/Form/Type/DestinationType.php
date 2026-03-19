@@ -13,13 +13,13 @@ use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteEntityType;
 class DestinationType extends AbstractType
 {
     public function __construct(
-        private DestinationRepository $destinationRepository,
-        private CountryExtension $countryExtension
+        private readonly DestinationRepository $destinationRepository,
+        private readonly CountryExtension $countryExtension
     ) {
 
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $destinations = $this->destinationRepository
             ->findByFilter(
@@ -31,13 +31,11 @@ class DestinationType extends AbstractType
 
         $countryExtension = $this->countryExtension;
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => $destinations,
-            'choice_label' => function (Destination $destination) use ($countryExtension) {
-                return sprintf("%s (%s)", $destination->name(), $countryExtension->countryName($destination->countryId()));
-            },
+            'choice_label' => fn(Destination $destination) => sprintf("%s (%s)", $destination->name(), $countryExtension->countryName($destination->countryId())),
             'class' => Destination::class
-        ));
+        ]);
     }
     
     public function getParent()

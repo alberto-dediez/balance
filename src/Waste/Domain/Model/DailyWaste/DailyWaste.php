@@ -10,7 +10,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
-class DailyWaste
+class DailyWaste implements \Stringable
 {
     use AggregateRoot;
 
@@ -22,8 +22,7 @@ class DailyWaste
         private WasteManagerId|null $wasteManagerId = null,
         private float $load = 0,
         private AccountId|null $accountId = null,
-        private ?\DateTimeImmutable $day = null,
-        array $events = []
+        private ?\DateTimeImmutable $day = null
     ) {
 
     }
@@ -76,7 +75,7 @@ class DailyWaste
         \DateTimeImmutable $day,
         float $load,
         AccountId $accountId
-    ) {
+    ): void {
         $this->recordApplyAndPublish(
             new DailyWasteRegistered(
                 dailyWasteId: $this->id(),
@@ -84,16 +83,16 @@ class DailyWaste
                 wasteId: $wasteId,
                 purpose: $purpose,
                 wasteManagerId: $wasteManagerId,
-                load: $load,
                 accountId: $accountId,
-                day: $day
+                day: $day,
+                load: $load
             )
         );
     }
 
     public function update(
         float $load
-    ) {
+    ): void {
         $this->recordApplyAndPublish(
             new DailyWasteUpdated(
                 dailyWasteId: $this->id(),
@@ -102,7 +101,7 @@ class DailyWaste
         );
     }
 
-    public function applyDailyWasteRegistered(DailyWasteRegistered $event)
+    public function applyDailyWasteRegistered(DailyWasteRegistered $event): void
     {
         $this->propertyId = $event->propertyId();
         $this->wasteId = $event->wasteId();
@@ -113,7 +112,7 @@ class DailyWaste
         $this->day = $event->day();
     }
 
-    public function applyDailyWasteUpdated(DailyWasteUpdated $event)
+    public function applyDailyWasteUpdated(DailyWasteUpdated $event): void
     {
         $this->load = $event->load();
     }

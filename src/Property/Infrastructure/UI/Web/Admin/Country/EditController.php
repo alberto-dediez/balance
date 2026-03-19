@@ -44,7 +44,7 @@ class EditController extends AbstractController
         $form = $this->createForm(AdminUpdateCountryType::class, $countryRequest); 
 
         try {
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateCountry, $loggedUser) {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateCountry, $loggedUser): void {
                 $countryRequest = $form->getData();
 
                 $updateCountry($countryRequest, $loggedUser());

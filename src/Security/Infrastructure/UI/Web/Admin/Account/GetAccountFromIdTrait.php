@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\UI\Web\Admin\Account;
 
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
-use Symfony\Component\Translation\TranslatableMessage;
 use App\Security\Domain\Model\Account\AccountRepository;
 
 trait GetAccountFromIdTrait
@@ -14,7 +15,7 @@ trait GetAccountFromIdTrait
         $account = $accountRepository->find(new AccountId($accountId));
 
         if (null == $account) {
-            throw $this->createNotFoundException(new TranslatableMessage("La cuenta no existe"));
+            throw $this->createNotFoundException('Account not found');
         }
 
         return $account;

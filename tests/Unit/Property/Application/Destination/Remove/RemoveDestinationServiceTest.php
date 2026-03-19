@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Destination\Remove;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -17,7 +18,7 @@ use App\Tests\Unit\Property\Domain\Model\Destination\DestinationRepositoryMother
 
 class RemoveDestinationServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -26,7 +27,7 @@ class RemoveDestinationServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = DestinationRepositoryMother::inMemory();
 
@@ -58,7 +59,7 @@ class RemoveDestinationServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof DestinationRemoved);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = DestinationRepositoryMother::inMemory();
 
@@ -73,7 +74,7 @@ class RemoveDestinationServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryDestinationRepository $repository): RemoveDestinationService
     {
         return new RemoveDestinationService($repository, new DestinationAuthorizer());
     }

@@ -13,7 +13,7 @@ final class CategoryRemoved extends DomainEvent
     protected static string $eventName = 'categoryRemoved';
 
     public function __construct(
-        private CategoryId $categoryId, 
+        private readonly CategoryId $categoryId,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -25,12 +25,12 @@ final class CategoryRemoved extends DomainEvent
         return $this->categoryId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->categoryId();
+        return $this->categoryId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'categoryId' => (string) $this->categoryId
@@ -40,7 +40,7 @@ final class CategoryRemoved extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new CategoryRemoved(
             categoryId: new CategoryId($payload['categoryId']),

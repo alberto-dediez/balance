@@ -2,6 +2,7 @@
 
 namespace App\Property\Infrastructure\UI\Console\Property;
 
+use App\Property\Domain\Model\Property\Property;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -36,13 +37,13 @@ class PropertyLoadCommand extends Command
     private ExternalSource $source;
 
     public function __construct(
-        private PropertyInfoExtractor $propertyInfoExtractor,
-        private ExternalIdExtractor $externalIdExtractor,
-        private RegisterPropertyService $registerPropertyService,
-        private PropertyRepository $propertyRepository,
-        private EntityManagerInterface $manager,
+        private readonly PropertyInfoExtractor $propertyInfoExtractor,
+        private readonly ExternalIdExtractor $externalIdExtractor,
+        private readonly RegisterPropertyService $registerPropertyService,
+        private readonly PropertyRepository $propertyRepository,
+        private readonly EntityManagerInterface $manager,
         #[AutowireIterator('property.import.configuration')] 
-        private iterable $configurations
+        private readonly iterable $configurations
     ) {
         parent::__construct();
     }
@@ -135,7 +136,7 @@ class PropertyLoadCommand extends Command
 
             $propertyId = $this->findByMainExternalId($externalId, $this->source);
 
-            if (null !== $propertyId) {
+            if ($propertyId instanceof PropertyId) {
                 continue;
             }
 
@@ -150,7 +151,7 @@ class PropertyLoadCommand extends Command
 
             $imported++;
 
-            if (0 == $imported % self::BATCH_SIZE) {
+            if (0 === $imported % self::BATCH_SIZE) {
                 $this->manager->clear();
                 $this->manager->getUnitOfWork()->clear();
             }
@@ -169,6 +170,6 @@ class PropertyLoadCommand extends Command
 
         $property = $this->propertyRepository->findBySourceAndExternalId($source, $externalId);
 
-        return null !== $property ? $property->id() : null;
+        return $property instanceof Property ? $property->id() : null;
     }
 }

@@ -16,11 +16,11 @@ final class PropertyUpdated extends DomainEvent
     protected static string $eventName = 'propertyUpdated';
 
     public function __construct(
-        private PropertyId $propertyId, 
-        private string $name, 
-        private ?PropertyInfo $info = null,
-        private ?ExternalId $externalId = null,
-        private ?AccountId $accountId = null,
+        private readonly PropertyId $propertyId,
+        private readonly string $name,
+        private readonly ?PropertyInfo $info = null,
+        private readonly ?ExternalId $externalId = null,
+        private readonly ?AccountId $accountId = null,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -52,16 +52,16 @@ final class PropertyUpdated extends DomainEvent
         return $this->accountId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->propertyId();
+        return $this->propertyId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'propertyId' => (string) $this->propertyId,
-            'accountId' => null !== $this->accountId ? ((string) $this->accountId) : null,
+            'accountId' => $this->accountId instanceof AccountId ? ((string) $this->accountId) : null,
             'name' => $this->name,
             'info' => $this->info,
             'externalId' => $this->externalId
@@ -71,14 +71,14 @@ final class PropertyUpdated extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new PropertyUpdated(
-            propertyId: new PropertyId($payload['propertyId']), 
-            accountId: null !== $payload['accountId'] ? new AccountId($payload['accountId']) : null, 
+            propertyId: new PropertyId($payload['propertyId']),
             name: $payload['name'],
-            info: isset($payload['info']) ? $payload['info'] : null,
-            externalId: isset($payload['externalId']) ? $payload['externalId'] : null,
+            info: $payload['info'] ?? null,
+            externalId: $payload['externalId'] ?? null,
+            accountId: null !== $payload['accountId'] ? new AccountId($payload['accountId']) : null,
             id: $id,
             occurredOn: $occurredOn
         );

@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\Account\List;
 
 use App\Security\Application\Account\List\ListAccountsRequest;
-use App\Security\Application\Account\List\ListAccountsResponse;
 use App\Security\Application\Account\List\ListAccountsService;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
@@ -14,12 +15,9 @@ use PHPUnit\Framework\TestCase;
 
 class ListAccountsServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {}
 
-    }
-
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = new InMemoryAccountRepository();
 
@@ -36,13 +34,11 @@ class ListAccountsServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListAccountsResponse);
         $this->assertCount(4, $result->accounts);
         $this->assertEquals(4, $result->totalResults);
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -62,7 +58,7 @@ class ListAccountsServiceTest extends TestCase
         $sut($request, $user);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryAccountRepository $repository): ListAccountsService
     {
         $authorizer = AccountAuthorizerMother::create();
 

@@ -77,7 +77,7 @@ class RegisterController extends AbstractController
         $user = $loggedUser();
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerMeasurement, $user) {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerMeasurement, $user): true {
                 $registerRequest = $form->getData();
 
                 $response = $registerMeasurement($registerRequest, $user);

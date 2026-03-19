@@ -36,59 +36,24 @@ enum PropertyType: string
     {
         $propertyType = PropertyType::Hotel;
 
-        switch(strtolower($name)) {
-            case 'albergue':
-                $propertyType = PropertyType::Hostel;
-                break;
-            case 'apartamentos':
-                $propertyType = PropertyType::Apartment;
-                break;
-            case 'aparthotel':
-            case 'apartahotel':
-                $propertyType = PropertyType::Aparthotel;
-                break;
-            case 'camping':
-                $propertyType = PropertyType::Camping;
-                break;
-            case 'hostal':
-                $propertyType = PropertyType::Hostel;
-                break;
-            case 'hotel':
-                $propertyType = PropertyType::Hotel;
-                break;
-            case 'motel':
-                $propertyType = PropertyType::Motel;
-                break;
-            case 'apartamento':
-            case 'residencia':
-                $propertyType = PropertyType::Flat;
-                break;
-            case 'resort':
-            case 'hotel resort':
-            case 'villa':
-                $propertyType = PropertyType::ResortHotel;
-                break;
-            case 'riad':
-            case 'pensión':
-                $propertyType = PropertyType::Other;
-                break;
-            case 'rural':
-            case 'alojamiento rural':
-                $propertyType = PropertyType::RuralAccommodation;
-                break;
-            case 'hotel vacacional':
-                $propertyType = PropertyType::VacationalHotel;
-                break;      
-            case 'hotel business':
-                $propertyType = PropertyType::BusinessHotel;
-                break;      
-            case 'hotel balneario':
-                $propertyType = PropertyType::SpaHotel;
-                break;      
-            case 'hotel urbano':
-                $propertyType = PropertyType::CityHotel;
-                break;      
-        }
+        $propertyType = match (strtolower($name)) {
+            'albergue' => PropertyType::Hostel,
+            'apartamentos' => PropertyType::Apartment,
+            'aparthotel', 'apartahotel' => PropertyType::Aparthotel,
+            'camping' => PropertyType::Camping,
+            'hostal' => PropertyType::Hostel,
+            'hotel' => PropertyType::Hotel,
+            'motel' => PropertyType::Motel,
+            'apartamento', 'residencia' => PropertyType::Flat,
+            'resort', 'hotel resort', 'villa' => PropertyType::ResortHotel,
+            'riad', 'pensión' => PropertyType::Other,
+            'rural', 'alojamiento rural' => PropertyType::RuralAccommodation,
+            'hotel vacacional' => PropertyType::VacationalHotel,
+            'hotel business' => PropertyType::BusinessHotel,
+            'hotel balneario' => PropertyType::SpaHotel,
+            'hotel urbano' => PropertyType::CityHotel,
+            default => $propertyType,
+        };
 
         return $propertyType;;
     }

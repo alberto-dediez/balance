@@ -4,36 +4,37 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Security;
 
-use Behat\Step\Given;
-use Behat\Hook\AfterScenario;
-use Behat\Behat\Context\Context;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
-use Behat\Behat\Hook\Scope\AfterScenarioScope;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Tests\Acceptance\Shared\AcceptanceClient;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use App\Security\Domain\Model\User\UserRepository;
-use App\Security\Domain\Model\Account\AccountRepository;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use Behat\Behat\Context\Context;
+use Behat\Behat\Hook\Scope\AfterScenarioScope;
+use Behat\Hook\AfterScenario;
+use Behat\Step\Given;
 
-final class SecurityContext implements Context
+use function PHPUnit\Framework\assertNotEmpty;
+
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+
+final readonly class SecurityContext implements Context
 {
     private AcceptanceClient $client;
 
     public function __construct(
-        KernelBrowser $kernelBrowser
+        KernelBrowser $kernelBrowser,
     ) {
         $this->client = AcceptanceClient::instance($kernelBrowser);
     }
 
     #[AfterScenario]
-    public function after(AfterScenarioScope $scope)
+    public function after(AfterScenarioScope $scope): void
     {
-        if (null !== $this->client){
-            $this->client->reset();
-        }
+        $this->client->reset();
     }
 
     private function getUserRepository(): UserRepository
@@ -47,68 +48,74 @@ final class SecurityContext implements Context
     }
 
     #[Given('user :username with role :role exists')]
-    public function userWithRoleExists($username, $role): void
+    public function userWithRoleExists(string $username, string $role): void
     {
+        assertNotEmpty(Role::tryFrom($role));
+
         $user = UserMother::fromUsernameAndRole($username, Role::tryFrom($role));
-        
-        $this->getUserRepository()->add($user);      
+
+        $this->getUserRepository()->add($user);
     }
 
     #[Given('user :username with id :id exists')]
-    public function userWithIdExists($username, $id): void
+    public function userWithIdExists(string $username, string $id): void
     {
         $user = UserMother::fromUsernameAndRoleAndId($username, Role::User, new UserId($id));
-        
+
         $this->getUserRepository()->add($user);
     }
 
     #[Given('account :name with id :id exists')]
-    public function accountWithIdExists($username, $id): void
+    public function accountWithIdExists(string $username, string $id): void
     {
         $account = AccountMother::fromNameAndId($username, $id);
-        
-        $this->getAccountRepository()->add($account);      
-    }    
+
+        $this->getAccountRepository()->add($account);
+    }
 
     #[Given('user :username with role :role of account :account exists')]
-    public function userWithRoleOfAccountExists($username, $role, $account): void
+    public function userWithRoleOfAccountExists(string $username, string $role, string $account): void
     {
+        assertNotEmpty(Role::tryFrom($role));
+
         $user = UserMother::fromUsernameAndRoleAndAccount($username, Role::tryFrom($role), new AccountId($account));
-        
-        $this->getUserRepository()->add($user);      
+
+        $this->getUserRepository()->add($user);
     }
 
     #[Given('user :username with id :id of account :account exists')]
-    public function userWithIdOfAccountExists($username, $id, $account): void
+    public function userWithIdOfAccountExists(string $username, string $id, string $account): void
     {
         $user = UserMother::from(
-            username: $username, 
-            role: Role::User, 
             userId: new UserId($id),
-            accountId: new AccountId($account)
+            username: $username,
+            role: Role::User,
+            accountId: new AccountId($account),
         );
-        
-        $this->getUserRepository()->add($user);      
+
+        $this->getUserRepository()->add($user);
     }
 
     #[Given('user :username with role :role with id :id of account :account exists')]
-    public function userWithRoleWithIdOfAccountExists($username, $id, $role, $account): void
+    public function userWithRoleWithIdOfAccountExists(string $username, string $id, string $role, string $account): void
     {
+        assertNotEmpty(Role::tryFrom($role));
+
         $user = UserMother::from(
-            username: $username, 
-            role: Role::tryFrom($role), 
             userId: new UserId($id),
-            accountId: new AccountId($account)
+            username: $username,
+            role: Role::tryFrom($role),
+            accountId: new AccountId($account),
         );
-        
-        $this->getUserRepository()->add($user);      
+
+        $this->getUserRepository()->add($user);
     }
 
     #[Given('user :username with recover token :token exists')]
-    public function userWithRecoverTokenExists($username, $token): void
+    public function userWithRecoverTokenExists(string $username, string $token): void
     {
         $user = UserMother::fromUsernameAndRecoverToken($username, $token);
-        
+
         $this->getUserRepository()->add($user);
     }
 }

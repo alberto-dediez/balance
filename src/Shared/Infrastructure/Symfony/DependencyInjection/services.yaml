@@ -11,6 +11,10 @@ services:
 
     App\Shared\:
         resource: '../../../'
+        
+    App\Fixtures\:
+        resource: '../../../../../fixtures/'
+        tags: ['doctrine.fixture.orm']
 
     App\Shared\Infrastructure\UI\Console\:
         resource: '../../../Infrastructure/UI/Console/'

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Destination\Register;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Property\Domain\Model\Country\CountryId;
@@ -18,7 +19,7 @@ use App\Tests\Unit\Property\Domain\Model\Destination\DestinationRepositoryMother
 
 class RegisterDestinationServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -27,7 +28,7 @@ class RegisterDestinationServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = DestinationRepositoryMother::inMemory();
 
@@ -61,7 +62,7 @@ class RegisterDestinationServiceTest extends TestCase
         $this->assertTrue($request->countryId->equals($lastEvent->countryId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = DestinationRepositoryMother::inMemory();
 
@@ -75,7 +76,7 @@ class RegisterDestinationServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryDestinationRepository $repository): RegisterDestinationService
     {
         return new RegisterDestinationService($repository, new DestinationAuthorizer());
     }

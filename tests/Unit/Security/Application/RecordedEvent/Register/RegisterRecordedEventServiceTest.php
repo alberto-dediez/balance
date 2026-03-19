@@ -1,32 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\RecordedEvent\Register;
 
 use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventRequest;
-use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventResponse;
 use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventService;
-use App\Security\Domain\Model\RecordedEvent\RecordedEvent;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRemoved;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryRecordedEventRepository;
-use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Security\Application\RecordedEvent\RecordedEventAuthorizerMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use PHPUnit\Framework\TestCase;
 
 class RegisterRecordedEventServiceTest extends TestCase
 {
-    private $spySubscriber;
-
-    protected function setUp(): void
-    {
-        DomainEventPublisher::instance()->reset();
-
-        $this->spySubscriber = new SpyDomainEventSubscriber();
-    }
-
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = new InMemoryRecordedEventRepository();
 
@@ -34,25 +23,22 @@ class RegisterRecordedEventServiceTest extends TestCase
 
         $request = new RegisterRecordedEventRequest(
             userId: UserId::generate(),
-            event: new UserRemoved(UserId::generate())
+            event: new UserRemoved(UserId::generate()),
         );
 
         $performBy = UserMother::registeredUser();
 
         $result = $sut($request, $performBy);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterRecordedEventResponse);
         $this->assertNotEmpty((string) $result->recordedEventId);
         $this->assertEquals(36, strlen((string) $result->recordedEventId));
 
         $recordedEventPersisted = $repository->find($result->recordedEventId);
 
         $this->assertNotNull($recordedEventPersisted);
-        $this->assertTrue($recordedEventPersisted instanceof RecordedEvent);
     }
 
-    public function testNoUserCanRecordEvents()
+    public function testNoUserCanRecordEvents(): void
     {
         $repository = new InMemoryRecordedEventRepository();
 
@@ -60,25 +46,22 @@ class RegisterRecordedEventServiceTest extends TestCase
 
         $request = new RegisterRecordedEventRequest(
             userId: UserId::generate(),
-            event: new UserRemoved(UserId::generate())
+            event: new UserRemoved(UserId::generate()),
         );
 
         $performBy = null;
 
         $result = $sut($request, $performBy);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterRecordedEventResponse);
         $this->assertNotEmpty((string) $result->recordedEventId);
         $this->assertEquals(36, strlen((string) $result->recordedEventId));
 
         $recordedEventPersisted = $repository->find($result->recordedEventId);
 
         $this->assertNotNull($recordedEventPersisted);
-        $this->assertTrue($recordedEventPersisted instanceof RecordedEvent);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = new InMemoryRecordedEventRepository();
 
@@ -88,13 +71,13 @@ class RegisterRecordedEventServiceTest extends TestCase
 
         $result = $sut->isHandled(new RegisterRecordedEventRequest(
             userId: $user->id(),
-            event: new UserRemoved(UserId::generate())
+            event: new UserRemoved(UserId::generate()),
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryRecordedEventRepository $repository): RegisterRecordedEventService
     {
         return new RegisterRecordedEventService($repository, RecordedEventAuthorizerMother::create());
     }

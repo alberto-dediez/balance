@@ -21,7 +21,7 @@ class RemoveWasteSubscriber implements DomainEventSubscriber
         $this->register();
     }
 
-    public function handle(DomainEvent $event)
+    public function handle(DomainEvent $event): void
     {
         if (!$this->isSubscribedTo($event)) {
             throw new \RuntimeException("Incorrect event!");
@@ -30,13 +30,13 @@ class RemoveWasteSubscriber implements DomainEventSubscriber
         $this->handlePropertyRemoved($event);
     }
 
-    private function handlePropertyRemoved(WasteRemoved $event)
+    private function handlePropertyRemoved(WasteRemoved $event): void
     {
         $containers = $this->containerRepository->findByFilter(
             new ContainerFilter(wasteId: $event->wasteId())
         );
 
-        if (count($containers) == 0) {
+        if (count($containers) === 0) {
             return ;
         }
 
@@ -53,7 +53,7 @@ class RemoveWasteSubscriber implements DomainEventSubscriber
         }
     }
 
-    public function isSubscribedTo(DomainEvent $event)
+    public function isSubscribedTo(DomainEvent $event): bool
     {
         return $event instanceof WasteRemoved;
     }

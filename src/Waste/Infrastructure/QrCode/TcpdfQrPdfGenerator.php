@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\QrCode;
 
+use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\Container\QrCode;
@@ -28,7 +29,7 @@ class TcpdfQrPdfGenerator implements QrPdfGenerator
         $waste = $this->wasteRepository->find($container->wasteId());
         $property = $this->propertyRepository->find($container->propertyId());
 
-        if (null === $property) {
+        if (!$property instanceof Property) {
             throw new \RuntimeException('Property not found');
         }
 
@@ -44,7 +45,7 @@ class TcpdfQrPdfGenerator implements QrPdfGenerator
         $pdf->Image($this->getImagePath('logo-vertical.png'), 76, 12, 65, 60, '', '', '', false, 300, '', false, false, 0);
 
         //Rectangulo con nombre del residuo
-        $pdf->Rect(0, 84, 210, 32, 'DF', array('L' => 0, 'T' => 0, 'R' => 0, 'B' => 0), $wasteColor);
+        $pdf->Rect(0, 84, 210, 32, 'DF', ['L' => 0, 'T' => 0, 'R' => 0, 'B' => 0], $wasteColor);
         $pdf->setXY(10, 84);
         $this->setFont($pdf, 60, self::FONT_STYLE_BOLD, self::COLOR_NEUTRAL_100);
         $pdf->setFontSpacing(1);
@@ -77,7 +78,7 @@ class TcpdfQrPdfGenerator implements QrPdfGenerator
         $pdf->MultiCell(w: 100, h: 10, txt: date("d.m.Y", strtotime('NOW')), border: 0, align: 'L');
 
         //QR
-        $image = "/tmp/" . (string) $container->id() . '-qr.png';
+        $image = "/tmp/" . $container->id() . '-qr.png';
         $imageContent = @file_get_contents($qrCode->path());
         file_put_contents($image, $imageContent);
         $pdf->Image($image, 72, 205, 64, 64, '', '', '', false, 300, '', false, false, 0);
@@ -89,7 +90,7 @@ class TcpdfQrPdfGenerator implements QrPdfGenerator
         $pdf->MultiCell(w: 210, h: 30, txt: $this->translator->trans('bioscore.info', []), border: 0, align: 'C');
 
 
-        $path = "/tmp/" . (string) $container->id() . '.pdf';
+        $path = "/tmp/" . $container->id() . '.pdf';
 
         $this->savePDF($pdf, $path);
 
@@ -98,7 +99,7 @@ class TcpdfQrPdfGenerator implements QrPdfGenerator
 
     private function getBackgroundColor(?Waste $waste): array
     {
-        if (null === $waste || null === $waste->color()) {
+        if (!$waste instanceof Waste || null === $waste->color()) {
             return $this->hex2rgb(self::COLOR_PRIMARY);
         }
 

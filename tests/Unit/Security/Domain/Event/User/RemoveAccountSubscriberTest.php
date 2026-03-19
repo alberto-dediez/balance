@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Domain\Event\User;
 
 use App\Security\Application\User\Remove\RemoveUserService;
@@ -22,14 +24,14 @@ class RemoveAccountSubscriberTest extends TestCase
         DomainEventPublisher::instance()->reset();
     }
 
-    public function isSubscribedToReturnsTrueIfAccountRemovedEventIsPassed()
+    public function isSubscribedToReturnsTrueIfAccountRemovedEventIsPassed(): void
     {
         $repository = new InMemoryUserRepository();
 
         $sut = $this->createSUT($repository);
 
         $event = new AccountRemoved(
-            AccountId::generate()
+            AccountId::generate(),
         );
 
         $result = $sut->isSubscribedTo($event);
@@ -37,14 +39,14 @@ class RemoveAccountSubscriberTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function isSubscribedToReturnsFalseIfNotAccountRemovedEventIsPassed()
+    public function isSubscribedToReturnsFalseIfNotAccountRemovedEventIsPassed(): void
     {
         $repository = new InMemoryUserRepository();
 
         $sut = $this->createSUT($repository);
 
         $event = new UserRemoved(
-            UserId::generate()
+            UserId::generate(),
         );
 
         $result = $sut->isSubscribedTo($event);
@@ -52,7 +54,7 @@ class RemoveAccountSubscriberTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testHandleCallsRemoveUserService()
+    public function testHandleCallsRemoveUserService(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -75,27 +77,27 @@ class RemoveAccountSubscriberTest extends TestCase
         $repository->add($user);
 
         $event = new AccountRemoved(
-            $account->id()
+            $account->id(),
         );
 
         $sut = $this->createSUT(
             repository: $repository,
-            usersToRemoved: 3
+            usersToRemoved: 3,
         );
         $sut->handle($event);
     }
 
-    private function createSUT($repository, int $usersToRemoved = 0)
+    private function createSUT(InMemoryUserRepository $repository, int $usersToRemoved = 0): RemoveAccountSubscriber
     {
         $removeUser = $this->createMock(RemoveUserService::class);
         $removeUser->expects($this->exactly($usersToRemoved))->method('__invoke');
 
-        /** @var RemoveUserService $removeUser */
+        /* @var RemoveUserService&MockObject $removeUser */
 
         return new RemoveAccountSubscriber(
             $repository,
             $removeUser,
-            new FakeLoggedUser(UserMother::adminUser())
+            new FakeLoggedUser(UserMother::adminUser()),
         );
     }
 }

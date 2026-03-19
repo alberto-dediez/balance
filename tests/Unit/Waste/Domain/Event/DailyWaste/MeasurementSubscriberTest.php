@@ -2,7 +2,6 @@
 
 namespace App\Tests\Unit\Waste\Domain\Event\DailyWaste;
 
-use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleRequest;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Tests\Unit\Shared\Application\CommandBus\SluttyCommandHandler;
@@ -18,7 +17,6 @@ use App\Waste\Domain\Event\DailyWaste\MeasurementSubscriber;
 use App\Waste\Domain\Model\Measurement\MeasurementRegistered;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
-use App\Waste\Application\DailyWaste\Calculate\CalculateDailyWasteService;
 use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeLoggedUser;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
 
@@ -34,7 +32,7 @@ class MeasurementSubscriberTest extends TestCase
         $this->spyCommandBus = new SluttyCommandHandler();
     }
 
-    public function isSubscribedToReturnsTrueIfMeasurementRemovedEventIsPassed()
+    public function isSubscribedToReturnsTrueIfMeasurementRemovedEventIsPassed(): void
     {
         $measurement = MeasurementMother::random();
 
@@ -58,7 +56,7 @@ class MeasurementSubscriberTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function isSubscribedToReturnsTrueIfMeasurementUpdatedEventIsPassed()
+    public function isSubscribedToReturnsTrueIfMeasurementUpdatedEventIsPassed(): void
     {
         $measurement = MeasurementMother::random();
 
@@ -79,7 +77,7 @@ class MeasurementSubscriberTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function isSubscribedToReturnsTrueIfMeasurementRegisteredEventIsPassed()
+    public function isSubscribedToReturnsTrueIfMeasurementRegisteredEventIsPassed(): void
     {
         $measurement = MeasurementMother::random();
 
@@ -109,7 +107,7 @@ class MeasurementSubscriberTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function isSubscribedToReturnsFalseWithOtherEvents()
+    public function isSubscribedToReturnsFalseWithOtherEvents(): void
     {
         $repository = MeasurementRepositoryMother::inMemory();
 
@@ -124,7 +122,7 @@ class MeasurementSubscriberTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testHandleRemove()
+    public function testHandleRemove(): void
     {
         $measurement = MeasurementMother::random();
 
@@ -154,7 +152,7 @@ class MeasurementSubscriberTest extends TestCase
         $this->assertTrue($commands[0]['command']->command() instanceof CalculateDailyWasteRequest);
     }
 
-    public function testHandleUpdate()
+    public function testHandleUpdate(): void
     {
         $measurement = MeasurementMother::random();
 
@@ -181,7 +179,7 @@ class MeasurementSubscriberTest extends TestCase
         $this->assertTrue($commands[0]['command']->command() instanceof CalculateDailyWasteRequest);
     }
 
-    public function testHandleRegister()
+    public function testHandleRegister(): void
     {
         $measurement = MeasurementMother::random();
 
@@ -217,7 +215,7 @@ class MeasurementSubscriberTest extends TestCase
         $this->assertTrue($commands[0]['command']->command() instanceof CalculateDailyWasteRequest);
     }
 
-    private function createSUT(MeasurementRepository $repository)
+    private function createSUT(MeasurementRepository $repository): MeasurementSubscriber
     {
         $loggedUser = new FakeLoggedUser(UserMother::random());
 

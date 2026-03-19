@@ -2,6 +2,8 @@
 
 namespace App\DataExchange\Application\Importation\Execute;
 
+use App\DataExchange\Domain\Model\Importation\Importation;
+use App\DataExchange\Domain\Model\Importation\ImportationType;
 use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleRequest;
 use App\DataExchange\Application\Importation\ImportationAuthorizer;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
@@ -30,13 +32,13 @@ class ExecuteImportationService implements CommandHandler
     {
         $importation = $this->importationRepository->find($request->importationId);
 
-        if (null === $importation) {
+        if (!$importation instanceof Importation) {
             throw new \RuntimeException('Importation not found');
         }
 
         $importationType = $this->importationTypeFactory->createFromCode($importation->type());
 
-        if (null === $importationType) {
+        if (!$importationType instanceof ImportationType) {
             throw new \RuntimeException('Import type not found');
         }
 

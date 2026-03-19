@@ -11,12 +11,12 @@ class FieldDefinition
         public string $fieldType,
         public array $options = []
     ) {
-        $this->options['required'] = $this->options['required'] ?? false;
+        $this->options['required'] ??= false;
 
         if ($this->fieldType === TextType::class) {
-            $this->options['attr']['placeholder'] = $this->options['attr']['placeholder'] ?? new TranslatableMessage('Ignorar');
+            $this->options['attr']['placeholder'] ??= new TranslatableMessage('Ignorar');
         } else {
-            $this->options['placeholder'] = $this->options['placeholder'] ?? new TranslatableMessage('Ignorar');
+            $this->options['placeholder'] ??= new TranslatableMessage('Ignorar');
         }
 
     }

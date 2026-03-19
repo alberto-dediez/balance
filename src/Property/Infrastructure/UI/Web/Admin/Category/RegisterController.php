@@ -28,7 +28,7 @@ class RegisterController extends AbstractController
         $form = $this->createForm(AdminRegisterCategoryType::class);
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerCategory, $loggedUser) {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerCategory, $loggedUser): true {
                 $registerRequest = $form->getData();
 
                 $response = $registerCategory($registerRequest, $loggedUser());

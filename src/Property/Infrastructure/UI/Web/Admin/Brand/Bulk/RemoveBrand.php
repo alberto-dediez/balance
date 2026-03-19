@@ -15,17 +15,19 @@ class RemoveBrand implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) == 0) {
+        if (count($request->elements) === 0) {
             return [];
         }
 
         $commands = [];
 
         foreach ($request->elements as $brand) {
-            if (null === $brand || null === $brand->id()) {
+            if (null === $brand) {
                 continue;
             }
-
+            if (null === $brand->id()) {
+                continue;
+            }
             $commands[] = new RemoveBrandRequest(
                 brandId: $brand->id()
             );

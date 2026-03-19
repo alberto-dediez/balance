@@ -21,8 +21,8 @@ use App\Waste\Application\DailyWaste\Calculate\CalculateDailyWasteService;
 class RecalculateCommand extends Command
 {
     public function __construct(
-        private MeasurementRepository $measurementRepository,
-        private CalculateDailyWasteService $calculateDailyWaste
+        private readonly MeasurementRepository $measurementRepository,
+        private readonly CalculateDailyWasteService $calculateDailyWaste
     ) {
         parent::__construct();
     }
@@ -38,7 +38,7 @@ class RecalculateCommand extends Command
             )
         );
 
-        if (count($measurements) == 0) {
+        if (count($measurements) === 0) {
             $io->warning("No hay medidas");
 
             return Command::SUCCESS;
@@ -61,7 +61,7 @@ class RecalculateCommand extends Command
                     ),
                     $user
                 );
-            } catch (\Exception $e) {
+            } catch (\Exception) {
 
             }
             

@@ -11,18 +11,18 @@ use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdType;
 class BrandIdType extends AggregateRootIdType
 {
     public function __construct(
-        private BrandRepository $countryRepository
+        private readonly BrandRepository $countryRepository
     ) {
 
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $categories = $this->countryRepository->findByFilter(new BrandFilter(limit: 0));
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => $this->getChoices($categories),
             'class' => BrandId::class
-        ));
+        ]);
     }
 }

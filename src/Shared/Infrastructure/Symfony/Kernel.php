@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Symfony;
 
 use App\Security\Application\Authorizer;
-use App\Shared\Domain\Event\DomainEvent;
-use App\Shared\Domain\Event\EventRegistry;
-use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Application\CommandBus\CommandHandler;
-use Symfony\Component\HttpKernel\Kernel as BaseKernel;
+use App\Shared\Domain\Event\DomainEvent;
+use App\Shared\Domain\Event\DomainEventSubscriber;
+use App\Shared\Domain\Event\EventRegistry;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 
 class Kernel extends BaseKernel implements CompilerPassInterface
 {
@@ -28,7 +30,7 @@ class Kernel extends BaseKernel implements CompilerPassInterface
 
         $taggedServices = $container->findTaggedServiceIds('domain.event');
 
-        foreach ($taggedServices as $class => $tags) {
+        foreach (array_keys($taggedServices) as $class) {
             EventRegistry::instance()
                 ->registerEvent($class::contextName(), $class)
             ;

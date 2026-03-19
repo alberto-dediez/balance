@@ -18,21 +18,21 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineBrandRepository implements BrandRepository
 {
-    public function __construct(private EntityManagerInterface $manager)
+    public function __construct(private readonly EntityManagerInterface $manager)
     {
 
     }
 
     public function add(Brand $brand): void
     {
-        $this->getEntityManager()->persist($brand);
-        $this->getEntityManager()->flush();
+        $this->manager->persist($brand);
+        $this->manager->flush();
     }
 
     public function remove(Brand $brand): void
     {
-        $this->getEntityManager()->remove($brand);
-        $this->getEntityManager()->flush();
+        $this->manager->remove($brand);
+        $this->manager->flush();
     }
 
     public function find(BrandId $brandId): ?Brand
@@ -87,7 +87,7 @@ class DoctrineBrandRepository implements BrandRepository
 
     private function createQueryBuilderFromFilter(BrandFilter $filter): QueryBuilder
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb = $this->manager->createQueryBuilder();
 
         $qb->select('b')
             ->from(Brand::class, 'b')
@@ -108,17 +108,12 @@ class DoctrineBrandRepository implements BrandRepository
             ;
         }
 
-        $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
+        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
 
-        switch ($filter->orderBy) {
-            case 'registeredAt':
-                $qb->orderBy('b.registeredAt', $way);
-                break;
-            case 'name':
-            default:
-                $qb->orderBy('b.name', $way);
-                break;
-        }
+        match ($filter->orderBy) {
+            'registeredAt' => $qb->orderBy('b.registeredAt', $way),
+            default => $qb->orderBy('b.name', $way),
+        };
 
         return $qb;
     }
@@ -147,10 +142,5 @@ class DoctrineBrandRepository implements BrandRepository
             ->getQuery()
             ->getSingleScalarResult()
         ;
-    }
-
-    private function getEntityManager()
-    {
-        return $this->manager;
     }
 }

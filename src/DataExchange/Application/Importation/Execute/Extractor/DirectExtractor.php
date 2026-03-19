@@ -6,7 +6,7 @@ use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
 
 class DirectExtractor implements FieldExtractor
 {
-    private string $columnName;
+    private readonly string $columnName;
 
     public function __construct(ImportationColumnConfiguration $columnConfiguration)
     {

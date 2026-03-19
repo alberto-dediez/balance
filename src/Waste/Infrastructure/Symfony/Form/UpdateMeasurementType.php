@@ -4,14 +4,11 @@ namespace App\Waste\Infrastructure\Symfony\Form;
 
 use App\Shared\Infrastructure\Symfony\Form\Type\NumberUnitType;
 use App\Waste\Domain\Model\Measurement\Unit;
-use BcMath\Number;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Infrastructure\Symfony\Form\Type\WeightType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -69,7 +66,7 @@ class UpdateMeasurementType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => UpdateMeasurementRequest::class,

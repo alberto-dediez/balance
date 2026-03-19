@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Waste\Application\WasteManager\List;
 
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteManagerRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\Account\AccountId;
@@ -20,7 +21,7 @@ class ListWasteManagersServiceTest extends TestCase
         
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = WasteManagerRepositoryMother::inMemory();
 
@@ -45,7 +46,7 @@ class ListWasteManagersServiceTest extends TestCase
         $this->assertEquals(3, $result->totalResults);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryWasteManagerRepository $repository): ListWasteManagersService
     {
         return new ListWasteManagersService($repository, new WasteManagerAuthorizer());
     }

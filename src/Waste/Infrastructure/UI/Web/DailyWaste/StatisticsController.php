@@ -29,13 +29,11 @@ class StatisticsController extends AbstractController
         $account = $loggedAccount();
         $user = $loggedUser();
 
-        list($filter, $form) = $this->filter($request, function () use ($account) {
-            return new StatisticsDailyWasteRequest(
-                dayFrom: (new \DateTimeImmutable("NOW -11 MONTHS"))->modify('first day of this month'),
-                dayTo: new \DateTimeImmutable("NOW"),
-                accountId: $account?->id()
-            );
-        }, StatisticsDailyWasteType::class);
+        [$filter, $form] = $this->filter($request, fn() => new StatisticsDailyWasteRequest(
+            accountId: $account?->id(),
+            dayFrom: (new \DateTimeImmutable("NOW -11 MONTHS"))->modify('first day of this month'),
+            dayTo: new \DateTimeImmutable("NOW")
+        ), StatisticsDailyWasteType::class);
 
         try {
             $response = $statisticsDailyWastes($filter, $user);

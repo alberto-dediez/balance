@@ -1,19 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Symfony\Event;
 
+use App\Shared\Application\CommandBus\CommandHandler;
+use App\Shared\Domain\Event\DomainEventSubscriber;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 #[AsEventListener]
 class ConsoleCommandListener
 {
+    /**
+     * @param iterable<DomainEventSubscriber> $subscribers
+     * @param iterable<CommandHandler>        $handlers
+     */
     public function __construct(
         #[AutowireIterator('domain.event.subscriber')]
-        private iterable $subscribers,
-         #[AutowireIterator('application.command.handler')]
-        private iterable $handlers
+        iterable $subscribers,
+        #[AutowireIterator('application.command.handler')]
+        iterable $handlers,
     ) {
         foreach ($subscribers as $subscriber) {
             $subscriber->register();
@@ -24,8 +32,5 @@ class ConsoleCommandListener
         }
     }
 
-    public function __invoke(ConsoleCommandEvent $event): void
-    {
-        
-    }
+    public function __invoke(ConsoleCommandEvent $event): void {}
 }

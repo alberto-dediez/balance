@@ -1,15 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\UI\Web\CRUD;
 
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CommandBus\CommandBusDispatcher;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Shared\Application\CommandBus\CommandBusDispatcher;
 
 trait BulkTrait
 {
-    public function bulkActions(Request $request, $bulkForm, User $user): bool
+    /**
+     * @param FormInterface<mixed> $bulkForm
+     */
+    public function bulkActions(Request $request, FormInterface $bulkForm, User $user): bool
     {
         $bulkForm->handleRequest($request);
 
@@ -18,10 +24,10 @@ trait BulkTrait
 
             $commands = $bulkRequest->commands();
 
-            if (count($commands) == 0) {
+            if (0 === count($commands)) {
                 $this->addFlash('danger', new TranslatableMessage('Debes seleccionar algún elemento sobre el que poder realizar la acción'));
 
-                return true;    
+                return true;
             }
 
             foreach ($commands as $command) {
@@ -31,7 +37,7 @@ trait BulkTrait
                     ;
 
                     $this->addFlash('success', $bulkRequest->action->success($command));
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     $this->addFlash('danger', $bulkRequest->action->failure($command));
                 }
             }

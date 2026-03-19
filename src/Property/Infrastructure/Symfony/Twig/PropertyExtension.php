@@ -12,7 +12,7 @@ class PropertyExtension extends AbstractExtension
 {
     private array $properties = [];
 
-    public function __construct(private PropertyRepository $propertyRepository)
+    public function __construct(private readonly PropertyRepository $propertyRepository)
     {
 
     }
@@ -20,7 +20,7 @@ class PropertyExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('property_name', [$this, 'propertyName']),
+            new TwigFilter('property_name', $this->propertyName(...)),
         ];
     }
 

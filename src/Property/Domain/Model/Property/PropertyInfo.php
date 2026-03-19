@@ -8,26 +8,26 @@ use App\Property\Domain\Model\Category\CategoryId;
 use App\Property\Domain\Model\Property\PropertyType;
 use App\Property\Domain\Model\Destination\DestinationId;
 
-class PropertyInfo
+class PropertyInfo implements \Stringable
 {
     public function __construct(
-        private PropertyType $propertyType = PropertyType::Hotel,
-        private CategoryId|null $categoryId = null,
-        private BrandId|null $brandId = null,
-        private ?string $address = null,
-        private ?string $postalCode = null,
-        private ?string $longitude = null,
-        private ?string $latitude = null,
-        private ?int $rooms = 0,
-        private ?string $zone = null,
-        private ?string $web = null,
-        private DestinationId|null $destinationId = null,
-        private CountryId|null $countryId = null
+        private readonly PropertyType $propertyType = PropertyType::Hotel,
+        private readonly CategoryId|null $categoryId = null,
+        private readonly BrandId|null $brandId = null,
+        private readonly ?string $address = null,
+        private readonly ?string $postalCode = null,
+        private readonly ?string $longitude = null,
+        private readonly ?string $latitude = null,
+        private readonly ?int $rooms = 0,
+        private readonly ?string $zone = null,
+        private readonly ?string $web = null,
+        private readonly DestinationId|null $destinationId = null,
+        private readonly CountryId|null $countryId = null
     ) {
 
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return implode(' | ', [
             'propertyType => ' . $this->propertyType()->value,
@@ -40,8 +40,8 @@ class PropertyInfo
             'rooms => ' . $this->rooms(),
             'zone => ' . $this->zone(),
             'web => ' . $this->web(),
-            'destinationId => ' . (string) $this->destinationId(),
-            'countryId => ' . (string) $this->countryId(),
+            'destinationId => ' . $this->destinationId(),
+            'countryId => ' . $this->countryId(),
         ]);
     }
 
@@ -112,11 +112,11 @@ class PropertyInfo
         }
 
         if (
-            (null == $this->categoryId() && null !== $other->categoryId())
-            || (null !== $this->categoryId() && null == $other->categoryId())
+            (null == $this->categoryId() && $other->categoryId() instanceof CategoryId)
+            || ($this->categoryId() instanceof CategoryId && null == $other->categoryId())
             || (
-                null !== $this->categoryId()
-                && null !== $other->categoryId()
+                $this->categoryId() instanceof CategoryId
+                && $other->categoryId() instanceof CategoryId
                 && !$this->categoryId()->equals($other->categoryId())
             )
         ) {
@@ -124,11 +124,11 @@ class PropertyInfo
         }
 
         if (
-            (null == $this->brandId() && null !== $other->brandId())
-            || (null !== $this->brandId() && null == $other->brandId())
+            (null == $this->brandId() && $other->brandId() instanceof BrandId)
+            || ($this->brandId() instanceof BrandId && null == $other->brandId())
             || (
-                null !== $this->brandId()
-                && null !== $other->brandId()
+                $this->brandId() instanceof BrandId
+                && $other->brandId() instanceof BrandId
                 && !$this->brandId()->equals($other->brandId())
             )
         ) {
@@ -164,38 +164,25 @@ class PropertyInfo
         }
 
         if (
-            (null == $this->destinationId() && null !== $other->destinationId())
-            || (null !== $this->destinationId() && null == $other->destinationId())
+            (null == $this->destinationId() && $other->destinationId() instanceof DestinationId)
+            || ($this->destinationId() instanceof DestinationId && null == $other->destinationId())
             || (
-                null !== $this->destinationId()
-                && null !== $other->destinationId()
+                $this->destinationId() instanceof DestinationId
+                && $other->destinationId() instanceof DestinationId
                 && !$this->destinationId()->equals($other->destinationId())
             )
         ) {
             return false;
         }
-
-        if (
-            (null == $this->countryId() && null !== $other->countryId())
-            || (null !== $this->countryId() && null == $other->countryId())
-            || (
-                null !== $this->countryId()
-                && null !== $other->countryId()
-                && !$this->countryId()->equals($other->countryId())
-            )
-        ) {
-            return false;
-        }
-
-        return true;
+        return !(null == $this->countryId() && $other->countryId() instanceof CountryId || $this->countryId() instanceof CountryId && null == $other->countryId() || $this->countryId() instanceof CountryId && $other->countryId() instanceof CountryId && !$this->countryId()->equals($other->countryId()));
     } 
 
     public function combine(PropertyInfo $other): PropertyInfo
     {
         return new PropertyInfo(
-            propertyType: null !== $this->propertyType() ? $this->propertyType() : $other->propertyType(),
-            categoryId: (null !== $this->categoryId() && !empty($this->categoryId())) ? $this->categoryId() : $other->categoryId(),
-            brandId: (null !== $this->brandId() && !empty($this->brandId())) ? $this->brandId() : $other->brandId(),
+            propertyType: $this->propertyType() ?? $other->propertyType(),
+            categoryId: ($this->categoryId() instanceof CategoryId && !empty($this->categoryId())) ? $this->categoryId() : $other->categoryId(),
+            brandId: ($this->brandId() instanceof BrandId && !empty($this->brandId())) ? $this->brandId() : $other->brandId(),
             address: (null !== $this->address() && !empty($this->address())) ? $this->address() : $other->address(),
             postalCode: (null !== $this->postalCode() && !empty($this->postalCode())) ? $this->postalCode() : $other->postalCode(),
             longitude: (null !== $this->longitude() && !empty($this->longitude())) ? $this->longitude() : $other->longitude(),
@@ -203,8 +190,8 @@ class PropertyInfo
             rooms: (null !== $this->rooms() && $this->rooms() > 0) ? $this->rooms() : $other->rooms(),
             zone: (null !== $this->zone() && !empty($this->zone())) ? $this->zone() : $other->zone(),
             web: (null !== $this->web() && !empty($this->web())) ? $this->web() : $other->web(),
-            destinationId: null !== $this->destinationId() ? $this->destinationId() : $other->destinationId(),
-            countryId: null !== $this->countryId() ? $this->countryId() : $other->countryId(),
+            destinationId: $this->destinationId() ?? $other->destinationId(),
+            countryId: $this->countryId() ?? $other->countryId(),
         );
     }
 }

@@ -34,53 +34,31 @@ trait GenericGenerator
         return $pdf;
     }
 
-    private function setFont(TCPDF $pdf, $size, $type = self::FONT_STYLE_REGULAR, $color = self::COLOR_PRIMARY)
+    private function setFont(TCPDF $pdf, $size, $type = self::FONT_STYLE_REGULAR, $color = self::COLOR_PRIMARY): void
     {
-        switch ($type) {
-            case self::FONT_STYLE_BOLD:
-                $fontName = 'Rubik-Bold';
-                break;
-            case self::FONT_STYLE_SEMIBOLD:
-                $fontName = 'Rubik-SemiBold';
-                break;
-            case self::FONT_STYLE_BLACK:
-                $fontName = 'Rubik-Black';
-                break;
-            case self::FONT_STYLE_REGULAR:
-                $fontName = 'Rubik-Regular';
-                break;   
-            case self::FONT_STYLE_BOLDITALIC:
-                $fontName = 'Rubik-BoldItalic';
-                break;   
-            case self::FONT_STYLE_MEDIUM:
-            default:
-                $fontName = 'Rubik-Medium';
-                break;            
-        }
+        $fontName = match ($type) {
+            self::FONT_STYLE_BOLD => 'Rubik-Bold',
+            self::FONT_STYLE_SEMIBOLD => 'Rubik-SemiBold',
+            self::FONT_STYLE_BLACK => 'Rubik-Black',
+            self::FONT_STYLE_REGULAR => 'Rubik-Regular',
+            self::FONT_STYLE_BOLDITALIC => 'Rubik-BoldItalic',
+            default => 'Rubik-Medium',
+        };
 
         $font = TCPDF_FONTS::addTTFfont($this->getFontPath($fontName), 'TrueTypeUnicode', '', 96);
 
         $pdf->setFont($font, '', $size, '', false);
         $pdf->setFontSpacing(0);
 
-        if (is_array($color) && count($color) == 3) {
+        if (is_array($color) && count($color) === 3) {
             $pdf->setTextColor($color[0], $color[1], $color[2]);
         } else {
-            switch ($color) {
-                case self::COLOR_SECONDARY:
-                    $pdf->setTextColor(193, 209, 24);
-                    break;
-                case self::COLOR_NEUTRAL_100:
-                    $pdf->setTextColor(255, 255, 255);
-                    break;
-                case self::COLOR_NEUTRAL_900:
-                    $pdf->setTextColor(0, 0, 0);
-                    break;
-                case self::COLOR_PRIMARY:
-                default:
-                    $pdf->setTextColor(64, 115, 142);
-                    break;
-            }
+            match ($color) {
+                self::COLOR_SECONDARY => $pdf->setTextColor(193, 209, 24),
+                self::COLOR_NEUTRAL_100 => $pdf->setTextColor(255, 255, 255),
+                self::COLOR_NEUTRAL_900 => $pdf->setTextColor(0, 0, 0),
+                default => $pdf->setTextColor(64, 115, 142),
+            };
         }                
     }
 
@@ -104,7 +82,7 @@ trait GenericGenerator
         return sprintf("%sassets/images/%s", $this->getRootDir(), $filename);
     }
 
-    private function secureMultiCell(TCPDF $pdf, string $html, $width, \Closure $createNewPage)
+    private function secureMultiCell(TCPDF $pdf, string $html, $width, \Closure $createNewPage): void
     {
         $breakPoint = $pdf->getPageHeight() - 10;
 
@@ -159,7 +137,7 @@ trait GenericGenerator
         }
     }
 
-    private function savePDF(TCPDF $pdf, string $path)
+    private function savePDF(TCPDF $pdf, string $path): void
     {
         $pdf->Output($path, 'F');
     }

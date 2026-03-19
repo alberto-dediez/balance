@@ -2,6 +2,7 @@
 
 namespace App\DataExchange\Infrastructure\UI\Web\Import;
 
+use App\DataExchange\Application\Importation\PairFields\PairFieldsImportationResponse;
 use App\DataExchange\Application\Importation\PairFields\PairFieldsImportationRequest;
 use App\DataExchange\Application\Importation\PairFields\PairFieldsImportationService;
 use App\DataExchange\Infrastructure\UI\Web\Form\TranslationsType;
@@ -48,7 +49,7 @@ class TranslationsController extends AbstractController
                 $form->getData(), $loggedUser()
             );
 
-            if (null === $response) {
+            if (!$response instanceof PairFieldsImportationResponse) {
                 $this->addFlash('danger', new TranslatableMessage('Hay errores en la configuración de los distintos campos. Por favor, revise el formulario.'));
             } else {
                 return $this->redirectToRoute('import_assign_values', ['code' => $code, 'id' => $importation->id()]);

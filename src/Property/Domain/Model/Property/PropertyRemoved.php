@@ -13,7 +13,7 @@ final class PropertyRemoved extends DomainEvent
     protected static string $eventName = 'propertyRemoved';
 
     public function __construct(
-        private PropertyId $propertyId, 
+        private readonly PropertyId $propertyId,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -25,12 +25,12 @@ final class PropertyRemoved extends DomainEvent
         return $this->propertyId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->propertyId();
+        return $this->propertyId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'propertyId' => (string) $this->propertyId
@@ -40,7 +40,7 @@ final class PropertyRemoved extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new PropertyRemoved(
             propertyId: new PropertyId($payload['propertyId']),

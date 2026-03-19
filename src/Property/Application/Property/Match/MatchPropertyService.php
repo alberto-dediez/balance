@@ -2,6 +2,7 @@
 
 namespace App\Property\Application\Property\Match;
 
+use App\Property\Domain\Model\Destination\DestinationId;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Property\Domain\Model\Property\Property;
@@ -16,7 +17,7 @@ class MatchPropertyService
 {
     const MIN_PERCENT_MATCH = 75;
 
-    public function __construct(private PropertyRepository $propertyRepository, private PropertyAuthorizer $authorizer)
+    public function __construct(private readonly PropertyRepository $propertyRepository, private readonly PropertyAuthorizer $authorizer)
     {
     }
 
@@ -52,7 +53,7 @@ class MatchPropertyService
     {
         $propertyIdFound = $this->findByMainExternalId($request);
         
-        if (null !== $propertyIdFound) {
+        if ($propertyIdFound instanceof PropertyId) {
             return $propertyIdFound;
         }
 
@@ -60,7 +61,7 @@ class MatchPropertyService
 
         $propertyIdFound = $this->findByExternalId($request);
 
-        if (null !== $propertyIdFound) {
+        if ($propertyIdFound instanceof PropertyId) {
             if (!isset($possibleMatchs[(string) $propertyIdFound])) {
                 $possibleMatchs[(string) $propertyIdFound] = [
                     'propertyId' => $propertyIdFound,
@@ -73,7 +74,7 @@ class MatchPropertyService
 
         $propertyIdFound = $this->findByName($request);
 
-        if (null !== $propertyIdFound) {
+        if ($propertyIdFound instanceof PropertyId) {
             if (!isset($possibleMatchs[(string) $propertyIdFound])) {
                 $possibleMatchs[(string) $propertyIdFound] = [
                     'propertyId' => $propertyIdFound,
@@ -86,7 +87,7 @@ class MatchPropertyService
 
         $propertyIdFound = $this->findByGeoPosition($request);
 
-        if (null !== $propertyIdFound) {
+        if ($propertyIdFound instanceof PropertyId) {
             if (!isset($possibleMatchs[(string) $propertyIdFound])) {
                 $possibleMatchs[(string) $propertyIdFound] = [
                     'propertyId' => $propertyIdFound,
@@ -97,7 +98,7 @@ class MatchPropertyService
             $possibleMatchs[(string) $propertyIdFound]['matchPercent'] += 50.0;
         }
 
-        if (count($possibleMatchs) == 0) {
+        if (count($possibleMatchs) === 0) {
             return null;
         }
 
@@ -127,7 +128,7 @@ class MatchPropertyService
 
         $property = $this->propertyRepository->findBySourceAndExternalId($request->source, $request->externalId);
 
-        return null !== $property ? $property->id() : null;
+        return $property instanceof Property ? $property->id() : null;
     }
 
     private function findByExternalId(MatchPropertyRequest $request): ?PropertyId
@@ -172,22 +173,22 @@ class MatchPropertyService
     {
         $properties = $this->propertyRepository->findByFilter(
             new PropertyFilter(
-                countryId: $request->info->countryId(),
-                name: $request->name
+                name: $request->name,
+                countryId: $request->info->countryId()
             )
         );
 
-        if (null == $properties || 0 == count($properties)) {
+        if (null == $properties || 0 === count($properties)) {
             $properties = $this->propertyRepository->findByFilter(
                 new PropertyFilter(
-                    countryId: $request->info->countryId(),
                     destinationId: $request->info->destinationId(),
+                    countryId: $request->info->countryId(),
                     limit: 10000
                 )
             );
         }
 
-        if (null == $properties || 0 == count($properties)) {
+        if (null == $properties || 0 === count($properties)) {
             $properties = $this->propertyRepository->findByFilter(
                 new PropertyFilter(
                     countryId: $request->info->countryId(),
@@ -204,8 +205,10 @@ class MatchPropertyService
             if (! $property->externalId()->isCombinable($request->externalId)) {
                 continue;
             }
-
-            if (null === $request->name || null === $property->name()) {
+            if (null === $request->name) {
+                continue;
+            }
+            if (null === $property->name()) {
                 continue;
             }
 
@@ -215,11 +218,11 @@ class MatchPropertyService
                 continue;
             }
 
-            if (null !== $property->info()->zone() && null !== $request->info->zone() && strtolower($property->info()->zone()) == strtolower($request->info->zone())) {
+            if (null !== $property->info()->zone() && null !== $request->info->zone() && strtolower($property->info()->zone()) === strtolower($request->info->zone())) {
                 $matchPercent += 50;
             }
 
-            if (null !== $request->info->destinationId() && $property->info()->destinationId()->equals($request->info->destinationId())) {
+            if ($request->info->destinationId() instanceof DestinationId && $property->info()->destinationId()->equals($request->info->destinationId())) {
                 $matchPercent += 100;
             }
 

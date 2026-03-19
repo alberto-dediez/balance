@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Category\Import;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCategoryRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Property\Domain\Model\Category\CategoryId;
@@ -26,7 +27,7 @@ class ImportCategoriesServiceTest extends TestCase
         
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = CategoryRepositoryMother::inMemory();
 
@@ -48,28 +49,28 @@ class ImportCategoriesServiceTest extends TestCase
         $request = new ImportCategoriesRequest(
             [
                 new CategoryRequest(
-                    name: '1 estrella', 
-                    createIfNotExists: false,
+                    name: '1 estrella',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '1234')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '1234'),
+                    createIfNotExists: false
                 ),
                 new CategoryRequest(
-                    name: '1 LLAVE', 
-                    createIfNotExists: false,
+                    name: '1 LLAVE',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '234')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '234'),
+                    createIfNotExists: false
                 ),
                 new CategoryRequest(
-                    name: '5 Estrellas Gran Lujo', 
-                    createIfNotExists: false,
+                    name: '5 Estrellas Gran Lujo',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '34')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '34'),
+                    createIfNotExists: false
                 ),
                 new CategoryRequest(
-                    name: 'Hostal', 
-                    createIfNotExists: true,
+                    name: 'Hostal',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '4')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '4'),
+                    createIfNotExists: true
                 ),
             ]
         );
@@ -90,7 +91,7 @@ class ImportCategoriesServiceTest extends TestCase
         $this->assertEquals('1234', $star->externalId()->bioscore());
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryCategoryRepository $repository): ImportCategoriesService
     {
         $registerService = $this->createMock(RegisterCategoryService::class);
         $registerService->method('__invoke')->willReturn(new RegisterCategoryResponse(CategoryId::generate(), '', null));

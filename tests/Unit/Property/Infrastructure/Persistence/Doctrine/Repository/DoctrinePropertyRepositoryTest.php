@@ -16,9 +16,7 @@ class DoctrinePropertyRepositoryTest extends PropertyRepositoryTest
         $manager = $this->getContainer()->get(EntityManagerInterface::class);
 
         $accountRepository = $this->createMock(DoctrineAccountRepository::class);
-        $accountRepository->method('find')->willReturnCallback(function ($id) {
-            return null !== $id ? new Account($id) : null;
-        });
+        $accountRepository->method('find')->willReturnCallback(fn($id) => null !== $id ? new Account($id) : null);
 
         return new DoctrinePropertyRepository($manager, $accountRepository);
     }

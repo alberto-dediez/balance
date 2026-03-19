@@ -11,7 +11,7 @@ use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 
 class ListMeasurementsService
 {
-    public function __construct(private MeasurementRepository $repository, private MeasurementAuthorizer $authorizer)
+    public function __construct(private readonly MeasurementRepository $repository, private readonly MeasurementAuthorizer $authorizer)
     {
 
     }
@@ -23,8 +23,8 @@ class ListMeasurementsService
             containerId: $request->containerId,
             propertyId: $request->propertyId,
             wasteId: $request->wasteId,
-            measurementMethod: $request->measurementMethod,
             purpose: $request->purpose,
+            measurementMethod: $request->measurementMethod,
             accountId: $request->accountId,
             registeredBy: $request->userId,
         );

@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\UI\Web\Container;
 
+use App\Waste\Application\Container\PrintQr\PrintQrContainerResponse;
 use App\Security\Application\Action;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,14 +41,14 @@ class PrintController extends AbstractController
         try {
             $response = $printContainer($containerRequest, $loggedUser());
 
-            if (null === $response || null === $response->path || empty($response->path)) {
+            if (!$response instanceof PrintQrContainerResponse || null === $response->path || empty($response->path)) {
                 throw new \RuntimeException("Invalid response");
             }
 
             return $this->file($response->path, sprintf("%s.pdf", (string) $container->id()), ResponseHeaderBag::DISPOSITION_INLINE);            
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->addFlash('danger', new TranslatableMessage("No se ha podido generar el cartel del contenedor escogido"));
         }
 

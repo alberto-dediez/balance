@@ -28,7 +28,7 @@ class RegisterController extends AbstractController
         $form = $this->createForm(AdminRegisterBrandType::class);
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerBrand, $loggedUser) {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerBrand, $loggedUser): true {
                 $registerRequest = $form->getData();
 
                 $response = $registerBrand($registerRequest, $loggedUser());

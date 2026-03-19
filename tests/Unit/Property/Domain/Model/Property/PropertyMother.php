@@ -15,7 +15,7 @@ class PropertyMother
         return self::fromName('name');
     }
 
-    public static function fromName($name)
+    public static function fromName(string $name)
     {
         return self::from(
             propertyId: PropertyId::generate(),
@@ -23,7 +23,7 @@ class PropertyMother
         );
     }
 
-    public static function fromNameAndInfo($name, PropertyInfo $info)
+    public static function fromNameAndInfo(string $name, PropertyInfo $info)
     {
         return self::from(
             propertyId: PropertyId::generate(),
@@ -32,7 +32,7 @@ class PropertyMother
         );
     }
 
-    public static function fromNameAndExternalId($name, ExternalId $externalId)
+    public static function fromNameAndExternalId(string $name, ExternalId $externalId)
     {
         return self::from(
             propertyId: PropertyId::generate(),
@@ -58,7 +58,7 @@ class PropertyMother
         );
     }
 
-    public static function from(PropertyId $propertyId, string $name = 'name', ?AccountId $accountId = null, ?PropertyInfo $info = null, ?ExternalId $externalId = null)
+    public static function from(PropertyId $propertyId, string $name = 'name', ?AccountId $accountId = null, ?PropertyInfo $info = null, ?ExternalId $externalId = null): Property
     {
         $property = new Property(
             id: $propertyId
@@ -76,6 +76,6 @@ class PropertyMother
 
     public static function random()
     {
-        return self::fromName('property-' . rand(100, 999));
+        return self::fromName('property-' . random_int(100, 999));
     }
 }

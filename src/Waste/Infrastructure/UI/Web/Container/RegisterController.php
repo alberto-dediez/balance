@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\UI\Web\Container;
 
+use App\Security\Domain\Model\Account\Account;
 use App\Security\Application\Action;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +33,7 @@ class RegisterController extends AbstractController
     {
         $account = $loggedAccount();
 
-        if (null === $account) {
+        if (!$account instanceof Account) {
             throw $this->createAccessDeniedException(
                 new TranslatableMessage("Debes pertenecer a una cuenta para poder acceder")
             );
@@ -46,7 +47,7 @@ class RegisterController extends AbstractController
         try {
             $form = $this->createForm(RegisterContainerType::class);
 
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerContainer, $loggedUser) {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerContainer, $loggedUser): true {
                 $registerRequest = new RegisterContainerRequest(
                     propertyId: $form->get('propertyId')->getData(),
                     wasteId: $form->get('wasteId')->getData(),

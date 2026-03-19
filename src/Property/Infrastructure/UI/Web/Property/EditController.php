@@ -44,7 +44,7 @@ class EditController extends AbstractController
         $form = $this->createForm(UpdatePropertyType::class, $propertyRequest); 
 
         try {
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateProperty, $loggedUser) {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateProperty, $loggedUser): void {
                 $propertyRequest = $form->getData();
 
                 $updateProperty($propertyRequest, $loggedUser());

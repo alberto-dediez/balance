@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Waste\Domain\Event\Container;
 
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryContainerRepository;
 use PHPUnit\Framework\TestCase;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -24,7 +25,7 @@ class RemovePropertySubscriberTest extends TestCase
         DomainEventPublisher::instance()->reset();
     }
 
-    public function isSubscribedToReturnsTrueIfPropertyRemovedEventIsPassed()
+    public function isSubscribedToReturnsTrueIfPropertyRemovedEventIsPassed(): void
     {
         $repository = ContainerRepositoryMother::inMemory();
 
@@ -39,7 +40,7 @@ class RemovePropertySubscriberTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function isSubscribedToReturnsFalseIfNotPropertyRemovedEventIsPassed()
+    public function isSubscribedToReturnsFalseIfNotPropertyRemovedEventIsPassed(): void
     {
         $repository = ContainerRepositoryMother::inMemory();
 
@@ -54,7 +55,7 @@ class RemovePropertySubscriberTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testHandleCallsRemoveContainerService()
+    public function testHandleCallsRemoveContainerService(): void
     {
         $repository = ContainerRepositoryMother::inMemory();
 
@@ -86,7 +87,7 @@ class RemovePropertySubscriberTest extends TestCase
         $sut->handle($event);
     }
 
-    private function createSUT($repository, int $containersToRemoved = 0)
+    private function createSUT(InMemoryContainerRepository $repository, int $containersToRemoved = 0): RemovePropertySubscriber
     {
         $removeContainer = $this->createMock(RemoveContainerService::class);
         $removeContainer->expects($this->exactly($containersToRemoved))->method('__invoke');

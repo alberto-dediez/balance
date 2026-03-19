@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Attribute\Exclude;
 class DeferredCommand implements Command
 {
     public function __construct(
-        private Command $command
+        private readonly Command $command
     ) {
 
     }

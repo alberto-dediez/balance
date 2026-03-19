@@ -10,7 +10,7 @@ use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 
 abstract class MeasurementRepositoryTest extends KernelTestCase
 {
-    public function testAddMeasurementToRepository()
+    public function testAddMeasurementToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -26,7 +26,7 @@ abstract class MeasurementRepositoryTest extends KernelTestCase
         $this->assertEquals($measurement->id(), $recoverMeasurement->id());
     }
 
-    public function testRemoveMeasurementToRepository()
+    public function testRemoveMeasurementToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -44,7 +44,7 @@ abstract class MeasurementRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($measurement->id()));
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -86,13 +86,13 @@ abstract class MeasurementRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByDay()
+    public function testFindByDay(): void
     {
         $dailyWaste = DailyWasteMother::random();
 
         $repository = $this->createSUT();
 
-        $containerId = ContainerId::generate();
+        ContainerId::generate();
 
         $repository->add(
             MeasurementMother::fromDay($dailyWaste)
@@ -125,7 +125,7 @@ abstract class MeasurementRepositoryTest extends KernelTestCase
         $this->assertCount(4, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 

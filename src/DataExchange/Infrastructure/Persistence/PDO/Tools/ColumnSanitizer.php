@@ -15,7 +15,7 @@ class ColumnSanitizer
 
             $baseName = strtolower(trim((string) $basename));
             $baseName = preg_replace('/[\s\W]+/', '_', $baseName);
-            $baseName = trim($baseName, '_');
+            $baseName = trim((string) $baseName, '_');
 
             if (empty($baseName) || $baseName === 'row_id') {
                 $baseName = 'col_' . $i;

@@ -29,7 +29,7 @@ class RegisterController extends AbstractController
         $form = $this->createForm(AdminRegisterPropertyType::class);
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerProperty, $loggedUser) {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerProperty, $loggedUser): true {
                 $registerRequest = $form->getData();
 
                 $response = $registerProperty($registerRequest, $loggedUser());

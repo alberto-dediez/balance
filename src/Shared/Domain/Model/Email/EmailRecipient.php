@@ -1,19 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Domain\Model\Email;
 
-class EmailRecipient
+class EmailRecipient implements \Stringable
 {
     public function __construct(
         public string $name,
-        public string $email
-    )
-    {
-        
-    }
+        public string $email,
+    ) {}
 
-    public function __toString()
+    public function __toString(): string
     {
-        return (string) $this->email;
+        return $this->email;
     }
 }

@@ -18,11 +18,7 @@ use App\Waste\Infrastructure\UI\Api\Container\ContainerResponseGenerator;
 
 #[Route('/containers/{containerId}', name: 'api_containers_view', methods: ['GET'])]
 #[Areas(['mobile', 'admin'])]
-#[OA\Get(
-    summary: "View Container",
-    description: "View an owned container",
-    tags: ['Waste']
-)]
+#[OA\Get(description: "View an owned container", summary: "View Container", tags: ['Waste'])]
 #[OA\Response(
     response: 200,
     description: 'Returns data of container',

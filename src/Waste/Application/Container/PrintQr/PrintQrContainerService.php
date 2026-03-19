@@ -10,7 +10,7 @@ use App\Waste\Domain\Model\Container\QrPdfGenerator;
 
 class PrintQrContainerService
 {
-    public function __construct(private ContainerRepository $repository, private QrPdfGenerator $pdfGenerator, private ContainerAuthorizer $authorizer)
+    public function __construct(private readonly ContainerRepository $repository, private readonly QrPdfGenerator $pdfGenerator, private readonly ContainerAuthorizer $authorizer)
     {
 
     }

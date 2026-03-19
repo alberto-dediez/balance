@@ -28,7 +28,7 @@ class RegisterController extends AbstractController
         $form = $this->createForm(AdminRegisterCountryType::class);
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerCountry, $loggedUser) {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerCountry, $loggedUser): true {
                 $registerRequest = $form->getData();
 
                 $response = $registerCountry($registerRequest, $loggedUser());

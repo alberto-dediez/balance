@@ -11,7 +11,7 @@ use App\Waste\Domain\Model\Container\ContainerRepository;
 
 class ListContainersService
 {
-    public function __construct(private ContainerRepository $repository, private ContainerAuthorizer $authorizer)
+    public function __construct(private readonly ContainerRepository $repository, private readonly ContainerAuthorizer $authorizer)
     {
 
     }

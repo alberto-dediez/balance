@@ -34,7 +34,7 @@ class ListController extends AbstractController
         $account = $loggedAccount();
         $user = $loggedUser();
 
-        list($filter, $form) = $this->filter($request, function () use ($account, $user) {
+        [$filter, $form] = $this->filter($request, function () use ($account, $user): ListMeasurementsRequest {
             $userId = $this->isGranted(Role::Owner->value)
                 ? null
                 : $user->id()

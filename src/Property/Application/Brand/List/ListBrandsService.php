@@ -11,7 +11,7 @@ use App\Property\Domain\Model\Brand\BrandRepository;
 
 class ListBrandsService
 {
-    public function __construct(private BrandRepository $repository, private BrandAuthorizer $authorizer)
+    public function __construct(private readonly BrandRepository $repository, private readonly BrandAuthorizer $authorizer)
     {
 
     }

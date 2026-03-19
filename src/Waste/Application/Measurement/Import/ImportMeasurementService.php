@@ -2,6 +2,9 @@
 
 namespace App\Waste\Application\Measurement\Import;
 
+use App\Property\Domain\Model\Property\Property;
+use App\Waste\Domain\Model\Waste\Waste;
+use App\Waste\Domain\Model\WasteManager\WasteManager;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action;
@@ -45,7 +48,7 @@ class ImportMeasurementService implements CommandHandler
 
     public function __invoke(ImportMeasurementRequest $request, User $user): ImportMeasurementResponse
     {
-        list($property, $container, $unit) = $this->getPropertyContainerAndUnitFrom($request, $user);
+        [$property, $container, $unit] = $this->getPropertyContainerAndUnitFrom($request, $user);
 
         $id = MeasurementId::generate();
 
@@ -72,7 +75,7 @@ class ImportMeasurementService implements CommandHandler
                 justification: $request->justification,
                 reference: $request->reference,
                 unit: $unit,
-                day: !empty($request->day) ? \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $request->day) : null,
+                day: empty($request->day) ? null : \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $request->day),
             )
         ;
 
@@ -91,20 +94,20 @@ class ImportMeasurementService implements CommandHandler
     private function getPropertyContainerAndUnitFrom(ImportMeasurementRequest $request, User $user): array
     {
         if (empty($request->containerId)) {
-            $property = !empty($request->propertyId) ? $this->propertyRepository->find(new PropertyId($request->propertyId)) : null;
-            $waste = !empty($request->wasteId) ? $this->wasteRepository->find(new WasteId($request->wasteId)) : null;
-            $wasteManager = !empty($request->wasteManagerId) ? $this->wasteManagerRepository->find(new WasteManagerId($request->wasteManagerId)) : null;
-            $purpose = !empty($request->purpose) ? Purpose::tryFrom($request->purpose) : null;
+            $property = empty($request->propertyId) ? null : $this->propertyRepository->find(new PropertyId($request->propertyId));
+            $waste = empty($request->wasteId) ? null : $this->wasteRepository->find(new WasteId($request->wasteId));
+            $wasteManager = empty($request->wasteManagerId) ? null : $this->wasteManagerRepository->find(new WasteManagerId($request->wasteManagerId));
+            $purpose = empty($request->purpose) ? null : Purpose::tryFrom($request->purpose);
 
-            if (null === $property) {
+            if (!$property instanceof Property) {
                 throw new \InvalidArgumentException(new TranslatableMessage("Debe indicar una propiedad para la medición"));
             }
 
-            if (null === $waste) {
+            if (!$waste instanceof Waste) {
                 throw new \InvalidArgumentException(new TranslatableMessage("Debe indicar el residuo para la medición"));
             }
 
-            if (null === $wasteManager) {
+            if (!$wasteManager instanceof WasteManager) {
                 throw new \InvalidArgumentException(new TranslatableMessage("Debe indicar el gestor de residuos para la medición"));
             }
 
@@ -125,13 +128,13 @@ class ImportMeasurementService implements CommandHandler
         } else {
             $container = $this->containerRepository->find(new ContainerId($request->containerId));
 
-            if (null === $container) {
+            if (!$container instanceof Container) {
                 throw new \InvalidArgumentException(new TranslatableMessage('El contenedor indicado no existe'));
             }
 
             $property = $this->propertyRepository->find($container->propertyId());
 
-            if (null === $property) {
+            if (!$property instanceof Property) {
                 throw new \InvalidArgumentException(new TranslatableMessage("Debe indicar una propiedad para la medición"));
             }
         }

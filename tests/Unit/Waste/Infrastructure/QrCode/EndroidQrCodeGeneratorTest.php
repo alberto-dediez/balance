@@ -9,7 +9,7 @@ use App\Waste\Infrastructure\QrCode\EndroidQrCodeGenerator;
 
 class EndroidQrCodeGeneratorTest extends TestCase
 {
-    public function testGenerateReturnsQrCode()
+    public function testGenerateReturnsQrCode(): void
     {
         $containerId = ContainerId::generate();
 
@@ -22,7 +22,7 @@ class EndroidQrCodeGeneratorTest extends TestCase
         $this->assertNotEmpty($qrCode->path());
     }
 
-    private function createSUT()
+    private function createSUT(): EndroidQrCodeGenerator
     {
         return new EndroidQrCodeGenerator();
     }

@@ -36,16 +36,16 @@ class EditController extends AbstractController
 
         $wasteRequest = new UpdateWasteRequest(
             wasteId: $waste->id(),
-            color: $waste->color(),
+            name: $waste->name(),
             isDangerous: $waste->isDangerous(),
             density: $waste->density(),
-            name: $waste->name()
+            color: $waste->color()
         );
 
         try {
             $form = $this->createForm(UpdateWasteType::class, $wasteRequest); 
 
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateWaste, $loggedUser) {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateWaste, $loggedUser): void {
                 $wasteRequest = $form->getData();
 
                 $updateWaste($wasteRequest, $loggedUser());

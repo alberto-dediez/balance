@@ -2,17 +2,14 @@
 
 namespace App\DataExchange\Infrastructure\UI\Web\Form;
 
-use App\DataExchange\Domain\Model\Importation\ColumnValueTranslation;
 use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
 use App\DataExchange\Infrastructure\UI\Web\DTO\FieldDefinition;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatableMessage;
 
 class ConfigurationTranslationType extends AbstractType
 {
@@ -21,7 +18,7 @@ class ConfigurationTranslationType extends AbstractType
         $definitions = $options['definitions'];
 
         $builder
-            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($definitions) {
+            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($definitions): void {
                 $configuration = $event->getData();
 
                 /** @var ?FieldDefinition $definition */
@@ -44,7 +41,7 @@ class ConfigurationTranslationType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => ImportationColumnConfiguration::class,

@@ -2,19 +2,15 @@
 
 namespace App\DataExchange\Infrastructure\UI\Web\Import;
 
+use App\DataExchange\Domain\Model\Importation\ImportationType;
+use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Application\Importation\Register\RegisterImportationRequest;
-use App\DataExchange\Application\Importation\Register\RegisterImportationResponse;
 use App\DataExchange\Application\Importation\Register\RegisterImportationService;
 use App\DataExchange\Domain\Model\Importation\ImportationTypeFactory;
 use App\DataExchange\Infrastructure\UI\Web\DTO\ImportFileRequest;
 use App\DataExchange\Infrastructure\UI\Web\Form\ImportFileType;
-use App\Security\Application\Action;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use App\Shared\Application\CommandBus\CommandBusDispatcher;
-use App\Waste\Application\Measurement\MeasurementAuthorizer;
-use App\Waste\Domain\Model\Measurement\Measurement;
-use App\Waste\Domain\Model\Measurement\MeasurementId;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,7 +31,7 @@ class ImportController extends AbstractController
     {
         $importationType = $importationTypeFactory->createFromCode($code);
 
-        if (null === $importationType) {
+        if (!$importationType instanceof ImportationType) {
             throw $this->createNotFoundException();
         }
 
@@ -61,7 +57,7 @@ class ImportController extends AbstractController
                 ), $loggedUser()
             );
 
-            if (null === $response || null === $response->importationId) {
+            if (!$response->importationId instanceof ImportationId) {
                 $this->addFlash('danger', new TranslatableMessage('Error importando el fichero {file}', ['{file}' => $data->file->getClientOriginalName()]));
 
                 return $this->redirectToRoute($importationType->returnRoute());

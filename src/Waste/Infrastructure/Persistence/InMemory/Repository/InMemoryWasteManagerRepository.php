@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\Persistence\InMemory\Repository;
 
+use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\WasteManager\WasteManager;
 use App\Waste\Domain\Model\WasteManager\WasteManagerFilter;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
@@ -46,7 +47,7 @@ class InMemoryWasteManagerRepository implements WasteManagerRepository
     {
         $results = [];
 
-        if (count($this->wasteManagers) == 0) {
+        if (count($this->wasteManagers) === 0) {
             return $results;
         }
 
@@ -54,10 +55,10 @@ class InMemoryWasteManagerRepository implements WasteManagerRepository
 
         foreach ($this->wasteManagers as $wasteManager) {
             if (
-                null !== $filter->accountId
+                $filter->accountId instanceof AccountId
                 && (
                     null == $wasteManager->accountId()
-                    || false == $filter->accountId->equals($wasteManager->accountId())
+                    || false === $filter->accountId->equals($wasteManager->accountId())
                 )
             ) {
                 continue;

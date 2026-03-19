@@ -15,17 +15,19 @@ class RemoveCountry implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) == 0) {
+        if (count($request->elements) === 0) {
             return [];
         }
 
         $commands = [];
 
         foreach ($request->elements as $country) {
-            if (null === $country || null === $country->id()) {
+            if (null === $country) {
                 continue;
             }
-
+            if (null === $country->id()) {
+                continue;
+            }
             $commands[] = new RemoveCountryRequest(
                 countryId: $country->id()
             );

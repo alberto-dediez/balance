@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\User\Remove;
 
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Application\User\Remove\RemoveUserRequest;
-use App\Security\Application\User\Remove\RemoveUserResponse;
 use App\Security\Application\User\Remove\RemoveUserService;
 use App\Security\Domain\Model\User\UserRemoved;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
@@ -16,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 
 class RemoveUserServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -25,7 +26,7 @@ class RemoveUserServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -38,13 +39,11 @@ class RemoveUserServiceTest extends TestCase
         $repository->add($user);
 
         $request = new RemoveUserRequest(
-            userId: $user->id()
+            userId: $user->id(),
         );
 
         $result = $sut($request, $performBy);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RemoveUserResponse);
         $this->assertTrue($user->id()->equals($result->userId));
 
         $userPersisted = $repository->find($result->userId);
@@ -57,7 +56,7 @@ class RemoveUserServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof UserRemoved);
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -72,13 +71,13 @@ class RemoveUserServiceTest extends TestCase
         $repository->add($user);
 
         $request = new RemoveUserRequest(
-            userId: $user->id()
+            userId: $user->id(),
         );
 
         $sut($request, $performBy);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -87,13 +86,13 @@ class RemoveUserServiceTest extends TestCase
         $user = UserMother::random();
 
         $result = $sut->isHandled(new RemoveUserRequest(
-            userId: $user->id()
+            userId: $user->id(),
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryUserRepository $repository): RemoveUserService
     {
         return new RemoveUserService($repository, UserAuthorizerMother::create());
     }

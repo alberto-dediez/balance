@@ -2,15 +2,11 @@
 
 namespace App\Tests\Unit\DataExchange\Application\Importation\ExecuteSingle;
 
-use App\DataExchange\Application\Importation\Execute\ExecuteImportationRequest;
-use App\DataExchange\Application\Importation\Execute\ExecuteImportationResponse;
-use App\DataExchange\Application\Importation\Execute\ExecuteImportationService;
 use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleRequest;
 use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleResponse;
 use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleService;
 use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationExecuted;
-use App\DataExchange\Domain\Model\Importation\ImportationExecutionStarted;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Domain\Model\Importation\ImportationStatus;
@@ -21,7 +17,6 @@ use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
-use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\DataExchange\Application\Importation\ImportationAuthorizerMother;
 use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
@@ -29,14 +24,13 @@ use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Application\CommandBus\FakeCommand;
 use App\Tests\Unit\Shared\Application\CommandBus\SluttyCommandHandler;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Waste\Application\Measurement\Import\ImportMeasurementRequest;
 use PHPUnit\Framework\TestCase;
 
 class ExecuteSingleServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
-    private $spyCommandBus;
+    private SluttyCommandHandler $spyCommandBus;
 
     protected function setUp(): void
     {
@@ -47,7 +41,7 @@ class ExecuteSingleServiceTest extends TestCase
         $this->spyCommandBus = new SluttyCommandHandler();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $importationFile = new ImportationFile(
             path: __DIR__ . '/superheroes.csv'
@@ -95,7 +89,7 @@ class ExecuteSingleServiceTest extends TestCase
         $this->assertNull($lastEvent);
     }
 
-    public function testUseCaseLastCommand()
+    public function testUseCaseLastCommand(): void
     {
         $importationFile = new ImportationFile(
             path: __DIR__ . '/superheroe.csv'
@@ -145,7 +139,7 @@ class ExecuteSingleServiceTest extends TestCase
         $this->assertTrue($importationPersisted->id()->equals($lastEvent->importationId()));
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -171,7 +165,7 @@ class ExecuteSingleServiceTest extends TestCase
         $sut($request, $user);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = new InMemoryImportationRepository();
 
@@ -186,7 +180,7 @@ class ExecuteSingleServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryImportationRepository $repository): ExecuteSingleService
     {
         $authorizer = ImportationAuthorizerMother::create();
 

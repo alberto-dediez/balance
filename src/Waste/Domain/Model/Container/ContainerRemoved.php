@@ -13,7 +13,7 @@ final class ContainerRemoved extends DomainEvent
     protected static string $eventName = 'containerRemoved';
 
     public function __construct(
-        private ContainerId $containerId, 
+        private readonly ContainerId $containerId,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -25,12 +25,12 @@ final class ContainerRemoved extends DomainEvent
         return $this->containerId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->containerId();
+        return $this->containerId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'containerId' => (string) $this->containerId
@@ -40,7 +40,7 @@ final class ContainerRemoved extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new ContainerRemoved(
             containerId: new ContainerId($payload['containerId']),

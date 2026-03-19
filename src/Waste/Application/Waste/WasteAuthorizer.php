@@ -21,14 +21,18 @@ final class WasteAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        return ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin));
+        if ($user->hasRole(Role::SuperAdmin)) {
+            return true;
+        }
+        return $user->hasRole(Role::Admin);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::Admin) 
-            || $user->hasRole(Role::SuperAdmin)
-        ;
+        if ($user->hasRole(Role::Admin)) {
+            return true;
+        }
+        return $user->hasRole(Role::SuperAdmin);
     }
 
     protected function canRemove(mixed $subject, User $user): bool

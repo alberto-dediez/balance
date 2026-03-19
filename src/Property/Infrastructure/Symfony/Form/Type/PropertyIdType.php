@@ -12,13 +12,13 @@ use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdType;
 class PropertyIdType extends AggregateRootIdType
 {
     public function __construct(
-        private LoggedAccount $loggedAccount, 
-        private PropertyRepository $propertyRepository
+        private readonly LoggedAccount $loggedAccount, 
+        private readonly PropertyRepository $propertyRepository
     ) {
 
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $loggedAccount = $this->loggedAccount;
 
@@ -30,9 +30,9 @@ class PropertyIdType extends AggregateRootIdType
             )
         );
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => $this->getChoices($properties),
             'class' => PropertyId::class
-        ));
+        ]);
     }
 }

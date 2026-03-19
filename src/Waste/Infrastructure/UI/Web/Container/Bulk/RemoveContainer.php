@@ -15,17 +15,19 @@ class RemoveContainer implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) == 0) {
+        if (count($request->elements) === 0) {
             return [];
         }
 
         $commands = [];
 
         foreach ($request->elements as $container) {
-            if (null === $container || null === $container->id()) {
+            if (null === $container) {
                 continue;
             }
-
+            if (null === $container->id()) {
+                continue;
+            }
             $commands[] = new RemoveContainerRequest(
                 containerId: $container->id()
             );

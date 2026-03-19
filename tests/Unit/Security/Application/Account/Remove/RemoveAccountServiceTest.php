@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\Account\Remove;
 
 use App\Security\Application\Account\Remove\RemoveAccountRequest;
-use App\Security\Application\Account\Remove\RemoveAccountResponse;
 use App\Security\Application\Account\Remove\RemoveAccountService;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountRemoved;
@@ -17,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 class RemoveAccountServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -26,7 +27,7 @@ class RemoveAccountServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = new InMemoryAccountRepository();
 
@@ -39,13 +40,11 @@ class RemoveAccountServiceTest extends TestCase
         $repository->add($account);
 
         $request = new RemoveAccountRequest(
-            accountId: $account->id()
+            accountId: $account->id(),
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RemoveAccountResponse);
         $this->assertTrue($account->id()->equals($result->accountId));
 
         $accountPersisted = $repository->find($result->accountId);
@@ -58,7 +57,7 @@ class RemoveAccountServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof AccountRemoved);
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -73,13 +72,13 @@ class RemoveAccountServiceTest extends TestCase
         $repository->add($account);
 
         $request = new RemoveAccountRequest(
-            accountId: $account->id()
+            accountId: $account->id(),
         );
 
         $sut($request, $user);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = new InMemoryAccountRepository();
 
@@ -88,13 +87,13 @@ class RemoveAccountServiceTest extends TestCase
         $account = AccountMother::fromName('MyAccount');
 
         $result = $sut->isHandled(new RemoveAccountRequest(
-            accountId: $account->id()
+            accountId: $account->id(),
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryAccountRepository $repository): RemoveAccountService
     {
         $authorizer = AccountAuthorizerMother::create();
 

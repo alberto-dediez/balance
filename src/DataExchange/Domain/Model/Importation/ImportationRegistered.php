@@ -14,11 +14,11 @@ final class ImportationRegistered extends DomainEvent
     protected static string $eventName = 'importationRegistered';
 
     public function __construct(
-        private ImportationId $importationId,
-        private string $name,
-        private string $type,
-        private ?AccountId $accountId,
-        private ?UserId $registeredBy,
+        private readonly ImportationId $importationId,
+        private readonly string $name,
+        private readonly string $type,
+        private readonly ?AccountId $accountId,
+        private readonly ?UserId $registeredBy,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -50,26 +50,26 @@ final class ImportationRegistered extends DomainEvent
         return $this->registeredBy;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->importationId();
+        return $this->importationId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'importationId' => (string) $this->importationId,
-            'accountId' => null === $this->accountId ? null : (string) $this->accountId,
-            'registeredBy' => null === $this->registeredBy ? null : (string) $this->registeredBy,
-            'name' => (string) $this->name,
-            'type' => (string) $this->type,
+            'accountId' => $this->accountId instanceof AccountId ? (string) $this->accountId : null,
+            'registeredBy' => $this->registeredBy instanceof UserId ? (string) $this->registeredBy : null,
+            'name' => $this->name,
+            'type' => $this->type,
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new ImportationRegistered(
             importationId: new ImportationId($payload['importationId']),

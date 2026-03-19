@@ -5,7 +5,6 @@ namespace App\Waste\Domain\Model\DailyWaste;
 use App\Shared\Domain\Model\Filter;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\Container\Purpose;
-use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 

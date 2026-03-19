@@ -19,11 +19,7 @@ use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponseGenerator;
 
 #[Route('/measurements/{measurementId}', name: 'api_measurements_edit', methods: ['PUT'])]
 #[Areas(['mobile', 'admin'])]
-#[OA\Put(
-    summary: "Edit Measurement",
-    description: "Edit an owned measurement",
-    tags: ['Waste']
-)]
+#[OA\Put(description: "Edit an owned measurement", summary: "Edit Measurement", tags: ['Waste'])]
 #[OA\Response(
     response: 200,
     description: 'Returns data of edited measurement',

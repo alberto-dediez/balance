@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Brand\Remove;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -17,7 +18,7 @@ use App\Tests\Unit\Property\Domain\Model\Brand\BrandRepositoryMother;
 
 class RemoveBrandServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -26,7 +27,7 @@ class RemoveBrandServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = BrandRepositoryMother::inMemory();
 
@@ -58,7 +59,7 @@ class RemoveBrandServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof BrandRemoved);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = BrandRepositoryMother::inMemory();
 
@@ -73,7 +74,7 @@ class RemoveBrandServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryBrandRepository $repository): RemoveBrandService
     {
         return new RemoveBrandService($repository, new BrandAuthorizer());
     }

@@ -5,9 +5,9 @@ namespace App\DataExchange\Domain\Model\Importation;
 class ImportationFile
 {
     public function __construct(
-        private string $path,
+        private readonly string $path,
         private string $extension = '',
-        private int $offset = 0
+        private readonly int $offset = 0
     ) {
         if (empty($this->extension)) {
             $this->extension = pathinfo($this->path, PATHINFO_EXTENSION);

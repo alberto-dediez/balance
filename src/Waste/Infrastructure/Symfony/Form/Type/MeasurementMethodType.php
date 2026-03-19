@@ -9,7 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class MeasurementMethodType extends AbstractType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $choices = [];
 
@@ -17,13 +17,11 @@ class MeasurementMethodType extends AbstractType
             $choices[$measurementMethod->value] = $measurementMethod;
         }
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => $choices,
             'translation_domain' => 'measurementMethod',
-            'choice_attr' => function (?MeasurementMethod $method): array {
-                return $method ? ['data-value' => $method->value] : [];
-            }
-        ));
+            'choice_attr' => fn(?MeasurementMethod $method): array => $method instanceof MeasurementMethod ? ['data-value' => $method->value] : []
+        ]);
     }
     
     public function getParent()

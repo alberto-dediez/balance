@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Property\List;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Property\Application\Property\PropertyAuthorizer;
@@ -19,7 +20,7 @@ class ListPropertiesServiceTest extends TestCase
         
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = PropertyRepositoryMother::inMemory();
 
@@ -42,7 +43,7 @@ class ListPropertiesServiceTest extends TestCase
         $this->assertEquals(4, $result->totalResults);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryPropertyRepository $repository): ListPropertiesService
     {
         return new ListPropertiesService($repository, new PropertyAuthorizer());
     }

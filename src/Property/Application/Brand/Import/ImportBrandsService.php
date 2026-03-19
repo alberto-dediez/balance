@@ -16,10 +16,10 @@ use App\Property\Application\Brand\Register\RegisterBrandService;
 class ImportBrandsService
 {
     public function __construct(
-        private BrandRepository $repository, 
-        private RegisterBrandService $registerBrand, 
-        private UpdateBrandService $updateBrand, 
-        private BrandAuthorizer $authorizer
+        private readonly BrandRepository $repository, 
+        private readonly RegisterBrandService $registerBrand, 
+        private readonly UpdateBrandService $updateBrand, 
+        private readonly BrandAuthorizer $authorizer
     ) {
 
     }
@@ -33,9 +33,7 @@ class ImportBrandsService
         $brandsMatch = $this->matchBrands($request->brands, $user);
 
         $totalResults = array_sum(
-            array_map(function (BrandResponse $response) {
-                return null !== $response->brandId ? 1 : 0;
-            }, $brandsMatch)
+            array_map(fn(BrandResponse $response) => $response->brandId instanceof BrandId ? 1 : 0, $brandsMatch)
         );
 
         return new ImportBrandsResponse($brandsMatch, $totalResults);
@@ -43,7 +41,7 @@ class ImportBrandsService
 
     private function matchBrands(array $brandRequests, User $user): array
     {
-        if (count($brandRequests) == 0) {
+        if (count($brandRequests) === 0) {
             return [];
         }
 
@@ -58,7 +56,7 @@ class ImportBrandsService
             if (null == $brandMatch) {
                 $brandMatch = $this->repository->findByName($request->name);
 
-                if (null !== $brandMatch) {
+                if ($brandMatch instanceof Brand) {
                     $this->updateBrand->__invoke(new UpdateBrandRequest(
                         $brandMatch->id(),
                         $brandMatch->name(),

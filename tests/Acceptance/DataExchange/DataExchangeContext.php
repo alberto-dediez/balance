@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\DataExchange;
 
+use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
@@ -13,7 +14,7 @@ use Behat\Behat\Context\Context;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
-final class DataExchangeContext implements Context
+final readonly class DataExchangeContext implements Context
 {
     private AcceptanceClient $client;
 
@@ -29,7 +30,7 @@ final class DataExchangeContext implements Context
     }
 
     #[Given('an importation with id :importationId from account :accountId exists')]
-    public function anImportationWithIdFromAccountExists($importationId, $accountId): void
+    public function anImportationWithIdFromAccountExists(string $importationId, string $accountId): void
     {
         $filename = __DIR__ . '/file-to-import.csv';
 
@@ -50,11 +51,11 @@ final class DataExchangeContext implements Context
         $importation = $repository->find(new ImportationId($importationId));
 
         foreach (explode('|', $fields) as $field) {
-            list($name, $value) = explode(':', $field);
+            [$name, $value] = explode(':', $field);
 
             $configuration = $importation->configurationFor($name);
 
-            if (null === $configuration) {
+            if (!$configuration instanceof ImportationColumnConfiguration) {
                 continue;
             }
 
@@ -65,7 +66,7 @@ final class DataExchangeContext implements Context
     }
 
     #[Given('an executed importation with id :importationId from account :accountId exists')]
-    public function anExecutedImportationWithIdFromAccountExists($importationId, $accountId): void
+    public function anExecutedImportationWithIdFromAccountExists(string $importationId, string $accountId): void
     {
         $filename = __DIR__ . '/file-to-import.csv';
 

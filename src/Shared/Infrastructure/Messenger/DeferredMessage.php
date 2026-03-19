@@ -10,8 +10,8 @@ use Symfony\Component\Messenger\Attribute\AsMessage;
 class DeferredMessage
 {
     public function __construct(
-        private Command $command,
-        private UserId $userId
+        private readonly Command $command,
+        private readonly UserId $userId
     ) {
 
     }

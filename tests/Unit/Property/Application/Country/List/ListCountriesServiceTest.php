@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Country\List;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Property\Application\Country\CountryAuthorizer;
@@ -19,7 +20,7 @@ class ListCountriesServiceTest extends TestCase
         
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = CountryRepositoryMother::inMemory();
 
@@ -42,7 +43,7 @@ class ListCountriesServiceTest extends TestCase
         $this->assertEquals(4, $result->totalResults);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryCountryRepository $repository): ListCountriesService
     {
         return new ListCountriesService($repository, new CountryAuthorizer());
     }

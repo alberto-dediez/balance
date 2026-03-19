@@ -16,10 +16,10 @@ use App\Property\Domain\Model\Country\CountryRepository;
 class ImportCountriesService
 {
     public function __construct(
-        private CountryRepository $repository, 
-        private RegisterCountryService $registerCountry, 
-        private UpdateCountryService $updateCountry, 
-        private CountryAuthorizer $authorizer
+        private readonly CountryRepository $repository, 
+        private readonly RegisterCountryService $registerCountry, 
+        private readonly UpdateCountryService $updateCountry, 
+        private readonly CountryAuthorizer $authorizer
     ) {
 
     }
@@ -33,9 +33,7 @@ class ImportCountriesService
         $countriesMatch = $this->matchCountries($request->countries, $user);
 
         $totalResults = array_sum(
-            array_map(function (CountryResponse $response) {
-                return null !== $response->countryId ? 1 : 0;
-            }, $countriesMatch)
+            array_map(fn(CountryResponse $response) => $response->countryId instanceof CountryId ? 1 : 0, $countriesMatch)
         );
 
         return new ImportCountriesResponse($countriesMatch, $totalResults);
@@ -43,7 +41,7 @@ class ImportCountriesService
 
     private function matchCountries(array $countryRequests, User $user): array
     {
-        if (count($countryRequests) == 0) {
+        if (count($countryRequests) === 0) {
             return [];
         }
 
@@ -63,7 +61,7 @@ class ImportCountriesService
                 $countryMatch = $this->repository->findByName($request->name);
             }
 
-            if (null !== $countryMatch) {
+            if ($countryMatch instanceof Country) {
                 $this->updateCountry->__invoke(new UpdateCountryRequest(
                     $countryMatch->id(),
                     $countryMatch->name(),

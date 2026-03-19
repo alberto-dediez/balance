@@ -18,14 +18,14 @@ final class DailyWasteRegistered extends DomainEvent
     protected static string $eventName = 'dailyWasteRegistered';
 
     public function __construct(
-        private DailyWasteId $dailyWasteId, 
-        private PropertyId $propertyId,
-        private WasteId $wasteId,
-        private Purpose $purpose,
-        private WasteManagerId $wasteManagerId,
-        private AccountId $accountId,
-        private \DateTimeImmutable $day,
-        private float $load = 0,
+        private readonly DailyWasteId $dailyWasteId,
+        private readonly PropertyId $propertyId,
+        private readonly WasteId $wasteId,
+        private readonly Purpose $purpose,
+        private readonly WasteManagerId $wasteManagerId,
+        private readonly AccountId $accountId,
+        private readonly \DateTimeImmutable $day,
+        private readonly float $load = 0,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -62,7 +62,7 @@ final class DailyWasteRegistered extends DomainEvent
         return $this->load;
     }
 
-    public function accountId(): ?AccountId
+    public function accountId(): AccountId
     {
         return $this->accountId;
     }
@@ -72,12 +72,12 @@ final class DailyWasteRegistered extends DomainEvent
         return $this->day;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->dailyWasteId();
+        return $this->dailyWasteId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'dailyWasteId' => (string) $this->dailyWasteId,
@@ -87,24 +87,24 @@ final class DailyWasteRegistered extends DomainEvent
             'wasteManagerId' => (string) $this->wasteManagerId,
             'load' => $this->load,
             'accountId' => (string) $this->accountId,
-            'day' => (string) $this->day->format('Y-m-d'),
+            'day' => $this->day->format('Y-m-d'),
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new DailyWasteRegistered(
-            dailyWasteId: new DailyWasteId($payload['dailyWasteId']), 
+            dailyWasteId: new DailyWasteId($payload['dailyWasteId']),
             propertyId: new PropertyId($payload['propertyId']),
-            wasteId: new WasteId($payload['waste']), 
+            wasteId: new WasteId($payload['waste']),
             purpose: Purpose::tryFrom($payload['purpose']),
             wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId($payload['wasteManagerId']) : WasteManagerId::generate(),
-            load: $payload['load'],
-            day: new \DateTimeImmutable($payload['day']),
             accountId: new AccountId($payload['accountId']),
+            day: new \DateTimeImmutable($payload['day']),
+            load: $payload['load'],
             id: $id,
             occurredOn: $occurredOn
         );

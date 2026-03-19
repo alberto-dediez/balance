@@ -18,7 +18,7 @@ class FakeTranslator implements TranslatorInterface
         return $this->locale;
     }
 
-    public function setLocale($locale)
+    public function setLocale($locale): void
     {
         $this->locale = $locale;
     }

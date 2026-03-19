@@ -46,12 +46,12 @@ class InMemoryCategoryRepository implements CategoryRepository
 
     public function findByName(string $name): ?Category
     {
-        if (count($this->categories) == 0) {
+        if (count($this->categories) === 0) {
             return null;
         }
 
         foreach ($this->categories as $category) {
-            if (null !== $category->name() && strtolower($category->name()) == strtolower($name)) {
+            if (null !== $category->name() && strtolower($category->name()) === strtolower($name)) {
                 return $this->find($category->id());
             }
         }
@@ -61,12 +61,12 @@ class InMemoryCategoryRepository implements CategoryRepository
 
     public function findByIso(string $iso): ?Category
     {
-        if (count($this->categories) == 0) {
+        if (count($this->categories) === 0) {
             return null;
         }
 
         foreach ($this->categories as $category) {
-            if (null !== $category->iso() && strtolower($category->iso()) == strtolower($iso)) {
+            if (null !== $category->iso() && strtolower($category->iso()) === strtolower($iso)) {
                 return $this->find($category->id());
             }
         }
@@ -76,7 +76,7 @@ class InMemoryCategoryRepository implements CategoryRepository
 
     public function findBySourceAndExternalId(ExternalSource $source, ExternalId $externalId): ?Category
     {
-        if (count($this->categories) == 0) {
+        if (count($this->categories) === 0) {
             return null;
         }
 
@@ -100,7 +100,7 @@ class InMemoryCategoryRepository implements CategoryRepository
     {
         $results = [];
 
-        if (count($this->categories) == 0) {
+        if (count($this->categories) === 0) {
             return $results;
         }
 
@@ -109,7 +109,7 @@ class InMemoryCategoryRepository implements CategoryRepository
         foreach ($this->categories as $category) {
             if (
                 !empty($filter->name)
-                && false === strpos(strtolower($category->name()), strtolower($filter->name))
+                && !str_contains(strtolower((string) $category->name()), strtolower($filter->name))
             ) {
                 continue;
             }

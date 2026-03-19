@@ -15,7 +15,7 @@ class CountryExtension extends AbstractExtension
 {
     private array $countries = [];
 
-    public function __construct(private CountryRepository $countryRepository)
+    public function __construct(private readonly CountryRepository $countryRepository)
     {
 
     }
@@ -23,7 +23,7 @@ class CountryExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('country_name', [$this, 'countryName']),
+            new TwigFilter('country_name', $this->countryName(...)),
         ];
     }
 
@@ -36,22 +36,22 @@ class CountryExtension extends AbstractExtension
 
     public function countryName(?CountryId $countryId): ?Country
     {
-        if (null === $countryId) {
+        if (!$countryId instanceof CountryId) {
             return null;
         }
 
-        if (count($this->countries) == 0) {
+        if (count($this->countries) === 0) {
             $this->preload();
         }
 
-        return isset($this->countries[(string) $countryId]) ? $this->countries[(string) $countryId] : null;
+        return $this->countries[(string) $countryId] ?? null;
     }
 
     private function preload(): void
     {
         $countries = $this->countryRepository->findByFilter(new CountryFilter(limit: 0));
 
-        if (count($countries) == 0) {
+        if (count($countries) === 0) {
             return ;
         }
 

@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
 
 class PairFieldsImportationServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -31,7 +31,7 @@ class PairFieldsImportationServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $importationFile = new ImportationFile(
             path: __DIR__ . '/../Register/superheroes.csv'
@@ -74,7 +74,7 @@ class PairFieldsImportationServiceTest extends TestCase
         $this->assertTrue($importationPersisted->id()->equals($lastEvent->importationId()));
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -99,7 +99,7 @@ class PairFieldsImportationServiceTest extends TestCase
         $sut($request, $user);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = new InMemoryImportationRepository();
 
@@ -113,7 +113,7 @@ class PairFieldsImportationServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryImportationRepository $repository): PairFieldsImportationService
     {
         $authorizer = ImportationAuthorizerMother::create();
 

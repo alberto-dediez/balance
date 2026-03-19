@@ -5,7 +5,7 @@ namespace App\Waste\Domain\Model\Container;
 class QrCode
 {
     public function __construct(
-        private string $path
+        private readonly string $path
     ) {
         
     }

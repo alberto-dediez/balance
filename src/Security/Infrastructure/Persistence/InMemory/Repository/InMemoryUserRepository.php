@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\DuplicatedUsernameException;
 use App\Security\Domain\Model\User\RecoverToken;
+use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\User\UserId;
@@ -15,22 +18,20 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryUserRepository implements UserRepository
 {
-    public function __construct(private array $users = [])
-    {
-
-    }
+    /**
+     * @param User[] $users
+     */
+    public function __construct(private array $users = []) {}
 
     public function add(User $user): void
     {
         if (isset($this->users[(string) $user->id()])) {
-            return ;
+            return;
         }
 
-        $usernameInUse = array_filter($this->users, function (User $savedUser) use ($user): bool {
-            return $user->username() === $savedUser->username() && !$savedUser->isRemoved();
-        });
+        $usernameInUse = array_filter($this->users, fn(User $savedUser): bool => $user->username() === $savedUser->username() && !$savedUser->isRemoved());
 
-        if ($usernameInUse) {
+        if ([] !== $usernameInUse) {
             throw new DuplicatedUsernameException($user->username());
         }
 
@@ -40,7 +41,7 @@ class InMemoryUserRepository implements UserRepository
     public function remove(User $user): void
     {
         if (!isset($this->users[(string) $user->id()])) {
-            return ;
+            return;
         }
 
         unset($this->users[(string) $user->id()]);
@@ -56,7 +57,7 @@ class InMemoryUserRepository implements UserRepository
 
     public function findByUsername(string $username): ?User
     {
-        if (count($this->users) == 0) {
+        if (0 === count($this->users)) {
             return null;
         }
 
@@ -71,12 +72,12 @@ class InMemoryUserRepository implements UserRepository
 
     public function findByRecoverToken(RecoverToken $recoverToken): ?User
     {
-        if (count($this->users) == 0) {
+        if (0 === count($this->users)) {
             return null;
         }
 
         foreach ($this->users as $user) {
-            if ($user->recoverToken()->equals($recoverToken)) {
+            if ($user->recoverToken()?->equals($recoverToken)) {
                 return $this->find($user->id());
             }
         }
@@ -84,25 +85,31 @@ class InMemoryUserRepository implements UserRepository
         return null;
     }
 
+    /**
+     * @return list<User>
+     */
     public function findByAccountId(AccountId $accountId): array
     {
         $account = new Account(
-            id: $accountId
+            id: $accountId,
         );
 
         $filter = new UserFilter(
-            account: $account
+            account: $account,
         );
         $filter->limit = 9999999999999;
 
         return $this->findByFilter($filter);
     }
 
+    /**
+     * @return list<User>
+     */
     public function findByFilter(UserFilter $filter): array
     {
         $results = [];
 
-        if (count($this->users) == 0) {
+        if (0 === count($this->users)) {
             return $results;
         }
 
@@ -110,17 +117,17 @@ class InMemoryUserRepository implements UserRepository
 
         foreach ($this->users as $user) {
             if (
-                !empty($filter->username)
-                && false === strpos(strtolower($user->username()), strtolower($filter->username))
+                !in_array($filter->username, [null, '', '0'], true)
+                && !str_contains(strtolower((string) $user->username()), strtolower($filter->username))
             ) {
                 continue;
             }
 
-            if (null !== $filter->role && !in_array($filter->role->value, $user->roles())) {
+            if ($filter->role instanceof Role && !in_array($filter->role, $user->roles())) {
                 continue;
             }
 
-            if (null !== $filter->account && (null == $user->accountId() || false == $user->accountId()->equals($filter->account->id()))) {
+            if ($filter->account instanceof Account && (null == $user->accountId() || false == $user->accountId()->equals($filter->account->id()))) {
                 continue;
             }
 
@@ -129,7 +136,7 @@ class InMemoryUserRepository implements UserRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

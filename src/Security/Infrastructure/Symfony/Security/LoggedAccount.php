@@ -1,30 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Security;
 
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountRepository;
 
 class LoggedAccount
 {
+    /** @var Account[] $accounts  */
     private array $accounts = [];
-    public function __construct(private LoggedUser $loggedUser, private AccountRepository $accountRepository)
-    {
 
-    }
+    public function __construct(private readonly LoggedUser $loggedUser, private readonly AccountRepository $accountRepository) {}
 
     public function __invoke(): ?Account
     {
         $user = $this->loggedUser->__invoke();
 
-        if (null === $user || null === $user->accountId()) {
+        if (!$user->accountId() instanceof AccountId) {
             return null;
         }
 
-        if (!isset($this->accounts[(string) $user->id()])) {
-            $this->accounts[(string) $user->id()] = $this->accountRepository->find($user->accountId());
+        $key = $user->id()->__toString();
+
+        if (!isset($this->accounts[$key])) {
+            $this->accounts[$key] = $this->accountRepository->find($user->accountId());
         }
 
-        return $this->accounts[(string) $user->id()];
+        return $this->accounts[$key];
     }
 }

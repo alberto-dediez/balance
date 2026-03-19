@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Category\List;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCategoryRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Property\Application\Category\CategoryAuthorizer;
@@ -19,7 +20,7 @@ class ListCategoriesServiceTest extends TestCase
         
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = CategoryRepositoryMother::inMemory();
 
@@ -42,7 +43,7 @@ class ListCategoriesServiceTest extends TestCase
         $this->assertEquals(4, $result->totalResults);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryCategoryRepository $repository): ListCategoriesService
     {
         return new ListCategoriesService($repository, new CategoryAuthorizer());
     }

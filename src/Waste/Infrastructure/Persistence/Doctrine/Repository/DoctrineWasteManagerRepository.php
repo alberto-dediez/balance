@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\WasteManager\WasteManager;
 use App\Waste\Domain\Model\WasteManager\WasteManagerFilter;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
@@ -16,21 +17,21 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineWasteManagerRepository implements WasteManagerRepository
 {
-    public function __construct(private EntityManagerInterface $manager)
+    public function __construct(private readonly EntityManagerInterface $manager)
     {
 
     }
 
     public function add(WasteManager $wasteManager): void
     {
-        $this->getEntityManager()->persist($wasteManager);
-        $this->getEntityManager()->flush();
+        $this->manager->persist($wasteManager);
+        $this->manager->flush();
     }
 
     public function remove(WasteManager $wasteManager): void
     {
-        $this->getEntityManager()->remove($wasteManager);
-        $this->getEntityManager()->flush();
+        $this->manager->remove($wasteManager);
+        $this->manager->flush();
     }
 
     public function find(WasteManagerId $wasteManagerId): ?WasteManager
@@ -49,7 +50,7 @@ class DoctrineWasteManagerRepository implements WasteManagerRepository
 
     private function createQueryBuilderFromFilter(WasteManagerFilter $filter): QueryBuilder
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb = $this->manager->createQueryBuilder();
 
         $qb->select('wm')
             ->from(WasteManager::class, 'wm')
@@ -79,7 +80,7 @@ class DoctrineWasteManagerRepository implements WasteManagerRepository
             ;
         }
 
-        if (null !== $filter->accountId) {
+        if ($filter->accountId instanceof AccountId) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('wm.accountId', ':accountId')
@@ -88,14 +89,11 @@ class DoctrineWasteManagerRepository implements WasteManagerRepository
             ;
         }
 
-        $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
+        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
 
-        switch ($filter->orderBy) {
-            case 'registeredAt':
-            default:
-                $qb->orderBy('wm.registeredAt', $way);
-                break;
-        }
+        match ($filter->orderBy) {
+            default => $qb->orderBy('wm.registeredAt', $way),
+        };
 
         return $qb;
     }
@@ -124,10 +122,5 @@ class DoctrineWasteManagerRepository implements WasteManagerRepository
             ->getQuery()
             ->getSingleScalarResult()
         ;
-    }
-
-    private function getEntityManager()
-    {
-        return $this->manager;
     }
 }

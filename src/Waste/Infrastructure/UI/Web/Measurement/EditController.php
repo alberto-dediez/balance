@@ -45,7 +45,7 @@ class EditController extends AbstractController
         try {
             $form = $this->createForm(UpdateMeasurementType::class, $measurementRequest, ['unit' => $measurement->unit()]);
 
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateMeasurement, $loggedUser) {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateMeasurement, $loggedUser): void {
                 $measurementRequest = $form->getData();
 
                 $updateMeasurement($measurementRequest, $loggedUser());

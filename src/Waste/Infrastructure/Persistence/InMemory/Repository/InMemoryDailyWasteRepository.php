@@ -42,34 +42,32 @@ class InMemoryDailyWasteRepository implements DailyWasteRepository
 
     public function find(DailyWasteId $dailyWasteId): ?DailyWaste
     {
-        return (isset($this->dailyWastes[(string) $dailyWasteId]))
-            ? $this->dailyWastes[(string) $dailyWasteId]
-            : null
+        return $this->dailyWastes[(string) $dailyWasteId] ?? null
         ;
     }
 
     public function findByDay(\DateTimeImmutable $day, PropertyId $propertyId, WasteId $wasteId, Purpose $purpose, WasteManagerId $wasteManagerId, AccountId $accountId): ?DailyWaste
     {
         $filter = new DailyWasteFilter(
-            limit: 0,
             properties: [$propertyId],
             wasteId: $wasteId,
             wasteManagerId: $wasteManagerId,
             purpose: $purpose,
             accountId: $accountId,
-            day: $day
+            day: $day,
+            limit: 0
         );
 
         $results = $this->findByFilter($filter);
 
-        return count($results) == 0 ? null : $results[0];
+        return count($results) === 0 ? null : $results[0];
     }
 
     public function findByFilter(DailyWasteFilter $filter): array
     {
         $results = [];
 
-        if (count($this->dailyWastes) == 0) {
+        if (count($this->dailyWastes) === 0) {
             return $results;
         }
 
@@ -77,24 +75,24 @@ class InMemoryDailyWasteRepository implements DailyWasteRepository
 
         foreach ($this->dailyWastes as $dailyWaste) {
             if (
-                null !== $filter->wasteId
+                $filter->wasteId instanceof WasteId
                 && (
                     null == $dailyWaste->wasteId()
-                    || false == $filter->wasteId->equals($dailyWaste->wasteId())
+                    || false === $filter->wasteId->equals($dailyWaste->wasteId())
                 )
             ) {
                 continue;
             }
 
-            if (null !== $filter->purpose && $filter->purpose !== $dailyWaste->purpose()) {
+            if ($filter->purpose instanceof Purpose && $filter->purpose !== $dailyWaste->purpose()) {
                 continue;
             }
 
             if (
-                null !== $filter->wasteManagerId
+                $filter->wasteManagerId instanceof WasteManagerId
                 && (
                     null == $dailyWaste->wasteManagerId()
-                    || false == $filter->wasteManagerId->equals($dailyWaste->wasteManagerId())
+                    || false === $filter->wasteManagerId->equals($dailyWaste->wasteManagerId())
                 )
             ) {
                 continue;
@@ -104,24 +102,24 @@ class InMemoryDailyWasteRepository implements DailyWasteRepository
                 count($filter->properties) > 0
                 && (
                     null == $dailyWaste->propertyId()
-                    || false == array_reduce($filter->properties, function ($carry, $value) use ($dailyWaste) { return $carry || $value->equals($dailyWaste->propertyId()); }, false)
+                    || false === array_reduce($filter->properties, fn(false $carry, $value) => $carry || $value->equals($dailyWaste->propertyId()), false)
                 )
             ) {
                 continue;
             }
 
             if (
-                null !== $filter->accountId
+                $filter->accountId instanceof AccountId
                 && (
                     null == $dailyWaste->accountId()
-                    || false == $filter->accountId->equals($dailyWaste->accountId())
+                    || false === $filter->accountId->equals($dailyWaste->accountId())
                 )
             ) {
                 continue;
             }
 
             if (
-                null !== $filter->day
+                $filter->day instanceof \DateTimeImmutable
                 && (
                     null == $dailyWaste->day()
                     || $dailyWaste->day()->format('Y-m-d') !== $filter->day->format('Y-m-d')
@@ -131,7 +129,7 @@ class InMemoryDailyWasteRepository implements DailyWasteRepository
             }
 
             if (
-                null !== $filter->dayFrom
+                $filter->dayFrom instanceof \DateTimeImmutable
                 && (
                     null == $dailyWaste->day()
                     || $dailyWaste->day()->format('Y-m-d') <= $filter->dayFrom->format('Y-m-d')
@@ -141,7 +139,7 @@ class InMemoryDailyWasteRepository implements DailyWasteRepository
             }
 
             if (
-                null !== $filter->dayTo
+                $filter->dayTo instanceof \DateTimeImmutable
                 && (
                     null == $dailyWaste->day()
                     || $dailyWaste->day()->format('Y-m-d') >= $filter->dayTo->format('Y-m-d')

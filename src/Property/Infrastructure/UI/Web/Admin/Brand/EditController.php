@@ -43,7 +43,7 @@ class EditController extends AbstractController
         $form = $this->createForm(AdminUpdateBrandType::class, $brandRequest); 
 
         try {
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateBrand, $loggedUser) {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateBrand, $loggedUser): void {
                 $brandRequest = $form->getData();
 
                 $updateBrand($brandRequest, $loggedUser());

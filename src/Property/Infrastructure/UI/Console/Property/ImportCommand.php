@@ -51,17 +51,17 @@ class ImportCommand extends Command
     private array $countries = [];
 
     public function __construct(
-        private PropertyInfoExtractor $propertyInfoExtractor,
-        private ExternalIdExtractor $externalIdExtractor,
-        private MatchPropertyService $matchPropertyService,
-        private RegisterPropertyService $registerPropertyService,
-        private ImportCountriesService $importCountries,
-        private ImportDestinationsService $importDestinations,
-        private ImportBrandsService $importBrands,
-        private ImportCategoriesService $importCategories,
-        private EntityManagerInterface $manager,
+        private readonly PropertyInfoExtractor $propertyInfoExtractor,
+        private readonly ExternalIdExtractor $externalIdExtractor,
+        private readonly MatchPropertyService $matchPropertyService,
+        private readonly RegisterPropertyService $registerPropertyService,
+        private readonly ImportCountriesService $importCountries,
+        private readonly ImportDestinationsService $importDestinations,
+        private readonly ImportBrandsService $importBrands,
+        private readonly ImportCategoriesService $importCategories,
+        private readonly EntityManagerInterface $manager,
         #[AutowireIterator('property.import.configuration')] 
-        private iterable $configurations
+        private readonly iterable $configurations
     ) {
         parent::__construct();
     }
@@ -174,14 +174,14 @@ class ImportCommand extends Command
                 continue;
             }
 
-            $categoryName = ucfirst(strtolower($this->fieldExtractor->extract(Field::InfoCategoryName, $row)));
+            $categoryName = ucfirst(strtolower((string) $this->fieldExtractor->extract(Field::InfoCategoryName, $row)));
             $categoryId = $this->fieldExtractor->hasField(Field::InfoCategoryId) ? $this->fieldExtractor->extract(Field::InfoCategoryId, $row) : md5($categoryName);
 
             if (!isset($categories[$categoryId])) {
                 $categories[$categoryId] = new CategoryRequest(
+                    name: $categoryName,
                     source: $this->source,
                     externalId: ExternalId::fromSourceAndId($this->source, $categoryId),
-                    name: $categoryName,
                     createIfNotExists: $createIfNotExists
                 );
             }
@@ -244,14 +244,14 @@ class ImportCommand extends Command
                 continue;
             }
 
-            $brandName = ucfirst(strtolower($this->fieldExtractor->extract(Field::InfoBrandName, $row)));
+            $brandName = ucfirst(strtolower((string) $this->fieldExtractor->extract(Field::InfoBrandName, $row)));
             $brandId = $this->fieldExtractor->hasField(Field::InfoBrandId) ? $this->fieldExtractor->extract(Field::InfoBrandId, $row) : md5($brandName);
 
             if (!isset($brands[$brandId])) {
                 $brands[$brandId] = new BrandRequest(
+                    name: $brandName,
                     source: $this->source,
                     externalId: ExternalId::fromSourceAndId($this->source, $brandId),
-                    name: $brandName,
                     createIfNotExists: $createIfNotExists
                 );
             }
@@ -314,15 +314,15 @@ class ImportCommand extends Command
                 continue;
             }
 
-            $countryName = ucfirst(strtolower($this->fieldExtractor->extract(Field::InfoCountryName, $row)));
+            $countryName = ucfirst(strtolower((string) $this->fieldExtractor->extract(Field::InfoCountryName, $row)));
             $countryIso = $this->fieldExtractor->extract(Field::InfoCountryIso, $row);
             $countryId = $this->fieldExtractor->hasField(Field::InfoCountryId) ? $this->fieldExtractor->extract(Field::InfoCountryId, $row) : md5($countryName);
 
             if (!isset($countries[$countryId])) {
                 $countries[$countryId] = new CountryRequest(
+                    name: $countryName,
                     source: $this->source,
                     externalId: ExternalId::fromSourceAndId($this->source, $countryId),
-                    name: $countryName,
                     iso: $countryIso,
                     createIfNotExists: $createIfNotExists
                 );
@@ -367,7 +367,7 @@ class ImportCommand extends Command
 
     private function getCountryId(array $row): ?CountryId
     {
-        $countryName = ucfirst(strtolower($this->fieldExtractor->extract(Field::InfoCountryName, $row)));
+        $countryName = ucfirst(strtolower((string) $this->fieldExtractor->extract(Field::InfoCountryName, $row)));
         $countryIso = $this->fieldExtractor->extract(Field::InfoCountryIso, $row);
         $countryId = $this->fieldExtractor->hasField(Field::InfoCountryId) ? $this->fieldExtractor->extract(Field::InfoCountryId, $row) : md5($countryName);
 
@@ -377,9 +377,9 @@ class ImportCommand extends Command
 
         $result = $this->importCountries->__invoke(new ImportCountriesRequest([
             new CountryRequest(
+                name: $countryName,
                 source: $this->source,
                 externalId: ExternalId::fromSourceAndId($this->source, $countryId),
-                name: $countryName,
                 iso: $countryIso,
                 createIfNotExists: false
             )
@@ -412,12 +412,12 @@ class ImportCommand extends Command
                 continue;
             }
 
-            $destinationName = ucfirst(strtolower($this->fieldExtractor->extract(Field::InfoDestinationName, $row)));
+            $destinationName = ucfirst(strtolower((string) $this->fieldExtractor->extract(Field::InfoDestinationName, $row)));
             $destinationId = $this->fieldExtractor->hasField(Field::InfoDestinationId) ? $this->fieldExtractor->extract(Field::InfoDestinationId, $row) : md5($destinationName);
 
             $countryId = $this->getCountryId($row);
 
-            if (!isset($destinations[$destinationId]) && null !== $countryId) {
+            if (!isset($destinations[$destinationId]) && $countryId instanceof CountryId) {
                 $destinations[$destinationId] = new DestinationRequest(
                     name: $destinationName,
                     countryId: $countryId,
@@ -546,7 +546,7 @@ class ImportCommand extends Command
 
             $imported++;
 
-            if (0 == $imported % self::BATCH_SIZE) {
+            if (0 === $imported % self::BATCH_SIZE) {
                 $this->manager->clear();
                 $this->manager->getUnitOfWork()->clear();
             }

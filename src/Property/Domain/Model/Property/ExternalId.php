@@ -2,12 +2,12 @@
 
 namespace App\Property\Domain\Model\Property;
 
-class ExternalId
+class ExternalId implements \Stringable
 {
     public function __construct(
-        private ?string $hotelbeds = null,
-        private ?string $restel = null,
-        private ?string $bioscore = null
+        private readonly ?string $hotelbeds = null,
+        private readonly ?string $restel = null,
+        private readonly ?string $bioscore = null
     ) {
 
     }
@@ -19,7 +19,7 @@ class ExternalId
         $bioscore = null;
 
         $attribute = $source->attribute();
-        $$attribute = $id;
+        ${$attribute} = $id;
 
         return new self(
             hotelbeds: $hotelbeds,
@@ -28,7 +28,7 @@ class ExternalId
         );
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return implode(' | ', [
             'hotelbeds => ' . $this->hotelbeds(),
@@ -70,15 +70,15 @@ class ExternalId
 
     public function isCombinable(ExternalId $other): bool
     {
-        if ($other->bioscore() !== null && $this->bioscore() !== null && $other->bioscore() != $this->bioscore()) {
+        if ($other->bioscore() !== null && $this->bioscore() !== null && $other->bioscore() !== $this->bioscore()) {
             return false;
         }
 
-        if ($other->restel() !== null && $this->restel() !== null && $other->restel() != $this->restel()) {
+        if ($other->restel() !== null && $this->restel() !== null && $other->restel() !== $this->restel()) {
             return false;
         }
 
-        if ($other->hotelbeds() !== null && $this->hotelbeds() !== null && $other->hotelbeds() != $this->hotelbeds()) {
+        if ($other->hotelbeds() !== null && $this->hotelbeds() !== null && $other->hotelbeds() !== $this->hotelbeds()) {
             return false;
         }
 
@@ -88,9 +88,9 @@ class ExternalId
     public function combine(ExternalId $other): ExternalId
     {
         return new ExternalId(
-            bioscore: (null !== $this->bioscore() && !empty($this->bioscore())) ? $this->bioscore() : $other->bioscore(),
-            restel: (null !== $this->restel() && !empty($this->restel())) ? $this->restel() : $other->restel(),
             hotelbeds: (null !== $this->hotelbeds() && !empty($this->hotelbeds())) ? $this->hotelbeds() : $other->hotelbeds(),
+            restel: (null !== $this->restel() && !empty($this->restel())) ? $this->restel() : $other->restel(),
+            bioscore: (null !== $this->bioscore() && !empty($this->bioscore())) ? $this->bioscore() : $other->bioscore(),
         );
     }
 }

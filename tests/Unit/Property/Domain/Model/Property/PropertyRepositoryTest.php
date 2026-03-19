@@ -8,7 +8,7 @@ use App\Property\Domain\Model\Property\PropertyRepository;
 
 abstract class PropertyRepositoryTest extends KernelTestCase
 {
-    public function testAddPropertyToRepository()
+    public function testAddPropertyToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -24,7 +24,7 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertEquals($property->id(), $recoverProperty->id());
     }
 
-    public function testRemovePropertyToRepository()
+    public function testRemovePropertyToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -42,7 +42,7 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($property->id()));
     }
 
-    public function testFindByName()
+    public function testFindByName(): void
     {
         $repository = $this->createSUT();
 
@@ -58,7 +58,7 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertEquals($property->id(), $recoverProperty->id());
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -84,7 +84,7 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
@@ -110,7 +110,7 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertCount(6, $result);
     }
 
-    public function testFindNotRecoverRemoved()
+    public function testFindNotRecoverRemoved(): void
     {
         $repository = $this->createSUT();
 

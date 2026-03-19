@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 class RegisterImportationServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -28,7 +28,7 @@ class RegisterImportationServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = new InMemoryImportationRepository();
 
@@ -69,7 +69,7 @@ class RegisterImportationServiceTest extends TestCase
         $this->assertTrue($importationPersisted->id()->equals($lastEvent->importationId()));
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -95,7 +95,7 @@ class RegisterImportationServiceTest extends TestCase
         $sut($request, $user);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = new InMemoryImportationRepository();
 
@@ -113,7 +113,7 @@ class RegisterImportationServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryImportationRepository $repository): RegisterImportationService
     {
         $authorizer = ImportationAuthorizerMother::create();
 

@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Notification;
 
-use App\Shared\Domain\Event\DomainEvent;
-use App\Shared\Domain\Event\RegisterTrait;
-use App\Shared\Domain\Model\Email\EmailSender;
-use App\Shared\Domain\Model\Email\EmailRecipient;
 use App\Security\Domain\Model\User\UserRegistered;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
+use App\Shared\Domain\Event\RegisterTrait;
+use App\Shared\Domain\Model\Email\EmailRecipient;
+use App\Shared\Domain\Model\Email\EmailSender;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WelcomeUserMailer implements DomainEventSubscriber
@@ -15,22 +17,24 @@ class WelcomeUserMailer implements DomainEventSubscriber
     use RegisterTrait;
 
     public function __construct(
-        private EmailSender $emailSender, 
-        private TranslatorInterface $translator
+        private EmailSender $emailSender,
+        private TranslatorInterface $translator,
     ) {
         $this->register();
     }
 
-    public function handle(DomainEvent $event)
+    public function handle(DomainEvent $event): void
     {
         if (!$this->isSubscribedTo($event)) {
-            throw new \RuntimeException("Incorrect event!");
+            throw new \RuntimeException('Incorrect event!');
         }
+
+        assert($event instanceof UserRegistered);
 
         $this->handlePasswordRecoveryInitialized($event);
     }
 
-    private function handlePasswordRecoveryInitialized(UserRegistered $event)
+    private function handlePasswordRecoveryInitialized(UserRegistered $event): void
     {
         $this->emailSender->__invoke(
             recipient: new EmailRecipient(name: $event->username(), email: $event->username()),
@@ -38,12 +42,12 @@ class WelcomeUserMailer implements DomainEventSubscriber
             template: '@security/users/welcome.email.html.twig',
             params: [
                 'username' => $event->username(),
-                'account' => $event->accountId()
-            ]
+                'account' => $event->accountId(),
+            ],
         );
     }
 
-    public function isSubscribedTo(DomainEvent $event)
+    public function isSubscribedTo(DomainEvent $event): bool
     {
         return $event instanceof UserRegistered;
     }

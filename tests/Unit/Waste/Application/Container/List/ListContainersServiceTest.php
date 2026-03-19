@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Waste\Application\Container\List;
 
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryContainerRepository;
 use PHPUnit\Framework\TestCase;
 use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -19,7 +20,7 @@ class ListContainersServiceTest extends TestCase
         
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = ContainerRepositoryMother::inMemory();
 
@@ -45,7 +46,7 @@ class ListContainersServiceTest extends TestCase
         $this->assertEquals(4, $result->totalResults);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryContainerRepository $repository): ListContainersService
     {
         return new ListContainersService($repository, new ContainerAuthorizer());
     }

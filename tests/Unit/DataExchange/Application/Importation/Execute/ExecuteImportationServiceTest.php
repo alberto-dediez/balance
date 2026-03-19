@@ -7,7 +7,6 @@ use App\DataExchange\Application\Importation\Execute\ExecuteImportationResponse;
 use App\DataExchange\Application\Importation\Execute\ExecuteImportationService;
 use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleRequest;
 use App\DataExchange\Domain\Model\Importation\Importation;
-use App\DataExchange\Domain\Model\Importation\ImportationExecuted;
 use App\DataExchange\Domain\Model\Importation\ImportationExecutionStarted;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
@@ -30,9 +29,9 @@ use PHPUnit\Framework\TestCase;
 
 class ExecuteImportationServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
-    private $spyCommandBus;
+    private SluttyCommandHandler $spyCommandBus;
 
     protected function setUp(): void
     {
@@ -43,7 +42,7 @@ class ExecuteImportationServiceTest extends TestCase
         $this->spyCommandBus = new SluttyCommandHandler();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $importationFile = new ImportationFile(
             path: __DIR__ . '/../Register/superheroes.csv'
@@ -92,7 +91,7 @@ class ExecuteImportationServiceTest extends TestCase
         $this->assertTrue($importationPersisted->id()->equals($lastEvent->importationId()));
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -116,7 +115,7 @@ class ExecuteImportationServiceTest extends TestCase
         $sut($request, $user);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = new InMemoryImportationRepository();
 
@@ -129,27 +128,25 @@ class ExecuteImportationServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryImportationRepository $repository): ExecuteImportationService
     {
         $authorizer = ImportationAuthorizerMother::create();
 
         $importationType = $this->createMock(ImportationType::class);
         $importationType->method('code')->willReturn('measurements');
-        $importationType->method('commandBuilder')->willReturnCallback(function (array $data) {
-            return new ImportMeasurementRequest(
-                containerId: $data['containerId'] ?? null,
-                propertyId: $data['propertyId'] ?? null,
-                wasteId: $data['wasteId'] ?? null,
-                purpose: $data['purpose'] ?? null,
-                wasteManagerId: $data['wasteManagerId'] ?? null,
-                quantity: $data['quantity'] ?? null,
-                load: $data['load'] ?? null,
-                justification: $data['justification'] ?? null,
-                unit: $data['unit'] ?? null,
-                day: $data['day'] ?? null,
-                reference  : $data['reference'] ?? null,
-            );
-        });
+        $importationType->method('commandBuilder')->willReturnCallback(fn(array $data) => new ImportMeasurementRequest(
+            containerId: $data['containerId'] ?? null,
+            propertyId: $data['propertyId'] ?? null,
+            wasteId: $data['wasteId'] ?? null,
+            purpose: $data['purpose'] ?? null,
+            wasteManagerId: $data['wasteManagerId'] ?? null,
+            quantity: $data['quantity'] ?? null,
+            load: $data['load'] ?? null,
+            justification: $data['justification'] ?? null,
+            unit: $data['unit'] ?? null,
+            day: $data['day'] ?? null,
+            reference  : $data['reference'] ?? null,
+        ));
 
         $importationTypeFactory = new ImportationTypeFactory([
             $importationType

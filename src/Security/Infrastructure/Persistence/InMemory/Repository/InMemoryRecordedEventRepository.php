@@ -1,25 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Security\Domain\Model\RecordedEvent\RecordedEvent;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventFilter;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventId;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventRepository;
+use App\Security\Domain\Model\User\UserId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]
 class InMemoryRecordedEventRepository implements RecordedEventRepository
 {
-    public function __construct(private array $events = [])
-    {
-
-    }
+    /**
+     * @param RecordedEvent[] $events
+     */
+    public function __construct(private array $events = []) {}
 
     public function add(RecordedEvent $event): void
     {
         if (isset($this->events[(string) $event->id()])) {
-            return ;
+            return;
         }
 
         $this->events[(string) $event->id()] = $event;
@@ -28,7 +31,7 @@ class InMemoryRecordedEventRepository implements RecordedEventRepository
     public function remove(RecordedEvent $event): void
     {
         if (!isset($this->events[(string) $event->id()])) {
-            return ;
+            return;
         }
 
         unset($this->events[(string) $event->id()]);
@@ -36,41 +39,42 @@ class InMemoryRecordedEventRepository implements RecordedEventRepository
 
     public function find(RecordedEventId $eventId): ?RecordedEvent
     {
-        return (isset($this->events[(string) $eventId]))
-            ? $this->events[(string) $eventId]
-            : null
+        return $this->events[(string) $eventId] ?? null
         ;
     }
 
+    /**
+     * @return list<RecordedEvent>
+     */
     public function findByFilter(RecordedEventFilter $filter): array
     {
         $results = [];
 
-        if (count($this->events) == 0) {
+        if (0 === count($this->events)) {
             return $results;
         }
 
         $offset = $filter->page * $filter->limit;
 
         foreach ($this->events as $event) {
-            if (null !== $filter->userId && (null == $event->userId() || false == $filter->userId->equals($event->userId()))) {
+            if ($filter->userId instanceof UserId && (null == $event->userId() || false === $filter->userId->equals($event->userId()))) {
                 continue;
             }
 
-            if (!empty($filter->eventName) && $filter->eventName !== $event->eventName()) {
+            if (!in_array($filter->eventName, [null, '', '0', $event->eventName()], true)) {
                 continue;
             }
 
-            if (!empty($filter->context) && $filter->context !== $event->context()) {
+            if (!in_array($filter->context, [null, '', '0', $event->context()], true)) {
                 continue;
             }
 
-            if (!empty($filter->aggregateRootId) && $filter->aggregateRootId !== $event->aggregateRootId()) {
+            if (!in_array($filter->aggregateRootId, [null, '', '0', $event->aggregateRootId()], true)) {
                 continue;
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

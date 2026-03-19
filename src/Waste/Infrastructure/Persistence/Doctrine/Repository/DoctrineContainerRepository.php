@@ -2,6 +2,12 @@
 
 namespace App\Waste\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerFilter;
 use App\Waste\Domain\Model\Container\ContainerId;
@@ -16,21 +22,21 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineContainerRepository implements ContainerRepository
 {
-    public function __construct(private EntityManagerInterface $manager)
+    public function __construct(private readonly EntityManagerInterface $manager)
     {
 
     }
 
     public function add(Container $container): void
     {
-        $this->getEntityManager()->persist($container);
-        $this->getEntityManager()->flush();
+        $this->manager->persist($container);
+        $this->manager->flush();
     }
 
     public function remove(Container $container): void
     {
-        $this->getEntityManager()->remove($container);
-        $this->getEntityManager()->flush();
+        $this->manager->remove($container);
+        $this->manager->flush();
     }
 
     public function find(ContainerId $containerId): ?Container
@@ -49,7 +55,7 @@ class DoctrineContainerRepository implements ContainerRepository
 
     private function createQueryBuilderFromFilter(ContainerFilter $filter): QueryBuilder
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb = $this->manager->createQueryBuilder();
 
         $qb->select('c')
             ->from(Container::class, 'c')
@@ -61,7 +67,7 @@ class DoctrineContainerRepository implements ContainerRepository
             )
         ;
 
-        if (null !== $filter->propertyId) {
+        if ($filter->propertyId instanceof PropertyId) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('c.propertyId', ':property')
@@ -70,7 +76,7 @@ class DoctrineContainerRepository implements ContainerRepository
             ;
         }
 
-        if (null !== $filter->wasteId) {
+        if ($filter->wasteId instanceof WasteId) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('c.wasteId', ':wasteId')
@@ -79,7 +85,7 @@ class DoctrineContainerRepository implements ContainerRepository
             ;
         }
 
-        if (null !== $filter->purpose) {
+        if ($filter->purpose instanceof Purpose) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('c.purpose', ':purpose')
@@ -88,7 +94,7 @@ class DoctrineContainerRepository implements ContainerRepository
             ;
         }
 
-        if (null !== $filter->measurementMethod) {
+        if ($filter->measurementMethod instanceof MeasurementMethod) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('c.measurementMethod', ':measurementMethod')
@@ -97,7 +103,7 @@ class DoctrineContainerRepository implements ContainerRepository
             ;
         }
 
-        if (null !== $filter->wasteManagerId) {
+        if ($filter->wasteManagerId instanceof WasteManagerId) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('c.wasteManagerId', ':wasteManagerId')
@@ -106,7 +112,7 @@ class DoctrineContainerRepository implements ContainerRepository
             ;
         }
 
-        if (null !== $filter->accountId) {
+        if ($filter->accountId instanceof AccountId) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('c.accountId', ':accountId')
@@ -115,14 +121,11 @@ class DoctrineContainerRepository implements ContainerRepository
             ;
         }
 
-        $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
+        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
 
-        switch ($filter->orderBy) {
-            case 'registeredAt':
-            default:
-                $qb->orderBy('c.registeredAt', $way);
-                break;
-        }
+        match ($filter->orderBy) {
+            default => $qb->orderBy('c.registeredAt', $way),
+        };
 
         return $qb;
     }
@@ -151,10 +154,5 @@ class DoctrineContainerRepository implements ContainerRepository
             ->getQuery()
             ->getSingleScalarResult()
         ;
-    }
-
-    private function getEntityManager()
-    {
-        return $this->manager;
     }
 }

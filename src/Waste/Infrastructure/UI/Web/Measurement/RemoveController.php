@@ -2,7 +2,6 @@
 
 namespace App\Waste\Infrastructure\UI\Web\Measurement;
 
-use App\Security\Application\Action;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -34,7 +33,7 @@ class RemoveController extends AbstractController
         
         } catch (UnauthorizedActionException $exception) {
             throw $this->createAccessDeniedException($exception->getMessage());
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->addFlash('danger', new TranslatableMessage("No se ha podido eliminar la medición"));
         }
 

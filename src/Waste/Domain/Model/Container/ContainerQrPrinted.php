@@ -13,8 +13,8 @@ final class ContainerQrPrinted extends DomainEvent
     protected static string $eventName = 'containerQrPrinted';
 
     public function __construct(
-        private ContainerId $containerId, 
-        private string $path,
+        private readonly ContainerId $containerId,
+        private readonly string $path,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -31,23 +31,23 @@ final class ContainerQrPrinted extends DomainEvent
         return $this->path;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->containerId();
+        return $this->containerId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'containerId' => (string) $this->containerId,
-            'path' => (string) $this->path
+            'path' => $this->path
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new ContainerQrPrinted(
             containerId: new ContainerId($payload['containerId']),

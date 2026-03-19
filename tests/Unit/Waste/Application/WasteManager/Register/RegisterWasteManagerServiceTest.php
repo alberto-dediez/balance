@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Waste\Application\WasteManager\Register;
 
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteManagerRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Waste\Domain\Model\WasteManager\WasteManager;
@@ -18,7 +19,7 @@ use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
 
 class RegisterWasteManagerServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -27,7 +28,7 @@ class RegisterWasteManagerServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = WasteManagerRepositoryMother::inMemory();
 
@@ -60,7 +61,7 @@ class RegisterWasteManagerServiceTest extends TestCase
         $this->assertTrue($wasteManagerPersisted->id()->equals($lastEvent->wasteManagerId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = WasteManagerRepositoryMother::inMemory();
 
@@ -76,7 +77,7 @@ class RegisterWasteManagerServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryWasteManagerRepository $repository): RegisterWasteManagerService
     {
         return new RegisterWasteManagerService($repository, new WasteManagerAuthorizer());
     }

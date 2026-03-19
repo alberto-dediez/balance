@@ -11,18 +11,18 @@ use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdType;
 class CategoryIdType extends AggregateRootIdType
 {
     public function __construct(
-        private CategoryRepository $countryRepository
+        private readonly CategoryRepository $countryRepository
     ) {
 
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $categories = $this->countryRepository->findByFilter(new CategoryFilter(limit: 0));
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => $this->getChoices($categories),
             'class' => CategoryId::class
-        ));
+        ]);
     }
 }

@@ -14,9 +14,9 @@ final class CategoryRegistered extends DomainEvent
     protected static string $eventName = 'categoryRegistered';
 
     public function __construct(
-        private CategoryId $categoryId, 
-        private string $name, 
-        private ?ExternalId $externalId = null,
+        private readonly CategoryId $categoryId,
+        private readonly string $name,
+        private readonly ?ExternalId $externalId = null,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -38,12 +38,12 @@ final class CategoryRegistered extends DomainEvent
         return $this->externalId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->categoryId();
+        return $this->categoryId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'categoryId' => (string) $this->categoryId,
@@ -55,12 +55,12 @@ final class CategoryRegistered extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new CategoryRegistered(
-            categoryId: new CategoryId($payload['categoryId']), 
+            categoryId: new CategoryId($payload['categoryId']),
             name: $payload['name'],
-            externalId: isset($payload['externalId']) ? $payload['externalId'] : null,
+            externalId: $payload['externalId'] ?? null,
             id: $id,
             occurredOn: $occurredOn
         );

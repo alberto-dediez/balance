@@ -12,7 +12,7 @@ class CategoryExtension extends AbstractExtension
 {
     private array $categories = [];
 
-    public function __construct(private CategoryRepository $categoryRepository)
+    public function __construct(private readonly CategoryRepository $categoryRepository)
     {
 
     }
@@ -20,7 +20,7 @@ class CategoryExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('category_name', [$this, 'categoryName']),
+            new TwigFilter('category_name', $this->categoryName(...)),
         ];
     }
 
@@ -33,7 +33,7 @@ class CategoryExtension extends AbstractExtension
 
     public function categoryName(?CategoryId $categoryId): ?Category
     {
-        if (null === $categoryId) {
+        if (!$categoryId instanceof CategoryId) {
             return null;
         }
 

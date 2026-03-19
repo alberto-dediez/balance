@@ -40,11 +40,9 @@ class ListController extends AbstractController
         }
         
         try {
-            list($filter, $form) = $this->filter($request, function () use ($account) {
-                return new ListWasteManagersRequest(
-                    accountId: $account->id(),
-                );
-            }, ListWasteManagersType::class);
+            [$filter, $form] = $this->filter($request, fn() => new ListWasteManagersRequest(
+                accountId: $account->id(),
+            ), ListWasteManagersType::class);
 
             $response = $listWasteManagers($filter, $loggedUser());
         } catch (UnauthorizedActionException $e) {

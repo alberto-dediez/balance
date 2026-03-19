@@ -31,11 +31,9 @@ class ListController extends AbstractController
         $user = $loggedUser();
         $accountId = $user->accountId();
 
-        list($filter, $form) = $this->filter($request, function () use ($accountId) {
-            return  new ListContainersRequest(
-                accountId: $accountId,
-            );
-        }, ListContainersType::class);
+        [$filter, $form] = $this->filter($request, fn() => new ListContainersRequest(
+            accountId: $accountId,
+        ), ListContainersType::class);
 
         try {
             $response = $listContainers($filter, $loggedUser());

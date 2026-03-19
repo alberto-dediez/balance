@@ -15,17 +15,19 @@ class RemoveProperty implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) == 0) {
+        if (count($request->elements) === 0) {
             return [];
         }
 
         $commands = [];
 
         foreach ($request->elements as $property) {
-            if (null === $property || null === $property->id()) {
+            if (null === $property) {
                 continue;
             }
-
+            if (null === $property->id()) {
+                continue;
+            }
             $commands[] = new RemovePropertyRequest(
                 propertyId: $property->id()
             );

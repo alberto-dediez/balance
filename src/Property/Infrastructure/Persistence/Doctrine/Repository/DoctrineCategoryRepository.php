@@ -18,21 +18,21 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineCategoryRepository implements CategoryRepository
 {
-    public function __construct(private EntityManagerInterface $manager)
+    public function __construct(private readonly EntityManagerInterface $manager)
     {
 
     }
 
     public function add(Category $category): void
     {
-        $this->getEntityManager()->persist($category);
-        $this->getEntityManager()->flush();
+        $this->manager->persist($category);
+        $this->manager->flush();
     }
 
     public function remove(Category $category): void
     {
-        $this->getEntityManager()->remove($category);
-        $this->getEntityManager()->flush();
+        $this->manager->remove($category);
+        $this->manager->flush();
     }
 
     public function find(CategoryId $categoryId): ?Category
@@ -87,7 +87,7 @@ class DoctrineCategoryRepository implements CategoryRepository
 
     private function createQueryBuilderFromFilter(CategoryFilter $filter): QueryBuilder
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb = $this->manager->createQueryBuilder();
 
         $qb->select('c')
             ->from(Category::class, 'c')
@@ -108,17 +108,12 @@ class DoctrineCategoryRepository implements CategoryRepository
             ;
         }
 
-        $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
+        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
 
-        switch ($filter->orderBy) {
-            case 'registeredAt':
-                $qb->orderBy('c.registeredAt', $way);
-                break;
-            case 'name':
-            default:
-                $qb->orderBy('c.name', $way);
-                break;
-        }
+        match ($filter->orderBy) {
+            'registeredAt' => $qb->orderBy('c.registeredAt', $way),
+            default => $qb->orderBy('c.name', $way),
+        };
 
         return $qb;
     }
@@ -147,10 +142,5 @@ class DoctrineCategoryRepository implements CategoryRepository
             ->getQuery()
             ->getSingleScalarResult()
         ;
-    }
-
-    private function getEntityManager()
-    {
-        return $this->manager;
     }
 }

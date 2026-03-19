@@ -40,11 +40,9 @@ class ListController extends AbstractController
         }
         
         try {
-            list($filter, $form) = $this->filter($request, function () use ($account) {
-                return new ListPropertiesRequest(
-                    accountId: $account->id(),
-                );
-            }, ListPropertiesType::class);
+            [$filter, $form] = $this->filter($request, fn() => new ListPropertiesRequest(
+                accountId: $account->id(),
+            ), ListPropertiesType::class);
 
             $response = $listProperties($filter, $loggedUser());
         } catch (UnauthorizedActionException $e) {

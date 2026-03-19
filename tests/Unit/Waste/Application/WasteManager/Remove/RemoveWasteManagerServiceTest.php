@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Waste\Application\WasteManager\Remove;
 
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteManagerRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\Account\AccountId;
@@ -18,7 +19,7 @@ use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
 
 class RemoveWasteManagerServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -27,7 +28,7 @@ class RemoveWasteManagerServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = WasteManagerRepositoryMother::inMemory();
 
@@ -59,7 +60,7 @@ class RemoveWasteManagerServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof WasteManagerRemoved);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = WasteManagerRepositoryMother::inMemory();
 
@@ -74,7 +75,7 @@ class RemoveWasteManagerServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryWasteManagerRepository $repository): RemoveWasteManagerService
     {
         return new RemoveWasteManagerService($repository, new WasteManagerAuthorizer());
     }

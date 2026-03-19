@@ -2,6 +2,7 @@
 
 namespace App\Waste\Domain\Event\DailyWaste;
 
+use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Domain\Event\DomainEvent;
@@ -23,14 +24,14 @@ class MeasurementSubscriber implements DomainEventSubscriber
         $this->register();
     }
 
-    public function handle(DomainEvent $event)
+    public function handle(DomainEvent $event): void
     {
         if (!$this->isSubscribedTo($event)) {
             throw new \RuntimeException("Incorrect event!");
         }
 
         try {
-            switch (get_class($event)) {
+            switch ($event::class) {
                 case MeasurementRegistered::class:
                     $this->handleRegister($event);
                     break;
@@ -42,14 +43,13 @@ class MeasurementSubscriber implements DomainEventSubscriber
                     break;
                 default:
                     throw new \RuntimeException("No handler for event!");
-                    break;
             }
-        } catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException) {
 
         }
     }
 
-    private function handleRegister(MeasurementRegistered $event)
+    private function handleRegister(MeasurementRegistered $event): void
     {
         CommandBusDispatcher::instance()->dispatch(
             new DeferredCommand(
@@ -66,7 +66,7 @@ class MeasurementSubscriber implements DomainEventSubscriber
         );
     }
 
-    private function handleRemoved(MeasurementRemoved $event)
+    private function handleRemoved(MeasurementRemoved $event): void
     {
         CommandBusDispatcher::instance()->dispatch(
             new DeferredCommand(
@@ -83,11 +83,11 @@ class MeasurementSubscriber implements DomainEventSubscriber
         );
     }
 
-    private function handleUpdated(MeasurementUpdated $event)
+    private function handleUpdated(MeasurementUpdated $event): void
     {
         $measurement = $this->measurementRepository->find($event->measurementId());
 
-        if (null === $measurement) {
+        if (!$measurement instanceof Measurement) {
             throw new \InvalidArgumentException('No measurement found!');
         }
 
@@ -106,7 +106,7 @@ class MeasurementSubscriber implements DomainEventSubscriber
         );
     }
 
-    public function isSubscribedTo(DomainEvent $event)
+    public function isSubscribedTo(DomainEvent $event): bool
     {
         return $event instanceof MeasurementRegistered
             || $event instanceof MeasurementUpdated

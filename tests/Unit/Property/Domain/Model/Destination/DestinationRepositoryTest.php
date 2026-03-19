@@ -8,7 +8,7 @@ use App\Property\Domain\Model\Destination\DestinationRepository;
 
 abstract class DestinationRepositoryTest extends KernelTestCase
 {
-    public function testAddDestinationToRepository()
+    public function testAddDestinationToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -24,7 +24,7 @@ abstract class DestinationRepositoryTest extends KernelTestCase
         $this->assertEquals($destination->id(), $recoverDestination->id());
     }
 
-    public function testRemoveDestinationToRepository()
+    public function testRemoveDestinationToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -42,7 +42,7 @@ abstract class DestinationRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($destination->id()));
     }
 
-    public function testFindByNameAndCountry()
+    public function testFindByNameAndCountry(): void
     {
         $repository = $this->createSUT();
 
@@ -58,7 +58,7 @@ abstract class DestinationRepositoryTest extends KernelTestCase
         $this->assertEquals($destination->id(), $recoverDestination->id());
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -84,7 +84,7 @@ abstract class DestinationRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
@@ -110,7 +110,7 @@ abstract class DestinationRepositoryTest extends KernelTestCase
         $this->assertCount(6, $result);
     }
 
-    public function testFindNotRecoverRemoved()
+    public function testFindNotRecoverRemoved(): void
     {
         $repository = $this->createSUT();
 

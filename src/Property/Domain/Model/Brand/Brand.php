@@ -5,7 +5,7 @@ namespace App\Property\Domain\Model\Brand;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Property\Domain\Model\Property\ExternalId;
 
-class Brand
+class Brand implements \Stringable
 {
     use AggregateRoot;
 
@@ -33,7 +33,7 @@ class Brand
 
     public function externalId(): ExternalId
     {
-        if (null === $this->externalId) {
+        if (!$this->externalId instanceof ExternalId) {
             $this->externalId = new ExternalId();
         }
 
@@ -55,7 +55,7 @@ class Brand
         return $this->removedAt;
     }
 
-    public function register(string $name, ?ExternalId $externalId = null)
+    public function register(string $name, ?ExternalId $externalId = null): void
     {
         $this->recordApplyAndPublish(
             new BrandRegistered(
@@ -66,7 +66,7 @@ class Brand
         );
     }
 
-    public function update(string $name, ?ExternalId $externalId = null)
+    public function update(string $name, ?ExternalId $externalId = null): void
     {
         $this->recordApplyAndPublish(
             new BrandUpdated(
@@ -77,7 +77,7 @@ class Brand
         );
     }
 
-    public function remove()
+    public function remove(): void
     {
         $this->recordApplyAndPublish(
             new BrandRemoved(
@@ -86,20 +86,20 @@ class Brand
         );
     }
 
-    public function applyBrandRegistered(BrandRegistered $event)
+    public function applyBrandRegistered(BrandRegistered $event): void
     {
         $this->name = $event->name();
         $this->registeredAt = $event->occurredOn();
-        $this->externalId = null === $event->externalId() ? new ExternalId() : $event->externalId();
+        $this->externalId = $event->externalId() ?? new ExternalId();
     }
 
-    public function applyBrandUpdated(BrandUpdated $event)
+    public function applyBrandUpdated(BrandUpdated $event): void
     {
         $this->name = $event->name();
-        $this->externalId = null === $event->externalId() ? $this->externalId() : $event->externalId();
+        $this->externalId = $event->externalId() ?? $this->externalId();
     }
 
-    public function applyBrandRemoved(BrandRemoved $event)
+    public function applyBrandRemoved(BrandRemoved $event): void
     {
         $this->removed = true;
         $this->removedAt = $event->occurredOn();
@@ -107,6 +107,6 @@ class Brand
 
     public function __toString(): string
     {
-        return (string) $this->name();
+        return $this->name();
     }
 }

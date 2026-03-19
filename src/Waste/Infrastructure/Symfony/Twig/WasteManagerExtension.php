@@ -10,9 +10,7 @@ use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;
 
 class WasteManagerExtension extends AbstractExtension
 {
-    private array $wasteManagers = [];
-
-    public function __construct(private WasteManagerRepository $wasteManagerRepository)
+    public function __construct(private readonly WasteManagerRepository $wasteManagerRepository)
     {
 
     }
@@ -20,7 +18,7 @@ class WasteManagerExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('waste_manager_name', [$this, 'wasteManagerName']),
+            new TwigFilter('waste_manager_name', $this->wasteManagerName(...)),
         ];
     }
 

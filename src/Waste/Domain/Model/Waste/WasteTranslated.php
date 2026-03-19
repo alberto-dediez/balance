@@ -14,9 +14,9 @@ final class WasteTranslated extends DomainEvent
     protected static string $eventName = 'wasteTranslated';
 
     public function __construct(
-        private WasteId $wasteId, 
-        private string $name, 
-        private Locale $locale,
+        private readonly WasteId $wasteId,
+        private readonly string $name,
+        private readonly Locale $locale,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -38,12 +38,12 @@ final class WasteTranslated extends DomainEvent
         return $this->locale;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->wasteId();
+        return $this->wasteId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'wasteId' => (string) $this->wasteId,
@@ -55,10 +55,10 @@ final class WasteTranslated extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         return new WasteTranslated(
-            wasteId: new WasteId($payload['wasteId']), 
+            wasteId: new WasteId($payload['wasteId']),
             name: $payload['name'],
             locale: Locale::tryFrom($payload['locale']),
             id: $id,

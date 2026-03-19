@@ -18,11 +18,7 @@ use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponseGenerator;
 
 #[Route('/measurements/{measurementId}', name: 'api_measurements_view', methods: ['GET'])]
 #[Areas(['mobile', 'admin'])]
-#[OA\Get(
-    summary: "View Measurement",
-    description: "View an owned measurement",
-    tags: ['Waste']
-)]
+#[OA\Get(description: "View an owned measurement", summary: "View Measurement", tags: ['Waste'])]
 #[OA\Response(
     response: 200,
     description: 'Returns data of measurement',

@@ -2,6 +2,7 @@
 
 namespace App\Waste\Infrastructure\UI\Web\Container;
 
+use App\Waste\Application\Container\PrintAllQr\PrintAllQrContainerResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -32,16 +33,16 @@ class PrintAllController extends AbstractController
         try {
             $response = $printAllContainer($containerRequest, $loggedUser());
 
-            if (null === $response || null === $response->path || empty($response->path)) {
+            if (!$response instanceof PrintAllQrContainerResponse || null === $response->path || empty($response->path)) {
                 throw new \RuntimeException("Invalid response");
             }
 
             return $this->file($response->path, "print_all.pdf", ResponseHeaderBag::DISPOSITION_INLINE);            
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
-        } catch (NotValidContainersForPrintException $e) {
+        } catch (NotValidContainersForPrintException) {
             $this->addFlash('danger', new TranslatableMessage("No hay contenedores disponibles para impresión"));
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->addFlash('danger', new TranslatableMessage("No se ha podido generar los carteles de los contenedores de la cuenta"));
         }
 

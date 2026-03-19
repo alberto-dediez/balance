@@ -19,7 +19,7 @@ use App\Tests\Unit\Waste\Infrastructure\QrCode\FakeQrPdfGenerator;
 
 class PrintQrContainerServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -28,7 +28,7 @@ class PrintQrContainerServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $containerRepository = ContainerRepositoryMother::inMemory();
 
@@ -48,7 +48,7 @@ class PrintQrContainerServiceTest extends TestCase
 
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof PrintQrContainerResponse);
-        $this->assertNotEmpty((string) $result->path);
+        $this->assertNotEmpty($result->path);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -57,7 +57,7 @@ class PrintQrContainerServiceTest extends TestCase
         $this->assertEquals($result->path, $lastEvent->path());
     }
 
-    private function createSUT(ContainerRepository $containerRepository)
+    private function createSUT(ContainerRepository $containerRepository): PrintQrContainerService
     {
         return new PrintQrContainerService(
             repository: $containerRepository,

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Waste\Application\Container\Remove;
 
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryContainerRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -17,7 +18,7 @@ use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 
 class RemoveContainerServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -26,7 +27,7 @@ class RemoveContainerServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = ContainerRepositoryMother::inMemory();
 
@@ -58,7 +59,7 @@ class RemoveContainerServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof ContainerRemoved);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = ContainerRepositoryMother::inMemory();
 
@@ -73,7 +74,7 @@ class RemoveContainerServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryContainerRepository $repository): RemoveContainerService
     {
         return new RemoveContainerService($repository, new ContainerAuthorizer());
     }

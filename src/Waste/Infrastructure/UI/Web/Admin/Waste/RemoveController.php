@@ -32,7 +32,7 @@ class RemoveController extends AbstractController
             $this->addFlash('success', new TranslatableMessage("Se ha eliminado el residuo {waste}", ['{waste}' => $waste->name()]));
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->addFlash('danger', new TranslatableMessage("No se ha podido eliminar el residuo {waste}", ['{waste}' => $waste->name()]));
         }
 

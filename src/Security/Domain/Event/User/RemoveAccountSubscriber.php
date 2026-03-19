@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Domain\Event\User;
 
-use App\Shared\Domain\Event\DomainEvent;
-use App\Shared\Domain\Event\RegisterTrait;
-use App\Security\Domain\Model\User\UserRepository;
-use App\Shared\Domain\Event\DomainEventSubscriber;
-use App\Security\Domain\Model\Account\AccountRemoved;
 use App\Security\Application\User\Remove\RemoveUserRequest;
 use App\Security\Application\User\Remove\RemoveUserService;
+use App\Security\Domain\Model\Account\AccountRemoved;
+use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Domain\Event\DomainEvent;
+use App\Shared\Domain\Event\DomainEventSubscriber;
+use App\Shared\Domain\Event\RegisterTrait;
 
 class RemoveAccountSubscriber implements DomainEventSubscriber
 {
@@ -20,21 +22,23 @@ class RemoveAccountSubscriber implements DomainEventSubscriber
         $this->register();
     }
 
-    public function handle(DomainEvent $event)
+    public function handle(DomainEvent $event): void
     {
         if (!$this->isSubscribedTo($event)) {
-            throw new \RuntimeException("Incorrect event!");
+            throw new \RuntimeException('Incorrect event!');
         }
+
+        assert($event instanceof AccountRemoved);
 
         $this->handleAccountRemoved($event);
     }
 
-    private function handleAccountRemoved(AccountRemoved $event)
+    private function handleAccountRemoved(AccountRemoved $event): void
     {
         $users = $this->userRepository->findByAccountId($event->accountId());
 
-        if (count($users) == 0) {
-            return ;
+        if (0 === count($users)) {
+            return;
         }
 
         $performBy = $this->loggedUser->__invoke();
@@ -43,14 +47,14 @@ class RemoveAccountSubscriber implements DomainEventSubscriber
 
         foreach ($users as $user) {
             $request = new RemoveUserRequest(
-                $user->id()
+                $user->id(),
             );
 
             $removeUser($request, $performBy);
         }
     }
 
-    public function isSubscribedTo(DomainEvent $event)
+    public function isSubscribedTo(DomainEvent $event): bool
     {
         return $event instanceof AccountRemoved;
     }

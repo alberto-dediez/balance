@@ -11,7 +11,7 @@ use App\Property\Domain\Model\Category\CategoryRepository;
 
 class ListCategoriesService
 {
-    public function __construct(private CategoryRepository $repository, private CategoryAuthorizer $authorizer)
+    public function __construct(private readonly CategoryRepository $repository, private readonly CategoryAuthorizer $authorizer)
     {
 
     }

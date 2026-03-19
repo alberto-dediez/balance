@@ -2,16 +2,14 @@
 
 namespace App\Tests\Unit\Waste\Domain\Model\DailyWaste;
 
-use App\Waste\Domain\Model\Waste\WasteId;
 use App\Security\Domain\Model\Account\AccountId;
-use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteFilter;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
 
 abstract class DailyWasteRepositoryTest extends KernelTestCase
 {
-    public function testAddDailyWasteToRepository()
+    public function testAddDailyWasteToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -27,7 +25,7 @@ abstract class DailyWasteRepositoryTest extends KernelTestCase
         $this->assertEquals($dailyWaste->id(), $recoverDailyWaste->id());
     }
 
-    public function testRemoveDailyWasteToRepository()
+    public function testRemoveDailyWasteToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -45,7 +43,7 @@ abstract class DailyWasteRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($dailyWaste->id()));
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -87,7 +85,7 @@ abstract class DailyWasteRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByDay()
+    public function testFindByDay(): void
     {
         $repository = $this->createSUT();
 
@@ -116,7 +114,7 @@ abstract class DailyWasteRepositoryTest extends KernelTestCase
             $dailyFromAccount
         );
 
-        $filter = new DailyWasteFilter();
+        new DailyWasteFilter();
 
         $result = $repository->findByDay(
             day: $dailyFromAccount->day(),
@@ -131,7 +129,7 @@ abstract class DailyWasteRepositoryTest extends KernelTestCase
         $this->assertTrue($result->id()->equals($dailyFromAccount->id()));
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 

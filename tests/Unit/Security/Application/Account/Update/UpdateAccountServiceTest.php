@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\Account\Update;
 
 use App\Security\Application\Account\Update\UpdateAccountRequest;
-use App\Security\Application\Account\Update\UpdateAccountResponse;
 use App\Security\Application\Account\Update\UpdateAccountService;
 use App\Security\Application\UnauthorizedActionException;
-use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountNameChanged;
 use App\Security\Domain\Model\Account\AccountStatusChanged;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 class UpdateAccountServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -28,7 +28,7 @@ class UpdateAccountServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCaseChangeNameAndState()
+    public function testUseCaseChangeNameAndState(): void
     {
         $repository = new InMemoryAccountRepository();
 
@@ -43,31 +43,27 @@ class UpdateAccountServiceTest extends TestCase
         $request = new UpdateAccountRequest(
             accountId: $account->id(),
             name: 'Company ABC',
-            active: false
+            active: false,
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateAccountResponse);
-
         $accountPersisted = $repository->find($result->accountId);
 
         $this->assertNotNull($accountPersisted);
-        $this->assertTrue($accountPersisted instanceof Account);
 
         $events = $this->spySubscriber->events();
 
         $this->assertGreaterThanOrEqual(2, count($events));
 
-        $eventFirst = $events[count($events)-2];
-        $eventLast = $events[count($events)-1];
+        $eventFirst = $events[count($events) - 2];
+        $eventLast = $events[count($events) - 1];
 
         $this->assertTrue($eventFirst instanceof AccountNameChanged);
         $this->assertTrue($eventLast instanceof AccountStatusChanged);
     }
 
-    public function testUseWhenOnlyChangeName()
+    public function testUseWhenOnlyChangeName(): void
     {
         $repository = new InMemoryAccountRepository();
 
@@ -82,18 +78,14 @@ class UpdateAccountServiceTest extends TestCase
         $request = new UpdateAccountRequest(
             accountId: $account->id(),
             name: 'Company ABC',
-            active: true
+            active: true,
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateAccountResponse);
-
         $accountPersisted = $repository->find($result->accountId);
 
         $this->assertNotNull($accountPersisted);
-        $this->assertTrue($accountPersisted instanceof Account);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -103,7 +95,7 @@ class UpdateAccountServiceTest extends TestCase
         $this->assertTrue($accountPersisted->id()->equals($lastEvent->accountId()));
     }
 
-    public function testUseWhenNothingChange()
+    public function testUseWhenNothingChange(): void
     {
         $repository = new InMemoryAccountRepository();
 
@@ -118,18 +110,14 @@ class UpdateAccountServiceTest extends TestCase
         $request = new UpdateAccountRequest(
             accountId: $account->id(),
             name: 'MyAccount',
-            active: true
+            active: true,
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateAccountResponse);
-
         $accountPersisted = $repository->find($result->accountId);
 
         $this->assertNotNull($accountPersisted);
-        $this->assertTrue($accountPersisted instanceof Account);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -138,7 +126,7 @@ class UpdateAccountServiceTest extends TestCase
         $this->assertFalse($lastEvent instanceof AccountStatusChanged);
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -155,13 +143,13 @@ class UpdateAccountServiceTest extends TestCase
         $request = new UpdateAccountRequest(
             accountId: $account->id(),
             name: 'MyAccount',
-            active: true
+            active: true,
         );
 
         $sut($request, $user);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = new InMemoryAccountRepository();
 
@@ -172,13 +160,13 @@ class UpdateAccountServiceTest extends TestCase
         $result = $sut->isHandled(new UpdateAccountRequest(
             accountId: $account->id(),
             name: 'MyAccount',
-            active: true
+            active: true,
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryAccountRepository $repository): UpdateAccountService
     {
         $authorizer = AccountAuthorizerMother::create();
 

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Brand\Import;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Property\Domain\Model\Brand\BrandId;
@@ -26,7 +27,7 @@ class ImportBrandsServiceTest extends TestCase
         
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = BrandRepositoryMother::inMemory();
 
@@ -48,28 +49,28 @@ class ImportBrandsServiceTest extends TestCase
         $request = new ImportBrandsRequest(
             [
                 new BrandRequest(
-                    name: 'ibis', 
-                    createIfNotExists: false,
+                    name: 'ibis',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '1234')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '1234'),
+                    createIfNotExists: false
                 ),
                 new BrandRequest(
-                    name: 'Orizonia', 
-                    createIfNotExists: false,
+                    name: 'Orizonia',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '234')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '234'),
+                    createIfNotExists: false
                 ),
                 new BrandRequest(
-                    name: 'Burger King', 
-                    createIfNotExists: false,
+                    name: 'Burger King',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '34')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '34'),
+                    createIfNotExists: false
                 ),
                 new BrandRequest(
-                    name: 'Travelplan', 
-                    createIfNotExists: true,
+                    name: 'Travelplan',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '4')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '4'),
+                    createIfNotExists: true
                 ),
             ]
         );
@@ -90,7 +91,7 @@ class ImportBrandsServiceTest extends TestCase
         $this->assertEquals('1234', $ibis->externalId()->bioscore());
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryBrandRepository $repository): ImportBrandsService
     {
         $registerService = $this->createMock(RegisterBrandService::class);
         $registerService->method('__invoke')->willReturn(new RegisterBrandResponse(BrandId::generate(), '', null));

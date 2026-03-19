@@ -15,7 +15,7 @@
         <field name="username" type="string" length="255" nullable="false"/>
         <field name="password" type="string" length="1024" nullable="false"/>
         <field name="roles" type="array" nullable="false"/>
-        <field name="removed" type="boolean" nullable="true"/>
+        <field name="removed" type="boolean" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
         <field name="accountId" type="account_id" nullable="true"/>

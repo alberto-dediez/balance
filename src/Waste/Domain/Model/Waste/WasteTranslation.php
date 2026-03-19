@@ -9,9 +9,9 @@ use App\Shared\Domain\Model\Locale\Translation;
 class WasteTranslation implements Translation
 {
     public function __construct(
-        private string $name,
-        private Locale $locale,
-        private WasteId $translatableId
+        private readonly string $name,
+        private readonly Locale $locale,
+        private readonly WasteId $translatableId
     )
     {
         

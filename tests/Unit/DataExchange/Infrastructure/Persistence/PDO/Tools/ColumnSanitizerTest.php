@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class ColumnSanitizerTest extends TestCase
 {
-    public function testSanitize()
+    public function testSanitize(): void
     {
         $headers = [
             'normal',

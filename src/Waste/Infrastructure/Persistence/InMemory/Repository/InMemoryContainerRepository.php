@@ -2,6 +2,12 @@
 
 namespace App\Waste\Infrastructure\Persistence\InMemory\Repository;
 
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerFilter;
 use App\Waste\Domain\Model\Container\ContainerId;
@@ -46,7 +52,7 @@ class InMemoryContainerRepository implements ContainerRepository
     {
         $results = [];
 
-        if (count($this->containers) == 0) {
+        if (count($this->containers) === 0) {
             return $results;
         }
 
@@ -54,42 +60,42 @@ class InMemoryContainerRepository implements ContainerRepository
 
         foreach ($this->containers as $container) {
             if (
-                null !== $filter->propertyId
+                $filter->propertyId instanceof PropertyId
                 && (
                     null == $container->propertyId()
-                    || false == $filter->propertyId->equals($container->propertyId())
+                    || false === $filter->propertyId->equals($container->propertyId())
                 )
             ) {
                 continue;
             }
 
             if (
-                null !== $filter->wasteId
+                $filter->wasteId instanceof WasteId
                 && (
                     null == $container->wasteId()
-                    || false == $filter->wasteId->equals($container->wasteId())
+                    || false === $filter->wasteId->equals($container->wasteId())
                 )
             ) {
                 continue;
             }
 
-            if (null !== $filter->purpose && $filter->purpose !== $container->purpose()) {
+            if ($filter->purpose instanceof Purpose && $filter->purpose !== $container->purpose()) {
                 continue;
             }
 
-            if (null !== $filter->measurementMethod && $filter->measurementMethod !== $container->measurementMethod()) {
+            if ($filter->measurementMethod instanceof MeasurementMethod && $filter->measurementMethod !== $container->measurementMethod()) {
                 continue;
             }
 
-            if (null !== $filter->wasteManagerId && !$filter->wasteManagerId->equals($container->wasteManagerId())) {
+            if ($filter->wasteManagerId instanceof WasteManagerId && !$filter->wasteManagerId->equals($container->wasteManagerId())) {
                 continue;
             }
 
             if (
-                null !== $filter->accountId
+                $filter->accountId instanceof AccountId
                 && (
                     null == $container->accountId()
-                    || false == $filter->accountId->equals($container->accountId())
+                    || false === $filter->accountId->equals($container->accountId())
                 )
             ) {
                 continue;

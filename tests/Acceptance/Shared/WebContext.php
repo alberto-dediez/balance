@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Shared;
 
+use App\Security\Domain\Model\User\UserRepository;
+use App\Security\Infrastructure\Symfony\Security\SecurityUser;
+use Behat\Behat\Context\Context;
+use Behat\Gherkin\Node\PyStringNode;
 use Behat\Step\Then;
 use Behat\Step\When;
 use PHPUnit\Framework\Assert;
-use Behat\Behat\Context\Context;
-use Behat\Gherkin\Node\PyStringNode;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use App\Security\Domain\Model\User\UserRepository;
-use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  *
  * @see http://behat.org/en/latest/quick_start.html
  */
-final class WebContext implements Context
+final readonly class WebContext implements Context
 {
     private AcceptanceClient $client;
 
@@ -35,31 +35,31 @@ final class WebContext implements Context
     }
 
     #[When('I am logged as :username')]
-    public function iAmLoggedAs($username)
+    public function iAmLoggedAs(string $username): void
     {
         $user = $this->getUserRepository()->findByUsername($username);
-        
+
         Assert::assertNotNull($user, 'Usuario no encontrado');
 
         $this->client->loginUser(
-            new SecurityUser($user)
+            new SecurityUser($user),
         );
     }
 
     #[When('I go to :path')]
-    public function iGoTo($path)
+    public function iGoTo(string $path): void
     {
         $this->client->request('GET', $path);
     }
 
     #[When('I follow redirect')]
-    public function iFollowredirect()
+    public function iFollowredirect(): void
     {
         $this->client->followRedirect();
     }
 
     #[When('I submit a form with :data and button :text')]
-    public function iSubmitAFormWith($data, $text): void
+    public function iSubmitAFormWith(string $data, string $text): void
     {
         $crawler = $this->client->getCrawler();
 
@@ -71,13 +71,9 @@ final class WebContext implements Context
         $arguments = explode('|', $data);
 
         foreach ($arguments as $argument) {
-            list($name, $value) = explode(':', $argument);
+            [$name, $value] = explode(':', $argument);
 
-            if ('[' == $name[0]) {
-                $key = sprintf("%s%s", $form->attr('name'), $name);    
-            } else {
-                $key = sprintf("%s[%s]", $form->attr('name'), $name);
-            }
+            $key = '[' == $name[0] ? sprintf('%s%s', $form->attr('name'), $name) : sprintf('%s[%s]', $form->attr('name'), $name);
 
             if ('[' == $value[0]) {
                 $value = explode(',', substr($value, 1, -1));
@@ -90,28 +86,24 @@ final class WebContext implements Context
     }
 
     #[Then('the response status should be :code')]
-    public function theResponseStatusShouldBe(int $expectedCode)
+    public function theResponseStatusShouldBe(int $expectedCode): void
     {
         $exception = $this->client->getException();
 
         if (null == $exception) {
             $code = $this->client->getResponse()->getStatusCode();
         } else {
-            switch (get_class($exception)) {
-                case NotFoundHttpException::class:
-                    $code = 404;
-                    break;
-                default:
-                    $code = $exception->getCode();
-                    break;
-            }
+            $code = match ($exception::class) {
+                NotFoundHttpException::class => 404,
+                default => $exception->getCode(),
+            };
         }
 
-        Assert::assertEquals($expectedCode, $code, null !== $exception ? $exception->getMessage() : 'Sin excepcion');
+        Assert::assertEquals($expectedCode, $code, $exception instanceof \Exception ? $exception->getMessage() : 'Sin excepcion');
     }
 
     #[Then('I am redirected to :path')]
-    public function iAmRedirectedTo($path)
+    public function iAmRedirectedTo(string $path): void
     {
         $this->client->followRedirect();
 
@@ -129,7 +121,7 @@ final class WebContext implements Context
     }
 
     #[Then('I see a button with name :name')]
-    public function iSeeAButtonWithName($name)
+    public function iSeeAButtonWithName(string $name): void
     {
         $crawler = $this->client->getCrawler();
 
@@ -139,7 +131,7 @@ final class WebContext implements Context
     }
 
     #[Then('I see a link with name :name')]
-    public function iSeeALinkWithName($name)
+    public function iSeeALinkWithName(string $name): void
     {
         $crawler = $this->client->getCrawler();
 
@@ -149,29 +141,42 @@ final class WebContext implements Context
     }
 
     #[Then('I see a table with :rows rows')]
-    public function iSeeATableWithRows($rows)
+    public function iSeeATableWithRows(int $rows): void
     {
         $crawler = $this->client->getCrawler();
 
         $nodes = $crawler->filter('table tr');
 
-        Assert::assertCount((int) $rows, $nodes);
+        Assert::assertCount($rows, $nodes);
     }
 
     #[Then('I see a JSON that should be equal to:')]
-    public function iSeeAJsonThatShouldBeEqualTo(PyStringNode $content)
+    public function iSeeAJsonThatShouldBeEqualTo(PyStringNode $content): void
     {
         $expected = json_encode(json_decode((string) $content), JSON_PRETTY_PRINT);
-        $actual = json_encode(json_decode($this->client->getResponse()->getContent(), true), JSON_PRETTY_PRINT);
+
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        $jsonResponse = json_decode($response, true);
+
+        Assert::assertNotFalse($jsonResponse);
+
+        $actual = json_encode($jsonResponse, JSON_PRETTY_PRINT);
 
         Assert::assertEquals($expected, $actual);
     }
 
     #[Then('I see a JSON that should be similar to:')]
-    public function iSeeAJsonThatShouldBeSimilarTo(PyStringNode $content)
+    public function iSeeAJsonThatShouldBeSimilarTo(PyStringNode $content): void
     {
         $expected = json_decode((string) $content);
-        $actual = json_decode($this->client->getResponse()->getContent(), true);
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        $actual = json_decode($response, true);
 
         foreach ($expected as $attr => $value) {
             Assert::assertTrue(isset($actual->$attr) || isset($actual[$attr]));
@@ -179,8 +184,12 @@ final class WebContext implements Context
     }
 
     #[Then('I see a text :text')]
-    public function iSeeAText($text)
+    public function iSeeAText(string $text): void
     {
-        Assert::assertStringContainsString($text, $this->client->getResponse()->getContent());
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        Assert::assertStringContainsString($text, $response);
     }
 }

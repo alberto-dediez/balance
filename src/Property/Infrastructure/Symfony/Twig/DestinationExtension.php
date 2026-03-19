@@ -12,7 +12,7 @@ class DestinationExtension extends AbstractExtension
 {
     private array $destinations = [];
 
-    public function __construct(private DestinationRepository $destinationRepository)
+    public function __construct(private readonly DestinationRepository $destinationRepository)
     {
 
     }
@@ -20,7 +20,7 @@ class DestinationExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('destination_name', [$this, 'destinationName']),
+            new TwigFilter('destination_name', $this->destinationName(...)),
         ];
     }
 

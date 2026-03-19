@@ -20,21 +20,21 @@ final class MeasurementRegistered extends DomainEvent
     protected static string $eventName = 'measurementRegistered';
 
     public function __construct(
-        private MeasurementId $measurementId,
-        private ContainerId $containerId,
-        private PropertyId $propertyId,
-        private WasteId $wasteId,
-        private MeasurementMethod $measurementMethod,
-        private Purpose $purpose,
-        private WasteManagerId $wasteManagerId,
-        private UserId $registeredBy,
-        private AccountId $accountId,
-        private \DateTimeImmutable $day,
-        private int $quantity = 0,
-        private float $load = 0,
-        private Unit $unit = Unit::Kilogram,
-        private ?string $justification = null,
-        private ?string $reference = null,
+        private readonly MeasurementId $measurementId,
+        private readonly ContainerId $containerId,
+        private readonly PropertyId $propertyId,
+        private readonly WasteId $wasteId,
+        private readonly MeasurementMethod $measurementMethod,
+        private readonly Purpose $purpose,
+        private readonly WasteManagerId $wasteManagerId,
+        private readonly UserId $registeredBy,
+        private readonly AccountId $accountId,
+        private readonly \DateTimeImmutable $day,
+        private readonly int $quantity = 0,
+        private readonly float $load = 0,
+        private readonly Unit $unit = Unit::Kilogram,
+        private readonly ?string $justification = null,
+        private readonly ?string $reference = null,
         ?DomainEventId $id = null,
         ?DateTimeImmutable $occurredOn = null
     ) {
@@ -101,7 +101,7 @@ final class MeasurementRegistered extends DomainEvent
         return $this->reference;
     }
 
-    public function accountId(): ?AccountId
+    public function accountId(): AccountId
     {
         return $this->accountId;
     }
@@ -116,12 +116,12 @@ final class MeasurementRegistered extends DomainEvent
         return $this->day;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->measurementId();
+        return $this->measurementId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'measurementId' => (string) $this->measurementId,
@@ -145,7 +145,7 @@ final class MeasurementRegistered extends DomainEvent
     public static function rebuildFromPayload(
         DomainEventId $id,
         DateTimeImmutable $occurredOn,
-        ?array $payload
+        array $payload = []
     ): static {
         $measurementMethod = MeasurementMethod::tryFrom($payload['measurementMethod']);
         $guessedUnit = $measurementMethod === MeasurementMethod::Volume ? Unit::Liter : Unit::Kilogram;

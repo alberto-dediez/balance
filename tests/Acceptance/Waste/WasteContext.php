@@ -26,7 +26,7 @@ use App\Tests\Unit\Waste\Domain\Model\DailyWaste\DailyWasteMother;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
 use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
 
-final class WasteContext implements Context
+final readonly class WasteContext implements Context
 {
     private AcceptanceClient $client;
 
@@ -67,7 +67,7 @@ final class WasteContext implements Context
     }
 
     #[Given('waste :name with id :id exists')]
-    public function wasteWithIdExists($name, $id): void
+    public function wasteWithIdExists(string $name, string $id): void
     {
         $waste = WasteMother::fromNameAndId($name, $id);
 
@@ -75,7 +75,7 @@ final class WasteContext implements Context
     }
 
     #[Given('container for :waste in :propertyId with id :id exists')]
-    public function containerForInWithIdExists($waste, $propertyId, $id): void
+    public function containerForInWithIdExists(string $waste, string $propertyId, string $id): void
     {
         $property = $this->getPropertyRepository()->find(new PropertyId($propertyId));
 
@@ -85,7 +85,7 @@ final class WasteContext implements Context
     }
 
     #[Given('container for :waste in :propertyId and managed by :manager with id :id exists')]
-    public function containerForInAndManagedByWithIdExists($waste, $propertyId, $managerId, $id): void
+    public function containerForInAndManagedByWithIdExists(string $waste, string $propertyId, string $managerId, string $id): void
     {
         $property = $this->getPropertyRepository()->find(new PropertyId($propertyId));
 
@@ -102,22 +102,22 @@ final class WasteContext implements Context
         );
 
         $measurement = MeasurementMother::from(
-            containerId: $container->id(),
+            measurementId: new MeasurementId($id),
             propertyId: $container->propertyId(),
             wasteId: $container->wasteId(),
             wasteManagerId: $container->wasteManagerId(),
-            purpose: $container->purpose(),
-            measurementMethod: $container->measurementMethod(),
+            containerId: $container->id(),
             registeredBy: new UserId($user),
-            measurementId: new MeasurementId($id),
-            accountId: new AccountId($accountId)
+            accountId: new AccountId($accountId),
+            purpose: $container->purpose(),
+            measurementMethod: $container->measurementMethod()
         );
 
         $this->getMeasurementRepository()->add($measurement);
     }
 
     #[Given('waste manager :name with id :wasteManagerId of account :accountId exists')]
-    public function wasteManagerWithIdOfAccountExists($name, $wasteManagerId, $accountId): void
+    public function wasteManagerWithIdOfAccountExists(string $name, $wasteManagerId, $accountId): void
     {
         $wasteManager = WasteManagerMother::fromNameAndIdAndAccount(
             name: $name,
@@ -129,7 +129,7 @@ final class WasteContext implements Context
     }
 
     #[Given('daily waste for day :day with id :dailyWasteId of account :accountId exists')]
-    public function dailyWasteForDayWithIdOfAccountExists($day, $dailyWasteId, $accountId): void
+    public function dailyWasteForDayWithIdOfAccountExists(string $day, string $dailyWasteId, string $accountId): void
     {
         $dailyWaste = DailyWasteMother::fromDayAndIdAndAccount($day, $dailyWasteId, $accountId);
 

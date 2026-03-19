@@ -1,57 +1,64 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Symfony\Twig;
 
-use Twig\TwigFilter;
-use Twig\TwigFunction;
-use Twig\Extension\AbstractExtension;
 use App\Security\Domain\Model\User\Role;
 use Symfony\Component\Translation\TranslatableMessage;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 class FilterExtension extends AbstractExtension
 {
+    /** @return list<TwigFilter>  */
     public function getFilters(): array
     {
         return [
-            new TwigFilter('is_open', [$this, 'isOpen']),
-            new TwigFilter('is_valued', [$this, 'isValued']),
-            new TwigFilter('is_stringable', [$this, 'isStringable']),
-            new TwigFilter('show_field_value', [$this, 'showFieldValue']),
-            new TwigFilter('show_fields', [$this, 'getShowFields']),
+            new TwigFilter('is_open', $this->isOpen(...)),
+            new TwigFilter('is_valued', $this->isValued(...)),
+            new TwigFilter('is_stringable', $this->isStringable(...)),
+            new TwigFilter('show_field_value', $this->showFieldValue(...)),
+            new TwigFilter('show_fields', $this->getShowFields(...)),
         ];
     }
 
+    /** @return list<TwigFunction>  */
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('get_fields', [$this, 'getFields']),
+            new TwigFunction('get_fields', $this->getFields(...)),
         ];
     }
 
-    public function isStringable($value)
+    public function isStringable(mixed $value): bool
     {
         return is_string($value) || (is_object($value) && method_exists($value, '__toString'));
     }
 
-    public function isOpen($filter)
+    public function isOpen(object $filter): bool
     {
         $fields = $this->getShowFields($filter);
 
         return count($fields) > 0;
     }
 
-    public function isValued($value)
+    public function isValued(mixed $value): bool
     {
-        return (
+        return
             null !== $value && (
-                (is_string($value) && strlen($value) > 0)
+                (is_string($value) && '' !== $value)
                 || (is_array($value) && count($value) > 0)
                 || (!is_string($value) && !is_array($value))
             )
-        );
+        ;
     }
 
-    public function getFields($filter)
+    /**
+     * @return string[]
+     */
+    public function getFields(object $filter): array
     {
         $fields = [];
 
@@ -67,7 +74,10 @@ class FilterExtension extends AbstractExtension
         return $fields;
     }
 
-    public function getShowFields($filter)
+    /**
+     * @return string[]
+     */
+    public function getShowFields(object $filter): array
     {
         $ignoreFields = ['limit', 'page', 'orderWay', 'orderBy'];
 
@@ -75,7 +85,7 @@ class FilterExtension extends AbstractExtension
 
         $fields = $this->getFields($filter);
 
-        if (null == $fields || count($fields) == 0) {
+        if ([] === $fields) {
             return $result;
         }
 
@@ -96,7 +106,7 @@ class FilterExtension extends AbstractExtension
         return $result;
     }
 
-    public function showFieldValue($value)
+    public function showFieldValue(mixed $value): string|TranslatableMessage|int
     {
         if (is_string($value)) {
             return $value;
@@ -114,7 +124,7 @@ class FilterExtension extends AbstractExtension
             return new TranslatableMessage($value->value, [], 'roles');
         }
 
-        if ($value instanceof \UnitEnum) {
+        if ($value instanceof \BackedEnum) {
             return $value->value;
         }
 

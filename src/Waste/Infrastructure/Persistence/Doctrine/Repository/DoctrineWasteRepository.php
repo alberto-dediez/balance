@@ -31,17 +31,17 @@ class DoctrineWasteRepository implements WasteRepository
 
     public function add(Waste $waste): void
     {
-        $this->getEntityManager()->persist($waste);
+        $this->manager->persist($waste);
 
-        $this->addTranslations($waste, $this->getEntityManager()->getRepository(WasteTranslation::class));
+        $this->addTranslations($waste, $this->manager->getRepository(WasteTranslation::class));
 
-        $this->getEntityManager()->flush();
+        $this->manager->flush();
     }
 
     public function remove(Waste $waste): void
     {
-        $this->getEntityManager()->remove($waste);
-        $this->getEntityManager()->flush();
+        $this->manager->remove($waste);
+        $this->manager->flush();
     }
 
     public function find(WasteId $wasteId): ?Waste
@@ -57,14 +57,14 @@ class DoctrineWasteRepository implements WasteRepository
             ->getOneOrNullResult()
         ;
 
-        $this->loadTranslations($waste, $this->getEntityManager()->getRepository(WasteTranslation::class));
+        $this->loadTranslations($waste, $this->manager->getRepository(WasteTranslation::class));
 
         return $waste;
     }
 
     private function createQueryBuilderFromFilter(WasteFilter $filter): QueryBuilder
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb = $this->manager->createQueryBuilder();
 
         $qb->select('w')
             ->from(Waste::class, 'w')
@@ -102,17 +102,12 @@ class DoctrineWasteRepository implements WasteRepository
             ;
         }
 
-        $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
+        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
 
-        switch ($filter->orderBy) {
-            case 'registeredAt':
-                $qb->orderBy('w.registeredAt', $way);
-                break;
-            case 'name':
-            default:
-                $qb->orderBy('w.name', $way);
-                break;
-        }
+        match ($filter->orderBy) {
+            'registeredAt' => $qb->orderBy('w.registeredAt', $way),
+            default => $qb->orderBy('w.name', $way),
+        };
 
         return $qb;
     }
@@ -132,12 +127,12 @@ class DoctrineWasteRepository implements WasteRepository
 
         $wastes = (array) $query->getResult();
 
-        if (count($wastes) == 0) {
+        if (count($wastes) === 0) {
             return [];
         }
 
         foreach ($wastes as $waste) {
-            $this->loadTranslations($waste, $this->getEntityManager()->getRepository(WasteTranslation::class));
+            $this->loadTranslations($waste, $this->manager->getRepository(WasteTranslation::class));
         }
 
         return $wastes;
@@ -153,7 +148,7 @@ class DoctrineWasteRepository implements WasteRepository
         ;
     }
 
-    private function getEntityManager()
+    private function getEntityManager(): EntityManagerInterface
     {
         return $this->manager;
     }

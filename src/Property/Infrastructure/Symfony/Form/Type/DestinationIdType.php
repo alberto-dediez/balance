@@ -11,17 +11,17 @@ use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdRemoteType;
 class DestinationIdType extends AggregateRootIdRemoteType
 {
     public function __construct(
-        private RouterInterface $router, private DestinationRepository $repository
+        private readonly RouterInterface $router, private readonly DestinationRepository $repository
     ) {
 
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'class' => DestinationId::class,
             'autocomplete-path' => $this->router->generate('destinations_autocomplete'),
             'repository' => $this->repository
-        ));
+        ]);
     }
 }

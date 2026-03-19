@@ -13,7 +13,7 @@ class WasteManagerMother
         bool $isPublic,
         AccountId $accountId,
         WasteManagerId $wasteManagerId
-    ) {
+    ): WasteManager {
         $wasteManager = new WasteManager(
             id: $wasteManagerId
         );
@@ -32,8 +32,8 @@ class WasteManagerMother
     public static function fromAccount(AccountId $accountId)
     {
         return self::from(
-            name: 'manager-' . rand(99, 999),
-            isPublic: rand(0, 1) == 1,
+            name: 'manager-' . random_int(99, 999),
+            isPublic: random_int(0, 1) === 1,
             accountId: $accountId,
             wasteManagerId: WasteManagerId::generate()
         );
@@ -42,8 +42,8 @@ class WasteManagerMother
     public static function random()
     {
         return self::from(
-            name: 'manager-' . rand(99, 999),
-            isPublic: rand(0, 1) == 1,
+            name: 'manager-' . random_int(99, 999),
+            isPublic: random_int(0, 1) === 1,
             accountId: AccountId::generate(),
             wasteManagerId: WasteManagerId::generate()
         );
@@ -53,7 +53,7 @@ class WasteManagerMother
     {
         return self::from(
             name: $name,
-            isPublic: rand(0, 1) == 1,
+            isPublic: random_int(0, 1) === 1,
             accountId: AccountId::generate(),
             wasteManagerId: WasteManagerId::generate()
         );
@@ -63,7 +63,7 @@ class WasteManagerMother
     {
         return self::from(
             name: $name,
-            isPublic: rand(0, 1) == 1,
+            isPublic: random_int(0, 1) === 1,
             accountId: $accountId,
             wasteManagerId: $wasteManagerId
         );

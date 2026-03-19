@@ -8,7 +8,7 @@ use App\Property\Domain\Model\Brand\BrandRepository;
 
 abstract class BrandRepositoryTest extends KernelTestCase
 {
-    public function testAddBrandToRepository()
+    public function testAddBrandToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -24,7 +24,7 @@ abstract class BrandRepositoryTest extends KernelTestCase
         $this->assertEquals($brand->id(), $recoverBrand->id());
     }
 
-    public function testRemoveBrandToRepository()
+    public function testRemoveBrandToRepository(): void
     {   
         $repository = $this->createSUT();
 
@@ -42,7 +42,7 @@ abstract class BrandRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($brand->id()));
     }
 
-    public function testFindByName()
+    public function testFindByName(): void
     {
         $repository = $this->createSUT();
 
@@ -58,7 +58,7 @@ abstract class BrandRepositoryTest extends KernelTestCase
         $this->assertEquals($brand->id(), $recoverBrand->id());
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -84,7 +84,7 @@ abstract class BrandRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
@@ -110,7 +110,7 @@ abstract class BrandRepositoryTest extends KernelTestCase
         $this->assertCount(6, $result);
     }
 
-    public function testFindNotRecoverRemoved()
+    public function testFindNotRecoverRemoved(): void
     {
         $repository = $this->createSUT();
 

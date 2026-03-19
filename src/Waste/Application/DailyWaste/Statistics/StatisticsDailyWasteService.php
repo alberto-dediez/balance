@@ -2,6 +2,9 @@
 
 namespace App\Waste\Application\DailyWaste\Statistics;
 
+use App\Property\Domain\Model\Property\Property;
+use App\Waste\Domain\Model\Waste\Waste;
+use App\Waste\Domain\Model\WasteManager\WasteManager;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Waste\Domain\Model\DailyWaste\DailyWaste;
@@ -12,16 +15,15 @@ use App\Waste\Application\DailyWaste\DailyWasteAuthorizer;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
 use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;
 use DatePeriod;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\iterator;
 
 class StatisticsDailyWasteService
 {
     public function __construct(
-        private DailyWasteRepository $dailyWasteRepository,
-        private WasteManagerRepository $wasteManagerRepository,
-        private PropertyRepository $propertyRepository,
-        private WasteRepository $wasteRepository,
-        private DailyWasteAuthorizer $authorizer
+        private readonly DailyWasteRepository $dailyWasteRepository,
+        private readonly WasteManagerRepository $wasteManagerRepository,
+        private readonly PropertyRepository $propertyRepository,
+        private readonly WasteRepository $wasteRepository,
+        private readonly DailyWasteAuthorizer $authorizer
     ) {
 
     }
@@ -40,7 +42,7 @@ class StatisticsDailyWasteService
 
         $dailyWastes = $this->dailyWasteRepository->findByFilter($request->filter());
 
-        list($byMonth, $byDate, $byPurpose, $byWaste, $byWasteManager, $byProperty) = $this->calculateStatistics($dailyWastes);
+        [$byMonth, $byDate, $byPurpose, $byWaste, $byWasteManager, $byProperty] = $this->calculateStatistics($dailyWastes);
 
         return new StatisticsDailyWasteResponse(
             byMonth: $byMonth,
@@ -52,11 +54,14 @@ class StatisticsDailyWasteService
         );
     }
 
-    private function calculateStatistics(array $dailyWastes)
+    /**
+     * @return mixed[][]
+     */
+    private function calculateStatistics(array $dailyWastes): array
     {
         $byMonth = $byDate = $byPurpose = $byWaste = $byWasteManager = $byProperty = [];
 
-        if (count($dailyWastes) == 0) {
+        if (count($dailyWastes) === 0) {
             return [
                 $byMonth,
                 $byDate,
@@ -69,7 +74,7 @@ class StatisticsDailyWasteService
 
         $months = $this->getMonths($dailyWastes);
 
-        $byMonth = array_reduce($months, function ($result, \DateTimeImmutable $month) {
+        $byMonth = array_reduce($months, function (array $result, \DateTimeImmutable $month): array {
            $result[$month->format('Ym')] = new ByMonth(
                month: $month,
                load: 0,
@@ -85,8 +90,13 @@ class StatisticsDailyWasteService
             $property = $this->propertyRepository->find($dailyWaste->propertyId());
             $waste = $this->wasteRepository->find($dailyWaste->wasteId());
             $wasteManager = $this->wasteManagerRepository->find($dailyWaste->wasteManagerId());
-
-            if (null === $property || null === $waste || null === $wasteManager) {
+            if (!$property instanceof Property) {
+                continue;
+            }
+            if (!$waste instanceof Waste) {
+                continue;
+            }
+            if (!$wasteManager instanceof WasteManager) {
                 continue;
             }
 
@@ -108,7 +118,7 @@ class StatisticsDailyWasteService
                     property: $property,
                     load: 0,
                     percentage: 0,
-                    months: array_reduce($months, function ($result, \DateTimeImmutable $month) {
+                    months: array_reduce($months, function (array $result, \DateTimeImmutable $month): array {
                         $result[$month->format('Ym')] = new ByMonth(
                             month: $month,
                             load: 0,
@@ -146,62 +156,50 @@ class StatisticsDailyWasteService
         }
 
         //ByMonth
-        array_walk($byMonth, function (ByMonth $byMonth) use ($total) {
+        array_walk($byMonth, function (ByMonth $byMonth) use ($total): void {
             $byMonth->percentage = $total == 0 ? 0 : $byMonth->load / $total;
         });
 
-        usort($byMonth, function (ByMonth $byMonthA, ByMonth $byMonthB) {
-            return $byMonthA->month <=> $byMonthB->month;
-        });
+        usort($byMonth, fn(ByMonth $byMonthA, ByMonth $byMonthB) => $byMonthA->month <=> $byMonthB->month);
 
         //ByDate
-        array_walk($byDate, function (ByDate $byDate) use ($total) {
+        array_walk($byDate, function (ByDate $byDate) use ($total): void {
             $byDate->percentage = $total == 0 ? 0 : $byDate->load / $total;
         });
 
-        usort($byDate, function (ByDate $byDateA, ByDate $byDateB) {
-            return $byDateA->date <=> $byDateB->date;
-        });
+        usort($byDate, fn(ByDate $byDateA, ByDate $byDateB) => $byDateA->date <=> $byDateB->date);
 
         //ByProperty
-        array_walk($byProperty, function (ByProperty $byProperty) use ($total) {
+        array_walk($byProperty, function (ByProperty $byProperty) use ($total): void {
             $byProperty->percentage = $total == 0 ? 0 : $byProperty->load / $total;
 
             $totalOfProperty = $byProperty->load;
 
-            array_walk($byProperty->months, function (ByMonth $byMonth) use ($totalOfProperty) {
+            array_walk($byProperty->months, function (ByMonth $byMonth) use ($totalOfProperty): void {
                 $byMonth->percentage = $totalOfProperty == 0 ? 0 : $byMonth->load / $totalOfProperty;
             });
 
-            usort($byProperty->months, function (ByMonth $byMonthA, ByMonth $byMonthB) {
-                return $byMonthA->month <=> $byMonthB->month;
-            });
+            usort($byProperty->months, fn(ByMonth $byMonthA, ByMonth $byMonthB) => $byMonthA->month <=> $byMonthB->month);
         });
 
-        usort($byProperty, function (ByProperty $byPropertyA, ByProperty $byPropertyB) {
-            return $byPropertyA->property->name() <=> $byPropertyB->property->name();
-        });
+        usort($byProperty, fn(ByProperty $byPropertyA, ByProperty $byPropertyB) => $byPropertyA->property->name() <=> $byPropertyB->property->name());
 
         //ByWaste
-        array_walk($byWaste, function (ByWaste $byWaste) use ($total) {
+        array_walk($byWaste, function (ByWaste $byWaste) use ($total): void {
             $byWaste->percentage = $total == 0 ? 0 : $byWaste->load / $total;
         });
 
-        usort($byWaste, function (ByWaste $byWasteA, ByWaste $byWasteB) {
-            return $byWasteA->waste->name() <=> $byWasteB->waste->name();
-        });
+        usort($byWaste, fn(ByWaste $byWasteA, ByWaste $byWasteB) => $byWasteA->waste->name() <=> $byWasteB->waste->name());
 
         //ByWasteManager
-        array_walk($byWasteManager, function (ByWasteManager $byWasteManager) use ($total) {
+        array_walk($byWasteManager, function (ByWasteManager $byWasteManager) use ($total): void {
             $byWasteManager->percentage = $total == 0 ? 0 : $byWasteManager->load / $total;
         });
 
-        usort($byWasteManager, function (ByWasteManager $byWasteManagerA, ByWasteManager $byWasteManagerB) {
-            return $byWasteManagerA->wasteManager->name() <=> $byWasteManagerB->wasteManager->name();
-        });
+        usort($byWasteManager, fn(ByWasteManager $byWasteManagerA, ByWasteManager $byWasteManagerB) => $byWasteManagerA->wasteManager->name() <=> $byWasteManagerB->wasteManager->name());
 
         //ByPurpose
-        array_walk($byPurpose, function (ByPurpose $byPurpose) use ($total) {
+        array_walk($byPurpose, function (ByPurpose $byPurpose) use ($total): void {
             $byPurpose->percentage = $total == 0 ? 0 : $byPurpose->load / $total;
         });
 
@@ -221,15 +219,11 @@ class StatisticsDailyWasteService
      */
     private function getMonths(array $dailyWastes): array
     {
-        $startDate = array_reduce($dailyWastes, function ($start, $dailyWaste) {
-            return (null === $start || $start > $dailyWaste->day()) ? $dailyWaste->day() : $start;
-        }, null);
+        $startDate = array_reduce($dailyWastes, fn($start, DailyWaste $dailyWaste) => (null === $start || $start > $dailyWaste->day()) ? $dailyWaste->day() : $start);
 
         $startDate = (new \DateTimeImmutable($startDate->format('Y-m-01')));
 
-        $endDate = array_reduce($dailyWastes, function ($start, $dailyWaste) {
-            return (null === $start || $start < $dailyWaste->day()) ? $dailyWaste->day() : $start;
-        }, null);
+        $endDate = array_reduce($dailyWastes, fn($start, DailyWaste $dailyWaste) => (null === $start || $start < $dailyWaste->day()) ? $dailyWaste->day() : $start);
 
         $endDate = (new \DateTimeImmutable($endDate->format('Y-m-t')));
 

@@ -11,20 +11,20 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class WasteIdType extends AggregateRootIdType
 {
     public function __construct(
-        private WasteRepository $wasteRepository
+        private readonly WasteRepository $wasteRepository
     ) {
 
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $wastes = $this->wasteRepository->findByFilter(
             new WasteFilter(limit: 0)
         );
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => $this->getChoices($wastes),
             'class' => WasteId::class
-        ));
+        ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Property\Application\Destination\Autocomplete;
 
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Property\Application\Destination\DestinationAuthorizer;
@@ -19,7 +20,7 @@ class AutocompleteDestinationServiceTest extends TestCase
         
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = DestinationRepositoryMother::inMemory();
 
@@ -43,7 +44,7 @@ class AutocompleteDestinationServiceTest extends TestCase
         $this->assertCount(4, $result->elements);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryDestinationRepository $repository): AutocompleteDestinationService
     {
         return new AutocompleteDestinationService($repository, new DestinationAuthorizer());
     }

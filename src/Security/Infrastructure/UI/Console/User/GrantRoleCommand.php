@@ -1,27 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\UI\Console\User;
 
-use InvalidArgumentException;
+use App\Security\Application\User\GrantRole\GrantRoleRequest;
+use App\Security\Application\User\GrantRole\GrantRoleService;
 use App\Security\Domain\Model\User\Role;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use App\Security\Domain\Model\User\UserRepository;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Security\Application\User\GrantRole\GrantRoleRequest;
-use App\Security\Application\User\GrantRole\GrantRoleService;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'security:user:grant-role',
-    description: 'Grant roles to an user'
+    description: 'Grant roles to an user',
 )]
 class GrantRoleCommand extends Command
 {
-    public function __construct(private GrantRoleService $grantRoleService, private UserRepository $userRepository)
+    public function __construct(private readonly GrantRoleService $grantRoleService, private readonly UserRepository $userRepository)
     {
         parent::__construct();
     }
@@ -39,12 +40,18 @@ class GrantRoleCommand extends Command
         $user = $this->userRepository->findByUsername($input->getArgument('username'));
 
         if (null == $user) {
-            throw new InvalidArgumentException("User not found");
+            throw new \InvalidArgumentException('User not found');
+        }
+
+        $role = Role::tryFrom($input->getArgument('role'));
+
+        if (null === $role) {
+            throw new \InvalidArgumentException('Role not found');
         }
 
         $request = new GrantRoleRequest(
-            $user->id(), 
-            Role::tryFrom($input->getArgument('role'))
+            $user->id(),
+            $role,
         );
 
         $performBy = UserMother::systemUser();
@@ -60,15 +67,18 @@ class GrantRoleCommand extends Command
                 ['userId', (string) $response->userId],
                 ['username', $response->username],
                 ['roles', $this->stringifyRoles($response->roles)],
-            ]
+            ],
         );
 
         return Command::SUCCESS;
     }
 
-    private function stringifyRoles(array $roles)
+    /**
+     * @param Role[] $roles
+     */
+    private function stringifyRoles(array $roles): string
     {
-        if (count($roles) == 0) {
+        if (0 === count($roles)) {
             return '';
         }
 

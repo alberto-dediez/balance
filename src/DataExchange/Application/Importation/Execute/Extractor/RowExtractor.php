@@ -6,11 +6,6 @@ class RowExtractor
 {
     private array $fields = [];
 
-    public function __construct()
-    {
-
-    }
-
     public function addFieldExtractor(FieldExtractor $fieldExtractor, string $fieldName): self
     {
         $this->fields[$fieldName] = $fieldExtractor;

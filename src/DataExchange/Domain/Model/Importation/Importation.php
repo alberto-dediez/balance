@@ -6,7 +6,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Model\AggregateRoot;
 
-class Importation
+class Importation implements \Stringable
 {
     use AggregateRoot;
 
@@ -126,7 +126,7 @@ class Importation
         return $this->registeredBy ?? null;
     }
 
-    public function register(string $name, string $type, ?AccountId $accountId, ?UserId $registeredBy = null)
+    public function register(string $name, string $type, ?AccountId $accountId, ?UserId $registeredBy = null): void
     {
         $this->recordApplyAndPublish(
             new ImportationRegistered(
@@ -177,7 +177,7 @@ class Importation
         );
     }
 
-    public function applyImportationRegistered(ImportationRegistered $event)
+    public function applyImportationRegistered(ImportationRegistered $event): void
     {
         $this->accountId = $event->accountId();
         $this->name = $event->name();
@@ -187,22 +187,22 @@ class Importation
         $this->registeredBy = $event->registeredBy();
     }
 
-    public function applyImportationConfigurationUpdated(ImportationConfigurationUpdated $event)
+    public function applyImportationConfigurationUpdated(ImportationConfigurationUpdated $event): void
     {
         $this->configurations = $event->configurations();
     }
 
-    public function applyImportationDefaultValuesUpdated(ImportationDefaultValuesUpdated $event)
+    public function applyImportationDefaultValuesUpdated(ImportationDefaultValuesUpdated $event): void
     {
         $this->defaultValues = $event->defaultValues();
     }
 
-    public function applyImportationExecutionStarted(ImportationExecutionStarted $event)
+    public function applyImportationExecutionStarted(ImportationExecutionStarted $event): void
     {
         $this->status = ImportationStatus::InProgress;
     }
 
-    public function applyImportationExecuted(ImportationExecuted $event)
+    public function applyImportationExecuted(ImportationExecuted $event): void
     {
         $this->status = ImportationStatus::Executed;
         $this->executedAt = $event->occurredOn();
@@ -210,6 +210,6 @@ class Importation
 
     public function __toString(): string
     {
-        return (string) $this->name();
+        return $this->name();
     }
 }

@@ -2,25 +2,23 @@
 
 namespace App\Waste\Infrastructure\Symfony\Form\Type;
 
-use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\ContainerFilter;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdType;
-use Symfony\Component\Translation\TranslatableMessage;
 
 class ContainerIdType extends AggregateRootIdType
 {
     public function __construct(
-        private LoggedAccount $loggedAccount,
-        private ContainerRepository $containerRepository
+        private readonly LoggedAccount $loggedAccount,
+        private readonly ContainerRepository $containerRepository
     ) {
 
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $loggedAccount = $this->loggedAccount;
 
@@ -33,9 +31,9 @@ class ContainerIdType extends AggregateRootIdType
             )
         );
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => $this->getChoices($containers),
             'class' => ContainerId::class
-        ));
+        ]);
     }
 }

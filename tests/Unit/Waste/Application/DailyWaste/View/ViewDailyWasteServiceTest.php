@@ -4,8 +4,6 @@ namespace App\Tests\Unit\Waste\Application\DailyWaste\View;
 
 use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
-use App\Security\Domain\Model\Account\Account;
-use App\Security\Domain\Model\Account\AccountId;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Waste\Application\DailyWaste\DailyWasteAuthorizer;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
@@ -25,7 +23,7 @@ class ViewDailyWasteServiceTest extends TestCase
         
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $dailyWaste = DailyWasteMother::fromDayAndIdAndAccount("2025-10-31", "d1", "account");
 
@@ -57,7 +55,7 @@ class ViewDailyWasteServiceTest extends TestCase
         $this->assertTrue($result->dailyWaste->id()->equals($dailyWaste->id()));
     }
 
-    private function createSUT(DailyWasteRepository $dailyWasteRepository, MeasurementRepository $measurementRepository)
+    private function createSUT(DailyWasteRepository $dailyWasteRepository, MeasurementRepository $measurementRepository): ViewDailyWasteService
     {
         return new ViewDailyWasteService($dailyWasteRepository, $measurementRepository, new DailyWasteAuthorizer());
     }

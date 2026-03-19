@@ -45,7 +45,7 @@ class RegisterController extends AbstractController
         $form = $this->createForm(RegisterWasteManagerType::class);
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerWasteManager, $account, $loggedUser) {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerWasteManager, $account, $loggedUser): true {
                 $registerRequest = $form->getData();
                 $registerRequest->accountId = $account->id();
 

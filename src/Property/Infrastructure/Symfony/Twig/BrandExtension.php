@@ -12,7 +12,7 @@ class BrandExtension extends AbstractExtension
 {
     private array $brands = [];
 
-    public function __construct(private BrandRepository $brandRepository)
+    public function __construct(private readonly BrandRepository $brandRepository)
     {
 
     }
@@ -20,7 +20,7 @@ class BrandExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('brand_name', [$this, 'brandName']),
+            new TwigFilter('brand_name', $this->brandName(...)),
         ];
     }
 
@@ -33,7 +33,7 @@ class BrandExtension extends AbstractExtension
 
     public function brandName(?BrandId $brandId): ?Brand
     {
-        if (null === $brandId) {
+        if (!$brandId instanceof BrandId) {
             return null;
         }
 
