@@ -11,6 +11,7 @@ PHP      = $(PHP_CONT) php
 PHP_TEST = $(TEST_CONT) php
 COMPOSER = $(PHP_CONT) composer
 SYMFONY  = $(PHP) bin/console
+PHP_EXTERNAL = docker run --rm -v $(pwd):/app -w /app php:8.4-cli
 
 # Misc
 .DEFAULT_GOAL = help
@@ -66,6 +67,10 @@ composer: ## Run composer, pass the parameter "c=" to run a given command, examp
 	@$(eval c ?=)
 	@$(COMPOSER) $(c)
 
+composer-external: ## Run composer from external container, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'
+	@$(eval c ?=)
+	@$(COMPOSER) $(c)
+
 vendor: ## Install vendors according to the current composer.lock file
 vendor: c=install --prefer-dist --no-dev --no-progress --no-scripts --no-interaction
 vendor: composer
@@ -112,6 +117,11 @@ behat-init:
 
 behat-snippets:
 	@$(PHP) vendor/bin/behat --dry-run --append-snippets
+
+## —— Bugs and errors ———————————————————————————————————————————————————————
+external-php:
+	@$(eval c ?=)
+	@$(PHP_EXTERNAL) $(c)
 
 ## —— Code Quality ——————————————————————————————————————————————————————————
 phpstan:
