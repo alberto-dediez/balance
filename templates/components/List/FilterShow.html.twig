@@ -1,7 +1,7 @@
 {% props label, value, id %}
 
 <div class="alert alert-info p-2 me-2 mb-0 filter-show" data-controller="filter">
-    {{ label }}:
+    {{ label | trans }}:
 
     {% if value is iterable %}
         <b>{{ value | map(v => v | show_field_value | trans) | join(', ') }}</b>
