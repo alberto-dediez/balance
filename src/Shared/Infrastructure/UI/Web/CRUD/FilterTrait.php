@@ -4,13 +4,23 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\UI\Web\CRUD;
 
+use App\Shared\Infrastructure\Persistence\Doctrine\DoctrineEntityReattacher;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\Service\Attribute\Required;
 
 trait FilterTrait
 {
+    private readonly DoctrineEntityReattacher $doctrineEntityReattacher;
+
+    #[Required]
+    public function setDoctrineEntityReattacher(DoctrineEntityReattacher $doctrineEntityReattacher): void
+    {
+        $this->doctrineEntityReattacher = $doctrineEntityReattacher;
+    }
+
     /**
      * @param class-string<FormTypeInterface<mixed>> $formClass
      *
@@ -23,7 +33,9 @@ trait FilterTrait
 
         $key = sprintf('%s-%s', $route, md5($formClass));
 
-        $filter = $session->has($key) ? $session->get($key) : $createFilter();
+        $filter = $session->has($key) ? $session->get($key) : null;
+
+        $filter = null !== $filter ? $this->doctrineEntityReattacher->reattach($filter) : $createFilter();
 
         $form = $this->createForm($formClass, $filter);
 

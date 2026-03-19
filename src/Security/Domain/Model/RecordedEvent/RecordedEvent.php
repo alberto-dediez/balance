@@ -6,6 +6,7 @@ namespace App\Security\Domain\Model\RecordedEvent;
 
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEvent;
+use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Event\EventRegistry;
 use App\Shared\Domain\Model\AggregateRootId;
 
@@ -87,7 +88,7 @@ class RecordedEvent
 
         /* @var class-string $class */
         return $class::rebuildFromPayload(
-            id: $this->id(),
+            id: new DomainEventId($this->id()->__toString()),
             occurredOn: $this->occurredOn(),
             payload: $this->payload(),
         );
