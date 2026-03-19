@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Property\Domain\Model\Country\CountryId;
@@ -14,15 +16,12 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryDestinationRepository implements DestinationRepository
 {
-    public function __construct(private array $destinations = [])
-    {
-
-    }
+    public function __construct(private array $destinations = []) {}
 
     public function add(Destination $destination): void
     {
         if (isset($this->destinations[(string) $destination->id()])) {
-            return ;
+            return;
         }
 
         $this->destinations[(string) $destination->id()] = $destination;
@@ -31,7 +30,7 @@ class InMemoryDestinationRepository implements DestinationRepository
     public function remove(Destination $destination): void
     {
         if (!isset($this->destinations[(string) $destination->id()])) {
-            return ;
+            return;
         }
 
         unset($this->destinations[(string) $destination->id()]);
@@ -47,7 +46,7 @@ class InMemoryDestinationRepository implements DestinationRepository
 
     public function findByNameAndCountry(string $name, CountryId $countryId): ?Destination
     {
-        if (count($this->destinations) === 0) {
+        if (0 === count($this->destinations)) {
             return null;
         }
 
@@ -62,7 +61,7 @@ class InMemoryDestinationRepository implements DestinationRepository
 
     public function findBySourceAndExternalId(ExternalSource $source, ExternalId $externalId): ?Destination
     {
-        if (count($this->destinations) === 0) {
+        if (0 === count($this->destinations)) {
             return null;
         }
 
@@ -86,7 +85,7 @@ class InMemoryDestinationRepository implements DestinationRepository
     {
         $results = [];
 
-        if (count($this->destinations) === 0) {
+        if (0 === count($this->destinations)) {
             return $results;
         }
 
@@ -109,7 +108,7 @@ class InMemoryDestinationRepository implements DestinationRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

@@ -1,24 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\Container\List;
 
+use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
+use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
+use App\Waste\Application\Container\ContainerAuthorizer;
+use App\Waste\Application\Container\List\ListContainersRequest;
+use App\Waste\Application\Container\List\ListContainersResponse;
+use App\Waste\Application\Container\List\ListContainersService;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryContainerRepository;
 use PHPUnit\Framework\TestCase;
-use App\Waste\Application\Container\ContainerAuthorizer;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
-use App\Waste\Application\Container\List\ListContainersRequest;
-use App\Waste\Application\Container\List\ListContainersService;
-use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
-use App\Waste\Application\Container\List\ListContainersResponse;
-use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 
 class ListContainersServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        
-    }
+    protected function setUp(): void {}
 
     public function testInvoke(): void
     {
@@ -35,7 +34,7 @@ class ListContainersServiceTest extends TestCase
         $repository->add(ContainerMother::fromAccount($account->id()));
 
         $request = new ListContainersRequest(
-            accountId: $account->id()
+            accountId: $account->id(),
         );
 
         $result = $sut($request, $user);

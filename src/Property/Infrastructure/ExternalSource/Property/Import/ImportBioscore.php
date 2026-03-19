@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\ExternalSource\Property\Import;
 
 use App\Property\Application\Property\Import\Field;
-use App\Property\Domain\Model\Property\ExternalSource;
 use App\Property\Application\Property\Import\FieldExtractor;
+use App\Property\Domain\Model\Property\ExternalSource;
 
 class ImportBioscore implements ImportConfiguration
 {
@@ -28,7 +30,7 @@ class ImportBioscore implements ImportConfiguration
             Field::InfoCategoryName->value => 15,
             Field::InfoBrandId->value => 16,
             Field::InfoBrandName->value => 17,
-            Field::Name->value => 2
+            Field::Name->value => 2,
         ]);
     }
 

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Container;
 
-use App\Waste\Domain\Model\Measurement\Unit;
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Shared\Domain\Model\AggregateRoot;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Model\AggregateRoot;
+use App\Waste\Domain\Model\Measurement\Unit;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 class Container implements \Stringable
@@ -15,49 +17,47 @@ class Container implements \Stringable
 
     public function __construct(
         private ContainerId $id,
-        private AccountId|null $accountId = null,
-        private PropertyId|null $propertyId = null,
-        private WasteId|null $wasteId = null,
+        private ?AccountId $accountId = null,
+        private ?PropertyId $propertyId = null,
+        private ?WasteId $wasteId = null,
         private ?Purpose $purpose = null,
         private ?MeasurementMethod $measurementMethod = null,
         private ?string $volume = '0',
-        private WasteManagerId|null $wasteManagerId = null,
+        private ?WasteManagerId $wasteManagerId = null,
         private ?QrCode $qrCode = null,
         private bool $removed = false,
         array $events = [],
         private ?\DateTimeImmutable $registeredAt = null,
         private ?\DateTimeImmutable $printedAt = null,
-        private ?\DateTimeImmutable $removedAt = null
-    ) {
-
-    }
+        private ?\DateTimeImmutable $removedAt = null,
+    ) {}
 
     public function id(): ContainerId
     {
         return $this->id;
     }
 
-    public function accountId() : ?AccountId
+    public function accountId(): ?AccountId
     {
         return $this->accountId;
     }
 
-    public function propertyId() : ?PropertyId
+    public function propertyId(): ?PropertyId
     {
         return $this->propertyId;
     }
 
-    public function wasteId() : ?WasteId
+    public function wasteId(): ?WasteId
     {
         return $this->wasteId;
     }
 
-    public function purpose() : ?Purpose
+    public function purpose(): ?Purpose
     {
         return $this->purpose;
     }
 
-    public function measurementMethod() : ?MeasurementMethod
+    public function measurementMethod(): ?MeasurementMethod
     {
         return $this->measurementMethod;
     }
@@ -72,7 +72,7 @@ class Container implements \Stringable
         return Unit::tryFrom($this->measurementMethod->unit());
     }
 
-    public function wasteManagerId() : ?WasteManagerId
+    public function wasteManagerId(): ?WasteManagerId
     {
         return $this->wasteManagerId;
     }
@@ -108,11 +108,11 @@ class Container implements \Stringable
         WasteId $wasteId,
         Purpose $purpose,
         MeasurementMethod $measurementMethod,
-        ?string $volume,
+        string|float|null $volume,
         WasteManagerId $wasteManagerId,
-        QrCode $qrCode
+        QrCode $qrCode,
     ): void {
-        if ($measurementMethod == MeasurementMethod::Volume && (null === $volume || $volume < 0)) {
+        if (MeasurementMethod::Volume == $measurementMethod && (null === $volume || $volume < 0)) {
             throw new NotValidVolumeException($volume);
         }
 
@@ -123,11 +123,11 @@ class Container implements \Stringable
                 propertyId: $propertyId,
                 wasteId: $wasteId,
                 measurementMethod: $measurementMethod,
-                volume: $volume,
+                volume: (string) $volume,
                 purpose: $purpose,
                 wasteManagerId: $wasteManagerId,
-                qrCode: $qrCode
-            )
+                qrCode: $qrCode,
+            ),
         );
     }
 
@@ -136,9 +136,9 @@ class Container implements \Stringable
         Purpose $purpose,
         MeasurementMethod $measurementMethod,
         WasteManagerId $wasteManagerId,
-        ?string $volume
+        ?string $volume,
     ): void {
-        if ($measurementMethod == MeasurementMethod::Volume && (null === $volume || $volume < 0)) {
+        if (MeasurementMethod::Volume == $measurementMethod && (null === $volume || $volume < 0)) {
             throw new NotValidVolumeException($volume);
         }
 
@@ -149,8 +149,8 @@ class Container implements \Stringable
                 measurementMethod: $measurementMethod,
                 volume: $volume,
                 purpose: $purpose,
-                wasteManagerId: $wasteManagerId
-            )
+                wasteManagerId: $wasteManagerId,
+            ),
         );
     }
 
@@ -161,8 +161,8 @@ class Container implements \Stringable
         $this->recordApplyAndPublish(
             new ContainerQrPrinted(
                 containerId: $this->id(),
-                path: $path
-            )
+                path: $path,
+            ),
         );
 
         return $path;
@@ -172,8 +172,8 @@ class Container implements \Stringable
     {
         $this->recordApplyAndPublish(
             new ContainerRemoved(
-                containerId: $this->id()
-            )
+                containerId: $this->id(),
+            ),
         );
     }
 
@@ -201,13 +201,13 @@ class Container implements \Stringable
 
     public function applyContainerQrPrinted(ContainerQrPrinted $event): void
     {
-        $this->printedAt = new \DateTimeImmutable("NOW");
+        $this->printedAt = new \DateTimeImmutable('NOW');
     }
 
     public function applyContainerRemoved(ContainerRemoved $event): void
     {
         $this->removed = true;
-        $this->removedAt = new \DateTimeImmutable("NOW");
+        $this->removedAt = new \DateTimeImmutable('NOW');
     }
 
     public function __toString(): string

@@ -1,35 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\UI\Web\Admin\Property;
 
+use App\Property\Application\Property\Update\UpdatePropertyRequest;
+use App\Property\Application\Property\Update\UpdatePropertyService;
+use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Property\Infrastructure\Symfony\Form\AdminUpdatePropertyType;
 use App\Security\Application\Action;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Property\Domain\Model\Property\PropertyRepository;
-use App\Security\Application\UnauthorizedActionException;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use App\Property\Application\Property\Update\UpdatePropertyRequest;
-use App\Property\Application\Property\Update\UpdatePropertyService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Property\Infrastructure\Symfony\Form\AdminUpdatePropertyType;
-use App\Property\Infrastructure\UI\Web\Admin\Property\GetPropertyFromIdTrait;
 
 #[Route('/admin/properties/edit/{propertyId}', name: 'admin_properties_edit')]
 class EditController extends AbstractController
 {
-    use EditTrait, GetPropertyFromIdTrait;
+    use EditTrait;
+    use GetPropertyFromIdTrait;
 
     public function __invoke(
-        string $propertyId, 
-        PropertyRepository $propertyRepository, 
-        UpdatePropertyService $updateProperty, 
+        string $propertyId,
+        PropertyRepository $propertyRepository,
+        UpdatePropertyService $updateProperty,
         LoggedUser $loggedUser,
-        Request $request
-    ): Response
-    {   
+        Request $request,
+    ): Response {
         $property = $this->getPropertyFromId($propertyId, $propertyRepository);
 
         $this->denyAccessUnlessGranted(Action::Edit->value, $property);
@@ -40,10 +41,10 @@ class EditController extends AbstractController
             name: $property->name(),
             accountId: $property->accountId(),
             info: $property->info(),
-            externalId: $property->externalId()
+            externalId: $property->externalId(),
         );
 
-        $form = $this->createForm(AdminUpdatePropertyType::class, $propertyRequest); 
+        $form = $this->createForm(AdminUpdatePropertyType::class, $propertyRequest);
 
         try {
             $needsRedirect = $this->edit($request, $form, function ($form) use ($updateProperty, $loggedUser): void {
@@ -63,7 +64,7 @@ class EditController extends AbstractController
 
         return $this->render('@property/admin/properties/edit.html.twig', [
             'property' => $property,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

@@ -1,11 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Country;
 
-use App\Property\Domain\Model\Country\Country;
-use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Property\ExternalId;
-use App\Property\Domain\Model\Country\CountryFilter;
 use App\Property\Domain\Model\Property\ExternalSource;
 
 interface CountryRepository

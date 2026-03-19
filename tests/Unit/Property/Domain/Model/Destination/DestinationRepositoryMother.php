@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Domain\Model\Destination;
 
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;

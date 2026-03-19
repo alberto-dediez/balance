@@ -1,30 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Symfony\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormInterface;
 use App\Property\Domain\Model\Brand\BrandId;
-use Symfony\Component\Form\CallbackTransformer;
-use Symfony\Component\Form\FormBuilderInterface;
 use App\Property\Domain\Model\Category\CategoryId;
+use App\Property\Domain\Model\Destination\Destination;
+use App\Property\Domain\Model\Destination\DestinationRepository;
 use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Domain\Model\Property\PropertyType;
-use App\Property\Domain\Model\Destination\Destination;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use App\Property\Infrastructure\Symfony\Form\Type\BrandIdType;
-use App\Property\Domain\Model\Destination\DestinationRepository;
-use App\Property\Infrastructure\Symfony\Form\Type\PropertyTypeType;
 
 class PropertyInfoType extends AbstractType
 {
-    public function __construct(private readonly DestinationRepository $destinationRepository)
-    {
-
-    }
+    public function __construct(private readonly DestinationRepository $destinationRepository) {}
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -63,11 +60,11 @@ class PropertyInfoType extends AbstractType
                 postalCode: $postalCode,
                 longitude: $longitude,
                 latitude: $latitude,
-                rooms: $rooms,
+                rooms: null === $rooms ? null : intval($rooms),
                 zone: $zone,
                 web: $web,
                 destinationId: $destinationId,
-                countryId: $countryId
+                countryId: $countryId,
             );
         };
 
@@ -76,101 +73,101 @@ class PropertyInfoType extends AbstractType
                 'label' => new TranslatableMessage('Tipo de propiedad'),
                 'setter' => function (PropertyInfo &$info, PropertyType $value, FormInterface $form) use ($changePropertyInfo): void {
                     $info = $changePropertyInfo($info, [
-                        'propertyType' => $value
+                        'propertyType' => $value,
                     ]);
                 },
-                'required' => true
+                'required' => true,
             ])
             ->add('categoryId', CategoryIdType::class, [
                 'label' => new TranslatableMessage('Categoría'),
                 'setter' => function (PropertyInfo &$info, ?string $value, FormInterface $form) use ($changePropertyInfo): void {
                     $info = $changePropertyInfo($info, [
-                        'categoryId' => $value
+                        'categoryId' => $value,
                     ]);
                 },
-                'required' => false
+                'required' => false,
             ])
             ->add('brandId', BrandIdType::class, [
                 'label' => new TranslatableMessage('Marca'),
                 'setter' => function (PropertyInfo &$info, ?string $value, FormInterface $form) use ($changePropertyInfo): void {
                     $info = $changePropertyInfo($info, [
-                        'brandId' => $value
+                        'brandId' => $value,
                     ]);
                 },
-                'required' => false
+                'required' => false,
             ])
             ->add('address', TextType::class, [
                 'label' => new TranslatableMessage('Dirección'),
                 'setter' => function (PropertyInfo &$info, ?string $value, FormInterface $form) use ($changePropertyInfo): void {
                     $info = $changePropertyInfo($info, [
-                        'address' => $value
+                        'address' => $value,
                     ]);
                 },
-                'required' => false
+                'required' => false,
             ])
             ->add('postalCode', TextType::class, [
                 'label' => new TranslatableMessage('Código postal'),
                 'setter' => function (PropertyInfo &$info, ?string $value, FormInterface $form) use ($changePropertyInfo): void {
                     $info = $changePropertyInfo($info, [
-                        'postalCode' => $value
+                        'postalCode' => $value,
                     ]);
                 },
-                'required' => false
+                'required' => false,
             ])
             ->add('longitude', NumberType::class, [
                 'label' => new TranslatableMessage('Longitud'),
                 'setter' => function (PropertyInfo &$info, ?string $value, FormInterface $form) use ($changePropertyInfo): void {
                     $info = $changePropertyInfo($info, [
-                        'longitude' => $value
+                        'longitude' => $value,
                     ]);
                 },
-                'required' => false
+                'required' => false,
             ])
             ->add('latitude', NumberType::class, [
                 'label' => new TranslatableMessage('Latitud'),
                 'setter' => function (PropertyInfo &$info, ?string $value, FormInterface $form) use ($changePropertyInfo): void {
                     $info = $changePropertyInfo($info, [
-                        'latitude' => $value
+                        'latitude' => $value,
                     ]);
                 },
-                'required' => false
+                'required' => false,
             ])
             ->add('rooms', NumberType::class, [
                 'label' => new TranslatableMessage('Habitaciones'),
                 'setter' => function (PropertyInfo &$info, ?string $value, FormInterface $form) use ($changePropertyInfo): void {
                     $info = $changePropertyInfo($info, [
-                        'rooms' => $value
+                        'rooms' => $value,
                     ]);
                 },
-                'required' => false
+                'required' => false,
             ])
             ->add('web', TextType::class, [
                 'label' => new TranslatableMessage('Web'),
                 'setter' => function (PropertyInfo &$info, ?string $value, FormInterface $form) use ($changePropertyInfo): void {
                     $info = $changePropertyInfo($info, [
-                        'web' => $value
+                        'web' => $value,
                     ]);
                 },
-                'required' => false
+                'required' => false,
             ])
             ->add('zone', TextType::class, [
                 'label' => new TranslatableMessage('Zone'),
                 'setter' => function (PropertyInfo &$info, ?string $value, FormInterface $form) use ($changePropertyInfo): void {
                     $info = $changePropertyInfo($info, [
-                        'zone' => $value
+                        'zone' => $value,
                     ]);
                 },
-                'required' => false
+                'required' => false,
             ])
             ->add('destinationId', DestinationType::class, [
                 'label' => new TranslatableMessage('Destino'),
                 'setter' => function (PropertyInfo &$info, ?Destination $value, FormInterface $form) use ($changePropertyInfo): void {
                     $info = $changePropertyInfo($info, [
                         'destinationId' => $value instanceof Destination ? $value->id() : null,
-                        'countryId' => $value instanceof Destination ? $value->countryId() : null
+                        'countryId' => $value instanceof Destination ? $value->countryId() : null,
                     ]);
                 },
-                'required' => true
+                'required' => true,
             ])
         ;
 
@@ -185,7 +182,7 @@ class PropertyInfoType extends AbstractType
 
                     return $repository->find($idToDestination);
                 },
-                fn($destinationToId): ?Destination => $destinationToId
+                fn($destinationToId): ?Destination => $destinationToId,
             ))
         ;
     }
@@ -194,7 +191,7 @@ class PropertyInfoType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => PropertyInfo::class,
-            'admin' => false
+            'admin' => false,
         ]);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\Persistence\InMemory\Repository;
 
 use App\DataExchange\Domain\Model\Importation\Importation;
@@ -17,7 +19,7 @@ class InMemoryImportationRepository implements ImportationRepository
     public function __construct(private array $importations = [])
     {
         $this->dataRepository = new SqliteImportationDataRepository(
-            __DIR__ . '/../../../../../../var/sqlite-test/'
+            __DIR__ . '/../../../../../../var/sqlite-test/',
         );
     }
 
@@ -25,15 +27,15 @@ class InMemoryImportationRepository implements ImportationRepository
     {
         if (isset($this->importations[(string) $importation->id()])) {
             $importation = $this->importations[(string) $importation->id()];
-            if (count($importation->configurations()) === 0) {
-                return ;
+            if (0 === count($importation->configurations())) {
+                return;
             }
 
             foreach ($importation->configurations() as $configuration) {
                 $this->dataRepository->saveConfiguration($importation->id(), $configuration);
             }
 
-            return ;
+            return;
         }
 
         $this->dataRepository->create($importation);
@@ -46,7 +48,7 @@ class InMemoryImportationRepository implements ImportationRepository
         $this->dataRepository->remove($importation->id());
 
         if (!isset($this->importations[(string) $importation->id()])) {
-            return ;
+            return;
         }
 
         unset($this->importations[(string) $importation->id()]);
@@ -57,13 +59,13 @@ class InMemoryImportationRepository implements ImportationRepository
         $importation = $this->importations[(string) $importationId] ?? null
         ;
 
-        if ($importation === null) {
+        if (null === $importation) {
             return null;
         }
 
-        if (count($importation->configurations()) === 0) {
+        if (0 === count($importation->configurations())) {
             $importation->loadConfigurations(
-                $this->dataRepository->getAllConfigurations($importation->id())
+                $this->dataRepository->getAllConfigurations($importation->id()),
             );
         }
 

@@ -1,25 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\Measurement\List;
 
-use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
-use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Waste\Application\Measurement\MeasurementAuthorizer;
-use App\Waste\Application\Measurement\List\ListMeasurementsRequest;
-use App\Waste\Application\Measurement\List\ListMeasurementsService;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
-use App\Waste\Application\Measurement\List\ListMeasurementsResponse;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
+use App\Waste\Application\Measurement\List\ListMeasurementsRequest;
+use App\Waste\Application\Measurement\List\ListMeasurementsResponse;
+use App\Waste\Application\Measurement\List\ListMeasurementsService;
+use App\Waste\Application\Measurement\MeasurementAuthorizer;
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
+use PHPUnit\Framework\TestCase;
 
 class ListMeasurementsServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        
-    }
+    protected function setUp(): void {}
 
     public function testInvoke(): void
     {
@@ -36,7 +35,7 @@ class ListMeasurementsServiceTest extends TestCase
         $repository->add(MeasurementMother::fromAccount($account->id()));
 
         $request = new ListMeasurementsRequest(
-            accountId: $account->id()
+            accountId: $account->id(),
         );
 
         $result = $sut($request, $user);

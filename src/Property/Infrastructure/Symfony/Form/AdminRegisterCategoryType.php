@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Symfony\Form;
 
+use App\Property\Application\Category\Register\RegisterCategoryRequest;
+use App\Property\Infrastructure\Symfony\Form\Type\ExternalIdType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use App\Property\Infrastructure\Symfony\Form\Type\ExternalIdType;
-use App\Property\Application\Category\Register\RegisterCategoryRequest;
 
 class AdminRegisterCategoryType extends AbstractType
 {
@@ -18,13 +20,13 @@ class AdminRegisterCategoryType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('Nombre'),
-                'required' => true
+                'required' => true,
             ])
             ->add('externalId', ExternalIdType::class, [
-                'label' => new TranslatableMessage('Identificadores externos')
+                'label' => new TranslatableMessage('Identificadores externos'),
             ])
             ->add('register', SubmitType::class, [
-                'label' => new TranslatableMessage('Registrar')
+                'label' => new TranslatableMessage('Registrar'),
             ])
         ;
     }
@@ -33,7 +35,7 @@ class AdminRegisterCategoryType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => RegisterCategoryRequest::class,
-            'admin' => true
+            'admin' => true,
         ]);
     }
 }

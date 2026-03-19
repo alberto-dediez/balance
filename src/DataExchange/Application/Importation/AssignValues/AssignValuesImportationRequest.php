@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Application\Importation\AssignValues;
 
 use App\DataExchange\Domain\Model\Importation\ImportationId;
@@ -9,8 +11,6 @@ class AssignValuesImportationRequest implements Command
 {
     public function __construct(
         public ImportationId $importationId,
-        public array $defaultValues
-    ) {
-
-    }
+        public array $defaultValues,
+    ) {}
 }

@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\UI\Web\Import;
 
-use App\DataExchange\Application\Importation\PairFields\PairFieldsImportationResponse;
 use App\DataExchange\Application\Importation\PairFields\PairFieldsImportationRequest;
+use App\DataExchange\Application\Importation\PairFields\PairFieldsImportationResponse;
 use App\DataExchange\Application\Importation\PairFields\PairFieldsImportationService;
 use App\DataExchange\Infrastructure\UI\Web\Form\PairFieldsType;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
@@ -24,8 +26,7 @@ class PairFieldsController extends AbstractController
         LoggedUser $loggedUser,
         PairFieldsImportationService $pairFields,
         Request $request,
-    ): Response
-    {
+    ): Response {
         $importationType = $this->getImportationTypeOrNotFound($code);
 
         $importation = $this->getImportationOrNotFound($id);
@@ -43,7 +44,8 @@ class PairFieldsController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $response = $pairFields(
-                    $form->getData(), $loggedUser()
+                    $form->getData(),
+                    $loggedUser(),
                 );
             } catch (\Throwable) {
                 $response = null;
@@ -62,6 +64,4 @@ class PairFieldsController extends AbstractController
             'importationType' => $importationType,
         ]);
     }
-
-
 }

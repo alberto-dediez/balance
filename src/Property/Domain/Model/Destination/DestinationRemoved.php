@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Destination;
 
-use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
-use App\Property\Domain\Model\Destination\DestinationId;
 
 final class DestinationRemoved extends DomainEvent
 {
@@ -15,7 +15,7 @@ final class DestinationRemoved extends DomainEvent
     public function __construct(
         private readonly DestinationId $destinationId,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -33,19 +33,19 @@ final class DestinationRemoved extends DomainEvent
     public function payload(): array
     {
         return [
-            'destinationId' => (string) $this->destinationId
+            'destinationId' => (string) $this->destinationId,
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        array $payload = []
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new DestinationRemoved(
             destinationId: new DestinationId($payload['destinationId']),
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Symfony\Form\Type;
 
 use App\Waste\Domain\Model\Container\Purpose;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PurposeType extends AbstractType
 {
@@ -22,7 +24,7 @@ class PurposeType extends AbstractType
             'translation_domain' => 'purpose',
         ]);
     }
-    
+
     public function getParent()
     {
         return ChoiceType::class;

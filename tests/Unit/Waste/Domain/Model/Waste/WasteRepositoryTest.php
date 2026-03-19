@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Domain\Model\Waste;
 
 use App\Shared\Domain\Model\Locale\Locale;
@@ -10,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 abstract class WasteRepositoryTest extends KernelTestCase
 {
     public function testAddWasteToRepository(): void
-    {   
+    {
         $repository = $this->createSUT();
 
         $waste = WasteMother::registeredWaste();
@@ -26,7 +28,7 @@ abstract class WasteRepositoryTest extends KernelTestCase
     }
 
     public function testRemoveWasteToRepository(): void
-    {   
+    {
         $repository = $this->createSUT();
 
         $waste = WasteMother::registeredWaste();
@@ -61,7 +63,7 @@ abstract class WasteRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new WasteFilter(
-            name: 'Plastico'
+            name: 'Plastico',
         );
 
         $result = $repository->findByFilter($filter);
@@ -87,7 +89,7 @@ abstract class WasteRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new WasteFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);

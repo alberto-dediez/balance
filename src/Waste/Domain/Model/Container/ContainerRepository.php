@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Waste\Domain\Model\Container;
+declare(strict_types=1);
 
-use App\Waste\Domain\Model\Container\Container;
-use App\Waste\Domain\Model\Container\ContainerId;
-use App\Waste\Domain\Model\Container\ContainerFilter;
+namespace App\Waste\Domain\Model\Container;
 
 interface ContainerRepository
 {

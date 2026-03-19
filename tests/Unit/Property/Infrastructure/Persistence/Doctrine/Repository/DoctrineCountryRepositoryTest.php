@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Property\Domain\Model\Country\CountryRepository;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Application\Category\Import;
 
 use App\Property\Domain\Model\Property\ExternalId;
@@ -11,8 +13,6 @@ class CategoryRequest
         public string $name,
         public ExternalSource $source,
         public ExternalId $externalId,
-        public ?bool $createIfNotExists = false
-    ) {
-
-    }
+        public ?bool $createIfNotExists = false,
+    ) {}
 }

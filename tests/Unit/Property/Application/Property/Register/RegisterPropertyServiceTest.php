@@ -1,21 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Property\Register;
 
-use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Property\Domain\Model\Property\Property;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Property\Application\Property\PropertyAuthorizer;
+use App\Property\Application\Property\Register\RegisterPropertyRequest;
+use App\Property\Application\Property\Register\RegisterPropertyResponse;
+use App\Property\Application\Property\Register\RegisterPropertyService;
+use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyRegistered;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Property\Application\Property\Register\RegisterPropertyRequest;
-use App\Property\Application\Property\Register\RegisterPropertyService;
-use App\Property\Application\Property\Register\RegisterPropertyResponse;
-use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
+use PHPUnit\Framework\TestCase;
 
 class RegisterPropertyServiceTest extends TestCase
 {
@@ -38,7 +40,7 @@ class RegisterPropertyServiceTest extends TestCase
 
         $request = new RegisterPropertyRequest(
             name: 'Hotel Abaco',
-            accountId: $user->accountId()
+            accountId: $user->accountId(),
         );
 
         $result = $sut($request, $user);
@@ -69,7 +71,7 @@ class RegisterPropertyServiceTest extends TestCase
 
         $result = $sut->isHandled(new RegisterPropertyRequest(
             name: 'A Property',
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
         ));
 
         $this->assertTrue($result);

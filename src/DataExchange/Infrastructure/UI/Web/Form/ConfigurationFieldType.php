@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\UI\Web\Form;
 
 use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
@@ -27,7 +29,7 @@ class ConfigurationFieldType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ImportationColumnConfiguration::class,
-            'fields' => []
+            'fields' => [],
         ]);
     }
 }

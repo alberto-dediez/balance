@@ -1,35 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Web\Admin\Waste;
 
 use App\Security\Application\Action;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
+use App\Waste\Application\Waste\Update\UpdateWasteRequest;
+use App\Waste\Application\Waste\Update\UpdateWasteService;
+use App\Waste\Domain\Model\Waste\WasteRepository;
+use App\Waste\Infrastructure\Symfony\Form\UpdateWasteType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Waste\Domain\Model\Waste\WasteRepository;
-use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Security\Application\UnauthorizedActionException;
-use App\Waste\Application\Waste\Update\UpdateWasteRequest;
-use App\Waste\Application\Waste\Update\UpdateWasteService;
-use App\Waste\Infrastructure\Symfony\Form\UpdateWasteType;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Waste\Infrastructure\UI\Web\Admin\Waste\GetWasteFromIdTrait;
 
 #[Route('/admin/wastes/edit/{wasteId}', name: 'admin_wastes_edit')]
 class EditController extends AbstractController
 {
-    use EditTrait, GetWasteFromIdTrait;
+    use EditTrait;
+    use GetWasteFromIdTrait;
 
     public function __invoke(
-        string $wasteId, 
-        WasteRepository $wasteRepository, 
-        UpdateWasteService $updateWaste, 
+        string $wasteId,
+        WasteRepository $wasteRepository,
+        UpdateWasteService $updateWaste,
         LoggedUser $loggedUser,
-        Request $request
-    ): Response
-    {   
+        Request $request,
+    ): Response {
         $waste = $this->getWasteFromId($wasteId, $wasteRepository);
 
         $this->denyAccessUnlessGranted(Action::Edit->value, $waste);
@@ -39,11 +40,11 @@ class EditController extends AbstractController
             name: $waste->name(),
             isDangerous: $waste->isDangerous(),
             density: $waste->density(),
-            color: $waste->color()
+            color: $waste->color(),
         );
 
         try {
-            $form = $this->createForm(UpdateWasteType::class, $wasteRequest); 
+            $form = $this->createForm(UpdateWasteType::class, $wasteRequest);
 
             $needsRedirect = $this->edit($request, $form, function ($form) use ($updateWaste, $loggedUser): void {
                 $wasteRequest = $form->getData();
@@ -62,7 +63,7 @@ class EditController extends AbstractController
 
         return $this->render('@waste/admin/wastes/edit.html.twig', [
             'waste' => $waste,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

@@ -1,21 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Brand\Update;
 
-use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Property\Domain\Model\Brand\Brand;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Property\Domain\Model\Brand\BrandUpdated;
 use App\Property\Application\Brand\BrandAuthorizer;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Property\Domain\Model\Brand\BrandMother;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Property\Application\Brand\Update\UpdateBrandRequest;
-use App\Property\Application\Brand\Update\UpdateBrandService;
 use App\Property\Application\Brand\Update\UpdateBrandResponse;
+use App\Property\Application\Brand\Update\UpdateBrandService;
+use App\Property\Domain\Model\Brand\Brand;
+use App\Property\Domain\Model\Brand\BrandUpdated;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Property\Domain\Model\Brand\BrandMother;
 use App\Tests\Unit\Property\Domain\Model\Brand\BrandRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class UpdateBrandServiceTest extends TestCase
 {
@@ -40,7 +42,7 @@ class UpdateBrandServiceTest extends TestCase
 
         $request = new UpdateBrandRequest(
             brandId: $brand->id(),
-            name: '1 Estrella'
+            name: '1 Estrella',
         );
 
         $user = UserMother::fromUsernameAndRole('user', Role::Admin);
@@ -73,7 +75,7 @@ class UpdateBrandServiceTest extends TestCase
 
         $result = $sut->isHandled(new UpdateBrandRequest(
             brandId: $brand->id(),
-            name: '2 Stars'
+            name: '2 Stars',
         ));
 
         $this->assertTrue($result);

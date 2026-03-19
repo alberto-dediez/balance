@@ -1,20 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Symfony\Form\Type;
 
-use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Country\CountryFilter;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Country\CountryRepository;
 use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CountryIdType extends AggregateRootIdType
 {
     public function __construct(
-        private readonly CountryRepository $countryRepository
-    ) {
-
-    }
+        private readonly CountryRepository $countryRepository,
+    ) {}
 
     public function configureOptions(OptionsResolver $resolver): void
     {
@@ -22,7 +22,7 @@ class CountryIdType extends AggregateRootIdType
 
         $resolver->setDefaults([
             'choices' => $this->getChoices($countries),
-            'class' => CountryId::class
+            'class' => CountryId::class,
         ]);
     }
 }

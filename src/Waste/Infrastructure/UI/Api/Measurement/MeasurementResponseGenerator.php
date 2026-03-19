@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Api\Measurement;
 
-use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Property\Infrastructure\Symfony\Twig\PropertyExtension;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\Measurement\Measurement as ModelMeasurement;
 use App\Waste\Infrastructure\Symfony\Twig\WasteExtension;
 use App\Waste\Infrastructure\Symfony\Twig\WasteManagerExtension;
-use App\Waste\Domain\Model\Measurement\Measurement as ModelMeasurement;
 use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponse as ApiMeasurement;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MeasurementResponseGenerator
 {
@@ -16,10 +18,8 @@ class MeasurementResponseGenerator
         private readonly PropertyExtension $propertyExtension,
         private readonly WasteExtension $wasteExtension,
         private readonly WasteManagerExtension $wasteManagerExtension,
-        private readonly TranslatorInterface $translator
-    ) {
-
-    }
+        private readonly TranslatorInterface $translator,
+    ) {}
 
     public function generate(ModelMeasurement $modelMeasurement): ApiMeasurement
     {
@@ -29,13 +29,13 @@ class MeasurementResponseGenerator
             waste: (string) $this->wasteExtension->wasteName($modelMeasurement->wasteId()),
             wasteManager: (string) $this->wasteManagerExtension->wasteManagerName($modelMeasurement->wasteManagerId()),
             quantity: $modelMeasurement->quantity(),
-            load: $modelMeasurement->load(),
+            load: (string) $modelMeasurement->load(),
             unit: $modelMeasurement->measurementMethod() instanceof MeasurementMethod
                 ? $modelMeasurement->measurementMethod()->unit()
                 : '',
             purpose: $this->translator->trans($modelMeasurement->purpose()->value, [], 'purpose'),
             justification: (string) $modelMeasurement->justification(),
-            registeredAt: $modelMeasurement->registeredAt()->format('Y-m-d H:i:s')
+            registeredAt: $modelMeasurement->registeredAt()->format('Y-m-d H:i:s'),
         );
     }
 }

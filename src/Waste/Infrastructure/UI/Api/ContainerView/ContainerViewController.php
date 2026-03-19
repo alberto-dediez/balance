@@ -1,28 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Api\ContainerView;
 
-use Nelmio\ApiDocBundle\Attribute\Areas;
-use OpenApi\Attributes as OA;
 use App\Security\Application\Action;
-use Nelmio\ApiDocBundle\Attribute\Model;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Waste\Domain\Model\Container\ContainerId;
-use App\Waste\Application\Container\ContainerAuthorizer;
-use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Waste\Application\Container\ContainerAuthorizer;
+use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Waste\Infrastructure\UI\Api\Container\ContainerResponse;
 use App\Waste\Infrastructure\UI\Api\Container\ContainerResponseGenerator;
+use Nelmio\ApiDocBundle\Attribute\Areas;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/containers/{containerId}', name: 'api_containers_view', methods: ['GET'])]
 #[Areas(['mobile', 'admin'])]
-#[OA\Get(description: "View an owned container", summary: "View Container", tags: ['Waste'])]
+#[OA\Get(description: 'View an owned container', summary: 'View Container', tags: ['Waste'])]
 #[OA\Response(
     response: 200,
     description: 'Returns data of container',
-    content: new Model(type: ContainerResponse::class)
+    content: new Model(type: ContainerResponse::class),
 )]
 class ContainerViewController extends AbstractController
 {
@@ -30,7 +32,7 @@ class ContainerViewController extends AbstractController
         string $containerId,
         ContainerAuthorizer $containerAuthorizer,
         ContainerRepository $containerRepository,
-        ContainerResponseGenerator $containerGenerator
+        ContainerResponseGenerator $containerGenerator,
     ): JsonResponse {
         /**
          * @var SecurityUser $user
@@ -38,13 +40,13 @@ class ContainerViewController extends AbstractController
         $user = $this->getUser();
 
         $container = $containerRepository->find(
-            new ContainerId($containerId)
+            new ContainerId($containerId),
         );
 
         $containerAuthorizer->denyUnlessCanDoThat($container, Action::View, $user);
 
         return $this->json(
-            $containerGenerator->generate($container)
+            $containerGenerator->generate($container),
         );
     }
 }

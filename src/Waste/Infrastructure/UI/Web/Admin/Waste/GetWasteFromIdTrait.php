@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Web\Admin\Waste;
 
 use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\Waste\WasteId;
-use Symfony\Component\Translation\TranslatableMessage;
 use App\Waste\Domain\Model\Waste\WasteRepository;
+use Symfony\Component\Translation\TranslatableMessage;
 
 trait GetWasteFromIdTrait
 {
@@ -14,7 +16,7 @@ trait GetWasteFromIdTrait
         $waste = $wasteRepository->find(new WasteId($wasteId));
 
         if (null == $waste) {
-            throw $this->createNotFoundException(new TranslatableMessage("El residuo no existe"));
+            throw $this->createNotFoundException(new TranslatableMessage('El residuo no existe'));
         }
 
         return $waste;

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Persistence\Doctrine\Repository;
 
-use App\Waste\Domain\Model\Container\ContainerId;
-use App\Waste\Domain\Model\Container\MeasurementMethod;
-use App\Security\Domain\Model\User\UserId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
+use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementFilter;
@@ -24,10 +26,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineMeasurementRepository implements MeasurementRepository
 {
-    public function __construct(private readonly EntityManagerInterface $manager)
-    {
-
-    }
+    public function __construct(private readonly EntityManagerInterface $manager) {}
 
     public function add(Measurement $measurement): void
     {
@@ -47,7 +46,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('m.id', ':id')
+                $qb->expr()->eq('m.id', ':id'),
             )
             ->setParameter('id', (string) $measurementId)
             ->getQuery()
@@ -64,7 +63,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
             purpose: $purpose,
             accountId: $accountId,
             registeredAt: $day,
-            limit: 0
+            limit: 0,
         );
 
         return $this->findByFilter($filter);
@@ -81,7 +80,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
         if ($filter->containerId instanceof ContainerId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.containerId', ':container')
+                    $qb->expr()->eq('m.containerId', ':container'),
                 )
                 ->setParameter('container', $filter->containerId)
             ;
@@ -90,7 +89,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
         if ($filter->propertyId instanceof PropertyId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.propertyId', ':property')
+                    $qb->expr()->eq('m.propertyId', ':property'),
                 )
                 ->setParameter('property', $filter->propertyId)
             ;
@@ -99,7 +98,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
         if ($filter->wasteId instanceof WasteId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.wasteId', ':wasteId')
+                    $qb->expr()->eq('m.wasteId', ':wasteId'),
                 )
                 ->setParameter('wasteId', $filter->wasteId)
             ;
@@ -108,7 +107,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
         if ($filter->purpose instanceof Purpose) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.purpose', ':purpose')
+                    $qb->expr()->eq('m.purpose', ':purpose'),
                 )
                 ->setParameter('purpose', $filter->purpose->value)
             ;
@@ -117,7 +116,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
         if ($filter->measurementMethod instanceof MeasurementMethod) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.measurementMethod', ':measurementMethod')
+                    $qb->expr()->eq('m.measurementMethod', ':measurementMethod'),
                 )
                 ->setParameter('measurementMethod', $filter->measurementMethod->value)
             ;
@@ -126,7 +125,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
         if ($filter->wasteManagerId instanceof WasteManagerId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.wasteManagerId', ':wasteManagerId')
+                    $qb->expr()->eq('m.wasteManagerId', ':wasteManagerId'),
                 )
                 ->setParameter('wasteManagerId', $filter->wasteManagerId)
             ;
@@ -135,7 +134,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
         if ($filter->accountId instanceof AccountId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.accountId', ':accountId')
+                    $qb->expr()->eq('m.accountId', ':accountId'),
                 )
                 ->setParameter('accountId', $filter->accountId)
             ;
@@ -144,7 +143,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
         if ($filter->userId instanceof UserId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.registeredBy', ':userId')
+                    $qb->expr()->eq('m.registeredBy', ':userId'),
                 )
                 ->setParameter('userId', $filter->userId)
             ;
@@ -153,7 +152,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
         if (!empty($filter->reference)) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.reference', ':reference')
+                    $qb->expr()->eq('m.reference', ':reference'),
                 )
                 ->setParameter('reference', $filter->reference)
             ;
@@ -162,13 +161,13 @@ class DoctrineMeasurementRepository implements MeasurementRepository
         if ($filter->registeredAt instanceof \DateTimeImmutable) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('m.registeredAt', ':registeredAt')
+                    $qb->expr()->like('m.registeredAt', ':registeredAt'),
                 )
-                ->setParameter('registeredAt', sprintf("%s%%", $filter->registeredAt->format('Y-m-d')))
+                ->setParameter('registeredAt', sprintf('%s%%', $filter->registeredAt->format('Y-m-d')))
             ;
         }
 
-        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
             default => $qb->orderBy('m.registeredAt', $way),

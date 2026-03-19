@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\DataExchange\Domain\Model\Importation;
 
 use App\DataExchange\Domain\Model\Importation\Importation;
@@ -65,7 +67,7 @@ class ImportationMother
             importationId: ImportationId::generate(),
             name: 'importation-' . random_int(100, 999),
             type: 'measurements',
-            importationFile: new ImportationFile(__DIR__ . '/file-to-import.csv', 0),
+            importationFile: new ImportationFile(__DIR__ . '/file-to-import.csv', '', 0),
             accountId: AccountId::generate(),
         );
     }

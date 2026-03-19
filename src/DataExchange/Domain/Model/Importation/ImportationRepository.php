@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Domain\Model\Importation;
 
 interface ImportationRepository
@@ -9,7 +11,9 @@ interface ImportationRepository
     public function find(ImportationId $importationId): ?Importation;
 
     public function getData(ImportationId $importationId, int $rowNumber): ?array;
+
     public function saveResult(ImportationId $importationId, int $rowNumber, ?string $error): void;
+
     public function getResult(ImportationId $importationId, int $rowNumber): ?array;
 
     public function remove(Importation $importation): void;

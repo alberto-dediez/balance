@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Domain\Model\Measurement;
 
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Security\Domain\Model\User\UserId;
-use App\Waste\Domain\Model\Container\Purpose;
-use App\Waste\Domain\Model\Container\Container;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Waste\Domain\Model\Container\ContainerId;
-use App\Waste\Domain\Model\DailyWaste\DailyWaste;
 use App\Property\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
+use App\Waste\Domain\Model\Container\Container;
+use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\DailyWaste\DailyWaste;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
-use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 class MeasurementMother
@@ -26,13 +28,13 @@ class MeasurementMother
             wasteManagerId: WasteManagerId::generate(),
             containerId: $containerId,
             registeredBy: UserId::generate(),
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
         );
     }
 
     public static function fromDay(DailyWaste $dailyWaste): Measurement
     {
-        $measurementMethod = MeasurementMethod::cases()[random_int(0, count(MeasurementMethod::cases())-1)];
+        $measurementMethod = MeasurementMethod::cases()[random_int(0, count(MeasurementMethod::cases()) - 1)];
 
         return self::from(
             measurementId: MeasurementId::generate(),
@@ -47,24 +49,24 @@ class MeasurementMother
             quantity: random_int(1, 9),
             load: random_int(0, 100) / 100,
             justification: null,
-            registeredAt: $dailyWaste->day()
+            registeredAt: $dailyWaste->day(),
         );
     }
 
     public static function from(
-        MeasurementId $measurementId, 
+        MeasurementId $measurementId,
         PropertyId $propertyId,
-        WasteId $wasteId, 
+        WasteId $wasteId,
         WasteManagerId $wasteManagerId,
-        ContainerId $containerId, 
+        ContainerId $containerId,
         UserId $registeredBy,
         AccountId $accountId,
-        Purpose $purpose = Purpose::Waste, 
+        Purpose $purpose = Purpose::Waste,
         MeasurementMethod $measurementMethod = MeasurementMethod::Volume,
         int $quantity = 0,
         float $load = 0,
         ?string $justification = null,
-        ?\DateTimeImmutable $registeredAt = null
+        ?\DateTimeImmutable $registeredAt = null,
     ) {
 
         if ($registeredAt instanceof \DateTimeImmutable) {
@@ -76,17 +78,17 @@ class MeasurementMother
                 purpose: $purpose,
                 measurementMethod: $measurementMethod,
                 wasteManagerId: $wasteManagerId,
-                quantity: $quantity, 
+                quantity: $quantity,
                 load: $load,
                 justification: $justification,
-                accountId: $accountId, 
+                accountId: $accountId,
                 registeredBy: $registeredBy,
-                registeredAt: $registeredAt
+                registeredAt: $registeredAt,
             );
         }
 
         $measurement = new Measurement(
-            id: $measurementId
+            id: $measurementId,
         );
 
         $container = new Container(
@@ -95,7 +97,7 @@ class MeasurementMother
             wasteId: $wasteId,
             purpose: $purpose,
             measurementMethod: $measurementMethod,
-            wasteManagerId: $wasteManagerId
+            wasteManagerId: $wasteManagerId,
         );
 
         $measurement
@@ -105,7 +107,7 @@ class MeasurementMother
                 load: $load,
                 registeredBy: $registeredBy,
                 accountId: $accountId,
-                justification: $justification
+                justification: $justification,
             )
         ;
 
@@ -114,8 +116,8 @@ class MeasurementMother
 
     public static function random()
     {
-        $purpose = Purpose::cases()[random_int(0, count(Purpose::cases())-1)];
-        $measurementMethod = MeasurementMethod::cases()[random_int(0, count(MeasurementMethod::cases())-1)];
+        $purpose = Purpose::cases()[random_int(0, count(Purpose::cases()) - 1)];
+        $measurementMethod = MeasurementMethod::cases()[random_int(0, count(MeasurementMethod::cases()) - 1)];
 
         return self::from(
             measurementId: MeasurementId::generate(),
@@ -128,14 +130,14 @@ class MeasurementMother
             purpose: $purpose,
             measurementMethod: $measurementMethod,
             quantity: random_int(1, 9),
-            load: random_int(0, 100) / 100
+            load: random_int(0, 100) / 100,
         );
     }
 
     public static function fromAccount(AccountId $accountId)
     {
-        $purpose = Purpose::cases()[random_int(0, count(Purpose::cases())-1)];
-        $measurementMethod = MeasurementMethod::cases()[random_int(0, count(MeasurementMethod::cases())-1)];
+        $purpose = Purpose::cases()[random_int(0, count(Purpose::cases()) - 1)];
+        $measurementMethod = MeasurementMethod::cases()[random_int(0, count(MeasurementMethod::cases()) - 1)];
 
         return self::from(
             measurementId: MeasurementId::generate(),
@@ -148,7 +150,7 @@ class MeasurementMother
             purpose: $purpose,
             measurementMethod: $measurementMethod,
             quantity: random_int(1, 9),
-            load: random_int(0, 100) / 100
+            load: random_int(0, 100) / 100,
         );
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\DataExchange\Application\Importation\Execute;
 
 use App\DataExchange\Application\Importation\Execute\ExecuteImportationRequest;
@@ -45,7 +47,7 @@ class ExecuteImportationServiceTest extends TestCase
     public function testUseCase(): void
     {
         $importationFile = new ImportationFile(
-            path: __DIR__ . '/../Register/superheroes.csv'
+            path: __DIR__ . '/../Register/superheroes.csv',
         );
 
         $importation = ImportationMother::fromNameAndFile('superheroes.csv', $importationFile);
@@ -56,13 +58,13 @@ class ExecuteImportationServiceTest extends TestCase
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: $importation->accountId()
+            accountId: $importation->accountId(),
         );
 
         $sut = $this->createSUT($repository);
 
         $request = new ExecuteImportationRequest(
-            importationId: $importation->id()
+            importationId: $importation->id(),
         );
 
         $result = $sut($request, $user);
@@ -103,13 +105,13 @@ class ExecuteImportationServiceTest extends TestCase
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
         );
 
         $sut = $this->createSUT($repository);
 
         $request = new ExecuteImportationRequest(
-            importationId: $importation->id()
+            importationId: $importation->id(),
         );
 
         $sut($request, $user);
@@ -122,7 +124,7 @@ class ExecuteImportationServiceTest extends TestCase
         $sut = $this->createSUT($repository);
 
         $result = $sut->isHandled(new ExecuteImportationRequest(
-            importationId: ImportationId::generate()
+            importationId: ImportationId::generate(),
         ));
 
         $this->assertTrue($result);
@@ -149,7 +151,7 @@ class ExecuteImportationServiceTest extends TestCase
         ));
 
         $importationTypeFactory = new ImportationTypeFactory([
-            $importationType
+            $importationType,
         ]);
 
         return new ExecuteImportationService($repository, $importationTypeFactory, $authorizer);

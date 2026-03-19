@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Property;
 
-use App\Shared\Domain\Model\AggregateRoot;
 use App\Security\Domain\Model\Account\AccountId;
-use App\Property\Domain\Model\Property\PropertyInfo;
+use App\Shared\Domain\Model\AggregateRoot;
 
 class Property implements \Stringable
 {
@@ -15,14 +16,12 @@ class Property implements \Stringable
         private string $name = '',
         private ?PropertyInfo $info = null,
         private ?ExternalId $externalId = null,
-        private AccountId|null $accountId = null,
+        private ?AccountId $accountId = null,
         private bool $removed = false,
         array $events = [],
         private ?\DateTimeImmutable $registeredAt = null,
-        private ?\DateTimeImmutable $removedAt = null
-    ) {
-
-    }
+        private ?\DateTimeImmutable $removedAt = null,
+    ) {}
 
     public function id(): PropertyId
     {
@@ -80,8 +79,8 @@ class Property implements \Stringable
                 name: $name,
                 info: $info,
                 externalId: $externalId,
-                accountId: $accountId
-            )
+                accountId: $accountId,
+            ),
         );
     }
 
@@ -93,8 +92,8 @@ class Property implements \Stringable
                 name: $name,
                 info: $info,
                 externalId: $externalId,
-                accountId: $accountId
-            )
+                accountId: $accountId,
+            ),
         );
     }
 
@@ -105,8 +104,8 @@ class Property implements \Stringable
                 propertyId: $this->id(),
                 name: $name,
                 info: $info,
-                externalId: $externalId
-            )
+                externalId: $externalId,
+            ),
         );
     }
 
@@ -114,8 +113,8 @@ class Property implements \Stringable
     {
         $this->recordApplyAndPublish(
             new PropertyRemoved(
-                propertyId: $this->id()
-            )
+                propertyId: $this->id(),
+            ),
         );
     }
 
@@ -139,8 +138,8 @@ class Property implements \Stringable
                     name: $this->name(),
                     info: $this->info()->combine($event->info()),
                     externalId: $this->externalId()->combine($event->externalId()),
-                    accountId: $this->accountId()
-                )
+                    accountId: $this->accountId(),
+                ),
             );
         }
     }

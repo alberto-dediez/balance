@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Property\Domain\Model\Category\Category;
@@ -13,15 +15,12 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryCategoryRepository implements CategoryRepository
 {
-    public function __construct(private array $categories = [])
-    {
-
-    }
+    public function __construct(private array $categories = []) {}
 
     public function add(Category $category): void
     {
         if (isset($this->categories[(string) $category->id()])) {
-            return ;
+            return;
         }
 
         $this->categories[(string) $category->id()] = $category;
@@ -30,7 +29,7 @@ class InMemoryCategoryRepository implements CategoryRepository
     public function remove(Category $category): void
     {
         if (!isset($this->categories[(string) $category->id()])) {
-            return ;
+            return;
         }
 
         unset($this->categories[(string) $category->id()]);
@@ -46,7 +45,7 @@ class InMemoryCategoryRepository implements CategoryRepository
 
     public function findByName(string $name): ?Category
     {
-        if (count($this->categories) === 0) {
+        if (0 === count($this->categories)) {
             return null;
         }
 
@@ -61,7 +60,7 @@ class InMemoryCategoryRepository implements CategoryRepository
 
     public function findByIso(string $iso): ?Category
     {
-        if (count($this->categories) === 0) {
+        if (0 === count($this->categories)) {
             return null;
         }
 
@@ -76,7 +75,7 @@ class InMemoryCategoryRepository implements CategoryRepository
 
     public function findBySourceAndExternalId(ExternalSource $source, ExternalId $externalId): ?Category
     {
-        if (count($this->categories) === 0) {
+        if (0 === count($this->categories)) {
             return null;
         }
 
@@ -100,7 +99,7 @@ class InMemoryCategoryRepository implements CategoryRepository
     {
         $results = [];
 
-        if (count($this->categories) === 0) {
+        if (0 === count($this->categories)) {
             return $results;
         }
 
@@ -119,7 +118,7 @@ class InMemoryCategoryRepository implements CategoryRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

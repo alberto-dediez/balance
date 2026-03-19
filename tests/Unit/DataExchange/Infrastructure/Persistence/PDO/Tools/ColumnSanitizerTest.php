@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\DataExchange\Infrastructure\Persistence\PDO\Tools;
 
 use App\DataExchange\Infrastructure\Persistence\PDO\Tools\ColumnSanitizer;

@@ -1,15 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Container;
 
-use DateTimeImmutable;
-use App\Waste\Domain\DomainEvent;
-use App\Waste\Domain\Model\Waste\WasteId;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Waste\Domain\Model\Container\ContainerId;
-use App\Property\Domain\Model\Property\PropertyId;
+use App\Waste\Domain\DomainEvent;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 final class ContainerRegistered extends DomainEvent
@@ -27,7 +27,7 @@ final class ContainerRegistered extends DomainEvent
         private readonly WasteManagerId $wasteManagerId,
         private readonly QrCode $qrCode,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -93,14 +93,14 @@ final class ContainerRegistered extends DomainEvent
             'measurementMethod' => $this->measurementMethod->value,
             'wasteManagerId' => (string) $this->wasteManagerId,
             'volume' => $this->volume,
-            'qrCode' => $this->qrCode->path()
+            'qrCode' => $this->qrCode->path(),
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        array $payload = []
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new ContainerRegistered(
             containerId: new ContainerId($payload['containerId']),
@@ -113,7 +113,7 @@ final class ContainerRegistered extends DomainEvent
             wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId($payload['wasteManagerId']) : WasteManagerId::generate(),
             qrCode: new QrCode($payload['qrCode'] ?? ''),
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

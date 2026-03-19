@@ -8,10 +8,10 @@ use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
-use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
-use Behat\Step\Given;
-use Behat\Behat\Context\Context;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
+use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
+use Behat\Behat\Context\Context;
+use Behat\Step\Given;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 final readonly class DataExchangeContext implements Context
@@ -19,12 +19,12 @@ final readonly class DataExchangeContext implements Context
     private AcceptanceClient $client;
 
     public function __construct(
-        KernelBrowser $kernelBrowser
+        KernelBrowser $kernelBrowser,
     ) {
         $this->client = AcceptanceClient::instance($kernelBrowser);
     }
 
-    public function getImportationRepository() : ImportationRepository
+    public function getImportationRepository(): ImportationRepository
     {
         return $this->client->getContainer()->get(ImportationRepository::class);
     }

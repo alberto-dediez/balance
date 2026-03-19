@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Domain\Model\WasteManager;
 
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerFilter;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class WasteManagerRepositoryTest extends KernelTestCase
 {
     public function testAddWasteManagerToRepository(): void
-    {   
+    {
         $repository = $this->createSUT();
 
         $wasteManager = WasteManagerMother::random();
@@ -26,7 +28,7 @@ abstract class WasteManagerRepositoryTest extends KernelTestCase
     }
 
     public function testRemoveWasteManagerToRepository(): void
-    {   
+    {
         $repository = $this->createSUT();
 
         $wasteManager = WasteManagerMother::random();
@@ -50,22 +52,22 @@ abstract class WasteManagerRepositoryTest extends KernelTestCase
         $accountId = AccountId::generate();
 
         $repository->add(
-            WasteManagerMother::random()
+            WasteManagerMother::random(),
         );
         $repository->add(
-            WasteManagerMother::random()
+            WasteManagerMother::random(),
         );
         $repository->add(
-            WasteManagerMother::random()
+            WasteManagerMother::random(),
         );
         $repository->add(
-            WasteManagerMother::random()
+            WasteManagerMother::random(),
         );
         $repository->add(
-            WasteManagerMother::random()
+            WasteManagerMother::random(),
         );
         $repository->add(
-            WasteManagerMother::fromAccount($accountId)
+            WasteManagerMother::fromAccount($accountId),
         );
 
         $filter = new WasteManagerFilter();
@@ -75,7 +77,7 @@ abstract class WasteManagerRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new WasteManagerFilter(
-            accountId: $accountId
+            accountId: $accountId,
         );
 
         $result = $repository->findByFilter($filter);
@@ -90,22 +92,22 @@ abstract class WasteManagerRepositoryTest extends KernelTestCase
         $accountId = AccountId::generate();
 
         $repository->add(
-            WasteManagerMother::random()
+            WasteManagerMother::random(),
         );
         $repository->add(
-            WasteManagerMother::random()
+            WasteManagerMother::random(),
         );
         $repository->add(
-            WasteManagerMother::random()
+            WasteManagerMother::random(),
         );
         $repository->add(
-            WasteManagerMother::random()
+            WasteManagerMother::random(),
         );
         $repository->add(
-            WasteManagerMother::random()
+            WasteManagerMother::random(),
         );
         $repository->add(
-            WasteManagerMother::fromAccount($accountId)
+            WasteManagerMother::fromAccount($accountId),
         );
 
         $filter = new WasteManagerFilter();
@@ -115,7 +117,7 @@ abstract class WasteManagerRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new WasteManagerFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);

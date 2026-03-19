@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\DataExchange\Application\Importation\ExecuteSingle;
 
 use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleRequest;
@@ -44,7 +46,7 @@ class ExecuteSingleServiceTest extends TestCase
     public function testUseCase(): void
     {
         $importationFile = new ImportationFile(
-            path: __DIR__ . '/superheroes.csv'
+            path: __DIR__ . '/superheroes.csv',
         );
 
         $importation = ImportationMother::fromNameAndFileAndStatus('superheroes.csv', $importationFile, ImportationStatus::InProgress);
@@ -55,7 +57,7 @@ class ExecuteSingleServiceTest extends TestCase
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: $importation->accountId()
+            accountId: $importation->accountId(),
         );
 
         $sut = $this->createSUT($repository);
@@ -63,7 +65,7 @@ class ExecuteSingleServiceTest extends TestCase
         $request = new ExecuteSingleRequest(
             importationId: $importation->id(),
             rowNumber: 0,
-            command: new FakeCommand()
+            command: new FakeCommand(),
         );
 
         $result = $sut($request, $user);
@@ -92,7 +94,7 @@ class ExecuteSingleServiceTest extends TestCase
     public function testUseCaseLastCommand(): void
     {
         $importationFile = new ImportationFile(
-            path: __DIR__ . '/superheroe.csv'
+            path: __DIR__ . '/superheroe.csv',
         );
 
         $importation = ImportationMother::fromNameAndFileAndStatus('superheroe.csv', $importationFile, ImportationStatus::InProgress);
@@ -103,7 +105,7 @@ class ExecuteSingleServiceTest extends TestCase
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: $importation->accountId()
+            accountId: $importation->accountId(),
         );
 
         $sut = $this->createSUT($repository);
@@ -111,7 +113,7 @@ class ExecuteSingleServiceTest extends TestCase
         $request = new ExecuteSingleRequest(
             importationId: $importation->id(),
             rowNumber: 0,
-            command: new FakeCommand()
+            command: new FakeCommand(),
         );
 
         $result = $sut($request, $user);
@@ -151,7 +153,7 @@ class ExecuteSingleServiceTest extends TestCase
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
         );
 
         $sut = $this->createSUT($repository);
@@ -159,7 +161,7 @@ class ExecuteSingleServiceTest extends TestCase
         $request = new ExecuteSingleRequest(
             importationId: $importation->id(),
             rowNumber: 0,
-            command: new FakeCommand()
+            command: new FakeCommand(),
         );
 
         $sut($request, $user);
@@ -174,7 +176,7 @@ class ExecuteSingleServiceTest extends TestCase
         $result = $sut->isHandled(new ExecuteSingleRequest(
             importationId: ImportationId::generate(),
             rowNumber: 0,
-            command: new FakeCommand()
+            command: new FakeCommand(),
         ));
 
         $this->assertTrue($result);
@@ -189,7 +191,7 @@ class ExecuteSingleServiceTest extends TestCase
         $importationType->method('isAuthorized')->willReturn(true);
 
         $importationTypeFactory = new ImportationTypeFactory([
-            $importationType
+            $importationType,
         ]);
 
         return new ExecuteSingleService($repository, $importationTypeFactory, $authorizer);

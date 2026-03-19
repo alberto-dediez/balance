@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Domain\Model\Category;
 
 use App\Property\Domain\Model\Category\Category;
@@ -11,7 +13,7 @@ class CategoryMother
     {
         return self::from(
             categoryId: CategoryId::generate(),
-            name: $name
+            name: $name,
         );
     }
 
@@ -19,14 +21,14 @@ class CategoryMother
     {
         return self::from(
             categoryId: new CategoryId($id),
-            name: $name
+            name: $name,
         );
     }
 
     public static function from(CategoryId $categoryId, string $name = 'name'): Category
     {
         $category = new Category(
-            id: $categoryId
+            id: $categoryId,
         );
 
         $category->register($name);
@@ -38,7 +40,7 @@ class CategoryMother
     {
         return self::from(
             categoryId: CategoryId::generate(),
-            name: 'category-' . random_int(100, 999)
+            name: 'category-' . random_int(100, 999),
         );
     }
 }

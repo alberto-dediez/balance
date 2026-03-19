@@ -1,20 +1,22 @@
-<?php 
+<?php
+
+declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\QrCode;
 
-use iio\libmergepdf\Merger;
-use iio\libmergepdf\Driver\TcpdiDriver;
 use App\Waste\Domain\Model\Container\QrPdfMerger;
+use iio\libmergepdf\Driver\TcpdiDriver;
+use iio\libmergepdf\Merger;
 
 class IioQrPdfMerger implements QrPdfMerger
 {
     public function merge(string $pathToPdf, string $otherPathToPdf): string
     {
-        $merger = new Merger(new TcpdiDriver);
+        $merger = new Merger(new TcpdiDriver());
         $merger->addFile($pathToPdf);
         $merger->addFile($otherPathToPdf);
 
-        $mergedPath = sprintf("/tmp/%s.pdf", md5($pathToPdf . $otherPathToPdf));
+        $mergedPath = sprintf('/tmp/%s.pdf', md5($pathToPdf . $otherPathToPdf));
 
         $mergedPdf = $merger->merge();
 

@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\DailyWaste\Statistics;
 
-use App\Waste\Domain\Model\Waste\Waste;
-use App\Waste\Domain\Model\Container\Purpose;
 use App\Property\Domain\Model\Property\Property;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\WasteManager\WasteManager;
 
 class StatisticsDailyWasteResponse
 {
-     public function __construct(
+    public function __construct(
         /** @var ByMonth[] */
         public array $byMonth,
 
@@ -26,17 +28,15 @@ class StatisticsDailyWasteResponse
         public array $byWasteManager,
 
         /** @var ByProperty[] */
-        public array $byProperty
-    ) {
-
-    }
+        public array $byProperty,
+    ) {}
 
     /** @return \DateTimeImmutable[] */
     public function dates(): array
     {
         return array_map(
             fn(ByDate $element) => $element->date,
-            $this->byDate
+            $this->byDate,
         );
     }
 
@@ -45,7 +45,7 @@ class StatisticsDailyWasteResponse
     {
         return array_map(
             fn(ByMonth $element) => $element->month,
-            $this->byMonth
+            $this->byMonth,
         );
     }
 

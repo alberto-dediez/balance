@@ -1,29 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Web\Admin\Waste;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\Symfony\Form\BulkType;
-use App\Shared\Infrastructure\UI\Web\CRUD\BulkTrait;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
+use App\Shared\Infrastructure\UI\Web\CRUD\BulkTrait;
 use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
 use App\Waste\Application\Waste\List\ListWastesRequest;
 use App\Waste\Application\Waste\List\ListWastesService;
-use App\Security\Application\UnauthorizedActionException;
 use App\Waste\Infrastructure\Symfony\Form\ListWastesType;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Waste\Infrastructure\UI\Web\Admin\Waste\Bulk\RemoveWaste;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/admin/wastes', name: 'admin_wastes')]
 class ListController extends AbstractController
 {
-    use FilterTrait, BulkTrait;
+    use FilterTrait;
+    use BulkTrait;
 
     public function __invoke(ListWastesService $listWastes, LoggedUser $loggedUser, Request $request): Response
-    {   
+    {
 
         try {
             [$filter, $form] = $this->filter($request, fn() => new ListWastesRequest(), ListWastesType::class);
@@ -33,11 +36,11 @@ class ListController extends AbstractController
             throw $this->createAccessDeniedException($e->getMessage());
         }
 
-        $bulkForm = $this->createForm(BulkType::class, new BulkRequest, [
+        $bulkForm = $this->createForm(BulkType::class, new BulkRequest(), [
             'elements' => $response->wastes,
             'actions' => [
-                new RemoveWaste()
-            ]
+                new RemoveWaste(),
+            ],
         ]);
 
         $needsRedirect = $this->bulkActions($request, $bulkForm, $loggedUser());
@@ -50,7 +53,7 @@ class ListController extends AbstractController
             'bulkForm' => $bulkForm->createView(),
             'wastes' => $response->wastes,
             'totalResults' => $response->totalResults,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

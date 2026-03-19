@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\Container\Remove;
 
-use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryContainerRepository;
-use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Waste\Domain\Model\Container\ContainerRemoved;
-use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
-use App\Waste\Application\Container\Remove\RemoveContainerRequest;
-use App\Waste\Application\Container\Remove\RemoveContainerService;
-use App\Waste\Application\Container\Remove\RemoveContainerResponse;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
+use App\Waste\Application\Container\ContainerAuthorizer;
+use App\Waste\Application\Container\Remove\RemoveContainerRequest;
+use App\Waste\Application\Container\Remove\RemoveContainerResponse;
+use App\Waste\Application\Container\Remove\RemoveContainerService;
+use App\Waste\Domain\Model\Container\ContainerRemoved;
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryContainerRepository;
+use PHPUnit\Framework\TestCase;
 
 class RemoveContainerServiceTest extends TestCase
 {
@@ -40,7 +42,7 @@ class RemoveContainerServiceTest extends TestCase
         $repository->add($container);
 
         $request = new RemoveContainerRequest(
-            containerId: $container->id()
+            containerId: $container->id(),
         );
 
         $result = $sut($request, $user);
@@ -48,7 +50,7 @@ class RemoveContainerServiceTest extends TestCase
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RemoveContainerResponse);
         $this->assertTrue($container->id()->equals($result->containerId));
-        
+
         $containerPersisted = $repository->find($result->containerId);
 
         $this->assertNull($containerPersisted);
@@ -68,7 +70,7 @@ class RemoveContainerServiceTest extends TestCase
         $container = ContainerMother::random();
 
         $result = $sut->isHandled(new RemoveContainerRequest(
-            containerId: $container->id()
+            containerId: $container->id(),
         ));
 
         $this->assertTrue($result);

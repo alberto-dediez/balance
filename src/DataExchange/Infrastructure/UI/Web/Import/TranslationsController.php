@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\UI\Web\Import;
 
-use App\DataExchange\Application\Importation\PairFields\PairFieldsImportationResponse;
 use App\DataExchange\Application\Importation\PairFields\PairFieldsImportationRequest;
+use App\DataExchange\Application\Importation\PairFields\PairFieldsImportationResponse;
 use App\DataExchange\Application\Importation\PairFields\PairFieldsImportationService;
 use App\DataExchange\Infrastructure\UI\Web\Form\TranslationsType;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
@@ -24,8 +26,7 @@ class TranslationsController extends AbstractController
         LoggedUser $loggedUser,
         PairFieldsImportationService $pairFields,
         Request $request,
-    ): Response
-    {
+    ): Response {
         $importationType = $this->getImportationTypeOrNotFound($code);
 
         $importation = $this->getImportationOrNotFound($id);
@@ -34,19 +35,20 @@ class TranslationsController extends AbstractController
 
         $pairFieldsRequest = new PairFieldsImportationRequest($importation->id(), $importation->configurations());
 
-        if (count($pairFieldsRequest->pairedConfigurations()) === 0) {
+        if (0 === count($pairFieldsRequest->pairedConfigurations())) {
             return $this->redirectToRoute('import_assign_values', ['code' => $code, 'id' => $importation->id()]);
         }
 
         $form = $this->createForm(TranslationsType::class, $pairFieldsRequest, [
-            'definitions' => $importationType->translationDefinitions()
+            'definitions' => $importationType->translationDefinitions(),
         ]);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $response = $pairFields(
-                $form->getData(), $loggedUser()
+                $form->getData(),
+                $loggedUser(),
             );
 
             if (!$response instanceof PairFieldsImportationResponse) {

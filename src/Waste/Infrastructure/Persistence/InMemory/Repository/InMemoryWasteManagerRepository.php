@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Security\Domain\Model\Account\AccountId;
@@ -12,15 +14,12 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryWasteManagerRepository implements WasteManagerRepository
 {
-    public function __construct(private array $wasteManagers = [])
-    {
-
-    }
+    public function __construct(private array $wasteManagers = []) {}
 
     public function add(WasteManager $wasteManager): void
     {
         if (isset($this->wasteManagers[(string) $wasteManager->id()])) {
-            return ;
+            return;
         }
 
         $this->wasteManagers[(string) $wasteManager->id()] = $wasteManager;
@@ -29,7 +28,7 @@ class InMemoryWasteManagerRepository implements WasteManagerRepository
     public function remove(WasteManager $wasteManager): void
     {
         if (!isset($this->wasteManagers[(string) $wasteManager->id()])) {
-            return ;
+            return;
         }
 
         unset($this->wasteManagers[(string) $wasteManager->id()]);
@@ -47,7 +46,7 @@ class InMemoryWasteManagerRepository implements WasteManagerRepository
     {
         $results = [];
 
-        if (count($this->wasteManagers) === 0) {
+        if (0 === count($this->wasteManagers)) {
             return $results;
         }
 
@@ -87,7 +86,7 @@ class InMemoryWasteManagerRepository implements WasteManagerRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

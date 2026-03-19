@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\UI\Web\Admin\Property\Bulk;
 
 use App\Security\Domain\Model\Account\AccountId;

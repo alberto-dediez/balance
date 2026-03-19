@@ -1,15 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Domain\Model\Importation;
 
 class ColumnValueTranslation implements \Stringable
 {
     public function __construct(
         public string $value,
-        public ?string $translation
-    ) {
-
-    }
+        public ?string $translation,
+    ) {}
 
     public function __toString(): string
     {

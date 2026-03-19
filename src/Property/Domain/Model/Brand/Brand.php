@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Brand;
 
-use App\Shared\Domain\Model\AggregateRoot;
 use App\Property\Domain\Model\Property\ExternalId;
+use App\Shared\Domain\Model\AggregateRoot;
 
 class Brand implements \Stringable
 {
@@ -16,10 +18,8 @@ class Brand implements \Stringable
         private bool $removed = false,
         array $events = [],
         private ?\DateTimeImmutable $registeredAt = null,
-        private ?\DateTimeImmutable $removedAt = null
-    ) {
-
-    }
+        private ?\DateTimeImmutable $removedAt = null,
+    ) {}
 
     public function id(): BrandId
     {
@@ -61,8 +61,8 @@ class Brand implements \Stringable
             new BrandRegistered(
                 brandId: $this->id(),
                 name: $name,
-                externalId: $externalId
-            )
+                externalId: $externalId,
+            ),
         );
     }
 
@@ -72,8 +72,8 @@ class Brand implements \Stringable
             new BrandUpdated(
                 brandId: $this->id(),
                 name: $name,
-                externalId: $externalId
-            )
+                externalId: $externalId,
+            ),
         );
     }
 
@@ -81,8 +81,8 @@ class Brand implements \Stringable
     {
         $this->recordApplyAndPublish(
             new BrandRemoved(
-                brandId: $this->id()
-            )
+                brandId: $this->id(),
+            ),
         );
     }
 

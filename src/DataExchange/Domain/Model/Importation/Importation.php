@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Domain\Model\Importation;
 
 use App\Security\Domain\Model\Account\AccountId;
@@ -23,9 +25,7 @@ class Importation implements \Stringable
         protected ?\DateTimeImmutable $registeredAt = null,
         protected ?\DateTimeImmutable $executedAt = null,
         protected ?UserId $registeredBy = null,
-    ) {
-
-    }
+    ) {}
 
     public function id(): ImportationId
     {
@@ -68,7 +68,7 @@ class Importation implements \Stringable
 
     public function configurationFor(string $columnName): ?ImportationColumnConfiguration
     {
-        if (count($this->configurations()) === 0) {
+        if (0 === count($this->configurations())) {
             return null;
         }
 
@@ -83,7 +83,7 @@ class Importation implements \Stringable
 
     public function configurationForField(string $field): ?ImportationColumnConfiguration
     {
-        if (count($this->configurations()) === 0) {
+        if (0 === count($this->configurations())) {
             return null;
         }
 
@@ -135,7 +135,7 @@ class Importation implements \Stringable
                 type: $type,
                 accountId: $accountId,
                 registeredBy: $registeredBy,
-            )
+            ),
         );
     }
 
@@ -144,8 +144,8 @@ class Importation implements \Stringable
         $this->recordApplyAndPublish(
             new ImportationConfigurationUpdated(
                 importationId: $this->id(),
-                configurations: $configurations
-            )
+                configurations: $configurations,
+            ),
         );
     }
 
@@ -154,8 +154,8 @@ class Importation implements \Stringable
         $this->recordApplyAndPublish(
             new ImportationDefaultValuesUpdated(
                 importationId: $this->id(),
-                defaultValues: $defaultValues
-            )
+                defaultValues: $defaultValues,
+            ),
         );
     }
 
@@ -163,8 +163,8 @@ class Importation implements \Stringable
     {
         $this->recordApplyAndPublish(
             new ImportationExecutionStarted(
-                importationId: $this->id()
-            )
+                importationId: $this->id(),
+            ),
         );
     }
 
@@ -172,8 +172,8 @@ class Importation implements \Stringable
     {
         $this->recordApplyAndPublish(
             new ImportationExecuted(
-                importationId: $this->id()
-            )
+                importationId: $this->id(),
+            ),
         );
     }
 

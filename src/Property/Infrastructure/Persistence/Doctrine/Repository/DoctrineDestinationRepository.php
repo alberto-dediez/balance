@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Property\Domain\Model\Country\CountryId;
@@ -19,10 +21,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineDestinationRepository implements DestinationRepository
 {
-    public function __construct(private readonly EntityManagerInterface $manager)
-    {
-
-    }
+    public function __construct(private readonly EntityManagerInterface $manager) {}
 
     public function add(Destination $destination): void
     {
@@ -42,7 +41,7 @@ class DoctrineDestinationRepository implements DestinationRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('d.id', ':id')
+                $qb->expr()->eq('d.id', ':id'),
             )
             ->setParameter('id', (string) $destinationId)
             ->getQuery()
@@ -58,8 +57,8 @@ class DoctrineDestinationRepository implements DestinationRepository
             ->andWhere(
                 $qb->expr()->andX(
                     $qb->expr()->like('d.name', ':name'),
-                    $qb->expr()->eq('d.countryId', ':countryId')
-                )
+                    $qb->expr()->eq('d.countryId', ':countryId'),
+                ),
             )
             ->setParameter('name', $name)
             ->setParameter('countryId', $countryId)
@@ -81,7 +80,7 @@ class DoctrineDestinationRepository implements DestinationRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->like("d.externalId.{$attribute}", ":sourceId")
+                $qb->expr()->like("d.externalId.{$attribute}", ':sourceId'),
             )
             ->setParameter('sourceId', $sourceId)
             ->getQuery()
@@ -99,15 +98,15 @@ class DoctrineDestinationRepository implements DestinationRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('d.removed'),
-                    $qb->expr()->eq('d.removed', $qb->expr()->literal(false))
-                )
+                    $qb->expr()->eq('d.removed', $qb->expr()->literal(false)),
+                ),
             )
         ;
 
         if (!empty($filter->name)) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('d.name', ':name')
+                    $qb->expr()->like('d.name', ':name'),
                 )
                 ->setParameter('name', "%{$filter->name}%")
             ;
@@ -116,13 +115,13 @@ class DoctrineDestinationRepository implements DestinationRepository
         if ($filter->countryId instanceof CountryId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('d.countryId', ':countryId')
+                    $qb->expr()->eq('d.countryId', ':countryId'),
                 )
                 ->setParameter('countryId', $filter->countryId)
             ;
         }
 
-        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
             'registeredAt' => $qb->orderBy('d.registeredAt', $way),

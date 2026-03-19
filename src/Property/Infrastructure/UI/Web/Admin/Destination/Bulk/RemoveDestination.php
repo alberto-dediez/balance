@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\UI\Web\Admin\Destination\Bulk;
 
+use App\Property\Application\Destination\Remove\RemoveDestinationRequest;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkAction;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
 use App\Shared\Infrastructure\UI\Web\Bulk\RemoveAction;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Property\Application\Destination\Remove\RemoveDestinationRequest;
 
 class RemoveDestination implements BulkAction
 {
@@ -15,7 +17,7 @@ class RemoveDestination implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) === 0) {
+        if (0 === count($request->elements)) {
             return [];
         }
 
@@ -29,7 +31,7 @@ class RemoveDestination implements BulkAction
                 continue;
             }
             $commands[] = new RemoveDestinationRequest(
-                destinationId: $destination->id()
+                destinationId: $destination->id(),
             );
         }
 
@@ -38,11 +40,11 @@ class RemoveDestination implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
-        return new TranslatableMessage("Se ha eliminado el destino {id}", ['{id}' => $command->destinationId]);
+        return new TranslatableMessage('Se ha eliminado el destino {id}', ['{id}' => $command->destinationId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
-        return new TranslatableMessage("No se ha podido eliminar el destino {id}", ['{id}' => $command->destinationId]);
+        return new TranslatableMessage('No se ha podido eliminar el destino {id}', ['{id}' => $command->destinationId]);
     }
 }

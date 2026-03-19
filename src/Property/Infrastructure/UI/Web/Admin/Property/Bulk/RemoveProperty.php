@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\UI\Web\Admin\Property\Bulk;
 
+use App\Property\Application\Property\Remove\RemovePropertyRequest;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkAction;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
 use App\Shared\Infrastructure\UI\Web\Bulk\RemoveAction;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Property\Application\Property\Remove\RemovePropertyRequest;
 
 class RemoveProperty implements BulkAction
 {
@@ -15,7 +17,7 @@ class RemoveProperty implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) === 0) {
+        if (0 === count($request->elements)) {
             return [];
         }
 
@@ -29,7 +31,7 @@ class RemoveProperty implements BulkAction
                 continue;
             }
             $commands[] = new RemovePropertyRequest(
-                propertyId: $property->id()
+                propertyId: $property->id(),
             );
         }
 
@@ -38,11 +40,11 @@ class RemoveProperty implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
-        return new TranslatableMessage("Se ha eliminado la propiedad {id}", ['{id}' => $command->propertyId]);
+        return new TranslatableMessage('Se ha eliminado la propiedad {id}', ['{id}' => $command->propertyId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
-        return new TranslatableMessage("No se ha podido eliminar la propiedad {id}", ['{id}' => $command->propertyId]);
+        return new TranslatableMessage('No se ha podido eliminar la propiedad {id}', ['{id}' => $command->propertyId]);
     }
 }

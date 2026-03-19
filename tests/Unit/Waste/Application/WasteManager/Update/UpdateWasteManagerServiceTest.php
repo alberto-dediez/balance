@@ -1,22 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\WasteManager\Update;
 
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
+use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
+use App\Waste\Application\WasteManager\Update\UpdateWasteManagerRequest;
+use App\Waste\Application\WasteManager\Update\UpdateWasteManagerResponse;
+use App\Waste\Application\WasteManager\Update\UpdateWasteManagerService;
+use App\Waste\Application\WasteManager\WasteManagerAuthorizer;
+use App\Waste\Domain\Model\WasteManager\WasteManager;
+use App\Waste\Domain\Model\WasteManager\WasteManagerUpdated;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteManagerRepository;
 use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Waste\Domain\Model\WasteManager\WasteManager;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Waste\Domain\Model\WasteManager\WasteManagerUpdated;
-use App\Waste\Application\WasteManager\WasteManagerAuthorizer;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Waste\Application\WasteManager\Update\UpdateWasteManagerRequest;
-use App\Waste\Application\WasteManager\Update\UpdateWasteManagerService;
-use App\Waste\Application\WasteManager\Update\UpdateWasteManagerResponse;
-use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
 
 class UpdateWasteManagerServiceTest extends TestCase
 {
@@ -44,7 +46,7 @@ class UpdateWasteManagerServiceTest extends TestCase
         $request = new UpdateWasteManagerRequest(
             wasteManagerId: $wasteManager->id(),
             name: 'Hotel',
-            isPublic: true
+            isPublic: true,
         );
 
         $result = $sut($request, $user);
@@ -77,7 +79,7 @@ class UpdateWasteManagerServiceTest extends TestCase
         $result = $sut->isHandled(new UpdateWasteManagerRequest(
             wasteManagerId: $wasteManager->id(),
             name: 'Hotel',
-            isPublic: true
+            isPublic: true,
         ));
 
         $this->assertTrue($result);

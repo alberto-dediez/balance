@@ -1,24 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Destination\List;
 
-use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
 use App\Property\Application\Destination\DestinationAuthorizer;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Property\Domain\Model\Destination\DestinationMother;
 use App\Property\Application\Destination\List\ListDestinationsRequest;
-use App\Property\Application\Destination\List\ListDestinationsService;
 use App\Property\Application\Destination\List\ListDestinationsResponse;
+use App\Property\Application\Destination\List\ListDestinationsService;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
+use App\Security\Domain\Model\User\Role;
+use App\Tests\Unit\Property\Domain\Model\Destination\DestinationMother;
 use App\Tests\Unit\Property\Domain\Model\Destination\DestinationRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\TestCase;
 
 class ListDestinationsServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        
-    }
+    protected function setUp(): void {}
 
     public function testInvoke(): void
     {

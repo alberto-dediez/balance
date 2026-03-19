@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Persistence\Doctrine\Repository;
 
-use App\Property\Domain\Model\Destination\DestinationId;
 use App\Property\Domain\Model\Country\CountryId;
-use App\Security\Domain\Model\Account\AccountId;
+use App\Property\Domain\Model\Destination\DestinationId;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyFilter;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Security\Domain\Model\Account\AccountId;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -21,12 +23,9 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrinePropertyRepository implements PropertyRepository
 {
-    const GEO_PRECISSION = 0.00001;
+    public const GEO_PRECISSION = 0.00001;
 
-    public function __construct(private readonly EntityManagerInterface $manager)
-    {
-
-    }
+    public function __construct(private readonly EntityManagerInterface $manager) {}
 
     public function add(Property $property): void
     {
@@ -46,7 +45,7 @@ class DoctrinePropertyRepository implements PropertyRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('p.id', ':id')
+                $qb->expr()->eq('p.id', ':id'),
             )
             ->setParameter('id', (string) $propertyId)
             ->getQuery()
@@ -60,7 +59,7 @@ class DoctrinePropertyRepository implements PropertyRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('p.name', ':name')
+                $qb->expr()->eq('p.name', ':name'),
             )
             ->setParameter('name', $name)
             ->getQuery()
@@ -99,7 +98,7 @@ class DoctrinePropertyRepository implements PropertyRepository
 
         return $qb
             ->andWhere(
-                $expr
+                $expr,
             )
             ->getQuery()
             ->setMaxResults(1)
@@ -120,7 +119,7 @@ class DoctrinePropertyRepository implements PropertyRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->like("p.externalId.{$attribute}", ":sourceId")
+                $qb->expr()->like("p.externalId.{$attribute}", ':sourceId'),
             )
             ->setParameter('sourceId', $sourceId)
             ->getQuery()
@@ -141,7 +140,7 @@ class DoctrinePropertyRepository implements PropertyRepository
                 $qb->expr()->andX(
                     $qb->expr()->between('p.info.latitude', ':min_latitude', ':max_latitude'),
                     $qb->expr()->between('p.info.longitude', ':min_longitude', ':max_longitude'),
-                )
+                ),
             )
             ->setParameter('min_latitude', $latitude - self::GEO_PRECISSION)
             ->setParameter('max_latitude', $latitude + self::GEO_PRECISSION)
@@ -162,15 +161,15 @@ class DoctrinePropertyRepository implements PropertyRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('p.removed'),
-                    $qb->expr()->eq('p.removed', $qb->expr()->literal(false))
-                )
+                    $qb->expr()->eq('p.removed', $qb->expr()->literal(false)),
+                ),
             )
         ;
 
         if (!empty($filter->name)) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('p.name', ':name')
+                    $qb->expr()->like('p.name', ':name'),
                 )
                 ->setParameter('name', "%{$filter->name}%")
             ;
@@ -179,7 +178,7 @@ class DoctrinePropertyRepository implements PropertyRepository
         if ($filter->destinationId instanceof DestinationId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('p.info.destinationId', ':destinationId')
+                    $qb->expr()->eq('p.info.destinationId', ':destinationId'),
                 )
                 ->setParameter('destinationId', $filter->destinationId)
             ;
@@ -188,7 +187,7 @@ class DoctrinePropertyRepository implements PropertyRepository
         if ($filter->countryId instanceof CountryId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('p.info.countryId', ':countryId')
+                    $qb->expr()->eq('p.info.countryId', ':countryId'),
                 )
                 ->setParameter('countryId', $filter->countryId)
             ;
@@ -197,13 +196,13 @@ class DoctrinePropertyRepository implements PropertyRepository
         if ($filter->accountId instanceof AccountId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('p.accountId', ':accountId')
+                    $qb->expr()->eq('p.accountId', ':accountId'),
                 )
                 ->setParameter('accountId', $filter->accountId)
             ;
         }
 
-        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
             'registeredAt' => $qb->orderBy('p.registeredAt', $way),

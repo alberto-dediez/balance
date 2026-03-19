@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Symfony\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
 use App\Property\Domain\Model\Property\PropertyType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PropertyTypeType extends AbstractType
 {
@@ -22,7 +24,7 @@ class PropertyTypeType extends AbstractType
             'translation_domain' => 'propertyType',
         ]);
     }
-    
+
     public function getParent()
     {
         return AutocompleteType::class;

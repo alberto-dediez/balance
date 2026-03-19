@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Property;
 
 class ExternalId implements \Stringable
@@ -7,10 +9,8 @@ class ExternalId implements \Stringable
     public function __construct(
         private readonly ?string $hotelbeds = null,
         private readonly ?string $restel = null,
-        private readonly ?string $bioscore = null
-    ) {
-
-    }
+        private readonly ?string $bioscore = null,
+    ) {}
 
     public static function fromSourceAndId(ExternalSource $source, string $id): self
     {
@@ -70,15 +70,15 @@ class ExternalId implements \Stringable
 
     public function isCombinable(ExternalId $other): bool
     {
-        if ($other->bioscore() !== null && $this->bioscore() !== null && $other->bioscore() !== $this->bioscore()) {
+        if (null !== $other->bioscore() && null !== $this->bioscore() && $other->bioscore() !== $this->bioscore()) {
             return false;
         }
 
-        if ($other->restel() !== null && $this->restel() !== null && $other->restel() !== $this->restel()) {
+        if (null !== $other->restel() && null !== $this->restel() && $other->restel() !== $this->restel()) {
             return false;
         }
 
-        if ($other->hotelbeds() !== null && $this->hotelbeds() !== null && $other->hotelbeds() !== $this->hotelbeds()) {
+        if (null !== $other->hotelbeds() && null !== $this->hotelbeds() && $other->hotelbeds() !== $this->hotelbeds()) {
             return false;
         }
 

@@ -1,24 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Domain\Event\DailyWaste;
 
-use App\Shared\Application\CommandBus\CommandBusDispatcher;
-use App\Shared\Application\CommandBus\DeferredCommand;
-use App\Tests\Unit\Shared\Application\CommandBus\SluttyCommandHandler;
-use App\Waste\Application\DailyWaste\Calculate\CalculateDailyWasteRequest;
-use PHPUnit\Framework\TestCase;
-use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRemoved;
+use App\Shared\Application\CommandBus\CommandBusDispatcher;
+use App\Shared\Application\CommandBus\DeferredCommand;
+use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Waste\Domain\Model\Measurement\MeasurementRemoved;
-use App\Waste\Domain\Model\Measurement\MeasurementUpdated;
+use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeLoggedUser;
+use App\Tests\Unit\Shared\Application\CommandBus\SluttyCommandHandler;
+use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
+use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
+use App\Waste\Application\DailyWaste\Calculate\CalculateDailyWasteRequest;
 use App\Waste\Domain\Event\DailyWaste\MeasurementSubscriber;
 use App\Waste\Domain\Model\Measurement\MeasurementRegistered;
+use App\Waste\Domain\Model\Measurement\MeasurementRemoved;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
-use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
-use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeLoggedUser;
-use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
+use App\Waste\Domain\Model\Measurement\MeasurementUpdated;
+use PHPUnit\Framework\TestCase;
 
 class MeasurementSubscriberTest extends TestCase
 {
@@ -48,7 +50,7 @@ class MeasurementSubscriberTest extends TestCase
             purpose: $measurement->purpose(),
             wasteManagerId: $measurement->wasteManagerId(),
             accountId: $measurement->accountId(),
-            day: $measurement->day()
+            day: $measurement->day(),
         );
 
         $result = $sut->isSubscribedTo($event);
@@ -69,7 +71,7 @@ class MeasurementSubscriberTest extends TestCase
             measurementId: $measurement->id(),
             quantity: $measurement->quantity(),
             load: $measurement->load(),
-            justification: $measurement->justification()
+            justification: $measurement->justification(),
         );
 
         $result = $sut->isSubscribedTo($event);
@@ -99,7 +101,7 @@ class MeasurementSubscriberTest extends TestCase
             day: $measurement->day(),
             quantity: $measurement->quantity(),
             load: $measurement->load(),
-            justification: $measurement->justification()
+            justification: $measurement->justification(),
         );
 
         $result = $sut->isSubscribedTo($event);
@@ -114,7 +116,7 @@ class MeasurementSubscriberTest extends TestCase
         $sut = $this->createSUT($repository);
 
         $event = new PropertyRemoved(
-            PropertyId::generate()
+            PropertyId::generate(),
         );
 
         $result = $sut->isSubscribedTo($event);
@@ -130,7 +132,7 @@ class MeasurementSubscriberTest extends TestCase
         $repository->add($measurement);
 
         $sut = $this->createSUT(
-            repository: $repository
+            repository: $repository,
         );
 
         $event = new MeasurementRemoved(
@@ -140,7 +142,7 @@ class MeasurementSubscriberTest extends TestCase
             purpose: $measurement->purpose(),
             wasteManagerId: $measurement->wasteManagerId(),
             accountId: $measurement->accountId(),
-            day: $measurement->day()
+            day: $measurement->day(),
         );
 
         $sut->handle($event);
@@ -160,14 +162,14 @@ class MeasurementSubscriberTest extends TestCase
         $repository->add($measurement);
 
         $sut = $this->createSUT(
-            repository: $repository
+            repository: $repository,
         );
 
         $event = new MeasurementUpdated(
             measurementId: $measurement->id(),
             quantity: $measurement->quantity(),
             load: $measurement->load(),
-            justification: $measurement->justification()
+            justification: $measurement->justification(),
         );
 
         $sut->handle($event);
@@ -187,7 +189,7 @@ class MeasurementSubscriberTest extends TestCase
         $repository->add($measurement);
 
         $sut = $this->createSUT(
-            repository: $repository
+            repository: $repository,
         );
 
         $event = new MeasurementRegistered(
@@ -203,7 +205,7 @@ class MeasurementSubscriberTest extends TestCase
             day: $measurement->day(),
             quantity: $measurement->quantity(),
             load: $measurement->load(),
-            justification: $measurement->justification()
+            justification: $measurement->justification(),
         );
 
         $sut->handle($event);
@@ -221,7 +223,7 @@ class MeasurementSubscriberTest extends TestCase
 
         return new MeasurementSubscriber(
             $repository,
-            $loggedUser
+            $loggedUser,
         );
     }
 }

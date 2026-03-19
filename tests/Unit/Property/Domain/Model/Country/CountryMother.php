@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Domain\Model\Country;
 
 use App\Property\Domain\Model\Country\Country;
@@ -11,7 +13,7 @@ class CountryMother
     {
         return self::from(
             countryId: CountryId::generate(),
-            name: $name
+            name: $name,
         );
     }
 
@@ -19,7 +21,7 @@ class CountryMother
     {
         return self::from(
             countryId: new CountryId($id),
-            name: $name
+            name: $name,
         );
     }
 
@@ -28,14 +30,14 @@ class CountryMother
         return self::from(
             countryId: new CountryId($id),
             name: $name,
-            iso: $iso
+            iso: $iso,
         );
     }
 
     public static function from(CountryId $countryId, string $name = 'name', ?string $iso = null): Country
     {
         $country = new Country(
-            id: $countryId
+            id: $countryId,
         );
 
         $country->register($name, $iso);
@@ -48,7 +50,7 @@ class CountryMother
         return self::from(
             countryId: CountryId::generate(),
             name: 'country-' . random_int(100, 999),
-            iso: 'ISO-' . random_int(100, 999)
+            iso: 'ISO-' . random_int(100, 999),
         );
     }
 }

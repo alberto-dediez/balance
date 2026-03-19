@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Messenger;
 
 use App\Security\Domain\Model\User\User;
@@ -14,10 +16,7 @@ class DeferredCommandMessenger implements DeferredCommandHandler
 {
     use RegisterHandlerTrait;
 
-    public function __construct(private MessageBusInterface $messageBus)
-    {
-
-    }
+    public function __construct(private MessageBusInterface $messageBus) {}
 
     public function isHandled(Command $command): bool
     {

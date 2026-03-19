@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Country\Register;
 
-use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Property\Domain\Model\Country\Country;
-use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Property\Application\Country\CountryAuthorizer;
+use App\Property\Application\Country\Register\RegisterCountryRequest;
+use App\Property\Application\Country\Register\RegisterCountryResponse;
+use App\Property\Application\Country\Register\RegisterCountryService;
+use App\Property\Domain\Model\Country\Country;
 use App\Property\Domain\Model\Country\CountryRegistered;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Property\Domain\Model\Country\CountryRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Property\Application\Country\Register\RegisterCountryRequest;
-use App\Property\Application\Country\Register\RegisterCountryService;
-use App\Property\Application\Country\Register\RegisterCountryResponse;
-use App\Tests\Unit\Property\Domain\Model\Country\CountryRepositoryMother;
+use PHPUnit\Framework\TestCase;
 
 class RegisterCountryServiceTest extends TestCase
 {
@@ -37,7 +39,7 @@ class RegisterCountryServiceTest extends TestCase
 
         $request = new RegisterCountryRequest(
             name: 'Spain',
-            iso: 'ES'
+            iso: 'ES',
         );
 
         $result = $sut($request, $user);
@@ -68,7 +70,7 @@ class RegisterCountryServiceTest extends TestCase
 
         $result = $sut->isHandled(new RegisterCountryRequest(
             name: 'Country',
-            iso: '123'
+            iso: '123',
         ));
 
         $this->assertTrue($result);

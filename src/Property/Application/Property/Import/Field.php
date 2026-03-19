@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Application\Property\Import;
 
 enum Field: string
@@ -31,7 +33,7 @@ enum Field: string
     case InfoRooms = 'info_rooms';
 
     case InfoWeb = 'info_web';
-    
+
     case InfoZone = 'info_zone';
 
     case InfoDestinationId = 'info_destination_id';

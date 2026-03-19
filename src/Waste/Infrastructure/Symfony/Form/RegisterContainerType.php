@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Symfony\Form;
 
+use App\Waste\Infrastructure\Symfony\Form\Type\ContainerVolumeType;
+use App\Waste\Infrastructure\Symfony\Form\Type\MeasurementMethodType;
+use App\Waste\Infrastructure\Symfony\Form\Type\PropertyIdType;
+use App\Waste\Infrastructure\Symfony\Form\Type\PurposeType;
+use App\Waste\Infrastructure\Symfony\Form\Type\WasteIdType;
+use App\Waste\Infrastructure\Symfony\Form\Type\WasteManagerIdType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use App\Waste\Infrastructure\Symfony\Form\Type\PurposeType;
-use App\Waste\Infrastructure\Symfony\Form\Type\WasteIdType;
-use App\Waste\Infrastructure\Symfony\Form\Type\PropertyIdType;
-use App\Waste\Infrastructure\Symfony\Form\Type\WasteManagerIdType;
-use App\Waste\Infrastructure\Symfony\Form\Type\ContainerVolumeType;
-use App\Waste\Infrastructure\Symfony\Form\Type\MeasurementMethodType;
 
 class RegisterContainerType extends AbstractType
 {
@@ -21,27 +23,27 @@ class RegisterContainerType extends AbstractType
         $builder
             ->add('propertyId', PropertyIdType::class, [
                 'label' => new TranslatableMessage('Propiedad'),
-                'required' => true
+                'required' => true,
             ])
             ->add('wasteId', WasteIdType::class, [
                 'label' => new TranslatableMessage('Tipología de residuo'),
-                'required' => true
+                'required' => true,
             ])
             ->add('purpose', PurposeType::class, [
                 'label' => new TranslatableMessage('Destino'),
-                'required' => true
+                'required' => true,
             ])
             ->add('measurementMethod', MeasurementMethodType::class, [
                 'label' => new TranslatableMessage('Método de medida'),
-                'required' => true
+                'required' => true,
             ])
             ->add('volume', ContainerVolumeType::class)
             ->add('wasteManagerId', WasteManagerIdType::class, [
                 'label' => new TranslatableMessage('Gestor de residuos'),
-                'required' => true
+                'required' => true,
             ])
             ->add('register', SubmitType::class, [
-                'label' => new TranslatableMessage('Registrar')
+                'label' => new TranslatableMessage('Registrar'),
             ])
         ;
     }

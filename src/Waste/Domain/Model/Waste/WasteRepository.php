@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Waste\Domain\Model\Waste;
+declare(strict_types=1);
 
-use App\Waste\Domain\Model\Waste\Waste;
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Waste\Domain\Model\Waste\WasteFilter;
+namespace App\Waste\Domain\Model\Waste;
 
 interface WasteRepository
 {

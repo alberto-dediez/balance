@@ -4,64 +4,64 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Waste;
 
-use Behat\Step\Given;
-use Behat\Behat\Context\Context;
-use App\Security\Domain\Model\User\UserId;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Tests\Acceptance\Shared\AcceptanceClient;
-use App\Waste\Domain\Model\Container\ContainerId;
-use App\Waste\Domain\Model\Waste\WasteRepository;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use App\Property\Domain\Model\Property\PropertyId;
-use App\Waste\Domain\Model\Measurement\MeasurementId;
-use App\Waste\Domain\Model\WasteManager\WasteManagerId;
-use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
-use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Property\Domain\Model\Property\PropertyRepository;
-use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
-use App\Waste\Domain\Model\Measurement\MeasurementRepository;
-use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
+use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
 use App\Tests\Unit\Waste\Domain\Model\DailyWaste\DailyWasteMother;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
+use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
 use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
+use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
+use App\Waste\Domain\Model\Measurement\MeasurementId;
+use App\Waste\Domain\Model\Measurement\MeasurementRepository;
+use App\Waste\Domain\Model\Waste\WasteRepository;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;
+use Behat\Behat\Context\Context;
+use Behat\Step\Given;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 final readonly class WasteContext implements Context
 {
     private AcceptanceClient $client;
 
     public function __construct(
-        KernelBrowser $kernelBrowser
+        KernelBrowser $kernelBrowser,
     ) {
         $this->client = AcceptanceClient::instance($kernelBrowser);
     }
 
-    public function getWasteRepository() : WasteRepository
+    public function getWasteRepository(): WasteRepository
     {
         return $this->client->getContainer()->get(WasteRepository::class);
     }
 
-    public function getContainerRepository() : ContainerRepository
+    public function getContainerRepository(): ContainerRepository
     {
         return $this->client->getContainer()->get(ContainerRepository::class);
     }
 
-    public function getPropertyRepository() : PropertyRepository
+    public function getPropertyRepository(): PropertyRepository
     {
         return $this->client->getContainer()->get(PropertyRepository::class);
     }
 
-    public function getMeasurementRepository() : MeasurementRepository
+    public function getMeasurementRepository(): MeasurementRepository
     {
         return $this->client->getContainer()->get(MeasurementRepository::class);
     }
 
-    public function getWasteManagerRepository() : WasteManagerRepository
+    public function getWasteManagerRepository(): WasteManagerRepository
     {
         return $this->client->getContainer()->get(WasteManagerRepository::class);
     }
 
-    public function getDailyWasteRepository() : DailyWasteRepository
+    public function getDailyWasteRepository(): DailyWasteRepository
     {
         return $this->client->getContainer()->get(DailyWasteRepository::class);
     }
@@ -98,7 +98,7 @@ final readonly class WasteContext implements Context
     public function measurementForContainerAndAccountFromUserWithIdExists($containerId, $accountId, $user, $id): void
     {
         $container = $this->getContainerRepository()->find(
-            new ContainerId($containerId)
+            new ContainerId($containerId),
         );
 
         $measurement = MeasurementMother::from(
@@ -110,7 +110,7 @@ final readonly class WasteContext implements Context
             registeredBy: new UserId($user),
             accountId: new AccountId($accountId),
             purpose: $container->purpose(),
-            measurementMethod: $container->measurementMethod()
+            measurementMethod: $container->measurementMethod(),
         );
 
         $this->getMeasurementRepository()->add($measurement);
@@ -122,7 +122,7 @@ final readonly class WasteContext implements Context
         $wasteManager = WasteManagerMother::fromNameAndIdAndAccount(
             name: $name,
             wasteManagerId: new WasteManagerId($wasteManagerId),
-            accountId: new AccountId($accountId)
+            accountId: new AccountId($accountId),
         );
 
         $this->getWasteManagerRepository()->add($wasteManager);

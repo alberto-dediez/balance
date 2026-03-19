@@ -1,14 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\Measurement\Remove;
 
-use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Shared\Application\CommandBus\CommandResponse;
+use App\Waste\Domain\Model\Measurement\MeasurementId;
 
 class RemoveMeasurementResponse implements CommandResponse
 {
-    public function __construct(public MeasurementId $measurementId)
-    {
-        
-    }
+    public function __construct(public MeasurementId $measurementId) {}
 }

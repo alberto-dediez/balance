@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Container;
 
-use DateTimeImmutable;
-use App\Waste\Domain\DomainEvent;
-use App\Waste\Domain\Model\Waste\WasteId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
-use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\DomainEvent;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 final class ContainerUpdated extends DomainEvent
@@ -22,7 +22,7 @@ final class ContainerUpdated extends DomainEvent
         private readonly Purpose $purpose,
         private readonly WasteManagerId $wasteManagerId,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -70,14 +70,14 @@ final class ContainerUpdated extends DomainEvent
             'purpose' => $this->purpose->value,
             'measurementMethod' => $this->measurementMethod->value,
             'wasteManagerId' => (string) $this->wasteManagerId,
-            'volume' => $this->volume
+            'volume' => $this->volume,
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        array $payload = []
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new ContainerUpdated(
             containerId: new ContainerId($payload['containerId']),
@@ -87,7 +87,7 @@ final class ContainerUpdated extends DomainEvent
             purpose: Purpose::tryFrom($payload['purpose']),
             wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId($payload['wasteManagerId']) : WasteManagerId::generate(),
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

@@ -1,31 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Country\Import;
 
-use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
+use App\Property\Application\Country\CountryAuthorizer;
+use App\Property\Application\Country\Import\CountryRequest;
+use App\Property\Application\Country\Import\ImportCountriesRequest;
+use App\Property\Application\Country\Import\ImportCountriesResponse;
+use App\Property\Application\Country\Import\ImportCountriesService;
+use App\Property\Application\Country\Register\RegisterCountryResponse;
+use App\Property\Application\Country\Register\RegisterCountryService;
+use App\Property\Application\Country\Update\UpdateCountryService;
 use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
-use App\Property\Application\Country\CountryAuthorizer;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Property\Application\Country\Import\CountryRequest;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
+use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Property\Domain\Model\Country\CountryMother;
-use App\Property\Application\Country\Update\UpdateCountryService;
-use App\Property\Application\Country\Import\ImportCountriesRequest;
-use App\Property\Application\Country\Import\ImportCountriesService;
-use App\Property\Application\Country\Import\ImportCountriesResponse;
-use App\Property\Application\Country\Register\RegisterCountryService;
-use App\Property\Application\Country\Register\RegisterCountryResponse;
 use App\Tests\Unit\Property\Domain\Model\Country\CountryRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\TestCase;
 
 class ImportCountriesServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        
-    }
+    protected function setUp(): void {}
 
     public function testInvoke(): void
     {
@@ -52,27 +51,27 @@ class ImportCountriesServiceTest extends TestCase
                     name: 'españa',
                     source: ExternalSource::Bioscore,
                     externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '1234'),
-                    createIfNotExists: false
+                    createIfNotExists: false,
                 ),
                 new CountryRequest(
                     name: 'INGLATERRA',
                     source: ExternalSource::Bioscore,
                     externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '234'),
-                    createIfNotExists: false
+                    createIfNotExists: false,
                 ),
                 new CountryRequest(
                     name: 'Irlanda',
                     source: ExternalSource::Bioscore,
                     externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '34'),
-                    createIfNotExists: false
+                    createIfNotExists: false,
                 ),
                 new CountryRequest(
                     name: 'Argentina',
                     source: ExternalSource::Bioscore,
                     externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '4'),
-                    createIfNotExists: true
+                    createIfNotExists: true,
                 ),
-            ]
+            ],
         );
 
         $result = $sut($request, $user);
@@ -98,18 +97,18 @@ class ImportCountriesServiceTest extends TestCase
         $registerService->method('__invoke')->willReturn(new RegisterCountryResponse(CountryId::generate(), ''));
 
         /** @var RegisterCountryService $registerService */
-
         $authorizer = new CountryAuthorizer();
 
         $updateService = new UpdateCountryService(
-            $repository, $authorizer
+            $repository,
+            $authorizer,
         );
 
         return new ImportCountriesService(
-            repository: $repository, 
+            repository: $repository,
             registerCountry: $registerService,
             updateCountry: $updateService,
-            authorizer: $authorizer
+            authorizer: $authorizer,
         );
     }
 }

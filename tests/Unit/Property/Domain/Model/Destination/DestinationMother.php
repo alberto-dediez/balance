@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Domain\Model\Destination;
 
 use App\Property\Domain\Model\Country\CountryId;
@@ -12,7 +14,7 @@ class DestinationMother
     {
         return self::from(
             destinationId: DestinationId::generate(),
-            name: $name
+            name: $name,
         );
     }
 
@@ -21,7 +23,7 @@ class DestinationMother
         return self::from(
             destinationId: DestinationId::generate(),
             name: $name,
-            countryId: $countryId
+            countryId: $countryId,
         );
     }
 
@@ -29,7 +31,7 @@ class DestinationMother
     {
         return self::from(
             destinationId: new DestinationId($id),
-            name: $name
+            name: $name,
         );
     }
 
@@ -38,14 +40,14 @@ class DestinationMother
         return self::from(
             destinationId: new DestinationId($id),
             name: $name,
-            countryId: new CountryId($countryId)
+            countryId: $countryId,
         );
     }
 
     public static function from(DestinationId $destinationId, string $name = 'name', ?string $countryId = null): Destination
     {
         $destination = new Destination(
-            id: $destinationId
+            id: $destinationId,
         );
 
         $destination->register($name, null !== $countryId ? new CountryId($countryId) : CountryId::generate());
@@ -57,7 +59,7 @@ class DestinationMother
     {
         return self::from(
             destinationId: DestinationId::generate(),
-            name: 'destination-' . random_int(100, 999)
+            name: 'destination-' . random_int(100, 999),
         );
     }
 }

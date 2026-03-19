@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Symfony\Form;
 
+use App\Property\Application\Property\Update\UpdatePropertyRequest;
+use App\Property\Infrastructure\Symfony\Form\Type\ExternalIdType;
+use App\Property\Infrastructure\Symfony\Form\Type\PropertyInfoType;
+use App\Security\Infrastructure\Symfony\Form\Type\AccountIdType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use App\Security\Infrastructure\Symfony\Form\Type\AccountIdType;
-use App\Property\Infrastructure\Symfony\Form\Type\ExternalIdType;
-use App\Property\Infrastructure\Symfony\Form\Type\PropertyInfoType;
-use App\Property\Application\Property\Update\UpdatePropertyRequest;
 
 class UpdatePropertyType extends AbstractType
 {
@@ -20,10 +22,10 @@ class UpdatePropertyType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('Nombre'),
-                'required' => true
+                'required' => true,
             ])
             ->add('info', PropertyInfoType::class, [
-                'label' => new TranslatableMessage('Información')
+                'label' => new TranslatableMessage('Información'),
             ])
         ;
 
@@ -35,17 +37,17 @@ class UpdatePropertyType extends AbstractType
                     'placeholder' => new TranslatableMessage('Sin cuenta'),
                 ])
                 ->add('externalId', ExternalIdType::class, [
-                    'label' => new TranslatableMessage('Identificadores externos')
+                    'label' => new TranslatableMessage('Identificadores externos'),
                 ])
             ;
         }
 
         $builder
             ->add('save', SubmitType::class, [
-                'label' => new TranslatableMessage('Guardar')
+                'label' => new TranslatableMessage('Guardar'),
             ])
             ->add('saveAndReturn', SubmitType::class, [
-                'label' => new TranslatableMessage('Guardar y salir')
+                'label' => new TranslatableMessage('Guardar y salir'),
             ])
         ;
     }
@@ -54,7 +56,7 @@ class UpdatePropertyType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => UpdatePropertyRequest::class,
-            'admin' => false
+            'admin' => false,
         ]);
     }
 }

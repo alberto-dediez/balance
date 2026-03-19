@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Domain\Model\Destination;
 
 use App\Property\Domain\Model\Destination\DestinationFilter;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Property\Domain\Model\Destination\DestinationRepository;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class DestinationRepositoryTest extends KernelTestCase
 {
     public function testAddDestinationToRepository(): void
-    {   
+    {
         $repository = $this->createSUT();
 
         $destination = DestinationMother::random();
@@ -25,7 +27,7 @@ abstract class DestinationRepositoryTest extends KernelTestCase
     }
 
     public function testRemoveDestinationToRepository(): void
-    {   
+    {
         $repository = $this->createSUT();
 
         $destination = DestinationMother::random();
@@ -76,7 +78,7 @@ abstract class DestinationRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new DestinationFilter(
-            name: 'Spain'
+            name: 'Spain',
         );
 
         $result = $repository->findByFilter($filter);
@@ -102,7 +104,7 @@ abstract class DestinationRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new DestinationFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);

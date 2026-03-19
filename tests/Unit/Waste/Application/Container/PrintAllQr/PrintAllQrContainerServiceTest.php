@@ -1,23 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\Container\PrintAllQr;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Waste\Application\Container\ContainerAuthorizer;
-use App\Waste\Domain\Model\Container\ContainerQrPrinted;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 use App\Tests\Unit\Waste\Infrastructure\QrCode\FakeQrPdfGenerator;
 use App\Tests\Unit\Waste\Infrastructure\QrCode\FakeQrPdfMerger;
+use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Waste\Application\Container\PrintAllQr\PrintAllQrContainerRequest;
-use App\Waste\Application\Container\PrintAllQr\PrintAllQrContainerService;
 use App\Waste\Application\Container\PrintAllQr\PrintAllQrContainerResponse;
+use App\Waste\Application\Container\PrintAllQr\PrintAllQrContainerService;
+use App\Waste\Domain\Model\Container\ContainerQrPrinted;
+use App\Waste\Domain\Model\Container\ContainerRepository;
+use PHPUnit\Framework\TestCase;
 
 class PrintAllQrContainerServiceTest extends TestCase
 {
@@ -50,7 +52,7 @@ class PrintAllQrContainerServiceTest extends TestCase
         $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId);
 
         $request = new PrintAllQrContainerRequest(
-            accountId: $accountId
+            accountId: $accountId,
         );
 
         $result = $sut($request, $user);
@@ -72,7 +74,7 @@ class PrintAllQrContainerServiceTest extends TestCase
             repository: $containerRepository,
             pdfGenerator: new FakeQrPdfGenerator(),
             pdfMerger: new FakeQrPdfMerger(),
-            authorizer: new ContainerAuthorizer()
+            authorizer: new ContainerAuthorizer(),
         );
     }
 }

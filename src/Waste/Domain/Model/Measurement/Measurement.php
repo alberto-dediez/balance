@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Measurement;
 
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Security\Domain\Model\User\UserId;
-use App\Shared\Domain\Model\AggregateRoot;
-use App\Waste\Domain\Model\Container\Purpose;
-use App\Waste\Domain\Model\Container\Container;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
+use App\Shared\Domain\Model\AggregateRoot;
+use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 class Measurement implements \Stringable
@@ -19,55 +21,53 @@ class Measurement implements \Stringable
 
     public function __construct(
         private MeasurementId $id,
-        private ContainerId|null $containerId = null,
-        private PropertyId|null $propertyId = null,
-        private WasteId|null $wasteId = null,
+        private ?ContainerId $containerId = null,
+        private ?PropertyId $propertyId = null,
+        private ?WasteId $wasteId = null,
         private ?Purpose $purpose = null,
         private ?MeasurementMethod $measurementMethod = null,
-        private WasteManagerId|null $wasteManagerId = null,
+        private ?WasteManagerId $wasteManagerId = null,
         private int $quantity = 0,
         private float $load = 0,
         private Unit $unit = Unit::Kilogram,
         private ?string $justification = null,
         private ?string $reference = null,
-        private AccountId|null $accountId = null,
-        private UserId|null $registeredBy = null,
-        private ?\DateTimeImmutable $registeredAt = null
-    ) {
-
-    }
+        private ?AccountId $accountId = null,
+        private ?UserId $registeredBy = null,
+        private ?\DateTimeImmutable $registeredAt = null,
+    ) {}
 
     public function id(): MeasurementId
     {
         return $this->id;
     }
 
-    public function containerId() : ?ContainerId
+    public function containerId(): ?ContainerId
     {
         return $this->containerId;
     }
 
-    public function propertyId() : ?PropertyId
+    public function propertyId(): ?PropertyId
     {
         return $this->propertyId;
     }
 
-    public function wasteId() : ?WasteId
+    public function wasteId(): ?WasteId
     {
         return $this->wasteId;
     }
 
-    public function purpose() : ?Purpose
+    public function purpose(): ?Purpose
     {
         return $this->purpose;
     }
 
-    public function measurementMethod() : ?MeasurementMethod
+    public function measurementMethod(): ?MeasurementMethod
     {
         return $this->measurementMethod;
     }
 
-    public function wasteManagerId() : ?WasteManagerId
+    public function wasteManagerId(): ?WasteManagerId
     {
         return $this->wasteManagerId;
     }
@@ -126,7 +126,7 @@ class Measurement implements \Stringable
         ?string $justification = null,
         ?string $reference = null,
         ?Unit $unit = null,
-        ?\DateTimeImmutable $day = null
+        ?\DateTimeImmutable $day = null,
     ): void {
         $this->recordApplyAndPublish(
             new MeasurementRegistered(
@@ -139,13 +139,13 @@ class Measurement implements \Stringable
                 wasteManagerId: $container->wasteManagerId(),
                 registeredBy: $registeredBy,
                 accountId: $accountId,
-                day: $day ?? new \DateTimeImmutable("NOW"),
+                day: $day ?? new \DateTimeImmutable('NOW'),
                 quantity: $quantity,
                 load: $load,
                 unit: $unit ?? $container->unit(),
                 justification: $justification,
-                reference: $reference
-            )
+                reference: $reference,
+            ),
         );
     }
 
@@ -161,8 +161,8 @@ class Measurement implements \Stringable
                 quantity: $quantity,
                 load: $load,
                 justification: $justification,
-                reference: $reference
-            )
+                reference: $reference,
+            ),
         );
     }
 
@@ -176,8 +176,8 @@ class Measurement implements \Stringable
                 purpose: $this->purpose(),
                 wasteManagerId: $this->wasteManagerId(),
                 accountId: $this->accountId(),
-                day: $this->day()
-            )
+                day: $this->day(),
+            ),
         );
     }
 
@@ -207,10 +207,7 @@ class Measurement implements \Stringable
         $this->reference = $event->reference();
     }
 
-    public function applyMeasurementRemoved(MeasurementRemoved $event)
-    {
-
-    }
+    public function applyMeasurementRemoved(MeasurementRemoved $event) {}
 
     public function __toString(): string
     {

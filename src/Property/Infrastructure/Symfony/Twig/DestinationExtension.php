@@ -1,21 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Symfony\Twig;
 
-use Twig\TwigFilter;
-use Twig\Extension\AbstractExtension;
 use App\Property\Domain\Model\Destination\Destination;
 use App\Property\Domain\Model\Destination\DestinationId;
 use App\Property\Domain\Model\Destination\DestinationRepository;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
 class DestinationExtension extends AbstractExtension
 {
     private array $destinations = [];
 
-    public function __construct(private readonly DestinationRepository $destinationRepository)
-    {
-
-    }
+    public function __construct(private readonly DestinationRepository $destinationRepository) {}
 
     public function getFilters(): array
     {
@@ -27,7 +26,7 @@ class DestinationExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            
+
         ];
     }
 

@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\UI\Web\Admin\Category\Bulk;
 
+use App\Property\Application\Category\Remove\RemoveCategoryRequest;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkAction;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
 use App\Shared\Infrastructure\UI\Web\Bulk\RemoveAction;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Property\Application\Category\Remove\RemoveCategoryRequest;
 
 class RemoveCategory implements BulkAction
 {
@@ -15,7 +17,7 @@ class RemoveCategory implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) === 0) {
+        if (0 === count($request->elements)) {
             return [];
         }
 
@@ -29,7 +31,7 @@ class RemoveCategory implements BulkAction
                 continue;
             }
             $commands[] = new RemoveCategoryRequest(
-                categoryId: $category->id()
+                categoryId: $category->id(),
             );
         }
 
@@ -38,11 +40,11 @@ class RemoveCategory implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
-        return new TranslatableMessage("Se ha eliminado la categoría {id}", ['{id}' => $command->categoryId]);
+        return new TranslatableMessage('Se ha eliminado la categoría {id}', ['{id}' => $command->categoryId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
-        return new TranslatableMessage("No se ha podido eliminar la categoría {id}", ['{id}' => $command->categoryId]);
+        return new TranslatableMessage('No se ha podido eliminar la categoría {id}', ['{id}' => $command->categoryId]);
     }
 }

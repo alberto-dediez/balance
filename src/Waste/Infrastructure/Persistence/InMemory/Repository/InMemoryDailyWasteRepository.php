@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Property\Domain\Model\Property\PropertyId;
@@ -17,15 +19,13 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 class InMemoryDailyWasteRepository implements DailyWasteRepository
 {
     public function __construct(
-        private array $dailyWastes = []
-    ) {
-
-    }
+        private array $dailyWastes = [],
+    ) {}
 
     public function add(DailyWaste $dailyWaste): void
     {
         if (isset($this->dailyWastes[(string) $dailyWaste->id()])) {
-            return ;
+            return;
         }
 
         $this->dailyWastes[(string) $dailyWaste->id()] = $dailyWaste;
@@ -34,7 +34,7 @@ class InMemoryDailyWasteRepository implements DailyWasteRepository
     public function remove(DailyWaste $dailyWaste): void
     {
         if (!isset($this->dailyWastes[(string) $dailyWaste->id()])) {
-            return ;
+            return;
         }
 
         unset($this->dailyWastes[(string) $dailyWaste->id()]);
@@ -55,19 +55,19 @@ class InMemoryDailyWasteRepository implements DailyWasteRepository
             purpose: $purpose,
             accountId: $accountId,
             day: $day,
-            limit: 0
+            limit: 0,
         );
 
         $results = $this->findByFilter($filter);
 
-        return count($results) === 0 ? null : $results[0];
+        return 0 === count($results) ? null : $results[0];
     }
 
     public function findByFilter(DailyWasteFilter $filter): array
     {
         $results = [];
 
-        if (count($this->dailyWastes) === 0) {
+        if (0 === count($this->dailyWastes)) {
             return $results;
         }
 
@@ -149,7 +149,7 @@ class InMemoryDailyWasteRepository implements DailyWasteRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

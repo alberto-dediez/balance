@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\DataExchange\Domain\Model\Importation\Importation;
@@ -16,10 +18,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineImportationRepository implements ImportationRepository
 {
-    public function __construct(private readonly EntityManagerInterface $manager, private readonly ImportationDataRepository $dataRepository)
-    {
-
-    }
+    public function __construct(private readonly EntityManagerInterface $manager, private readonly ImportationDataRepository $dataRepository) {}
 
     public function add(Importation $importation): void
     {
@@ -33,8 +32,8 @@ class DoctrineImportationRepository implements ImportationRepository
             $this->manager->persist($importation);
             $this->manager->flush();
 
-            if (count($importation->configurations()) === 0) {
-                return ;
+            if (0 === count($importation->configurations())) {
+                return;
             }
 
             foreach ($importation->configurations() as $configuration) {
@@ -55,7 +54,7 @@ class DoctrineImportationRepository implements ImportationRepository
 
         $importation = $qb
             ->andWhere(
-                $qb->expr()->eq('i.id', ':id')
+                $qb->expr()->eq('i.id', ':id'),
             )
             ->setParameter('id', $importationId)
             ->getQuery()
@@ -66,9 +65,9 @@ class DoctrineImportationRepository implements ImportationRepository
             return null;
         }
 
-        if (count($importation->configurations()) === 0) {
+        if (0 === count($importation->configurations())) {
             $importation->loadConfigurations(
-                $this->dataRepository->getAllConfigurations($importation->id())
+                $this->dataRepository->getAllConfigurations($importation->id()),
             );
         }
 

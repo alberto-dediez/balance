@@ -1,21 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Symfony\Twig;
 
-use Twig\TwigFilter;
-use Twig\Extension\AbstractExtension;
 use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\Waste\WasteRepository;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
 class WasteExtension extends AbstractExtension
 {
     private array $wastes = [];
 
-    public function __construct(private readonly WasteRepository $wasteRepository)
-    {
-
-    }
+    public function __construct(private readonly WasteRepository $wasteRepository) {}
 
     public function getFilters(): array
     {
@@ -27,7 +26,7 @@ class WasteExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            
+
         ];
     }
 

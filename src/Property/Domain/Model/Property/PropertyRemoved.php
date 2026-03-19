@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Property;
 
-use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
-use App\Property\Domain\Model\Property\PropertyId;
 
 final class PropertyRemoved extends DomainEvent
 {
@@ -15,7 +15,7 @@ final class PropertyRemoved extends DomainEvent
     public function __construct(
         private readonly PropertyId $propertyId,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -33,19 +33,19 @@ final class PropertyRemoved extends DomainEvent
     public function payload(): array
     {
         return [
-            'propertyId' => (string) $this->propertyId
+            'propertyId' => (string) $this->propertyId,
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        array $payload = []
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new PropertyRemoved(
             propertyId: new PropertyId($payload['propertyId']),
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

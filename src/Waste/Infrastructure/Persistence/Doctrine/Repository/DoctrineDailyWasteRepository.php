@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Property\Domain\Model\Property\PropertyId;
@@ -21,10 +23,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineDailyWasteRepository implements DailyWasteRepository
 {
-    public function __construct(private readonly EntityManagerInterface $manager)
-    {
-
-    }
+    public function __construct(private readonly EntityManagerInterface $manager) {}
 
     public function add(DailyWaste $dailyWaste): void
     {
@@ -44,7 +43,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('m.id', ':id')
+                $qb->expr()->eq('m.id', ':id'),
             )
             ->setParameter('id', (string) $dailyWasteId)
             ->getQuery()
@@ -61,7 +60,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
             purpose: $purpose,
             accountId: $accountId,
             day: $day,
-            limit: 0
+            limit: 0,
         );
 
         return $this->createQueryBuilderFromFilter($filter)
@@ -81,7 +80,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
         if (count($filter->properties) > 0) {
             $qb
                 ->andWhere(
-                    $qb->expr()->in('m.propertyId', ':properties')
+                    $qb->expr()->in('m.propertyId', ':properties'),
                 )
                 ->setParameter('properties', array_map(fn(PropertyId $propertyId) => (string) $propertyId, $filter->properties))
             ;
@@ -90,7 +89,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
         if ($filter->wasteId instanceof WasteId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.wasteId', ':wasteId')
+                    $qb->expr()->eq('m.wasteId', ':wasteId'),
                 )
                 ->setParameter('wasteId', $filter->wasteId)
             ;
@@ -99,7 +98,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
         if ($filter->purpose instanceof Purpose) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.purpose', ':purpose')
+                    $qb->expr()->eq('m.purpose', ':purpose'),
                 )
                 ->setParameter('purpose', $filter->purpose->value)
             ;
@@ -108,7 +107,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
         if ($filter->wasteManagerId instanceof WasteManagerId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.wasteManagerId', ':wasteManagerId')
+                    $qb->expr()->eq('m.wasteManagerId', ':wasteManagerId'),
                 )
                 ->setParameter('wasteManagerId', $filter->wasteManagerId)
             ;
@@ -117,7 +116,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
         if ($filter->accountId instanceof AccountId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.accountId', ':accountId')
+                    $qb->expr()->eq('m.accountId', ':accountId'),
                 )
                 ->setParameter('accountId', $filter->accountId)
             ;
@@ -126,16 +125,16 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
         if ($filter->day instanceof \DateTimeImmutable) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('m.day', ':day')
+                    $qb->expr()->like('m.day', ':day'),
                 )
-                ->setParameter('day', sprintf("%s%%", $filter->day->format('Y-m-d')))
+                ->setParameter('day', sprintf('%s%%', $filter->day->format('Y-m-d')))
             ;
         }
 
         if ($filter->dayFrom instanceof \DateTimeImmutable) {
             $qb
                 ->andWhere(
-                    $qb->expr()->gte('m.day', ':dayFrom')
+                    $qb->expr()->gte('m.day', ':dayFrom'),
                 )
                 ->setParameter('dayFrom', $filter->dayFrom->format('Y-m-d'))
             ;
@@ -144,13 +143,13 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
         if ($filter->dayTo instanceof \DateTimeImmutable) {
             $qb
                 ->andWhere(
-                    $qb->expr()->lte('m.day', ':dayTo')
+                    $qb->expr()->lte('m.day', ':dayTo'),
                 )
                 ->setParameter('dayTo', $filter->dayTo->format('Y-m-d'))
             ;
         }
 
-        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
             default => $qb->orderBy('m.day', $way),

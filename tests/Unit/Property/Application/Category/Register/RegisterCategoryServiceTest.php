@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Category\Register;
 
-use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCategoryRepository;
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Property\Domain\Model\Category\Category;
-use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Property\Application\Category\CategoryAuthorizer;
+use App\Property\Application\Category\Register\RegisterCategoryRequest;
+use App\Property\Application\Category\Register\RegisterCategoryResponse;
+use App\Property\Application\Category\Register\RegisterCategoryService;
+use App\Property\Domain\Model\Category\Category;
 use App\Property\Domain\Model\Category\CategoryRegistered;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCategoryRepository;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Property\Domain\Model\Category\CategoryRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Property\Application\Category\Register\RegisterCategoryRequest;
-use App\Property\Application\Category\Register\RegisterCategoryService;
-use App\Property\Application\Category\Register\RegisterCategoryResponse;
-use App\Tests\Unit\Property\Domain\Model\Category\CategoryRepositoryMother;
+use PHPUnit\Framework\TestCase;
 
 class RegisterCategoryServiceTest extends TestCase
 {
@@ -36,7 +38,7 @@ class RegisterCategoryServiceTest extends TestCase
         $sut = $this->createSUT($repository);
 
         $request = new RegisterCategoryRequest(
-            name: '1 Estrella'
+            name: '1 Estrella',
         );
 
         $result = $sut($request, $user);
@@ -66,7 +68,7 @@ class RegisterCategoryServiceTest extends TestCase
         $sut = $this->createSUT($repository);
 
         $result = $sut->isHandled(new RegisterCategoryRequest(
-            name: '2 stars'
+            name: '2 stars',
         ));
 
         $this->assertTrue($result);

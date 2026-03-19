@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Shared\Domain\Model\Locale\LocaleGetter;
@@ -12,15 +14,12 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryWasteRepository implements WasteRepository
 {
-    public function __construct(private readonly LocaleGetter $localeGetter, private array $wastes = [])
-    {
-
-    }
+    public function __construct(private readonly LocaleGetter $localeGetter, private array $wastes = []) {}
 
     public function add(Waste $waste): void
     {
         if (isset($this->wastes[(string) $waste->id()])) {
-            return ;
+            return;
         }
 
         $waste->translations()->setLocale($this->localeGetter->locale());
@@ -31,7 +30,7 @@ class InMemoryWasteRepository implements WasteRepository
     public function remove(Waste $waste): void
     {
         if (!isset($this->wastes[(string) $waste->id()])) {
-            return ;
+            return;
         }
 
         unset($this->wastes[(string) $waste->id()]);
@@ -49,7 +48,7 @@ class InMemoryWasteRepository implements WasteRepository
     {
         $results = [];
 
-        if (count($this->wastes) === 0) {
+        if (0 === count($this->wastes)) {
             return $results;
         }
 
@@ -72,7 +71,7 @@ class InMemoryWasteRepository implements WasteRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

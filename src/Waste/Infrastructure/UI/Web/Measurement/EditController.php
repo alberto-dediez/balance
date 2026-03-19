@@ -1,35 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Web\Measurement;
 
 use App\Security\Application\Action;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
-use Symfony\Component\Translation\TranslatableMessage;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
+use App\Waste\Application\Measurement\Update\UpdateMeasurementRequest;
+use App\Waste\Application\Measurement\Update\UpdateMeasurementService;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 use App\Waste\Infrastructure\Symfony\Form\UpdateMeasurementType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Waste\Application\Measurement\Update\UpdateMeasurementRequest;
-use App\Waste\Application\Measurement\Update\UpdateMeasurementService;
-use App\Waste\Infrastructure\UI\Web\Measurement\GetMeasurementFromIdTrait;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/measurements/edit/{measurementId}', name: 'measurements_edit')]
 class EditController extends AbstractController
 {
-    use EditTrait, GetMeasurementFromIdTrait;
+    use EditTrait;
+    use GetMeasurementFromIdTrait;
 
     public function __invoke(
         string $measurementId,
         MeasurementRepository $measurementRepository,
         UpdateMeasurementService $updateMeasurement,
         LoggedUser $loggedUser,
-        Request $request
-    ): Response
-    {
+        Request $request,
+    ): Response {
         $measurement = $this->getMeasurementFromId($measurementId, $measurementRepository);
 
         $this->denyAccessUnlessGranted(Action::Edit->value, $measurement);
@@ -62,7 +63,7 @@ class EditController extends AbstractController
 
         return $this->render('@waste/measurements/edit.html.twig', [
             'measurement' => $measurement,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\UI\Web\Form;
 
 use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
@@ -25,16 +27,18 @@ class ConfigurationTranslationType extends AbstractType
                 $definition = $definitions[$configuration->field] ?? null;
 
                 if (null === $definition) {
-                    return ;
+                    return;
                 }
 
                 $event
                     ->getForm()
                     ->add(
-                        'translations', CollectionType::class, [
+                        'translations',
+                        CollectionType::class,
+                        [
                             'entry_type' => ColumnValueTranslationType::class,
                             'entry_options' => ['definition' => $definition],
-                        ]
+                        ],
                     )
                 ;
             })
@@ -45,7 +49,7 @@ class ConfigurationTranslationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ImportationColumnConfiguration::class,
-            'definitions' => []
+            'definitions' => [],
         ]);
     }
 }

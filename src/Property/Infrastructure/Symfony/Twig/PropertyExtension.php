@@ -1,21 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Symfony\Twig;
 
-use Twig\TwigFilter;
-use Twig\Extension\AbstractExtension;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
 class PropertyExtension extends AbstractExtension
 {
     private array $properties = [];
 
-    public function __construct(private readonly PropertyRepository $propertyRepository)
-    {
-
-    }
+    public function __construct(private readonly PropertyRepository $propertyRepository) {}
 
     public function getFilters(): array
     {
@@ -27,7 +26,7 @@ class PropertyExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            
+
         ];
     }
 

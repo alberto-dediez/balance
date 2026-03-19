@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\UI\Web\Import;
 
 use App\Security\Application\Action;
@@ -19,8 +21,7 @@ class ViewController extends AbstractController
         string $id,
         LoggedUser $loggedUser,
         Request $request,
-    ): Response
-    {
+    ): Response {
         $importationType = $this->getImportationTypeOrNotFound($code);
 
         $importation = $this->getImportationOrNotFound($id);
@@ -33,13 +34,13 @@ class ViewController extends AbstractController
         while (null !== ($row = $this->importationRepository->getResult($importation->id(), $rowNumber))) {
             $results[] = $row;
 
-            $rowNumber++;
+            ++$rowNumber;
         }
 
         return $this->render('@data_exchange/import/view.html.twig', [
             'importation' => $importation,
             'importationType' => $importationType,
-            'results' => $results
+            'results' => $results,
         ]);
     }
 }

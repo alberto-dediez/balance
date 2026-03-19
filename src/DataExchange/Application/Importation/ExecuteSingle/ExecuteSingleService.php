@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Application\Importation\ExecuteSingle;
 
-use App\DataExchange\Domain\Model\Importation\Importation;
-use App\DataExchange\Domain\Model\Importation\ImportationType;
 use App\DataExchange\Application\Importation\ImportationAuthorizer;
+use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
+use App\DataExchange\Domain\Model\Importation\ImportationType;
 use App\DataExchange\Domain\Model\Importation\ImportationTypeFactory;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
@@ -17,14 +19,14 @@ use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 
 class ExecuteSingleService implements CommandHandler
 {
-    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+    use RegisterHandlerTrait;
+    use CommandInvokeHandlerTrait;
 
     public function __construct(
         private ImportationRepository $importationRepository,
         private ImportationTypeFactory $importationTypeFactory,
-        private ImportationAuthorizer $authorizer
-    ) {
-    }
+        private ImportationAuthorizer $authorizer,
+    ) {}
 
     public function __invoke(ExecuteSingleRequest $request, User $user): ExecuteSingleResponse
     {
@@ -51,7 +53,7 @@ class ExecuteSingleService implements CommandHandler
         try {
             CommandBusDispatcher::instance()->dispatch(
                 $request->command,
-                $user
+                $user,
             );
         } catch (\Throwable $exception) {
             $errorMessage = $exception->getMessage();
@@ -70,7 +72,7 @@ class ExecuteSingleService implements CommandHandler
         return new ExecuteSingleResponse(
             importationId: $importation->id(),
             rowNumber: $request->rowNumber,
-            success: null === $errorMessage
+            success: null === $errorMessage,
         );
     }
 

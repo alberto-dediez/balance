@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Destination;
 
-use App\Shared\Domain\Model\AggregateRoot;
 use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Property\ExternalId;
+use App\Shared\Domain\Model\AggregateRoot;
 
 class Destination implements \Stringable
 {
@@ -13,15 +15,13 @@ class Destination implements \Stringable
     public function __construct(
         private DestinationId $id,
         private string $name = '',
-        private CountryId|null $countryId = null,
+        private ?CountryId $countryId = null,
         private ?ExternalId $externalId = null,
         private bool $removed = false,
         array $events = [],
         private ?\DateTimeImmutable $registeredAt = null,
-        private ?\DateTimeImmutable $removedAt = null
-    ) {
-
-    }
+        private ?\DateTimeImmutable $removedAt = null,
+    ) {}
 
     public function id(): DestinationId
     {
@@ -69,8 +69,8 @@ class Destination implements \Stringable
                 destinationId: $this->id(),
                 name: $name,
                 countryId: $countryId,
-                externalId: $externalId
-            )
+                externalId: $externalId,
+            ),
         );
     }
 
@@ -81,8 +81,8 @@ class Destination implements \Stringable
                 destinationId: $this->id(),
                 name: $name,
                 countryId: $countryId,
-                externalId: $externalId
-            )
+                externalId: $externalId,
+            ),
         );
     }
 
@@ -90,8 +90,8 @@ class Destination implements \Stringable
     {
         $this->recordApplyAndPublish(
             new DestinationRemoved(
-                destinationId: $this->id()
-            )
+                destinationId: $this->id(),
+            ),
         );
     }
 

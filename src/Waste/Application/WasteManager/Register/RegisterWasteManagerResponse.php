@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\WasteManager\Register;
 
 use App\Security\Domain\Model\Account\AccountId;
@@ -9,11 +11,9 @@ use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 class RegisterWasteManagerResponse implements CommandResponse
 {
     public function __construct(
-        public WasteManagerId $wasteManagerId, 
+        public WasteManagerId $wasteManagerId,
         public string $name,
         public bool $isPublic,
-        public ?AccountId $accountId = null
-    ) {
-        
-    }
+        public ?AccountId $accountId = null,
+    ) {}
 }

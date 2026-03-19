@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\WasteManager;
 
-use App\Shared\Domain\Model\AggregateRoot;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Model\AggregateRoot;
 
 class WasteManager implements \Stringable
 {
@@ -12,15 +14,13 @@ class WasteManager implements \Stringable
     public function __construct(
         private WasteManagerId $id,
         private ?string $name = null,
-        private AccountId|null $accountId = null,
+        private ?AccountId $accountId = null,
         private bool $isPublic = true,
         private bool $removed = false,
         array $events = [],
         private ?\DateTimeImmutable $registeredAt = null,
-        private ?\DateTimeImmutable $removedAt = null
-    ) {
-
-    }
+        private ?\DateTimeImmutable $removedAt = null,
+    ) {}
 
     public function id(): WasteManagerId
     {
@@ -60,28 +60,28 @@ class WasteManager implements \Stringable
     public function register(
         string $name,
         bool $isPublic,
-        AccountId $accountId
+        AccountId $accountId,
     ): void {
         $this->recordApplyAndPublish(
             new WasteManagerRegistered(
                 wasteManagerId: $this->id(),
                 name: $name,
                 isPublic: $isPublic,
-                accountId: $accountId
-            )
+                accountId: $accountId,
+            ),
         );
     }
 
     public function update(
         string $name,
-        bool $isPublic
+        bool $isPublic,
     ): void {
         $this->recordApplyAndPublish(
             new WasteManagerUpdated(
                 wasteManagerId: $this->id(),
                 name: $name,
-                isPublic: $isPublic
-            )
+                isPublic: $isPublic,
+            ),
         );
     }
 
@@ -89,8 +89,8 @@ class WasteManager implements \Stringable
     {
         $this->recordApplyAndPublish(
             new WasteManagerRemoved(
-                wasteManagerId: $this->id()
-            )
+                wasteManagerId: $this->id(),
+            ),
         );
     }
 
@@ -111,7 +111,7 @@ class WasteManager implements \Stringable
     public function applyWasteManagerRemoved(WasteManagerRemoved $event): void
     {
         $this->removed = true;
-        $this->removedAt = new \DateTimeImmutable("NOW");
+        $this->removedAt = new \DateTimeImmutable('NOW');
     }
 
     public function __toString(): string

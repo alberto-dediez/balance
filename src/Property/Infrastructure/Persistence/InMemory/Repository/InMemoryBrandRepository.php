@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Property\Domain\Model\Brand\Brand;
@@ -13,15 +15,12 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryBrandRepository implements BrandRepository
 {
-    public function __construct(private array $brands = [])
-    {
-
-    }
+    public function __construct(private array $brands = []) {}
 
     public function add(Brand $brand): void
     {
         if (isset($this->brands[(string) $brand->id()])) {
-            return ;
+            return;
         }
 
         $this->brands[(string) $brand->id()] = $brand;
@@ -30,7 +29,7 @@ class InMemoryBrandRepository implements BrandRepository
     public function remove(Brand $brand): void
     {
         if (!isset($this->brands[(string) $brand->id()])) {
-            return ;
+            return;
         }
 
         unset($this->brands[(string) $brand->id()]);
@@ -46,7 +45,7 @@ class InMemoryBrandRepository implements BrandRepository
 
     public function findByName(string $name): ?Brand
     {
-        if (count($this->brands) === 0) {
+        if (0 === count($this->brands)) {
             return null;
         }
 
@@ -61,7 +60,7 @@ class InMemoryBrandRepository implements BrandRepository
 
     public function findBySourceAndExternalId(ExternalSource $source, ExternalId $externalId): ?Brand
     {
-        if (count($this->brands) === 0) {
+        if (0 === count($this->brands)) {
             return null;
         }
 
@@ -85,7 +84,7 @@ class InMemoryBrandRepository implements BrandRepository
     {
         $results = [];
 
-        if (count($this->brands) === 0) {
+        if (0 === count($this->brands)) {
             return $results;
         }
 
@@ -104,7 +103,7 @@ class InMemoryBrandRepository implements BrandRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

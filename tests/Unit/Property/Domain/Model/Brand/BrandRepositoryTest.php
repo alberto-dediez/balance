@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Domain\Model\Brand;
 
 use App\Property\Domain\Model\Brand\BrandFilter;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Property\Domain\Model\Brand\BrandRepository;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class BrandRepositoryTest extends KernelTestCase
 {
     public function testAddBrandToRepository(): void
-    {   
+    {
         $repository = $this->createSUT();
 
         $brand = BrandMother::random();
@@ -25,7 +27,7 @@ abstract class BrandRepositoryTest extends KernelTestCase
     }
 
     public function testRemoveBrandToRepository(): void
-    {   
+    {
         $repository = $this->createSUT();
 
         $brand = BrandMother::random();
@@ -76,7 +78,7 @@ abstract class BrandRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new BrandFilter(
-            name: 'Ibis'
+            name: 'Ibis',
         );
 
         $result = $repository->findByFilter($filter);
@@ -102,7 +104,7 @@ abstract class BrandRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new BrandFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\DataExchange\Application\Importation\AssignValues;
 
 use App\DataExchange\Application\Importation\AssignValues\AssignValuesImportationRequest;
@@ -34,7 +36,7 @@ class AssignValuesImportationServiceTest extends TestCase
     public function testUseCase(): void
     {
         $importationFile = new ImportationFile(
-            path: __DIR__ . '/../Register/superheroes.csv'
+            path: __DIR__ . '/../Register/superheroes.csv',
         );
 
         $importation = ImportationMother::fromNameAndFile('superheroes.csv', $importationFile);
@@ -45,7 +47,7 @@ class AssignValuesImportationServiceTest extends TestCase
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: $importation->accountId()
+            accountId: $importation->accountId(),
         );
 
         $sut = $this->createSUT($repository);
@@ -54,8 +56,8 @@ class AssignValuesImportationServiceTest extends TestCase
             importationId: $importation->id(),
             defaultValues: [
                 'name' => null,
-                'age' => '35'
-            ]
+                'age' => '35',
+            ],
         );
 
         $result = $sut($request, $user);
@@ -89,14 +91,14 @@ class AssignValuesImportationServiceTest extends TestCase
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
         );
 
         $sut = $this->createSUT($repository);
 
         $request = new AssignValuesImportationRequest(
             importationId: $importation->id(),
-            defaultValues: []
+            defaultValues: [],
         );
 
         $sut($request, $user);
@@ -110,7 +112,7 @@ class AssignValuesImportationServiceTest extends TestCase
 
         $result = $sut->isHandled(new AssignValuesImportationRequest(
             importationId: ImportationId::generate(),
-            defaultValues: []
+            defaultValues: [],
         ));
 
         $this->assertTrue($result);

@@ -1,30 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Api\MeasurementRegister;
 
-use Nelmio\ApiDocBundle\Attribute\Areas;
-use OpenApi\Attributes as OA;
-use Nelmio\ApiDocBundle\Attribute\Model;
-use Symfony\Component\Routing\Attribute\Route;
-use App\Waste\Domain\Model\Container\ContainerId;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Waste\Domain\Model\Measurement\MeasurementRepository;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponse;
 use App\Waste\Application\Measurement\Register\RegisterMeasurementRequest;
 use App\Waste\Application\Measurement\Register\RegisterMeasurementService;
+use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\Measurement\MeasurementRepository;
+use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponse;
 use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponseGenerator;
 use App\Waste\Infrastructure\UI\Api\MeasurementRegister\MeasurementRegisterRequest as ApiRequest;
+use Nelmio\ApiDocBundle\Attribute\Areas;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/measurements', name: 'api_measurements_register', methods: ['POST'])]
 #[Areas(['mobile', 'admin'])]
-#[OA\Post(description: "Register a measurement in an owned container", summary: "Register Measurement", tags: ['Waste'])]
+#[OA\Post(description: 'Register a measurement in an owned container', summary: 'Register Measurement', tags: ['Waste'])]
 #[OA\Response(
     response: 200,
     description: 'Returns data of registered measurement',
-    content: new Model(type: MeasurementResponse::class)
+    content: new Model(type: MeasurementResponse::class),
 )]
 class MeasurementRegisterController extends AbstractController
 {
@@ -33,7 +35,7 @@ class MeasurementRegisterController extends AbstractController
         ApiRequest $request,
         RegisterMeasurementService $registerMeasurement,
         MeasurementRepository $measurementRepository,
-        MeasurementResponseGenerator $measurementGenerator
+        MeasurementResponseGenerator $measurementGenerator,
     ): JsonResponse {
         /**
          * @var SecurityUser $user
@@ -46,15 +48,15 @@ class MeasurementRegisterController extends AbstractController
                 quantity: $request->quantity,
                 load: (float) $request->load,
                 registeredBy: $user->id(),
-                justification: $request->justification
+                justification: $request->justification,
             ),
-            $user
+            $user,
         );
 
         $measurement = $measurementRepository->find($registerResponse->measurementId);
 
         return $this->json(
-            $measurementGenerator->generate($measurement)
+            $measurementGenerator->generate($measurement),
         );
     }
 }

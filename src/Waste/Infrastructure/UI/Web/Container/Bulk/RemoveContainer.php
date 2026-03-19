@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Web\Container\Bulk;
 
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkAction;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
 use App\Shared\Infrastructure\UI\Web\Bulk\RemoveAction;
-use Symfony\Component\Translation\TranslatableMessage;
 use App\Waste\Application\Container\Remove\RemoveContainerRequest;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class RemoveContainer implements BulkAction
 {
@@ -15,7 +17,7 @@ class RemoveContainer implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) === 0) {
+        if (0 === count($request->elements)) {
             return [];
         }
 
@@ -29,7 +31,7 @@ class RemoveContainer implements BulkAction
                 continue;
             }
             $commands[] = new RemoveContainerRequest(
-                containerId: $container->id()
+                containerId: $container->id(),
             );
         }
 
@@ -38,11 +40,11 @@ class RemoveContainer implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
-        return new TranslatableMessage("Se ha eliminado el contenedor {id}", ['{id}' => $command->containerId]);
+        return new TranslatableMessage('Se ha eliminado el contenedor {id}', ['{id}' => $command->containerId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
-        return new TranslatableMessage("No se ha podido eliminar el contenedor {id}", ['{id}' => $command->containerId]);
+        return new TranslatableMessage('No se ha podido eliminar el contenedor {id}', ['{id}' => $command->containerId]);
     }
 }

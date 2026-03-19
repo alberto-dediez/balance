@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;

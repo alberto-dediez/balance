@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\Persistence\PDO\Tools;
 
-use OpenSpout\Reader\XLSX\Reader;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\NotImportedException;
+use OpenSpout\Reader\XLSX\Reader;
 
 class FileExtractor
 {
@@ -31,7 +33,7 @@ class FileExtractor
         $offset = $this->importationFile->offset();
 
         while ($offset > 0) {
-            $offset--;
+            --$offset;
             $this->iterator->next();
         }
 

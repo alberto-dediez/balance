@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Shared\Domain\Model\Locale\LocaleGetter;
@@ -50,7 +52,7 @@ class DoctrineWasteRepository implements WasteRepository
 
         $waste = $qb
             ->andWhere(
-                $qb->expr()->eq('w.id', ':id')
+                $qb->expr()->eq('w.id', ':id'),
             )
             ->setParameter('id', (string) $wasteId)
             ->getQuery()
@@ -72,8 +74,8 @@ class DoctrineWasteRepository implements WasteRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('w.removed'),
-                    $qb->expr()->eq('w.removed', $qb->expr()->literal(false))
-                )
+                    $qb->expr()->eq('w.removed', $qb->expr()->literal(false)),
+                ),
             )
             ->setParameter('locale', $this->localeGetter->locale())
         ;
@@ -84,10 +86,10 @@ class DoctrineWasteRepository implements WasteRepository
                     $qb->expr()->orX(
                         $qb->expr()->andX(
                             $qb->expr()->like('w.name', ':name'),
-                            $qb->expr()->isNull('trans.name')
+                            $qb->expr()->isNull('trans.name'),
                         ),
-                        $qb->expr()->like('trans.name', ':name')
-                    )
+                        $qb->expr()->like('trans.name', ':name'),
+                    ),
                 )
                 ->setParameter('name', "%{$filter->name}%")
             ;
@@ -96,13 +98,13 @@ class DoctrineWasteRepository implements WasteRepository
         if (null !== $filter->isDangerous) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('w.isDangerous', ':isDangerous')
+                    $qb->expr()->eq('w.isDangerous', ':isDangerous'),
                 )
                 ->setParameter('isDangerous', $filter->isDangerous)
             ;
         }
 
-        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
             'registeredAt' => $qb->orderBy('w.registeredAt', $way),
@@ -127,7 +129,7 @@ class DoctrineWasteRepository implements WasteRepository
 
         $wastes = (array) $query->getResult();
 
-        if (count($wastes) === 0) {
+        if (0 === count($wastes)) {
             return [];
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Messenger;
 
 use App\Security\Domain\Model\User\UserId;
@@ -11,10 +13,8 @@ class DeferredMessage
 {
     public function __construct(
         private readonly Command $command,
-        private readonly UserId $userId
-    ) {
-
-    }
+        private readonly UserId $userId,
+    ) {}
 
     public function command(): Command
     {

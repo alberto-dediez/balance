@@ -1,11 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Category;
 
-use App\Property\Domain\Model\Category\Category;
-use App\Property\Domain\Model\Category\CategoryId;
 use App\Property\Domain\Model\Property\ExternalId;
-use App\Property\Domain\Model\Category\CategoryFilter;
 use App\Property\Domain\Model\Property\ExternalSource;
 
 interface CategoryRepository

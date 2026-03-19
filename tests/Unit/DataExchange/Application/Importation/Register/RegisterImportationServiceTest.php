@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\DataExchange\Application\Importation\Register;
 
 use App\DataExchange\Application\Importation\Register\RegisterImportationRequest;
@@ -35,7 +37,7 @@ class RegisterImportationServiceTest extends TestCase
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
         );
 
         $sut = $this->createSUT($repository);
@@ -46,7 +48,7 @@ class RegisterImportationServiceTest extends TestCase
             path: __DIR__ . '/superheroes.csv',
             offset: 0,
             extension: 'csv',
-            accountId: $user->accountId()
+            accountId: $user->accountId(),
         );
 
         $result = $sut($request, $user);
@@ -78,7 +80,7 @@ class RegisterImportationServiceTest extends TestCase
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
         );
 
         $sut = $this->createSUT($repository);
@@ -89,7 +91,7 @@ class RegisterImportationServiceTest extends TestCase
             path: __DIR__ . '/superheroes.csv',
             offset: 0,
             extension: 'csv',
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
         );
 
         $sut($request, $user);
@@ -107,7 +109,7 @@ class RegisterImportationServiceTest extends TestCase
             path: __DIR__ . '/superheroes.csv',
             offset: 0,
             extension: 'csv',
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
         ));
 
         $this->assertTrue($result);

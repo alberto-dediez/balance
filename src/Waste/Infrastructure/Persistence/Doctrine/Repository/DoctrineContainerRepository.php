@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Property\Domain\Model\Property\PropertyId;
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Waste\Domain\Model\Container\Purpose;
-use App\Waste\Domain\Model\Container\MeasurementMethod;
-use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerFilter;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -22,10 +24,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineContainerRepository implements ContainerRepository
 {
-    public function __construct(private readonly EntityManagerInterface $manager)
-    {
-
-    }
+    public function __construct(private readonly EntityManagerInterface $manager) {}
 
     public function add(Container $container): void
     {
@@ -45,7 +44,7 @@ class DoctrineContainerRepository implements ContainerRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('c.id', ':id')
+                $qb->expr()->eq('c.id', ':id'),
             )
             ->setParameter('id', (string) $containerId)
             ->getQuery()
@@ -62,15 +61,15 @@ class DoctrineContainerRepository implements ContainerRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('c.removed'),
-                    $qb->expr()->eq('c.removed', $qb->expr()->literal(false))
-                )
+                    $qb->expr()->eq('c.removed', $qb->expr()->literal(false)),
+                ),
             )
         ;
 
         if ($filter->propertyId instanceof PropertyId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('c.propertyId', ':property')
+                    $qb->expr()->eq('c.propertyId', ':property'),
                 )
                 ->setParameter('property', $filter->propertyId)
             ;
@@ -79,7 +78,7 @@ class DoctrineContainerRepository implements ContainerRepository
         if ($filter->wasteId instanceof WasteId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('c.wasteId', ':wasteId')
+                    $qb->expr()->eq('c.wasteId', ':wasteId'),
                 )
                 ->setParameter('wasteId', $filter->wasteId)
             ;
@@ -88,7 +87,7 @@ class DoctrineContainerRepository implements ContainerRepository
         if ($filter->purpose instanceof Purpose) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('c.purpose', ':purpose')
+                    $qb->expr()->eq('c.purpose', ':purpose'),
                 )
                 ->setParameter('purpose', $filter->purpose->value)
             ;
@@ -97,7 +96,7 @@ class DoctrineContainerRepository implements ContainerRepository
         if ($filter->measurementMethod instanceof MeasurementMethod) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('c.measurementMethod', ':measurementMethod')
+                    $qb->expr()->eq('c.measurementMethod', ':measurementMethod'),
                 )
                 ->setParameter('measurementMethod', $filter->measurementMethod->value)
             ;
@@ -106,7 +105,7 @@ class DoctrineContainerRepository implements ContainerRepository
         if ($filter->wasteManagerId instanceof WasteManagerId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('c.wasteManagerId', ':wasteManagerId')
+                    $qb->expr()->eq('c.wasteManagerId', ':wasteManagerId'),
                 )
                 ->setParameter('wasteManagerId', $filter->wasteManagerId)
             ;
@@ -115,13 +114,13 @@ class DoctrineContainerRepository implements ContainerRepository
         if ($filter->accountId instanceof AccountId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('c.accountId', ':accountId')
+                    $qb->expr()->eq('c.accountId', ':accountId'),
                 )
                 ->setParameter('accountId', $filter->accountId)
             ;
         }
 
-        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
             default => $qb->orderBy('c.registeredAt', $way),

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain;
 
 use App\Shared\Domain\Event\DomainEvent as SharedDomainEvent;

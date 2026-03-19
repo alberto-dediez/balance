@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Domain\Model\Property;
 
 use App\Property\Domain\Model\Property\PropertyFilter;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class PropertyRepositoryTest extends KernelTestCase
 {
     public function testAddPropertyToRepository(): void
-    {   
+    {
         $repository = $this->createSUT();
 
         $property = PropertyMother::registeredProperty();
@@ -25,7 +27,7 @@ abstract class PropertyRepositoryTest extends KernelTestCase
     }
 
     public function testRemovePropertyToRepository(): void
-    {   
+    {
         $repository = $this->createSUT();
 
         $property = PropertyMother::registeredProperty();
@@ -76,7 +78,7 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new PropertyFilter(
-            name: 'Hotel'
+            name: 'Hotel',
         );
 
         $result = $repository->findByFilter($filter);
@@ -102,7 +104,7 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new PropertyFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);

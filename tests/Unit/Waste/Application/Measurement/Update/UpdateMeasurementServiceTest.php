@@ -1,21 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\Measurement\Update;
 
-use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
-use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Waste\Domain\Model\Measurement\MeasurementUpdated;
-use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
-use App\Waste\Application\Measurement\Update\UpdateMeasurementRequest;
-use App\Waste\Application\Measurement\Update\UpdateMeasurementService;
-use App\Waste\Application\Measurement\Update\UpdateMeasurementResponse;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
+use App\Waste\Application\Measurement\MeasurementAuthorizer;
+use App\Waste\Application\Measurement\Update\UpdateMeasurementRequest;
+use App\Waste\Application\Measurement\Update\UpdateMeasurementResponse;
+use App\Waste\Application\Measurement\Update\UpdateMeasurementService;
+use App\Waste\Domain\Model\Measurement\Measurement;
+use App\Waste\Domain\Model\Measurement\MeasurementUpdated;
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
+use PHPUnit\Framework\TestCase;
 
 class UpdateMeasurementServiceTest extends TestCase
 {
@@ -44,7 +46,7 @@ class UpdateMeasurementServiceTest extends TestCase
             measurementId: $measurement->id(),
             quantity: 2,
             load: 0.26,
-            justification: null
+            justification: null,
         );
 
         $result = $sut($request, $user);
@@ -77,7 +79,7 @@ class UpdateMeasurementServiceTest extends TestCase
             measurementId: $measurement->id(),
             quantity: 2,
             load: 0.26,
-            justification: null
+            justification: null,
         ));
 
         $this->assertTrue($result);
@@ -87,7 +89,7 @@ class UpdateMeasurementServiceTest extends TestCase
     {
         return new UpdateMeasurementService(
             measurementRepository: $repository,
-            authorizer: new MeasurementAuthorizer()
+            authorizer: new MeasurementAuthorizer(),
         );
     }
 }

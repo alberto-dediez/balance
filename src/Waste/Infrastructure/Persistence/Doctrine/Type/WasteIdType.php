@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Persistence\Doctrine\Type;
 
 use App\Shared\Infrastructure\Persistence\Doctrine\Type\AggregateRootIdTypeTrait;

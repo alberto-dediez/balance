@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Symfony\Form;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Property\Application\Property\List\ListPropertiesRequest;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AdminListPropertiesType extends ListPropertiesType
 {
@@ -11,7 +13,7 @@ class AdminListPropertiesType extends ListPropertiesType
     {
         $resolver->setDefaults([
             'data_class' => ListPropertiesRequest::class,
-            'admin' => true
+            'admin' => true,
         ]);
     }
 }

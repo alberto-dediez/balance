@@ -1,22 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Property\Update;
 
-use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Property\Domain\Model\Property\Property;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Property\Domain\Model\Property\PropertyUpdated;
 use App\Property\Application\Property\PropertyAuthorizer;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Property\Application\Property\Update\UpdatePropertyRequest;
-use App\Property\Application\Property\Update\UpdatePropertyService;
 use App\Property\Application\Property\Update\UpdatePropertyResponse;
+use App\Property\Application\Property\Update\UpdatePropertyService;
+use App\Property\Domain\Model\Property\Property;
+use App\Property\Domain\Model\Property\PropertyUpdated;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class UpdatePropertyServiceTest extends TestCase
 {
@@ -42,7 +44,7 @@ class UpdatePropertyServiceTest extends TestCase
         $request = new UpdatePropertyRequest(
             propertyId: $property->id(),
             name: 'Hotel',
-            accountId: new AccountId('6666')
+            accountId: new AccountId('6666'),
         );
 
         $user = UserMother::fromUsernameAndRole('user', Role::Admin);
@@ -77,7 +79,7 @@ class UpdatePropertyServiceTest extends TestCase
         $result = $sut->isHandled(new UpdatePropertyRequest(
             propertyId: $property->id(),
             name: 'Restaurante',
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
         ));
 
         $this->assertTrue($result);

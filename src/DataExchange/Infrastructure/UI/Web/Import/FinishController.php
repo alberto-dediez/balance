@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\UI\Web\Import;
 
 use App\DataExchange\Application\Importation\Execute\ExecuteImportationRequest;
@@ -22,8 +24,7 @@ class FinishController extends AbstractController
         LoggedUser $loggedUser,
         ExecuteImportationService $executeImportation,
         Request $request,
-    ): Response
-    {
+    ): Response {
         $importationType = $this->getImportationTypeOrNotFound($code);
 
         $importation = $this->getImportationOrNotFound($id);
@@ -40,7 +41,7 @@ class FinishController extends AbstractController
 
         return $this->render('@data_exchange/import/finish.html.twig', [
             'importation' => $importation,
-            'importationType' => $importationType
+            'importationType' => $importationType,
         ]);
     }
 }

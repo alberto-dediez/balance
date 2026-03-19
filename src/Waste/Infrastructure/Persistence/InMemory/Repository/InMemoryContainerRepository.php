@@ -1,31 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Property\Domain\Model\Property\PropertyId;
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Waste\Domain\Model\Container\Purpose;
-use App\Waste\Domain\Model\Container\MeasurementMethod;
-use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerFilter;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]
 class InMemoryContainerRepository implements ContainerRepository
 {
-    public function __construct(private array $containers = [])
-    {
-
-    }
+    public function __construct(private array $containers = []) {}
 
     public function add(Container $container): void
     {
         if (isset($this->containers[(string) $container->id()])) {
-            return ;
+            return;
         }
 
         $this->containers[(string) $container->id()] = $container;
@@ -34,7 +33,7 @@ class InMemoryContainerRepository implements ContainerRepository
     public function remove(Container $container): void
     {
         if (!isset($this->containers[(string) $container->id()])) {
-            return ;
+            return;
         }
 
         unset($this->containers[(string) $container->id()]);
@@ -52,7 +51,7 @@ class InMemoryContainerRepository implements ContainerRepository
     {
         $results = [];
 
-        if (count($this->containers) === 0) {
+        if (0 === count($this->containers)) {
             return $results;
         }
 
@@ -106,7 +105,7 @@ class InMemoryContainerRepository implements ContainerRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

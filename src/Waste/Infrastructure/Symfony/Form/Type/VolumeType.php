@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Symfony\Form\Type;
 
+use App\Shared\Infrastructure\Symfony\Form\Type\NumberUnitType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use App\Shared\Infrastructure\Symfony\Form\Type\NumberUnitType;
 
 class VolumeType extends AbstractType
 {

@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Waste;
 
-use DateTimeImmutable;
-use App\Waste\Domain\DomainEvent;
-use App\Waste\Domain\Model\Waste\WasteId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
+use App\Waste\Domain\DomainEvent;
 
 final class WasteRegistered extends DomainEvent
 {
@@ -19,7 +19,7 @@ final class WasteRegistered extends DomainEvent
         private readonly string $density = '0.00',
         private readonly string $color = '#000000',
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -61,14 +61,14 @@ final class WasteRegistered extends DomainEvent
             'name' => $this->name,
             'isDangerous' => $this->isDangerous,
             'density' => $this->density,
-            'color' => $this->color
+            'color' => $this->color,
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        array $payload = []
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new WasteRegistered(
             wasteId: new WasteId($payload['wasteId']),
@@ -77,7 +77,7 @@ final class WasteRegistered extends DomainEvent
             density: $payload['density'] ?? '0',
             color: $payload['color'] ?? '#c3d300',
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

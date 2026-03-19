@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\UI\Web\Import;
 
-use App\DataExchange\Domain\Model\Importation\ImportationType;
-use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Application\Importation\Register\RegisterImportationRequest;
 use App\DataExchange\Application\Importation\Register\RegisterImportationService;
+use App\DataExchange\Domain\Model\Importation\ImportationId;
+use App\DataExchange\Domain\Model\Importation\ImportationType;
 use App\DataExchange\Domain\Model\Importation\ImportationTypeFactory;
 use App\DataExchange\Infrastructure\UI\Web\DTO\ImportFileRequest;
 use App\DataExchange\Infrastructure\UI\Web\Form\ImportFileType;
@@ -27,8 +29,7 @@ class ImportController extends AbstractController
         ImportationTypeFactory $importationTypeFactory,
         RegisterImportationService $registerImportation,
         Request $request,
-    ): Response
-    {
+    ): Response {
         $importationType = $importationTypeFactory->createFromCode($code);
 
         if (!$importationType instanceof ImportationType) {
@@ -53,8 +54,9 @@ class ImportController extends AbstractController
                     path: $data->file->getRealPath(),
                     offset: $data->offset,
                     extension: $data->file->guessExtension(),
-                    accountId: $loggedAccount()?->id()
-                ), $loggedUser()
+                    accountId: $loggedAccount()?->id(),
+                ),
+                $loggedUser(),
             );
 
             if (!$response->importationId instanceof ImportationId) {

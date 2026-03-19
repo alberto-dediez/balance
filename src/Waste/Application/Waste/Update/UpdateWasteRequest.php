@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\Waste\Update;
 
-use App\Waste\Domain\Model\Waste\WasteId;
 use App\Shared\Application\CommandBus\Command;
+use App\Waste\Domain\Model\Waste\WasteId;
 
 class UpdateWasteRequest implements Command
 {
@@ -13,7 +15,5 @@ class UpdateWasteRequest implements Command
         public bool $isDangerous,
         public string $density,
         public string $color,
-    ) {
-
-    }
+    ) {}
 }

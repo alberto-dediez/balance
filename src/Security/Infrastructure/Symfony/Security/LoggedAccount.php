@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Security\Infrastructure\Symfony\Security;
 
-use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\Account;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
 
 class LoggedAccount
 {
-    /** @var Account[] $accounts  */
+    /** @var Account[] */
     private array $accounts = [];
 
     public function __construct(private readonly LoggedUser $loggedUser, private readonly AccountRepository $accountRepository) {}

@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Domain\Model\Importation;
 
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
-use DateTimeImmutable;
 
 final class ImportationExecuted extends DomainEvent
 {
@@ -14,7 +15,7 @@ final class ImportationExecuted extends DomainEvent
     public function __construct(
         private readonly ImportationId $importationId,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -38,13 +39,13 @@ final class ImportationExecuted extends DomainEvent
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        array $payload = []
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new ImportationExecuted(
             importationId: new ImportationId($payload['importationId']),
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

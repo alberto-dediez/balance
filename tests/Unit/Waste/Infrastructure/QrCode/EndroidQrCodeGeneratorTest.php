@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Infrastructure\QrCode;
 
-use PHPUnit\Framework\TestCase;
-use App\Waste\Domain\Model\Container\QrCode;
 use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\Container\QrCode;
 use App\Waste\Infrastructure\QrCode\EndroidQrCodeGenerator;
+use PHPUnit\Framework\TestCase;
 
 class EndroidQrCodeGeneratorTest extends TestCase
 {

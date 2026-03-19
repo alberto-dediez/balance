@@ -1,25 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\WasteManager\List;
 
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
+use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
+use App\Waste\Application\WasteManager\List\ListWasteManagersRequest;
+use App\Waste\Application\WasteManager\List\ListWasteManagersResponse;
+use App\Waste\Application\WasteManager\List\ListWasteManagersService;
+use App\Waste\Application\WasteManager\WasteManagerAuthorizer;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteManagerRepository;
 use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Waste\Application\WasteManager\WasteManagerAuthorizer;
-use App\Waste\Application\WasteManager\List\ListWasteManagersRequest;
-use App\Waste\Application\WasteManager\List\ListWasteManagersService;
-use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
-use App\Waste\Application\WasteManager\List\ListWasteManagersResponse;
-use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
 
 class ListWasteManagersServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        
-    }
+    protected function setUp(): void {}
 
     public function testInvoke(): void
     {
@@ -35,7 +34,7 @@ class ListWasteManagersServiceTest extends TestCase
         $repository->add(WasteManagerMother::random());
 
         $request = new ListWasteManagersRequest(
-            accountId: $user->accountId()
+            accountId: $user->accountId(),
         );
 
         $result = $sut($request, $user);

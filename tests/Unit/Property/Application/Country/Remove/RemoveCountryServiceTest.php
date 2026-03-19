@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Country\Remove;
 
+use App\Property\Application\Country\CountryAuthorizer;
+use App\Property\Application\Country\Remove\RemoveCountryRequest;
+use App\Property\Application\Country\Remove\RemoveCountryResponse;
+use App\Property\Application\Country\Remove\RemoveCountryService;
+use App\Property\Domain\Model\Country\CountryRemoved;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
-use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Property\Domain\Model\Country\CountryRemoved;
-use App\Property\Application\Country\CountryAuthorizer;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Property\Domain\Model\Country\CountryMother;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Property\Application\Country\Remove\RemoveCountryRequest;
-use App\Property\Application\Country\Remove\RemoveCountryService;
-use App\Property\Application\Country\Remove\RemoveCountryResponse;
 use App\Tests\Unit\Property\Domain\Model\Country\CountryRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class RemoveCountryServiceTest extends TestCase
 {
@@ -40,7 +42,7 @@ class RemoveCountryServiceTest extends TestCase
         $repository->add($country);
 
         $request = new RemoveCountryRequest(
-            countryId: $country->id()
+            countryId: $country->id(),
         );
 
         $result = $sut($request, $user);
@@ -48,7 +50,7 @@ class RemoveCountryServiceTest extends TestCase
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RemoveCountryResponse);
         $this->assertTrue($country->id()->equals($result->countryId));
-        
+
         $countryPersisted = $repository->find($result->countryId);
 
         $this->assertNull($countryPersisted);
@@ -68,7 +70,7 @@ class RemoveCountryServiceTest extends TestCase
         $country = CountryMother::random();
 
         $result = $sut->isHandled(new RemoveCountryRequest(
-            countryId: $country->id()
+            countryId: $country->id(),
         ));
 
         $this->assertTrue($result);

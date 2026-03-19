@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Domain\Model\Country;
 
 use App\Property\Domain\Model\Country\CountryFilter;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Property\Domain\Model\Country\CountryRepository;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class CountryRepositoryTest extends KernelTestCase
 {
     public function testAddCountryToRepository(): void
-    {   
+    {
         $repository = $this->createSUT();
 
         $country = CountryMother::random();
@@ -25,7 +27,7 @@ abstract class CountryRepositoryTest extends KernelTestCase
     }
 
     public function testRemoveCountryToRepository(): void
-    {   
+    {
         $repository = $this->createSUT();
 
         $country = CountryMother::random();
@@ -92,7 +94,7 @@ abstract class CountryRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new CountryFilter(
-            name: 'Spain'
+            name: 'Spain',
         );
 
         $result = $repository->findByFilter($filter);
@@ -118,7 +120,7 @@ abstract class CountryRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new CountryFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);

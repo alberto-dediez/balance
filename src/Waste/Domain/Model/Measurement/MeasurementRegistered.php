@@ -1,18 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Measurement;
 
-use DateTimeImmutable;
-use App\Waste\Domain\DomainEvent;
-use App\Waste\Domain\Model\Waste\WasteId;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
-use App\Waste\Domain\Model\Container\Purpose;
-use App\Security\Domain\Model\Account\AccountId;
+use App\Waste\Domain\DomainEvent;
 use App\Waste\Domain\Model\Container\ContainerId;
-use App\Property\Domain\Model\Property\PropertyId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 final class MeasurementRegistered extends DomainEvent
@@ -36,7 +37,7 @@ final class MeasurementRegistered extends DomainEvent
         private readonly ?string $justification = null,
         private readonly ?string $reference = null,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -144,11 +145,11 @@ final class MeasurementRegistered extends DomainEvent
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        array $payload = []
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         $measurementMethod = MeasurementMethod::tryFrom($payload['measurementMethod']);
-        $guessedUnit = $measurementMethod === MeasurementMethod::Volume ? Unit::Liter : Unit::Kilogram;
+        $guessedUnit = MeasurementMethod::Volume === $measurementMethod ? Unit::Liter : Unit::Kilogram;
 
         return new MeasurementRegistered(
             measurementId: new MeasurementId($payload['measurementId']),
@@ -160,14 +161,14 @@ final class MeasurementRegistered extends DomainEvent
             wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId($payload['wasteManagerId']) : WasteManagerId::generate(),
             registeredBy: new UserId($payload['registeredBy']),
             accountId: new AccountId($payload['accountId']),
-            day: isset($payload['day']) ? new \DateTimeImmutable($payload['day']): $occurredOn,
+            day: isset($payload['day']) ? new \DateTimeImmutable($payload['day']) : $occurredOn,
             quantity: $payload['quantity'],
             load: $payload['load'],
             unit: isset($payload['unit']) && !empty($payload['unit']) ? Unit::tryFrom($payload['unit']) : $guessedUnit,
             justification: $payload['justification'],
             reference: $payload['reference'],
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

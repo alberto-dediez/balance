@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Symfony\Form;
 
+use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
+use App\Shared\Infrastructure\Symfony\Form\Type\BooleanType;
+use App\Waste\Application\Waste\List\ListWastesRequest;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use App\Waste\Application\Waste\List\ListWastesRequest;
-use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
-use App\Shared\Infrastructure\Symfony\Form\Type\BooleanType;
 
 class ListWastesType extends BaseFilterType
 {
@@ -17,11 +19,11 @@ class ListWastesType extends BaseFilterType
         $builder
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('Nombre'),
-                'required' => false
+                'required' => false,
             ])
             ->add('isDangerous', BooleanType::class, [
                 'label' => new TranslatableMessage('¿Es peligroso?'),
-                'required' => false
+                'required' => false,
             ])
         ;
 
@@ -31,7 +33,7 @@ class ListWastesType extends BaseFilterType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ListWastesRequest::class
+            'data_class' => ListWastesRequest::class,
         ]);
     }
 }

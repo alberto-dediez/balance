@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\QrCode;
 
-use Endroid\QrCode\Builder\Builder;
-use Endroid\QrCode\Writer\PngWriter;
-use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\RoundBlockSizeMode;
-use Endroid\QrCode\ErrorCorrectionLevel;
-use App\Waste\Domain\Model\Container\QrCode;
 use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\Container\QrCode;
 use App\Waste\Domain\Model\Container\QrCodeGenerator;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\RoundBlockSizeMode;
+use Endroid\QrCode\Writer\PngWriter;
 
 class EndroidQrCodeGenerator implements QrCodeGenerator
 {
@@ -24,13 +26,13 @@ class EndroidQrCodeGenerator implements QrCodeGenerator
             errorCorrectionLevel: ErrorCorrectionLevel::High,
             size: 600,
             margin: 10,
-            roundBlockSizeMode: RoundBlockSizeMode::Margin
+            roundBlockSizeMode: RoundBlockSizeMode::Margin,
         );
 
         $result = $builder->build();
 
         return new QrCode(
-            $result->getDataUri()
+            $result->getDataUri(),
         );
     }
 }

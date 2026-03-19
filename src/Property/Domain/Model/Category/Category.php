@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Category;
 
-use App\Shared\Domain\Model\AggregateRoot;
 use App\Property\Domain\Model\Property\ExternalId;
+use App\Shared\Domain\Model\AggregateRoot;
 
 class Category implements \Stringable
 {
@@ -16,10 +18,8 @@ class Category implements \Stringable
         private bool $removed = false,
         array $events = [],
         private ?\DateTimeImmutable $registeredAt = null,
-        private ?\DateTimeImmutable $removedAt = null
-    ) {
-
-    }
+        private ?\DateTimeImmutable $removedAt = null,
+    ) {}
 
     public function id(): CategoryId
     {
@@ -61,8 +61,8 @@ class Category implements \Stringable
             new CategoryRegistered(
                 categoryId: $this->id(),
                 name: $name,
-                externalId: $externalId
-            )
+                externalId: $externalId,
+            ),
         );
     }
 
@@ -72,8 +72,8 @@ class Category implements \Stringable
             new CategoryUpdated(
                 categoryId: $this->id(),
                 name: $name,
-                externalId: $externalId
-            )
+                externalId: $externalId,
+            ),
         );
     }
 
@@ -81,8 +81,8 @@ class Category implements \Stringable
     {
         $this->recordApplyAndPublish(
             new CategoryRemoved(
-                categoryId: $this->id()
-            )
+                categoryId: $this->id(),
+            ),
         );
     }
 

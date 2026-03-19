@@ -1,25 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Application\Country\Register;
 
+use App\Property\Application\Country\CountryAuthorizer;
+use App\Property\Domain\Model\Country\Country;
+use App\Property\Domain\Model\Country\CountryId;
+use App\Property\Domain\Model\Country\CountryRepository;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
-use App\Property\Domain\Model\Country\Country;
 use App\Shared\Application\CommandBus\Command;
-use App\Property\Domain\Model\Country\CountryId;
 use App\Shared\Application\CommandBus\CommandHandler;
-use App\Property\Application\Country\CountryAuthorizer;
-use App\Property\Domain\Model\Country\CountryRepository;
-use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 
 class RegisterCountryService implements CommandHandler
 {
-    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+    use RegisterHandlerTrait;
+    use CommandInvokeHandlerTrait;
 
-    public function __construct(private CountryRepository $countryRepository, private CountryAuthorizer $authorizer)
-    {
-    }
+    public function __construct(private CountryRepository $countryRepository, private CountryAuthorizer $authorizer) {}
 
     public function __invoke(RegisterCountryRequest $request, User $user): RegisterCountryResponse
     {
@@ -27,7 +28,7 @@ class RegisterCountryService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat(new Country(
             id: CountryId::generate(),
-            iso: $request->iso
+            iso: $request->iso,
         ), Action::Register, $user);
 
         $country = new Country($id);

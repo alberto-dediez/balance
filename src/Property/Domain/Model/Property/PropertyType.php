@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Property;
 
 enum PropertyType: string
@@ -55,6 +57,6 @@ enum PropertyType: string
             default => $propertyType,
         };
 
-        return $propertyType;;
+        return $propertyType;
     }
 }

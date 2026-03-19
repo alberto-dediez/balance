@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\UI\Web\Form;
 
 use App\DataExchange\Infrastructure\UI\Web\DTO\ImportFileRequest;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotNull;
 
@@ -45,10 +47,10 @@ class ImportFileType extends AbstractType
             ])
             ->add('offset', NumberType::class, [
                 'label' => new TranslatableMessage('Líneas a ignorar del inicio del fichero'),
-                'required' => true
+                'required' => true,
             ])
             ->add('import', SubmitType::class, [
-                'label' => new TranslatableMessage('Importar')
+                'label' => new TranslatableMessage('Importar'),
             ])
         ;
     }

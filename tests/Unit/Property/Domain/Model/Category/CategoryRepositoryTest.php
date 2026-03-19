@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Domain\Model\Category;
 
 use App\Property\Domain\Model\Category\CategoryFilter;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Property\Domain\Model\Category\CategoryRepository;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class CategoryRepositoryTest extends KernelTestCase
 {
     public function testAddCategoryToRepository(): void
-    {   
+    {
         $repository = $this->createSUT();
 
         $category = CategoryMother::random();
@@ -25,7 +27,7 @@ abstract class CategoryRepositoryTest extends KernelTestCase
     }
 
     public function testRemoveCategoryToRepository(): void
-    {   
+    {
         $repository = $this->createSUT();
 
         $category = CategoryMother::random();
@@ -76,7 +78,7 @@ abstract class CategoryRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new CategoryFilter(
-            name: '3 Estrellas'
+            name: '3 Estrellas',
         );
 
         $result = $repository->findByFilter($filter);
@@ -102,7 +104,7 @@ abstract class CategoryRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new CategoryFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);

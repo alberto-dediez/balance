@@ -1,20 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\Measurement\List;
 
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
+use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
-use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 
 class ListMeasurementsService
 {
-    public function __construct(private readonly MeasurementRepository $repository, private readonly MeasurementAuthorizer $authorizer)
-    {
-
-    }
+    public function __construct(private readonly MeasurementRepository $repository, private readonly MeasurementAuthorizer $authorizer) {}
 
     public function __invoke(ListMeasurementsRequest $request, User $user): ListMeasurementsResponse
     {

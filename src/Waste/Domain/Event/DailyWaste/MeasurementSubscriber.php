@@ -1,19 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Event\DailyWaste;
 
-use App\Waste\Domain\Model\Measurement\Measurement;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Domain\Event\DomainEvent;
-use App\Shared\Domain\Event\RegisterTrait;
 use App\Shared\Domain\Event\DomainEventSubscriber;
-use App\Waste\Domain\Model\Measurement\MeasurementUpdated;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use App\Waste\Domain\Model\Measurement\MeasurementRegistered;
+use App\Shared\Domain\Event\RegisterTrait;
 use App\Waste\Application\DailyWaste\Calculate\CalculateDailyWasteRequest;
+use App\Waste\Domain\Model\Measurement\Measurement;
+use App\Waste\Domain\Model\Measurement\MeasurementRegistered;
 use App\Waste\Domain\Model\Measurement\MeasurementRemoved;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
+use App\Waste\Domain\Model\Measurement\MeasurementUpdated;
 
 class MeasurementSubscriber implements DomainEventSubscriber
 {
@@ -27,7 +29,7 @@ class MeasurementSubscriber implements DomainEventSubscriber
     public function handle(DomainEvent $event): void
     {
         if (!$this->isSubscribedTo($event)) {
-            throw new \RuntimeException("Incorrect event!");
+            throw new \RuntimeException('Incorrect event!');
         }
 
         try {
@@ -42,7 +44,7 @@ class MeasurementSubscriber implements DomainEventSubscriber
                     $this->handleUpdated($event);
                     break;
                 default:
-                    throw new \RuntimeException("No handler for event!");
+                    throw new \RuntimeException('No handler for event!');
             }
         } catch (\InvalidArgumentException) {
 
@@ -59,10 +61,10 @@ class MeasurementSubscriber implements DomainEventSubscriber
                     wasteManagerId: $event->wasteManagerId(),
                     accountId: $event->accountId(),
                     purpose: $event->purpose(),
-                    day: $event->day()
-                )
+                    day: $event->day(),
+                ),
             ),
-            $this->loggedUser->__invoke()
+            $this->loggedUser->__invoke(),
         );
     }
 
@@ -76,10 +78,10 @@ class MeasurementSubscriber implements DomainEventSubscriber
                     wasteManagerId: $event->wasteManagerId(),
                     accountId: $event->accountId(),
                     purpose: $event->purpose(),
-                    day: $event->day()
-                )
+                    day: $event->day(),
+                ),
             ),
-            $this->loggedUser->__invoke()
+            $this->loggedUser->__invoke(),
         );
     }
 
@@ -99,10 +101,10 @@ class MeasurementSubscriber implements DomainEventSubscriber
                     wasteManagerId: $measurement->wasteManagerId(),
                     accountId: $measurement->accountId(),
                     purpose: $measurement->purpose(),
-                    day: $measurement->day()
-                )
+                    day: $measurement->day(),
+                ),
             ),
-            $this->loggedUser->__invoke()
+            $this->loggedUser->__invoke(),
         );
     }
 

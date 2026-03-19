@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Domain\Model\Importation;
 
 use App\DataExchange\Application\Importation\Execute\Extractor\RowExtractor;

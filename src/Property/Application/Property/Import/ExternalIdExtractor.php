@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Application\Property\Import;
 
-use App\Property\Application\Property\Import\Field;
 use App\Property\Domain\Model\Property\ExternalId;
 
 class ExternalIdExtractor

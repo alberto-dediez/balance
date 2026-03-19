@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Property\Domain\Model\Country\Country;
@@ -18,10 +20,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineCountryRepository implements CountryRepository
 {
-    public function __construct(private readonly EntityManagerInterface $manager)
-    {
-
-    }
+    public function __construct(private readonly EntityManagerInterface $manager) {}
 
     public function add(Country $country): void
     {
@@ -41,7 +40,7 @@ class DoctrineCountryRepository implements CountryRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('c.id', ':id')
+                $qb->expr()->eq('c.id', ':id'),
             )
             ->setParameter('id', (string) $countryId)
             ->getQuery()
@@ -55,7 +54,7 @@ class DoctrineCountryRepository implements CountryRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->like('c.name', ':name')
+                $qb->expr()->like('c.name', ':name'),
             )
             ->setParameter('name', $name)
             ->getQuery()
@@ -69,7 +68,7 @@ class DoctrineCountryRepository implements CountryRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->like('c.iso', ':iso')
+                $qb->expr()->like('c.iso', ':iso'),
             )
             ->setParameter('iso', $iso)
             ->getQuery()
@@ -90,7 +89,7 @@ class DoctrineCountryRepository implements CountryRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->like("c.externalId.{$attribute}", ":sourceId")
+                $qb->expr()->like("c.externalId.{$attribute}", ':sourceId'),
             )
             ->setParameter('sourceId', $sourceId)
             ->getQuery()
@@ -108,15 +107,15 @@ class DoctrineCountryRepository implements CountryRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('c.removed'),
-                    $qb->expr()->eq('c.removed', $qb->expr()->literal(false))
-                )
+                    $qb->expr()->eq('c.removed', $qb->expr()->literal(false)),
+                ),
             )
         ;
 
         if (!empty($filter->name)) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('c.name', ':name')
+                    $qb->expr()->like('c.name', ':name'),
                 )
                 ->setParameter('name', "%{$filter->name}%")
             ;
@@ -125,13 +124,13 @@ class DoctrineCountryRepository implements CountryRepository
         if (null !== $filter->iso) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('c.iso', ':iso')
+                    $qb->expr()->eq('c.iso', ':iso'),
                 )
                 ->setParameter('iso', $filter->iso)
             ;
         }
 
-        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
             'registeredAt' => $qb->orderBy('c.registeredAt', $way),

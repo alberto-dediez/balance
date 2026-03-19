@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\Measurement\Import;
 
 use App\Property\Domain\Model\Property\Property;
-use App\Waste\Domain\Model\Waste\Waste;
-use App\Waste\Domain\Model\WasteManager\WasteManager;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action;
@@ -24,15 +24,18 @@ use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 use App\Waste\Domain\Model\Measurement\Unit;
+use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\Waste\WasteRepository;
+use App\Waste\Domain\Model\WasteManager\WasteManager;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ImportMeasurementService implements CommandHandler
 {
-    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+    use RegisterHandlerTrait;
+    use CommandInvokeHandlerTrait;
 
     public function __construct(
         private MeasurementRepository $measurementRepository,
@@ -41,10 +44,8 @@ class ImportMeasurementService implements CommandHandler
         private WasteRepository $wasteRepository,
         private WasteManagerRepository $wasteManagerRepository,
         private UserRepository $userRepository,
-        private MeasurementAuthorizer $authorizer
-    ) {
-
-    }
+        private MeasurementAuthorizer $authorizer,
+    ) {}
 
     public function __invoke(ImportMeasurementRequest $request, User $user): ImportMeasurementResponse
     {
@@ -58,10 +59,10 @@ class ImportMeasurementService implements CommandHandler
                 containerId: $container->id(),
                 propertyId: $property->id(),
                 accountId: $property->accountId(),
-                registeredBy: $user->id()
+                registeredBy: $user->id(),
             ),
             Action::Register,
-            $user
+            $user,
         );
 
         $measurement = new Measurement($id);
@@ -100,19 +101,19 @@ class ImportMeasurementService implements CommandHandler
             $purpose = empty($request->purpose) ? null : Purpose::tryFrom($request->purpose);
 
             if (!$property instanceof Property) {
-                throw new \InvalidArgumentException(new TranslatableMessage("Debe indicar una propiedad para la medición"));
+                throw new \InvalidArgumentException('Debe indicar una propiedad para la medición');
             }
 
             if (!$waste instanceof Waste) {
-                throw new \InvalidArgumentException(new TranslatableMessage("Debe indicar el residuo para la medición"));
+                throw new \InvalidArgumentException('Debe indicar el residuo para la medición');
             }
 
             if (!$wasteManager instanceof WasteManager) {
-                throw new \InvalidArgumentException(new TranslatableMessage("Debe indicar el gestor de residuos para la medición"));
+                throw new \InvalidArgumentException('Debe indicar el gestor de residuos para la medición');
             }
 
             if (null === $purpose) {
-                throw new \InvalidArgumentException(new TranslatableMessage("Debe indicar el destino de la medición"));
+                throw new \InvalidArgumentException('Debe indicar el destino de la medición');
             }
 
             $container = new Container(
@@ -122,27 +123,27 @@ class ImportMeasurementService implements CommandHandler
                 wasteId: $waste->id(),
                 purpose: $purpose,
                 measurementMethod: MeasurementMethod::Weight,
-                volume: 0,
-                wasteManagerId: $wasteManager->id()
+                volume: (string) 0,
+                wasteManagerId: $wasteManager->id(),
             );
         } else {
             $container = $this->containerRepository->find(new ContainerId($request->containerId));
 
             if (!$container instanceof Container) {
-                throw new \InvalidArgumentException(new TranslatableMessage('El contenedor indicado no existe'));
+                throw new \InvalidArgumentException('El contenedor indicado no existe');
             }
 
             $property = $this->propertyRepository->find($container->propertyId());
 
             if (!$property instanceof Property) {
-                throw new \InvalidArgumentException(new TranslatableMessage("Debe indicar una propiedad para la medición"));
+                throw new \InvalidArgumentException('Debe indicar una propiedad para la medición');
             }
         }
 
         $unit = Unit::tryFrom($request->unit);
 
         if (null === $unit) {
-            throw new \InvalidArgumentException(new TranslatableMessage('Debe indicar la unidad de la medición'));
+            throw new \InvalidArgumentException('Debe indicar la unidad de la medición');
         }
 
         return [$property, $container, $unit];

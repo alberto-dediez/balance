@@ -1,26 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\Container\Update;
 
-use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryContainerRepository;
-use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Waste\Domain\Model\Container\Purpose;
-use App\Waste\Domain\Model\Container\Container;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Waste\Domain\Model\Container\ContainerUpdated;
-use App\Waste\Domain\Model\Container\MeasurementMethod;
-use App\Waste\Domain\Model\WasteManager\WasteManagerId;
-use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Waste\Domain\Model\Container\NotValidVolumeException;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
-use App\Waste\Application\Container\Update\UpdateContainerRequest;
-use App\Waste\Application\Container\Update\UpdateContainerService;
-use App\Waste\Application\Container\Update\UpdateContainerResponse;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
+use App\Waste\Application\Container\ContainerAuthorizer;
+use App\Waste\Application\Container\Update\UpdateContainerRequest;
+use App\Waste\Application\Container\Update\UpdateContainerResponse;
+use App\Waste\Application\Container\Update\UpdateContainerService;
+use App\Waste\Domain\Model\Container\Container;
+use App\Waste\Domain\Model\Container\ContainerUpdated;
+use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\Container\NotValidVolumeException;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryContainerRepository;
+use PHPUnit\Framework\TestCase;
 
 class UpdateContainerServiceTest extends TestCase
 {
@@ -50,8 +52,8 @@ class UpdateContainerServiceTest extends TestCase
             wasteId: new WasteId('444'),
             purpose: Purpose::Waste,
             measurementMethod: MeasurementMethod::Volume,
-            volume: 46,
-            wasteManagerId: WasteManagerId::generate()
+            volume: (string) 46,
+            wasteManagerId: WasteManagerId::generate(),
         );
 
         $result = $sut($request, $user);
@@ -63,7 +65,7 @@ class UpdateContainerServiceTest extends TestCase
 
         $this->assertNotNull($containerPersisted);
         $this->assertTrue($containerPersisted instanceof Container);
-        $this->assertEquals(46, $containerPersisted->volume());
+        $this->assertEquals('46', $containerPersisted->volume());
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -72,7 +74,7 @@ class UpdateContainerServiceTest extends TestCase
         $this->assertEquals('444', (string) $lastEvent->wasteId());
         $this->assertTrue($containerPersisted->id()->equals($lastEvent->containerId()));
         $this->assertTrue($request->wasteManagerId->equals($containerPersisted->wasteManagerId()));
-        $this->assertEquals(46, $lastEvent->volume());
+        $this->assertEquals('46', $lastEvent->volume());
     }
 
     public function testUpdateWeightContainer(): void
@@ -93,7 +95,7 @@ class UpdateContainerServiceTest extends TestCase
             purpose: Purpose::Waste,
             measurementMethod: MeasurementMethod::Weight,
             volume: null,
-            wasteManagerId: WasteManagerId::generate()
+            wasteManagerId: WasteManagerId::generate(),
         );
 
         $result = $sut($request, $user);
@@ -122,7 +124,7 @@ class UpdateContainerServiceTest extends TestCase
             purpose: Purpose::Waste,
             measurementMethod: MeasurementMethod::Volume,
             volume: null,
-            wasteManagerId: WasteManagerId::generate()
+            wasteManagerId: WasteManagerId::generate(),
         );
 
         $sut($request, $user);
@@ -142,7 +144,7 @@ class UpdateContainerServiceTest extends TestCase
             purpose: Purpose::Waste,
             measurementMethod: MeasurementMethod::Volume,
             volume: null,
-            wasteManagerId: WasteManagerId::generate()
+            wasteManagerId: WasteManagerId::generate(),
         ));
 
         $this->assertTrue($result);
@@ -152,7 +154,7 @@ class UpdateContainerServiceTest extends TestCase
     {
         return new UpdateContainerService(
             containerRepository: $repository,
-            authorizer: new ContainerAuthorizer()
+            authorizer: new ContainerAuthorizer(),
         );
     }
 }

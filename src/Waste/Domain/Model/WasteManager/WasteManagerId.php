@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\WasteManager;
 
 use App\Shared\Domain\Model\AggregateRootId;

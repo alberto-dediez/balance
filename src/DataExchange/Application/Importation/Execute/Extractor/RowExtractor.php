@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Application\Importation\Execute\Extractor;
 
 class RowExtractor
@@ -15,7 +17,7 @@ class RowExtractor
 
     public function extractFields(array $row): array
     {
-        if (count($this->fields) === 0) {
+        if (0 === count($this->fields)) {
             return [];
         }
 

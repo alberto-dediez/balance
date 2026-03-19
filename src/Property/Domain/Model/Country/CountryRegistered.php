@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Country;
 
-use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
+use App\Property\Domain\Model\Property\ExternalId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
-use App\Property\Domain\Model\Country\CountryId;
-use App\Property\Domain\Model\Property\ExternalId;
 
 final class CountryRegistered extends DomainEvent
 {
@@ -19,7 +19,7 @@ final class CountryRegistered extends DomainEvent
         private readonly ?string $iso = null,
         private readonly ?ExternalId $externalId = null,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -55,22 +55,22 @@ final class CountryRegistered extends DomainEvent
             'countryId' => (string) $this->countryId,
             'iso' => $this->iso,
             'name' => $this->name,
-            'externalId' => $this->externalId
+            'externalId' => $this->externalId,
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        array $payload = []
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new CountryRegistered(
             countryId: new CountryId($payload['countryId']),
             name: $payload['name'],
-            iso:$payload['iso'],
+            iso: $payload['iso'],
             externalId: $payload['externalId'] ?? null,
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

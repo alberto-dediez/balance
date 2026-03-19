@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Waste;
 
-use DateTimeImmutable;
-use App\Waste\Domain\DomainEvent;
-use App\Waste\Domain\Model\Waste\WasteId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
+use App\Waste\Domain\DomainEvent;
 
 final class WasteRemoved extends DomainEvent
 {
@@ -15,7 +15,7 @@ final class WasteRemoved extends DomainEvent
     public function __construct(
         private readonly WasteId $wasteId,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -33,19 +33,19 @@ final class WasteRemoved extends DomainEvent
     public function payload(): array
     {
         return [
-            'wasteId' => (string) $this->wasteId
+            'wasteId' => (string) $this->wasteId,
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        array $payload = []
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new WasteRemoved(
             wasteId: new WasteId($payload['wasteId']),
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

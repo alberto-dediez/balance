@@ -1,31 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Brand\Import;
 
-use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
+use App\Property\Application\Brand\BrandAuthorizer;
+use App\Property\Application\Brand\Import\BrandRequest;
+use App\Property\Application\Brand\Import\ImportBrandsRequest;
+use App\Property\Application\Brand\Import\ImportBrandsResponse;
+use App\Property\Application\Brand\Import\ImportBrandsService;
+use App\Property\Application\Brand\Register\RegisterBrandResponse;
+use App\Property\Application\Brand\Register\RegisterBrandService;
+use App\Property\Application\Brand\Update\UpdateBrandService;
 use App\Property\Domain\Model\Brand\BrandId;
 use App\Property\Domain\Model\Property\ExternalId;
-use App\Property\Application\Brand\BrandAuthorizer;
 use App\Property\Domain\Model\Property\ExternalSource;
-use App\Property\Application\Brand\Import\BrandRequest;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
+use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Property\Domain\Model\Brand\BrandMother;
-use App\Property\Application\Brand\Import\ImportBrandsRequest;
-use App\Property\Application\Brand\Import\ImportBrandsService;
-use App\Property\Application\Brand\Import\ImportBrandsResponse;
-use App\Property\Application\Brand\Register\RegisterBrandService;
-use App\Property\Application\Brand\Register\RegisterBrandResponse;
-use App\Property\Application\Brand\Update\UpdateBrandService;
 use App\Tests\Unit\Property\Domain\Model\Brand\BrandRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\TestCase;
 
 class ImportBrandsServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        
-    }
+    protected function setUp(): void {}
 
     public function testInvoke(): void
     {
@@ -52,27 +51,27 @@ class ImportBrandsServiceTest extends TestCase
                     name: 'ibis',
                     source: ExternalSource::Bioscore,
                     externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '1234'),
-                    createIfNotExists: false
+                    createIfNotExists: false,
                 ),
                 new BrandRequest(
                     name: 'Orizonia',
                     source: ExternalSource::Bioscore,
                     externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '234'),
-                    createIfNotExists: false
+                    createIfNotExists: false,
                 ),
                 new BrandRequest(
                     name: 'Burger King',
                     source: ExternalSource::Bioscore,
                     externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '34'),
-                    createIfNotExists: false
+                    createIfNotExists: false,
                 ),
                 new BrandRequest(
                     name: 'Travelplan',
                     source: ExternalSource::Bioscore,
                     externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '4'),
-                    createIfNotExists: true
+                    createIfNotExists: true,
                 ),
-            ]
+            ],
         );
 
         $result = $sut($request, $user);
@@ -97,18 +96,18 @@ class ImportBrandsServiceTest extends TestCase
         $registerService->method('__invoke')->willReturn(new RegisterBrandResponse(BrandId::generate(), '', null));
 
         /** @var RegisterBrandService $registerService */
-
         $authorizer = new BrandAuthorizer();
 
         $updateService = new UpdateBrandService(
-            $repository, $authorizer
+            $repository,
+            $authorizer,
         );
 
         return new ImportBrandsService(
-            repository: $repository, 
+            repository: $repository,
             registerBrand: $registerService,
             updateBrand: $updateService,
-            authorizer: $authorizer
+            authorizer: $authorizer,
         );
     }
 }

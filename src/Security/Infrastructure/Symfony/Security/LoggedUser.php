@@ -15,9 +15,7 @@ class LoggedUser
 
     private ?User $forcedUser = null;
 
-    public function __construct(private readonly Security $security, private readonly UserRepository $userRepository) {
-
-    }
+    public function __construct(private readonly Security $security, private readonly UserRepository $userRepository) {}
 
     public function getLoggedUserOrNull(): ?User
     {

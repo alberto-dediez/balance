@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Property\Remove;
 
+use App\Property\Application\Property\PropertyAuthorizer;
+use App\Property\Application\Property\Remove\RemovePropertyRequest;
+use App\Property\Application\Property\Remove\RemovePropertyResponse;
+use App\Property\Application\Property\Remove\RemovePropertyService;
+use App\Property\Domain\Model\Property\PropertyRemoved;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
-use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Property\Domain\Model\Property\PropertyRemoved;
-use App\Property\Application\Property\PropertyAuthorizer;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Property\Application\Property\Remove\RemovePropertyRequest;
-use App\Property\Application\Property\Remove\RemovePropertyService;
-use App\Property\Application\Property\Remove\RemovePropertyResponse;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class RemovePropertyServiceTest extends TestCase
 {
@@ -40,7 +42,7 @@ class RemovePropertyServiceTest extends TestCase
         $repository->add($property);
 
         $request = new RemovePropertyRequest(
-            propertyId: $property->id()
+            propertyId: $property->id(),
         );
 
         $result = $sut($request, $user);
@@ -48,7 +50,7 @@ class RemovePropertyServiceTest extends TestCase
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RemovePropertyResponse);
         $this->assertTrue($property->id()->equals($result->propertyId));
-        
+
         $propertyPersisted = $repository->find($result->propertyId);
 
         $this->assertNull($propertyPersisted);
@@ -68,7 +70,7 @@ class RemovePropertyServiceTest extends TestCase
         $property = PropertyMother::random();
 
         $result = $sut->isHandled(new RemovePropertyRequest(
-            propertyId: $property->id()
+            propertyId: $property->id(),
         ));
 
         $this->assertTrue($result);

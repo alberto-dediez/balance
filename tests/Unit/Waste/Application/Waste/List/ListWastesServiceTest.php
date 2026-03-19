@@ -1,23 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\Waste\List;
 
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
+use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
+use App\Waste\Application\Waste\List\ListWastesRequest;
+use App\Waste\Application\Waste\List\ListWastesResponse;
+use App\Waste\Application\Waste\List\ListWastesService;
+use App\Waste\Application\Waste\WasteAuthorizer;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteRepository;
 use PHPUnit\Framework\TestCase;
-use App\Waste\Application\Waste\WasteAuthorizer;
-use App\Waste\Application\Waste\List\ListWastesRequest;
-use App\Waste\Application\Waste\List\ListWastesService;
-use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
-use App\Waste\Application\Waste\List\ListWastesResponse;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
 
 class ListWastesServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        
-    }
+    protected function setUp(): void {}
 
     public function testInvoke(): void
     {
@@ -52,7 +51,7 @@ class ListWastesServiceTest extends TestCase
         $repository->add(WasteMother::fromIsDangerous(false));
 
         $request = new ListWastesRequest(
-            isDangerous: true
+            isDangerous: true,
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -63,7 +62,7 @@ class ListWastesServiceTest extends TestCase
         $this->assertEquals(1, $result->totalResults);
 
         $request = new ListWastesRequest(
-            isDangerous: false
+            isDangerous: false,
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -74,7 +73,7 @@ class ListWastesServiceTest extends TestCase
         $this->assertEquals(3, $result->totalResults);
 
         $request = new ListWastesRequest(
-            isDangerous: null
+            isDangerous: null,
         );
 
         $result = $sut($request, UserMother::adminUser());

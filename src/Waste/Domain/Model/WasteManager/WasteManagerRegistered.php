@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\WasteManager;
 
-use DateTimeImmutable;
-use App\Waste\Domain\DomainEvent;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Waste\Domain\Model\WasteManager\WasteManagerId;
+use App\Waste\Domain\DomainEvent;
 
 final class WasteManagerRegistered extends DomainEvent
 {
@@ -19,7 +19,7 @@ final class WasteManagerRegistered extends DomainEvent
         private readonly bool $isPublic,
         private readonly AccountId $accountId,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -55,14 +55,14 @@ final class WasteManagerRegistered extends DomainEvent
             'wasteManagerId' => (string) $this->wasteManagerId,
             'accountId' => (string) $this->accountId,
             'name' => $this->name,
-            'isPublic' => $this->isPublic
+            'isPublic' => $this->isPublic,
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        array $payload = []
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new WasteManagerRegistered(
             wasteManagerId: new WasteManagerId($payload['wasteManagerId']),
@@ -70,7 +70,7 @@ final class WasteManagerRegistered extends DomainEvent
             isPublic: $payload['isPublic'],
             accountId: new AccountId($payload['accountId']),
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

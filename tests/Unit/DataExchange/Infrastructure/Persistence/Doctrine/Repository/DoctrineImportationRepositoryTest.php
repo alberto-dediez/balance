@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\DataExchange\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;

@@ -1,30 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\Measurement\Register;
 
-use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryContainerRepository;
-use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
-use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
-use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\UserId;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Waste\Domain\Model\Container\ContainerId;
-use App\Waste\Domain\Model\Measurement\Measurement;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Waste\Application\Measurement\MeasurementAuthorizer;
-use App\Waste\Domain\Model\Measurement\MeasurementRegistered;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserRepositoryMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
-use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
-use App\Tests\Unit\Security\Domain\Model\User\UserRepositoryMother;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
-use App\Waste\Application\Measurement\Register\RegisterMeasurementRequest;
-use App\Waste\Application\Measurement\Register\RegisterMeasurementService;
-use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
-use App\Waste\Application\Measurement\Register\RegisterMeasurementResponse;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
+use App\Waste\Application\Measurement\MeasurementAuthorizer;
+use App\Waste\Application\Measurement\Register\RegisterMeasurementRequest;
+use App\Waste\Application\Measurement\Register\RegisterMeasurementResponse;
+use App\Waste\Application\Measurement\Register\RegisterMeasurementService;
+use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\Measurement\Measurement;
+use App\Waste\Domain\Model\Measurement\MeasurementRegistered;
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryContainerRepository;
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
+use PHPUnit\Framework\TestCase;
 
 class RegisterMeasurementServiceTest extends TestCase
 {
@@ -47,7 +49,7 @@ class RegisterMeasurementServiceTest extends TestCase
         $container = ContainerMother::random();
 
         $containerRepository->add(
-            $container
+            $container,
         );
 
         $account = AccountMother::registeredAccount();
@@ -56,7 +58,7 @@ class RegisterMeasurementServiceTest extends TestCase
 
         $userRepository->add($user);
 
-        $property = PropertyMother::fromNameAndAccountAndId('Hotel', $account->id(), (string) $container->propertyId());
+        $property = PropertyMother::fromNameAndAccountAndId('Hotel', (string) $account->id(), (string) $container->propertyId());
 
         $propertyRepository->add($property);
 
@@ -64,7 +66,7 @@ class RegisterMeasurementServiceTest extends TestCase
             containerRepository: $containerRepository,
             measurementRepository: $measurementRepository,
             propertyRepository: $propertyRepository,
-            userRepository: $userRepository
+            userRepository: $userRepository,
         );
 
         $request = new RegisterMeasurementRequest(
@@ -73,7 +75,7 @@ class RegisterMeasurementServiceTest extends TestCase
             load: 0.5,
             registeredBy: $user->id(),
             justification: 'Fiesta de pijamas!',
-            reference: '123'
+            reference: '123',
         );
 
         $result = $sut($request, $user);
@@ -108,7 +110,7 @@ class RegisterMeasurementServiceTest extends TestCase
             containerRepository: $containerRepository,
             measurementRepository: $measurementRepository,
             propertyRepository: $propertyRepository,
-            userRepository: $userRepository
+            userRepository: $userRepository,
         );
 
         $result = $sut->isHandled(new RegisterMeasurementRequest(
@@ -116,7 +118,7 @@ class RegisterMeasurementServiceTest extends TestCase
             quantity: 1,
             load: 0.5,
             registeredBy: UserId::generate(),
-            justification: 'Fiesta de pijamas!'
+            justification: 'Fiesta de pijamas!',
         ));
 
         $this->assertTrue($result);
@@ -129,7 +131,7 @@ class RegisterMeasurementServiceTest extends TestCase
             containerRepository: $containerRepository,
             propertyRepository: $propertyRepository,
             userRepository: $userRepository,
-            authorizer: new MeasurementAuthorizer()
+            authorizer: new MeasurementAuthorizer(),
         );
     }
 }

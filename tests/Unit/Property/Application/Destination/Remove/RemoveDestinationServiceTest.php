@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Destination\Remove;
 
+use App\Property\Application\Destination\DestinationAuthorizer;
+use App\Property\Application\Destination\Remove\RemoveDestinationRequest;
+use App\Property\Application\Destination\Remove\RemoveDestinationResponse;
+use App\Property\Application\Destination\Remove\RemoveDestinationService;
+use App\Property\Domain\Model\Destination\DestinationRemoved;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
-use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Property\Domain\Model\Destination\DestinationRemoved;
-use App\Property\Application\Destination\DestinationAuthorizer;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Property\Domain\Model\Destination\DestinationMother;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Property\Application\Destination\Remove\RemoveDestinationRequest;
-use App\Property\Application\Destination\Remove\RemoveDestinationService;
-use App\Property\Application\Destination\Remove\RemoveDestinationResponse;
 use App\Tests\Unit\Property\Domain\Model\Destination\DestinationRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class RemoveDestinationServiceTest extends TestCase
 {
@@ -40,7 +42,7 @@ class RemoveDestinationServiceTest extends TestCase
         $repository->add($destination);
 
         $request = new RemoveDestinationRequest(
-            destinationId: $destination->id()
+            destinationId: $destination->id(),
         );
 
         $result = $sut($request, $user);
@@ -48,7 +50,7 @@ class RemoveDestinationServiceTest extends TestCase
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RemoveDestinationResponse);
         $this->assertTrue($destination->id()->equals($result->destinationId));
-        
+
         $destinationPersisted = $repository->find($result->destinationId);
 
         $this->assertNull($destinationPersisted);
@@ -68,7 +70,7 @@ class RemoveDestinationServiceTest extends TestCase
         $destination = DestinationMother::random();
 
         $result = $sut->isHandled(new RemoveDestinationRequest(
-            destinationId: $destination->id()
+            destinationId: $destination->id(),
         ));
 
         $this->assertTrue($result);

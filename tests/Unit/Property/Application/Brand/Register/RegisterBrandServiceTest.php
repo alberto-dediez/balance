@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Brand\Register;
 
-use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Property\Domain\Model\Brand\Brand;
-use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Property\Application\Brand\BrandAuthorizer;
+use App\Property\Application\Brand\Register\RegisterBrandRequest;
+use App\Property\Application\Brand\Register\RegisterBrandResponse;
+use App\Property\Application\Brand\Register\RegisterBrandService;
+use App\Property\Domain\Model\Brand\Brand;
 use App\Property\Domain\Model\Brand\BrandRegistered;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Property\Domain\Model\Brand\BrandRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Property\Application\Brand\Register\RegisterBrandRequest;
-use App\Property\Application\Brand\Register\RegisterBrandService;
-use App\Property\Application\Brand\Register\RegisterBrandResponse;
-use App\Tests\Unit\Property\Domain\Model\Brand\BrandRepositoryMother;
+use PHPUnit\Framework\TestCase;
 
 class RegisterBrandServiceTest extends TestCase
 {
@@ -36,7 +38,7 @@ class RegisterBrandServiceTest extends TestCase
         $sut = $this->createSUT($repository);
 
         $request = new RegisterBrandRequest(
-            name: 'Orizonia'
+            name: 'Orizonia',
         );
 
         $result = $sut($request, $user);
@@ -66,7 +68,7 @@ class RegisterBrandServiceTest extends TestCase
         $sut = $this->createSUT($repository);
 
         $result = $sut->isHandled(new RegisterBrandRequest(
-            name: 'Travelplan'
+            name: 'Travelplan',
         ));
 
         $this->assertTrue($result);

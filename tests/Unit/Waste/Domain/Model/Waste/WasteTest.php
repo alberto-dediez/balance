@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Domain\Model\Waste;
 
-use PHPUnit\Framework\TestCase;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\Waste\WasteId;
-use App\Shared\Domain\Model\Locale\Locale;
+use PHPUnit\Framework\TestCase;
 
 class WasteTest extends TestCase
 {
@@ -13,7 +15,7 @@ class WasteTest extends TestCase
     {
         $waste = new Waste(
             id: WasteId::generate(),
-            name: 'waste-name'
+            name: 'waste-name',
         );
 
         $this->assertCount(0, $waste->translations());
@@ -27,7 +29,7 @@ class WasteTest extends TestCase
     {
         $waste = new Waste(
             id: WasteId::generate(),
-            name: 'waste-name'
+            name: 'waste-name',
         );
         $waste->translate('translated-name-en', Locale::English);
         $waste->translate('translated-name-it', Locale::Italian);
@@ -40,7 +42,7 @@ class WasteTest extends TestCase
     {
         $waste = new Waste(
             id: WasteId::generate(),
-            name: 'waste-name'
+            name: 'waste-name',
         );
         $waste->translate('translated-name-en', Locale::English);
         $waste->translate('translated-name-it', Locale::Italian);

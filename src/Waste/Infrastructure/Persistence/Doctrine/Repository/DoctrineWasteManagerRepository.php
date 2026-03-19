@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Security\Domain\Model\Account\AccountId;
@@ -17,10 +19,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineWasteManagerRepository implements WasteManagerRepository
 {
-    public function __construct(private readonly EntityManagerInterface $manager)
-    {
-
-    }
+    public function __construct(private readonly EntityManagerInterface $manager) {}
 
     public function add(WasteManager $wasteManager): void
     {
@@ -40,7 +39,7 @@ class DoctrineWasteManagerRepository implements WasteManagerRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('wm.id', ':id')
+                $qb->expr()->eq('wm.id', ':id'),
             )
             ->setParameter('id', (string) $wasteManagerId)
             ->getQuery()
@@ -57,15 +56,15 @@ class DoctrineWasteManagerRepository implements WasteManagerRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('wm.removed'),
-                    $qb->expr()->eq('wm.removed', $qb->expr()->literal(false))
-                )
+                    $qb->expr()->eq('wm.removed', $qb->expr()->literal(false)),
+                ),
             )
         ;
 
         if (null !== $filter->name) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('wm.name', ':name')
+                    $qb->expr()->eq('wm.name', ':name'),
                 )
                 ->setParameter('name', $filter->name)
             ;
@@ -74,7 +73,7 @@ class DoctrineWasteManagerRepository implements WasteManagerRepository
         if (null !== $filter->isPublic) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('wm.isPublic', ':isPublic')
+                    $qb->expr()->eq('wm.isPublic', ':isPublic'),
                 )
                 ->setParameter('isPublic', $filter->isPublic)
             ;
@@ -83,13 +82,13 @@ class DoctrineWasteManagerRepository implements WasteManagerRepository
         if ($filter->accountId instanceof AccountId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('wm.accountId', ':accountId')
+                    $qb->expr()->eq('wm.accountId', ':accountId'),
                 )
                 ->setParameter('accountId', $filter->accountId)
             ;
         }
 
-        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
             default => $qb->orderBy('wm.registeredAt', $way),

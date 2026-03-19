@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Application\Importation\Register;
 
 use App\DataExchange\Application\Importation\ImportationAuthorizer;
@@ -16,11 +18,10 @@ use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 
 class RegisterImportationService implements CommandHandler
 {
-    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+    use RegisterHandlerTrait;
+    use CommandInvokeHandlerTrait;
 
-    public function __construct(private ImportationRepository $importationRepository, private ImportationAuthorizer $authorizer)
-    {
-    }
+    public function __construct(private ImportationRepository $importationRepository, private ImportationAuthorizer $authorizer) {}
 
     public function __invoke(RegisterImportationRequest $request, User $user): RegisterImportationResponse
     {
@@ -29,13 +30,13 @@ class RegisterImportationService implements CommandHandler
         $file = new ImportationFile(
             path: $request->path,
             extension: $request->extension,
-            offset: $request->offset
+            offset: $request->offset,
         );
 
         $importation = new Importation(
             id: $id,
             accountId: $request->accountId,
-            file: $file
+            file: $file,
         );
 
         $this->authorizer->denyUnlessCanDoThat($importation, Action::Register, $user);
@@ -44,7 +45,7 @@ class RegisterImportationService implements CommandHandler
             name: $request->name,
             type: $request->type,
             accountId: $request->accountId,
-            registeredBy: $user->id()
+            registeredBy: $user->id(),
         );
 
         $this->importationRepository->add($importation);
@@ -54,7 +55,7 @@ class RegisterImportationService implements CommandHandler
             name: $importation->name(),
             type: $importation->type(),
             accountId: $importation->accountId(),
-            registeredBy: $importation->registeredBy()
+            registeredBy: $importation->registeredBy(),
         );
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Property\Domain\Model\Category\Category;
@@ -18,10 +20,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineCategoryRepository implements CategoryRepository
 {
-    public function __construct(private readonly EntityManagerInterface $manager)
-    {
-
-    }
+    public function __construct(private readonly EntityManagerInterface $manager) {}
 
     public function add(Category $category): void
     {
@@ -41,7 +40,7 @@ class DoctrineCategoryRepository implements CategoryRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('c.id', ':id')
+                $qb->expr()->eq('c.id', ':id'),
             )
             ->setParameter('id', (string) $categoryId)
             ->getQuery()
@@ -55,7 +54,7 @@ class DoctrineCategoryRepository implements CategoryRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->like('c.name', ':name')
+                $qb->expr()->like('c.name', ':name'),
             )
             ->setParameter('name', $name)
             ->getQuery()
@@ -76,7 +75,7 @@ class DoctrineCategoryRepository implements CategoryRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->like("c.externalId.{$attribute}", ":sourceId")
+                $qb->expr()->like("c.externalId.{$attribute}", ':sourceId'),
             )
             ->setParameter('sourceId', $sourceId)
             ->getQuery()
@@ -94,21 +93,21 @@ class DoctrineCategoryRepository implements CategoryRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('c.removed'),
-                    $qb->expr()->eq('c.removed', $qb->expr()->literal(false))
-                )
+                    $qb->expr()->eq('c.removed', $qb->expr()->literal(false)),
+                ),
             )
         ;
 
         if (!empty($filter->name)) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('c.name', ':name')
+                    $qb->expr()->like('c.name', ':name'),
                 )
                 ->setParameter('name', "%{$filter->name}%")
             ;
         }
 
-        $way = $filter->orderWay === 'ASC' ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
             'registeredAt' => $qb->orderBy('c.registeredAt', $way),

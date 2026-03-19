@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Api\Container;
 
-use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Property\Infrastructure\Symfony\Twig\PropertyExtension;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use App\Waste\Domain\Model\Container\Container as ModelContainer;
+use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Infrastructure\Symfony\Twig\WasteExtension;
 use App\Waste\Infrastructure\Symfony\Twig\WasteManagerExtension;
-use App\Waste\Domain\Model\Container\Container as ModelContainer;
 use App\Waste\Infrastructure\UI\Api\Container\ContainerResponse as ApiContainer;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ContainerResponseGenerator
 {
@@ -16,18 +18,16 @@ class ContainerResponseGenerator
         private readonly PropertyExtension $propertyExtension,
         private readonly WasteExtension $wasteExtension,
         private readonly WasteManagerExtension $wasteManagerExtension,
-        private readonly TranslatorInterface $translator
-    ) {
-
-    }
+        private readonly TranslatorInterface $translator,
+    ) {}
 
     public function generate(ModelContainer $modelContainer): ApiContainer
     {
         return new ApiContainer(
             containerId: (string) $modelContainer->id(),
-            property: $this->propertyExtension->propertyName($modelContainer->propertyId()),
-            waste: $this->wasteExtension->wasteName($modelContainer->wasteId()),
-            wasteManager: $this->wasteManagerExtension->wasteManagerName($modelContainer->wasteManagerId()),
+            property: (string) $this->propertyExtension->propertyName($modelContainer->propertyId()),
+            waste: (string) $this->wasteExtension->wasteName($modelContainer->wasteId()),
+            wasteManager: (string) $this->wasteManagerExtension->wasteManagerName($modelContainer->wasteManagerId()),
             unit: $modelContainer->measurementMethod() instanceof MeasurementMethod
                 ? $modelContainer->measurementMethod()->unit()
                 : '',

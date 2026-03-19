@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\ExternalSource\Property\Import;
 
 use App\Property\Application\Property\Import\Field;
-use App\Property\Domain\Model\Property\ExternalSource;
 use App\Property\Application\Property\Import\FieldExtractor;
+use App\Property\Domain\Model\Property\ExternalSource;
 
 class ImportRestel implements ImportConfiguration
 {
@@ -22,7 +24,7 @@ class ImportRestel implements ImportConfiguration
             Field::InfoZone->value => 9,
             Field::InfoDestinationName->value => 10,
             Field::InfoCountryName->value => 11,
-            Field::Name->value => 2
+            Field::Name->value => 2,
         ]);
     }
 

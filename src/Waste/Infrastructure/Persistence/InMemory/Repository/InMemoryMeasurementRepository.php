@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Persistence\InMemory\Repository;
 
-use App\Waste\Domain\Model\Container\ContainerId;
-use App\Waste\Domain\Model\Container\MeasurementMethod;
-use App\Security\Domain\Model\User\UserId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
+use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementFilter;
@@ -20,15 +22,13 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 class InMemoryMeasurementRepository implements MeasurementRepository
 {
     public function __construct(
-        private array $measurements = []
-    ) {
-
-    }
+        private array $measurements = [],
+    ) {}
 
     public function add(Measurement $measurement): void
     {
         if (isset($this->measurements[(string) $measurement->id()])) {
-            return ;
+            return;
         }
 
         $this->measurements[(string) $measurement->id()] = $measurement;
@@ -37,7 +37,7 @@ class InMemoryMeasurementRepository implements MeasurementRepository
     public function remove(Measurement $measurement): void
     {
         if (!isset($this->measurements[(string) $measurement->id()])) {
-            return ;
+            return;
         }
 
         unset($this->measurements[(string) $measurement->id()]);
@@ -58,7 +58,7 @@ class InMemoryMeasurementRepository implements MeasurementRepository
             purpose: $purpose,
             accountId: $accountId,
             registeredAt: $day,
-            limit: 0
+            limit: 0,
         );
 
         return $this->findByFilter($filter);
@@ -68,7 +68,7 @@ class InMemoryMeasurementRepository implements MeasurementRepository
     {
         $results = [];
 
-        if (count($this->measurements) === 0) {
+        if (0 === count($this->measurements)) {
             return $results;
         }
 
@@ -161,7 +161,7 @@ class InMemoryMeasurementRepository implements MeasurementRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

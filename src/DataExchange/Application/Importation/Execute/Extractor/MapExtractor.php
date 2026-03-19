@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Application\Importation\Execute\Extractor;
 
 use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
@@ -14,8 +16,8 @@ class MapExtractor implements FieldExtractor
     {
         $this->columnName = $columnConfiguration->name;
 
-        if (count($columnConfiguration->translations) === 0) {
-            return ;
+        if (0 === count($columnConfiguration->translations)) {
+            return;
         }
 
         foreach ($columnConfiguration->translations as $translation) {

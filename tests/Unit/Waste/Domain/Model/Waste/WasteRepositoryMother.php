@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Domain\Model\Waste;
 
 use App\Shared\Domain\Model\Locale\Locale;
@@ -11,7 +13,7 @@ class WasteRepositoryMother
     public static function inMemory(Locale $locale = Locale::Spanish): InMemoryWasteRepository
     {
         return new InMemoryWasteRepository(
-            localeGetter: new FakeLocaleGetter($locale)
+            localeGetter: new FakeLocaleGetter($locale),
         );
     }
 }

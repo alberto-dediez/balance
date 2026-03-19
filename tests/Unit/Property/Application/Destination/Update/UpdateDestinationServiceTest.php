@@ -1,22 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Destination\Update;
 
-use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Property\Domain\Model\Country\CountryId;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Property\Domain\Model\Destination\Destination;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Property\Domain\Model\Destination\DestinationUpdated;
 use App\Property\Application\Destination\DestinationAuthorizer;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Tests\Unit\Property\Domain\Model\Destination\DestinationMother;
 use App\Property\Application\Destination\Update\UpdateDestinationRequest;
-use App\Property\Application\Destination\Update\UpdateDestinationService;
 use App\Property\Application\Destination\Update\UpdateDestinationResponse;
+use App\Property\Application\Destination\Update\UpdateDestinationService;
+use App\Property\Domain\Model\Country\CountryId;
+use App\Property\Domain\Model\Destination\Destination;
+use App\Property\Domain\Model\Destination\DestinationUpdated;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Property\Domain\Model\Destination\DestinationMother;
 use App\Tests\Unit\Property\Domain\Model\Destination\DestinationRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class UpdateDestinationServiceTest extends TestCase
 {
@@ -42,7 +44,7 @@ class UpdateDestinationServiceTest extends TestCase
         $request = new UpdateDestinationRequest(
             destinationId: $destination->id(),
             name: 'Barcelona',
-            countryId: new CountryId('6666')
+            countryId: new CountryId('6666'),
         );
 
         $user = UserMother::fromUsernameAndRole('user', Role::Admin);
@@ -77,7 +79,7 @@ class UpdateDestinationServiceTest extends TestCase
         $result = $sut->isHandled(new UpdateDestinationRequest(
             destinationId: $destination->id(),
             name: 'Barcelona',
-            countryId: CountryId::generate()
+            countryId: CountryId::generate(),
         ));
 
         $this->assertTrue($result);

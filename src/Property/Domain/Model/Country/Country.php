@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Country;
 
-use App\Shared\Domain\Model\AggregateRoot;
 use App\Property\Domain\Model\Property\ExternalId;
+use App\Shared\Domain\Model\AggregateRoot;
 
 class Country implements \Stringable
 {
@@ -12,15 +14,13 @@ class Country implements \Stringable
     public function __construct(
         private CountryId $id,
         private string $name = '',
-        private string|null $iso = null,
+        private ?string $iso = null,
         private ?ExternalId $externalId = null,
         private bool $removed = false,
         array $events = [],
         private ?\DateTimeImmutable $registeredAt = null,
-        private ?\DateTimeImmutable $removedAt = null
-    ) {
-
-    }
+        private ?\DateTimeImmutable $removedAt = null,
+    ) {}
 
     public function id(): CountryId
     {
@@ -68,8 +68,8 @@ class Country implements \Stringable
                 countryId: $this->id(),
                 name: $name,
                 iso: $iso,
-                externalId: $externalId
-            )
+                externalId: $externalId,
+            ),
         );
     }
 
@@ -80,8 +80,8 @@ class Country implements \Stringable
                 countryId: $this->id(),
                 name: $name,
                 iso: $iso,
-                externalId: $externalId
-            )
+                externalId: $externalId,
+            ),
         );
     }
 
@@ -89,8 +89,8 @@ class Country implements \Stringable
     {
         $this->recordApplyAndPublish(
             new CountryRemoved(
-                countryId: $this->id()
-            )
+                countryId: $this->id(),
+            ),
         );
     }
 

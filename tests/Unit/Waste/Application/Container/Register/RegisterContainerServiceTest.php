@@ -1,32 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\Container\Register;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Waste\Domain\Model\Container\QrCode;
-use App\Waste\Domain\Model\Container\Purpose;
-use App\Waste\Domain\Model\Container\Container;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Property\Domain\Model\Property\PropertyId;
-use App\Waste\Domain\Model\Container\MeasurementMethod;
-use App\Waste\Domain\Model\WasteManager\WasteManagerId;
-use App\Waste\Application\Container\ContainerAuthorizer;
+use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
+use App\Tests\Unit\Waste\Infrastructure\QrCode\FakeQrCodeGenerator;
+use App\Waste\Application\Container\ContainerAuthorizer;
+use App\Waste\Application\Container\Register\RegisterContainerRequest;
+use App\Waste\Application\Container\Register\RegisterContainerResponse;
+use App\Waste\Application\Container\Register\RegisterContainerService;
+use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerRegistered;
 use App\Waste\Domain\Model\Container\ContainerRepository;
-use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\Container\NotValidVolumeException;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
-use App\Waste\Application\Container\Register\RegisterContainerRequest;
-use App\Waste\Application\Container\Register\RegisterContainerService;
-use App\Waste\Application\Container\Register\RegisterContainerResponse;
-use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
-use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
-use App\Tests\Unit\Waste\Infrastructure\QrCode\FakeQrCodeGenerator;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\Container\QrCode;
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
+use PHPUnit\Framework\TestCase;
 
 class RegisterContainerServiceTest extends TestCase
 {
@@ -60,7 +62,7 @@ class RegisterContainerServiceTest extends TestCase
             purpose: Purpose::Recycling,
             measurementMethod: MeasurementMethod::Weight,
             volume: 50,
-            wasteManagerId: WasteManagerId::generate()
+            wasteManagerId: WasteManagerId::generate(),
         );
 
         $result = $sut($request, $user);
@@ -110,7 +112,7 @@ class RegisterContainerServiceTest extends TestCase
             purpose: Purpose::Recycling,
             measurementMethod: MeasurementMethod::Weight,
             volume: null,
-            wasteManagerId: WasteManagerId::generate()
+            wasteManagerId: WasteManagerId::generate(),
         );
 
         $result = $sut($request, $user);
@@ -159,7 +161,7 @@ class RegisterContainerServiceTest extends TestCase
             purpose: Purpose::Recycling,
             measurementMethod: MeasurementMethod::Volume,
             volume: null,
-            wasteManagerId: WasteManagerId::generate()
+            wasteManagerId: WasteManagerId::generate(),
         );
 
         $sut($request, $user);
@@ -178,7 +180,7 @@ class RegisterContainerServiceTest extends TestCase
             purpose: Purpose::Reuse,
             measurementMethod: MeasurementMethod::Volume,
             volume: 10,
-            wasteManagerId: WasteManagerId::generate()
+            wasteManagerId: WasteManagerId::generate(),
         ));
 
         $this->assertTrue($result);
@@ -190,7 +192,7 @@ class RegisterContainerServiceTest extends TestCase
             containerRepository: $containerRepository,
             propertyRepository: $propertyRepository,
             qrCodeGenerator: new FakeQrCodeGenerator(),
-            authorizer: new ContainerAuthorizer()
+            authorizer: new ContainerAuthorizer(),
         );
     }
 }

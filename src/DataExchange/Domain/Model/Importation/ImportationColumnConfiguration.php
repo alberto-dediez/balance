@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Domain\Model\Importation;
 
 class ImportationColumnConfiguration
@@ -10,8 +12,6 @@ class ImportationColumnConfiguration
         public ?string $field,
         public array $values,
         /** @var ColumnValueTranslation[] $translations */
-        public array $translations
-    ) {
-
-    }
+        public array $translations,
+    ) {}
 }

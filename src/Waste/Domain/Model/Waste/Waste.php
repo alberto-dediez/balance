@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Waste;
 
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Shared\Domain\Model\Locale\Locale;
-use App\Waste\Domain\Model\Waste\WasteUpdated;
 use App\Shared\Domain\Model\Locale\Translatable;
 use App\Shared\Domain\Model\Locale\Translations;
 
@@ -23,7 +24,7 @@ class Waste implements Translatable, \Stringable
         protected bool $removed = false,
         array $events = [],
         protected ?\DateTimeImmutable $registeredAt = null,
-        protected ?\DateTimeImmutable $removedAt = null
+        protected ?\DateTimeImmutable $removedAt = null,
     ) {
         $this->translations = new Translations();
     }
@@ -85,7 +86,7 @@ class Waste implements Translatable, \Stringable
         bool $isDangerous = false,
         string $density = '0.00',
         string $color = '#c3d300',
-        ?Locale $locale = null
+        ?Locale $locale = null,
     ): void {
         $this->recordApplyAndPublish(
             new WasteRegistered(
@@ -93,8 +94,8 @@ class Waste implements Translatable, \Stringable
                 name: $name,
                 isDangerous: $isDangerous,
                 density: $density,
-                color: $color
-            )
+                color: $color,
+            ),
         );
 
         if ($locale instanceof Locale) {
@@ -107,7 +108,7 @@ class Waste implements Translatable, \Stringable
         bool $isDangerous,
         string $density,
         string $color,
-        ?Locale $locale = null
+        ?Locale $locale = null,
     ): void {
         $this->recordApplyAndPublish(
             new WasteUpdated(
@@ -115,8 +116,8 @@ class Waste implements Translatable, \Stringable
                 name: $locale instanceof Locale ? $this->name : $name,
                 isDangerous: $isDangerous,
                 density: $density,
-                color: $color
-            )
+                color: $color,
+            ),
         );
 
         if ($locale instanceof Locale) {
@@ -130,8 +131,8 @@ class Waste implements Translatable, \Stringable
             new WasteTranslated(
                 wasteId: $this->id(),
                 name: $name,
-                locale: $locale
-            )
+                locale: $locale,
+            ),
         );
     }
 
@@ -139,8 +140,8 @@ class Waste implements Translatable, \Stringable
     {
         $this->recordApplyAndPublish(
             new WasteRemoved(
-                wasteId: $this->id()
-            )
+                wasteId: $this->id(),
+            ),
         );
     }
 
@@ -166,7 +167,7 @@ class Waste implements Translatable, \Stringable
         $wasteTranslation = new WasteTranslation(
             name: $event->name(),
             locale: $event->locale(),
-            translatableId: $this->id()
+            translatableId: $this->id(),
         );
 
         $this->translations()->add($wasteTranslation);

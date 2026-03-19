@@ -1,14 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Destination;
 
-use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
-use App\Shared\Domain\Event\DomainEventId;
-use App\Shared\Domain\Model\AggregateRootId;
 use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Property\ExternalId;
-use App\Property\Domain\Model\Destination\DestinationId;
+use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 
 final class DestinationUpdated extends DomainEvent
 {
@@ -20,7 +20,7 @@ final class DestinationUpdated extends DomainEvent
         private readonly ?CountryId $countryId = null,
         private readonly ?ExternalId $externalId = null,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -56,14 +56,14 @@ final class DestinationUpdated extends DomainEvent
             'destinationId' => (string) $this->destinationId,
             'countryId' => (string) $this->countryId,
             'name' => $this->name,
-            'externalId' => $this->externalId
+            'externalId' => $this->externalId,
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        array $payload = []
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new DestinationUpdated(
             destinationId: new DestinationId($payload['destinationId']),
@@ -71,7 +71,7 @@ final class DestinationUpdated extends DomainEvent
             countryId: null == $payload['countryId'] ? CountryId::generate() : new CountryId($payload['countryId']),
             externalId: $payload['externalId'] ?? null,
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Application\Category\Import;
 
 use App\Property\Domain\Model\Category\CategoryId;
@@ -11,8 +13,6 @@ class CategoryResponse
         public string $name,
         public ?ExternalId $externalId = null,
         public ?bool $createIfNotExists = false,
-        public ?CategoryId $categoryId = null
-    ) {
-
-    }
+        public ?CategoryId $categoryId = null,
+    ) {}
 }

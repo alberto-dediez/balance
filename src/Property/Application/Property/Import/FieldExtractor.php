@@ -1,15 +1,12 @@
 <?php
 
-namespace App\Property\Application\Property\Import;
+declare(strict_types=1);
 
-use App\Property\Application\Property\Import\Field;
+namespace App\Property\Application\Property\Import;
 
 class FieldExtractor
 {
-    public function __construct(private array $config = [])
-    {
-
-    }
+    public function __construct(private array $config = []) {}
 
     public function extract(Field $field, array $row)
     {

@@ -1,40 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Tcpdf;
 
-use \TCPDF;
-use \TCPDF_FONTS;
 use Symfony\Component\DomCrawler\Crawler;
 
 trait GenericGenerator
 {
-    const COLOR_PRIMARY = 'blue';
-    const COLOR_SECONDARY = 'green';
-    const COLOR_NEUTRAL_100 = 'white';
-    const COLOR_NEUTRAL_900 = 'black';
+    public const COLOR_PRIMARY = 'blue';
+    public const COLOR_SECONDARY = 'green';
+    public const COLOR_NEUTRAL_100 = 'white';
+    public const COLOR_NEUTRAL_900 = 'black';
 
-    const FONT_STYLE_BOLD = 'bold';
-    const FONT_STYLE_SEMIBOLD = 'semi-bold';
-    const FONT_STYLE_BLACK = 'black';
-    const FONT_STYLE_REGULAR = 'regular';
-    const FONT_STYLE_BOLDITALIC = 'bold-italic';
-    const FONT_STYLE_MEDIUM = 'medium';
+    public const FONT_STYLE_BOLD = 'bold';
+    public const FONT_STYLE_SEMIBOLD = 'semi-bold';
+    public const FONT_STYLE_BLACK = 'black';
+    public const FONT_STYLE_REGULAR = 'regular';
+    public const FONT_STYLE_BOLDITALIC = 'bold-italic';
+    public const FONT_STYLE_MEDIUM = 'medium';
 
-    private function createPDF(string $title): TCPDF
+    private function createPDF(string $title): \TCPDF
     {
-        $pdf = new TCPDF('P');
+        $pdf = new \TCPDF('P');
         $pdf->setCreator('Bioscore Sustainability');
         $pdf->setAuthor('Bioscore Sustainability');
-        $pdf->setTitle($title);      
+        $pdf->setTitle($title);
         $pdf->setMargins(0, 0, 0, true);
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);
         $pdf->setAutoPageBreak(false, 0);
-        
+
         return $pdf;
     }
 
-    private function setFont(TCPDF $pdf, $size, $type = self::FONT_STYLE_REGULAR, $color = self::COLOR_PRIMARY): void
+    private function setFont(\TCPDF $pdf, $size, $type = self::FONT_STYLE_REGULAR, $color = self::COLOR_PRIMARY): void
     {
         $fontName = match ($type) {
             self::FONT_STYLE_BOLD => 'Rubik-Bold',
@@ -45,12 +45,12 @@ trait GenericGenerator
             default => 'Rubik-Medium',
         };
 
-        $font = TCPDF_FONTS::addTTFfont($this->getFontPath($fontName), 'TrueTypeUnicode', '', 96);
+        $font = \TCPDF_FONTS::addTTFfont($this->getFontPath($fontName), 'TrueTypeUnicode', '', 96);
 
         $pdf->setFont($font, '', $size, '', false);
         $pdf->setFontSpacing(0);
 
-        if (is_array($color) && count($color) === 3) {
+        if (is_array($color) && 3 === count($color)) {
             $pdf->setTextColor($color[0], $color[1], $color[2]);
         } else {
             match ($color) {
@@ -59,12 +59,12 @@ trait GenericGenerator
                 self::COLOR_NEUTRAL_900 => $pdf->setTextColor(0, 0, 0),
                 default => $pdf->setTextColor(64, 115, 142),
             };
-        }                
+        }
     }
 
     private function hex2rgb(string $hexColor): array
     {
-        return sscanf($hexColor, "#%02x%02x%02x");
+        return sscanf($hexColor, '#%02x%02x%02x');
     }
 
     private function getRootDir(): string
@@ -74,15 +74,15 @@ trait GenericGenerator
 
     private function getFontPath(string $fontName): string
     {
-        return sprintf("%sassets/fonts/%s.ttf", $this->getRootDir(), $fontName);
+        return sprintf('%sassets/fonts/%s.ttf', $this->getRootDir(), $fontName);
     }
 
     private function getImagePath(string $filename): string
     {
-        return sprintf("%sassets/images/%s", $this->getRootDir(), $filename);
+        return sprintf('%sassets/images/%s', $this->getRootDir(), $filename);
     }
 
-    private function secureMultiCell(TCPDF $pdf, string $html, $width, \Closure $createNewPage): void
+    private function secureMultiCell(\TCPDF $pdf, string $html, $width, \Closure $createNewPage): void
     {
         $breakPoint = $pdf->getPageHeight() - 10;
 
@@ -90,15 +90,15 @@ trait GenericGenerator
 
         foreach ($crawler->filter('body > *') as $element) {
             $htmlElement = $element->ownerDocument->saveHTML($element);
-            
+
             $pdf->setX(16);
 
             $savedPdf = clone $pdf;
             $savedPdf->MultiCell(
-                $width, 
-                0, 
-                $htmlElement, 
-                0, 
+                $width,
+                0,
+                $htmlElement,
+                0,
                 'L',
                 false,
                 1,
@@ -106,20 +106,20 @@ trait GenericGenerator
                 '',
                 true,
                 null,
-                true
+                true,
             );
 
             $afterHeight = $savedPdf->getY();
 
             if ($afterHeight > $breakPoint) {
-                $createNewPage($pdf);                
+                $createNewPage($pdf);
             }
 
             $pdf->MultiCell(
-                $width, 
-                0, 
-                $htmlElement, 
-                0, 
+                $width,
+                0,
+                $htmlElement,
+                0,
                 'L',
                 false,
                 1,
@@ -127,17 +127,17 @@ trait GenericGenerator
                 '',
                 true,
                 null,
-                true
+                true,
             );
 
             /** @var DomNode $element */
-            if ($element->tagName == 'p' || $element->tagName == 'ul') {
+            if ('p' == $element->tagName || 'ul' == $element->tagName) {
                 $pdf->SetY($pdf->getY() + 5);
             }
         }
     }
 
-    private function savePDF(TCPDF $pdf, string $path): void
+    private function savePDF(\TCPDF $pdf, string $path): void
     {
         $pdf->Output($path, 'F');
     }

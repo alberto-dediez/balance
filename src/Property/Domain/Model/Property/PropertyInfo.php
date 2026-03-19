@@ -1,19 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Property;
 
 use App\Property\Domain\Model\Brand\BrandId;
-use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Category\CategoryId;
-use App\Property\Domain\Model\Property\PropertyType;
+use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Destination\DestinationId;
 
 class PropertyInfo implements \Stringable
 {
     public function __construct(
         private readonly PropertyType $propertyType = PropertyType::Hotel,
-        private readonly CategoryId|null $categoryId = null,
-        private readonly BrandId|null $brandId = null,
+        private readonly ?CategoryId $categoryId = null,
+        private readonly ?BrandId $brandId = null,
         private readonly ?string $address = null,
         private readonly ?string $postalCode = null,
         private readonly ?string $longitude = null,
@@ -21,11 +22,9 @@ class PropertyInfo implements \Stringable
         private readonly ?int $rooms = 0,
         private readonly ?string $zone = null,
         private readonly ?string $web = null,
-        private readonly DestinationId|null $destinationId = null,
-        private readonly CountryId|null $countryId = null
-    ) {
-
-    }
+        private readonly ?DestinationId $destinationId = null,
+        private readonly ?CountryId $countryId = null,
+    ) {}
 
     public function __toString(): string
     {
@@ -174,8 +173,9 @@ class PropertyInfo implements \Stringable
         ) {
             return false;
         }
+
         return !(null == $this->countryId() && $other->countryId() instanceof CountryId || $this->countryId() instanceof CountryId && null == $other->countryId() || $this->countryId() instanceof CountryId && $other->countryId() instanceof CountryId && !$this->countryId()->equals($other->countryId()));
-    } 
+    }
 
     public function combine(PropertyInfo $other): PropertyInfo
     {

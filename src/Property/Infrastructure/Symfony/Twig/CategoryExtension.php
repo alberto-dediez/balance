@@ -1,21 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Symfony\Twig;
 
-use Twig\TwigFilter;
-use Twig\Extension\AbstractExtension;
 use App\Property\Domain\Model\Category\Category;
 use App\Property\Domain\Model\Category\CategoryId;
 use App\Property\Domain\Model\Category\CategoryRepository;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
 class CategoryExtension extends AbstractExtension
 {
     private array $categories = [];
 
-    public function __construct(private readonly CategoryRepository $categoryRepository)
-    {
-
-    }
+    public function __construct(private readonly CategoryRepository $categoryRepository) {}
 
     public function getFilters(): array
     {
@@ -27,7 +26,7 @@ class CategoryExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            
+
         ];
     }
 

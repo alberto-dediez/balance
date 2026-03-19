@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\Persistence\PDO\Tools;
 
 class ColumnSanitizer
@@ -17,7 +19,7 @@ class ColumnSanitizer
             $baseName = preg_replace('/[\s\W]+/', '_', $baseName);
             $baseName = trim((string) $baseName, '_');
 
-            if (empty($baseName) || $baseName === 'row_id') {
+            if (empty($baseName) || 'row_id' === $baseName) {
                 $baseName = 'col_' . $i;
             }
 
@@ -28,7 +30,7 @@ class ColumnSanitizer
                 continue;
             }
 
-            $counts[$baseName]++;
+            ++$counts[$baseName];
             $sanitized[] = $baseName . '_' . $counts[$baseName];
         }
 

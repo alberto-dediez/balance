@@ -1,16 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Measurement;
 
-use DateTimeImmutable;
-use App\Waste\Domain\DomainEvent;
-use App\Waste\Domain\Model\Waste\WasteId;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
+use App\Waste\Domain\DomainEvent;
 use App\Waste\Domain\Model\Container\Purpose;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Property\Domain\Model\Property\PropertyId;
-use App\Waste\Domain\Model\Measurement\MeasurementId;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 final class MeasurementRemoved extends DomainEvent
@@ -26,7 +26,7 @@ final class MeasurementRemoved extends DomainEvent
         private readonly AccountId $accountId,
         private readonly \DateTimeImmutable $day,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -86,8 +86,8 @@ final class MeasurementRemoved extends DomainEvent
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        array $payload = []
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new MeasurementRemoved(
             measurementId: new MeasurementId($payload['measurementId']),
@@ -98,7 +98,7 @@ final class MeasurementRemoved extends DomainEvent
             accountId: new AccountId($payload['accountId']),
             day: new \DateTimeImmutable($payload['day']),
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

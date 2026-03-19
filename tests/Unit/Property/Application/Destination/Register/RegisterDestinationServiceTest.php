@@ -1,21 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Destination\Register;
 
-use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Property\Domain\Model\Country\CountryId;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Property\Domain\Model\Destination\Destination;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Property\Application\Destination\DestinationAuthorizer;
-use App\Property\Domain\Model\Destination\DestinationRegistered;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Property\Application\Destination\Register\RegisterDestinationRequest;
-use App\Property\Application\Destination\Register\RegisterDestinationService;
 use App\Property\Application\Destination\Register\RegisterDestinationResponse;
+use App\Property\Application\Destination\Register\RegisterDestinationService;
+use App\Property\Domain\Model\Country\CountryId;
+use App\Property\Domain\Model\Destination\Destination;
+use App\Property\Domain\Model\Destination\DestinationRegistered;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Property\Domain\Model\Destination\DestinationRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class RegisterDestinationServiceTest extends TestCase
 {
@@ -38,7 +40,7 @@ class RegisterDestinationServiceTest extends TestCase
 
         $request = new RegisterDestinationRequest(
             name: 'Spain',
-            countryId: CountryId::generate()
+            countryId: CountryId::generate(),
         );
 
         $result = $sut($request, $user);
@@ -70,7 +72,7 @@ class RegisterDestinationServiceTest extends TestCase
 
         $result = $sut->isHandled(new RegisterDestinationRequest(
             name: 'Destination',
-            countryId: CountryId::generate()
+            countryId: CountryId::generate(),
         ));
 
         $this->assertTrue($result);

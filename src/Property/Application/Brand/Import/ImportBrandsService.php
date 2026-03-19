@@ -1,39 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Application\Brand\Import;
 
-use App\Security\Application\Action;
-use App\Security\Domain\Model\User\User;
-use App\Property\Domain\Model\Brand\Brand;
-use App\Property\Domain\Model\Brand\BrandId;
 use App\Property\Application\Brand\BrandAuthorizer;
-use App\Property\Domain\Model\Brand\BrandRepository;
-use App\Property\Application\Brand\Update\UpdateBrandRequest;
-use App\Property\Application\Brand\Update\UpdateBrandService;
 use App\Property\Application\Brand\Register\RegisterBrandRequest;
 use App\Property\Application\Brand\Register\RegisterBrandService;
+use App\Property\Application\Brand\Update\UpdateBrandRequest;
+use App\Property\Application\Brand\Update\UpdateBrandService;
+use App\Property\Domain\Model\Brand\Brand;
+use App\Property\Domain\Model\Brand\BrandId;
+use App\Property\Domain\Model\Brand\BrandRepository;
+use App\Security\Application\Action;
+use App\Security\Domain\Model\User\User;
 
 class ImportBrandsService
 {
     public function __construct(
-        private readonly BrandRepository $repository, 
-        private readonly RegisterBrandService $registerBrand, 
-        private readonly UpdateBrandService $updateBrand, 
-        private readonly BrandAuthorizer $authorizer
-    ) {
-
-    }
+        private readonly BrandRepository $repository,
+        private readonly RegisterBrandService $registerBrand,
+        private readonly UpdateBrandService $updateBrand,
+        private readonly BrandAuthorizer $authorizer,
+    ) {}
 
     public function __invoke(ImportBrandsRequest $request, User $user): ImportBrandsResponse
     {
         $this->authorizer->denyUnlessCanDoThat(new Brand(
-            id: BrandId::generate()
+            id: BrandId::generate(),
         ), Action::Admin, $user);
 
         $brandsMatch = $this->matchBrands($request->brands, $user);
 
         $totalResults = array_sum(
-            array_map(fn(BrandResponse $response) => $response->brandId instanceof BrandId ? 1 : 0, $brandsMatch)
+            array_map(fn(BrandResponse $response) => $response->brandId instanceof BrandId ? 1 : 0, $brandsMatch),
         );
 
         return new ImportBrandsResponse($brandsMatch, $totalResults);
@@ -41,7 +41,7 @@ class ImportBrandsService
 
     private function matchBrands(array $brandRequests, User $user): array
     {
-        if (count($brandRequests) === 0) {
+        if (0 === count($brandRequests)) {
             return [];
         }
 
@@ -50,7 +50,7 @@ class ImportBrandsService
         foreach ($brandRequests as $request) {
             $brandMatch = $this->repository->findBySourceAndExternalId(
                 source: $request->source,
-                externalId: $request->externalId
+                externalId: $request->externalId,
             );
 
             if (null == $brandMatch) {
@@ -61,8 +61,8 @@ class ImportBrandsService
                         $brandMatch->id(),
                         $brandMatch->name(),
                         $brandMatch->externalId()->combine(
-                            $request->externalId
-                        )
+                            $request->externalId,
+                        ),
                     ), $user);
                 }
             }
@@ -80,7 +80,7 @@ class ImportBrandsService
                 name: $request->name,
                 externalId: $request->externalId,
                 createIfNotExists: $request->createIfNotExists,
-                brandId: $brandMatch?->id()
+                brandId: $brandMatch?->id(),
             );
         }
 

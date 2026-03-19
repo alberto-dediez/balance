@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\Measurement\Import;
 
 use App\Property\Domain\Model\Property\PropertyRepository;
@@ -57,7 +59,7 @@ class ImportMeasurementServiceTest extends TestCase
         $user = UserMother::fromUsernameAndAccount('user', $account);
         $userRepository->add($user);
 
-        $property = PropertyMother::fromNameAndAccountAndId('Hotel', $account->id(), $data['propertyId']);
+        $property = PropertyMother::fromNameAndAccountAndId('Hotel', (string) $account->id(), $data['propertyId']);
         $propertyRepository->add($property);
 
         $waste = WasteMother::fromNameAndId('Papel', $data['wasteId']);
@@ -66,7 +68,7 @@ class ImportMeasurementServiceTest extends TestCase
         $wasteManager = WasteManagerMother::fromNameAndIdAndAccount(
             name: 'Basuras SL',
             wasteManagerId: new WasteManagerId($data['wasteManagerId']),
-            accountId: $account->id()
+            accountId: $account->id(),
         );
         $wasteManagerRepository->add($wasteManager);
 
@@ -76,7 +78,7 @@ class ImportMeasurementServiceTest extends TestCase
             propertyRepository: $propertyRepository,
             wasteRepository: $wasteRepository,
             wasteManagerRepository: $wasteManagerRepository,
-            userRepository: $userRepository
+            userRepository: $userRepository,
         );
 
         $request = new ImportMeasurementRequest(
@@ -90,7 +92,7 @@ class ImportMeasurementServiceTest extends TestCase
             justification: $data['justification'],
             unit: $data['unit'],
             day: $data['day'],
-            reference: $data['reference']
+            reference: $data['reference'],
         );
 
         $result = $sut($request, $user);
@@ -127,7 +129,7 @@ class ImportMeasurementServiceTest extends TestCase
             propertyRepository: $propertyRepository,
             wasteRepository: $wasteRepository,
             wasteManagerRepository: $wasteManagerRepository,
-            userRepository: $userRepository
+            userRepository: $userRepository,
         );
 
         $data = $this->createData();
@@ -142,7 +144,7 @@ class ImportMeasurementServiceTest extends TestCase
             justification: $data['justification'],
             unit: $data['unit'],
             day: $data['day'],
-            reference: $data['reference']
+            reference: $data['reference'],
         );
 
         $result = $sut->isHandled($request);
@@ -156,7 +158,7 @@ class ImportMeasurementServiceTest extends TestCase
         PropertyRepository $propertyRepository,
         WasteRepository $wasteRepository,
         WasteManagerRepository $wasteManagerRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
     ): ImportMeasurementService {
         return new ImportMeasurementService(
             measurementRepository: $measurementRepository,
@@ -165,7 +167,7 @@ class ImportMeasurementServiceTest extends TestCase
             wasteRepository: $wasteRepository,
             wasteManagerRepository: $wasteManagerRepository,
             userRepository: $userRepository,
-            authorizer: new MeasurementAuthorizer()
+            authorizer: new MeasurementAuthorizer(),
         );
     }
 

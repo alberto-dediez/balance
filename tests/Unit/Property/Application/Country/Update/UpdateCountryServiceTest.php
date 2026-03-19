@@ -1,21 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Country\Update;
 
-use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Property\Domain\Model\Country\Country;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Property\Domain\Model\Country\CountryUpdated;
 use App\Property\Application\Country\CountryAuthorizer;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Property\Domain\Model\Country\CountryMother;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Property\Application\Country\Update\UpdateCountryRequest;
-use App\Property\Application\Country\Update\UpdateCountryService;
 use App\Property\Application\Country\Update\UpdateCountryResponse;
+use App\Property\Application\Country\Update\UpdateCountryService;
+use App\Property\Domain\Model\Country\Country;
+use App\Property\Domain\Model\Country\CountryUpdated;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Property\Domain\Model\Country\CountryMother;
 use App\Tests\Unit\Property\Domain\Model\Country\CountryRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class UpdateCountryServiceTest extends TestCase
 {
@@ -41,7 +43,7 @@ class UpdateCountryServiceTest extends TestCase
         $request = new UpdateCountryRequest(
             countryId: $country->id(),
             name: 'Spain',
-            iso: '6666'
+            iso: '6666',
         );
 
         $user = UserMother::fromUsernameAndRole('user', Role::Admin);
@@ -76,7 +78,7 @@ class UpdateCountryServiceTest extends TestCase
         $result = $sut->isHandled(new UpdateCountryRequest(
             countryId: $country->id(),
             name: 'Country',
-            iso: '123'
+            iso: '123',
         ));
 
         $this->assertTrue($result);

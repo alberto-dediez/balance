@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Application\Importation\PairFields;
 
 use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
@@ -11,13 +13,11 @@ class PairFieldsImportationRequest implements Command
     public function __construct(
         public ImportationId $importationId,
         /** @var ImportationColumnConfiguration[] $configurations */
-        public array $configurations
-    ) {
-
-    }
+        public array $configurations,
+    ) {}
 
     public function pairedConfigurations(): array
     {
-        return array_filter($this->configurations, fn(ImportationColumnConfiguration $configuration) => $configuration->field !== null);
+        return array_filter($this->configurations, fn(ImportationColumnConfiguration $configuration) => null !== $configuration->field);
     }
 }

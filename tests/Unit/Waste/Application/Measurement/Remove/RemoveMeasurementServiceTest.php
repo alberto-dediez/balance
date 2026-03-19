@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\Measurement\Remove;
 
-use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
-use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Waste\Domain\Model\Measurement\MeasurementRemoved;
-use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
-use App\Waste\Application\Measurement\Remove\RemoveMeasurementRequest;
-use App\Waste\Application\Measurement\Remove\RemoveMeasurementService;
-use App\Waste\Application\Measurement\Remove\RemoveMeasurementResponse;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
+use App\Waste\Application\Measurement\MeasurementAuthorizer;
+use App\Waste\Application\Measurement\Remove\RemoveMeasurementRequest;
+use App\Waste\Application\Measurement\Remove\RemoveMeasurementResponse;
+use App\Waste\Application\Measurement\Remove\RemoveMeasurementService;
+use App\Waste\Domain\Model\Measurement\MeasurementRemoved;
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
+use PHPUnit\Framework\TestCase;
 
 class RemoveMeasurementServiceTest extends TestCase
 {
@@ -40,7 +42,7 @@ class RemoveMeasurementServiceTest extends TestCase
         $repository->add($measurement);
 
         $request = new RemoveMeasurementRequest(
-            measurementId: $measurement->id()
+            measurementId: $measurement->id(),
         );
 
         $result = $sut($request, $user);
@@ -48,7 +50,7 @@ class RemoveMeasurementServiceTest extends TestCase
         $this->assertNotNull($result);
         $this->assertTrue($result instanceof RemoveMeasurementResponse);
         $this->assertTrue($measurement->id()->equals($result->measurementId));
-        
+
         $measurementPersisted = $repository->find($result->measurementId);
 
         $this->assertNull($measurementPersisted);
@@ -68,7 +70,7 @@ class RemoveMeasurementServiceTest extends TestCase
         $measurement = MeasurementMother::random();
 
         $result = $sut->isHandled(new RemoveMeasurementRequest(
-            measurementId: $measurement->id()
+            measurementId: $measurement->id(),
         ));
 
         $this->assertTrue($result);

@@ -1,15 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Property;
 
-use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Property\Domain\Model\Property\ExternalId;
-use App\Property\Domain\Model\Property\PropertyId;
-use App\Property\Domain\Model\Property\PropertyInfo;
 
 final class PropertyRegistered extends DomainEvent
 {
@@ -22,7 +20,7 @@ final class PropertyRegistered extends DomainEvent
         private readonly ?ExternalId $externalId = null,
         private readonly ?AccountId $accountId = null,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -64,14 +62,14 @@ final class PropertyRegistered extends DomainEvent
             'accountId' => $this->accountId instanceof AccountId ? ((string) $this->accountId) : null,
             'name' => $this->name,
             'info' => $this->info,
-            'externalId' => $this->externalId
+            'externalId' => $this->externalId,
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        array $payload = []
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new PropertyRegistered(
             propertyId: new PropertyId($payload['propertyId']),
@@ -80,7 +78,7 @@ final class PropertyRegistered extends DomainEvent
             externalId: $payload['externalId'] ?? null,
             accountId: null !== $payload['accountId'] ? new AccountId($payload['accountId']) : null,
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

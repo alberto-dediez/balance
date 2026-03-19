@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\Measurement;
 
+use App\Security\Application\AbstractAuthorizer;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
-use App\Security\Application\AbstractAuthorizer;
 use App\Waste\Domain\Model\Measurement\Measurement;
 
 final class MeasurementAuthorizer extends AbstractAuthorizer
@@ -61,9 +63,8 @@ final class MeasurementAuthorizer extends AbstractAuthorizer
 
         return
             $user->accountId()->equals($subject->accountId())
-            && (
-                $user->hasRole(Role::Owner)
-            )
+                && $user->hasRole(Role::Owner)
+
         ;
     }
 
@@ -75,9 +76,8 @@ final class MeasurementAuthorizer extends AbstractAuthorizer
 
         return
             $user->accountId()->equals($subject->accountId())
-            && (
-                $user->hasRole(Role::Owner)
-            )
+                && $user->hasRole(Role::Owner)
+
         ;
     }
 

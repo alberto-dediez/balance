@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Application\Importation\AssignValues;
 
-use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Application\Importation\ImportationAuthorizer;
+use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
@@ -14,11 +16,10 @@ use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 
 class AssignValuesImportationService implements CommandHandler
 {
-    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+    use RegisterHandlerTrait;
+    use CommandInvokeHandlerTrait;
 
-    public function __construct(private ImportationRepository $importationRepository, private ImportationAuthorizer $authorizer)
-    {
-    }
+    public function __construct(private ImportationRepository $importationRepository, private ImportationAuthorizer $authorizer) {}
 
     public function __invoke(AssignValuesImportationRequest $request, User $user): AssignValuesImportationResponse
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\UI\Web\Form;
 
 use App\DataExchange\Domain\Model\Importation\ColumnValueTranslation;
@@ -12,14 +14,14 @@ class ColumnValueTranslationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (null === $options['definition']) {
-            return ;
+            return;
         }
 
         $builder
             ->add(
                 'translation',
                 $options['definition']->fieldType,
-                $options['definition']->options
+                $options['definition']->options,
             )
         ;
     }
@@ -28,7 +30,7 @@ class ColumnValueTranslationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ColumnValueTranslation::class,
-            'definition' => null
+            'definition' => null,
         ]);
     }
 }

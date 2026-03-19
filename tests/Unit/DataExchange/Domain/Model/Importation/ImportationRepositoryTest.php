@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\DataExchange\Domain\Model\Importation;
 
 use App\DataExchange\Domain\Model\Importation\ImportationFile;

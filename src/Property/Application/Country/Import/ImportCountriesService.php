@@ -1,39 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Application\Country\Import;
 
-use App\Security\Application\Action;
-use App\Security\Domain\Model\User\User;
-use App\Property\Domain\Model\Country\Country;
-use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Application\Country\CountryAuthorizer;
 use App\Property\Application\Country\Register\RegisterCountryRequest;
 use App\Property\Application\Country\Register\RegisterCountryService;
 use App\Property\Application\Country\Update\UpdateCountryRequest;
 use App\Property\Application\Country\Update\UpdateCountryService;
+use App\Property\Domain\Model\Country\Country;
+use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Country\CountryRepository;
+use App\Security\Application\Action;
+use App\Security\Domain\Model\User\User;
 
 class ImportCountriesService
 {
     public function __construct(
-        private readonly CountryRepository $repository, 
-        private readonly RegisterCountryService $registerCountry, 
-        private readonly UpdateCountryService $updateCountry, 
-        private readonly CountryAuthorizer $authorizer
-    ) {
-
-    }
+        private readonly CountryRepository $repository,
+        private readonly RegisterCountryService $registerCountry,
+        private readonly UpdateCountryService $updateCountry,
+        private readonly CountryAuthorizer $authorizer,
+    ) {}
 
     public function __invoke(ImportCountriesRequest $request, User $user): ImportCountriesResponse
     {
         $this->authorizer->denyUnlessCanDoThat(new Country(
-            id: CountryId::generate()
+            id: CountryId::generate(),
         ), Action::Admin, $user);
 
         $countriesMatch = $this->matchCountries($request->countries, $user);
 
         $totalResults = array_sum(
-            array_map(fn(CountryResponse $response) => $response->countryId instanceof CountryId ? 1 : 0, $countriesMatch)
+            array_map(fn(CountryResponse $response) => $response->countryId instanceof CountryId ? 1 : 0, $countriesMatch),
         );
 
         return new ImportCountriesResponse($countriesMatch, $totalResults);
@@ -41,7 +41,7 @@ class ImportCountriesService
 
     private function matchCountries(array $countryRequests, User $user): array
     {
-        if (count($countryRequests) === 0) {
+        if (0 === count($countryRequests)) {
             return [];
         }
 
@@ -50,7 +50,7 @@ class ImportCountriesService
         foreach ($countryRequests as $request) {
             $countryMatch = $this->repository->findBySourceAndExternalId(
                 source: $request->source,
-                externalId: $request->externalId
+                externalId: $request->externalId,
             );
 
             if (null == $countryMatch && null != $request->iso && !empty($request->iso)) {
@@ -67,8 +67,8 @@ class ImportCountriesService
                     $countryMatch->name(),
                     $countryMatch->iso(),
                     $countryMatch->externalId()->combine(
-                        $request->externalId
-                    )
+                        $request->externalId,
+                    ),
                 ), $user);
             }
 
@@ -87,7 +87,7 @@ class ImportCountriesService
                 iso: $request->iso,
                 externalId: $request->externalId,
                 createIfNotExists: $request->createIfNotExists,
-                countryId: $countryMatch?->id()
+                countryId: $countryMatch?->id(),
             );
         }
 
