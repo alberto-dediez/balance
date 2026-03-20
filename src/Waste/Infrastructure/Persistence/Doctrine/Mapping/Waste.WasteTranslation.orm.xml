@@ -5,7 +5,7 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                                       http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="App\Waste\Domain\Model\Waste\WasteTranslation" table="waste_translation">
+    <entity name="App\Waste\Domain\Model\Waste\WasteTranslation" table="waste_translation" change-tracking-policy="DEFERRED_EXPLICIT">
         <id name="locale" type="locale" length="5" />
         <field name="name" type="string" length="255" nullable="false" />
         <id name="translatableId" type="waste_id" column="waste_id" />

@@ -9,4 +9,6 @@ interface Translation
     public function locale(): Locale;
 
     public function translatableId(): mixed;
+
+    public function update(Translation $translation): void;
 }

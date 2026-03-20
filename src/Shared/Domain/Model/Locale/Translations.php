@@ -29,24 +29,13 @@ class Translations implements \Countable
 
     public function add(Translation $translation): void
     {
-        if ($this->contains($translation)) {
-            $this->remove($translation);
+        if (!$this->contains($translation)) {
+            $this->translations[] = $translation;
+
+            return ;
         }
 
-        $this->translations[] = $translation;
-    }
-
-    public function remove(Translation $translation): void
-    {
-        if (0 === count($this->translations)) {
-            return;
-        }
-
-        foreach ($this->translations as $i => $savedTranslation) {
-            if ($translation->locale() === $savedTranslation->locale()) {
-                unset($this->translations[$i]);
-            }
-        }
+        $this->get($translation->locale())->update($translation);
     }
 
     public function get(Locale $locale): ?Translation

@@ -10,7 +10,7 @@ use App\Shared\Domain\Model\Locale\Translation;
 class WasteTranslation implements Translation
 {
     public function __construct(
-        private readonly string $name,
+        private string $name,
         private readonly Locale $locale,
         private readonly WasteId $translatableId,
     ) {}
@@ -28,5 +28,12 @@ class WasteTranslation implements Translation
     public function translatableId(): WasteId
     {
         return $this->translatableId;
+    }
+
+    public function update(Translation $translation): void
+    {
+        assert($translation instanceof WasteTranslation);
+
+        $this->name = $translation->name();
     }
 }

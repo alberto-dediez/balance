@@ -36,21 +36,18 @@ trait DoctrineTranslatableRepositoryTrait
     {
         $translations = $translatable->translations();
 
-        if (0 === count($translations)) {
-            return;
-        }
-
-        $storedTranslations = $translationRepository->findBy([
-            'translatableId' => $translatable->id(),
-        ]);
-
-        foreach ($storedTranslations as $storedTranslation) {
-            if (!$translations->contains($storedTranslation)) {
-                $this->getEntityManager()->remove($storedTranslation);
-            }
-        }
+        $qb = $translationRepository->createQueryBuilder('t');
+        $qb->delete()
+            ->where(
+                $qb->expr()->eq('t.translatableId', ':id')
+            )
+            ->setParameter('id', $translatable->id())
+            ->getQuery()
+            ->execute()
+        ;
 
         foreach ($translations->toArray() as $translation) {
+            $this->getEntityManager()->detach($translation);
             $this->getEntityManager()->persist($translation);
         }
     }
