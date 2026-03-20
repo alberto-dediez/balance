@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Waste\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Shared\Domain\Model\Locale\LocaleGetter;
+use App\Shared\Infrastructure\Persistence\Doctrine\Repository\DoctrineTranslatableRepositoryTrait;
 use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\Waste\WasteFilter;
 use App\Waste\Domain\Model\Waste\WasteId;
@@ -20,6 +21,8 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineWasteRepository implements WasteRepository
 {
+    use DoctrineTranslatableRepositoryTrait;
+
     public function __construct(private EntityManagerInterface $manager)
     {
 
@@ -29,33 +32,7 @@ class DoctrineWasteRepository implements WasteRepository
     {
         $this->manager->persist($waste);
 
-        if (count($waste->translations()) > 0) {
-            $qb = $this->manager->createQueryBuilder();
-
-            $qb->update(WasteTranslation::class, 't')
-                ->set('t.name', ':name')
-                ->where(
-                    $qb->expr()->andX(
-                        $qb->expr()->eq('t.locale', ':locale'),
-                        $qb->expr()->eq('t.translatable', ':waste')
-                    )
-                )
-                ->setParameter('waste', $waste)
-            ;
-
-            foreach ($waste->translations() as $translation) {
-                if (!$this->manager->contains($translation)) {
-                    $this->manager->persist($translation);
-                } else {
-                    $qb
-                        ->setParameter('locale', $translation->locale())
-                        ->setParameter('name', $translation->name())
-                        ->getQuery()
-                        ->execute()
-                    ;
-                }
-            }
-        }
+        $this->addTranslations($waste, WasteTranslation::class, $this->manager);
 
         $this->manager->flush();
     }
