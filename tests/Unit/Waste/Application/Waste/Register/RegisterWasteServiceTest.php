@@ -8,7 +8,7 @@ use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleGetter;
+use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
 use App\Waste\Application\Waste\Register\RegisterWasteRequest;
 use App\Waste\Application\Waste\Register\RegisterWasteResponse;
@@ -27,6 +27,7 @@ class RegisterWasteServiceTest extends TestCase
     protected function setUp(): void
     {
         DomainEventPublisher::instance()->reset();
+        FakeLocaleSetter::reset();
 
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
@@ -119,11 +120,9 @@ class RegisterWasteServiceTest extends TestCase
 
     private function createSUT(InMemoryWasteRepository $repository, Locale $locale): RegisterWasteService
     {
+        FakeLocaleSetter::set($locale);
         return new RegisterWasteService(
             wasteRepository: $repository,
-            localeGetter: new FakeLocaleGetter(
-                locale: $locale,
-            ),
             authorizer: new WasteAuthorizer(),
         );
     }

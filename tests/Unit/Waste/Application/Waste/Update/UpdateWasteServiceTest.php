@@ -9,7 +9,7 @@ use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleGetter;
+use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
 use App\Waste\Application\Waste\Update\UpdateWasteRequest;
@@ -29,6 +29,7 @@ class UpdateWasteServiceTest extends TestCase
     protected function setUp(): void
     {
         DomainEventPublisher::instance()->reset();
+        FakeLocaleSetter::reset();
 
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
@@ -98,6 +99,8 @@ class UpdateWasteServiceTest extends TestCase
 
         $wastePersisted = $repository->find($result->wasteId);
 
+        FakeLocaleSetter::set(Locale::Spanish);
+
         $this->assertNotNull($wastePersisted);
         $this->assertTrue($wastePersisted instanceof Waste);
         $this->assertNotEquals('changedName', $wastePersisted->name());
@@ -132,11 +135,9 @@ class UpdateWasteServiceTest extends TestCase
 
     private function createSUT(InMemoryWasteRepository $repository, Locale $locale): UpdateWasteService
     {
+        FakeLocaleSetter::set($locale);
         return new UpdateWasteService(
             wasteRepository: $repository,
-            localeGetter: new FakeLocaleGetter(
-                locale: $locale,
-            ),
             authorizer: new WasteAuthorizer(),
         );
     }

@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineWasteRepository implements WasteRepository
 {
-    public function __construct(private EntityManagerInterface $manager, private LocaleGetter $localeGetter)
+    public function __construct(private EntityManagerInterface $manager)
     {
 
     }
@@ -47,7 +47,7 @@ class DoctrineWasteRepository implements WasteRepository
     {
         $qb = $this->createQueryBuilderFromFilter(new WasteFilter());
 
-        $waste = $qb
+        return $qb
             ->andWhere(
                 $qb->expr()->eq('w.id', ':id'),
             )
@@ -55,10 +55,6 @@ class DoctrineWasteRepository implements WasteRepository
             ->getQuery()
             ->getOneOrNullResult()
         ;
-
-        $waste?->translations()->setLocale($this->localeGetter->locale());
-
-        return $waste;
     }
 
     private function createQueryBuilderFromFilter(WasteFilter $filter): QueryBuilder
@@ -74,7 +70,7 @@ class DoctrineWasteRepository implements WasteRepository
                     $qb->expr()->eq('w.removed', $qb->expr()->literal(false)),
                 ),
             )
-            ->setParameter('locale', $this->localeGetter->locale())
+            ->setParameter('locale', LocaleGetter::locale())
         ;
 
         if (!empty($filter->name)) {
@@ -124,14 +120,10 @@ class DoctrineWasteRepository implements WasteRepository
             ;
         }
 
-        $wastes = (array) $query->getResult();
+        $wastes = $query->getResult();
 
         if (0 === count($wastes)) {
             return [];
-        }
-
-        foreach ($wastes as $waste) {
-            $waste->translations()->setLocale($this->localeGetter->locale());
         }
 
         return $wastes;

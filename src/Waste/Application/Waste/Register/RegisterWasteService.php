@@ -23,7 +23,6 @@ class RegisterWasteService implements CommandHandler
 
     public function __construct(
         private WasteRepository $wasteRepository,
-        private LocaleGetter $localeGetter,
         private WasteAuthorizer $authorizer,
     ) {}
 
@@ -33,8 +32,8 @@ class RegisterWasteService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat(new Waste(id: $id), Action::List, $user);
 
-        $locale = $this->localeGetter->locale();
-        $isDefaultLocale = $this->localeGetter->default() === $locale;
+        $locale = LocaleGetter::locale();
+        $isDefaultLocale = LocaleGetter::default() === $locale;
 
         $waste = new Waste($id);
         $waste->register(

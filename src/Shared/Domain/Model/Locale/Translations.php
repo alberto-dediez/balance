@@ -5,17 +5,9 @@ declare(strict_types=1);
 namespace App\Shared\Domain\Model\Locale;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\PersistentCollection;
 
 class Translations extends ArrayCollection implements \Countable
 {
-    private ?Locale $locale = null;
-
-    public function __construct(array|PersistentCollection $translations = [])
-    {
-        parent::__construct(is_array($translations) ? $translations : $translations->toArray());
-    }
-
     public function add(mixed $element): void
     {
         if (!$element instanceof Translation) {
@@ -65,18 +57,9 @@ class Translations extends ArrayCollection implements \Countable
         return false;
     }
 
-    public function setLocale(Locale $locale): void
-    {
-        $this->locale = $locale;
-    }
-
     public function currentTranslation(): ?Translation
     {
-        if (!$this->locale instanceof Locale) {
-            return null;
-        }
-
-        return $this->getTranslationFor($this->locale);
+        return $this->getTranslationFor(LocaleGetter::locale());
     }
 
     public function getTranslationFor(Locale $locale): ?Translation

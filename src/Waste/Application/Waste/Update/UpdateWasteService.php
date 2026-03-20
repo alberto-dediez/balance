@@ -21,7 +21,6 @@ class UpdateWasteService implements CommandHandler
 
     public function __construct(
         private WasteRepository $wasteRepository,
-        private LocaleGetter $localeGetter,
         private WasteAuthorizer $authorizer,
     ) {}
 
@@ -35,8 +34,8 @@ class UpdateWasteService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($waste, Action::Edit, $user);
 
-        $locale = $this->localeGetter->locale();
-        $isDefaultLocale = $locale === $this->localeGetter->default();
+        $locale = LocaleGetter::locale();
+        $isDefaultLocale = $locale === LocaleGetter::default();
 
         $waste->update(
             name: $request->name,

@@ -14,15 +14,13 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryWasteRepository implements WasteRepository
 {
-    public function __construct(private readonly LocaleGetter $localeGetter, private array $wastes = []) {}
+    public function __construct(private array $wastes = []) {}
 
     public function add(Waste $waste): void
     {
         if (isset($this->wastes[(string) $waste->id()])) {
             return;
         }
-
-        $waste->translations()->setLocale($this->localeGetter->locale());
 
         $this->wastes[(string) $waste->id()] = $waste;
     }

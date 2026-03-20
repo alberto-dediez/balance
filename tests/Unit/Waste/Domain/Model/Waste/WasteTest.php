@@ -5,12 +5,18 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Waste\Domain\Model\Waste;
 
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
 use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\Waste\WasteId;
 use PHPUnit\Framework\TestCase;
 
 class WasteTest extends TestCase
 {
+    public function setUp(): void
+    {
+        FakeLocaleSetter::reset();
+    }
+
     public function testTranslateAddTranslation(): void
     {
         $waste = new Waste(
@@ -48,7 +54,7 @@ class WasteTest extends TestCase
         $waste->translate('translated-name-it', Locale::Italian);
         $waste->translate('translated-name-ge', Locale::German);
 
-        $waste->translations()->setLocale(Locale::Italian);
+        FakeLocaleSetter::set(Locale::Italian);
 
         $this->assertEquals('translated-name-it', $waste->name());
     }

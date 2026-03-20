@@ -109,6 +109,13 @@ test-acceptance: ## Execute acceptance tests
 	@$(PHP_TEST) bin/console doc:sch:upd -e test --force -q
 	@$(PHP_TEST) vendor/bin/behat $(options)
 
+
+test-this: ## Execute one test
+	@$(eval test ?=)
+	@$(PHP_TEST) bin/console doc:sch:drop -e test --force -q
+	@$(PHP_TEST) bin/console doc:sch:upd -e test --force -q
+	@$(PHP_TEST) bin/phpunit $(test)
+
 reset-test-cache: ## Clear testing cache
 	@$(PHP) bin/console cache:clear --env=test -q
 

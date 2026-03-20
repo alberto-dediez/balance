@@ -5,12 +5,20 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Waste\Domain\Model\Waste;
 
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
 use App\Waste\Domain\Model\Waste\WasteFilter;
 use App\Waste\Domain\Model\Waste\WasteRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class WasteRepositoryTest extends KernelTestCase
 {
+    public function setUp(): void
+    {
+        FakeLocaleSetter::reset();
+
+        parent::setUp();
+    }
+
     public function testAddWasteToRepository(): void
     {
         $repository = $this->createSUT();
