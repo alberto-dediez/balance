@@ -9,6 +9,7 @@ use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\Waste\WasteFilter;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\Waste\WasteRepository;;
+use App\Waste\Domain\Model\Waste\WasteTranslation;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -29,8 +30,30 @@ class DoctrineWasteRepository implements WasteRepository
         $this->manager->persist($waste);
 
         if (count($waste->translations()) > 0) {
+            $qb = $this->manager->createQueryBuilder();
+
+            $qb->update(WasteTranslation::class, 't')
+                ->set('t.name', ':name')
+                ->where(
+                    $qb->expr()->andX(
+                        $qb->expr()->eq('t.locale', ':locale'),
+                        $qb->expr()->eq('t.translatable', ':waste')
+                    )
+                )
+                ->setParameter('waste', $waste)
+            ;
+
             foreach ($waste->translations() as $translation) {
-                $this->manager->persist($translation);
+                if (!$this->manager->contains($translation)) {
+                    $this->manager->persist($translation);
+                } else {
+                    $qb
+                        ->setParameter('locale', $translation->locale())
+                        ->setParameter('name', $translation->name())
+                        ->getQuery()
+                        ->execute()
+                    ;
+                }
             }
         }
 
