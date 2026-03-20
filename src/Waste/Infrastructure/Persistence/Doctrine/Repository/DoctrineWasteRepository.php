@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace App\Waste\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Shared\Domain\Model\Locale\LocaleGetter;
-use App\Shared\Infrastructure\Persistence\Doctrine\Repository\DoctrineTranslatableRepositoryTrait;
 use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\Waste\WasteFilter;
 use App\Waste\Domain\Model\Waste\WasteId;
-use App\Waste\Domain\Model\Waste\WasteRepository;
-use App\Waste\Domain\Model\Waste\WasteTranslation;
+use App\Waste\Domain\Model\Waste\WasteRepository;;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -22,20 +19,20 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineWasteRepository implements WasteRepository
 {
-    use DoctrineTranslatableRepositoryTrait;
-
-    private EntityRepository $repository;
-
     public function __construct(private EntityManagerInterface $manager, private LocaleGetter $localeGetter)
     {
-        $this->repository = $manager->getRepository(Waste::class);
+
     }
 
     public function add(Waste $waste): void
     {
         $this->manager->persist($waste);
 
-        $this->addTranslations($waste, $this->manager->getRepository(WasteTranslation::class));
+        if (count($waste->translations()) > 0) {
+            foreach ($waste->translations() as $translation) {
+                $this->manager->persist($translation);
+            }
+        }
 
         $this->manager->flush();
     }
@@ -59,7 +56,7 @@ class DoctrineWasteRepository implements WasteRepository
             ->getOneOrNullResult()
         ;
 
-        $this->loadTranslations($waste, $this->manager->getRepository(WasteTranslation::class));
+        $waste?->translations()->setLocale($this->localeGetter->locale());
 
         return $waste;
     }
@@ -70,7 +67,7 @@ class DoctrineWasteRepository implements WasteRepository
 
         $qb->select('w')
             ->from(Waste::class, 'w')
-            ->leftJoin(WasteTranslation::class, 'trans', 'WITH', 'trans.translatableId = w.id AND trans.locale = :locale')
+            ->leftJoin('w.translations', 'trans', 'WITH', 'trans.locale = :locale')
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('w.removed'),
@@ -134,7 +131,7 @@ class DoctrineWasteRepository implements WasteRepository
         }
 
         foreach ($wastes as $waste) {
-            $this->loadTranslations($waste, $this->manager->getRepository(WasteTranslation::class));
+            $waste->translations()->setLocale($this->localeGetter->locale());
         }
 
         return $wastes;

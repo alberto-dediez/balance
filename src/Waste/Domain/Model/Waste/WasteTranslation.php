@@ -11,8 +11,8 @@ class WasteTranslation implements Translation
 {
     public function __construct(
         private string $name,
-        private readonly Locale $locale,
-        private readonly WasteId $translatableId,
+        private Locale $locale,
+        private Waste $translatable,
     ) {}
 
     public function name(): string
@@ -25,9 +25,9 @@ class WasteTranslation implements Translation
         return $this->locale;
     }
 
-    public function translatableId(): WasteId
+    public function translatable(): Waste
     {
-        return $this->translatableId;
+        return $this->translatable;
     }
 
     public function update(Translation $translation): void

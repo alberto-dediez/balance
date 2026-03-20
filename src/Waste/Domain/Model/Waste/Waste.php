@@ -13,7 +13,7 @@ class Waste implements Translatable, \Stringable
 {
     use AggregateRoot;
 
-    private ?Translations $translations = null;
+    private iterable $translations;
 
     public function __construct(
         protected WasteId $id,
@@ -59,9 +59,11 @@ class Waste implements Translatable, \Stringable
 
     public function translations(): Translations
     {
-        if (!$this->translations instanceof Translations) {
-            $this->translations = new Translations();
+        if ($this->translations instanceof Translations) {
+            return $this->translations;
         }
+
+        $this->translations = new Translations($this->translations->toArray());
 
         return $this->translations;
     }
@@ -167,7 +169,7 @@ class Waste implements Translatable, \Stringable
         $wasteTranslation = new WasteTranslation(
             name: $event->name(),
             locale: $event->locale(),
-            translatableId: $this->id(),
+            translatable: $this,
         );
 
         $this->translations()->add($wasteTranslation);

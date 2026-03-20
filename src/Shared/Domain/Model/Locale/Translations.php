@@ -4,14 +4,66 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\Model\Locale;
 
-class Translations implements \Countable
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\PersistentCollection;
+
+class Translations extends ArrayCollection implements \Countable
 {
     private ?Locale $locale = null;
 
-    /**
-     * @param Translation[] $translations
-     */
-    public function __construct(private array $translations = []) {}
+    public function __construct(array|PersistentCollection $translations = [])
+    {
+        parent::__construct(is_array($translations) ? $translations : $translations->toArray());
+    }
+
+    public function add(mixed $element): void
+    {
+        if (!$element instanceof Translation) {
+            throw new \InvalidArgumentException('$element must be an instance of Translation');
+        }
+
+        if (!$this->contains($element)) {
+            parent::add($element);
+        }
+
+        $this->getTranslationFor($element->locale())->update($element);
+    }
+
+    public function removeElement(mixed $element): void
+    {
+        if (!$element instanceof Translation) {
+            throw new \InvalidArgumentException('$element must be an instance of Translation');
+        }
+
+        if (count($this) == 0) {
+            return ;
+        }
+
+        foreach ($this->toArray() as $i => $savedTranslation) {
+            if ($element->locale() === $savedTranslation->locale()) {
+                parent::removeElement($savedTranslation);
+            }
+        }
+    }
+
+    public function contains(mixed $element): bool
+    {
+        if (!$element instanceof Translation) {
+            throw new \InvalidArgumentException('$element must be an instance of Translation');
+        }
+
+        if (count($this) == 0) {
+            return false;
+        }
+
+        foreach ($this as $savedTranslation) {
+            if ($element->locale() === $savedTranslation->locale()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public function setLocale(Locale $locale): void
     {
@@ -24,50 +76,23 @@ class Translations implements \Countable
             return null;
         }
 
-        return $this->get($this->locale);
+        return $this->getTranslationFor($this->locale);
     }
 
-    public function add(Translation $translation): void
+    public function getTranslationFor(Locale $locale): ?Translation
     {
-        if (!$this->contains($translation)) {
-            $this->translations[] = $translation;
+        $translations = $this->toArray();
 
-            return ;
-        }
-
-        $this->get($translation->locale())->update($translation);
-    }
-
-    public function get(Locale $locale): ?Translation
-    {
-        if (0 === count($this->translations)) {
+        if (0 === count($translations)) {
             return null;
         }
 
-        foreach ($this->translations as $translation) {
+        foreach ($translations as $translation) {
             if ($locale === $translation->locale()) {
                 return $translation;
             }
         }
 
         return null;
-    }
-
-    public function contains(Translation $translation): bool
-    {
-        return $this->get($translation->locale()) instanceof Translation;
-    }
-
-    /**
-     * @return Translation[]
-     */
-    public function toArray(): array
-    {
-        return $this->translations;
-    }
-
-    public function count(): int
-    {
-        return count($this->translations);
     }
 }
