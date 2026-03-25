@@ -5,53 +5,60 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Shared\Domain\Model\Locale\Translatable;
+use App\Waste\Domain\Model\Waste\WasteTranslation;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 trait DoctrineTranslatableRepositoryTrait
 {
-    private function loadTranslations(?Translatable $translatable, EntityRepository $translationRepository): void
+    private function addTranslations(Translatable $translatable, string $translationClass, EntityManagerInterface $manager): void
     {
-        if (!$translatable instanceof Translatable) {
-            return;
-        }
+        $translationRepository = $manager->getRepository($translationClass);
 
-        $translatable->translations()->setLocale($this->localeGetter->locale());
+        if (count($translatable->translations()) > 0) {
+            $qb = $translationRepository->createQueryBuilder('t');
 
-        $storedTranslations = $translationRepository
-            ->findBy([
-                'translatableId' => $translatable->id(),
-            ])
-        ;
+            $reflection = new \ReflectionClass($translationClass);
 
-        if (0 === count($storedTranslations)) {
-            return;
-        }
+            $qb->update()
+                ->where(
+                    $qb->expr()->andX(
+                        $qb->expr()->eq('t.locale', ':locale'),
+                        $qb->expr()->eq('t.translatable', ':translatable')
+                    )
+                )
+                ->setParameter('translatable', $translatable)
+            ;
 
-        foreach ($storedTranslations as $translation) {
-            $translatable->translations()->add($translation);
-        }
-    }
+            foreach ($reflection->getProperties() as $property) {
+                if (in_array($property->getName(), ['locale', 'translatable'], true)) {
+                    continue;
+                }
 
-    private function addTranslations(Translatable $translatable, EntityRepository $translationRepository): void
-    {
-        $translations = $translatable->translations();
-
-        if (0 === count($translations)) {
-            return;
-        }
-
-        $storedTranslations = $translationRepository->findBy([
-            'translatableId' => $translatable->id(),
-        ]);
-
-        foreach ($storedTranslations as $storedTranslation) {
-            if (!$translations->contains($storedTranslation)) {
-                $this->getEntityManager()->remove($storedTranslation);
+                $qb->set('t.' . $property->getName(), ':' . $property->getName());
             }
-        }
 
-        foreach ($translations->toArray() as $translation) {
-            $this->getEntityManager()->persist($translation);
+            foreach ($translatable->translations() as $translation) {
+                if (!$manager->contains($translation)) {
+                    $manager->persist($translation);
+                } else {
+                    foreach ($reflection->getProperties() as $property) {
+                        if (in_array($property->getName(), ['locale', 'translatable'], true)) {
+                            continue;
+                        }
+
+                        $propertyName = $property->getName();
+
+                        $qb->setParameter($propertyName, $translation->$propertyName());
+                    }
+
+                    $qb
+                        ->setParameter('locale', $translation->locale())
+                        ->getQuery()
+                        ->execute()
+                    ;
+                }
+            }
         }
     }
 }
