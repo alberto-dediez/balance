@@ -30,7 +30,6 @@ use App\Waste\Domain\Model\Waste\WasteRepository;
 use App\Waste\Domain\Model\WasteManager\WasteManager;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;
-use Symfony\Component\Translation\TranslatableMessage;
 
 class ImportMeasurementService implements CommandHandler
 {

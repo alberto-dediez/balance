@@ -18,6 +18,7 @@ class DoctrineWasteRepositoryTest extends WasteRepositoryTest
         $manager = $this->getContainer()->get(EntityManagerInterface::class);
 
         FakeLocaleSetter::set($locale);
+
         return new DoctrineWasteRepository($manager);
     }
 }

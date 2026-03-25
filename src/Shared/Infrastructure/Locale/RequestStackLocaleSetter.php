@@ -34,4 +34,3 @@ class RequestStackLocaleSetter
         LocaleGetter::setLocale($locale);
     }
 }
-

@@ -13,6 +13,7 @@ class WasteRepositoryMother
     public static function inMemory(Locale $locale = Locale::Spanish): InMemoryWasteRepository
     {
         FakeLocaleSetter::set($locale);
+
         return new InMemoryWasteRepository();
     }
 }

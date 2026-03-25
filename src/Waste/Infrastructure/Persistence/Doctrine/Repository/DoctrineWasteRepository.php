@@ -9,7 +9,7 @@ use App\Shared\Infrastructure\Persistence\Doctrine\Repository\DoctrineTranslatab
 use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\Waste\WasteFilter;
 use App\Waste\Domain\Model\Waste\WasteId;
-use App\Waste\Domain\Model\Waste\WasteRepository;;
+use App\Waste\Domain\Model\Waste\WasteRepository;
 use App\Waste\Domain\Model\Waste\WasteTranslation;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -23,10 +23,7 @@ class DoctrineWasteRepository implements WasteRepository
 {
     use DoctrineTranslatableRepositoryTrait;
 
-    public function __construct(private EntityManagerInterface $manager)
-    {
-
-    }
+    public function __construct(private EntityManagerInterface $manager) {}
 
     public function add(Waste $waste): void
     {

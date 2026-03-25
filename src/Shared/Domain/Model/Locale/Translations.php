@@ -27,8 +27,8 @@ class Translations extends ArrayCollection implements \Countable
             throw new \InvalidArgumentException('$element must be an instance of Translation');
         }
 
-        if (count($this) == 0) {
-            return ;
+        if (0 == count($this)) {
+            return;
         }
 
         foreach ($this->toArray() as $i => $savedTranslation) {
@@ -44,7 +44,7 @@ class Translations extends ArrayCollection implements \Countable
             throw new \InvalidArgumentException('$element must be an instance of Translation');
         }
 
-        if (count($this) == 0) {
+        if (0 == count($this)) {
             return false;
         }
 

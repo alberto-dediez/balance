@@ -136,6 +136,7 @@ class UpdateWasteServiceTest extends TestCase
     private function createSUT(InMemoryWasteRepository $repository, Locale $locale): UpdateWasteService
     {
         FakeLocaleSetter::set($locale);
+
         return new UpdateWasteService(
             wasteRepository: $repository,
             authorizer: new WasteAuthorizer(),

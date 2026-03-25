@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\Persistence\InMemory\Repository;
 
-use App\Shared\Domain\Model\Locale\LocaleGetter;
 use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\Waste\WasteFilter;
 use App\Waste\Domain\Model\Waste\WasteId;
