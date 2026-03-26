@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Security\Infrastructure\Bioscore;
+namespace App\Security\Infrastructure\SSO;
 
 use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer\Key\InMemory;
@@ -13,20 +13,21 @@ use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Validator;
 use Symfony\Component\Clock\NativeClock;
 
-class BioscoreJwtDecoder
+class SSOJwtDecoder
 {
     public function __construct(
-        private readonly string $publicKeyPath
+        private readonly string $publicKeyPath,
     ) {}
 
     /**
      * @return array<string, mixed>
+     *
      * @throws \Exception If the token is invalid
      */
     public function decode(string $tokenStr): array
     {
         $parser = new Parser(new JoseEncoder());
-        
+
         try {
             $token = $parser->parse($tokenStr);
         } catch (\Exception $e) {
@@ -34,7 +35,7 @@ class BioscoreJwtDecoder
         }
 
         $validator = new Validator();
-        
+
         $keyContent = @file_get_contents($this->publicKeyPath);
         if (false === $keyContent) {
             $keyContent = $this->publicKeyPath;
@@ -43,7 +44,7 @@ class BioscoreJwtDecoder
         try {
             $publicKey = InMemory::plainText($keyContent);
             $constraint = new SignedWith(new Sha256(), $publicKey);
-            
+
             if (!$validator->validate($token, $constraint)) {
                 throw new \Exception('Invalid JWT signature.');
             }

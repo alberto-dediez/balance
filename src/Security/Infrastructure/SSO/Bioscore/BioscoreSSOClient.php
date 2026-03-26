@@ -2,26 +2,31 @@
 
 declare(strict_types=1);
 
-namespace App\Security\Infrastructure\Bioscore;
+namespace App\Security\Infrastructure\SSO\Bioscore;
 
+use App\Security\Infrastructure\SSO\SSOClient;
+use App\Shared\Domain\Model\Locale\Locale;
+use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class BioscoreSsoClient
+#[When(env: 'dev')]
+#[When(env: 'prod')]
+class BioscoreSSOClient implements SSOClient
 {
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly string $ssoUrl,
         private readonly string $apiBaseUrl,
-        private readonly string $platform,
+        private readonly string $origin,
     ) {}
 
-    public function getLoginUrl(string $language = 'es'): string
+    public function getLoginUrl(Locale $locale = Locale::Spanish): string
     {
         return sprintf(
             '%s/%s/login-sso/%s',
             rtrim($this->ssoUrl, '/'),
-            $language,
-            $this->platform,
+            $locale->value,
+            $this->origin,
         );
     }
 

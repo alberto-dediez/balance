@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Security\Infrastructure\Symfony\Security;
 
-use App\Security\Infrastructure\Bioscore\BioscoreJwtDecoder;
-use App\Security\Infrastructure\Bioscore\BioscoreSsoClient;
+use App\Security\Infrastructure\SSO\SSOClient;
+use App\Security\Infrastructure\SSO\SSOJwtDecoder;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,20 +21,20 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-class BioscoreAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
+class SSOAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
     use TargetPathTrait;
 
     public function __construct(
-        private readonly BioscoreSsoClient $ssoClient,
+        private readonly SSOClient $ssoClient,
         private readonly UserProviderInterface $userProvider,
-        private readonly BioscoreJwtDecoder $jwtDecoder,
+        private readonly SSOJwtDecoder $jwtDecoder,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {}
 
     public function supports(Request $request): ?bool
     {
-        return 'app_login_bioscore_callback' === $request->attributes->get('_route')
+        return 'app_login_sso_callback' === $request->attributes->get('_route')
             && $request->query->has('token');
     }
 
