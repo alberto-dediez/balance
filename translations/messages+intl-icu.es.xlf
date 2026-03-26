@@ -1361,6 +1361,10 @@
         <source>Residuos generados</source>
         <target>Residuos generados</target>
       </trans-unit>
+      <trans-unit id=".yxSs_P" resname="Login con Bioscore">
+        <source>Login con Bioscore</source>
+        <target>Login con Bioscore</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
