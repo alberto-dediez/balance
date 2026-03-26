@@ -117,6 +117,7 @@ class DoctrineCategoryRepository implements CategoryRepository
         return $qb;
     }
 
+    /** @return Category[] */
     public function findByFilter(CategoryFilter $filter): array
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
@@ -137,7 +138,7 @@ class DoctrineCategoryRepository implements CategoryRepository
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return $qb->select('COUNT(DISTINCT c)')
+        return (int) $qb->select('COUNT(DISTINCT c)')
             ->getQuery()
             ->getSingleScalarResult()
         ;

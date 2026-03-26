@@ -6,5 +6,8 @@ namespace App\Property\Application\Destination\List;
 
 class ListDestinationsResponse
 {
+    /**
+     * @param \App\Property\Domain\Model\Destination\Destination[] $destinations
+     */
     public function __construct(public array $destinations = [], public int $totalResults = 0) {}
 }

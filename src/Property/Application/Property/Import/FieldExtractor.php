@@ -6,11 +6,17 @@ namespace App\Property\Application\Property\Import;
 
 class FieldExtractor
 {
+    /**
+     * @param array<string, int|string> $config
+     */
     public function __construct(private array $config = []) {}
 
+    /**
+     * @param array<mixed> $row
+     */
     public function extract(Field $field, array $row)
     {
-        if (!isset($this->config[$field->value]) || null === $this->config[$field->value]) {
+        if (!isset($this->config[$field->value])) {
             return null;
         }
 
@@ -21,6 +27,6 @@ class FieldExtractor
 
     public function hasField(Field $field): bool
     {
-        return isset($this->config[$field->value]) && null !== $this->config[$field->value];
+        return isset($this->config[$field->value]);
     }
 }

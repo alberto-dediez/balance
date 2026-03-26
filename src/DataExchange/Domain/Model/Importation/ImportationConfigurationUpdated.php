@@ -12,6 +12,7 @@ final class ImportationConfigurationUpdated extends DomainEvent
 {
     protected static string $eventName = 'importationConfigurationUpdated';
 
+    /** @param ImportationColumnConfiguration[] $configurations */
     public function __construct(
         private readonly ImportationId $importationId,
         private readonly array $configurations = [],
@@ -26,6 +27,7 @@ final class ImportationConfigurationUpdated extends DomainEvent
         return $this->importationId;
     }
 
+    /** @return ImportationColumnConfiguration[] */
     public function configurations(): array
     {
         return $this->configurations;

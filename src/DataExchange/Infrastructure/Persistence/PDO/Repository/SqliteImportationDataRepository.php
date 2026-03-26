@@ -142,13 +142,21 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         $connection->exec($createTableSql);
     }
 
+    /** @return array<int, string> */
     public function getColumns(ImportationId $importationId): array
     {
         $connection = $this->connect($importationId);
 
-        return $connection->query("SELECT name FROM pragma_table_info('importation_data') WHERE name != 'row_id' AND name != 'error' and name != 'executed';")->fetchAll(\PDO::FETCH_COLUMN);
+        $stmt = $connection->query("SELECT name FROM pragma_table_info('importation_data') WHERE name != 'row_id' AND name != 'error' and name != 'executed';");
+
+        if (false === $stmt) {
+            throw new \RuntimeException('Failed to execute query.');
+        }
+
+        return $stmt->fetchAll(\PDO::FETCH_COLUMN);
     }
 
+    /** @return array<int, string> */
     public function getValues(ImportationId $importationId, int $column): array
     {
         $connection = $this->connect($importationId);
@@ -157,10 +165,16 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         $columnName = $columns[$column] ?? '';
 
         $sql = sprintf('SELECT DISTINCT(`%s`) FROM importation_data', $columnName);
+        $stmt = $connection->query($sql);
 
-        return $connection->query($sql)->fetchAll(\PDO::FETCH_COLUMN);
+        if (false === $stmt) {
+            throw new \RuntimeException('Failed to execute query.');
+        }
+
+        return $stmt->fetchAll(\PDO::FETCH_COLUMN);
     }
 
+    /** @return ImportationColumnConfiguration[] */
     public function getAllConfigurations(ImportationId $importationId): array
     {
         $columns = $this->getColumns($importationId);
@@ -186,7 +200,13 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         $values = $this->getValues($importationId, $column);
 
         $connection = $this->connect($importationId);
-        $field = $connection->query(sprintf('SELECT `%s` FROM importation_fields LIMIT 1', $columnName))->fetch(\PDO::FETCH_COLUMN);
+        $stmt = $connection->query(sprintf('SELECT `%s` FROM importation_fields LIMIT 1', $columnName));
+
+        if (false === $stmt) {
+            throw new \RuntimeException('Failed to execute query.');
+        }
+
+        $field = $stmt->fetch(\PDO::FETCH_COLUMN);
 
         $translations = $this->getTranslations($importationId, $columnName, $values);
 
@@ -200,6 +220,8 @@ class SqliteImportationDataRepository implements ImportationDataRepository
     }
 
     /**
+     * @param array<int|string, mixed> $values
+     *
      * @return ColumnValueTranslation[]
      */
     private function getTranslations(ImportationId $importationId, string $columnName, array $values): array
@@ -248,6 +270,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         }
     }
 
+    /** @return array<string, mixed>|null */
     public function getData(ImportationId $importationId, int $rowNumber): ?array
     {
         $connection = $this->connect($importationId);
@@ -283,6 +306,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         $statement->execute();
     }
 
+    /** @return array<string, mixed>|null */
     public function getResult(ImportationId $importationId, int $rowNumber): ?array
     {
         $connection = $this->connect($importationId);
@@ -306,7 +330,13 @@ class SqliteImportationDataRepository implements ImportationDataRepository
     {
         $connection = $this->connect($importationId);
 
-        return $connection->query('SELECT COUNT(*) FROM importation_data WHERE `executed` != 1')->fetchColumn();
+        $stmt = $connection->query('SELECT COUNT(*) FROM importation_data WHERE `executed` != 1');
+
+        if (false === $stmt) {
+            throw new \RuntimeException('Failed to execute query.');
+        }
+
+        return (int) $stmt->fetchColumn();
     }
 
     public function remove(ImportationId $importationId): void

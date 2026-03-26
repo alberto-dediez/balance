@@ -15,6 +15,7 @@ use Twig\TwigFilter;
 #[Autoconfigure(tags: [['name' => 'twig.extension', 'priority' => -10]])]
 class CountryExtension extends AbstractExtension
 {
+    /** @var Country[] */
     private array $countries = [];
 
     public function __construct(private readonly CountryRepository $countryRepository) {}

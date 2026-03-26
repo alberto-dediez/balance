@@ -39,6 +39,11 @@ class ImportCategoriesService
         return new ImportCategoriesResponse($categoriesMatch, $totalResults);
     }
 
+    /**
+     * @param CategoryRequest[] $categoryRequests
+     *
+     * @return CategoryResponse[]
+     */
     private function matchCategories(array $categoryRequests, User $user): array
     {
         if (0 === count($categoryRequests)) {

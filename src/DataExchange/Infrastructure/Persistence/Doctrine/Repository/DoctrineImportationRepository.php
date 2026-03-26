@@ -74,6 +74,7 @@ class DoctrineImportationRepository implements ImportationRepository
         return $importation;
     }
 
+    /** @return array<string, mixed>|null */
     public function getData(ImportationId $importationId, int $rowNumber): ?array
     {
         return $this->dataRepository->getData($importationId, $rowNumber);
@@ -84,6 +85,7 @@ class DoctrineImportationRepository implements ImportationRepository
         $this->dataRepository->saveResult($importationId, $rowNumber, $error);
     }
 
+    /** @return array<string, mixed>|null */
     public function getResult(ImportationId $importationId, int $rowNumber): ?array
     {
         return $this->dataRepository->getResult($importationId, $rowNumber);

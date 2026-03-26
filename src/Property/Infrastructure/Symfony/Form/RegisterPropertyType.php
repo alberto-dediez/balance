@@ -15,6 +15,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/** @extends AbstractType<RegisterPropertyRequest> */
 class RegisterPropertyType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

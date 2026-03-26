@@ -20,6 +20,7 @@ interface PropertyRepository
 
     public function findByGeoPosition(string $latitude, string $longitude): ?Property;
 
+    /** @return Property[] */
     public function findByFilter(PropertyFilter $filter): array;
 
     public function totalResultsByFilter(PropertyFilter $filter): int;

@@ -16,6 +16,7 @@ class InMemoryImportationRepository implements ImportationRepository
 {
     private readonly ImportationDataRepository $dataRepository;
 
+    /** @param array<string, Importation> $importations */
     public function __construct(private array $importations = [])
     {
         $this->dataRepository = new SqliteImportationDataRepository(
@@ -72,11 +73,13 @@ class InMemoryImportationRepository implements ImportationRepository
         return $importation;
     }
 
+    /** @return array<int, string> */
     public function getColumns(ImportationId $importationId): array
     {
         return $this->dataRepository->getColumns($importationId);
     }
 
+    /** @return array<string, mixed>|null */
     public function getData(ImportationId $importationId, int $rowNumber): ?array
     {
         return $this->dataRepository->getData($importationId, $rowNumber);
@@ -87,6 +90,7 @@ class InMemoryImportationRepository implements ImportationRepository
         $this->dataRepository->saveResult($importationId, $rowNumber, $error);
     }
 
+    /** @return array<string, mixed>|null */
     public function getResult(ImportationId $importationId, int $rowNumber): ?array
     {
         return $this->dataRepository->getResult($importationId, $rowNumber);

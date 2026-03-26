@@ -212,6 +212,7 @@ class DoctrinePropertyRepository implements PropertyRepository
         return $qb;
     }
 
+    /** @return Property[] */
     public function findByFilter(PropertyFilter $filter): array
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
@@ -232,7 +233,7 @@ class DoctrinePropertyRepository implements PropertyRepository
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return $qb->select('COUNT(DISTINCT p)')
+        return (int) $qb->select('COUNT(DISTINCT p)')
             ->getQuery()
             ->getSingleScalarResult()
         ;

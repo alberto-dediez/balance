@@ -8,6 +8,9 @@ use App\Property\Domain\Model\Property\ExternalId;
 
 class ExternalIdExtractor
 {
+    /**
+     * @param array<mixed> $row
+     */
     public function extract(FieldExtractor $fieldExtractor, array $row): ExternalId
     {
         $restel = $fieldExtractor->extract(Field::ExternalRestel, $row);

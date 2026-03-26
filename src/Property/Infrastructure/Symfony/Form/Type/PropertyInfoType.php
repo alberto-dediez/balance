@@ -19,6 +19,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/** @extends AbstractType<PropertyInfo> */
 class PropertyInfoType extends AbstractType
 {
     public function __construct(private readonly DestinationRepository $destinationRepository) {}

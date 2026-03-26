@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/** @extends AbstractType<ExternalId> */
 class ExternalIdType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

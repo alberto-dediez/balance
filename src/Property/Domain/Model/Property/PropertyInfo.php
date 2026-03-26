@@ -12,7 +12,7 @@ use App\Property\Domain\Model\Destination\DestinationId;
 class PropertyInfo implements \Stringable
 {
     public function __construct(
-        private readonly PropertyType $propertyType = PropertyType::Hotel,
+        private readonly ?PropertyType $propertyType = PropertyType::Hotel,
         private readonly ?CategoryId $categoryId = null,
         private readonly ?BrandId $brandId = null,
         private readonly ?string $address = null,
@@ -29,7 +29,7 @@ class PropertyInfo implements \Stringable
     public function __toString(): string
     {
         return implode(' | ', [
-            'propertyType => ' . $this->propertyType()->value,
+            'propertyType => ' . $this->propertyType()?->value,
             'categoryId => ' . $this->categoryId(),
             'brandId => ' . $this->brandId(),
             'address => ' . $this->address(),
@@ -44,7 +44,7 @@ class PropertyInfo implements \Stringable
         ]);
     }
 
-    public function propertyType(): PropertyType
+    public function propertyType(): ?PropertyType
     {
         return $this->propertyType;
     }
@@ -181,8 +181,8 @@ class PropertyInfo implements \Stringable
     {
         return new PropertyInfo(
             propertyType: $this->propertyType() ?? $other->propertyType(),
-            categoryId: ($this->categoryId() instanceof CategoryId && !empty($this->categoryId())) ? $this->categoryId() : $other->categoryId(),
-            brandId: ($this->brandId() instanceof BrandId && !empty($this->brandId())) ? $this->brandId() : $other->brandId(),
+            categoryId: $this->categoryId() ?? $other->categoryId(),
+            brandId: $this->brandId() ?? $other->brandId(),
             address: (null !== $this->address() && !empty($this->address())) ? $this->address() : $other->address(),
             postalCode: (null !== $this->postalCode() && !empty($this->postalCode())) ? $this->postalCode() : $other->postalCode(),
             longitude: (null !== $this->longitude() && !empty($this->longitude())) ? $this->longitude() : $other->longitude(),

@@ -11,8 +11,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractType<ImportationColumnConfiguration>
+ */
 class ConfigurationFieldType extends AbstractType
 {
+    /** @param array<string, mixed> $options */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

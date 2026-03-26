@@ -141,6 +141,7 @@ class DoctrineCountryRepository implements CountryRepository
         return $qb;
     }
 
+    /** @return Country[] */
     public function findByFilter(CountryFilter $filter): array
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
@@ -161,7 +162,7 @@ class DoctrineCountryRepository implements CountryRepository
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return $qb->select('COUNT(DISTINCT c)')
+        return (int) $qb->select('COUNT(DISTINCT c)')
             ->getQuery()
             ->getSingleScalarResult()
         ;

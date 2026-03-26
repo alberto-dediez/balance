@@ -15,6 +15,7 @@ class DirectExtractor implements FieldExtractor
         $this->columnName = $columnConfiguration->name;
     }
 
+    /** @param array<int|string, mixed> $row */
     public function extractField(array $row): mixed
     {
         return $row[$this->columnName] ?? null;

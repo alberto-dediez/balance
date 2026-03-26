@@ -11,6 +11,7 @@ class AssignValuesImportationRequest implements Command
 {
     public function __construct(
         public ImportationId $importationId,
+        /** @var array<string, mixed> */
         public array $defaultValues,
     ) {}
 }

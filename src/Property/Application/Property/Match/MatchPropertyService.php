@@ -40,9 +40,11 @@ class MatchPropertyService
         }
 
         $property = $this->propertyRepository->find($propertyIdFound);
-        $property->match($request->name, $request->info, $request->externalId);
 
-        $this->propertyRepository->add($property);
+        if ($property instanceof Property) {
+            $property->match($request->name, $request->info, $request->externalId);
+            $this->propertyRepository->add($property);
+        }
 
         return new MatchPropertyResponse(
             propertyId: $propertyIdFound,
@@ -57,6 +59,7 @@ class MatchPropertyService
             return $propertyIdFound;
         }
 
+        /** @var array<string, array{propertyId: PropertyId, matchPercent: float}> $possibleMatchs */
         $possibleMatchs = [];
 
         $propertyIdFound = $this->findByExternalId($request);
@@ -105,6 +108,9 @@ class MatchPropertyService
         return $this->getBestMatch($possibleMatchs);
     }
 
+    /**
+     * @param array<string, array{propertyId: PropertyId, matchPercent: float}> $possibleMatchs
+     */
     private function getBestMatch(array $possibleMatchs): ?PropertyId
     {
         $bestMatch = null;
@@ -178,7 +184,7 @@ class MatchPropertyService
             ),
         );
 
-        if (null == $properties || 0 === count($properties)) {
+        if (0 === count($properties)) {
             $properties = $this->propertyRepository->findByFilter(
                 new PropertyFilter(
                     destinationId: $request->info->destinationId(),
@@ -188,7 +194,7 @@ class MatchPropertyService
             );
         }
 
-        if (null == $properties || 0 === count($properties)) {
+        if (0 === count($properties)) {
             $properties = $this->propertyRepository->findByFilter(
                 new PropertyFilter(
                     countryId: $request->info->countryId(),
@@ -203,9 +209,6 @@ class MatchPropertyService
 
         foreach ($properties as $property) {
             if (! $property->externalId()->isCombinable($request->externalId)) {
-                continue;
-            }
-            if (null === $request->name) {
                 continue;
             }
             if (null === $property->name()) {

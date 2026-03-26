@@ -13,6 +13,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/** @extends AbstractType<RegisterCountryRequest> */
 class AdminRegisterCountryType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

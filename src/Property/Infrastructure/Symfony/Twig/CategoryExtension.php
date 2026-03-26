@@ -12,6 +12,7 @@ use Twig\TwigFilter;
 
 class CategoryExtension extends AbstractExtension
 {
+    /** @var Category[] */
     private array $categories = [];
 
     public function __construct(private readonly CategoryRepository $categoryRepository) {}
@@ -37,7 +38,11 @@ class CategoryExtension extends AbstractExtension
         }
 
         if (!isset($this->categories[(string) $categoryId])) {
-            $this->categories[(string) $categoryId] = $this->categoryRepository->find($categoryId);
+            $category = $this->categoryRepository->find($categoryId);
+
+            if (null !== $category) {
+                $this->categories[(string) $categoryId] = $category;
+            }
         }
 
         return $this->categories[(string) $categoryId];

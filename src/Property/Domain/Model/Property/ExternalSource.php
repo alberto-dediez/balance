@@ -19,7 +19,7 @@ enum ExternalSource: string
         };
     }
 
-    public function attribute(): ?string
+    public function attribute(): string
     {
         return match ($this) {
             self::Hotelbeds => 'hotelbeds',

@@ -16,6 +16,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryDestinationRepository implements DestinationRepository
 {
+    /** @param Destination[] $destinations */
     public function __construct(private array $destinations = []) {}
 
     public function add(Destination $destination): void
@@ -51,7 +52,7 @@ class InMemoryDestinationRepository implements DestinationRepository
         }
 
         foreach ($this->destinations as $destination) {
-            if (null !== $destination->name() && strtolower($destination->name()) === strtolower($name) && $destination->countryId()->equals($countryId)) {
+            if (strtolower($destination->name()) === strtolower($name) && null !== $destination->countryId() && $destination->countryId()->equals($countryId)) {
                 return $this->find($destination->id());
             }
         }
@@ -81,6 +82,7 @@ class InMemoryDestinationRepository implements DestinationRepository
         return null;
     }
 
+    /** @return Destination[] */
     public function findByFilter(DestinationFilter $filter): array
     {
         $results = [];

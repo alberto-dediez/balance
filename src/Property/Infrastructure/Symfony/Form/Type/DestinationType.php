@@ -12,6 +12,9 @@ use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteEntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class DestinationType extends AbstractType
 {
     public function __construct(

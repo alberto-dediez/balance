@@ -46,10 +46,14 @@ class TranslationsController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $response = $pairFields(
-                $form->getData(),
-                $loggedUser(),
-            );
+            try {
+                $response = $pairFields(
+                    $form->getData(),
+                    $loggedUser(),
+                );
+            } catch (\Throwable) {
+                $response = null;
+            }
 
             if (!$response instanceof PairFieldsImportationResponse) {
                 $this->addFlash('danger', new TranslatableMessage('Hay errores en la configuración de los distintos campos. Por favor, revise el formulario.'));

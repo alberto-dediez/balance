@@ -34,9 +34,9 @@ class PropertyLoadCommand extends Command
 {
     public const BATCH_SIZE = 500;
 
-    private FieldExtractor $fieldExtractor;
+    private ?FieldExtractor $fieldExtractor = null;
 
-    private ExternalSource $source;
+    private ?ExternalSource $source = null;
 
     public function __construct(
         private readonly PropertyInfoExtractor $propertyInfoExtractor,
@@ -45,6 +45,7 @@ class PropertyLoadCommand extends Command
         private readonly PropertyRepository $propertyRepository,
         private readonly EntityManagerInterface $manager,
         #[AutowireIterator('property.import.configuration')]
+        /** @var iterable<\App\Property\Infrastructure\ExternalSource\Property\Import\ImportConfiguration> */
         private readonly iterable $configurations,
     ) {
         parent::__construct();
@@ -64,30 +65,31 @@ class PropertyLoadCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $io->title('Importando fichero de propiedades');
 
-        $source = ExternalSource::tryFrom($input->getArgument('source'));
+        $source = ExternalSource::tryFrom((string) $input->getArgument('source'));
 
         if (null === $source) {
-            $io->error(sprintf('Fuente "%s" no reconocida.', $source));
+            $io->error(sprintf('Fuente "%s" no reconocida.', (string) $input->getArgument('source')));
 
             return Command::FAILURE;
         }
 
         $this->source = $source;
 
+        /** @var \App\Property\Infrastructure\ExternalSource\Property\Import\ImportConfiguration $configuration */
         foreach ($this->configurations as $configuration) {
-            if ($configuration->getSource() === $source) {
+            if ($configuration->getSource() === $this->source) {
                 $this->fieldExtractor = $configuration->getFieldExtractor();
                 break;
             }
         }
 
-        if (null == $this->fieldExtractor) {
-            $io->error(sprintf('No se ha encontrado configuración para la fuente "%s".', $source->value));
+        if (null === $this->fieldExtractor) {
+            $io->error(sprintf('No se ha encontrado configuración para la fuente "%s".', $this->source->value));
 
             return Command::FAILURE;
         }
 
-        $filename = $input->getArgument('file');
+        $filename = (string) $input->getArgument('file');
 
         if (!file_exists($filename)) {
             $io->error(sprintf('El fichero "%s" no existe.', $filename));
@@ -101,27 +103,31 @@ class PropertyLoadCommand extends Command
             return Command::FAILURE;
         }
 
-        $offset = $input->getOption('offset-properties');
+        $offset = (int) $input->getOption('offset-properties');
 
         $this->properties($io, $filename, $offset);
 
         return Command::SUCCESS;
     }
 
-    protected function properties(SymfonyStyle $io, string $filename, $offset = 0)
+    protected function properties(SymfonyStyle $io, string $filename, int $offset = 0): void
     {
         $file = fopen($filename, 'r');
 
+        if (false === $file) {
+            $io->error(sprintf('No se pudo abrir el fichero "%s".', $filename));
+
+            return;
+        }
+
         // La primera fila es la cabecera con los nombres de los campos
-        $row = fgetcsv($file, 2000, ';');
+        fgetcsv($file, 2000, ';');
 
         $progressBar = $io->createProgressBar();
 
         $imported = 0;
 
-        while (false !== $row) {
-            $row = fgetcsv($file, 2000, ';');
-
+        while (false !== ($row = fgetcsv($file, 2000, ';'))) {
             if (!is_array($row)) {
                 continue;
             }
@@ -134,6 +140,13 @@ class PropertyLoadCommand extends Command
                 continue;
             }
 
+            /* @var array<string, string|null> $row */
+            if (null === $this->fieldExtractor || null === $this->source) {
+                $io->error('Error en la configuración del extractor o la fuente.');
+
+                return;
+            }
+
             $externalId = $this->externalIdExtractor->extract($this->fieldExtractor, $row);
 
             $propertyId = $this->findByMainExternalId($externalId, $this->source);
@@ -143,7 +156,7 @@ class PropertyLoadCommand extends Command
             }
 
             $propertyInfo = $this->propertyInfoExtractor->extract($this->fieldExtractor, $this->source, $row);
-            $propertyName = $this->fieldExtractor->extract(Field::Name, $row);
+            $propertyName = (string) $this->fieldExtractor->extract(Field::Name, $row);
 
             $registerResponse = $this->registerPropertyService->__invoke(new RegisterPropertyRequest(
                 name: $propertyName,

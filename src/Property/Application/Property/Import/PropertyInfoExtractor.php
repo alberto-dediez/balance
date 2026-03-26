@@ -26,10 +26,16 @@ class PropertyInfoExtractor
         private readonly BrandRepository $brandRepository,
     ) {}
 
+    /**
+     * @param array<mixed> $row
+     */
     public function extract(FieldExtractor $fieldExtractor, ExternalSource $source, array $row): PropertyInfo
     {
-        $longitude = str_replace(',', '.', $fieldExtractor->extract(Field::InfoLongitude, $row));
-        $latitude = str_replace(',', '.', $fieldExtractor->extract(Field::InfoLatitude, $row));
+        $longitudeData = $fieldExtractor->extract(Field::InfoLongitude, $row);
+        $latitudeData = $fieldExtractor->extract(Field::InfoLatitude, $row);
+
+        $longitude = null !== $longitudeData ? str_replace(',', '.', (string) $longitudeData) : null;
+        $latitude = null !== $latitudeData ? str_replace(',', '.', (string) $latitudeData) : null;
 
         $countryExternalId = $fieldExtractor->extract(Field::InfoCountryId, $row);
         $countryExternalName = $fieldExtractor->extract(Field::InfoCountryName, $row);

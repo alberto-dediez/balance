@@ -20,8 +20,8 @@ class SSOJwtDecoderTest extends TestCase
     protected function setUp(): void
     {
         $res = openssl_pkey_new([
-            "private_key_bits" => 2048,
-            "private_key_type" => OPENSSL_KEYTYPE_RSA,
+            'private_key_bits' => 2048,
+            'private_key_type' => OPENSSL_KEYTYPE_RSA,
         ]);
 
         openssl_pkey_export($res, $privateKey);
@@ -44,7 +44,7 @@ class SSOJwtDecoderTest extends TestCase
     public function testDecodeInvalidSignature(): void
     {
         // Generate another key pair for an invalid signature
-        $res = openssl_pkey_new(["private_key_bits" => 2048, "private_key_type" => OPENSSL_KEYTYPE_RSA]);
+        $res = openssl_pkey_new(['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);
         openssl_pkey_export($res, $otherPrivateKey);
 
         $decoder = new SSOJwtDecoder($this->publicKey);
@@ -79,7 +79,7 @@ class SSOJwtDecoderTest extends TestCase
 
     private function createToken(array $claims, ?string $privateKey = null, ?\DateTimeImmutable $expiresAt = null): string
     {
-        $tokenBuilder = clone (new Builder(new JoseEncoder(), ChainedFormatter::default()));
+        $tokenBuilder = clone new Builder(new JoseEncoder(), ChainedFormatter::default());
         $algorithm    = new Sha256();
         $signingKey   = InMemory::plainText($privateKey ?? $this->privateKey);
 

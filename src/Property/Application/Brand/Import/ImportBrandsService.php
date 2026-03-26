@@ -39,6 +39,11 @@ class ImportBrandsService
         return new ImportBrandsResponse($brandsMatch, $totalResults);
     }
 
+    /**
+     * @param BrandRequest[] $brandRequests
+     *
+     * @return BrandResponse[]
+     */
     private function matchBrands(array $brandRequests, User $user): array
     {
         if (0 === count($brandRequests)) {

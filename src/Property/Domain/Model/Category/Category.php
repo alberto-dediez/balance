@@ -11,15 +11,20 @@ class Category implements \Stringable
 {
     use AggregateRoot;
 
+    /**
+     * @param array<\App\Shared\Domain\Event\DomainEvent> $events
+     */
     public function __construct(
         private CategoryId $id,
         private string $name = '',
         private ?ExternalId $externalId = null,
-        private bool $removed = false,
+        private ?bool $removed = false,
         array $events = [],
-        private ?\DateTimeImmutable $registeredAt = null,
+        private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $removedAt = null,
-    ) {}
+    ) {
+        $this->events = $events;
+    }
 
     public function id(): CategoryId
     {
@@ -42,7 +47,7 @@ class Category implements \Stringable
 
     public function isRemoved(): bool
     {
-        return $this->removed;
+        return $this->removed ?? false;
     }
 
     public function registeredAt(): \DateTimeImmutable

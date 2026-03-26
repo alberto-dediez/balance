@@ -20,16 +20,18 @@ interface ImportationType
 
     public function returnRoute(): string;
 
+    /** @return string[] */
     public function fields(): array;
 
-    /** @return ?FieldDefinition[] */
+    /** @return FieldDefinition[] */
     public function translationDefinitions(): array;
 
-    /** @return ?FieldDefinition[] */
+    /** @return FieldDefinition[] */
     public function assignValueDefinitions(): array;
 
     public function buildRowExtractor(Importation $importation): RowExtractor;
 
+    /** @param array<string, mixed> $data */
     public function commandBuilder(array $data): Command;
 
     public function isAuthorized(User $user): bool;

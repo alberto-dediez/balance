@@ -8,6 +8,7 @@ use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
 
 class MapExtractor implements FieldExtractor
 {
+    /** @var array<string, string|null> */
     private array $translations = [];
 
     private readonly string $columnName;
@@ -25,6 +26,7 @@ class MapExtractor implements FieldExtractor
         }
     }
 
+    /** @param array<int|string, mixed> $row */
     public function extractField(array $row): mixed
     {
         $value = $row[$this->columnName] ?? null;

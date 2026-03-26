@@ -11,6 +11,7 @@ class FieldDefinition
 {
     public function __construct(
         public string $fieldType,
+        /** @var array<string, mixed> */
         public array $options = [],
     ) {
         $this->options['required'] ??= false;

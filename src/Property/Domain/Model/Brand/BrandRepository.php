@@ -19,6 +19,9 @@ interface BrandRepository
 
     public function findBySourceAndExternalId(ExternalSource $source, ExternalId $externalId): ?Brand;
 
+    /**
+     * @return Brand[]
+     */
     public function findByFilter(BrandFilter $filter): array;
 
     public function totalResultsByFilter(BrandFilter $filter): int;

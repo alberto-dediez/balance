@@ -9,8 +9,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<ColumnValueTranslation>
+ */
 class ColumnValueTranslationType extends AbstractType
 {
+    /** @param array<string, mixed> $options */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (null === $options['definition']) {

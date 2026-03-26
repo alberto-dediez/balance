@@ -42,6 +42,11 @@ class ImportDestinationsService
         return new ImportDestinationsResponse($destinationsMatch, $totalResults);
     }
 
+    /**
+     * @param DestinationRequest[] $destinationRequests
+     *
+     * @return DestinationResponse[]
+     */
     private function matchDestinations(array $destinationRequests, User $user): array
     {
         if (0 === count($destinationRequests)) {
@@ -56,7 +61,7 @@ class ImportDestinationsService
                 externalId: $request->externalId,
             );
 
-            if (null !== $request->countryId && null == $destinationMatch) {
+            if (null == $destinationMatch) {
                 $destinationMatch = $this->findByNameAndCountry($request);
 
                 if ($destinationMatch instanceof Destination) {

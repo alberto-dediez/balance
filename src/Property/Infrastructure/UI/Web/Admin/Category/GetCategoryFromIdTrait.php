@@ -16,7 +16,7 @@ trait GetCategoryFromIdTrait
         $category = $categoryRepository->find(new CategoryId($categoryId));
 
         if (null == $category) {
-            throw $this->createNotFoundException(new TranslatableMessage('La categoría no existe'));
+            throw $this->createNotFoundException((string) new TranslatableMessage('La categoría no existe'));
         }
 
         return $category;

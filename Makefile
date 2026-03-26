@@ -135,6 +135,10 @@ phpstan:
 	@$(eval c ?=)
 	@$(PHP) bin/phpstan $(c)
 
+phpstan-json:
+	@$(eval c ?=)
+	@$(PHP) bin/phpstan $(c) --error-format=json > phpstan-report.json
+
 rector:
 	@$(eval c ?=)
 	$(PHP_CONT) ./vendor/bin/rector $(c)

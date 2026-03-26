@@ -12,12 +12,12 @@
 
         <field name="name" type="string" length="255" nullable="false" />
         <field name="type" type="string" length="255" nullable="false" />
-        <field name="status" type="string" enum-type="App\DataExchange\Domain\Model\Importation\ImportationStatus" nullable="true"/>
+        <field name="status" type="string" enum-type="App\DataExchange\Domain\Model\Importation\ImportationStatus" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
         <field name="executedAt" type="datetime_immutable" column="executed_at" nullable="true" />
         <field name="accountId" type="account_id" nullable="true" />
         <field name="registeredBy" type="user_id" nullable="true" />
-        <field name="defaultValues" type="array" nullable="true" />
+        <field name="defaultValues" type="array" nullable="false" />
     </entity>
 
 </doctrine-mapping>

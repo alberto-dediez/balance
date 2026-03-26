@@ -18,6 +18,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryPropertyRepository implements PropertyRepository
 {
+    /** @param Property[] $properties */
     public function __construct(private array $properties = []) {}
 
     public function add(Property $property): void
@@ -121,6 +122,7 @@ class InMemoryPropertyRepository implements PropertyRepository
         return null;
     }
 
+    /** @return Property[] */
     public function findByFilter(PropertyFilter $filter): array
     {
         $results = [];
@@ -143,11 +145,11 @@ class InMemoryPropertyRepository implements PropertyRepository
                 continue;
             }
 
-            if ($filter->destinationId instanceof DestinationId && (null == $property->info()?->destinationId() || false === $filter->destinationId->equals($property->info()->destinationId()))) {
+            if ($filter->destinationId instanceof DestinationId && (null == $property->info()->destinationId() || false === $filter->destinationId->equals($property->info()->destinationId()))) {
                 continue;
             }
 
-            if ($filter->countryId instanceof CountryId && (null == $property->info()?->countryId() || false === $filter->countryId->equals($property->info()->countryId()))) {
+            if ($filter->countryId instanceof CountryId && (null == $property->info()->countryId() || false === $filter->countryId->equals($property->info()->countryId()))) {
                 continue;
             }
 

@@ -131,6 +131,7 @@ class DoctrineDestinationRepository implements DestinationRepository
         return $qb;
     }
 
+    /** @return Destination[] */
     public function findByFilter(DestinationFilter $filter): array
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
@@ -151,7 +152,7 @@ class DoctrineDestinationRepository implements DestinationRepository
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return $qb->select('COUNT(DISTINCT d)')
+        return (int) $qb->select('COUNT(DISTINCT d)')
             ->getQuery()
             ->getSingleScalarResult()
         ;

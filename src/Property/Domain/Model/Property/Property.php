@@ -11,17 +11,22 @@ class Property implements \Stringable
 {
     use AggregateRoot;
 
+    /**
+     * @param array<\App\Shared\Domain\Event\DomainEvent> $events
+     */
     public function __construct(
         private PropertyId $id,
         private string $name = '',
         private ?PropertyInfo $info = null,
         private ?ExternalId $externalId = null,
         private ?AccountId $accountId = null,
-        private bool $removed = false,
+        private ?bool $removed = false,
         array $events = [],
-        private ?\DateTimeImmutable $registeredAt = null,
+        private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $removedAt = null,
-    ) {}
+    ) {
+        $this->events = $events;
+    }
 
     public function id(): PropertyId
     {
@@ -58,7 +63,7 @@ class Property implements \Stringable
 
     public function isRemoved(): bool
     {
-        return $this->removed;
+        return $this->removed ?? false;
     }
 
     public function registeredAt(): \DateTimeImmutable
@@ -131,13 +136,16 @@ class Property implements \Stringable
 
     public function applyPropertyMatched(PropertyMatched $event): void
     {
-        if (!$this->info()->equals($event->info()) || !$this->externalId()->equals($event->externalId())) {
+        $eventInfo = $event->info() ?? new PropertyInfo();
+        $eventExternalId = $event->externalId() ?? new ExternalId();
+
+        if (!$this->info()->equals($eventInfo) || !$this->externalId()->equals($eventExternalId)) {
             $this->recordApplyAndPublish(
                 new PropertyUpdated(
                     propertyId: $this->id(),
                     name: $this->name(),
-                    info: $this->info()->combine($event->info()),
-                    externalId: $this->externalId()->combine($event->externalId()),
+                    info: $this->info()->combine($eventInfo),
+                    externalId: $this->externalId()->combine($eventExternalId),
                     accountId: $this->accountId(),
                 ),
             );

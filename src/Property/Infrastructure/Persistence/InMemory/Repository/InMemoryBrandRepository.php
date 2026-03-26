@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryBrandRepository implements BrandRepository
 {
+    /** @param Brand[] $brands */
     public function __construct(private array $brands = []) {}
 
     public function add(Brand $brand): void
@@ -50,7 +51,7 @@ class InMemoryBrandRepository implements BrandRepository
         }
 
         foreach ($this->brands as $brand) {
-            if (null !== $brand->name() && strtolower($brand->name()) === strtolower($name)) {
+            if (strtolower($brand->name()) === strtolower($name)) {
                 return $this->find($brand->id());
             }
         }
@@ -80,6 +81,7 @@ class InMemoryBrandRepository implements BrandRepository
         return null;
     }
 
+    /** @return Brand[] */
     public function findByFilter(BrandFilter $filter): array
     {
         $results = [];

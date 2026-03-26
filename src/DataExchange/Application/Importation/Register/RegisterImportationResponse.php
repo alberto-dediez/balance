@@ -11,5 +11,11 @@ use App\Shared\Application\CommandBus\CommandResponse;
 
 class RegisterImportationResponse implements CommandResponse
 {
-    public function __construct(public ImportationId $importationId, public string $name, public string $type, public AccountId $accountId, public ?UserId $registeredBy) {}
+    public function __construct(
+        public ImportationId $importationId,
+        public string $name,
+        public string $type,
+        public ?AccountId $accountId,
+        public ?UserId $registeredBy,
+    ) {}
 }

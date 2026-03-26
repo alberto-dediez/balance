@@ -9,6 +9,7 @@ use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/** @extends AbstractType<mixed> */
 class PropertyTypeType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void

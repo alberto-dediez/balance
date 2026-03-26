@@ -12,6 +12,7 @@ use Twig\TwigFilter;
 
 class DestinationExtension extends AbstractExtension
 {
+    /** @var Destination[] */
     private array $destinations = [];
 
     public function __construct(private readonly DestinationRepository $destinationRepository) {}
@@ -37,7 +38,11 @@ class DestinationExtension extends AbstractExtension
         }
 
         if (!isset($this->destinations[(string) $destinationId])) {
-            $this->destinations[(string) $destinationId] = $this->destinationRepository->find($destinationId);
+            $destination = $this->destinationRepository->find($destinationId);
+
+            if (null !== $destination) {
+                $this->destinations[(string) $destinationId] = $destination;
+            }
         }
 
         return $this->destinations[(string) $destinationId];

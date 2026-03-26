@@ -12,6 +12,11 @@ class Importation implements \Stringable
 {
     use AggregateRoot;
 
+    /**
+     * @param ImportationColumnConfiguration[] $configurations
+     * @param array<string, mixed>             $events
+     * @param array<string, mixed>             $defaultValues
+     */
     public function __construct(
         protected ImportationId $id,
         protected string $name = '',
@@ -22,10 +27,12 @@ class Importation implements \Stringable
         array $events = [],
         protected array $configurations = [],
         protected array $defaultValues = [],
-        protected ?\DateTimeImmutable $registeredAt = null,
+        protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         protected ?\DateTimeImmutable $executedAt = null,
         protected ?UserId $registeredBy = null,
-    ) {}
+    ) {
+        $this->events = $events;
+    }
 
     public function id(): ImportationId
     {
@@ -52,18 +59,20 @@ class Importation implements \Stringable
         return ImportationStatus::InProgress === $this->status;
     }
 
+    /** @param ImportationColumnConfiguration[] $configurations */
     public function loadConfigurations(array $configurations): void
     {
-        if (isset($this->configurations) && is_array($this->configurations) && count($this->configurations) > 0) {
+        if (count($this->configurations) > 0) {
             throw new \RuntimeException('Use configure() to save new configurations.');
         }
 
         $this->configurations = $configurations;
     }
 
+    /** @return ImportationColumnConfiguration[] */
     public function configurations(): array
     {
-        return $this->configurations ?? [];
+        return $this->configurations;
     }
 
     public function configurationFor(string $columnName): ?ImportationColumnConfiguration
@@ -96,9 +105,10 @@ class Importation implements \Stringable
         return null;
     }
 
+    /** @return array<string, mixed> */
     public function defaultValues(): array
     {
-        return $this->defaultValues ?? [];
+        return $this->defaultValues;
     }
 
     public function defaultValueForField(string $field): ?string
@@ -116,7 +126,7 @@ class Importation implements \Stringable
         return $this->file ?? null;
     }
 
-    public function registeredAt(): ?\DateTimeImmutable
+    public function registeredAt(): \DateTimeImmutable
     {
         return $this->registeredAt;
     }
@@ -139,6 +149,7 @@ class Importation implements \Stringable
         );
     }
 
+    /** @param ImportationColumnConfiguration[] $configurations */
     public function configure(array $configurations): void
     {
         $this->recordApplyAndPublish(
@@ -149,6 +160,7 @@ class Importation implements \Stringable
         );
     }
 
+    /** @param array<string, mixed> $defaultValues */
     public function setDefaultValues(array $defaultValues): void
     {
         $this->recordApplyAndPublish(

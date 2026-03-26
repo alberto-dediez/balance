@@ -8,8 +8,10 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 class ImportationTypeFactory
 {
+    /** @var array<string, ImportationType> */
     private array $types = [];
 
+    /** @param iterable<ImportationType> $importationTypes */
     public function __construct(
         #[AutowireIterator('exchange.importation.type')]
         iterable $importationTypes,

@@ -117,6 +117,7 @@ class DoctrineBrandRepository implements BrandRepository
         return $qb;
     }
 
+    /** @return Brand[] */
     public function findByFilter(BrandFilter $filter): array
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
@@ -137,7 +138,7 @@ class DoctrineBrandRepository implements BrandRepository
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return $qb->select('COUNT(DISTINCT b)')
+        return (int) $qb->select('COUNT(DISTINCT b)')
             ->getQuery()
             ->getSingleScalarResult()
         ;

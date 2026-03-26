@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryCategoryRepository implements CategoryRepository
 {
+    /** @param Category[] $categories */
     public function __construct(private array $categories = []) {}
 
     public function add(Category $category): void
@@ -50,22 +51,7 @@ class InMemoryCategoryRepository implements CategoryRepository
         }
 
         foreach ($this->categories as $category) {
-            if (null !== $category->name() && strtolower($category->name()) === strtolower($name)) {
-                return $this->find($category->id());
-            }
-        }
-
-        return null;
-    }
-
-    public function findByIso(string $iso): ?Category
-    {
-        if (0 === count($this->categories)) {
-            return null;
-        }
-
-        foreach ($this->categories as $category) {
-            if (null !== $category->iso() && strtolower($category->iso()) === strtolower($iso)) {
+            if (strtolower($category->name()) === strtolower($name)) {
                 return $this->find($category->id());
             }
         }
@@ -95,6 +81,7 @@ class InMemoryCategoryRepository implements CategoryRepository
         return null;
     }
 
+    /** @return Category[] */
     public function findByFilter(CategoryFilter $filter): array
     {
         $results = [];

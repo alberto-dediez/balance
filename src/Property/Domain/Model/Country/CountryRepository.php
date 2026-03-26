@@ -21,6 +21,9 @@ interface CountryRepository
 
     public function findBySourceAndExternalId(ExternalSource $source, ExternalId $externalId): ?Country;
 
+    /**
+     * @return Country[]
+     */
     public function findByFilter(CountryFilter $filter): array;
 
     public function totalResultsByFilter(CountryFilter $filter): int;

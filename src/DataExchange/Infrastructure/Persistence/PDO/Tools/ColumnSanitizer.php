@@ -6,6 +6,11 @@ namespace App\DataExchange\Infrastructure\Persistence\PDO\Tools;
 
 class ColumnSanitizer
 {
+    /**
+     * @param array<int, mixed> $headers
+     *
+     * @return string[]
+     */
     public static function sanitize(array $headers): array
     {
         $sanitized = [];

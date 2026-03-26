@@ -13,7 +13,7 @@
 
         <field name="name" type="string" length="255" nullable="false"/>
         <field name="iso" type="string" length="10" nullable="true"/>
-        <field name="removed" type="boolean" nullable="true"/>
+        <field name="removed" type="boolean" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
     </entity>

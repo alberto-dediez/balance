@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryCountryRepository implements CountryRepository
 {
+    /** @param Country[] $countries */
     public function __construct(private array $countries = []) {}
 
     public function add(Country $country): void
@@ -50,7 +51,7 @@ class InMemoryCountryRepository implements CountryRepository
         }
 
         foreach ($this->countries as $country) {
-            if (null !== $country->name() && strtolower($country->name()) === strtolower($name)) {
+            if (strtolower($country->name()) === strtolower($name)) {
                 return $this->find($country->id());
             }
         }
@@ -95,6 +96,7 @@ class InMemoryCountryRepository implements CountryRepository
         return null;
     }
 
+    /** @return Country[] */
     public function findByFilter(CountryFilter $filter): array
     {
         $results = [];

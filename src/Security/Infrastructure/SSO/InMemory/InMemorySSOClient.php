@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\SSO\InMemory;
 
 use App\Security\Infrastructure\SSO\SSOClient;
@@ -11,7 +13,7 @@ class InMemorySSOClient implements SSOClient
 {
     public function __construct(
         private string $ssoUrl = '',
-        private bool $validToken = true
+        private bool $validToken = true,
     ) {}
 
     public function setValidToken(bool $validToken): self
@@ -25,6 +27,7 @@ class InMemorySSOClient implements SSOClient
     {
         return $this->ssoUrl;
     }
+
     public function checkToken(string $token): bool
     {
         return $this->validToken;

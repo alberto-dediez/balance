@@ -20,6 +20,9 @@ interface DestinationRepository
 
     public function findBySourceAndExternalId(ExternalSource $source, ExternalId $externalId): ?Destination;
 
+    /**
+     * @return Destination[]
+     */
     public function findByFilter(DestinationFilter $filter): array;
 
     public function totalResultsByFilter(DestinationFilter $filter): int;

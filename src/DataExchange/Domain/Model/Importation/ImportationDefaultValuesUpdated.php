@@ -12,6 +12,7 @@ final class ImportationDefaultValuesUpdated extends DomainEvent
 {
     protected static string $eventName = 'importationDefaultValuesUpdated';
 
+    /** @param array<string, mixed> $defaultValues */
     public function __construct(
         private readonly ImportationId $importationId,
         private readonly array $defaultValues = [],
@@ -26,6 +27,7 @@ final class ImportationDefaultValuesUpdated extends DomainEvent
         return $this->importationId;
     }
 
+    /** @return array<string, mixed> */
     public function defaultValues(): array
     {
         return $this->defaultValues;

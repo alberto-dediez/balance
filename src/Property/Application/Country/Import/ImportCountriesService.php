@@ -39,6 +39,11 @@ class ImportCountriesService
         return new ImportCountriesResponse($countriesMatch, $totalResults);
     }
 
+    /**
+     * @param CountryRequest[] $countryRequests
+     *
+     * @return CountryResponse[]
+     */
     private function matchCountries(array $countryRequests, User $user): array
     {
         if (0 === count($countryRequests)) {

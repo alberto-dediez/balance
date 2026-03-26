@@ -16,6 +16,7 @@ class PairFieldsImportationRequest implements Command
         public array $configurations,
     ) {}
 
+    /** @return array<int, ImportationColumnConfiguration> */
     public function pairedConfigurations(): array
     {
         return array_filter($this->configurations, fn(ImportationColumnConfiguration $configuration) => null !== $configuration->field);

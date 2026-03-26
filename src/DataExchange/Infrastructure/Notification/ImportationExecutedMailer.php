@@ -8,6 +8,7 @@ use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationExecuted;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
 use App\Security\Domain\Model\User\User;
+use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
@@ -31,7 +32,7 @@ class ImportationExecutedMailer implements DomainEventSubscriber
 
     public function handle(DomainEvent $event): void
     {
-        if (!$this->isSubscribedTo($event)) {
+        if (!$event instanceof ImportationExecuted) {
             throw new \RuntimeException('Incorrect event!');
         }
 
@@ -46,7 +47,13 @@ class ImportationExecutedMailer implements DomainEventSubscriber
             return;
         }
 
-        $user = $this->userRepository->find($importation->registeredBy());
+        $userId = $importation->registeredBy();
+
+        if (!$userId instanceof UserId) {
+            return;
+        }
+
+        $user = $this->userRepository->find($userId);
 
         if (!$user instanceof User) {
             return;

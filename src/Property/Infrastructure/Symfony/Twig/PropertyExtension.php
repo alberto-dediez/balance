@@ -12,6 +12,7 @@ use Twig\TwigFilter;
 
 class PropertyExtension extends AbstractExtension
 {
+    /** @var Property[] */
     private array $properties = [];
 
     public function __construct(private readonly PropertyRepository $propertyRepository) {}
@@ -33,9 +34,13 @@ class PropertyExtension extends AbstractExtension
     public function propertyName(PropertyId $propertyId): ?Property
     {
         if (!isset($this->properties[(string) $propertyId])) {
-            $this->properties[(string) $propertyId] = $this->propertyRepository->find($propertyId);
+            $property = $this->propertyRepository->find($propertyId);
+
+            if (null !== $property) {
+                $this->properties[(string) $propertyId] = $property;
+            }
         }
 
-        return $this->properties[(string) $propertyId];
+        return $this->properties[(string) $propertyId] ?? null;
     }
 }

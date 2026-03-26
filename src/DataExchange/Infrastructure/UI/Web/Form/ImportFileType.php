@@ -15,6 +15,9 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotNull;
 
+/**
+ * @extends AbstractType<ImportFileRequest>
+ */
 class ImportFileType extends AbstractType
 {
     private const MAX_FILE_SIZE = '4096k';

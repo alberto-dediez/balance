@@ -11,6 +11,9 @@ class Country implements \Stringable
 {
     use AggregateRoot;
 
+    /**
+     * @param array<\App\Shared\Domain\Event\DomainEvent> $events
+     */
     public function __construct(
         private CountryId $id,
         private string $name = '',
@@ -18,9 +21,11 @@ class Country implements \Stringable
         private ?ExternalId $externalId = null,
         private bool $removed = false,
         array $events = [],
-        private ?\DateTimeImmutable $registeredAt = null,
+        private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $removedAt = null,
-    ) {}
+    ) {
+        $this->events = $events;
+    }
 
     public function id(): CountryId
     {

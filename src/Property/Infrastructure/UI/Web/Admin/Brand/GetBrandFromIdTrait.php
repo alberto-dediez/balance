@@ -16,7 +16,7 @@ trait GetBrandFromIdTrait
         $brand = $brandRepository->find(new BrandId($brandId));
 
         if (null == $brand) {
-            throw $this->createNotFoundException(new TranslatableMessage('La marca no existe'));
+            throw $this->createNotFoundException((string) new TranslatableMessage('La marca no existe'));
         }
 
         return $brand;

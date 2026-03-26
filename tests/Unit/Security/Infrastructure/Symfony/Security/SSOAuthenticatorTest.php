@@ -41,7 +41,7 @@ class SSOAuthenticatorTest extends TestCase
             $this->ssoClient,
             $this->userProvider,
             $this->jwtDecoder,
-            $this->urlGenerator
+            $this->urlGenerator,
         );
     }
 
@@ -145,7 +145,7 @@ class SSOAuthenticatorTest extends TestCase
         $this->jwtDecoder->method('decode')->willReturn(['email' => 'notfound@example.com']);
 
         $passport = $this->authenticator->authenticate($request);
-        
+
         /** @var UserBadge $badge */
         $badge = $passport->getBadge(UserBadge::class);
         $loader = $badge->getUserLoader();
@@ -185,13 +185,13 @@ class SSOAuthenticatorTest extends TestCase
     {
         $request = new Request();
         $session = $this->createMock(Session::class);
-        
+
         // TargetPathTrait uses the session key '_security.main.target_path'
         $session->expects($this->once())
             ->method('get')
             ->with('_security.main.target_path')
             ->willReturn('/custom-target');
-            
+
         $request->setSession($session);
 
         $token = $this->createMock(TokenInterface::class);

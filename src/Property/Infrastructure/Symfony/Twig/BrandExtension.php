@@ -12,6 +12,7 @@ use Twig\TwigFilter;
 
 class BrandExtension extends AbstractExtension
 {
+    /** @var Brand[] */
     private array $brands = [];
 
     public function __construct(private readonly BrandRepository $brandRepository) {}
@@ -37,7 +38,11 @@ class BrandExtension extends AbstractExtension
         }
 
         if (!isset($this->brands[(string) $brandId])) {
-            $this->brands[(string) $brandId] = $this->brandRepository->find($brandId);
+            $brand = $this->brandRepository->find($brandId);
+
+            if (null !== $brand) {
+                $this->brands[(string) $brandId] = $brand;
+            }
         }
 
         return $this->brands[(string) $brandId];
