@@ -12,6 +12,7 @@ interface WasteManagerRepository
 
     public function find(WasteManagerId $wasteManagerId): ?WasteManager;
 
+    /** @return array<int, WasteManager> */
     public function findByFilter(WasteManagerFilter $filter): array;
 
     public function totalResultsByFilter(WasteManagerFilter $filter): int;

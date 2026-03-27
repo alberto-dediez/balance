@@ -7,7 +7,6 @@ namespace App\Property\Infrastructure\UI\Web\Admin\Country;
 use App\Property\Domain\Model\Country\Country;
 use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Country\CountryRepository;
-use Symfony\Component\Translation\TranslatableMessage;
 
 trait GetCountryFromIdTrait
 {
@@ -16,7 +15,7 @@ trait GetCountryFromIdTrait
         $country = $countryRepository->find(new CountryId($countryId));
 
         if (null == $country) {
-            throw $this->createNotFoundException(new TranslatableMessage('El país no existe'));
+            throw $this->createNotFoundException('El país no existe');
         }
 
         return $country;

@@ -31,9 +31,10 @@ class TcpdfQrPdfGeneratorTest extends TestCase
 
         $sut = $this->createSUT($wasteRepository, $propertyRepository);
 
+        self::assertNotEmpty($container->qrCode());
+
         $path = $sut->generate($container, $container->qrCode());
 
-        $this->assertNotNull($path);
         $this->assertNotEmpty($path);
     }
 

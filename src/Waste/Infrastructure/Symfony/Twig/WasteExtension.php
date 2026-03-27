@@ -12,6 +12,7 @@ use Twig\TwigFilter;
 
 class WasteExtension extends AbstractExtension
 {
+    /** @var array<string, Waste|null> */
     private array $wastes = [];
 
     public function __construct(private readonly WasteRepository $wasteRepository) {}

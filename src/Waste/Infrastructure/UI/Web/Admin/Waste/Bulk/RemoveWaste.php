@@ -40,11 +40,15 @@ class RemoveWaste implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
+        assert($command instanceof RemoveWasteRequest);
+
         return new TranslatableMessage('Se ha eliminado el tipo de residuo {id}', ['{id}' => $command->wasteId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
+        assert($command instanceof RemoveWasteRequest);
+
         return new TranslatableMessage('No se ha podido eliminar el tipo de residuo {id}', ['{id}' => $command->wasteId]);
     }
 }

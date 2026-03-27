@@ -13,10 +13,8 @@ use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
 use App\Waste\Application\Waste\Update\UpdateWasteRequest;
-use App\Waste\Application\Waste\Update\UpdateWasteResponse;
 use App\Waste\Application\Waste\Update\UpdateWasteService;
 use App\Waste\Application\Waste\WasteAuthorizer;
-use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\Waste\WasteTranslated;
 use App\Waste\Domain\Model\Waste\WasteUpdated;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteRepository;
@@ -56,13 +54,9 @@ class UpdateWasteServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateWasteResponse);
-
         $wastePersisted = $repository->find($result->wasteId);
 
         $this->assertNotNull($wastePersisted);
-        $this->assertTrue($wastePersisted instanceof Waste);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -94,15 +88,11 @@ class UpdateWasteServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateWasteResponse);
-
         $wastePersisted = $repository->find($result->wasteId);
 
         FakeLocaleSetter::set(Locale::Spanish);
 
         $this->assertNotNull($wastePersisted);
-        $this->assertTrue($wastePersisted instanceof Waste);
         $this->assertNotEquals('changedName', $wastePersisted->name());
 
         $lastEvent = $this->spySubscriber->lastEvent();

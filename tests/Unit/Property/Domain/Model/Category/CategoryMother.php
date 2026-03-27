@@ -9,7 +9,7 @@ use App\Property\Domain\Model\Category\CategoryId;
 
 class CategoryMother
 {
-    public static function fromName(string $name)
+    public static function fromName(string $name): Category
     {
         return self::from(
             categoryId: CategoryId::generate(),
@@ -17,7 +17,7 @@ class CategoryMother
         );
     }
 
-    public static function fromNameAndId(string $name, string $id)
+    public static function fromNameAndId(string $name, string $id): Category
     {
         return self::from(
             categoryId: new CategoryId($id),
@@ -36,7 +36,7 @@ class CategoryMother
         return $category;
     }
 
-    public static function random()
+    public static function random(): Category
     {
         return self::from(
             categoryId: CategoryId::generate(),

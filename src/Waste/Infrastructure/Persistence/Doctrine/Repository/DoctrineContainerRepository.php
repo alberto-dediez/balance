@@ -129,6 +129,7 @@ class DoctrineContainerRepository implements ContainerRepository
         return $qb;
     }
 
+    /** @return array<int, Container> */
     public function findByFilter(ContainerFilter $filter): array
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
@@ -149,7 +150,7 @@ class DoctrineContainerRepository implements ContainerRepository
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return $qb->select('COUNT(DISTINCT c)')
+        return (int) $qb->select('COUNT(DISTINCT c)')
             ->getQuery()
             ->getSingleScalarResult()
         ;

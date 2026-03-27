@@ -8,6 +8,7 @@ use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token\Parser;
+use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Validator;
@@ -24,12 +25,16 @@ class SSOJwtDecoder
      *
      * @throws \Exception If the token is invalid
      */
-    public function decode(string $tokenStr): array
+    public function decode(string $tokenizeData): array
     {
+        if (empty($tokenizeData)) {
+            return [];
+        }
+
         $parser = new Parser(new JoseEncoder());
 
         try {
-            $token = $parser->parse($tokenStr);
+            $token = $parser->parse($tokenizeData);
         } catch (\Exception $e) {
             throw new \Exception('Failed to parse JWT token.', 0, $e);
         }
@@ -39,6 +44,10 @@ class SSOJwtDecoder
         $keyContent = @file_get_contents($this->publicKeyPath);
         if (false === $keyContent) {
             $keyContent = $this->publicKeyPath;
+        }
+
+        if (empty($keyContent)) {
+            throw new \Exception('Invalid Key File.');
         }
 
         try {
@@ -58,6 +67,11 @@ class SSOJwtDecoder
         }
 
         $payload = [];
+
+        if (!$token instanceof UnencryptedToken) {
+            return $payload;
+        }
+
         foreach ($token->claims()->all() as $name => $value) {
             if ($value instanceof \DateTimeInterface) {
                 $value = $value->getTimestamp();

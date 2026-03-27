@@ -53,6 +53,7 @@ class RegisterContainerService implements CommandHandler
             $user,
         );
 
+        assert(null !== $property->accountId());
         $container = new Container($id);
         $container
             ->register(
@@ -68,6 +69,11 @@ class RegisterContainerService implements CommandHandler
         ;
 
         $this->containerRepository->add($container);
+
+        assert(null !== $container->propertyId());
+        assert(null !== $container->wasteId());
+        assert(null !== $container->wasteManagerId());
+        assert(null !== $container->qrCode());
 
         return new RegisterContainerResponse(
             containerId: $container->id(),

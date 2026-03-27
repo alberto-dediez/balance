@@ -40,13 +40,15 @@ class RemoveCategory implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
-        /* @var \App\Property\Application\Category\Remove\RemoveCategoryRequest $command */
+        assert($command instanceof RemoveCategoryRequest);
+
         return new TranslatableMessage('Se ha eliminado la categoría {id}', ['{id}' => $command->categoryId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
-        /* @var \App\Property\Application\Category\Remove\RemoveCategoryRequest $command */
+        assert($command instanceof RemoveCategoryRequest);
+
         return new TranslatableMessage('No se ha podido eliminar la categoría {id}', ['{id}' => $command->categoryId]);
     }
 }

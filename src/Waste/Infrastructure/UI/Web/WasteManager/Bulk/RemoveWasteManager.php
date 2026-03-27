@@ -40,11 +40,15 @@ class RemoveWasteManager implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
+        assert($command instanceof RemoveWasteManagerRequest);
+
         return new TranslatableMessage('Se ha eliminado el gestor {id}', ['{id}' => $command->wasteManagerId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
+        assert($command instanceof RemoveWasteManagerRequest);
+
         return new TranslatableMessage('No se ha podido eliminar el gestor {id}', ['{id}' => $command->wasteManagerId]);
     }
 }

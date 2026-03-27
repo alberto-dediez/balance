@@ -54,6 +54,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
         ;
     }
 
+    /** @return array<int, Measurement> */
     public function findByDay(\DateTimeImmutable $day, PropertyId $propertyId, WasteId $wasteId, Purpose $purpose, WasteManagerId $wasteManagerId, AccountId $accountId): array
     {
         $filter = new MeasurementFilter(
@@ -176,6 +177,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
         return $qb;
     }
 
+    /** @return array<int, Measurement> */
     public function findByFilter(MeasurementFilter $filter): array
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
@@ -196,7 +198,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return $qb->select('COUNT(DISTINCT m)')
+        return (int) $qb->select('COUNT(DISTINCT m)')
             ->getQuery()
             ->getSingleScalarResult()
         ;

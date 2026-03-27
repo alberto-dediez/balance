@@ -18,6 +18,10 @@ class PrintQrContainerService
     {
         $container = $this->repository->find($request->containerId);
 
+        if (null === $container) {
+            throw new \InvalidArgumentException('Container not found');
+        }
+
         $this->authorizer->denyUnlessCanDoThat($container, Action::View, $user);
 
         $path = $container->printQr($this->pdfGenerator);

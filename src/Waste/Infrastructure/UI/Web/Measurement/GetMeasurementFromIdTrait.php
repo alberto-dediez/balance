@@ -7,7 +7,6 @@ namespace App\Waste\Infrastructure\UI\Web\Measurement;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
-use Symfony\Component\Translation\TranslatableMessage;
 
 trait GetMeasurementFromIdTrait
 {
@@ -16,7 +15,7 @@ trait GetMeasurementFromIdTrait
         $container = $containerRepository->find(new MeasurementId($containerId));
 
         if (null == $container) {
-            throw $this->createNotFoundException(new TranslatableMessage('La medición no existe'));
+            throw $this->createNotFoundException('La medición no existe');
         }
 
         return $container;

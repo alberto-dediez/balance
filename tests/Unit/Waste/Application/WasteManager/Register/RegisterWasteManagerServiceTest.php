@@ -11,10 +11,8 @@ use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
 use App\Waste\Application\WasteManager\Register\RegisterWasteManagerRequest;
-use App\Waste\Application\WasteManager\Register\RegisterWasteManagerResponse;
 use App\Waste\Application\WasteManager\Register\RegisterWasteManagerService;
 use App\Waste\Application\WasteManager\WasteManagerAuthorizer;
-use App\Waste\Domain\Model\WasteManager\WasteManager;
 use App\Waste\Domain\Model\WasteManager\WasteManagerRegistered;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteManagerRepository;
 use PHPUnit\Framework\TestCase;
@@ -45,15 +43,12 @@ class RegisterWasteManagerServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterWasteManagerResponse);
         $this->assertNotEmpty((string) $result->wasteManagerId);
         $this->assertEquals(36, strlen((string) $result->wasteManagerId));
 
         $wasteManagerPersisted = $repository->find($result->wasteManagerId);
 
         $this->assertNotNull($wasteManagerPersisted);
-        $this->assertTrue($wasteManagerPersisted instanceof WasteManager);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

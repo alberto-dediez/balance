@@ -12,12 +12,12 @@ use App\Security\Domain\Model\Account\AccountId;
 
 class PropertyMother
 {
-    public static function registeredProperty()
+    public static function registeredProperty(): Property
     {
         return self::fromName('name');
     }
 
-    public static function fromName(string $name)
+    public static function fromName(string $name): Property
     {
         return self::from(
             propertyId: PropertyId::generate(),
@@ -25,7 +25,7 @@ class PropertyMother
         );
     }
 
-    public static function fromNameAndInfo(string $name, PropertyInfo $info)
+    public static function fromNameAndInfo(string $name, PropertyInfo $info): Property
     {
         return self::from(
             propertyId: PropertyId::generate(),
@@ -34,7 +34,7 @@ class PropertyMother
         );
     }
 
-    public static function fromNameAndExternalId(string $name, ExternalId $externalId)
+    public static function fromNameAndExternalId(string $name, ExternalId $externalId): Property
     {
         return self::from(
             propertyId: PropertyId::generate(),
@@ -43,7 +43,7 @@ class PropertyMother
         );
     }
 
-    public static function fromNameAndId(string $name, string $id)
+    public static function fromNameAndId(string $name, string $id): Property
     {
         return self::from(
             propertyId: new PropertyId($id),
@@ -51,7 +51,7 @@ class PropertyMother
         );
     }
 
-    public static function fromNameAndAccountAndId(string $name, string $accountId, string $id)
+    public static function fromNameAndAccountAndId(string $name, string $accountId, string $id): Property
     {
         return self::from(
             propertyId: new PropertyId($id),
@@ -76,7 +76,7 @@ class PropertyMother
         return $property;
     }
 
-    public static function random()
+    public static function random(): Property
     {
         return self::fromName('property-' . random_int(100, 999));
     }

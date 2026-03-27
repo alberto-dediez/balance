@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Waste\Infrastructure\Symfony\Form;
 
 use App\Property\Application\Property\Update\UpdatePropertyRequest;
+use App\Property\Infrastructure\Symfony\Form\UpdatePropertyType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AdminUpdatePropertyType extends UpdatePropertyType

@@ -12,10 +12,8 @@ use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
 use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
 use App\Waste\Application\WasteManager\Update\UpdateWasteManagerRequest;
-use App\Waste\Application\WasteManager\Update\UpdateWasteManagerResponse;
 use App\Waste\Application\WasteManager\Update\UpdateWasteManagerService;
 use App\Waste\Application\WasteManager\WasteManagerAuthorizer;
-use App\Waste\Domain\Model\WasteManager\WasteManager;
 use App\Waste\Domain\Model\WasteManager\WasteManagerUpdated;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteManagerRepository;
 use PHPUnit\Framework\TestCase;
@@ -37,6 +35,8 @@ class UpdateWasteManagerServiceTest extends TestCase
 
         $repository = WasteManagerRepositoryMother::inMemory();
 
+        self::assertNotEmpty($user->accountId());
+
         $wasteManager = WasteManagerMother::fromAccount($user->accountId());
 
         $repository->add($wasteManager);
@@ -51,13 +51,9 @@ class UpdateWasteManagerServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateWasteManagerResponse);
-
         $wasteManagerPersisted = $repository->find($result->wasteManagerId);
 
         $this->assertNotNull($wasteManagerPersisted);
-        $this->assertTrue($wasteManagerPersisted instanceof WasteManager);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

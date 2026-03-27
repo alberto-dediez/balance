@@ -36,6 +36,8 @@ class RegisterDestinationService implements CommandHandler
 
         $this->destinationRepository->add($destination);
 
+        assert(null !== $destination->countryId());
+
         return new RegisterDestinationResponse($destination->id(), $destination->name(), $destination->countryId());
     }
 

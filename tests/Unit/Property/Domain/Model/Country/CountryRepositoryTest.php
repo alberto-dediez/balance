@@ -66,11 +66,14 @@ abstract class CountryRepositoryTest extends KernelTestCase
 
         $country = CountryMother::random();
 
-        $this->assertNull($repository->findByIso($country->iso()));
+        $iso = $country->iso();
+        assert(null !== $iso);
+
+        $this->assertNull($repository->findByIso($iso));
 
         $repository->add($country);
 
-        $recoverCountry = $repository->findByIso($country->iso());
+        $recoverCountry = $repository->findByIso($iso);
 
         $this->assertNotNull($recoverCountry);
         $this->assertTrue($country->id()->equals($recoverCountry->id()));

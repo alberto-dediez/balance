@@ -12,9 +12,7 @@ use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
 use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Application\Measurement\Update\UpdateMeasurementRequest;
-use App\Waste\Application\Measurement\Update\UpdateMeasurementResponse;
 use App\Waste\Application\Measurement\Update\UpdateMeasurementService;
-use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementUpdated;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
 use PHPUnit\Framework\TestCase;
@@ -38,7 +36,9 @@ class UpdateMeasurementServiceTest extends TestCase
 
         $repository->add($measurement);
 
-        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $measurement->accountId());
+        $accountId = $measurement->accountId();
+        self::assertNotNull($accountId);
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId);
 
         $sut = $this->createSUT($repository);
 
@@ -51,13 +51,9 @@ class UpdateMeasurementServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateMeasurementResponse);
-
         $measurementPersisted = $repository->find($result->measurementId);
 
         $this->assertNotNull($measurementPersisted);
-        $this->assertTrue($measurementPersisted instanceof Measurement);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

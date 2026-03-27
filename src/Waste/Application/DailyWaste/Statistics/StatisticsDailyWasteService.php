@@ -54,6 +54,8 @@ class StatisticsDailyWasteService
     }
 
     /**
+     * @param DailyWaste[] $dailyWastes
+     *
      * @return mixed[][]
      */
     private function calculateStatistics(array $dailyWastes): array
@@ -86,9 +88,17 @@ class StatisticsDailyWasteService
         $total = 0;
 
         foreach ($dailyWastes as $dailyWaste) {
-            $property = $this->propertyRepository->find($dailyWaste->propertyId());
-            $waste = $this->wasteRepository->find($dailyWaste->wasteId());
-            $wasteManager = $this->wasteManagerRepository->find($dailyWaste->wasteManagerId());
+            $dailyWastePropertyId = $dailyWaste->propertyId();
+            $dailyWasteWasteId = $dailyWaste->wasteId();
+            $dailyWasteWasteManagerId = $dailyWaste->wasteManagerId();
+
+            if (null === $dailyWastePropertyId || null === $dailyWasteWasteId || null === $dailyWasteWasteManagerId) {
+                continue;
+            }
+
+            $property = $this->propertyRepository->find($dailyWastePropertyId);
+            $waste = $this->wasteRepository->find($dailyWasteWasteId);
+            $wasteManager = $this->wasteManagerRepository->find($dailyWasteWasteManagerId);
             if (!$property instanceof Property) {
                 continue;
             }
@@ -147,11 +157,12 @@ class StatisticsDailyWasteService
             $byWasteManager[(string) $dailyWaste->wasteManagerId()]->load += $dailyWaste->load();
 
             // ByPurpose
-            if (!isset($byPurpose[$dailyWaste->purpose()->value])) {
-                $byPurpose[$dailyWaste->purpose()->value] = new ByPurpose($dailyWaste->purpose(), 0, 0);
+            $dailyWastePurpose = $dailyWaste->purpose();
+            if (!isset($byPurpose[$dailyWastePurpose->value])) {
+                $byPurpose[$dailyWastePurpose->value] = new ByPurpose($dailyWastePurpose, 0, 0);
             }
 
-            $byPurpose[$dailyWaste->purpose()->value]->load += $dailyWaste->load();
+            $byPurpose[$dailyWastePurpose->value]->load += $dailyWaste->load();
         }
 
         // ByMonth
@@ -203,12 +214,12 @@ class StatisticsDailyWasteService
         });
 
         return [
-            array_values($byMonth),
-            array_values($byDate),
-            array_values($byPurpose),
-            array_values($byWaste),
-            array_values($byWasteManager),
-            array_values($byProperty),
+            $byMonth,
+            $byDate,
+            $byPurpose,
+            $byWaste,
+            $byWasteManager,
+            $byProperty,
         ];
     }
 

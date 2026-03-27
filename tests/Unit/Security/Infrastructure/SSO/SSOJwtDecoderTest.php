@@ -24,10 +24,12 @@ class SSOJwtDecoderTest extends TestCase
             'private_key_type' => OPENSSL_KEYTYPE_RSA,
         ]);
 
+        self::assertNotFalse($res);
         openssl_pkey_export($res, $privateKey);
         $this->privateKey = $privateKey;
 
         $details = openssl_pkey_get_details($res);
+        self::assertNotFalse($details);
         $this->publicKey = $details['key'];
     }
 
@@ -45,6 +47,7 @@ class SSOJwtDecoderTest extends TestCase
     {
         // Generate another key pair for an invalid signature
         $res = openssl_pkey_new(['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);
+        self::assertNotFalse($res);
         openssl_pkey_export($res, $otherPrivateKey);
 
         $decoder = new SSOJwtDecoder($this->publicKey);
@@ -77,11 +80,14 @@ class SSOJwtDecoderTest extends TestCase
         $decoder->decode('not-a-jwt');
     }
 
+    /** @param array<string, mixed> $claims */
     private function createToken(array $claims, ?string $privateKey = null, ?\DateTimeImmutable $expiresAt = null): string
     {
         $tokenBuilder = clone new Builder(new JoseEncoder(), ChainedFormatter::default());
         $algorithm    = new Sha256();
-        $signingKey   = InMemory::plainText($privateKey ?? $this->privateKey);
+        $keyContents  = $privateKey ?? $this->privateKey;
+        self::assertNotEmpty($keyContents);
+        $signingKey   = InMemory::plainText($keyContents);
 
         $now = new \DateTimeImmutable();
         $expiresAt = $expiresAt ?? $now->modify('+1 hour');
@@ -92,6 +98,7 @@ class SSOJwtDecoderTest extends TestCase
             ->expiresAt($expiresAt);
 
         foreach ($claims as $name => $value) {
+            self::assertNotEmpty($name);
             $tokenBuilder = match ($name) {
                 'sub' => $tokenBuilder->relatedTo($value),
                 'aud' => $tokenBuilder->permittedFor($value),

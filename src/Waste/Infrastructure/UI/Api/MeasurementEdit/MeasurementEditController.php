@@ -54,6 +54,8 @@ class MeasurementEditController extends AbstractController
 
         $measurement = $measurementRepository->find($updateResponse->measurementId);
 
+        assert(null !== $measurement);
+
         return $this->json(
             $measurementGenerator->generate($measurement),
         );

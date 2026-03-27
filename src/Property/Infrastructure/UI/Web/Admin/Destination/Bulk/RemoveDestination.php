@@ -40,11 +40,15 @@ class RemoveDestination implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
+        assert($command instanceof RemoveDestinationRequest);
+
         return new TranslatableMessage('Se ha eliminado el destino {id}', ['{id}' => $command->destinationId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
+        assert($command instanceof RemoveDestinationRequest);
+
         return new TranslatableMessage('No se ha podido eliminar el destino {id}', ['{id}' => $command->destinationId]);
     }
 }

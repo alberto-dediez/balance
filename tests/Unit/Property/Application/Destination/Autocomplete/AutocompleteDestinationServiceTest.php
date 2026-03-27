@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Property\Application\Destination\Autocomplete;
 
 use App\Property\Application\Destination\Autocomplete\AutocompleteDestinationRequest;
-use App\Property\Application\Destination\Autocomplete\AutocompleteDestinationResponse;
 use App\Property\Application\Destination\Autocomplete\AutocompleteDestinationService;
 use App\Property\Application\Destination\DestinationAuthorizer;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
@@ -38,8 +37,6 @@ class AutocompleteDestinationServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof AutocompleteDestinationResponse);
         $this->assertCount(4, $result->elements);
     }
 

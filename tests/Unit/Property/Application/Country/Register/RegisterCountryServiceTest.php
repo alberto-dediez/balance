@@ -6,9 +6,7 @@ namespace App\Tests\Unit\Property\Application\Country\Register;
 
 use App\Property\Application\Country\CountryAuthorizer;
 use App\Property\Application\Country\Register\RegisterCountryRequest;
-use App\Property\Application\Country\Register\RegisterCountryResponse;
 use App\Property\Application\Country\Register\RegisterCountryService;
-use App\Property\Domain\Model\Country\Country;
 use App\Property\Domain\Model\Country\CountryRegistered;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
 use App\Security\Domain\Model\User\Role;
@@ -44,15 +42,12 @@ class RegisterCountryServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterCountryResponse);
         $this->assertNotEmpty((string) $result->countryId);
         $this->assertEquals(36, strlen((string) $result->countryId));
 
         $countryPersisted = $repository->find($result->countryId);
 
         $this->assertNotNull($countryPersisted);
-        $this->assertTrue($countryPersisted instanceof Country);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

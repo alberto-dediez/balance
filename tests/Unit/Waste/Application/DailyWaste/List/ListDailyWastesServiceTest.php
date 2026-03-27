@@ -12,7 +12,6 @@ use App\Tests\Unit\Waste\Domain\Model\DailyWaste\DailyWasteMother;
 use App\Tests\Unit\Waste\Domain\Model\DailyWaste\DailyWasteRepositoryMother;
 use App\Waste\Application\DailyWaste\DailyWasteAuthorizer;
 use App\Waste\Application\DailyWaste\List\ListDailyWastesRequest;
-use App\Waste\Application\DailyWaste\List\ListDailyWastesResponse;
 use App\Waste\Application\DailyWaste\List\ListDailyWastesService;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryDailyWasteRepository;
 use PHPUnit\Framework\TestCase;
@@ -41,8 +40,6 @@ class ListDailyWastesServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListDailyWastesResponse);
         $this->assertCount(4, $result->dailyWastes);
         $this->assertEquals(4, $result->totalResults);
     }

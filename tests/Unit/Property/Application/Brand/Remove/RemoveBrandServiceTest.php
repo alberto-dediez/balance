@@ -6,7 +6,6 @@ namespace App\Tests\Unit\Property\Application\Brand\Remove;
 
 use App\Property\Application\Brand\BrandAuthorizer;
 use App\Property\Application\Brand\Remove\RemoveBrandRequest;
-use App\Property\Application\Brand\Remove\RemoveBrandResponse;
 use App\Property\Application\Brand\Remove\RemoveBrandService;
 use App\Property\Domain\Model\Brand\BrandRemoved;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
@@ -47,8 +46,6 @@ class RemoveBrandServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RemoveBrandResponse);
         $this->assertTrue($brand->id()->equals($result->brandId));
 
         $brandPersisted = $repository->find($result->brandId);

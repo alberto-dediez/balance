@@ -18,6 +18,7 @@ use App\Waste\Domain\Event\Container\RemovePropertySubscriber;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\ContainerRemoved;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryContainerRepository;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class RemovePropertySubscriberTest extends TestCase
@@ -91,10 +92,10 @@ class RemovePropertySubscriberTest extends TestCase
 
     private function createSUT(InMemoryContainerRepository $repository, int $containersToRemoved = 0): RemovePropertySubscriber
     {
+        /** @var RemoveContainerService&MockObject $removeContainer * */
         $removeContainer = $this->createMock(RemoveContainerService::class);
         $removeContainer->expects($this->exactly($containersToRemoved))->method('__invoke');
 
-        /** @var RemoveContainerService $removeContainer * */
         $loggedUser = new FakeLoggedUser(UserMother::random());
 
         return new RemovePropertySubscriber(

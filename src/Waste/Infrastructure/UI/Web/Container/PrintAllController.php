@@ -8,7 +8,6 @@ use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Waste\Application\Container\PrintAllQr\PrintAllQrContainerRequest;
-use App\Waste\Application\Container\PrintAllQr\PrintAllQrContainerResponse;
 use App\Waste\Application\Container\PrintAllQr\PrintAllQrContainerService;
 use App\Waste\Domain\Model\Container\NotValidContainersForPrintException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,14 +26,17 @@ class PrintAllController extends AbstractController
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
+        $account = $loggedAccount();
+        assert(null !== $account);
+
         $containerRequest = new PrintAllQrContainerRequest(
-            accountId: $loggedAccount()?->id(),
+            accountId: $account->id(),
         );
 
         try {
             $response = $printAllContainer($containerRequest, $loggedUser());
 
-            if (!$response instanceof PrintAllQrContainerResponse || null === $response->path || empty($response->path)) {
+            if (empty($response->path)) {
                 throw new \RuntimeException('Invalid response');
             }
 

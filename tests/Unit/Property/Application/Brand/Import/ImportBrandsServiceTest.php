@@ -7,7 +7,6 @@ namespace App\Tests\Unit\Property\Application\Brand\Import;
 use App\Property\Application\Brand\BrandAuthorizer;
 use App\Property\Application\Brand\Import\BrandRequest;
 use App\Property\Application\Brand\Import\ImportBrandsRequest;
-use App\Property\Application\Brand\Import\ImportBrandsResponse;
 use App\Property\Application\Brand\Import\ImportBrandsService;
 use App\Property\Application\Brand\Register\RegisterBrandResponse;
 use App\Property\Application\Brand\Register\RegisterBrandService;
@@ -20,6 +19,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Property\Domain\Model\Brand\BrandMother;
 use App\Tests\Unit\Property\Domain\Model\Brand\BrandRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ImportBrandsServiceTest extends TestCase
@@ -76,9 +76,6 @@ class ImportBrandsServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ImportBrandsResponse);
-
         $this->assertCount(4, $result->brands);
         $this->assertEquals(3, $result->matched);
 
@@ -93,9 +90,9 @@ class ImportBrandsServiceTest extends TestCase
     private function createSUT(InMemoryBrandRepository $repository): ImportBrandsService
     {
         $registerService = $this->createMock(RegisterBrandService::class);
-        $registerService->method('__invoke')->willReturn(new RegisterBrandResponse(BrandId::generate(), '', null));
+        $registerService->method('__invoke')->willReturn(new RegisterBrandResponse(BrandId::generate(), ''));
 
-        /** @var RegisterBrandService $registerService */
+        /** @var RegisterBrandService&MockObject $registerService */
         $authorizer = new BrandAuthorizer();
 
         $updateService = new UpdateBrandService(

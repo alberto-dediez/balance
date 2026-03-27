@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\DataExchange\Application\Importation\ExecuteSingle;
 
 use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleRequest;
-use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleResponse;
 use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleService;
-use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationExecuted;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
@@ -54,10 +52,12 @@ class ExecuteSingleServiceTest extends TestCase
         $repository = new InMemoryImportationRepository();
         $repository->add($importation);
 
+        $accountId = $importation->accountId();
+        self::assertNotNull($accountId);
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: $importation->accountId(),
+            accountId: $accountId,
         );
 
         $sut = $this->createSUT($repository);
@@ -70,15 +70,12 @@ class ExecuteSingleServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ExecuteSingleResponse);
         $this->assertNotEmpty((string) $result->importationId);
         $this->assertEquals(36, strlen((string) $result->importationId));
 
         $importationPersisted = $repository->find($result->importationId);
 
         $this->assertNotNull($importationPersisted);
-        $this->assertTrue($importationPersisted instanceof Importation);
         $this->assertTrue($importationPersisted->isInProgress());
 
         $commands = $this->spyCommandBus->commands();
@@ -102,10 +99,12 @@ class ExecuteSingleServiceTest extends TestCase
         $repository = new InMemoryImportationRepository();
         $repository->add($importation);
 
+        $accountId = $importation->accountId();
+        self::assertNotNull($accountId);
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: $importation->accountId(),
+            accountId: $accountId,
         );
 
         $sut = $this->createSUT($repository);
@@ -118,15 +117,12 @@ class ExecuteSingleServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ExecuteSingleResponse);
         $this->assertNotEmpty((string) $result->importationId);
         $this->assertEquals(36, strlen((string) $result->importationId));
 
         $importationPersisted = $repository->find($result->importationId);
 
         $this->assertNotNull($importationPersisted);
-        $this->assertTrue($importationPersisted instanceof Importation);
         $this->assertTrue($importationPersisted->isExecuted());
 
         $commands = $this->spyCommandBus->commands();

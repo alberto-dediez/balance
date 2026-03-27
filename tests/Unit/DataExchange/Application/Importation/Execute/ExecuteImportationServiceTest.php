@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Unit\DataExchange\Application\Importation\Execute;
 
 use App\DataExchange\Application\Importation\Execute\ExecuteImportationRequest;
-use App\DataExchange\Application\Importation\Execute\ExecuteImportationResponse;
 use App\DataExchange\Application\Importation\Execute\ExecuteImportationService;
 use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleRequest;
-use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationExecutionStarted;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
@@ -55,10 +53,12 @@ class ExecuteImportationServiceTest extends TestCase
         $repository = new InMemoryImportationRepository();
         $repository->add($importation);
 
+        $accountId = $importation->accountId();
+        self::assertNotNull($accountId);
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: $importation->accountId(),
+            accountId: $accountId,
         );
 
         $sut = $this->createSUT($repository);
@@ -69,15 +69,12 @@ class ExecuteImportationServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ExecuteImportationResponse);
         $this->assertNotEmpty((string) $result->importationId);
         $this->assertEquals(36, strlen((string) $result->importationId));
 
         $importationPersisted = $repository->find($result->importationId);
 
         $this->assertNotNull($importationPersisted);
-        $this->assertTrue($importationPersisted instanceof Importation);
         $this->assertTrue($importationPersisted->isInProgress());
 
         $commands = $this->spyCommandBus->commands();

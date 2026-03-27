@@ -45,6 +45,8 @@ class ContainerViewController extends AbstractController
 
         $containerAuthorizer->denyUnlessCanDoThat($container, Action::View, $user);
 
+        assert(null !== $container);
+
         return $this->json(
             $containerGenerator->generate($container),
         );

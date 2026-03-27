@@ -6,7 +6,6 @@ namespace App\Tests\Unit\Property\Application\Category\Remove;
 
 use App\Property\Application\Category\CategoryAuthorizer;
 use App\Property\Application\Category\Remove\RemoveCategoryRequest;
-use App\Property\Application\Category\Remove\RemoveCategoryResponse;
 use App\Property\Application\Category\Remove\RemoveCategoryService;
 use App\Property\Domain\Model\Category\CategoryRemoved;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCategoryRepository;
@@ -47,8 +46,6 @@ class RemoveCategoryServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RemoveCategoryResponse);
         $this->assertTrue($category->id()->equals($result->categoryId));
 
         $categoryPersisted = $repository->find($result->categoryId);

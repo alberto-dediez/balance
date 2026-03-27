@@ -12,7 +12,6 @@ use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
 use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
 use App\Waste\Application\WasteManager\Remove\RemoveWasteManagerRequest;
-use App\Waste\Application\WasteManager\Remove\RemoveWasteManagerResponse;
 use App\Waste\Application\WasteManager\Remove\RemoveWasteManagerService;
 use App\Waste\Application\WasteManager\WasteManagerAuthorizer;
 use App\Waste\Domain\Model\WasteManager\WasteManagerRemoved;
@@ -38,7 +37,9 @@ class RemoveWasteManagerServiceTest extends TestCase
 
         $sut = $this->createSUT($repository);
 
-        $wasteManager = WasteManagerMother::fromAccount($user->accountId());
+        $accountId = $user->accountId();
+        self::assertNotNull($accountId);
+        $wasteManager = WasteManagerMother::fromAccount($accountId);
 
         $repository->add($wasteManager);
 
@@ -48,8 +49,6 @@ class RemoveWasteManagerServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RemoveWasteManagerResponse);
         $this->assertTrue($wasteManager->id()->equals($result->wasteManagerId));
 
         $wasteManagerPersisted = $repository->find($result->wasteManagerId);

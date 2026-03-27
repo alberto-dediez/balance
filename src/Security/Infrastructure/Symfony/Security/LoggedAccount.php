@@ -26,7 +26,11 @@ class LoggedAccount
         $key = $user->id()->__toString();
 
         if (!isset($this->accounts[$key])) {
-            $this->accounts[$key] = $this->accountRepository->find($user->accountId());
+            $account = $this->accountRepository->find($user->accountId());
+            if (!$account instanceof Account) {
+                return null;
+            }
+            $this->accounts[$key] = $account;
         }
 
         return $this->accounts[$key];

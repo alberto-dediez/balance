@@ -19,7 +19,10 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryContainerRepository implements ContainerRepository
 {
-    public function __construct(private array $containers = []) {}
+    /** @param array<string, Container> $containers */
+    public function __construct(
+        private array $containers = [],
+    ) {}
 
     public function add(Container $container): void
     {
@@ -47,6 +50,7 @@ class InMemoryContainerRepository implements ContainerRepository
         ;
     }
 
+    /** @return array<int, Container> */
     public function findByFilter(ContainerFilter $filter): array
     {
         $results = [];
@@ -86,7 +90,7 @@ class InMemoryContainerRepository implements ContainerRepository
                 continue;
             }
 
-            if ($filter->wasteManagerId instanceof WasteManagerId && !$filter->wasteManagerId->equals($container->wasteManagerId())) {
+            if ($filter->wasteManagerId instanceof WasteManagerId && (null === $container->wasteManagerId() || !$filter->wasteManagerId->equals($container->wasteManagerId()))) {
                 continue;
             }
 

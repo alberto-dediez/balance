@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\DataExchange\Application\Importation\Register;
 
 use App\DataExchange\Application\Importation\Register\RegisterImportationRequest;
-use App\DataExchange\Application\Importation\Register\RegisterImportationResponse;
 use App\DataExchange\Application\Importation\Register\RegisterImportationService;
-use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationRegistered;
 use App\DataExchange\Infrastructure\Persistence\InMemory\Repository\InMemoryImportationRepository;
 use App\Security\Application\UnauthorizedActionException;
@@ -53,15 +51,12 @@ class RegisterImportationServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterImportationResponse);
         $this->assertNotEmpty((string) $result->importationId);
         $this->assertEquals(36, strlen((string) $result->importationId));
 
         $importationPersisted = $repository->find($result->importationId);
 
         $this->assertNotNull($importationPersisted);
-        $this->assertTrue($importationPersisted instanceof Importation);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

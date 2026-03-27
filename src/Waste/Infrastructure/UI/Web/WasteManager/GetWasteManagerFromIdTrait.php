@@ -7,7 +7,6 @@ namespace App\Waste\Infrastructure\UI\Web\WasteManager;
 use App\Waste\Domain\Model\WasteManager\WasteManager;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;
-use Symfony\Component\Translation\TranslatableMessage;
 
 trait GetWasteManagerFromIdTrait
 {
@@ -16,7 +15,7 @@ trait GetWasteManagerFromIdTrait
         $wasteManager = $wasteManagerRepository->find(new WasteManagerId($wasteManagerId));
 
         if (null == $wasteManager) {
-            throw $this->createNotFoundException(new TranslatableMessage('El gestor de residuos no existe'));
+            throw $this->createNotFoundException('El gestor de residuos no existe');
         }
 
         return $wasteManager;

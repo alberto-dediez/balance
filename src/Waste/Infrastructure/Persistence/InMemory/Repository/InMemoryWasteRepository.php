@@ -13,7 +13,10 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryWasteRepository implements WasteRepository
 {
-    public function __construct(private array $wastes = []) {}
+    /** @param array<string, Waste> $wastes */
+    public function __construct(
+        private array $wastes = [],
+    ) {}
 
     public function add(Waste $waste): void
     {
@@ -41,6 +44,7 @@ class InMemoryWasteRepository implements WasteRepository
         ;
     }
 
+    /** @return array<int, Waste> */
     public function findByFilter(WasteFilter $filter): array
     {
         $results = [];

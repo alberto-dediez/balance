@@ -20,6 +20,7 @@ interface DailyWasteRepository
 
     public function findByDay(\DateTimeImmutable $day, PropertyId $propertyId, WasteId $wasteId, Purpose $purpose, WasteManagerId $wasteManagerId, AccountId $accountId): ?DailyWaste;
 
+    /** @return array<int, DailyWaste> */
     public function findByFilter(DailyWasteFilter $filter): array;
 
     public function totalResultsByFilter(DailyWasteFilter $filter): int;

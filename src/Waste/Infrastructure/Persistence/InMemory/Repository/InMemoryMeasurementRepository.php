@@ -21,6 +21,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryMeasurementRepository implements MeasurementRepository
 {
+    /** @param array<string, Measurement> $measurements */
     public function __construct(
         private array $measurements = [],
     ) {}
@@ -49,6 +50,7 @@ class InMemoryMeasurementRepository implements MeasurementRepository
         ;
     }
 
+    /** @return array<int, Measurement> */
     public function findByDay(\DateTimeImmutable $day, PropertyId $propertyId, WasteId $wasteId, Purpose $purpose, WasteManagerId $wasteManagerId, AccountId $accountId): array
     {
         $filter = new MeasurementFilter(
@@ -64,6 +66,7 @@ class InMemoryMeasurementRepository implements MeasurementRepository
         return $this->findByFilter($filter);
     }
 
+    /** @return array<int, Measurement> */
     public function findByFilter(MeasurementFilter $filter): array
     {
         $results = [];

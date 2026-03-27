@@ -14,7 +14,10 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryWasteManagerRepository implements WasteManagerRepository
 {
-    public function __construct(private array $wasteManagers = []) {}
+    /** @param array<string, WasteManager> $wasteManagers */
+    public function __construct(
+        private array $wasteManagers = [],
+    ) {}
 
     public function add(WasteManager $wasteManager): void
     {
@@ -42,6 +45,7 @@ class InMemoryWasteManagerRepository implements WasteManagerRepository
         ;
     }
 
+    /** @return array<int, WasteManager> */
     public function findByFilter(WasteManagerFilter $filter): array
     {
         $results = [];

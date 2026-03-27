@@ -36,8 +36,12 @@ class RegisterMeasurementService implements CommandHandler
         $this->validateRequest($request);
 
         $container = $this->containerRepository->find($request->containerId);
+        assert(null !== $container);
+        assert(null !== $container->propertyId());
 
         $property = $this->propertyRepository->find($container->propertyId());
+        assert(null !== $property);
+        assert(null !== $property->accountId());
 
         $id = MeasurementId::generate();
 
@@ -63,18 +67,23 @@ class RegisterMeasurementService implements CommandHandler
                 accountId: $property->accountId(),
                 justification: $request->justification,
                 reference: $request->reference,
-                day: $request->day,
+                day: $request->day instanceof \DateTime ? \DateTimeImmutable::createFromMutable($request->day) : $request->day,
             )
         ;
 
         $this->measurementRepository->add($measurement);
 
+        $containerId = $measurement->containerId();
+        assert(null !== $containerId);
+        $registeredBy = $measurement->registeredBy();
+        assert(null !== $registeredBy);
+
         return new RegisterMeasurementResponse(
             measurementId: $measurement->id(),
-            containerId: $measurement->containerId(),
+            containerId: $containerId,
             quantity: $measurement->quantity(),
             load: $measurement->load(),
-            registeredBy: $measurement->registeredBy(),
+            registeredBy: $registeredBy,
             justification: $measurement->justification(),
             reference: $measurement->reference(),
         );
@@ -88,7 +97,9 @@ class RegisterMeasurementService implements CommandHandler
             throw new \InvalidArgumentException('Debes especificar un contenedor válido');
         }
 
-        $property = $this->propertyRepository->find($container->propertyId());
+        $containerPropertyId = $container->propertyId();
+        assert(null !== $containerPropertyId);
+        $property = $this->propertyRepository->find($containerPropertyId);
 
         if (null == $property) {
             throw new \InvalidArgumentException('Debes especificar una propiedad válida');
@@ -96,7 +107,9 @@ class RegisterMeasurementService implements CommandHandler
 
         $user = $this->userRepository->find($request->registeredBy);
 
-        if (null == $user || null == $user->accountId() || false === $user->accountId()->equals($property->accountId())) {
+        $userAccountId = $user?->accountId();
+        $propertyAccountId = $property->accountId();
+        if (null == $user || null === $userAccountId || null === $propertyAccountId || false === $userAccountId->equals($propertyAccountId)) {
             throw new \InvalidArgumentException('El usuario que registra la medición no es válido');
         }
     }

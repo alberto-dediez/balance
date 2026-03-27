@@ -10,6 +10,8 @@ use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\Container\Purpose;
 
 class ListContainersService
 {
@@ -22,8 +24,8 @@ class ListContainersService
             accountId: $request->accountId,
             propertyId: $request->propertyId,
             wasteId: $request->wasteId,
-            purpose: $request->purpose,
-            measurementMethod: $request->measurementMethod,
+            purpose: $request->purpose ?? Purpose::Waste,
+            measurementMethod: $request->measurementMethod ?? MeasurementMethod::Volume,
         );
 
         $this->authorizer->denyUnlessCanDoThat($container, Action::List, $user);

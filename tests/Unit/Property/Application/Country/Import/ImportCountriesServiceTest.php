@@ -7,7 +7,6 @@ namespace App\Tests\Unit\Property\Application\Country\Import;
 use App\Property\Application\Country\CountryAuthorizer;
 use App\Property\Application\Country\Import\CountryRequest;
 use App\Property\Application\Country\Import\ImportCountriesRequest;
-use App\Property\Application\Country\Import\ImportCountriesResponse;
 use App\Property\Application\Country\Import\ImportCountriesService;
 use App\Property\Application\Country\Register\RegisterCountryResponse;
 use App\Property\Application\Country\Register\RegisterCountryService;
@@ -20,6 +19,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Property\Domain\Model\Country\CountryMother;
 use App\Tests\Unit\Property\Domain\Model\Country\CountryRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ImportCountriesServiceTest extends TestCase
@@ -76,9 +76,6 @@ class ImportCountriesServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ImportCountriesResponse);
-
         $this->assertCount(4, $result->countries);
         $this->assertEquals(3, $result->matched);
 
@@ -96,7 +93,7 @@ class ImportCountriesServiceTest extends TestCase
         $registerService = $this->createMock(RegisterCountryService::class);
         $registerService->method('__invoke')->willReturn(new RegisterCountryResponse(CountryId::generate(), ''));
 
-        /** @var RegisterCountryService $registerService */
+        /** @var RegisterCountryService&MockObject $registerService */
         $authorizer = new CountryAuthorizer();
 
         $updateService = new UpdateCountryService(

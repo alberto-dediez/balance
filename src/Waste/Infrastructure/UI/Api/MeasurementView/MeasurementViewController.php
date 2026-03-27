@@ -45,6 +45,8 @@ class MeasurementViewController extends AbstractController
 
         $measurementAuthorizer->denyUnlessCanDoThat($measurement, Action::View, $user);
 
+        assert(null !== $measurement);
+
         return $this->json(
             $measurementGenerator->generate($measurement),
         );

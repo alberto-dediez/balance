@@ -6,7 +6,6 @@ namespace App\Tests\Unit\Property\Application\Destination\Remove;
 
 use App\Property\Application\Destination\DestinationAuthorizer;
 use App\Property\Application\Destination\Remove\RemoveDestinationRequest;
-use App\Property\Application\Destination\Remove\RemoveDestinationResponse;
 use App\Property\Application\Destination\Remove\RemoveDestinationService;
 use App\Property\Domain\Model\Destination\DestinationRemoved;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
@@ -47,8 +46,6 @@ class RemoveDestinationServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RemoveDestinationResponse);
         $this->assertTrue($destination->id()->equals($result->destinationId));
 
         $destinationPersisted = $repository->find($result->destinationId);

@@ -7,7 +7,6 @@ namespace App\Tests\Unit\Property\Application\Destination\Import;
 use App\Property\Application\Destination\DestinationAuthorizer;
 use App\Property\Application\Destination\Import\DestinationRequest;
 use App\Property\Application\Destination\Import\ImportDestinationsRequest;
-use App\Property\Application\Destination\Import\ImportDestinationsResponse;
 use App\Property\Application\Destination\Import\ImportDestinationsService;
 use App\Property\Application\Destination\Register\RegisterDestinationResponse;
 use App\Property\Application\Destination\Register\RegisterDestinationService;
@@ -90,9 +89,6 @@ class ImportDestinationsServiceTest extends TestCase
         );
 
         $result = $sut($request, $user);
-
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ImportDestinationsResponse);
 
         $this->assertCount(4, $result->destinations);
         $this->assertEquals(3, $result->matched);

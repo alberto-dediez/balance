@@ -35,6 +35,8 @@ class EditController extends AbstractController
 
         $this->denyAccessUnlessGranted(Action::Edit->value, $destination);
 
+        assert(null !== $destination->countryId());
+
         $destinationRequest = new UpdateDestinationRequest(
             destinationId: $destination->id(),
             name: $destination->name(),

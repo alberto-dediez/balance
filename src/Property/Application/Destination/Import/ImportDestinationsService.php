@@ -65,6 +65,7 @@ class ImportDestinationsService
                 $destinationMatch = $this->findByNameAndCountry($request);
 
                 if ($destinationMatch instanceof Destination) {
+                    assert(null !== $destinationMatch->countryId());
                     $this->updateDestination->__invoke(new UpdateDestinationRequest(
                         destinationId: $destinationMatch->id(),
                         name: $destinationMatch->name(),

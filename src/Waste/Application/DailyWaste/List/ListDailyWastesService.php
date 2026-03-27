@@ -7,6 +7,7 @@ namespace App\Waste\Application\DailyWaste\List;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Waste\Application\DailyWaste\DailyWasteAuthorizer;
+use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\DailyWaste\DailyWaste;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteId;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
@@ -21,9 +22,9 @@ class ListDailyWastesService
             id: DailyWasteId::generate(),
             propertyId: null,
             wasteId: $request->wasteId,
-            purpose: $request->purpose,
+            purpose: $request->purpose ?? Purpose::Waste,
             accountId: $request->accountId,
-            day: $request->day,
+            day: $request->day ?? new \DateTimeImmutable(),
         );
 
         $this->authorizer->denyUnlessCanDoThat($dailyWaste, Action::List, $user);

@@ -12,6 +12,7 @@ interface ContainerRepository
 
     public function find(ContainerId $containerId): ?Container;
 
+    /** @return array<int, Container> */
     public function findByFilter(ContainerFilter $filter): array;
 
     public function totalResultsByFilter(ContainerFilter $filter): int;

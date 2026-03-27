@@ -12,7 +12,6 @@ use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Waste\Application\Container\Remove\RemoveContainerRequest;
-use App\Waste\Application\Container\Remove\RemoveContainerResponse;
 use App\Waste\Application\Container\Remove\RemoveContainerService;
 use App\Waste\Domain\Model\Container\ContainerRemoved;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryContainerRepository;
@@ -37,7 +36,9 @@ class RemoveContainerServiceTest extends TestCase
 
         $container = ContainerMother::registeredContainer();
 
-        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $container->accountId());
+        $accountId = $container->accountId();
+        self::assertNotNull($accountId);
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId);
 
         $repository->add($container);
 
@@ -47,8 +48,6 @@ class RemoveContainerServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RemoveContainerResponse);
         $this->assertTrue($container->id()->equals($result->containerId));
 
         $containerPersisted = $repository->find($result->containerId);

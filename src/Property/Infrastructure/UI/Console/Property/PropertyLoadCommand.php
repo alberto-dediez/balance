@@ -15,6 +15,7 @@ use App\Property\Domain\Model\Property\ExternalSource;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Property\Infrastructure\ExternalSource\Property\Import\ImportConfiguration;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -38,6 +39,7 @@ class PropertyLoadCommand extends Command
 
     private ?ExternalSource $source = null;
 
+    /** @param iterable<ImportConfiguration> $configurations */
     public function __construct(
         private readonly PropertyInfoExtractor $propertyInfoExtractor,
         private readonly ExternalIdExtractor $externalIdExtractor,
@@ -45,7 +47,6 @@ class PropertyLoadCommand extends Command
         private readonly PropertyRepository $propertyRepository,
         private readonly EntityManagerInterface $manager,
         #[AutowireIterator('property.import.configuration')]
-        /** @var iterable<\App\Property\Infrastructure\ExternalSource\Property\Import\ImportConfiguration> */
         private readonly iterable $configurations,
     ) {
         parent::__construct();
@@ -75,7 +76,6 @@ class PropertyLoadCommand extends Command
 
         $this->source = $source;
 
-        /** @var \App\Property\Infrastructure\ExternalSource\Property\Import\ImportConfiguration $configuration */
         foreach ($this->configurations as $configuration) {
             if ($configuration->getSource() === $this->source) {
                 $this->fieldExtractor = $configuration->getFieldExtractor();
@@ -128,10 +128,6 @@ class PropertyLoadCommand extends Command
         $imported = 0;
 
         while (false !== ($row = fgetcsv($file, 2000, ';'))) {
-            if (!is_array($row)) {
-                continue;
-            }
-
             $progressBar->advance();
 
             if ($offset > 0) {

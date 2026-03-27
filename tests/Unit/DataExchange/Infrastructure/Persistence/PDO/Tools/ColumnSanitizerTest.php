@@ -22,7 +22,6 @@ class ColumnSanitizerTest extends TestCase
 
         $result = ColumnSanitizer::sanitize($headers);
 
-        $this->assertTrue(is_array($result));
         $this->assertCount(6, $result);
         $this->assertEquals('normal', $result[0]);
         $this->assertEquals('algun', $result[1]);

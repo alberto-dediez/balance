@@ -9,7 +9,7 @@ use App\Property\Domain\Model\Brand\BrandId;
 
 class BrandMother
 {
-    public static function fromName(string $name)
+    public static function fromName(string $name): Brand
     {
         return self::from(
             brandId: BrandId::generate(),
@@ -17,7 +17,7 @@ class BrandMother
         );
     }
 
-    public static function fromNameAndId(string $name, string $id)
+    public static function fromNameAndId(string $name, string $id): Brand
     {
         return self::from(
             brandId: new BrandId($id),
@@ -36,7 +36,7 @@ class BrandMother
         return $brand;
     }
 
-    public static function random()
+    public static function random(): Brand
     {
         return self::from(
             brandId: BrandId::generate(),

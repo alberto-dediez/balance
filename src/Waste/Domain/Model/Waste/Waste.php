@@ -13,8 +13,12 @@ class Waste implements Translatable, \Stringable
 {
     use AggregateRoot;
 
+    /** @var iterable<WasteTranslation>|Translations */
     private iterable $translations;
 
+    /**
+     * @param array<mixed> $events
+     */
     public function __construct(
         protected WasteId $id,
         protected string $name = '',
@@ -23,10 +27,12 @@ class Waste implements Translatable, \Stringable
         protected string $color = '#c3d300',
         protected bool $removed = false,
         array $events = [],
-        protected ?\DateTimeImmutable $registeredAt = null,
+        protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable(),
         protected ?\DateTimeImmutable $removedAt = null,
     ) {
         $this->translations = new Translations();
+
+        $this->events = $events;
     }
 
     public function id(): WasteId
@@ -36,7 +42,7 @@ class Waste implements Translatable, \Stringable
 
     public function name(): string
     {
-        /** @var WasteTranslation $translation */
+        /** @var WasteTranslation|null $translation */
         $translation = $this->translations()->currentTranslation();
 
         return null !== $translation ? $translation->name() : $this->name;
@@ -63,7 +69,7 @@ class Waste implements Translatable, \Stringable
             return $this->translations;
         }
 
-        $this->translations = new Translations($this->translations->toArray());
+        $this->translations = new Translations(iterator_to_array($this->translations));
 
         return $this->translations;
     }

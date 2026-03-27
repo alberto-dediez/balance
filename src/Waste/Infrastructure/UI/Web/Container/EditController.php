@@ -35,6 +35,9 @@ class EditController extends AbstractController
 
         $this->denyAccessUnlessGranted(Action::Edit->value, $container);
 
+        assert(null !== $container->wasteId());
+        assert(null !== $container->wasteManagerId());
+
         $containerRequest = new UpdateContainerRequest(
             containerId: $container->id(),
             wasteId: $container->wasteId(),

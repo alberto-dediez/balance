@@ -8,7 +8,6 @@ use App\Security\Application\Action;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Waste\Application\Container\PrintQr\PrintQrContainerRequest;
-use App\Waste\Application\Container\PrintQr\PrintQrContainerResponse;
 use App\Waste\Application\Container\PrintQr\PrintQrContainerService;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -41,7 +40,7 @@ class PrintController extends AbstractController
         try {
             $response = $printContainer($containerRequest, $loggedUser());
 
-            if (!$response instanceof PrintQrContainerResponse || null === $response->path || empty($response->path)) {
+            if (empty($response->path)) {
                 throw new \RuntimeException('Invalid response');
             }
 

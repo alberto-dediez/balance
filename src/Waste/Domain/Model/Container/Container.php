@@ -15,22 +15,27 @@ class Container implements \Stringable
 {
     use AggregateRoot;
 
+    /**
+     * @param array<mixed> $events
+     */
     public function __construct(
         private ContainerId $id,
         private ?AccountId $accountId = null,
         private ?PropertyId $propertyId = null,
         private ?WasteId $wasteId = null,
-        private ?Purpose $purpose = null,
-        private ?MeasurementMethod $measurementMethod = null,
+        private Purpose $purpose = Purpose::Waste,
+        private MeasurementMethod $measurementMethod = MeasurementMethod::Volume,
         private ?string $volume = '0',
         private ?WasteManagerId $wasteManagerId = null,
         private ?QrCode $qrCode = null,
         private bool $removed = false,
         array $events = [],
-        private ?\DateTimeImmutable $registeredAt = null,
+        private \DateTimeImmutable $registeredAt = new \DateTimeImmutable(),
         private ?\DateTimeImmutable $printedAt = null,
         private ?\DateTimeImmutable $removedAt = null,
-    ) {}
+    ) {
+        $this->events = $events;
+    }
 
     public function id(): ContainerId
     {
@@ -52,12 +57,12 @@ class Container implements \Stringable
         return $this->wasteId;
     }
 
-    public function purpose(): ?Purpose
+    public function purpose(): Purpose
     {
         return $this->purpose;
     }
 
-    public function measurementMethod(): ?MeasurementMethod
+    public function measurementMethod(): MeasurementMethod
     {
         return $this->measurementMethod;
     }
@@ -69,7 +74,10 @@ class Container implements \Stringable
 
     public function unit(): Unit
     {
-        return Unit::tryFrom($this->measurementMethod->unit());
+        $unit = Unit::tryFrom($this->measurementMethod->unit());
+        assert(null !== $unit);
+
+        return $unit;
     }
 
     public function wasteManagerId(): ?WasteManagerId
@@ -84,7 +92,7 @@ class Container implements \Stringable
 
     public function isRemoved(): bool
     {
-        return $this->removed;
+        return (bool) $this->removed;
     }
 
     public function registeredAt(): \DateTimeImmutable
@@ -94,6 +102,8 @@ class Container implements \Stringable
 
     public function printedAt(): \DateTimeImmutable
     {
+        assert(null !== $this->printedAt);
+
         return $this->printedAt;
     }
 
@@ -113,7 +123,7 @@ class Container implements \Stringable
         QrCode $qrCode,
     ): void {
         if (MeasurementMethod::Volume == $measurementMethod && (null === $volume || $volume < 0)) {
-            throw new NotValidVolumeException($volume);
+            throw new NotValidVolumeException(is_float($volume) ? (string) $volume : $volume);
         }
 
         $this->recordApplyAndPublish(
@@ -156,7 +166,9 @@ class Container implements \Stringable
 
     public function printQr(QrPdfGenerator $pdfGenerator): string
     {
-        $path = $pdfGenerator->generate($this, $this->qrCode());
+        $qrCode = $this->qrCode();
+        assert(null !== $qrCode);
+        $path = $pdfGenerator->generate($this, $qrCode);
 
         $this->recordApplyAndPublish(
             new ContainerQrPrinted(

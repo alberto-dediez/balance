@@ -37,6 +37,8 @@ class UpdateWasteManagerService implements CommandHandler
 
         $this->repository->add($wasteManager);
 
+        assert(null !== $wasteManager->name());
+
         return new UpdateWasteManagerResponse(
             wasteManagerId: $wasteManager->id(),
             name: $wasteManager->name(),

@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\DataExchange\Application\Importation\AssignValues;
 
 use App\DataExchange\Application\Importation\AssignValues\AssignValuesImportationRequest;
-use App\DataExchange\Application\Importation\AssignValues\AssignValuesImportationResponse;
 use App\DataExchange\Application\Importation\AssignValues\AssignValuesImportationService;
-use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationDefaultValuesUpdated;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
@@ -44,10 +42,12 @@ class AssignValuesImportationServiceTest extends TestCase
         $repository = new InMemoryImportationRepository();
         $repository->add($importation);
 
+        $accountId = $importation->accountId();
+        self::assertNotNull($accountId);
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: $importation->accountId(),
+            accountId: $accountId,
         );
 
         $sut = $this->createSUT($repository);
@@ -62,15 +62,12 @@ class AssignValuesImportationServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof AssignValuesImportationResponse);
         $this->assertNotEmpty((string) $result->importationId);
         $this->assertEquals(36, strlen((string) $result->importationId));
 
         $importationPersisted = $repository->find($result->importationId);
 
         $this->assertNotNull($importationPersisted);
-        $this->assertTrue($importationPersisted instanceof Importation);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

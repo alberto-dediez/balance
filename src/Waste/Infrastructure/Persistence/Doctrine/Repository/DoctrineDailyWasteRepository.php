@@ -158,6 +158,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
         return $qb;
     }
 
+    /** @return array<int, DailyWaste> */
     public function findByFilter(DailyWasteFilter $filter): array
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
@@ -178,7 +179,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return $qb->select('COUNT(DISTINCT m)')
+        return (int) $qb->select('COUNT(DISTINCT m)')
             ->getQuery()
             ->getSingleScalarResult()
         ;

@@ -47,6 +47,9 @@ class UpdateContainerService implements CommandHandler
 
         $this->containerRepository->add($container);
 
+        assert(null !== $container->wasteId());
+        assert(null !== $container->wasteManagerId());
+
         return new UpdateContainerResponse(
             containerId: $container->id(),
             wasteId: $container->wasteId(),

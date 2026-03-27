@@ -12,7 +12,6 @@ use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
 use App\Waste\Application\DailyWaste\DailyWasteAuthorizer;
 use App\Waste\Application\DailyWaste\View\ViewDailyWasteRequest;
-use App\Waste\Application\DailyWaste\View\ViewDailyWasteResponse;
 use App\Waste\Application\DailyWaste\View\ViewDailyWasteService;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
@@ -39,7 +38,9 @@ class ViewDailyWasteServiceTest extends TestCase
 
         $sut = $this->createSUT($dailyWasteRepository, $measurementRepository);
 
-        $user = UserMother::fromUsernameAndRoleAndAccount('test', Role::Owner, $dailyWaste->accountId());
+        $accountId = $dailyWaste->accountId();
+        self::assertNotNull($accountId);
+        $user = UserMother::fromUsernameAndRoleAndAccount('test', Role::Owner, $accountId);
 
         $request = new ViewDailyWasteRequest(
             dailyWasteId: $dailyWaste->id(),
@@ -47,10 +48,7 @@ class ViewDailyWasteServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ViewDailyWasteResponse);
         $this->assertCount(5, $result->measurements);
-        $this->assertNotNull($result->dailyWaste);
         $this->assertTrue($result->dailyWaste->id()->equals($dailyWaste->id()));
     }
 

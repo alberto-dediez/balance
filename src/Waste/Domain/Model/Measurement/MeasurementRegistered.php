@@ -150,6 +150,11 @@ final class MeasurementRegistered extends DomainEvent
     ): static {
         $measurementMethod = MeasurementMethod::tryFrom($payload['measurementMethod']);
         $guessedUnit = MeasurementMethod::Volume === $measurementMethod ? Unit::Liter : Unit::Kilogram;
+        $purpose = Purpose::tryFrom($payload['purpose']);
+        $unit = isset($payload['unit']) && !empty($payload['unit']) ? Unit::tryFrom($payload['unit']) : $guessedUnit;
+        assert(null !== $measurementMethod);
+        assert(null !== $purpose);
+        assert(null !== $unit);
 
         return new MeasurementRegistered(
             measurementId: new MeasurementId($payload['measurementId']),
@@ -157,14 +162,14 @@ final class MeasurementRegistered extends DomainEvent
             propertyId: new PropertyId($payload['propertyId']),
             wasteId: new WasteId($payload['waste']),
             measurementMethod: $measurementMethod,
-            purpose: Purpose::tryFrom($payload['purpose']),
+            purpose: $purpose,
             wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId($payload['wasteManagerId']) : WasteManagerId::generate(),
             registeredBy: new UserId($payload['registeredBy']),
             accountId: new AccountId($payload['accountId']),
             day: isset($payload['day']) ? new \DateTimeImmutable($payload['day']) : $occurredOn,
             quantity: $payload['quantity'],
             load: $payload['load'],
-            unit: isset($payload['unit']) && !empty($payload['unit']) ? Unit::tryFrom($payload['unit']) : $guessedUnit,
+            unit: $unit,
             justification: $payload['justification'],
             reference: $payload['reference'],
             id: $id,

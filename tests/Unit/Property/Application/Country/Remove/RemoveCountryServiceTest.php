@@ -6,7 +6,6 @@ namespace App\Tests\Unit\Property\Application\Country\Remove;
 
 use App\Property\Application\Country\CountryAuthorizer;
 use App\Property\Application\Country\Remove\RemoveCountryRequest;
-use App\Property\Application\Country\Remove\RemoveCountryResponse;
 use App\Property\Application\Country\Remove\RemoveCountryService;
 use App\Property\Domain\Model\Country\CountryRemoved;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
@@ -47,8 +46,6 @@ class RemoveCountryServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RemoveCountryResponse);
         $this->assertTrue($country->id()->equals($result->countryId));
 
         $countryPersisted = $repository->find($result->countryId);

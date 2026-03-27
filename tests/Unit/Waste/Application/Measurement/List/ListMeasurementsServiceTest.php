@@ -10,7 +10,6 @@ use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
 use App\Waste\Application\Measurement\List\ListMeasurementsRequest;
-use App\Waste\Application\Measurement\List\ListMeasurementsResponse;
 use App\Waste\Application\Measurement\List\ListMeasurementsService;
 use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
@@ -40,8 +39,6 @@ class ListMeasurementsServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListMeasurementsResponse);
         $this->assertCount(4, $result->measurements);
         $this->assertEquals(4, $result->totalResults);
     }

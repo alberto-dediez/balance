@@ -8,7 +8,6 @@ use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
 use App\Waste\Application\Waste\List\ListWastesRequest;
-use App\Waste\Application\Waste\List\ListWastesResponse;
 use App\Waste\Application\Waste\List\ListWastesService;
 use App\Waste\Application\Waste\WasteAuthorizer;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteRepository;
@@ -33,8 +32,6 @@ class ListWastesServiceTest extends TestCase
 
         $result = $sut($request, UserMother::adminUser());
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListWastesResponse);
         $this->assertCount(4, $result->wastes);
         $this->assertEquals(4, $result->totalResults);
     }
@@ -56,8 +53,6 @@ class ListWastesServiceTest extends TestCase
 
         $result = $sut($request, UserMother::adminUser());
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListWastesResponse);
         $this->assertCount(1, $result->wastes);
         $this->assertEquals(1, $result->totalResults);
 
@@ -67,8 +62,6 @@ class ListWastesServiceTest extends TestCase
 
         $result = $sut($request, UserMother::adminUser());
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListWastesResponse);
         $this->assertCount(3, $result->wastes);
         $this->assertEquals(3, $result->totalResults);
 
@@ -78,8 +71,6 @@ class ListWastesServiceTest extends TestCase
 
         $result = $sut($request, UserMother::adminUser());
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListWastesResponse);
         $this->assertCount(4, $result->wastes);
         $this->assertEquals(4, $result->totalResults);
     }

@@ -12,7 +12,6 @@ use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
 use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Application\Measurement\Remove\RemoveMeasurementRequest;
-use App\Waste\Application\Measurement\Remove\RemoveMeasurementResponse;
 use App\Waste\Application\Measurement\Remove\RemoveMeasurementService;
 use App\Waste\Domain\Model\Measurement\MeasurementRemoved;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
@@ -37,7 +36,9 @@ class RemoveMeasurementServiceTest extends TestCase
 
         $measurement = MeasurementMother::random();
 
-        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $measurement->accountId());
+        $accountId = $measurement->accountId();
+        self::assertNotNull($accountId);
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId);
 
         $repository->add($measurement);
 
@@ -47,8 +48,6 @@ class RemoveMeasurementServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RemoveMeasurementResponse);
         $this->assertTrue($measurement->id()->equals($result->measurementId));
 
         $measurementPersisted = $repository->find($result->measurementId);

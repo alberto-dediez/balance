@@ -6,11 +6,13 @@ namespace App\Waste\Infrastructure\Symfony\Form\Type;
 
 use App\Waste\Domain\Model\Container\MeasurementMethod;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
+/** @extends AbstractType<array<string, mixed>> */
 class ContainerVolumeType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void
@@ -23,10 +25,11 @@ class ContainerVolumeType extends AbstractType
                 new Assert\Callback(
                     function ($value, ExecutionContextInterface $context, mixed $payload): void {
                         $volume = $value;
-                        $measurementMethod = $context->getObject()?->getParent()?->get('measurementMethod')?->getData();
+                        $formObject = $context->getObject();
+                        $measurementMethod = ($formObject instanceof FormInterface) ? $formObject->getParent()?->get('measurementMethod')?->getData() : null;
 
                         if (MeasurementMethod::Volume === $measurementMethod && (null === $volume || '' === $volume)) {
-                            $context->buildViolation(new TranslatableMessage('Debes especificar un volumen válido para este contenedor'))
+                            $context->buildViolation('Debes especificar un volumen válido para este contenedor')
                                 ->atPath('volume')
                                 ->addViolation()
                             ;

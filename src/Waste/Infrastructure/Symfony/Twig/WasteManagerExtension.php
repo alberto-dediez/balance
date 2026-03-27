@@ -12,6 +12,9 @@ use Twig\TwigFilter;
 
 class WasteManagerExtension extends AbstractExtension
 {
+    /** @var array<string, WasteManager|null> */
+    private array $wasteManagers = [];
+
     public function __construct(private readonly WasteManagerRepository $wasteManagerRepository) {}
 
     public function getFilters(): array
@@ -34,10 +37,10 @@ class WasteManagerExtension extends AbstractExtension
             return null;
         }
 
-        if (!isset($wasteManagers[(string) $wasteManagerId])) {
-            $wasteManagers[(string) $wasteManagerId] = $this->wasteManagerRepository->find($wasteManagerId);
+        if (!isset($this->wasteManagers[(string) $wasteManagerId])) {
+            $this->wasteManagers[(string) $wasteManagerId] = $this->wasteManagerRepository->find($wasteManagerId);
         }
 
-        return $wasteManagers[(string) $wasteManagerId];
+        return $this->wasteManagers[(string) $wasteManagerId];
     }
 }

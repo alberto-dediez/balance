@@ -102,14 +102,19 @@ final class ContainerRegistered extends DomainEvent
         \DateTimeImmutable $occurredOn,
         array $payload = [],
     ): static {
+        $measurementMethod = MeasurementMethod::tryFrom($payload['measurementMethod']);
+        $purpose = Purpose::tryFrom($payload['purpose']);
+        assert(null !== $measurementMethod);
+        assert(null !== $purpose);
+
         return new ContainerRegistered(
             containerId: new ContainerId($payload['containerId']),
             accountId: new AccountId($payload['accountId']),
             propertyId: new PropertyId($payload['propertyId']),
             wasteId: new WasteId($payload['waste']),
-            measurementMethod: MeasurementMethod::tryFrom($payload['measurementMethod']),
+            measurementMethod: $measurementMethod,
             volume: $payload['volume'] ?? '0',
-            purpose: Purpose::tryFrom($payload['purpose']),
+            purpose: $purpose,
             wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId($payload['wasteManagerId']) : WasteManagerId::generate(),
             qrCode: new QrCode($payload['qrCode'] ?? ''),
             id: $id,

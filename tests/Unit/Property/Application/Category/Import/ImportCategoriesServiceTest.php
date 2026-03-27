@@ -7,7 +7,6 @@ namespace App\Tests\Unit\Property\Application\Category\Import;
 use App\Property\Application\Category\CategoryAuthorizer;
 use App\Property\Application\Category\Import\CategoryRequest;
 use App\Property\Application\Category\Import\ImportCategoriesRequest;
-use App\Property\Application\Category\Import\ImportCategoriesResponse;
 use App\Property\Application\Category\Import\ImportCategoriesService;
 use App\Property\Application\Category\Register\RegisterCategoryResponse;
 use App\Property\Application\Category\Register\RegisterCategoryService;
@@ -20,6 +19,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Property\Domain\Model\Category\CategoryMother;
 use App\Tests\Unit\Property\Domain\Model\Category\CategoryRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ImportCategoriesServiceTest extends TestCase
@@ -76,9 +76,6 @@ class ImportCategoriesServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ImportCategoriesResponse);
-
         $this->assertCount(4, $result->categories);
         $this->assertEquals(3, $result->matched);
 
@@ -93,9 +90,9 @@ class ImportCategoriesServiceTest extends TestCase
     private function createSUT(InMemoryCategoryRepository $repository): ImportCategoriesService
     {
         $registerService = $this->createMock(RegisterCategoryService::class);
-        $registerService->method('__invoke')->willReturn(new RegisterCategoryResponse(CategoryId::generate(), '', null));
+        $registerService->method('__invoke')->willReturn(new RegisterCategoryResponse(CategoryId::generate(), ''));
 
-        /** @var RegisterCategoryService $registerService */
+        /** @var RegisterCategoryService&MockObject $registerService */
         $authorizer = new CategoryAuthorizer();
 
         $updateService = new UpdateCategoryService(

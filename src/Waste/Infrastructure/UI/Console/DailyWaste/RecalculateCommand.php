@@ -49,17 +49,27 @@ class RecalculateCommand extends Command
         $progressBar = $io->createProgressBar();
 
         foreach ($measurements as $measurement) {
-            $user = UserMother::fromUsernameAndRoleAndAccount('system', Role::Owner, $measurement->accountId());
+            $measurementAccountId = $measurement->accountId();
+            $measurementPropertyId = $measurement->propertyId();
+            $measurementWasteId = $measurement->wasteId();
+            $measurementWasteManagerId = $measurement->wasteManagerId();
+            $measurementPurpose = $measurement->purpose();
+            $measurementDay = $measurement->day();
+            assert(null !== $measurementAccountId);
+            assert(null !== $measurementPropertyId);
+            assert(null !== $measurementWasteId);
+            assert(null !== $measurementWasteManagerId);
+            $user = UserMother::fromUsernameAndRoleAndAccount('system', Role::Owner, $measurementAccountId);
 
             try {
                 $this->calculateDailyWaste->__invoke(
                     new CalculateDailyWasteRequest(
-                        propertyId: $measurement->propertyId(),
-                        wasteId: $measurement->wasteId(),
-                        wasteManagerId: $measurement->wasteManagerId(),
-                        accountId: $measurement->accountId(),
-                        purpose: $measurement->purpose(),
-                        day: $measurement->day(),
+                        propertyId: $measurementPropertyId,
+                        wasteId: $measurementWasteId,
+                        wasteManagerId: $measurementWasteManagerId,
+                        accountId: $measurementAccountId,
+                        purpose: $measurementPurpose,
+                        day: $measurementDay,
                     ),
                     $user,
                 );

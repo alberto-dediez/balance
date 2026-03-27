@@ -6,9 +6,7 @@ namespace App\Tests\Unit\Property\Application\Category\Register;
 
 use App\Property\Application\Category\CategoryAuthorizer;
 use App\Property\Application\Category\Register\RegisterCategoryRequest;
-use App\Property\Application\Category\Register\RegisterCategoryResponse;
 use App\Property\Application\Category\Register\RegisterCategoryService;
-use App\Property\Domain\Model\Category\Category;
 use App\Property\Domain\Model\Category\CategoryRegistered;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCategoryRepository;
 use App\Security\Domain\Model\User\Role;
@@ -43,15 +41,12 @@ class RegisterCategoryServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterCategoryResponse);
         $this->assertNotEmpty((string) $result->categoryId);
         $this->assertEquals(36, strlen((string) $result->categoryId));
 
         $categoryPersisted = $repository->find($result->categoryId);
 
         $this->assertNotNull($categoryPersisted);
-        $this->assertTrue($categoryPersisted instanceof Category);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

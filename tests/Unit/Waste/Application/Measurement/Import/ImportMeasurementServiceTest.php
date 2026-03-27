@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Waste\Application\Measurement\Import;
 
 use App\Property\Domain\Model\Property\PropertyRepository;
-use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Security\Domain\Model\User\UserRepositoryMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
@@ -20,12 +18,10 @@ use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
 use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
 use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
 use App\Waste\Application\Measurement\Import\ImportMeasurementRequest;
-use App\Waste\Application\Measurement\Import\ImportMeasurementResponse;
 use App\Waste\Application\Measurement\Import\ImportMeasurementService;
 use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Waste\Domain\Model\Container\Purpose;
-use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementRegistered;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 use App\Waste\Domain\Model\Waste\WasteRepository;
@@ -48,7 +44,6 @@ class ImportMeasurementServiceTest extends TestCase
     {
         $data = $this->createData();
 
-        $userRepository = UserRepositoryMother::inMemory();
         $measurementRepository = MeasurementRepositoryMother::inMemory();
         $containerRepository = ContainerRepositoryMother::inMemory();
         $propertyRepository = PropertyRepositoryMother::inMemory();
@@ -57,7 +52,6 @@ class ImportMeasurementServiceTest extends TestCase
 
         $account = AccountMother::registeredAccount();
         $user = UserMother::fromUsernameAndAccount('user', $account);
-        $userRepository->add($user);
 
         $property = PropertyMother::fromNameAndAccountAndId('Hotel', (string) $account->id(), $data['propertyId']);
         $propertyRepository->add($property);
@@ -78,7 +72,6 @@ class ImportMeasurementServiceTest extends TestCase
             propertyRepository: $propertyRepository,
             wasteRepository: $wasteRepository,
             wasteManagerRepository: $wasteManagerRepository,
-            userRepository: $userRepository,
         );
 
         $request = new ImportMeasurementRequest(
@@ -97,15 +90,12 @@ class ImportMeasurementServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ImportMeasurementResponse);
         $this->assertNotEmpty((string) $result->measurementId);
         $this->assertEquals(36, strlen((string) $result->measurementId));
 
         $measurementPersisted = $measurementRepository->find($result->measurementId);
 
         $this->assertNotNull($measurementPersisted);
-        $this->assertTrue($measurementPersisted instanceof Measurement);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -116,7 +106,6 @@ class ImportMeasurementServiceTest extends TestCase
 
     public function testIsHandle(): void
     {
-        $userRepository = UserRepositoryMother::inMemory();
         $measurementRepository = MeasurementRepositoryMother::inMemory();
         $containerRepository = ContainerRepositoryMother::inMemory();
         $propertyRepository = PropertyRepositoryMother::inMemory();
@@ -129,7 +118,6 @@ class ImportMeasurementServiceTest extends TestCase
             propertyRepository: $propertyRepository,
             wasteRepository: $wasteRepository,
             wasteManagerRepository: $wasteManagerRepository,
-            userRepository: $userRepository,
         );
 
         $data = $this->createData();
@@ -158,7 +146,6 @@ class ImportMeasurementServiceTest extends TestCase
         PropertyRepository $propertyRepository,
         WasteRepository $wasteRepository,
         WasteManagerRepository $wasteManagerRepository,
-        UserRepository $userRepository,
     ): ImportMeasurementService {
         return new ImportMeasurementService(
             measurementRepository: $measurementRepository,
@@ -166,11 +153,11 @@ class ImportMeasurementServiceTest extends TestCase
             propertyRepository: $propertyRepository,
             wasteRepository: $wasteRepository,
             wasteManagerRepository: $wasteManagerRepository,
-            userRepository: $userRepository,
             authorizer: new MeasurementAuthorizer(),
         );
     }
 
+    /** @return array<string, mixed> */
     private function createData(): array
     {
         return [

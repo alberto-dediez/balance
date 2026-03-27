@@ -50,11 +50,14 @@ abstract class DestinationRepositoryTest extends KernelTestCase
 
         $destination = DestinationMother::random();
 
-        $this->assertNull($repository->findByNameAndCountry($destination->name(), $destination->countryId()));
+        $countryId = $destination->countryId();
+        assert(null !== $countryId);
+
+        $this->assertNull($repository->findByNameAndCountry($destination->name(), $countryId));
 
         $repository->add($destination);
 
-        $recoverDestination = $repository->findByNameAndCountry($destination->name(), $destination->countryId());
+        $recoverDestination = $repository->findByNameAndCountry($destination->name(), $countryId);
 
         $this->assertNotNull($recoverDestination);
         $this->assertEquals($destination->id(), $recoverDestination->id());

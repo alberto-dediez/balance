@@ -10,7 +10,6 @@ use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Waste\Application\Container\List\ListContainersRequest;
-use App\Waste\Application\Container\List\ListContainersResponse;
 use App\Waste\Application\Container\List\ListContainersService;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryContainerRepository;
 use PHPUnit\Framework\TestCase;
@@ -39,8 +38,6 @@ class ListContainersServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListContainersResponse);
         $this->assertCount(4, $result->containers);
         $this->assertEquals(4, $result->totalResults);
     }

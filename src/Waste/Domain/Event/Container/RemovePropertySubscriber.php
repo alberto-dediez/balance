@@ -29,6 +29,7 @@ class RemovePropertySubscriber implements DomainEventSubscriber
             throw new \RuntimeException('Incorrect event!');
         }
 
+        assert($event instanceof PropertyRemoved);
         $this->handlePropertyRemoved($event);
     }
 

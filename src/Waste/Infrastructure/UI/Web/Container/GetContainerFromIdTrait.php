@@ -7,7 +7,6 @@ namespace App\Waste\Infrastructure\UI\Web\Container;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\ContainerRepository;
-use Symfony\Component\Translation\TranslatableMessage;
 
 trait GetContainerFromIdTrait
 {
@@ -16,7 +15,7 @@ trait GetContainerFromIdTrait
         $container = $containerRepository->find(new ContainerId($containerId));
 
         if (null == $container) {
-            throw $this->createNotFoundException(new TranslatableMessage('El contenedor no existe'));
+            throw $this->createNotFoundException('El contenedor no existe');
         }
 
         return $container;

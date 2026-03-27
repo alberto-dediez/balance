@@ -6,10 +6,8 @@ namespace App\Tests\Unit\Property\Application\Destination\Register;
 
 use App\Property\Application\Destination\DestinationAuthorizer;
 use App\Property\Application\Destination\Register\RegisterDestinationRequest;
-use App\Property\Application\Destination\Register\RegisterDestinationResponse;
 use App\Property\Application\Destination\Register\RegisterDestinationService;
 use App\Property\Domain\Model\Country\CountryId;
-use App\Property\Domain\Model\Destination\Destination;
 use App\Property\Domain\Model\Destination\DestinationRegistered;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
 use App\Security\Domain\Model\User\Role;
@@ -45,15 +43,12 @@ class RegisterDestinationServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterDestinationResponse);
         $this->assertNotEmpty((string) $result->destinationId);
         $this->assertEquals(36, strlen((string) $result->destinationId));
 
         $destinationPersisted = $repository->find($result->destinationId);
 
         $this->assertNotNull($destinationPersisted);
-        $this->assertTrue($destinationPersisted instanceof Destination);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -61,7 +56,9 @@ class RegisterDestinationServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof DestinationRegistered);
         $this->assertEquals('Spain', $lastEvent->name());
         $this->assertTrue($destinationPersisted->id()->equals($lastEvent->destinationId()));
-        $this->assertTrue($request->countryId->equals($lastEvent->countryId()));
+        $countryId = $lastEvent->countryId();
+        self::assertNotNull($countryId);
+        $this->assertTrue($request->countryId->equals($countryId));
     }
 
     public function testIsHandle(): void

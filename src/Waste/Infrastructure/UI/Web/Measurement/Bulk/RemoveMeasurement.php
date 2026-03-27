@@ -40,11 +40,15 @@ class RemoveMeasurement implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
+        assert($command instanceof RemoveMeasurementRequest);
+
         return new TranslatableMessage('Se ha eliminado la medición {id}', ['{id}' => $command->measurementId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
+        assert($command instanceof RemoveMeasurementRequest);
+
         return new TranslatableMessage('No se ha podido eliminar la medición {id}', ['{id}' => $command->measurementId]);
     }
 }

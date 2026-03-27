@@ -6,7 +6,6 @@ namespace App\Tests\Unit\Property\Application\Property\Remove;
 
 use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Application\Property\Remove\RemovePropertyRequest;
-use App\Property\Application\Property\Remove\RemovePropertyResponse;
 use App\Property\Application\Property\Remove\RemovePropertyService;
 use App\Property\Domain\Model\Property\PropertyRemoved;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
@@ -47,8 +46,6 @@ class RemovePropertyServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RemovePropertyResponse);
         $this->assertTrue($property->id()->equals($result->propertyId));
 
         $propertyPersisted = $repository->find($result->propertyId);

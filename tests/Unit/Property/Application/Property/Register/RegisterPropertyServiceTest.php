@@ -6,9 +6,7 @@ namespace App\Tests\Unit\Property\Application\Property\Register;
 
 use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Application\Property\Register\RegisterPropertyRequest;
-use App\Property\Application\Property\Register\RegisterPropertyResponse;
 use App\Property\Application\Property\Register\RegisterPropertyService;
-use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyRegistered;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
@@ -45,15 +43,12 @@ class RegisterPropertyServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterPropertyResponse);
         $this->assertNotEmpty((string) $result->propertyId);
         $this->assertEquals(36, strlen((string) $result->propertyId));
 
         $propertyPersisted = $repository->find($result->propertyId);
 
         $this->assertNotNull($propertyPersisted);
-        $this->assertTrue($propertyPersisted instanceof Property);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

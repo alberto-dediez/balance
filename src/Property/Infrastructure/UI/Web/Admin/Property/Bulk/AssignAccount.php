@@ -55,6 +55,8 @@ class AssignAccount implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
+        assert($command instanceof UpdatePropertyRequest);
+
         $assignAccount = null !== $command->accountId;
 
         return $assignAccount
@@ -65,6 +67,8 @@ class AssignAccount implements BulkAction
 
     public function failure(Command $command): TranslatableMessage
     {
+        assert($command instanceof UpdatePropertyRequest);
+
         return new TranslatableMessage('No se ha podido modificar la propiedad {id}', ['{id}' => $command->propertyId]);
     }
 }

@@ -6,7 +6,6 @@ namespace App\Tests\Unit\Property\Application\Country\List;
 
 use App\Property\Application\Country\CountryAuthorizer;
 use App\Property\Application\Country\List\ListCountriesRequest;
-use App\Property\Application\Country\List\ListCountriesResponse;
 use App\Property\Application\Country\List\ListCountriesService;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
 use App\Security\Domain\Model\User\Role;
@@ -36,8 +35,6 @@ class ListCountriesServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListCountriesResponse);
         $this->assertCount(4, $result->countries);
         $this->assertEquals(4, $result->totalResults);
     }

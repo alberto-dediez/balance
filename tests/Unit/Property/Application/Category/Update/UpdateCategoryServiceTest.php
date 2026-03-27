@@ -6,9 +6,7 @@ namespace App\Tests\Unit\Property\Application\Category\Update;
 
 use App\Property\Application\Category\CategoryAuthorizer;
 use App\Property\Application\Category\Update\UpdateCategoryRequest;
-use App\Property\Application\Category\Update\UpdateCategoryResponse;
 use App\Property\Application\Category\Update\UpdateCategoryService;
-use App\Property\Domain\Model\Category\Category;
 use App\Property\Domain\Model\Category\CategoryUpdated;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCategoryRepository;
 use App\Security\Domain\Model\User\Role;
@@ -49,13 +47,9 @@ class UpdateCategoryServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateCategoryResponse);
-
         $categoryPersisted = $repository->find($result->categoryId);
 
         $this->assertNotNull($categoryPersisted);
-        $this->assertTrue($categoryPersisted instanceof Category);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

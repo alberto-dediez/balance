@@ -6,6 +6,7 @@ namespace App\Shared\Domain\Model\Locale;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+/** @extends ArrayCollection<int, Translation> */
 class Translations extends ArrayCollection implements \Countable
 {
     public function add(mixed $element): void
@@ -18,24 +19,23 @@ class Translations extends ArrayCollection implements \Countable
             parent::add($element);
         }
 
-        $this->getTranslationFor($element->locale())->update($element);
+        $this->getTranslationFor($element->locale())?->update($element);
     }
 
-    public function removeElement(mixed $element): void
+    public function removeElement(mixed $element): bool
     {
-        if (!$element instanceof Translation) {
-            throw new \InvalidArgumentException('$element must be an instance of Translation');
-        }
-
         if (0 == count($this)) {
-            return;
+            return false;
         }
 
-        foreach ($this->toArray() as $i => $savedTranslation) {
+        $removed = false;
+        foreach ($this->toArray() as $savedTranslation) {
             if ($element->locale() === $savedTranslation->locale()) {
-                parent::removeElement($savedTranslation);
+                $removed = parent::removeElement($savedTranslation);
             }
         }
+
+        return $removed;
     }
 
     public function contains(mixed $element): bool

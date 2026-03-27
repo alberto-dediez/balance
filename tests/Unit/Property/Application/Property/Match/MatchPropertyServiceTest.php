@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Property\Application\Property\Match;
 
 use App\Property\Application\Property\Match\MatchPropertyRequest;
-use App\Property\Application\Property\Match\MatchPropertyResponse;
 use App\Property\Application\Property\Match\MatchPropertyService;
 use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Domain\Model\Property\ExternalId;
@@ -72,9 +71,8 @@ class MatchPropertyServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof MatchPropertyResponse);
         $this->assertNotEmpty((string) $result->propertyId);
+        assert(null !== $result->propertyId);
         $this->assertTrue($result->propertyId->equals($hotelB->id()));
 
         $lastEvent = $this->spySubscriber->lastEvent();
@@ -124,9 +122,8 @@ class MatchPropertyServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof MatchPropertyResponse);
         $this->assertNotEmpty((string) $result->propertyId);
+        assert(null !== $result->propertyId);
         $this->assertTrue($result->propertyId->equals($hotelB->id()));
 
         $lastEvent = $this->spySubscriber->lastEvent();

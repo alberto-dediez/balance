@@ -34,6 +34,8 @@ class UpdateDestinationService implements CommandHandler
 
         $this->repository->add($destination);
 
+        assert(null !== $destination->countryId());
+
         return new UpdateDestinationResponse(
             destinationId: $destination->id(),
             name: $destination->name(),

@@ -6,7 +6,6 @@ namespace App\Tests\Unit\Property\Application\Destination\List;
 
 use App\Property\Application\Destination\DestinationAuthorizer;
 use App\Property\Application\Destination\List\ListDestinationsRequest;
-use App\Property\Application\Destination\List\ListDestinationsResponse;
 use App\Property\Application\Destination\List\ListDestinationsService;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
 use App\Security\Domain\Model\User\Role;
@@ -36,8 +35,6 @@ class ListDestinationsServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListDestinationsResponse);
         $this->assertCount(4, $result->destinations);
         $this->assertEquals(4, $result->totalResults);
     }

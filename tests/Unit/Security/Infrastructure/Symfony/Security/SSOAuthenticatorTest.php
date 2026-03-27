@@ -25,6 +25,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
 class SSOAuthenticatorTest extends TestCase
 {
     private InMemorySSOClient $ssoClient;
+    /** @var UserProviderInterface<UserInterface>&MockObject */
     private UserProviderInterface&MockObject $userProvider;
     private SSOJwtDecoder&MockObject $jwtDecoder;
     private UrlGeneratorInterface&MockObject $urlGenerator;
@@ -123,7 +124,6 @@ class SSOAuthenticatorTest extends TestCase
 
         /** @var UserBadge $badge */
         $badge = $passport->getBadge(UserBadge::class);
-        $this->assertNotNull($badge);
         $this->assertEquals('user@example.com', $badge->getUserIdentifier());
 
         // Test the user loader inside the UserBadge
@@ -134,6 +134,9 @@ class SSOAuthenticatorTest extends TestCase
             ->willReturn($userMock);
 
         $loader = $badge->getUserLoader();
+
+        self::assertIsCallable($loader);
+
         $loadedUser = $loader('user@example.com');
 
         $this->assertSame($userMock, $loadedUser);
@@ -149,6 +152,8 @@ class SSOAuthenticatorTest extends TestCase
         /** @var UserBadge $badge */
         $badge = $passport->getBadge(UserBadge::class);
         $loader = $badge->getUserLoader();
+
+        self::assertIsCallable($loader);
 
         $this->userProvider->expects($this->once())
             ->method('loadUserByIdentifier')

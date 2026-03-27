@@ -18,8 +18,10 @@ interface MeasurementRepository
 
     public function find(MeasurementId $measurementId): ?Measurement;
 
+    /** @return array<int, Measurement> */
     public function findByDay(\DateTimeImmutable $day, PropertyId $propertyId, WasteId $wasteId, Purpose $purpose, WasteManagerId $wasteManagerId, AccountId $accountId): array;
 
+    /** @return array<int, Measurement> */
     public function findByFilter(MeasurementFilter $filter): array;
 
     public function totalResultsByFilter(MeasurementFilter $filter): int;

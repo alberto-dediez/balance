@@ -6,7 +6,6 @@ namespace App\Tests\Unit\Property\Application\Category\List;
 
 use App\Property\Application\Category\CategoryAuthorizer;
 use App\Property\Application\Category\List\ListCategoriesRequest;
-use App\Property\Application\Category\List\ListCategoriesResponse;
 use App\Property\Application\Category\List\ListCategoriesService;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCategoryRepository;
 use App\Security\Domain\Model\User\Role;
@@ -36,8 +35,6 @@ class ListCategoriesServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListCategoriesResponse);
         $this->assertCount(4, $result->categories);
         $this->assertEquals(4, $result->totalResults);
     }

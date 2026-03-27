@@ -29,6 +29,7 @@ class RemoveWasteSubscriber implements DomainEventSubscriber
             throw new \RuntimeException('Incorrect event!');
         }
 
+        assert($event instanceof WasteRemoved);
         $this->handlePropertyRemoved($event);
     }
 

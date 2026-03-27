@@ -72,13 +72,12 @@ class SqliteImportationDataRepositoryTest extends TestCase
         $orderedValues = $configuration->values;
         sort($orderedValues);
 
-        $this->assertNotNull($configuration);
         $this->assertEquals(1, $configuration->column);
         $this->assertEquals('edad', $configuration->name);
         $this->assertEquals(null, $configuration->field);
         $this->assertEquals(['14', '15', '16', '17', '18'], $orderedValues);
         $this->assertCount(5, $configuration->translations);
-        $this->assertNotNull(array_filter($configuration->translations, fn(ColumnValueTranslation $translation): bool => '14' === $translation->value));
+        $this->assertGreaterThan(0, count(array_filter($configuration->translations, fn(ColumnValueTranslation $translation): bool => '14' === $translation->value)));
     }
 
     public function testGivenAnImportationColumnConfigurationWhenISaveItThenICanRecoverIt(): void
@@ -107,12 +106,12 @@ class SqliteImportationDataRepositoryTest extends TestCase
 
         $this->assertEquals('ageOfHeroe', $recoverConfiguration->field);
 
-        /** @var ?ColumnValueTranslation $foundTranslation */
         $foundTranslations = array_filter($recoverConfiguration->translations, fn(ColumnValueTranslation $translation): bool => '14' === $translation->value);
         $this->assertCount(1, $foundTranslations);
 
+        /** @var ?ColumnValueTranslation $foundTranslation */
         $foundTranslation = array_pop($foundTranslations);
-        $this->assertEquals('Infantil', $foundTranslation->translation);
+        $this->assertEquals('Infantil', $foundTranslation?->translation);
     }
 
     public function testGivenAnImportationWhenISaveAnErrorMessageThenICanRecoverIt(): void
@@ -134,7 +133,7 @@ class SqliteImportationDataRepositoryTest extends TestCase
 
         $otherResult = $sut->getResult($importation->id(), 1);
 
-        $this->assertEmpty($otherResult['error']);
+        $this->assertEmpty($otherResult['error'] ?? '');
     }
 
     private function createSUT(): ImportationDataRepository

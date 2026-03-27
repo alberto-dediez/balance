@@ -6,9 +6,7 @@ namespace App\Tests\Unit\Property\Application\Brand\Register;
 
 use App\Property\Application\Brand\BrandAuthorizer;
 use App\Property\Application\Brand\Register\RegisterBrandRequest;
-use App\Property\Application\Brand\Register\RegisterBrandResponse;
 use App\Property\Application\Brand\Register\RegisterBrandService;
-use App\Property\Domain\Model\Brand\Brand;
 use App\Property\Domain\Model\Brand\BrandRegistered;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
 use App\Security\Domain\Model\User\Role;
@@ -43,15 +41,12 @@ class RegisterBrandServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterBrandResponse);
         $this->assertNotEmpty((string) $result->brandId);
         $this->assertEquals(36, strlen((string) $result->brandId));
 
         $brandPersisted = $repository->find($result->brandId);
 
         $this->assertNotNull($brandPersisted);
-        $this->assertTrue($brandPersisted instanceof Brand);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

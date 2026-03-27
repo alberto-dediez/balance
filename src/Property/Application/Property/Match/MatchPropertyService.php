@@ -211,7 +211,8 @@ class MatchPropertyService
             if (! $property->externalId()->isCombinable($request->externalId)) {
                 continue;
             }
-            if (null === $property->name()) {
+
+            if (empty($property->name())) {
                 continue;
             }
 
@@ -225,7 +226,7 @@ class MatchPropertyService
                 $matchPercent += 50;
             }
 
-            if ($request->info->destinationId() instanceof DestinationId && $property->info()->destinationId()->equals($request->info->destinationId())) {
+            if ($request->info->destinationId() instanceof DestinationId && $property->info()->destinationId() instanceof DestinationId && $property->info()->destinationId()->equals($request->info->destinationId())) {
                 $matchPercent += 100;
             }
 

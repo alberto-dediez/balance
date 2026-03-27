@@ -11,16 +11,21 @@ class WasteManager implements \Stringable
 {
     use AggregateRoot;
 
+    /**
+     * @param array<mixed> $events
+     */
     public function __construct(
         private WasteManagerId $id,
-        private ?string $name = null,
+        private string $name = '',
         private ?AccountId $accountId = null,
         private bool $isPublic = true,
         private bool $removed = false,
         array $events = [],
-        private ?\DateTimeImmutable $registeredAt = null,
+        private \DateTimeImmutable $registeredAt = new \DateTimeImmutable(),
         private ?\DateTimeImmutable $removedAt = null,
-    ) {}
+    ) {
+        $this->events = $events;
+    }
 
     public function id(): WasteManagerId
     {

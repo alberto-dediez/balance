@@ -6,9 +6,7 @@ namespace App\Tests\Unit\Property\Application\Property\Update;
 
 use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Application\Property\Update\UpdatePropertyRequest;
-use App\Property\Application\Property\Update\UpdatePropertyResponse;
 use App\Property\Application\Property\Update\UpdatePropertyService;
-use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyUpdated;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
@@ -51,13 +49,9 @@ class UpdatePropertyServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdatePropertyResponse);
-
         $propertyPersisted = $repository->find($result->propertyId);
 
         $this->assertNotNull($propertyPersisted);
-        $this->assertTrue($propertyPersisted instanceof Property);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

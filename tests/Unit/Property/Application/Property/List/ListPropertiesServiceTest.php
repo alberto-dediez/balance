@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Property\Application\Property\List;
 
 use App\Property\Application\Property\List\ListPropertiesRequest;
-use App\Property\Application\Property\List\ListPropertiesResponse;
 use App\Property\Application\Property\List\ListPropertiesService;
 use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
@@ -36,8 +35,6 @@ class ListPropertiesServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListPropertiesResponse);
         $this->assertCount(4, $result->properties);
         $this->assertEquals(4, $result->totalResults);
     }

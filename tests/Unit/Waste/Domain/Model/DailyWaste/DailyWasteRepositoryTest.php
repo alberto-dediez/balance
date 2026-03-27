@@ -116,7 +116,10 @@ abstract class DailyWasteRepositoryTest extends KernelTestCase
             $dailyFromAccount,
         );
 
-        new DailyWasteFilter();
+        self::assertNotEmpty($dailyFromAccount->propertyId());
+        self::assertNotEmpty($dailyFromAccount->accountId());
+        self::assertNotEmpty($dailyFromAccount->wasteId());
+        self::assertNotEmpty($dailyFromAccount->wasteManagerId());
 
         $result = $repository->findByDay(
             day: $dailyFromAccount->day(),

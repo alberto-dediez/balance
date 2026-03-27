@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class ViewController extends AbstractController
 {
     public function __invoke(
-        $dailyWasteId,
+        string $dailyWasteId,
         LoggedUser $loggedUser,
         ViewDailyWasteService $viewDailyWaste,
         Request $request,

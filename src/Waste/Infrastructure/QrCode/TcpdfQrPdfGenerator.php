@@ -26,8 +26,13 @@ class TcpdfQrPdfGenerator implements QrPdfGenerator
 
     public function generate(Container $container, QrCode $qrCode): string
     {
-        $waste = $this->wasteRepository->find($container->wasteId());
-        $property = $this->propertyRepository->find($container->propertyId());
+        $wasteId = $container->wasteId();
+        assert(null !== $wasteId);
+        $propertyId = $container->propertyId();
+        assert(null !== $propertyId);
+
+        $waste = $this->wasteRepository->find($wasteId);
+        $property = $this->propertyRepository->find($propertyId);
 
         if (!$property instanceof Property) {
             throw new \RuntimeException('Property not found');
@@ -97,12 +102,21 @@ class TcpdfQrPdfGenerator implements QrPdfGenerator
         return $path;
     }
 
+    /** @return array<int, int> */
     private function getBackgroundColor(?Waste $waste): array
     {
-        if (!$waste instanceof Waste || null === $waste->color()) {
-            return $this->hex2rgb(self::COLOR_PRIMARY);
+        if (!$waste instanceof Waste || '' === $waste->color()) {
+            $color = $this->hex2rgb(self::COLOR_PRIMARY);
+            assert(null !== $color);
+
+            /* @var array<int, int> $color */
+            return $color;
         }
 
-        return $this->hex2rgb($waste->color());
+        $color = $this->hex2rgb($waste->color());
+        assert(null !== $color);
+
+        /* @var array<int, int> $color */
+        return $color;
     }
 }

@@ -19,10 +19,8 @@ use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
 use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Application\Measurement\Register\RegisterMeasurementRequest;
-use App\Waste\Application\Measurement\Register\RegisterMeasurementResponse;
 use App\Waste\Application\Measurement\Register\RegisterMeasurementService;
 use App\Waste\Domain\Model\Container\ContainerId;
-use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementRegistered;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryContainerRepository;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
@@ -80,17 +78,13 @@ class RegisterMeasurementServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterMeasurementResponse);
         $this->assertNotEmpty((string) $result->measurementId);
         $this->assertEquals(36, strlen((string) $result->measurementId));
         $this->assertEquals('123', $result->reference);
 
-
         $measurementPersisted = $measurementRepository->find($result->measurementId);
 
         $this->assertNotNull($measurementPersisted);
-        $this->assertTrue($measurementPersisted instanceof Measurement);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

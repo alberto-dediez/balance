@@ -32,6 +32,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MeasurementImportationType implements ImportationType
 {
+    /** @var array<string, array{translationDefinition: FieldDefinition|null, assignValueDefinition: FieldDefinition|null}> */
     private readonly array $fields;
 
     public function __construct(
@@ -142,11 +143,13 @@ class MeasurementImportationType implements ImportationType
         return array_keys($this->fields);
     }
 
+    /** @return array<string, FieldDefinition|null> */
     public function translationDefinitions(): array
     {
         return array_map(fn(array $definition) => $definition['translationDefinition'] ?? null, $this->fields);
     }
 
+    /** @return array<string, FieldDefinition|null> */
     public function assignValueDefinitions(): array
     {
         return array_map(fn(array $definition) => $definition['assignValueDefinition'] ?? null, $this->fields);

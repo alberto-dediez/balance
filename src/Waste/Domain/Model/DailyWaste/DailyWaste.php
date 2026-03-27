@@ -19,11 +19,11 @@ class DailyWaste implements \Stringable
         private DailyWasteId $id,
         private ?PropertyId $propertyId = null,
         private ?WasteId $wasteId = null,
-        private ?Purpose $purpose = null,
+        private Purpose $purpose = Purpose::Waste,
         private ?WasteManagerId $wasteManagerId = null,
-        private float $load = 0,
+        private float|string $load = 0,
         private ?AccountId $accountId = null,
-        private ?\DateTimeImmutable $day = null,
+        private \DateTimeImmutable $day = new \DateTimeImmutable(),
     ) {}
 
     public function id(): DailyWasteId
@@ -41,7 +41,7 @@ class DailyWaste implements \Stringable
         return $this->wasteId;
     }
 
-    public function purpose(): ?Purpose
+    public function purpose(): Purpose
     {
         return $this->purpose;
     }
@@ -53,7 +53,7 @@ class DailyWaste implements \Stringable
 
     public function load(): float
     {
-        return $this->load;
+        return (float) $this->load;
     }
 
     public function accountId(): ?AccountId

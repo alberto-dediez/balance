@@ -35,6 +35,8 @@ class EditController extends AbstractController
 
         $this->denyAccessUnlessGranted(Action::Edit->value, $wasteManager);
 
+        assert(null !== $wasteManager->name());
+
         $wasteManagerRequest = new UpdateWasteManagerRequest(
             wasteManagerId: $wasteManager->id(),
             name: $wasteManager->name(),

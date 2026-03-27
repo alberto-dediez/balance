@@ -79,12 +79,17 @@ final class ContainerUpdated extends DomainEvent
         \DateTimeImmutable $occurredOn,
         array $payload = [],
     ): static {
+        $measurementMethod = MeasurementMethod::tryFrom($payload['measurementMethod']);
+        $purpose = Purpose::tryFrom($payload['purpose']);
+        assert(null !== $measurementMethod);
+        assert(null !== $purpose);
+
         return new ContainerUpdated(
             containerId: new ContainerId($payload['containerId']),
             wasteId: new WasteId($payload['wasteId']),
-            measurementMethod: MeasurementMethod::tryFrom($payload['measurementMethod']),
+            measurementMethod: $measurementMethod,
             volume: $payload['volume'] ?? '0',
-            purpose: Purpose::tryFrom($payload['purpose']),
+            purpose: $purpose,
             wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId($payload['wasteManagerId']) : WasteManagerId::generate(),
             id: $id,
             occurredOn: $occurredOn,

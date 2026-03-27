@@ -40,11 +40,15 @@ class RemoveProperty implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
+        assert($command instanceof RemovePropertyRequest);
+
         return new TranslatableMessage('Se ha eliminado la propiedad {id}', ['{id}' => $command->propertyId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
+        assert($command instanceof RemovePropertyRequest);
+
         return new TranslatableMessage('No se ha podido eliminar la propiedad {id}', ['{id}' => $command->propertyId]);
     }
 }

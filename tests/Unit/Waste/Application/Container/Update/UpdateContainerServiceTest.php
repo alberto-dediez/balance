@@ -14,7 +14,6 @@ use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Waste\Application\Container\Update\UpdateContainerRequest;
 use App\Waste\Application\Container\Update\UpdateContainerResponse;
 use App\Waste\Application\Container\Update\UpdateContainerService;
-use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerUpdated;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\Container\NotValidVolumeException;
@@ -41,7 +40,9 @@ class UpdateContainerServiceTest extends TestCase
 
         $container = ContainerMother::random();
 
-        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $container->accountId());
+        $accountId = $container->accountId();
+        self::assertNotNull($accountId);
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId);
 
         $repository->add($container);
 
@@ -58,13 +59,9 @@ class UpdateContainerServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateContainerResponse);
-
         $containerPersisted = $repository->find($result->containerId);
 
         $this->assertNotNull($containerPersisted);
-        $this->assertTrue($containerPersisted instanceof Container);
         $this->assertEquals('46', $containerPersisted->volume());
 
         $lastEvent = $this->spySubscriber->lastEvent();
@@ -73,7 +70,9 @@ class UpdateContainerServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof ContainerUpdated);
         $this->assertEquals('444', (string) $lastEvent->wasteId());
         $this->assertTrue($containerPersisted->id()->equals($lastEvent->containerId()));
-        $this->assertTrue($request->wasteManagerId->equals($containerPersisted->wasteManagerId()));
+        $wasteManagerId = $containerPersisted->wasteManagerId();
+        self::assertNotNull($wasteManagerId);
+        $this->assertTrue($request->wasteManagerId->equals($wasteManagerId));
         $this->assertEquals('46', $lastEvent->volume());
     }
 
@@ -83,7 +82,9 @@ class UpdateContainerServiceTest extends TestCase
 
         $container = ContainerMother::random();
 
-        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $container->accountId());
+        $accountId = $container->accountId();
+        self::assertNotNull($accountId);
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId);
 
         $repository->add($container);
 
@@ -100,8 +101,7 @@ class UpdateContainerServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateContainerResponse);
+        $this->assertInstanceOf(UpdateContainerResponse::class, $result);
     }
 
     public function testUpdateVolumeContainerWithoutVolume(): void
@@ -112,7 +112,9 @@ class UpdateContainerServiceTest extends TestCase
 
         $container = ContainerMother::random();
 
-        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $container->accountId());
+        $accountId = $container->accountId();
+        self::assertNotNull($accountId);
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId);
 
         $repository->add($container);
 

@@ -18,7 +18,6 @@ use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
 use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
 use App\Waste\Application\DailyWaste\DailyWasteAuthorizer;
 use App\Waste\Application\DailyWaste\Statistics\StatisticsDailyWasteRequest;
-use App\Waste\Application\DailyWaste\Statistics\StatisticsDailyWasteResponse;
 use App\Waste\Application\DailyWaste\Statistics\StatisticsDailyWasteService;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteId;
@@ -127,9 +126,6 @@ class StatisticsDailyWasteServiceTest extends TestCase
         );
 
         $result = $sut($request, $user);
-
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof StatisticsDailyWasteResponse);
 
         $this->assertCount(3, $result->byDate);
         $this->assertEquals('2025-06-01', $result->byDate[0]->date->format('Y-m-d'));

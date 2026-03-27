@@ -6,9 +6,7 @@ namespace App\Tests\Unit\Property\Application\Country\Update;
 
 use App\Property\Application\Country\CountryAuthorizer;
 use App\Property\Application\Country\Update\UpdateCountryRequest;
-use App\Property\Application\Country\Update\UpdateCountryResponse;
 use App\Property\Application\Country\Update\UpdateCountryService;
-use App\Property\Domain\Model\Country\Country;
 use App\Property\Domain\Model\Country\CountryUpdated;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
 use App\Security\Domain\Model\User\Role;
@@ -50,13 +48,9 @@ class UpdateCountryServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateCountryResponse);
-
         $countryPersisted = $repository->find($result->countryId);
 
         $this->assertNotNull($countryPersisted);
-        $this->assertTrue($countryPersisted instanceof Country);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

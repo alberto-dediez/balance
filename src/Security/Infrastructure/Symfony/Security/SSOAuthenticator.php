@@ -9,6 +9,7 @@ use App\Security\Infrastructure\SSO\SSOJwtDecoder;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -25,6 +26,9 @@ class SSOAuthenticator extends AbstractAuthenticator implements AuthenticationEn
 {
     use TargetPathTrait;
 
+    /**
+     * @param UserProviderInterface<\Symfony\Component\Security\Core\User\UserInterface> $userProvider
+     */
     public function __construct(
         private readonly SSOClient $ssoClient,
         private readonly UserProviderInterface $userProvider,
@@ -53,7 +57,7 @@ class SSOAuthenticator extends AbstractAuthenticator implements AuthenticationEn
         try {
             $payload = $this->jwtDecoder->decode($token);
 
-            if (!is_array($payload)) {
+            if (empty($payload)) {
                 throw new AuthenticationException('Invalid JWT payload.');
             }
 
@@ -88,7 +92,11 @@ class SSOAuthenticator extends AbstractAuthenticator implements AuthenticationEn
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        $request->getSession()->getFlashBag()->add('error', $exception->getMessage());
+        $session = $request->getSession();
+
+        if ($session instanceof FlashBagAwareSessionInterface) {
+            $session->getFlashBag()->add('error', $exception->getMessage());
+        }
 
         return new RedirectResponse($this->urlGenerator->generate('app_login'));
     }

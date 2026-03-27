@@ -7,6 +7,8 @@ namespace App\Waste\Application\Measurement\List;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Waste\Application\Measurement\MeasurementAuthorizer;
+use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
@@ -22,8 +24,8 @@ class ListMeasurementsService
             containerId: $request->containerId,
             propertyId: $request->propertyId,
             wasteId: $request->wasteId,
-            purpose: $request->purpose,
-            measurementMethod: $request->measurementMethod,
+            purpose: $request->purpose ?? Purpose::Waste,
+            measurementMethod: $request->measurementMethod ?? MeasurementMethod::Volume,
             accountId: $request->accountId,
             registeredBy: $request->userId,
         );

@@ -10,7 +10,6 @@ use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
 use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
 use App\Waste\Application\WasteManager\List\ListWasteManagersRequest;
-use App\Waste\Application\WasteManager\List\ListWasteManagersResponse;
 use App\Waste\Application\WasteManager\List\ListWasteManagersService;
 use App\Waste\Application\WasteManager\WasteManagerAuthorizer;
 use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteManagerRepository;
@@ -28,9 +27,11 @@ class ListWasteManagersServiceTest extends TestCase
 
         $sut = $this->createSUT($repository);
 
-        $repository->add(WasteManagerMother::fromAccount($user->accountId()));
-        $repository->add(WasteManagerMother::fromAccount($user->accountId()));
-        $repository->add(WasteManagerMother::fromAccount($user->accountId()));
+        $accountId = $user->accountId();
+        self::assertNotNull($accountId);
+        $repository->add(WasteManagerMother::fromAccount($accountId));
+        $repository->add(WasteManagerMother::fromAccount($accountId));
+        $repository->add(WasteManagerMother::fromAccount($accountId));
         $repository->add(WasteManagerMother::random());
 
         $request = new ListWasteManagersRequest(
@@ -39,8 +40,6 @@ class ListWasteManagersServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListWasteManagersResponse);
         $this->assertCount(3, $result->wasteManagers);
         $this->assertEquals(3, $result->totalResults);
     }

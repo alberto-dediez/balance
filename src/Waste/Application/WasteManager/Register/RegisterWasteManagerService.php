@@ -31,6 +31,8 @@ class RegisterWasteManagerService implements CommandHandler
             accountId: $request->accountId,
         ), Action::Register, $user);
 
+        assert(null !== $request->accountId);
+
         $wasteManager = new WasteManager($id);
         $wasteManager->register(
             name: $request->name,
@@ -39,6 +41,9 @@ class RegisterWasteManagerService implements CommandHandler
         );
 
         $this->wasteManagerRepository->add($wasteManager);
+
+        assert(null !== $wasteManager->name());
+        assert(null !== $wasteManager->accountId());
 
         return new RegisterWasteManagerResponse(
             wasteManagerId: $wasteManager->id(),

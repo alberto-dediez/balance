@@ -10,6 +10,9 @@ use OpenApi\Attributes as OA;
 
 class MeasurementHistoryResponse
 {
+    /**
+     * @param array<int, mixed> $measurements
+     */
     public function __construct(
         #[OA\Property(
             type: 'string',

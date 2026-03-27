@@ -38,14 +38,14 @@ class WasteHomeController extends AbstractController
         ;
 
         $result = $listService(new ListMeasurementsRequest(
-            accountId: $account?->id(),
+            accountId: $account->id(),
             userId: $userId,
             limit: 9,
         ), $user);
 
-        if ($this->isGranted(Role::Owner->value) && $account instanceof Account) {
+        if ($this->isGranted(Role::Owner->value)) {
             $statistics = $statisticsService(new StatisticsDailyWasteRequest(
-                accountId: $account?->id(),
+                accountId: $account->id(),
                 dayFrom: new \DateTimeImmutable('NOW -1 MONTH'),
                 dayTo: new \DateTimeImmutable('NOW'),
             ), $user);

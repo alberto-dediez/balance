@@ -40,13 +40,15 @@ class RemoveBrand implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
-        /* @var RemoveBrandRequest $command */
+        assert($command instanceof RemoveBrandRequest);
+
         return new TranslatableMessage('Se ha eliminado la marca {id}', ['{id}' => $command->brandId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
-        /* @var RemoveBrandRequest $command */
+        assert($command instanceof RemoveBrandRequest);
+
         return new TranslatableMessage('No se ha podido eliminar la marca {id}', ['{id}' => $command->brandId]);
     }
 }

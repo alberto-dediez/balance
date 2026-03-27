@@ -10,7 +10,7 @@ use App\Property\Domain\Model\Destination\DestinationId;
 
 class DestinationMother
 {
-    public static function fromName(string $name)
+    public static function fromName(string $name): Destination
     {
         return self::from(
             destinationId: DestinationId::generate(),
@@ -18,7 +18,7 @@ class DestinationMother
         );
     }
 
-    public static function fromNameAndCountry(string $name, string $countryId)
+    public static function fromNameAndCountry(string $name, string $countryId): Destination
     {
         return self::from(
             destinationId: DestinationId::generate(),
@@ -27,7 +27,7 @@ class DestinationMother
         );
     }
 
-    public static function fromNameAndId(string $name, string $id)
+    public static function fromNameAndId(string $name, string $id): Destination
     {
         return self::from(
             destinationId: new DestinationId($id),
@@ -35,7 +35,7 @@ class DestinationMother
         );
     }
 
-    public static function fromNameAndCountryAndId(string $name, string $countryId, string $id)
+    public static function fromNameAndCountryAndId(string $name, string $countryId, string $id): Destination
     {
         return self::from(
             destinationId: new DestinationId($id),
@@ -55,7 +55,7 @@ class DestinationMother
         return $destination;
     }
 
-    public static function random()
+    public static function random(): Destination
     {
         return self::from(
             destinationId: DestinationId::generate(),

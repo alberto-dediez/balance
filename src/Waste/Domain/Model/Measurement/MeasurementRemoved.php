@@ -89,11 +89,14 @@ final class MeasurementRemoved extends DomainEvent
         \DateTimeImmutable $occurredOn,
         array $payload = [],
     ): static {
+        $purpose = Purpose::tryFrom($payload['purpose']);
+        assert(null !== $purpose);
+
         return new MeasurementRemoved(
             measurementId: new MeasurementId($payload['measurementId']),
             propertyId: new PropertyId($payload['propertyId']),
             wasteId: new WasteId($payload['waste']),
-            purpose: Purpose::tryFrom($payload['purpose']),
+            purpose: $purpose,
             wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId($payload['wasteManagerId']) : WasteManagerId::generate(),
             accountId: new AccountId($payload['accountId']),
             day: new \DateTimeImmutable($payload['day']),

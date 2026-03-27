@@ -115,6 +115,11 @@ abstract class MeasurementRepositoryTest extends KernelTestCase
             MeasurementMother::random(),
         );
 
+        self::assertNotEmpty($dailyWaste->propertyId());
+        self::assertNotEmpty($dailyWaste->accountId());
+        self::assertNotEmpty($dailyWaste->wasteId());
+        self::assertNotEmpty($dailyWaste->wasteManagerId());
+
         $result = $repository->findByDay(
             day: $dailyWaste->day(),
             propertyId: $dailyWaste->propertyId(),

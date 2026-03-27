@@ -12,6 +12,7 @@ interface WasteRepository
 
     public function find(WasteId $wasteId): ?Waste;
 
+    /** @return array<int, Waste> */
     public function findByFilter(WasteFilter $filter): array;
 
     public function totalResultsByFilter(WasteFilter $filter): int;

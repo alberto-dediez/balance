@@ -93,6 +93,11 @@ class MeasurementSubscriber implements DomainEventSubscriber
             throw new \InvalidArgumentException('No measurement found!');
         }
 
+        assert(null !== $measurement->propertyId());
+        assert(null !== $measurement->wasteId());
+        assert(null !== $measurement->wasteManagerId());
+        assert(null !== $measurement->accountId());
+
         CommandBusDispatcher::instance()->dispatch(
             new DeferredCommand(
                 command: new CalculateDailyWasteRequest(

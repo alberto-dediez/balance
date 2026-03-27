@@ -27,6 +27,7 @@ use App\Property\Application\Property\Register\RegisterPropertyService;
 use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
+use App\Property\Infrastructure\ExternalSource\Property\Import\ImportConfiguration;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -53,6 +54,7 @@ class ImportCommand extends Command
     /** @var CountryId[] */
     private array $countries = [];
 
+    /** @param iterable<ImportConfiguration> $configurations */
     public function __construct(
         private readonly PropertyInfoExtractor $propertyInfoExtractor,
         private readonly ExternalIdExtractor $externalIdExtractor,
@@ -64,7 +66,6 @@ class ImportCommand extends Command
         private readonly ImportCategoriesService $importCategories,
         private readonly EntityManagerInterface $manager,
         #[AutowireIterator('property.import.configuration')]
-        /** @var iterable<\App\Property\Infrastructure\ExternalSource\Property\Import\ImportConfiguration> */
         private readonly iterable $configurations,
     ) {
         parent::__construct();
@@ -104,7 +105,7 @@ class ImportCommand extends Command
 
         $this->source = $source;
 
-        /** @var \App\Property\Infrastructure\ExternalSource\Property\Import\ImportConfiguration $configuration */
+        /** @var ImportConfiguration $configuration */
         foreach ($this->configurations as $configuration) {
             if ($configuration->getSource() === $this->source) {
                 $this->fieldExtractor = $configuration->getFieldExtractor();
@@ -179,11 +180,7 @@ class ImportCommand extends Command
         $categories = [];
 
         while (false !== ($row = fgetcsv($file, 2000, ';'))) {
-            if (!is_array($row)) {
-                continue;
-            }
-
-            /** @var array<string, string|null> $row */
+            /** @var array<int, string|null> $row */
             $categoryName = ucfirst(strtolower((string) $this->fieldExtractor->extract(Field::InfoCategoryName, $row)));
             $categoryId = $this->fieldExtractor->hasField(Field::InfoCategoryId) ? (string) $this->fieldExtractor->extract(Field::InfoCategoryId, $row) : md5($categoryName);
 
@@ -270,11 +267,7 @@ class ImportCommand extends Command
         $brands = [];
 
         while (false !== ($row = fgetcsv($file, 2000, ';'))) {
-            if (!is_array($row)) {
-                continue;
-            }
-
-            /** @var array<string, string|null> $row */
+            /** @var array<int, string|null> $row */
             $brandName = ucfirst(strtolower((string) $this->fieldExtractor->extract(Field::InfoBrandName, $row)));
             $brandId = $this->fieldExtractor->hasField(Field::InfoBrandId) ? (string) $this->fieldExtractor->extract(Field::InfoBrandId, $row) : md5($brandName);
 
@@ -361,11 +354,7 @@ class ImportCommand extends Command
         $countries = [];
 
         while (false !== ($row = fgetcsv($file, 2000, ';'))) {
-            if (!is_array($row)) {
-                continue;
-            }
-
-            /** @var array<string, string|null> $row */
+            /** @var array<int, string|null> $row */
             $countryName = ucfirst(strtolower((string) $this->fieldExtractor->extract(Field::InfoCountryName, $row)));
             $countryIso = (string) $this->fieldExtractor->extract(Field::InfoCountryIso, $row);
             $countryId = $this->fieldExtractor->hasField(Field::InfoCountryId) ? (string) $this->fieldExtractor->extract(Field::InfoCountryId, $row) : md5($countryName);
@@ -433,7 +422,10 @@ class ImportCommand extends Command
         $io->success(sprintf('Importados %s paises', $result->matched));
     }
 
-    private function getCountryId(/* @param array<string, string|null> $row */ array $row): ?CountryId
+    /**
+     * @param array<int, string|null> $row
+     */
+    private function getCountryId(array $row): ?CountryId
     {
         if (null === $this->fieldExtractor || null === $this->source) {
             return null;
@@ -488,20 +480,13 @@ class ImportCommand extends Command
         $destinations = [];
 
         while (false !== ($row = fgetcsv($file, 2000, ';'))) {
-            if (!is_array($row)) {
-                continue;
-            }
-
-            /** @var array<string, string|null> $row */
+            /** @var array<int, string|null> $row */
             $destinationName = ucfirst(strtolower((string) $this->fieldExtractor->extract(Field::InfoDestinationName, $row)));
             $destinationId = $this->fieldExtractor->hasField(Field::InfoDestinationId) ? (string) $this->fieldExtractor->extract(Field::InfoDestinationId, $row) : md5($destinationName);
 
             $countryId = $this->getCountryId($row);
 
             if (!isset($destinations[$destinationId]) && $countryId instanceof CountryId) {
-                if (null === $this->source) {
-                    return;
-                }
                 $destinations[$destinationId] = new DestinationRequest(
                     name: $destinationName,
                     countryId: $countryId,
@@ -528,11 +513,6 @@ class ImportCommand extends Command
                 'Id', 'Nombre', 'Pais', 'Source',
             ]);
 
-            if (null === $this->source) {
-                fclose($outputFile);
-
-                return;
-            }
             $attribute = $this->source->attribute();
 
             foreach ($result->destinations as $destinationResult) {
@@ -597,10 +577,6 @@ class ImportCommand extends Command
         }
 
         while (false !== ($row = fgetcsv($file, 2000, ';'))) {
-            if (!is_array($row)) {
-                continue;
-            }
-
             $progressBar->advance();
 
             if ($offset > 0) {
@@ -609,7 +585,7 @@ class ImportCommand extends Command
                 continue;
             }
 
-            /** @var array<string, string|null> $row */
+            /** @var array<int, string|null> $row */
             $propertyInfo = $this->propertyInfoExtractor->extract($this->fieldExtractor, $this->source, $row);
             $externalId = $this->externalIdExtractor->extract($this->fieldExtractor, $row);
 
@@ -644,7 +620,7 @@ class ImportCommand extends Command
                     (string) $propertyInfo->postalCode(),
                     (string) $propertyInfo->latitude(),
                     (string) $propertyInfo->longitude(),
-                    $propertyInfo->propertyType()->value,
+                    $propertyInfo->propertyType()?->value ?: '',
                     (string) $propertyInfo->zone(),
                     (string) ($propertyInfo->destinationId() ?? ''),
                     (string) $this->fieldExtractor->extract(Field::InfoDestinationName, $row),
@@ -664,7 +640,7 @@ class ImportCommand extends Command
             }
         }
 
-        if (!$createIfNotExists && null !== $outputFile) {
+        if (!$createIfNotExists) {
             fclose($outputFile);
         }
 

@@ -9,12 +9,12 @@ use App\Waste\Domain\Model\Waste\WasteId;
 
 class WasteMother
 {
-    public static function registeredWaste()
+    public static function registeredWaste(): Waste
     {
         return self::fromName('name');
     }
 
-    public static function fromName(string $name)
+    public static function fromName(string $name): Waste
     {
         return self::from(
             name: $name,
@@ -23,7 +23,7 @@ class WasteMother
         );
     }
 
-    public static function fromIsDangerous(bool $isDangerous)
+    public static function fromIsDangerous(bool $isDangerous): Waste
     {
         return self::from(
             name: 'waste-' . random_int(100, 999),
@@ -32,7 +32,7 @@ class WasteMother
         );
     }
 
-    public static function fromNameAndId(string $name, string $id)
+    public static function fromNameAndId(string $name, string $id): Waste
     {
         return self::from(
             name: $name,
@@ -41,7 +41,7 @@ class WasteMother
         );
     }
 
-    public static function fromDensityAndId(string $density, string $id)
+    public static function fromDensityAndId(string $density, string $id): Waste
     {
         return self::from(
             name: 'waste-' . random_int(100, 999),
@@ -66,7 +66,7 @@ class WasteMother
         return $waste;
     }
 
-    public static function random()
+    public static function random(): Waste
     {
         return self::from(
             name: 'waste-' . random_int(100, 999),

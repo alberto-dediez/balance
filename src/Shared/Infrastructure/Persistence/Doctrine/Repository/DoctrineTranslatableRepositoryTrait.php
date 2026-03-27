@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 trait DoctrineTranslatableRepositoryTrait
 {
+    /** @param class-string $translationClass */
     private function addTranslations(Translatable $translatable, string $translationClass, EntityManagerInterface $manager): void
     {
         $translationRepository = $manager->getRepository($translationClass);

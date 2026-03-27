@@ -40,11 +40,15 @@ class RemoveContainer implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
+        assert($command instanceof RemoveContainerRequest);
+
         return new TranslatableMessage('Se ha eliminado el contenedor {id}', ['{id}' => $command->containerId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
+        assert($command instanceof RemoveContainerRequest);
+
         return new TranslatableMessage('No se ha podido eliminar el contenedor {id}', ['{id}' => $command->containerId]);
     }
 }

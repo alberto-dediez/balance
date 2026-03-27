@@ -6,9 +6,7 @@ namespace App\Tests\Unit\Property\Application\Brand\Update;
 
 use App\Property\Application\Brand\BrandAuthorizer;
 use App\Property\Application\Brand\Update\UpdateBrandRequest;
-use App\Property\Application\Brand\Update\UpdateBrandResponse;
 use App\Property\Application\Brand\Update\UpdateBrandService;
-use App\Property\Domain\Model\Brand\Brand;
 use App\Property\Domain\Model\Brand\BrandUpdated;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
 use App\Security\Domain\Model\User\Role;
@@ -49,13 +47,9 @@ class UpdateBrandServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateBrandResponse);
-
         $brandPersisted = $repository->find($result->brandId);
 
         $this->assertNotNull($brandPersisted);
-        $this->assertTrue($brandPersisted instanceof Brand);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

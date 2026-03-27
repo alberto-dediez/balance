@@ -17,15 +17,12 @@ use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 use App\Tests\Unit\Waste\Infrastructure\QrCode\FakeQrCodeGenerator;
 use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Waste\Application\Container\Register\RegisterContainerRequest;
-use App\Waste\Application\Container\Register\RegisterContainerResponse;
 use App\Waste\Application\Container\Register\RegisterContainerService;
-use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerRegistered;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\Container\NotValidVolumeException;
 use App\Waste\Domain\Model\Container\Purpose;
-use App\Waste\Domain\Model\Container\QrCode;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use PHPUnit\Framework\TestCase;
@@ -67,18 +64,13 @@ class RegisterContainerServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterContainerResponse);
         $this->assertNotEmpty((string) $result->containerId);
         $this->assertEquals(36, strlen((string) $result->containerId));
         $this->assertEquals(50, $result->volume);
-        $this->assertNotNull($result->qrCode);
-        $this->assertTrue($result->qrCode instanceof QrCode);
 
         $containerPersisted = $containerRepository->find($result->containerId);
 
         $this->assertNotNull($containerPersisted);
-        $this->assertTrue($containerPersisted instanceof Container);
         $this->assertNotNull($containerPersisted->qrCode());
         $this->assertEquals(50, $containerPersisted->volume());
 
@@ -117,17 +109,12 @@ class RegisterContainerServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterContainerResponse);
         $this->assertNotEmpty((string) $result->containerId);
         $this->assertEquals(36, strlen((string) $result->containerId));
-        $this->assertNotNull($result->qrCode);
-        $this->assertTrue($result->qrCode instanceof QrCode);
 
         $containerPersisted = $containerRepository->find($result->containerId);
 
         $this->assertNotNull($containerPersisted);
-        $this->assertTrue($containerPersisted instanceof Container);
         $this->assertNotNull($containerPersisted->qrCode());
 
         $lastEvent = $this->spySubscriber->lastEvent();

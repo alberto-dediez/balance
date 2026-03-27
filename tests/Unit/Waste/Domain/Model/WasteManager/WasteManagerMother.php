@@ -31,7 +31,7 @@ class WasteManagerMother
         return $wasteManager;
     }
 
-    public static function fromAccount(AccountId $accountId)
+    public static function fromAccount(AccountId $accountId): WasteManager
     {
         return self::from(
             name: 'manager-' . random_int(99, 999),
@@ -41,7 +41,7 @@ class WasteManagerMother
         );
     }
 
-    public static function random()
+    public static function random(): WasteManager
     {
         return self::from(
             name: 'manager-' . random_int(99, 999),
@@ -51,7 +51,7 @@ class WasteManagerMother
         );
     }
 
-    public static function fromName(string $name)
+    public static function fromName(string $name): WasteManager
     {
         return self::from(
             name: $name,
@@ -61,7 +61,7 @@ class WasteManagerMother
         );
     }
 
-    public static function fromNameAndIdAndAccount(string $name, WasteManagerId $wasteManagerId, AccountId $accountId)
+    public static function fromNameAndIdAndAccount(string $name, WasteManagerId $wasteManagerId, AccountId $accountId): WasteManager
     {
         return self::from(
             name: $name,

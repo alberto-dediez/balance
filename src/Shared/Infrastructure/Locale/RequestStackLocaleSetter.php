@@ -23,9 +23,11 @@ class RequestStackLocaleSetter
         }
 
         $defaultLocale = Locale::tryFrom($this->defaultLocale);
-        LocaleGetter::setDefault($defaultLocale);
+        if ($defaultLocale instanceof Locale) {
+            LocaleGetter::setDefault($defaultLocale);
+        }
 
-        $locale = Locale::tryFrom($this->requestStack->getCurrentRequest()?->getLocale());
+        $locale = Locale::tryFrom((string) $this->requestStack->getCurrentRequest()?->getLocale());
 
         if (!$locale instanceof Locale) {
             return;

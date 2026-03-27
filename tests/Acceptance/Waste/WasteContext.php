@@ -78,6 +78,7 @@ final readonly class WasteContext implements Context
     public function containerForInWithIdExists(string $waste, string $propertyId, string $id): void
     {
         $property = $this->getPropertyRepository()->find(new PropertyId($propertyId));
+        assert(null !== $property);
 
         $container = ContainerMother::fromPropertyAccountAndWasteAndId($propertyId, (string) $property->accountId(), $waste, $id);
 
@@ -88,6 +89,7 @@ final readonly class WasteContext implements Context
     public function containerForInAndManagedByWithIdExists(string $waste, string $propertyId, string $managerId, string $id): void
     {
         $property = $this->getPropertyRepository()->find(new PropertyId($propertyId));
+        assert(null !== $property);
 
         $container = ContainerMother::fromPropertyAccountAndWasteAndIdAndManager($propertyId, (string) $property->accountId(), $waste, $id, $managerId);
 
@@ -95,17 +97,25 @@ final readonly class WasteContext implements Context
     }
 
     #[Given('measurement for container :container and account :account from user :user with id :id exists')]
-    public function measurementForContainerAndAccountFromUserWithIdExists($containerId, $accountId, $user, $id): void
+    public function measurementForContainerAndAccountFromUserWithIdExists(string $containerId, string $accountId, string $user, string $id): void
     {
         $container = $this->getContainerRepository()->find(
             new ContainerId($containerId),
         );
+        assert(null !== $container);
+
+        $propertyId = $container->propertyId();
+        $wasteId = $container->wasteId();
+        $wasteManagerId = $container->wasteManagerId();
+        assert(null !== $propertyId);
+        assert(null !== $wasteId);
+        assert(null !== $wasteManagerId);
 
         $measurement = MeasurementMother::from(
             measurementId: new MeasurementId($id),
-            propertyId: $container->propertyId(),
-            wasteId: $container->wasteId(),
-            wasteManagerId: $container->wasteManagerId(),
+            propertyId: $propertyId,
+            wasteId: $wasteId,
+            wasteManagerId: $wasteManagerId,
             containerId: $container->id(),
             registeredBy: new UserId($user),
             accountId: new AccountId($accountId),
@@ -117,7 +127,7 @@ final readonly class WasteContext implements Context
     }
 
     #[Given('waste manager :name with id :wasteManagerId of account :accountId exists')]
-    public function wasteManagerWithIdOfAccountExists(string $name, $wasteManagerId, $accountId): void
+    public function wasteManagerWithIdOfAccountExists(string $name, string $wasteManagerId, string $accountId): void
     {
         $wasteManager = WasteManagerMother::fromNameAndIdAndAccount(
             name: $name,

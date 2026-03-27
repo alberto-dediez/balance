@@ -9,7 +9,6 @@ use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
-use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
@@ -42,7 +41,6 @@ class ImportMeasurementService implements CommandHandler
         private PropertyRepository $propertyRepository,
         private WasteRepository $wasteRepository,
         private WasteManagerRepository $wasteManagerRepository,
-        private UserRepository $userRepository,
         private MeasurementAuthorizer $authorizer,
     ) {}
 
@@ -65,17 +63,19 @@ class ImportMeasurementService implements CommandHandler
         );
 
         $measurement = new Measurement($id);
+        $propertyAccountId = $property->accountId();
+        assert(null !== $propertyAccountId);
         $measurement
             ->register(
                 container: $container,
-                quantity: $request->quantity ?? 1,
+                quantity: (int) ($request->quantity ?? 1),
                 load: empty($request->load) ? 0 : ((float) $request->load),
                 registeredBy: $user->id(),
-                accountId: $property->accountId(),
+                accountId: $propertyAccountId,
                 justification: $request->justification,
                 reference: $request->reference,
                 unit: $unit,
-                day: empty($request->day) ? null : \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $request->day),
+                day: empty($request->day) ? null : (\DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $request->day) ?: null),
             )
         ;
 
@@ -91,6 +91,9 @@ class ImportMeasurementService implements CommandHandler
         return $command instanceof ImportMeasurementRequest;
     }
 
+    /**
+     * @return array{Property, Container, Unit}
+     */
     private function getPropertyContainerAndUnitFrom(ImportMeasurementRequest $request, User $user): array
     {
         if (empty($request->containerId)) {
@@ -132,14 +135,16 @@ class ImportMeasurementService implements CommandHandler
                 throw new \InvalidArgumentException('El contenedor indicado no existe');
             }
 
-            $property = $this->propertyRepository->find($container->propertyId());
+            $containerPropertyId = $container->propertyId();
+            assert(null !== $containerPropertyId);
+            $property = $this->propertyRepository->find($containerPropertyId);
 
             if (!$property instanceof Property) {
                 throw new \InvalidArgumentException('Debe indicar una propiedad para la medición');
             }
         }
 
-        $unit = Unit::tryFrom($request->unit);
+        $unit = null !== $request->unit ? Unit::tryFrom($request->unit) : null;
 
         if (null === $unit) {
             throw new \InvalidArgumentException('Debe indicar la unidad de la medición');

@@ -45,10 +45,11 @@ final readonly class DataExchangeContext implements Context
     }
 
     #[Given('importation :importationId has paired fields :fields')]
-    public function importationHasPairedFields($importationId, $fields): void
+    public function importationHasPairedFields(string $importationId, string $fields): void
     {
         $repository = $this->getImportationRepository();
         $importation = $repository->find(new ImportationId($importationId));
+        assert(null !== $importation);
 
         foreach (explode('|', $fields) as $field) {
             [$name, $value] = explode(':', $field);

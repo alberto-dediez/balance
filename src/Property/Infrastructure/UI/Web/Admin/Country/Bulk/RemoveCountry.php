@@ -40,13 +40,15 @@ class RemoveCountry implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
-        /* @var \App\Property\Application\Country\Remove\RemoveCountryRequest $command */
+        assert($command instanceof RemoveCountryRequest);
+
         return new TranslatableMessage('Se ha eliminado el país {id}', ['{id}' => $command->countryId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
-        /* @var \App\Property\Application\Country\Remove\RemoveCountryRequest $command */
+        assert($command instanceof RemoveCountryRequest);
+
         return new TranslatableMessage('No se ha podido eliminar el país {id}', ['{id}' => $command->countryId]);
     }
 }

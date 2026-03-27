@@ -55,6 +55,8 @@ class MeasurementRegisterController extends AbstractController
 
         $measurement = $measurementRepository->find($registerResponse->measurementId);
 
+        assert(null !== $measurement);
+
         return $this->json(
             $measurementGenerator->generate($measurement),
         );

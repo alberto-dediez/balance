@@ -34,7 +34,8 @@ trait GenericGenerator
         return $pdf;
     }
 
-    private function setFont(\TCPDF $pdf, $size, $type = self::FONT_STYLE_REGULAR, $color = self::COLOR_PRIMARY): void
+    /** @param string|array<int, int> $color */
+    private function setFont(\TCPDF $pdf, int|float $size, string $type = self::FONT_STYLE_REGULAR, string|array $color = self::COLOR_PRIMARY): void
     {
         $fontName = match ($type) {
             self::FONT_STYLE_BOLD => 'Rubik-Bold',
@@ -46,6 +47,8 @@ trait GenericGenerator
         };
 
         $font = \TCPDF_FONTS::addTTFfont($this->getFontPath($fontName), 'TrueTypeUnicode', '', 96);
+
+        assert(is_string($font));
 
         $pdf->setFont($font, '', $size, '', false);
         $pdf->setFontSpacing(0);
@@ -62,7 +65,8 @@ trait GenericGenerator
         }
     }
 
-    private function hex2rgb(string $hexColor): array
+    /** @return array<int, mixed>|null */
+    private function hex2rgb(string $hexColor): ?array
     {
         return sscanf($hexColor, '#%02x%02x%02x');
     }
@@ -82,14 +86,17 @@ trait GenericGenerator
         return sprintf('%sassets/images/%s', $this->getRootDir(), $filename);
     }
 
-    private function secureMultiCell(\TCPDF $pdf, string $html, $width, \Closure $createNewPage): void
+    private function secureMultiCell(\TCPDF $pdf, string $html, float|int $width, \Closure $createNewPage): void
     {
         $breakPoint = $pdf->getPageHeight() - 10;
 
         $crawler = new Crawler($html);
 
         foreach ($crawler->filter('body > *') as $element) {
+            assert(null !== $element->ownerDocument);
             $htmlElement = $element->ownerDocument->saveHTML($element);
+
+            assert(is_string($htmlElement));
 
             $pdf->setX(16);
 
@@ -102,10 +109,10 @@ trait GenericGenerator
                 'L',
                 false,
                 1,
-                '',
-                '',
-                true,
                 null,
+                null,
+                true,
+                0,
                 true,
             );
 
@@ -123,15 +130,14 @@ trait GenericGenerator
                 'L',
                 false,
                 1,
-                '',
-                '',
-                true,
                 null,
+                null,
+                true,
+                0,
                 true,
             );
 
-            /** @var DomNode $element */
-            if ('p' == $element->tagName || 'ul' == $element->tagName) {
+            if ($element instanceof \DOMElement && ('p' === $element->tagName || 'ul' === $element->tagName)) {
                 $pdf->SetY($pdf->getY() + 5);
             }
         }

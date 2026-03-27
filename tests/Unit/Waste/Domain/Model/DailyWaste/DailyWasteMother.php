@@ -46,7 +46,7 @@ class DailyWasteMother
         return $dailyWaste;
     }
 
-    public static function random()
+    public static function random(): DailyWaste
     {
         $purpose = Purpose::cases()[random_int(0, count(Purpose::cases()) - 1)];
 
@@ -62,7 +62,7 @@ class DailyWasteMother
         );
     }
 
-    public static function fromAccount(AccountId $accountId)
+    public static function fromAccount(AccountId $accountId): DailyWaste
     {
         $purpose = Purpose::cases()[random_int(0, count(Purpose::cases()) - 1)];
 
@@ -78,7 +78,7 @@ class DailyWasteMother
         );
     }
 
-    public static function fromDayAndIdAndAccount(string $day, string $dailyWasteId, string $accountId)
+    public static function fromDayAndIdAndAccount(string $day, string $dailyWasteId, string $accountId): DailyWaste
     {
         $purpose = Purpose::cases()[random_int(0, count(Purpose::cases()) - 1)];
 

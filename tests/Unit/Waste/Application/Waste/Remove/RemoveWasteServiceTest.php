@@ -10,7 +10,6 @@ use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
 use App\Waste\Application\Waste\Remove\RemoveWasteRequest;
-use App\Waste\Application\Waste\Remove\RemoveWasteResponse;
 use App\Waste\Application\Waste\Remove\RemoveWasteService;
 use App\Waste\Application\Waste\WasteAuthorizer;
 use App\Waste\Domain\Model\Waste\WasteRemoved;
@@ -44,8 +43,6 @@ class RemoveWasteServiceTest extends TestCase
 
         $result = $sut($request, UserMother::adminUser());
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RemoveWasteResponse);
         $this->assertTrue($waste->id()->equals($result->wasteId));
 
         $wastePersisted = $repository->find($result->wasteId);

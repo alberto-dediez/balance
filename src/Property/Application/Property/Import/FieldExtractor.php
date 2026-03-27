@@ -14,7 +14,7 @@ class FieldExtractor
     /**
      * @param array<mixed> $row
      */
-    public function extract(Field $field, array $row)
+    public function extract(Field $field, array $row): mixed
     {
         if (!isset($this->config[$field->value])) {
             return null;

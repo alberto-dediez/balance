@@ -14,6 +14,9 @@ class DailyWasteFilter
 {
     use Filter;
 
+    /**
+     * @param array<int, mixed> $properties
+     */
     public function __construct(
         public array $properties = [],
         public ?WasteId $wasteId = null,

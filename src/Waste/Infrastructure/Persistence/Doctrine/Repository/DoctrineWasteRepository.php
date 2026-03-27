@@ -104,6 +104,7 @@ class DoctrineWasteRepository implements WasteRepository
         return $qb;
     }
 
+    /** @return array<int, Waste> */
     public function findByFilter(WasteFilter $filter): array
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
@@ -130,7 +131,7 @@ class DoctrineWasteRepository implements WasteRepository
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return $qb->select('COUNT(DISTINCT w)')
+        return (int) $qb->select('COUNT(DISTINCT w)')
             ->getQuery()
             ->getSingleScalarResult()
         ;

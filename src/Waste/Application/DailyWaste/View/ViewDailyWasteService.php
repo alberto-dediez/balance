@@ -25,6 +25,11 @@ class ViewDailyWasteService
 
         $this->authorizer->denyUnlessCanDoThat($dailyWaste, Action::View, $user);
 
+        assert(null !== $dailyWaste->propertyId());
+        assert(null !== $dailyWaste->wasteId());
+        assert(null !== $dailyWaste->wasteManagerId());
+        assert(null !== $dailyWaste->accountId());
+
         $measurements = $this->measurementRepository->findByDay(
             day: $dailyWaste->day(),
             propertyId: $dailyWaste->propertyId(),

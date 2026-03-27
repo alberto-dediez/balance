@@ -15,7 +15,6 @@ use App\Tests\Unit\Waste\Infrastructure\QrCode\FakeQrPdfGenerator;
 use App\Tests\Unit\Waste\Infrastructure\QrCode\FakeQrPdfMerger;
 use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Waste\Application\Container\PrintAllQr\PrintAllQrContainerRequest;
-use App\Waste\Application\Container\PrintAllQr\PrintAllQrContainerResponse;
 use App\Waste\Application\Container\PrintAllQr\PrintAllQrContainerService;
 use App\Waste\Domain\Model\Container\ContainerQrPrinted;
 use App\Waste\Domain\Model\Container\ContainerRepository;
@@ -57,8 +56,6 @@ class PrintAllQrContainerServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof PrintAllQrContainerResponse);
         $this->assertNotEmpty($result->path);
 
         $lastEvent = $this->spySubscriber->lastEvent();

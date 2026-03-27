@@ -57,10 +57,16 @@ final class WasteTranslated extends DomainEvent
         \DateTimeImmutable $occurredOn,
         array $payload = [],
     ): static {
+        $locale = Locale::tryFrom($payload['locale']);
+
+        if (!$locale instanceof Locale) {
+            $locale = Locale::Spanish;
+        }
+
         return new WasteTranslated(
             wasteId: new WasteId($payload['wasteId']),
             name: $payload['name'],
-            locale: Locale::tryFrom($payload['locale']),
+            locale: $locale,
             id: $id,
             occurredOn: $occurredOn,
         );

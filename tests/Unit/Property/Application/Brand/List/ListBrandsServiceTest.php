@@ -6,7 +6,6 @@ namespace App\Tests\Unit\Property\Application\Brand\List;
 
 use App\Property\Application\Brand\BrandAuthorizer;
 use App\Property\Application\Brand\List\ListBrandsRequest;
-use App\Property\Application\Brand\List\ListBrandsResponse;
 use App\Property\Application\Brand\List\ListBrandsService;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
 use App\Security\Domain\Model\User\Role;
@@ -36,8 +35,6 @@ class ListBrandsServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListBrandsResponse);
         $this->assertCount(4, $result->brands);
         $this->assertEquals(4, $result->totalResults);
     }

@@ -18,6 +18,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryDailyWasteRepository implements DailyWasteRepository
 {
+    /** @param array<string, DailyWaste> $dailyWastes */
     public function __construct(
         private array $dailyWastes = [],
     ) {}
@@ -63,6 +64,7 @@ class InMemoryDailyWasteRepository implements DailyWasteRepository
         return 0 === count($results) ? null : $results[0];
     }
 
+    /** @return array<int, DailyWaste> */
     public function findByFilter(DailyWasteFilter $filter): array
     {
         $results = [];
@@ -102,7 +104,7 @@ class InMemoryDailyWasteRepository implements DailyWasteRepository
                 count($filter->properties) > 0
                 && (
                     null == $dailyWaste->propertyId()
-                    || false === array_reduce($filter->properties, fn(false $carry, $value) => $carry || $value->equals($dailyWaste->propertyId()), false)
+                    || false === array_reduce($filter->properties, fn(bool $carry, $value) => $carry || $value->equals($dailyWaste->propertyId()), false)
                 )
             ) {
                 continue;

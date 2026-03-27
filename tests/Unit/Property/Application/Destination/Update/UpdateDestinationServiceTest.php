@@ -6,10 +6,8 @@ namespace App\Tests\Unit\Property\Application\Destination\Update;
 
 use App\Property\Application\Destination\DestinationAuthorizer;
 use App\Property\Application\Destination\Update\UpdateDestinationRequest;
-use App\Property\Application\Destination\Update\UpdateDestinationResponse;
 use App\Property\Application\Destination\Update\UpdateDestinationService;
 use App\Property\Domain\Model\Country\CountryId;
-use App\Property\Domain\Model\Destination\Destination;
 use App\Property\Domain\Model\Destination\DestinationUpdated;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
 use App\Security\Domain\Model\User\Role;
@@ -51,20 +49,18 @@ class UpdateDestinationServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateDestinationResponse);
-
         $destinationPersisted = $repository->find($result->destinationId);
 
         $this->assertNotNull($destinationPersisted);
-        $this->assertTrue($destinationPersisted instanceof Destination);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
         $this->assertNotNull($lastEvent);
         $this->assertTrue($lastEvent instanceof DestinationUpdated);
         $this->assertEquals('Barcelona', $lastEvent->name());
-        $this->assertTrue($request->countryId->equals($lastEvent->countryId()));
+        $countryId = $lastEvent->countryId();
+        self::assertNotNull($countryId);
+        $this->assertTrue($request->countryId->equals($countryId));
         $this->assertTrue($destinationPersisted->id()->equals($lastEvent->destinationId()));
     }
 

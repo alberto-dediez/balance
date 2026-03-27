@@ -6,7 +6,6 @@ namespace App\Waste\Infrastructure\UI\Api\Container;
 
 use App\Property\Infrastructure\Symfony\Twig\PropertyExtension;
 use App\Waste\Domain\Model\Container\Container as ModelContainer;
-use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Infrastructure\Symfony\Twig\WasteExtension;
 use App\Waste\Infrastructure\Symfony\Twig\WasteManagerExtension;
 use App\Waste\Infrastructure\UI\Api\Container\ContainerResponse as ApiContainer;
@@ -23,15 +22,19 @@ class ContainerResponseGenerator
 
     public function generate(ModelContainer $modelContainer): ApiContainer
     {
+        $propertyId = $modelContainer->propertyId();
+        assert(null !== $propertyId);
+        $wasteId = $modelContainer->wasteId();
+        assert(null !== $wasteId);
+        $purpose = $modelContainer->purpose();
+
         return new ApiContainer(
             containerId: (string) $modelContainer->id(),
-            property: (string) $this->propertyExtension->propertyName($modelContainer->propertyId()),
-            waste: (string) $this->wasteExtension->wasteName($modelContainer->wasteId()),
+            property: (string) $this->propertyExtension->propertyName($propertyId),
+            waste: (string) $this->wasteExtension->wasteName($wasteId),
             wasteManager: (string) $this->wasteManagerExtension->wasteManagerName($modelContainer->wasteManagerId()),
-            unit: $modelContainer->measurementMethod() instanceof MeasurementMethod
-                ? $modelContainer->measurementMethod()->unit()
-                : '',
-            purpose: $this->translator->trans($modelContainer->purpose()->value, [], 'purpose'),
+            unit: $modelContainer->measurementMethod()->unit(),
+            purpose: $this->translator->trans($purpose->value, [], 'purpose'),
         );
     }
 }

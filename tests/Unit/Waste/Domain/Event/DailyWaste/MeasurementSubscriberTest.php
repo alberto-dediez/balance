@@ -43,6 +43,11 @@ class MeasurementSubscriberTest extends TestCase
 
         $sut = $this->createSUT($repository);
 
+        self::assertNotEmpty($measurement->propertyId());
+        self::assertNotEmpty($measurement->accountId());
+        self::assertNotEmpty($measurement->wasteId());
+        self::assertNotEmpty($measurement->wasteManagerId());
+
         $event = new MeasurementRemoved(
             measurementId: $measurement->id(),
             propertyId: $measurement->propertyId(),
@@ -87,6 +92,13 @@ class MeasurementSubscriberTest extends TestCase
         $repository->add($measurement);
 
         $sut = $this->createSUT($repository);
+
+        self::assertNotEmpty($measurement->propertyId());
+        self::assertNotEmpty($measurement->accountId());
+        self::assertNotEmpty($measurement->wasteId());
+        self::assertNotEmpty($measurement->wasteManagerId());
+        self::assertNotEmpty($measurement->containerId());
+        self::assertNotEmpty($measurement->registeredBy());
 
         $event = new MeasurementRegistered(
             measurementId: $measurement->id(),
@@ -134,6 +146,13 @@ class MeasurementSubscriberTest extends TestCase
         $sut = $this->createSUT(
             repository: $repository,
         );
+
+        self::assertNotEmpty($measurement->propertyId());
+        self::assertNotEmpty($measurement->accountId());
+        self::assertNotEmpty($measurement->wasteId());
+        self::assertNotEmpty($measurement->wasteManagerId());
+        self::assertNotEmpty($measurement->containerId());
+        self::assertNotEmpty($measurement->registeredBy());
 
         $event = new MeasurementRemoved(
             measurementId: $measurement->id(),
@@ -191,6 +210,13 @@ class MeasurementSubscriberTest extends TestCase
         $sut = $this->createSUT(
             repository: $repository,
         );
+
+        self::assertNotEmpty($measurement->propertyId());
+        self::assertNotEmpty($measurement->accountId());
+        self::assertNotEmpty($measurement->wasteId());
+        self::assertNotEmpty($measurement->wasteManagerId());
+        self::assertNotEmpty($measurement->containerId());
+        self::assertNotEmpty($measurement->registeredBy());
 
         $event = new MeasurementRegistered(
             measurementId: $measurement->id(),

@@ -9,7 +9,7 @@ use App\Property\Domain\Model\Country\CountryId;
 
 class CountryMother
 {
-    public static function fromName(string $name)
+    public static function fromName(string $name): Country
     {
         return self::from(
             countryId: CountryId::generate(),
@@ -17,7 +17,7 @@ class CountryMother
         );
     }
 
-    public static function fromNameAndId(string $name, string $id)
+    public static function fromNameAndId(string $name, string $id): Country
     {
         return self::from(
             countryId: new CountryId($id),
@@ -25,7 +25,7 @@ class CountryMother
         );
     }
 
-    public static function fromNameAndIsoAndId(string $name, string $iso, string $id)
+    public static function fromNameAndIsoAndId(string $name, string $iso, string $id): Country
     {
         return self::from(
             countryId: new CountryId($id),
@@ -45,7 +45,7 @@ class CountryMother
         return $country;
     }
 
-    public static function random()
+    public static function random(): Country
     {
         return self::from(
             countryId: CountryId::generate(),

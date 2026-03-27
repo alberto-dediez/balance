@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\DataExchange\Application\Importation\PairFields;
 
 use App\DataExchange\Application\Importation\PairFields\PairFieldsImportationRequest;
-use App\DataExchange\Application\Importation\PairFields\PairFieldsImportationResponse;
 use App\DataExchange\Application\Importation\PairFields\PairFieldsImportationService;
-use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationConfigurationUpdated;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
@@ -44,10 +42,12 @@ class PairFieldsImportationServiceTest extends TestCase
         $repository = new InMemoryImportationRepository();
         $repository->add($importation);
 
+        $accountId = $importation->accountId();
+        self::assertNotNull($accountId);
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: $importation->accountId(),
+            accountId: $accountId,
         );
 
         $sut = $this->createSUT($repository);
@@ -59,15 +59,12 @@ class PairFieldsImportationServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof PairFieldsImportationResponse);
         $this->assertNotEmpty((string) $result->importationId);
         $this->assertEquals(36, strlen((string) $result->importationId));
 
         $importationPersisted = $repository->find($result->importationId);
 
         $this->assertNotNull($importationPersisted);
-        $this->assertTrue($importationPersisted instanceof Importation);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

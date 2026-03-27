@@ -13,7 +13,6 @@ use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 use App\Tests\Unit\Waste\Infrastructure\QrCode\FakeQrPdfGenerator;
 use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Waste\Application\Container\PrintQr\PrintQrContainerRequest;
-use App\Waste\Application\Container\PrintQr\PrintQrContainerResponse;
 use App\Waste\Application\Container\PrintQr\PrintQrContainerService;
 use App\Waste\Domain\Model\Container\ContainerQrPrinted;
 use App\Waste\Domain\Model\Container\ContainerRepository;
@@ -40,7 +39,9 @@ class PrintQrContainerServiceTest extends TestCase
 
         $sut = $this->createSUT($containerRepository);
 
-        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $container->accountId());
+        $accountId = $container->accountId();
+        self::assertNotNull($accountId);
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId);
 
         $request = new PrintQrContainerRequest(
             containerId: $container->id(),
@@ -48,8 +49,6 @@ class PrintQrContainerServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof PrintQrContainerResponse);
         $this->assertNotEmpty($result->path);
 
         $lastEvent = $this->spySubscriber->lastEvent();
