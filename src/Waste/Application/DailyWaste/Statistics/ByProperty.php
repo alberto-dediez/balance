@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\DailyWaste\Statistics;
 
 use App\Property\Domain\Model\Property\Property;
@@ -11,8 +13,6 @@ class ByProperty
         public float $load,
         public float $percentage,
         /** @var ByMonth[] */
-        public array $months = []
-    )
-    {
-    }
+        public array $months = [],
+    ) {}
 }

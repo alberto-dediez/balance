@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Application\Brand\Import;
 
 use App\Property\Domain\Model\Brand\BrandId;
@@ -11,8 +13,6 @@ class BrandResponse
         public string $name,
         public ?ExternalId $externalId = null,
         public ?bool $createIfNotExists = false,
-        public ?BrandId $brandId = null
-    ) {
-
-    }
+        public ?BrandId $brandId = null,
+    ) {}
 }

@@ -1,17 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Domain\Model\Waste;
 
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
 use App\Waste\Domain\Model\Waste\WasteFilter;
 use App\Waste\Domain\Model\Waste\WasteRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleGetter;
 
 abstract class WasteRepositoryTest extends KernelTestCase
 {
-    public function testAddWasteToRepository()
-    {   
+    public function setUp(): void
+    {
+        FakeLocaleSetter::reset();
+
+        parent::setUp();
+    }
+
+    public function testAddWasteToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $waste = WasteMother::registeredWaste();
@@ -26,8 +35,8 @@ abstract class WasteRepositoryTest extends KernelTestCase
         $this->assertEquals($waste->id(), $recoverWaste->id());
     }
 
-    public function testRemoveWasteToRepository()
-    {   
+    public function testRemoveWasteToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $waste = WasteMother::registeredWaste();
@@ -44,7 +53,7 @@ abstract class WasteRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($waste->id()));
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -62,7 +71,7 @@ abstract class WasteRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new WasteFilter(
-            name: 'Plastico'
+            name: 'Plastico',
         );
 
         $result = $repository->findByFilter($filter);
@@ -70,7 +79,7 @@ abstract class WasteRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
@@ -88,7 +97,7 @@ abstract class WasteRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new WasteFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);
@@ -96,7 +105,7 @@ abstract class WasteRepositoryTest extends KernelTestCase
         $this->assertCount(6, $result);
     }
 
-    public function testFindNotRecoverRemoved()
+    public function testFindNotRecoverRemoved(): void
     {
         $repository = $this->createSUT();
 
@@ -115,7 +124,7 @@ abstract class WasteRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($waste->id()));
     }
 
-    public function testFindRecoverWithTranslation()
+    public function testFindRecoverWithTranslation(): void
     {
         $repository = $this->createSUT(Locale::English);
 
@@ -135,7 +144,7 @@ abstract class WasteRepositoryTest extends KernelTestCase
         $this->assertEquals('translated-name', $recoverWaste->name());
     }
 
-    public function testFindByFilterWithNameTranslated()
+    public function testFindByFilterWithNameTranslated(): void
     {
         $repository = $this->createSUT(Locale::English);
 

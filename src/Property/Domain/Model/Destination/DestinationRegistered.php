@@ -1,26 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Destination;
 
-use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
-use App\Shared\Domain\Event\DomainEventId;
-use App\Shared\Domain\Model\AggregateRootId;
 use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Property\ExternalId;
-use App\Property\Domain\Model\Destination\DestinationId;
+use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\AggregateRootId;
 
 final class DestinationRegistered extends DomainEvent
 {
     protected static string $eventName = 'destinationRegistered';
 
     public function __construct(
-        private DestinationId $destinationId, 
-        private string $name, 
-        private ?CountryId $countryId = null,
-        private ?ExternalId $externalId = null,
+        private readonly DestinationId $destinationId,
+        private readonly string $name,
+        private readonly ?CountryId $countryId = null,
+        private readonly ?ExternalId $externalId = null,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -45,33 +45,33 @@ final class DestinationRegistered extends DomainEvent
         return $this->externalId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->destinationId();
+        return $this->destinationId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'destinationId' => (string) $this->destinationId,
-            'countryId' => (string) $this->countryId(),
+            'countryId' => (string) $this->countryId,
             'name' => $this->name,
-            'externalId' => $this->externalId
+            'externalId' => $this->externalId,
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        ?array $payload
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new DestinationRegistered(
-            destinationId: new DestinationId($payload['destinationId']), 
-            countryId: null == $payload['countryId'] ? CountryId::generate() : new CountryId($payload['countryId']), 
+            destinationId: new DestinationId($payload['destinationId']),
             name: $payload['name'],
-            externalId: isset($payload['externalId']) ? $payload['externalId'] : null,
+            countryId: null == $payload['countryId'] ? CountryId::generate() : new CountryId($payload['countryId']),
+            externalId: $payload['externalId'] ?? null,
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

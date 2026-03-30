@@ -1,22 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Web\Container;
 
 use App\Security\Application\Action;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\Account;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
+use App\Waste\Application\Container\Register\RegisterContainerRequest;
+use App\Waste\Application\Container\Register\RegisterContainerService;
+use App\Waste\Domain\Model\Container\Container;
+use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Infrastructure\Symfony\Form\RegisterContainerType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Waste\Domain\Model\Container\Container;
-use App\Waste\Domain\Model\Container\ContainerId;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
-use App\Security\Application\UnauthorizedActionException;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
-use App\Waste\Infrastructure\Symfony\Form\RegisterContainerType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Waste\Application\Container\Register\RegisterContainerRequest;
-use App\Waste\Application\Container\Register\RegisterContainerService;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/containers/register', name: 'containers_register')]
 class RegisterController extends AbstractController
@@ -27,38 +31,36 @@ class RegisterController extends AbstractController
         LoggedUser $loggedUser,
         LoggedAccount $loggedAccount,
         RegisterContainerService $registerContainer,
-        Request $request
-    ): Response
-    {
+        TranslatorInterface $translator,
+        Request $request,
+    ): Response {
         $account = $loggedAccount();
 
-        if (null === $account) {
-            throw $this->createAccessDeniedException(
-                new TranslatableMessage("Debes pertenecer a una cuenta para poder acceder")
-            );
+        if (!$account instanceof Account) {
+            throw $this->createAccessDeniedException($translator->trans('Debes pertenecer a una cuenta para poder acceder'));
         }
 
         $this->denyAccessUnlessGranted(Action::Register->value, new Container(
             id: ContainerId::generate(),
-            accountId: $account->id()
+            accountId: $account->id(),
         ));
 
         try {
             $form = $this->createForm(RegisterContainerType::class);
 
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerContainer, $loggedUser) {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerContainer, $loggedUser): true {
                 $registerRequest = new RegisterContainerRequest(
                     propertyId: $form->get('propertyId')->getData(),
                     wasteId: $form->get('wasteId')->getData(),
                     purpose: $form->get('purpose')->getData(),
                     measurementMethod: $form->get('measurementMethod')->getData(),
                     volume: $form->get('volume')->getData(),
-                    wasteManagerId: $form->get('wasteManagerId')->getData()
+                    wasteManagerId: $form->get('wasteManagerId')->getData(),
                 );
 
                 $response = $registerContainer($registerRequest, $loggedUser());
 
-                $this->addFlash('success', new TranslatableMessage("Contenedor creado correctamente"));
+                $this->addFlash('success', new TranslatableMessage('Contenedor creado correctamente'));
 
                 return true;
             });
@@ -71,7 +73,7 @@ class RegisterController extends AbstractController
         }
 
         return $this->render('@waste/containers/register.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

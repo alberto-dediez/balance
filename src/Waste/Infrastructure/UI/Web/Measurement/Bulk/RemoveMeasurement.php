@@ -1,40 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Web\Measurement\Bulk;
 
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkAction;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
-use Symfony\Component\Translation\TranslatableMessage;
+use App\Shared\Infrastructure\UI\Web\Bulk\RemoveAction;
 use App\Waste\Application\Measurement\Remove\RemoveMeasurementRequest;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class RemoveMeasurement implements BulkAction
 {
-    public function id(): string
-    {
-        return 'remove';
-    }
-
-    public function name(): string
-    {
-        return new TranslatableMessage('Eliminar');
-    }
+    use RemoveAction;
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) == 0) {
+        if (0 === count($request->elements)) {
             return [];
         }
 
         $commands = [];
 
         foreach ($request->elements as $measurement) {
-            if (null === $measurement || null === $measurement->id()) {
+            if (null === $measurement) {
                 continue;
             }
-
+            if (null === $measurement->id()) {
+                continue;
+            }
             $commands[] = new RemoveMeasurementRequest(
-                measurementId: $measurement->id()
+                measurementId: $measurement->id(),
             );
         }
 
@@ -43,11 +40,15 @@ class RemoveMeasurement implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
-        return new TranslatableMessage("Se ha eliminado la medición {id}", ['{id}' => $command->measurementId]);
+        assert($command instanceof RemoveMeasurementRequest);
+
+        return new TranslatableMessage('Se ha eliminado la medición {id}', ['{id}' => $command->measurementId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
-        return new TranslatableMessage("No se ha podido eliminar la medición {id}", ['{id}' => $command->measurementId]);
+        assert($command instanceof RemoveMeasurementRequest);
+
+        return new TranslatableMessage('No se ha podido eliminar la medición {id}', ['{id}' => $command->measurementId]);
     }
 }

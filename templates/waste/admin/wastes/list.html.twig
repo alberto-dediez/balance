@@ -26,7 +26,7 @@
 
     <twig:List:Table :columns="columns" :elements="wastes" :bulkForm="bulkForm">
         <td>{{ element.name }}</td>
-        <td>{{ element.isDangerous | show_field_value }}</td>
+        <td>{{ element.isDangerous | show_field_value | trans }}</td>
         <td>{{ element.density }}</td>
         <td>
             <span style="color: {{ element.color }}">

@@ -14,7 +14,7 @@
         <field name="purpose" type="string" enum-type="App\Waste\Domain\Model\Container\Purpose" nullable="false"/>
         <field name="measurementMethod" type="string" enum-type="App\Waste\Domain\Model\Container\MeasurementMethod" nullable="false"/>
         <field name="volume" type="decimal" scale="2" precision="12"  nullable="true"/>
-        <field name="removed" type="boolean" nullable="true"/>
+        <field name="removed" type="boolean" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="printedAt" type="datetime_immutable" column="printed_at" nullable="true"/>
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>

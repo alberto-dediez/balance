@@ -1,16 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\DataExchange\Application\Importation\ExecuteSingle;
 
-use App\DataExchange\Application\Importation\Execute\ExecuteImportationRequest;
-use App\DataExchange\Application\Importation\Execute\ExecuteImportationResponse;
-use App\DataExchange\Application\Importation\Execute\ExecuteImportationService;
 use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleRequest;
-use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleResponse;
 use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleService;
-use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationExecuted;
-use App\DataExchange\Domain\Model\Importation\ImportationExecutionStarted;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Domain\Model\Importation\ImportationStatus;
@@ -21,7 +17,6 @@ use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
-use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\DataExchange\Application\Importation\ImportationAuthorizerMother;
 use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
@@ -29,14 +24,13 @@ use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Application\CommandBus\FakeCommand;
 use App\Tests\Unit\Shared\Application\CommandBus\SluttyCommandHandler;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Waste\Application\Measurement\Import\ImportMeasurementRequest;
 use PHPUnit\Framework\TestCase;
 
 class ExecuteSingleServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
-    private $spyCommandBus;
+    private SluttyCommandHandler $spyCommandBus;
 
     protected function setUp(): void
     {
@@ -47,10 +41,10 @@ class ExecuteSingleServiceTest extends TestCase
         $this->spyCommandBus = new SluttyCommandHandler();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $importationFile = new ImportationFile(
-            path: __DIR__ . '/superheroes.csv'
+            path: __DIR__ . '/superheroes.csv',
         );
 
         $importation = ImportationMother::fromNameAndFileAndStatus('superheroes.csv', $importationFile, ImportationStatus::InProgress);
@@ -58,10 +52,12 @@ class ExecuteSingleServiceTest extends TestCase
         $repository = new InMemoryImportationRepository();
         $repository->add($importation);
 
+        $accountId = $importation->accountId();
+        self::assertNotNull($accountId);
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: $importation->accountId()
+            accountId: $accountId,
         );
 
         $sut = $this->createSUT($repository);
@@ -69,20 +65,17 @@ class ExecuteSingleServiceTest extends TestCase
         $request = new ExecuteSingleRequest(
             importationId: $importation->id(),
             rowNumber: 0,
-            command: new FakeCommand()
+            command: new FakeCommand(),
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ExecuteSingleResponse);
         $this->assertNotEmpty((string) $result->importationId);
         $this->assertEquals(36, strlen((string) $result->importationId));
 
         $importationPersisted = $repository->find($result->importationId);
 
         $this->assertNotNull($importationPersisted);
-        $this->assertTrue($importationPersisted instanceof Importation);
         $this->assertTrue($importationPersisted->isInProgress());
 
         $commands = $this->spyCommandBus->commands();
@@ -95,10 +88,10 @@ class ExecuteSingleServiceTest extends TestCase
         $this->assertNull($lastEvent);
     }
 
-    public function testUseCaseLastCommand()
+    public function testUseCaseLastCommand(): void
     {
         $importationFile = new ImportationFile(
-            path: __DIR__ . '/superheroe.csv'
+            path: __DIR__ . '/superheroe.csv',
         );
 
         $importation = ImportationMother::fromNameAndFileAndStatus('superheroe.csv', $importationFile, ImportationStatus::InProgress);
@@ -106,10 +99,12 @@ class ExecuteSingleServiceTest extends TestCase
         $repository = new InMemoryImportationRepository();
         $repository->add($importation);
 
+        $accountId = $importation->accountId();
+        self::assertNotNull($accountId);
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: $importation->accountId()
+            accountId: $accountId,
         );
 
         $sut = $this->createSUT($repository);
@@ -117,20 +112,17 @@ class ExecuteSingleServiceTest extends TestCase
         $request = new ExecuteSingleRequest(
             importationId: $importation->id(),
             rowNumber: 0,
-            command: new FakeCommand()
+            command: new FakeCommand(),
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ExecuteSingleResponse);
         $this->assertNotEmpty((string) $result->importationId);
         $this->assertEquals(36, strlen((string) $result->importationId));
 
         $importationPersisted = $repository->find($result->importationId);
 
         $this->assertNotNull($importationPersisted);
-        $this->assertTrue($importationPersisted instanceof Importation);
         $this->assertTrue($importationPersisted->isExecuted());
 
         $commands = $this->spyCommandBus->commands();
@@ -145,7 +137,7 @@ class ExecuteSingleServiceTest extends TestCase
         $this->assertTrue($importationPersisted->id()->equals($lastEvent->importationId()));
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -157,7 +149,7 @@ class ExecuteSingleServiceTest extends TestCase
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
         );
 
         $sut = $this->createSUT($repository);
@@ -165,13 +157,13 @@ class ExecuteSingleServiceTest extends TestCase
         $request = new ExecuteSingleRequest(
             importationId: $importation->id(),
             rowNumber: 0,
-            command: new FakeCommand()
+            command: new FakeCommand(),
         );
 
         $sut($request, $user);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = new InMemoryImportationRepository();
 
@@ -180,13 +172,13 @@ class ExecuteSingleServiceTest extends TestCase
         $result = $sut->isHandled(new ExecuteSingleRequest(
             importationId: ImportationId::generate(),
             rowNumber: 0,
-            command: new FakeCommand()
+            command: new FakeCommand(),
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryImportationRepository $repository): ExecuteSingleService
     {
         $authorizer = ImportationAuthorizerMother::create();
 
@@ -195,7 +187,7 @@ class ExecuteSingleServiceTest extends TestCase
         $importationType->method('isAuthorized')->willReturn(true);
 
         $importationTypeFactory = new ImportationTypeFactory([
-            $importationType
+            $importationType,
         ]);
 
         return new ExecuteSingleService($repository, $importationTypeFactory, $authorizer);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\Persistence\InMemory\Repository;
 
 use App\DataExchange\Domain\Model\Importation\Importation;
@@ -12,12 +14,13 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryImportationRepository implements ImportationRepository
 {
-    private ImportationDataRepository $dataRepository;
+    private readonly ImportationDataRepository $dataRepository;
 
+    /** @param array<string, Importation> $importations */
     public function __construct(private array $importations = [])
     {
         $this->dataRepository = new SqliteImportationDataRepository(
-            __DIR__ . '/../../../../../../var/sqlite-test/'
+            __DIR__ . '/../../../../../../var/sqlite-test/',
         );
     }
 
@@ -25,15 +28,15 @@ class InMemoryImportationRepository implements ImportationRepository
     {
         if (isset($this->importations[(string) $importation->id()])) {
             $importation = $this->importations[(string) $importation->id()];
-            if (count($importation->configurations()) === 0) {
-                return ;
+            if (0 === count($importation->configurations())) {
+                return;
             }
 
             foreach ($importation->configurations() as $configuration) {
                 $this->dataRepository->saveConfiguration($importation->id(), $configuration);
             }
 
-            return ;
+            return;
         }
 
         $this->dataRepository->create($importation);
@@ -46,7 +49,7 @@ class InMemoryImportationRepository implements ImportationRepository
         $this->dataRepository->remove($importation->id());
 
         if (!isset($this->importations[(string) $importation->id()])) {
-            return ;
+            return;
         }
 
         unset($this->importations[(string) $importation->id()]);
@@ -54,29 +57,29 @@ class InMemoryImportationRepository implements ImportationRepository
 
     public function find(ImportationId $importationId): ?Importation
     {
-        $importation = isset($this->importations[(string) $importationId])
-            ? $this->importations[(string) $importationId]
-            : null
+        $importation = $this->importations[(string) $importationId] ?? null
         ;
 
-        if ($importation === null) {
+        if (null === $importation) {
             return null;
         }
 
-        if (count($importation->configurations()) === 0) {
+        if (0 === count($importation->configurations())) {
             $importation->loadConfigurations(
-                $this->dataRepository->getAllConfigurations($importation->id())
+                $this->dataRepository->getAllConfigurations($importation->id()),
             );
         }
 
         return $importation;
     }
 
+    /** @return array<int, string> */
     public function getColumns(ImportationId $importationId): array
     {
         return $this->dataRepository->getColumns($importationId);
     }
 
+    /** @return array<string, mixed>|null */
     public function getData(ImportationId $importationId, int $rowNumber): ?array
     {
         return $this->dataRepository->getData($importationId, $rowNumber);
@@ -87,6 +90,7 @@ class InMemoryImportationRepository implements ImportationRepository
         $this->dataRepository->saveResult($importationId, $rowNumber, $error);
     }
 
+    /** @return array<string, mixed>|null */
     public function getResult(ImportationId $importationId, int $rowNumber): ?array
     {
         return $this->dataRepository->getResult($importationId, $rowNumber);

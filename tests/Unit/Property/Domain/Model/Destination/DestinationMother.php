@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Domain\Model\Destination;
 
 use App\Property\Domain\Model\Country\CountryId;
@@ -8,44 +10,44 @@ use App\Property\Domain\Model\Destination\DestinationId;
 
 class DestinationMother
 {
-    public static function fromName(string $name)
-    {
-        return self::from(
-            destinationId: DestinationId::generate(),
-            name: $name
-        );
-    }
-
-    public static function fromNameAndCountry(string $name, string $countryId)
+    public static function fromName(string $name): Destination
     {
         return self::from(
             destinationId: DestinationId::generate(),
             name: $name,
-            countryId: $countryId
         );
     }
 
-    public static function fromNameAndId(string $name, string $id)
+    public static function fromNameAndCountry(string $name, string $countryId): Destination
     {
         return self::from(
-            destinationId: new DestinationId($id),
-            name: $name
+            destinationId: DestinationId::generate(),
+            name: $name,
+            countryId: $countryId,
         );
     }
 
-    public static function fromNameAndCountryAndId(string $name, string $countryId, string $id)
+    public static function fromNameAndId(string $name, string $id): Destination
     {
         return self::from(
             destinationId: new DestinationId($id),
             name: $name,
-            countryId: new CountryId($countryId)
         );
     }
 
-    public static function from(DestinationId $destinationId, string $name = 'name', ?string $countryId = null)
+    public static function fromNameAndCountryAndId(string $name, string $countryId, string $id): Destination
+    {
+        return self::from(
+            destinationId: new DestinationId($id),
+            name: $name,
+            countryId: $countryId,
+        );
+    }
+
+    public static function from(DestinationId $destinationId, string $name = 'name', ?string $countryId = null): Destination
     {
         $destination = new Destination(
-            id: $destinationId
+            id: $destinationId,
         );
 
         $destination->register($name, null !== $countryId ? new CountryId($countryId) : CountryId::generate());
@@ -53,11 +55,11 @@ class DestinationMother
         return $destination;
     }
 
-    public static function random()
+    public static function random(): Destination
     {
         return self::from(
             destinationId: DestinationId::generate(),
-            name: 'destination-' . rand(100, 999)
+            name: 'destination-' . random_int(100, 999),
         );
     }
 }

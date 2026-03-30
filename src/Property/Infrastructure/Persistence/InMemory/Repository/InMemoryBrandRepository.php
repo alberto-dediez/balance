@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Property\Domain\Model\Brand\Brand;
@@ -13,15 +15,13 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryBrandRepository implements BrandRepository
 {
-    public function __construct(private array $brands = [])
-    {
-
-    }
+    /** @param Brand[] $brands */
+    public function __construct(private array $brands = []) {}
 
     public function add(Brand $brand): void
     {
         if (isset($this->brands[(string) $brand->id()])) {
-            return ;
+            return;
         }
 
         $this->brands[(string) $brand->id()] = $brand;
@@ -30,7 +30,7 @@ class InMemoryBrandRepository implements BrandRepository
     public function remove(Brand $brand): void
     {
         if (!isset($this->brands[(string) $brand->id()])) {
-            return ;
+            return;
         }
 
         unset($this->brands[(string) $brand->id()]);
@@ -46,12 +46,12 @@ class InMemoryBrandRepository implements BrandRepository
 
     public function findByName(string $name): ?Brand
     {
-        if (count($this->brands) == 0) {
+        if (0 === count($this->brands)) {
             return null;
         }
 
         foreach ($this->brands as $brand) {
-            if (null !== $brand->name() && strtolower($brand->name()) == strtolower($name)) {
+            if (strtolower($brand->name()) === strtolower($name)) {
                 return $this->find($brand->id());
             }
         }
@@ -61,7 +61,7 @@ class InMemoryBrandRepository implements BrandRepository
 
     public function findBySourceAndExternalId(ExternalSource $source, ExternalId $externalId): ?Brand
     {
-        if (count($this->brands) == 0) {
+        if (0 === count($this->brands)) {
             return null;
         }
 
@@ -81,11 +81,12 @@ class InMemoryBrandRepository implements BrandRepository
         return null;
     }
 
+    /** @return Brand[] */
     public function findByFilter(BrandFilter $filter): array
     {
         $results = [];
 
-        if (count($this->brands) == 0) {
+        if (0 === count($this->brands)) {
             return $results;
         }
 
@@ -94,7 +95,7 @@ class InMemoryBrandRepository implements BrandRepository
         foreach ($this->brands as $brand) {
             if (
                 !empty($filter->name)
-                && false === strpos(strtolower($brand->name()), strtolower($filter->name))
+                && !str_contains(strtolower((string) $brand->name()), strtolower($filter->name))
             ) {
                 continue;
             }
@@ -104,7 +105,7 @@ class InMemoryBrandRepository implements BrandRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

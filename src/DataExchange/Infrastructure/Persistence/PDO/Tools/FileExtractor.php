@@ -1,35 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\Persistence\PDO\Tools;
 
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\NotImportedException;
-use OpenSpout\Reader\Common\Creator\ReaderFactory;
-use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-use PhpOffice\PhpSpreadsheet\IOFactory;
+use OpenSpout\Reader\XLSX\Reader;
 
 class FileExtractor
 {
-    private iterable $iterator;
+    /** @var \Iterator<\OpenSpout\Common\Entity\Row> */
+    private readonly \Iterator $iterator;
 
+    /** @var string[] */
     private array $columns = [];
 
-    public function __construct(private ImportationFile $importationFile)
+    public function __construct(private readonly ImportationFile $importationFile)
     {
-        switch ($this->importationFile->extension()) {
-            case 'xlsx':
-            case 'xls':
-                $reader = new \OpenSpout\Reader\XLSX\Reader();
-                break;
-            case 'csv':
-                $reader = new \OpenSpout\Reader\CSV\Reader();
-                break;
-            case 'ods':
-                $reader = new \OpenSpout\Reader\ODS\Reader();
-                break;
-            default:
-                throw new NotImportedException('Invalid file extension');
-        }
+        $reader = match ($this->importationFile->extension()) {
+            'xlsx', 'xls' => new Reader(),
+            'csv' => new \OpenSpout\Reader\CSV\Reader(),
+            'ods' => new \OpenSpout\Reader\ODS\Reader(),
+            default => throw new NotImportedException('Invalid file extension'),
+        };
 
         $reader->open($this->importationFile->path());
 
@@ -41,22 +35,31 @@ class FileExtractor
         $offset = $this->importationFile->offset();
 
         while ($offset > 0) {
-            $offset--;
+            --$offset;
             $this->iterator->next();
         }
 
-        foreach ($this->iterator->current()->getCells() as $cell) {
-            $this->columns[] = $cell->getValue();
+        $row = $this->iterator->current();
+
+        if (null === $row) {
+            throw new NotImportedException('Invalid file, no rows found.');
         }
 
-        $this->columns = ColumnSanitizer::sanitize($this->columns);
+        $columns = [];
+        foreach ($row->getCells() as $cell) {
+            $columns[] = $cell->getValue();
+        }
+
+        $this->columns = ColumnSanitizer::sanitize($columns);
     }
 
+    /** @return string[] */
     public function getColumns(): array
     {
         return $this->columns;
     }
 
+    /** @return array<string, mixed>|null */
     public function getRow(): ?array
     {
         $this->iterator->next();
@@ -65,9 +68,15 @@ class FileExtractor
             return null;
         }
 
+        $iteratorRow = $this->iterator->current();
+
+        if (null === $iteratorRow) {
+            return null;
+        }
+
         $row = array_fill_keys($this->columns, null);
 
-        foreach ($this->iterator->current()->getCells() as $index0 => $cell) {
+        foreach ($iteratorRow->getCells() as $index0 => $cell) {
             if (!isset($this->columns[$index0])) {
                 break;
             }

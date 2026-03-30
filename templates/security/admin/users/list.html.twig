@@ -29,7 +29,7 @@
         </td>
         <td>{{ element.roles | map(t => t.value | trans({}, 'roles')) | join(', ') }}</td>
         <td>{{ element.account }}</td>
-        <td>{{ element.active | show_field_value }}</td>
+        <td>{{ element.active | show_field_value | trans }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
             {% if element | is_authorized('edit') %}
@@ -38,7 +38,7 @@
 
             {% if element | is_authorized('remove') %}
                 <twig:List:Action:Delete path="{{ path('admin_users_remove', {'userId': element.id}) }}" />
-            {% endif %}  
+            {% endif %}
         </td>
     </twig:List:Table>
 {% endblock %}

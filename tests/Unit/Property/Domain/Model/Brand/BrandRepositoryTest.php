@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Domain\Model\Brand;
 
 use App\Property\Domain\Model\Brand\BrandFilter;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Property\Domain\Model\Brand\BrandRepository;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class BrandRepositoryTest extends KernelTestCase
 {
-    public function testAddBrandToRepository()
-    {   
+    public function testAddBrandToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $brand = BrandMother::random();
@@ -24,8 +26,8 @@ abstract class BrandRepositoryTest extends KernelTestCase
         $this->assertEquals($brand->id(), $recoverBrand->id());
     }
 
-    public function testRemoveBrandToRepository()
-    {   
+    public function testRemoveBrandToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $brand = BrandMother::random();
@@ -42,7 +44,7 @@ abstract class BrandRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($brand->id()));
     }
 
-    public function testFindByName()
+    public function testFindByName(): void
     {
         $repository = $this->createSUT();
 
@@ -58,7 +60,7 @@ abstract class BrandRepositoryTest extends KernelTestCase
         $this->assertEquals($brand->id(), $recoverBrand->id());
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -76,7 +78,7 @@ abstract class BrandRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new BrandFilter(
-            name: 'Ibis'
+            name: 'Ibis',
         );
 
         $result = $repository->findByFilter($filter);
@@ -84,7 +86,7 @@ abstract class BrandRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
@@ -102,7 +104,7 @@ abstract class BrandRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new BrandFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);
@@ -110,7 +112,7 @@ abstract class BrandRepositoryTest extends KernelTestCase
         $this->assertCount(6, $result);
     }
 
-    public function testFindNotRecoverRemoved()
+    public function testFindNotRecoverRemoved(): void
     {
         $repository = $this->createSUT();
 

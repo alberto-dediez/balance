@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Domain\Model\RecordedEvent;
 
 use App\Shared\Domain\Model\AggregateRootId;

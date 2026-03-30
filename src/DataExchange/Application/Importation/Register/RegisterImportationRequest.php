@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Application\Importation\Register;
 
 use App\Security\Domain\Model\Account\AccountId;
@@ -13,8 +15,6 @@ class RegisterImportationRequest implements Command
         public string $path,
         public int $offset,
         public string $extension,
-        public ?AccountId $accountId
-    ) {
-
-    }
+        public ?AccountId $accountId,
+    ) {}
 }

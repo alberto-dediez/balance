@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Security;
 
 use App\Security\Domain\Model\User\User;
-use Symfony\Bundle\SecurityBundle\Security;
 use App\Security\Domain\Model\User\UserRepository;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class LoggedUser
 {
@@ -12,19 +15,29 @@ class LoggedUser
 
     private ?User $forcedUser = null;
 
-    public function __construct(private Security $security, private UserRepository $userRepository)
-    {
+    public function __construct(private readonly Security $security, private readonly UserRepository $userRepository) {}
 
+    public function getLoggedUserOrNull(): ?User
+    {
+        try {
+            return $this->__invoke();
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
-    public function __invoke(): ?User
+    public function __invoke(): User
     {
-        if (null !== $this->forcedUser) {
+        if ($this->forcedUser instanceof User) {
             return $this->forcedUser;
         }
 
-        if (null == $this->user) {
+        if (!$this->user instanceof User) {
             $this->loadUser();
+        }
+
+        if (!$this->user instanceof User) {
+            throw new \RuntimeException('Call to LoggedUser in a non authenticated environment');
         }
 
         return $this->user;
@@ -35,15 +48,15 @@ class LoggedUser
         $this->forcedUser = $user;
     }
 
-    private function loadUser()
+    private function loadUser(): void
     {
         $user = $this->security->getUser();
 
-        if (null === $user) {
-            return ;
+        if (!$user instanceof UserInterface) {
+            return;
         }
 
-        /** @var User $user */
+        assert($user instanceof SecurityUser);
 
         $this->user = $this->userRepository->find($user->id());
     }

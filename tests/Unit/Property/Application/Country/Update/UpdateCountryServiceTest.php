@@ -1,25 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Country\Update;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Property\Domain\Model\Country\Country;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Property\Domain\Model\Country\CountryUpdated;
 use App\Property\Application\Country\CountryAuthorizer;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Property\Domain\Model\Country\CountryMother;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Property\Application\Country\Update\UpdateCountryRequest;
 use App\Property\Application\Country\Update\UpdateCountryService;
-use App\Property\Application\Country\Update\UpdateCountryResponse;
+use App\Property\Domain\Model\Country\CountryUpdated;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Property\Domain\Model\Country\CountryMother;
 use App\Tests\Unit\Property\Domain\Model\Country\CountryRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class UpdateCountryServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -28,7 +28,7 @@ class UpdateCountryServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = CountryRepositoryMother::inMemory();
 
@@ -41,20 +41,16 @@ class UpdateCountryServiceTest extends TestCase
         $request = new UpdateCountryRequest(
             countryId: $country->id(),
             name: 'Spain',
-            iso: '6666'
+            iso: '6666',
         );
 
         $user = UserMother::fromUsernameAndRole('user', Role::Admin);
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateCountryResponse);
-
         $countryPersisted = $repository->find($result->countryId);
 
         $this->assertNotNull($countryPersisted);
-        $this->assertTrue($countryPersisted instanceof Country);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -65,7 +61,7 @@ class UpdateCountryServiceTest extends TestCase
         $this->assertTrue($countryPersisted->id()->equals($lastEvent->countryId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = CountryRepositoryMother::inMemory();
 
@@ -76,13 +72,13 @@ class UpdateCountryServiceTest extends TestCase
         $result = $sut->isHandled(new UpdateCountryRequest(
             countryId: $country->id(),
             name: 'Country',
-            iso: '123'
+            iso: '123',
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryCountryRepository $repository): UpdateCountryService
     {
         return new UpdateCountryService($repository, new CountryAuthorizer());
     }

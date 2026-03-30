@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Web\Container;
 
-use App\Waste\Domain\Model\Container\Container;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerId;
-use Symfony\Component\Translation\TranslatableMessage;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 
 trait GetContainerFromIdAndAccountTrait
@@ -15,11 +16,11 @@ trait GetContainerFromIdAndAccountTrait
         $container = $containerRepository->find(new ContainerId($containerId));
 
         if (null == $container) {
-            throw $this->createNotFoundException(new TranslatableMessage("El contenedor no existe"));
+            throw $this->createNotFoundException('El contenedor no existe');
         }
 
         if (null == $container->accountId() || null == $accountId || !$container->accountId()->equals($accountId)) {
-            throw $this->createNotFoundException(new TranslatableMessage("El contenedor no existe"));
+            throw $this->createNotFoundException('El contenedor no existe');
         }
 
         return $container;

@@ -9,10 +9,10 @@
         <id name="id" type="waste_manager_id" column="id">
             <generator strategy="NONE" />
         </id>
-        
+
         <field name="name" type="string" nullable="false"/>
-        <field name="isPublic" type="boolean" nullable="true"/>
-        <field name="removed" type="boolean" nullable="true"/>
+        <field name="isPublic" type="boolean" nullable="false"/>
+        <field name="removed" type="boolean" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
 

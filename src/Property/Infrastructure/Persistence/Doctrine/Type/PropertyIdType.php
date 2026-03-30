@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Persistence\Doctrine\Type;
 
 use App\Property\Domain\Model\Property\PropertyId;

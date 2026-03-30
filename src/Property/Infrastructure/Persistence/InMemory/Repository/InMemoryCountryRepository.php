@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Property\Domain\Model\Country\Country;
@@ -13,15 +15,13 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryCountryRepository implements CountryRepository
 {
-    public function __construct(private array $countries = [])
-    {
-
-    }
+    /** @param Country[] $countries */
+    public function __construct(private array $countries = []) {}
 
     public function add(Country $country): void
     {
         if (isset($this->countries[(string) $country->id()])) {
-            return ;
+            return;
         }
 
         $this->countries[(string) $country->id()] = $country;
@@ -30,7 +30,7 @@ class InMemoryCountryRepository implements CountryRepository
     public function remove(Country $country): void
     {
         if (!isset($this->countries[(string) $country->id()])) {
-            return ;
+            return;
         }
 
         unset($this->countries[(string) $country->id()]);
@@ -46,12 +46,12 @@ class InMemoryCountryRepository implements CountryRepository
 
     public function findByName(string $name): ?Country
     {
-        if (count($this->countries) == 0) {
+        if (0 === count($this->countries)) {
             return null;
         }
 
         foreach ($this->countries as $country) {
-            if (null !== $country->name() && strtolower($country->name()) == strtolower($name)) {
+            if (strtolower($country->name()) === strtolower($name)) {
                 return $this->find($country->id());
             }
         }
@@ -61,12 +61,12 @@ class InMemoryCountryRepository implements CountryRepository
 
     public function findByIso(string $iso): ?Country
     {
-        if (count($this->countries) == 0) {
+        if (0 === count($this->countries)) {
             return null;
         }
 
         foreach ($this->countries as $country) {
-            if (null !== $country->iso() && strtolower($country->iso()) == strtolower($iso)) {
+            if (null !== $country->iso() && strtolower($country->iso()) === strtolower($iso)) {
                 return $this->find($country->id());
             }
         }
@@ -76,7 +76,7 @@ class InMemoryCountryRepository implements CountryRepository
 
     public function findBySourceAndExternalId(ExternalSource $source, ExternalId $externalId): ?Country
     {
-        if (count($this->countries) == 0) {
+        if (0 === count($this->countries)) {
             return null;
         }
 
@@ -96,11 +96,12 @@ class InMemoryCountryRepository implements CountryRepository
         return null;
     }
 
+    /** @return Country[] */
     public function findByFilter(CountryFilter $filter): array
     {
         $results = [];
 
-        if (count($this->countries) == 0) {
+        if (0 === count($this->countries)) {
             return $results;
         }
 
@@ -109,7 +110,7 @@ class InMemoryCountryRepository implements CountryRepository
         foreach ($this->countries as $country) {
             if (
                 !empty($filter->name)
-                && false === strpos(strtolower($country->name()), strtolower($filter->name))
+                && !str_contains(strtolower((string) $country->name()), strtolower($filter->name))
             ) {
                 continue;
             }
@@ -123,7 +124,7 @@ class InMemoryCountryRepository implements CountryRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

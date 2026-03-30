@@ -1,0 +1,33 @@
+parameters:
+    level: 8
+    paths:
+        - src/
+        - tests/
+    symfony:
+        # You have to provide a path to srcDevDebugProjectContainer.xml or similar XML file describing your container.
+        containerXmlPath: var/cache/dev/App_Shared_Infrastructure_Symfony_KernelDevDebugContainer.xml
+    # If you're using PHP config files for Symfony 5.3+, you also need this for auto-loading of `Symfony\Config`:
+    scanDirectories:
+        - var/cache/dev/Symfony/Config
+    # If you're using PHP config files (including the ones under packages/*.php) for Symfony 5.3+,
+    # you need this to load the helper functions (i.e. service(), env()):
+    scanFiles:
+        - vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php
+    doctrine:
+        objectManagerLoader: tests/object-manager.php
+    ignoreErrors:
+        -
+            message: '#Property App\\Waste\\Domain\\Model\\Waste\\Waste::\$translations type mapping mismatch#'
+            identifier: doctrine.associationType
+        -
+            message: '#Instanceof between App\\Shared\\Domain\\Model\\Locale\\Translation and App\\Shared\\Domain\\Model\\Locale\\Translation will always evaluate to true\.#'
+            identifier: instanceof.alwaysTrue
+        -
+            message: '#Trait App\\Security\\Infrastructure\\UI\\Web\\User\\OnlyUsersFromAccountTrait is used zero times and is not analysed\.#'
+        -
+            message: '#Parameter \#1 .* of method .*::__invoke\(\) expects .*, .*Command given\.#'
+            path: src/Shared/Application/CommandBus/CommandInvokeHandlerTrait.php
+        -
+            message: '#Service ".*" is private\.#'
+            paths:
+                - tests/*

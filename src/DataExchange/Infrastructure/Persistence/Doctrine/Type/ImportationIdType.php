@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\Persistence\Doctrine\Type;
 
 use App\DataExchange\Domain\Model\Importation\ImportationId;

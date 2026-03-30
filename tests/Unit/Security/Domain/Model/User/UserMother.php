@@ -1,127 +1,127 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Domain\Model\User;
 
-use App\Security\Domain\Model\User\Role;
-use App\Security\Domain\Model\User\User;
-use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\RecoverToken;
+use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\User;
+use App\Security\Domain\Model\User\UserId;
 
 class UserMother
 {
-    public static function registeredUser()
+    public static function registeredUser(): User
     {
         return self::from(
             userId: UserId::generate(),
-            username: 'username'
+            username: 'username',
         );
     }
 
-    public static function systemUser()
+    public static function systemUser(): User
     {
         return new User(
             id: new UserId('system'),
             username: 'system',
-            roles: [Role::Admin]
+            roles: [Role::Admin],
         );
     }
 
-    public static function adminUser()
+    public static function adminUser(): User
     {
         return self::from(
             userId: UserId::generate(),
-            role: Role::Admin
+            role: Role::Admin,
         );
     }
 
-    public static function ownerUser()
+    public static function ownerUser(): User
     {
         return self::from(
             userId: UserId::generate(),
-            role: Role::Owner
+            role: Role::Owner,
         );
     }
 
-    public static function fromUsername($username)
+    public static function fromUsername(string $username): User
     {
         return self::from(
             userId: UserId::generate(),
-            username: $username
+            username: $username,
         );
     }
 
-    public static function fromUsernameAndRole($username, Role $role)
+    public static function fromUsernameAndRole(string $username, Role $role): User
     {
         return self::from(
             userId: UserId::generate(),
+            username: $username,
             role: $role,
-            username: $username
         );
     }
 
-    public static function fromUsernameAndRoleAndId($username, Role $role, UserId $userId)
+    public static function fromUsernameAndRoleAndId(string $username, Role $role, UserId $userId): User
     {
         return self::from(
             userId: $userId,
-            username: $username
+            username: $username,
         );
     }
 
-    public static function fromUsernameAndAccount($username, Account $account)
+    public static function fromUsernameAndAccount(string $username, Account $account): User
     {
         return self::from(
             userId: UserId::generate(),
             username: $username,
-            accountId: $account->id()
+            accountId: $account->id(),
         );
     }
 
-    public static function fromUsernameAndRoleAndAccount(string $username, Role $role, AccountId $accountId)
+    public static function fromUsernameAndRoleAndAccount(string $username, Role $role, AccountId $accountId): User
     {
         return self::from(
             userId: UserId::generate(),
             username: $username,
             role: $role,
-            accountId: $accountId
+            accountId: $accountId,
         );
     }
 
-    public static function fromUsernameAndRecoverToken(string $username, string $recoverToken)
+    public static function fromUsernameAndRecoverToken(string $username, string $recoverToken): User
     {
         return self::from(
             userId: UserId::generate(),
             username: $username,
-            recoverToken: new RecoverToken($recoverToken, new \DateTimeImmutable('NOW +1 HOUR'))
+            recoverToken: new RecoverToken($recoverToken, new \DateTimeImmutable('NOW +1 HOUR')),
         );
     }
 
-    public static function from(UserId $userId, string $username = 'username', Role $role = Role::User, ?AccountId $accountId = null, ?RecoverToken $recoverToken = null)
+    public static function from(UserId $userId, string $username = 'username', Role $role = Role::User, ?AccountId $accountId = null, ?RecoverToken $recoverToken = null): User
     {
-        $user = new User(
+        return new User(
             id: $userId,
-            recoverToken: $recoverToken,
             username: $username,
             password: 'apassword',
             accountId: $accountId,
-            registeredAt: new \DateTimeImmutable("NOW"),
             roles: [
-                $role
-            ]
+                $role,
+            ],
+            recoverToken: $recoverToken,
+            registeredAt: new \DateTimeImmutable('NOW'),
         );
-
-        return $user;
     }
 
-    public static function random()
+    public static function random(): User
     {
         $roles = [
             Role::Admin,
             Role::Owner,
-            Role::User
+            Role::User,
         ];
 
-        return self::fromUsernameAndRole('user-' . rand(100, 9999999), $roles[rand(0, 2)]);
+        return self::fromUsernameAndRole('user-' . random_int(100, 9999999), $roles[random_int(0, 2)]);
     }
 }

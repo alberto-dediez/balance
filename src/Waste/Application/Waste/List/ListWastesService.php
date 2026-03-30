@@ -1,20 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\Waste\List;
 
 use App\Security\Application\Action;
-use App\Waste\Domain\Model\Waste\Waste;
 use App\Security\Domain\Model\User\User;
-use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Application\Waste\WasteAuthorizer;
+use App\Waste\Domain\Model\Waste\Waste;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\Waste\WasteRepository;
 
 class ListWastesService
 {
-    public function __construct(private WasteRepository $repository, private WasteAuthorizer $authorizer)
-    {
-
-    }
+    public function __construct(private readonly WasteRepository $repository, private readonly WasteAuthorizer $authorizer) {}
 
     public function __invoke(ListWastesRequest $request, User $user): ListWastesResponse
     {

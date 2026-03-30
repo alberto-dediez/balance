@@ -1,37 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Application\User\Register;
 
 use App\Security\Application\Action;
+use App\Security\Application\User\UserAuthorizer;
 use App\Security\Domain\Model\User\DuplicatedUsernameException;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
-use App\Shared\Application\CommandBus\Command;
-use App\Security\Application\User\UserAuthorizer;
 use App\Security\Domain\Model\User\UserRepository;
+use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
-use App\Security\Application\User\Register\PasswordHasher;
-use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 
 class RegisterUserService implements CommandHandler
 {
-    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+    use RegisterHandlerTrait;
+    use CommandInvokeHandlerTrait;
 
-    public function __construct(private UserRepository $userRepository, private PasswordHasher $passwordHasher, private UserAuthorizer $authorizer)
-    {
-    }
+    public function __construct(private UserRepository $userRepository, private PasswordHasher $passwordHasher, private UserAuthorizer $authorizer) {}
 
     public function __invoke(RegisterUserRequest $request, User $performBy): RegisterUserResponse
     {
         $user = new User(
             id: UserId::generate(),
-            accountId: $request->accountId
+            accountId: $request->accountId,
         );
 
         $this->authorizer->denyUnlessCanDoThat($user, Action::Register, $performBy);
 
-        if (null !== $this->userRepository->findByUsername($request->username)) {
+        if ($this->userRepository->findByUsername($request->username) instanceof User) {
             throw new DuplicatedUsernameException($request->username);
         }
 

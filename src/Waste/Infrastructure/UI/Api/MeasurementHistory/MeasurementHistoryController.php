@@ -1,37 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Api\MeasurementHistory;
 
-use Nelmio\ApiDocBundle\Attribute\Areas;
-use OpenApi\Attributes as OA;
-use Nelmio\ApiDocBundle\Attribute\Model;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Waste\Application\Measurement\List\ListMeasurementsRequest;
 use App\Waste\Application\Measurement\List\ListMeasurementsService;
 use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponseGenerator;
+use Nelmio\ApiDocBundle\Attribute\Areas;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/measurements/history', name: 'api_measurements_history', methods: ['GET'])]
 #[Areas(['mobile', 'admin'])]
-#[OA\Get(
-    summary: "Get history of measurements",
-    description: "Return last measurements registered by logged user",
-    tags: ['Waste']
-)]
+#[OA\Get(description: 'Return last measurements registered by logged user', summary: 'Get history of measurements', tags: ['Waste'])]
 #[OA\Response(
     response: 200,
     description: 'Returns list of measurements',
-    content: new Model(type: MeasurementHistoryResponse::class)
+    content: new Model(type: MeasurementHistoryResponse::class),
 )]
 class MeasurementHistoryController extends AbstractController
 {
     public function __invoke(
         ListMeasurementsService $listMeasurements,
-        MeasurementResponseGenerator $measurementGenerator
-    ): JsonResponse
-    {
+        MeasurementResponseGenerator $measurementGenerator,
+    ): JsonResponse {
         /**
          * @var SecurityUser $user
          */
@@ -39,13 +36,13 @@ class MeasurementHistoryController extends AbstractController
 
         $response = $listMeasurements(
             new ListMeasurementsRequest(
-                userId: $user->id(),
                 accountId: $user->accountId(),
+                userId: $user->id(),
                 limit: 10,
                 orderBy: 'registeredAt',
-                orderWay: 'DESC'
+                orderWay: 'DESC',
             ),
-            $user
+            $user,
         );
 
         $username = $user->username();
@@ -58,7 +55,7 @@ class MeasurementHistoryController extends AbstractController
         }
 
         return $this->json(
-            new MeasurementHistoryResponse($username, $measurements)
+            new MeasurementHistoryResponse($username, $measurements),
         );
     }
 }

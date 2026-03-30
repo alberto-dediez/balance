@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Security\Domain\Model\Account\Account;
@@ -11,15 +13,15 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryAccountRepository implements AccountRepository
 {
-    public function __construct(private array $accounts = [])
-    {
-
-    }
+    /**
+     * @param Account[] $accounts
+     */
+    public function __construct(private array $accounts = []) {}
 
     public function add(Account $account): void
     {
         if (isset($this->accounts[(string) $account->id()])) {
-            return ;
+            return;
         }
 
         $this->accounts[(string) $account->id()] = $account;
@@ -28,7 +30,7 @@ class InMemoryAccountRepository implements AccountRepository
     public function remove(Account $account): void
     {
         if (!isset($this->accounts[(string) $account->id()])) {
-            return ;
+            return;
         }
 
         unset($this->accounts[(string) $account->id()]);
@@ -44,7 +46,7 @@ class InMemoryAccountRepository implements AccountRepository
 
     public function findByName(string $name): ?Account
     {
-        if (count($this->accounts) == 0) {
+        if (0 === count($this->accounts)) {
             return null;
         }
 
@@ -57,11 +59,14 @@ class InMemoryAccountRepository implements AccountRepository
         return null;
     }
 
+    /**
+     * @return list<Account>
+     */
     public function findByFilter(AccountFilter $filter): array
     {
         $results = [];
 
-        if (count($this->accounts) == 0) {
+        if (0 === count($this->accounts)) {
             return $results;
         }
 
@@ -69,8 +74,8 @@ class InMemoryAccountRepository implements AccountRepository
 
         foreach ($this->accounts as $account) {
             if (
-                !empty($filter->name)
-                && false === strpos(strtolower($account->name()), strtolower($filter->name))
+                !in_array($filter->name, [null, '', '0'], true)
+                && !str_contains(strtolower((string) $account->name()), strtolower($filter->name))
             ) {
                 continue;
             }
@@ -84,7 +89,7 @@ class InMemoryAccountRepository implements AccountRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

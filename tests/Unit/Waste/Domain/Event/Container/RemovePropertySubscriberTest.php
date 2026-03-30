@@ -1,21 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Domain\Event\Container;
 
-use PHPUnit\Framework\TestCase;
 use App\Property\Domain\Model\Property\PropertyId;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Waste\Domain\Model\Container\ContainerId;
 use App\Property\Domain\Model\Property\PropertyRemoved;
-use App\Waste\Domain\Model\Container\ContainerRemoved;
-use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
-use App\Waste\Domain\Event\Container\RemovePropertySubscriber;
-use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
-use App\Waste\Application\Container\Remove\RemoveContainerService;
-use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeLoggedUser;
+use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
+use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
+use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
+use App\Waste\Application\Container\Remove\RemoveContainerService;
+use App\Waste\Domain\Event\Container\RemovePropertySubscriber;
+use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\Container\ContainerRemoved;
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryContainerRepository;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 class RemovePropertySubscriberTest extends TestCase
 {
@@ -24,14 +28,14 @@ class RemovePropertySubscriberTest extends TestCase
         DomainEventPublisher::instance()->reset();
     }
 
-    public function isSubscribedToReturnsTrueIfPropertyRemovedEventIsPassed()
+    public function isSubscribedToReturnsTrueIfPropertyRemovedEventIsPassed(): void
     {
         $repository = ContainerRepositoryMother::inMemory();
 
         $sut = $this->createSUT($repository);
 
         $event = new PropertyRemoved(
-            PropertyId::generate()
+            PropertyId::generate(),
         );
 
         $result = $sut->isSubscribedTo($event);
@@ -39,14 +43,14 @@ class RemovePropertySubscriberTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function isSubscribedToReturnsFalseIfNotPropertyRemovedEventIsPassed()
+    public function isSubscribedToReturnsFalseIfNotPropertyRemovedEventIsPassed(): void
     {
         $repository = ContainerRepositoryMother::inMemory();
 
         $sut = $this->createSUT($repository);
 
         $event = new ContainerRemoved(
-            ContainerId::generate()
+            ContainerId::generate(),
         );
 
         $result = $sut->isSubscribedTo($event);
@@ -54,7 +58,7 @@ class RemovePropertySubscriberTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testHandleCallsRemoveContainerService()
+    public function testHandleCallsRemoveContainerService(): void
     {
         $repository = ContainerRepositoryMother::inMemory();
 
@@ -63,42 +67,41 @@ class RemovePropertySubscriberTest extends TestCase
 
         $waste = WasteMother::fromName('Plastico');
 
-        $container = ContainerMother::fromPropertyAndWaste($property->id(), $waste->id());
+        $container = ContainerMother::fromPropertyAndWaste($property->id()->__toString(), $waste->id()->__toString());
         $repository->add($container);
 
-        $container = ContainerMother::fromPropertyAndWaste($property->id(), $waste->id());
+        $container = ContainerMother::fromPropertyAndWaste($property->id()->__toString(), $waste->id()->__toString());
         $repository->add($container);
 
-        $container = ContainerMother::fromPropertyAndWaste($property->id(), $waste->id());
+        $container = ContainerMother::fromPropertyAndWaste($property->id()->__toString(), $waste->id()->__toString());
         $repository->add($container);
 
-        $container = ContainerMother::fromPropertyAndWaste($otherProperty->id(), $waste->id());
+        $container = ContainerMother::fromPropertyAndWaste($otherProperty->id()->__toString(), $waste->id()->__toString());
         $repository->add($container);
 
         $event = new PropertyRemoved(
-            $property->id()
+            $property->id(),
         );
 
         $sut = $this->createSUT(
-            repository: $repository, 
-            containersToRemoved: 3
+            repository: $repository,
+            containersToRemoved: 3,
         );
         $sut->handle($event);
     }
 
-    private function createSUT($repository, int $containersToRemoved = 0)
+    private function createSUT(InMemoryContainerRepository $repository, int $containersToRemoved = 0): RemovePropertySubscriber
     {
+        /** @var RemoveContainerService&MockObject $removeContainer * */
         $removeContainer = $this->createMock(RemoveContainerService::class);
         $removeContainer->expects($this->exactly($containersToRemoved))->method('__invoke');
-        
-        /** @var RemoveContainerService $removeContainer **/
 
         $loggedUser = new FakeLoggedUser(UserMother::random());
 
         return new RemovePropertySubscriber(
             $repository,
             $removeContainer,
-            $loggedUser
+            $loggedUser,
         );
     }
 }

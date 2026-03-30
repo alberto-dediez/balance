@@ -1,14 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\DailyWaste;
 
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Waste\Domain\Model\Container\Purpose;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Waste\Domain\Model\DailyWaste\DailyWaste;
 use App\Property\Domain\Model\Property\PropertyId;
-use App\Waste\Domain\Model\DailyWaste\DailyWasteId;
-use App\Waste\Domain\Model\DailyWaste\DailyWasteFilter;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 interface DailyWasteRepository
@@ -21,6 +20,7 @@ interface DailyWasteRepository
 
     public function findByDay(\DateTimeImmutable $day, PropertyId $propertyId, WasteId $wasteId, Purpose $purpose, WasteManagerId $wasteManagerId, AccountId $accountId): ?DailyWaste;
 
+    /** @return array<int, DailyWaste> */
     public function findByFilter(DailyWasteFilter $filter): array;
 
     public function totalResultsByFilter(DailyWasteFilter $filter): int;

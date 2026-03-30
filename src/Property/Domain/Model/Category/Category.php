@@ -1,24 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Category;
 
-use App\Shared\Domain\Model\AggregateRoot;
 use App\Property\Domain\Model\Property\ExternalId;
+use App\Shared\Domain\Model\AggregateRoot;
 
-class Category
+class Category implements \Stringable
 {
     use AggregateRoot;
 
+    /**
+     * @param array<\App\Shared\Domain\Event\DomainEvent> $events
+     */
     public function __construct(
         private CategoryId $id,
         private string $name = '',
         private ?ExternalId $externalId = null,
-        private bool $removed = false,
+        private ?bool $removed = false,
         array $events = [],
-        private ?\DateTimeImmutable $registeredAt = null,
-        private ?\DateTimeImmutable $removedAt = null
+        private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
+        private ?\DateTimeImmutable $removedAt = null,
     ) {
-
+        $this->events = $events;
     }
 
     public function id(): CategoryId
@@ -33,7 +38,7 @@ class Category
 
     public function externalId(): ExternalId
     {
-        if (null === $this->externalId) {
+        if (!$this->externalId instanceof ExternalId) {
             $this->externalId = new ExternalId();
         }
 
@@ -42,7 +47,7 @@ class Category
 
     public function isRemoved(): bool
     {
-        return $this->removed;
+        return $this->removed ?? false;
     }
 
     public function registeredAt(): \DateTimeImmutable
@@ -55,51 +60,51 @@ class Category
         return $this->removedAt;
     }
 
-    public function register(string $name, ?ExternalId $externalId = null)
+    public function register(string $name, ?ExternalId $externalId = null): void
     {
         $this->recordApplyAndPublish(
             new CategoryRegistered(
                 categoryId: $this->id(),
                 name: $name,
-                externalId: $externalId
-            )
+                externalId: $externalId,
+            ),
         );
     }
 
-    public function update(string $name, ?ExternalId $externalId = null)
+    public function update(string $name, ?ExternalId $externalId = null): void
     {
         $this->recordApplyAndPublish(
             new CategoryUpdated(
                 categoryId: $this->id(),
                 name: $name,
-                externalId: $externalId
-            )
+                externalId: $externalId,
+            ),
         );
     }
 
-    public function remove()
+    public function remove(): void
     {
         $this->recordApplyAndPublish(
             new CategoryRemoved(
-                categoryId: $this->id()
-            )
+                categoryId: $this->id(),
+            ),
         );
     }
 
-    public function applyCategoryRegistered(CategoryRegistered $event)
+    public function applyCategoryRegistered(CategoryRegistered $event): void
     {
         $this->name = $event->name();
-        $this->externalId = null === $event->externalId() ? new ExternalId() : $event->externalId();
+        $this->externalId = $event->externalId() ?? new ExternalId();
         $this->registeredAt = $event->occurredOn();
     }
 
-    public function applyCategoryUpdated(CategoryUpdated $event)
+    public function applyCategoryUpdated(CategoryUpdated $event): void
     {
         $this->name = $event->name();
-        $this->externalId = null === $event->externalId() ? $this->externalId() : $event->externalId();
+        $this->externalId = $event->externalId() ?? $this->externalId();
     }
 
-    public function applyCategoryRemoved(CategoryRemoved $event)
+    public function applyCategoryRemoved(CategoryRemoved $event): void
     {
         $this->removed = true;
         $this->removedAt = $event->occurredOn();
@@ -107,6 +112,6 @@ class Category
 
     public function __toString(): string
     {
-        return (string) $this->name();
+        return $this->name();
     }
 }

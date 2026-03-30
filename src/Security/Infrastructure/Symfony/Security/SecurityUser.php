@@ -1,19 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Security;
 
-use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
-use Symfony\Component\Security\Core\User\UserInterface;
+
+use function PHPUnit\Framework\assertNotEmpty;
+
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class SecurityUser extends User implements UserInterface, PasswordAuthenticatedUserInterface, EquatableInterface
 {
     public function getRoles(): array
     {
         $roles = [];
-        
+
         foreach ($this->roles() as $role) {
             $roles[] = $role->value;
         }
@@ -28,30 +32,32 @@ class SecurityUser extends User implements UserInterface, PasswordAuthenticatedU
 
     public function getUserIdentifier(): string
     {
-        return (string) $this->username;
+        assertNotEmpty($this->username);
+
+        return $this->username;
     }
 
     public function getPassword(): ?string
     {
         return $this->password();
     }
-    
+
     public function isEqualTo(UserInterface $user): bool
     {
-        return $user->getUserIdentifier() == $this->getUserIdentifier() && $user->getRoles() == $this->getRoles();
+        return $user->getUserIdentifier() === $this->getUserIdentifier() && $user->getRoles() == $this->getRoles();
     }
 
     public function __construct(User $user)
     {
         parent::__construct(
-            id: $user->id(), 
+            id: $user->id(),
             username: $user->username(),
             password: $user->password(),
             accountId: $user->accountId(),
             account: $user->account(),
             roles: $user->roles(),
             events: $user->recordedEvents(),
-            registeredAt: $user->registeredAt()
+            registeredAt: $user->registeredAt() ?? new \DateTimeImmutable('NOW'),
         );
     }
 }

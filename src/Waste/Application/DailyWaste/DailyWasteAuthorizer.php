@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\DailyWaste;
 
+use App\Security\Application\AbstractAuthorizer;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
-use App\Security\Application\AbstractAuthorizer;
 use App\Waste\Domain\Model\DailyWaste\DailyWaste;
 
 final class DailyWasteAuthorizer extends AbstractAuthorizer
@@ -14,7 +16,7 @@ final class DailyWasteAuthorizer extends AbstractAuthorizer
         if (null == $user->accountId() || null == $subject->accountId()) {
             return false;
         }
-        
+
         return $user->accountId()->equals($subject->accountId());
     }
 
@@ -24,7 +26,7 @@ final class DailyWasteAuthorizer extends AbstractAuthorizer
             return false;
         }
 
-        return 
+        return
             $user->accountId()->equals($subject->accountId())
             && $user->hasRole(Role::Owner)
         ;
@@ -32,10 +34,10 @@ final class DailyWasteAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        if (null == $user->accountId() || null == $subject->accountId() || false == $user->accountId()->equals($subject->accountId())) {
+        if (null == $user->accountId() || null == $subject->accountId() || false === $user->accountId()->equals($subject->accountId())) {
             return false;
         }
-        
+
         return $user->hasRole(Role::Owner);
     }
 
@@ -47,8 +49,8 @@ final class DailyWasteAuthorizer extends AbstractAuthorizer
     protected function canRemove(mixed $subject, User $user): bool
     {
         return false;
-    }  
-    
+    }
+
     public function supports(mixed $subject): bool
     {
         return $subject instanceof DailyWaste;

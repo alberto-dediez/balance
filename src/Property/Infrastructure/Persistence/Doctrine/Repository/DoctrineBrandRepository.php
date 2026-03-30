@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Property\Domain\Model\Brand\Brand;
@@ -8,6 +10,7 @@ use App\Property\Domain\Model\Brand\BrandId;
 use App\Property\Domain\Model\Brand\BrandRepository;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -18,21 +21,18 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineBrandRepository implements BrandRepository
 {
-    public function __construct(private EntityManagerInterface $manager)
-    {
-
-    }
+    public function __construct(private readonly EntityManagerInterface $manager) {}
 
     public function add(Brand $brand): void
     {
-        $this->getEntityManager()->persist($brand);
-        $this->getEntityManager()->flush();
+        $this->manager->persist($brand);
+        $this->manager->flush();
     }
 
     public function remove(Brand $brand): void
     {
-        $this->getEntityManager()->remove($brand);
-        $this->getEntityManager()->flush();
+        $this->manager->remove($brand);
+        $this->manager->flush();
     }
 
     public function find(BrandId $brandId): ?Brand
@@ -41,7 +41,7 @@ class DoctrineBrandRepository implements BrandRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('b.id', ':id')
+                $qb->expr()->eq('b.id', ':id'),
             )
             ->setParameter('id', (string) $brandId)
             ->getQuery()
@@ -55,7 +55,7 @@ class DoctrineBrandRepository implements BrandRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->like('b.name', ':name')
+                $qb->expr()->like('b.name', ':name'),
             )
             ->setParameter('name', $name)
             ->getQuery()
@@ -76,7 +76,7 @@ class DoctrineBrandRepository implements BrandRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->like("b.externalId.{$attribute}", ":sourceId")
+                $qb->expr()->like("b.externalId.{$attribute}", ':sourceId'),
             )
             ->setParameter('sourceId', $sourceId)
             ->getQuery()
@@ -87,42 +87,39 @@ class DoctrineBrandRepository implements BrandRepository
 
     private function createQueryBuilderFromFilter(BrandFilter $filter): QueryBuilder
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb = $this->manager->createQueryBuilder();
 
         $qb->select('b')
             ->from(Brand::class, 'b')
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('b.removed'),
-                    $qb->expr()->eq('b.removed', $qb->expr()->literal(false))
-                )
+                    $qb->expr()->eq('b.removed', ':removed')
+                ),
             )
+            ->setParameter('removed', false, Types::BOOLEAN)
         ;
 
         if (!empty($filter->name)) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('b.name', ':name')
+                    $qb->expr()->like('b.name', ':name'),
                 )
                 ->setParameter('name', "%{$filter->name}%")
             ;
         }
 
-        $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
-        switch ($filter->orderBy) {
-            case 'registeredAt':
-                $qb->orderBy('b.registeredAt', $way);
-                break;
-            case 'name':
-            default:
-                $qb->orderBy('b.name', $way);
-                break;
-        }
+        match ($filter->orderBy) {
+            'registeredAt' => $qb->orderBy('b.registeredAt', $way),
+            default => $qb->orderBy('b.name', $way),
+        };
 
         return $qb;
     }
 
+    /** @return Brand[] */
     public function findByFilter(BrandFilter $filter): array
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
@@ -143,14 +140,9 @@ class DoctrineBrandRepository implements BrandRepository
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return $qb->select('COUNT(DISTINCT b)')
+        return (int) $qb->select('COUNT(DISTINCT b)')
             ->getQuery()
             ->getSingleScalarResult()
         ;
-    }
-
-    private function getEntityManager()
-    {
-        return $this->manager;
     }
 }

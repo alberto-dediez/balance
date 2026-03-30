@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\Measurement\Import;
 
 use App\Shared\Application\CommandBus\Command;
-use App\Waste\Domain\Model\Container\Purpose;
 
 class ImportMeasurementRequest implements Command
 {
@@ -19,7 +20,5 @@ class ImportMeasurementRequest implements Command
         public ?string $unit,
         public ?string $day,
         public ?string $reference,
-    ) {
-
-    }
+    ) {}
 }

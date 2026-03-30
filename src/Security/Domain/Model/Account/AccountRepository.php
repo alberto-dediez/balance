@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Security\Domain\Model\Account;
+declare(strict_types=1);
 
-use App\Security\Domain\Model\Account\Account;
-use App\Security\Domain\Model\Account\AccountId;
+namespace App\Security\Domain\Model\Account;
 
 interface AccountRepository
 {
@@ -15,6 +14,7 @@ interface AccountRepository
 
     public function findByName(string $name): ?Account;
 
+    /** @return list<Account> */
     public function findByFilter(AccountFilter $filter): array;
 
     public function totalResultsByFilter(AccountFilter $filter): int;

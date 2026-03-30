@@ -1,27 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Persistence\InMemory\Repository;
 
+use App\Property\Domain\Model\Country\CountryId;
+use App\Property\Domain\Model\Destination\DestinationId;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyFilter;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]
 class InMemoryPropertyRepository implements PropertyRepository
 {
-    public function __construct(private array $properties = [])
-    {
-
-    }
+    /** @param Property[] $properties */
+    public function __construct(private array $properties = []) {}
 
     public function add(Property $property): void
     {
         if (isset($this->properties[(string) $property->id()])) {
-            return ;
+            return;
         }
 
         $this->properties[(string) $property->id()] = $property;
@@ -30,7 +33,7 @@ class InMemoryPropertyRepository implements PropertyRepository
     public function remove(Property $property): void
     {
         if (!isset($this->properties[(string) $property->id()])) {
-            return ;
+            return;
         }
 
         unset($this->properties[(string) $property->id()]);
@@ -46,7 +49,7 @@ class InMemoryPropertyRepository implements PropertyRepository
 
     public function findByName(string $name): ?Property
     {
-        if (count($this->properties) == 0) {
+        if (0 === count($this->properties)) {
             return null;
         }
 
@@ -61,12 +64,12 @@ class InMemoryPropertyRepository implements PropertyRepository
 
     public function findByExternalId(ExternalId $externalId): ?Property
     {
-        if (count($this->properties) == 0) {
+        if (0 === count($this->properties)) {
             return null;
         }
 
         foreach ($this->properties as $property) {
-            if ($property->externalId()->bioscore() !== null && $property->externalId()->bioscore() == $externalId->bioscore()) {
+            if (null !== $property->externalId()->bioscore() && $property->externalId()->bioscore() == $externalId->bioscore()) {
                 return $this->find($property->id());
             }
 
@@ -84,7 +87,7 @@ class InMemoryPropertyRepository implements PropertyRepository
 
     public function findBySourceAndExternalId(ExternalSource $source, ExternalId $externalId): ?Property
     {
-        if (count($this->properties) == 0) {
+        if (0 === count($this->properties)) {
             return null;
         }
 
@@ -106,7 +109,7 @@ class InMemoryPropertyRepository implements PropertyRepository
 
     public function findByGeoPosition(string $latitude, string $longitude): ?Property
     {
-        if (count($this->properties) == 0) {
+        if (0 === count($this->properties)) {
             return null;
         }
 
@@ -119,11 +122,12 @@ class InMemoryPropertyRepository implements PropertyRepository
         return null;
     }
 
+    /** @return Property[] */
     public function findByFilter(PropertyFilter $filter): array
     {
         $results = [];
 
-        if (count($this->properties) == 0) {
+        if (0 === count($this->properties)) {
             return $results;
         }
 
@@ -132,20 +136,20 @@ class InMemoryPropertyRepository implements PropertyRepository
         foreach ($this->properties as $property) {
             if (
                 !empty($filter->name)
-                && false === strpos(strtolower($property->name()), strtolower($filter->name))
+                && !str_contains(strtolower((string) $property->name()), strtolower($filter->name))
             ) {
                 continue;
             }
 
-            if (null !== $filter->accountId && (null == $property->accountId() || false == $filter->accountId->equals($property->accountId()))) {
+            if ($filter->accountId instanceof AccountId && (null == $property->accountId() || false === $filter->accountId->equals($property->accountId()))) {
                 continue;
             }
 
-            if (null !== $filter->destinationId && (null == $property->info()?->destinationId() || false == $filter->destinationId->equals($property->info()->destinationId()))) {
+            if ($filter->destinationId instanceof DestinationId && (null == $property->info()->destinationId() || false === $filter->destinationId->equals($property->info()->destinationId()))) {
                 continue;
             }
 
-            if (null !== $filter->countryId && (null == $property->info()?->countryId() || false == $filter->countryId->equals($property->info()->countryId()))) {
+            if ($filter->countryId instanceof CountryId && (null == $property->info()->countryId() || false === $filter->countryId->equals($property->info()->countryId()))) {
                 continue;
             }
 
@@ -154,7 +158,7 @@ class InMemoryPropertyRepository implements PropertyRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

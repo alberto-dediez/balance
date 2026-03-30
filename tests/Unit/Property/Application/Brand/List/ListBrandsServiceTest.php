@@ -1,25 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Brand\List;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
 use App\Property\Application\Brand\BrandAuthorizer;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Property\Domain\Model\Brand\BrandMother;
 use App\Property\Application\Brand\List\ListBrandsRequest;
 use App\Property\Application\Brand\List\ListBrandsService;
-use App\Property\Application\Brand\List\ListBrandsResponse;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
+use App\Security\Domain\Model\User\Role;
+use App\Tests\Unit\Property\Domain\Model\Brand\BrandMother;
 use App\Tests\Unit\Property\Domain\Model\Brand\BrandRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\TestCase;
 
 class ListBrandsServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        
-    }
+    protected function setUp(): void {}
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = BrandRepositoryMother::inMemory();
 
@@ -36,13 +35,11 @@ class ListBrandsServiceTest extends TestCase
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListBrandsResponse);
         $this->assertCount(4, $result->brands);
         $this->assertEquals(4, $result->totalResults);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryBrandRepository $repository): ListBrandsService
     {
         return new ListBrandsService($repository, new BrandAuthorizer());
     }

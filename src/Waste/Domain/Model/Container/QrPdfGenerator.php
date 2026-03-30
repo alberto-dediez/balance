@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Waste\Domain\Model\Container;
+declare(strict_types=1);
 
-use App\Waste\Domain\Model\Container\QrCode;
-use App\Waste\Domain\Model\Container\Container;
+namespace App\Waste\Domain\Model\Container;
 
 interface QrPdfGenerator
 {

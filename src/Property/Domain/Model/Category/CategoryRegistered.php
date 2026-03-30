@@ -1,24 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Category;
 
-use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
+use App\Property\Domain\Model\Property\ExternalId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
-use App\Property\Domain\Model\Category\CategoryId;
-use App\Property\Domain\Model\Property\ExternalId;
 
 final class CategoryRegistered extends DomainEvent
 {
     protected static string $eventName = 'categoryRegistered';
 
     public function __construct(
-        private CategoryId $categoryId, 
-        private string $name, 
-        private ?ExternalId $externalId = null,
+        private readonly CategoryId $categoryId,
+        private readonly string $name,
+        private readonly ?ExternalId $externalId = null,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -38,31 +38,31 @@ final class CategoryRegistered extends DomainEvent
         return $this->externalId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->categoryId();
+        return $this->categoryId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'categoryId' => (string) $this->categoryId,
             'name' => $this->name,
-            'externalId' => $this->externalId
+            'externalId' => $this->externalId,
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        ?array $payload
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new CategoryRegistered(
-            categoryId: new CategoryId($payload['categoryId']), 
+            categoryId: new CategoryId($payload['categoryId']),
             name: $payload['name'],
-            externalId: isset($payload['externalId']) ? $payload['externalId'] : null,
+            externalId: $payload['externalId'] ?? null,
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

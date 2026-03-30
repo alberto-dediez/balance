@@ -1,32 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Category\Import;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
+use App\Property\Application\Category\CategoryAuthorizer;
+use App\Property\Application\Category\Import\CategoryRequest;
+use App\Property\Application\Category\Import\ImportCategoriesRequest;
+use App\Property\Application\Category\Import\ImportCategoriesService;
+use App\Property\Application\Category\Register\RegisterCategoryResponse;
+use App\Property\Application\Category\Register\RegisterCategoryService;
+use App\Property\Application\Category\Update\UpdateCategoryService;
 use App\Property\Domain\Model\Category\CategoryId;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
-use App\Property\Application\Category\CategoryAuthorizer;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Property\Application\Category\Import\CategoryRequest;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCategoryRepository;
+use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Property\Domain\Model\Category\CategoryMother;
-use App\Property\Application\Category\Update\UpdateCategoryService;
-use App\Property\Application\Category\Import\ImportCategoriesRequest;
-use App\Property\Application\Category\Import\ImportCategoriesService;
-use App\Property\Application\Category\Import\ImportCategoriesResponse;
-use App\Property\Application\Category\Register\RegisterCategoryService;
-use App\Property\Application\Category\Register\RegisterCategoryResponse;
 use App\Tests\Unit\Property\Domain\Model\Category\CategoryRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 class ImportCategoriesServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        
-    }
+    protected function setUp(): void {}
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = CategoryRepositoryMother::inMemory();
 
@@ -48,36 +48,33 @@ class ImportCategoriesServiceTest extends TestCase
         $request = new ImportCategoriesRequest(
             [
                 new CategoryRequest(
-                    name: '1 estrella', 
-                    createIfNotExists: false,
+                    name: '1 estrella',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '1234')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '1234'),
+                    createIfNotExists: false,
                 ),
                 new CategoryRequest(
-                    name: '1 LLAVE', 
-                    createIfNotExists: false,
+                    name: '1 LLAVE',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '234')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '234'),
+                    createIfNotExists: false,
                 ),
                 new CategoryRequest(
-                    name: '5 Estrellas Gran Lujo', 
-                    createIfNotExists: false,
+                    name: '5 Estrellas Gran Lujo',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '34')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '34'),
+                    createIfNotExists: false,
                 ),
                 new CategoryRequest(
-                    name: 'Hostal', 
+                    name: 'Hostal',
+                    source: ExternalSource::Bioscore,
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '4'),
                     createIfNotExists: true,
-                    source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '4')
                 ),
-            ]
+            ],
         );
 
         $result = $sut($request, $user);
-
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ImportCategoriesResponse);
 
         $this->assertCount(4, $result->categories);
         $this->assertEquals(3, $result->matched);
@@ -90,24 +87,24 @@ class ImportCategoriesServiceTest extends TestCase
         $this->assertEquals('1234', $star->externalId()->bioscore());
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryCategoryRepository $repository): ImportCategoriesService
     {
         $registerService = $this->createMock(RegisterCategoryService::class);
-        $registerService->method('__invoke')->willReturn(new RegisterCategoryResponse(CategoryId::generate(), '', null));
+        $registerService->method('__invoke')->willReturn(new RegisterCategoryResponse(CategoryId::generate(), ''));
 
-        /** @var RegisterCategoryService $registerService */
-
+        /** @var RegisterCategoryService&MockObject $registerService */
         $authorizer = new CategoryAuthorizer();
 
         $updateService = new UpdateCategoryService(
-            $repository, $authorizer
+            $repository,
+            $authorizer,
         );
 
         return new ImportCategoriesService(
-            repository: $repository, 
+            repository: $repository,
             registerCategory: $registerService,
             updateCategory: $updateService,
-            authorizer: $authorizer
+            authorizer: $authorizer,
         );
     }
 }

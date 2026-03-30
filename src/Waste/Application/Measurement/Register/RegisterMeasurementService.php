@@ -1,42 +1,47 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\Measurement\Register;
 
+use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
-use App\Shared\Application\CommandBus\Command;
 use App\Security\Domain\Model\User\UserRepository;
-use App\Waste\Domain\Model\Measurement\Measurement;
+use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
-use App\Waste\Domain\Model\Measurement\MeasurementId;
-use App\Waste\Domain\Model\Container\ContainerRepository;
-use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use App\Waste\Application\Measurement\MeasurementAuthorizer;
+use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Waste\Domain\Model\Measurement\Measurement;
+use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
-use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 
 class RegisterMeasurementService implements CommandHandler
 {
-    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+    use RegisterHandlerTrait;
+    use CommandInvokeHandlerTrait;
 
     public function __construct(
         private MeasurementRepository $measurementRepository,
         private ContainerRepository $containerRepository,
         private PropertyRepository $propertyRepository,
         private UserRepository $userRepository,
-        private MeasurementAuthorizer $authorizer
-    ) {
-
-    }
+        private MeasurementAuthorizer $authorizer,
+    ) {}
 
     public function __invoke(RegisterMeasurementRequest $request, User $user): RegisterMeasurementResponse
     {
         $this->validateRequest($request);
 
         $container = $this->containerRepository->find($request->containerId);
+        assert(null !== $container);
+        assert(null !== $container->propertyId());
 
         $property = $this->propertyRepository->find($container->propertyId());
+        assert(null !== $property);
+        assert(null !== $property->accountId());
 
         $id = MeasurementId::generate();
 
@@ -49,7 +54,7 @@ class RegisterMeasurementService implements CommandHandler
                 registeredBy: $user->id(),
             ),
             Action::Register,
-            $user
+            $user,
         );
 
         $measurement = new Measurement($id);
@@ -62,41 +67,50 @@ class RegisterMeasurementService implements CommandHandler
                 accountId: $property->accountId(),
                 justification: $request->justification,
                 reference: $request->reference,
-                day: $request->day,
+                day: $request->day instanceof \DateTime ? \DateTimeImmutable::createFromMutable($request->day) : $request->day,
             )
         ;
 
         $this->measurementRepository->add($measurement);
 
+        $containerId = $measurement->containerId();
+        assert(null !== $containerId);
+        $registeredBy = $measurement->registeredBy();
+        assert(null !== $registeredBy);
+
         return new RegisterMeasurementResponse(
             measurementId: $measurement->id(),
-            containerId: $measurement->containerId(),
+            containerId: $containerId,
             quantity: $measurement->quantity(),
             load: $measurement->load(),
-            registeredBy: $measurement->registeredBy(),
+            registeredBy: $registeredBy,
             justification: $measurement->justification(),
             reference: $measurement->reference(),
         );
     }
 
-    private function validateRequest(RegisterMeasurementRequest $request)
+    private function validateRequest(RegisterMeasurementRequest $request): void
     {
         $container = $this->containerRepository->find($request->containerId);
 
         if (null == $container) {
-            throw new \InvalidArgumentException("Debes especificar un contenedor válido");
+            throw new \InvalidArgumentException('Debes especificar un contenedor válido');
         }
 
-        $property = $this->propertyRepository->find($container->propertyId());
+        $containerPropertyId = $container->propertyId();
+        assert(null !== $containerPropertyId);
+        $property = $this->propertyRepository->find($containerPropertyId);
 
         if (null == $property) {
-            throw new \InvalidArgumentException("Debes especificar una propiedad válida");
+            throw new \InvalidArgumentException('Debes especificar una propiedad válida');
         }
 
         $user = $this->userRepository->find($request->registeredBy);
 
-        if (null == $user || null == $user->accountId() || false == $user->accountId()->equals($property->accountId())) {
-            throw new \InvalidArgumentException("El usuario que registra la medición no es válido");
+        $userAccountId = $user?->accountId();
+        $propertyAccountId = $property->accountId();
+        if (null == $user || null === $userAccountId || null === $propertyAccountId || false === $userAccountId->equals($propertyAccountId)) {
+            throw new \InvalidArgumentException('El usuario que registra la medición no es válido');
         }
     }
 

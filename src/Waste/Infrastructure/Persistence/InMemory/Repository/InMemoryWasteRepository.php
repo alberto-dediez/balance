@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Persistence\InMemory\Repository;
 
-use App\Shared\Domain\Model\Locale\LocaleGetter;
 use App\Waste\Domain\Model\Waste\Waste;
 use App\Waste\Domain\Model\Waste\WasteFilter;
 use App\Waste\Domain\Model\Waste\WasteId;
@@ -12,18 +13,16 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryWasteRepository implements WasteRepository
 {
-    public function __construct(private LocaleGetter $localeGetter, private array $wastes = [])
-    {
-
-    }
+    /** @param array<string, Waste> $wastes */
+    public function __construct(
+        private array $wastes = [],
+    ) {}
 
     public function add(Waste $waste): void
     {
         if (isset($this->wastes[(string) $waste->id()])) {
-            return ;
+            return;
         }
-
-        $waste->translations()->setLocale($this->localeGetter->locale());
 
         $this->wastes[(string) $waste->id()] = $waste;
     }
@@ -31,7 +30,7 @@ class InMemoryWasteRepository implements WasteRepository
     public function remove(Waste $waste): void
     {
         if (!isset($this->wastes[(string) $waste->id()])) {
-            return ;
+            return;
         }
 
         unset($this->wastes[(string) $waste->id()]);
@@ -45,11 +44,12 @@ class InMemoryWasteRepository implements WasteRepository
         ;
     }
 
+    /** @return array<int, Waste> */
     public function findByFilter(WasteFilter $filter): array
     {
         $results = [];
 
-        if (count($this->wastes) == 0) {
+        if (0 === count($this->wastes)) {
             return $results;
         }
 
@@ -58,7 +58,7 @@ class InMemoryWasteRepository implements WasteRepository
         foreach ($this->wastes as $waste) {
             if (
                 !empty($filter->name)
-                && false === strpos(strtolower($waste->name()), strtolower($filter->name))
+                && !str_contains(strtolower((string) $waste->name()), strtolower($filter->name))
             ) {
                 continue;
             }
@@ -72,7 +72,7 @@ class InMemoryWasteRepository implements WasteRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

@@ -1,28 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\DailyWaste\Calculate;
 
+use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
-use App\Waste\Domain\Model\DailyWaste\DailyWaste;
-use App\Waste\Domain\Model\Measurement\Unit;
-use App\Waste\Domain\Model\Waste\WasteRepository;
-use App\Waste\Domain\Model\DailyWaste\DailyWasteId;
-use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Shared\Application\CommandBus\CommandHandler;
-use App\Waste\Domain\Model\Container\MeasurementMethod;
-use App\Waste\Domain\Model\Container\ContainerRepository;
-use App\Property\Domain\Model\Property\PropertyRepository;
-use App\Waste\Application\DailyWaste\DailyWasteAuthorizer;
-use App\Shared\Application\CommandBus\RegisterHandlerTrait;
-use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
-use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Waste\Application\DailyWaste\DailyWasteAuthorizer;
+use App\Waste\Domain\Model\Container\Container;
+use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Waste\Domain\Model\DailyWaste\DailyWaste;
+use App\Waste\Domain\Model\DailyWaste\DailyWasteId;
+use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
+use App\Waste\Domain\Model\Measurement\Measurement;
+use App\Waste\Domain\Model\Measurement\MeasurementRepository;
+use App\Waste\Domain\Model\Measurement\Unit;
+use App\Waste\Domain\Model\Waste\Waste;
+use App\Waste\Domain\Model\Waste\WasteRepository;
 
 class CalculateDailyWasteService implements CommandHandler
 {
-    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+    use RegisterHandlerTrait;
+    use CommandInvokeHandlerTrait;
 
     public function __construct(
         private DailyWasteRepository $dailyWasteRepository,
@@ -30,10 +34,8 @@ class CalculateDailyWasteService implements CommandHandler
         private MeasurementRepository $measurementRepository,
         private PropertyRepository $propertyRepository,
         private WasteRepository $wasteRepository,
-        private DailyWasteAuthorizer $authorizer
-    ) {
-
-    }
+        private DailyWasteAuthorizer $authorizer,
+    ) {}
 
     public function __invoke(CalculateDailyWasteRequest $request, User $user): CalculateDailyWasteResponse
     {
@@ -46,10 +48,10 @@ class CalculateDailyWasteService implements CommandHandler
                 id: $id,
                 propertyId: $request->propertyId,
                 accountId: $request->accountId,
-                day: $request->day
+                day: $request->day,
             ),
             Action::Register,
-            $user
+            $user,
         );
 
         $load = $this->calculateLoad($request);
@@ -60,20 +62,20 @@ class CalculateDailyWasteService implements CommandHandler
             wasteId: $request->wasteId,
             purpose: $request->purpose,
             wasteManagerId: $request->wasteManagerId,
-            accountId: $request->accountId
+            accountId: $request->accountId,
         );
 
-        if (null === $dailyWaste) {
+        if (!$dailyWaste instanceof DailyWaste) {
             $dailyWaste = new DailyWaste($id);
             $dailyWaste
                 ->register(
-                    day: $request->day,
                     propertyId: $request->propertyId,
                     wasteId: $request->wasteId,
                     purpose: $request->purpose,
                     wasteManagerId: $request->wasteManagerId,
+                    day: $request->day,
+                    load: $load,
                     accountId: $request->accountId,
-                    load: $load
                 )
             ;
         } else {
@@ -84,16 +86,20 @@ class CalculateDailyWasteService implements CommandHandler
 
         return new CalculateDailyWasteResponse(
             dailyWasteId: $dailyWaste->id(),
-            load: $dailyWaste->load()
+            load: $dailyWaste->load(),
         );
     }
 
-    private function validateRequest(CalculateDailyWasteRequest $request)
+    private function validateRequest(CalculateDailyWasteRequest $request): void
     {
         $property = $this->propertyRepository->find($request->propertyId);
 
-        if (null == $property || false === $property->accountId()->equals($request->accountId)) {
-            throw new \InvalidArgumentException("Debes especificar una propiedad válida");
+        if (null === $property || null === $property->accountId()) {
+            throw new \InvalidArgumentException('Debes especificar una propiedad válida');
+        }
+
+        if (false === $property->accountId()->equals($request->accountId)) {
+            throw new \InvalidArgumentException('Debes especificar una propiedad válida');
         }
     }
 
@@ -105,28 +111,31 @@ class CalculateDailyWasteService implements CommandHandler
             wasteId: $request->wasteId,
             purpose: $request->purpose,
             wasteManagerId: $request->wasteManagerId,
-            accountId: $request->accountId
+            accountId: $request->accountId,
         );
 
-        if (null === $measurements || 0 === count($measurements)) {
+        if (0 === count($measurements)) {
             return 0.0;
         }
 
         $wasteRepository = $this->wasteRepository;
         $containerRepository = $this->containerRepository;
 
-        return array_reduce($measurements, function (float $totalLoad, Measurement $measurement) use ($wasteRepository, $containerRepository) {
-            if ($measurement->unit() !== Unit::Kilogram) {
+        return array_reduce($measurements, function (float $totalLoad, Measurement $measurement) use ($wasteRepository, $containerRepository): float {
+            assert(null !== $measurement->unit());
+            if (Unit::Kilogram !== $measurement->unit()) {
+                assert(null !== $measurement->containerId());
                 $container = $containerRepository->find($measurement->containerId());
-                $containerVolume = null === $container ? 0 : $container->volume();
+                $containerVolume = $container instanceof Container ? $container->volume() : 0;
 
+                assert(null !== $measurement->wasteId());
                 $waste = $wasteRepository->find($measurement->wasteId());
-                $wasteDensity = null === $waste ? 0 : $waste->density();
+                $wasteDensity = $waste instanceof Waste ? $waste->density() : 0;
 
                 $load = $measurement->unit()->calculateLoadInKilograms(
                     load: $measurement->load(),
-                    volume: $containerVolume,
-                    density: $wasteDensity
+                    volume: floatval($containerVolume),
+                    density: floatval($wasteDensity),
                 );
             } else {
                 $load = $measurement->load();

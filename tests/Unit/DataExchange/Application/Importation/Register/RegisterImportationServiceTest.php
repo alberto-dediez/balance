@@ -1,11 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\DataExchange\Application\Importation\Register;
 
 use App\DataExchange\Application\Importation\Register\RegisterImportationRequest;
-use App\DataExchange\Application\Importation\Register\RegisterImportationResponse;
 use App\DataExchange\Application\Importation\Register\RegisterImportationService;
-use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationRegistered;
 use App\DataExchange\Infrastructure\Persistence\InMemory\Repository\InMemoryImportationRepository;
 use App\Security\Application\UnauthorizedActionException;
@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 class RegisterImportationServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -28,14 +28,14 @@ class RegisterImportationServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = new InMemoryImportationRepository();
 
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
         );
 
         $sut = $this->createSUT($repository);
@@ -46,20 +46,17 @@ class RegisterImportationServiceTest extends TestCase
             path: __DIR__ . '/superheroes.csv',
             offset: 0,
             extension: 'csv',
-            accountId: $user->accountId()
+            accountId: $user->accountId(),
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterImportationResponse);
         $this->assertNotEmpty((string) $result->importationId);
         $this->assertEquals(36, strlen((string) $result->importationId));
 
         $importationPersisted = $repository->find($result->importationId);
 
         $this->assertNotNull($importationPersisted);
-        $this->assertTrue($importationPersisted instanceof Importation);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -69,7 +66,7 @@ class RegisterImportationServiceTest extends TestCase
         $this->assertTrue($importationPersisted->id()->equals($lastEvent->importationId()));
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -78,7 +75,7 @@ class RegisterImportationServiceTest extends TestCase
         $user = UserMother::fromUsernameAndRoleAndAccount(
             username: 'owner',
             role: Role::Owner,
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
         );
 
         $sut = $this->createSUT($repository);
@@ -89,13 +86,13 @@ class RegisterImportationServiceTest extends TestCase
             path: __DIR__ . '/superheroes.csv',
             offset: 0,
             extension: 'csv',
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
         );
 
         $sut($request, $user);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = new InMemoryImportationRepository();
 
@@ -107,13 +104,13 @@ class RegisterImportationServiceTest extends TestCase
             path: __DIR__ . '/superheroes.csv',
             offset: 0,
             extension: 'csv',
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryImportationRepository $repository): RegisterImportationService
     {
         $authorizer = ImportationAuthorizerMother::create();
 

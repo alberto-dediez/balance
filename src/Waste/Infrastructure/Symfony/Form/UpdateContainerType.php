@@ -1,19 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Symfony\Form;
 
+use App\Waste\Application\Container\Update\UpdateContainerRequest;
+use App\Waste\Infrastructure\Symfony\Form\Type\ContainerVolumeType;
+use App\Waste\Infrastructure\Symfony\Form\Type\MeasurementMethodType;
+use App\Waste\Infrastructure\Symfony\Form\Type\PurposeType;
+use App\Waste\Infrastructure\Symfony\Form\Type\WasteIdType;
+use App\Waste\Infrastructure\Symfony\Form\Type\WasteManagerIdType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use App\Waste\Infrastructure\Symfony\Form\Type\PurposeType;
-use App\Waste\Infrastructure\Symfony\Form\Type\WasteIdType;
-use App\Waste\Application\Container\Update\UpdateContainerRequest;
-use App\Waste\Infrastructure\Symfony\Form\Type\WasteManagerIdType;
-use App\Waste\Infrastructure\Symfony\Form\Type\ContainerVolumeType;
-use App\Waste\Infrastructure\Symfony\Form\Type\MeasurementMethodType;
 
+/** @extends AbstractType<array<string, mixed>> */
 class UpdateContainerType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -21,34 +24,34 @@ class UpdateContainerType extends AbstractType
         $builder
             ->add('wasteId', WasteIdType::class, [
                 'label' => new TranslatableMessage('Tipología de residuo'),
-                'required' => true
+                'required' => true,
             ])
             ->add('purpose', PurposeType::class, [
                 'label' => new TranslatableMessage('Destino'),
-                'required' => true
+                'required' => true,
             ])
             ->add('measurementMethod', MeasurementMethodType::class, [
                 'label' => new TranslatableMessage('Método de medida'),
-                'required' => true
+                'required' => true,
             ])
             ->add('volume', ContainerVolumeType::class)
             ->add('wasteManagerId', WasteManagerIdType::class, [
                 'label' => new TranslatableMessage('Gestor de residuos'),
-                'required' => true
+                'required' => true,
             ])
             ->add('save', SubmitType::class, [
-                'label' => new TranslatableMessage('Guardar')
+                'label' => new TranslatableMessage('Guardar'),
             ])
             ->add('saveAndReturn', SubmitType::class, [
-                'label' => new TranslatableMessage('Guardar y salir')
+                'label' => new TranslatableMessage('Guardar y salir'),
             ])
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => UpdateContainerRequest::class
+            'data_class' => UpdateContainerRequest::class,
         ]);
     }
 }

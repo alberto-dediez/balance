@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\Waste;
 
-use App\Waste\Domain\Model\Waste\Waste;
+use App\Security\Application\AbstractAuthorizer;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
-use App\Security\Application\AbstractAuthorizer;
+use App\Waste\Domain\Model\Waste\Waste;
 
 final class WasteAuthorizer extends AbstractAuthorizer
 {
@@ -21,21 +23,27 @@ final class WasteAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        return ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin));
+        if ($user->hasRole(Role::SuperAdmin)) {
+            return true;
+        }
+
+        return $user->hasRole(Role::Admin);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::Admin) 
-            || $user->hasRole(Role::SuperAdmin)
-        ;
+        if ($user->hasRole(Role::Admin)) {
+            return true;
+        }
+
+        return $user->hasRole(Role::SuperAdmin);
     }
 
     protected function canRemove(mixed $subject, User $user): bool
     {
         return $this->canEdit($subject, $user);
-    }  
-    
+    }
+
     public function supports(mixed $subject): bool
     {
         return $subject instanceof Waste;

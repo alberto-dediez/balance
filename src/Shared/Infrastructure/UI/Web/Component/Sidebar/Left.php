@@ -1,21 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\UI\Web\Component\Sidebar;
 
-use App\Security\Domain\Model\User\Role;
-use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
+use App\Shared\Infrastructure\UI\Web\Navigation\Node;
 use App\Shared\Infrastructure\UI\Web\Navigation\NodeLister;
+use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent('Sidebar:Left', template: '@components/Sidebar/Left.html.twig')]
-final class Left
+final readonly class Left
 {
     public function __construct(
-        private NodeLister $nodeLister
-    ) {
+        private NodeLister $nodeLister,
+    ) {}
 
-    }
-
-    public function nodes()
+    /**
+     * @return list<Node>
+     */
+    public function nodes(): array
     {
         return $this->nodeLister->nodes();
     }

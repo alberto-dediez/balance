@@ -1,32 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Application\Category\Update;
 
-use InvalidArgumentException;
+use App\Property\Application\Category\CategoryAuthorizer;
+use App\Property\Domain\Model\Category\CategoryRepository;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
-use App\Property\Application\Category\CategoryAuthorizer;
-use App\Property\Domain\Model\Category\CategoryRepository;
-use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 
 class UpdateCategoryService implements CommandHandler
 {
-    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+    use RegisterHandlerTrait;
+    use CommandInvokeHandlerTrait;
 
-    public function __construct(private CategoryRepository $repository, private CategoryAuthorizer $authorizer)
-    {
-
-    }
+    public function __construct(private CategoryRepository $repository, private CategoryAuthorizer $authorizer) {}
 
     public function __invoke(UpdateCategoryRequest $request, User $user): UpdateCategoryResponse
     {
         $category = $this->repository->find($request->categoryId);
 
         if (null == $category) {
-            throw new InvalidArgumentException("Category not found");
+            throw new \InvalidArgumentException('Category not found');
         }
 
         $this->authorizer->denyUnlessCanDoThat($category, Action::Edit, $user);
@@ -37,7 +36,7 @@ class UpdateCategoryService implements CommandHandler
 
         return new UpdateCategoryResponse(
             categoryId: $category->id(),
-            name: $category->name()
+            name: $category->name(),
         );
     }
 

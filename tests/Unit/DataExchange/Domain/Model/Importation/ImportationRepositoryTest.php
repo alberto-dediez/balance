@@ -1,12 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\DataExchange\Domain\Model\Importation;
 
-use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
-use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
-use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class ImportationRepositoryTest extends KernelTestCase
@@ -27,11 +26,13 @@ abstract class ImportationRepositoryTest extends KernelTestCase
         $repository->add($importation);
 
         $importation = $repository->find($importation->id());
+        assert(null !== $importation);
 
         $configurations = $importation->configurations();
 
         $this->assertCount(4, $configurations);
 
+        /** @var array{nombre: string, edad: string, clase: string, superpoder: string} $data */
         $data = $repository->getData($importation->id(), 2);
 
         $this->assertEquals('Carla Ruiz', $data['nombre']);

@@ -1,24 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\User\Autocomplete;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Security\Application\User\UserAuthorizer;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Security\Application\User\Autocomplete\AutocompleteUserRequest;
 use App\Security\Application\User\Autocomplete\AutocompleteUserService;
-use App\Security\Application\User\Autocomplete\AutocompleteUserResponse;
+use App\Security\Application\User\UserAuthorizer;
+use App\Security\Domain\Model\User\Role;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserRepositoryMother;
+use PHPUnit\Framework\TestCase;
 
 class AutocompleteUserServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        
-    }
+    protected function setUp(): void {}
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = UserRepositoryMother::inMemory();
 
@@ -32,17 +31,15 @@ class AutocompleteUserServiceTest extends TestCase
         $repository->add(UserMother::random());
 
         $request = new AutocompleteUserRequest(
-            query: ''
+            query: '',
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof AutocompleteUserResponse);
         $this->assertCount(4, $result->elements);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryUserRepository $repository): AutocompleteUserService
     {
         return new AutocompleteUserService($repository, new UserAuthorizer());
     }

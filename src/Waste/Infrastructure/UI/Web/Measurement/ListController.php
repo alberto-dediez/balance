@@ -1,40 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Web\Measurement;
 
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\Role;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\Symfony\Form\BulkType;
+use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
+use App\Shared\Infrastructure\UI\Web\CRUD\BulkTrait;
+use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
+use App\Waste\Application\Measurement\List\ListMeasurementsRequest;
+use App\Waste\Application\Measurement\List\ListMeasurementsService;
+use App\Waste\Infrastructure\Symfony\Form\ListMeasurementsType;
+use App\Waste\Infrastructure\UI\Web\Measurement\Bulk\RemoveMeasurement;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Shared\Infrastructure\Symfony\Form\BulkType;
-use App\Shared\Infrastructure\UI\Web\CRUD\BulkTrait;
-use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
-use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
-use App\Security\Application\UnauthorizedActionException;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
-use App\Waste\Infrastructure\Symfony\Form\ListMeasurementsType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Waste\Application\Measurement\List\ListMeasurementsRequest;
-use App\Waste\Application\Measurement\List\ListMeasurementsService;
-use App\Waste\Infrastructure\UI\Web\Measurement\Bulk\RemoveMeasurement;
 
 #[Route('/measurements', name: 'measurements')]
 class ListController extends AbstractController
 {
-    use FilterTrait, BulkTrait;
+    use FilterTrait;
+    use BulkTrait;
 
     public function __invoke(
         LoggedAccount $loggedAccount,
         LoggedUser $loggedUser,
-        ListMeasurementsService $listMeasurements, 
-        Request $request
-    ): Response
-    {   
+        ListMeasurementsService $listMeasurements,
+        Request $request,
+    ): Response {
         $account = $loggedAccount();
         $user = $loggedUser();
 
-        list($filter, $form) = $this->filter($request, function () use ($account, $user) {
+        [$filter, $form] = $this->filter($request, function () use ($account, $user): ListMeasurementsRequest {
             $userId = $this->isGranted(Role::Owner->value)
                 ? null
                 : $user->id()
@@ -42,7 +44,7 @@ class ListController extends AbstractController
 
             return  new ListMeasurementsRequest(
                 accountId: $account?->id(),
-                userId: $userId
+                userId: $userId,
             );
         }, ListMeasurementsType::class);
 
@@ -52,11 +54,11 @@ class ListController extends AbstractController
             throw $this->createAccessDeniedException($exception->getMessage());
         }
 
-        $bulkForm = $this->createForm(BulkType::class, new BulkRequest, [
+        $bulkForm = $this->createForm(BulkType::class, new BulkRequest(), [
             'elements' => $response->measurements,
             'actions' => [
-                new RemoveMeasurement()
-            ]
+                new RemoveMeasurement(),
+            ],
         ]);
 
         $needsRedirect = $this->bulkActions($request, $bulkForm, $loggedUser());
@@ -69,7 +71,7 @@ class ListController extends AbstractController
             'bulkForm' => $bulkForm->createView(),
             'measurements' => $response->measurements,
             'totalResults' => $response->totalResults,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Domain\Model\Country;
 
 use App\Property\Domain\Model\Country\CountryFilter;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Property\Domain\Model\Country\CountryRepository;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class CountryRepositoryTest extends KernelTestCase
 {
-    public function testAddCountryToRepository()
-    {   
+    public function testAddCountryToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $country = CountryMother::random();
@@ -24,8 +26,8 @@ abstract class CountryRepositoryTest extends KernelTestCase
         $this->assertEquals($country->id(), $recoverCountry->id());
     }
 
-    public function testRemoveCountryToRepository()
-    {   
+    public function testRemoveCountryToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $country = CountryMother::random();
@@ -42,7 +44,7 @@ abstract class CountryRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($country->id()));
     }
 
-    public function testFindByName()
+    public function testFindByName(): void
     {
         $repository = $this->createSUT();
 
@@ -58,23 +60,26 @@ abstract class CountryRepositoryTest extends KernelTestCase
         $this->assertEquals($country->id(), $recoverCountry->id());
     }
 
-    public function testFindByIso()
+    public function testFindByIso(): void
     {
         $repository = $this->createSUT();
 
         $country = CountryMother::random();
 
-        $this->assertNull($repository->findByIso($country->iso()));
+        $iso = $country->iso();
+        assert(null !== $iso);
+
+        $this->assertNull($repository->findByIso($iso));
 
         $repository->add($country);
 
-        $recoverCountry = $repository->findByIso($country->iso());
+        $recoverCountry = $repository->findByIso($iso);
 
         $this->assertNotNull($recoverCountry);
         $this->assertTrue($country->id()->equals($recoverCountry->id()));
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -92,7 +97,7 @@ abstract class CountryRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new CountryFilter(
-            name: 'Spain'
+            name: 'Spain',
         );
 
         $result = $repository->findByFilter($filter);
@@ -100,7 +105,7 @@ abstract class CountryRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
@@ -118,7 +123,7 @@ abstract class CountryRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new CountryFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);
@@ -126,7 +131,7 @@ abstract class CountryRepositoryTest extends KernelTestCase
         $this->assertCount(6, $result);
     }
 
-    public function testFindNotRecoverRemoved()
+    public function testFindNotRecoverRemoved(): void
     {
         $repository = $this->createSUT();
 

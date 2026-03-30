@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\DataExchange\Domain\Model\Importation;
 
 use App\DataExchange\Domain\Model\Importation\Importation;
@@ -28,8 +30,8 @@ class ImportationMother
             name: $name,
             type: 'measurements',
             importationFile: $file,
-            status: $status,
             accountId: AccountId::generate(),
+            status: $status,
         );
     }
 
@@ -52,9 +54,9 @@ class ImportationMother
             id: $importationId,
             name: $name,
             type: $type,
+            status: $status,
             accountId: $accountId,
             file: $importationFile,
-            status: $status,
             registeredAt: new \DateTimeImmutable('NOW'),
         );
     }
@@ -63,9 +65,9 @@ class ImportationMother
     {
         return self::from(
             importationId: ImportationId::generate(),
-            name: 'importation-' . rand(100, 999),
+            name: 'importation-' . random_int(100, 999),
             type: 'measurements',
-            importationFile: new ImportationFile(__DIR__ . '/file-to-import.csv', 0),
+            importationFile: new ImportationFile(__DIR__ . '/file-to-import.csv', '', 0),
             accountId: AccountId::generate(),
         );
     }

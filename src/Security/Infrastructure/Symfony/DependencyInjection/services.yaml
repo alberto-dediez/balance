@@ -1,3 +1,9 @@
+parameters:
+    sso_url: '%env(SSO_URL)%'
+    sso_origin: '%env(SSO_PLATFORM)%'
+    sso_api_url: '%env(SSO_API_URL)%'
+    sso_jwt_public_key: '%env(resolve:SSO_JWT_PUBLIC_KEY)%'
+
 services:
     _defaults:
         autowire: true
@@ -11,6 +17,16 @@ services:
     App\Security\Infrastructure\UI\Console\:
         resource: '../../../Infrastructure/UI/Console/'
         tags: ['console.command']
+
+    App\Security\Infrastructure\SSO\Bioscore\BioscoreSSOClient:
+        arguments:
+            $ssoUrl: '%sso_url%'
+            $apiBaseUrl: '%sso_api_url%'
+            $origin: '%sso_origin%'
+
+    App\Security\Infrastructure\SSO\SSOJwtDecoder:
+        arguments:
+            $publicKeyPath: '%sso_jwt_public_key%'
 
     App\Security\Application\User\Register\RegisterUserService:
         arguments:

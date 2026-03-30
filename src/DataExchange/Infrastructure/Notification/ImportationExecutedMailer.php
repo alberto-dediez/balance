@@ -1,15 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\Notification;
 
+use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationExecuted;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
+use App\Security\Domain\Model\User\User;
+use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Domain\Event\DomainEvent;
-use App\Shared\Domain\Event\RegisterTrait;
-use App\Shared\Domain\Model\Email\EmailSender;
-use App\Shared\Domain\Model\Email\EmailRecipient;
 use App\Shared\Domain\Event\DomainEventSubscriber;
+use App\Shared\Domain\Event\RegisterTrait;
+use App\Shared\Domain\Model\Email\EmailRecipient;
+use App\Shared\Domain\Model\Email\EmailSender;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ImportationExecutedMailer implements DomainEventSubscriber
@@ -20,32 +25,38 @@ class ImportationExecutedMailer implements DomainEventSubscriber
         private EmailSender $emailSender,
         private ImportationRepository $importationRepository,
         private UserRepository $userRepository,
-        private TranslatorInterface $translator
+        private TranslatorInterface $translator,
     ) {
         $this->register();
     }
 
-    public function handle(DomainEvent $event)
+    public function handle(DomainEvent $event): void
     {
-        if (!$this->isSubscribedTo($event)) {
-            throw new \RuntimeException("Incorrect event!");
+        if (!$event instanceof ImportationExecuted) {
+            throw new \RuntimeException('Incorrect event!');
         }
 
         $this->handleImportationExecuted($event);
     }
 
-    private function handleImportationExecuted(ImportationExecuted $event)
+    private function handleImportationExecuted(ImportationExecuted $event): void
     {
         $importation = $this->importationRepository->find($event->importationId());
 
-        if (null === $importation) {
-            return ;
+        if (!$importation instanceof Importation) {
+            return;
         }
 
-        $user = $this->userRepository->find($importation->registeredBy());
+        $userId = $importation->registeredBy();
 
-        if (null === $user) {
-            return ;
+        if (!$userId instanceof UserId) {
+            return;
+        }
+
+        $user = $this->userRepository->find($userId);
+
+        if (!$user instanceof User) {
+            return;
         }
 
         $this->emailSender->__invoke(
@@ -54,12 +65,12 @@ class ImportationExecutedMailer implements DomainEventSubscriber
             template: '@data_exchange/notification/executed.email.html.twig',
             params: [
                 'user' => $user,
-                'importation' => $importation
-            ]
+                'importation' => $importation,
+            ],
         );
     }
 
-    public function isSubscribedTo(DomainEvent $event)
+    public function isSubscribedTo(DomainEvent $event): bool
     {
         return $event instanceof ImportationExecuted;
     }

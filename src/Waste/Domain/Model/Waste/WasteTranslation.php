@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Waste;
 
-use App\Waste\Domain\Model\Waste\WasteId;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\Translation;
 
@@ -11,11 +12,8 @@ class WasteTranslation implements Translation
     public function __construct(
         private string $name,
         private Locale $locale,
-        private WasteId $translatableId
-    )
-    {
-        
-    }
+        private Waste $translatable,
+    ) {}
 
     public function name(): string
     {
@@ -27,8 +25,15 @@ class WasteTranslation implements Translation
         return $this->locale;
     }
 
-    public function translatableId(): WasteId
+    public function translatable(): Waste
     {
-        return $this->translatableId;
+        return $this->translatable;
+    }
+
+    public function update(Translation $translation): void
+    {
+        assert($translation instanceof WasteTranslation);
+
+        $this->name = $translation->name();
     }
 }

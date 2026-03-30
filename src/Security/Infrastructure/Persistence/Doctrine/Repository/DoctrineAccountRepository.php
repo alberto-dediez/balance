@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountFilter;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -17,23 +19,18 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineAccountRepository implements AccountRepository
 {
-    private EntityRepository $repository;
-
-    public function __construct(private EntityManagerInterface $manager)
-    {
-        $this->repository = $manager->getRepository(Account::class);
-    }
+    public function __construct(private readonly EntityManagerInterface $manager) {}
 
     public function add(Account $account): void
     {
-        $this->getEntityManager()->persist($account);
-        $this->getEntityManager()->flush();
+        $this->manager->persist($account);
+        $this->manager->flush();
     }
 
     public function remove(Account $account): void
     {
-        $this->getEntityManager()->remove($account);
-        $this->getEntityManager()->flush();
+        $this->manager->remove($account);
+        $this->manager->flush();
     }
 
     public function find(AccountId $accountId): ?Account
@@ -42,7 +39,7 @@ class DoctrineAccountRepository implements AccountRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('a.id', ':id')
+                $qb->expr()->eq('a.id', ':id'),
             )
             ->setParameter('id', $accountId)
             ->getQuery()
@@ -56,7 +53,7 @@ class DoctrineAccountRepository implements AccountRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('a.name', ':name')
+                $qb->expr()->eq('a.name', ':name'),
             )
             ->setParameter('name', $name)
             ->getQuery()
@@ -66,22 +63,23 @@ class DoctrineAccountRepository implements AccountRepository
 
     private function createQueryBuilderFromFilter(AccountFilter $filter): QueryBuilder
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb = $this->manager->createQueryBuilder();
 
         $qb->select('a')
             ->from(Account::class, 'a')
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('a.removed'),
-                    $qb->expr()->eq('a.removed', $qb->expr()->literal(false))
-                )
+                    $qb->expr()->eq('a.removed', ':removed')
+                ),
             )
+            ->setParameter('removed', false, Types::BOOLEAN)
         ;
 
-        if (!empty($filter->name)) {
+        if (!in_array($filter->name, [null, '', '0'], true)) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('a.name', ':name')
+                    $qb->expr()->like('a.name', ':name'),
                 )
                 ->setParameter('name', "%{$filter->name}%")
             ;
@@ -90,27 +88,25 @@ class DoctrineAccountRepository implements AccountRepository
         if (null !== $filter->active) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('a.active', ':active')
+                    $qb->expr()->eq('a.active', ':active'),
                 )
                 ->setParameter('active', $filter->active)
             ;
         }
 
-        $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
-        switch ($filter->orderBy) {
-            case 'registeredAt':
-                $qb->orderBy('a.registeredAt', $way);
-                break;
-            case 'name':
-            default:
-                $qb->orderBy('a.name', $way);
-                break;
-        }
+        match ($filter->orderBy) {
+            'registeredAt' => $qb->orderBy('a.registeredAt', $way),
+            default => $qb->orderBy('a.name', $way),
+        };
 
         return $qb;
     }
 
+    /**
+     * @return list<Account>
+     */
     public function findByFilter(AccountFilter $filter): array
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
@@ -131,14 +127,11 @@ class DoctrineAccountRepository implements AccountRepository
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return $qb->select('COUNT(DISTINCT a)')
+        $count = $qb->select('COUNT(DISTINCT a)')
             ->getQuery()
             ->getSingleScalarResult()
         ;
-    }
 
-    private function getEntityManager()
-    {
-        return $this->manager;
+        return intval($count);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\UI\Web\Import;
 
 use App\DataExchange\Application\Importation\ImportationAuthorizer;
@@ -17,9 +19,7 @@ trait AuthorizeTrait
         private ImportationAuthorizer $importationAuthorizer,
         private ImportationTypeFactory $importationTypeFactory,
         private ImportationRepository $importationRepository,
-    ) {
-
-    }
+    ) {}
 
     private function getImportationOrNotFound(string $id): Importation
     {
@@ -61,12 +61,10 @@ trait AuthorizeTrait
             return false;
         }
 
-        if (false === $this->importationAuthorizer->canDoThat(
-                $importation, Action::Edit, $user
-            )) {
-            return false;
-        }
-
-        return true;
+        return false !== $this->importationAuthorizer->canDoThat(
+            $importation,
+            Action::Edit,
+            $user,
+        );
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Persistence\Doctrine\Type;
 
 use App\Shared\Domain\Model\AggregateRootId;
@@ -18,11 +20,16 @@ trait AggregateRootIdTypeTrait
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?AggregateRootId
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
-        return new ($this->getClassName())($value);
+        $className = $this->getClassName();
+
+        /** @var AggregateRootId $instance */
+        $instance = new $className($value);
+
+        return $instance;
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
@@ -38,5 +45,4 @@ trait AggregateRootIdTypeTrait
     {
         return true;
     }
-
 }

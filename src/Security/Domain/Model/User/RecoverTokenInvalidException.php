@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Security\Domain\Model\User;
+declare(strict_types=1);
 
-use App\Security\Domain\Model\User\RecoverToken;
+namespace App\Security\Domain\Model\User;
 
 class RecoverTokenInvalidException extends \RuntimeException
 {
     public function __construct(RecoverToken $recoverToken)
     {
         parent::__construct(
-            sprintf("El token %s es incorrecto. Fecha de expiración %s", $recoverToken->token(), $recoverToken->expirateAt()->format('H:i d/m/Y')),
-            403
+            sprintf('El token %s es incorrecto. Fecha de expiración %s', $recoverToken->token(), $recoverToken->expirateAt()?->format('H:i d/m/Y')),
+            403,
         );
     }
 }

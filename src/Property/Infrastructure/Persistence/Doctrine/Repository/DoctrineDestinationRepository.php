@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Property\Domain\Model\Country\CountryId;
@@ -9,6 +11,7 @@ use App\Property\Domain\Model\Destination\DestinationId;
 use App\Property\Domain\Model\Destination\DestinationRepository;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -19,21 +22,18 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineDestinationRepository implements DestinationRepository
 {
-    public function __construct(private EntityManagerInterface $manager)
-    {
-
-    }
+    public function __construct(private readonly EntityManagerInterface $manager) {}
 
     public function add(Destination $destination): void
     {
-        $this->getEntityManager()->persist($destination);
-        $this->getEntityManager()->flush();
+        $this->manager->persist($destination);
+        $this->manager->flush();
     }
 
     public function remove(Destination $destination): void
     {
-        $this->getEntityManager()->remove($destination);
-        $this->getEntityManager()->flush();
+        $this->manager->remove($destination);
+        $this->manager->flush();
     }
 
     public function find(DestinationId $destinationId): ?Destination
@@ -42,7 +42,7 @@ class DoctrineDestinationRepository implements DestinationRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('d.id', ':id')
+                $qb->expr()->eq('d.id', ':id'),
             )
             ->setParameter('id', (string) $destinationId)
             ->getQuery()
@@ -58,8 +58,8 @@ class DoctrineDestinationRepository implements DestinationRepository
             ->andWhere(
                 $qb->expr()->andX(
                     $qb->expr()->like('d.name', ':name'),
-                    $qb->expr()->eq('d.countryId', ':countryId')
-                )
+                    $qb->expr()->eq('d.countryId', ':countryId'),
+                ),
             )
             ->setParameter('name', $name)
             ->setParameter('countryId', $countryId)
@@ -81,7 +81,7 @@ class DoctrineDestinationRepository implements DestinationRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->like("d.externalId.{$attribute}", ":sourceId")
+                $qb->expr()->like("d.externalId.{$attribute}", ':sourceId'),
             )
             ->setParameter('sourceId', $sourceId)
             ->getQuery()
@@ -92,51 +92,48 @@ class DoctrineDestinationRepository implements DestinationRepository
 
     private function createQueryBuilderFromFilter(DestinationFilter $filter): QueryBuilder
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb = $this->manager->createQueryBuilder();
 
         $qb->select('d')
             ->from(Destination::class, 'd')
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('d.removed'),
-                    $qb->expr()->eq('d.removed', $qb->expr()->literal(false))
-                )
+                    $qb->expr()->eq('d.removed', ':removed')
+                ),
             )
+            ->setParameter('removed', false, Types::BOOLEAN)
         ;
 
         if (!empty($filter->name)) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('d.name', ':name')
+                    $qb->expr()->like('d.name', ':name'),
                 )
                 ->setParameter('name', "%{$filter->name}%")
             ;
         }
 
-        if (null !== $filter->countryId) {
+        if ($filter->countryId instanceof CountryId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('d.countryId', ':countryId')
+                    $qb->expr()->eq('d.countryId', ':countryId'),
                 )
                 ->setParameter('countryId', $filter->countryId)
             ;
         }
 
-        $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
-        switch ($filter->orderBy) {
-            case 'registeredAt':
-                $qb->orderBy('d.registeredAt', $way);
-                break;
-            case 'name':
-            default:
-                $qb->orderBy('d.name', $way);
-                break;
-        }
+        match ($filter->orderBy) {
+            'registeredAt' => $qb->orderBy('d.registeredAt', $way),
+            default => $qb->orderBy('d.name', $way),
+        };
 
         return $qb;
     }
 
+    /** @return Destination[] */
     public function findByFilter(DestinationFilter $filter): array
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
@@ -157,14 +154,9 @@ class DoctrineDestinationRepository implements DestinationRepository
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return $qb->select('COUNT(DISTINCT d)')
+        return (int) $qb->select('COUNT(DISTINCT d)')
             ->getQuery()
             ->getSingleScalarResult()
         ;
-    }
-
-    private function getEntityManager()
-    {
-        return $this->manager;
     }
 }

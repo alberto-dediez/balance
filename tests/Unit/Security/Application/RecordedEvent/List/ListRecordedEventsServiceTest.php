@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\RecordedEvent\List;
 
 use App\Security\Application\RecordedEvent\List\ListRecordedEventsRequest;
-use App\Security\Application\RecordedEvent\List\ListRecordedEventsResponse;
 use App\Security\Application\RecordedEvent\List\ListRecordedEventsService;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryRecordedEventRepository;
@@ -14,12 +15,9 @@ use PHPUnit\Framework\TestCase;
 
 class ListRecordedEventsServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {}
 
-    }
-
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = new InMemoryRecordedEventRepository();
 
@@ -36,13 +34,11 @@ class ListRecordedEventsServiceTest extends TestCase
 
         $result = $sut($request, $performBy);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListRecordedEventsResponse);
         $this->assertCount(4, $result->events);
         $this->assertEquals(4, $result->totalResults);
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -59,10 +55,10 @@ class ListRecordedEventsServiceTest extends TestCase
 
         $request = new ListRecordedEventsRequest();
 
-        $result = $sut($request, $performBy);
+        $sut($request, $performBy);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryRecordedEventRepository $repository): ListRecordedEventsService
     {
         return new ListRecordedEventsService($repository, RecordedEventAuthorizerMother::create());
     }

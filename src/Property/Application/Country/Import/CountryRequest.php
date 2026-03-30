@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Application\Country\Import;
 
 use App\Property\Domain\Model\Property\ExternalId;
@@ -12,8 +14,6 @@ class CountryRequest
         public ExternalSource $source,
         public ExternalId $externalId,
         public ?string $iso = null,
-        public ?bool $createIfNotExists = false
-    ) {
-
-    }
+        public ?bool $createIfNotExists = false,
+    ) {}
 }

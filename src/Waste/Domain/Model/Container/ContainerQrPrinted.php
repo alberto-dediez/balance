@@ -1,22 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Container;
 
-use DateTimeImmutable;
-use App\Waste\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
-use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\DomainEvent;
 
 final class ContainerQrPrinted extends DomainEvent
 {
     protected static string $eventName = 'containerQrPrinted';
 
     public function __construct(
-        private ContainerId $containerId, 
-        private string $path,
+        private readonly ContainerId $containerId,
+        private readonly string $path,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -31,29 +31,29 @@ final class ContainerQrPrinted extends DomainEvent
         return $this->path;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->containerId();
+        return $this->containerId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'containerId' => (string) $this->containerId,
-            'path' => (string) $this->path
+            'path' => $this->path,
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        ?array $payload
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new ContainerQrPrinted(
             containerId: new ContainerId($payload['containerId']),
             path: $payload['path'],
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

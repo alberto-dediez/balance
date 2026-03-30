@@ -1,53 +1,51 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Application\CommandBus;
 
-use BadMethodCallException;
 use App\Security\Domain\Model\User\User;
-use App\Shared\Application\CommandBus\Command;
-use App\Shared\Application\CommandBus\CommandHandler;
-use App\Shared\Application\CommandBus\CommandResponse;
 
 class CommandBusDispatcher
 {
-    protected static $instance;
-    
-    protected array $handlers; 
+    protected static ?CommandBusDispatcher $instance = null;
 
-    private function __construct()
-    {
-        $this->handlers = [];
-    }
+    /**
+     * @var CommandHandler[]
+     */
+    protected array $handlers = [];
+
+    private function __construct() {}
 
     public static function instance(): CommandBusDispatcher
     {
-        if (null === static::$instance) {
+        if (!static::$instance instanceof CommandBusDispatcher) {
             static::$instance = new self();
         }
-        
+
         return static::$instance;
     }
 
     public function __clone()
     {
-        throw new BadMethodCallException("Clone is not supported");
+        throw new \BadMethodCallException('Clone is not supported');
     }
 
-    public function subscribe(CommandHandler $handler) 
+    public function subscribe(CommandHandler $handler): void
     {
-        if (!isset($this->handlers[get_class($handler)])) {
-            $this->handlers[get_class($handler)] = $handler;    
-        }        
+        if (!isset($this->handlers[$handler::class])) {
+            $this->handlers[$handler::class] = $handler;
+        }
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->handlers = [];
     }
 
     public function dispatch(Command $command, User $user): ?CommandResponse
     {
-        if (count($this->handlers) == 0) {
+        if (0 === count($this->handlers)) {
             return null;
         }
 

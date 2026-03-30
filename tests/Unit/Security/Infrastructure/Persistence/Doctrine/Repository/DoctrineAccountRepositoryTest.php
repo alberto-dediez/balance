@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Security\Domain\Model\Account\AccountRepository;

@@ -1,24 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\Measurement\Update;
 
-use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Waste\Domain\Model\Measurement\MeasurementUpdated;
-use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
+use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
+use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Application\Measurement\Update\UpdateMeasurementRequest;
 use App\Waste\Application\Measurement\Update\UpdateMeasurementService;
-use App\Waste\Application\Measurement\Update\UpdateMeasurementResponse;
-use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
+use App\Waste\Domain\Model\Measurement\MeasurementUpdated;
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryMeasurementRepository;
+use PHPUnit\Framework\TestCase;
 
 class UpdateMeasurementServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -27,7 +28,7 @@ class UpdateMeasurementServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = MeasurementRepositoryMother::inMemory();
 
@@ -35,7 +36,9 @@ class UpdateMeasurementServiceTest extends TestCase
 
         $repository->add($measurement);
 
-        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $measurement->accountId());
+        $accountId = $measurement->accountId();
+        self::assertNotNull($accountId);
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId);
 
         $sut = $this->createSUT($repository);
 
@@ -43,18 +46,14 @@ class UpdateMeasurementServiceTest extends TestCase
             measurementId: $measurement->id(),
             quantity: 2,
             load: 0.26,
-            justification: null
+            justification: null,
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateMeasurementResponse);
-
         $measurementPersisted = $repository->find($result->measurementId);
 
         $this->assertNotNull($measurementPersisted);
-        $this->assertTrue($measurementPersisted instanceof Measurement);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -64,7 +63,7 @@ class UpdateMeasurementServiceTest extends TestCase
         $this->assertTrue($measurementPersisted->id()->equals($lastEvent->measurementId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = MeasurementRepositoryMother::inMemory();
 
@@ -76,17 +75,17 @@ class UpdateMeasurementServiceTest extends TestCase
             measurementId: $measurement->id(),
             quantity: 2,
             load: 0.26,
-            justification: null
+            justification: null,
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryMeasurementRepository $repository): UpdateMeasurementService
     {
         return new UpdateMeasurementService(
             measurementRepository: $repository,
-            authorizer: new MeasurementAuthorizer()
+            authorizer: new MeasurementAuthorizer(),
         );
     }
 }

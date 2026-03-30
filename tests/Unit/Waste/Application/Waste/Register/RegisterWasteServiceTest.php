@@ -1,34 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\Waste\Register;
 
-use PHPUnit\Framework\TestCase;
-use App\Waste\Domain\Model\Waste\Waste;
-use App\Shared\Domain\Model\Locale\Locale;
-use App\Waste\Application\Waste\WasteAuthorizer;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Waste\Domain\Model\Waste\WasteRegistered;
-use App\Waste\Domain\Model\Waste\WasteTranslated;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
+use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
 use App\Waste\Application\Waste\Register\RegisterWasteRequest;
 use App\Waste\Application\Waste\Register\RegisterWasteService;
-use App\Waste\Application\Waste\Register\RegisterWasteResponse;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleGetter;
-use App\Tests\Unit\Waste\Domain\Model\Waste\WasteRepositoryMother;
+use App\Waste\Application\Waste\WasteAuthorizer;
+use App\Waste\Domain\Model\Waste\WasteRegistered;
+use App\Waste\Domain\Model\Waste\WasteTranslated;
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteRepository;
+use PHPUnit\Framework\TestCase;
 
 class RegisterWasteServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
         DomainEventPublisher::instance()->reset();
+        FakeLocaleSetter::reset();
 
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = WasteRepositoryMother::inMemory();
 
@@ -38,13 +40,11 @@ class RegisterWasteServiceTest extends TestCase
             name: 'Company ABC',
             isDangerous: true,
             density: '0.03',
-            color: '#cccddd'
+            color: '#cccddd',
         );
 
         $result = $sut($request, UserMother::adminUser());
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterWasteResponse);
         $this->assertNotEmpty((string) $result->wasteId);
         $this->assertEquals(36, strlen((string) $result->wasteId));
         $this->assertTrue($result->isDangerous);
@@ -52,7 +52,6 @@ class RegisterWasteServiceTest extends TestCase
         $wastePersisted = $repository->find($result->wasteId);
 
         $this->assertNotNull($wastePersisted);
-        $this->assertTrue($wastePersisted instanceof Waste);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -65,7 +64,7 @@ class RegisterWasteServiceTest extends TestCase
         $this->assertTrue($wastePersisted->isDangerous());
     }
 
-    public function testRegisterWithLocaleTranslate()
+    public function testRegisterWithLocaleTranslate(): void
     {
         $repository = WasteRepositoryMother::inMemory(Locale::Spanish);
 
@@ -75,18 +74,14 @@ class RegisterWasteServiceTest extends TestCase
             name: 'changedName',
             isDangerous: true,
             density: '0.03',
-            color: '#cccddd'
+            color: '#cccddd',
         );
 
         $result = $sut($request, UserMother::adminUser());
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterWasteResponse);
-
         $wastePersisted = $repository->find($result->wasteId);
 
         $this->assertNotNull($wastePersisted);
-        $this->assertTrue($wastePersisted instanceof Waste);
         $this->assertEquals('changedName', $wastePersisted->name());
 
         $lastEvent = $this->spySubscriber->lastEvent();
@@ -98,7 +93,7 @@ class RegisterWasteServiceTest extends TestCase
         $this->assertTrue($wastePersisted->id()->equals($lastEvent->wasteId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = WasteRepositoryMother::inMemory(Locale::Spanish);
 
@@ -108,20 +103,19 @@ class RegisterWasteServiceTest extends TestCase
             name: 'changedName',
             isDangerous: true,
             density: '0.03',
-            color: '#cccddd'
+            color: '#cccddd',
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository, Locale $locale)
+    private function createSUT(InMemoryWasteRepository $repository, Locale $locale): RegisterWasteService
     {
+        FakeLocaleSetter::set($locale);
+
         return new RegisterWasteService(
-            wasteRepository: $repository, 
-            localeGetter: new FakeLocaleGetter(
-                locale: $locale
-            ),
-            authorizer: new WasteAuthorizer()
+            wasteRepository: $repository,
+            authorizer: new WasteAuthorizer(),
         );
     }
 }

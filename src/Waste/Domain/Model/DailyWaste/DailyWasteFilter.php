@@ -1,18 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\DailyWaste;
 
-use App\Shared\Domain\Model\Filter;
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Waste\Domain\Model\Container\Purpose;
-use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Model\Filter;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 class DailyWasteFilter
 {
     use Filter;
 
+    /**
+     * @param array<int, mixed> $properties
+     */
     public function __construct(
         public array $properties = [],
         public ?WasteId $wasteId = null,
@@ -25,7 +29,6 @@ class DailyWasteFilter
         int $limit = 10,
         string $orderBy = 'default',
         string $orderWay = 'DESC',
-
     ) {
         $this->limit = $limit;
         $this->orderBy = $orderBy;

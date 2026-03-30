@@ -1,50 +1,50 @@
 <?php
 
-namespace App\Shared\Domain\Event;
+declare(strict_types=1);
 
-use BadMethodCallException;
+namespace App\Shared\Domain\Event;
 
 class EventRegistry
 {
-    private string $pathToFile;
+    private readonly string $pathToFile;
 
-    protected static $instance;
+    protected static ?EventRegistry $instance = null;
 
+    /**
+     * @param array<string,string> $events
+     */
     private function __construct(
-        protected array $events = []
+        protected array $events = [],
     ) {
         $this->pathToFile = __DIR__ . '/../../../../var/events.json';
     }
 
     public static function instance(): EventRegistry
     {
-        if (null === static::$instance) {
+        if (!static::$instance instanceof EventRegistry) {
             static::$instance = new self();
 
             static::$instance->load();
         }
-        
+
         return static::$instance;
     }
 
     public function __clone()
     {
-        throw new BadMethodCallException("Clone is not supported");
+        throw new \BadMethodCallException('Clone is not supported');
     }
 
-    public function registerEvent(string $fullName, string $class)
+    public function registerEvent(string $fullName, string $class): void
     {
         $this->events[$fullName] = $class;
     }
 
     public function getEvent(string $context, string $eventName): ?string
     {
-        $fullname = sprintf("%s.%s", $context, $eventName);
+        $fullName = sprintf('%s.%s', $context, $eventName);
 
-        return isset($this->events[$fullname]) 
-            ? $this->events[$fullname]
-            : null
-        ;
+        return $this->events[$fullName] ?? null;
     }
 
     public function save(): void
@@ -54,12 +54,23 @@ class EventRegistry
 
     protected function load(): void
     {
-        if (file_exists($this->pathToFile)) {
-            $events = @json_decode(file_get_contents($this->pathToFile), true);
+        if (!file_exists($this->pathToFile)) {
+            return;
+        }
 
-            if (is_array($events)) {
-                $this->events = $events;
-            }
-        }       
+        $content = file_get_contents($this->pathToFile);
+
+        if (false === $content) {
+            return;
+        }
+
+
+        $events = @json_decode($content, true);
+
+        if (!is_array($events)) {
+            return;
+        }
+
+        $this->events = $events;
     }
 }

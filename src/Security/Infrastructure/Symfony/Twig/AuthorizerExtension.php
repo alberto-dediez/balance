@@ -1,45 +1,45 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Twig;
 
-use Twig\TwigFilter;
 use App\Security\Application\Action;
-use Twig\Extension\AbstractExtension;
 use App\Security\Infrastructure\Symfony\Security\AuthorizerFactory;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Doctrine\Migrations\Query\Exception\InvalidArguments;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
 class AuthorizerExtension extends AbstractExtension
 {
     public function __construct(
-        private AuthorizerFactory $authorizerFactory, 
-        private LoggedUser $loggedUser
-    ) {
-
-    }
+        private readonly AuthorizerFactory $authorizerFactory,
+        private readonly LoggedUser $loggedUser,
+    ) {}
 
     public function getFilters(): array
     {
         return [
-            new TwigFilter('is_authorized', [$this, 'isAuthorized']),
+            new TwigFilter('is_authorized', $this->isAuthorized(...)),
         ];
     }
 
     public function getFunctions(): array
     {
         return [
-            
+
         ];
     }
 
-    public function isAuthorized(mixed $subject, Action|string $action)
+    public function isAuthorized(mixed $subject, Action|string $action): bool
     {
         $action = is_string($action) ? Action::tryFrom($action) : $action;
 
         $authorizer = $this->authorizerFactory->createFor($subject);
 
         if (null == $action || null == $authorizer) {
-            throw new InvalidArguments("Invalid subject or action");
+            throw new InvalidArguments('Invalid subject or action');
         }
 
         $user = $this->loggedUser->__invoke();

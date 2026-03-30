@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\UI\Web\Import;
 
 use App\DataExchange\Application\Importation\AssignValues\AssignValuesImportationRequest;
+use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
 use App\DataExchange\Infrastructure\UI\Web\Form\AssignValuesType;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
+use App\Shared\Application\CommandBus\CommandResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,8 +26,7 @@ class AssignValuesController extends AbstractController
         string $id,
         LoggedUser $loggedUser,
         Request $request,
-    ): Response
-    {
+    ): Response {
         $importationType = $this->getImportationTypeOrNotFound($code);
 
         $importation = $this->getImportationOrNotFound($id);
@@ -32,11 +35,9 @@ class AssignValuesController extends AbstractController
 
         $definitions = $importationType->assignValueDefinitions();
 
-        $notConfiguredFields = array_filter(array_keys($definitions), function ($field) use ($importation) {
-            return null === $importation->configurationForField($field);
-        });
+        $notConfiguredFields = array_filter(array_keys($definitions), fn(int|string $field) => !$importation->configurationForField($field) instanceof ImportationColumnConfiguration);
 
-        if (count($notConfiguredFields) === 0) {
+        if (0 === count($notConfiguredFields)) {
             return $this->redirectToRoute('import_finish', ['code' => $code, 'id' => $importation->id()]);
         }
 
@@ -54,10 +55,11 @@ class AssignValuesController extends AbstractController
                 new AssignValuesImportationRequest(
                     importationId: $importation->id(),
                     defaultValues: $form->getData(),
-                ), $loggedUser()
+                ),
+                $loggedUser(),
             );
 
-            if (null === $response) {
+            if (!$response instanceof CommandResponse) {
                 $this->addFlash('danger', new TranslatableMessage('Hay errores en la configuración de los distintos campos. Por favor, revise el formulario.'));
             } else {
                 return $this->redirectToRoute('import_finish', ['code' => $code, 'id' => $importation->id()]);

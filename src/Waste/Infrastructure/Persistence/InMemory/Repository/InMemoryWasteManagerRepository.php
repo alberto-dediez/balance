@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Persistence\InMemory\Repository;
 
+use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\WasteManager\WasteManager;
 use App\Waste\Domain\Model\WasteManager\WasteManagerFilter;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
@@ -11,15 +14,15 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryWasteManagerRepository implements WasteManagerRepository
 {
-    public function __construct(private array $wasteManagers = [])
-    {
-
-    }
+    /** @param array<string, WasteManager> $wasteManagers */
+    public function __construct(
+        private array $wasteManagers = [],
+    ) {}
 
     public function add(WasteManager $wasteManager): void
     {
         if (isset($this->wasteManagers[(string) $wasteManager->id()])) {
-            return ;
+            return;
         }
 
         $this->wasteManagers[(string) $wasteManager->id()] = $wasteManager;
@@ -28,7 +31,7 @@ class InMemoryWasteManagerRepository implements WasteManagerRepository
     public function remove(WasteManager $wasteManager): void
     {
         if (!isset($this->wasteManagers[(string) $wasteManager->id()])) {
-            return ;
+            return;
         }
 
         unset($this->wasteManagers[(string) $wasteManager->id()]);
@@ -42,11 +45,12 @@ class InMemoryWasteManagerRepository implements WasteManagerRepository
         ;
     }
 
+    /** @return array<int, WasteManager> */
     public function findByFilter(WasteManagerFilter $filter): array
     {
         $results = [];
 
-        if (count($this->wasteManagers) == 0) {
+        if (0 === count($this->wasteManagers)) {
             return $results;
         }
 
@@ -54,10 +58,10 @@ class InMemoryWasteManagerRepository implements WasteManagerRepository
 
         foreach ($this->wasteManagers as $wasteManager) {
             if (
-                null !== $filter->accountId
+                $filter->accountId instanceof AccountId
                 && (
                     null == $wasteManager->accountId()
-                    || false == $filter->accountId->equals($wasteManager->accountId())
+                    || false === $filter->accountId->equals($wasteManager->accountId())
                 )
             ) {
                 continue;
@@ -86,7 +90,7 @@ class InMemoryWasteManagerRepository implements WasteManagerRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

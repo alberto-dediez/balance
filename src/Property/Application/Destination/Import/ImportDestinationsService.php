@@ -1,55 +1,55 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Application\Destination\Import;
 
-use App\Security\Application\Action;
-use App\Security\Domain\Model\User\User;
-use App\Property\Domain\Model\Destination\Destination;
-use App\Property\Domain\Model\Country\CountryRepository;
-use App\Property\Domain\Model\Destination\DestinationId;
-use App\Property\Domain\Model\Destination\DestinationFilter;
 use App\Property\Application\Destination\DestinationAuthorizer;
-use App\Property\Domain\Model\Destination\DestinationRepository;
-use App\Property\Application\Destination\Import\DestinationRequest;
-use App\Property\Application\Destination\Update\UpdateDestinationRequest;
-use App\Property\Application\Destination\Update\UpdateDestinationService;
 use App\Property\Application\Destination\Register\RegisterDestinationRequest;
 use App\Property\Application\Destination\Register\RegisterDestinationService;
+use App\Property\Application\Destination\Update\UpdateDestinationRequest;
+use App\Property\Application\Destination\Update\UpdateDestinationService;
+use App\Property\Domain\Model\Destination\Destination;
+use App\Property\Domain\Model\Destination\DestinationFilter;
+use App\Property\Domain\Model\Destination\DestinationId;
+use App\Property\Domain\Model\Destination\DestinationRepository;
+use App\Security\Application\Action;
+use App\Security\Domain\Model\User\User;
 
 class ImportDestinationsService
 {
-    const MIN_PERCENT_MATCH = 75;
+    public const MIN_PERCENT_MATCH = 75;
 
     public function __construct(
-        private DestinationRepository $repository, 
-        private CountryRepository $countryRepository, 
-        private RegisterDestinationService $registerDestination, 
-        private UpdateDestinationService $updateDestination, 
-        private DestinationAuthorizer $authorizer
-    ) {
-
-    }
+        private readonly DestinationRepository $repository,
+        private readonly RegisterDestinationService $registerDestination,
+        private readonly UpdateDestinationService $updateDestination,
+        private readonly DestinationAuthorizer $authorizer,
+    ) {}
 
     public function __invoke(ImportDestinationsRequest $request, User $user): ImportDestinationsResponse
     {
         $this->authorizer->denyUnlessCanDoThat(new Destination(
-            id: DestinationId::generate()
+            id: DestinationId::generate(),
         ), Action::Admin, $user);
 
         $destinationsMatch = $this->matchDestinations($request->destinations, $user);
 
         $totalResults = array_sum(
-            array_map(function (DestinationResponse $response) {
-                return null !== $response->destinationId ? 1 : 0;
-            }, $destinationsMatch)
+            array_map(fn(DestinationResponse $response) => $response->destinationId instanceof DestinationId ? 1 : 0, $destinationsMatch),
         );
 
         return new ImportDestinationsResponse($destinationsMatch, $totalResults);
     }
 
+    /**
+     * @param DestinationRequest[] $destinationRequests
+     *
+     * @return DestinationResponse[]
+     */
     private function matchDestinations(array $destinationRequests, User $user): array
     {
-        if (count($destinationRequests) == 0) {
+        if (0 === count($destinationRequests)) {
             return [];
         }
 
@@ -58,20 +58,21 @@ class ImportDestinationsService
         foreach ($destinationRequests as $request) {
             $destinationMatch = $this->repository->findBySourceAndExternalId(
                 source: $request->source,
-                externalId: $request->externalId
+                externalId: $request->externalId,
             );
 
-            if (null !== $request->countryId && null == $destinationMatch) {
+            if (null == $destinationMatch) {
                 $destinationMatch = $this->findByNameAndCountry($request);
 
-                if (null !== $destinationMatch) {
+                if ($destinationMatch instanceof Destination) {
+                    assert(null !== $destinationMatch->countryId());
                     $this->updateDestination->__invoke(new UpdateDestinationRequest(
                         destinationId: $destinationMatch->id(),
                         name: $destinationMatch->name(),
                         countryId: $destinationMatch->countryId(),
                         externalId: $destinationMatch->externalId()->combine(
-                            $request->externalId
-                        )
+                            $request->externalId,
+                        ),
                     ), $user);
                 }
 
@@ -89,9 +90,9 @@ class ImportDestinationsService
             $result[] = new DestinationResponse(
                 name: $request->name,
                 countryId: $request->countryId,
-                createIfNotExists: $request->createIfNotExists,
                 externalId: $request->externalId,
-                destinationId: $destinationMatch?->id()
+                createIfNotExists: $request->createIfNotExists,
+                destinationId: $destinationMatch?->id(),
             );
         }
 
@@ -102,15 +103,15 @@ class ImportDestinationsService
     {
         $destinationMatch = $this->repository->findByNameAndCountry($request->name, $request->countryId);
 
-        if (null !== $destinationMatch) {
+        if ($destinationMatch instanceof Destination) {
             return $destinationMatch;
         }
 
         $destinations = $this->repository->findByFilter(
             new DestinationFilter(
                 countryId: $request->countryId,
-                limit: 10000
-            )
+                limit: 10000,
+            ),
         );
 
         $possibleMatch = null;
@@ -122,7 +123,7 @@ class ImportDestinationsService
                 continue;
             }
 
-            similar_text($request->name, $destination->name(), $matchPercent);
+            similar_text($request->name, (string) $destination->name(), $matchPercent);
 
             if ($matchPercent < self::MIN_PERCENT_MATCH) {
                 continue;

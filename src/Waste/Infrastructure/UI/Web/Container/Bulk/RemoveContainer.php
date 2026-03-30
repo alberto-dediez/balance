@@ -1,40 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Web\Container\Bulk;
 
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkAction;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
-use Symfony\Component\Translation\TranslatableMessage;
+use App\Shared\Infrastructure\UI\Web\Bulk\RemoveAction;
 use App\Waste\Application\Container\Remove\RemoveContainerRequest;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class RemoveContainer implements BulkAction
 {
-    public function id(): string
-    {
-        return 'remove';
-    }
-
-    public function name(): string
-    {
-        return new TranslatableMessage('Eliminar');
-    }
+    use RemoveAction;
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) == 0) {
+        if (0 === count($request->elements)) {
             return [];
         }
 
         $commands = [];
 
         foreach ($request->elements as $container) {
-            if (null === $container || null === $container->id()) {
+            if (null === $container) {
                 continue;
             }
-
+            if (null === $container->id()) {
+                continue;
+            }
             $commands[] = new RemoveContainerRequest(
-                containerId: $container->id()
+                containerId: $container->id(),
             );
         }
 
@@ -43,11 +40,15 @@ class RemoveContainer implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
-        return new TranslatableMessage("Se ha eliminado el contenedor {id}", ['{id}' => $command->containerId]);
+        assert($command instanceof RemoveContainerRequest);
+
+        return new TranslatableMessage('Se ha eliminado el contenedor {id}', ['{id}' => $command->containerId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
-        return new TranslatableMessage("No se ha podido eliminar el contenedor {id}", ['{id}' => $command->containerId]);
+        assert($command instanceof RemoveContainerRequest);
+
+        return new TranslatableMessage('No se ha podido eliminar el contenedor {id}', ['{id}' => $command->containerId]);
     }
 }

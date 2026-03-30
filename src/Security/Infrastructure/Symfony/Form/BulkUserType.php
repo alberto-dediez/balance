@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Form;
 
-use Symfony\Component\Form\FormBuilderInterface;
+use App\Security\Infrastructure\Symfony\Form\Type\RoleType;
+use App\Security\Infrastructure\UI\Web\User\Bulk\BulkUserRequest;
+use App\Security\Infrastructure\UI\Web\User\Bulk\RemoveUser;
 use App\Shared\Infrastructure\Symfony\Form\BulkType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Security\Infrastructure\Symfony\Form\Type\RoleType;
-use App\Security\Infrastructure\UI\Web\User\Bulk\RemoveUser;
-use App\Security\Infrastructure\UI\Web\User\Bulk\BulkUserRequest;
 
 class BulkUserType extends BulkType
 {
@@ -22,15 +24,15 @@ class BulkUserType extends BulkType
                     'data-controller' => 'showable',
                     'data-showable-selector-value' => '[name*="action"]',
                     'data-showable-container-value' => 'div:not(.input-group)',
-                    'data-showable-conditions-value' => json_encode(['grant-role', 'ungrant-role'])
-                ]
+                    'data-showable-conditions-value' => json_encode(['grant-role', 'ungrant-role']),
+                ],
             ])
         ;
 
         parent::buildForm($builder, $options);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -38,7 +40,7 @@ class BulkUserType extends BulkType
             'actions' => [
                 new RemoveUser(),
             ],
-            'data_class' => BulkUserRequest::class
+            'data_class' => BulkUserRequest::class,
         ]);
     }
 }

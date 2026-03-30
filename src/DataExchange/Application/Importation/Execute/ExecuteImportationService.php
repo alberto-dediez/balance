@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Application\Importation\Execute;
 
 use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleRequest;
 use App\DataExchange\Application\Importation\ImportationAuthorizer;
+use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
+use App\DataExchange\Domain\Model\Importation\ImportationType;
 use App\DataExchange\Domain\Model\Importation\ImportationTypeFactory;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
@@ -17,26 +21,26 @@ use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 
 class ExecuteImportationService implements CommandHandler
 {
-    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+    use RegisterHandlerTrait;
+    use CommandInvokeHandlerTrait;
 
     public function __construct(
         private ImportationRepository $importationRepository,
         private ImportationTypeFactory $importationTypeFactory,
-        private ImportationAuthorizer $authorizer
-    ) {
-    }
+        private ImportationAuthorizer $authorizer,
+    ) {}
 
     public function __invoke(ExecuteImportationRequest $request, User $user): ExecuteImportationResponse
     {
         $importation = $this->importationRepository->find($request->importationId);
 
-        if (null === $importation) {
+        if (!$importation instanceof Importation) {
             throw new \RuntimeException('Importation not found');
         }
 
         $importationType = $this->importationTypeFactory->createFromCode($importation->type());
 
-        if (null === $importationType) {
+        if (!$importationType instanceof ImportationType) {
             throw new \RuntimeException('Import type not found');
         }
 
@@ -60,10 +64,10 @@ class ExecuteImportationService implements CommandHandler
                         new ExecuteSingleRequest(
                             importationId: $importation->id(),
                             rowNumber: $rowNumber,
-                            command: $command
+                            command: $command,
                         ),
                     ),
-                    $user
+                    $user,
                 );
             } catch (\Throwable $exception) {
                 $errorMessage = $exception->getMessage();
@@ -71,11 +75,11 @@ class ExecuteImportationService implements CommandHandler
 
             $this->importationRepository->saveResult($importation->id(), $rowNumber, $errorMessage);
 
-            $rowNumber++;
+            ++$rowNumber;
         }
 
         return new ExecuteImportationResponse(
-            importationId: $importation->id()
+            importationId: $importation->id(),
         );
     }
 

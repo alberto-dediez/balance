@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Domain\Model\Brand;
 
 use App\Property\Domain\Model\Brand\Brand;
@@ -7,26 +9,26 @@ use App\Property\Domain\Model\Brand\BrandId;
 
 class BrandMother
 {
-    public static function fromName($name)
+    public static function fromName(string $name): Brand
     {
         return self::from(
             brandId: BrandId::generate(),
-            name: $name
+            name: $name,
         );
     }
 
-    public static function fromNameAndId(string $name, string $id)
+    public static function fromNameAndId(string $name, string $id): Brand
     {
         return self::from(
             brandId: new BrandId($id),
-            name: $name
+            name: $name,
         );
     }
 
-    public static function from(BrandId $brandId, string $name = 'name')
+    public static function from(BrandId $brandId, string $name = 'name'): Brand
     {
         $brand = new Brand(
-            id: $brandId
+            id: $brandId,
         );
 
         $brand->register($name);
@@ -34,11 +36,11 @@ class BrandMother
         return $brand;
     }
 
-    public static function random()
+    public static function random(): Brand
     {
         return self::from(
             brandId: BrandId::generate(),
-            name: 'brand-' . rand(100, 999)
+            name: 'brand-' . random_int(100, 999),
         );
     }
 }

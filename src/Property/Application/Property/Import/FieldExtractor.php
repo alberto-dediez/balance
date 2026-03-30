@@ -1,29 +1,32 @@
 <?php
 
-namespace App\Property\Application\Property\Import;
+declare(strict_types=1);
 
-use App\Property\Application\Property\Import\Field;
+namespace App\Property\Application\Property\Import;
 
 class FieldExtractor
 {
-    public function __construct(private array $config = [])
-    {
+    /**
+     * @param array<string, int|string> $config
+     */
+    public function __construct(private array $config = []) {}
 
-    }
-
-    public function extract(Field $field, array $row)
+    /**
+     * @param array<mixed> $row
+     */
+    public function extract(Field $field, array $row): mixed
     {
-        if (!isset($this->config[$field->value]) || null === $this->config[$field->value]) {
+        if (!isset($this->config[$field->value])) {
             return null;
         }
 
         $index = $this->config[$field->value];
 
-        return isset($row[$index]) ? $row[$index] : null;
+        return $row[$index] ?? null;
     }
 
     public function hasField(Field $field): bool
     {
-        return isset($this->config[$field->value]) && null !== $this->config[$field->value];
+        return isset($this->config[$field->value]);
     }
 }

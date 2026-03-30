@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Symfony\Form;
 
-use Symfony\Component\Form\FormBuilderInterface;
+use App\Property\Infrastructure\UI\Web\Admin\Property\Bulk\AssignAccount;
+use App\Property\Infrastructure\UI\Web\Admin\Property\Bulk\BulkPropertyRequest;
+use App\Property\Infrastructure\UI\Web\Admin\Property\Bulk\RemoveProperty;
+use App\Security\Infrastructure\Symfony\Form\Type\AccountIdType;
 use App\Shared\Infrastructure\Symfony\Form\BulkType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Security\Infrastructure\Symfony\Form\Type\AccountIdType;
-use App\Property\Infrastructure\UI\Web\Admin\Property\Bulk\AssignAccount;
-use App\Property\Infrastructure\UI\Web\Admin\Property\Bulk\RemoveProperty;
-use App\Property\Infrastructure\UI\Web\Admin\Property\Bulk\BulkPropertyRequest;
 
 class AdminBulkPropertyType extends BulkType
 {
@@ -25,13 +27,13 @@ class AdminBulkPropertyType extends BulkType
                     'data-controller' => 'showable',
                     'data-showable-selector-value' => '[name*="action"]',
                     'data-showable-container-value' => 'div:not(.input-group)',
-                    'data-showable-condition-value' => 'assign-account'
-                ]
+                    'data-showable-condition-value' => 'assign-account',
+                ],
             ])
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -40,7 +42,7 @@ class AdminBulkPropertyType extends BulkType
                 new AssignAccount(),
                 new RemoveProperty(),
             ],
-            'data_class' => BulkPropertyRequest::class
+            'data_class' => BulkPropertyRequest::class,
         ]);
     }
 }

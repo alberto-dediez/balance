@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\Measurement;
 
 use App\DataExchange\Application\Importation\Execute\Extractor\AssignValueExtractor;
@@ -7,6 +9,7 @@ use App\DataExchange\Application\Importation\Execute\Extractor\DirectExtractor;
 use App\DataExchange\Application\Importation\Execute\Extractor\MapExtractor;
 use App\DataExchange\Application\Importation\Execute\Extractor\RowExtractor;
 use App\DataExchange\Domain\Model\Importation\Importation;
+use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
 use App\DataExchange\Domain\Model\Importation\ImportationType;
 use App\DataExchange\Infrastructure\UI\Web\DTO\FieldDefinition;
 use App\Security\Application\Action;
@@ -29,53 +32,54 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MeasurementImportationType implements ImportationType
 {
-    private array $fields;
+    /** @var array<string, array{translationDefinition: FieldDefinition|null, assignValueDefinition: FieldDefinition|null}> */
+    private readonly array $fields;
 
     public function __construct(
-        private MeasurementAuthorizer $measurementAuthorizer,
+        private readonly MeasurementAuthorizer $measurementAuthorizer,
         TranslatorInterface $translator,
     ) {
-        $unitChoicesForImportation = array_filter(Unit::cases(), fn ($unit) => $unit !== Unit::Percentage);
+        $unitChoicesForImportation = array_filter(Unit::cases(), fn(Unit $unit): bool => Unit::Percentage !== $unit);
 
         $this->fields = [
             'containerId' => [
                 'translationDefinition' => new FieldDefinition(
-                    fieldType: ContainerIdType::class
+                    fieldType: ContainerIdType::class,
                 ),
                 'assignValueDefinition' => new FieldDefinition(
-                    fieldType: ContainerIdType::class
+                    fieldType: ContainerIdType::class,
                 ),
             ],
             'propertyId' =>  [
                 'translationDefinition' => new FieldDefinition(
-                    fieldType: PropertyIdType::class
+                    fieldType: PropertyIdType::class,
                 ),
                 'assignValueDefinition' =>  new FieldDefinition(
-                    fieldType: PropertyIdType::class
+                    fieldType: PropertyIdType::class,
                 ),
             ],
             'wasteId' => [
                 'translationDefinition' => new FieldDefinition(
-                    fieldType: WasteIdType::class
+                    fieldType: WasteIdType::class,
                 ),
                 'assignValueDefinition' => new FieldDefinition(
-                    fieldType: WasteIdType::class
+                    fieldType: WasteIdType::class,
                 ),
             ],
             'purpose' => [
                 'translationDefinition' => new FieldDefinition(
-                    fieldType: PurposeValueType::class
+                    fieldType: PurposeValueType::class,
                 ),
                 'assignValueDefinition' =>  new FieldDefinition(
-                    fieldType: PurposeValueType::class
+                    fieldType: PurposeValueType::class,
                 ),
             ],
             'wasteManagerId' => [
                 'translationDefinition' => new FieldDefinition(
-                    fieldType: WasteManagerIdType::class
+                    fieldType: WasteManagerIdType::class,
                 ),
                 'assignValueDefinition' =>  new FieldDefinition(
-                    fieldType: WasteManagerIdType::class
+                    fieldType: WasteManagerIdType::class,
                 ),
             ],
             'quantity' => [
@@ -89,7 +93,7 @@ class MeasurementImportationType implements ImportationType
             'justification' => [
                 'translationDefinition' => null,
                 'assignValueDefinition' => new FieldDefinition(
-                    fieldType: TextType::class
+                    fieldType: TextType::class,
                 ),
             ],
             'unit' => [
@@ -97,23 +101,23 @@ class MeasurementImportationType implements ImportationType
                     fieldType: ChoiceType::class,
                     options: [
                         'choices' => array_combine(
-                            array_map(fn (Unit $unit) => $unit->label($translator), $unitChoicesForImportation),
-                            array_map(fn (Unit $unit) => $unit->value, $unitChoicesForImportation),
-                        )
-                    ]
+                            array_map(fn(Unit $unit): string => $unit->label($translator), $unitChoicesForImportation),
+                            array_map(fn(Unit $unit) => $unit->value, $unitChoicesForImportation),
+                        ),
+                    ],
                 ),
                 'assignValueDefinition' => null,
             ],
             'day' => [
                 'translationDefinition' => null,
                 'assignValueDefinition' => new FieldDefinition(
-                    fieldType: DateTimeType::class
+                    fieldType: DateTimeType::class,
                 ),
             ],
             'reference' => [
                 'translationDefinition' => null,
                 'assignValueDefinition' => new FieldDefinition(
-                    fieldType: TextType::class
+                    fieldType: TextType::class,
                 ),
             ],
         ];
@@ -139,14 +143,16 @@ class MeasurementImportationType implements ImportationType
         return array_keys($this->fields);
     }
 
+    /** @return array<string, FieldDefinition|null> */
     public function translationDefinitions(): array
     {
-        return array_map(fn (array $definition) => $definition['translationDefinition'] ?? null, $this->fields);
+        return array_map(fn(array $definition) => $definition['translationDefinition'] ?? null, $this->fields);
     }
 
+    /** @return array<string, FieldDefinition|null> */
     public function assignValueDefinitions(): array
     {
-        return array_map(fn (array $definition) => $definition['assignValueDefinition'] ?? null, $this->fields);
+        return array_map(fn(array $definition) => $definition['assignValueDefinition'] ?? null, $this->fields);
     }
 
     public function commandBuilder(array $data): Command
@@ -175,7 +181,7 @@ class MeasurementImportationType implements ImportationType
         foreach ($this->fields() as $field) {
             $configuration = $importation->configurationForField($field);
 
-            if (null !== $configuration) {
+            if ($configuration instanceof ImportationColumnConfiguration) {
                 switch ($field) {
                     case 'containerId':
                     case 'propertyId':
@@ -185,7 +191,7 @@ class MeasurementImportationType implements ImportationType
                     case 'unit':
                         $rowExtractor->addFieldExtractor(
                             new MapExtractor($configuration),
-                            $field
+                            $field,
                         );
                         break;
                     case 'quantity':
@@ -195,7 +201,7 @@ class MeasurementImportationType implements ImportationType
                     case 'reference':
                         $rowExtractor->addFieldExtractor(
                             new DirectExtractor($configuration),
-                            $field
+                            $field,
                         );
                         break;
                 }
@@ -206,7 +212,8 @@ class MeasurementImportationType implements ImportationType
             $defaultValue = $defaultValues[$field] ?? null;
 
             $rowExtractor->addFieldExtractor(
-                new AssignValueExtractor($defaultValue), $field
+                new AssignValueExtractor($defaultValue),
+                $field,
             );
         }
 
@@ -218,10 +225,10 @@ class MeasurementImportationType implements ImportationType
         return $this->measurementAuthorizer->canDoThat(
             new Measurement(
                 id: MeasurementId::generate(),
-                accountId: $user->accountId()
+                accountId: $user->accountId(),
             ),
             Action::Import,
-            $user
+            $user,
         );
     }
 }

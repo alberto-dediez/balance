@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Shared\Domain\Model\Email;
 
-use App\Shared\Domain\Model\Email\EmailSent;
-use App\Shared\Domain\Model\Email\EmailSender;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Email\EmailRecipient;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use App\Shared\Domain\Model\Email\EmailSender;
+use App\Shared\Domain\Model\Email\EmailSent;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class EmailSenderTest extends KernelTestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -20,7 +22,7 @@ abstract class EmailSenderTest extends KernelTestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $sut = $this->createSUT();
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Application\Importation\Register;
 
 use App\DataExchange\Domain\Model\Importation\ImportationId;
@@ -9,8 +11,11 @@ use App\Shared\Application\CommandBus\CommandResponse;
 
 class RegisterImportationResponse implements CommandResponse
 {
-    public function __construct(public ImportationId $importationId, public string $name, public string $type, public AccountId $accountId, public ?UserId $registeredBy)
-    {
-
-    }
+    public function __construct(
+        public ImportationId $importationId,
+        public string $name,
+        public string $type,
+        public ?AccountId $accountId,
+        public ?UserId $registeredBy,
+    ) {}
 }

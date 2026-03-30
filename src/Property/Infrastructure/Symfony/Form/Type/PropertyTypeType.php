@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Symfony\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
 use App\Property\Domain\Model\Property\PropertyType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/** @extends AbstractType<mixed> */
 class PropertyTypeType extends AbstractType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $choices = [];
 
@@ -17,12 +20,12 @@ class PropertyTypeType extends AbstractType
             $choices[$propertyType->value] = $propertyType;
         }
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => $choices,
             'translation_domain' => 'propertyType',
-        ));
+        ]);
     }
-    
+
     public function getParent()
     {
         return AutocompleteType::class;

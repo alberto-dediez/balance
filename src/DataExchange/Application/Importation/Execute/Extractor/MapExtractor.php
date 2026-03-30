@@ -1,21 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Application\Importation\Execute\Extractor;
 
 use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
 
 class MapExtractor implements FieldExtractor
 {
+    /** @var array<string, string|null> */
     private array $translations = [];
 
-    private string $columnName;
+    private readonly string $columnName;
 
     public function __construct(ImportationColumnConfiguration $columnConfiguration)
     {
         $this->columnName = $columnConfiguration->name;
 
-        if (count($columnConfiguration->translations) === 0) {
-            return ;
+        if (0 === count($columnConfiguration->translations)) {
+            return;
         }
 
         foreach ($columnConfiguration->translations as $translation) {
@@ -23,6 +26,7 @@ class MapExtractor implements FieldExtractor
         }
     }
 
+    /** @param array<int|string, mixed> $row */
     public function extractField(array $row): mixed
     {
         $value = $row[$this->columnName] ?? null;

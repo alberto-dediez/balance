@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\DataExchange\Infrastructure\Persistence\PDO\Tools;
 
 use App\DataExchange\Infrastructure\Persistence\PDO\Tools\ColumnSanitizer;
@@ -7,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class ColumnSanitizerTest extends TestCase
 {
-    public function testSanitize()
+    public function testSanitize(): void
     {
         $headers = [
             'normal',
@@ -20,7 +22,6 @@ class ColumnSanitizerTest extends TestCase
 
         $result = ColumnSanitizer::sanitize($headers);
 
-        $this->assertTrue(is_array($result));
         $this->assertCount(6, $result);
         $this->assertEquals('normal', $result[0]);
         $this->assertEquals('algun', $result[1]);

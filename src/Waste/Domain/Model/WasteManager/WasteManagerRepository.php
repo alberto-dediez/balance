@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Waste\Domain\Model\WasteManager;
+declare(strict_types=1);
 
-use App\Waste\Domain\Model\WasteManager\WasteManager;
-use App\Waste\Domain\Model\WasteManager\WasteManagerId;
-use App\Waste\Domain\Model\WasteManager\WasteManagerFilter;
+namespace App\Waste\Domain\Model\WasteManager;
 
 interface WasteManagerRepository
 {
@@ -14,6 +12,7 @@ interface WasteManagerRepository
 
     public function find(WasteManagerId $wasteManagerId): ?WasteManager;
 
+    /** @return array<int, WasteManager> */
     public function findByFilter(WasteManagerFilter $filter): array;
 
     public function totalResultsByFilter(WasteManagerFilter $filter): int;

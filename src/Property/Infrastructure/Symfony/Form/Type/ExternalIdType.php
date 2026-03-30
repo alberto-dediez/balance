@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Symfony\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormBuilderInterface;
 use App\Property\Domain\Model\Property\ExternalId;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 
+/** @extends AbstractType<ExternalId> */
 class ExternalIdType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -24,7 +27,7 @@ class ExternalIdType extends AbstractType
                         bioscore: $externalId->bioscore(),
                     );
                 },
-                'required' => false
+                'required' => false,
             ])
             ->add('restel', TextType::class, [
                 'label' => new TranslatableMessage('Restel ID'),
@@ -35,7 +38,7 @@ class ExternalIdType extends AbstractType
                         bioscore: $externalId->bioscore(),
                     );
                 },
-                'required' => false
+                'required' => false,
             ])
             ->add('bioscore', TextType::class, [
                 'label' => new TranslatableMessage('Bioscore ID'),
@@ -46,16 +49,16 @@ class ExternalIdType extends AbstractType
                         bioscore: $value,
                     );
                 },
-                'required' => false
+                'required' => false,
             ])
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => ExternalId::class,
-            'admin' => false
+            'admin' => false,
         ]);
     }
 }

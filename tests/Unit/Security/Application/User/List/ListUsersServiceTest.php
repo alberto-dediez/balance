@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Security\Application\User\List;
 
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Application\User\List\ListUsersRequest;
-use App\Security\Application\User\List\ListUsersResponse;
 use App\Security\Application\User\List\ListUsersService;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
@@ -15,12 +16,9 @@ use PHPUnit\Framework\TestCase;
 
 class ListUsersServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {}
 
-    }
-
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -37,13 +35,11 @@ class ListUsersServiceTest extends TestCase
 
         $result = $sut($request, $performBy);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListUsersResponse);
         $this->assertCount(4, $result->users);
         $this->assertEquals(4, $result->totalResults);
     }
 
-    public function testAccessByOwner()
+    public function testAccessByOwner(): void
     {
         $repository = new InMemoryUserRepository();
 
@@ -59,18 +55,16 @@ class ListUsersServiceTest extends TestCase
         $repository->add(UserMother::fromUsernameAndAccount('user4', $account));
 
         $request = new ListUsersRequest(
-            account: $account
+            account: $account,
         );
 
         $result = $sut($request, $performBy);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ListUsersResponse);
         $this->assertCount(4, $result->users);
         $this->assertEquals(4, $result->totalResults);
     }
 
-    public function testUnauthorizedAccess()
+    public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
 
@@ -89,13 +83,13 @@ class ListUsersServiceTest extends TestCase
         $repository->add(UserMother::fromUsernameAndAccount('user4', $account));
 
         $request = new ListUsersRequest(
-            account: $account
+            account: $account,
         );
 
         $sut($request, $performBy);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryUserRepository $repository): ListUsersService
     {
         return new ListUsersService($repository, UserAuthorizerMother::create());
     }

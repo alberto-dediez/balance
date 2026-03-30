@@ -1,18 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Domain\Model\DailyWaste;
 
-use App\Waste\Domain\Model\Waste\WasteId;
 use App\Security\Domain\Model\Account\AccountId;
-use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteFilter;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class DailyWasteRepositoryTest extends KernelTestCase
 {
-    public function testAddDailyWasteToRepository()
-    {   
+    public function testAddDailyWasteToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $dailyWaste = DailyWasteMother::random();
@@ -27,8 +27,8 @@ abstract class DailyWasteRepositoryTest extends KernelTestCase
         $this->assertEquals($dailyWaste->id(), $recoverDailyWaste->id());
     }
 
-    public function testRemoveDailyWasteToRepository()
-    {   
+    public function testRemoveDailyWasteToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $dailyWaste = DailyWasteMother::random();
@@ -45,31 +45,31 @@ abstract class DailyWasteRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($dailyWaste->id()));
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
         $accountId = AccountId::generate();
 
         $repository->add(
-            DailyWasteMother::random()
+            DailyWasteMother::random(),
         );
         $repository->add(
-            DailyWasteMother::random()
+            DailyWasteMother::random(),
         );
         $repository->add(
-            DailyWasteMother::random()
+            DailyWasteMother::random(),
         );
         $repository->add(
-            DailyWasteMother::random()
+            DailyWasteMother::random(),
         );
         $repository->add(
-            DailyWasteMother::random()
+            DailyWasteMother::random(),
         );
         $repository->add(
             DailyWasteMother::fromAccount(
-                $accountId
-            )
+                $accountId,
+            ),
         );
 
         $filter = new DailyWasteFilter();
@@ -79,7 +79,7 @@ abstract class DailyWasteRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new DailyWasteFilter(
-            accountId: $accountId
+            accountId: $accountId,
         );
 
         $result = $repository->findByFilter($filter);
@@ -87,36 +87,39 @@ abstract class DailyWasteRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByDay()
+    public function testFindByDay(): void
     {
         $repository = $this->createSUT();
 
         $accountId = AccountId::generate();
 
         $dailyFromAccount = DailyWasteMother::fromAccount(
-            $accountId
+            $accountId,
         );
 
         $repository->add(
-            DailyWasteMother::random()
+            DailyWasteMother::random(),
         );
         $repository->add(
-            DailyWasteMother::random()
+            DailyWasteMother::random(),
         );
         $repository->add(
-            DailyWasteMother::random()
+            DailyWasteMother::random(),
         );
         $repository->add(
-            DailyWasteMother::random()
+            DailyWasteMother::random(),
         );
         $repository->add(
-            DailyWasteMother::random()
+            DailyWasteMother::random(),
         );
         $repository->add(
-            $dailyFromAccount
+            $dailyFromAccount,
         );
 
-        $filter = new DailyWasteFilter();
+        self::assertNotEmpty($dailyFromAccount->propertyId());
+        self::assertNotEmpty($dailyFromAccount->accountId());
+        self::assertNotEmpty($dailyFromAccount->wasteId());
+        self::assertNotEmpty($dailyFromAccount->wasteManagerId());
 
         $result = $repository->findByDay(
             day: $dailyFromAccount->day(),
@@ -124,38 +127,38 @@ abstract class DailyWasteRepositoryTest extends KernelTestCase
             wasteId: $dailyFromAccount->wasteId(),
             purpose: $dailyFromAccount->purpose(),
             wasteManagerId: $dailyFromAccount->wasteManagerId(),
-            accountId: $dailyFromAccount->accountId()
+            accountId: $dailyFromAccount->accountId(),
         );
 
         $this->assertNotNull($result);
         $this->assertTrue($result->id()->equals($dailyFromAccount->id()));
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
         $accountId = AccountId::generate();
 
         $repository->add(
-            DailyWasteMother::random()
+            DailyWasteMother::random(),
         );
         $repository->add(
-            DailyWasteMother::random()
+            DailyWasteMother::random(),
         );
         $repository->add(
-            DailyWasteMother::random()
+            DailyWasteMother::random(),
         );
         $repository->add(
-            DailyWasteMother::random()
+            DailyWasteMother::random(),
         );
         $repository->add(
-            DailyWasteMother::random()
+            DailyWasteMother::random(),
         );
         $repository->add(
             DailyWasteMother::fromAccount(
-                $accountId
-            )
+                $accountId,
+            ),
         );
 
         $filter = new DailyWasteFilter();
@@ -165,7 +168,7 @@ abstract class DailyWasteRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new DailyWasteFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);

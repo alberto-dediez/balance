@@ -1,57 +1,63 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Shared\Domain\Model\Locale\Translatable;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 trait DoctrineTranslatableRepositoryTrait
 {
-    private function loadTranslations(?Translatable $translatable, EntityRepository $translationRepository)
+    /** @param class-string $translationClass */
+    private function addTranslations(Translatable $translatable, string $translationClass, EntityManagerInterface $manager): void
     {
-        if (null === $translatable) {
-            return ;
-        }
+        $translationRepository = $manager->getRepository($translationClass);
 
-        $translatable->translations()->setLocale($this->localeGetter->locale());
+        if (count($translatable->translations()) > 0) {
+            $qb = $translationRepository->createQueryBuilder('t');
 
-        $storedTranslations = $translationRepository
-            ->findBy([
-                'translatableId' => $translatable->id()
-            ])
-        ;
+            $reflection = new \ReflectionClass($translationClass);
 
-        if (count($storedTranslations) == 0) {
-            return ;
-        }
+            $qb->update()
+                ->where(
+                    $qb->expr()->andX(
+                        $qb->expr()->eq('t.locale', ':locale'),
+                        $qb->expr()->eq('t.translatable', ':translatable'),
+                    ),
+                )
+                ->setParameter('translatable', $translatable)
+            ;
 
-        foreach ($storedTranslations as $translation) {
-            $translatable->translations()->add($translation);
-        }
-    }
+            foreach ($reflection->getProperties() as $property) {
+                if (in_array($property->getName(), ['locale', 'translatable'], true)) {
+                    continue;
+                }
 
-    private function addTranslations(Translatable $translatable, EntityRepository $translationRepository)
-    {
-        $translations = $translatable->translations();
+                $qb->set('t.' . $property->getName(), ':' . $property->getName());
+            }
 
-        if (count($translations) == 0) {
-            return ;
-        }
+            foreach ($translatable->translations() as $translation) {
+                if (!$manager->contains($translation)) {
+                    $manager->persist($translation);
+                } else {
+                    foreach ($reflection->getProperties() as $property) {
+                        if (in_array($property->getName(), ['locale', 'translatable'], true)) {
+                            continue;
+                        }
 
-        $storedTranslations = $translationRepository->findBy([
-            'translatableId' => $translatable->id()
-        ]);
+                        $propertyName = $property->getName();
 
-        if (count($storedTranslations) > 0) {
-            foreach ($storedTranslations as $storedTranslation) {
-                if (!$translations->contains($storedTranslation)) {
-                    $this->getEntityManager()->remove($storedTranslation);
+                        $qb->setParameter($propertyName, $translation->$propertyName());
+                    }
+
+                    $qb
+                        ->setParameter('locale', $translation->locale())
+                        ->getQuery()
+                        ->execute()
+                    ;
                 }
             }
-        }
-
-        foreach ($translations->toArray() as $translation) {
-            $this->getEntityManager()->persist($translation);
         }
     }
 }

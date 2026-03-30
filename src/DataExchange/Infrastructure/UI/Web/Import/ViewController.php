@@ -1,17 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\UI\Web\Import;
 
-use App\DataExchange\Application\Importation\Execute\ExecuteImportationRequest;
-use App\DataExchange\Application\Importation\Execute\ExecuteImportationService;
-use App\DataExchange\Domain\Model\Importation\ImportationRepository;
 use App\Security\Application\Action;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/{code}/import/{id}/results', name: 'import_view')]
 class ViewController extends AbstractController
@@ -23,8 +21,7 @@ class ViewController extends AbstractController
         string $id,
         LoggedUser $loggedUser,
         Request $request,
-    ): Response
-    {
+    ): Response {
         $importationType = $this->getImportationTypeOrNotFound($code);
 
         $importation = $this->getImportationOrNotFound($id);
@@ -37,13 +34,13 @@ class ViewController extends AbstractController
         while (null !== ($row = $this->importationRepository->getResult($importation->id(), $rowNumber))) {
             $results[] = $row;
 
-            $rowNumber++;
+            ++$rowNumber;
         }
 
         return $this->render('@data_exchange/import/view.html.twig', [
             'importation' => $importation,
             'importationType' => $importationType,
-            'results' => $results
+            'results' => $results,
         ]);
     }
 }

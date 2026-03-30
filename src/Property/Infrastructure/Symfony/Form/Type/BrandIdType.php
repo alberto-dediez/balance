@@ -1,28 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Symfony\Form\Type;
 
-use App\Property\Domain\Model\Brand\BrandId;
 use App\Property\Domain\Model\Brand\BrandFilter;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use App\Property\Domain\Model\Brand\BrandId;
 use App\Property\Domain\Model\Brand\BrandRepository;
 use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BrandIdType extends AggregateRootIdType
 {
     public function __construct(
-        private BrandRepository $countryRepository
-    ) {
+        private readonly BrandRepository $countryRepository,
+    ) {}
 
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $categories = $this->countryRepository->findByFilter(new BrandFilter(limit: 0));
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => $this->getChoices($categories),
-            'class' => BrandId::class
-        ));
+            'class' => BrandId::class,
+        ]);
     }
 }

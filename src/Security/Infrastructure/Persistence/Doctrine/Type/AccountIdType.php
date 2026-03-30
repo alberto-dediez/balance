@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Persistence\Doctrine\Type;
 
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Model\AggregateRootId;
 use App\Shared\Infrastructure\Persistence\Doctrine\Type\AggregateRootIdTypeTrait;
 use Doctrine\DBAL\Types\Type;
 
@@ -15,6 +18,7 @@ class AccountIdType extends Type
         return 'account_id';
     }
 
+    /** @return class-string<AggregateRootId> */
     public function getClassName(): string
     {
         return AccountId::class;

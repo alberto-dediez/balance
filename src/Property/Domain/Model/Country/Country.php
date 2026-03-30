@@ -1,25 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Country;
 
-use App\Shared\Domain\Model\AggregateRoot;
 use App\Property\Domain\Model\Property\ExternalId;
+use App\Shared\Domain\Model\AggregateRoot;
 
-class Country
+class Country implements \Stringable
 {
     use AggregateRoot;
 
+    /**
+     * @param array<\App\Shared\Domain\Event\DomainEvent> $events
+     */
     public function __construct(
         private CountryId $id,
         private string $name = '',
-        private string|null $iso = null,
+        private ?string $iso = null,
         private ?ExternalId $externalId = null,
         private bool $removed = false,
         array $events = [],
-        private ?\DateTimeImmutable $registeredAt = null,
-        private ?\DateTimeImmutable $removedAt = null
+        private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
+        private ?\DateTimeImmutable $removedAt = null,
     ) {
-
+        $this->events = $events;
     }
 
     public function id(): CountryId
@@ -39,7 +44,7 @@ class Country
 
     public function externalId(): ExternalId
     {
-        if (null === $this->externalId) {
+        if (!$this->externalId instanceof ExternalId) {
             $this->externalId = new ExternalId();
         }
 
@@ -61,55 +66,55 @@ class Country
         return $this->removedAt;
     }
 
-    public function register(string $name, ?string $iso, ?ExternalId $externalId = null)
+    public function register(string $name, ?string $iso, ?ExternalId $externalId = null): void
     {
         $this->recordApplyAndPublish(
             new CountryRegistered(
                 countryId: $this->id(),
-                iso: $iso,
                 name: $name,
-                externalId: $externalId
-            )
+                iso: $iso,
+                externalId: $externalId,
+            ),
         );
     }
 
-    public function update(string $name, ?string $iso, ?ExternalId $externalId = null)
+    public function update(string $name, ?string $iso, ?ExternalId $externalId = null): void
     {
         $this->recordApplyAndPublish(
             new CountryUpdated(
                 countryId: $this->id(),
-                iso: $iso,
                 name: $name,
-                externalId: $externalId
-            )
+                iso: $iso,
+                externalId: $externalId,
+            ),
         );
     }
 
-    public function remove()
+    public function remove(): void
     {
         $this->recordApplyAndPublish(
             new CountryRemoved(
-                countryId: $this->id()
-            )
+                countryId: $this->id(),
+            ),
         );
     }
 
-    public function applyCountryRegistered(CountryRegistered $event)
+    public function applyCountryRegistered(CountryRegistered $event): void
     {
         $this->name = $event->name();
         $this->iso = $event->iso();
         $this->registeredAt = $event->occurredOn();
-        $this->externalId = null === $event->externalId() ? new ExternalId() : $event->externalId();
+        $this->externalId = $event->externalId() ?? new ExternalId();
     }
 
-    public function applyCountryUpdated(CountryUpdated $event)
+    public function applyCountryUpdated(CountryUpdated $event): void
     {
         $this->name = $event->name();
         $this->iso = $event->iso();
-        $this->externalId = null === $event->externalId() ? $this->externalId() : $event->externalId();
+        $this->externalId = $event->externalId() ?? $this->externalId();
     }
 
-    public function applyCountryRemoved(CountryRemoved $event)
+    public function applyCountryRemoved(CountryRemoved $event): void
     {
         $this->removed = true;
         $this->removedAt = $event->occurredOn();
@@ -117,6 +122,6 @@ class Country
 
     public function __toString(): string
     {
-        return (string) $this->name();
+        return $this->name();
     }
 }

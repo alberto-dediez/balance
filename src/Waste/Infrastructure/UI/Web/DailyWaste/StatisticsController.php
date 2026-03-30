@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Web\DailyWaste;
 
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
+use App\Waste\Application\DailyWaste\Statistics\StatisticsDailyWasteRequest;
+use App\Waste\Application\DailyWaste\Statistics\StatisticsDailyWasteService;
+use App\Waste\Infrastructure\Symfony\Form\StatisticsDailyWasteType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
-use App\Security\Application\UnauthorizedActionException;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
-use App\Waste\Application\DailyWaste\Statistics\StatisticsDailyWasteRequest;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Waste\Infrastructure\Symfony\Form\StatisticsDailyWasteType;
-use App\Waste\Application\DailyWaste\Statistics\StatisticsDailyWasteService;
 
 #[Route('/daily-wastes/statistics', name: 'daily_wastes_statistics')]
 class StatisticsController extends AbstractController
@@ -23,19 +25,16 @@ class StatisticsController extends AbstractController
         LoggedAccount $loggedAccount,
         LoggedUser $loggedUser,
         StatisticsDailyWasteService $statisticsDailyWastes,
-        Request $request
-    ): Response
-    {
+        Request $request,
+    ): Response {
         $account = $loggedAccount();
         $user = $loggedUser();
 
-        list($filter, $form) = $this->filter($request, function () use ($account) {
-            return new StatisticsDailyWasteRequest(
-                dayFrom: (new \DateTimeImmutable("NOW -11 MONTHS"))->modify('first day of this month'),
-                dayTo: new \DateTimeImmutable("NOW"),
-                accountId: $account?->id()
-            );
-        }, StatisticsDailyWasteType::class);
+        [$filter, $form] = $this->filter($request, fn() => new StatisticsDailyWasteRequest(
+            accountId: $account?->id(),
+            dayFrom: (new \DateTimeImmutable('NOW -11 MONTHS'))->modify('first day of this month'),
+            dayTo: new \DateTimeImmutable('NOW'),
+        ), StatisticsDailyWasteType::class);
 
         try {
             $response = $statisticsDailyWastes($filter, $user);
@@ -45,7 +44,7 @@ class StatisticsController extends AbstractController
 
         return $this->render('@waste/daily-wastes/statistics.html.twig', [
             'statistics' => $response,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

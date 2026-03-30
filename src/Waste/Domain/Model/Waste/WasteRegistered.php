@@ -1,25 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Waste;
 
-use DateTimeImmutable;
-use App\Waste\Domain\DomainEvent;
-use App\Waste\Domain\Model\Waste\WasteId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
+use App\Waste\Domain\DomainEvent;
 
 final class WasteRegistered extends DomainEvent
 {
     protected static string $eventName = 'wasteRegistered';
 
     public function __construct(
-        private WasteId $wasteId, 
-        private string $name, 
-        private bool $isDangerous = false,
-        private string $density = '0.00',
-        private string $color = '#000000',
+        private readonly WasteId $wasteId,
+        private readonly string $name,
+        private readonly bool $isDangerous = false,
+        private readonly string $density = '0.00',
+        private readonly string $color = '#000000',
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -49,35 +49,35 @@ final class WasteRegistered extends DomainEvent
         return $this->color;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->wasteId();
+        return $this->wasteId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'wasteId' => (string) $this->wasteId,
             'name' => $this->name,
             'isDangerous' => $this->isDangerous,
             'density' => $this->density,
-            'color' => $this->color
+            'color' => $this->color,
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        ?array $payload
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new WasteRegistered(
-            wasteId: new WasteId($payload['wasteId']), 
+            wasteId: new WasteId($payload['wasteId']),
             name: $payload['name'],
-            isDangerous: isset($payload['isDangerous']) ? $payload['isDangerous'] : false,
-            density: isset($payload['density']) ? $payload['density'] : '0',
-            color: isset($payload['color']) ? $payload['color'] : '#c3d300',
+            isDangerous: $payload['isDangerous'] ?? false,
+            density: $payload['density'] ?? '0',
+            color: $payload['color'] ?? '#c3d300',
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

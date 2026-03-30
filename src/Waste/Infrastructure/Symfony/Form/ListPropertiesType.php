@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Symfony\Form;
 
+use App\Property\Application\Property\List\ListPropertiesRequest;
+use App\Security\Infrastructure\Symfony\Form\Type\AccountIdType;
+use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
-use App\Security\Infrastructure\Symfony\Form\Type\AccountIdType;
-use App\Property\Application\Property\List\ListPropertiesRequest;
 
 class ListPropertiesType extends BaseFilterType
 {
@@ -17,7 +19,7 @@ class ListPropertiesType extends BaseFilterType
         $builder
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('Nombre'),
-                'required' => false
+                'required' => false,
             ])
         ;
 
@@ -26,7 +28,7 @@ class ListPropertiesType extends BaseFilterType
                 ->add('accountId', AccountIdType::class, [
                     'label' => new TranslatableMessage('Cuenta'),
                     'required' => false,
-                    'placeholder' => new TranslatableMessage('Todas las cuentas')
+                    'placeholder' => new TranslatableMessage('Todas las cuentas'),
                 ])
             ;
         }
@@ -34,11 +36,11 @@ class ListPropertiesType extends BaseFilterType
         parent::buildForm($builder, $options);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => ListPropertiesRequest::class,
-            'admin' => false
+            'admin' => false,
         ]);
     }
 }

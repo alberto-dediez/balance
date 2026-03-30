@@ -1,24 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\Container\Update;
 
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Waste\Domain\Model\Container\Purpose;
-use App\Waste\Domain\Model\Container\ContainerId;
 use App\Shared\Application\CommandBus\CommandResponse;
+use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 class UpdateContainerResponse implements CommandResponse
 {
     public function __construct(
-        public ContainerId $containerId, 
+        public ContainerId $containerId,
         public WasteId $wasteId,
         public Purpose $purpose,
         public MeasurementMethod $measurementMethod,
         public ?string $volume,
-        public WasteManagerId $wasteManagerId
-    ) {
-        
-    }
+        public WasteManagerId $wasteManagerId,
+    ) {}
 }

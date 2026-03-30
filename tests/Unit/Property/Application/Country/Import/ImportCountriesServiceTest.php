@@ -1,32 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Country\Import;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
+use App\Property\Application\Country\CountryAuthorizer;
+use App\Property\Application\Country\Import\CountryRequest;
+use App\Property\Application\Country\Import\ImportCountriesRequest;
+use App\Property\Application\Country\Import\ImportCountriesService;
+use App\Property\Application\Country\Register\RegisterCountryResponse;
+use App\Property\Application\Country\Register\RegisterCountryService;
+use App\Property\Application\Country\Update\UpdateCountryService;
 use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
-use App\Property\Application\Country\CountryAuthorizer;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Property\Application\Country\Import\CountryRequest;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
+use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Property\Domain\Model\Country\CountryMother;
-use App\Property\Application\Country\Update\UpdateCountryService;
-use App\Property\Application\Country\Import\ImportCountriesRequest;
-use App\Property\Application\Country\Import\ImportCountriesService;
-use App\Property\Application\Country\Import\ImportCountriesResponse;
-use App\Property\Application\Country\Register\RegisterCountryService;
-use App\Property\Application\Country\Register\RegisterCountryResponse;
 use App\Tests\Unit\Property\Domain\Model\Country\CountryRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 class ImportCountriesServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        
-    }
+    protected function setUp(): void {}
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = CountryRepositoryMother::inMemory();
 
@@ -48,36 +48,33 @@ class ImportCountriesServiceTest extends TestCase
         $request = new ImportCountriesRequest(
             [
                 new CountryRequest(
-                    name: 'españa', 
-                    createIfNotExists: false,
+                    name: 'españa',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '1234')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '1234'),
+                    createIfNotExists: false,
                 ),
                 new CountryRequest(
-                    name: 'INGLATERRA', 
-                    createIfNotExists: false,
+                    name: 'INGLATERRA',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '234')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '234'),
+                    createIfNotExists: false,
                 ),
                 new CountryRequest(
-                    name: 'Irlanda', 
-                    createIfNotExists: false,
+                    name: 'Irlanda',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '34')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '34'),
+                    createIfNotExists: false,
                 ),
                 new CountryRequest(
-                    name: 'Argentina', 
+                    name: 'Argentina',
+                    source: ExternalSource::Bioscore,
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '4'),
                     createIfNotExists: true,
-                    source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '4')
                 ),
-            ]
+            ],
         );
 
         $result = $sut($request, $user);
-
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ImportCountriesResponse);
 
         $this->assertCount(4, $result->countries);
         $this->assertEquals(3, $result->matched);
@@ -91,24 +88,24 @@ class ImportCountriesServiceTest extends TestCase
         $this->assertEquals('234', $england->externalId()->bioscore());
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryCountryRepository $repository): ImportCountriesService
     {
         $registerService = $this->createMock(RegisterCountryService::class);
-        $registerService->method('__invoke')->willReturn(new RegisterCountryResponse(CountryId::generate(), '', null));
+        $registerService->method('__invoke')->willReturn(new RegisterCountryResponse(CountryId::generate(), ''));
 
-        /** @var RegisterCountryService $registerService */
-
+        /** @var RegisterCountryService&MockObject $registerService */
         $authorizer = new CountryAuthorizer();
 
         $updateService = new UpdateCountryService(
-            $repository, $authorizer
+            $repository,
+            $authorizer,
         );
 
         return new ImportCountriesService(
-            repository: $repository, 
+            repository: $repository,
             registerCountry: $registerService,
             updateCountry: $updateService,
-            authorizer: $authorizer
+            authorizer: $authorizer,
         );
     }
 }

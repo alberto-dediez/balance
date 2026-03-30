@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Application\User\List;
+
+use App\Security\Domain\Model\User\User;
 
 class ListUsersResponse
 {
-    public function __construct(public array $users = [], public int $totalResults = 0)
-    {
-        
-    }
+    /**
+     * @param User[] $users
+     */
+    public function __construct(public array $users = [], public int $totalResults = 0) {}
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Application;
 
 use App\Security\Domain\Model\User\Role;
@@ -13,7 +15,7 @@ abstract class AbstractAuthorizer implements Authorizer
             return false;
         }
 
-        return match($action) {
+        return match ($action) {
             Action::Register => $this->canRegister($subject, $user),
             Action::View => $this->canView($subject, $user),
             Action::List => $this->canList($subject, $user),
@@ -23,11 +25,10 @@ abstract class AbstractAuthorizer implements Authorizer
             Action::Autocomplete => $this->canAutocomplete($subject, $user),
             Action::Import => $this->canImport($subject, $user),
             Action::Export => $this->canExport($subject, $user),
-            default => throw new \LogicException('Esta acción no está definida')
         };
     }
 
-    public function denyUnlessCanDoThat(mixed $subject, Action $action, User $user)
+    public function denyUnlessCanDoThat(mixed $subject, Action $action, User $user): void
     {
         if (!$this->canDoThat($subject, $action, $user)) {
             throw new UnauthorizedActionException($subject, $action);
@@ -36,9 +37,11 @@ abstract class AbstractAuthorizer implements Authorizer
 
     protected function canAdmin(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::Admin)
-            || $user->hasRole(Role::SuperAdmin)
-        ;
+        if ($user->hasRole(Role::Admin)) {
+            return true;
+        }
+
+        return $user->hasRole(Role::SuperAdmin);
     }
 
     protected function canAutocomplete(mixed $subject, User $user): bool
@@ -57,9 +60,14 @@ abstract class AbstractAuthorizer implements Authorizer
     }
 
     abstract protected function canRegister(mixed $subject, User $user): bool;
+
     abstract protected function canView(mixed $subject, User $user): bool;
+
     abstract protected function canList(mixed $subject, User $user): bool;
+
     abstract protected function canEdit(mixed $subject, User $user): bool;
+
     abstract protected function canRemove(mixed $subject, User $user): bool;
+
     abstract public function supports(mixed $subject): bool;
 }

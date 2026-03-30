@@ -1,16 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Symfony\Form;
 
+use App\Shared\Infrastructure\Symfony\Form\Type\BooleanType;
+use App\Waste\Application\WasteManager\Register\RegisterWasteManagerRequest;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use App\Shared\Infrastructure\Symfony\Form\Type\BooleanType;
-use App\Waste\Application\WasteManager\Register\RegisterWasteManagerRequest;
 
+/** @extends AbstractType<array<string, mixed>> */
 class RegisterWasteManagerType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -18,14 +21,14 @@ class RegisterWasteManagerType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('Nombre'),
-                'required' => true
+                'required' => true,
             ])
             ->add('isPublic', BooleanType::class, [
                 'label' => new TranslatableMessage('¿Es público?'),
-                'required' => true
+                'required' => true,
             ])
             ->add('register', SubmitType::class, [
-                'label' => new TranslatableMessage('Registrar')
+                'label' => new TranslatableMessage('Registrar'),
             ])
         ;
     }
@@ -34,7 +37,7 @@ class RegisterWasteManagerType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => RegisterWasteManagerRequest::class,
-            'admin' => false
+            'admin' => false,
         ]);
     }
 }

@@ -1,35 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\UI\Web\Admin\Category;
 
+use App\Property\Application\Category\Update\UpdateCategoryRequest;
+use App\Property\Application\Category\Update\UpdateCategoryService;
+use App\Property\Domain\Model\Category\CategoryRepository;
+use App\Property\Infrastructure\Symfony\Form\AdminUpdateCategoryType;
 use App\Security\Application\Action;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Property\Domain\Model\Category\CategoryRepository;
-use App\Security\Application\UnauthorizedActionException;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use App\Property\Application\Category\Update\UpdateCategoryRequest;
-use App\Property\Application\Category\Update\UpdateCategoryService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Property\Infrastructure\Symfony\Form\AdminUpdateCategoryType;
-use App\Property\Infrastructure\UI\Web\Admin\Category\GetCategoryFromIdTrait;
 
 #[Route('/admin/categories/edit/{categoryId}', name: 'admin_categories_edit')]
 class EditController extends AbstractController
 {
-    use EditTrait, GetCategoryFromIdTrait;
+    use EditTrait;
+    use GetCategoryFromIdTrait;
 
     public function __invoke(
-        string $categoryId, 
-        CategoryRepository $categoryRepository, 
-        UpdateCategoryService $updateCategory, 
+        string $categoryId,
+        CategoryRepository $categoryRepository,
+        UpdateCategoryService $updateCategory,
         LoggedUser $loggedUser,
-        Request $request
-    ): Response
-    {   
+        Request $request,
+    ): Response {
         $category = $this->getCategoryFromId($categoryId, $categoryRepository);
 
         $this->denyAccessUnlessGranted(Action::Edit->value, $category);
@@ -37,13 +38,13 @@ class EditController extends AbstractController
         $categoryRequest = new UpdateCategoryRequest(
             categoryId: $category->id(),
             name: $category->name(),
-            externalId: $category->externalId()
+            externalId: $category->externalId(),
         );
 
-        $form = $this->createForm(AdminUpdateCategoryType::class, $categoryRequest); 
+        $form = $this->createForm(AdminUpdateCategoryType::class, $categoryRequest);
 
         try {
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateCategory, $loggedUser) {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateCategory, $loggedUser): void {
                 $categoryRequest = $form->getData();
 
                 $updateCategory($categoryRequest, $loggedUser());
@@ -60,7 +61,7 @@ class EditController extends AbstractController
 
         return $this->render('@property/admin/categories/edit.html.twig', [
             'category' => $category,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

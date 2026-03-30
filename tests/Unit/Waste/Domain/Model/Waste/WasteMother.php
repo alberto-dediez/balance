@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Domain\Model\Waste;
 
 use App\Waste\Domain\Model\Waste\Waste;
@@ -7,70 +9,70 @@ use App\Waste\Domain\Model\Waste\WasteId;
 
 class WasteMother
 {
-    public static function registeredWaste()
-    {   
+    public static function registeredWaste(): Waste
+    {
         return self::fromName('name');
     }
 
-    public static function fromName($name)
+    public static function fromName(string $name): Waste
     {
         return self::from(
             name: $name,
-            isDangerous: rand(0, 1) == 1,
-            id: (string) WasteId::generate()
+            isDangerous: 1 === random_int(0, 1),
+            id: (string) WasteId::generate(),
         );
     }
-    
-    public static function fromIsDangerous(bool $isDangerous)
+
+    public static function fromIsDangerous(bool $isDangerous): Waste
     {
         return self::from(
-            name: 'waste-' . rand(100, 999),
+            name: 'waste-' . random_int(100, 999),
             isDangerous: $isDangerous,
-            id: (string) WasteId::generate()
+            id: (string) WasteId::generate(),
         );
     }
 
-    public static function fromNameAndId(string $name, string $id)
+    public static function fromNameAndId(string $name, string $id): Waste
     {
         return self::from(
-            name: $name, 
-            isDangerous: rand(0, 1) == 1,
-            id: $id
+            name: $name,
+            isDangerous: 1 === random_int(0, 1),
+            id: $id,
         );
     }
 
-    public static function fromDensityAndId(string $density, string $id)
+    public static function fromDensityAndId(string $density, string $id): Waste
     {
         return self::from(
-            name: 'waste-' . rand(100, 999),
-            isDangerous: rand(0, 1) == 1,
+            name: 'waste-' . random_int(100, 999),
+            isDangerous: 1 === random_int(0, 1),
+            id: $id,
             density: $density,
-            id: $id
         );
     }
 
     public static function from(
-        string $name, 
+        string $name,
         bool $isDangerous,
         string $id,
-        string $density = '1.00', 
+        string $density = '1.00',
         string $color = '#c3d300',
-    ) {
+    ): Waste {
         $waste = new Waste(
-            id: new WasteId($id)
+            id: new WasteId($id),
         );
         $waste->register($name, $isDangerous, $density, $color);
 
         return $waste;
     }
 
-    public static function random()
+    public static function random(): Waste
     {
         return self::from(
-            name: 'waste-' . rand(100, 999),
-            isDangerous: rand(0, 1) == 1,
-            density: rand(1, 100) / 100,
-            id: (string) WasteId::generate()
+            name: 'waste-' . random_int(100, 999),
+            isDangerous: 1 === random_int(0, 1),
+            id: (string) WasteId::generate(),
+            density: (string) (random_int(1, 100) / 100),
         );
     }
 }

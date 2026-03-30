@@ -1,34 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\Measurement\Update;
 
-use InvalidArgumentException;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
+use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use App\Waste\Application\Measurement\MeasurementAuthorizer;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
-use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 
 class UpdateMeasurementService implements CommandHandler
 {
-    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+    use RegisterHandlerTrait;
+    use CommandInvokeHandlerTrait;
 
     public function __construct(
         private MeasurementRepository $measurementRepository,
-        private MeasurementAuthorizer $authorizer
-    ) {
-
-    }
+        private MeasurementAuthorizer $authorizer,
+    ) {}
 
     public function __invoke(UpdateMeasurementRequest $request, User $user): UpdateMeasurementResponse
     {
         $measurement = $this->measurementRepository->find($request->measurementId);
 
         if (null == $measurement) {
-            throw new InvalidArgumentException("Measurement not found");
+            throw new \InvalidArgumentException('Measurement not found');
         }
 
         $this->authorizer->denyUnlessCanDoThat($measurement, Action::Edit, $user);
@@ -37,7 +37,7 @@ class UpdateMeasurementService implements CommandHandler
             quantity: $request->quantity,
             load: $request->load,
             justification: $request->justification,
-            reference: $request->reference
+            reference: $request->reference,
         );
 
         $this->measurementRepository->add($measurement);
@@ -47,7 +47,7 @@ class UpdateMeasurementService implements CommandHandler
             quantity: $measurement->quantity(),
             load: $measurement->load(),
             justification: $measurement->justification(),
-            reference: $measurement->reference()
+            reference: $measurement->reference(),
         );
     }
 

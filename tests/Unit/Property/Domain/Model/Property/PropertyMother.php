@@ -1,81 +1,83 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Domain\Model\Property;
 
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\Property;
-use App\Security\Domain\Model\Account\AccountId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
+use App\Security\Domain\Model\Account\AccountId;
 
 class PropertyMother
 {
-    public static function registeredProperty()
-    {   
+    public static function registeredProperty(): Property
+    {
         return self::fromName('name');
     }
 
-    public static function fromName($name)
-    {
-        return self::from(
-            propertyId: PropertyId::generate(),
-            name: $name
-        );
-    }
-
-    public static function fromNameAndInfo($name, PropertyInfo $info)
+    public static function fromName(string $name): Property
     {
         return self::from(
             propertyId: PropertyId::generate(),
             name: $name,
-            info: $info
         );
     }
 
-    public static function fromNameAndExternalId($name, ExternalId $externalId)
+    public static function fromNameAndInfo(string $name, PropertyInfo $info): Property
     {
         return self::from(
             propertyId: PropertyId::generate(),
             name: $name,
-            externalId: $externalId
+            info: $info,
         );
     }
 
-    public static function fromNameAndId(string $name, string $id)
+    public static function fromNameAndExternalId(string $name, ExternalId $externalId): Property
     {
         return self::from(
-            propertyId: new PropertyId($id),
-            name: $name
+            propertyId: PropertyId::generate(),
+            name: $name,
+            externalId: $externalId,
         );
     }
 
-    public static function fromNameAndAccountAndId(string $name, string $accountId, string $id)
+    public static function fromNameAndId(string $name, string $id): Property
     {
         return self::from(
             propertyId: new PropertyId($id),
             name: $name,
-            accountId: new AccountId($accountId)
         );
     }
 
-    public static function from(PropertyId $propertyId, string $name = 'name', ?AccountId $accountId = null, ?PropertyInfo $info = null, ?ExternalId $externalId = null)
+    public static function fromNameAndAccountAndId(string $name, string $accountId, string $id): Property
+    {
+        return self::from(
+            propertyId: new PropertyId($id),
+            name: $name,
+            accountId: new AccountId($accountId),
+        );
+    }
+
+    public static function from(PropertyId $propertyId, string $name = 'name', ?AccountId $accountId = null, ?PropertyInfo $info = null, ?ExternalId $externalId = null): Property
     {
         $property = new Property(
-            id: $propertyId
+            id: $propertyId,
         );
 
         $property->register(
-            name: $name, 
-            accountId: $accountId, 
-            info: $info, 
-            externalId: $externalId
+            name: $name,
+            accountId: $accountId,
+            info: $info,
+            externalId: $externalId,
         );
 
         return $property;
     }
 
-    public static function random()
+    public static function random(): Property
     {
-        return self::fromName('property-' . rand(100, 999));
+        return self::fromName('property-' . random_int(100, 999));
     }
 }

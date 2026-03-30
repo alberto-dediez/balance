@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Symfony\Form;
 
+use App\Property\Application\Property\List\ListPropertiesRequest;
+use App\Property\Infrastructure\Symfony\Form\Type\CountryIdType;
+use App\Property\Infrastructure\Symfony\Form\Type\DestinationIdType;
+use App\Security\Infrastructure\Symfony\Form\Type\AccountIdType;
+use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
-use App\Property\Infrastructure\Symfony\Form\Type\CountryIdType;
-use App\Security\Infrastructure\Symfony\Form\Type\AccountIdType;
-use App\Property\Application\Property\List\ListPropertiesRequest;
-use App\Property\Infrastructure\Symfony\Form\Type\DestinationIdType;
 
 class ListPropertiesType extends BaseFilterType
 {
@@ -19,17 +21,17 @@ class ListPropertiesType extends BaseFilterType
         $builder
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('Nombre'),
-                'required' => false
+                'required' => false,
             ])
             ->add('destinationId', DestinationIdType::class, [
                 'label' => new TranslatableMessage('Destino'),
                 'required' => false,
-                'placeholder' => new TranslatableMessage('Todos los destinos')
+                'placeholder' => new TranslatableMessage('Todos los destinos'),
             ])
             ->add('countryId', CountryIdType::class, [
                 'label' => new TranslatableMessage('País'),
                 'required' => false,
-                'placeholder' => new TranslatableMessage('Todos los países')
+                'placeholder' => new TranslatableMessage('Todos los países'),
             ])
         ;
 
@@ -38,7 +40,7 @@ class ListPropertiesType extends BaseFilterType
                 ->add('accountId', AccountIdType::class, [
                     'label' => new TranslatableMessage('Cuenta'),
                     'required' => false,
-                    'placeholder' => new TranslatableMessage('Todas las cuentas')
+                    'placeholder' => new TranslatableMessage('Todas las cuentas'),
                 ])
             ;
         }
@@ -46,11 +48,11 @@ class ListPropertiesType extends BaseFilterType
         parent::buildForm($builder, $options);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => ListPropertiesRequest::class,
-            'admin' => false
+            'admin' => false,
         ]);
     }
 }

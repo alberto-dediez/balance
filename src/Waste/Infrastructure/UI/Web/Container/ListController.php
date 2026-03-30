@@ -1,41 +1,41 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Web\Container;
 
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\Symfony\Form\BulkType;
+use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
+use App\Shared\Infrastructure\UI\Web\CRUD\BulkTrait;
+use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
+use App\Waste\Application\Container\List\ListContainersRequest;
+use App\Waste\Application\Container\List\ListContainersService;
+use App\Waste\Infrastructure\Symfony\Form\ListContainersType;
+use App\Waste\Infrastructure\UI\Web\Container\Bulk\RemoveContainer;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Shared\Infrastructure\Symfony\Form\BulkType;
-use App\Shared\Infrastructure\UI\Web\CRUD\BulkTrait;
-use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
-use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
-use App\Security\Application\UnauthorizedActionException;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use App\Waste\Infrastructure\Symfony\Form\ListContainersType;
-use App\Waste\Application\Container\List\ListContainersRequest;
-use App\Waste\Application\Container\List\ListContainersService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Waste\Infrastructure\UI\Web\Container\Bulk\RemoveContainer;
 
 #[Route('/containers', name: 'containers')]
 class ListController extends AbstractController
 {
-    use FilterTrait, BulkTrait;
+    use FilterTrait;
+    use BulkTrait;
 
     public function __invoke(
         LoggedUser $loggedUser,
-        ListContainersService $listContainers, 
-        Request $request
-    ): Response
-    {   
+        ListContainersService $listContainers,
+        Request $request,
+    ): Response {
         $user = $loggedUser();
         $accountId = $user->accountId();
 
-        list($filter, $form) = $this->filter($request, function () use ($accountId) {
-            return  new ListContainersRequest(
-                accountId: $accountId,
-            );
-        }, ListContainersType::class);
+        [$filter, $form] = $this->filter($request, fn() => new ListContainersRequest(
+            accountId: $accountId,
+        ), ListContainersType::class);
 
         try {
             $response = $listContainers($filter, $loggedUser());
@@ -43,11 +43,11 @@ class ListController extends AbstractController
             throw $this->createAccessDeniedException($exception->getMessage());
         }
 
-        $bulkForm = $this->createForm(BulkType::class, new BulkRequest, [
+        $bulkForm = $this->createForm(BulkType::class, new BulkRequest(), [
             'elements' => $response->containers,
             'actions' => [
-                new RemoveContainer()
-            ]
+                new RemoveContainer(),
+            ],
         ]);
 
         $needsRedirect = $this->bulkActions($request, $bulkForm, $loggedUser());
@@ -60,7 +60,7 @@ class ListController extends AbstractController
             'bulkForm' => $bulkForm->createView(),
             'containers' => $response->containers,
             'totalResults' => $response->totalResults,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

@@ -1,22 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Domain\Model;
 
 use App\Shared\Domain\Uuid\UuidGenerator;
 
 trait AggregateRootIdTrait
 {
-    public function __construct(private string $id)
-    {
+    public function __construct(private string $id) {}
 
-    }
-
-    public static function fromString(string $id): AggregateRootId
+    public static function fromString(string $id): self
     {
         return new self($id);
     }
 
-    public static function generate(): AggregateRootId
+    public static function generate(): self
     {
         $id = UuidGenerator::v7();
 

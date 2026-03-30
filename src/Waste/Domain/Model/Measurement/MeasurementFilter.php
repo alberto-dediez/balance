@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Measurement;
 
-use App\Shared\Domain\Model\Filter;
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Security\Domain\Model\User\UserId;
-use App\Waste\Domain\Model\Container\Purpose;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
+use App\Shared\Domain\Model\Filter;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 class MeasurementFilter
@@ -30,7 +32,6 @@ class MeasurementFilter
         int $limit = 10,
         string $orderBy = 'default',
         string $orderWay = 'DESC',
-
     ) {
         $this->limit = $limit;
         $this->orderBy = $orderBy;

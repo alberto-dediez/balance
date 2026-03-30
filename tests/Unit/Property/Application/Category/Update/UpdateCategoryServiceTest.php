@@ -1,24 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Category\Update;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Property\Domain\Model\Category\Category;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Property\Domain\Model\Category\CategoryUpdated;
 use App\Property\Application\Category\CategoryAuthorizer;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Property\Domain\Model\Category\CategoryMother;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Property\Application\Category\Update\UpdateCategoryRequest;
 use App\Property\Application\Category\Update\UpdateCategoryService;
-use App\Property\Application\Category\Update\UpdateCategoryResponse;
+use App\Property\Domain\Model\Category\CategoryUpdated;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCategoryRepository;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Property\Domain\Model\Category\CategoryMother;
 use App\Tests\Unit\Property\Domain\Model\Category\CategoryRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class UpdateCategoryServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -27,7 +28,7 @@ class UpdateCategoryServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = CategoryRepositoryMother::inMemory();
 
@@ -39,20 +40,16 @@ class UpdateCategoryServiceTest extends TestCase
 
         $request = new UpdateCategoryRequest(
             categoryId: $category->id(),
-            name: '1 Estrella'
+            name: '1 Estrella',
         );
 
         $user = UserMother::fromUsernameAndRole('user', Role::Admin);
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateCategoryResponse);
-
         $categoryPersisted = $repository->find($result->categoryId);
 
         $this->assertNotNull($categoryPersisted);
-        $this->assertTrue($categoryPersisted instanceof Category);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -62,7 +59,7 @@ class UpdateCategoryServiceTest extends TestCase
         $this->assertTrue($categoryPersisted->id()->equals($lastEvent->categoryId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = CategoryRepositoryMother::inMemory();
 
@@ -72,13 +69,13 @@ class UpdateCategoryServiceTest extends TestCase
 
         $result = $sut->isHandled(new UpdateCategoryRequest(
             categoryId: $category->id(),
-            name: '***'
+            name: '***',
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryCategoryRepository $repository): UpdateCategoryService
     {
         return new UpdateCategoryService($repository, new CategoryAuthorizer());
     }

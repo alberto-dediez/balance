@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\DataExchange\Domain\Model\Importation\Importation;
@@ -16,25 +18,22 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineImportationRepository implements ImportationRepository
 {
-    public function __construct(private EntityManagerInterface $manager, private ImportationDataRepository $dataRepository)
-    {
-
-    }
+    public function __construct(private readonly EntityManagerInterface $manager, private readonly ImportationDataRepository $dataRepository) {}
 
     public function add(Importation $importation): void
     {
         try {
             $recoverImportation = $this->find($importation->id());
 
-            if (null === $recoverImportation) {
+            if (!$recoverImportation instanceof Importation) {
                 $this->dataRepository->create($importation);
             }
 
-            $this->getEntityManager()->persist($importation);
-            $this->getEntityManager()->flush();
+            $this->manager->persist($importation);
+            $this->manager->flush();
 
-            if (count($importation->configurations()) === 0) {
-                return ;
+            if (0 === count($importation->configurations())) {
+                return;
             }
 
             foreach ($importation->configurations() as $configuration) {
@@ -47,7 +46,7 @@ class DoctrineImportationRepository implements ImportationRepository
 
     public function find(ImportationId $importationId): ?Importation
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb = $this->manager->createQueryBuilder();
 
         $qb->select('i')
             ->from(Importation::class, 'i')
@@ -55,7 +54,7 @@ class DoctrineImportationRepository implements ImportationRepository
 
         $importation = $qb
             ->andWhere(
-                $qb->expr()->eq('i.id', ':id')
+                $qb->expr()->eq('i.id', ':id'),
             )
             ->setParameter('id', $importationId)
             ->getQuery()
@@ -66,15 +65,16 @@ class DoctrineImportationRepository implements ImportationRepository
             return null;
         }
 
-        if (count($importation->configurations()) === 0) {
+        if (0 === count($importation->configurations())) {
             $importation->loadConfigurations(
-                $this->dataRepository->getAllConfigurations($importation->id())
+                $this->dataRepository->getAllConfigurations($importation->id()),
             );
         }
 
         return $importation;
     }
 
+    /** @return array<string, mixed>|null */
     public function getData(ImportationId $importationId, int $rowNumber): ?array
     {
         return $this->dataRepository->getData($importationId, $rowNumber);
@@ -85,6 +85,7 @@ class DoctrineImportationRepository implements ImportationRepository
         $this->dataRepository->saveResult($importationId, $rowNumber, $error);
     }
 
+    /** @return array<string, mixed>|null */
     public function getResult(ImportationId $importationId, int $rowNumber): ?array
     {
         return $this->dataRepository->getResult($importationId, $rowNumber);
@@ -94,17 +95,12 @@ class DoctrineImportationRepository implements ImportationRepository
     {
         $this->dataRepository->remove($importation->id());
 
-        $this->getEntityManager()->remove($importation);
-        $this->getEntityManager()->flush();
+        $this->manager->remove($importation);
+        $this->manager->flush();
     }
 
     public function pendingRows(ImportationId $importationId): int
     {
         return $this->dataRepository->pendingRows($importationId);
-    }
-
-    private function getEntityManager()
-    {
-        return $this->manager;
     }
 }

@@ -1,19 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Waste;
 
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Shared\Domain\Model\Locale\Locale;
-use App\Waste\Domain\Model\Waste\WasteUpdated;
 use App\Shared\Domain\Model\Locale\Translatable;
 use App\Shared\Domain\Model\Locale\Translations;
 
-class Waste implements Translatable
+class Waste implements Translatable, \Stringable
 {
     use AggregateRoot;
 
-    private ?Translations $translations = null;
+    /** @var iterable<WasteTranslation>|Translations */
+    private iterable $translations;
 
+    /**
+     * @param array<mixed> $events
+     */
     public function __construct(
         protected WasteId $id,
         protected string $name = '',
@@ -22,10 +27,12 @@ class Waste implements Translatable
         protected string $color = '#c3d300',
         protected bool $removed = false,
         array $events = [],
-        protected ?\DateTimeImmutable $registeredAt = null,
-        protected ?\DateTimeImmutable $removedAt = null
+        protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable(),
+        protected ?\DateTimeImmutable $removedAt = null,
     ) {
         $this->translations = new Translations();
+
+        $this->events = $events;
     }
 
     public function id(): WasteId
@@ -35,7 +42,7 @@ class Waste implements Translatable
 
     public function name(): string
     {
-        /** @var WasteTranslation $translation */
+        /** @var WasteTranslation|null $translation */
         $translation = $this->translations()->currentTranslation();
 
         return null !== $translation ? $translation->name() : $this->name;
@@ -58,9 +65,11 @@ class Waste implements Translatable
 
     public function translations(): Translations
     {
-        if (null === $this->translations) {
-            $this->translations = new Translations();
+        if ($this->translations instanceof Translations) {
+            return $this->translations;
         }
+
+        $this->translations = new Translations(iterator_to_array($this->translations));
 
         return $this->translations;
     }
@@ -85,19 +94,19 @@ class Waste implements Translatable
         bool $isDangerous = false,
         string $density = '0.00',
         string $color = '#c3d300',
-        ?Locale $locale = null
-    ) {
+        ?Locale $locale = null,
+    ): void {
         $this->recordApplyAndPublish(
             new WasteRegistered(
                 wasteId: $this->id(),
                 name: $name,
                 isDangerous: $isDangerous,
                 density: $density,
-                color: $color
-            )
+                color: $color,
+            ),
         );
 
-        if (null !== $locale) {
+        if ($locale instanceof Locale) {
             $this->translate($name, $locale);
         }
     }
@@ -107,44 +116,44 @@ class Waste implements Translatable
         bool $isDangerous,
         string $density,
         string $color,
-        ?Locale $locale = null
-    ) {
+        ?Locale $locale = null,
+    ): void {
         $this->recordApplyAndPublish(
             new WasteUpdated(
                 wasteId: $this->id(),
-                name: null === $locale ? $name : $this->name,
+                name: $locale instanceof Locale ? $this->name : $name,
                 isDangerous: $isDangerous,
                 density: $density,
-                color: $color
-            )
+                color: $color,
+            ),
         );
 
-        if (null !== $locale) {
+        if ($locale instanceof Locale) {
             $this->translate($name, $locale);
         }
     }
 
-    public function translate(string $name, Locale $locale)
+    public function translate(string $name, Locale $locale): void
     {
         $this->recordApplyAndPublish(
             new WasteTranslated(
                 wasteId: $this->id(),
                 name: $name,
-                locale: $locale
-            )
+                locale: $locale,
+            ),
         );
     }
 
-    public function remove()
+    public function remove(): void
     {
         $this->recordApplyAndPublish(
             new WasteRemoved(
-                wasteId: $this->id()
-            )
+                wasteId: $this->id(),
+            ),
         );
     }
 
-    public function applyWasteRegistered(WasteRegistered $event)
+    public function applyWasteRegistered(WasteRegistered $event): void
     {
         $this->name = $event->name();
         $this->isDangerous = $event->isDangerous();
@@ -153,7 +162,7 @@ class Waste implements Translatable
         $this->registeredAt = $event->occurredOn();
     }
 
-    public function applyWasteUpdated(WasteUpdated $event)
+    public function applyWasteUpdated(WasteUpdated $event): void
     {
         $this->name = $event->name();
         $this->isDangerous = $event->isDangerous();
@@ -161,18 +170,18 @@ class Waste implements Translatable
         $this->color = $event->color();
     }
 
-    public function applyWasteTranslated(WasteTranslated $event)
+    public function applyWasteTranslated(WasteTranslated $event): void
     {
         $wasteTranslation = new WasteTranslation(
             name: $event->name(),
             locale: $event->locale(),
-            translatableId: $this->id()
+            translatable: $this,
         );
 
         $this->translations()->add($wasteTranslation);
     }
 
-    public function applyWasteRemoved(WasteRemoved $event)
+    public function applyWasteRemoved(WasteRemoved $event): void
     {
         $this->removed = true;
         $this->removedAt = $event->occurredOn();
@@ -180,6 +189,6 @@ class Waste implements Translatable
 
     public function __toString(): string
     {
-        return (string) $this->name();
+        return $this->name();
     }
 }

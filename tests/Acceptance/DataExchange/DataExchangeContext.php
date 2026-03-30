@@ -4,32 +4,33 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\DataExchange;
 
+use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
-use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
-use Behat\Step\Given;
-use Behat\Behat\Context\Context;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
+use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
+use Behat\Behat\Context\Context;
+use Behat\Step\Given;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
-final class DataExchangeContext implements Context
+final readonly class DataExchangeContext implements Context
 {
     private AcceptanceClient $client;
 
     public function __construct(
-        KernelBrowser $kernelBrowser
+        KernelBrowser $kernelBrowser,
     ) {
         $this->client = AcceptanceClient::instance($kernelBrowser);
     }
 
-    public function getImportationRepository() : ImportationRepository
+    public function getImportationRepository(): ImportationRepository
     {
         return $this->client->getContainer()->get(ImportationRepository::class);
     }
 
     #[Given('an importation with id :importationId from account :accountId exists')]
-    public function anImportationWithIdFromAccountExists($importationId, $accountId): void
+    public function anImportationWithIdFromAccountExists(string $importationId, string $accountId): void
     {
         $filename = __DIR__ . '/file-to-import.csv';
 
@@ -44,17 +45,18 @@ final class DataExchangeContext implements Context
     }
 
     #[Given('importation :importationId has paired fields :fields')]
-    public function importationHasPairedFields($importationId, $fields): void
+    public function importationHasPairedFields(string $importationId, string $fields): void
     {
         $repository = $this->getImportationRepository();
         $importation = $repository->find(new ImportationId($importationId));
+        assert(null !== $importation);
 
         foreach (explode('|', $fields) as $field) {
-            list($name, $value) = explode(':', $field);
+            [$name, $value] = explode(':', $field);
 
             $configuration = $importation->configurationFor($name);
 
-            if (null === $configuration) {
+            if (!$configuration instanceof ImportationColumnConfiguration) {
                 continue;
             }
 
@@ -65,7 +67,7 @@ final class DataExchangeContext implements Context
     }
 
     #[Given('an executed importation with id :importationId from account :accountId exists')]
-    public function anExecutedImportationWithIdFromAccountExists($importationId, $accountId): void
+    public function anExecutedImportationWithIdFromAccountExists(string $importationId, string $accountId): void
     {
         $filename = __DIR__ . '/file-to-import.csv';
 

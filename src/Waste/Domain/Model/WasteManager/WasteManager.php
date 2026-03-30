@@ -1,25 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\WasteManager;
 
-use App\Shared\Domain\Model\AggregateRoot;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Model\AggregateRoot;
 
-class WasteManager
+class WasteManager implements \Stringable
 {
     use AggregateRoot;
 
+    /**
+     * @param array<mixed> $events
+     */
     public function __construct(
         private WasteManagerId $id,
-        private ?string $name = null,
-        private AccountId|null $accountId = null,
+        private string $name = '',
+        private ?AccountId $accountId = null,
         private bool $isPublic = true,
         private bool $removed = false,
         array $events = [],
-        private ?\DateTimeImmutable $registeredAt = null,
-        private ?\DateTimeImmutable $removedAt = null
+        private \DateTimeImmutable $registeredAt = new \DateTimeImmutable(),
+        private ?\DateTimeImmutable $removedAt = null,
     ) {
-
+        $this->events = $events;
     }
 
     public function id(): WasteManagerId
@@ -60,41 +65,41 @@ class WasteManager
     public function register(
         string $name,
         bool $isPublic,
-        AccountId $accountId
-    ) {
+        AccountId $accountId,
+    ): void {
         $this->recordApplyAndPublish(
             new WasteManagerRegistered(
                 wasteManagerId: $this->id(),
                 name: $name,
                 isPublic: $isPublic,
-                accountId: $accountId
-            )
+                accountId: $accountId,
+            ),
         );
     }
 
     public function update(
         string $name,
-        bool $isPublic
-    ) {
+        bool $isPublic,
+    ): void {
         $this->recordApplyAndPublish(
             new WasteManagerUpdated(
                 wasteManagerId: $this->id(),
                 name: $name,
-                isPublic: $isPublic
-            )
+                isPublic: $isPublic,
+            ),
         );
     }
 
-    public function remove()
+    public function remove(): void
     {
         $this->recordApplyAndPublish(
             new WasteManagerRemoved(
-                wasteManagerId: $this->id()
-            )
+                wasteManagerId: $this->id(),
+            ),
         );
     }
 
-    public function applyWasteManagerRegistered(WasteManagerRegistered $event)
+    public function applyWasteManagerRegistered(WasteManagerRegistered $event): void
     {
         $this->name = $event->name();
         $this->isPublic = $event->isPublic();
@@ -102,16 +107,16 @@ class WasteManager
         $this->registeredAt = $event->occurredOn();
     }
 
-    public function applyWasteManagerUpdated(WasteManagerUpdated $event)
+    public function applyWasteManagerUpdated(WasteManagerUpdated $event): void
     {
         $this->name = $event->name();
         $this->isPublic = $event->isPublic();
     }
 
-    public function applyWasteManagerRemoved(WasteManagerRemoved $event)
+    public function applyWasteManagerRemoved(WasteManagerRemoved $event): void
     {
         $this->removed = true;
-        $this->removedAt = new \DateTimeImmutable("NOW");
+        $this->removedAt = new \DateTimeImmutable('NOW');
     }
 
     public function __toString(): string

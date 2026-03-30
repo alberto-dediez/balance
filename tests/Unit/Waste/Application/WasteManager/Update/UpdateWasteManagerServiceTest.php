@@ -1,25 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\WasteManager\Update;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Waste\Domain\Model\WasteManager\WasteManager;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Waste\Domain\Model\WasteManager\WasteManagerUpdated;
-use App\Waste\Application\WasteManager\WasteManagerAuthorizer;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
+use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
 use App\Waste\Application\WasteManager\Update\UpdateWasteManagerRequest;
 use App\Waste\Application\WasteManager\Update\UpdateWasteManagerService;
-use App\Waste\Application\WasteManager\Update\UpdateWasteManagerResponse;
-use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
+use App\Waste\Application\WasteManager\WasteManagerAuthorizer;
+use App\Waste\Domain\Model\WasteManager\WasteManagerUpdated;
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteManagerRepository;
+use PHPUnit\Framework\TestCase;
 
 class UpdateWasteManagerServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -28,11 +29,13 @@ class UpdateWasteManagerServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, AccountId::generate());
 
         $repository = WasteManagerRepositoryMother::inMemory();
+
+        self::assertNotEmpty($user->accountId());
 
         $wasteManager = WasteManagerMother::fromAccount($user->accountId());
 
@@ -43,18 +46,14 @@ class UpdateWasteManagerServiceTest extends TestCase
         $request = new UpdateWasteManagerRequest(
             wasteManagerId: $wasteManager->id(),
             name: 'Hotel',
-            isPublic: true
+            isPublic: true,
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateWasteManagerResponse);
-
         $wasteManagerPersisted = $repository->find($result->wasteManagerId);
 
         $this->assertNotNull($wasteManagerPersisted);
-        $this->assertTrue($wasteManagerPersisted instanceof WasteManager);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -65,7 +64,7 @@ class UpdateWasteManagerServiceTest extends TestCase
         $this->assertTrue($wasteManagerPersisted->id()->equals($lastEvent->wasteManagerId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = WasteManagerRepositoryMother::inMemory();
 
@@ -76,13 +75,13 @@ class UpdateWasteManagerServiceTest extends TestCase
         $result = $sut->isHandled(new UpdateWasteManagerRequest(
             wasteManagerId: $wasteManager->id(),
             name: 'Hotel',
-            isPublic: true
+            isPublic: true,
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryWasteManagerRepository $repository): UpdateWasteManagerService
     {
         return new UpdateWasteManagerService($repository, new WasteManagerAuthorizer());
     }

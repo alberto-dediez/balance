@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Waste\Domain\Model\Waste;
+declare(strict_types=1);
 
-use App\Waste\Domain\Model\Waste\Waste;
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Waste\Domain\Model\Waste\WasteFilter;
+namespace App\Waste\Domain\Model\Waste;
 
 interface WasteRepository
 {
-    public function add(Waste $account): void;
+    public function add(Waste $waste): void;
 
-    public function remove(Waste $account): void;
+    public function remove(Waste $waste): void;
 
-    public function find(WasteId $accountId): ?Waste;
+    public function find(WasteId $wasteId): ?Waste;
 
+    /** @return array<int, Waste> */
     public function findByFilter(WasteFilter $filter): array;
 
     public function totalResultsByFilter(WasteFilter $filter): int;

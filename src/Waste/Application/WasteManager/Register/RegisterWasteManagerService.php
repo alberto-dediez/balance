@@ -1,25 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\WasteManager\Register;
 
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
-use App\Waste\Domain\Model\WasteManager\WasteManager;
-use App\Waste\Domain\Model\WasteManager\WasteManagerId;
+use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use App\Waste\Application\WasteManager\WasteManagerAuthorizer;
+use App\Waste\Domain\Model\WasteManager\WasteManager;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;
-use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 
 class RegisterWasteManagerService implements CommandHandler
 {
-    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+    use RegisterHandlerTrait;
+    use CommandInvokeHandlerTrait;
 
-    public function __construct(private WasteManagerRepository $wasteManagerRepository, private WasteManagerAuthorizer $authorizer)
-    {
-    }
+    public function __construct(private WasteManagerRepository $wasteManagerRepository, private WasteManagerAuthorizer $authorizer) {}
 
     public function __invoke(RegisterWasteManagerRequest $request, User $user): RegisterWasteManagerResponse
     {
@@ -27,23 +28,28 @@ class RegisterWasteManagerService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat(new WasteManager(
             id: WasteManagerId::generate(),
-            accountId: $request->accountId
+            accountId: $request->accountId,
         ), Action::Register, $user);
+
+        assert(null !== $request->accountId);
 
         $wasteManager = new WasteManager($id);
         $wasteManager->register(
             name: $request->name,
             isPublic: $request->isPublic,
-            accountId: $request->accountId
+            accountId: $request->accountId,
         );
 
         $this->wasteManagerRepository->add($wasteManager);
 
+        assert(null !== $wasteManager->name());
+        assert(null !== $wasteManager->accountId());
+
         return new RegisterWasteManagerResponse(
-            wasteManagerId: $wasteManager->id(), 
+            wasteManagerId: $wasteManager->id(),
             name: $wasteManager->name(),
             isPublic: $wasteManager->isPublic(),
-            accountId: $wasteManager->accountId()
+            accountId: $wasteManager->accountId(),
         );
     }
 

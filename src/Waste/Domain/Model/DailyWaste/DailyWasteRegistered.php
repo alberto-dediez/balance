@@ -1,16 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\DailyWaste;
 
-use DateTimeImmutable;
-use App\Waste\Domain\DomainEvent;
-use App\Waste\Domain\Model\Waste\WasteId;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
+use App\Waste\Domain\DomainEvent;
 use App\Waste\Domain\Model\Container\Purpose;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Property\Domain\Model\Property\PropertyId;
-use App\Waste\Domain\Model\DailyWaste\DailyWasteId;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 final class DailyWasteRegistered extends DomainEvent
@@ -18,16 +18,16 @@ final class DailyWasteRegistered extends DomainEvent
     protected static string $eventName = 'dailyWasteRegistered';
 
     public function __construct(
-        private DailyWasteId $dailyWasteId, 
-        private PropertyId $propertyId,
-        private WasteId $wasteId,
-        private Purpose $purpose,
-        private WasteManagerId $wasteManagerId,
-        private AccountId $accountId,
-        private \DateTimeImmutable $day,
-        private float $load = 0,
+        private readonly DailyWasteId $dailyWasteId,
+        private readonly PropertyId $propertyId,
+        private readonly WasteId $wasteId,
+        private readonly Purpose $purpose,
+        private readonly WasteManagerId $wasteManagerId,
+        private readonly AccountId $accountId,
+        private readonly \DateTimeImmutable $day,
+        private readonly float $load = 0,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -62,7 +62,7 @@ final class DailyWasteRegistered extends DomainEvent
         return $this->load;
     }
 
-    public function accountId(): ?AccountId
+    public function accountId(): AccountId
     {
         return $this->accountId;
     }
@@ -72,12 +72,12 @@ final class DailyWasteRegistered extends DomainEvent
         return $this->day;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->dailyWasteId();
+        return $this->dailyWasteId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'dailyWasteId' => (string) $this->dailyWasteId,
@@ -87,26 +87,29 @@ final class DailyWasteRegistered extends DomainEvent
             'wasteManagerId' => (string) $this->wasteManagerId,
             'load' => $this->load,
             'accountId' => (string) $this->accountId,
-            'day' => (string) $this->day->format('Y-m-d'),
+            'day' => $this->day->format('Y-m-d'),
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        ?array $payload
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
+        $purpose = Purpose::tryFrom($payload['purpose']);
+        assert(null !== $purpose);
+
         return new DailyWasteRegistered(
-            dailyWasteId: new DailyWasteId($payload['dailyWasteId']), 
+            dailyWasteId: new DailyWasteId($payload['dailyWasteId']),
             propertyId: new PropertyId($payload['propertyId']),
-            wasteId: new WasteId($payload['waste']), 
-            purpose: Purpose::tryFrom($payload['purpose']),
+            wasteId: new WasteId($payload['waste']),
+            purpose: $purpose,
             wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId($payload['wasteManagerId']) : WasteManagerId::generate(),
-            load: $payload['load'],
-            day: new \DateTimeImmutable($payload['day']),
             accountId: new AccountId($payload['accountId']),
+            day: new \DateTimeImmutable($payload['day']),
+            load: $payload['load'],
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Application\Measurement;
 
+use App\Security\Application\AbstractAuthorizer;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
-use App\Security\Application\AbstractAuthorizer;
 use App\Waste\Domain\Model\Measurement\Measurement;
 
 final class MeasurementAuthorizer extends AbstractAuthorizer
@@ -35,11 +37,7 @@ final class MeasurementAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        if (null == $user->accountId() || null == $subject->accountId() || false == $user->accountId()->equals($subject->accountId())) {
-            return false;
-        }
-
-        return true;
+        return !(null == $user->accountId() || null == $subject->accountId() || false === $user->accountId()->equals($subject->accountId()));
     }
 
     protected function canEdit(mixed $subject, User $user): bool
@@ -65,9 +63,8 @@ final class MeasurementAuthorizer extends AbstractAuthorizer
 
         return
             $user->accountId()->equals($subject->accountId())
-            && (
-                $user->hasRole(Role::Owner)
-            )
+                && $user->hasRole(Role::Owner)
+
         ;
     }
 
@@ -79,9 +76,8 @@ final class MeasurementAuthorizer extends AbstractAuthorizer
 
         return
             $user->accountId()->equals($subject->accountId())
-            && (
-                $user->hasRole(Role::Owner)
-            )
+                && $user->hasRole(Role::Owner)
+
         ;
     }
 

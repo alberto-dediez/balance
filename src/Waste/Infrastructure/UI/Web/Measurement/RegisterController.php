@@ -1,50 +1,52 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\UI\Web\Measurement;
 
 use App\Security\Application\Action;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
+use App\Waste\Application\Measurement\Register\RegisterMeasurementRequest;
+use App\Waste\Application\Measurement\Register\RegisterMeasurementService;
+use App\Waste\Domain\Model\Container\ContainerFilter;
+use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Waste\Domain\Model\Measurement\Measurement;
+use App\Waste\Domain\Model\Measurement\MeasurementId;
+use App\Waste\Infrastructure\Symfony\Form\RegisterMeasurementType;
+use App\Waste\Infrastructure\UI\Web\Container\GetContainerFromIdAndAccountTrait;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Waste\Domain\Model\Measurement\Measurement;
-use App\Waste\Domain\Model\Container\ContainerFilter;
-use App\Waste\Domain\Model\Measurement\MeasurementId;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
-use App\Security\Application\UnauthorizedActionException;
-use App\Waste\Domain\Model\Container\ContainerRepository;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Waste\Infrastructure\Symfony\Form\RegisterMeasurementType;
-use App\Waste\Application\Measurement\Register\RegisterMeasurementRequest;
-use App\Waste\Application\Measurement\Register\RegisterMeasurementService;
-use App\Waste\Infrastructure\UI\Web\Container\GetContainerFromIdAndAccountTrait;
 
 class RegisterController extends AbstractController
 {
-    use RegisterTrait, GetContainerFromIdAndAccountTrait;
+    use RegisterTrait;
+    use GetContainerFromIdAndAccountTrait;
 
     #[Route('/measurements/register', name: 'measurements_register')]
     public function chooseContainer(
         LoggedUser $loggedUser,
         ContainerRepository $containerRepository,
-        Request $request
-    ): Response
-    {
+        Request $request,
+    ): Response {
         $this->denyAccessUnlessGranted(Action::Register->value, new Measurement(
             id: MeasurementId::generate(),
-            accountId: $loggedUser()->accountId()
+            accountId: $loggedUser()->accountId(),
         ));
 
         $containers = $containerRepository->findByFilter(
             new ContainerFilter(
                 accountId: $loggedUser()->accountId(),
-                limit: 0
-            )
+                limit: 0,
+            ),
         );
 
         return $this->render('@waste/measurements/choose-container.html.twig', [
-            'containers' => $containers
+            'containers' => $containers,
         ]);
     }
 
@@ -54,14 +56,13 @@ class RegisterController extends AbstractController
         ContainerRepository $containerRepository,
         LoggedUser $loggedUser,
         RegisterMeasurementService $registerMeasurement,
-        Request $request
-    ): Response
-    {
+        Request $request,
+    ): Response {
         $container = $this->getContainerFromIdAndAccount($containerId, $loggedUser()->accountId(), $containerRepository);
 
         $this->denyAccessUnlessGranted(Action::Register->value, new Measurement(
             id: MeasurementId::generate(),
-            accountId: $loggedUser()->accountId()
+            accountId: $loggedUser()->accountId(),
         ));
 
         $registerRequest = new RegisterMeasurementRequest(
@@ -69,7 +70,7 @@ class RegisterController extends AbstractController
             quantity: 1,
             load: 0,
             registeredBy: $loggedUser()->id(),
-            day: new \DateTimeImmutable('NOW')
+            day: new \DateTimeImmutable('NOW'),
         );
 
         $form = $this->createForm(RegisterMeasurementType::class, $registerRequest, ['measurementMethod' => $container->measurementMethod()]);
@@ -77,12 +78,12 @@ class RegisterController extends AbstractController
         $user = $loggedUser();
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerMeasurement, $user) {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerMeasurement, $user): true {
                 $registerRequest = $form->getData();
 
                 $response = $registerMeasurement($registerRequest, $user);
 
-                $this->addFlash('success', new TranslatableMessage("Medición registrada correctamente"));
+                $this->addFlash('success', new TranslatableMessage('Medición registrada correctamente'));
 
                 return true;
             });
@@ -96,7 +97,7 @@ class RegisterController extends AbstractController
 
         return $this->render('@waste/measurements/register.html.twig', [
             'form' => $form->createView(),
-            'container' => $container
+            'container' => $container,
         ]);
     }
 }

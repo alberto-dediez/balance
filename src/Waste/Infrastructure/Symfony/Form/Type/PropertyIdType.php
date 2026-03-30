@@ -1,24 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Symfony\Form\Type;
 
-use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyFilter;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PropertyIdType extends AggregateRootIdType
 {
     public function __construct(
-        private LoggedAccount $loggedAccount, 
-        private PropertyRepository $propertyRepository
-    ) {
+        private readonly LoggedAccount $loggedAccount,
+        private readonly PropertyRepository $propertyRepository,
+    ) {}
 
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $loggedAccount = $this->loggedAccount;
 
@@ -27,13 +27,13 @@ class PropertyIdType extends AggregateRootIdType
         $properties = $this->propertyRepository->findByFilter(
             new PropertyFilter(
                 accountId: null == $account ? null : $account->id(),
-                limit: 0
-            )
+                limit: 0,
+            ),
         );
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => $this->getChoices($properties),
-            'class' => PropertyId::class
-        ));
+            'class' => PropertyId::class,
+        ]);
     }
 }

@@ -1,25 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\Container\PrintQr;
 
-use PHPUnit\Framework\TestCase;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Waste\Application\Container\ContainerAuthorizer;
-use App\Waste\Domain\Model\Container\ContainerQrPrinted;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
-use App\Waste\Application\Container\PrintQr\PrintQrContainerRequest;
-use App\Waste\Application\Container\PrintQr\PrintQrContainerService;
-use App\Waste\Application\Container\PrintQr\PrintQrContainerResponse;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 use App\Tests\Unit\Waste\Infrastructure\QrCode\FakeQrPdfGenerator;
+use App\Waste\Application\Container\ContainerAuthorizer;
+use App\Waste\Application\Container\PrintQr\PrintQrContainerRequest;
+use App\Waste\Application\Container\PrintQr\PrintQrContainerService;
+use App\Waste\Domain\Model\Container\ContainerQrPrinted;
+use App\Waste\Domain\Model\Container\ContainerRepository;
+use PHPUnit\Framework\TestCase;
 
 class PrintQrContainerServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -28,7 +29,7 @@ class PrintQrContainerServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $containerRepository = ContainerRepositoryMother::inMemory();
 
@@ -38,17 +39,17 @@ class PrintQrContainerServiceTest extends TestCase
 
         $sut = $this->createSUT($containerRepository);
 
-        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $container->accountId());
+        $accountId = $container->accountId();
+        self::assertNotNull($accountId);
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId);
 
         $request = new PrintQrContainerRequest(
-            containerId: $container->id()
+            containerId: $container->id(),
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof PrintQrContainerResponse);
-        $this->assertNotEmpty((string) $result->path);
+        $this->assertNotEmpty($result->path);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -57,12 +58,12 @@ class PrintQrContainerServiceTest extends TestCase
         $this->assertEquals($result->path, $lastEvent->path());
     }
 
-    private function createSUT(ContainerRepository $containerRepository)
+    private function createSUT(ContainerRepository $containerRepository): PrintQrContainerService
     {
         return new PrintQrContainerService(
             repository: $containerRepository,
             pdfGenerator: new FakeQrPdfGenerator(),
-            authorizer: new ContainerAuthorizer()
+            authorizer: new ContainerAuthorizer(),
         );
     }
 }

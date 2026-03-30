@@ -1,24 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Property\Register;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Property\Domain\Model\Property\Property;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Property\Application\Property\PropertyAuthorizer;
-use App\Property\Domain\Model\Property\PropertyRegistered;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Property\Application\Property\Register\RegisterPropertyRequest;
 use App\Property\Application\Property\Register\RegisterPropertyService;
-use App\Property\Application\Property\Register\RegisterPropertyResponse;
+use App\Property\Domain\Model\Property\PropertyRegistered;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class RegisterPropertyServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -27,7 +28,7 @@ class RegisterPropertyServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = PropertyRepositoryMother::inMemory();
 
@@ -37,20 +38,17 @@ class RegisterPropertyServiceTest extends TestCase
 
         $request = new RegisterPropertyRequest(
             name: 'Hotel Abaco',
-            accountId: $user->accountId()
+            accountId: $user->accountId(),
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterPropertyResponse);
         $this->assertNotEmpty((string) $result->propertyId);
         $this->assertEquals(36, strlen((string) $result->propertyId));
 
         $propertyPersisted = $repository->find($result->propertyId);
 
         $this->assertNotNull($propertyPersisted);
-        $this->assertTrue($propertyPersisted instanceof Property);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -60,7 +58,7 @@ class RegisterPropertyServiceTest extends TestCase
         $this->assertTrue($propertyPersisted->id()->equals($lastEvent->propertyId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = PropertyRepositoryMother::inMemory();
 
@@ -68,13 +66,13 @@ class RegisterPropertyServiceTest extends TestCase
 
         $result = $sut->isHandled(new RegisterPropertyRequest(
             name: 'A Property',
-            accountId: AccountId::generate()
+            accountId: AccountId::generate(),
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryPropertyRepository $repository): RegisterPropertyService
     {
         return new RegisterPropertyService($repository, new PropertyAuthorizer());
     }

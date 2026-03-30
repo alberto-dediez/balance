@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Application\CommandBus;
 
 use App\Security\Domain\Model\User\User;
@@ -10,5 +12,5 @@ interface CommandHandler
 
     public function handle(Command $command, User $user): ?CommandResponse;
 
-    public function register();
+    public function register(): void;
 }

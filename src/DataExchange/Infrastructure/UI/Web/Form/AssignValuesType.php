@@ -1,15 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\UI\Web\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class AssignValuesType extends AbstractType
 {
+    /** @param array<string, mixed> $options */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (count($options['fields']) > 0) {
@@ -26,12 +32,12 @@ class AssignValuesType extends AbstractType
 
         $builder
             ->add('continue', SubmitType::class, [
-                'label' => new TranslatableMessage('Continuar')
+                'label' => new TranslatableMessage('Continuar'),
             ])
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'fields' => [],

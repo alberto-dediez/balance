@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Domain\Model\Destination;
 
 use App\Property\Domain\Model\Destination\DestinationFilter;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Property\Domain\Model\Destination\DestinationRepository;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class DestinationRepositoryTest extends KernelTestCase
 {
-    public function testAddDestinationToRepository()
-    {   
+    public function testAddDestinationToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $destination = DestinationMother::random();
@@ -24,8 +26,8 @@ abstract class DestinationRepositoryTest extends KernelTestCase
         $this->assertEquals($destination->id(), $recoverDestination->id());
     }
 
-    public function testRemoveDestinationToRepository()
-    {   
+    public function testRemoveDestinationToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $destination = DestinationMother::random();
@@ -42,23 +44,26 @@ abstract class DestinationRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($destination->id()));
     }
 
-    public function testFindByNameAndCountry()
+    public function testFindByNameAndCountry(): void
     {
         $repository = $this->createSUT();
 
         $destination = DestinationMother::random();
 
-        $this->assertNull($repository->findByNameAndCountry($destination->name(), $destination->countryId()));
+        $countryId = $destination->countryId();
+        assert(null !== $countryId);
+
+        $this->assertNull($repository->findByNameAndCountry($destination->name(), $countryId));
 
         $repository->add($destination);
 
-        $recoverDestination = $repository->findByNameAndCountry($destination->name(), $destination->countryId());
+        $recoverDestination = $repository->findByNameAndCountry($destination->name(), $countryId);
 
         $this->assertNotNull($recoverDestination);
         $this->assertEquals($destination->id(), $recoverDestination->id());
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -76,7 +81,7 @@ abstract class DestinationRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new DestinationFilter(
-            name: 'Spain'
+            name: 'Spain',
         );
 
         $result = $repository->findByFilter($filter);
@@ -84,7 +89,7 @@ abstract class DestinationRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
@@ -102,7 +107,7 @@ abstract class DestinationRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new DestinationFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);
@@ -110,7 +115,7 @@ abstract class DestinationRepositoryTest extends KernelTestCase
         $this->assertCount(6, $result);
     }
 
-    public function testFindNotRecoverRemoved()
+    public function testFindNotRecoverRemoved(): void
     {
         $repository = $this->createSUT();
 

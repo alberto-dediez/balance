@@ -1,10 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Brand;
 
-use App\Property\Domain\Model\Brand\Brand;
-use App\Property\Domain\Model\Brand\BrandId;
-use App\Property\Domain\Model\Brand\BrandFilter;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
 
@@ -20,6 +19,9 @@ interface BrandRepository
 
     public function findBySourceAndExternalId(ExternalSource $source, ExternalId $externalId): ?Brand;
 
+    /**
+     * @return Brand[]
+     */
     public function findByFilter(BrandFilter $filter): array;
 
     public function totalResultsByFilter(BrandFilter $filter): int;

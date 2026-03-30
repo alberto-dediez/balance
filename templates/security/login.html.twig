@@ -8,12 +8,12 @@
 
         <div class="form-group mb-3">
             <label class="form-label" for="username">{% trans -%}Email{%- endtrans %}</label>
-            <input 
-                class="form-control" 
-                type="text" 
-                id="username" 
-                required="" 
-                name="_username" 
+            <input
+                class="form-control"
+                type="text"
+                id="username"
+                required=""
+                name="_username"
                 placeholder="{% trans -%}Introduce tu email{%- endtrans %}"
             >
         </div>
@@ -21,15 +21,15 @@
         <div class="form-group mb-3">
             <label class="form-label" for="password">{% trans -%}Contraseña{%- endtrans %}</label>
             <div class="input-group" data-controller="password">
-                <input 
-                    class="form-control" 
-                    type="password" 
-                    required="" 
-                    id="password" 
-                    name="_password" 
+                <input
+                    class="form-control"
+                    type="password"
+                    required=""
+                    id="password"
+                    name="_password"
                     placeholder="{% trans -%}Introduce tu contraseña{%- endtrans %}"
                 >
-                <button class="btn btn-light reveal rounded-end" 
+                <button class="btn btn-light reveal rounded-end"
                     type="button"
                     title="{% trans -%}Mostrar / ocultar contraseña{%- endtrans %}"
                     data-action="click->password#toogleVisibility"
@@ -51,6 +51,11 @@
             <button class="btn btn-primary w-100 py-8 mb-4 rounded-2" name="submit" type="submit">{% trans -%}Acceder{%- endtrans %}</button>
         </div>
 
+        <div class="form-group mb-4 text-center">
+            <a href="{{ path('app_login_sso') }}" class="btn btn-outline-primary w-100 py-8 rounded-2 d-flex align-items-center justify-content-center">
+                {% trans -%}Login con Bioscore{%- endtrans %}
+            </a>
+        </div>
 
         <input type="hidden" name="_csrf_token"
             value="{{ csrf_token('authenticate') }}"
@@ -69,4 +74,4 @@
 
 {% block javascripts %}
     {{ parent() }}
-{% endblock %}        
+{% endblock %}

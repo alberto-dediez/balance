@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Application\Importation\PairFields;
 
 use App\DataExchange\Application\Importation\ImportationAuthorizer;
+use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
@@ -13,31 +16,30 @@ use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 
 class PairFieldsImportationService implements CommandHandler
 {
-    use RegisterHandlerTrait, CommandInvokeHandlerTrait;
+    use RegisterHandlerTrait;
+    use CommandInvokeHandlerTrait;
 
-    public function __construct(private ImportationRepository $importationRepository, private ImportationAuthorizer $authorizer)
-    {
-    }
+    public function __construct(private ImportationRepository $importationRepository, private ImportationAuthorizer $authorizer) {}
 
     public function __invoke(PairFieldsImportationRequest $request, User $user): PairFieldsImportationResponse
     {
         $importation = $this->importationRepository->find($request->importationId);
 
-        if (null === $importation) {
+        if (!$importation instanceof Importation) {
             throw new \RuntimeException('Importation not found');
         }
 
         $this->authorizer->denyUnlessCanDoThat($importation, Action::Edit, $user);
 
         $importation->configure(
-            $request->configurations
+            $request->configurations,
         );
 
         $this->importationRepository->add($importation);
 
         return new PairFieldsImportationResponse(
             importationId: $importation->id(),
-            configurations: $importation->configurations()
+            configurations: $importation->configurations(),
         );
     }
 

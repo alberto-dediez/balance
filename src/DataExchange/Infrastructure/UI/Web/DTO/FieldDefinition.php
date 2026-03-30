@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\UI\Web\DTO;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -9,14 +11,15 @@ class FieldDefinition
 {
     public function __construct(
         public string $fieldType,
-        public array $options = []
+        /** @var array<string, mixed> */
+        public array $options = [],
     ) {
-        $this->options['required'] = $this->options['required'] ?? false;
+        $this->options['required'] ??= false;
 
-        if ($this->fieldType === TextType::class) {
-            $this->options['attr']['placeholder'] = $this->options['attr']['placeholder'] ?? new TranslatableMessage('Ignorar');
+        if (TextType::class === $this->fieldType) {
+            $this->options['attr']['placeholder'] ??= new TranslatableMessage('Ignorar');
         } else {
-            $this->options['placeholder'] = $this->options['placeholder'] ?? new TranslatableMessage('Ignorar');
+            $this->options['placeholder'] ??= new TranslatableMessage('Ignorar');
         }
 
     }

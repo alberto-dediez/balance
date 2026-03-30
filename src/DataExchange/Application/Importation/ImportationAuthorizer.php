@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Application\Importation;
 
 use App\DataExchange\Domain\Model\Importation\Importation;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 
@@ -26,7 +29,11 @@ final class ImportationAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        return ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin));
+        if ($user->hasRole(Role::SuperAdmin)) {
+            return true;
+        }
+
+        return $user->hasRole(Role::Admin);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
@@ -46,10 +53,14 @@ final class ImportationAuthorizer extends AbstractAuthorizer
 
     private function haveAccess(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::Admin)
-            || $user->hasRole(Role::SuperAdmin)
-            || ($user->hasRole(Role::Owner) && (null !== $user->accountId() && $subject->accountId()->equals($user->accountId())))
-        ;
+        if ($user->hasRole(Role::Admin)) {
+            return true;
+        }
+        if ($user->hasRole(Role::SuperAdmin)) {
+            return true;
+        }
+
+        return $user->hasRole(Role::Owner) && ($user->accountId() instanceof AccountId && $subject->accountId()->equals($user->accountId()));
     }
 
     public function supports(mixed $subject): bool

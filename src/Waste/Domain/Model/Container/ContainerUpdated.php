@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Container;
 
-use DateTimeImmutable;
-use App\Waste\Domain\DomainEvent;
-use App\Waste\Domain\Model\Waste\WasteId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
-use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\DomainEvent;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 final class ContainerUpdated extends DomainEvent
@@ -15,14 +15,14 @@ final class ContainerUpdated extends DomainEvent
     protected static string $eventName = 'containerUpdated';
 
     public function __construct(
-        private ContainerId $containerId, 
-        private WasteId $wasteId,
-        private MeasurementMethod $measurementMethod,
-        private ?string $volume,
-        private Purpose $purpose,
-        private WasteManagerId $wasteManagerId,
+        private readonly ContainerId $containerId,
+        private readonly WasteId $wasteId,
+        private readonly MeasurementMethod $measurementMethod,
+        private readonly ?string $volume,
+        private readonly Purpose $purpose,
+        private readonly WasteManagerId $wasteManagerId,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -57,12 +57,12 @@ final class ContainerUpdated extends DomainEvent
         return $this->wasteManagerId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->containerId();
+        return $this->containerId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'containerId' => (string) $this->containerId,
@@ -70,24 +70,29 @@ final class ContainerUpdated extends DomainEvent
             'purpose' => $this->purpose->value,
             'measurementMethod' => $this->measurementMethod->value,
             'wasteManagerId' => (string) $this->wasteManagerId,
-            'volume' => $this->volume
+            'volume' => $this->volume,
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        ?array $payload
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
+        $measurementMethod = MeasurementMethod::tryFrom($payload['measurementMethod']);
+        $purpose = Purpose::tryFrom($payload['purpose']);
+        assert(null !== $measurementMethod);
+        assert(null !== $purpose);
+
         return new ContainerUpdated(
-            containerId: new ContainerId($payload['containerId']), 
-            wasteId: new WasteId($payload['wasteId']), 
-            purpose: Purpose::tryFrom($payload['purpose']),
-            measurementMethod: MeasurementMethod::tryFrom($payload['measurementMethod']),
-            volume: isset($payload['volume']) ? $payload['volume'] : '0',
+            containerId: new ContainerId($payload['containerId']),
+            wasteId: new WasteId($payload['wasteId']),
+            measurementMethod: $measurementMethod,
+            volume: $payload['volume'] ?? '0',
+            purpose: $purpose,
             wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId($payload['wasteManagerId']) : WasteManagerId::generate(),
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

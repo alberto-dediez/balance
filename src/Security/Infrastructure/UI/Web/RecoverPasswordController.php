@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\UI\Web;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use App\Security\Application\User\RecoverPassword\RecoverPasswordRequest;
+use App\Security\Application\User\RecoverPassword\RecoverPasswordService;
+use App\Security\Application\User\RecoverToken\RecoverTokenRequest;
+use App\Security\Application\User\RecoverToken\RecoverTokenService;
 use App\Security\Domain\Model\User\RecoverToken;
-use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Security\Application\User\RecoverToken\RecoverTokenRequest;
-use App\Security\Application\User\RecoverToken\RecoverTokenService;
-use App\Security\Application\User\RecoverPassword\RecoverPasswordRequest;
-use App\Security\Application\User\RecoverPassword\RecoverPasswordService;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class RecoverPasswordController extends AbstractController
 {
@@ -36,18 +38,18 @@ class RecoverPasswordController extends AbstractController
             try {
                 $recoverToken(
                     new RecoverTokenRequest(
-                        username: $form->get('username')->getData()
-                    )
+                        username: $form->get('username')->getData(),
+                    ),
                 );
-            } catch (\InvalidArgumentException $exception) {
-                //No hacemos nada cuando el usuario no se encuentre
+            } catch (\InvalidArgumentException) {
+                // No hacemos nada cuando el usuario no se encuentre
             }
 
             return $this->render('@security/password/thanks.html.twig');
         }
 
         return $this->render('@security/password/recover.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 
@@ -61,14 +63,14 @@ class RecoverPasswordController extends AbstractController
         $form = $this->createFormBuilder()
             ->add('password', RepeatedType::class, [
                 'first_options'  => [
-                    'label' => new TranslatableMessage('Contraseña'), 
+                    'label' => new TranslatableMessage('Contraseña'),
                 ],
                 'second_options' => [
-                    'label' => new TranslatableMessage('Repetir Contraseña')
+                    'label' => new TranslatableMessage('Repetir Contraseña'),
                 ],
                 'type' => PasswordType::class,
                 'invalid_message' => new TranslatableMessage('Las contraseñas no coinciden.'),
-                'required' => true
+                'required' => true,
             ])
             ->getForm()
         ;
@@ -80,10 +82,10 @@ class RecoverPasswordController extends AbstractController
                 $recoverPassword(
                     new RecoverPasswordRequest(
                         token: new RecoverToken($token),
-                        password: $form->get('password')->getData()
-                    )
+                        password: $form->get('password')->getData(),
+                    ),
                 );
-            } catch (\InvalidArgumentException $exception) {
+            } catch (\InvalidArgumentException) {
                 return $this->render('@security/password/error.html.twig');
             }
 
@@ -91,7 +93,7 @@ class RecoverPasswordController extends AbstractController
         }
 
         return $this->render('@security/password/modify.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

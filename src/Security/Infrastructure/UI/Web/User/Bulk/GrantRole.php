@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\UI\Web\User\Bulk;
 
+use App\Security\Application\User\GrantRole\GrantRoleRequest;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkAction;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Security\Application\User\GrantRole\GrantRoleRequest;
-use App\Security\Infrastructure\UI\Web\User\Bulk\BulkUserRequest;
 
 class GrantRole implements BulkAction
 {
@@ -16,31 +17,33 @@ class GrantRole implements BulkAction
         return 'grant-role';
     }
 
-    public function name(): string
+    public function name(): string|TranslatableMessage
     {
         return new TranslatableMessage('Asignar rol');
     }
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) == 0) {
+        if (0 === count($request->elements)) {
             return [];
         }
 
-        if (!$request instanceof BulkUserRequest || null === $request->role) {
-            throw new \RuntimeException("Invalid BulkRequest sent!");
+        if (!$request instanceof BulkUserRequest) {
+            throw new \RuntimeException('Invalid BulkRequest sent!');
         }
 
         $commands = [];
 
         foreach ($request->elements as $user) {
-            if (null === $user || null === $user->id()) {
+            if (null === $user) {
                 continue;
             }
-
+            if (null === $user->id()) {
+                continue;
+            }
             $commands[] = new GrantRoleRequest(
                 userId: $user->id(),
-                role: $request->role
+                role: $request->role,
             );
         }
 
@@ -49,11 +52,15 @@ class GrantRole implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
-        return new TranslatableMessage("Se ha añadido el rol seleccionado al usuario {id}", ['{id}' => $command->userId]);
+        assert($command instanceof GrantRoleRequest);
+
+        return new TranslatableMessage('Se ha añadido el rol seleccionado al usuario {id}', ['{id}' => $command->userId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
-        return new TranslatableMessage("No se ha podido añadir el rol seleccionado al usuario {id}", ['{id}' => $command->userId]);
+        assert($command instanceof GrantRoleRequest);
+
+        return new TranslatableMessage('No se ha podido añadir el rol seleccionado al usuario {id}', ['{id}' => $command->userId]);
     }
 }

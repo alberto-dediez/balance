@@ -1,27 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Property;
 
-use App\Shared\Domain\Model\AggregateRoot;
 use App\Security\Domain\Model\Account\AccountId;
-use App\Property\Domain\Model\Property\PropertyInfo;
+use App\Shared\Domain\Model\AggregateRoot;
 
-class Property
+class Property implements \Stringable
 {
     use AggregateRoot;
 
+    /**
+     * @param array<\App\Shared\Domain\Event\DomainEvent> $events
+     */
     public function __construct(
         private PropertyId $id,
         private string $name = '',
         private ?PropertyInfo $info = null,
         private ?ExternalId $externalId = null,
-        private AccountId|null $accountId = null,
-        private bool $removed = false,
+        private ?AccountId $accountId = null,
+        private ?bool $removed = false,
         array $events = [],
-        private ?\DateTimeImmutable $registeredAt = null,
-        private ?\DateTimeImmutable $removedAt = null
+        private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
+        private ?\DateTimeImmutable $removedAt = null,
     ) {
-
+        $this->events = $events;
     }
 
     public function id(): PropertyId
@@ -36,7 +40,7 @@ class Property
 
     public function info(): PropertyInfo
     {
-        if (null === $this->info) {
+        if (!$this->info instanceof PropertyInfo) {
             $this->info = new PropertyInfo();
         }
 
@@ -45,7 +49,7 @@ class Property
 
     public function externalId(): ExternalId
     {
-        if (null === $this->externalId) {
+        if (!$this->externalId instanceof ExternalId) {
             $this->externalId = new ExternalId();
         }
 
@@ -59,7 +63,7 @@ class Property
 
     public function isRemoved(): bool
     {
-        return $this->removed;
+        return $this->removed ?? false;
     }
 
     public function registeredAt(): \DateTimeImmutable
@@ -72,89 +76,92 @@ class Property
         return $this->removedAt;
     }
 
-    public function register(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null)
+    public function register(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null): void
     {
         $this->recordApplyAndPublish(
             new PropertyRegistered(
                 propertyId: $this->id(),
-                accountId: $accountId,
                 name: $name,
                 info: $info,
-                externalId: $externalId
-            )
+                externalId: $externalId,
+                accountId: $accountId,
+            ),
         );
     }
 
-    public function update(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null)
+    public function update(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null): void
     {
         $this->recordApplyAndPublish(
             new PropertyUpdated(
                 propertyId: $this->id(),
-                accountId: $accountId,
                 name: $name,
                 info: $info,
-                externalId: $externalId
-            )
+                externalId: $externalId,
+                accountId: $accountId,
+            ),
         );
     }
 
-    public function match(string $name, PropertyInfo $info, ExternalId $externalId)
+    public function match(string $name, PropertyInfo $info, ExternalId $externalId): void
     {
         $this->recordApplyAndPublish(
             new PropertyMatched(
                 propertyId: $this->id(),
                 name: $name,
                 info: $info,
-                externalId: $externalId
-            )
+                externalId: $externalId,
+            ),
         );
     }
 
-    public function remove()
+    public function remove(): void
     {
         $this->recordApplyAndPublish(
             new PropertyRemoved(
-                propertyId: $this->id()
-            )
+                propertyId: $this->id(),
+            ),
         );
     }
 
-    public function applyPropertyRegistered(PropertyRegistered $event)
+    public function applyPropertyRegistered(PropertyRegistered $event): void
     {
         $this->name = $event->name();
         $this->accountId = $event->accountId();
 
-        $this->info = null === $event->info() ? new PropertyInfo() : $event->info();
-        $this->externalId = null === $event->externalId() ? new ExternalId() : $event->externalId();
+        $this->info = $event->info() ?? new PropertyInfo();
+        $this->externalId = $event->externalId() ?? new ExternalId();
 
         $this->registeredAt = $event->occurredOn();
     }
 
-    public function applyPropertyMatched(PropertyMatched $event)
+    public function applyPropertyMatched(PropertyMatched $event): void
     {
-        if (!$this->info()->equals($event->info()) || !$this->externalId()->equals($event->externalId())) {
+        $eventInfo = $event->info() ?? new PropertyInfo();
+        $eventExternalId = $event->externalId() ?? new ExternalId();
+
+        if (!$this->info()->equals($eventInfo) || !$this->externalId()->equals($eventExternalId)) {
             $this->recordApplyAndPublish(
                 new PropertyUpdated(
                     propertyId: $this->id(),
-                    accountId: $this->accountId(),
                     name: $this->name(),
-                    info: $this->info()->combine($event->info()),
-                    externalId: $this->externalId()->combine($event->externalId())
-                )
+                    info: $this->info()->combine($eventInfo),
+                    externalId: $this->externalId()->combine($eventExternalId),
+                    accountId: $this->accountId(),
+                ),
             );
         }
     }
 
-    public function applyPropertyUpdated(PropertyUpdated $event)
+    public function applyPropertyUpdated(PropertyUpdated $event): void
     {
         $this->name = $event->name();
         $this->accountId = $event->accountId();
 
-        $this->info = null === $event->info() ? $this->info() : $event->info();
-        $this->externalId = null === $event->externalId() ? $this->externalId() : $event->externalId();
+        $this->info = $event->info() ?? $this->info();
+        $this->externalId = $event->externalId() ?? $this->externalId();
     }
 
-    public function applyPropertyRemoved(PropertyRemoved $event)
+    public function applyPropertyRemoved(PropertyRemoved $event): void
     {
         $this->removed = true;
         $this->removedAt = $event->occurredOn();
@@ -162,6 +169,6 @@ class Property
 
     public function __toString(): string
     {
-        return (string) $this->name();
+        return $this->name();
     }
 }

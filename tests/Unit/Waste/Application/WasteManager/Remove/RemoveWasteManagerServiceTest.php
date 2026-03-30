@@ -1,24 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\WasteManager\Remove;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Waste\Domain\Model\WasteManager\WasteManagerRemoved;
-use App\Waste\Application\WasteManager\WasteManagerAuthorizer;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
+use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
 use App\Waste\Application\WasteManager\Remove\RemoveWasteManagerRequest;
 use App\Waste\Application\WasteManager\Remove\RemoveWasteManagerService;
-use App\Waste\Application\WasteManager\Remove\RemoveWasteManagerResponse;
-use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
+use App\Waste\Application\WasteManager\WasteManagerAuthorizer;
+use App\Waste\Domain\Model\WasteManager\WasteManagerRemoved;
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteManagerRepository;
+use PHPUnit\Framework\TestCase;
 
 class RemoveWasteManagerServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -27,7 +29,7 @@ class RemoveWasteManagerServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = WasteManagerRepositoryMother::inMemory();
 
@@ -35,20 +37,20 @@ class RemoveWasteManagerServiceTest extends TestCase
 
         $sut = $this->createSUT($repository);
 
-        $wasteManager = WasteManagerMother::fromAccount($user->accountId());
+        $accountId = $user->accountId();
+        self::assertNotNull($accountId);
+        $wasteManager = WasteManagerMother::fromAccount($accountId);
 
         $repository->add($wasteManager);
 
         $request = new RemoveWasteManagerRequest(
-            wasteManagerId: $wasteManager->id()
+            wasteManagerId: $wasteManager->id(),
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RemoveWasteManagerResponse);
         $this->assertTrue($wasteManager->id()->equals($result->wasteManagerId));
-        
+
         $wasteManagerPersisted = $repository->find($result->wasteManagerId);
 
         $this->assertNull($wasteManagerPersisted);
@@ -59,7 +61,7 @@ class RemoveWasteManagerServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof WasteManagerRemoved);
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = WasteManagerRepositoryMother::inMemory();
 
@@ -74,7 +76,7 @@ class RemoveWasteManagerServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryWasteManagerRepository $repository): RemoveWasteManagerService
     {
         return new RemoveWasteManagerService($repository, new WasteManagerAuthorizer());
     }

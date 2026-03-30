@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\DataExchange\Infrastructure\Persistence\PDO\Repository;
 
 use App\DataExchange\Domain\Model\Importation\ColumnValueTranslation;
@@ -11,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 class SqliteImportationDataRepositoryTest extends TestCase
 {
-    const STORAGE_PATH = __DIR__ . '/../../../../../../../var/sqlite-test/';
+    public const STORAGE_PATH = __DIR__ . '/../../../../../../../var/sqlite-test/';
 
     public function testGivenAnImportationWhenICreateAnImportationDataThenDataIsAccessibleThroughAnSqlite(): void
     {
@@ -23,7 +25,7 @@ class SqliteImportationDataRepositoryTest extends TestCase
 
         $sut->create($importation);
 
-        $file = self::STORAGE_PATH . ((string) $importation->id()) . '.sqlite';
+        $file = self::STORAGE_PATH . $importation->id() . '.sqlite';
 
         $this->assertFileExists($file);
 
@@ -42,7 +44,7 @@ class SqliteImportationDataRepositoryTest extends TestCase
 
         $sut->create($importation);
 
-        $file = self::STORAGE_PATH . ((string) $importation->id()) . '.sqlite';
+        $file = self::STORAGE_PATH . $importation->id() . '.sqlite';
 
         $this->assertFileExists($file);
 
@@ -70,13 +72,12 @@ class SqliteImportationDataRepositoryTest extends TestCase
         $orderedValues = $configuration->values;
         sort($orderedValues);
 
-        $this->assertNotNull($configuration);
         $this->assertEquals(1, $configuration->column);
         $this->assertEquals('edad', $configuration->name);
         $this->assertEquals(null, $configuration->field);
-        $this->assertEquals(['14','15','16','17','18'], $orderedValues);
+        $this->assertEquals(['14', '15', '16', '17', '18'], $orderedValues);
         $this->assertCount(5, $configuration->translations);
-        $this->assertNotNull(array_filter($configuration->translations, fn (ColumnValueTranslation $translation) => $translation->value == '14'));
+        $this->assertGreaterThan(0, count(array_filter($configuration->translations, fn(ColumnValueTranslation $translation): bool => '14' === $translation->value)));
     }
 
     public function testGivenAnImportationColumnConfigurationWhenISaveItThenICanRecoverIt(): void
@@ -105,12 +106,12 @@ class SqliteImportationDataRepositoryTest extends TestCase
 
         $this->assertEquals('ageOfHeroe', $recoverConfiguration->field);
 
-        /** @var ?ColumnValueTranslation $foundTranslation */
-        $foundTranslations = array_filter($recoverConfiguration->translations, fn (ColumnValueTranslation $translation) => $translation->value == '14');
+        $foundTranslations = array_filter($recoverConfiguration->translations, fn(ColumnValueTranslation $translation): bool => '14' === $translation->value);
         $this->assertCount(1, $foundTranslations);
 
+        /** @var ?ColumnValueTranslation $foundTranslation */
         $foundTranslation = array_pop($foundTranslations);
-        $this->assertEquals('Infantil', $foundTranslation->translation);
+        $this->assertEquals('Infantil', $foundTranslation?->translation);
     }
 
     public function testGivenAnImportationWhenISaveAnErrorMessageThenICanRecoverIt(): void
@@ -132,7 +133,7 @@ class SqliteImportationDataRepositoryTest extends TestCase
 
         $otherResult = $sut->getResult($importation->id(), 1);
 
-        $this->assertEmpty($otherResult['error']);
+        $this->assertEmpty($otherResult['error'] ?? '');
     }
 
     private function createSUT(): ImportationDataRepository
@@ -149,10 +150,12 @@ class SqliteImportationDataRepositoryTest extends TestCase
         }
 
         foreach (scandir(self::STORAGE_PATH) as $file) {
-            if ($file === '.' || $file === '..') {
+            if ('.' === $file) {
                 continue;
             }
-
+            if ('..' === $file) {
+                continue;
+            }
             unlink(self::STORAGE_PATH . $file);
         }
     }

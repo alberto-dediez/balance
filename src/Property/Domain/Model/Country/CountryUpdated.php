@@ -1,25 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Country;
 
-use DateTimeImmutable;
 use App\Property\Domain\DomainEvent;
+use App\Property\Domain\Model\Property\ExternalId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
-use App\Property\Domain\Model\Country\CountryId;
-use App\Property\Domain\Model\Property\ExternalId;
 
 final class CountryUpdated extends DomainEvent
 {
     protected static string $eventName = 'countryUpdated';
 
     public function __construct(
-        private CountryId $countryId, 
-        private string $name, 
-        private ?string $iso = null,
-        private ?ExternalId $externalId = null,
+        private readonly CountryId $countryId,
+        private readonly string $name,
+        private readonly ?string $iso = null,
+        private readonly ?ExternalId $externalId = null,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -44,33 +44,33 @@ final class CountryUpdated extends DomainEvent
         return $this->externalId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->countryId();
+        return $this->countryId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'countryId' => (string) $this->countryId,
             'iso' => $this->iso,
             'name' => $this->name,
-            'externalId' => $this->externalId
+            'externalId' => $this->externalId,
         ];
     }
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        ?array $payload
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new CountryUpdated(
-            countryId: new CountryId($payload['countryId']), 
-            iso: $payload['iso'], 
+            countryId: new CountryId($payload['countryId']),
             name: $payload['name'],
-            externalId: isset($payload['externalId']) ? $payload['externalId'] : null,
+            iso: $payload['iso'],
+            externalId: $payload['externalId'] ?? null,
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

@@ -1,18 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Measurement;
 
-use DateTimeImmutable;
-use App\Waste\Domain\DomainEvent;
-use App\Waste\Domain\Model\Waste\WasteId;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
-use App\Waste\Domain\Model\Container\Purpose;
-use App\Security\Domain\Model\Account\AccountId;
+use App\Waste\Domain\DomainEvent;
 use App\Waste\Domain\Model\Container\ContainerId;
-use App\Property\Domain\Model\Property\PropertyId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 final class MeasurementRegistered extends DomainEvent
@@ -20,23 +21,23 @@ final class MeasurementRegistered extends DomainEvent
     protected static string $eventName = 'measurementRegistered';
 
     public function __construct(
-        private MeasurementId $measurementId,
-        private ContainerId $containerId,
-        private PropertyId $propertyId,
-        private WasteId $wasteId,
-        private MeasurementMethod $measurementMethod,
-        private Purpose $purpose,
-        private WasteManagerId $wasteManagerId,
-        private UserId $registeredBy,
-        private AccountId $accountId,
-        private \DateTimeImmutable $day,
-        private int $quantity = 0,
-        private float $load = 0,
-        private Unit $unit = Unit::Kilogram,
-        private ?string $justification = null,
-        private ?string $reference = null,
+        private readonly MeasurementId $measurementId,
+        private readonly ContainerId $containerId,
+        private readonly PropertyId $propertyId,
+        private readonly WasteId $wasteId,
+        private readonly MeasurementMethod $measurementMethod,
+        private readonly Purpose $purpose,
+        private readonly WasteManagerId $wasteManagerId,
+        private readonly UserId $registeredBy,
+        private readonly AccountId $accountId,
+        private readonly \DateTimeImmutable $day,
+        private readonly int $quantity = 0,
+        private readonly float $load = 0,
+        private readonly Unit $unit = Unit::Kilogram,
+        private readonly ?string $justification = null,
+        private readonly ?string $reference = null,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -101,7 +102,7 @@ final class MeasurementRegistered extends DomainEvent
         return $this->reference;
     }
 
-    public function accountId(): ?AccountId
+    public function accountId(): AccountId
     {
         return $this->accountId;
     }
@@ -116,12 +117,12 @@ final class MeasurementRegistered extends DomainEvent
         return $this->day;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->measurementId();
+        return $this->measurementId;
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'measurementId' => (string) $this->measurementId,
@@ -144,11 +145,16 @@ final class MeasurementRegistered extends DomainEvent
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        ?array $payload
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         $measurementMethod = MeasurementMethod::tryFrom($payload['measurementMethod']);
-        $guessedUnit = $measurementMethod === MeasurementMethod::Volume ? Unit::Liter : Unit::Kilogram;
+        $guessedUnit = MeasurementMethod::Volume === $measurementMethod ? Unit::Liter : Unit::Kilogram;
+        $purpose = Purpose::tryFrom($payload['purpose']);
+        $unit = isset($payload['unit']) && !empty($payload['unit']) ? Unit::tryFrom($payload['unit']) : $guessedUnit;
+        assert(null !== $measurementMethod);
+        assert(null !== $purpose);
+        assert(null !== $unit);
 
         return new MeasurementRegistered(
             measurementId: new MeasurementId($payload['measurementId']),
@@ -156,18 +162,18 @@ final class MeasurementRegistered extends DomainEvent
             propertyId: new PropertyId($payload['propertyId']),
             wasteId: new WasteId($payload['waste']),
             measurementMethod: $measurementMethod,
-            purpose: Purpose::tryFrom($payload['purpose']),
+            purpose: $purpose,
             wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId($payload['wasteManagerId']) : WasteManagerId::generate(),
             registeredBy: new UserId($payload['registeredBy']),
             accountId: new AccountId($payload['accountId']),
-            day: isset($payload['day']) ? new \DateTimeImmutable($payload['day']): $occurredOn,
+            day: isset($payload['day']) ? new \DateTimeImmutable($payload['day']) : $occurredOn,
             quantity: $payload['quantity'],
             load: $payload['load'],
-            unit: isset($payload['unit']) && !empty($payload['unit']) ? Unit::tryFrom($payload['unit']) : $guessedUnit,
+            unit: $unit,
             justification: $payload['justification'],
             reference: $payload['reference'],
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

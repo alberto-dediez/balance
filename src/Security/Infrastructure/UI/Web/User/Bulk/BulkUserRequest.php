@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\UI\Web\User\Bulk;
 
 use App\Security\Domain\Model\User\Role;

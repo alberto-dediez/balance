@@ -1,17 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Form;
 
+use App\Security\Application\User\Register\RegisterUserRequest;
 use App\Security\Domain\Model\User\Role;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use App\Security\Infrastructure\Symfony\Form\Type\RoleType;
-use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Security\Infrastructure\Symfony\Form\Type\AccountType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use App\Security\Infrastructure\Symfony\Form\Type\RoleType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractType<RegisterUserRequest>
+ */
 class AdminRegisterUserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -19,11 +25,11 @@ class AdminRegisterUserType extends AbstractType
         $builder
             ->add('username', TextType::class, [
                 'label' => new TranslatableMessage('Nombre de usuario'),
-                'required' => true
+                'required' => true,
             ])
             ->add('password', PasswordType::class, [
                 'label' => new TranslatableMessage('Contraseña'),
-                'required' => true
+                'required' => true,
             ])
             ->add('account', AccountType::class, [
                 'label' => new TranslatableMessage('Cuenta'),
@@ -33,13 +39,11 @@ class AdminRegisterUserType extends AbstractType
                 'label' => new TranslatableMessage('Rol de usuario'),
                 'choices' => Role::casesForAdmins(),
                 'required' => false,
-                'multiple' => true
+                'multiple' => true,
             ])
             ->add('register', SubmitType::class, [
-                'label' => new TranslatableMessage('Registrar')
+                'label' => new TranslatableMessage('Registrar'),
             ])
         ;
-
-        parent::buildForm($builder, $options);
     }
 }

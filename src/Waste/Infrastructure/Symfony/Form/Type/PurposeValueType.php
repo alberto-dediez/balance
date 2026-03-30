@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Symfony\Form\Type;
 
 use App\Waste\Domain\Model\Container\Purpose;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/** @extends AbstractType<array<string, mixed>> */
 class PurposeValueType extends AbstractType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $choices = [];
 
@@ -17,10 +20,10 @@ class PurposeValueType extends AbstractType
             $choices[$purpose->value] = $purpose->value;
         }
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => $choices,
             'translation_domain' => 'purpose',
-        ));
+        ]);
     }
 
     public function getParent()

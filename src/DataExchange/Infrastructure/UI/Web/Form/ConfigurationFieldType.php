@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Infrastructure\UI\Web\Form;
 
 use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
@@ -9,8 +11,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractType<ImportationColumnConfiguration>
+ */
 class ConfigurationFieldType extends AbstractType
 {
+    /** @param array<string, mixed> $options */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -23,11 +29,11 @@ class ConfigurationFieldType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => ImportationColumnConfiguration::class,
-            'fields' => []
+            'fields' => [],
         ]);
     }
 }

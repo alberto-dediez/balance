@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Infrastructure\Symfony\Form;
 
 use App\Security\Domain\Model\User\Role;
-use Symfony\Component\Form\FormBuilderInterface;
-use App\Shared\Infrastructure\Symfony\Form\BulkType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatableMessage;
 use App\Security\Infrastructure\Symfony\Form\Type\RoleType;
+use App\Security\Infrastructure\UI\Web\User\Bulk\BulkUserRequest;
 use App\Security\Infrastructure\UI\Web\User\Bulk\GrantRole;
 use App\Security\Infrastructure\UI\Web\User\Bulk\RemoveUser;
 use App\Security\Infrastructure\UI\Web\User\Bulk\UngrantRole;
-use App\Security\Infrastructure\UI\Web\User\Bulk\BulkUserRequest;
+use App\Shared\Infrastructure\Symfony\Form\BulkType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class AdminBulkUserType extends BulkType
 {
@@ -28,13 +30,13 @@ class AdminBulkUserType extends BulkType
                     'data-controller' => 'showable',
                     'data-showable-selector-value' => '[name*="action"]',
                     'data-showable-container-value' => 'div:not(.input-group)',
-                    'data-showable-conditions-value' => json_encode(['grant-role', 'ungrant-role'])
-                ]
+                    'data-showable-conditions-value' => json_encode(['grant-role', 'ungrant-role']),
+                ],
             ])
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -42,9 +44,9 @@ class AdminBulkUserType extends BulkType
             'actions' => [
                 new RemoveUser(),
                 new GrantRole(),
-                new UngrantRole()
+                new UngrantRole(),
             ],
-            'data_class' => BulkUserRequest::class
+            'data_class' => BulkUserRequest::class,
         ]);
     }
 }

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Measurement;
 
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 enum Unit: string
 {
-    const LITERS_IN_A_M3 = 1000;
+    public const LITERS_IN_A_M3 = 1000;
 
     case CubicMeter = 'm3';
 
@@ -18,7 +20,7 @@ enum Unit: string
 
     public function calculateLoadInKilograms(float $load, float $volume, float $density): float
     {
-        return match($this) {
+        return match ($this) {
             self::Kilogram => $load,
             self::Liter => $load * $density,
             self::CubicMeter => $load * $density * self::LITERS_IN_A_M3,

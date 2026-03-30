@@ -1,74 +1,73 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\Measurement;
 
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Security\Domain\Model\User\UserId;
-use App\Shared\Domain\Model\AggregateRoot;
-use App\Waste\Domain\Model\Container\Purpose;
-use App\Waste\Domain\Model\Container\Container;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
+use App\Shared\Domain\Model\AggregateRoot;
+use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
-class Measurement
+class Measurement implements \Stringable
 {
     use AggregateRoot;
 
     public function __construct(
         private MeasurementId $id,
-        private ContainerId|null $containerId = null,
-        private PropertyId|null $propertyId = null,
-        private WasteId|null $wasteId = null,
-        private ?Purpose $purpose = null,
-        private ?MeasurementMethod $measurementMethod = null,
-        private WasteManagerId|null $wasteManagerId = null,
+        private ?ContainerId $containerId = null,
+        private ?PropertyId $propertyId = null,
+        private ?WasteId $wasteId = null,
+        private Purpose $purpose = Purpose::Waste,
+        private MeasurementMethod $measurementMethod = MeasurementMethod::Volume,
+        private ?WasteManagerId $wasteManagerId = null,
         private int $quantity = 0,
-        private float $load = 0,
+        private float|string $load = 0,
         private Unit $unit = Unit::Kilogram,
         private ?string $justification = null,
         private ?string $reference = null,
-        private AccountId|null $accountId = null,
-        private UserId|null $registeredBy = null,
-        private ?\DateTimeImmutable $registeredAt = null,
-        array $events = []
-    ) {
-
-    }
+        private ?AccountId $accountId = null,
+        private ?UserId $registeredBy = null,
+        private \DateTimeImmutable $registeredAt = new \DateTimeImmutable(),
+    ) {}
 
     public function id(): MeasurementId
     {
         return $this->id;
     }
 
-    public function containerId() : ?ContainerId
+    public function containerId(): ?ContainerId
     {
         return $this->containerId;
     }
 
-    public function propertyId() : ?PropertyId
+    public function propertyId(): ?PropertyId
     {
         return $this->propertyId;
     }
 
-    public function wasteId() : ?WasteId
+    public function wasteId(): ?WasteId
     {
         return $this->wasteId;
     }
 
-    public function purpose() : ?Purpose
+    public function purpose(): Purpose
     {
         return $this->purpose;
     }
 
-    public function measurementMethod() : ?MeasurementMethod
+    public function measurementMethod(): MeasurementMethod
     {
         return $this->measurementMethod;
     }
 
-    public function wasteManagerId() : ?WasteManagerId
+    public function wasteManagerId(): ?WasteManagerId
     {
         return $this->wasteManagerId;
     }
@@ -80,7 +79,7 @@ class Measurement
 
     public function load(): float
     {
-        return $this->load;
+        return (float) $this->load;
     }
 
     public function unit(): ?Unit
@@ -127,26 +126,35 @@ class Measurement
         ?string $justification = null,
         ?string $reference = null,
         ?Unit $unit = null,
-        ?\DateTimeImmutable $day = null
-    ) {
+        ?\DateTimeImmutable $day = null,
+    ): void {
+        $propertyId = $container->propertyId();
+        assert(null !== $propertyId);
+        $wasteId = $container->wasteId();
+        assert(null !== $wasteId);
+        $measurementMethod = $container->measurementMethod();
+        $purpose = $container->purpose();
+        $wasteManagerId = $container->wasteManagerId();
+        assert(null !== $wasteManagerId);
+
         $this->recordApplyAndPublish(
             new MeasurementRegistered(
                 measurementId: $this->id(),
                 containerId: $container->id(),
-                propertyId: $container->propertyId(),
-                wasteId: $container->wasteId(),
-                measurementMethod: $container->measurementMethod(),
-                purpose: $container->purpose(),
-                wasteManagerId: $container->wasteManagerId(),
+                propertyId: $propertyId,
+                wasteId: $wasteId,
+                measurementMethod: $measurementMethod,
+                purpose: $purpose,
+                wasteManagerId: $wasteManagerId,
                 registeredBy: $registeredBy,
                 accountId: $accountId,
-                day: $day ?? new \DateTimeImmutable("NOW"),
+                day: $day ?? new \DateTimeImmutable('NOW'),
                 quantity: $quantity,
                 load: $load,
                 unit: $unit ?? $container->unit(),
                 justification: $justification,
-                reference: $reference
-            )
+                reference: $reference,
+            ),
         );
     }
 
@@ -155,34 +163,44 @@ class Measurement
         float $load,
         ?string $justification = null,
         ?string $reference = null,
-    ) {
+    ): void {
         $this->recordApplyAndPublish(
             new MeasurementUpdated(
                 measurementId: $this->id(),
                 quantity: $quantity,
                 load: $load,
                 justification: $justification,
-                reference: $reference
-            )
+                reference: $reference,
+            ),
         );
     }
 
-    public function remove()
+    public function remove(): void
     {
+        $propertyId = $this->propertyId();
+        assert(null !== $propertyId);
+        $wasteId = $this->wasteId();
+        assert(null !== $wasteId);
+        $purpose = $this->purpose();
+        $wasteManagerId = $this->wasteManagerId();
+        assert(null !== $wasteManagerId);
+        $accountId = $this->accountId();
+        assert(null !== $accountId);
+
         $this->recordApplyAndPublish(
             new MeasurementRemoved(
                 measurementId: $this->id(),
-                propertyId: $this->propertyId(),
-                wasteId: $this->wasteId(),
-                purpose: $this->purpose(),
-                wasteManagerId: $this->wasteManagerId(),
-                accountId: $this->accountId(),
-                day: $this->day()
-            )
+                propertyId: $propertyId,
+                wasteId: $wasteId,
+                purpose: $purpose,
+                wasteManagerId: $wasteManagerId,
+                accountId: $accountId,
+                day: $this->day(),
+            ),
         );
     }
 
-    public function applyMeasurementRegistered(MeasurementRegistered $event)
+    public function applyMeasurementRegistered(MeasurementRegistered $event): void
     {
         $this->containerId = $event->containerId();
         $this->propertyId = $event->propertyId();
@@ -200,7 +218,7 @@ class Measurement
         $this->registeredAt = $event->day();
     }
 
-    public function applyMeasurementUpdated(MeasurementUpdated $event)
+    public function applyMeasurementUpdated(MeasurementUpdated $event): void
     {
         $this->quantity = $event->quantity();
         $this->load = $event->load();
@@ -208,10 +226,7 @@ class Measurement
         $this->reference = $event->reference();
     }
 
-    public function applyMeasurementRemoved(MeasurementRemoved $event)
-    {
-
-    }
+    public function applyMeasurementRemoved(MeasurementRemoved $event): void {}
 
     public function __toString(): string
     {

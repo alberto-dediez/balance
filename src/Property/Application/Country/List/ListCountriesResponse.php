@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Application\Country\List;
 
 class ListCountriesResponse
 {
-    public function __construct(public array $countries = [], public int $totalResults = 0)
-    {
-        
-    }
+    /**
+     * @param \App\Property\Domain\Model\Country\Country[] $countries
+     */
+    public function __construct(public array $countries = [], public int $totalResults = 0) {}
 }

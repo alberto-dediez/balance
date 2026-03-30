@@ -1,71 +1,76 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Application\Property\Import;
 
 use App\Property\Domain\Model\Brand\BrandId;
-use App\Property\Domain\Model\Country\CountryId;
-use App\Property\Domain\Model\Category\CategoryId;
-use App\Property\Domain\Model\Property\ExternalId;
-use App\Property\Application\Property\Import\Field;
 use App\Property\Domain\Model\Brand\BrandRepository;
-use App\Property\Domain\Model\Property\PropertyInfo;
-use App\Property\Domain\Model\Property\PropertyType;
-use App\Property\Domain\Model\Property\ExternalSource;
+use App\Property\Domain\Model\Category\CategoryId;
+use App\Property\Domain\Model\Category\CategoryRepository;
+use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Country\CountryRepository;
 use App\Property\Domain\Model\Destination\DestinationId;
-use App\Property\Domain\Model\Category\CategoryRepository;
 use App\Property\Domain\Model\Destination\DestinationRepository;
+use App\Property\Domain\Model\Property\ExternalId;
+use App\Property\Domain\Model\Property\ExternalSource;
+use App\Property\Domain\Model\Property\PropertyInfo;
+use App\Property\Domain\Model\Property\PropertyType;
 
 class PropertyInfoExtractor
 {
     public function __construct(
-        private DestinationRepository $destinationRepository, 
-        private CountryRepository $countryRepository,
-        private CategoryRepository $categoryRepository,
-        private BrandRepository $brandRepository
-    ) {
+        private readonly DestinationRepository $destinationRepository,
+        private readonly CountryRepository $countryRepository,
+        private readonly CategoryRepository $categoryRepository,
+        private readonly BrandRepository $brandRepository,
+    ) {}
 
-    }
-
+    /**
+     * @param array<mixed> $row
+     */
     public function extract(FieldExtractor $fieldExtractor, ExternalSource $source, array $row): PropertyInfo
     {
-        $longitude = str_replace(',', '.', $fieldExtractor->extract(Field::InfoLongitude, $row));
-        $latitude = str_replace(',', '.', $fieldExtractor->extract(Field::InfoLatitude, $row));
+        $longitudeData = $fieldExtractor->extract(Field::InfoLongitude, $row);
+        $latitudeData = $fieldExtractor->extract(Field::InfoLatitude, $row);
+
+        $longitude = null !== $longitudeData ? str_replace(',', '.', (string) $longitudeData) : null;
+        $latitude = null !== $latitudeData ? str_replace(',', '.', (string) $latitudeData) : null;
 
         $countryExternalId = $fieldExtractor->extract(Field::InfoCountryId, $row);
         $countryExternalName = $fieldExtractor->extract(Field::InfoCountryName, $row);
 
         $countryId = $this->getCountryId(
-            null !== $countryExternalId ? $countryExternalId : md5($countryExternalName),
+            $countryExternalId ?? md5((string) $countryExternalName),
             $countryExternalName,
-            $source
+            $source,
         );
 
         $destinationExternalId = $fieldExtractor->extract(Field::InfoDestinationId, $row);
         $destinationExternalName = $fieldExtractor->extract(Field::InfoDestinationName, $row);
 
         $destinationId = $this->getDestinationId(
-            null !== $destinationExternalId ? $destinationExternalId : md5($destinationExternalName),
+            $destinationExternalId ?? md5((string) $destinationExternalName),
             $destinationExternalName,
-            $source
+            $source,
         );
 
         $brandExternalId = $fieldExtractor->extract(Field::InfoBrandId, $row);
         $brandExternalName = $fieldExtractor->extract(Field::InfoBrandName, $row);
 
         $brandId = $this->getBrandId(
-            null !== $brandExternalId ? $brandExternalId : md5($brandExternalName),
+            $brandExternalId ?? md5((string) $brandExternalName),
             $brandExternalName,
-            $source
+            $source,
         );
 
         $categoryExternalId = $fieldExtractor->extract(Field::InfoCategoryId, $row);
         $categoryExternalName = $fieldExtractor->extract(Field::InfoCategoryName, $row);
 
         $categoryId = $this->getCategoryId(
-            null !== $categoryExternalId ? $categoryExternalId : md5($categoryExternalName),
+            $categoryExternalId ?? md5((string) $categoryExternalName),
             $categoryExternalName,
-            $source
+            $source,
         );
 
         $propertyTypeData = $fieldExtractor->extract(Field::InfoPropertyType, $row);
@@ -73,16 +78,16 @@ class PropertyInfoExtractor
         return new PropertyInfo(
             propertyType: null == $propertyTypeData ? PropertyType::Other : PropertyType::translate($propertyTypeData),
             categoryId: $categoryId,
+            brandId: $brandId,
             address: $fieldExtractor->extract(Field::InfoAddress, $row),
-            postalCode: substr($fieldExtractor->extract(Field::InfoPostalCode, $row), 0, 20),
-            longitude: !empty($longitude) ? $longitude : null,
-            latitude: !empty($latitude) ? $latitude : null,
+            postalCode: substr((string) $fieldExtractor->extract(Field::InfoPostalCode, $row), 0, 20),
+            longitude: empty($longitude) ? null : $longitude,
+            latitude: empty($latitude) ? null : $latitude,
             rooms: (int) $fieldExtractor->extract(Field::InfoRooms, $row),
-            web: $fieldExtractor->extract(Field::InfoWeb, $row),
             zone: $fieldExtractor->extract(Field::InfoZone, $row),
+            web: $fieldExtractor->extract(Field::InfoWeb, $row),
             destinationId: $destinationId,
             countryId: $countryId,
-            brandId: $brandId,
         );
     }
 

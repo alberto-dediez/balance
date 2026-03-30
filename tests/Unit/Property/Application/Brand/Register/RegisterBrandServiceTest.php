@@ -1,23 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Brand\Register;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Property\Domain\Model\Brand\Brand;
-use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Property\Application\Brand\BrandAuthorizer;
-use App\Property\Domain\Model\Brand\BrandRegistered;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Property\Application\Brand\Register\RegisterBrandRequest;
 use App\Property\Application\Brand\Register\RegisterBrandService;
-use App\Property\Application\Brand\Register\RegisterBrandResponse;
+use App\Property\Domain\Model\Brand\BrandRegistered;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Property\Domain\Model\Brand\BrandRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class RegisterBrandServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -26,7 +27,7 @@ class RegisterBrandServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = BrandRepositoryMother::inMemory();
 
@@ -35,20 +36,17 @@ class RegisterBrandServiceTest extends TestCase
         $sut = $this->createSUT($repository);
 
         $request = new RegisterBrandRequest(
-            name: 'Orizonia'
+            name: 'Orizonia',
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterBrandResponse);
         $this->assertNotEmpty((string) $result->brandId);
         $this->assertEquals(36, strlen((string) $result->brandId));
 
         $brandPersisted = $repository->find($result->brandId);
 
         $this->assertNotNull($brandPersisted);
-        $this->assertTrue($brandPersisted instanceof Brand);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -58,20 +56,20 @@ class RegisterBrandServiceTest extends TestCase
         $this->assertTrue($brandPersisted->id()->equals($lastEvent->brandId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = BrandRepositoryMother::inMemory();
 
         $sut = $this->createSUT($repository);
 
         $result = $sut->isHandled(new RegisterBrandRequest(
-            name: 'Travelplan'
+            name: 'Travelplan',
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryBrandRepository $repository): RegisterBrandService
     {
         return new RegisterBrandService($repository, new BrandAuthorizer());
     }

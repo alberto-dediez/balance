@@ -1,32 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Application\Brand\Import;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Property\Domain\Model\Brand\BrandId;
-use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Application\Brand\BrandAuthorizer;
-use App\Property\Domain\Model\Property\ExternalSource;
 use App\Property\Application\Brand\Import\BrandRequest;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Property\Domain\Model\Brand\BrandMother;
 use App\Property\Application\Brand\Import\ImportBrandsRequest;
 use App\Property\Application\Brand\Import\ImportBrandsService;
-use App\Property\Application\Brand\Import\ImportBrandsResponse;
-use App\Property\Application\Brand\Register\RegisterBrandService;
 use App\Property\Application\Brand\Register\RegisterBrandResponse;
+use App\Property\Application\Brand\Register\RegisterBrandService;
 use App\Property\Application\Brand\Update\UpdateBrandService;
+use App\Property\Domain\Model\Brand\BrandId;
+use App\Property\Domain\Model\Property\ExternalId;
+use App\Property\Domain\Model\Property\ExternalSource;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
+use App\Security\Domain\Model\User\Role;
+use App\Tests\Unit\Property\Domain\Model\Brand\BrandMother;
 use App\Tests\Unit\Property\Domain\Model\Brand\BrandRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 class ImportBrandsServiceTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        
-    }
+    protected function setUp(): void {}
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $repository = BrandRepositoryMother::inMemory();
 
@@ -48,36 +48,33 @@ class ImportBrandsServiceTest extends TestCase
         $request = new ImportBrandsRequest(
             [
                 new BrandRequest(
-                    name: 'ibis', 
-                    createIfNotExists: false,
+                    name: 'ibis',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '1234')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '1234'),
+                    createIfNotExists: false,
                 ),
                 new BrandRequest(
-                    name: 'Orizonia', 
-                    createIfNotExists: false,
+                    name: 'Orizonia',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '234')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '234'),
+                    createIfNotExists: false,
                 ),
                 new BrandRequest(
-                    name: 'Burger King', 
-                    createIfNotExists: false,
+                    name: 'Burger King',
                     source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '34')
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '34'),
+                    createIfNotExists: false,
                 ),
                 new BrandRequest(
-                    name: 'Travelplan', 
+                    name: 'Travelplan',
+                    source: ExternalSource::Bioscore,
+                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '4'),
                     createIfNotExists: true,
-                    source: ExternalSource::Bioscore,
-                    externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '4')
                 ),
-            ]
+            ],
         );
 
         $result = $sut($request, $user);
-
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof ImportBrandsResponse);
 
         $this->assertCount(4, $result->brands);
         $this->assertEquals(3, $result->matched);
@@ -90,24 +87,24 @@ class ImportBrandsServiceTest extends TestCase
         $this->assertEquals('1234', $ibis->externalId()->bioscore());
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryBrandRepository $repository): ImportBrandsService
     {
         $registerService = $this->createMock(RegisterBrandService::class);
-        $registerService->method('__invoke')->willReturn(new RegisterBrandResponse(BrandId::generate(), '', null));
+        $registerService->method('__invoke')->willReturn(new RegisterBrandResponse(BrandId::generate(), ''));
 
-        /** @var RegisterBrandService $registerService */
-
+        /** @var RegisterBrandService&MockObject $registerService */
         $authorizer = new BrandAuthorizer();
 
         $updateService = new UpdateBrandService(
-            $repository, $authorizer
+            $repository,
+            $authorizer,
         );
 
         return new ImportBrandsService(
-            repository: $repository, 
+            repository: $repository,
             registerBrand: $registerService,
             updateBrand: $updateService,
-            authorizer: $authorizer
+            authorizer: $authorizer,
         );
     }
 }

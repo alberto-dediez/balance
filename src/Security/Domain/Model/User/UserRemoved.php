@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Domain\Model\User;
 
-use DateTimeImmutable;
 use App\Security\Domain\DomainEvent;
-use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
@@ -13,9 +13,9 @@ final class UserRemoved extends DomainEvent
     protected static string $eventName = 'userRemoved';
 
     public function __construct(
-        private UserId $userId, 
+        private readonly UserId $userId,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -25,27 +25,33 @@ final class UserRemoved extends DomainEvent
         return $this->userId;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
-        return $this->userId();
+        return $this->userId;
     }
 
-    public function payload(): ?array
+    /**
+     * @return array{userId:string}
+     */
+    public function payload(): array
     {
         return [
-            'userId' => (string) $this->userId
+            'userId' => (string) $this->userId,
         ];
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        ?array $payload
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
         return new UserRemoved(
-            userId: new UserId($payload['userId']),
+            userId: new UserId($payload['userId'] ?? ''),
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Property\Domain\Model\Property;
 
 use App\Property\Domain\Model\Property\PropertyFilter;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class PropertyRepositoryTest extends KernelTestCase
 {
-    public function testAddPropertyToRepository()
-    {   
+    public function testAddPropertyToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $property = PropertyMother::registeredProperty();
@@ -24,8 +26,8 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertEquals($property->id(), $recoverProperty->id());
     }
 
-    public function testRemovePropertyToRepository()
-    {   
+    public function testRemovePropertyToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $property = PropertyMother::registeredProperty();
@@ -42,7 +44,7 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($property->id()));
     }
 
-    public function testFindByName()
+    public function testFindByName(): void
     {
         $repository = $this->createSUT();
 
@@ -58,7 +60,7 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertEquals($property->id(), $recoverProperty->id());
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -76,7 +78,7 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new PropertyFilter(
-            name: 'Hotel'
+            name: 'Hotel',
         );
 
         $result = $repository->findByFilter($filter);
@@ -84,7 +86,7 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
@@ -102,7 +104,7 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new PropertyFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);
@@ -110,7 +112,7 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertCount(6, $result);
     }
 
-    public function testFindNotRecoverRemoved()
+    public function testFindNotRecoverRemoved(): void
     {
         $repository = $this->createSUT();
 

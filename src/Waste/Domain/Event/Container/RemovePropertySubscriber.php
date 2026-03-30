@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Event\Container;
 
-use App\Shared\Domain\Event\DomainEvent;
-use App\Shared\Domain\Event\RegisterTrait;
-use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Property\Domain\Model\Property\PropertyRemoved;
-use App\Waste\Domain\Model\Container\ContainerFilter;
-use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Domain\Event\DomainEvent;
+use App\Shared\Domain\Event\DomainEventSubscriber;
+use App\Shared\Domain\Event\RegisterTrait;
 use App\Waste\Application\Container\Remove\RemoveContainerRequest;
 use App\Waste\Application\Container\Remove\RemoveContainerService;
+use App\Waste\Domain\Model\Container\ContainerFilter;
+use App\Waste\Domain\Model\Container\ContainerRepository;
 
 class RemovePropertySubscriber implements DomainEventSubscriber
 {
@@ -21,23 +23,24 @@ class RemovePropertySubscriber implements DomainEventSubscriber
         $this->register();
     }
 
-    public function handle(DomainEvent $event)
+    public function handle(DomainEvent $event): void
     {
         if (!$this->isSubscribedTo($event)) {
-            throw new \RuntimeException("Incorrect event!");
+            throw new \RuntimeException('Incorrect event!');
         }
 
+        assert($event instanceof PropertyRemoved);
         $this->handlePropertyRemoved($event);
     }
 
-    private function handlePropertyRemoved(PropertyRemoved $event)
+    private function handlePropertyRemoved(PropertyRemoved $event): void
     {
         $containers = $this->containerRepository->findByFilter(
-            new ContainerFilter(propertyId: $event->propertyId())
+            new ContainerFilter(propertyId: $event->propertyId()),
         );
 
-        if (count($containers) == 0) {
-            return ;
+        if (0 === count($containers)) {
+            return;
         }
 
         $removeContainer = $this->removeContainer;
@@ -46,14 +49,14 @@ class RemovePropertySubscriber implements DomainEventSubscriber
 
         foreach ($containers as $container) {
             $request = new RemoveContainerRequest(
-                $container->id()
+                $container->id(),
             );
 
             $removeContainer($request, $user);
         }
     }
 
-    public function isSubscribedTo(DomainEvent $event)
+    public function isSubscribedTo(DomainEvent $event): bool
     {
         return $event instanceof PropertyRemoved;
     }

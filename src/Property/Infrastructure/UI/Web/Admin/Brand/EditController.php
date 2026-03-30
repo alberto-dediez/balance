@@ -1,35 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\UI\Web\Admin\Brand;
 
+use App\Property\Application\Brand\Update\UpdateBrandRequest;
+use App\Property\Application\Brand\Update\UpdateBrandService;
+use App\Property\Domain\Model\Brand\BrandRepository;
+use App\Property\Infrastructure\Symfony\Form\AdminUpdateBrandType;
 use App\Security\Application\Action;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\Property\Domain\Model\Brand\BrandRepository;
-use App\Security\Application\UnauthorizedActionException;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use App\Property\Application\Brand\Update\UpdateBrandRequest;
-use App\Property\Application\Brand\Update\UpdateBrandService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Property\Infrastructure\Symfony\Form\AdminUpdateBrandType;
-use App\Property\Infrastructure\UI\Web\Admin\Brand\GetBrandFromIdTrait;
 
 #[Route('/admin/brands/edit/{brandId}', name: 'admin_brands_edit')]
 class EditController extends AbstractController
 {
-    use EditTrait, GetBrandFromIdTrait;
+    use EditTrait;
+    use GetBrandFromIdTrait;
 
     public function __invoke(
-        string $brandId, 
-        BrandRepository $brandRepository, 
-        UpdateBrandService $updateBrand, 
+        string $brandId,
+        BrandRepository $brandRepository,
+        UpdateBrandService $updateBrand,
         LoggedUser $loggedUser,
-        Request $request
-    ): Response
-    {   
+        Request $request,
+    ): Response {
         $brand = $this->getBrandFromId($brandId, $brandRepository);
 
         $this->denyAccessUnlessGranted(Action::Edit->value, $brand);
@@ -37,13 +38,13 @@ class EditController extends AbstractController
         $brandRequest = new UpdateBrandRequest(
             brandId: $brand->id(),
             name: $brand->name(),
-            externalId: $brand->externalId()
+            externalId: $brand->externalId(),
         );
 
-        $form = $this->createForm(AdminUpdateBrandType::class, $brandRequest); 
+        $form = $this->createForm(AdminUpdateBrandType::class, $brandRequest);
 
         try {
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateBrand, $loggedUser) {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateBrand, $loggedUser): void {
                 $brandRequest = $form->getData();
 
                 $updateBrand($brandRequest, $loggedUser());
@@ -60,7 +61,7 @@ class EditController extends AbstractController
 
         return $this->render('@property/admin/brands/edit.html.twig', [
             'brand' => $brand,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

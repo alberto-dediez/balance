@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Property;
 
 enum ExternalSource: string
@@ -17,7 +19,7 @@ enum ExternalSource: string
         };
     }
 
-    public function attribute(): ?string
+    public function attribute(): string
     {
         return match ($this) {
             self::Hotelbeds => 'hotelbeds',

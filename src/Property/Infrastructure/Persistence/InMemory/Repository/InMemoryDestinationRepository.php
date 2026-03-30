@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Property\Domain\Model\Country\CountryId;
@@ -14,15 +16,13 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryDestinationRepository implements DestinationRepository
 {
-    public function __construct(private array $destinations = [])
-    {
-
-    }
+    /** @param Destination[] $destinations */
+    public function __construct(private array $destinations = []) {}
 
     public function add(Destination $destination): void
     {
         if (isset($this->destinations[(string) $destination->id()])) {
-            return ;
+            return;
         }
 
         $this->destinations[(string) $destination->id()] = $destination;
@@ -31,7 +31,7 @@ class InMemoryDestinationRepository implements DestinationRepository
     public function remove(Destination $destination): void
     {
         if (!isset($this->destinations[(string) $destination->id()])) {
-            return ;
+            return;
         }
 
         unset($this->destinations[(string) $destination->id()]);
@@ -47,12 +47,12 @@ class InMemoryDestinationRepository implements DestinationRepository
 
     public function findByNameAndCountry(string $name, CountryId $countryId): ?Destination
     {
-        if (count($this->destinations) == 0) {
+        if (0 === count($this->destinations)) {
             return null;
         }
 
         foreach ($this->destinations as $destination) {
-            if (null !== $destination->name() && strtolower($destination->name()) == strtolower($name) && $destination->countryId()->equals($countryId)) {
+            if (strtolower($destination->name()) === strtolower($name) && null !== $destination->countryId() && $destination->countryId()->equals($countryId)) {
                 return $this->find($destination->id());
             }
         }
@@ -62,7 +62,7 @@ class InMemoryDestinationRepository implements DestinationRepository
 
     public function findBySourceAndExternalId(ExternalSource $source, ExternalId $externalId): ?Destination
     {
-        if (count($this->destinations) == 0) {
+        if (0 === count($this->destinations)) {
             return null;
         }
 
@@ -82,11 +82,12 @@ class InMemoryDestinationRepository implements DestinationRepository
         return null;
     }
 
+    /** @return Destination[] */
     public function findByFilter(DestinationFilter $filter): array
     {
         $results = [];
 
-        if (count($this->destinations) == 0) {
+        if (0 === count($this->destinations)) {
             return $results;
         }
 
@@ -95,12 +96,12 @@ class InMemoryDestinationRepository implements DestinationRepository
         foreach ($this->destinations as $destination) {
             if (
                 !empty($filter->name)
-                && false === strpos(strtolower($destination->name()), strtolower($filter->name))
+                && !str_contains(strtolower((string) $destination->name()), strtolower($filter->name))
             ) {
                 continue;
             }
 
-            if (null !== $filter->countryId && null !== $destination->countryId() && !$filter->countryId->equals($destination->countryId())) {
+            if ($filter->countryId instanceof CountryId && null !== $destination->countryId() && !$filter->countryId->equals($destination->countryId())) {
                 continue;
             }
 
@@ -109,7 +110,7 @@ class InMemoryDestinationRepository implements DestinationRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

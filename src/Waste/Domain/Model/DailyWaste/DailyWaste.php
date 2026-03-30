@@ -1,61 +1,59 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Domain\Model\DailyWaste;
 
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Shared\Domain\Model\AggregateRoot;
-use App\Waste\Domain\Model\Container\Purpose;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
-use App\Waste\Domain\Model\DailyWaste\DailyWasteId;
+use App\Shared\Domain\Model\AggregateRoot;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
-class DailyWaste
+class DailyWaste implements \Stringable
 {
     use AggregateRoot;
 
     public function __construct(
         private DailyWasteId $id,
-        private PropertyId|null $propertyId = null,
-        private WasteId|null $wasteId = null,
-        private ?Purpose $purpose = null,
-        private WasteManagerId|null $wasteManagerId = null,
-        private float $load = 0,
-        private AccountId|null $accountId = null,
-        private ?\DateTimeImmutable $day = null,
-        array $events = []
-    ) {
-
-    }
+        private ?PropertyId $propertyId = null,
+        private ?WasteId $wasteId = null,
+        private Purpose $purpose = Purpose::Waste,
+        private ?WasteManagerId $wasteManagerId = null,
+        private float|string $load = 0,
+        private ?AccountId $accountId = null,
+        private \DateTimeImmutable $day = new \DateTimeImmutable(),
+    ) {}
 
     public function id(): DailyWasteId
     {
         return $this->id;
     }
 
-    public function propertyId() : ?PropertyId
+    public function propertyId(): ?PropertyId
     {
         return $this->propertyId;
     }
 
-    public function wasteId() : ?WasteId
+    public function wasteId(): ?WasteId
     {
         return $this->wasteId;
     }
 
-    public function purpose() : ?Purpose
+    public function purpose(): Purpose
     {
         return $this->purpose;
     }
 
-    public function wasteManagerId() : ?WasteManagerId
+    public function wasteManagerId(): ?WasteManagerId
     {
         return $this->wasteManagerId;
     }
 
     public function load(): float
     {
-        return $this->load;
+        return (float) $this->load;
     }
 
     public function accountId(): ?AccountId
@@ -75,8 +73,8 @@ class DailyWaste
         WasteManagerId $wasteManagerId,
         \DateTimeImmutable $day,
         float $load,
-        AccountId $accountId
-    ) {
+        AccountId $accountId,
+    ): void {
         $this->recordApplyAndPublish(
             new DailyWasteRegistered(
                 dailyWasteId: $this->id(),
@@ -84,25 +82,25 @@ class DailyWaste
                 wasteId: $wasteId,
                 purpose: $purpose,
                 wasteManagerId: $wasteManagerId,
-                load: $load,
                 accountId: $accountId,
-                day: $day
-            )
+                day: $day,
+                load: $load,
+            ),
         );
     }
 
     public function update(
-        float $load
-    ) {
+        float $load,
+    ): void {
         $this->recordApplyAndPublish(
             new DailyWasteUpdated(
                 dailyWasteId: $this->id(),
                 load: $load,
-            )
+            ),
         );
     }
 
-    public function applyDailyWasteRegistered(DailyWasteRegistered $event)
+    public function applyDailyWasteRegistered(DailyWasteRegistered $event): void
     {
         $this->propertyId = $event->propertyId();
         $this->wasteId = $event->wasteId();
@@ -113,7 +111,7 @@ class DailyWaste
         $this->day = $event->day();
     }
 
-    public function applyDailyWasteUpdated(DailyWasteUpdated $event)
+    public function applyDailyWasteUpdated(DailyWasteUpdated $event): void
     {
         $this->load = $event->load();
     }

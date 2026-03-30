@@ -1,26 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Domain\Model\Account;
 
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Security\Domain\Model\Account\AccountRegistered;
 
-class Account
+class Account implements \Stringable
 {
     use AggregateRoot;
 
+    /**
+     * @param DomainEvent[] $events
+     */
     public function __construct(
         protected AccountId $id,
         protected string $name = '',
         protected bool $active = false,
         protected bool $removed = false,
         array $events = [],
-        protected ?\DateTimeImmutable $registeredAt = null,
-        protected ?\DateTimeImmutable $removedAt = null
+        protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
+        protected ?\DateTimeImmutable $removedAt = null,
     ) {
-
+        $this->events = $events;
     }
 
     public function id(): AccountId
@@ -53,47 +56,47 @@ class Account
         return $this->removedAt;
     }
 
-    public function register(string $name, bool $active)
+    public function register(string $name, bool $active): void
     {
         $this->recordApplyAndPublish(
             new AccountRegistered(
                 accountId: $this->id(),
                 name: $name,
-                active: $active
-            )
+                active: $active,
+            ),
         );
     }
 
-    public function changeName(string $name)
+    public function changeName(string $name): void
     {
         $this->recordApplyAndPublish(
             new AccountNameChanged(
                 accountId: $this->id(),
-                name: $name
-            )
+                name: $name,
+            ),
         );
     }
 
-    public function changeStatus(bool $active)
+    public function changeStatus(bool $active): void
     {
         $this->recordApplyAndPublish(
             new AccountStatusChanged(
                 accountId: $this->id(),
-                active: $active
-            )
+                active: $active,
+            ),
         );
     }
 
-    public function remove()
+    public function remove(): void
     {
         $this->recordApplyAndPublish(
             new AccountRemoved(
-                accountId: $this->id()
-            )
+                accountId: $this->id(),
+            ),
         );
     }
 
-    public function applyAccountRegistered(AccountRegistered $event)
+    public function applyAccountRegistered(AccountRegistered $event): void
     {
         $this->name = $event->name();
         $this->active = $event->active();
@@ -101,24 +104,24 @@ class Account
         $this->registeredAt = $event->occurredOn();
     }
 
-    public function applyAccountNameChanged(AccountNameChanged $event)
+    public function applyAccountNameChanged(AccountNameChanged $event): void
     {
         $this->name = $event->name();
     }
 
-    public function applyAccountStatusChanged(AccountStatusChanged $event)
+    public function applyAccountStatusChanged(AccountStatusChanged $event): void
     {
         $this->active = $event->active();
     }
 
-    public function applyAccountRemoved(AccountRemoved $event)
+    public function applyAccountRemoved(AccountRemoved $event): void
     {
         $this->removed = true;
-        $this->removedAt = new \DateTimeImmutable("NOW");
+        $this->removedAt = new \DateTimeImmutable('NOW');
     }
 
     public function __toString(): string
     {
-        return (string) $this->name();
+        return $this->name();
     }
 }

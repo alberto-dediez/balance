@@ -1,24 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Application\WasteManager\Register;
 
-use PHPUnit\Framework\TestCase;
-use App\Security\Domain\Model\User\Role;
-use App\Waste\Domain\Model\WasteManager\WasteManager;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Waste\Application\WasteManager\WasteManagerAuthorizer;
-use App\Waste\Domain\Model\WasteManager\WasteManagerRegistered;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
 use App\Waste\Application\WasteManager\Register\RegisterWasteManagerRequest;
 use App\Waste\Application\WasteManager\Register\RegisterWasteManagerService;
-use App\Waste\Application\WasteManager\Register\RegisterWasteManagerResponse;
-use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerRepositoryMother;
+use App\Waste\Application\WasteManager\WasteManagerAuthorizer;
+use App\Waste\Domain\Model\WasteManager\WasteManagerRegistered;
+use App\Waste\Infrastructure\Persistence\InMemory\Repository\InMemoryWasteManagerRepository;
+use PHPUnit\Framework\TestCase;
 
 class RegisterWasteManagerServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -27,7 +28,7 @@ class RegisterWasteManagerServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    public function testUseCase()
+    public function testUseCase(): void
     {
         $repository = WasteManagerRepositoryMother::inMemory();
 
@@ -37,20 +38,17 @@ class RegisterWasteManagerServiceTest extends TestCase
 
         $request = new RegisterWasteManagerRequest(
             name: 'Hotel Abaco',
-            accountId: $user->accountId()
+            accountId: $user->accountId(),
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterWasteManagerResponse);
         $this->assertNotEmpty((string) $result->wasteManagerId);
         $this->assertEquals(36, strlen((string) $result->wasteManagerId));
 
         $wasteManagerPersisted = $repository->find($result->wasteManagerId);
 
         $this->assertNotNull($wasteManagerPersisted);
-        $this->assertTrue($wasteManagerPersisted instanceof WasteManager);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -60,7 +58,7 @@ class RegisterWasteManagerServiceTest extends TestCase
         $this->assertTrue($wasteManagerPersisted->id()->equals($lastEvent->wasteManagerId()));
     }
 
-    public function testIsHandle()
+    public function testIsHandle(): void
     {
         $repository = WasteManagerRepositoryMother::inMemory();
 
@@ -70,13 +68,13 @@ class RegisterWasteManagerServiceTest extends TestCase
 
         $result = $sut->isHandled(new RegisterWasteManagerRequest(
             name: 'Hotel Abaco',
-            accountId: $user->accountId()
+            accountId: $user->accountId(),
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository)
+    private function createSUT(InMemoryWasteManagerRepository $repository): RegisterWasteManagerService
     {
         return new RegisterWasteManagerService($repository, new WasteManagerAuthorizer());
     }

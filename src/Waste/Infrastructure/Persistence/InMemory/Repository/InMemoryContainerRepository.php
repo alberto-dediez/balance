@@ -1,25 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Persistence\InMemory\Repository;
 
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerFilter;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Waste\Domain\Model\Container\MeasurementMethod;
+use App\Waste\Domain\Model\Container\Purpose;
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]
 class InMemoryContainerRepository implements ContainerRepository
 {
-    public function __construct(private array $containers = [])
-    {
-
-    }
+    /** @param array<string, Container> $containers */
+    public function __construct(
+        private array $containers = [],
+    ) {}
 
     public function add(Container $container): void
     {
         if (isset($this->containers[(string) $container->id()])) {
-            return ;
+            return;
         }
 
         $this->containers[(string) $container->id()] = $container;
@@ -28,7 +36,7 @@ class InMemoryContainerRepository implements ContainerRepository
     public function remove(Container $container): void
     {
         if (!isset($this->containers[(string) $container->id()])) {
-            return ;
+            return;
         }
 
         unset($this->containers[(string) $container->id()]);
@@ -42,11 +50,12 @@ class InMemoryContainerRepository implements ContainerRepository
         ;
     }
 
+    /** @return array<int, Container> */
     public function findByFilter(ContainerFilter $filter): array
     {
         $results = [];
 
-        if (count($this->containers) == 0) {
+        if (0 === count($this->containers)) {
             return $results;
         }
 
@@ -54,42 +63,42 @@ class InMemoryContainerRepository implements ContainerRepository
 
         foreach ($this->containers as $container) {
             if (
-                null !== $filter->propertyId
+                $filter->propertyId instanceof PropertyId
                 && (
                     null == $container->propertyId()
-                    || false == $filter->propertyId->equals($container->propertyId())
+                    || false === $filter->propertyId->equals($container->propertyId())
                 )
             ) {
                 continue;
             }
 
             if (
-                null !== $filter->wasteId
+                $filter->wasteId instanceof WasteId
                 && (
                     null == $container->wasteId()
-                    || false == $filter->wasteId->equals($container->wasteId())
+                    || false === $filter->wasteId->equals($container->wasteId())
                 )
             ) {
                 continue;
             }
 
-            if (null !== $filter->purpose && $filter->purpose !== $container->purpose()) {
+            if ($filter->purpose instanceof Purpose && $filter->purpose !== $container->purpose()) {
                 continue;
             }
 
-            if (null !== $filter->measurementMethod && $filter->measurementMethod !== $container->measurementMethod()) {
+            if ($filter->measurementMethod instanceof MeasurementMethod && $filter->measurementMethod !== $container->measurementMethod()) {
                 continue;
             }
 
-            if (null !== $filter->wasteManagerId && !$filter->wasteManagerId->equals($container->wasteManagerId())) {
+            if ($filter->wasteManagerId instanceof WasteManagerId && (null === $container->wasteManagerId() || !$filter->wasteManagerId->equals($container->wasteManagerId()))) {
                 continue;
             }
 
             if (
-                null !== $filter->accountId
+                $filter->accountId instanceof AccountId
                 && (
                     null == $container->accountId()
-                    || false == $filter->accountId->equals($container->accountId())
+                    || false === $filter->accountId->equals($container->accountId())
                 )
             ) {
                 continue;
@@ -100,7 +109,7 @@ class InMemoryContainerRepository implements ContainerRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

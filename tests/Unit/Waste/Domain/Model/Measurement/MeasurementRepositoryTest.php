@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Domain\Model\Measurement;
 
 use App\Tests\Unit\Waste\Domain\Model\DailyWaste\DailyWasteMother;
 use App\Waste\Domain\Model\Container\ContainerId;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Waste\Domain\Model\Measurement\MeasurementFilter;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class MeasurementRepositoryTest extends KernelTestCase
 {
-    public function testAddMeasurementToRepository()
-    {   
+    public function testAddMeasurementToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $measurement = MeasurementMother::random();
@@ -26,8 +28,8 @@ abstract class MeasurementRepositoryTest extends KernelTestCase
         $this->assertEquals($measurement->id(), $recoverMeasurement->id());
     }
 
-    public function testRemoveMeasurementToRepository()
-    {   
+    public function testRemoveMeasurementToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $measurement = MeasurementMother::random();
@@ -44,31 +46,31 @@ abstract class MeasurementRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($measurement->id()));
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
         $containerId = ContainerId::generate();
 
         $repository->add(
-            MeasurementMother::random()
+            MeasurementMother::random(),
         );
         $repository->add(
-            MeasurementMother::random()
+            MeasurementMother::random(),
         );
         $repository->add(
-            MeasurementMother::random()
+            MeasurementMother::random(),
         );
         $repository->add(
-            MeasurementMother::random()
+            MeasurementMother::random(),
         );
         $repository->add(
-            MeasurementMother::random()
+            MeasurementMother::random(),
         );
         $repository->add(
             MeasurementMother::fromContainer(
-                $containerId
-            )
+                $containerId,
+            ),
         );
 
         $filter = new MeasurementFilter();
@@ -78,7 +80,7 @@ abstract class MeasurementRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new MeasurementFilter(
-            containerId: $containerId
+            containerId: $containerId,
         );
 
         $result = $repository->findByFilter($filter);
@@ -86,32 +88,37 @@ abstract class MeasurementRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByDay()
+    public function testFindByDay(): void
     {
         $dailyWaste = DailyWasteMother::random();
 
         $repository = $this->createSUT();
 
-        $containerId = ContainerId::generate();
+        ContainerId::generate();
 
         $repository->add(
-            MeasurementMother::fromDay($dailyWaste)
+            MeasurementMother::fromDay($dailyWaste),
         );
         $repository->add(
-            MeasurementMother::fromDay($dailyWaste)
+            MeasurementMother::fromDay($dailyWaste),
         );
         $repository->add(
-            MeasurementMother::fromDay($dailyWaste)
+            MeasurementMother::fromDay($dailyWaste),
         );
         $repository->add(
-            MeasurementMother::fromDay($dailyWaste)
+            MeasurementMother::fromDay($dailyWaste),
         );
         $repository->add(
-            MeasurementMother::random()
+            MeasurementMother::random(),
         );
         $repository->add(
-            MeasurementMother::random()
+            MeasurementMother::random(),
         );
+
+        self::assertNotEmpty($dailyWaste->propertyId());
+        self::assertNotEmpty($dailyWaste->accountId());
+        self::assertNotEmpty($dailyWaste->wasteId());
+        self::assertNotEmpty($dailyWaste->wasteManagerId());
 
         $result = $repository->findByDay(
             day: $dailyWaste->day(),
@@ -119,37 +126,37 @@ abstract class MeasurementRepositoryTest extends KernelTestCase
             wasteId: $dailyWaste->wasteId(),
             purpose: $dailyWaste->purpose(),
             wasteManagerId: $dailyWaste->wasteManagerId(),
-            accountId: $dailyWaste->accountId()
+            accountId: $dailyWaste->accountId(),
         );
 
         $this->assertCount(4, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
         $containerId = ContainerId::generate();
 
         $repository->add(
-            MeasurementMother::random()
+            MeasurementMother::random(),
         );
         $repository->add(
-            MeasurementMother::random()
+            MeasurementMother::random(),
         );
         $repository->add(
-            MeasurementMother::random()
+            MeasurementMother::random(),
         );
         $repository->add(
-            MeasurementMother::random()
+            MeasurementMother::random(),
         );
         $repository->add(
-            MeasurementMother::random()
+            MeasurementMother::random(),
         );
         $repository->add(
             MeasurementMother::fromContainer(
-                $containerId
-            )
+                $containerId,
+            ),
         );
 
         $filter = new MeasurementFilter();
@@ -159,7 +166,7 @@ abstract class MeasurementRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new MeasurementFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);

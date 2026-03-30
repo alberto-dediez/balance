@@ -1,9 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
+use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementFilter;
@@ -21,21 +26,18 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'prod')]
 class DoctrineMeasurementRepository implements MeasurementRepository
 {
-    public function __construct(private EntityManagerInterface $manager)
-    {
-
-    }
+    public function __construct(private readonly EntityManagerInterface $manager) {}
 
     public function add(Measurement $measurement): void
     {
-        $this->getEntityManager()->persist($measurement);
-        $this->getEntityManager()->flush();
+        $this->manager->persist($measurement);
+        $this->manager->flush();
     }
 
     public function remove(Measurement $measurement): void
     {
-        $this->getEntityManager()->remove($measurement);
-        $this->getEntityManager()->flush();
+        $this->manager->remove($measurement);
+        $this->manager->flush();
     }
 
     public function find(MeasurementId $measurementId): ?Measurement
@@ -44,7 +46,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('m.id', ':id')
+                $qb->expr()->eq('m.id', ':id'),
             )
             ->setParameter('id', (string) $measurementId)
             ->getQuery()
@@ -52,6 +54,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
         ;
     }
 
+    /** @return array<int, Measurement> */
     public function findByDay(\DateTimeImmutable $day, PropertyId $propertyId, WasteId $wasteId, Purpose $purpose, WasteManagerId $wasteManagerId, AccountId $accountId): array
     {
         $filter = new MeasurementFilter(
@@ -61,7 +64,7 @@ class DoctrineMeasurementRepository implements MeasurementRepository
             purpose: $purpose,
             accountId: $accountId,
             registeredAt: $day,
-            limit: 0
+            limit: 0,
         );
 
         return $this->findByFilter($filter);
@@ -69,79 +72,79 @@ class DoctrineMeasurementRepository implements MeasurementRepository
 
     private function createQueryBuilderFromFilter(MeasurementFilter $filter): QueryBuilder
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb = $this->manager->createQueryBuilder();
 
         $qb->select('m')
             ->from(Measurement::class, 'm')
         ;
 
-        if (null !== $filter->containerId) {
+        if ($filter->containerId instanceof ContainerId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.containerId', ':container')
+                    $qb->expr()->eq('m.containerId', ':container'),
                 )
                 ->setParameter('container', $filter->containerId)
             ;
         }
 
-        if (null !== $filter->propertyId) {
+        if ($filter->propertyId instanceof PropertyId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.propertyId', ':property')
+                    $qb->expr()->eq('m.propertyId', ':property'),
                 )
                 ->setParameter('property', $filter->propertyId)
             ;
         }
 
-        if (null !== $filter->wasteId) {
+        if ($filter->wasteId instanceof WasteId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.wasteId', ':wasteId')
+                    $qb->expr()->eq('m.wasteId', ':wasteId'),
                 )
                 ->setParameter('wasteId', $filter->wasteId)
             ;
         }
 
-        if (null !== $filter->purpose) {
+        if ($filter->purpose instanceof Purpose) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.purpose', ':purpose')
+                    $qb->expr()->eq('m.purpose', ':purpose'),
                 )
                 ->setParameter('purpose', $filter->purpose->value)
             ;
         }
 
-        if (null !== $filter->measurementMethod) {
+        if ($filter->measurementMethod instanceof MeasurementMethod) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.measurementMethod', ':measurementMethod')
+                    $qb->expr()->eq('m.measurementMethod', ':measurementMethod'),
                 )
                 ->setParameter('measurementMethod', $filter->measurementMethod->value)
             ;
         }
 
-        if (null !== $filter->wasteManagerId) {
+        if ($filter->wasteManagerId instanceof WasteManagerId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.wasteManagerId', ':wasteManagerId')
+                    $qb->expr()->eq('m.wasteManagerId', ':wasteManagerId'),
                 )
                 ->setParameter('wasteManagerId', $filter->wasteManagerId)
             ;
         }
 
-        if (null !== $filter->accountId) {
+        if ($filter->accountId instanceof AccountId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.accountId', ':accountId')
+                    $qb->expr()->eq('m.accountId', ':accountId'),
                 )
                 ->setParameter('accountId', $filter->accountId)
             ;
         }
 
-        if (null !== $filter->userId) {
+        if ($filter->userId instanceof UserId) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.registeredBy', ':userId')
+                    $qb->expr()->eq('m.registeredBy', ':userId'),
                 )
                 ->setParameter('userId', $filter->userId)
             ;
@@ -150,33 +153,31 @@ class DoctrineMeasurementRepository implements MeasurementRepository
         if (!empty($filter->reference)) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('m.reference', ':reference')
+                    $qb->expr()->eq('m.reference', ':reference'),
                 )
                 ->setParameter('reference', $filter->reference)
             ;
         }
 
-        if (null !== $filter->registeredAt) {
+        if ($filter->registeredAt instanceof \DateTimeImmutable) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('m.registeredAt', ':registeredAt')
+                    $qb->expr()->like('m.registeredAt', ':registeredAt'),
                 )
-                ->setParameter('registeredAt', sprintf("%s%%", $filter->registeredAt->format('Y-m-d')))
+                ->setParameter('registeredAt', sprintf('%s%%', $filter->registeredAt->format('Y-m-d')))
             ;
         }
 
-        $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
-        switch ($filter->orderBy) {
-            case 'registeredAt':
-            default:
-                $qb->orderBy('m.registeredAt', $way);
-                break;
-        }
+        match ($filter->orderBy) {
+            default => $qb->orderBy('m.registeredAt', $way),
+        };
 
         return $qb;
     }
 
+    /** @return array<int, Measurement> */
     public function findByFilter(MeasurementFilter $filter): array
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
@@ -197,14 +198,9 @@ class DoctrineMeasurementRepository implements MeasurementRepository
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return $qb->select('COUNT(DISTINCT m)')
+        return (int) $qb->select('COUNT(DISTINCT m)')
             ->getQuery()
             ->getSingleScalarResult()
         ;
-    }
-
-    private function getEntityManager()
-    {
-        return $this->manager;
     }
 }

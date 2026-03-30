@@ -1,11 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Property\Domain\Model\Category;
 
-use App\Property\Domain\Model\Category\Category;
-use App\Property\Domain\Model\Category\CategoryId;
 use App\Property\Domain\Model\Property\ExternalId;
-use App\Property\Domain\Model\Category\CategoryFilter;
 use App\Property\Domain\Model\Property\ExternalSource;
 
 interface CategoryRepository
@@ -20,6 +19,9 @@ interface CategoryRepository
 
     public function findBySourceAndExternalId(ExternalSource $source, ExternalId $externalId): ?Category;
 
+    /**
+     * @return Category[]
+     */
     public function findByFilter(CategoryFilter $filter): array;
 
     public function totalResultsByFilter(CategoryFilter $filter): int;

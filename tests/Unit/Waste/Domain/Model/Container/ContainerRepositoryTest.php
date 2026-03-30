@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Waste\Domain\Model\Container;
 
-use App\Waste\Domain\Model\Container\ContainerFilter;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
-use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
+use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
+use App\Waste\Domain\Model\Container\ContainerFilter;
+use App\Waste\Domain\Model\Container\ContainerRepository;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class ContainerRepositoryTest extends KernelTestCase
 {
-    public function testAddContainerToRepository()
-    {   
+    public function testAddContainerToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $container = ContainerMother::random();
@@ -26,8 +28,8 @@ abstract class ContainerRepositoryTest extends KernelTestCase
         $this->assertEquals($container->id(), $recoverContainer->id());
     }
 
-    public function testRemoveContainerToRepository()
-    {   
+    public function testRemoveContainerToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $container = ContainerMother::random();
@@ -44,7 +46,7 @@ abstract class ContainerRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($container->id()));
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -52,24 +54,25 @@ abstract class ContainerRepositoryTest extends KernelTestCase
         $waste = WasteMother::fromName('Plastico');
 
         $repository->add(
-            ContainerMother::random()
+            ContainerMother::random(),
         );
         $repository->add(
-            ContainerMother::random()
+            ContainerMother::random(),
         );
         $repository->add(
-            ContainerMother::random()
+            ContainerMother::random(),
         );
         $repository->add(
-            ContainerMother::random()
+            ContainerMother::random(),
         );
         $repository->add(
-            ContainerMother::random()
+            ContainerMother::random(),
         );
         $repository->add(
             ContainerMother::fromPropertyAndWaste(
-                (string) $property->id(), (string) $waste->id()
-            )
+                (string) $property->id(),
+                (string) $waste->id(),
+            ),
         );
 
         $filter = new ContainerFilter();
@@ -79,8 +82,8 @@ abstract class ContainerRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new ContainerFilter(
+            propertyId: $property->id(),
             wasteId: $waste->id(),
-            propertyId: $property->id()
         );
 
         $result = $repository->findByFilter($filter);
@@ -88,7 +91,7 @@ abstract class ContainerRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
@@ -96,24 +99,25 @@ abstract class ContainerRepositoryTest extends KernelTestCase
         $waste = WasteMother::fromName('Plastico');
 
         $repository->add(
-            ContainerMother::random()
+            ContainerMother::random(),
         );
         $repository->add(
-            ContainerMother::random()
+            ContainerMother::random(),
         );
         $repository->add(
-            ContainerMother::random()
+            ContainerMother::random(),
         );
         $repository->add(
-            ContainerMother::random()
+            ContainerMother::random(),
         );
         $repository->add(
-            ContainerMother::random()
+            ContainerMother::random(),
         );
         $repository->add(
             ContainerMother::fromPropertyAndWaste(
-                (string) $property->id(), (string) $waste->id()
-            )
+                (string) $property->id(),
+                (string) $waste->id(),
+            ),
         );
 
         $filter = new ContainerFilter();
@@ -123,7 +127,7 @@ abstract class ContainerRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new ContainerFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);
@@ -131,7 +135,7 @@ abstract class ContainerRepositoryTest extends KernelTestCase
         $this->assertCount(6, $result);
     }
 
-    public function testFindNotRecoverRemoved()
+    public function testFindNotRecoverRemoved(): void
     {
         $repository = $this->createSUT();
 

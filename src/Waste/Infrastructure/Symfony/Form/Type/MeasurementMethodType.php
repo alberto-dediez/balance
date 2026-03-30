@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Waste\Infrastructure\Symfony\Form\Type;
 
 use App\Waste\Domain\Model\Container\MeasurementMethod;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/** @extends AbstractType<array<string, mixed>> */
 class MeasurementMethodType extends AbstractType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $choices = [];
 
@@ -17,15 +20,13 @@ class MeasurementMethodType extends AbstractType
             $choices[$measurementMethod->value] = $measurementMethod;
         }
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => $choices,
             'translation_domain' => 'measurementMethod',
-            'choice_attr' => function (?MeasurementMethod $method): array {
-                return $method ? ['data-value' => $method->value] : [];
-            }
-        ));
+            'choice_attr' => fn(?MeasurementMethod $method): array => $method instanceof MeasurementMethod ? ['data-value' => $method->value] : [],
+        ]);
     }
-    
+
     public function getParent()
     {
         return ChoiceType::class;

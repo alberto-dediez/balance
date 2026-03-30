@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataExchange\Application\Importation\ExecuteSingle;
 
 use App\DataExchange\Domain\Model\Importation\ImportationId;
@@ -11,7 +13,5 @@ class ExecuteSingleRequest implements Command
         public ImportationId $importationId,
         public int $rowNumber,
         public Command $command,
-    ) {
-
-    }
+    ) {}
 }
