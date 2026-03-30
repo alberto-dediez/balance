@@ -9,6 +9,7 @@ use App\Waste\Domain\Model\WasteManager\WasteManager;
 use App\Waste\Domain\Model\WasteManager\WasteManagerFilter;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -56,9 +57,10 @@ class DoctrineWasteManagerRepository implements WasteManagerRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('wm.removed'),
-                    $qb->expr()->eq('wm.removed', $qb->expr()->literal(false)),
+                    $qb->expr()->eq('wm.removed', ':removed')
                 ),
             )
+            ->setParameter('removed', false, Types::BOOLEAN)
         ;
 
         if (null !== $filter->name) {

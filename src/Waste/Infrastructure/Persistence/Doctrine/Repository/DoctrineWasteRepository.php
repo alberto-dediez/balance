@@ -11,6 +11,7 @@ use App\Waste\Domain\Model\Waste\WasteFilter;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\Waste\WasteRepository;
 use App\Waste\Domain\Model\Waste\WasteTranslation;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -64,9 +65,10 @@ class DoctrineWasteRepository implements WasteRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('w.removed'),
-                    $qb->expr()->eq('w.removed', $qb->expr()->literal(false)),
+                    $qb->expr()->eq('w.removed', ':removed')
                 ),
             )
+            ->setParameter('removed', false, Types::BOOLEAN)
             ->setParameter('locale', LocaleGetter::locale())
         ;
 

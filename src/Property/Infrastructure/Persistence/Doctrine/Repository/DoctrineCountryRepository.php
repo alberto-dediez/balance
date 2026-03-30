@@ -10,6 +10,7 @@ use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Country\CountryRepository;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -107,9 +108,10 @@ class DoctrineCountryRepository implements CountryRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('c.removed'),
-                    $qb->expr()->eq('c.removed', $qb->expr()->literal(false)),
+                    $qb->expr()->eq('c.removed', ':removed')
                 ),
             )
+            ->setParameter('removed', false, Types::BOOLEAN)
         ;
 
         if (!empty($filter->name)) {

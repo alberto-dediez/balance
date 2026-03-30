@@ -14,6 +14,7 @@ use App\Waste\Domain\Model\Container\MeasurementMethod;
 use App\Waste\Domain\Model\Container\Purpose;
 use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\WasteManager\WasteManagerId;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -61,9 +62,10 @@ class DoctrineContainerRepository implements ContainerRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('c.removed'),
-                    $qb->expr()->eq('c.removed', $qb->expr()->literal(false)),
+                    $qb->expr()->eq('c.removed', ':removed')
                 ),
             )
+            ->setParameter('removed', false, Types::BOOLEAN)
         ;
 
         if ($filter->propertyId instanceof PropertyId) {

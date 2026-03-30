@@ -10,6 +10,7 @@ use App\Property\Domain\Model\Brand\BrandId;
 use App\Property\Domain\Model\Brand\BrandRepository;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -93,9 +94,10 @@ class DoctrineBrandRepository implements BrandRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('b.removed'),
-                    $qb->expr()->eq('b.removed', $qb->expr()->literal(false)),
+                    $qb->expr()->eq('b.removed', ':removed')
                 ),
             )
+            ->setParameter('removed', false, Types::BOOLEAN)
         ;
 
         if (!empty($filter->name)) {

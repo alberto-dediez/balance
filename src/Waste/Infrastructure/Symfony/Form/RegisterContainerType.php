@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /** @extends AbstractType<array<string, mixed>> */
 class RegisterContainerType extends AbstractType
@@ -25,23 +26,28 @@ class RegisterContainerType extends AbstractType
             ->add('propertyId', PropertyIdType::class, [
                 'label' => new TranslatableMessage('Propiedad'),
                 'required' => true,
+                'constraints' => [new Assert\NotBlank()],
             ])
             ->add('wasteId', WasteIdType::class, [
                 'label' => new TranslatableMessage('Tipología de residuo'),
                 'required' => true,
+                'constraints' => [new Assert\NotBlank()],
             ])
             ->add('purpose', PurposeType::class, [
                 'label' => new TranslatableMessage('Destino'),
                 'required' => true,
+                'constraints' => [new Assert\NotNull()],
             ])
             ->add('measurementMethod', MeasurementMethodType::class, [
                 'label' => new TranslatableMessage('Método de medida'),
                 'required' => true,
+                'constraints' => [new Assert\NotNull()],
             ])
             ->add('volume', ContainerVolumeType::class)
             ->add('wasteManagerId', WasteManagerIdType::class, [
                 'label' => new TranslatableMessage('Gestor de residuos'),
                 'required' => true,
+                'constraints' => [new Assert\NotBlank()],
             ])
             ->add('register', SubmitType::class, [
                 'label' => new TranslatableMessage('Registrar'),

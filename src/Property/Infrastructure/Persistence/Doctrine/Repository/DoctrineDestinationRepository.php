@@ -11,6 +11,7 @@ use App\Property\Domain\Model\Destination\DestinationId;
 use App\Property\Domain\Model\Destination\DestinationRepository;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -98,9 +99,10 @@ class DoctrineDestinationRepository implements DestinationRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('d.removed'),
-                    $qb->expr()->eq('d.removed', $qb->expr()->literal(false)),
+                    $qb->expr()->eq('d.removed', ':removed')
                 ),
             )
+            ->setParameter('removed', false, Types::BOOLEAN)
         ;
 
         if (!empty($filter->name)) {

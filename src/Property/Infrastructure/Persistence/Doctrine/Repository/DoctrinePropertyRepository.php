@@ -13,6 +13,7 @@ use App\Property\Domain\Model\Property\PropertyFilter;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -161,9 +162,10 @@ class DoctrinePropertyRepository implements PropertyRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('p.removed'),
-                    $qb->expr()->eq('p.removed', $qb->expr()->literal(false)),
+                    $qb->expr()->eq('p.removed', ':removed')
                 ),
             )
+            ->setParameter('removed', false, Types::BOOLEAN)
         ;
 
         if (!empty($filter->name)) {

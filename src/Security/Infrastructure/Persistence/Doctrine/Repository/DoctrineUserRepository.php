@@ -13,6 +13,7 @@ use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -129,9 +130,10 @@ class DoctrineUserRepository implements UserRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('u.removed'),
-                    $qb->expr()->eq('u.removed', $qb->expr()->literal(false)),
+                    $qb->expr()->eq('u.removed', ':removed')
                 ),
             )
+            ->setParameter('removed', false, Types::BOOLEAN)
         ;
 
         if (!in_array($filter->username, [null, '', '0'], true)) {
