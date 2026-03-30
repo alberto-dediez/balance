@@ -19,6 +19,9 @@ parameters:
         -
             message: '#Trait App\\Shared\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineTranslatableRepositoryTrait is used zero times and is not analysed\.#'
         -
+            message: '#Instanceof between App\\Shared\\Domain\\Model\\Locale\\Translation and App\\Shared\\Domain\\Model\\Locale\\Translation will always evaluate to true\.#'
+            identifier: instanceof.alwaysTrue
+        -
             message: '#Trait App\\Security\\Infrastructure\\UI\\Web\\User\\OnlyUsersFromAccountTrait is used zero times and is not analysed\.#'
         -
             message: '#Parameter \#1 .* of method .*::__invoke\(\) expects .*, .*Command given\.#'
@@ -27,11 +30,3 @@ parameters:
             message: '#Service ".*" is private\.#'
             paths:
                 - tests/*
-#        -
-#            message: '#Call to method PHPUnit\\Framework\\Assert::assert(NotNull|True)\(\) .* will always evaluate to true\.#'
-#            paths:
-#                - tests/*
-#        -
-#            message: '#Instanceof between .* and .* will always evaluate to true\.#'
-#            paths:
-#                - tests/*

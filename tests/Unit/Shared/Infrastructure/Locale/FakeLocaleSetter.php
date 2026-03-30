@@ -17,8 +17,9 @@ readonly class FakeLocaleSetter
         LocaleGetter::setDefault($default);
     }
 
-    public static function reset(): void {
-        LocaleGetter::setLocale(Locale::Spanish,);
-        LocaleGetter::setDefault(Locale::Spanish,);
+    public static function reset(): void
+    {
+        LocaleGetter::setLocale(Locale::Spanish);
+        LocaleGetter::setDefault(Locale::Spanish);
     }
 }

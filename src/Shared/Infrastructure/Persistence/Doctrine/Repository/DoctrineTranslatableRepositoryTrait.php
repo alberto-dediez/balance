@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Shared\Domain\Model\Locale\Translatable;
-use App\Waste\Domain\Model\Waste\WasteTranslation;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 
 trait DoctrineTranslatableRepositoryTrait
 {
@@ -24,8 +22,8 @@ trait DoctrineTranslatableRepositoryTrait
                 ->where(
                     $qb->expr()->andX(
                         $qb->expr()->eq('t.locale', ':locale'),
-                        $qb->expr()->eq('t.translatable', ':translatable')
-                    )
+                        $qb->expr()->eq('t.translatable', ':translatable'),
+                    ),
                 )
                 ->setParameter('translatable', $translatable)
             ;

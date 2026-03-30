@@ -44,7 +44,7 @@ class FakeLocaleSetterTest extends TestCase
     {
         FakeLocaleSetter::set(
             locale: Locale::German,
-            default: Locale::Italian
+            default: Locale::Italian,
         );
 
         $this->assertEquals(Locale::German, LocaleGetter::locale());
