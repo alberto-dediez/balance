@@ -6,6 +6,7 @@ namespace App\Security\Infrastructure\Symfony\Form\Type;
 
 use App\Security\Domain\Model\Account\Account;
 use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteEntityType;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\AbstractType;
@@ -27,9 +28,10 @@ class AccountType extends AbstractType
                     ->where(
                         $qb->expr()->orX(
                             $qb->expr()->isNull('u.removed'),
-                            $qb->expr()->eq('u.removed', $qb->expr()->literal(false)),
+                            $qb->expr()->eq('u.removed', ':removed'),
                         ),
                     )
+                    ->setParameter('removed', false, Types::BOOLEAN)
                 ;
 
                 return $qb;

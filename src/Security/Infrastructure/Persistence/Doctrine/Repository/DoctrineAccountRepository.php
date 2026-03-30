@@ -8,6 +8,7 @@ use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountFilter;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -69,9 +70,10 @@ class DoctrineAccountRepository implements AccountRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('a.removed'),
-                    $qb->expr()->eq('a.removed', $qb->expr()->literal(false)),
+                    $qb->expr()->eq('a.removed', ':removed'),
                 ),
             )
+            ->setParameter('removed', false, Types::BOOLEAN)
         ;
 
         if (!in_array($filter->name, [null, '', '0'], true)) {
