@@ -28,7 +28,7 @@ class AccountType extends AbstractType
                     ->where(
                         $qb->expr()->orX(
                             $qb->expr()->isNull('u.removed'),
-                            $qb->expr()->eq('u.removed', ':removed')
+                            $qb->expr()->eq('u.removed', ':removed'),
                         ),
                     )
                     ->setParameter('removed', false, Types::BOOLEAN)

@@ -31,11 +31,3 @@ parameters:
             message: '#Service ".*" is private\.#'
             paths:
                 - tests/*
-#        -
-#            message: '#Call to method PHPUnit\\Framework\\Assert::assert(NotNull|True)\(\) .* will always evaluate to true\.#'
-#            paths:
-#                - tests/*
-#        -
-#            message: '#Instanceof between .* and .* will always evaluate to true\.#'
-#            paths:
-#                - tests/*
