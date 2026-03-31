@@ -1,16 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\FoodLoss\Domain\Model\Action;
 
-use App\Shared\Domain\Model\Locale\Locale;
 use App\FoodLoss\Domain\Model\Action\ActionFilter;
 use App\FoodLoss\Domain\Model\Action\ActionRepository;
+use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class ActionRepositoryTest extends KernelTestCase
 {
-    public function testAddActionToRepository()
-    {   
+    public function setUp(): void
+    {
+        FakeLocaleSetter::reset();
+
+        parent::setUp();
+    }
+
+    public function testAddActionToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $action = ActionMother::registeredAction();
@@ -25,8 +35,8 @@ abstract class ActionRepositoryTest extends KernelTestCase
         $this->assertEquals($action->id(), $recoverAction->id());
     }
 
-    public function testRemoveActionToRepository()
-    {   
+    public function testRemoveActionToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $action = ActionMother::registeredAction();
@@ -43,7 +53,7 @@ abstract class ActionRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($action->id()));
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -61,7 +71,7 @@ abstract class ActionRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new ActionFilter(
-            description: 'Descripción de la acción'
+            description: 'Descripción de la acción',
         );
 
         $result = $repository->findByFilter($filter);
@@ -69,7 +79,7 @@ abstract class ActionRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
@@ -87,7 +97,7 @@ abstract class ActionRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new ActionFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);
@@ -95,7 +105,7 @@ abstract class ActionRepositoryTest extends KernelTestCase
         $this->assertCount(6, $result);
     }
 
-    public function testFindNotRecoverRemoved()
+    public function testFindNotRecoverRemoved(): void
     {
         $repository = $this->createSUT();
 
@@ -114,7 +124,7 @@ abstract class ActionRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($action->id()));
     }
 
-    public function testFindRecoverWithTranslation()
+    public function testFindRecoverWithTranslation(): void
     {
         $repository = $this->createSUT(Locale::English);
 
@@ -134,7 +144,7 @@ abstract class ActionRepositoryTest extends KernelTestCase
         $this->assertEquals('translated-description', $recoverAction->description());
     }
 
-    public function testFindByFilterWithDescriptionTranslated()
+    public function testFindByFilterWithDescriptionTranslated(): void
     {
         $repository = $this->createSUT(Locale::English);
 

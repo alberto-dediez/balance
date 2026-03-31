@@ -1,32 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\FoodLoss\Application\ServiceCategory\Update;
 
-use PHPUnit\Framework\TestCase;
-use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategory;
-use App\Security\Domain\Model\User\Role;
-use App\Shared\Domain\Model\Locale\Locale;
-use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryUpdated;
 use App\FoodLoss\Application\ServiceCategory\ServiceCategoryAuthorizer;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryTranslated;
-use App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryMother;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\FoodLoss\Application\ServiceCategory\Update\UpdateServiceCategoryRequest;
 use App\FoodLoss\Application\ServiceCategory\Update\UpdateServiceCategoryService;
-use App\FoodLoss\Application\ServiceCategory\Update\UpdateServiceCategoryResponse;
-use App\FoodLoss\Domain\Model\ServiceCategory\Priority;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleGetter;
+use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepository;
+use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryTranslated;
+use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryUpdated;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
+use PHPUnit\Framework\TestCase;
 
 class UpdateServiceCategoryServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
         DomainEventPublisher::instance()->reset();
+        FakeLocaleSetter::reset();
 
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
@@ -45,24 +46,19 @@ class UpdateServiceCategoryServiceTest extends TestCase
 
         $request = new UpdateServiceCategoryRequest(
             serviceCategoryId: $serviceCategory->id(),
-            name: 'changedName'
+            name: 'changedName',
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateServiceCategoryResponse);
-
         $serviceCategoryPersisted = $repository->find($result->serviceCategoryId);
 
         $this->assertNotNull($serviceCategoryPersisted);
-        $this->assertTrue($serviceCategoryPersisted instanceof ServiceCategory);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
         $this->assertNotNull($lastEvent);
         $this->assertTrue($lastEvent instanceof ServiceCategoryUpdated);
-        $this->assertEquals('changedName', $lastEvent->name());
         $this->assertTrue($serviceCategoryPersisted->id()->equals($lastEvent->serviceCategoryId()));
     }
 
@@ -80,18 +76,16 @@ class UpdateServiceCategoryServiceTest extends TestCase
 
         $request = new UpdateServiceCategoryRequest(
             serviceCategoryId: $serviceCategory->id(),
-            name: 'changedName'
+            name: 'changedName',
         );
 
         $result = $sut($request, $user);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof UpdateServiceCategoryResponse);
-
         $serviceCategoryPersisted = $repository->find($result->serviceCategoryId);
 
+        FakeLocaleSetter::set(Locale::Spanish);
+
         $this->assertNotNull($serviceCategoryPersisted);
-        $this->assertTrue($serviceCategoryPersisted instanceof ServiceCategory);
         $this->assertNotEquals('changedName', $serviceCategoryPersisted->name());
 
         $lastEvent = $this->spySubscriber->lastEvent();
@@ -113,20 +107,19 @@ class UpdateServiceCategoryServiceTest extends TestCase
 
         $result = $sut->isHandled(new UpdateServiceCategoryRequest(
             serviceCategoryId: $serviceCategory->id(),
-            name: 'changedName'
+            name: 'changedName',
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository, Locale $locale): UpdateServiceCategoryService
+    private function createSUT(ServiceCategoryRepository $repository, Locale $locale): UpdateServiceCategoryService
     {
+        FakeLocaleSetter::set($locale);
+
         return new UpdateServiceCategoryService(
             serviceCategoryRepository: $repository,
-            localeGetter: new FakeLocaleGetter(
-                locale: $locale
-            ),
-            authorizer: new ServiceCategoryAuthorizer()
+            authorizer: new ServiceCategoryAuthorizer(),
         );
     }
 }

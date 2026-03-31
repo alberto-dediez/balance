@@ -1,16 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory;
 
-use App\Shared\Domain\Model\Locale\Locale;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryFilter;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepository;
+use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class ServiceCategoryRepositoryTest extends KernelTestCase
 {
-    public function testAddServiceCategoryToRepository()
-    {   
+    public function setUp(): void
+    {
+        FakeLocaleSetter::reset();
+
+        parent::setUp();
+    }
+
+    public function testAddServiceCategoryToRepository(): void
+    {
         $repository = $this->createSUT();
 
         $serviceCategory = ServiceCategoryMother::registeredServiceCategory();
@@ -25,8 +35,8 @@ abstract class ServiceCategoryRepositoryTest extends KernelTestCase
         $this->assertEquals($serviceCategory->id(), $recoveredServiceCategory->id());
     }
 
-    public function testRemoveServiceCategoryFromRepository()
-    {   
+    public function testRemoveServiceCategoryFromRepository(): void
+    {
         $repository = $this->createSUT();
 
         $serviceCategory = ServiceCategoryMother::registeredServiceCategory();
@@ -43,7 +53,7 @@ abstract class ServiceCategoryRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($serviceCategory->id()));
     }
 
-    public function testFindByFilter()
+    public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
 
@@ -61,7 +71,7 @@ abstract class ServiceCategoryRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new ServiceCategoryFilter(
-            name: 'Categoría de servicio 1'
+            name: 'Categoría de servicio 1',
         );
 
         $result = $repository->findByFilter($filter);
@@ -69,7 +79,7 @@ abstract class ServiceCategoryRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindByFilterWithLimitZeroReturnAllElements()
+    public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
 
@@ -87,7 +97,7 @@ abstract class ServiceCategoryRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new ServiceCategoryFilter(
-            limit: 0
+            limit: 0,
         );
 
         $result = $repository->findByFilter($filter);
@@ -95,7 +105,7 @@ abstract class ServiceCategoryRepositoryTest extends KernelTestCase
         $this->assertCount(6, $result);
     }
 
-    public function testFindNotRecoverRemoved()
+    public function testFindNotRecoverRemoved(): void
     {
         $repository = $this->createSUT();
 
@@ -114,7 +124,7 @@ abstract class ServiceCategoryRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($serviceCategory->id()));
     }
 
-    public function testFindRecoverWithTranslation()
+    public function testFindRecoverWithTranslation(): void
     {
         $repository = $this->createSUT(Locale::English);
 
@@ -134,7 +144,7 @@ abstract class ServiceCategoryRepositoryTest extends KernelTestCase
         $this->assertEquals('translated-name', $recoveredServiceCategory->name());
     }
 
-    public function testFindByFilterWithNameTranslated()
+    public function testFindByFilterWithNameTranslated(): void
     {
         $repository = $this->createSUT(Locale::English);
 

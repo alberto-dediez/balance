@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\FoodLoss\Domain\Model\ServiceCategory;
 
-use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\Translation;
 
@@ -11,11 +12,8 @@ class ServiceCategoryTranslation implements Translation
     public function __construct(
         private string $name,
         private Locale $locale,
-        private ServiceCategoryId $translatableId
-    )
-    {
-        
-    }
+        private ServiceCategory $translatable,
+    ) {}
 
     public function name(): string
     {
@@ -27,8 +25,15 @@ class ServiceCategoryTranslation implements Translation
         return $this->locale;
     }
 
-    public function translatableId(): ServiceCategoryId
+    public function translatable(): ServiceCategory
     {
-        return $this->translatableId;
+        return $this->translatable;
+    }
+
+    public function update(Translation $translation): void
+    {
+        assert($translation instanceof ServiceCategoryTranslation);
+
+        $this->name = $translation->name();
     }
 }

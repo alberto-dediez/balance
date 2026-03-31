@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\FoodLoss\Infrastructure\Persistence\InMemory\Repository;
 
-use App\Shared\Domain\Model\Locale\LocaleGetter;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategory;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryFilter;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
@@ -12,18 +13,16 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryServiceCategoryRepository implements ServiceCategoryRepository
 {
-    public function __construct(private LocaleGetter $localeGetter, private array $serviceCategories = [])
-    {
-
-    }
+    /** @param array<string, ServiceCategory> $serviceCategories */
+    public function __construct(
+        private array $serviceCategories = [],
+    ) {}
 
     public function add(ServiceCategory $serviceCategory): void
     {
-        if (isset($this->ServiceCategories[(string) $serviceCategory->id()])) {
-            return ;
+        if (isset($this->serviceCategories[(string) $serviceCategory->id()])) {
+            return;
         }
-
-        $serviceCategory->translations()->setLocale($this->localeGetter->locale());
 
         $this->serviceCategories[(string) $serviceCategory->id()] = $serviceCategory;
     }
@@ -31,7 +30,7 @@ class InMemoryServiceCategoryRepository implements ServiceCategoryRepository
     public function remove(ServiceCategory $serviceCategory): void
     {
         if (!isset($this->serviceCategories[(string) $serviceCategory->id()])) {
-            return ;
+            return;
         }
 
         unset($this->serviceCategories[(string) $serviceCategory->id()]);
@@ -45,11 +44,12 @@ class InMemoryServiceCategoryRepository implements ServiceCategoryRepository
         ;
     }
 
+    /** @return array<int, ServiceCategory> */
     public function findByFilter(ServiceCategoryFilter $filter): array
     {
         $results = [];
 
-        if (count($this->serviceCategories) == 0) {
+        if (0 === count($this->serviceCategories)) {
             return $results;
         }
 
@@ -58,7 +58,7 @@ class InMemoryServiceCategoryRepository implements ServiceCategoryRepository
         foreach ($this->serviceCategories as $serviceCategory) {
             if (
                 !empty($filter->name)
-                && false === strpos(strtolower($serviceCategory->name()), strtolower($filter->name))
+                && !str_contains(strtolower((string) $serviceCategory->name()), strtolower($filter->name))
             ) {
                 continue;
             }
@@ -68,7 +68,7 @@ class InMemoryServiceCategoryRepository implements ServiceCategoryRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

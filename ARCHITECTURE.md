@@ -20,6 +20,7 @@ El proyecto sigue **Domain-Driven Design con Arquitectura Hexagonal** estricta.
 | `Waste/` | Gestión de residuos, contenedores, mediciones, diarios |
 | `Property/` | Propiedades/instalaciones, categorías, países, marcas, destinos |
 | `DataExchange/` | Importación de datos desde hojas de cálculo |
+| `FoodLoss/` | Acciones y categorías de servicio (gestión de pérdida de alimentos) |
 
 ### Estructura por Contexto
 ```
@@ -39,6 +40,17 @@ El proyecto sigue **Domain-Driven Design con Arquitectura Hexagonal** estricta.
     ├── UI/Api/                     # Controladores REST (JSON, JWT)
     ├── UI/Console/                 # Comandos de consola
     └── Symfony/DependencyInjection/services.yaml
+
+```
+La capa `Application/` se organiza por aggregate, no directamente por use case:
+```
+Application/
+  [Aggregate]/
+    [Aggregate]Authorizer.php       # Lógica de autorización del aggregate
+    [UseCase]/
+      [UseCase]Service.php
+      [UseCase]Request.php
+      [UseCase]Response.php
 ```
 
 ## Patrones de Diseño Clave
@@ -105,7 +117,7 @@ SYMFONY_DEPRECATIONS_HELPER="disabled=1"
 |-----------------------------|----------------------------------------------|
 | `make up`                   | Levantar contenedores Docker                 |
 | `make down`                 | Parar contenedores                           |
-| `make sh` / `make bash`     | Conectar al contenedor PHP                   |
+| `make bash` / `make sh`     | Conectar al contenedor PHP                   |
 | `make test`                 | Ejecutar todos los tests (acceptance + unit) |
 | `make test-unit`            | Solo tests unitarios (PHPUnit)               |
 | `make test-acceptance`      | Solo tests de aceptación (Behat)             |

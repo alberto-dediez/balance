@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\FoodLoss\Infrastructure\Persistence\Doctrine\Type;
 
-use App\Shared\Infrastructure\Persistence\Doctrine\Type\AggregateRootIdTypeTrait;
 use App\FoodLoss\Domain\Model\Action\ActionId;
+use App\Shared\Infrastructure\Persistence\Doctrine\Type\AggregateRootIdTypeTrait;
 use Doctrine\DBAL\Types\Type;
 
 class ActionIdType extends Type

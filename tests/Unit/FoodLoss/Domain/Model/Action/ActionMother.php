@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\FoodLoss\Domain\Model\Action;
 
 use App\FoodLoss\Domain\Model\Action\Action;
@@ -8,66 +10,66 @@ use App\FoodLoss\Domain\Model\Action\Priority;
 
 class ActionMother
 {
-    public static function registeredAction()
-    {   
+    public static function registeredAction(): Action
+    {
         return self::fromDescription('description');
     }
 
-    public static function fromDescription($description)
+    public static function fromDescription(string $description): Action
     {
         return self::from(
             description: $description,
-            priority: static::generateRandomPriority(),
-            id: (string) ActionId::generate()
-        );
-    }
-    
-    public static function fromPriority(Priority $priority)
-    {
-        return self::from(
-            description: 'action-' . rand(100, 999),
-            priority: $priority,
-            id: (string) ActionId::generate()
-        );
-    }
-
-    public static function fromDescriptionAndId(string $description, string $id)
-    {
-        return self::from(
-            description: $description, 
             priority: self::generateRandomPriority(),
-            id: $id
+            id: (string) ActionId::generate(),
         );
     }
 
-    public static function fromPriorityAndId(Priority $priority, string $id)
+    public static function fromPriority(Priority $priority): Action
     {
         return self::from(
             description: 'action-' . rand(100, 999),
             priority: $priority,
-            id: $id
+            id: (string) ActionId::generate(),
+        );
+    }
+
+    public static function fromDescriptionAndId(string $description, string $id): Action
+    {
+        return self::from(
+            description: $description,
+            priority: self::generateRandomPriority(),
+            id: $id,
+        );
+    }
+
+    public static function fromPriorityAndId(Priority $priority, string $id): Action
+    {
+        return self::from(
+            description: 'action-' . rand(100, 999),
+            priority: $priority,
+            id: $id,
         );
     }
 
     public static function from(
-        string $description, 
+        string $description,
         Priority $priority,
-        string $id
-    ) {
+        string $id,
+    ): Action {
         $action = new Action(
-            id: new ActionId($id)
+            id: new ActionId($id),
         );
         $action->register($description, $priority);
 
         return $action;
     }
 
-    public static function random()
+    public static function random(): Action
     {
         return self::from(
             description: 'action-' . rand(100, 999),
             priority: self::generateRandomPriority(),
-            id: (string) ActionId::generate()
+            id: (string) ActionId::generate(),
         );
     }
 

@@ -11,9 +11,19 @@
         </id>
 
         <field name="name" type="string" length="255" nullable="false"/>
-        <field name="removed" type="boolean" nullable="true"/>
+        <field name="removed" type="boolean" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+
+        <one-to-many field="translations"
+                     target-entity="App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryTranslation"
+                     mapped-by="translatable"
+                     fetch="EXTRA_LAZY">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
     </entity>
 </doctrine-mapping>

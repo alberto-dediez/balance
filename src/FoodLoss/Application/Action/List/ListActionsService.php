@@ -1,20 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\FoodLoss\Application\Action\List;
 
-use App\Security\Application\Action as SecurityAction;
-use App\Security\Domain\Model\User\User;
+use App\FoodLoss\Application\Action\ActionAuthorizer;
 use App\FoodLoss\Domain\Model\Action\Action;
 use App\FoodLoss\Domain\Model\Action\ActionId;
-use App\FoodLoss\Application\Action\ActionAuthorizer;
 use App\FoodLoss\Domain\Model\Action\ActionRepository;
+use App\Security\Application\Action as SecurityAction;
+use App\Security\Domain\Model\User\User;
 
 class ListActionsService
 {
-    public function __construct(private ActionRepository $repository, private ActionAuthorizer $authorizer)
-    {
-
-    }
+    public function __construct(private ActionRepository $repository, private ActionAuthorizer $authorizer) {}
 
     public function __invoke(ListActionsRequest $request, User $user): ListActionsResponse
     {

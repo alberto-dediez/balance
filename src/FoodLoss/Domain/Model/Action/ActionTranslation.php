@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\FoodLoss\Domain\Model\Action;
 
-use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\Translation;
 
@@ -11,11 +12,8 @@ class ActionTranslation implements Translation
     public function __construct(
         private string $description,
         private Locale $locale,
-        private ActionId $translatableId
-    )
-    {
-        
-    }
+        private Action $translatable,
+    ) {}
 
     public function description(): string
     {
@@ -27,8 +25,15 @@ class ActionTranslation implements Translation
         return $this->locale;
     }
 
-    public function translatableId(): ActionId
+    public function translatable(): Action
     {
-        return $this->translatableId;
+        return $this->translatable;
+    }
+
+    public function update(Translation $translation): void
+    {
+        assert($translation instanceof ActionTranslation);
+
+        $this->description = $translation->description();
     }
 }

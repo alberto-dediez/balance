@@ -1,22 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\FoodLoss\Application\ServiceCategory\Remove;
 
-use PHPUnit\Framework\TestCase;
-use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRemoved;
-use App\FoodLoss\Application\ServiceCategory\ServiceCategoryAuthorizer;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryMother;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\FoodLoss\Application\ServiceCategory\Remove\RemoveServiceCategoryRequest;
 use App\FoodLoss\Application\ServiceCategory\Remove\RemoveServiceCategoryService;
-use App\FoodLoss\Application\ServiceCategory\Remove\RemoveServiceCategoryResponse;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\FoodLoss\Application\ServiceCategory\ServiceCategoryAuthorizer;
+use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRemoved;
+use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepository;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class RemoveServiceCategoryServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -36,15 +38,13 @@ class RemoveServiceCategoryServiceTest extends TestCase
         $repository->add($serviceCategory);
 
         $request = new RemoveServiceCategoryRequest(
-            serviceCategoryId: $serviceCategory->id()
+            serviceCategoryId: $serviceCategory->id(),
         );
 
         $result = $sut($request, UserMother::adminUser());
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RemoveServiceCategoryResponse);
         $this->assertTrue($serviceCategory->id()->equals($result->serviceCategoryId));
-        
+
         $serviceCategoryPersisted = $repository->find($result->serviceCategoryId);
 
         $this->assertNull($serviceCategoryPersisted);
@@ -64,13 +64,13 @@ class RemoveServiceCategoryServiceTest extends TestCase
         $serviceCategory = ServiceCategoryMother::random();
 
         $result = $sut->isHandled(new RemoveServiceCategoryRequest(
-            serviceCategoryId: $serviceCategory->id()
+            serviceCategoryId: $serviceCategory->id(),
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository): RemoveServiceCategoryService
+    private function createSUT(ServiceCategoryRepository $repository): RemoveServiceCategoryService
     {
         return new RemoveServiceCategoryService($repository, new ServiceCategoryAuthorizer());
     }

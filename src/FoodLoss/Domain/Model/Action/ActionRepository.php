@@ -1,10 +1,8 @@
 <?php
 
-namespace App\FoodLoss\Domain\Model\Action;
+declare(strict_types=1);
 
-use App\FoodLoss\Domain\Model\Action\Action;
-use App\FoodLoss\Domain\Model\Action\ActionId;
-use App\FoodLoss\Domain\Model\Action\ActionFilter;
+namespace App\FoodLoss\Domain\Model\Action;
 
 interface ActionRepository
 {
@@ -14,6 +12,7 @@ interface ActionRepository
 
     public function find(ActionId $actionId): ?Action;
 
+    /** @return array<Action> */
     public function findByFilter(ActionFilter $filter): array;
 
     public function totalResultsByFilter(ActionFilter $filter): int;

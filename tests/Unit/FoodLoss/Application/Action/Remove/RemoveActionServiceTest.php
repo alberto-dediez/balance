@@ -1,22 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\FoodLoss\Application\Action\Remove;
 
-use PHPUnit\Framework\TestCase;
-use App\FoodLoss\Domain\Model\Action\ActionRemoved;
 use App\FoodLoss\Application\Action\ActionAuthorizer;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Tests\Unit\FoodLoss\Domain\Model\Action\ActionMother;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\FoodLoss\Application\Action\Remove\RemoveActionRequest;
 use App\FoodLoss\Application\Action\Remove\RemoveActionService;
-use App\FoodLoss\Application\Action\Remove\RemoveActionResponse;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\FoodLoss\Domain\Model\Action\ActionRemoved;
+use App\FoodLoss\Domain\Model\Action\ActionRepository;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\FoodLoss\Domain\Model\Action\ActionMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Action\ActionRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
 
 class RemoveActionServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
@@ -36,15 +38,13 @@ class RemoveActionServiceTest extends TestCase
         $repository->add($action);
 
         $request = new RemoveActionRequest(
-            actionId: $action->id()
+            actionId: $action->id(),
         );
 
         $result = $sut($request, UserMother::adminUser());
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RemoveActionResponse);
         $this->assertTrue($action->id()->equals($result->actionId));
-        
+
         $actionPersisted = $repository->find($result->actionId);
 
         $this->assertNull($actionPersisted);
@@ -64,13 +64,13 @@ class RemoveActionServiceTest extends TestCase
         $action = ActionMother::random();
 
         $result = $sut->isHandled(new RemoveActionRequest(
-            actionId: $action->id()
+            actionId: $action->id(),
         ));
 
         $this->assertTrue($result);
     }
 
-    private function createSUT($repository): RemoveActionService
+    private function createSUT(ActionRepository $repository): RemoveActionService
     {
         return new RemoveActionService($repository, new ActionAuthorizer());
     }

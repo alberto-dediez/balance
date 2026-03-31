@@ -162,7 +162,7 @@ class DoctrinePropertyRepository implements PropertyRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('p.removed'),
-                    $qb->expr()->eq('p.removed', ':removed')
+                    $qb->expr()->eq('p.removed', ':removed'),
                 ),
             )
             ->setParameter('removed', false, Types::BOOLEAN)

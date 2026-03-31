@@ -1,24 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\FoodLoss\Domain\Model\Action;
 
-use DateTimeImmutable;
 use App\FoodLoss\Domain\DomainEvent;
-use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\Shared\Domain\Event\DomainEventId;
-use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\AggregateRootId;
+use App\Shared\Domain\Model\Locale\Locale;
 
 final class ActionTranslated extends DomainEvent
 {
     protected static string $eventName = 'actionTranslated';
 
     public function __construct(
-        private ActionId $actionId, 
-        private string $description, 
+        private ActionId $actionId,
+        private string $description,
         private Locale $locale,
         ?DomainEventId $id = null,
-        ?DateTimeImmutable $occurredOn = null
+        ?\DateTimeImmutable $occurredOn = null,
     ) {
         parent::__construct($id, $occurredOn);
     }
@@ -38,12 +38,12 @@ final class ActionTranslated extends DomainEvent
         return $this->locale;
     }
 
-    public function aggregateRootId(): ?AggregateRootId
+    public function aggregateRootId(): AggregateRootId
     {
         return $this->actionId();
     }
 
-    public function payload(): ?array
+    public function payload(): array
     {
         return [
             'actionId' => (string) $this->actionId,
@@ -54,15 +54,18 @@ final class ActionTranslated extends DomainEvent
 
     public static function rebuildFromPayload(
         DomainEventId $id,
-        DateTimeImmutable $occurredOn,
-        ?array $payload
+        \DateTimeImmutable $occurredOn,
+        array $payload = [],
     ): static {
+        $locale = Locale::tryFrom($payload['locale']);
+        assert(null !== $locale);
+
         return new ActionTranslated(
-            actionId: new ActionId($payload['actionId']), 
+            actionId: new ActionId($payload['actionId']),
             description: $payload['description'],
-            locale: Locale::tryFrom($payload['locale']),
+            locale: $locale,
             id: $id,
-            occurredOn: $occurredOn
+            occurredOn: $occurredOn,
         );
     }
 }

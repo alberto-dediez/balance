@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\FoodLoss\Domain\Model\Action;
 
 use App\Shared\Domain\Model\AggregateRoot;
@@ -11,19 +13,23 @@ class Action implements Translatable
 {
     use AggregateRoot;
 
-    private ?Translations $translations = null;
+    /** @var iterable<ActionTranslation>|Translations */
+    private iterable $translations;
 
+    /** @param array<mixed> $events */
     public function __construct(
         private ActionId $id,
         private string $description = '',
         private Priority $priority = Priority::Prevention,
         private bool $removed = false,
         array $events = [],
-        private ?\DateTimeImmutable $registeredAt = null,
+        private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $updatedAt = null,
-        private ?\DateTimeImmutable $removedAt = null
+        private ?\DateTimeImmutable $removedAt = null,
     ) {
         $this->translations = new Translations();
+
+        $this->events = $events;
     }
 
     public function id(): ActionId
@@ -33,7 +39,7 @@ class Action implements Translatable
 
     public function description(): string
     {
-        /** @var ActionTranslation $translation */
+        /** @var ActionTranslation|null $translation */
         $translation = $this->translations()->currentTranslation();
 
         return null !== $translation ? $translation->description() : $this->description;
@@ -46,9 +52,11 @@ class Action implements Translatable
 
     public function translations(): Translations
     {
-        if (null === $this->translations) {
-            $this->translations = new Translations();
+        if ($this->translations instanceof Translations) {
+            return $this->translations;
         }
+
+        $this->translations = new Translations(iterator_to_array($this->translations));
 
         return $this->translations;
     }
@@ -76,14 +84,14 @@ class Action implements Translatable
     public function register(
         string $description,
         Priority $priority,
-        ?Locale $locale = null
-    ) {
+        ?Locale $locale = null,
+    ): void {
         $this->recordApplyAndPublish(
             new ActionRegistered(
                 actionId: $this->id(),
                 description: $description,
-                priority: $priority
-            )
+                priority: $priority,
+            ),
         );
 
         if (null !== $locale) {
@@ -94,14 +102,14 @@ class Action implements Translatable
     public function update(
         string $description,
         Priority $priority,
-        ?Locale $locale = null
-    ) {
+        ?Locale $locale = null,
+    ): void {
         $this->recordApplyAndPublish(
             new ActionUpdated(
                 actionId: $this->id(),
                 description: null === $locale ? $description : $this->description,
-                priority: $priority
-            )
+                priority: $priority,
+            ),
         );
 
         if (null !== $locale) {
@@ -109,52 +117,52 @@ class Action implements Translatable
         }
     }
 
-    public function translate(string $description, Locale $locale)
+    public function translate(string $description, Locale $locale): void
     {
         $this->recordApplyAndPublish(
             new ActionTranslated(
                 actionId: $this->id(),
                 description: $description,
-                locale: $locale
-            )
+                locale: $locale,
+            ),
         );
     }
 
-    public function remove()
+    public function remove(): void
     {
         $this->recordApplyAndPublish(
             new ActionRemoved(
-                actionId: $this->id()
-            )
+                actionId: $this->id(),
+            ),
         );
     }
 
-    public function applyActionRegistered(ActionRegistered $event)
+    public function applyActionRegistered(ActionRegistered $event): void
     {
         $this->description = $event->description();
         $this->priority = $event->priority();
         $this->registeredAt = $event->occurredOn();
     }
 
-    public function applyActionUpdated(ActionUpdated $event)
+    public function applyActionUpdated(ActionUpdated $event): void
     {
         $this->description = $event->description();
         $this->priority = $event->priority();
         $this->updatedAt = $event->occurredOn();
     }
 
-    public function applyActionTranslated(ActionTranslated $event)
+    public function applyActionTranslated(ActionTranslated $event): void
     {
         $actionTranslation = new ActionTranslation(
             description: $event->description(),
             locale: $event->locale(),
-            translatableId: $this->id()
+            translatable: $this,
         );
 
         $this->translations()->add($actionTranslation);
     }
 
-    public function applyActionRemoved(ActionRemoved $event)
+    public function applyActionRemoved(ActionRemoved $event): void
     {
         $this->removed = true;
         $this->removedAt = $event->occurredOn();

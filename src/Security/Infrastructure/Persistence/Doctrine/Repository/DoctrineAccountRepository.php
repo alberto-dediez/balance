@@ -70,7 +70,7 @@ class DoctrineAccountRepository implements AccountRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('a.removed'),
-                    $qb->expr()->eq('a.removed', ':removed')
+                    $qb->expr()->eq('a.removed', ':removed'),
                 ),
             )
             ->setParameter('removed', false, Types::BOOLEAN)

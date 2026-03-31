@@ -1,16 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\FoodLoss\Infrastructure\Persistence\Doctrine\Repository;
 
-use App\Shared\Domain\Model\Locale\LocaleGetter;
-use App\Shared\Infrastructure\Persistence\Doctrine\Repository\DoctrineTranslatableRepositoryTrait;
 use App\FoodLoss\Domain\Model\Action\Action;
 use App\FoodLoss\Domain\Model\Action\ActionFilter;
 use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\Action\ActionRepository;
 use App\FoodLoss\Domain\Model\Action\ActionTranslation;
+use App\Shared\Domain\Model\Locale\LocaleGetter;
+use App\Shared\Infrastructure\Persistence\Doctrine\Repository\DoctrineTranslatableRepositoryTrait;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -22,18 +23,13 @@ class DoctrineActionRepository implements ActionRepository
 {
     use DoctrineTranslatableRepositoryTrait;
 
-    private EntityRepository $repository;
-
-    public function __construct(private EntityManagerInterface $manager, private LocaleGetter $localeGetter)
-    {
-        $this->repository = $manager->getRepository(Action::class);
-    }
+    public function __construct(private EntityManagerInterface $manager) {}
 
     public function add(Action $action): void
     {
         $this->getEntityManager()->persist($action);
 
-        $this->addTranslations($action, $this->getEntityManager()->getRepository(ActionTranslation::class));
+        $this->addTranslations($action, ActionTranslation::class, $this->manager);
 
         $this->getEntityManager()->flush();
     }
@@ -50,14 +46,12 @@ class DoctrineActionRepository implements ActionRepository
 
         $action = $qb
             ->andWhere(
-                $qb->expr()->eq('a.id', ':id')
+                $qb->expr()->eq('a.id', ':id'),
             )
             ->setParameter('id', (string) $actionId)
             ->getQuery()
             ->getOneOrNullResult()
         ;
-
-        $this->loadTranslations($action, $this->getEntityManager()->getRepository(ActionTranslation::class));
 
         return $action;
     }
@@ -68,14 +62,14 @@ class DoctrineActionRepository implements ActionRepository
 
         $qb->select('a')
             ->from(Action::class, 'a')
-            ->leftJoin(ActionTranslation::class, 'trans', 'WITH', 'trans.translatableId = a.id AND trans.locale = :locale')
+            ->leftJoin(ActionTranslation::class, 'trans', 'WITH', 'trans.translatable = a AND trans.locale = :locale')
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('a.removed'),
-                    $qb->expr()->eq('a.removed', $qb->expr()->literal(false))
-                )
+                    $qb->expr()->eq('a.removed', $qb->expr()->literal(false)),
+                ),
             )
-            ->setParameter('locale', $this->localeGetter->locale())
+            ->setParameter('locale', LocaleGetter::locale())
         ;
 
         if (!empty($filter->description)) {
@@ -84,10 +78,10 @@ class DoctrineActionRepository implements ActionRepository
                     $qb->expr()->orX(
                         $qb->expr()->andX(
                             $qb->expr()->like('a.description', ':description'),
-                            $qb->expr()->isNull('trans.description')
+                            $qb->expr()->isNull('trans.description'),
                         ),
-                        $qb->expr()->like('trans.description', ':description')
-                    )
+                        $qb->expr()->like('trans.description', ':description'),
+                    ),
                 )
                 ->setParameter('description', "%{$filter->description}%")
             ;
@@ -96,13 +90,13 @@ class DoctrineActionRepository implements ActionRepository
         if (null !== $filter->priority) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('a.priority', ':priority')
+                    $qb->expr()->eq('a.priority', ':priority'),
                 )
                 ->setParameter('priority', $filter->priority->value)
             ;
         }
 
-        $way = $filter->orderWay == 'ASC' ? 'ASC' : 'DESC';
+        $way = 'ASC' == $filter->orderWay ? 'ASC' : 'DESC';
 
         switch ($filter->orderBy) {
             case 'registeredAt':
@@ -123,6 +117,7 @@ class DoctrineActionRepository implements ActionRepository
         return $qb;
     }
 
+    /** @return array<Action> */
     public function findByFilter(ActionFilter $filter): array
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
@@ -136,30 +131,20 @@ class DoctrineActionRepository implements ActionRepository
             ;
         }
 
-        $actions = (array) $query->getResult();
-
-        if (count($actions) == 0) {
-            return [];
-        }
-
-        foreach ($actions as $action) {
-            $this->loadTranslations($action, $this->getEntityManager()->getRepository(ActionTranslation::class));
-        }
-
-        return $actions;
+        return $query->getResult();
     }
 
     public function totalResultsByFilter(ActionFilter $filter): int
     {
         $qb = $this->createQueryBuilderFromFilter($filter);
 
-        return $qb->select('COUNT(DISTINCT a)')
+        return (int) $qb->select('COUNT(DISTINCT a)')
             ->getQuery()
             ->getSingleScalarResult()
         ;
     }
 
-    private function getEntityManager()
+    private function getEntityManager(): EntityManagerInterface
     {
         return $this->manager;
     }

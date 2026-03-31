@@ -94,7 +94,7 @@ class DoctrineBrandRepository implements BrandRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('b.removed'),
-                    $qb->expr()->eq('b.removed', ':removed')
+                    $qb->expr()->eq('b.removed', ':removed'),
                 ),
             )
             ->setParameter('removed', false, Types::BOOLEAN)

@@ -1,10 +1,8 @@
 <?php
 
-namespace App\FoodLoss\Domain\Model\ServiceCategory;
+declare(strict_types=1);
 
-use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategory;
-use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
-use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryFilter;
+namespace App\FoodLoss\Domain\Model\ServiceCategory;
 
 interface ServiceCategoryRepository
 {
@@ -14,6 +12,7 @@ interface ServiceCategoryRepository
 
     public function find(ServiceCategoryId $serviceCategoryId): ?ServiceCategory;
 
+    /** @return array<ServiceCategory> */
     public function findByFilter(ServiceCategoryFilter $filter): array;
 
     public function totalResultsByFilter(ServiceCategoryFilter $filter): int;

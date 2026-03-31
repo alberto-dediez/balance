@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\FoodLoss\Infrastructure\UI\Web\Admin\Action\Bulk;
 
+use App\FoodLoss\Application\Action\Remove\RemoveActionRequest;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkAction;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
 use Symfony\Component\Translation\TranslatableMessage;
-use App\FoodLoss\Application\Action\Remove\RemoveActionRequest;
 
 class RemoveAction implements BulkAction
 {
@@ -15,14 +17,14 @@ class RemoveAction implements BulkAction
         return 'remove';
     }
 
-    public function name(): string
+    public function name(): string|TranslatableMessage
     {
         return new TranslatableMessage('Eliminar');
     }
 
     public function commands(BulkRequest $request): array
     {
-        if (count($request->elements) == 0) {
+        if (0 == count($request->elements)) {
             return [];
         }
 
@@ -34,7 +36,7 @@ class RemoveAction implements BulkAction
             }
 
             $commands[] = new RemoveActionRequest(
-                actionId: $action->id()
+                actionId: $action->id(),
             );
         }
 
@@ -43,11 +45,15 @@ class RemoveAction implements BulkAction
 
     public function success(Command $command): TranslatableMessage
     {
-        return new TranslatableMessage("Se ha eliminado la acción {id}", ['{id}' => $command->actionId]);
+        assert($command instanceof RemoveActionRequest);
+
+        return new TranslatableMessage('Se ha eliminado la acción {id}', ['{id}' => $command->actionId]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
-        return new TranslatableMessage("No se ha podido eliminar la acción {id}", ['{id}' => $command->actionId]);
+        assert($command instanceof RemoveActionRequest);
+
+        return new TranslatableMessage('No se ha podido eliminar la acción {id}', ['{id}' => $command->actionId]);
     }
 }

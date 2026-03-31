@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\FoodLoss\Application\ServiceCategory;
 
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategory;
+use App\Security\Application\AbstractAuthorizer;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
-use App\Security\Application\AbstractAuthorizer;
 
 final class ServiceCategoryAuthorizer extends AbstractAuthorizer
 {
@@ -21,12 +23,12 @@ final class ServiceCategoryAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        return ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin));
+        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::Admin) 
+        return $user->hasRole(Role::Admin)
             || $user->hasRole(Role::SuperAdmin)
         ;
     }
@@ -34,8 +36,8 @@ final class ServiceCategoryAuthorizer extends AbstractAuthorizer
     protected function canRemove(mixed $subject, User $user): bool
     {
         return $this->canEdit($subject, $user);
-    }  
-    
+    }
+
     public function supports(mixed $subject): bool
     {
         return $subject instanceof ServiceCategory;

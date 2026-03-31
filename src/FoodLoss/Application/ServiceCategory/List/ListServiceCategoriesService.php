@@ -1,20 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\FoodLoss\Application\ServiceCategory\List;
 
-use App\Security\Application\Action;
-use App\Security\Domain\Model\User\User;
-use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\FoodLoss\Application\ServiceCategory\ServiceCategoryAuthorizer;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategory;
+use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepository;
+use App\Security\Application\Action;
+use App\Security\Domain\Model\User\User;
 
 class ListServiceCategoriesService
 {
-    public function __construct(private ServiceCategoryRepository $repository, private ServiceCategoryAuthorizer $authorizer)
-    {
-
-    }
+    public function __construct(private ServiceCategoryRepository $repository, private ServiceCategoryAuthorizer $authorizer) {}
 
     public function __invoke(ListServiceCategoriesRequest $request, User $user): ListServiceCategoriesResponse
     {

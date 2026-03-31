@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\FoodLoss\Infrastructure\Symfony\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
 use App\FoodLoss\Domain\Model\Action\Priority;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/** @extends AbstractType<mixed> */
 class PriorityType extends AbstractType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $choices = [];
 
@@ -17,13 +20,13 @@ class PriorityType extends AbstractType
             $choices[$priorityCase->value] = $priorityCase;
         }
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => $choices,
             'translation_domain' => 'priorityType',
-        ));
+        ]);
     }
-    
-    public function getParent()
+
+    public function getParent(): string
     {
         return AutocompleteType::class;
     }

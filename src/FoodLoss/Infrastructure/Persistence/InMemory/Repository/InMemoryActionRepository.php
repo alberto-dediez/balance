@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\FoodLoss\Infrastructure\Persistence\InMemory\Repository;
 
-use App\Shared\Domain\Model\Locale\LocaleGetter;
 use App\FoodLoss\Domain\Model\Action\Action;
 use App\FoodLoss\Domain\Model\Action\ActionFilter;
 use App\FoodLoss\Domain\Model\Action\ActionId;
@@ -12,18 +13,16 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryActionRepository implements ActionRepository
 {
-    public function __construct(private LocaleGetter $localeGetter, private array $actions = [])
-    {
-
-    }
+    /** @param array<string, Action> $actions */
+    public function __construct(
+        private array $actions = [],
+    ) {}
 
     public function add(Action $action): void
     {
         if (isset($this->actions[(string) $action->id()])) {
-            return ;
+            return;
         }
-
-        $action->translations()->setLocale($this->localeGetter->locale());
 
         $this->actions[(string) $action->id()] = $action;
     }
@@ -31,7 +30,7 @@ class InMemoryActionRepository implements ActionRepository
     public function remove(Action $action): void
     {
         if (!isset($this->actions[(string) $action->id()])) {
-            return ;
+            return;
         }
 
         unset($this->actions[(string) $action->id()]);
@@ -45,11 +44,12 @@ class InMemoryActionRepository implements ActionRepository
         ;
     }
 
+    /** @return array<int, Action> */
     public function findByFilter(ActionFilter $filter): array
     {
         $results = [];
 
-        if (count($this->actions) == 0) {
+        if (0 === count($this->actions)) {
             return $results;
         }
 
@@ -58,14 +58,14 @@ class InMemoryActionRepository implements ActionRepository
         foreach ($this->actions as $action) {
             if (
                 !empty($filter->description)
-                && false === strpos(strtolower($action->description()), strtolower($filter->description))
+                && !str_contains(strtolower((string) $action->description()), strtolower($filter->description))
             ) {
                 continue;
             }
 
             if (
                 !empty($filter->priority)
-                && false === strpos(strtolower($action->priority()->value), strtolower($filter->priority->value))
+                && !str_contains(strtolower($action->priority()->value), strtolower($filter->priority->value))
             ) {
                 continue;
             }
@@ -75,7 +75,7 @@ class InMemoryActionRepository implements ActionRepository
             }
 
             if ($offset > 0) {
-                $offset--;
+                --$offset;
 
                 continue;
             }

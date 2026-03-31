@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\FoodLoss\Domain\Model\ServiceCategory;
 
 use App\Shared\Domain\Model\AggregateRoot;
@@ -11,18 +13,22 @@ class ServiceCategory implements Translatable
 {
     use AggregateRoot;
 
-    private ?Translations $translations = null;
+    /** @var iterable<ServiceCategoryTranslation>|Translations */
+    private iterable $translations;
 
+    /** @param array<mixed> $events */
     public function __construct(
         private ServiceCategoryId $id,
         private string $name = '',
         private bool $removed = false,
         array $events = [],
-        private ?\DateTimeImmutable $registeredAt = null,
+        private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $updatedAt = null,
-        private ?\DateTimeImmutable $removedAt = null
+        private ?\DateTimeImmutable $removedAt = null,
     ) {
         $this->translations = new Translations();
+
+        $this->events = $events;
     }
 
     public function id(): ServiceCategoryId
@@ -32,7 +38,7 @@ class ServiceCategory implements Translatable
 
     public function name(): string
     {
-        /** @var ServiceCategoryTranslation $translation */
+        /** @var ServiceCategoryTranslation|null $translation */
         $translation = $this->translations()->currentTranslation();
 
         return null !== $translation ? $translation->name() : $this->name;
@@ -40,9 +46,11 @@ class ServiceCategory implements Translatable
 
     public function translations(): Translations
     {
-        if (null === $this->translations) {
-            $this->translations = new Translations();
+        if ($this->translations instanceof Translations) {
+            return $this->translations;
         }
+
+        $this->translations = new Translations(iterator_to_array($this->translations));
 
         return $this->translations;
     }
@@ -69,13 +77,13 @@ class ServiceCategory implements Translatable
 
     public function register(
         string $name,
-        ?Locale $locale = null
-    ) {
+        ?Locale $locale = null,
+    ): void {
         $this->recordApplyAndPublish(
             new ServiceCategoryRegistered(
                 serviceCategoryId: $this->id(),
-                name: $name
-            )
+                name: $name,
+            ),
         );
 
         if (null !== $locale) {
@@ -85,13 +93,13 @@ class ServiceCategory implements Translatable
 
     public function update(
         string $name,
-        ?Locale $locale = null
-    ) {
+        ?Locale $locale = null,
+    ): void {
         $this->recordApplyAndPublish(
             new ServiceCategoryUpdated(
                 serviceCategoryId: $this->id(),
-                name: null === $locale ? $name : $this->name
-            )
+                name: null === $locale ? $name : $this->name,
+            ),
         );
 
         if (null !== $locale) {
@@ -99,50 +107,50 @@ class ServiceCategory implements Translatable
         }
     }
 
-    public function translate(string $name, Locale $locale)
+    public function translate(string $name, Locale $locale): void
     {
         $this->recordApplyAndPublish(
             new ServiceCategoryTranslated(
                 serviceCategoryId: $this->id(),
                 name: $name,
-                locale: $locale
-            )
+                locale: $locale,
+            ),
         );
     }
 
-    public function remove()
+    public function remove(): void
     {
         $this->recordApplyAndPublish(
             new ServiceCategoryRemoved(
-                serviceCategoryId: $this->id()
-            )
+                serviceCategoryId: $this->id(),
+            ),
         );
     }
 
-    public function applyServiceCategoryRegistered(ServiceCategoryRegistered $event)
+    public function applyServiceCategoryRegistered(ServiceCategoryRegistered $event): void
     {
         $this->name = $event->name();
         $this->registeredAt = $event->occurredOn();
     }
 
-    public function applyServiceCategoryUpdated(ServiceCategoryUpdated $event)
+    public function applyServiceCategoryUpdated(ServiceCategoryUpdated $event): void
     {
         $this->name = $event->name();
         $this->updatedAt = $event->occurredOn();
     }
 
-    public function applyServiceCategoryTranslated(ServiceCategoryTranslated $event)
+    public function applyServiceCategoryTranslated(ServiceCategoryTranslated $event): void
     {
         $serviceCategoryTranslation = new ServiceCategoryTranslation(
             name: $event->name(),
             locale: $event->locale(),
-            translatableId: $this->id()
+            translatable: $this,
         );
 
         $this->translations()->add($serviceCategoryTranslation);
     }
 
-    public function applyServiceCategoryRemoved(ServiceCategoryRemoved $event)
+    public function applyServiceCategoryRemoved(ServiceCategoryRemoved $event): void
     {
         $this->removed = true;
         $this->removedAt = $event->occurredOn();

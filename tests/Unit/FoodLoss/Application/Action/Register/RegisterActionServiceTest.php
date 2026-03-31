@@ -1,31 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\FoodLoss\Application\Action\Register;
 
-use PHPUnit\Framework\TestCase;
-use App\FoodLoss\Domain\Model\Action\Action;
-use App\Shared\Domain\Model\Locale\Locale;
 use App\FoodLoss\Application\Action\ActionAuthorizer;
-use App\Shared\Domain\Event\DomainEventPublisher;
-use App\FoodLoss\Domain\Model\Action\ActionRegistered;
-use App\FoodLoss\Domain\Model\Action\ActionTranslated;
-use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\FoodLoss\Application\Action\Register\RegisterActionRequest;
 use App\FoodLoss\Application\Action\Register\RegisterActionService;
-use App\FoodLoss\Application\Action\Register\RegisterActionResponse;
+use App\FoodLoss\Domain\Model\Action\ActionRegistered;
 use App\FoodLoss\Domain\Model\Action\ActionRepository;
+use App\FoodLoss\Domain\Model\Action\ActionTranslated;
 use App\FoodLoss\Domain\Model\Action\Priority;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleGetter;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\FoodLoss\Domain\Model\Action\ActionRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
+use PHPUnit\Framework\TestCase;
 
 class RegisterActionServiceTest extends TestCase
 {
-    private $spySubscriber;
+    private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
         DomainEventPublisher::instance()->reset();
+        FakeLocaleSetter::reset();
 
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
@@ -38,13 +39,11 @@ class RegisterActionServiceTest extends TestCase
 
         $request = new RegisterActionRequest(
             description: 'Action 1',
-            priority: Priority::Prevention
+            priority: Priority::Prevention,
         );
 
         $result = $sut($request, UserMother::adminUser());
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterActionResponse);
         $this->assertNotEmpty((string) $result->actionId);
         $this->assertEquals(36, strlen((string) $result->actionId));
         $this->assertEquals('Action 1', $result->description);
@@ -53,7 +52,6 @@ class RegisterActionServiceTest extends TestCase
         $actionPersisted = $repository->find($result->actionId);
 
         $this->assertNotNull($actionPersisted);
-        $this->assertTrue($actionPersisted instanceof Action);
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -72,18 +70,14 @@ class RegisterActionServiceTest extends TestCase
 
         $request = new RegisterActionRequest(
             description: 'changedDescription',
-            priority: Priority::Prevention
+            priority: Priority::Prevention,
         );
 
         $result = $sut($request, UserMother::adminUser());
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result instanceof RegisterActionResponse);
-
         $actionPersisted = $repository->find($result->actionId);
 
         $this->assertNotNull($actionPersisted);
-        $this->assertTrue($actionPersisted instanceof Action);
         $this->assertEquals('changedDescription', $actionPersisted->description());
         $this->assertEquals(Priority::Prevention, $actionPersisted->priority());
 
@@ -104,7 +98,7 @@ class RegisterActionServiceTest extends TestCase
 
         $result = $sut->isHandled(new RegisterActionRequest(
             description: 'changedDescription',
-            priority: Priority::Prevention
+            priority: Priority::Prevention,
         ));
 
         $this->assertTrue($result);
@@ -112,12 +106,11 @@ class RegisterActionServiceTest extends TestCase
 
     private function createSUT(ActionRepository $repository, Locale $locale): RegisterActionService
     {
+        FakeLocaleSetter::set($locale);
+
         return new RegisterActionService(
-            actionRepository: $repository, 
-            localeGetter: new FakeLocaleGetter(
-                locale: $locale
-            ),
-            authorizer: new ActionAuthorizer()
+            actionRepository: $repository,
+            authorizer: new ActionAuthorizer(),
         );
     }
 }

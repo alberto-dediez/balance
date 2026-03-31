@@ -9,7 +9,7 @@ All commands run through `make`. Never call `docker compose exec php ...` or `ph
 ```bash
 make up                        # Start Docker containers
 make down                      # Stop containers
-make bash                      # Shell into the PHP container
+make bash / make sh            # Shell into the PHP container
 
 make test                      # Run all tests (acceptance + unit)
 make test-unit                 # PHPUnit unit tests only
@@ -45,6 +45,7 @@ Read ARCHITECTURE.md
 | `Waste/` | Waste, Container, Measurement, DailyWaste aggregates |
 | `Property/` | Property, Category, Country, Brand, Destination aggregates |
 | `DataExchange/` | Importation aggregate; spreadsheet import pipeline |
+| `FoodLoss/` | Action, ServiceCategory aggregates (food loss management) |
 
 ### Layer Structure (same in every context)
 
@@ -58,10 +59,12 @@ Domain/
     [Aggregate]Filter.php       ← Pagination/search criteria
   Event/                        ← Domain event subscribers
 
-Application/[UseCase]/
-  [UseCase]Service.php          ← CommandHandler, __invoke(Request, User)
-  [UseCase]Request.php          ← Input DTO
-  [UseCase]Response.php         ← Output DTO
+Application/[Aggregate]/
+  [Aggregate]Authorizer.php     ← Authorization logic for the aggregate
+  [UseCase]/
+    [UseCase]Service.php        ← CommandHandler, __invoke(Request, User)
+    [UseCase]Request.php        ← Input DTO
+    [UseCase]Response.php       ← Output DTO
 
 Infrastructure/
   Persistence/Doctrine/         ← DoctrineXxxRepository (production)

@@ -1,29 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\FoodLoss\Infrastructure\UI\Web\Admin\ServiceCategory;
 
+use App\FoodLoss\Application\ServiceCategory\List\ListServiceCategoriesRequest;
+use App\FoodLoss\Application\ServiceCategory\List\ListServiceCategoriesService;
+use App\FoodLoss\Infrastructure\Symfony\Form\ListServiceCategoriesType;
+use App\FoodLoss\Infrastructure\UI\Web\Admin\ServiceCategory\Bulk\RemoveServiceCategory;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\Symfony\Form\BulkType;
+use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
+use App\Shared\Infrastructure\UI\Web\CRUD\BulkTrait;
+use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Shared\Infrastructure\Symfony\Form\BulkType;
-use App\Shared\Infrastructure\UI\Web\CRUD\BulkTrait;
-use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
-use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
-use App\FoodLoss\Application\ServiceCategory\List\ListServiceCategoriesRequest;
-use App\FoodLoss\Application\ServiceCategory\List\ListServiceCategoriesService;
-use App\Security\Application\UnauthorizedActionException;
-use App\FoodLoss\Infrastructure\Symfony\Form\ListServiceCategoriesType;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use App\FoodLoss\Infrastructure\UI\Web\Admin\ServiceCategory\Bulk\RemoveServiceCategory;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/service-categories', name: 'admin_service_categories')]
 class ListController extends AbstractController
 {
-    use FilterTrait, BulkTrait;
+    use FilterTrait;
+    use BulkTrait;
 
     public function __invoke(ListServiceCategoriesService $listServiceCategories, LoggedUser $loggedUser, Request $request): Response
-    {   
+    {
 
         try {
             list($filter, $form) = $this->filter($request, function () {
@@ -35,11 +38,11 @@ class ListController extends AbstractController
             throw $this->createAccessDeniedException($e->getMessage());
         }
 
-        $bulkForm = $this->createForm(BulkType::class, new BulkRequest, [
+        $bulkForm = $this->createForm(BulkType::class, new BulkRequest(), [
             'elements' => $response->serviceCategories,
             'actions' => [
-                new RemoveServiceCategory()
-            ]
+                new RemoveServiceCategory(),
+            ],
         ]);
 
         $needsRedirect = $this->bulkActions($request, $bulkForm, $loggedUser());
@@ -52,7 +55,7 @@ class ListController extends AbstractController
             'bulkForm' => $bulkForm->createView(),
             'serviceCategories' => $response->serviceCategories,
             'totalResults' => $response->totalResults,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\FoodLoss\Infrastructure\Persistence\Doctrine\Repository;
 
-use App\Shared\Domain\Model\Locale\Locale;
-use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleGetter;
-use App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepositoryTest;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepository;
 use App\FoodLoss\Infrastructure\Persistence\Doctrine\Repository\DoctrineServiceCategoryRepository;
+use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepositoryTest;
+use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
 use Doctrine\ORM\EntityManagerInterface;
 
 class DoctrineServiceCategoryRepositoryTest extends ServiceCategoryRepositoryTest
@@ -15,6 +17,8 @@ class DoctrineServiceCategoryRepositoryTest extends ServiceCategoryRepositoryTes
     {
         $manager = $this->getContainer()->get(EntityManagerInterface::class);
 
-        return new DoctrineServiceCategoryRepository($manager, new FakeLocaleGetter($locale));
+        FakeLocaleSetter::set($locale);
+
+        return new DoctrineServiceCategoryRepository($manager);
     }
 }

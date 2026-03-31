@@ -8,7 +8,11 @@
     <entity name="App\FoodLoss\Domain\Model\Action\ActionTranslation" table="action_translation">
         <id name="locale" type="locale" length="5" />
         <field name="description" type="string" length="1024" nullable="false" />
-        <id name="translatableId" type="action_id" column="action_id" />
+        <id name="translatable" association-key="true" />
+
+        <many-to-one field="translatable" target-entity="App\FoodLoss\Domain\Model\Action\Action" inversed-by="translations">
+            <join-column name="action_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
     </entity>
 
 </doctrine-mapping>

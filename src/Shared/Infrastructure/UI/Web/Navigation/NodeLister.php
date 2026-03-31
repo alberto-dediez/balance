@@ -83,24 +83,24 @@ class NodeLister
             ],
         );
 
-        $nodes [] = new Node(
+        $nodes[] = new Node(
             label: new TranslatableMessage('Puntos críticos'),
             icon: 'solar:map-point-wave-bold-duotone',
             items: [
                 new Node(
                     label: new TranslatableMessage('Acciones'),
                     icon: 'solar:bolt-linear',
-                    target: $this->router->generate('admin_actions')
+                    target: $this->router->generate('admin_actions'),
                 ),
                 new Node(
                     label: new TranslatableMessage('Categorías de servicio'),
                     icon: 'solar:folder-with-files-line-duotone',
-                    target: $this->router->generate('admin_service_categories')
-                )
-            ]
+                    target: $this->router->generate('admin_service_categories'),
+                ),
+            ],
         );
 
-        $nodes [] =  new Node(
+        $nodes[] =  new Node(
             label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',
             items: [

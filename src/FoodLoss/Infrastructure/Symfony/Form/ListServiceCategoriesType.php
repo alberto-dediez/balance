@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
+use App\FoodLoss\Application\ServiceCategory\List\ListServiceCategoriesRequest;
+use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use App\FoodLoss\Application\ServiceCategory\List\ListServiceCategoriesRequest;
-use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
 
 class ListServiceCategoriesType extends BaseFilterType
 {
@@ -16,7 +18,7 @@ class ListServiceCategoriesType extends BaseFilterType
         $builder
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('Nombre'),
-                'required' => false
+                'required' => false,
             ])
         ;
 
@@ -26,7 +28,7 @@ class ListServiceCategoriesType extends BaseFilterType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => ListServiceCategoriesRequest::class
+            'data_class' => ListServiceCategoriesRequest::class,
         ]);
     }
 }
