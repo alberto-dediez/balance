@@ -72,24 +72,12 @@ class NodeLister
         );
 
         $nodes[] = new Node(
-            label: new TranslatableMessage('Residuos'),
-            icon: 'ph:recycle-duotone',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Tipologias'),
-                    icon: 'solar:folder-with-files-line-duotone',
-                    target: $this->router->generate('admin_wastes'),
-                ),
-            ],
-        );
-
-        $nodes[] = new Node(
-            label: new TranslatableMessage('Puntos críticos'),
-            icon: 'solar:map-point-wave-bold-duotone',
+            label: new TranslatableMessage('Jerarquía de prioridades'),
+            icon: 'solar:filters-line-duotone',
             items: [
                 new Node(
                     label: new TranslatableMessage('Acciones'),
-                    icon: 'solar:bolt-linear',
+                    icon: 'solar:hand-heart-line-duotone',
                     target: $this->router->generate('admin_actions'),
                 ),
                 new Node(
@@ -144,38 +132,6 @@ class NodeLister
             ],
         );
 
-        $nodes[] = new Node(
-            label: new TranslatableMessage('Residuos'),
-            icon: 'ph:recycle-duotone',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Gestores'),
-                    icon: 'hugeicons:garbage-truck',
-                    target: $this->router->generate('waste_managers'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Contenedores'),
-                    icon: 'solar:paper-bin-line-duotone',
-                    target: $this->router->generate('containers'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Mediciones'),
-                    icon: 'solar:ruler-line-duotone',
-                    target: $this->router->generate('measurements'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Cantidades totales'),
-                    icon: 'solar:calculator-line-duotone',
-                    target: $this->router->generate('daily_wastes'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Estadísticas'),
-                    icon: 'solar:chart-square-line-duotone',
-                    target: $this->router->generate('daily_wastes_statistics'),
-                ),
-            ],
-        );
-
         $nodes[] =  new Node(
             label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',
@@ -197,18 +153,6 @@ class NodeLister
     private function toUsers(): array
     {
         $nodes = [];
-
-        $nodes[] = new Node(
-            label: new TranslatableMessage('Residuos'),
-            icon: 'ph:recycle-duotone',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Mediciones'),
-                    icon: 'solar:ruler-line-duotone',
-                    target: $this->router->generate('measurements'),
-                ),
-            ],
-        );
 
         return $nodes;
     }

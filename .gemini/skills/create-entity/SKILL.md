@@ -16,6 +16,10 @@ The user must provide:
 3. **Fields** with types (e.g., `name: string`, `priority: Priority(enum)`, `density: string`)
 4. **Soft delete** (yes/no) - whether the entity supports logical deletion
 5. **Translations** (yes/no) - whether it has translatable fields, and which fields are translatable
+6. **Access Role** (Admin / Owner-User / Both) - Who can perform the CRUD actions:
+    - **Admin**: Routes preceded by `/admin`. Can access all accounts and filter by `accountId`.
+    - **Owner-User**: Routes NOT preceded by `/admin`. `accountId` is forced by code (usually from `LoggedAccount`).
+    - **Both**: Separate controllers and templates for each role, following the rules above.
 
 If the user doesn't provide all inputs, ask for the missing information before proceeding.
 
@@ -23,31 +27,31 @@ If the user doesn't provide all inputs, ask for the missing information before p
 
 Given entity name `{Entity}` in context `{Context}`:
 
-| Element | Name Pattern |
-|---------|-------------|
-| Aggregate Root | `{Entity}` |
-| ID Value Object | `{Entity}Id` |
-| Filter | `{Entity}Filter` |
-| Repository Interface | `{Entity}Repository` |
-| Translation Entity | `{Entity}Translation` (if translatable) |
-| Domain Events | `{Entity}Registered`, `{Entity}Updated`, `{Entity}Removed`, `{Entity}Translated` |
-| Authorizer | `{Entity}Authorizer` |
-| Register Service | `Register{Entity}Service` |
-| Update Service | `Update{Entity}Service` |
-| Remove Service | `Remove{Entity}Service` |
-| List Service | `List{Entities}Service` (pluralized) |
-| Request DTOs | `Register{Entity}Request`, `Update{Entity}Request`, `Remove{Entity}Request`, `List{Entities}Request` |
-| Response DTOs | `Register{Entity}Response`, `Update{Entity}Response`, `Remove{Entity}Response`, `List{Entities}Response` |
-| Doctrine Repository | `Doctrine{Entity}Repository` |
-| InMemory Repository | `InMemory{Entity}Repository` |
-| Doctrine Type | `{Entity}IdType` |
-| Mother | `{Entity}Mother` |
-| Repository Mother | `{Entity}RepositoryMother` |
-| Behat Context | `{Context}Context` (shared per context, add steps) |
-| Web Controllers | `ListController`, `RegisterController`, `EditController`, `RemoveController` |
-| Form Types | `Register{Entity}Type`, `Update{Entity}Type`, `List{Entities}Type` |
-| Bulk Action | `RemoveAction` |
-| Twig Templates | `list.html.twig`, `register.html.twig`, `edit.html.twig` |
+| Element | Name Pattern                                                                                                                                            |
+|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Aggregate Root | `{Entity}`                                                                                                                                              |
+| ID Value Object | `{Entity}Id`                                                                                                                                            |
+| Filter | `{Entity}Filter`                                                                                                                                        |
+| Repository Interface | `{Entity}Repository`                                                                                                                                    |
+| Translation Entity | `{Entity}Translation` (if translatable)                                                                                                                 |
+| Domain Events | `{Entity}Registered`, `{Entity}Updated`, `{Entity}Removed`, `{Entity}Translated`                                                                        |
+| Authorizer | `{Entity}Authorizer`                                                                                                                                    |
+| Register Service | `Register{Entity}Service`                                                                                                                               |
+| Update Service | `Update{Entity}Service`                                                                                                                                 |
+| Remove Service | `Remove{Entity}Service`                                                                                                                                 |
+| List Service | `List{Entities}Service` (pluralized)                                                                                                                    |
+| Request DTOs | `Register{Entity}Request`, `Update{Entity}Request`, `Remove{Entity}Request`, `List{Entities}Request`                                                    |
+| Response DTOs | `Register{Entity}Response`, `Update{Entity}Response`, `Remove{Entity}Response`, `List{Entities}Response`                                                |
+| Doctrine Repository | `Doctrine{Entity}Repository`                                                                                                                            |
+| InMemory Repository | `InMemory{Entity}Repository`                                                                                                                            |
+| Doctrine Type | `{Entity}IdType`                                                                                                                                        |
+| Mother | `{Entity}Mother`                                                                                                                                        |
+| Repository Mother | `{Entity}RepositoryMother`                                                                                                                              |
+| Behat Context | `{Context}Context` (shared per context, add steps)                                                                                                      |
+| Web Controllers | `Admin\ListController`, `Admin\RegisterController`, `ListController`, `RegisterController`, etc.                                                        |
+| Form Types | `Register{Entity}Type`, `Update{Entity}Type`, `List{Entities}Type`                                                                                      |
+| Bulk Action | `RemoveAction`                                                                                                                                          |
+| Twig Templates | `admin/{entities_snake}/list.html.twig`, `admin/{entities_snake}/register.html.twig`, `admin/{entities_snake}/edit.html.twig`, `{entities_snake}/list.html.twig`, `{entities_snake}/register.html.twig`, `{entities_snake}/edit.html.twig` |
 
 ## Directory Structure
 
@@ -101,18 +105,32 @@ src/{Context}/
         Update{Entity}Type.php
         List{Entities}Type.php
     UI/
-      Web/Admin/{Entity}/
-        ListController.php
-        RegisterController.php
-        EditController.php
-        RemoveController.php
-        Get{Entity}FromIdTrait.php
-        Bulk/RemoveAction.php
+      Web/
+        Admin/{Entity}/
+          ListController.php
+          RegisterController.php
+          EditController.php
+          RemoveController.php
+          Get{Entity}FromIdTrait.php
+          Bulk/RemoveAction.php
+        {Entity}/
+          ListController.php
+          RegisterController.php
+          EditController.php
+          RemoveController.php
+          Get{Entity}FromIdTrait.php
+          Bulk/RemoveAction.php
 
-templates/{context_snake}/admin/{entities_snake}/
-  list.html.twig
-  register.html.twig
-  edit.html.twig
+templates/{context_snake}/
+  admin/{entities_kebab}/
+    list.html.twig
+    register.html.twig
+    edit.html.twig
+  user/{entities_kebab}/
+    list.html.twig
+    register.html.twig
+    edit.html.twig
+
 
 tests/
   Unit/{Context}/
@@ -803,14 +821,24 @@ final class {Entity}Authorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin);
+        // Admin access
+        if ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin)) {
+            return true;
+        }
+
+        // Owner/User access (only if entity belongs to an account or is user-level)
+        return $user->hasRole(Role::Owner) || $user->hasRole(Role::User);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::Admin)
-            || $user->hasRole(Role::SuperAdmin)
-        ;
+        if ($user->hasRole(Role::Admin) || $user->hasRole(Role::SuperAdmin)) {
+            return true;
+        }
+
+        // For Owner/User: check if they own the resource (e.g. same accountId)
+        // return $subject->accountId()->equals($user->accountId());
+        return $user->hasRole(Role::Owner) || $user->hasRole(Role::User);
     }
 
     protected function canRemove(mixed $subject, User $user): bool
@@ -1686,7 +1714,7 @@ class ListController extends AbstractController
             return $this->redirect($request->getRequestUri());
         }
 
-        return $this->render('@{context_snake}/admin/{entities_snake}/list.html.twig', [
+        return $this->render('@{context_snake}/admin/{entities_kebab}/list.html.twig', [
             'bulkForm' => $bulkForm->createView(),
             '{entities}' => $response->{entities},
             'totalResults' => $response->totalResults,
@@ -1748,7 +1776,7 @@ class RegisterController extends AbstractController
             throw $this->createAccessDeniedException($e->getMessage());
         }
 
-        return $this->render('@{context_snake}/admin/{entities_snake}/register.html.twig', [
+        return $this->render('@{context_snake}/admin/{entities_kebab}/register.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -1819,7 +1847,7 @@ class EditController extends AbstractController
             throw $this->createAccessDeniedException($e->getMessage());
         }
 
-        return $this->render('@{context_snake}/admin/{entities_snake}/edit.html.twig', [
+        return $this->render('@{context_snake}/admin/{entities_kebab}/edit.html.twig', [
             '{entity}' => ${entity},
             'form' => $form->createView(),
         ]);
@@ -1874,7 +1902,58 @@ class RemoveController extends AbstractController
 }
 ```
 
-#### Get{Entity}FromIdTrait.php
+#### User\ListController.php (Owner/User Access)
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\{Context}\Infrastructure\UI\Web\User\{Entity};
+
+use App\{Context}\Application\{Entity}\List\List{Entities}Request;
+use App\{Context}\Application\{Entity}\List\List{Entities}Service;
+use App\{Context}\Infrastructure\Symfony\Form\List{Entities}Type;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+#[Route('/{entities_kebab}', name: 'user_{entities_snake}')]
+class ListController extends AbstractController
+{
+    use FilterTrait;
+
+    public function __invoke(List{Entities}Service $list{Entities}, LoggedUser $loggedUser, Request $request): Response
+    {
+        try {
+            $user = $loggedUser();
+            
+            list($filter, $form) = $this->filter($request, function () use ($user) {
+                $request = new List{Entities}Request();
+                // FORCE accountId from logged user
+                $request->accountId = (string) $user->accountId();
+                return $request;
+            }, List{Entities}Type::class);
+
+            $response = $list{Entities}($filter, $user);
+        } catch (UnauthorizedActionException $e) {
+            throw $this->createAccessDeniedException($e->getMessage());
+        }
+
+        return $this->render('@{context_snake}/user/{entities_kebab}/list.html.twig', [
+            '{entities}' => $response->{entities},
+            'totalResults' => $response->totalResults,
+            'form' => $form->createView(),
+        ]);
+    }
+}
+```
+
+#### Get{Entity}FromIdTrait.php (updated to check accountId if user is not admin)
 
 ```php
 <?php
@@ -2849,6 +2928,10 @@ If creating a NEW bounded context (not adding to an existing one), add route gro
 
 ## Important Notes
 
+- **Role-based Routing & Authorization:**
+    - **Admin:** Routes MUST be prefixed with `/admin`. Controllers use the `Admin` sub-namespace. They can access all accounts and filter by `accountId`.
+    - **Owner-User:** Routes MUST NOT have any prefix (direct path to `{entities_kebab}`). Controllers use the `User` (or similar) sub-namespace. The `accountId` MUST be forced from `LoggedAccount` and passed to filters/commands.
+    - **Acceptance Tests:** Features must have scenarios for both roles if applicable, ensuring correct status codes (200 vs 403) and access to correct paths.
 - Each bounded context has its own `DomainEvent` base class (e.g., `App\FoodLoss\Domain\DomainEvent`) that extends `App\Shared\Domain\Event\DomainEvent` and sets `$context`
 - The `DomainEvent::$context` value uses kebab-case (e.g., `food-loss`, `waste`, `property`)
 - Always use `null ==` (loose comparison) when checking for null in services (project convention)
