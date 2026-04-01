@@ -2240,6 +2240,16 @@ class List{Entities}Type extends BaseFilterType
 {% endblock %}
 ```
 
+#### {enum_name}.html.twig (Only if you create a new Enum)
+Instead of creating `.xlf` files manually, create a dummy twig template for the translation extractor:
+File: `templates/{context_snake}/translations/{enum_name}.html.twig`
+```twig
+{{ 'EnumCase1' | trans({}, '{enum_name}') }}
+{{ 'EnumCase2' | trans({}, '{enum_name}') }}
+```
+
+Don't execute translations
+
 ### 7. Tests
 
 #### {Entity}Mother.php
@@ -2928,9 +2938,11 @@ If creating a NEW bounded context (not adding to an existing one), add route gro
 
 ## Important Notes
 
+- **Never create `.xlf` translation files manually.** When creating an enum, create a dummy Twig template (`templates/{context_snake}/translations/{enum_name}.html.twig`) using the `trans` filter so the translation extraction tool captures them. Don't execute translations.
+
 - **Role-based Routing & Authorization:**
     - **Admin:** Routes MUST be prefixed with `/admin`. Controllers use the `Admin` sub-namespace. They can access all accounts and filter by `accountId`.
-    - **Owner-User:** Routes MUST NOT have any prefix (direct path to `{entities_kebab}`). Controllers use the `User` (or similar) sub-namespace. The `accountId` MUST be forced from `LoggedAccount` and passed to filters/commands.
+    - **Owner-User:** Routes MUST NOT have any prefix (direct path to `{entities_kebab}`). Controllers not use sub-namespace. The `accountId` MUST be forced from `LoggedAccount` and passed to filters/commands.
     - **Acceptance Tests:** Features must have scenarios for both roles if applicable, ensuring correct status codes (200 vs 403) and access to correct paths.
 - Each bounded context has its own `DomainEvent` base class (e.g., `App\FoodLoss\Domain\DomainEvent`) that extends `App\Shared\Domain\Event\DomainEvent` and sets `$context`
 - The `DomainEvent::$context` value uses kebab-case (e.g., `food-loss`, `waste`, `property`)
@@ -2942,3 +2954,4 @@ If creating a NEW bounded context (not adding to an existing one), add route gro
 - If the context DomainEvent base class doesn't exist yet, create it following the existing pattern
 - Acceptance test steps use the `#[Given]` attribute for step definitions
 - The BulkTrait handles batch operations through the CommandBusDispatcher
+- When using the Acceptance Test step `When I submit a form with "data" and button "text"`, the data fields MUST be separated by a pipe (`|`), not a comma. For example: `When I submit a form with "name:Test Name|priority:High" and button "Registrar"`.
