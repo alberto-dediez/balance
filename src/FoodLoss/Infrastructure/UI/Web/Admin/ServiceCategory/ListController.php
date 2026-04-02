@@ -51,7 +51,7 @@ class ListController extends AbstractController
             return $this->redirect($request->getRequestUri());
         }
 
-        return $this->render('@food_loss/admin/service_categories/list.html.twig', [
+        return $this->render('@food_loss/admin/service-categories/list.html.twig', [
             'bulkForm' => $bulkForm->createView(),
             'serviceCategories' => $response->serviceCategories,
             'totalResults' => $response->totalResults,

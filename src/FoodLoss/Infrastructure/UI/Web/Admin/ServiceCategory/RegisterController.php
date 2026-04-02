@@ -47,7 +47,7 @@ class RegisterController extends AbstractController
             throw $this->createAccessDeniedException($e->getMessage());
         }
 
-        return $this->render('@food_loss/admin/service_categories/register.html.twig', [
+        return $this->render('@food_loss/admin/service-categories/register.html.twig', [
             'form' => $form->createView(),
         ]);
     }

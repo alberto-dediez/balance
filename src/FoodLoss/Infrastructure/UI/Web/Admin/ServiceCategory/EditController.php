@@ -58,7 +58,7 @@ class EditController extends AbstractController
             throw $this->createAccessDeniedException($e->getMessage());
         }
 
-        return $this->render('@food_loss/admin/service_categories/edit.html.twig', [
+        return $this->render('@food_loss/admin/service-categories/edit.html.twig', [
             'serviceCategory' => $serviceCategory,
             'form' => $form->createView(),
         ]);
