@@ -40,6 +40,7 @@ class EditController extends AbstractController
             name: $criticalPoint->name(),
             propertyId: $criticalPoint->propertyId(),
             supplyChainStage: $criticalPoint->supplyChainStage(),
+            serviceCategoryIds: $criticalPoint->serviceCategoryIds(),
         );
 
         $form = $this->createForm(UpdateCriticalPointType::class, $criticalPointRequest);

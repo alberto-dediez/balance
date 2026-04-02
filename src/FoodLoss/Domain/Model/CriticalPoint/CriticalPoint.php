@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Domain\Model\CriticalPoint;
 
+use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\AggregateRoot;
@@ -24,6 +25,8 @@ class CriticalPoint implements \Stringable
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $updatedAt = null,
         private ?\DateTimeImmutable $removedAt = null,
+        /** @var iterable<CriticalPointServiceCategoryLink>|CriticalPointServiceCategories */
+        private iterable $serviceCategories = [],
     ) {
         $this->events = $events;
     }
@@ -73,11 +76,15 @@ class CriticalPoint implements \Stringable
         return $this->removedAt;
     }
 
+    /**
+     * @param ServiceCategoryId[] $serviceCategoryIds
+     */
     public function register(
         string $name,
         PropertyId $propertyId,
         AccountId $accountId,
         SupplyChainStage $supplyChainStage,
+        array $serviceCategoryIds = [],
     ): void {
         $this->recordApplyAndPublish(
             new CriticalPointRegistered(
@@ -88,12 +95,18 @@ class CriticalPoint implements \Stringable
                 supplyChainStage: $supplyChainStage,
             ),
         );
+
+        $this->syncServiceCategories($serviceCategoryIds);
     }
 
+    /**
+     * @param ServiceCategoryId[] $serviceCategoryIds
+     */
     public function update(
         string $name,
         PropertyId $propertyId,
         SupplyChainStage $supplyChainStage,
+        array $serviceCategoryIds = [],
     ): void {
         $this->recordApplyAndPublish(
             new CriticalPointUpdated(
@@ -103,6 +116,8 @@ class CriticalPoint implements \Stringable
                 supplyChainStage: $supplyChainStage,
             ),
         );
+
+        $this->syncServiceCategories($serviceCategoryIds);
     }
 
     public function remove(): void
@@ -112,6 +127,84 @@ class CriticalPoint implements \Stringable
                 criticalPointId: $this->id(),
             ),
         );
+    }
+
+    public function serviceCategories(): CriticalPointServiceCategories
+    {
+        if ($this->serviceCategories instanceof CriticalPointServiceCategories) {
+            return $this->serviceCategories;
+        }
+
+        $this->serviceCategories = new CriticalPointServiceCategories(
+            array_values(iterator_to_array($this->serviceCategories)),
+        );
+
+        return $this->serviceCategories;
+    }
+
+    /**
+     * @return ServiceCategoryId[]
+     */
+    public function serviceCategoryIds(): array
+    {
+        return $this->serviceCategories()->ids();
+    }
+
+    public function linkServiceCategory(ServiceCategoryId $serviceCategoryId): void
+    {
+        if ($this->serviceCategories()->has($serviceCategoryId)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CriticalPointServiceCategoryLinked(
+                criticalPointId: $this->id(),
+                serviceCategoryId: $serviceCategoryId,
+            ),
+        );
+    }
+
+    public function unlinkServiceCategory(ServiceCategoryId $serviceCategoryId): void
+    {
+        if (!$this->serviceCategories()->has($serviceCategoryId)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CriticalPointServiceCategoryUnlinked(
+                criticalPointId: $this->id(),
+                serviceCategoryId: $serviceCategoryId,
+            ),
+        );
+    }
+
+    /**
+     * @param ServiceCategoryId[] $newServiceCategoryIds
+     */
+    private function syncServiceCategories(array $newServiceCategoryIds): void
+    {
+        $current = $this->serviceCategories();
+
+        // Unlink categories that are no longer present
+        foreach ($current->ids() as $currentId) {
+            $found = false;
+            foreach ($newServiceCategoryIds as $newId) {
+                if ($currentId->equals($newId)) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $this->unlinkServiceCategory($currentId);
+            }
+        }
+
+        // Link new categories
+        foreach ($newServiceCategoryIds as $newId) {
+            if (!$current->has($newId)) {
+                $this->linkServiceCategory($newId);
+            }
+        }
     }
 
     public function applyCriticalPointRegistered(CriticalPointRegistered $event): void
@@ -135,6 +228,21 @@ class CriticalPoint implements \Stringable
     {
         $this->removed = true;
         $this->removedAt = $event->occurredOn();
+    }
+
+    public function applyCriticalPointServiceCategoryLinked(CriticalPointServiceCategoryLinked $event): void
+    {
+        $link = new CriticalPointServiceCategoryLink(
+            criticalPoint: $this,
+            serviceCategoryId: $event->serviceCategoryId(),
+        );
+
+        $this->serviceCategories()->add($link);
+    }
+
+    public function applyCriticalPointServiceCategoryUnlinked(CriticalPointServiceCategoryUnlinked $event): void
+    {
+        $this->serviceCategories()->removeById($event->serviceCategoryId());
     }
 
     public function __toString(): string

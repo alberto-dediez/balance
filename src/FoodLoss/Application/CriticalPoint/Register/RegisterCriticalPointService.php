@@ -56,6 +56,7 @@ class RegisterCriticalPointService implements CommandHandler
             propertyId: $request->propertyId,
             accountId: $accountId,
             supplyChainStage: $request->supplyChainStage,
+            serviceCategoryIds: $request->serviceCategoryIds,
         );
 
         $this->criticalPointRepository->add($criticalPoint);
@@ -63,6 +64,7 @@ class RegisterCriticalPointService implements CommandHandler
         return new RegisterCriticalPointResponse(
             criticalPointId: $criticalPoint->id(),
             name: $criticalPoint->name(),
+            serviceCategoryIds: $criticalPoint->serviceCategoryIds(),
         );
     }
 

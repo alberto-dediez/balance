@@ -89,6 +89,16 @@ class DoctrineCriticalPointRepository implements CriticalPointRepository
             ;
         }
 
+        if (null !== $filter->serviceCategoryId) {
+            $qb
+                ->join('e.serviceCategories', 'sc')
+                ->andWhere(
+                    $qb->expr()->eq('sc.serviceCategoryId', ':serviceCategoryId'),
+                )
+                ->setParameter('serviceCategoryId', (string) $filter->serviceCategoryId)
+            ;
+        }
+
         $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {

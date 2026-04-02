@@ -73,6 +73,19 @@ class InMemoryCriticalPointRepository implements CriticalPointRepository
                 continue;
             }
 
+            if (null !== $filter->serviceCategoryId) {
+                $linked = false;
+                foreach ($criticalPoint->serviceCategoryIds() as $id) {
+                    if ($id->equals($filter->serviceCategoryId)) {
+                        $linked = true;
+                        break;
+                    }
+                }
+                if (!$linked) {
+                    continue;
+                }
+            }
+
             if (true == $criticalPoint->isRemoved()) {
                 continue;
             }

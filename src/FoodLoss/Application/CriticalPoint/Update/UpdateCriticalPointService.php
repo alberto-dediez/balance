@@ -56,6 +56,7 @@ class UpdateCriticalPointService implements CommandHandler
             name: $request->name,
             propertyId: $request->propertyId,
             supplyChainStage: $request->supplyChainStage,
+            serviceCategoryIds: $request->serviceCategoryIds,
         );
 
         $this->criticalPointRepository->add($criticalPoint);
@@ -63,6 +64,7 @@ class UpdateCriticalPointService implements CommandHandler
         return new UpdateCriticalPointResponse(
             criticalPointId: $criticalPoint->id(),
             name: $criticalPoint->name(),
+            serviceCategoryIds: $criticalPoint->serviceCategoryIds(),
         );
     }
 

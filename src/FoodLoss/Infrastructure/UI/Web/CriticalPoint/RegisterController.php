@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\UI\Web\CriticalPoint;
 
+use App\FoodLoss\Application\CriticalPoint\Register\RegisterCriticalPointRequest;
 use App\FoodLoss\Application\CriticalPoint\Register\RegisterCriticalPointService;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
@@ -27,7 +28,7 @@ class RegisterController extends AbstractController
     {
         $this->denyAccessUnlessGranted(SecurityAction::Register->value, new CriticalPoint(CriticalPointId::generate()));
 
-        $form = $this->createForm(RegisterCriticalPointType::class);
+        $form = $this->createForm(RegisterCriticalPointType::class, new RegisterCriticalPointRequest());
 
         try {
             $needsRedirect = $this->register($request, $form, function ($form) use ($registerCriticalPoint, $loggedUser) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
 use App\FoodLoss\Application\CriticalPoint\Register\RegisterCriticalPointRequest;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\ServiceCategoryIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\SupplyChainStageType;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use Symfony\Component\Form\AbstractType;
@@ -31,6 +32,11 @@ class RegisterCriticalPointType extends AbstractType
             ->add('supplyChainStage', SupplyChainStageType::class, [
                 'label' => new TranslatableMessage('Etapa de la cadena de suministro'),
                 'required' => true,
+            ])
+            ->add('serviceCategoryIds', ServiceCategoryIdType::class, [
+                'label' => new TranslatableMessage('Categorías de servicio'),
+                'required' => false,
+                'multiple' => true,
             ])
             ->add('register', SubmitType::class, [
                 'label' => new TranslatableMessage('Registrar'),

@@ -7,6 +7,7 @@ namespace App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\CriticalPoint\SupplyChainStage;
+use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 
@@ -57,6 +58,20 @@ class CriticalPointMother
             propertyId: $propertyId ?? PropertyId::generate(),
             accountId: $accountId ?? AccountId::generate(),
             supplyChainStage: SupplyChainStage::Receiving,
+        );
+
+        return $criticalPoint;
+    }
+
+    public static function withServiceCategories(ServiceCategoryId ...$ids): CriticalPoint
+    {
+        $criticalPoint = new CriticalPoint(id: CriticalPointId::generate());
+        $criticalPoint->register(
+            name: 'critical-point-' . rand(100, 999),
+            propertyId: PropertyId::generate(),
+            accountId: AccountId::generate(),
+            supplyChainStage: SupplyChainStage::Receiving,
+            serviceCategoryIds: array_values($ids),
         );
 
         return $criticalPoint;

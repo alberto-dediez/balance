@@ -120,6 +120,16 @@ final readonly class WebContext implements Context
         Assert::assertCount(1, $forms);
     }
 
+    #[Then('I see a form field :name')]
+    public function iSeeAFormField(string $name): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $field = $crawler->filter(sprintf('[name*="%s"]', $name));
+
+        Assert::assertGreaterThan(0, $field->count(), sprintf('Form field "%s" not found in the page', $name));
+    }
+
     #[Then('I see a button with name :name')]
     public function iSeeAButtonWithName(string $name): void
     {
