@@ -1,0 +1,45 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Motivos' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Descripción' | trans,
+            'sortable': true,
+            'sortableBy': 'description'
+        }, {
+            'label': 'Prioridad' | trans
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': 'Fecha de actualización' | trans,
+            'sortable': true,
+            'sortableBy': 'updatedAt'
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="reasons" :bulkForm="bulkForm">
+        <td>{{ element.description }}</td>
+        <td>{{ element.priority.value | trans({}, 'priorityType') }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>{{ element.updatedAt ? element.updatedAt | date('d/m/Y') : '' }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('admin_reasons_edit', {'reasonId': element.id}) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('admin_reasons_remove', {'reasonId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('admin_reasons_register') }}" />
+{% endblock list_actions %}

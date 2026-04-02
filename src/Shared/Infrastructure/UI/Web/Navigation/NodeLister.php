@@ -81,6 +81,11 @@ class NodeLister
                     target: $this->router->generate('admin_actions'),
                 ),
                 new Node(
+                    label: new TranslatableMessage('Motivos'),
+                    icon: 'solar:shield-cross-line-duotone',
+                    target: $this->router->generate('admin_reasons'),
+                ),
+                new Node(
                     label: new TranslatableMessage('Categorías de servicio'),
                     icon: 'solar:folder-with-files-line-duotone',
                     target: $this->router->generate('admin_service_categories'),
