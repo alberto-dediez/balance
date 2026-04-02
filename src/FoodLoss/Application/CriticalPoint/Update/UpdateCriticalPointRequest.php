@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Application\CriticalPoint\Update;
 
+use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
+use App\FoodLoss\Domain\Model\CriticalPoint\PriorityAssessment;
 use App\FoodLoss\Domain\Model\CriticalPoint\SupplyChainStage;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -21,5 +23,10 @@ class UpdateCriticalPointRequest implements Command
         public ?PropertyId $propertyId = null,
         public SupplyChainStage $supplyChainStage = SupplyChainStage::Receiving,
         public array $serviceCategoryIds = [],
+        public PriorityAssessment $prevention = new PriorityAssessment(Priority::Prevention),
+        public PriorityAssessment $humanDonation = new PriorityAssessment(Priority::HumanDonation),
+        public PriorityAssessment $animalFeed = new PriorityAssessment(Priority::AnimalFeed),
+        public PriorityAssessment $transformation = new PriorityAssessment(Priority::Transformation),
+        public PriorityAssessment $composting = new PriorityAssessment(Priority::Composting),
     ) {}
 }

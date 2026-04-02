@@ -56,6 +56,11 @@ class RegisterCriticalPointService implements CommandHandler
             propertyId: $request->propertyId,
             accountId: $accountId,
             supplyChainStage: $request->supplyChainStage,
+            prevention: $request->prevention,
+            humanDonation: $request->humanDonation,
+            animalFeed: $request->animalFeed,
+            transformation: $request->transformation,
+            composting: $request->composting,
             serviceCategoryIds: $request->serviceCategoryIds,
         );
 
@@ -65,6 +70,11 @@ class RegisterCriticalPointService implements CommandHandler
             criticalPointId: $criticalPoint->id(),
             name: $criticalPoint->name(),
             serviceCategoryIds: $criticalPoint->serviceCategoryIds(),
+            prevention: $criticalPoint->prevention(),
+            humanDonation: $criticalPoint->humanDonation(),
+            animalFeed: $criticalPoint->animalFeed(),
+            transformation: $criticalPoint->transformation(),
+            composting: $criticalPoint->composting(),
         );
     }
 

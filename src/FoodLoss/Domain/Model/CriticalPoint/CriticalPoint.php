@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Domain\Model\CriticalPoint;
 
+use App\FoodLoss\Domain\Model\Action\ActionId;
+use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -12,6 +14,12 @@ use App\Shared\Domain\Model\AggregateRoot;
 class CriticalPoint implements \Stringable
 {
     use AggregateRoot;
+
+    private bool $preventionPossible = false;
+    private bool $humanDonationPossible = false;
+    private bool $animalFeedPossible = false;
+    private bool $transformationPossible = false;
+    private bool $compostingPossible = false;
 
     /** @param array<\App\Shared\Domain\Event\DomainEvent> $events */
     public function __construct(
@@ -27,6 +35,8 @@ class CriticalPoint implements \Stringable
         private ?\DateTimeImmutable $removedAt = null,
         /** @var iterable<CriticalPointServiceCategoryLink>|CriticalPointServiceCategories */
         private iterable $serviceCategories = [],
+        /** @var iterable<CriticalPointActionLink>|CriticalPointActions */
+        private iterable $actions = [],
     ) {
         $this->events = $events;
     }
@@ -56,6 +66,51 @@ class CriticalPoint implements \Stringable
         return $this->supplyChainStage;
     }
 
+    public function prevention(): PriorityAssessment
+    {
+        return new PriorityAssessment(
+            priority: Priority::Prevention,
+            isPossible: $this->preventionPossible,
+            actionIds: $this->actions()->byPriority(Priority::Prevention),
+        );
+    }
+
+    public function humanDonation(): PriorityAssessment
+    {
+        return new PriorityAssessment(
+            priority: Priority::HumanDonation,
+            isPossible: $this->humanDonationPossible,
+            actionIds: $this->actions()->byPriority(Priority::HumanDonation),
+        );
+    }
+
+    public function animalFeed(): PriorityAssessment
+    {
+        return new PriorityAssessment(
+            priority: Priority::AnimalFeed,
+            isPossible: $this->animalFeedPossible,
+            actionIds: $this->actions()->byPriority(Priority::AnimalFeed),
+        );
+    }
+
+    public function transformation(): PriorityAssessment
+    {
+        return new PriorityAssessment(
+            priority: Priority::Transformation,
+            isPossible: $this->transformationPossible,
+            actionIds: $this->actions()->byPriority(Priority::Transformation),
+        );
+    }
+
+    public function composting(): PriorityAssessment
+    {
+        return new PriorityAssessment(
+            priority: Priority::Composting,
+            isPossible: $this->compostingPossible,
+            actionIds: $this->actions()->byPriority(Priority::Composting),
+        );
+    }
+
     public function isRemoved(): bool
     {
         return $this->removed;
@@ -76,14 +131,17 @@ class CriticalPoint implements \Stringable
         return $this->removedAt;
     }
 
-    /**
-     * @param ServiceCategoryId[] $serviceCategoryIds
-     */
+    /** @param ServiceCategoryId[] $serviceCategoryIds */
     public function register(
         string $name,
         PropertyId $propertyId,
         AccountId $accountId,
         SupplyChainStage $supplyChainStage,
+        PriorityAssessment $prevention,
+        PriorityAssessment $humanDonation,
+        PriorityAssessment $animalFeed,
+        PriorityAssessment $transformation,
+        PriorityAssessment $composting,
         array $serviceCategoryIds = [],
     ): void {
         $this->recordApplyAndPublish(
@@ -93,19 +151,28 @@ class CriticalPoint implements \Stringable
                 propertyId: $propertyId,
                 accountId: $accountId,
                 supplyChainStage: $supplyChainStage,
+                prevention: $prevention,
+                humanDonation: $humanDonation,
+                animalFeed: $animalFeed,
+                transformation: $transformation,
+                composting: $composting,
             ),
         );
 
         $this->syncServiceCategories($serviceCategoryIds);
+        $this->syncActionsFromAssessments($prevention, $humanDonation, $animalFeed, $transformation, $composting);
     }
 
-    /**
-     * @param ServiceCategoryId[] $serviceCategoryIds
-     */
+    /** @param ServiceCategoryId[] $serviceCategoryIds */
     public function update(
         string $name,
         PropertyId $propertyId,
         SupplyChainStage $supplyChainStage,
+        PriorityAssessment $prevention,
+        PriorityAssessment $humanDonation,
+        PriorityAssessment $animalFeed,
+        PriorityAssessment $transformation,
+        PriorityAssessment $composting,
         array $serviceCategoryIds = [],
     ): void {
         $this->recordApplyAndPublish(
@@ -114,10 +181,16 @@ class CriticalPoint implements \Stringable
                 name: $name,
                 propertyId: $propertyId,
                 supplyChainStage: $supplyChainStage,
+                prevention: $prevention,
+                humanDonation: $humanDonation,
+                animalFeed: $animalFeed,
+                transformation: $transformation,
+                composting: $composting,
             ),
         );
 
         $this->syncServiceCategories($serviceCategoryIds);
+        $this->syncActionsFromAssessments($prevention, $humanDonation, $animalFeed, $transformation, $composting);
     }
 
     public function remove(): void
@@ -207,12 +280,97 @@ class CriticalPoint implements \Stringable
         }
     }
 
+    public function actions(): CriticalPointActions
+    {
+        if ($this->actions instanceof CriticalPointActions) {
+            return $this->actions;
+        }
+
+        $this->actions = new CriticalPointActions(
+            array_values(iterator_to_array($this->actions)),
+        );
+
+        return $this->actions;
+    }
+
+    /**
+     * @return ActionId[]
+     */
+    public function actionIds(): array
+    {
+        return $this->actions()->ids();
+    }
+
+    public function linkAction(ActionId $actionId, Priority $priority): void
+    {
+        if ($this->actions()->has($actionId)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CriticalPointActionLinked(
+                criticalPointId: $this->id(),
+                actionId: $actionId,
+                priority: $priority,
+            ),
+        );
+    }
+
+    public function unlinkAction(ActionId $actionId): void
+    {
+        if (!$this->actions()->has($actionId)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CriticalPointActionUnlinked(
+                criticalPointId: $this->id(),
+                actionId: $actionId,
+            ),
+        );
+    }
+
+    private function syncActionsFromAssessments(
+        PriorityAssessment $prevention,
+        PriorityAssessment $humanDonation,
+        PriorityAssessment $animalFeed,
+        PriorityAssessment $transformation,
+        PriorityAssessment $composting,
+    ): void {
+        /** @var array<string, array{ActionId, Priority}> $newActions */
+        $newActions = [];
+        foreach ([$prevention, $humanDonation, $animalFeed, $transformation, $composting] as $assessment) {
+            foreach ($assessment->actionIds as $actionId) {
+                $newActions[(string) $actionId] = [$actionId, $assessment->priority];
+            }
+        }
+
+        $current = $this->actions();
+
+        foreach ($current->ids() as $currentId) {
+            if (!array_key_exists((string) $currentId, $newActions)) {
+                $this->unlinkAction($currentId);
+            }
+        }
+
+        foreach ($newActions as [$actionId, $priority]) {
+            if (!$current->has($actionId)) {
+                $this->linkAction($actionId, $priority);
+            }
+        }
+    }
+
     public function applyCriticalPointRegistered(CriticalPointRegistered $event): void
     {
         $this->name = $event->name();
         $this->propertyId = $event->propertyId();
         $this->accountId = $event->accountId();
         $this->supplyChainStage = $event->supplyChainStage();
+        $this->preventionPossible = $event->prevention()->isPossible;
+        $this->humanDonationPossible = $event->humanDonation()->isPossible;
+        $this->animalFeedPossible = $event->animalFeed()->isPossible;
+        $this->transformationPossible = $event->transformation()->isPossible;
+        $this->compostingPossible = $event->composting()->isPossible;
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -221,6 +379,11 @@ class CriticalPoint implements \Stringable
         $this->name = $event->name();
         $this->propertyId = $event->propertyId();
         $this->supplyChainStage = $event->supplyChainStage();
+        $this->preventionPossible = $event->prevention()->isPossible;
+        $this->humanDonationPossible = $event->humanDonation()->isPossible;
+        $this->animalFeedPossible = $event->animalFeed()->isPossible;
+        $this->transformationPossible = $event->transformation()->isPossible;
+        $this->compostingPossible = $event->composting()->isPossible;
         $this->updatedAt = $event->occurredOn();
     }
 
@@ -243,6 +406,22 @@ class CriticalPoint implements \Stringable
     public function applyCriticalPointServiceCategoryUnlinked(CriticalPointServiceCategoryUnlinked $event): void
     {
         $this->serviceCategories()->removeById($event->serviceCategoryId());
+    }
+
+    public function applyCriticalPointActionLinked(CriticalPointActionLinked $event): void
+    {
+        $link = new CriticalPointActionLink(
+            criticalPoint: $this,
+            actionId: $event->actionId(),
+            priority: $event->priority(),
+        );
+
+        $this->actions()->add($link);
+    }
+
+    public function applyCriticalPointActionUnlinked(CriticalPointActionUnlinked $event): void
+    {
+        $this->actions()->removeById($event->actionId());
     }
 
     public function __toString(): string

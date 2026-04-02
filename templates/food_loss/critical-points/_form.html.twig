@@ -1,0 +1,41 @@
+<div class="row">
+    <div class="col-12">
+        {{ form_row(form.name) }}
+    </div>
+    <div class="col-12">
+        {{ form_row(form.propertyId) }}
+    </div>
+    <div class="col-12">
+        {{ form_row(form.supplyChainStage) }}
+    </div>
+    <div class="col-12">
+        {{ form_row(form.serviceCategoryIds) }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <h5>{% trans %}Prevención{% endtrans %}</h5>
+        {{ form_row(form.prevention.isPossible) }}
+        {{ form_row(form.prevention.actionIds) }}
+    </div>
+    <div class="col-12">
+        <h5>{% trans %}Transformación para consumo humano{% endtrans %}</h5>
+        {{ form_row(form.transformation.isPossible) }}
+        {{ form_row(form.transformation.actionIds) }}
+    </div>
+    <div class="col-12">
+        <h5>{% trans %}Donación{% endtrans %}</h5>
+        {{ form_row(form.humanDonation.isPossible) }}
+        {{ form_row(form.humanDonation.actionIds) }}
+    </div>
+    <div class="col-12">
+        <h5>{% trans %}Alimentación animal{% endtrans %}</h5>
+        {{ form_row(form.animalFeed.isPossible) }}
+        {{ form_row(form.animalFeed.actionIds) }}
+    </div>
+    <div class="col-12">
+        <h5>{% trans %}Consumo no humano{% endtrans %}</h5>
+        {{ form_row(form.composting.isPossible) }}
+        {{ form_row(form.composting.actionIds) }}
+    </div>
+</div>

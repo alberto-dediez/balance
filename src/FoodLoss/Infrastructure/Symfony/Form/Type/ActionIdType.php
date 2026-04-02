@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\Model\Action\ActionFilter;
 use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\Action\ActionRepository;
 use App\Shared\Infrastructure\Symfony\Form\Type\AggregateRootIdType;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ActionIdType extends AggregateRootIdType
@@ -18,13 +19,17 @@ class ActionIdType extends AggregateRootIdType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $actions = $this->actionRepository->findByFilter(
-            new ActionFilter(limit: 0),
-        );
-
         $resolver->setDefaults([
-            'choices' => $this->getChoices($actions),
             'class' => ActionId::class,
+            'action_priority' => null,
         ]);
+
+        $resolver->setNormalizer('choices', function (Options $options, $value) {
+            $filter = new ActionFilter(priority: $options['action_priority'] ?? null, limit: 0);
+
+            $actions = $this->actionRepository->findByFilter($filter);
+
+            return $this->getChoices($actions);
+        });
     }
 }

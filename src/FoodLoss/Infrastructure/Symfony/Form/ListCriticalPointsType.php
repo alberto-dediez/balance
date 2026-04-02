@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
 use App\FoodLoss\Application\CriticalPoint\List\ListCriticalPointsRequest;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\ActionIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\ServiceCategoryIdType;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
@@ -28,6 +29,10 @@ class ListCriticalPointsType extends BaseFilterType
             ])
             ->add('serviceCategoryId', ServiceCategoryIdType::class, [
                 'label' => new TranslatableMessage('Categoría de servicio'),
+                'required' => false,
+            ])
+            ->add('actionId', ActionIdType::class, [
+                'label' => new TranslatableMessage('Acción'),
                 'required' => false,
             ])
         ;

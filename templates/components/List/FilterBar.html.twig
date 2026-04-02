@@ -32,6 +32,8 @@
                             {% set value = value | category_name %}
                         {% elseif field == 'purpose' %}
                             {% set value = value.value | trans({}, 'purpose') %}
+                        {% elseif field == 'actionId' %}
+                            {% set value = value | action_name %}
                         {% elseif field == 'serviceCategoryId' %}
                             {% set value = value | service_category_name %}
                         {% elseif field == 'serviceCategoryIds' %}

@@ -86,6 +86,10 @@ class InMemoryCriticalPointRepository implements CriticalPointRepository
                 }
             }
 
+            if (null !== $filter->actionId && !$criticalPoint->actions()->has($filter->actionId)) {
+                continue;
+            }
+
             if (true == $criticalPoint->isRemoved()) {
                 continue;
             }

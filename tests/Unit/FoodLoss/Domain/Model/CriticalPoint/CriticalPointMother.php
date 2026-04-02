@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint;
 
+use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
+use App\FoodLoss\Domain\Model\CriticalPoint\PriorityAssessment;
 use App\FoodLoss\Domain\Model\CriticalPoint\SupplyChainStage;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -58,6 +60,11 @@ class CriticalPointMother
             propertyId: $propertyId ?? PropertyId::generate(),
             accountId: $accountId ?? AccountId::generate(),
             supplyChainStage: SupplyChainStage::Receiving,
+            prevention: new PriorityAssessment(Priority::Prevention, false),
+            humanDonation: new PriorityAssessment(Priority::HumanDonation, false),
+            animalFeed: new PriorityAssessment(Priority::AnimalFeed, false),
+            transformation: new PriorityAssessment(Priority::Transformation, false),
+            composting: new PriorityAssessment(Priority::Composting, false),
         );
 
         return $criticalPoint;
@@ -71,6 +78,11 @@ class CriticalPointMother
             propertyId: PropertyId::generate(),
             accountId: AccountId::generate(),
             supplyChainStage: SupplyChainStage::Receiving,
+            prevention: new PriorityAssessment(Priority::Prevention, false),
+            humanDonation: new PriorityAssessment(Priority::HumanDonation, false),
+            animalFeed: new PriorityAssessment(Priority::AnimalFeed, false),
+            transformation: new PriorityAssessment(Priority::Transformation, false),
+            composting: new PriorityAssessment(Priority::Composting, false),
             serviceCategoryIds: array_values($ids),
         );
 

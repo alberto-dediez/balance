@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointActionLink" table="critical_point_action_link">
+        <id name="criticalPoint" association-key="true" />
+        <id name="actionId" type="action_id" column="action_id" />
+
+        <field name="priority" type="string" enum-type="App\FoodLoss\Domain\Model\Action\Priority" nullable="false" column="priority"/>
+
+        <many-to-one field="criticalPoint" target-entity="App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint" inversed-by="actions">
+            <join-column name="critical_point_id" referenced-column-name="id" on-delete="CASCADE" />
+        </many-to-one>
+    </entity>
+
+</doctrine-mapping>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
 use App\FoodLoss\Application\CriticalPoint\Update\UpdateCriticalPointRequest;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\PriorityAssessmentType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\ServiceCategoryIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\SupplyChainStageType;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyIdType;
@@ -32,6 +33,26 @@ class UpdateCriticalPointType extends AbstractType
             ->add('supplyChainStage', SupplyChainStageType::class, [
                 'label' => new TranslatableMessage('Etapa de la cadena de suministro'),
                 'required' => true,
+            ])
+            ->add('prevention', PriorityAssessmentType::class, [
+                'label' => new TranslatableMessage('¿Se podía haber prevenido el desperdicio?'),
+                'action_priority' => \App\FoodLoss\Domain\Model\Action\Priority::Prevention,
+            ])
+            ->add('humanDonation', PriorityAssessmentType::class, [
+                'label' => new TranslatableMessage('¿Se puede donar?'),
+                'action_priority' => \App\FoodLoss\Domain\Model\Action\Priority::HumanDonation,
+            ])
+            ->add('animalFeed', PriorityAssessmentType::class, [
+                'label' => new TranslatableMessage('¿Se puede usar para alimentación animal?'),
+                'action_priority' => \App\FoodLoss\Domain\Model\Action\Priority::AnimalFeed,
+            ])
+            ->add('transformation', PriorityAssessmentType::class, [
+                'label' => new TranslatableMessage('¿Se puede transformar para consumo humano?'),
+                'action_priority' => \App\FoodLoss\Domain\Model\Action\Priority::Transformation,
+            ])
+            ->add('composting', PriorityAssessmentType::class, [
+                'label' => new TranslatableMessage('¿Se puede dar un uso no humano (ej. compostaje)?'),
+                'action_priority' => \App\FoodLoss\Domain\Model\Action\Priority::Composting,
             ])
             ->add('serviceCategoryIds', ServiceCategoryIdType::class, [
                 'label' => new TranslatableMessage('Categorías de servicio'),

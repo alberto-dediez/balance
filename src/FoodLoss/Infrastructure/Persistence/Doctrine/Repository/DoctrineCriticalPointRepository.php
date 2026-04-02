@@ -99,6 +99,12 @@ class DoctrineCriticalPointRepository implements CriticalPointRepository
             ;
         }
 
+        if (null !== $filter->actionId) {
+            $qb->join('e.actions', 'a')
+               ->andWhere('a.actionId = :actionId')
+               ->setParameter('actionId', (string) $filter->actionId);
+        }
+
         $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {

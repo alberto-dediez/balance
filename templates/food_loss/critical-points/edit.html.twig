@@ -13,20 +13,7 @@
 {% block content %}
     {{ form_start(form) }}
         <twig:Card>
-            <div class="row">
-                <div class="col-12">
-                    {{ form_row(form.name) }}
-                </div>
-                <div class="col-12">
-                    {{ form_row(form.propertyId) }}
-                </div>
-                <div class="col-12">
-                    {{ form_row(form.supplyChainStage) }}
-                </div>
-                <div class="col-12">
-                    {{ form_row(form.serviceCategoryIds) }}
-                </div>
-            </div>
+            {% include '@food_loss/critical-points/_form.html.twig' %}
 
             <twig:ActionBar>
                 <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
