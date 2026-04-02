@@ -49,7 +49,7 @@ class RegisterController extends AbstractController
             $this->addFlash('danger', $e->getMessage());
         }
 
-        return $this->render('@food_loss/critical_points/register.html.twig', [
+        return $this->render('@food_loss/critical-points/register.html.twig', [
             'form' => $form->createView(),
         ]);
     }

@@ -50,7 +50,7 @@ class ListController extends AbstractController
             return $this->redirect($request->getRequestUri());
         }
 
-        return $this->render('@food_loss/critical_points/list.html.twig', [
+        return $this->render('@food_loss/critical-points/list.html.twig', [
             'bulkForm' => $bulkForm->createView(),
             'criticalPoints' => $response->criticalPoints,
             'totalResults' => $response->totalResults,

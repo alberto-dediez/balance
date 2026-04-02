@@ -62,7 +62,7 @@ class EditController extends AbstractController
             $this->addFlash('danger', $e->getMessage());
         }
 
-        return $this->render('@food_loss/critical_points/edit.html.twig', [
+        return $this->render('@food_loss/critical-points/edit.html.twig', [
             'criticalPoint' => $criticalPoint,
             'form' => $form->createView(),
         ]);
