@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20260401124010 extends AbstractMigration
+final class Version20260402053442 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,7 +21,7 @@ final class Version20260401124010 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            CREATE TABLE food_loss_critical_point (
+            CREATE TABLE critical_points (
               id VARCHAR(36) NOT NULL COMMENT '(DC2Type:critical_point_id)',
               name VARCHAR(255) NOT NULL,
               property_id VARCHAR(36) NOT NULL COMMENT '(DC2Type:property_id)',
@@ -39,6 +39,6 @@ final class Version20260401124010 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP TABLE food_loss_critical_point');
+        $this->addSql('DROP TABLE critical_points');
     }
 }

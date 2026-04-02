@@ -1657,6 +1657,11 @@ Add the translations one-to-many:
 </doctrine-mapping>
 ```
 
+**⚠️ DATABASE TABLE NAMING CONVENTION:**
+- Table names in the `table` attribute must be **snake_case** and always **plural** (e.g., `properties`, `critical_points`, `waste_containers`)
+- **Never include the bounded context prefix** in the table name. For example, even in the `FoodLoss` context, the table is `critical_points`, not `food_loss_critical_points`
+- For translation tables, follow the same rule: `{entity_snake}_translation` remains plural and without context prefix
+
 ### 4. Web Controllers
 
 #### ListController.php
@@ -2168,6 +2173,8 @@ class List{Entities}Type extends BaseFilterType
             'label': 'Fecha de actualización' | trans,
             'sortable': true,
             'sortableBy': 'updatedAt'
+        }, {
+            'label': ''
         },
     ] %}
 
@@ -2175,6 +2182,8 @@ class List{Entities}Type extends BaseFilterType
         <td>{{ element.name }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>{{ element.updatedAt | date('d/m/Y') }}</td>
+        <!-- If the entity has a propertyId field, display it using the property_name filter -->
+        <!-- <td>{{ element.propertyId | property_name }}</td> -->
         <td>
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('admin_{entities_snake}_edit', {'{entity}Id': element.id}) }}" />
@@ -2186,6 +2195,16 @@ class List{Entities}Type extends BaseFilterType
         </td>
     </twig:List:Table>
 {% endblock %}
+
+**⚠️ ACTIONS COLUMN IN LIST TABLES:**
+The empty column definition `{ 'label': '' }` at the end of the columns array is **required** for the action buttons (Edit and Delete). This column has no header but renders the action buttons in each row. Do not remove or rename this column.
+
+**⚠️ PROPERTY_ID FILTER IN TEMPLATES:**
+When displaying a `propertyId` field in any Twig template (list, edit, or register), always use the `property_name` Twig filter to convert the ID to a human-readable property name. This provides better UI/UX:
+```twig
+{{ element.propertyId | property_name }}
+```
+This applies to any location where you display a property reference, not just in list tables.
 
 {% block list_actions %}
     <twig:Link:Register path="{{ path('admin_{entities_snake}_register') }}" />

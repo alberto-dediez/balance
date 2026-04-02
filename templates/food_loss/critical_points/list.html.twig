@@ -9,19 +9,21 @@
             'sortable': true,
             'sortableBy': 'name'
         }, {
-            'label': 'Centro' | trans,
+            'label': 'Propiedad' | trans,
         }, {
             'label': 'Etapa' | trans,
         }, {
             'label': 'Fecha de registro' | trans,
             'sortable': true,
             'sortableBy': 'registeredAt'
-        },
+        }, {
+            'label': ''
+        }
     ] %}
 
     <twig:List:Table :columns="columns" :elements="criticalPoints" :bulkForm="bulkForm">
         <td>{{ element.name }}</td>
-        <td>{{ element.propertyId }}</td>
+        <td>{{ element.propertyId | property_name }}</td>
         <td>{{ element.supplyChainStage.value | trans([], 'supplyChainStage') }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>

@@ -1441,6 +1441,54 @@
         <source>Categorías de servicio</source>
         <target>Categorías de servicio</target>
       </trans-unit>
+      <trans-unit id="ijP65K5" resname="Jerarquía de prioridades">
+        <source>Jerarquía de prioridades</source>
+        <target>Jerarquía de prioridades</target>
+      </trans-unit>
+      <trans-unit id="F1EyIWj" resname="El fichero no es válido.">
+        <source>El fichero no es válido.</source>
+        <target>El fichero no es válido.</target>
+      </trans-unit>
+      <trans-unit id="Q4SsLBF" resname="Punto crítico creado correctamente: {name}">
+        <source>Punto crítico creado correctamente: {name}</source>
+        <target>Punto crítico creado correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="I90cvyF" resname="Punto crítico actualizado con éxito">
+        <source>Punto crítico actualizado con éxito</source>
+        <target>Punto crítico actualizado con éxito</target>
+      </trans-unit>
+      <trans-unit id="eOh3Ih3" resname="Se ha eliminado el punto crítico {name}">
+        <source>Se ha eliminado el punto crítico {name}</source>
+        <target>Se ha eliminado el punto crítico {name}</target>
+      </trans-unit>
+      <trans-unit id="cti39tR" resname="No se ha podido eliminar el punto crítico {name}">
+        <source>No se ha podido eliminar el punto crítico {name}</source>
+        <target>No se ha podido eliminar el punto crítico {name}</target>
+      </trans-unit>
+      <trans-unit id="mMDWcRJ" resname="Se ha eliminado el punto crítico {id}">
+        <source>Se ha eliminado el punto crítico {id}</source>
+        <target>Se ha eliminado el punto crítico {id}</target>
+      </trans-unit>
+      <trans-unit id="1WbAagZ" resname="No se ha podido eliminar el punto crítico {id}">
+        <source>No se ha podido eliminar el punto crítico {id}</source>
+        <target>No se ha podido eliminar el punto crítico {id}</target>
+      </trans-unit>
+      <trans-unit id="hyqgiHW" resname="Centro">
+        <source>Centro</source>
+        <target>Centro</target>
+      </trans-unit>
+      <trans-unit id="U4odQuO" resname="Etapa de la cadena de suministro">
+        <source>Etapa de la cadena de suministro</source>
+        <target>Etapa de la cadena de suministro</target>
+      </trans-unit>
+      <trans-unit id="vIpB6Zi" resname="Puntos Críticos">
+        <source>Puntos Críticos</source>
+        <target>Puntos Críticos</target>
+      </trans-unit>
+      <trans-unit id="qo6r2rF" resname="Etapa">
+        <source>Etapa</source>
+        <target>Etapa</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

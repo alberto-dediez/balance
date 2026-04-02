@@ -5,7 +5,7 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                                       http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint" table="food_loss_critical_point">
+    <entity name="App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint" table="critical_points">
         <id name="id" type="critical_point_id" column="id">
             <generator strategy="NONE" />
         </id>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="h1tRljN" resname="Receiving">
+        <source>Receiving</source>
+        <target>Goods Receiving</target>
+      </trans-unit>
+      <trans-unit id=".bgrmny" resname="Storage">
+        <source>Storage</source>
+        <target>Storage and Preservation</target>
+      </trans-unit>
+      <trans-unit id="z1HNKxg" resname="Preparation">
+        <source>Preparation</source>
+        <target>Preparation and Production</target>
+      </trans-unit>
+      <trans-unit id="e7Nst0l" resname="Service">
+        <source>Service</source>
+        <target>Dining Room and Buffet Service</target>
+      </trans-unit>
+      <trans-unit id="xWtVLoB" resname="PlateWaste">
+        <source>PlateWaste</source>
+        <target>Customer Leftovers</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -73,7 +73,7 @@ class NodeLister
 
         $nodes[] = new Node(
             label: new TranslatableMessage('Jerarquía de prioridades'),
-            icon: 'solar:filters-line-duotone',
+            icon: 'solar:danger-triangle-line-duotone',
             items: [
                 new Node(
                     label: new TranslatableMessage('Acciones'),
@@ -128,6 +128,18 @@ class NodeLister
                     label: new TranslatableMessage('Propiedades'),
                     icon: 'solar:buildings-2-line-duotone',
                     target: $this->router->generate('properties'),
+                ),
+            ],
+        );
+
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Jerarquía de prioridades'),
+            icon: 'solar:danger-triangle-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Puntos críticos'),
+                    icon: 'ph:cooking-pot-duotone',
+                    target: $this->router->generate('critical_points'),
                 ),
             ],
         );
