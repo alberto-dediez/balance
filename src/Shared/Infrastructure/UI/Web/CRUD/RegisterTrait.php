@@ -20,7 +20,7 @@ trait RegisterTrait
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 return $register($form);
-            } catch (\Exception) {
+            } catch (\Exception $e) {
                 $this->addFlash('danger', new TranslatableMessage('Error inesperado'));
             }
         }

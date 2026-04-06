@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointFilter;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
+use App\Security\Domain\Model\Account\AccountId;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -71,7 +72,7 @@ class DoctrineCriticalPointRepository implements CriticalPointRepository
             ;
         }
 
-        if (!empty($filter->accountId)) {
+        if ($filter->accountId instanceof AccountId) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('e.accountId', ':accountId'),

@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointFilter;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
+use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]
@@ -60,8 +61,9 @@ class InMemoryCriticalPointRepository implements CriticalPointRepository
             }
 
             if (
-                !empty($filter->accountId)
-                && (string) $criticalPoint->accountId() !== $filter->accountId
+                $filter->accountId instanceof AccountId
+                && (null == $criticalPoint->accountId()
+                    || false === $filter->accountId->equals($criticalPoint->accountId()))
             ) {
                 continue;
             }

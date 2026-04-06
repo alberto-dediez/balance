@@ -28,6 +28,7 @@ doctrine:
             daily_waste_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\DailyWasteIdType
             critical_point_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointIdType
             reason_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ReasonIdType
+            recipient_organization_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\RecipientOrganizationIdType
     orm:
         auto_generate_proxy_classes: true
         enable_native_lazy_objects: true

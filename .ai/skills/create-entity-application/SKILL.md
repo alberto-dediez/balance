@@ -63,6 +63,7 @@ src/{Context}/
 tests/
   Unit/{Context}/
     Application/{Entity}/
+      {Entity}AuthorizerTest.php
       Register/Register{Entity}ServiceTest.php
       Update/Update{Entity}ServiceTest.php
       Remove/Remove{Entity}ServiceTest.php
@@ -75,10 +76,11 @@ tests/
 
 #### {Entity}Authorizer.php
 
-Adapt the `canList` / `canEdit` logic according to the Access Role:
-- **Admin**: only SuperAdmin and Admin may access
-- **Owner-User**: Owner and User may access (accountId check if needed)
-- **Both**: Admin for the admin controllers; Owner/User for the user-facing controllers
+Choose the variant that matches the Access Role:
+
+---
+
+**Variant A — Admin only** (routes under `/admin`, no account check):
 
 ```php
 <?php
@@ -106,24 +108,12 @@ final class {Entity}Authorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        // Admin access
-        if ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin)) {
-            return true;
-        }
-
-        // Owner/User access (only if entity belongs to an account or is user-level)
-        return $user->hasRole(Role::Owner) || $user->hasRole(Role::User);
+        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::Admin) || $user->hasRole(Role::SuperAdmin)) {
-            return true;
-        }
-
-        // For Owner/User: check if they own the resource (e.g. same accountId)
-        // return $subject->accountId()->equals($user->accountId());
-        return $user->hasRole(Role::Owner) || $user->hasRole(Role::User);
+        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin);
     }
 
     protected function canRemove(mixed $subject, User $user): bool
@@ -137,6 +127,273 @@ final class {Entity}Authorizer extends AbstractAuthorizer
     }
 }
 ```
+
+---
+
+**Variant B — Owner-User** (routes without `/admin`, must check that user's `accountId` matches entity's `accountId`):
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\{Context}\Application\{Entity};
+
+use App\{Context}\Domain\Model\{Entity}\{Entity};
+use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\User;
+
+final class {Entity}Authorizer extends AbstractAuthorizer
+{
+    protected function canRegister(mixed $subject, User $user): bool
+    {
+        return $this->canList($subject, $user);
+    }
+
+    protected function canView(mixed $subject, User $user): bool
+    {
+        return $this->canEdit($subject, $user);
+    }
+
+    protected function canList(mixed $subject, User $user): bool
+    {
+        assert($subject instanceof {Entity});
+
+        $subjectAccountId = $subject->accountId();
+
+        return $user->hasRole(Role::Owner)
+            && $user->accountId() instanceof AccountId
+            && null !== $subjectAccountId
+            && $user->accountId()->equals($subjectAccountId);
+    }
+
+    protected function canEdit(mixed $subject, User $user): bool
+    {
+        if (!$user->hasRole(Role::Owner) || !$user->accountId() instanceof AccountId) {
+            return false;
+        }
+
+        if (!$subject instanceof {Entity}) {
+            return false;
+        }
+
+        $subjectAccountId = $subject->accountId();
+
+        return null !== $subjectAccountId && $user->accountId()->equals($subjectAccountId);
+    }
+
+    protected function canRemove(mixed $subject, User $user): bool
+    {
+        return $this->canEdit($subject, $user);
+    }
+
+    public function supports(mixed $subject): bool
+    {
+        return $subject instanceof {Entity};
+    }
+}
+```
+
+> **Note (Owner-User):** The entity **must** have an `accountId(): ?AccountId` method. Both `canList` and `canEdit` verify that the logged-in user's `accountId` equals the entity's `accountId`. Without this check, an Owner could access another account's data.
+
+---
+
+**Variant C — Both** (Admin controller + User controller): use Variant A logic for Admin routes and Variant B logic for User routes — combined in the same authorizer:
+
+```php
+    protected function canList(mixed $subject, User $user): bool
+    {
+        // Admin: unrestricted
+        if ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin)) {
+            return true;
+        }
+
+        // Owner: must belong to same account
+        assert($subject instanceof {Entity});
+        $subjectAccountId = $subject->accountId();
+
+        return $user->hasRole(Role::Owner)
+            && $user->accountId() instanceof AccountId
+            && null !== $subjectAccountId
+            && $user->accountId()->equals($subjectAccountId);
+    }
+
+    protected function canEdit(mixed $subject, User $user): bool
+    {
+        if ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin)) {
+            return true;
+        }
+
+        if (!$user->hasRole(Role::Owner) || !$user->accountId() instanceof AccountId) {
+            return false;
+        }
+
+        if (!$subject instanceof {Entity}) {
+            return false;
+        }
+
+        $subjectAccountId = $subject->accountId();
+
+        return null !== $subjectAccountId && $user->accountId()->equals($subjectAccountId);
+    }
+```
+
+#### {Entity}AuthorizerTest.php
+
+Choose tests matching the Access Role variant of the authorizer.
+
+**Variant A — Admin only:**
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\{Context}\Application\{Entity};
+
+use App\{Context}\Application\{Entity}\{Entity}Authorizer;
+use App\{Context}\Domain\Model\{Entity}\{Entity};
+use App\{Context}\Domain\Model\{Entity}\{Entity}Id;
+use App\Security\Application\Action;
+use App\Security\Application\UnauthorizedActionException;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\TestCase;
+
+class {Entity}AuthorizerTest extends TestCase
+{
+    private {Entity}Authorizer $authorizer;
+    private {Entity} ${entity};
+
+    protected function setUp(): void
+    {
+        $this->authorizer = new {Entity}Authorizer();
+        $this->{entity} = new {Entity}(id: {Entity}Id::generate());
+    }
+
+    public function testAdminCanList(): void
+    {
+        $this->authorizer->denyUnlessCanDoThat($this->{entity}, Action::List, UserMother::adminUser());
+        $this->assertTrue(true);
+    }
+
+    public function testAdminCanEdit(): void
+    {
+        $this->authorizer->denyUnlessCanDoThat($this->{entity}, Action::Edit, UserMother::adminUser());
+        $this->assertTrue(true);
+    }
+
+    public function testOwnerCannotList(): void
+    {
+        $this->expectException(UnauthorizedActionException::class);
+        $this->authorizer->denyUnlessCanDoThat($this->{entity}, Action::List, UserMother::ownerUser());
+    }
+}
+```
+
+---
+
+**Variant B — Owner-User** (accountId must match):
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\{Context}\Application\{Entity};
+
+use App\{Context}\Application\{Entity}\{Entity}Authorizer;
+use App\{Context}\Domain\Model\{Entity}\{Entity}Id;
+use App\Security\Application\Action;
+use App\Security\Application\UnauthorizedActionException;
+use App\Tests\Unit\{Context}\Domain\Model\{Entity}\{Entity}Mother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\TestCase;
+
+class {Entity}AuthorizerTest extends TestCase
+{
+    private {Entity}Authorizer $authorizer;
+
+    protected function setUp(): void
+    {
+        $this->authorizer = new {Entity}Authorizer();
+    }
+
+    public function testOwnerCanListOwnEntity(): void
+    {
+        $user = UserMother::ownerUser();
+        // Entity belongs to the same account as the user
+        ${entity} = {Entity}Mother::fromAccountId($user->accountId());
+
+        $this->authorizer->denyUnlessCanDoThat(${entity}, Action::List, $user);
+
+        $this->assertTrue(true);
+    }
+
+    public function testOwnerCanRegisterOwnEntity(): void
+    {
+        $user = UserMother::ownerUser();
+        ${entity} = {Entity}Mother::fromAccountId($user->accountId());
+
+        $this->authorizer->denyUnlessCanDoThat(${entity}, Action::Register, $user);
+
+        $this->assertTrue(true);
+    }
+
+    public function testOwnerCanEditOwnEntity(): void
+    {
+        $user = UserMother::ownerUser();
+        ${entity} = {Entity}Mother::fromAccountId($user->accountId());
+
+        $this->authorizer->denyUnlessCanDoThat(${entity}, Action::Edit, $user);
+
+        $this->assertTrue(true);
+    }
+
+    public function testOwnerCannotEditOtherAccountEntity(): void
+    {
+        $user = UserMother::ownerUser();
+        // Entity belongs to a different account
+        ${entity} = {Entity}Mother::fromAccountId({Entity}Id::generate()); // wrong type — use AccountId::generate()
+
+        $this->expectException(UnauthorizedActionException::class);
+
+        $this->authorizer->denyUnlessCanDoThat(${entity}, Action::Edit, $user);
+    }
+
+    public function testOwnerWithoutAccountCannotList(): void
+    {
+        $user = UserMother::ownerUserWithoutAccount();
+        ${entity} = {Entity}Mother::random();
+
+        $this->expectException(UnauthorizedActionException::class);
+
+        $this->authorizer->denyUnlessCanDoThat(${entity}, Action::List, $user);
+    }
+
+    public function testOwnerCanRemoveOwnEntity(): void
+    {
+        $user = UserMother::ownerUser();
+        ${entity} = {Entity}Mother::fromAccountId($user->accountId());
+
+        $this->authorizer->denyUnlessCanDoThat(${entity}, Action::Remove, $user);
+
+        $this->assertTrue(true);
+    }
+
+    public function testAdminCannotList(): void
+    {
+        ${entity} = {Entity}Mother::random();
+
+        $this->expectException(UnauthorizedActionException::class);
+
+        $this->authorizer->denyUnlessCanDoThat(${entity}, Action::List, UserMother::adminUser());
+    }
+}
+```
+
+> **Note:** The `{Entity}Mother::fromAccountId(AccountId $accountId)` factory method must be added to the Mother class. `UserMother::ownerUser()` returns an Owner with a valid `accountId`. `UserMother::ownerUserWithoutAccount()` returns an Owner whose `accountId()` is null.
 
 ### 2. Register Use Case
 
@@ -744,7 +1001,7 @@ Follow the same pattern:
 3. Create Update use case: `Update{Entity}Request.php`, `Update{Entity}Response.php`, `Update{Entity}Service.php`
 4. Create Remove use case: `Remove{Entity}Request.php`, `Remove{Entity}Response.php`, `Remove{Entity}Service.php`
 5. Create List use case: `List{Entities}Request.php`, `List{Entities}Response.php`, `List{Entities}Service.php`
-6. Create unit test files: `Register{Entity}ServiceTest.php`, `Update{Entity}ServiceTest.php`, `Remove{Entity}ServiceTest.php`, `List{Entities}ServiceTest.php`
+6. Create unit test files: `{Entity}AuthorizerTest.php`, `Register{Entity}ServiceTest.php`, `Update{Entity}ServiceTest.php`, `Remove{Entity}ServiceTest.php`, `List{Entities}ServiceTest.php`
 7. Run `make cs-fix`
 8. Run `make phpstan`
 

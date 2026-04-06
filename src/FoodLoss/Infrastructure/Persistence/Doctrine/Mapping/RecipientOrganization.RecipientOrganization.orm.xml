@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganization" table="recipient_organizations">
+        <id name="id" type="recipient_organization_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="name" type="string" length="255" nullable="false"/>
+        <field name="type" type="string" enum-type="App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationType" nullable="false"/>
+        <field name="nif" type="string" length="50" nullable="false"/>
+        <field name="socialReason" type="string" length="255" column="social_reason" nullable="false"/>
+        <field name="address" type="text" nullable="false"/>
+        <field name="operatingHours" type="string" length="255" column="operating_hours" nullable="false"/>
+        <field name="pickupTypes" type="json" column="pickup_types" nullable="false"/>
+        <field name="accountId" type="account_id" column="account_id" nullable="false"/>
+
+        <embedded name="contact" class="App\FoodLoss\Domain\Model\RecipientOrganization\Contact" column-prefix="contact_" />
+
+        <field name="removed" type="boolean" nullable="false"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+    </entity>
+</doctrine-mapping>

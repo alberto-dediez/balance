@@ -20,10 +20,7 @@ class ListCriticalPointsService
 
     public function __invoke(ListCriticalPointsRequest $request, User $user): ListCriticalPointsResponse
     {
-        $this->authorizer->denyUnlessCanDoThat(new CriticalPoint(id: CriticalPointId::generate()), SecurityAction::List, $user);
-
-        // Force filtering by user's accountId
-        $request->accountId = (string) $user->accountId();
+        $this->authorizer->denyUnlessCanDoThat(new CriticalPoint(id: CriticalPointId::generate(), accountId: $request->accountId), SecurityAction::List, $user);
 
         $criticalPoints = $this->criticalPointRepository->findByFilter($request);
         $totalResults = $this->criticalPointRepository->totalResultsByFilter($request);

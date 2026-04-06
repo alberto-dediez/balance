@@ -7,11 +7,15 @@ namespace App\Tests\Acceptance\FoodLoss;
 use App\FoodLoss\Domain\Model\Action\ActionRepository;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
 use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
+use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationRepository;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepository;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\FoodLoss\Domain\Model\Action\ActionMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint\CriticalPointMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Reason\ReasonMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryMother;
 use Behat\Behat\Context\Context;
 use Behat\Step\Given;
@@ -42,6 +46,16 @@ final class FoodLossContext implements Context
         return $this->client->getContainer()->get(CriticalPointRepository::class);
     }
 
+    public function getReasonRepository(): ReasonRepository
+    {
+        return $this->client->getContainer()->get(ReasonRepository::class);
+    }
+
+    public function getRecipientOrganizationRepository(): RecipientOrganizationRepository
+    {
+        return $this->client->getContainer()->get(RecipientOrganizationRepository::class);
+    }
+
     #[Given('action :description with id :id exists')]
     public function actionWithIdExists(string $description, string $id): void
     {
@@ -66,11 +80,6 @@ final class FoodLossContext implements Context
         $this->getCriticalPointRepository()->add($criticalPoint);
     }
 
-    public function getReasonRepository(): ReasonRepository
-    {
-        return $this->client->getContainer()->get(ReasonRepository::class);
-    }
-
     #[Given('reason :description with id :id exists')]
     public function reasonWithIdExists(string $description, string $id): void
     {
@@ -85,10 +94,22 @@ final class FoodLossContext implements Context
         $criticalPoint = CriticalPointMother::from(
             name: $name,
             id: $id,
-            accountId: new \App\Security\Domain\Model\Account\AccountId($accountId),
-            propertyId: new \App\Property\Domain\Model\Property\PropertyId($propertyId),
+            accountId: new AccountId($accountId),
+            propertyId: new PropertyId($propertyId),
         );
 
         $this->getCriticalPointRepository()->add($criticalPoint);
+    }
+
+    #[Given('recipient organization :name with id :id of account :accountId exists')]
+    public function recipientOrganizationWithIdOfAccountExists(string $name, string $id, string $accountId): void
+    {
+        $recipientOrganization = RecipientOrganizationMother::from(
+            name: $name,
+            id: $id,
+            accountId: $accountId,
+        );
+
+        $this->getRecipientOrganizationRepository()->add($recipientOrganization);
     }
 }

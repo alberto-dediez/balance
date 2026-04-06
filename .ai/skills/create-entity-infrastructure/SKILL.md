@@ -97,11 +97,14 @@ namespace App\{Context}\Infrastructure\Symfony\Form;
 
 use App\{Context}\Application\{Entity}\Register\Register{Entity}Request;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /** @extends AbstractType<mixed> */
 class Register{Entity}Type extends AbstractType
@@ -109,18 +112,51 @@ class Register{Entity}Type extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // One form field per user-editable field
+            // Required string field — always NotBlank + Length
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('{Field_label}'),
                 'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Length(max: 255),
+                ],
             ])
+            // Enum field — always NotNull
+            // ->add('type', {Enum}Type::class, [
+            //     'label' => new TranslatableMessage('{Field_label}'),
+            //     'required' => true,
+            //     'constraints' => [new Assert\NotNull()],
+            // ])
+            // Optional string field — always empty_data + Length
+            // ->add('description', TextareaType::class, [
+            //     'label' => new TranslatableMessage('{Field_label}'),
+            //     'required' => false,
+            //     'empty_data' => '',
+            // ])
+            // Optional short string field
+            // ->add('phone', TextType::class, [
+            //     'label' => new TranslatableMessage('{Field_label}'),
+            //     'required' => false,
+            //     'empty_data' => '',
+            //     'constraints' => [new Assert\Length(max: 50)],
+            // ])
+            // Optional email field
+            // ->add('email', EmailType::class, [
+            //     'label' => new TranslatableMessage('{Field_label}'),
+            //     'required' => false,
+            //     'empty_data' => '',
+            //     'constraints' => [
+            //         new Assert\Email(),
+            //         new Assert\Length(max: 255),
+            //     ],
+            // ])
             ->add('register', SubmitType::class, [
                 'label' => new TranslatableMessage('Registrar'),
             ])
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Register{Entity}Request::class,
@@ -129,11 +165,19 @@ class Register{Entity}Type extends AbstractType
 }
 ```
 
+> **Validation rules:**
+> - **Required string** (`name`, etc.): `NotBlank` + `Length(max: N)` matching the ORM column length
+> - **Required enum**: `NotNull` constraint
+> - **Optional string**: `'required' => false`, `'empty_data' => ''`, and `Length(max: N)` — the `empty_data` prevents Symfony's PropertyAccessor from throwing when mapping null to a non-nullable string property
+> - **Optional email**: `Email()` + `Length(max: 255)` + `empty_data => ''`
+> - **Textarea**: same as optional string but use `TextareaType::class`
+
 #### Update{Entity}Type.php
 
 Same structure as Register but:
 - `data_class` = `Update{Entity}Request::class`
 - Replace the `register` button with `save` and `saveAndReturn`:
+- Same constraints must be applied to every field — do not skip them on the Update form
 
 ```php
             ->add('save', SubmitType::class, [
@@ -467,22 +511,16 @@ declare(strict_types=1);
 namespace App\{Context}\Infrastructure\UI\Web\Admin\{Entity}\Bulk;
 
 use App\{Context}\Application\{Entity}\Remove\Remove{Entity}Request;
+use App\{Context}\Domain\Model\{Entity}\{Entity};
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkAction;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
+use App\Shared\Infrastructure\UI\Web\Bulk\RemoveAction as RemoveActionTrait;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class RemoveAction implements BulkAction
 {
-    public function id(): string
-    {
-        return 'remove';
-    }
-
-    public function name(): string|TranslatableMessage
-    {
-        return new TranslatableMessage('Eliminar');
-    }
+    use RemoveActionTrait;
 
     public function commands(BulkRequest $request): array
     {
@@ -493,7 +531,7 @@ class RemoveAction implements BulkAction
         $commands = [];
 
         foreach ($request->elements as ${entity}) {
-            if (null === ${entity} || null === ${entity}->id()) {
+            if (!${entity} instanceof {Entity}) {
                 continue;
             }
 
@@ -509,17 +547,19 @@ class RemoveAction implements BulkAction
     {
         assert($command instanceof Remove{Entity}Request);
 
-        return new TranslatableMessage('Se ha eliminado {entity_label} {id}', ['{id}' => $command->{entity}Id]);
+        return new TranslatableMessage('Se ha eliminado {entity_label} {id}', ['{id}' => (string) $command->{entity}Id]);
     }
 
     public function failure(Command $command): TranslatableMessage
     {
         assert($command instanceof Remove{Entity}Request);
 
-        return new TranslatableMessage('No se ha podido eliminar {entity_label} {id}', ['{id}' => $command->{entity}Id]);
+        return new TranslatableMessage('No se ha podido eliminar {entity_label} {id}', ['{id}' => (string) $command->{entity}Id]);
     }
 }
 ```
+
+> **Note:** Use `RemoveActionTrait` from `App\Shared\Infrastructure\UI\Web\Bulk\RemoveAction` — it provides the `id()` and `name()` methods. The guard in `commands()` must check `instanceof {Entity}` (not `null === ${entity}->id()`). Same pattern applies to User-facing `Bulk/RemoveAction.php`.
 
 ### 3. User Web Controllers (Owner-User or Both)
 
@@ -536,6 +576,7 @@ use App\{Context}\Application\{Entity}\List\List{Entities}Request;
 use App\{Context}\Application\{Entity}\List\List{Entities}Service;
 use App\{Context}\Infrastructure\Symfony\Form\List{Entities}Type;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -548,19 +589,22 @@ class ListController extends AbstractController
 {
     use FilterTrait;
 
-    public function __invoke(List{Entities}Service $list{Entities}, LoggedUser $loggedUser, Request $request): Response
-    {
+    public function __invoke(
+        List{Entities}Service $list{Entities},
+        LoggedUser $loggedUser,
+        LoggedAccount $loggedAccount,
+        Request $request,
+    ): Response {
         try {
-            $user = $loggedUser();
-
-            list($filter, $form) = $this->filter($request, function () use ($user) {
+            list($filter, $form) = $this->filter($request, function () use ($loggedAccount) {
                 $request = new List{Entities}Request();
-                // FORCE accountId from logged user
-                $request->accountId = (string) $user->accountId();
+                // FORCE accountId from logged account — pass AccountId value object, not string
+                $request->accountId = $loggedAccount()?->id();
+
                 return $request;
             }, List{Entities}Type::class);
 
-            $response = $list{Entities}($filter, $user);
+            $response = $list{Entities}($filter, $loggedUser());
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
         }
@@ -574,12 +618,80 @@ class ListController extends AbstractController
 }
 ```
 
-For User-facing `RegisterController`, `EditController`, `RemoveController`, and `Get{Entity}FromIdTrait`: follow the same structure as the Admin versions but:
+> **accountId pattern:** Always use `LoggedAccount` (not `LoggedUser`) to resolve the `accountId`. Call `$loggedAccount()?->id()` to get an `AccountId` value object (or `null` for users without an account). Assign it directly to the filter's `?AccountId $accountId` field — never cast to string.
+
+#### {Entity}\RegisterController.php
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\{Context}\Infrastructure\UI\Web\User\{Entity};
+
+use App\{Context}\Application\{Entity}\Register\Register{Entity}Service;
+use App\{Context}\Domain\Model\{Entity}\{Entity};
+use App\{Context}\Domain\Model\{Entity}\{Entity}Id;
+use App\{Context}\Infrastructure\Symfony\Form\Register{Entity}Type;
+use App\Security\Application\Action as SecurityAction;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Translation\TranslatableMessage;
+
+#[Route('/{entities_kebab}/register', name: 'user_{entities_snake}_register')]
+class RegisterController extends AbstractController
+{
+    use RegisterTrait;
+
+    public function __invoke(
+        Register{Entity}Service $register{Entity},
+        LoggedUser $loggedUser,
+        LoggedAccount $loggedAccount,
+        Request $request,
+    ): Response {
+        $this->denyAccessUnlessGranted(SecurityAction::Register->value, new {Entity}({Entity}Id::generate()));
+
+        $form = $this->createForm(Register{Entity}Type::class);
+
+        try {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($register{Entity}, $loggedUser, $loggedAccount) {
+                $registerRequest = $form->getData();
+                // FORCE accountId from logged account
+                $registerRequest->accountId = $loggedAccount()?->id();
+
+                $response = $register{Entity}($registerRequest, $loggedUser());
+
+                $this->addFlash('success', new TranslatableMessage('{Entity_label} creado correctamente: {name}', ['{name}' => $response->name]));
+
+                return true;
+            });
+
+            if ($needsRedirect) {
+                return $this->redirectToRoute('user_{entities_snake}');
+            }
+        } catch (UnauthorizedActionException $e) {
+            throw $this->createAccessDeniedException($e->getMessage());
+        }
+
+        return $this->render('@{context_snake}/user/{entities_kebab}/register.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+}
+```
+
+For User-facing `EditController`, `RemoveController`, and `Get{Entity}FromIdTrait`: follow the same structure as the Admin versions but:
 - Namespace: `App\{Context}\Infrastructure\UI\Web\User\{Entity}`
-- Routes without `/admin` prefix: `/{entities_kebab}/register`, `/{entities_kebab}/edit/{{entity}Id}`, etc.
-- Route names: `user_{entities_snake}`, `user_{entities_snake}_register`, etc.
+- Routes without `/admin` prefix: `/{entities_kebab}/edit/{{entity}Id}`, `/{entities_kebab}/remove/{{entity}Id}`
+- Route names: `user_{entities_snake}_edit`, `user_{entities_snake}_remove`, etc.
 - Template paths: `@{context_snake}/user/{entities_kebab}/...`
-- Force `accountId` from `$loggedUser()` instead of allowing it to come from the filter form
+- Inject `LoggedAccount` and force `accountId` from `$loggedAccount()?->id()` wherever needed
 
 ### 4. Twig Templates
 
@@ -688,13 +800,18 @@ For user-facing templates (`user/{entities_kebab}/`): same structure but route n
 
 #### {enum_name}.html.twig (only if you create a new Enum)
 
-Instead of creating `.xlf` files manually, create a dummy Twig template for the translation extractor:
-File: `templates/{context_snake}/translations/{enum_name}.html.twig`
+Instead of creating `.xlf` files manually, create a dummy Twig template for the translation extractor.
+
+File path: `templates/{context_snake}/translations/{enum_name}.html.twig`
+
+> **Naming rule:** The enum name used as translation domain and as filename must start with **lowercase** (`lcfirst`). E.g. for `RecipientOrganizationType`: domain = `recipientOrganizationType`, file = `templates/food_loss/translations/recipientOrganizationType.html.twig`.
 
 ```twig
 {{ 'EnumCase1' | trans({}, '{enum_name}') }}
 {{ 'EnumCase2' | trans({}, '{enum_name}') }}
 ```
+
+Also set `'translation_domain' => '{enum_name}'` (lcfirst) in the Symfony Form Type that uses the enum.
 
 Do NOT execute translations (`make translation`).
 
@@ -880,6 +997,10 @@ Only needed when adding a **new bounded context** (not adding to an existing one
   - **Admin**: routes MUST be prefixed `/admin`. Controllers in `Admin\` sub-namespace.
   - **Owner-User**: routes without prefix. Controllers in no sub-namespace. Force `accountId` from `LoggedAccount`.
   - **Both**: generate both sets of controllers/templates. Admin ones for managing all; User ones for self-service.
+- **accountId in Owner-User controllers:** Always force `accountId` in the **controller**, not in the service. The service receives an already-complete request. Use `LoggedAccount` (returns `?Account`) and call `$loggedAccount()?->id()` to get an `AccountId` value object. Assign it directly to `$request->accountId` — never cast to string.
+- **Enum translation domain names:** Always start with **lowercase** (`lcfirst`). E.g. `RecipientOrganizationType` → domain = `recipientOrganizationType`. Set this in the Form Type's `'translation_domain'` option. Translation template files go in `templates/{context_snake}/translations/{enum_name}.html.twig`.
+- **Form validation constraints:** Always add validation constraints matching ORM column lengths. Required fields: `NotBlank` + `Length(max: N)`. Required enums: `NotNull`. Optional fields: `'empty_data' => ''` + `Length(max: N)`. The `empty_data` prevents a TypeError when Symfony maps null to a non-nullable string property. Apply the same constraints to both Register and Update form types.
+- **Bulk RemoveAction:** Always use `RemoveActionTrait` from `App\Shared\Infrastructure\UI\Web\Bulk\RemoveAction`. Guard elements with `instanceof {Entity}`, not `null === ${entity}->id()`.
 - **Acceptance test form data**: fields MUST be separated by a pipe (`|`), not a comma. E.g.: `When I submit a form with "name:Test Name|priority:High" and button "Registrar"`.
 - **Never create `.xlf` translation files manually.** Use the dummy Twig template approach for enums.
 - The `BulkTrait` handles batch operations through the `CommandBusDispatcher`

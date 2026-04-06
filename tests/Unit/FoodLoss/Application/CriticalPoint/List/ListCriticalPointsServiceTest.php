@@ -35,7 +35,9 @@ class ListCriticalPointsServiceTest extends TestCase
 
         $sut = $this->createSUT($repository);
 
-        $request = new ListCriticalPointsRequest();
+        $request = new ListCriticalPointsRequest(
+            accountId: $accountId
+        );
 
         $result = $sut($request, UserMother::fromUsernameAndRoleAndAccount('user', \App\Security\Domain\Model\User\Role::Owner, $accountId));
 

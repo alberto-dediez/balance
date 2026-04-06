@@ -140,7 +140,10 @@ tests/
       {Entity}Mother.php
       {Entity}RepositoryMother.php
       InMemory{Entity}RepositoryTest.php
+    Infrastructure/Persistence/Doctrine/Repository/
+      Doctrine{Entity}RepositoryTest.php
     Application/{Entity}/
+      {Entity}AuthorizerTest.php
       Register/Register{Entity}ServiceTest.php
       Update/Update{Entity}ServiceTest.php
       Remove/Remove{Entity}ServiceTest.php
@@ -540,6 +543,8 @@ class {Entity}Translation implements Translation
 
 #### {Entity}Filter.php
 
+**Always use value objects instead of primitives** for filter fields. In particular, `accountId` MUST be `?AccountId`, never `?string`.
+
 ```php
 <?php
 
@@ -547,6 +552,7 @@ declare(strict_types=1);
 
 namespace App\{Context}\Domain\Model\{Entity};
 
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\Filter;
 
 class {Entity}Filter
@@ -554,8 +560,9 @@ class {Entity}Filter
     use Filter;
 
     public function __construct(
-        // One nullable property per filterable field
+        // One nullable property per filterable field — use value objects, not primitives
         public ?string $name = null,
+        public ?AccountId $accountId = null,   // include only for account-scoped entities
         int $limit = 10,
     ) {
         $this->limit = $limit;
@@ -795,6 +802,10 @@ final class {Entity}Translated extends DomainEvent
 
 #### {Entity}Authorizer.php
 
+Choose the variant that matches the Access Role:
+
+**Variant A — Admin only:**
+
 ```php
 <?php
 
@@ -821,24 +832,12 @@ final class {Entity}Authorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        // Admin access
-        if ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin)) {
-            return true;
-        }
-
-        // Owner/User access (only if entity belongs to an account or is user-level)
-        return $user->hasRole(Role::Owner) || $user->hasRole(Role::User);
+        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::Admin) || $user->hasRole(Role::SuperAdmin)) {
-            return true;
-        }
-
-        // For Owner/User: check if they own the resource (e.g. same accountId)
-        // return $subject->accountId()->equals($user->accountId());
-        return $user->hasRole(Role::Owner) || $user->hasRole(Role::User);
+        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin);
     }
 
     protected function canRemove(mixed $subject, User $user): bool
@@ -852,6 +851,76 @@ final class {Entity}Authorizer extends AbstractAuthorizer
     }
 }
 ```
+
+**Variant B — Owner-User** (must verify that the user's `accountId` matches the entity's `accountId`):
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\{Context}\Application\{Entity};
+
+use App\{Context}\Domain\Model\{Entity}\{Entity};
+use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\User;
+
+final class {Entity}Authorizer extends AbstractAuthorizer
+{
+    protected function canRegister(mixed $subject, User $user): bool
+    {
+        return $this->canList($subject, $user);
+    }
+
+    protected function canView(mixed $subject, User $user): bool
+    {
+        return $this->canEdit($subject, $user);
+    }
+
+    protected function canList(mixed $subject, User $user): bool
+    {
+        assert($subject instanceof {Entity});
+
+        $subjectAccountId = $subject->accountId();
+
+        return $user->hasRole(Role::Owner)
+            && $user->accountId() instanceof AccountId
+            && null !== $subjectAccountId
+            && $user->accountId()->equals($subjectAccountId);
+    }
+
+    protected function canEdit(mixed $subject, User $user): bool
+    {
+        if (!$user->hasRole(Role::Owner) || !$user->accountId() instanceof AccountId) {
+            return false;
+        }
+
+        if (!$subject instanceof {Entity}) {
+            return false;
+        }
+
+        $subjectAccountId = $subject->accountId();
+
+        return null !== $subjectAccountId && $user->accountId()->equals($subjectAccountId);
+    }
+
+    protected function canRemove(mixed $subject, User $user): bool
+    {
+        return $this->canEdit($subject, $user);
+    }
+
+    public function supports(mixed $subject): bool
+    {
+        return $subject instanceof {Entity};
+    }
+}
+```
+
+> **Note (Owner-User):** The entity **must** have an `accountId(): ?AccountId` method. `canList` and `canEdit` both verify that the logged-in Owner's `accountId` equals the entity's `accountId`. This prevents cross-account data access.
+
+**Variant C — Both** (Admin + Owner-User combined): use Variant A for Admin routes and Variant B logic in the same authorizer — `canList`/`canEdit` first check Admin, then fall through to the accountId check for Owners.
 
 #### Register{Entity}Request.php
 
@@ -1909,17 +1978,20 @@ class RemoveController extends AbstractController
 
 #### User\ListController.php (Owner/User Access)
 
+The `accountId` is forced **in the controller** using `LoggedAccount` before passing the request to the service.
+
 ```php
 <?php
 
 declare(strict_types=1);
 
-namespace App\{Context}\Infrastructure\UI\Web\User\{Entity};
+namespace App\{Context}\Infrastructure\UI\Web\{Entity};
 
 use App\{Context}\Application\{Entity}\List\List{Entities}Request;
 use App\{Context}\Application\{Entity}\List\List{Entities}Service;
 use App\{Context}\Infrastructure\Symfony\Form\List{Entities}Type;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -1927,20 +1999,21 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/{entities_kebab}', name: 'user_{entities_snake}')]
+#[Route('/{entities_kebab}', name: '{entities_snake}')]
 class ListController extends AbstractController
 {
     use FilterTrait;
 
-    public function __invoke(List{Entities}Service $list{Entities}, LoggedUser $loggedUser, Request $request): Response
+    public function __invoke(List{Entities}Service $list{Entities}, LoggedUser $loggedUser, LoggedAccount $loggedAccount, Request $request): Response
     {
         try {
             $user = $loggedUser();
-            
-            list($filter, $form) = $this->filter($request, function () use ($user) {
+            $account = $loggedAccount();
+
+            list($filter, $form) = $this->filter($request, function () use ($loggedAccount) {
                 $request = new List{Entities}Request();
-                // FORCE accountId from logged user
-                $request->accountId = (string) $user->accountId();
+                // FORCE accountId from logged account — pass AccountId object, not a string
+                $request->accountId = $loggedAccount()?->id();
                 return $request;
             }, List{Entities}Type::class);
 
@@ -1949,9 +2022,75 @@ class ListController extends AbstractController
             throw $this->createAccessDeniedException($e->getMessage());
         }
 
-        return $this->render('@{context_snake}/user/{entities_kebab}/list.html.twig', [
+        return $this->render('@{context_snake}/{entities_kebab}/list.html.twig', [
             '{entities}' => $response->{entities},
             'totalResults' => $response->totalResults,
+            'form' => $form->createView(),
+        ]);
+    }
+}
+```
+
+#### User\RegisterController.php (Owner/User Access)
+
+The `accountId` is forced **in the controller** using `LoggedAccount` and set on the request DTO before the service is called.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\{Context}\Infrastructure\UI\Web\{Entity};
+
+use App\{Context}\Application\{Entity}\Register\Register{Entity}Request;
+use App\{Context}\Application\{Entity}\Register\Register{Entity}Service;
+use App\{Context}\Domain\Model\{Entity}\{Entity};
+use App\{Context}\Domain\Model\{Entity}\{Entity}Id;
+use App\{Context}\Infrastructure\Symfony\Form\Register{Entity}Type;
+use App\Security\Application\Action as SecurityAction;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Translation\TranslatableMessage;
+
+#[Route('/{entities_kebab}/register', name: '{entities_snake}_register')]
+class RegisterController extends AbstractController
+{
+    use RegisterTrait;
+
+    public function __invoke(Register{Entity}Service $register{Entity}, LoggedUser $loggedUser, LoggedAccount $loggedAccount, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted(SecurityAction::Register->value, new {Entity}({Entity}Id::generate()));
+
+        $form = $this->createForm(Register{Entity}Type::class, new Register{Entity}Request());
+
+        try {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($register{Entity}, $loggedUser, $loggedAccount) {
+                $registerRequest = $form->getData();
+
+                // FORCE accountId from logged account — pass AccountId object, not a string
+                $registerRequest->accountId = $loggedAccount()->id();
+
+                $response = $register{Entity}($registerRequest, $loggedUser());
+
+                $this->addFlash('success', new TranslatableMessage('{Entity_label} creado correctamente: {name}', ['{name}' => $response->name]));
+
+                return true;
+            });
+
+            if ($needsRedirect) {
+                return $this->redirectToRoute('{entities_snake}');
+            }
+        } catch (UnauthorizedActionException $e) {
+            throw $this->createAccessDeniedException($e->getMessage());
+        }
+
+        return $this->render('@{context_snake}/{entities_kebab}/register.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -1988,6 +2127,8 @@ trait Get{Entity}FromIdTrait
 
 #### Bulk/RemoveAction.php
 
+Use the `RemoveAction` trait from `App\Shared\Infrastructure\UI\Web\Bulk\RemoveAction` to provide `id()` and `name()` — never implement them manually.
+
 ```php
 <?php
 
@@ -1996,22 +2137,16 @@ declare(strict_types=1);
 namespace App\{Context}\Infrastructure\UI\Web\Admin\{Entity}\Bulk;
 
 use App\{Context}\Application\{Entity}\Remove\Remove{Entity}Request;
+use App\{Context}\Domain\Model\{Entity}\{Entity};
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkAction;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
+use App\Shared\Infrastructure\UI\Web\Bulk\RemoveAction as RemoveActionTrait;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class RemoveAction implements BulkAction
 {
-    public function id(): string
-    {
-        return 'remove';
-    }
-
-    public function name(): string|TranslatableMessage
-    {
-        return new TranslatableMessage('Eliminar');
-    }
+    use RemoveActionTrait;
 
     public function commands(BulkRequest $request): array
     {
@@ -2022,7 +2157,7 @@ class RemoveAction implements BulkAction
         $commands = [];
 
         foreach ($request->elements as ${entity}) {
-            if (null === ${entity} || null === ${entity}->id()) {
+            if (!${entity} instanceof {Entity}) {
                 continue;
             }
 
@@ -2052,7 +2187,14 @@ class RemoveAction implements BulkAction
 
 ### 5. Form Types
 
-#### Register{Entity}Type.php
+#### Register{Entity}Type.php and Update{Entity}Type.php
+
+**Validation rules** (apply identically to both Register and Update form types):
+- Required `string` fields → `NotBlank` + `Length(max: N)` where N comes from the ORM mapping (`length="N"`).
+- Required enum/choice fields → `NotNull`.
+- Optional `string` fields → `Length(max: N)` only (no `NotBlank`), plus `empty_data => ''` to prevent null reaching non-nullable properties.
+- Optional `email` fields → `Email` + `Length(max: N)`, plus `empty_data => ''`.
+- `text` (unlimited) fields → no `Length` constraint needed.
 
 ```php
 <?php
@@ -2063,11 +2205,13 @@ namespace App\{Context}\Infrastructure\Symfony\Form;
 
 use App\{Context}\Application\{Entity}\Register\Register{Entity}Request;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /** @extends AbstractType<mixed> */
 class Register{Entity}Type extends AbstractType
@@ -2075,18 +2219,45 @@ class Register{Entity}Type extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // One form field per user-editable field
+            // Required string — NotBlank + Length from ORM mapping
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('{Field_label}'),
                 'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Length(max: 255),
+                ],
             ])
+            // Required enum/choice — NotNull
+            // ->add('type', {Enum}Type::class, [
+            //     'label' => new TranslatableMessage('{Field_label}'),
+            //     'required' => true,
+            //     'constraints' => [new Assert\NotNull()],
+            // ])
+            // Optional string with DB length — Length only, no NotBlank, empty_data: ''
+            // ->add('code', TextType::class, [
+            //     'label' => new TranslatableMessage('{Field_label}'),
+            //     'required' => false,
+            //     'empty_data' => '',
+            //     'constraints' => [new Assert\Length(max: 50)],
+            // ])
+            // Optional email — Email + Length, empty_data: ''
+            // ->add('email', EmailType::class, [
+            //     'label' => new TranslatableMessage('{Field_label}'),
+            //     'required' => false,
+            //     'empty_data' => '',
+            //     'constraints' => [
+            //         new Assert\Email(),
+            //         new Assert\Length(max: 255),
+            //     ],
+            // ])
             ->add('register', SubmitType::class, [
                 'label' => new TranslatableMessage('Registrar'),
             ])
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Register{Entity}Request::class,
@@ -2095,9 +2266,7 @@ class Register{Entity}Type extends AbstractType
 }
 ```
 
-#### Update{Entity}Type.php
-
-Same structure as Register but with `save` and `saveAndReturn` buttons:
+`Update{Entity}Type` is identical but uses `Update{Entity}Request::class` as `data_class` and replaces the submit button with:
 
 ```php
             ->add('save', SubmitType::class, [
@@ -2107,8 +2276,6 @@ Same structure as Register but with `save` and `saveAndReturn` buttons:
                 'label' => new TranslatableMessage('Guardar y salir'),
             ])
 ```
-
-And data_class = `Update{Entity}Request::class`.
 
 #### List{Entities}Type.php
 
@@ -2262,6 +2429,9 @@ This applies to any location where you display a property reference, not just in
 #### {enum_name}.html.twig (Only if you create a new Enum)
 Instead of creating `.xlf` files manually, create a dummy twig template for the translation extractor:
 File: `templates/{context_snake}/translations/{enum_name}.html.twig`
+
+**Naming rule:** `{enum_name}` = **lcfirst** of the enum class name if it already ends in `Type` (e.g. `RecipientOrganizationType` → `recipientOrganizationType`), or lcfirst of `{EnumClass}Type` if it doesn't (e.g. `Priority` → `priorityType`). The name MUST start with a lowercase letter. This same value is used as the `translation_domain` in the Form type.
+
 ```twig
 {{ 'EnumCase1' | trans({}, '{enum_name}') }}
 {{ 'EnumCase2' | trans({}, '{enum_name}') }}
@@ -2577,6 +2747,64 @@ class InMemory{Entity}RepositoryTest extends {Entity}RepositoryTest
 }
 ```
 
+#### Doctrine{Entity}RepositoryTest.php
+
+Located at `tests/Unit/{Context}/Infrastructure/Persistence/Doctrine/Repository/Doctrine{Entity}RepositoryTest.php`.
+
+For **non-translatable** entities:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\{Context}\Infrastructure\Persistence\Doctrine\Repository;
+
+use App\{Context}\Domain\Model\{Entity}\{Entity}Repository;
+use App\{Context}\Infrastructure\Persistence\Doctrine\Repository\Doctrine{Entity}Repository;
+use App\Tests\Unit\{Context}\Domain\Model\{Entity}\{Entity}RepositoryTest;
+use Doctrine\ORM\EntityManagerInterface;
+
+class Doctrine{Entity}RepositoryTest extends {Entity}RepositoryTest
+{
+    protected function createSUT(): {Entity}Repository
+    {
+        $manager = $this->getContainer()->get(EntityManagerInterface::class);
+
+        return new Doctrine{Entity}Repository($manager);
+    }
+}
+```
+
+For **translatable** entities, inject locale via `FakeLocaleSetter`:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\{Context}\Infrastructure\Persistence\Doctrine\Repository;
+
+use App\{Context}\Domain\Model\{Entity}\{Entity}Repository;
+use App\{Context}\Infrastructure\Persistence\Doctrine\Repository\Doctrine{Entity}Repository;
+use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\{Context}\Domain\Model\{Entity}\{Entity}RepositoryTest;
+use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
+use Doctrine\ORM\EntityManagerInterface;
+
+class Doctrine{Entity}RepositoryTest extends {Entity}RepositoryTest
+{
+    public function createSUT(Locale $locale = Locale::Spanish): {Entity}Repository
+    {
+        $manager = $this->getContainer()->get(EntityManagerInterface::class);
+
+        FakeLocaleSetter::set($locale);
+
+        return new Doctrine{Entity}Repository($manager);
+    }
+}
+```
+
 #### {Entity}Test.php (only if translatable)
 
 ```php
@@ -2637,6 +2865,100 @@ class {Entity}Test extends TestCase
         FakeLocaleSetter::set(Locale::Italian);
 
         $this->assertEquals('translated-name-it', ${entity}->name());
+    }
+}
+```
+
+#### {Entity}AuthorizerTest.php
+
+Located at `tests/Unit/{Context}/Application/{Entity}/{Entity}AuthorizerTest.php`.
+
+Test each permission rule defined in the authorizer. Cover at minimum: the allowed roles can perform each action, disallowed roles cannot, and account ownership is enforced for edit/remove when applicable.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\{Context}\Application\{Entity};
+
+use App\{Context}\Application\{Entity}\{Entity}Authorizer;
+use App\{Context}\Domain\Model\{Entity}\{Entity};
+use App\{Context}\Domain\Model\{Entity}\{Entity}Id;
+use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
+use App\Tests\Unit\{Context}\Domain\Model\{Entity}\{Entity}Mother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\TestCase;
+
+class {Entity}AuthorizerTest extends TestCase
+{
+    // --- For Owner-User entities (accountId-scoped): ---
+
+    public function testOwnerCanList{Entities}(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+        $subject = new {Entity}({Entity}Id::generate());
+
+        $this->assertTrue($this->createSUT()->canDoThat($subject, Action::List, $user));
+    }
+
+    public function testOwnerCanRegister{Entities}(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+        $subject = new {Entity}({Entity}Id::generate());
+
+        $this->assertTrue($this->createSUT()->canDoThat($subject, Action::Register, $user));
+    }
+
+    public function testOwnerCanEdit{Entity}FromSameAccount(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+        $subject = {Entity}Mother::from(name: 'Test', id: (string) {Entity}Id::generate(), accountId: 'account-id-test');
+
+        $this->assertTrue($this->createSUT()->canDoThat($subject, Action::Edit, $user));
+    }
+
+    public function testOwnerCannotEdit{Entity}FromOtherAccount(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+        $subject = {Entity}Mother::from(name: 'Test', id: (string) {Entity}Id::generate(), accountId: 'other-account-id');
+
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Edit, $user));
+    }
+
+    public function testOwnerCanRemove{Entity}FromSameAccount(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+        $subject = {Entity}Mother::from(name: 'Test', id: (string) {Entity}Id::generate(), accountId: 'account-id-test');
+
+        $this->assertTrue($this->createSUT()->canDoThat($subject, Action::Remove, $user));
+    }
+
+    public function testUserWithoutAccountCannotList(): void
+    {
+        $user = UserMother::fromUsernameAndRole('user', Role::Owner);
+        $subject = new {Entity}({Entity}Id::generate());
+
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::List, $user));
+    }
+
+    public function testAdminCannotList(): void
+    {
+        $user = UserMother::adminUser();
+        $subject = new {Entity}({Entity}Id::generate());
+
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::List, $user));
+    }
+
+    // --- For Admin-only entities, replace with: ---
+    // public function testAdminCanList{Entities}(): void { ... Action::List ... assertTrue }
+    // public function testOwnerCannotList{Entities}(): void { ... Action::List ... assertFalse }
+
+    private function createSUT(): {Entity}Authorizer
+    {
+        return new {Entity}Authorizer();
     }
 }
 ```
@@ -2957,11 +3279,11 @@ If creating a NEW bounded context (not adding to an existing one), add route gro
 
 ## Important Notes
 
-- **Never create `.xlf` translation files manually.** When creating an enum, create a dummy Twig template (`templates/{context_snake}/translations/{enum_name}.html.twig`) using the `trans` filter so the translation extraction tool captures them. Don't execute translations.
+- **Never create `.xlf` translation files manually.** When creating an enum, create a dummy Twig template (`templates/{context_snake}/translations/{enum_name}.html.twig`) using the `trans` filter so the translation extraction tool captures them. The `{enum_name}` (and its matching `translation_domain` in the Form type) MUST start with a **lowercase** letter: lcfirst of the enum class name if it ends in `Type` (e.g. `RecipientOrganizationType` → `recipientOrganizationType`), or lcfirst of `{EnumClass}Type` otherwise (e.g. `Priority` → `priorityType`). Don't execute translations.
 
 - **Role-based Routing & Authorization:**
     - **Admin:** Routes MUST be prefixed with `/admin`. Controllers use the `Admin` sub-namespace. They can access all accounts and filter by `accountId`.
-    - **Owner-User:** Routes MUST NOT have any prefix (direct path to `{entities_kebab}`). Controllers not use sub-namespace. The `accountId` MUST be forced from `LoggedAccount` and passed to filters/commands.
+    - **Owner-User:** Routes MUST NOT have any prefix (direct path to `{entities_kebab}`). Controllers do not use a sub-namespace. The `accountId` MUST be forced **in the controller** (never in the service) before calling the service. Use `LoggedAccount` (not `LoggedUser`) to obtain the account, then set `$request->accountId` from `$account->id()`. The service receives the request already populated with the correct data and must not resolve the account itself.
     - **Acceptance Tests:** Features must have scenarios for both roles if applicable, ensuring correct status codes (200 vs 403) and access to correct paths.
 - Each bounded context has its own `DomainEvent` base class (e.g., `App\FoodLoss\Domain\DomainEvent`) that extends `App\Shared\Domain\Event\DomainEvent` and sets `$context`
 - The `DomainEvent::$context` value uses kebab-case (e.g., `food-loss`, `waste`, `property`)

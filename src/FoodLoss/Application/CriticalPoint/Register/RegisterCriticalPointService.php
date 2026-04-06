@@ -47,7 +47,7 @@ class RegisterCriticalPointService implements CommandHandler
 
         $id = CriticalPointId::generate();
 
-        $criticalPoint = new CriticalPoint(id: $id);
+        $criticalPoint = new CriticalPoint(id: $id, accountId: $accountId);
 
         $this->authorizer->denyUnlessCanDoThat($criticalPoint, SecurityAction::List, $user);
 

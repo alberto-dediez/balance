@@ -6,6 +6,7 @@ namespace App\FoodLoss\Domain\Model\CriticalPoint;
 
 use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\Filter;
 
 class CriticalPointFilter
@@ -14,7 +15,7 @@ class CriticalPointFilter
 
     public function __construct(
         public ?string $name = null,
-        public ?string $accountId = null,
+        public ?AccountId $accountId = null,
         public ?string $propertyId = null,
         public ?ServiceCategoryId $serviceCategoryId = null,
         public ?ActionId $actionId = null,

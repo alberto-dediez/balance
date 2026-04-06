@@ -80,6 +80,11 @@ tests/
       {Entity}RepositoryTest.php
       InMemory{Entity}RepositoryTest.php
       {Entity}Test.php                          # only if translatable
+    Infrastructure/
+      Persistence/
+        Doctrine/
+          Repository/
+            Doctrine{Entity}RepositoryTest.php
 ```
 
 ## File Templates
@@ -475,6 +480,7 @@ declare(strict_types=1);
 
 namespace App\{Context}\Domain\Model\{Entity};
 
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\Filter;
 
 class {Entity}Filter
@@ -484,12 +490,16 @@ class {Entity}Filter
     public function __construct(
         // One nullable property per filterable field
         public ?string $name = null,
+        // Use value objects, not primitives (e.g. AccountId, not string)
+        public ?AccountId $accountId = null,
         int $limit = 10,
     ) {
         $this->limit = $limit;
     }
 }
 ```
+
+> **Important:** Always use value objects (e.g. `?AccountId`) instead of primitives (e.g. `?string`) for filter fields when a value object is available. This ensures type safety and consistency across all layers.
 
 #### {Entity}Repository.php
 
@@ -798,6 +808,14 @@ class Doctrine{Entity}Repository implements {Entity}Repository
             ;
         }
 
+        // For value object filters, use instanceof check (never !empty() on value objects)
+        if ($filter->accountId instanceof AccountId) {
+            $qb
+                ->andWhere($qb->expr()->eq('e.accountId', ':accountId'))
+                ->setParameter('accountId', (string) $filter->accountId)
+            ;
+        }
+
         $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
@@ -958,6 +976,15 @@ class InMemory{Entity}Repository implements {Entity}Repository
             if (
                 !empty($filter->name)
                 && !str_contains(strtolower((string) ${entity}->name()), strtolower($filter->name))
+            ) {
+                continue;
+            }
+
+            // For value object filters, use ->equals() not string comparison
+            if (
+                $filter->accountId instanceof AccountId
+                && (null === ${entity}->accountId()
+                    || false === $filter->accountId->equals(${entity}->accountId()))
             ) {
                 continue;
             }
@@ -1373,6 +1400,35 @@ class InMemory{Entity}RepositoryTest extends {Entity}RepositoryTest
 }
 ```
 
+#### Doctrine{Entity}RepositoryTest.php
+
+Lives in `tests/Unit/{Context}/Infrastructure/Persistence/Doctrine/Repository/`:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\{Context}\Infrastructure\Persistence\Doctrine\Repository;
+
+use App\{Context}\Domain\Model\{Entity}\{Entity}Repository;
+use App\{Context}\Infrastructure\Persistence\Doctrine\Repository\Doctrine{Entity}Repository;
+use App\Tests\Unit\{Context}\Domain\Model\{Entity}\{Entity}RepositoryTest;
+use Doctrine\ORM\EntityManagerInterface;
+
+class Doctrine{Entity}RepositoryTest extends {Entity}RepositoryTest
+{
+    protected function createSUT(): {Entity}Repository
+    {
+        $manager = $this->getContainer()->get(EntityManagerInterface::class);
+
+        return new Doctrine{Entity}Repository($manager);
+    }
+}
+```
+
+> **Note:** This test extends the abstract `{Entity}RepositoryTest` and runs all the same tests against a real Doctrine/SQLite setup. No mock repositories.
+
 #### {Entity}Test.php (only if translatable)
 
 ```php
@@ -1466,7 +1522,7 @@ Add the new Doctrine type under `doctrine.dbal.types`:
 2. Create Domain model files: `{Entity}.php`, `{Entity}Id.php`, `{Entity}Filter.php`, `{Entity}Repository.php`
 3. Create Domain events: `{Entity}Registered.php`, `{Entity}Updated.php`, `{Entity}Removed.php` (if soft delete), `{Entity}Translated.php` + `{Entity}Translation.php` (if translatable)
 4. Create Infrastructure: `Doctrine{Entity}Repository.php`, `InMemory{Entity}Repository.php`, `{Entity}IdType.php`, ORM mapping XML files
-5. Create test files: `{Entity}Mother.php`, `{Entity}RepositoryMother.php`, `{Entity}RepositoryTest.php`, `InMemory{Entity}RepositoryTest.php`, `{Entity}Test.php` (if translatable)
+5. Create test files: `{Entity}Mother.php`, `{Entity}RepositoryMother.php`, `{Entity}RepositoryTest.php`, `InMemory{Entity}RepositoryTest.php`, `Doctrine{Entity}RepositoryTest.php`, `{Entity}Test.php` (if translatable)
 6. Update `config/packages/doctrine.yaml` with the new type
 7. Run `make cs-fix`
 8. Run `make phpstan`

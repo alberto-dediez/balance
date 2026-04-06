@@ -11,6 +11,7 @@ use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Infrastructure\Symfony\Form\RegisterCriticalPointType;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,9 +25,12 @@ class RegisterController extends AbstractController
 {
     use RegisterTrait;
 
-    public function __invoke(RegisterCriticalPointService $registerCriticalPoint, LoggedUser $loggedUser, Request $request): Response
+    public function __invoke(RegisterCriticalPointService $registerCriticalPoint, LoggedUser $loggedUser, LoggedAccount $loggedAccount, Request $request): Response
     {
-        $this->denyAccessUnlessGranted(SecurityAction::Register->value, new CriticalPoint(CriticalPointId::generate()));
+        $this->denyAccessUnlessGranted(SecurityAction::Register->value, new CriticalPoint(
+            id: CriticalPointId::generate(),
+            accountId: $loggedAccount()?->id(),
+        ));
 
         $form = $this->createForm(RegisterCriticalPointType::class, new RegisterCriticalPointRequest());
 

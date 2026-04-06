@@ -77,7 +77,7 @@ abstract class CriticalPointRepositoryTest extends KernelTestCase
 
         // Filter by account
         $filter = new CriticalPointFilter(
-            accountId: (string) $accountId,
+            accountId: $accountId,
         );
 
         $result = $repository->findByFilter($filter);

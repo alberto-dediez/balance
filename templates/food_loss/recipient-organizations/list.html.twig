@@ -1,0 +1,43 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Entidades Receptoras' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': 'Tipo' | trans,
+        }, {
+            'label': 'NIF' | trans,
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="recipientOrganizations" :bulkForm="bulkForm">
+        <td>{{ element.name }}</td>
+        <td>{{ element.type.value | trans([], 'recipientOrganizationType') }}</td>
+        <td>{{ element.nif }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('recipient_organizations_edit', {'recipientOrganizationId': element.id}) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('recipient_organizations_remove', {'recipientOrganizationId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('recipient_organizations_register') }}" />
+{% endblock list_actions %}

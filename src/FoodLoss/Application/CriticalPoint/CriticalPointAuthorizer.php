@@ -24,7 +24,11 @@ final class CriticalPointAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::Owner) && $user->accountId() instanceof AccountId;
+        assert($subject instanceof CriticalPoint);
+
+        $subjectAccountId = $subject->accountId();
+
+        return $user->hasRole(Role::Owner) && $user->accountId() instanceof AccountId && null !== $subjectAccountId && $user->accountId()->equals($subjectAccountId);
     }
 
     protected function canEdit(mixed $subject, User $user): bool

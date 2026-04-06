@@ -9,6 +9,7 @@ use App\FoodLoss\Application\CriticalPoint\List\ListCriticalPointsService;
 use App\FoodLoss\Infrastructure\Symfony\Form\ListCriticalPointsType;
 use App\FoodLoss\Infrastructure\UI\Web\CriticalPoint\Bulk\RemoveAction;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\Symfony\Form\BulkType;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
@@ -25,11 +26,13 @@ class ListController extends AbstractController
     use FilterTrait;
     use BulkTrait;
 
-    public function __invoke(ListCriticalPointsService $listCriticalPoints, LoggedUser $loggedUser, Request $request): Response
+    public function __invoke(ListCriticalPointsService $listCriticalPoints, LoggedUser $loggedUser, LoggedAccount $loggedAccount, Request $request): Response
     {
         try {
-            list($filter, $form) = $this->filter($request, function () {
-                return new ListCriticalPointsRequest();
+            list($filter, $form) = $this->filter($request, function () use ($loggedAccount) {
+                return new ListCriticalPointsRequest(
+                    accountId: $loggedAccount()?->id(),
+                );
             }, ListCriticalPointsType::class);
 
             $response = $listCriticalPoints($filter, $loggedUser());

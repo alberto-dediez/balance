@@ -149,6 +149,18 @@ class NodeLister
             ],
         );
 
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Donaciones'),
+            icon: 'solar:hand-heart-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Entidades Receptoras'),
+                    icon: 'solar:buildings-2-line-duotone',
+                    target: $this->router->generate('recipient_organizations'),
+                ),
+            ],
+        );
+
         $nodes[] =  new Node(
             label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',
