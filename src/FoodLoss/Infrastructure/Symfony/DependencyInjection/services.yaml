@@ -11,3 +11,10 @@ services:
     App\FoodLoss\Infrastructure\UI\Console\:
         resource: '../../../Infrastructure/UI/Console/'
         tags: ['console.command']
+
+    App\FoodLoss\Application\DonationAgreement\DonationAgreementUploader:
+        alias: App\FoodLoss\Infrastructure\FileUploader\LocalFileDonationAgreementUploader
+
+    App\FoodLoss\Infrastructure\FileUploader\LocalFileDonationAgreementUploader:
+        arguments:
+            $uploadsDir: '%kernel.project_dir%/var/uploads'

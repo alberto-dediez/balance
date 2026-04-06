@@ -20,9 +20,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  *
  * @see http://behat.org/en/latest/quick_start.html
  */
-final readonly class WebContext implements Context
+final class WebContext implements Context
 {
     private AcceptanceClient $client;
+
+    /** @var array<string, string> */
+    private array $files = [];
 
     public function __construct(KernelBrowser $client)
     {
@@ -82,7 +85,24 @@ final readonly class WebContext implements Context
             $formData[$key] = $value;
         }
 
+        foreach ($this->files as $field => $path) {
+            $key = '[' === $field[0] ? sprintf('%s%s', $form->attr('name'), $field) : sprintf('%s[%s]', $form->attr('name'), $field);
+
+            $fileField = $formData[$key];
+            assert($fileField instanceof \Symfony\Component\DomCrawler\Field\FileFormField);
+
+            $fileField->upload($path);
+        }
+
         $this->client->submit($formData);
+
+        $this->files = [];
+    }
+
+    #[When('I attach the file :path to :field')]
+    public function iAttachTheFileTo(string $path, string $field): void
+    {
+        $this->files[$field] = $path;
     }
 
     #[Then('the response status should be :code')]

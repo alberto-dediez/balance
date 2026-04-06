@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreement" table="donation_agreements">
+        <id name="id" type="donation_agreement_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="recipientOrganizationId" type="recipient_organization_id" column="recipient_organization_id" nullable="false"/>
+        <field name="accountId" type="account_id" column="account_id" nullable="false"/>
+        <field name="startDate" type="datetime_immutable" column="start_date" nullable="false"/>
+        <field name="expirationDate" type="datetime_immutable" column="expiration_date" nullable="false"/>
+        <field name="uploadedBy" type="user_id" column="uploaded_by" nullable="false"/>
+        <field name="path" type="string" length="255" nullable="false"/>
+
+        <field name="removed" type="boolean" nullable="false"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+    </entity>
+</doctrine-mapping>

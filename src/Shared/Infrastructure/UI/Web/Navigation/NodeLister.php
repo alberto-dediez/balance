@@ -163,6 +163,11 @@ class NodeLister
                     icon: 'solar:record-minimalistic-line-duotone',
                     target: $this->router->generate('delivery_logs'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Convenios de donación'),
+                    icon: 'solar:file-text-line-duotone',
+                    target: $this->router->generate('donation_agreements'),
+                ),
             ],
         );
 
@@ -196,6 +201,11 @@ class NodeLister
                     label: new TranslatableMessage('Registro de entregas'),
                     icon: 'solar:record-minimalistic-line-duotone',
                     target: $this->router->generate('delivery_logs'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Convenios de donación'),
+                    icon: 'solar:file-text-line-duotone',
+                    target: $this->router->generate('donation_agreements'),
                 ),
             ],
         );

@@ -7,6 +7,7 @@ namespace App\Tests\Acceptance\FoodLoss;
 use App\FoodLoss\Domain\Model\Action\ActionRepository;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
+use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
 use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationRepository;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepository;
@@ -16,6 +17,7 @@ use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\FoodLoss\Domain\Model\Action\ActionMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint\CriticalPointMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Reason\ReasonMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryMother;
@@ -63,6 +65,11 @@ final class FoodLossContext implements Context
         return $this->client->getContainer()->get(DeliveryLogRepository::class);
     }
 
+    public function getDonationAgreementRepository(): DonationAgreementRepository
+    {
+        return $this->client->getContainer()->get(DonationAgreementRepository::class);
+    }
+
     #[Given('action :description with id :id exists')]
     public function actionWithIdExists(string $description, string $id): void
     {
@@ -101,11 +108,19 @@ final class FoodLossContext implements Context
         $criticalPoint = CriticalPointMother::from(
             name: $name,
             id: $id,
-            accountId: new AccountId($accountId),
             propertyId: new PropertyId($propertyId),
+            accountId: new AccountId($accountId),
         );
 
         $this->getCriticalPointRepository()->add($criticalPoint);
+    }
+
+    #[Given('recipient organization :name with id :id exists')]
+    public function recipientOrganizationWithIdExists(string $name, string $id): void
+    {
+        $recipientOrganization = RecipientOrganizationMother::fromNameAndId($name, $id);
+
+        $this->getRecipientOrganizationRepository()->add($recipientOrganization);
     }
 
     #[Given('recipient organization :name with id :id of account :accountId exists')]
@@ -130,5 +145,44 @@ final class FoodLossContext implements Context
         );
 
         $this->getDeliveryLogRepository()->add($deliveryLog);
+    }
+
+    #[Given('donation agreement with id :id exists')]
+    public function donationAgreementWithIdExists(string $id): void
+    {
+        $donationAgreement = DonationAgreementMother::from(
+            id: $id,
+            recipientOrganizationId: (string) \App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId::generate(),
+            accountId: 'account-test',
+            startDate: new \DateTimeImmutable('2023-01-01'),
+            expirationDate: new \DateTimeImmutable('2024-01-01'),
+            uploadedBy: (string) \App\Security\Domain\Model\User\UserId::generate(),
+            path: 'path/test.pdf',
+        );
+
+        $this->getDonationAgreementRepository()->add($donationAgreement);
+    }
+
+    #[Given('donation agreement with id :id of account :accountId exists')]
+    public function donationAgreementWithIdOfAccountExists(string $id, string $accountId): void
+    {
+        $donationAgreement = DonationAgreementMother::from(
+            id: $id,
+            recipientOrganizationId: (string) \App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId::generate(),
+            accountId: $accountId,
+            startDate: new \DateTimeImmutable('2023-01-01'),
+            expirationDate: new \DateTimeImmutable('2024-01-01'),
+            uploadedBy: (string) \App\Security\Domain\Model\User\UserId::generate(),
+            path: 'path/test.pdf',
+        );
+
+        $this->getDonationAgreementRepository()->add($donationAgreement);
+    }
+
+    #[Given('a dummy PDF file exists in :path')]
+    public function aDummyPdfFileExistsIn(string $path): void
+    {
+        $content = "%PDF-1.4\n1 0 obj\n<< /Title (Test) >>\nendobj\nxref\n0 1\n0000000000 65535 f\ntrailer\n<< /Root 1 0 R >>\n%%EOF";
+        file_put_contents($path, $content);
     }
 }
