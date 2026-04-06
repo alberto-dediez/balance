@@ -13,7 +13,7 @@ use App\Security\Domain\Model\User\User;
 
 class ListReasonsService
 {
-    public function __construct(private ReasonRepository $repository, private ReasonAuthorizer $authorizer) {}
+    public function __construct(private readonly ReasonRepository $repository, private readonly ReasonAuthorizer $authorizer) {}
 
     public function __invoke(ListReasonsRequest $request, User $user): ListReasonsResponse
     {

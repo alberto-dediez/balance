@@ -136,7 +136,7 @@ class ImportMeasurementService implements CommandHandler
             }
 
             $containerPropertyId = $container->propertyId();
-            assert(null !== $containerPropertyId);
+            assert($containerPropertyId instanceof PropertyId);
             $property = $this->propertyRepository->find($containerPropertyId);
 
             if (!$property instanceof Property) {

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\InMemory\Repository;
 
+use App\Security\Domain\Model\Account\AccountId;
+use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLog;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogFilter;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogId;
@@ -60,15 +63,15 @@ class InMemoryDeliveryLogRepository implements DeliveryLogRepository
                 continue;
             }
 
-            if (null !== $filter->accountId && (null === $deliveryLog->accountId() || !$filter->accountId->equals($deliveryLog->accountId()))) {
+            if ($filter->accountId instanceof AccountId && (null === $deliveryLog->accountId() || !$filter->accountId->equals($deliveryLog->accountId()))) {
                 continue;
             }
 
-            if (null !== $filter->recipientOrganizationId && (null === $deliveryLog->recipientOrganizationId() || !$filter->recipientOrganizationId->equals($deliveryLog->recipientOrganizationId()))) {
+            if ($filter->recipientOrganizationId instanceof RecipientOrganizationId && (null === $deliveryLog->recipientOrganizationId() || !$filter->recipientOrganizationId->equals($deliveryLog->recipientOrganizationId()))) {
                 continue;
             }
 
-            if (null !== $filter->propertyId && (null === $deliveryLog->propertyId() || !$filter->propertyId->equals($deliveryLog->propertyId()))) {
+            if ($filter->propertyId instanceof PropertyId && (null === $deliveryLog->propertyId() || !$filter->propertyId->equals($deliveryLog->propertyId()))) {
                 continue;
             }
 
@@ -76,11 +79,11 @@ class InMemoryDeliveryLogRepository implements DeliveryLogRepository
                 continue;
             }
 
-            if (null !== $filter->dateFrom && $deliveryLog->date() < $filter->dateFrom) {
+            if ($filter->dateFrom instanceof \DateTimeImmutable && $deliveryLog->date() < $filter->dateFrom) {
                 continue;
             }
 
-            if (null !== $filter->dateTo && $deliveryLog->date() > $filter->dateTo) {
+            if ($filter->dateTo instanceof \DateTimeImmutable && $deliveryLog->date() > $filter->dateTo) {
                 continue;
             }
 

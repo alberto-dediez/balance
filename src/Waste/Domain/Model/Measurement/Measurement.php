@@ -129,13 +129,13 @@ class Measurement implements \Stringable
         ?\DateTimeImmutable $day = null,
     ): void {
         $propertyId = $container->propertyId();
-        assert(null !== $propertyId);
+        assert($propertyId instanceof PropertyId);
         $wasteId = $container->wasteId();
-        assert(null !== $wasteId);
+        assert($wasteId instanceof WasteId);
         $measurementMethod = $container->measurementMethod();
         $purpose = $container->purpose();
         $wasteManagerId = $container->wasteManagerId();
-        assert(null !== $wasteManagerId);
+        assert($wasteManagerId instanceof WasteManagerId);
 
         $this->recordApplyAndPublish(
             new MeasurementRegistered(
@@ -178,14 +178,14 @@ class Measurement implements \Stringable
     public function remove(): void
     {
         $propertyId = $this->propertyId();
-        assert(null !== $propertyId);
+        assert($propertyId instanceof PropertyId);
         $wasteId = $this->wasteId();
-        assert(null !== $wasteId);
+        assert($wasteId instanceof WasteId);
         $purpose = $this->purpose();
         $wasteManagerId = $this->wasteManagerId();
-        assert(null !== $wasteManagerId);
+        assert($wasteManagerId instanceof WasteManagerId);
         $accountId = $this->accountId();
-        assert(null !== $accountId);
+        assert($accountId instanceof AccountId);
 
         $this->recordApplyAndPublish(
             new MeasurementRemoved(

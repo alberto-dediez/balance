@@ -14,8 +14,8 @@ use App\Security\Domain\Model\User\User;
 class ListCriticalPointsService
 {
     public function __construct(
-        private CriticalPointRepository $criticalPointRepository,
-        private CriticalPointAuthorizer $authorizer,
+        private readonly CriticalPointRepository $criticalPointRepository,
+        private readonly CriticalPointAuthorizer $authorizer,
     ) {}
 
     public function __invoke(ListCriticalPointsRequest $request, User $user): ListCriticalPointsResponse

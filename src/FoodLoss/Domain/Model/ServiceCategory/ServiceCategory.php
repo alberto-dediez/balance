@@ -9,7 +9,7 @@ use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\Translatable;
 use App\Shared\Domain\Model\Locale\Translations;
 
-class ServiceCategory implements Translatable
+class ServiceCategory implements Translatable, \Stringable
 {
     use AggregateRoot;
 
@@ -86,7 +86,7 @@ class ServiceCategory implements Translatable
             ),
         );
 
-        if (null !== $locale) {
+        if ($locale instanceof Locale) {
             $this->translate($name, $locale);
         }
     }
@@ -98,11 +98,11 @@ class ServiceCategory implements Translatable
         $this->recordApplyAndPublish(
             new ServiceCategoryUpdated(
                 serviceCategoryId: $this->id(),
-                name: null === $locale ? $name : $this->name,
+                name: $locale instanceof Locale ? $this->name : $name,
             ),
         );
 
-        if (null !== $locale) {
+        if ($locale instanceof Locale) {
             $this->translate($name, $locale);
         }
     }
@@ -158,6 +158,6 @@ class ServiceCategory implements Translatable
 
     public function __toString(): string
     {
-        return (string) $this->name();
+        return $this->name();
     }
 }

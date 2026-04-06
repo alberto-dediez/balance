@@ -36,7 +36,7 @@ class DownloadController extends AbstractController
         $response = new BinaryFileResponse($path);
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            'convenio-' . (string) $donationAgreement->recipientOrganizationId() . '.pdf',
+            'convenio-' . $donationAgreement->recipientOrganizationId() . '.pdf',
         );
 
         return $response;

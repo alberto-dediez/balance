@@ -14,8 +14,8 @@ use App\Security\Domain\Model\User\User;
 class ListRecipientOrganizationsService
 {
     public function __construct(
-        private RecipientOrganizationRepository $repository,
-        private RecipientOrganizationAuthorizer $authorizer,
+        private readonly RecipientOrganizationRepository $repository,
+        private readonly RecipientOrganizationAuthorizer $authorizer,
     ) {}
 
     public function __invoke(ListRecipientOrganizationsRequest $request, User $user): ListRecipientOrganizationsResponse

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\Action\Action;
 use App\FoodLoss\Domain\Model\Action\ActionFilter;
 use App\FoodLoss\Domain\Model\Action\ActionId;
@@ -27,38 +28,35 @@ class DoctrineActionRepository implements ActionRepository
 
     public function add(Action $action): void
     {
-        $this->getEntityManager()->persist($action);
+        $this->manager->persist($action);
 
         $this->addTranslations($action, ActionTranslation::class, $this->manager);
 
-        $this->getEntityManager()->flush();
+        $this->manager->flush();
     }
 
     public function remove(Action $action): void
     {
-        $this->getEntityManager()->remove($action);
-        $this->getEntityManager()->flush();
+        $this->manager->remove($action);
+        $this->manager->flush();
     }
 
     public function find(ActionId $actionId): ?Action
     {
         $qb = $this->createQueryBuilderFromFilter(new ActionFilter());
 
-        $action = $qb
+        return $qb
             ->andWhere(
                 $qb->expr()->eq('a.id', ':id'),
             )
             ->setParameter('id', (string) $actionId)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
-
-        return $action;
+            ->getOneOrNullResult();
     }
 
     private function createQueryBuilderFromFilter(ActionFilter $filter): QueryBuilder
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb = $this->manager->createQueryBuilder();
 
         $qb->select('a')
             ->from(Action::class, 'a')
@@ -87,7 +85,7 @@ class DoctrineActionRepository implements ActionRepository
             ;
         }
 
-        if (null !== $filter->priority) {
+        if ($filter->priority instanceof Priority) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('a.priority', ':priority'),
@@ -96,23 +94,14 @@ class DoctrineActionRepository implements ActionRepository
             ;
         }
 
-        $way = 'ASC' == $filter->orderWay ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
-        switch ($filter->orderBy) {
-            case 'registeredAt':
-                $qb->orderBy('a.registeredAt', $way);
-                break;
-            case 'updatedAt':
-                $qb->orderBy('a.updatedAt', $way);
-                break;
-            case 'priority':
-                $qb->orderBy('a.priority', $way);
-                break;
-            case 'description':
-            default:
-                $qb->orderBy('a.description', $way);
-                break;
-        }
+        match ($filter->orderBy) {
+            'registeredAt' => $qb->orderBy('a.registeredAt', $way),
+            'updatedAt' => $qb->orderBy('a.updatedAt', $way),
+            'priority' => $qb->orderBy('a.priority', $way),
+            default => $qb->orderBy('a.description', $way),
+        };
 
         return $qb;
     }
@@ -142,10 +131,5 @@ class DoctrineActionRepository implements ActionRepository
             ->getQuery()
             ->getSingleScalarResult()
         ;
-    }
-
-    private function getEntityManager(): EntityManagerInterface
-    {
-        return $this->manager;
     }
 }

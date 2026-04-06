@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\UI\Api\ContainerView;
 
+use App\Waste\Domain\Model\Container\Container;
 use App\Security\Application\Action;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use App\Waste\Application\Container\ContainerAuthorizer;
@@ -45,7 +46,7 @@ class ContainerViewController extends AbstractController
 
         $containerAuthorizer->denyUnlessCanDoThat($container, Action::View, $user);
 
-        assert(null !== $container);
+        assert($container instanceof Container);
 
         return $this->json(
             $containerGenerator->generate($container),

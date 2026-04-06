@@ -43,7 +43,7 @@ class EditController extends AbstractController
         try {
             $form = $this->createForm(UpdateServiceCategoryType::class, $serviceCategoryRequest);
 
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateServiceCategory, $loggedUser) {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateServiceCategory, $loggedUser): void {
                 $serviceCategoryRequest = $form->getData();
 
                 $updateServiceCategory($serviceCategoryRequest, $loggedUser());

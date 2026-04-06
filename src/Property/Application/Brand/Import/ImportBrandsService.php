@@ -33,7 +33,7 @@ class ImportBrandsService
         $brandsMatch = $this->matchBrands($request->brands, $user);
 
         $totalResults = array_sum(
-            array_map(fn(BrandResponse $response) => $response->brandId instanceof BrandId ? 1 : 0, $brandsMatch),
+            array_map(fn(BrandResponse $response): int => $response->brandId instanceof BrandId ? 1 : 0, $brandsMatch),
         );
 
         return new ImportBrandsResponse($brandsMatch, $totalResults);

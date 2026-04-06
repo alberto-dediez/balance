@@ -14,9 +14,9 @@ final class ServiceCategoryTranslated extends DomainEvent
     protected static string $eventName = 'serviceCategoryTranslated';
 
     public function __construct(
-        private ServiceCategoryId $serviceCategoryId,
-        private string $name,
-        private Locale $locale,
+        private readonly ServiceCategoryId $serviceCategoryId,
+        private readonly string $name,
+        private readonly Locale $locale,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -40,7 +40,7 @@ final class ServiceCategoryTranslated extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->serviceCategoryId();
+        return $this->serviceCategoryId;
     }
 
     public function payload(): array

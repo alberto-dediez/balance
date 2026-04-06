@@ -13,7 +13,7 @@ final class DeliveryLogRemoved extends DomainEvent
     protected static string $eventName = 'deliveryLogRemoved';
 
     public function __construct(
-        private DeliveryLogId $deliveryLogId,
+        private readonly DeliveryLogId $deliveryLogId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -27,7 +27,7 @@ final class DeliveryLogRemoved extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->deliveryLogId();
+        return $this->deliveryLogId;
     }
 
     public function payload(): array

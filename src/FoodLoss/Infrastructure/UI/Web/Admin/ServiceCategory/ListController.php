@@ -29,9 +29,7 @@ class ListController extends AbstractController
     {
 
         try {
-            list($filter, $form) = $this->filter($request, function () {
-                return  new ListServiceCategoriesRequest();
-            }, ListServiceCategoriesType::class);
+            [$filter, $form] = $this->filter($request, fn() => new ListServiceCategoriesRequest(), ListServiceCategoriesType::class);
 
             $response = $listServiceCategories($filter, $loggedUser());
         } catch (UnauthorizedActionException $e) {

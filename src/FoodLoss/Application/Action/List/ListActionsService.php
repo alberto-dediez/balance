@@ -13,7 +13,7 @@ use App\Security\Domain\Model\User\User;
 
 class ListActionsService
 {
-    public function __construct(private ActionRepository $repository, private ActionAuthorizer $authorizer) {}
+    public function __construct(private readonly ActionRepository $repository, private readonly ActionAuthorizer $authorizer) {}
 
     public function __invoke(ListActionsRequest $request, User $user): ListActionsResponse
     {

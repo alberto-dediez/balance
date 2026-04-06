@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\UI\Web\Container;
 
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Security\Application\Action;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
@@ -35,8 +37,8 @@ class EditController extends AbstractController
 
         $this->denyAccessUnlessGranted(Action::Edit->value, $container);
 
-        assert(null !== $container->wasteId());
-        assert(null !== $container->wasteManagerId());
+        assert($container->wasteId() instanceof WasteId);
+        assert($container->wasteManagerId() instanceof WasteManagerId);
 
         $containerRequest = new UpdateContainerRequest(
             containerId: $container->id(),

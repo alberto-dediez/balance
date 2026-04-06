@@ -33,7 +33,7 @@ class ImportCategoriesService
         $categoriesMatch = $this->matchCategories($request->categories, $user);
 
         $totalResults = array_sum(
-            array_map(fn(CategoryResponse $response) => $response->categoryId instanceof CategoryId ? 1 : 0, $categoriesMatch),
+            array_map(fn(CategoryResponse $response): int => $response->categoryId instanceof CategoryId ? 1 : 0, $categoriesMatch),
         );
 
         return new ImportCategoriesResponse($categoriesMatch, $totalResults);

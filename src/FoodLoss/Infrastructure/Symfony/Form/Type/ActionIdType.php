@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ActionIdType extends AggregateRootIdType
 {
     public function __construct(
-        private ActionRepository $actionRepository,
+        private readonly ActionRepository $actionRepository,
     ) {}
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -24,7 +24,7 @@ class ActionIdType extends AggregateRootIdType
             'action_priority' => null,
         ]);
 
-        $resolver->setNormalizer('choices', function (Options $options, $value) {
+        $resolver->setNormalizer('choices', function (Options $options, $value): array {
             $filter = new ActionFilter(priority: $options['action_priority'] ?? null, limit: 0);
 
             $actions = $this->actionRepository->findByFilter($filter);

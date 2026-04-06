@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Application\DonationAgreement;
 
+use App\Security\Domain\Model\Account\AccountId;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreement;
 use App\Security\Application\AbstractAuthorizer;
 use App\Security\Domain\Model\User\Role;
@@ -30,7 +31,7 @@ final class DonationAgreementAuthorizer extends AbstractAuthorizer
     {
         assert($subject instanceof DonationAgreement);
 
-        if (!$user->hasRole(Role::Owner) || null === $user->accountId()) {
+        if (!$user->hasRole(Role::Owner) || !$user->accountId() instanceof AccountId) {
             return false;
         }
 

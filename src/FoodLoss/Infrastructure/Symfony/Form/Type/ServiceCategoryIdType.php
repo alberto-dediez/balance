@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ServiceCategoryIdType extends AggregateRootIdType
 {
     public function __construct(
-        private ServiceCategoryRepository $serviceCategoryRepository,
+        private readonly ServiceCategoryRepository $serviceCategoryRepository,
     ) {}
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -6,7 +6,7 @@ namespace App\FoodLoss\Domain\Model\CriticalPoint;
 
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 
-final class CriticalPointServiceCategoryLink
+final readonly class CriticalPointServiceCategoryLink
 {
     public function __construct(
         private CriticalPoint $criticalPoint,

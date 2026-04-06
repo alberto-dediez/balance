@@ -40,7 +40,7 @@ class DestinationExtension extends AbstractExtension
         if (!isset($this->destinations[(string) $destinationId])) {
             $destination = $this->destinationRepository->find($destinationId);
 
-            if (null !== $destination) {
+            if ($destination instanceof Destination) {
                 $this->destinations[(string) $destinationId] = $destination;
             }
         }

@@ -13,7 +13,7 @@ final class DonationAgreementRemoved extends DomainEvent
     protected static string $eventName = 'donationAgreementRemoved';
 
     public function __construct(
-        private DonationAgreementId $donationAgreementId,
+        private readonly DonationAgreementId $donationAgreementId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -27,7 +27,7 @@ final class DonationAgreementRemoved extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->donationAgreementId();
+        return $this->donationAgreementId;
     }
 
     public function payload(): array

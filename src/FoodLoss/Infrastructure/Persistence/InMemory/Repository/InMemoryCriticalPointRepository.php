@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\InMemory\Repository;
 
+use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
+use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointFilter;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
@@ -75,7 +77,7 @@ class InMemoryCriticalPointRepository implements CriticalPointRepository
                 continue;
             }
 
-            if (null !== $filter->serviceCategoryId) {
+            if ($filter->serviceCategoryId instanceof ServiceCategoryId) {
                 $linked = false;
                 foreach ($criticalPoint->serviceCategoryIds() as $id) {
                     if ($id->equals($filter->serviceCategoryId)) {
@@ -88,7 +90,7 @@ class InMemoryCriticalPointRepository implements CriticalPointRepository
                 }
             }
 
-            if (null !== $filter->actionId && !$criticalPoint->actions()->has($filter->actionId)) {
+            if ($filter->actionId instanceof ActionId && !$criticalPoint->actions()->has($filter->actionId)) {
                 continue;
             }
 

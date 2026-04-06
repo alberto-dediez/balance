@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Application\CriticalPoint\Remove;
 
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
+use App\Security\Domain\Model\User\Role;
 use App\FoodLoss\Application\CriticalPoint\CriticalPointAuthorizer;
 use App\FoodLoss\Application\CriticalPoint\Remove\RemoveCriticalPointRequest;
 use App\FoodLoss\Application\CriticalPoint\Remove\RemoveCriticalPointService;
@@ -29,7 +31,7 @@ class RemoveCriticalPointServiceTest extends TestCase
         $accountId = AccountId::generate();
         $criticalPoint = CriticalPointMother::from(
             name: 'To be removed',
-            id: (string) \App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId::generate(),
+            id: (string) CriticalPointId::generate(),
             accountId: $accountId,
         );
         $repository->add($criticalPoint);
@@ -40,7 +42,7 @@ class RemoveCriticalPointServiceTest extends TestCase
             criticalPointId: $criticalPoint->id(),
         );
 
-        $result = $sut($request, UserMother::fromUsernameAndRoleAndAccount('user', \App\Security\Domain\Model\User\Role::Owner, $accountId));
+        $result = $sut($request, UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId));
 
         $this->assertEquals($criticalPoint->id(), $result->criticalPointId);
 

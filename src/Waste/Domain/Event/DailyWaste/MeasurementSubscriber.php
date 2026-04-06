@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Waste\Domain\Event\DailyWaste;
 
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\DeferredCommand;
@@ -93,10 +97,10 @@ class MeasurementSubscriber implements DomainEventSubscriber
             throw new \InvalidArgumentException('No measurement found!');
         }
 
-        assert(null !== $measurement->propertyId());
-        assert(null !== $measurement->wasteId());
-        assert(null !== $measurement->wasteManagerId());
-        assert(null !== $measurement->accountId());
+        assert($measurement->propertyId() instanceof PropertyId);
+        assert($measurement->wasteId() instanceof WasteId);
+        assert($measurement->wasteManagerId() instanceof WasteManagerId);
+        assert($measurement->accountId() instanceof AccountId);
 
         CommandBusDispatcher::instance()->dispatch(
             new DeferredCommand(

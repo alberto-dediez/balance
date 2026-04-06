@@ -74,7 +74,7 @@ class CriticalPointMother
     {
         $criticalPoint = new CriticalPoint(id: CriticalPointId::generate());
         $criticalPoint->register(
-            name: 'critical-point-' . rand(100, 999),
+            name: 'critical-point-' . random_int(100, 999),
             propertyId: PropertyId::generate(),
             accountId: AccountId::generate(),
             supplyChainStage: SupplyChainStage::Receiving,
@@ -92,7 +92,7 @@ class CriticalPointMother
     public static function random(): CriticalPoint
     {
         return self::from(
-            name: 'critical-point-' . rand(100, 999),
+            name: 'critical-point-' . random_int(100, 999),
             id: (string) CriticalPointId::generate(),
         );
     }

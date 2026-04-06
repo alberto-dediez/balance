@@ -11,8 +11,8 @@ class ServiceCategoryTranslation implements Translation
 {
     public function __construct(
         private string $name,
-        private Locale $locale,
-        private ServiceCategory $translatable,
+        private readonly Locale $locale,
+        private readonly ServiceCategory $translatable,
     ) {}
 
     public function name(): string

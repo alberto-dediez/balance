@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Waste;
 
+use App\Property\Domain\Model\Property\Property;
+use App\Waste\Domain\Model\Container\Container;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
@@ -78,7 +81,7 @@ final readonly class WasteContext implements Context
     public function containerForInWithIdExists(string $waste, string $propertyId, string $id): void
     {
         $property = $this->getPropertyRepository()->find(new PropertyId($propertyId));
-        assert(null !== $property);
+        assert($property instanceof Property);
 
         $container = ContainerMother::fromPropertyAccountAndWasteAndId($propertyId, (string) $property->accountId(), $waste, $id);
 
@@ -89,7 +92,7 @@ final readonly class WasteContext implements Context
     public function containerForInAndManagedByWithIdExists(string $waste, string $propertyId, string $managerId, string $id): void
     {
         $property = $this->getPropertyRepository()->find(new PropertyId($propertyId));
-        assert(null !== $property);
+        assert($property instanceof Property);
 
         $container = ContainerMother::fromPropertyAccountAndWasteAndIdAndManager($propertyId, (string) $property->accountId(), $waste, $id, $managerId);
 
@@ -102,14 +105,14 @@ final readonly class WasteContext implements Context
         $container = $this->getContainerRepository()->find(
             new ContainerId($containerId),
         );
-        assert(null !== $container);
+        assert($container instanceof Container);
 
         $propertyId = $container->propertyId();
         $wasteId = $container->wasteId();
         $wasteManagerId = $container->wasteManagerId();
-        assert(null !== $propertyId);
-        assert(null !== $wasteId);
-        assert(null !== $wasteManagerId);
+        assert($propertyId instanceof PropertyId);
+        assert($wasteId instanceof WasteId);
+        assert($wasteManagerId instanceof WasteManagerId);
 
         $measurement = MeasurementMother::from(
             measurementId: new MeasurementId($id),

@@ -65,9 +65,7 @@ class ListServiceCategoriesServiceTest extends TestCase
         $this->assertCount(3, $result->serviceCategories);
         $this->assertEquals(3, $result->totalResults);
 
-        $request = new ListServiceCategoriesRequest(
-            name: null,
-        );
+        $request = new ListServiceCategoriesRequest();
 
         $result = $sut($request, UserMother::adminUser());
 

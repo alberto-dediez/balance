@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\Reason\Reason;
 use App\FoodLoss\Domain\Model\Reason\ReasonFilter;
 use App\FoodLoss\Domain\Model\Reason\ReasonId;
@@ -28,9 +29,9 @@ class DoctrineReasonRepository implements ReasonRepository
 
     public function add(Reason $reason): void
     {
-        $this->getEntityManager()->persist($reason);
+        $this->manager->persist($reason);
         $this->addTranslations($reason, ReasonTranslation::class, $this->manager);
-        $this->getEntityManager()->flush();
+        $this->manager->flush();
     }
 
     public function remove(Reason $reason): void
@@ -85,7 +86,7 @@ class DoctrineReasonRepository implements ReasonRepository
             ;
         }
 
-        if (null !== $filter->priority) {
+        if ($filter->priority instanceof Priority) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('e.priority', ':priority'),
@@ -130,10 +131,5 @@ class DoctrineReasonRepository implements ReasonRepository
             ->getQuery()
             ->getSingleScalarResult()
         ;
-    }
-
-    private function getEntityManager(): EntityManagerInterface
-    {
-        return $this->manager;
     }
 }

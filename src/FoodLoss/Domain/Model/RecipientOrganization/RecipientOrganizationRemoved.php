@@ -13,7 +13,7 @@ final class RecipientOrganizationRemoved extends DomainEvent
     protected static string $eventName = 'recipientOrganizationRemoved';
 
     public function __construct(
-        private RecipientOrganizationId $recipientOrganizationId,
+        private readonly RecipientOrganizationId $recipientOrganizationId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -27,7 +27,7 @@ final class RecipientOrganizationRemoved extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->recipientOrganizationId();
+        return $this->recipientOrganizationId;
     }
 
     public function payload(): array

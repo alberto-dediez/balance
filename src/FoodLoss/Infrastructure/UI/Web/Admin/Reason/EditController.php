@@ -44,7 +44,7 @@ class EditController extends AbstractController
         try {
             $form = $this->createForm(UpdateReasonType::class, $reasonRequest);
 
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateReason, $loggedUser) {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateReason, $loggedUser): void {
                 $reasonRequest = $form->getData();
 
                 $updateReason($reasonRequest, $loggedUser());

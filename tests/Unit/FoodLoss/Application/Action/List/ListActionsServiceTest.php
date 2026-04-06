@@ -65,9 +65,7 @@ class ListActionsServiceTest extends TestCase
         $this->assertCount(3, $result->actions);
         $this->assertEquals(3, $result->totalResults);
 
-        $request = new ListActionsRequest(
-            description: null,
-        );
+        $request = new ListActionsRequest();
 
         $result = $sut($request, UserMother::adminUser());
 

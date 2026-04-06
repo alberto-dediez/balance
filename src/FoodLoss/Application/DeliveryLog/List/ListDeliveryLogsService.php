@@ -14,8 +14,8 @@ use App\Security\Domain\Model\User\User;
 class ListDeliveryLogsService
 {
     public function __construct(
-        private DeliveryLogRepository $repository,
-        private DeliveryLogAuthorizer $authorizer,
+        private readonly DeliveryLogRepository $repository,
+        private readonly DeliveryLogAuthorizer $authorizer,
     ) {}
 
     public function __invoke(ListDeliveryLogsRequest $request, User $user): ListDeliveryLogsResponse

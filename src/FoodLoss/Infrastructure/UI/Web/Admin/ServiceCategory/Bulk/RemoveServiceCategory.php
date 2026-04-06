@@ -24,17 +24,19 @@ class RemoveServiceCategory implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (0 == count($request->elements)) {
+        if (0 === count($request->elements)) {
             return [];
         }
 
         $commands = [];
 
         foreach ($request->elements as $serviceCategory) {
-            if (null === $serviceCategory || null === $serviceCategory->id()) {
+            if (null === $serviceCategory) {
                 continue;
             }
-
+            if (null === $serviceCategory->id()) {
+                continue;
+            }
             $commands[] = new RemoveServiceCategoryRequest(
                 serviceCategoryId: $serviceCategory->id(),
             );

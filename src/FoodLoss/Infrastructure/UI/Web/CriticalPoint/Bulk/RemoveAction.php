@@ -25,7 +25,7 @@ class RemoveAction implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (0 == count($request->elements)) {
+        if (0 === count($request->elements)) {
             return [];
         }
 

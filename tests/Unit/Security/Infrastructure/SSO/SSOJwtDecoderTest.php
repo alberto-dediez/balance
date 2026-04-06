@@ -90,7 +90,7 @@ class SSOJwtDecoderTest extends TestCase
         $signingKey   = InMemory::plainText($keyContents);
 
         $now = new \DateTimeImmutable();
-        $expiresAt = $expiresAt ?? $now->modify('+1 hour');
+        $expiresAt ??= $now->modify('+1 hour');
 
         $tokenBuilder = $tokenBuilder
             ->issuedBy('https://example.com')

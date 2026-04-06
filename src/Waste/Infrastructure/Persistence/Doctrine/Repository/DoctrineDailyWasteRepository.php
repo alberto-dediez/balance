@@ -82,7 +82,7 @@ class DoctrineDailyWasteRepository implements DailyWasteRepository
                 ->andWhere(
                     $qb->expr()->in('m.propertyId', ':properties'),
                 )
-                ->setParameter('properties', array_map(fn(PropertyId $propertyId) => (string) $propertyId, $filter->properties))
+                ->setParameter('properties', array_map(fn(PropertyId $propertyId): string => (string) $propertyId, $filter->properties))
             ;
         }
 

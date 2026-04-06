@@ -28,9 +28,7 @@ class ListController extends AbstractController
     public function __invoke(ListReasonsService $listReasons, LoggedUser $loggedUser, Request $request): Response
     {
         try {
-            list($filter, $form) = $this->filter($request, function () {
-                return new ListReasonsRequest();
-            }, ListReasonsType::class);
+            [$filter, $form] = $this->filter($request, fn() => new ListReasonsRequest(), ListReasonsType::class);
 
             $response = $listReasons($filter, $loggedUser());
         } catch (UnauthorizedActionException $e) {

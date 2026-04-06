@@ -54,7 +54,7 @@ class DonationAgreementMother
         return self::from(
             id: (string) DonationAgreementId::generate(),
             recipientOrganizationId: (string) RecipientOrganizationId::generate(),
-            accountId: 'account-' . rand(100, 999),
+            accountId: 'account-' . random_int(100, 999),
             startDate: new \DateTimeImmutable('NOW'),
             expirationDate: new \DateTimeImmutable('+1 year'),
             uploadedBy: (string) UserId::generate(),

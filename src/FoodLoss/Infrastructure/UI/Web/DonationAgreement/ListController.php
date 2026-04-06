@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\UI\Web\DonationAgreement;
 
+use App\Security\Application\Action;
+use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreement;
+use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementId;
+use App\Security\Domain\Model\Account\Account;
 use App\FoodLoss\Application\DonationAgreement\List\ListDonationAgreementsRequest;
 use App\FoodLoss\Application\DonationAgreement\List\ListDonationAgreementsService;
 use App\FoodLoss\Infrastructure\Symfony\Form\ListDonationAgreementsType;
@@ -31,17 +35,17 @@ class ListController extends AbstractController
         $user = $loggedUser();
 
         $this->denyAccessUnlessGranted(
-            \App\Security\Application\Action::List->value,
-            new \App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreement(
-                id: \App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementId::generate(),
+            Action::List->value,
+            new DonationAgreement(
+                id: DonationAgreementId::generate(),
                 accountId: $account?->id(),
             ),
         );
 
-        assert(null !== $account);
+        assert($account instanceof Account);
 
         try {
-            list($filter, $form) = $this->filter($request, function () use ($account) {
+            [$filter, $form] = $this->filter($request, function () use ($account): ListDonationAgreementsRequest {
                 $request = new ListDonationAgreementsRequest();
                 $request->accountId = $account->id();
 

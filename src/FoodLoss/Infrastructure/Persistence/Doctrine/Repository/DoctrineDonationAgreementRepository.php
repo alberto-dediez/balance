@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreement;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementFilter;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementId;
@@ -62,7 +64,7 @@ class DoctrineDonationAgreementRepository implements DonationAgreementRepository
             ->setParameter('removed', false, Types::BOOLEAN)
         ;
 
-        if (null !== $filter->recipientOrganizationId) {
+        if ($filter->recipientOrganizationId instanceof RecipientOrganizationId) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('e.recipientOrganizationId', ':recipientOrganizationId'),
@@ -71,7 +73,7 @@ class DoctrineDonationAgreementRepository implements DonationAgreementRepository
             ;
         }
 
-        if (null !== $filter->accountId) {
+        if ($filter->accountId instanceof AccountId) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('e.accountId', ':accountId'),

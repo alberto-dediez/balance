@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Application\CriticalPoint\Register;
 
+use App\Security\Domain\Model\User\Role;
 use App\FoodLoss\Application\CriticalPoint\CriticalPointAuthorizer;
 use App\FoodLoss\Application\CriticalPoint\Register\RegisterCriticalPointRequest;
 use App\FoodLoss\Application\CriticalPoint\Register\RegisterCriticalPointService;
@@ -50,7 +51,7 @@ class RegisterCriticalPointServiceTest extends TestCase
             supplyChainStage: SupplyChainStage::Receiving,
         );
 
-        $result = $sut($request, UserMother::fromUsernameAndRoleAndAccount('user', \App\Security\Domain\Model\User\Role::Owner, $accountId));
+        $result = $sut($request, UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId));
 
         $this->assertNotEmpty((string) $result->criticalPointId);
         $this->assertEquals('Critical Point 1', $result->name);
@@ -90,7 +91,7 @@ class RegisterCriticalPointServiceTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Property not found or does not belong to your account');
 
-        $sut($request, UserMother::fromUsernameAndRoleAndAccount('user', \App\Security\Domain\Model\User\Role::Owner, $accountId));
+        $sut($request, UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId));
     }
 
     private function createSUT(CriticalPointRepository $repository, PropertyRepository $propertyRepository): RegisterCriticalPointService

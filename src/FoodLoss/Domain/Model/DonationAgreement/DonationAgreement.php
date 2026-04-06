@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Domain\Model\DonationAgreement;
 
+use App\Shared\Domain\Event\DomainEvent;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -13,7 +14,7 @@ class DonationAgreement implements \Stringable
 {
     use AggregateRoot;
 
-    /** @param array<\App\Shared\Domain\Event\DomainEvent> $events */
+    /** @param array<DomainEvent> $events */
     public function __construct(
         private DonationAgreementId $id,
         private ?RecipientOrganizationId $recipientOrganizationId = null,

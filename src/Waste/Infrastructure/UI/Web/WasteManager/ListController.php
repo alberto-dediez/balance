@@ -41,7 +41,7 @@ class ListController extends AbstractController
         }
 
         try {
-            [$filter, $form] = $this->filter($request, fn() => new ListWasteManagersRequest(
+            [$filter, $form] = $this->filter($request, fn(): ListWasteManagersRequest => new ListWasteManagersRequest(
                 accountId: $account->id(),
             ), ListWasteManagersType::class);
 

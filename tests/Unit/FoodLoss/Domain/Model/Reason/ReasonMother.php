@@ -47,7 +47,7 @@ class ReasonMother
     public static function random(): Reason
     {
         return self::from(
-            description: 'reason-' . rand(100, 999),
+            description: 'reason-' . random_int(100, 999),
             id: (string) ReasonId::generate(),
         );
     }

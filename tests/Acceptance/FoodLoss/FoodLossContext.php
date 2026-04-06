@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\FoodLoss;
 
+use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
+use App\Security\Domain\Model\User\UserId;
 use App\FoodLoss\Domain\Model\Action\ActionRepository;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
@@ -25,7 +27,7 @@ use Behat\Behat\Context\Context;
 use Behat\Step\Given;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
-final class FoodLossContext implements Context
+final readonly class FoodLossContext implements Context
 {
     private AcceptanceClient $client;
 
@@ -108,8 +110,8 @@ final class FoodLossContext implements Context
         $criticalPoint = CriticalPointMother::from(
             name: $name,
             id: $id,
-            propertyId: new PropertyId($propertyId),
             accountId: new AccountId($accountId),
+            propertyId: new PropertyId($propertyId),
         );
 
         $this->getCriticalPointRepository()->add($criticalPoint);
@@ -152,11 +154,11 @@ final class FoodLossContext implements Context
     {
         $donationAgreement = DonationAgreementMother::from(
             id: $id,
-            recipientOrganizationId: (string) \App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId::generate(),
+            recipientOrganizationId: (string) RecipientOrganizationId::generate(),
             accountId: 'account-test',
             startDate: new \DateTimeImmutable('2023-01-01'),
             expirationDate: new \DateTimeImmutable('2024-01-01'),
-            uploadedBy: (string) \App\Security\Domain\Model\User\UserId::generate(),
+            uploadedBy: (string) UserId::generate(),
             path: 'path/test.pdf',
         );
 
@@ -168,11 +170,11 @@ final class FoodLossContext implements Context
     {
         $donationAgreement = DonationAgreementMother::from(
             id: $id,
-            recipientOrganizationId: (string) \App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId::generate(),
+            recipientOrganizationId: (string) RecipientOrganizationId::generate(),
             accountId: $accountId,
             startDate: new \DateTimeImmutable('2023-01-01'),
             expirationDate: new \DateTimeImmutable('2024-01-01'),
-            uploadedBy: (string) \App\Security\Domain\Model\User\UserId::generate(),
+            uploadedBy: (string) UserId::generate(),
             path: 'path/test.pdf',
         );
 

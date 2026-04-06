@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\UI\Api\Container;
 
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Property\Infrastructure\Symfony\Twig\PropertyExtension;
 use App\Waste\Domain\Model\Container\Container as ModelContainer;
 use App\Waste\Infrastructure\Symfony\Twig\WasteExtension;
@@ -23,9 +25,9 @@ class ContainerResponseGenerator
     public function generate(ModelContainer $modelContainer): ApiContainer
     {
         $propertyId = $modelContainer->propertyId();
-        assert(null !== $propertyId);
+        assert($propertyId instanceof PropertyId);
         $wasteId = $modelContainer->wasteId();
-        assert(null !== $wasteId);
+        assert($wasteId instanceof WasteId);
         $purpose = $modelContainer->purpose();
 
         return new ApiContainer(

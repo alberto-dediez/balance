@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Application\CriticalPoint\List;
 
+use App\Security\Domain\Model\User\Role;
 use App\FoodLoss\Application\CriticalPoint\CriticalPointAuthorizer;
 use App\FoodLoss\Application\CriticalPoint\List\ListCriticalPointsRequest;
 use App\FoodLoss\Application\CriticalPoint\List\ListCriticalPointsService;
@@ -39,7 +40,7 @@ class ListCriticalPointsServiceTest extends TestCase
             accountId: $accountId,
         );
 
-        $result = $sut($request, UserMother::fromUsernameAndRoleAndAccount('user', \App\Security\Domain\Model\User\Role::Owner, $accountId));
+        $result = $sut($request, UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId));
 
         $this->assertCount(2, $result->criticalPoints);
         $this->assertEquals(2, $result->totalResults);

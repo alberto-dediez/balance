@@ -35,7 +35,7 @@ class RecipientOrganizationMother
     public static function fromAccount(string $account): RecipientOrganization
     {
         return self::from(
-            name: 'name-' . rand(100, 999),
+            name: 'name-' . random_int(100, 999),
             id: (string) RecipientOrganizationId::generate(),
             accountId: $account,
         );
@@ -91,7 +91,7 @@ class RecipientOrganizationMother
     public static function random(): RecipientOrganization
     {
         return self::from(
-            name: 'recipient-organization-' . rand(100, 999),
+            name: 'recipient-organization-' . random_int(100, 999),
             id: (string) RecipientOrganizationId::generate(),
         );
     }

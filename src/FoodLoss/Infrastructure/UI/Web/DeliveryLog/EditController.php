@@ -51,7 +51,7 @@ class EditController extends AbstractController
         try {
             $form = $this->createForm(UpdateDeliveryLogType::class, $updateRequest);
 
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateDeliveryLog, $loggedUser) {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateDeliveryLog, $loggedUser): void {
                 $updateRequest = $form->getData();
 
                 $updateDeliveryLog($updateRequest, $loggedUser());

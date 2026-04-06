@@ -29,11 +29,9 @@ class ListController extends AbstractController
     public function __invoke(ListCriticalPointsService $listCriticalPoints, LoggedUser $loggedUser, LoggedAccount $loggedAccount, Request $request): Response
     {
         try {
-            list($filter, $form) = $this->filter($request, function () use ($loggedAccount) {
-                return new ListCriticalPointsRequest(
-                    accountId: $loggedAccount()?->id(),
-                );
-            }, ListCriticalPointsType::class);
+            [$filter, $form] = $this->filter($request, fn() => new ListCriticalPointsRequest(
+                accountId: $loggedAccount()?->id(),
+            ), ListCriticalPointsType::class);
 
             $response = $listCriticalPoints($filter, $loggedUser());
         } catch (UnauthorizedActionException $e) {

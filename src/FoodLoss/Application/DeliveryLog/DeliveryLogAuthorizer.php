@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Application\DeliveryLog;
 
+use App\Security\Domain\Model\Account\AccountId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLog;
 use App\Security\Application\AbstractAuthorizer;
 use App\Security\Domain\Model\User\Role;
@@ -23,17 +24,17 @@ final class DeliveryLogAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        if (!($user->hasRole(Role::Owner) || $user->hasRole(Role::User))) {
+        if (!$user->hasRole(Role::Owner) && !$user->hasRole(Role::User)) {
             return false;
         }
 
-        if (null === $user->accountId()) {
+        if (!$user->accountId() instanceof AccountId) {
             return false;
         }
 
         assert($subject instanceof DeliveryLog);
 
-        return null !== $subject->accountId() && $subject->accountId()->equals($user->accountId());
+        return $subject->accountId() instanceof AccountId && $subject->accountId()->equals($user->accountId());
     }
 
     protected function canEdit(mixed $subject, User $user): bool

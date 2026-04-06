@@ -51,7 +51,7 @@ class EditController extends AbstractController
         $form = $this->createForm(UpdateCriticalPointType::class, $criticalPointRequest);
 
         try {
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateCriticalPoint, $loggedUser) {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateCriticalPoint, $loggedUser): void {
                 $criticalPointRequest = $form->getData();
 
                 $updateCriticalPoint($criticalPointRequest, $loggedUser());

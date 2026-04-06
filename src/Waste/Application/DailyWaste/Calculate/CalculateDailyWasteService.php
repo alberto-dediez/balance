@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Waste\Application\DailyWaste\Calculate;
 
+use App\Property\Domain\Model\Property\Property;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
@@ -94,7 +98,7 @@ class CalculateDailyWasteService implements CommandHandler
     {
         $property = $this->propertyRepository->find($request->propertyId);
 
-        if (null === $property || null === $property->accountId()) {
+        if (!$property instanceof Property || !$property->accountId() instanceof AccountId) {
             throw new \InvalidArgumentException('Debes especificar una propiedad válida');
         }
 
@@ -122,13 +126,13 @@ class CalculateDailyWasteService implements CommandHandler
         $containerRepository = $this->containerRepository;
 
         return array_reduce($measurements, function (float $totalLoad, Measurement $measurement) use ($wasteRepository, $containerRepository): float {
-            assert(null !== $measurement->unit());
+            assert($measurement->unit() instanceof Unit);
             if (Unit::Kilogram !== $measurement->unit()) {
-                assert(null !== $measurement->containerId());
+                assert($measurement->containerId() instanceof ContainerId);
                 $container = $containerRepository->find($measurement->containerId());
                 $containerVolume = $container instanceof Container ? $container->volume() : 0;
 
-                assert(null !== $measurement->wasteId());
+                assert($measurement->wasteId() instanceof WasteId);
                 $waste = $wasteRepository->find($measurement->wasteId());
                 $wasteDensity = $waste instanceof Waste ? $waste->density() : 0;
 

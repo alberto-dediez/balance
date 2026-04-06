@@ -23,7 +23,7 @@ final class CriticalPointServiceCategories extends ArrayCollection
     public function ids(): array
     {
         return array_map(
-            fn(CriticalPointServiceCategoryLink $link) => $link->serviceCategoryId(),
+            fn(CriticalPointServiceCategoryLink $link): ServiceCategoryId => $link->serviceCategoryId(),
             $this->toArray(),
         );
     }

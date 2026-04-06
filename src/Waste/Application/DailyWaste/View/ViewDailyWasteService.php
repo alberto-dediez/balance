@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Waste\Application\DailyWaste\View;
 
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Waste\Application\DailyWaste\DailyWasteAuthorizer;
@@ -25,10 +29,10 @@ class ViewDailyWasteService
 
         $this->authorizer->denyUnlessCanDoThat($dailyWaste, Action::View, $user);
 
-        assert(null !== $dailyWaste->propertyId());
-        assert(null !== $dailyWaste->wasteId());
-        assert(null !== $dailyWaste->wasteManagerId());
-        assert(null !== $dailyWaste->accountId());
+        assert($dailyWaste->propertyId() instanceof PropertyId);
+        assert($dailyWaste->wasteId() instanceof WasteId);
+        assert($dailyWaste->wasteManagerId() instanceof WasteManagerId);
+        assert($dailyWaste->accountId() instanceof AccountId);
 
         $measurements = $this->measurementRepository->findByDay(
             day: $dailyWaste->day(),

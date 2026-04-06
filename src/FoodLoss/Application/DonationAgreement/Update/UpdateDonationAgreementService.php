@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Application\DonationAgreement\Update;
 
+use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
+use App\Security\Domain\Model\User\UserId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\FoodLoss\Application\DonationAgreement\DonationAgreementAuthorizer;
 use App\FoodLoss\Application\DonationAgreement\DonationAgreementUploader;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
@@ -35,13 +38,13 @@ class UpdateDonationAgreementService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($donationAgreement, SecurityAction::Edit, $user);
 
-        assert(null !== $request->recipientOrganizationId);
-        assert(null !== $request->startDate);
-        assert(null !== $request->expirationDate);
-        assert(null !== $request->uploadedBy);
+        assert($request->recipientOrganizationId instanceof RecipientOrganizationId);
+        assert($request->startDate instanceof \DateTimeImmutable);
+        assert($request->expirationDate instanceof \DateTimeImmutable);
+        assert($request->uploadedBy instanceof UserId);
 
         if (null !== $request->temporaryFilePath && null !== $request->fileExtension) {
-            assert(null !== $donationAgreement->accountId());
+            assert($donationAgreement->accountId() instanceof AccountId);
             $relativePath = $this->fileUploader->upload($request->temporaryFilePath, $request->fileExtension, $donationAgreement->accountId(), $request->recipientOrganizationId);
         } else {
             $relativePath = $donationAgreement->path();

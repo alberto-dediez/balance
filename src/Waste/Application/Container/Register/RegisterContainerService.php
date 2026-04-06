@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\Waste\Application\Container\Register;
 
+use App\Security\Domain\Model\Account\AccountId;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
+use App\Waste\Domain\Model\Container\QrCode;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
@@ -53,7 +58,7 @@ class RegisterContainerService implements CommandHandler
             $user,
         );
 
-        assert(null !== $property->accountId());
+        assert($property->accountId() instanceof AccountId);
         $container = new Container($id);
         $container
             ->register(
@@ -70,10 +75,10 @@ class RegisterContainerService implements CommandHandler
 
         $this->containerRepository->add($container);
 
-        assert(null !== $container->propertyId());
-        assert(null !== $container->wasteId());
-        assert(null !== $container->wasteManagerId());
-        assert(null !== $container->qrCode());
+        assert($container->propertyId() instanceof PropertyId);
+        assert($container->wasteId() instanceof WasteId);
+        assert($container->wasteManagerId() instanceof WasteManagerId);
+        assert($container->qrCode() instanceof QrCode);
 
         return new RegisterContainerResponse(
             containerId: $container->id(),

@@ -30,7 +30,7 @@ class StatisticsController extends AbstractController
         $account = $loggedAccount();
         $user = $loggedUser();
 
-        [$filter, $form] = $this->filter($request, fn() => new StatisticsDailyWasteRequest(
+        [$filter, $form] = $this->filter($request, fn(): StatisticsDailyWasteRequest => new StatisticsDailyWasteRequest(
             accountId: $account?->id(),
             dayFrom: (new \DateTimeImmutable('NOW -11 MONTHS'))->modify('first day of this month'),
             dayTo: new \DateTimeImmutable('NOW'),

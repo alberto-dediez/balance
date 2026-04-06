@@ -14,17 +14,17 @@ final class RecipientOrganizationUpdated extends DomainEvent
 
     /** @param string[] $pickupTypes */
     public function __construct(
-        private RecipientOrganizationId $recipientOrganizationId,
-        private string $name,
-        private RecipientOrganizationType $type,
-        private string $nif,
-        private string $socialReason,
-        private string $address,
-        private string $contactName,
-        private string $contactEmail,
-        private string $contactPhone,
-        private string $operatingHours,
-        private array $pickupTypes,
+        private readonly RecipientOrganizationId $recipientOrganizationId,
+        private readonly string $name,
+        private readonly RecipientOrganizationType $type,
+        private readonly string $nif,
+        private readonly string $socialReason,
+        private readonly string $address,
+        private readonly string $contactName,
+        private readonly string $contactEmail,
+        private readonly string $contactPhone,
+        private readonly string $operatingHours,
+        private readonly array $pickupTypes,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -89,7 +89,7 @@ final class RecipientOrganizationUpdated extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->recipientOrganizationId();
+        return $this->recipientOrganizationId;
     }
 
     public function payload(): array

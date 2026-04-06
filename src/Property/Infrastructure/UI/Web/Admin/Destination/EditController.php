@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Property\Infrastructure\UI\Web\Admin\Destination;
 
+use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Application\Destination\Update\UpdateDestinationRequest;
 use App\Property\Application\Destination\Update\UpdateDestinationService;
 use App\Property\Domain\Model\Destination\DestinationRepository;
@@ -35,7 +36,7 @@ class EditController extends AbstractController
 
         $this->denyAccessUnlessGranted(Action::Edit->value, $destination);
 
-        assert(null !== $destination->countryId());
+        assert($destination->countryId() instanceof CountryId);
 
         $destinationRequest = new UpdateDestinationRequest(
             destinationId: $destination->id(),

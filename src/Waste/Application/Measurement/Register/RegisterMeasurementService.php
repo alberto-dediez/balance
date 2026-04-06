@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace App\Waste\Application\Measurement\Register;
 
+use App\Waste\Domain\Model\Container\Container;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Property\Domain\Model\Property\Property;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Waste\Domain\Model\Container\ContainerId;
+use App\Security\Domain\Model\User\UserId;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
@@ -36,12 +42,12 @@ class RegisterMeasurementService implements CommandHandler
         $this->validateRequest($request);
 
         $container = $this->containerRepository->find($request->containerId);
-        assert(null !== $container);
-        assert(null !== $container->propertyId());
+        assert($container instanceof Container);
+        assert($container->propertyId() instanceof PropertyId);
 
         $property = $this->propertyRepository->find($container->propertyId());
-        assert(null !== $property);
-        assert(null !== $property->accountId());
+        assert($property instanceof Property);
+        assert($property->accountId() instanceof AccountId);
 
         $id = MeasurementId::generate();
 
@@ -74,9 +80,9 @@ class RegisterMeasurementService implements CommandHandler
         $this->measurementRepository->add($measurement);
 
         $containerId = $measurement->containerId();
-        assert(null !== $containerId);
+        assert($containerId instanceof ContainerId);
         $registeredBy = $measurement->registeredBy();
-        assert(null !== $registeredBy);
+        assert($registeredBy instanceof UserId);
 
         return new RegisterMeasurementResponse(
             measurementId: $measurement->id(),
@@ -98,7 +104,7 @@ class RegisterMeasurementService implements CommandHandler
         }
 
         $containerPropertyId = $container->propertyId();
-        assert(null !== $containerPropertyId);
+        assert($containerPropertyId instanceof PropertyId);
         $property = $this->propertyRepository->find($containerPropertyId);
 
         if (null == $property) {
@@ -109,7 +115,7 @@ class RegisterMeasurementService implements CommandHandler
 
         $userAccountId = $user?->accountId();
         $propertyAccountId = $property->accountId();
-        if (null == $user || null === $userAccountId || null === $propertyAccountId || false === $userAccountId->equals($propertyAccountId)) {
+        if (null == $user || !$userAccountId instanceof AccountId || !$propertyAccountId instanceof AccountId || false === $userAccountId->equals($propertyAccountId)) {
             throw new \InvalidArgumentException('El usuario que registra la medición no es válido');
         }
     }

@@ -14,8 +14,8 @@ final class CriticalPointServiceCategoryLinked extends DomainEvent
     protected static string $eventName = 'criticalPointServiceCategoryLinked';
 
     public function __construct(
-        private CriticalPointId $criticalPointId,
-        private ServiceCategoryId $serviceCategoryId,
+        private readonly CriticalPointId $criticalPointId,
+        private readonly ServiceCategoryId $serviceCategoryId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -34,7 +34,7 @@ final class CriticalPointServiceCategoryLinked extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->criticalPointId();
+        return $this->criticalPointId;
     }
 
     public function payload(): array

@@ -10,7 +10,7 @@ use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\Translatable;
 use App\Shared\Domain\Model\Locale\Translations;
 
-class Reason implements Translatable
+class Reason implements Translatable, \Stringable
 {
     use AggregateRoot;
 
@@ -95,7 +95,7 @@ class Reason implements Translatable
             ),
         );
 
-        if (null !== $locale) {
+        if ($locale instanceof Locale) {
             $this->translate($description, $locale);
         }
     }
@@ -108,12 +108,12 @@ class Reason implements Translatable
         $this->recordApplyAndPublish(
             new ReasonUpdated(
                 reasonId: $this->id(),
-                description: null === $locale ? $description : $this->description,
+                description: $locale instanceof Locale ? $this->description : $description,
                 priority: $priority,
             ),
         );
 
-        if (null !== $locale) {
+        if ($locale instanceof Locale) {
             $this->translate($description, $locale);
         }
     }
@@ -171,6 +171,6 @@ class Reason implements Translatable
 
     public function __toString(): string
     {
-        return (string) $this->description();
+        return $this->description();
     }
 }

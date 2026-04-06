@@ -27,17 +27,17 @@ class DoctrineServiceCategoryRepository implements ServiceCategoryRepository
 
     public function add(ServiceCategory $serviceCategory): void
     {
-        $this->getEntityManager()->persist($serviceCategory);
+        $this->manager->persist($serviceCategory);
 
         $this->addTranslations($serviceCategory, ServiceCategoryTranslation::class, $this->manager);
 
-        $this->getEntityManager()->flush();
+        $this->manager->flush();
     }
 
     public function remove(ServiceCategory $serviceCategory): void
     {
-        $this->getEntityManager()->remove($serviceCategory);
-        $this->getEntityManager()->flush();
+        $this->manager->remove($serviceCategory);
+        $this->manager->flush();
     }
 
     public function find(ServiceCategoryId $serviceCategoryId): ?ServiceCategory
@@ -56,7 +56,7 @@ class DoctrineServiceCategoryRepository implements ServiceCategoryRepository
 
     private function createQueryBuilderFromFilter(ServiceCategoryFilter $filter): QueryBuilder
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb = $this->manager->createQueryBuilder();
 
         $qb->select('s')
             ->from(ServiceCategory::class, 's')
@@ -85,20 +85,13 @@ class DoctrineServiceCategoryRepository implements ServiceCategoryRepository
             ;
         }
 
-        $way = 'ASC' == $filter->orderWay ? 'ASC' : 'DESC';
+        $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
-        switch ($filter->orderBy) {
-            case 'registeredAt':
-                $qb->orderBy('s.registeredAt', $way);
-                break;
-            case 'updatedAt':
-                $qb->orderBy('s.updatedAt', $way);
-                break;
-            case 'name':
-            default:
-                $qb->orderBy('s.name', $way);
-                break;
-        }
+        match ($filter->orderBy) {
+            'registeredAt' => $qb->orderBy('s.registeredAt', $way),
+            'updatedAt' => $qb->orderBy('s.updatedAt', $way),
+            default => $qb->orderBy('s.name', $way),
+        };
 
         return $qb;
     }
@@ -128,10 +121,5 @@ class DoctrineServiceCategoryRepository implements ServiceCategoryRepository
             ->getQuery()
             ->getSingleScalarResult()
         ;
-    }
-
-    private function getEntityManager(): EntityManagerInterface
-    {
-        return $this->manager;
     }
 }

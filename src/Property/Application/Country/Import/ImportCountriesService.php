@@ -33,7 +33,7 @@ class ImportCountriesService
         $countriesMatch = $this->matchCountries($request->countries, $user);
 
         $totalResults = array_sum(
-            array_map(fn(CountryResponse $response) => $response->countryId instanceof CountryId ? 1 : 0, $countriesMatch),
+            array_map(fn(CountryResponse $response): int => $response->countryId instanceof CountryId ? 1 : 0, $countriesMatch),
         );
 
         return new ImportCountriesResponse($countriesMatch, $totalResults);

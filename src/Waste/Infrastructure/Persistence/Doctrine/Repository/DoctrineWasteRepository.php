@@ -138,9 +138,4 @@ class DoctrineWasteRepository implements WasteRepository
             ->getSingleScalarResult()
         ;
     }
-
-    private function getEntityManager(): EntityManagerInterface
-    {
-        return $this->manager;
-    }
 }

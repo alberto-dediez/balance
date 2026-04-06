@@ -40,7 +40,7 @@ class CategoryExtension extends AbstractExtension
         if (!isset($this->categories[(string) $categoryId])) {
             $category = $this->categoryRepository->find($categoryId);
 
-            if (null !== $category) {
+            if ($category instanceof Category) {
                 $this->categories[(string) $categoryId] = $category;
             }
         }

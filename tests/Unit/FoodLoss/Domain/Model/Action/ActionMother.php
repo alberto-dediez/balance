@@ -27,7 +27,7 @@ class ActionMother
     public static function fromPriority(Priority $priority): Action
     {
         return self::from(
-            description: 'action-' . rand(100, 999),
+            description: 'action-' . random_int(100, 999),
             priority: $priority,
             id: (string) ActionId::generate(),
         );
@@ -45,7 +45,7 @@ class ActionMother
     public static function fromPriorityAndId(Priority $priority, string $id): Action
     {
         return self::from(
-            description: 'action-' . rand(100, 999),
+            description: 'action-' . random_int(100, 999),
             priority: $priority,
             id: $id,
         );
@@ -67,7 +67,7 @@ class ActionMother
     public static function random(): Action
     {
         return self::from(
-            description: 'action-' . rand(100, 999),
+            description: 'action-' . random_int(100, 999),
             priority: self::generateRandomPriority(),
             id: (string) ActionId::generate(),
         );
@@ -76,8 +76,7 @@ class ActionMother
     private static function generateRandomPriority(): Priority
     {
         $cases = Priority::cases();
-        $randomCase = $cases[random_int(0, count($cases) - 1)];
 
-        return $randomCase;
+        return $cases[random_int(0, count($cases) - 1)];
     }
 }

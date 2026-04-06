@@ -92,7 +92,7 @@ class Container implements \Stringable
 
     public function isRemoved(): bool
     {
-        return (bool) $this->removed;
+        return $this->removed;
     }
 
     public function registeredAt(): \DateTimeImmutable
@@ -102,7 +102,7 @@ class Container implements \Stringable
 
     public function printedAt(): \DateTimeImmutable
     {
-        assert(null !== $this->printedAt);
+        assert($this->printedAt instanceof \DateTimeImmutable);
 
         return $this->printedAt;
     }
@@ -167,7 +167,7 @@ class Container implements \Stringable
     public function printQr(QrPdfGenerator $pdfGenerator): string
     {
         $qrCode = $this->qrCode();
-        assert(null !== $qrCode);
+        assert($qrCode instanceof QrCode);
         $path = $pdfGenerator->generate($this, $qrCode);
 
         $this->recordApplyAndPublish(

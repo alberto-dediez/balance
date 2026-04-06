@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Application\CriticalPoint\Update;
 
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
+use App\Security\Domain\Model\User\Role;
 use App\FoodLoss\Application\CriticalPoint\CriticalPointAuthorizer;
 use App\FoodLoss\Application\CriticalPoint\Update\UpdateCriticalPointRequest;
 use App\FoodLoss\Application\CriticalPoint\Update\UpdateCriticalPointService;
@@ -39,7 +41,7 @@ class UpdateCriticalPointServiceTest extends TestCase
 
         $criticalPoint = CriticalPointMother::from(
             name: 'Original Name',
-            id: (string) \App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId::generate(),
+            id: (string) CriticalPointId::generate(),
             accountId: $accountId,
             propertyId: $propertyId,
         );
@@ -54,7 +56,7 @@ class UpdateCriticalPointServiceTest extends TestCase
             supplyChainStage: SupplyChainStage::Storage,
         );
 
-        $result = $sut($request, UserMother::fromUsernameAndRoleAndAccount('user', \App\Security\Domain\Model\User\Role::Owner, $accountId));
+        $result = $sut($request, UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId));
 
         $this->assertEquals('Updated Name', $result->name);
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Shared;
 
+use Symfony\Component\DomCrawler\Field\FileFormField;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use Behat\Behat\Context\Context;
@@ -22,7 +23,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 final class WebContext implements Context
 {
-    private AcceptanceClient $client;
+    private readonly AcceptanceClient $client;
 
     /** @var array<string, string> */
     private array $files = [];
@@ -89,7 +90,7 @@ final class WebContext implements Context
             $key = '[' === $field[0] ? sprintf('%s%s', $form->attr('name'), $field) : sprintf('%s[%s]', $form->attr('name'), $field);
 
             $fileField = $formData[$key];
-            assert($fileField instanceof \Symfony\Component\DomCrawler\Field\FileFormField);
+            assert($fileField instanceof FileFormField);
 
             $fileField->upload($path);
         }

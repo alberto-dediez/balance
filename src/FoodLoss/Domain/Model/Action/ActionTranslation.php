@@ -11,8 +11,8 @@ class ActionTranslation implements Translation
 {
     public function __construct(
         private string $description,
-        private Locale $locale,
-        private Action $translatable,
+        private readonly Locale $locale,
+        private readonly Action $translatable,
     ) {}
 
     public function description(): string

@@ -29,7 +29,7 @@ class RecipientOrganizationExtension extends AbstractExtension
         if (!isset($this->recipientOrganizations[(string) $id])) {
             $recipientOrganization = $this->repository->find($id);
 
-            if (null !== $recipientOrganization) {
+            if ($recipientOrganization instanceof RecipientOrganization) {
                 $this->recipientOrganizations[(string) $id] = $recipientOrganization;
             }
         }

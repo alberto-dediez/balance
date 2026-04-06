@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\InMemory\Repository;
 
+use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\Action\Action;
 use App\FoodLoss\Domain\Model\Action\ActionFilter;
 use App\FoodLoss\Domain\Model\Action\ActionId;
@@ -64,7 +65,7 @@ class InMemoryActionRepository implements ActionRepository
             }
 
             if (
-                !empty($filter->priority)
+                $filter->priority instanceof Priority
                 && !str_contains(strtolower($action->priority()->value), strtolower($filter->priority->value))
             ) {
                 continue;

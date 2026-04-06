@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\UI\Web\DonationAgreement;
 
+use App\Security\Domain\Model\Account\Account;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\FoodLoss\Application\DonationAgreement\Register\RegisterDonationAgreementRequest;
 use App\FoodLoss\Application\DonationAgreement\Register\RegisterDonationAgreementService;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreement;
@@ -39,19 +41,19 @@ class RegisterController extends AbstractController
             accountId: $account?->id(),
         ));
 
-        assert(null !== $account);
+        assert($account instanceof Account);
 
         $form = $this->createForm(RegisterDonationAgreementType::class, new RegisterDonationAgreementRequest());
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerDonationAgreement, $user, $account) {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerDonationAgreement, $user, $account): true {
                 /** @var RegisterDonationAgreementRequest $registerRequest */
                 $registerRequest = $form->getData();
 
                 $registerRequest->accountId = $account->id();
                 $registerRequest->uploadedBy = $user->id();
 
-                /** @var \Symfony\Component\HttpFoundation\File\UploadedFile $file */
+                /** @var UploadedFile $file */
                 $file = $form->get('pdfFile')->getData();
 
                 $registerRequest->temporaryFilePath = $file->getPathname();

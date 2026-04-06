@@ -83,7 +83,7 @@ class PropertyLoadCommand extends Command
             }
         }
 
-        if (null === $this->fieldExtractor) {
+        if (!$this->fieldExtractor instanceof FieldExtractor) {
             $io->error(sprintf('No se ha encontrado configuración para la fuente "%s".', $this->source->value));
 
             return Command::FAILURE;
@@ -137,7 +137,7 @@ class PropertyLoadCommand extends Command
             }
 
             /* @var array<string, string|null> $row */
-            if (null === $this->fieldExtractor || null === $this->source) {
+            if (!$this->fieldExtractor instanceof FieldExtractor || !$this->source instanceof ExternalSource) {
                 $io->error('Error en la configuración del extractor o la fuente.');
 
                 return;

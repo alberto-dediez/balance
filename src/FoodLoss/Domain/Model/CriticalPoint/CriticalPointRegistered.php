@@ -16,16 +16,16 @@ final class CriticalPointRegistered extends DomainEvent
     protected static string $eventName = 'criticalPointRegistered';
 
     public function __construct(
-        private CriticalPointId $criticalPointId,
-        private string $name,
-        private PropertyId $propertyId,
-        private AccountId $accountId,
-        private SupplyChainStage $supplyChainStage,
-        private PriorityAssessment $prevention,
-        private PriorityAssessment $humanDonation,
-        private PriorityAssessment $animalFeed,
-        private PriorityAssessment $transformation,
-        private PriorityAssessment $composting,
+        private readonly CriticalPointId $criticalPointId,
+        private readonly string $name,
+        private readonly PropertyId $propertyId,
+        private readonly AccountId $accountId,
+        private readonly SupplyChainStage $supplyChainStage,
+        private readonly PriorityAssessment $prevention,
+        private readonly PriorityAssessment $humanDonation,
+        private readonly PriorityAssessment $animalFeed,
+        private readonly PriorityAssessment $transformation,
+        private readonly PriorityAssessment $composting,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -84,7 +84,7 @@ final class CriticalPointRegistered extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->criticalPointId();
+        return $this->criticalPointId;
     }
 
     public function payload(): array

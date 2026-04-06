@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\UI\Api\Measurement;
 
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Property\Infrastructure\Symfony\Twig\PropertyExtension;
 use App\Waste\Domain\Model\Measurement\Measurement as ModelMeasurement;
 use App\Waste\Infrastructure\Symfony\Twig\WasteExtension;
@@ -23,9 +25,9 @@ class MeasurementResponseGenerator
     public function generate(ModelMeasurement $modelMeasurement): ApiMeasurement
     {
         $propertyId = $modelMeasurement->propertyId();
-        assert(null !== $propertyId);
+        assert($propertyId instanceof PropertyId);
         $wasteId = $modelMeasurement->wasteId();
-        assert(null !== $wasteId);
+        assert($wasteId instanceof WasteId);
         $purpose = $modelMeasurement->purpose();
 
         return new ApiMeasurement(

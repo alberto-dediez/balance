@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Waste\Application\Container\PrintQr;
 
+use App\Waste\Domain\Model\Container\Container;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Waste\Application\Container\ContainerAuthorizer;
@@ -18,7 +19,7 @@ class PrintQrContainerService
     {
         $container = $this->repository->find($request->containerId);
 
-        if (null === $container) {
+        if (!$container instanceof Container) {
             throw new \InvalidArgumentException('Container not found');
         }
 

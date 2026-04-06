@@ -29,11 +29,9 @@ class ListController extends AbstractController
     public function __invoke(ListRecipientOrganizationsService $listRecipientOrganizations, LoggedUser $loggedUser, LoggedAccount $loggedAccount, Request $request): Response
     {
         try {
-            list($filter, $form) = $this->filter($request, function () use ($loggedAccount) {
-                return new ListRecipientOrganizationsRequest(
-                    accountId: $loggedAccount()?->id(),
-                );
-            }, ListRecipientOrganizationsType::class);
+            [$filter, $form] = $this->filter($request, fn() => new ListRecipientOrganizationsRequest(
+                accountId: $loggedAccount()?->id(),
+            ), ListRecipientOrganizationsType::class);
 
             $response = $listRecipientOrganizations($filter, $loggedUser());
         } catch (UnauthorizedActionException $e) {

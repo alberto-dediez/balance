@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\UI\Api\MeasurementEdit;
 
+use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use App\Waste\Application\Measurement\Update\UpdateMeasurementRequest;
 use App\Waste\Application\Measurement\Update\UpdateMeasurementService;
@@ -54,7 +55,7 @@ class MeasurementEditController extends AbstractController
 
         $measurement = $measurementRepository->find($updateResponse->measurementId);
 
-        assert(null !== $measurement);
+        assert($measurement instanceof Measurement);
 
         return $this->json(
             $measurementGenerator->generate($measurement),

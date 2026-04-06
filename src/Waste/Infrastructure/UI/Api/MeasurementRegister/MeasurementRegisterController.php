@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\UI\Api\MeasurementRegister;
 
+use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use App\Waste\Application\Measurement\Register\RegisterMeasurementRequest;
 use App\Waste\Application\Measurement\Register\RegisterMeasurementService;
@@ -55,7 +56,7 @@ class MeasurementRegisterController extends AbstractController
 
         $measurement = $measurementRepository->find($registerResponse->measurementId);
 
-        assert(null !== $measurement);
+        assert($measurement instanceof Measurement);
 
         return $this->json(
             $measurementGenerator->generate($measurement),

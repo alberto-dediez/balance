@@ -10,12 +10,12 @@ use App\Security\Domain\Model\Account\AccountId;
 
 class LocalFileDonationAgreementUploader implements DonationAgreementUploader
 {
-    public function __construct(private string $uploadsDir) {}
+    public function __construct(private readonly string $uploadsDir) {}
 
     public function upload(string $sourcePath, string $extension, AccountId $accountId, RecipientOrganizationId $recipientOrganizationId): string
     {
-        $fileName = (string) $recipientOrganizationId . '-' . uniqid() . '.' . $extension;
-        $relativePath = 'donation_agreements/' . (string) $accountId . '/' . $fileName;
+        $fileName = $recipientOrganizationId . '-' . uniqid() . '.' . $extension;
+        $relativePath = 'donation_agreements/' . $accountId . '/' . $fileName;
         $absoluteDestination = $this->uploadsDir . '/' . $relativePath;
 
         if (!is_dir(dirname($absoluteDestination))) {

@@ -146,13 +146,13 @@ class MeasurementImportationType implements ImportationType
     /** @return array<string, FieldDefinition|null> */
     public function translationDefinitions(): array
     {
-        return array_map(fn(array $definition) => $definition['translationDefinition'] ?? null, $this->fields);
+        return array_map(fn(array $definition): ?FieldDefinition => $definition['translationDefinition'] ?? null, $this->fields);
     }
 
     /** @return array<string, FieldDefinition|null> */
     public function assignValueDefinitions(): array
     {
-        return array_map(fn(array $definition) => $definition['assignValueDefinition'] ?? null, $this->fields);
+        return array_map(fn(array $definition): ?FieldDefinition => $definition['assignValueDefinition'] ?? null, $this->fields);
     }
 
     public function commandBuilder(array $data): Command

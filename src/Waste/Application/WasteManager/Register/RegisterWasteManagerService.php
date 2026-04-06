@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Waste\Application\WasteManager\Register;
 
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -31,7 +32,7 @@ class RegisterWasteManagerService implements CommandHandler
             accountId: $request->accountId,
         ), Action::Register, $user);
 
-        assert(null !== $request->accountId);
+        assert($request->accountId instanceof AccountId);
 
         $wasteManager = new WasteManager($id);
         $wasteManager->register(
@@ -43,7 +44,7 @@ class RegisterWasteManagerService implements CommandHandler
         $this->wasteManagerRepository->add($wasteManager);
 
         assert(null !== $wasteManager->name());
-        assert(null !== $wasteManager->accountId());
+        assert($wasteManager->accountId() instanceof AccountId);
 
         return new RegisterWasteManagerResponse(
             wasteManagerId: $wasteManager->id(),

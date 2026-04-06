@@ -35,7 +35,7 @@ class RegisterController extends AbstractController
         $form = $this->createForm(RegisterCriticalPointType::class, new RegisterCriticalPointRequest());
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerCriticalPoint, $loggedUser) {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerCriticalPoint, $loggedUser): true {
                 $registerRequest = $form->getData();
 
                 $response = $registerCriticalPoint($registerRequest, $loggedUser());

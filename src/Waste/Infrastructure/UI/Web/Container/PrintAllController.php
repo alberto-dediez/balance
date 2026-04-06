@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\UI\Web\Container;
 
+use App\Security\Domain\Model\Account\Account;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
@@ -27,7 +28,7 @@ class PrintAllController extends AbstractController
         Request $request,
     ): Response {
         $account = $loggedAccount();
-        assert(null !== $account);
+        assert($account instanceof Account);
 
         $containerRequest = new PrintAllQrContainerRequest(
             accountId: $account->id(),

@@ -36,7 +36,7 @@ class PropertyExtension extends AbstractExtension
         if (!isset($this->properties[(string) $propertyId])) {
             $property = $this->propertyRepository->find($propertyId);
 
-            if (null !== $property) {
+            if ($property instanceof Property) {
                 $this->properties[(string) $propertyId] = $property;
             }
         }

@@ -9,7 +9,7 @@ use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\Translatable;
 use App\Shared\Domain\Model\Locale\Translations;
 
-class Action implements Translatable
+class Action implements Translatable, \Stringable
 {
     use AggregateRoot;
 
@@ -94,7 +94,7 @@ class Action implements Translatable
             ),
         );
 
-        if (null !== $locale) {
+        if ($locale instanceof Locale) {
             $this->translate($description, $locale);
         }
     }
@@ -107,12 +107,12 @@ class Action implements Translatable
         $this->recordApplyAndPublish(
             new ActionUpdated(
                 actionId: $this->id(),
-                description: null === $locale ? $description : $this->description,
+                description: $locale instanceof Locale ? $this->description : $description,
                 priority: $priority,
             ),
         );
 
-        if (null !== $locale) {
+        if ($locale instanceof Locale) {
             $this->translate($description, $locale);
         }
     }
@@ -170,6 +170,6 @@ class Action implements Translatable
 
     public function __toString(): string
     {
-        return (string) $this->description();
+        return $this->description();
     }
 }

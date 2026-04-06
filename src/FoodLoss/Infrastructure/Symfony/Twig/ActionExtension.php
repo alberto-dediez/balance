@@ -29,7 +29,7 @@ class ActionExtension extends AbstractExtension
         if (!isset($this->actions[(string) $actionId])) {
             $action = $this->actionRepository->find($actionId);
 
-            if (null !== $action) {
+            if ($action instanceof Action) {
                 $this->actions[(string) $actionId] = $action;
             }
         }

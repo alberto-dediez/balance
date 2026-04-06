@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security\Infrastructure\Symfony\Security;
 
+use Symfony\Component\Security\Core\User\UserInterface;
 use App\Security\Infrastructure\SSO\SSOClient;
 use App\Security\Infrastructure\SSO\SSOJwtDecoder;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -27,7 +28,7 @@ class SSOAuthenticator extends AbstractAuthenticator implements AuthenticationEn
     use TargetPathTrait;
 
     /**
-     * @param UserProviderInterface<\Symfony\Component\Security\Core\User\UserInterface> $userProvider
+     * @param UserProviderInterface<UserInterface> $userProvider
      */
     public function __construct(
         private readonly SSOClient $ssoClient,
@@ -67,14 +68,14 @@ class SSOAuthenticator extends AbstractAuthenticator implements AuthenticationEn
                 throw new AuthenticationException('Email not found in SSO token.');
             }
         } catch (\Throwable $e) {
-            throw new AuthenticationException('Failed to decode or validate SSO token: ' . $e->getMessage());
+            throw new AuthenticationException('Failed to decode or validate SSO token: ' . $e->getMessage(), $e->getCode(), $e);
         }
 
         return new SelfValidatingPassport(
-            new UserBadge($email, function (string $userIdentifier) {
+            new UserBadge($email, function (string $userIdentifier): UserInterface {
                 try {
                     return $this->userProvider->loadUserByIdentifier($userIdentifier);
-                } catch (UserNotFoundException $e) {
+                } catch (UserNotFoundException) {
                     throw new AuthenticationException('User not found in our system.');
                 }
             }),

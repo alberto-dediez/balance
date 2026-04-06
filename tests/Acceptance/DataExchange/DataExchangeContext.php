@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\DataExchange;
 
+use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
@@ -49,7 +50,7 @@ final readonly class DataExchangeContext implements Context
     {
         $repository = $this->getImportationRepository();
         $importation = $repository->find(new ImportationId($importationId));
-        assert(null !== $importation);
+        assert($importation instanceof Importation);
 
         foreach (explode('|', $fields) as $field) {
             [$name, $value] = explode(':', $field);

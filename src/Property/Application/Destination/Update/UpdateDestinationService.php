@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Property\Application\Destination\Update;
 
+use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Application\Destination\DestinationAuthorizer;
 use App\Property\Domain\Model\Destination\DestinationRepository;
 use App\Security\Application\Action;
@@ -34,7 +35,7 @@ class UpdateDestinationService implements CommandHandler
 
         $this->repository->add($destination);
 
-        assert(null !== $destination->countryId());
+        assert($destination->countryId() instanceof CountryId);
 
         return new UpdateDestinationResponse(
             destinationId: $destination->id(),

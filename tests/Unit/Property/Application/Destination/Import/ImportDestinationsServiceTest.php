@@ -15,7 +15,6 @@ use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Destination\DestinationId;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
-use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Property\Domain\Model\Country\CountryMother;
@@ -36,7 +35,7 @@ class ImportDestinationsServiceTest extends TestCase
 
         $user = UserMother::fromUsernameAndRole('admin', Role::Admin);
 
-        $sut = $this->createSUT($repository, $countryRepository);
+        $sut = $this->createSUT($repository);
 
         $spain = CountryMother::fromName('España');
         $countryRepository->add($spain);
@@ -102,7 +101,7 @@ class ImportDestinationsServiceTest extends TestCase
         $this->assertEquals('1234', $barcelona->externalId()->bioscore());
     }
 
-    private function createSUT(InMemoryDestinationRepository $repository, InMemoryCountryRepository $countryRepository): ImportDestinationsService
+    private function createSUT(InMemoryDestinationRepository $repository): ImportDestinationsService
     {
         $registerService = $this->createMock(RegisterDestinationService::class);
         $registerService->method('__invoke')->willReturn(new RegisterDestinationResponse(DestinationId::generate(), '', CountryId::generate()));

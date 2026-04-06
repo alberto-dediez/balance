@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\Security\Domain\Model\Account\AccountId;
+use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLog;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogFilter;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogId;
@@ -62,7 +65,7 @@ class DoctrineDeliveryLogRepository implements DeliveryLogRepository
             ->setParameter('removed', false, Types::BOOLEAN)
         ;
 
-        if (null !== $filter->accountId) {
+        if ($filter->accountId instanceof AccountId) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('e.accountId', ':accountId'),
@@ -71,7 +74,7 @@ class DoctrineDeliveryLogRepository implements DeliveryLogRepository
             ;
         }
 
-        if (null !== $filter->recipientOrganizationId) {
+        if ($filter->recipientOrganizationId instanceof RecipientOrganizationId) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('e.recipientOrganizationId', ':recipientOrganizationId'),
@@ -80,7 +83,7 @@ class DoctrineDeliveryLogRepository implements DeliveryLogRepository
             ;
         }
 
-        if (null !== $filter->propertyId) {
+        if ($filter->propertyId instanceof PropertyId) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('e.propertyId', ':propertyId'),
@@ -98,7 +101,7 @@ class DoctrineDeliveryLogRepository implements DeliveryLogRepository
             ;
         }
 
-        if (null !== $filter->dateFrom) {
+        if ($filter->dateFrom instanceof \DateTimeImmutable) {
             $qb
                 ->andWhere(
                     $qb->expr()->gte('e.date', ':dateFrom'),
@@ -107,7 +110,7 @@ class DoctrineDeliveryLogRepository implements DeliveryLogRepository
             ;
         }
 
-        if (null !== $filter->dateTo) {
+        if ($filter->dateTo instanceof \DateTimeImmutable) {
             $qb
                 ->andWhere(
                     $qb->expr()->lte('e.date', ':dateTo'),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Application\RecipientOrganization\Update;
 
+use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Application\RecipientOrganization\RecipientOrganizationAuthorizer;
 use App\FoodLoss\Application\RecipientOrganization\Update\UpdateRecipientOrganizationRequest;
 use App\FoodLoss\Application\RecipientOrganization\Update\UpdateRecipientOrganizationService;
@@ -32,7 +33,7 @@ class UpdateRecipientOrganizationServiceTest extends TestCase
 
         $recipientOrganization = RecipientOrganizationMother::from(
             name: 'Original Name',
-            id: (string) \App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId::generate(),
+            id: (string) RecipientOrganizationId::generate(),
             accountId: 'test-account-id',
         );
 

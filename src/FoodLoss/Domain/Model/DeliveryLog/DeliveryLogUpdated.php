@@ -15,14 +15,14 @@ final class DeliveryLogUpdated extends DomainEvent
     protected static string $eventName = 'deliveryLogUpdated';
 
     public function __construct(
-        private DeliveryLogId $deliveryLogId,
-        private \DateTimeImmutable $date,
-        private float $quantity,
-        private DeliveryLogUnit $unit,
-        private string $productType,
-        private string $batch,
-        private RecipientOrganizationId $recipientOrganizationId,
-        private PropertyId $propertyId,
+        private readonly DeliveryLogId $deliveryLogId,
+        private readonly \DateTimeImmutable $date,
+        private readonly float $quantity,
+        private readonly DeliveryLogUnit $unit,
+        private readonly string $productType,
+        private readonly string $batch,
+        private readonly RecipientOrganizationId $recipientOrganizationId,
+        private readonly PropertyId $propertyId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -71,7 +71,7 @@ final class DeliveryLogUpdated extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->deliveryLogId();
+        return $this->deliveryLogId;
     }
 
     public function payload(): array

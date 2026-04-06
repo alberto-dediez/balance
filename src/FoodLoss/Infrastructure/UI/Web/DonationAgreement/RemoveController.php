@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\UI\Web\DonationAgreement;
 
+use App\Security\Application\Action;
 use App\FoodLoss\Application\DonationAgreement\Remove\RemoveDonationAgreementRequest;
 use App\FoodLoss\Application\DonationAgreement\Remove\RemoveDonationAgreementService;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
@@ -27,7 +28,7 @@ class RemoveController extends AbstractController
     ): Response {
         $donationAgreement = $this->getDonationAgreementFromId($donationAgreementId, $donationAgreementRepository);
 
-        $this->denyAccessUnlessGranted(\App\Security\Application\Action::Remove->value, $donationAgreement);
+        $this->denyAccessUnlessGranted(Action::Remove->value, $donationAgreement);
 
         try {
             $removeDonationAgreement(new RemoveDonationAgreementRequest($donationAgreement->id()), $loggedUser());
@@ -35,7 +36,7 @@ class RemoveController extends AbstractController
             $this->addFlash('success', new TranslatableMessage('Se ha eliminado el convenio de donación'));
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->addFlash('danger', new TranslatableMessage('No se ha podido eliminar el convenio de donación'));
         }
 

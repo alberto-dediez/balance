@@ -22,7 +22,7 @@ class RegisterDeliveryLogRequest implements Command
         public ?PropertyId $propertyId = null,
         public ?AccountId $accountId = null,
     ) {
-        if (null === $this->date) {
+        if (!$this->date instanceof \DateTimeImmutable) {
             $this->date = new \DateTimeImmutable('NOW');
         }
     }

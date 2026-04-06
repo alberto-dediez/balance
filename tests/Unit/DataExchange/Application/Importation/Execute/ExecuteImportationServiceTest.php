@@ -133,7 +133,7 @@ class ExecuteImportationServiceTest extends TestCase
 
         $importationType = $this->createMock(ImportationType::class);
         $importationType->method('code')->willReturn('measurements');
-        $importationType->method('commandBuilder')->willReturnCallback(fn(array $data) => new ImportMeasurementRequest(
+        $importationType->method('commandBuilder')->willReturnCallback(fn(array $data): ImportMeasurementRequest => new ImportMeasurementRequest(
             containerId: $data['containerId'] ?? null,
             propertyId: $data['propertyId'] ?? null,
             wasteId: $data['wasteId'] ?? null,

@@ -14,7 +14,7 @@ trait GetDeliveryLogFromIdTrait
     {
         $deliveryLog = $repository->find(new DeliveryLogId($deliveryLogId));
 
-        if (null === $deliveryLog) {
+        if (!$deliveryLog instanceof DeliveryLog) {
             throw $this->createNotFoundException('Registro de entrega no encontrado');
         }
 

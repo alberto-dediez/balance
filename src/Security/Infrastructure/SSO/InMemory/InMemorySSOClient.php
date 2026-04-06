@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 class InMemorySSOClient implements SSOClient
 {
     public function __construct(
-        private string $ssoUrl = '',
+        private readonly string $ssoUrl = '',
         private bool $validToken = true,
     ) {}
 

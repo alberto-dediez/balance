@@ -36,7 +36,7 @@ class DestinationType extends AbstractType
 
         $resolver->setDefaults([
             'choices' => $destinations,
-            'choice_label' => fn(Destination $destination) => sprintf('%s (%s)', $destination->name(), $countryExtension->countryName($destination->countryId())),
+            'choice_label' => fn(Destination $destination): string => sprintf('%s (%s)', $destination->name(), $countryExtension->countryName($destination->countryId())),
             'class' => Destination::class,
         ]);
     }

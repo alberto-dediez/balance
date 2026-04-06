@@ -14,9 +14,9 @@ final class ReasonTranslated extends DomainEvent
     protected static string $eventName = 'reasonTranslated';
 
     public function __construct(
-        private ReasonId $reasonId,
-        private string $description,
-        private Locale $locale,
+        private readonly ReasonId $reasonId,
+        private readonly string $description,
+        private readonly Locale $locale,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -40,7 +40,7 @@ final class ReasonTranslated extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->reasonId();
+        return $this->reasonId;
     }
 
     public function payload(): array

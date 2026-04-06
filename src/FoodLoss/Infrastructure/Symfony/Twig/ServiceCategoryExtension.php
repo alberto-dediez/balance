@@ -29,7 +29,7 @@ class ServiceCategoryExtension extends AbstractExtension
         if (!isset($this->serviceCategories[(string) $serviceCategoryId])) {
             $serviceCategory = $this->serviceCategoryRepository->find($serviceCategoryId);
 
-            if (null !== $serviceCategory) {
+            if ($serviceCategory instanceof ServiceCategory) {
                 $this->serviceCategories[(string) $serviceCategoryId] = $serviceCategory;
             }
         }

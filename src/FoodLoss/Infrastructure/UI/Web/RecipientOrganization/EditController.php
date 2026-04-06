@@ -52,7 +52,7 @@ class EditController extends AbstractController
         try {
             $form = $this->createForm(UpdateRecipientOrganizationType::class, $recipientOrganizationRequest);
 
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateRecipientOrganization, $loggedUser) {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateRecipientOrganization, $loggedUser): void {
                 $updateRequest = $form->getData();
 
                 $updateRecipientOrganization($updateRequest, $loggedUser());

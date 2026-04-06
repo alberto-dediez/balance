@@ -45,7 +45,7 @@ class ServiceCategoryMother
     public static function random(): ServiceCategory
     {
         return self::from(
-            name: 'serviceCategory-' . rand(100, 999),
+            name: 'serviceCategory-' . random_int(100, 999),
             id: (string) ServiceCategoryId::generate(),
         );
     }

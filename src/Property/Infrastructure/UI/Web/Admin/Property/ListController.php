@@ -33,7 +33,7 @@ class ListController extends AbstractController
         $this->denyAccessUnlessGranted(Action::Admin->value, new Property(PropertyId::generate()));
 
         try {
-            [$filter, $form] = $this->filter($request, fn() => new ListPropertiesRequest(), AdminListPropertiesType::class);
+            [$filter, $form] = $this->filter($request, fn(): ListPropertiesRequest => new ListPropertiesRequest(), AdminListPropertiesType::class);
 
             $response = $listProperties($filter, $loggedUser());
         } catch (UnauthorizedActionException $e) {

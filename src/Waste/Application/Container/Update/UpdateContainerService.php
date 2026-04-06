@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Waste\Application\Container\Update;
 
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -47,8 +49,8 @@ class UpdateContainerService implements CommandHandler
 
         $this->containerRepository->add($container);
 
-        assert(null !== $container->wasteId());
-        assert(null !== $container->wasteManagerId());
+        assert($container->wasteId() instanceof WasteId);
+        assert($container->wasteManagerId() instanceof WasteManagerId);
 
         return new UpdateContainerResponse(
             containerId: $container->id(),

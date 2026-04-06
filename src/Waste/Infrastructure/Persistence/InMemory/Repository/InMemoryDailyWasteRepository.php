@@ -104,7 +104,7 @@ class InMemoryDailyWasteRepository implements DailyWasteRepository
                 count($filter->properties) > 0
                 && (
                     null == $dailyWaste->propertyId()
-                    || false === array_reduce($filter->properties, fn(bool $carry, $value) => $carry || $value->equals($dailyWaste->propertyId()), false)
+                    || false === array_reduce($filter->properties, fn(bool $carry, $value): bool => $carry || $value->equals($dailyWaste->propertyId()), false)
                 )
             ) {
                 continue;

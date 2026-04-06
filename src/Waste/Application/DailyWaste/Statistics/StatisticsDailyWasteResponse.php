@@ -35,7 +35,7 @@ class StatisticsDailyWasteResponse
     public function dates(): array
     {
         return array_map(
-            fn(ByDate $element) => $element->date,
+            fn(ByDate $element): \DateTimeImmutable => $element->date,
             $this->byDate,
         );
     }
@@ -44,7 +44,7 @@ class StatisticsDailyWasteResponse
     public function months(): array
     {
         return array_map(
-            fn(ByMonth $element) => $element->month,
+            fn(ByMonth $element): \DateTimeImmutable => $element->month,
             $this->byMonth,
         );
     }
@@ -52,25 +52,25 @@ class StatisticsDailyWasteResponse
     /** @return Purpose[] */
     public function purposes(): array
     {
-        return array_map(fn(ByPurpose $element) => $element->purpose, $this->byPurpose);
+        return array_map(fn(ByPurpose $element): Purpose => $element->purpose, $this->byPurpose);
     }
 
     /** @return Waste[] */
     public function wastes(): array
     {
-        return array_map(fn(ByWaste $element) => $element->waste, $this->byWaste);
+        return array_map(fn(ByWaste $element): Waste => $element->waste, $this->byWaste);
     }
 
     /** @return WasteManager[] */
     public function wasteManagers(): array
     {
-        return array_map(fn(ByWasteManager $element) => $element->wasteManager, $this->byWasteManager);
+        return array_map(fn(ByWasteManager $element): WasteManager => $element->wasteManager, $this->byWasteManager);
     }
 
     /** @return Property[] */
     public function properties(): array
     {
-        return array_map(fn(ByProperty $element) => $element->property, $this->byProperty);
+        return array_map(fn(ByProperty $element): Property => $element->property, $this->byProperty);
     }
 
     /** @return float[][] */
@@ -83,7 +83,7 @@ class StatisticsDailyWasteResponse
         }
 
         foreach ($this->byProperty as $property) {
-            $result[] = array_map(fn(ByMonth $byMonth) => $byMonth->load, $property->months);
+            $result[] = array_map(fn(ByMonth $byMonth): float => $byMonth->load, $property->months);
         }
 
         return $result;

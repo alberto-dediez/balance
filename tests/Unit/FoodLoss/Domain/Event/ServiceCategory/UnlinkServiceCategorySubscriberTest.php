@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Domain\Event\ServiceCategory;
 
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Event\ServiceCategory\UnlinkServiceCategorySubscriber;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRemoved;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
@@ -31,7 +32,7 @@ class UnlinkServiceCategorySubscriberTest extends TestCase
     {
         $sut = new UnlinkServiceCategorySubscriber(CriticalPointRepositoryMother::inMemory());
 
-        $this->assertFalse($sut->isSubscribedTo(new CriticalPointRemoved(\App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId::generate())));
+        $this->assertFalse($sut->isSubscribedTo(new CriticalPointRemoved(CriticalPointId::generate())));
     }
 
     public function testHandleUnlinksServiceCategoryFromAllLinkedCriticalPoints(): void

@@ -28,7 +28,7 @@ final class CriticalPointAuthorizer extends AbstractAuthorizer
 
         $subjectAccountId = $subject->accountId();
 
-        return $user->hasRole(Role::Owner) && $user->accountId() instanceof AccountId && null !== $subjectAccountId && $user->accountId()->equals($subjectAccountId);
+        return $user->hasRole(Role::Owner) && $user->accountId() instanceof AccountId && $subjectAccountId instanceof AccountId && $user->accountId()->equals($subjectAccountId);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
@@ -43,7 +43,7 @@ final class CriticalPointAuthorizer extends AbstractAuthorizer
 
         $subjectAccountId = $subject->accountId();
 
-        return null !== $subjectAccountId && $user->accountId()->equals($subjectAccountId);
+        return $subjectAccountId instanceof AccountId && $user->accountId()->equals($subjectAccountId);
     }
 
     protected function canRemove(mixed $subject, User $user): bool

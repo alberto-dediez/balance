@@ -24,17 +24,19 @@ class RemoveAction implements BulkAction
 
     public function commands(BulkRequest $request): array
     {
-        if (0 == count($request->elements)) {
+        if (0 === count($request->elements)) {
             return [];
         }
 
         $commands = [];
 
         foreach ($request->elements as $action) {
-            if (null === $action || null === $action->id()) {
+            if (null === $action) {
                 continue;
             }
-
+            if (null === $action->id()) {
+                continue;
+            }
             $commands[] = new RemoveActionRequest(
                 actionId: $action->id(),
             );

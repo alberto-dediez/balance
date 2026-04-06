@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Application\DonationAgreement\Register;
 
+use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
 use App\FoodLoss\Application\DonationAgreement\DonationAgreementAuthorizer;
 use App\FoodLoss\Application\DonationAgreement\DonationAgreementUploader;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreement;
@@ -33,11 +36,11 @@ class RegisterDonationAgreementService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat(new DonationAgreement(id: $id, accountId: $request->accountId), SecurityAction::Register, $user);
 
-        assert(null !== $request->recipientOrganizationId);
-        assert(null !== $request->accountId);
-        assert(null !== $request->startDate);
-        assert(null !== $request->expirationDate);
-        assert(null !== $request->uploadedBy);
+        assert($request->recipientOrganizationId instanceof RecipientOrganizationId);
+        assert($request->accountId instanceof AccountId);
+        assert($request->startDate instanceof \DateTimeImmutable);
+        assert($request->expirationDate instanceof \DateTimeImmutable);
+        assert($request->uploadedBy instanceof UserId);
 
         $path = $this->fileUploader->upload($request->temporaryFilePath, $request->fileExtension, $request->accountId, $request->recipientOrganizationId);
 

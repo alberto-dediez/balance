@@ -30,7 +30,7 @@ class RegisterController extends AbstractController
         $form = $this->createForm(RegisterActionType::class);
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerAction, $loggedUser) {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerAction, $loggedUser): true {
                 $registerRequest = $form->getData();
 
                 $response = $registerAction($registerRequest, $loggedUser());

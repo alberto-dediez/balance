@@ -33,7 +33,7 @@ class ListController extends AbstractController
         $this->denyAccessUnlessGranted(Action::List->value, new Country(CountryId::generate()));
 
         try {
-            [$filter, $form] = $this->filter($request, fn() => new ListCountriesRequest(), AdminListCountriesType::class);
+            [$filter, $form] = $this->filter($request, fn(): ListCountriesRequest => new ListCountriesRequest(), AdminListCountriesType::class);
 
             $response = $listCountries($filter, $loggedUser());
         } catch (UnauthorizedActionException $e) {

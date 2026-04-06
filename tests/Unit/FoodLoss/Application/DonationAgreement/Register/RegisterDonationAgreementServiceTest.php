@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Application\DonationAgreement\Register;
 
+use App\Security\Domain\Model\User\Role;
 use App\FoodLoss\Application\DonationAgreement\DonationAgreementAuthorizer;
 use App\FoodLoss\Application\DonationAgreement\DonationAgreementUploader;
 use App\FoodLoss\Application\DonationAgreement\Register\RegisterDonationAgreementRequest;
@@ -33,7 +34,7 @@ class RegisterDonationAgreementServiceTest extends TestCase
         $repository = DonationAgreementRepositoryMother::inMemory();
         $sut = $this->createSUT($repository);
 
-        $user = UserMother::fromUsernameAndRoleAndAccount('owner', \App\Security\Domain\Model\User\Role::Owner, new AccountId('account-test'));
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-test'));
 
         $recipientOrganizationId = RecipientOrganizationId::generate();
 
@@ -66,7 +67,7 @@ class RegisterDonationAgreementServiceTest extends TestCase
         $fileUploader = new class implements DonationAgreementUploader {
             public function upload(string $sourcePath, string $extension, AccountId $accountId, RecipientOrganizationId $recipientOrganizationId): string
             {
-                return 'donation_agreements/' . (string) $accountId . '/test.' . $extension;
+                return 'donation_agreements/' . $accountId . '/test.' . $extension;
             }
         };
 

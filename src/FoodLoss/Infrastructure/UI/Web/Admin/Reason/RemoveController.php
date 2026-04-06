@@ -33,7 +33,7 @@ class RemoveController extends AbstractController
             $this->addFlash('success', new TranslatableMessage('Se ha eliminado el motivo {reason}', ['{reason}' => $reason->description()]));
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->addFlash('danger', new TranslatableMessage('No se ha podido eliminar el motivo {reason}', ['{reason}' => $reason->description()]));
         }
 

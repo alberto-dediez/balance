@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Property\Domain\Model\Destination;
 
+use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Destination\DestinationFilter;
 use App\Property\Domain\Model\Destination\DestinationRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -51,7 +52,7 @@ abstract class DestinationRepositoryTest extends KernelTestCase
         $destination = DestinationMother::random();
 
         $countryId = $destination->countryId();
-        assert(null !== $countryId);
+        assert($countryId instanceof CountryId);
 
         $this->assertNull($repository->findByNameAndCountry($destination->name(), $countryId));
 

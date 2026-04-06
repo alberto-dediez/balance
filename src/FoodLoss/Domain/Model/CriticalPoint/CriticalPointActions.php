@@ -24,7 +24,7 @@ final class CriticalPointActions extends ArrayCollection
     public function ids(): array
     {
         return array_map(
-            fn(CriticalPointActionLink $link) => $link->actionId(),
+            fn(CriticalPointActionLink $link): ActionId => $link->actionId(),
             $this->toArray(),
         );
     }
@@ -53,10 +53,10 @@ final class CriticalPointActions extends ArrayCollection
     public function byPriority(Priority $priority): array
     {
         return array_map(
-            fn(CriticalPointActionLink $link) => $link->actionId(),
+            fn(CriticalPointActionLink $link): ActionId => $link->actionId(),
             array_values(array_filter(
                 $this->toArray(),
-                fn(CriticalPointActionLink $link) => $link->priority() === $priority,
+                fn(CriticalPointActionLink $link): bool => $link->priority() === $priority,
             )),
         );
     }

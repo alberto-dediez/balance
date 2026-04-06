@@ -30,7 +30,7 @@ class ListController extends AbstractController
         $account = $loggedAccount();
         $user = $loggedUser();
 
-        [$filter, $form] = $this->filter($request, fn() => new ListDailyWastesRequest(
+        [$filter, $form] = $this->filter($request, fn(): ListDailyWastesRequest => new ListDailyWastesRequest(
             accountId: $account?->id(),
         ), ListDailyWastesType::class);
 

@@ -41,7 +41,7 @@ class ListController extends AbstractController
         }
 
         try {
-            [$filter, $form] = $this->filter($request, fn() => new ListPropertiesRequest(
+            [$filter, $form] = $this->filter($request, fn(): ListPropertiesRequest => new ListPropertiesRequest(
                 accountId: $account->id(),
             ), ListPropertiesType::class);
 

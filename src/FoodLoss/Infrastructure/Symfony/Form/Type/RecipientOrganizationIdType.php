@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Symfony\Form\Type;
 
+use App\Security\Domain\Model\Account\Account;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationFilter;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationRepository;
@@ -24,7 +25,7 @@ class RecipientOrganizationIdType extends AggregateRootIdType
 
         $recipientOrganizations = $this->repository->findByFilter(
             new RecipientOrganizationFilter(
-                accountId: null === $account ? null : $account->id(),
+                accountId: $account instanceof Account ? $account->id() : null,
             ),
         );
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\QrCode;
 
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Waste\Domain\Model\Container\Container;
@@ -27,9 +29,9 @@ class TcpdfQrPdfGenerator implements QrPdfGenerator
     public function generate(Container $container, QrCode $qrCode): string
     {
         $wasteId = $container->wasteId();
-        assert(null !== $wasteId);
+        assert($wasteId instanceof WasteId);
         $propertyId = $container->propertyId();
-        assert(null !== $propertyId);
+        assert($propertyId instanceof PropertyId);
 
         $waste = $this->wasteRepository->find($wasteId);
         $property = $this->propertyRepository->find($propertyId);

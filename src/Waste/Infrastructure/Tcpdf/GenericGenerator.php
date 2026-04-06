@@ -93,7 +93,7 @@ trait GenericGenerator
         $crawler = new Crawler($html);
 
         foreach ($crawler->filter('body > *') as $element) {
-            assert(null !== $element->ownerDocument);
+            assert($element->ownerDocument instanceof \DOMDocument);
             $htmlElement = $element->ownerDocument->saveHTML($element);
 
             assert(is_string($htmlElement));

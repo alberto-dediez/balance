@@ -11,11 +11,11 @@ use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
 
-final class RemoveDeliveryLogsOnRecipientOrganizationRemovedSubscriber implements DomainEventSubscriber
+final readonly class RemoveDeliveryLogsOnRecipientOrganizationRemovedSubscriber implements DomainEventSubscriber
 {
     use RegisterTrait;
 
-    public function __construct(private readonly DeliveryLogRepository $deliveryLogRepository)
+    public function __construct(private DeliveryLogRepository $deliveryLogRepository)
     {
         $this->register();
     }

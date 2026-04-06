@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Domain\Model\RecipientOrganization;
 
+use App\Shared\Domain\Event\DomainEvent;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\AggregateRoot;
 
@@ -14,7 +15,7 @@ class RecipientOrganization implements \Stringable
     /** @var string[] */
     private array $pickupTypes = [];
 
-    /** @param array<\App\Shared\Domain\Event\DomainEvent> $events */
+    /** @param array<DomainEvent> $events */
     public function __construct(
         private RecipientOrganizationId $id,
         private string $name = '',
@@ -77,7 +78,7 @@ class RecipientOrganization implements \Stringable
     /** @return PickupType[] */
     public function pickupTypes(): array
     {
-        return array_map(fn(string $value) => PickupType::from($value), $this->pickupTypes);
+        return array_map(PickupType::from(...), $this->pickupTypes);
     }
 
     public function accountId(): ?AccountId

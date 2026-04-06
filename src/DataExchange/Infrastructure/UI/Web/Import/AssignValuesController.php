@@ -35,7 +35,7 @@ class AssignValuesController extends AbstractController
 
         $definitions = $importationType->assignValueDefinitions();
 
-        $notConfiguredFields = array_filter(array_keys($definitions), fn(int|string $field) => !$importation->configurationForField($field) instanceof ImportationColumnConfiguration);
+        $notConfiguredFields = array_filter(array_keys($definitions), fn(int|string $field): bool => !$importation->configurationForField($field) instanceof ImportationColumnConfiguration);
 
         if (0 === count($notConfiguredFields)) {
             return $this->redirectToRoute('import_finish', ['code' => $code, 'id' => $importation->id()]);

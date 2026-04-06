@@ -13,7 +13,7 @@ final class ReasonRemoved extends DomainEvent
     protected static string $eventName = 'reasonRemoved';
 
     public function __construct(
-        private ReasonId $reasonId,
+        private readonly ReasonId $reasonId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -27,7 +27,7 @@ final class ReasonRemoved extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->reasonId();
+        return $this->reasonId;
     }
 
     public function payload(): array

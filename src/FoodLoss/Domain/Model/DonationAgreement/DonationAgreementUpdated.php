@@ -15,12 +15,12 @@ final class DonationAgreementUpdated extends DomainEvent
     protected static string $eventName = 'donationAgreementUpdated';
 
     public function __construct(
-        private DonationAgreementId $donationAgreementId,
-        private RecipientOrganizationId $recipientOrganizationId,
-        private \DateTimeImmutable $startDate,
-        private \DateTimeImmutable $expirationDate,
-        private UserId $uploadedBy,
-        private string $path,
+        private readonly DonationAgreementId $donationAgreementId,
+        private readonly RecipientOrganizationId $recipientOrganizationId,
+        private readonly \DateTimeImmutable $startDate,
+        private readonly \DateTimeImmutable $expirationDate,
+        private readonly UserId $uploadedBy,
+        private readonly string $path,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -59,7 +59,7 @@ final class DonationAgreementUpdated extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->donationAgreementId();
+        return $this->donationAgreementId;
     }
 
     public function payload(): array

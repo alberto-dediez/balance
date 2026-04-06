@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Property\Application\Destination\Import;
 
+use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Application\Destination\DestinationAuthorizer;
 use App\Property\Application\Destination\Register\RegisterDestinationRequest;
 use App\Property\Application\Destination\Register\RegisterDestinationService;
@@ -36,7 +37,7 @@ class ImportDestinationsService
         $destinationsMatch = $this->matchDestinations($request->destinations, $user);
 
         $totalResults = array_sum(
-            array_map(fn(DestinationResponse $response) => $response->destinationId instanceof DestinationId ? 1 : 0, $destinationsMatch),
+            array_map(fn(DestinationResponse $response): int => $response->destinationId instanceof DestinationId ? 1 : 0, $destinationsMatch),
         );
 
         return new ImportDestinationsResponse($destinationsMatch, $totalResults);
@@ -65,7 +66,7 @@ class ImportDestinationsService
                 $destinationMatch = $this->findByNameAndCountry($request);
 
                 if ($destinationMatch instanceof Destination) {
-                    assert(null !== $destinationMatch->countryId());
+                    assert($destinationMatch->countryId() instanceof CountryId);
                     $this->updateDestination->__invoke(new UpdateDestinationRequest(
                         destinationId: $destinationMatch->id(),
                         name: $destinationMatch->name(),

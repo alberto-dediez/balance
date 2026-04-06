@@ -44,7 +44,7 @@ class EditController extends AbstractController
         try {
             $form = $this->createForm(UpdateActionType::class, $actionRequest);
 
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateAction, $loggedUser) {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateAction, $loggedUser): void {
                 $actionRequest = $form->getData();
 
                 $updateAction($actionRequest, $loggedUser());

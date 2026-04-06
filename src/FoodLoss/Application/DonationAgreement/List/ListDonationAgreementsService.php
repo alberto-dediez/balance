@@ -13,7 +13,7 @@ use App\Security\Domain\Model\User\User;
 
 class ListDonationAgreementsService
 {
-    public function __construct(private DonationAgreementRepository $repository, private DonationAgreementAuthorizer $authorizer) {}
+    public function __construct(private readonly DonationAgreementRepository $repository, private readonly DonationAgreementAuthorizer $authorizer) {}
 
     public function __invoke(ListDonationAgreementsRequest $request, User $user): ListDonationAgreementsResponse
     {

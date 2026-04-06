@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Property\Infrastructure\UI\Web\Admin\Property\Bulk;
 
+use App\Security\Domain\Model\Account\AccountId;
 use App\Property\Application\Property\Update\UpdatePropertyRequest;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkAction;
@@ -57,7 +58,7 @@ class AssignAccount implements BulkAction
     {
         assert($command instanceof UpdatePropertyRequest);
 
-        $assignAccount = null !== $command->accountId;
+        $assignAccount = $command->accountId instanceof AccountId;
 
         return $assignAccount
             ? new TranslatableMessage('Se ha asignado la cuenta seleccionada a la propiedad {id}', ['{id}' => $command->propertyId])

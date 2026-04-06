@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
+use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointFilter;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
@@ -90,7 +92,7 @@ class DoctrineCriticalPointRepository implements CriticalPointRepository
             ;
         }
 
-        if (null !== $filter->serviceCategoryId) {
+        if ($filter->serviceCategoryId instanceof ServiceCategoryId) {
             $qb
                 ->join('e.serviceCategories', 'sc')
                 ->andWhere(
@@ -100,7 +102,7 @@ class DoctrineCriticalPointRepository implements CriticalPointRepository
             ;
         }
 
-        if (null !== $filter->actionId) {
+        if ($filter->actionId instanceof ActionId) {
             $qb->join('e.actions', 'a')
                ->andWhere('a.actionId = :actionId')
                ->setParameter('actionId', (string) $filter->actionId);

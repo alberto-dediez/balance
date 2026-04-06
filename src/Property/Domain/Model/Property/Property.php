@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Property\Domain\Model\Property;
 
+use App\Shared\Domain\Event\DomainEvent;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\AggregateRoot;
 
@@ -12,7 +13,7 @@ class Property implements \Stringable
     use AggregateRoot;
 
     /**
-     * @param array<\App\Shared\Domain\Event\DomainEvent> $events
+     * @param array<DomainEvent> $events
      */
     public function __construct(
         private PropertyId $id,

@@ -40,7 +40,7 @@ class BrandExtension extends AbstractExtension
         if (!isset($this->brands[(string) $brandId])) {
             $brand = $this->brandRepository->find($brandId);
 
-            if (null !== $brand) {
+            if ($brand instanceof Brand) {
                 $this->brands[(string) $brandId] = $brand;
             }
         }

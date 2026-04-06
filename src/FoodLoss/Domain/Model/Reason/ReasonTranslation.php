@@ -11,8 +11,8 @@ class ReasonTranslation implements Translation
 {
     public function __construct(
         private string $description,
-        private Locale $locale,
-        private Reason $translatable,
+        private readonly Locale $locale,
+        private readonly Reason $translatable,
     ) {}
 
     public function description(): string

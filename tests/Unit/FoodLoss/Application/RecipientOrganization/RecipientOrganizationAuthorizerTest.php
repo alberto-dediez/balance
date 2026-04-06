@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Application\RecipientOrganization;
 
+use App\Security\Domain\Model\Account\AccountId;
 use App\FoodLoss\Application\RecipientOrganization\RecipientOrganizationAuthorizer;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganization;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
@@ -17,7 +18,7 @@ class RecipientOrganizationAuthorizerTest extends TestCase
 {
     public function testOwnerCanListRecipientOrganizations(): void
     {
-        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new \App\Security\Domain\Model\Account\AccountId('account-id-test'));
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
         $subject = RecipientOrganizationMother::fromAccount('account-id-test');
 
         $this->assertTrue($this->createSUT()->canDoThat($subject, Action::List, $user));
@@ -25,7 +26,7 @@ class RecipientOrganizationAuthorizerTest extends TestCase
 
     public function testOwnerCanRegisterRecipientOrganizations(): void
     {
-        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new \App\Security\Domain\Model\Account\AccountId('account-id-test'));
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
         $subject = RecipientOrganizationMother::fromAccount('account-id-test');
 
         $this->assertTrue($this->createSUT()->canDoThat($subject, Action::Register, $user));
@@ -33,7 +34,7 @@ class RecipientOrganizationAuthorizerTest extends TestCase
 
     public function testOwnerCanEditRecipientOrganizationFromSameAccount(): void
     {
-        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new \App\Security\Domain\Model\Account\AccountId('account-id-test'));
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
         $subject = RecipientOrganizationMother::from(name: 'Test', id: (string) RecipientOrganizationId::generate(), accountId: 'account-id-test');
 
         $this->assertTrue($this->createSUT()->canDoThat($subject, Action::Edit, $user));
@@ -41,7 +42,7 @@ class RecipientOrganizationAuthorizerTest extends TestCase
 
     public function testOwnerCannotEditRecipientOrganizationFromOtherAccount(): void
     {
-        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new \App\Security\Domain\Model\Account\AccountId('account-id-test'));
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
         $subject = RecipientOrganizationMother::from(name: 'Test', id: (string) RecipientOrganizationId::generate(), accountId: 'other-account-id');
 
         $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Edit, $user));
@@ -49,7 +50,7 @@ class RecipientOrganizationAuthorizerTest extends TestCase
 
     public function testOwnerCanRemoveRecipientOrganizationFromSameAccount(): void
     {
-        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new \App\Security\Domain\Model\Account\AccountId('account-id-test'));
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
         $subject = RecipientOrganizationMother::from(name: 'Test', id: (string) RecipientOrganizationId::generate(), accountId: 'account-id-test');
 
         $this->assertTrue($this->createSUT()->canDoThat($subject, Action::Remove, $user));

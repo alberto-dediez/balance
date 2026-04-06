@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\InMemory\Repository;
 
+use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\Reason\Reason;
 use App\FoodLoss\Domain\Model\Reason\ReasonFilter;
 use App\FoodLoss\Domain\Model\Reason\ReasonId;
@@ -64,7 +65,7 @@ class InMemoryReasonRepository implements ReasonRepository
             }
 
             if (
-                !empty($filter->priority)
+                $filter->priority instanceof Priority
                 && !str_contains(strtolower($reason->priority()->value), strtolower($filter->priority->value))
             ) {
                 continue;

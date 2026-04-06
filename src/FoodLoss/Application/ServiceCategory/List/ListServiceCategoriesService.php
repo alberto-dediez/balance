@@ -13,7 +13,7 @@ use App\Security\Domain\Model\User\User;
 
 class ListServiceCategoriesService
 {
-    public function __construct(private ServiceCategoryRepository $repository, private ServiceCategoryAuthorizer $authorizer) {}
+    public function __construct(private readonly ServiceCategoryRepository $repository, private readonly ServiceCategoryAuthorizer $authorizer) {}
 
     public function __invoke(ListServiceCategoriesRequest $request, User $user): ListServiceCategoriesResponse
     {

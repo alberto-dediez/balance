@@ -13,7 +13,7 @@ final class ServiceCategoryRemoved extends DomainEvent
     protected static string $eventName = 'serviceCategoryRemoved';
 
     public function __construct(
-        private ServiceCategoryId $serviceCategoryId,
+        private readonly ServiceCategoryId $serviceCategoryId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -27,7 +27,7 @@ final class ServiceCategoryRemoved extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->serviceCategoryId();
+        return $this->serviceCategoryId;
     }
 
     public function payload(): array

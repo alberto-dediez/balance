@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Domain\Model\CriticalPoint;
 
+use App\Shared\Domain\Event\DomainEvent;
 use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
@@ -21,7 +22,7 @@ class CriticalPoint implements \Stringable
     private bool $transformationPossible = false;
     private bool $compostingPossible = false;
 
-    /** @param array<\App\Shared\Domain\Event\DomainEvent> $events */
+    /** @param array<DomainEvent> $events */
     public function __construct(
         private CriticalPointId $id,
         private string $name = '',
@@ -426,6 +427,6 @@ class CriticalPoint implements \Stringable
 
     public function __toString(): string
     {
-        return (string) $this->name();
+        return $this->name();
     }
 }

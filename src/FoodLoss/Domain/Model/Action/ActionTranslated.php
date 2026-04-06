@@ -14,9 +14,9 @@ final class ActionTranslated extends DomainEvent
     protected static string $eventName = 'actionTranslated';
 
     public function __construct(
-        private ActionId $actionId,
-        private string $description,
-        private Locale $locale,
+        private readonly ActionId $actionId,
+        private readonly string $description,
+        private readonly Locale $locale,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -40,7 +40,7 @@ final class ActionTranslated extends DomainEvent
 
     public function aggregateRootId(): AggregateRootId
     {
-        return $this->actionId();
+        return $this->actionId;
     }
 
     public function payload(): array

@@ -31,6 +31,7 @@ The project follows a Hexagonal Architecture (Port & Adapters) with Domain-Drive
 
 - **Style Precedence:** The coding style and commenting patterns found in `src/Shared` and `src/Security` Bounded Contexts (BCs) MUST be treated as the primary reference. Mirror their structure and conventions in other parts of the codebase.
 - **Strict Typing:** Every PHP file must begin with `declare(strict_types=1);`.
+- **Import Classes:** Always import classes with `use` statements. Never use fully qualified class names inline (e.g. `new App\Foo\Bar()` or `App\Foo\Bar::CONST`). Exception: global namespace classes (`\DateTimeImmutable`, `\Exception`, `\Throwable`, etc.) may keep the leading backslash without a `use` statement.
 - **PHPDoc:** Use PHPDoc comments primarily when native type hints are insufficient, particularly for specifying types within arrays (e.g., `/** @var User[] $users */`).
 - **DDD Patterns:** Use Aggregate Roots, Value Objects, Domain Events, and Repositories as demonstrated in the `Shared` and `Security` BCs.
     - Entities should use the `AggregateRoot` trait from `App\Shared\Domain\Model\AggregateRoot`.

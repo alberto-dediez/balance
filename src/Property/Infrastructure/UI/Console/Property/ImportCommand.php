@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Property\Infrastructure\UI\Console\Property;
 
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Application\Brand\Import\BrandRequest;
 use App\Property\Application\Brand\Import\ImportBrandsRequest;
 use App\Property\Application\Brand\Import\ImportBrandsService;
@@ -113,7 +114,7 @@ class ImportCommand extends Command
             }
         }
 
-        if (null === $this->fieldExtractor) {
+        if (!$this->fieldExtractor instanceof FieldExtractor) {
             $io->error(sprintf('No se ha encontrado configuración para la fuente "%s".', $this->source->value));
 
             return Command::FAILURE;
@@ -160,7 +161,7 @@ class ImportCommand extends Command
 
     protected function categories(SymfonyStyle $io, string $filename, bool $createIfNotExists): void
     {
-        if (null === $this->fieldExtractor || !$this->fieldExtractor->hasField(Field::InfoCategoryName)) {
+        if (!$this->fieldExtractor instanceof FieldExtractor || !$this->fieldExtractor->hasField(Field::InfoCategoryName)) {
             $io->error('No se puede importar categorias para esta fuente.');
 
             return;
@@ -185,7 +186,7 @@ class ImportCommand extends Command
             $categoryId = $this->fieldExtractor->hasField(Field::InfoCategoryId) ? (string) $this->fieldExtractor->extract(Field::InfoCategoryId, $row) : md5($categoryName);
 
             if (!isset($categories[$categoryId])) {
-                if (null === $this->source) {
+                if (!$this->source instanceof ExternalSource) {
                     return;
                 }
                 $categories[$categoryId] = new CategoryRequest(
@@ -213,7 +214,7 @@ class ImportCommand extends Command
                 'Id', 'Nombre', 'Source',
             ]);
 
-            if (null === $this->source) {
+            if (!$this->source instanceof ExternalSource) {
                 fclose($outputFile);
 
                 return;
@@ -247,7 +248,7 @@ class ImportCommand extends Command
 
     protected function brands(SymfonyStyle $io, string $filename, bool $createIfNotExists): void
     {
-        if (null === $this->fieldExtractor || !$this->fieldExtractor->hasField(Field::InfoBrandName)) {
+        if (!$this->fieldExtractor instanceof FieldExtractor || !$this->fieldExtractor->hasField(Field::InfoBrandName)) {
             $io->error('No se puede importar marcas para esta fuente.');
 
             return;
@@ -272,7 +273,7 @@ class ImportCommand extends Command
             $brandId = $this->fieldExtractor->hasField(Field::InfoBrandId) ? (string) $this->fieldExtractor->extract(Field::InfoBrandId, $row) : md5($brandName);
 
             if (!isset($brands[$brandId])) {
-                if (null === $this->source) {
+                if (!$this->source instanceof ExternalSource) {
                     return;
                 }
                 $brands[$brandId] = new BrandRequest(
@@ -300,7 +301,7 @@ class ImportCommand extends Command
                 'Id', 'Nombre', 'Source',
             ]);
 
-            if (null === $this->source) {
+            if (!$this->source instanceof ExternalSource) {
                 fclose($outputFile);
 
                 return;
@@ -334,7 +335,7 @@ class ImportCommand extends Command
 
     protected function countries(SymfonyStyle $io, string $filename, bool $createIfNotExists): void
     {
-        if (null === $this->fieldExtractor || !$this->fieldExtractor->hasField(Field::InfoCountryName)) {
+        if (!$this->fieldExtractor instanceof FieldExtractor || !$this->fieldExtractor->hasField(Field::InfoCountryName)) {
             $io->error('No se puede importar paises para esta fuente.');
 
             return;
@@ -360,7 +361,7 @@ class ImportCommand extends Command
             $countryId = $this->fieldExtractor->hasField(Field::InfoCountryId) ? (string) $this->fieldExtractor->extract(Field::InfoCountryId, $row) : md5($countryName);
 
             if (!isset($countries[$countryId])) {
-                if (null === $this->source) {
+                if (!$this->source instanceof ExternalSource) {
                     return;
                 }
                 $countries[$countryId] = new CountryRequest(
@@ -389,7 +390,7 @@ class ImportCommand extends Command
                 'Id', 'Nombre', 'ISO', 'Source',
             ]);
 
-            if (null === $this->source) {
+            if (!$this->source instanceof ExternalSource) {
                 fclose($outputFile);
 
                 return;
@@ -427,7 +428,7 @@ class ImportCommand extends Command
      */
     private function getCountryId(array $row): ?CountryId
     {
-        if (null === $this->fieldExtractor || null === $this->source) {
+        if (!$this->fieldExtractor instanceof FieldExtractor || !$this->source instanceof ExternalSource) {
             return null;
         }
 
@@ -460,7 +461,7 @@ class ImportCommand extends Command
 
     protected function destinations(SymfonyStyle $io, string $filename, bool $createIfNotExists): void
     {
-        if (null === $this->fieldExtractor || null === $this->source || !$this->fieldExtractor->hasField(Field::InfoDestinationName)) {
+        if (!$this->fieldExtractor instanceof FieldExtractor || !$this->source instanceof ExternalSource || !$this->fieldExtractor->hasField(Field::InfoDestinationName)) {
             $io->error('No se puede importar destinos para esta fuente.');
 
             return;
@@ -543,7 +544,7 @@ class ImportCommand extends Command
 
     protected function properties(SymfonyStyle $io, string $filename, bool $createIfNotExists, int $offset = 0): void
     {
-        if (null === $this->fieldExtractor || null === $this->source) {
+        if (!$this->fieldExtractor instanceof FieldExtractor || !$this->source instanceof ExternalSource) {
             $io->error('No se puede importar propiedades para esta fuente.');
 
             return;
@@ -602,7 +603,7 @@ class ImportCommand extends Command
 
             $propertyId = $response->propertyId;
 
-            if (null === $propertyId && $createIfNotExists) {
+            if (!$propertyId instanceof PropertyId && $createIfNotExists) {
                 $registerResponse = $this->registerPropertyService->__invoke(new RegisterPropertyRequest(
                     name: $propertyName,
                     info: $propertyInfo,
@@ -610,11 +611,13 @@ class ImportCommand extends Command
                 ), UserMother::systemUser());
 
                 $propertyId = $registerResponse->propertyId;
-            } elseif (null === $propertyId) {
+            } elseif (!$propertyId instanceof PropertyId) {
+                assert(!empty($outputFile));
+
                 fputcsv($outputFile, [
-                    (string) ($externalId->bioscore() ?? ''),
-                    (string) ($externalId->hotelbeds() ?? ''),
-                    (string) ($externalId->restel() ?? ''),
+                    $externalId->bioscore() ?? '',
+                    $externalId->hotelbeds() ?? '',
+                    $externalId->restel() ?? '',
                     $propertyName,
                     (string) $propertyInfo->address(),
                     (string) $propertyInfo->postalCode(),
@@ -641,6 +644,8 @@ class ImportCommand extends Command
         }
 
         if (!$createIfNotExists) {
+            assert(!empty($outputFile));
+
             fclose($outputFile);
         }
 

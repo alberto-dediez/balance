@@ -54,7 +54,7 @@ class DeliveryLogMother
     public static function random(): DeliveryLog
     {
         return self::from(
-            productType: 'Product-' . rand(100, 999),
+            productType: 'Product-' . random_int(100, 999),
             id: (string) DeliveryLogId::generate(),
             accountId: (string) AccountId::generate(),
         );
@@ -63,7 +63,7 @@ class DeliveryLogMother
     public static function withPropertyId(PropertyId $propertyId): DeliveryLog
     {
         return self::from(
-            productType: 'Product-' . rand(100, 999),
+            productType: 'Product-' . random_int(100, 999),
             id: (string) DeliveryLogId::generate(),
             accountId: (string) AccountId::generate(),
             propertyId: (string) $propertyId,
@@ -73,7 +73,7 @@ class DeliveryLogMother
     public static function withRecipientOrganizationId(RecipientOrganizationId $recipientOrganizationId): DeliveryLog
     {
         return self::from(
-            productType: 'Product-' . rand(100, 999),
+            productType: 'Product-' . random_int(100, 999),
             id: (string) DeliveryLogId::generate(),
             accountId: (string) AccountId::generate(),
             recipientOrganizationId: (string) $recipientOrganizationId,

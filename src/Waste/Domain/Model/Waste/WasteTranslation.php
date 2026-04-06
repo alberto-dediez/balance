@@ -11,8 +11,8 @@ class WasteTranslation implements Translation
 {
     public function __construct(
         private string $name,
-        private Locale $locale,
-        private Waste $translatable,
+        private readonly Locale $locale,
+        private readonly Waste $translatable,
     ) {}
 
     public function name(): string

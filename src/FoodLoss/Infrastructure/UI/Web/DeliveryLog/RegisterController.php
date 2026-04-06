@@ -32,7 +32,7 @@ class RegisterController extends AbstractController
         $form = $this->createForm(RegisterDeliveryLogType::class, new RegisterDeliveryLogRequest());
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerDeliveryLog, $loggedUser, $loggedAccount) {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerDeliveryLog, $loggedUser, $loggedAccount): true {
                 $registerRequest = $form->getData();
                 $registerRequest->accountId = $loggedAccount()?->id();
 

@@ -7,7 +7,7 @@ namespace App\FoodLoss\Domain\Model\CriticalPoint;
 use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\Action\Priority;
 
-final class CriticalPointActionLink
+final readonly class CriticalPointActionLink
 {
     public function __construct(
         private CriticalPoint $criticalPoint,

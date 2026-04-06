@@ -91,8 +91,13 @@ class StatisticsDailyWasteService
             $dailyWastePropertyId = $dailyWaste->propertyId();
             $dailyWasteWasteId = $dailyWaste->wasteId();
             $dailyWasteWasteManagerId = $dailyWaste->wasteManagerId();
-
-            if (null === $dailyWastePropertyId || null === $dailyWasteWasteId || null === $dailyWasteWasteManagerId) {
+            if (null === $dailyWastePropertyId) {
+                continue;
+            }
+            if (null === $dailyWasteWasteId) {
+                continue;
+            }
+            if (null === $dailyWasteWasteManagerId) {
                 continue;
             }
 
@@ -170,14 +175,14 @@ class StatisticsDailyWasteService
             $byMonth->percentage = 0 == $total ? 0 : $byMonth->load / $total;
         });
 
-        usort($byMonth, fn(ByMonth $byMonthA, ByMonth $byMonthB) => $byMonthA->month <=> $byMonthB->month);
+        usort($byMonth, fn(ByMonth $byMonthA, ByMonth $byMonthB): int => $byMonthA->month <=> $byMonthB->month);
 
         // ByDate
         array_walk($byDate, function (ByDate $byDate) use ($total): void {
             $byDate->percentage = 0 == $total ? 0 : $byDate->load / $total;
         });
 
-        usort($byDate, fn(ByDate $byDateA, ByDate $byDateB) => $byDateA->date <=> $byDateB->date);
+        usort($byDate, fn(ByDate $byDateA, ByDate $byDateB): int => $byDateA->date <=> $byDateB->date);
 
         // ByProperty
         array_walk($byProperty, function (ByProperty $byProperty) use ($total): void {
@@ -189,24 +194,24 @@ class StatisticsDailyWasteService
                 $byMonth->percentage = 0 == $totalOfProperty ? 0 : $byMonth->load / $totalOfProperty;
             });
 
-            usort($byProperty->months, fn(ByMonth $byMonthA, ByMonth $byMonthB) => $byMonthA->month <=> $byMonthB->month);
+            usort($byProperty->months, fn(ByMonth $byMonthA, ByMonth $byMonthB): int => $byMonthA->month <=> $byMonthB->month);
         });
 
-        usort($byProperty, fn(ByProperty $byPropertyA, ByProperty $byPropertyB) => $byPropertyA->property->name() <=> $byPropertyB->property->name());
+        usort($byProperty, fn(ByProperty $byPropertyA, ByProperty $byPropertyB): int => $byPropertyA->property->name() <=> $byPropertyB->property->name());
 
         // ByWaste
         array_walk($byWaste, function (ByWaste $byWaste) use ($total): void {
             $byWaste->percentage = 0 == $total ? 0 : $byWaste->load / $total;
         });
 
-        usort($byWaste, fn(ByWaste $byWasteA, ByWaste $byWasteB) => $byWasteA->waste->name() <=> $byWasteB->waste->name());
+        usort($byWaste, fn(ByWaste $byWasteA, ByWaste $byWasteB): int => $byWasteA->waste->name() <=> $byWasteB->waste->name());
 
         // ByWasteManager
         array_walk($byWasteManager, function (ByWasteManager $byWasteManager) use ($total): void {
             $byWasteManager->percentage = 0 == $total ? 0 : $byWasteManager->load / $total;
         });
 
-        usort($byWasteManager, fn(ByWasteManager $byWasteManagerA, ByWasteManager $byWasteManagerB) => $byWasteManagerA->wasteManager->name() <=> $byWasteManagerB->wasteManager->name());
+        usort($byWasteManager, fn(ByWasteManager $byWasteManagerA, ByWasteManager $byWasteManagerB): int => $byWasteManagerA->wasteManager->name() <=> $byWasteManagerB->wasteManager->name());
 
         // ByPurpose
         array_walk($byPurpose, function (ByPurpose $byPurpose) use ($total): void {

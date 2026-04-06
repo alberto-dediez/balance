@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\UI\Web\DonationAgreement;
 
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\FoodLoss\Application\DonationAgreement\Update\UpdateDonationAgreementRequest;
 use App\FoodLoss\Application\DonationAgreement\Update\UpdateDonationAgreementService;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
@@ -48,11 +49,11 @@ class EditController extends AbstractController
         $form = $this->createForm(UpdateDonationAgreementType::class, $updateRequest);
 
         try {
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateDonationAgreement, $user) {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateDonationAgreement, $user): void {
                 /** @var UpdateDonationAgreementRequest $updateRequest */
                 $updateRequest = $form->getData();
 
-                /** @var \Symfony\Component\HttpFoundation\File\UploadedFile|null $file */
+                /** @var UploadedFile|null $file */
                 $file = $form->get('pdfFile')->getData();
 
                 if ($file) {

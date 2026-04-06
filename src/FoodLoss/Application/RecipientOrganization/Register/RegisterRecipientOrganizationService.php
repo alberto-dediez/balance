@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Application\RecipientOrganization\Register;
 
+use App\Security\Domain\Model\Account\AccountId;
 use App\FoodLoss\Application\RecipientOrganization\RecipientOrganizationAuthorizer;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganization;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
@@ -29,7 +30,7 @@ class RegisterRecipientOrganizationService implements CommandHandler
     {
         $accountId = $user->accountId();
 
-        if (null === $accountId) {
+        if (!$accountId instanceof AccountId) {
             throw new \InvalidArgumentException('User must have an account');
         }
 

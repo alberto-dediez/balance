@@ -33,7 +33,7 @@ class ListController extends AbstractController
         $this->denyAccessUnlessGranted(Action::List->value, new Brand(BrandId::generate()));
 
         try {
-            [$filter, $form] = $this->filter($request, fn() => new ListBrandsRequest(), AdminListBrandsType::class);
+            [$filter, $form] = $this->filter($request, fn(): ListBrandsRequest => new ListBrandsRequest(), AdminListBrandsType::class);
 
             $response = $listBrands($filter, $loggedUser());
         } catch (UnauthorizedActionException $e) {

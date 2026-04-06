@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\InMemory\Repository;
 
+use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreement;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementFilter;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementId;
@@ -49,14 +51,14 @@ class InMemoryDonationAgreementRepository implements DonationAgreementRepository
             }
 
             if (
-                null !== $filter->recipientOrganizationId
+                $filter->recipientOrganizationId instanceof RecipientOrganizationId
                 && (string) $donationAgreement->recipientOrganizationId() !== (string) $filter->recipientOrganizationId
             ) {
                 continue;
             }
 
             if (
-                null !== $filter->accountId
+                $filter->accountId instanceof AccountId
                 && (string) $donationAgreement->accountId() !== (string) $filter->accountId
             ) {
                 continue;
@@ -66,7 +68,7 @@ class InMemoryDonationAgreementRepository implements DonationAgreementRepository
         }
 
         // Sorting (default by registeredAt DESC)
-        usort($results, function (DonationAgreement $a, DonationAgreement $b) use ($filter) {
+        usort($results, function (DonationAgreement $a, DonationAgreement $b) use ($filter): int {
             $way = 'ASC' === $filter->orderWay ? 1 : -1;
 
             $valA = match ($filter->orderBy) {
@@ -85,7 +87,7 @@ class InMemoryDonationAgreementRepository implements DonationAgreementRepository
         });
 
         if ($filter->limit > 0) {
-            $results = array_slice($results, $filter->page * $filter->limit, $filter->limit);
+            return array_slice($results, $filter->page * $filter->limit, $filter->limit);
         }
 
         return $results;
