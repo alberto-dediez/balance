@@ -65,5 +65,15 @@
                 <cascade-remove/>
             </cascade>
         </one-to-many>
+
+        <one-to-many field="reasons"
+                     target-entity="App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointReasonLink"
+                     mapped-by="criticalPoint"
+                     fetch="EXTRA_LAZY">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
     </entity>
 </doctrine-mapping>

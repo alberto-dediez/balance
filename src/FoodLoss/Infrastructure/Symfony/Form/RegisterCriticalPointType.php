@@ -28,7 +28,7 @@ class RegisterCriticalPointType extends AbstractType
                 'required' => true,
             ])
             ->add('propertyId', PropertyIdType::class, [
-                'label' => new TranslatableMessage('Centro'),
+                'label' => new TranslatableMessage('Propiedad'),
                 'required' => true,
             ])
             ->add('supplyChainStage', SupplyChainStageType::class, [

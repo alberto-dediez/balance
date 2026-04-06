@@ -1473,10 +1473,6 @@
         <source>No se ha podido eliminar el punto crítico {id}</source>
         <target>Critical point {id} could not be deleted</target>
       </trans-unit>
-      <trans-unit id="hyqgiHW" resname="Centro">
-        <source>Centro</source>
-        <target>Center</target>
-      </trans-unit>
       <trans-unit id="U4odQuO" resname="Etapa de la cadena de suministro">
         <source>Etapa de la cadena de suministro</source>
         <target>Supply Chain Stage</target>

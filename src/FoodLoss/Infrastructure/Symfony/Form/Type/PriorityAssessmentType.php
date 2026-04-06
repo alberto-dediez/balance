@@ -31,6 +31,18 @@ class PriorityAssessmentType extends AbstractType
                 'data-showable-condition-value' => '1',
             ],
         ]);
+
+        $builder->add('reasonIds', ReasonIdType::class, [
+            'label' => 'Motivos',
+            'multiple' => true,
+            'required' => false,
+            'action_priority' => $options['action_priority'],
+            'row_attr' => [
+                'data-controller' => 'showable',
+                'data-showable-selector-value' => '[name$="[' . $builder->getName() . '][isPossible]"]',
+                'data-showable-condition-value' => '0',
+            ],
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

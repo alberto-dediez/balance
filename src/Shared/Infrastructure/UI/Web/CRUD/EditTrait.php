@@ -21,7 +21,7 @@ trait EditTrait
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $edit($form);
-            } catch (\Exception) {
+            } catch (\Exception $e) {
                 $this->addFlash('danger', new TranslatableMessage('Error inesperado. No se ha podido actualizar correctamente.'));
             }
 

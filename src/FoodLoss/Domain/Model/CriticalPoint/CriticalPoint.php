@@ -7,6 +7,7 @@ namespace App\FoodLoss\Domain\Model\CriticalPoint;
 use App\Shared\Domain\Event\DomainEvent;
 use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\Action\Priority;
+use App\FoodLoss\Domain\Model\Reason\ReasonId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -38,6 +39,8 @@ class CriticalPoint implements \Stringable
         private iterable $serviceCategories = [],
         /** @var iterable<CriticalPointActionLink>|CriticalPointActions */
         private iterable $actions = [],
+        /** @var iterable<CriticalPointReasonLink>|CriticalPointReasons */
+        private iterable $reasons = [],
     ) {
         $this->events = $events;
     }
@@ -73,6 +76,7 @@ class CriticalPoint implements \Stringable
             priority: Priority::Prevention,
             isPossible: $this->preventionPossible,
             actionIds: $this->actions()->byPriority(Priority::Prevention),
+            reasonIds: $this->reasons()->byPriority(Priority::Prevention),
         );
     }
 
@@ -82,6 +86,7 @@ class CriticalPoint implements \Stringable
             priority: Priority::HumanDonation,
             isPossible: $this->humanDonationPossible,
             actionIds: $this->actions()->byPriority(Priority::HumanDonation),
+            reasonIds: $this->reasons()->byPriority(Priority::HumanDonation),
         );
     }
 
@@ -91,6 +96,7 @@ class CriticalPoint implements \Stringable
             priority: Priority::AnimalFeed,
             isPossible: $this->animalFeedPossible,
             actionIds: $this->actions()->byPriority(Priority::AnimalFeed),
+            reasonIds: $this->reasons()->byPriority(Priority::AnimalFeed),
         );
     }
 
@@ -100,6 +106,7 @@ class CriticalPoint implements \Stringable
             priority: Priority::Transformation,
             isPossible: $this->transformationPossible,
             actionIds: $this->actions()->byPriority(Priority::Transformation),
+            reasonIds: $this->reasons()->byPriority(Priority::Transformation),
         );
     }
 
@@ -109,6 +116,7 @@ class CriticalPoint implements \Stringable
             priority: Priority::Composting,
             isPossible: $this->compostingPossible,
             actionIds: $this->actions()->byPriority(Priority::Composting),
+            reasonIds: $this->reasons()->byPriority(Priority::Composting),
         );
     }
 
@@ -162,6 +170,7 @@ class CriticalPoint implements \Stringable
 
         $this->syncServiceCategories($serviceCategoryIds);
         $this->syncActionsFromAssessments($prevention, $humanDonation, $animalFeed, $transformation, $composting);
+        $this->syncReasonsFromAssessments($prevention, $humanDonation, $animalFeed, $transformation, $composting);
     }
 
     /** @param ServiceCategoryId[] $serviceCategoryIds */
@@ -192,6 +201,7 @@ class CriticalPoint implements \Stringable
 
         $this->syncServiceCategories($serviceCategoryIds);
         $this->syncActionsFromAssessments($prevention, $humanDonation, $animalFeed, $transformation, $composting);
+        $this->syncReasonsFromAssessments($prevention, $humanDonation, $animalFeed, $transformation, $composting);
     }
 
     public function remove(): void
@@ -361,6 +371,86 @@ class CriticalPoint implements \Stringable
         }
     }
 
+    public function reasons(): CriticalPointReasons
+    {
+        if ($this->reasons instanceof CriticalPointReasons) {
+            return $this->reasons;
+        }
+
+        $this->reasons = new CriticalPointReasons(
+            array_values(iterator_to_array($this->reasons)),
+        );
+
+        return $this->reasons;
+    }
+
+    /**
+     * @return ReasonId[]
+     */
+    public function reasonIds(): array
+    {
+        return $this->reasons()->ids();
+    }
+
+    public function linkReason(ReasonId $reasonId, Priority $priority): void
+    {
+        if ($this->reasons()->has($reasonId)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CriticalPointReasonLinked(
+                criticalPointId: $this->id(),
+                reasonId: $reasonId,
+                priority: $priority,
+            ),
+        );
+    }
+
+    public function unlinkReason(ReasonId $reasonId): void
+    {
+        if (!$this->reasons()->has($reasonId)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CriticalPointReasonUnlinked(
+                criticalPointId: $this->id(),
+                reasonId: $reasonId,
+            ),
+        );
+    }
+
+    private function syncReasonsFromAssessments(
+        PriorityAssessment $prevention,
+        PriorityAssessment $humanDonation,
+        PriorityAssessment $animalFeed,
+        PriorityAssessment $transformation,
+        PriorityAssessment $composting,
+    ): void {
+        /** @var array<string, array{ReasonId, Priority}> $newReasons */
+        $newReasons = [];
+        foreach ([$prevention, $humanDonation, $animalFeed, $transformation, $composting] as $assessment) {
+            foreach ($assessment->reasonIds as $reasonId) {
+                $newReasons[(string) $reasonId] = [$reasonId, $assessment->priority];
+            }
+        }
+
+        $current = $this->reasons();
+
+        foreach ($current->ids() as $currentId) {
+            if (!array_key_exists((string) $currentId, $newReasons)) {
+                $this->unlinkReason($currentId);
+            }
+        }
+
+        foreach ($newReasons as [$reasonId, $priority]) {
+            if (!$current->has($reasonId)) {
+                $this->linkReason($reasonId, $priority);
+            }
+        }
+    }
+
     public function applyCriticalPointRegistered(CriticalPointRegistered $event): void
     {
         $this->name = $event->name();
@@ -423,6 +513,22 @@ class CriticalPoint implements \Stringable
     public function applyCriticalPointActionUnlinked(CriticalPointActionUnlinked $event): void
     {
         $this->actions()->removeById($event->actionId());
+    }
+
+    public function applyCriticalPointReasonLinked(CriticalPointReasonLinked $event): void
+    {
+        $link = new CriticalPointReasonLink(
+            criticalPoint: $this,
+            reasonId: $event->reasonId(),
+            priority: $event->priority(),
+        );
+
+        $this->reasons()->add($link);
+    }
+
+    public function applyCriticalPointReasonUnlinked(CriticalPointReasonUnlinked $event): void
+    {
+        $this->reasons()->removeById($event->reasonId());
     }
 
     public function __toString(): string

@@ -17,25 +17,30 @@
         <h5>{% trans %}Prevención{% endtrans %}</h5>
         {{ form_row(form.prevention.isPossible) }}
         {{ form_row(form.prevention.actionIds) }}
+        {{ form_row(form.prevention.reasonIds) }}
     </div>
     <div class="col-12">
         <h5>{% trans %}Transformación para consumo humano{% endtrans %}</h5>
         {{ form_row(form.transformation.isPossible) }}
         {{ form_row(form.transformation.actionIds) }}
+        {{ form_row(form.transformation.reasonIds) }}
     </div>
     <div class="col-12">
         <h5>{% trans %}Donación{% endtrans %}</h5>
         {{ form_row(form.humanDonation.isPossible) }}
         {{ form_row(form.humanDonation.actionIds) }}
+        {{ form_row(form.humanDonation.reasonIds) }}
     </div>
     <div class="col-12">
         <h5>{% trans %}Alimentación animal{% endtrans %}</h5>
         {{ form_row(form.animalFeed.isPossible) }}
         {{ form_row(form.animalFeed.actionIds) }}
+        {{ form_row(form.animalFeed.reasonIds) }}
     </div>
     <div class="col-12">
         <h5>{% trans %}Consumo no humano{% endtrans %}</h5>
         {{ form_row(form.composting.isPossible) }}
         {{ form_row(form.composting.actionIds) }}
+        {{ form_row(form.composting.reasonIds) }}
     </div>
 </div>

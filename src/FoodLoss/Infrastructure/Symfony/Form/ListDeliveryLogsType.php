@@ -27,7 +27,7 @@ class ListDeliveryLogsType extends BaseFilterType
                 'required' => false,
             ])
             ->add('propertyId', PropertyIdType::class, [
-                'label' => new TranslatableMessage('Centro'),
+                'label' => new TranslatableMessage('Propiedad'),
                 'required' => false,
             ])
         ;
