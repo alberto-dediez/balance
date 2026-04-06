@@ -10,6 +10,7 @@ use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointFilter;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
@@ -83,12 +84,12 @@ class DoctrineCriticalPointRepository implements CriticalPointRepository
             ;
         }
 
-        if (!empty($filter->propertyId)) {
+        if ($filter->propertyId instanceof PropertyId) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('e.propertyId', ':propertyId'),
                 )
-                ->setParameter('propertyId', $filter->propertyId)
+                ->setParameter('propertyId', (string) $filter->propertyId)
             ;
         }
 

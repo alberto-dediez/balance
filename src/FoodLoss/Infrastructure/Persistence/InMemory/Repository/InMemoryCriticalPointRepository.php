@@ -10,6 +10,7 @@ use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointFilter;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -71,8 +72,8 @@ class InMemoryCriticalPointRepository implements CriticalPointRepository
             }
 
             if (
-                !empty($filter->propertyId)
-                && (string) $criticalPoint->propertyId() !== $filter->propertyId
+                $filter->propertyId instanceof PropertyId
+                && (null === $criticalPoint->propertyId() || !$filter->propertyId->equals($criticalPoint->propertyId()))
             ) {
                 continue;
             }
