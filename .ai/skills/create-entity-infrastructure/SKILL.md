@@ -1002,6 +1002,8 @@ Only needed when adding a **new bounded context** (not adding to an existing one
 - **Form validation constraints:** Always add validation constraints matching ORM column lengths. Required fields: `NotBlank` + `Length(max: N)`. Required enums: `NotNull`. Optional fields: `'empty_data' => ''` + `Length(max: N)`. The `empty_data` prevents a TypeError when Symfony maps null to a non-nullable string property. Apply the same constraints to both Register and Update form types.
 - **Bulk RemoveAction:** Always use `RemoveActionTrait` from `App\Shared\Infrastructure\UI\Web\Bulk\RemoveAction`. Guard elements with `instanceof {Entity}`, not `null === ${entity}->id()`.
 - **Acceptance test form data**: fields MUST be separated by a pipe (`|`), not a comma. E.g.: `When I submit a form with "name:Test Name|priority:High" and button "Registrar"`.
+- **Acceptance Tests Structure**: ALWAYS create four separate `.feature` files (`{entity}-list.feature`, `{entity}-register.feature`, `{entity}-edit.feature`, `{entity}-remove.feature`). Do NOT combine them into a single file.
+- **Twig Form Layout**: In `edit.html.twig`, ALWAYS use a single column layout (`<div class="col-12">`) for ALL form fields to ensure visual consistency with the default single-column rendering of `register.html.twig`.
 - **Never create `.xlf` translation files manually.** Use the dummy Twig template approach for enums.
 - The `BulkTrait` handles batch operations through the `CommandBusDispatcher`
 - The services.yaml in each context auto-wires all classes — no manual registration needed

@@ -3296,3 +3296,5 @@ If creating a NEW bounded context (not adding to an existing one), add route gro
 - Acceptance test steps use the `#[Given]` attribute for step definitions
 - The BulkTrait handles batch operations through the CommandBusDispatcher
 - When using the Acceptance Test step `When I submit a form with "data" and button "text"`, the data fields MUST be separated by a pipe (`|`), not a comma. For example: `When I submit a form with "name:Test Name|priority:High" and button "Registrar"`.
+- **Acceptance Tests Structure**: ALWAYS create four separate `.feature` files (`{entity}-list.feature`, `{entity}-register.feature`, `{entity}-edit.feature`, `{entity}-remove.feature`). Do NOT combine them into a single file.
+- **Twig Form Layout**: In `edit.html.twig`, ALWAYS use a single column layout (`<div class="col-12">`) for ALL form fields to ensure visual consistency with the default single-column rendering of `register.html.twig`.

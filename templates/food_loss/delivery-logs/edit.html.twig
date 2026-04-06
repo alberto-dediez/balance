@@ -1,0 +1,48 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('delivery_logs') }}" />
+{% endblock %}
+
+{% set page_title = ('Donaciones' | trans) 
+    ~ ' > '
+    ~ ('Registro de entregas' | trans) 
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ deliveryLog.productType %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.date) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.quantity) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.unit) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.productType) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.batch) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.recipientOrganizationId) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.propertyId) }}
+                </div>
+            </div>    
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

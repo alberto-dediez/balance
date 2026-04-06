@@ -1,0 +1,46 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Registro de entregas' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Fecha' | trans,
+            'sortable': true,
+            'sortableBy': 'date'
+        }, {
+            'label': 'Cantidad' | trans
+        }, {
+            'label': 'Tipo de producto' | trans,
+            'sortable': true,
+            'sortableBy': 'productType'
+        }, {
+            'label': 'Entidad receptora' | trans
+        }, {
+            'label': 'Centro' | trans
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="deliveryLogs">
+        <td>{{ element.date | date('d/m/Y') }}</td>
+        <td>{{ element.quantity }} {{ element.unit.value | trans({}, 'deliveryLogUnit') }}</td>
+        <td>{{ element.productType }}</td>
+        <td>{{ element.recipientOrganizationId | recipient_organization_name }}</td>
+        <td>{{ element.propertyId | property_name }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('delivery_logs_edit', {'deliveryLogId': element.id}) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('delivery_logs_remove', {'deliveryLogId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('delivery_logs_register') }}" />
+{% endblock list_actions %}

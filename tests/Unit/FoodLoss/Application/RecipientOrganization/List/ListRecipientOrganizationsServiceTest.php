@@ -39,7 +39,7 @@ class ListRecipientOrganizationsServiceTest extends TestCase
         $sut = $this->createSUT($repository);
 
         $result = $sut(new ListRecipientOrganizationsRequest(
-            accountId: new AccountId($accountId)
+            accountId: new AccountId($accountId),
         ), $user);
 
         $this->assertEquals(2, $result->totalResults);

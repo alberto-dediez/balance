@@ -38,8 +38,11 @@ class RegisterRecipientOrganizationService implements CommandHandler
         $this->authorizer->denyUnlessCanDoThat(
             new RecipientOrganization(
                 id: $id,
-                accountId: $accountId
-            ), SecurityAction::List, $user);
+                accountId: $accountId,
+            ),
+            SecurityAction::List,
+            $user,
+        );
 
         $recipientOrganization = new RecipientOrganization($id);
         $recipientOrganization->register(

@@ -6,6 +6,7 @@ namespace App\Tests\Acceptance\FoodLoss;
 
 use App\FoodLoss\Domain\Model\Action\ActionRepository;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
+use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
 use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationRepository;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepository;
@@ -14,6 +15,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\FoodLoss\Domain\Model\Action\ActionMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint\CriticalPointMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Reason\ReasonMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryMother;
@@ -54,6 +56,11 @@ final class FoodLossContext implements Context
     public function getRecipientOrganizationRepository(): RecipientOrganizationRepository
     {
         return $this->client->getContainer()->get(RecipientOrganizationRepository::class);
+    }
+
+    public function getDeliveryLogRepository(): DeliveryLogRepository
+    {
+        return $this->client->getContainer()->get(DeliveryLogRepository::class);
     }
 
     #[Given('action :description with id :id exists')]
@@ -111,5 +118,17 @@ final class FoodLossContext implements Context
         );
 
         $this->getRecipientOrganizationRepository()->add($recipientOrganization);
+    }
+
+    #[Given('delivery log :productType with id :id of account :accountId exists')]
+    public function deliveryLogWithIdOfAccountExists(string $productType, string $id, string $accountId): void
+    {
+        $deliveryLog = DeliveryLogMother::from(
+            productType: $productType,
+            id: $id,
+            accountId: $accountId,
+        );
+
+        $this->getDeliveryLogRepository()->add($deliveryLog);
     }
 }

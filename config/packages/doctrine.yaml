@@ -29,6 +29,8 @@ doctrine:
             critical_point_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointIdType
             reason_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ReasonIdType
             recipient_organization_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\RecipientOrganizationIdType
+            delivery_log_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DeliveryLogIdType
+
     orm:
         auto_generate_proxy_classes: true
         enable_native_lazy_objects: true

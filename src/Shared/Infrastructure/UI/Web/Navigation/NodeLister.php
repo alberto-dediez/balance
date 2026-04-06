@@ -158,6 +158,11 @@ class NodeLister
                     icon: 'solar:buildings-2-line-duotone',
                     target: $this->router->generate('recipient_organizations'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Registro de entregas'),
+                    icon: 'solar:record-minimalistic-line-duotone',
+                    target: $this->router->generate('delivery_logs'),
+                ),
             ],
         );
 
@@ -182,6 +187,18 @@ class NodeLister
     private function toUsers(): array
     {
         $nodes = [];
+
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Donaciones'),
+            icon: 'solar:hand-heart-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Registro de entregas'),
+                    icon: 'solar:record-minimalistic-line-duotone',
+                    target: $this->router->generate('delivery_logs'),
+                ),
+            ],
+        );
 
         return $nodes;
     }

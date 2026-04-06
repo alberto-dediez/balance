@@ -37,7 +37,7 @@ class RecipientOrganizationMother
         return self::from(
             name: 'name-' . rand(100, 999),
             id: (string) RecipientOrganizationId::generate(),
-            accountId: $account
+            accountId: $account,
         );
     }
 
