@@ -31,6 +31,7 @@ doctrine:
             recipient_organization_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\RecipientOrganizationIdType
             delivery_log_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DeliveryLogIdType
             donation_agreement_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DonationAgreementIdType
+            prevention_plan_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\PreventionPlanIdType
 
     orm:
         auto_generate_proxy_classes: true

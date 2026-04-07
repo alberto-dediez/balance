@@ -635,6 +635,107 @@ class List{Entity}sServiceTest extends TestCase
 
 ---
 
+### Subscriber Tests — setUp-based style
+
+When writing tests for `DomainEventSubscriber` classes, prefer initialising all shared state in `setUp()` (SUT, repository, event key data) so each test method stays minimal and focused. This is the preferred style for subscriber tests:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\{Context}\Domain\Event\{Trigger};
+
+use App\{Context}\Domain\Event\{Trigger}\{Subscriber};
+use App\{Context}\Domain\Model\{Entity}\{Entity}Repository;
+use App\{Trigger}\Domain\Model\{TriggerAggregate}\{TriggerAggregate}Id;
+use App\{Trigger}\Domain\Model\{TriggerAggregate}\{TriggerAggregateRemoved};
+use App\{SomeOtherEvent};
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\{Context}\Domain\Model\{Entity}\{Entity}Mother;
+use App\Tests\Unit\{Context}\Domain\Model\{Entity}\{Entity}RepositoryMother;
+use PHPUnit\Framework\TestCase;
+
+class {Subscriber}Test extends TestCase
+{
+    private {Subscriber} $sut;
+    private {Entity}Repository $repository;
+    private {TriggerAggregateId} $triggerId;
+    private {TriggerAggregateRemoved} $event;
+
+    protected function setUp(): void
+    {
+        DomainEventPublisher::instance()->reset();
+
+        $this->triggerId = {TriggerAggregateId}::generate();
+        $this->event     = new {TriggerAggregateRemoved}($this->triggerId);
+        $this->repository = {Entity}RepositoryMother::inMemory();
+        $this->sut        = new {Subscriber}($this->repository);
+    }
+
+    public function testIsSubscribedTo{TriggerAggregateRemoved}(): void
+    {
+        $this->assertTrue($this->sut->isSubscribedTo($this->event));
+    }
+
+    public function testIsNotSubscribedToOtherEvents(): void
+    {
+        $this->assertFalse($this->sut->isSubscribedTo(new {SomeOtherEvent}(/* ... */)));
+    }
+
+    // Scenario: entity with multiple links → only the matching one is unlinked
+    public function testUnlinks{TriggerAggregate}WhenEntityHasMultipleLinks(): void
+    {
+        $otherTriggerId = {TriggerAggregateId}::generate();
+
+        $entity = {Entity}Mother::withLinkIds([$this->triggerId, $otherTriggerId]);
+        $this->repository->add($entity);
+
+        $this->sut->handle($this->event);
+
+        $updated = $this->repository->find($entity->id());
+
+        $this->assertNotNull($updated);
+        $this->assertFalse($updated->isRemoved());
+
+        $remainingIds = array_map(static fn ($id) => (string) $id, $updated->linkIds());
+        $this->assertNotContains((string) $this->triggerId, $remainingIds);
+        $this->assertContains((string) $otherTriggerId, $remainingIds);
+    }
+
+    // Scenario: entity whose only link is the removed aggregate → entity is removed
+    public function testRemovesEntityWhenItOnlyHasTheRemovedLink(): void
+    {
+        $entity = {Entity}Mother::withLinkIds([$this->triggerId]);
+        $this->repository->add($entity);
+
+        $this->sut->handle($this->event);
+
+        $this->assertNull($this->repository->find($entity->id()));
+    }
+
+    // Scenario: entity with no links (or links to other aggregates) → untouched
+    public function testDoesNothingWhenEntityHasNoMatchingLink(): void
+    {
+        $entity = {Entity}Mother::withLinkIds([]);
+        $this->repository->add($entity);
+
+        $this->sut->handle($this->event);
+
+        $this->assertNotNull($this->repository->find($entity->id()));
+        $this->assertFalse($this->repository->find($entity->id())->isRemoved());
+    }
+}
+```
+
+**Rules for this style:**
+- Declare `private` properties for the SUT, repository, and all reusable test values (IDs, events).
+- `setUp()` wires everything together — test methods only assert, they never rebuild infrastructure.
+- Add `with{Link}Ids(array $ids)` factory methods to the relevant Mother to support link-based scenarios.
+- Keep the three canonical scenarios: multiple links (unlink one), single link (remove entity), no matching link (do nothing).
+
+---
+
 ## Execution Checklist
 
 Work through files in this order. Mark each complete before moving to the next.

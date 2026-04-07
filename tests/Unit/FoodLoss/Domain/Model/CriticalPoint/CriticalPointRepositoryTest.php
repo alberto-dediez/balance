@@ -86,7 +86,7 @@ abstract class CriticalPointRepositoryTest extends KernelTestCase
 
         // Filter by property
         $filter = new CriticalPointFilter(
-            propertyId: (string) $propertyId,
+            propertyId: $propertyId,
         );
 
         $result = $repository->findByFilter($filter);

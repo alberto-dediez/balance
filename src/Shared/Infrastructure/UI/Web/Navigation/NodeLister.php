@@ -150,6 +150,18 @@ class NodeLister
         );
 
         $nodes[] = new Node(
+            label: new TranslatableMessage('Plan de Prevención'),
+            icon: 'solar:shield-check-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Planes de Prevención'),
+                    icon: 'solar:document-text-line-duotone',
+                    target: $this->router->generate('prevention_plans'),
+                ),
+            ],
+        );
+
+        $nodes[] = new Node(
             label: new TranslatableMessage('Donaciones'),
             icon: 'solar:hand-heart-line-duotone',
             items: [

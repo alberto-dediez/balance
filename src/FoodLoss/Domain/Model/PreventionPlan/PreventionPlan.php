@@ -1,0 +1,222 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\FoodLoss\Domain\Model\PreventionPlan;
+
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Model\AggregateRoot;
+
+class PreventionPlan implements \Stringable
+{
+    use AggregateRoot;
+
+    /** @var iterable<PreventionPlanPropertyLink>|PreventionPlanProperties */
+    private iterable $properties = [];
+
+    /** @param array<\App\Shared\Domain\Event\DomainEvent> $events */
+    public function __construct(
+        private PreventionPlanId $id,
+        private string $name = '',
+        private ?AccountId $accountId = null,
+        private bool $removed = false,
+        array $events = [],
+        private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
+        private ?\DateTimeImmutable $updatedAt = null,
+        private ?\DateTimeImmutable $removedAt = null,
+    ) {
+        $this->events = $events;
+    }
+
+    public function id(): PreventionPlanId
+    {
+        return $this->id;
+    }
+
+    public function name(): string
+    {
+        return $this->name;
+    }
+
+    public function properties(): PreventionPlanProperties
+    {
+        if ($this->properties instanceof PreventionPlanProperties) {
+            return $this->properties;
+        }
+
+        $this->properties = new PreventionPlanProperties(
+            array_values(iterator_to_array($this->properties)),
+        );
+
+        return $this->properties;
+    }
+
+    /** @return PropertyId[] */
+    public function propertyIds(): array
+    {
+        return $this->properties()->ids();
+    }
+
+    public function accountId(): ?AccountId
+    {
+        return $this->accountId;
+    }
+
+    public function isRemoved(): bool
+    {
+        return $this->removed;
+    }
+
+    public function registeredAt(): \DateTimeImmutable
+    {
+        return $this->registeredAt;
+    }
+
+    public function updatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function removedAt(): ?\DateTimeImmutable
+    {
+        return $this->removedAt;
+    }
+
+    /**
+     * @param PropertyId[] $propertyIds
+     */
+    public function register(
+        string $name,
+        array $propertyIds,
+        AccountId $accountId,
+    ): void {
+        $this->recordApplyAndPublish(
+            new PreventionPlanRegistered(
+                preventionPlanId: $this->id(),
+                name: $name,
+                accountId: $accountId,
+            ),
+        );
+
+        $this->syncProperties($propertyIds);
+    }
+
+    /**
+     * @param PropertyId[] $propertyIds
+     */
+    public function update(
+        string $name,
+        array $propertyIds,
+    ): void {
+        $this->recordApplyAndPublish(
+            new PreventionPlanUpdated(
+                preventionPlanId: $this->id(),
+                name: $name,
+            ),
+        );
+
+        $this->syncProperties($propertyIds);
+    }
+
+    public function linkProperty(PropertyId $propertyId): void
+    {
+        if ($this->properties()->has($propertyId)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new PreventionPlanPropertyLinked(
+                preventionPlanId: $this->id(),
+                propertyId: $propertyId,
+            ),
+        );
+    }
+
+    public function unlinkProperty(PropertyId $propertyId): void
+    {
+        if (!$this->properties()->has($propertyId)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new PreventionPlanPropertyUnlinked(
+                preventionPlanId: $this->id(),
+                propertyId: $propertyId,
+            ),
+        );
+    }
+
+    public function remove(): void
+    {
+        $this->recordApplyAndPublish(
+            new PreventionPlanRemoved(
+                preventionPlanId: $this->id(),
+            ),
+        );
+    }
+
+    public function applyPreventionPlanRegistered(PreventionPlanRegistered $event): void
+    {
+        $this->name = $event->name();
+        $this->accountId = $event->accountId();
+        $this->registeredAt = $event->occurredOn();
+    }
+
+    public function applyPreventionPlanUpdated(PreventionPlanUpdated $event): void
+    {
+        $this->name = $event->name();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyPreventionPlanPropertyLinked(PreventionPlanPropertyLinked $event): void
+    {
+        $link = new PreventionPlanPropertyLink(
+            preventionPlan: $this,
+            propertyId: $event->propertyId(),
+        );
+
+        $this->properties()->add($link);
+    }
+
+    public function applyPreventionPlanPropertyUnlinked(PreventionPlanPropertyUnlinked $event): void
+    {
+        $this->properties()->removeById($event->propertyId());
+    }
+
+    public function applyPreventionPlanRemoved(PreventionPlanRemoved $event): void
+    {
+        $this->removed = true;
+        $this->removedAt = $event->occurredOn();
+    }
+
+    /** @param PropertyId[] $newPropertyIds */
+    private function syncProperties(array $newPropertyIds): void
+    {
+        $current = $this->properties();
+
+        foreach ($current->ids() as $currentId) {
+            $found = false;
+            foreach ($newPropertyIds as $newId) {
+                if ($currentId->equals($newId)) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $this->unlinkProperty($currentId);
+            }
+        }
+
+        foreach ($newPropertyIds as $newId) {
+            if (!$current->has($newId)) {
+                $this->linkProperty($newId);
+            }
+        }
+    }
+
+    public function __toString(): string
+    {
+        return $this->name();
+    }
+}

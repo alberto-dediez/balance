@@ -1,0 +1,9 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = ('Planes de Prevención' | trans)
+    ~ ' > '
+    ~ ('Registrar' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('prevention_plans') }}" />
+{% endblock %}

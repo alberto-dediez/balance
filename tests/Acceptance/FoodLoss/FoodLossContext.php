@@ -4,22 +4,24 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\FoodLoss;
 
-use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
-use App\Security\Domain\Model\User\UserId;
 use App\FoodLoss\Domain\Model\Action\ActionRepository;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
+use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
 use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
+use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationRepository;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\FoodLoss\Domain\Model\Action\ActionMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint\CriticalPointMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Reason\ReasonMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryMother;
@@ -70,6 +72,11 @@ final readonly class FoodLossContext implements Context
     public function getDonationAgreementRepository(): DonationAgreementRepository
     {
         return $this->client->getContainer()->get(DonationAgreementRepository::class);
+    }
+
+    public function getPreventionPlanRepository(): PreventionPlanRepository
+    {
+        return $this->client->getContainer()->get(PreventionPlanRepository::class);
     }
 
     #[Given('action :description with id :id exists')]
@@ -179,6 +186,26 @@ final readonly class FoodLossContext implements Context
         );
 
         $this->getDonationAgreementRepository()->add($donationAgreement);
+    }
+
+    #[Given('prevention plan :name with id :id exists')]
+    public function preventionPlanWithIdExists(string $name, string $id): void
+    {
+        $preventionPlan = PreventionPlanMother::fromNameAndId($name, $id);
+
+        $this->getPreventionPlanRepository()->add($preventionPlan);
+    }
+
+    #[Given('prevention plan :name with id :id of account :accountId exists')]
+    public function preventionPlanWithIdOfAccountExists(string $name, string $id, string $accountId): void
+    {
+        $preventionPlan = PreventionPlanMother::from(
+            name: $name,
+            id: $id,
+            accountId: $accountId,
+        );
+
+        $this->getPreventionPlanRepository()->add($preventionPlan);
     }
 
     #[Given('a dummy PDF file exists in :path')]
