@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Application\DonationAgreement\Register;
 
-use App\Security\Domain\Model\User\Role;
 use App\FoodLoss\Application\DonationAgreement\DonationAgreementAuthorizer;
 use App\FoodLoss\Application\DonationAgreement\DonationAgreementUploader;
 use App\FoodLoss\Application\DonationAgreement\Register\RegisterDonationAgreementRequest;
@@ -13,6 +12,7 @@ use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRegistered;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;

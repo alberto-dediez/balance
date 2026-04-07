@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Domain\Model\CriticalPoint;
 
-use App\Shared\Domain\Event\DomainEvent;
 use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\Reason\ReasonId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
 
 class CriticalPoint implements \Stringable

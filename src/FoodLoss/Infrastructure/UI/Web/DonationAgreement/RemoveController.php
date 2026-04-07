@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\UI\Web\DonationAgreement;
 
-use App\Security\Application\Action;
 use App\FoodLoss\Application\DonationAgreement\Remove\RemoveDonationAgreementRequest;
 use App\FoodLoss\Application\DonationAgreement\Remove\RemoveDonationAgreementService;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
+use App\Security\Application\Action;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

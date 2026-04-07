@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\UI\Web\Container;
 
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Security\Application\Action;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
@@ -13,6 +11,8 @@ use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
 use App\Waste\Application\Container\Update\UpdateContainerRequest;
 use App\Waste\Application\Container\Update\UpdateContainerService;
 use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Waste\Infrastructure\Symfony\Form\UpdateContainerType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

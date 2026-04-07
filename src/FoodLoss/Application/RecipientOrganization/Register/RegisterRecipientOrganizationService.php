@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Application\RecipientOrganization\Register;
 
-use App\Security\Domain\Model\Account\AccountId;
 use App\FoodLoss\Application\RecipientOrganization\RecipientOrganizationAuthorizer;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganization;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationRepository;
 use App\Security\Application\Action as SecurityAction;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;

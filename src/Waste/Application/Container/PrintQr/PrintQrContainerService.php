@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Waste\Application\Container\PrintQr;
 
-use App\Waste\Domain\Model\Container\Container;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Waste\Application\Container\ContainerAuthorizer;
+use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Waste\Domain\Model\Container\QrPdfGenerator;
 

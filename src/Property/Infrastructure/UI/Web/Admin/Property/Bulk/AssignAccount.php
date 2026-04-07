@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Property\Infrastructure\UI\Web\Admin\Property\Bulk;
 
-use App\Security\Domain\Model\Account\AccountId;
 use App\Property\Application\Property\Update\UpdatePropertyRequest;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkAction;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;

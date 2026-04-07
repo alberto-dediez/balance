@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
-use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Application\CriticalPoint\Register\RegisterCriticalPointRequest;
+use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\PriorityAssessmentType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\ServiceCategoryIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\SupplyChainStageType;

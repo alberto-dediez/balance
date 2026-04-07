@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Domain\Model\DeliveryLog;
 
-use App\Shared\Domain\Event\DomainEvent;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
 
 class DeliveryLog implements \Stringable

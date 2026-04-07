@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\UI\Api\MeasurementView;
 
-use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Security\Application\Action;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use App\Waste\Application\Measurement\MeasurementAuthorizer;
+use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementId;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponse;

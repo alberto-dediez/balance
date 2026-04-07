@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Property\Application\Destination\Register;
 
-use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Application\Destination\DestinationAuthorizer;
+use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Destination\Destination;
 use App\Property\Domain\Model\Destination\DestinationId;
 use App\Property\Domain\Model\Destination\DestinationRepository;

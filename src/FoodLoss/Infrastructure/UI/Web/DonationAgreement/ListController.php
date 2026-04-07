@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\UI\Web\DonationAgreement;
 
-use App\Security\Application\Action;
-use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreement;
-use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementId;
-use App\Security\Domain\Model\Account\Account;
 use App\FoodLoss\Application\DonationAgreement\List\ListDonationAgreementsRequest;
 use App\FoodLoss\Application\DonationAgreement\List\ListDonationAgreementsService;
+use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreement;
+use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementId;
 use App\FoodLoss\Infrastructure\Symfony\Form\ListDonationAgreementsType;
+use App\Security\Application\Action;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\Account;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;

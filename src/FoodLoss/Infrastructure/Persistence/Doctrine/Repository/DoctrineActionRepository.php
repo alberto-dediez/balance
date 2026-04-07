@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\Doctrine\Repository;
 
-use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\Action\Action;
 use App\FoodLoss\Domain\Model\Action\ActionFilter;
 use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\Action\ActionRepository;
 use App\FoodLoss\Domain\Model\Action\ActionTranslation;
+use App\FoodLoss\Domain\Model\Action\Priority;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
 use App\Shared\Infrastructure\Persistence\Doctrine\Repository\DoctrineTranslatableRepositoryTrait;
 use Doctrine\ORM\EntityManagerInterface;

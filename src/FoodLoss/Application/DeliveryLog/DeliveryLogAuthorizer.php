@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Application\DeliveryLog;
 
-use App\Security\Domain\Model\Account\AccountId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLog;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 

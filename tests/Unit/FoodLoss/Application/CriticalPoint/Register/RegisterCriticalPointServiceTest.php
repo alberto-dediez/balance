@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Application\CriticalPoint\Register;
 
-use App\Security\Domain\Model\User\Role;
 use App\FoodLoss\Application\CriticalPoint\CriticalPointAuthorizer;
 use App\FoodLoss\Application\CriticalPoint\Register\RegisterCriticalPointRequest;
 use App\FoodLoss\Application\CriticalPoint\Register\RegisterCriticalPointService;
@@ -14,6 +13,7 @@ use App\FoodLoss\Domain\Model\CriticalPoint\SupplyChainStage;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;

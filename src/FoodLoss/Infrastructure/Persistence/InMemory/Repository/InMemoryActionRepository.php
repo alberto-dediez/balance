@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\InMemory\Repository;
 
-use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\Action\Action;
 use App\FoodLoss\Domain\Model\Action\ActionFilter;
 use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\Action\ActionRepository;
+use App\FoodLoss\Domain\Model\Action\Priority;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]

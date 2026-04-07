@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Application\CriticalPoint\Remove;
 
-use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
-use App\Security\Domain\Model\User\Role;
 use App\FoodLoss\Application\CriticalPoint\CriticalPointAuthorizer;
 use App\FoodLoss\Application\CriticalPoint\Remove\RemoveCriticalPointRequest;
 use App\FoodLoss\Application\CriticalPoint\Remove\RemoveCriticalPointService;
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint\CriticalPointMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepositoryMother;

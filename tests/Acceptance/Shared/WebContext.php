@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Shared;
 
-use Symfony\Component\DomCrawler\Field\FileFormField;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use Behat\Behat\Context\Context;
@@ -13,6 +12,7 @@ use Behat\Step\Then;
 use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\DomCrawler\Field\FileFormField;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**

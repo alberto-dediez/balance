@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Waste\Application\WasteManager\Register;
 
-use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\QrCode;
 
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\Property;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\QrCode;
 use App\Waste\Domain\Model\Container\QrPdfGenerator;
 use App\Waste\Domain\Model\Waste\Waste;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Domain\Model\Waste\WasteRepository;
 use App\Waste\Infrastructure\Tcpdf\GenericGenerator;
 use Symfony\Contracts\Translation\TranslatorInterface;

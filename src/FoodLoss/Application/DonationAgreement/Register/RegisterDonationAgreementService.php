@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Application\DonationAgreement\Register;
 
-use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Security\Domain\Model\User\UserId;
 use App\FoodLoss\Application\DonationAgreement\DonationAgreementAuthorizer;
 use App\FoodLoss\Application\DonationAgreement\DonationAgreementUploader;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreement;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementId;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
+use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\Security\Application\Action as SecurityAction;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
+use App\Security\Domain\Model\User\UserId;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;

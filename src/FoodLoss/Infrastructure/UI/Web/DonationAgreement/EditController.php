@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\UI\Web\DonationAgreement;
 
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\FoodLoss\Application\DonationAgreement\Update\UpdateDonationAgreementRequest;
 use App\FoodLoss\Application\DonationAgreement\Update\UpdateDonationAgreementService;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
@@ -14,6 +13,7 @@ use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;

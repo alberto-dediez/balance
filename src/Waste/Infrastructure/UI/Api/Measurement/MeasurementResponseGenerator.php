@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Waste\Infrastructure\UI\Api\Measurement;
 
 use App\Property\Domain\Model\Property\PropertyId;
-use App\Waste\Domain\Model\Waste\WasteId;
 use App\Property\Infrastructure\Symfony\Twig\PropertyExtension;
 use App\Waste\Domain\Model\Measurement\Measurement as ModelMeasurement;
+use App\Waste\Domain\Model\Waste\WasteId;
 use App\Waste\Infrastructure\Symfony\Twig\WasteExtension;
 use App\Waste\Infrastructure\Symfony\Twig\WasteManagerExtension;
 use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponse as ApiMeasurement;

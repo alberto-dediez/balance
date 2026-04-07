@@ -26,6 +26,7 @@ final class ReasonAuthorizer extends AbstractAuthorizer
         if ($user->hasRole(Role::SuperAdmin)) {
             return true;
         }
+
         return $user->hasRole(Role::Admin);
     }
 
@@ -34,6 +35,7 @@ final class ReasonAuthorizer extends AbstractAuthorizer
         if ($user->hasRole(Role::Admin)) {
             return true;
         }
+
         return $user->hasRole(Role::SuperAdmin);
     }
 

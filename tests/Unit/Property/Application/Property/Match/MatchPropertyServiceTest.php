@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Property\Application\Property\Match;
 
-use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Application\Property\Match\MatchPropertyRequest;
 use App\Property\Application\Property\Match\MatchPropertyService;
 use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Domain\Model\Property\PropertyMatched;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;

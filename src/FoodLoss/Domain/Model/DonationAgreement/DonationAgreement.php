@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Domain\Model\DonationAgreement;
 
-use App\Shared\Domain\Event\DomainEvent;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
 
 class DonationAgreement implements \Stringable

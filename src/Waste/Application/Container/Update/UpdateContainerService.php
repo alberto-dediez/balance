@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Waste\Application\Container\Update;
 
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -14,6 +12,8 @@ use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 class UpdateContainerService implements CommandHandler
 {

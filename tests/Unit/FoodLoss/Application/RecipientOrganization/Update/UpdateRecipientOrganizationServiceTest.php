@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Application\RecipientOrganization\Update;
 
-use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Application\RecipientOrganization\RecipientOrganizationAuthorizer;
 use App\FoodLoss\Application\RecipientOrganization\Update\UpdateRecipientOrganizationRequest;
 use App\FoodLoss\Application\RecipientOrganization\Update\UpdateRecipientOrganizationService;
+use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationRepository;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationType;
 use App\Security\Domain\Model\Account\AccountId;

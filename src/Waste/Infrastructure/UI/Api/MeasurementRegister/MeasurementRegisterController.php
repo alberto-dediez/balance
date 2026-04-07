@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\UI\Api\MeasurementRegister;
 
-use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use App\Waste\Application\Measurement\Register\RegisterMeasurementRequest;
 use App\Waste\Application\Measurement\Register\RegisterMeasurementService;
 use App\Waste\Domain\Model\Container\ContainerId;
+use App\Waste\Domain\Model\Measurement\Measurement;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponse;
 use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponseGenerator;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Application\DeliveryLog\Remove;
 
-use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLog;
 use App\FoodLoss\Application\DeliveryLog\DeliveryLogAuthorizer;
+use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLog;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;

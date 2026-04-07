@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Application\RecipientOrganization;
 
-use App\Security\Domain\Model\Account\AccountId;
 use App\FoodLoss\Application\RecipientOrganization\RecipientOrganizationAuthorizer;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganization;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;

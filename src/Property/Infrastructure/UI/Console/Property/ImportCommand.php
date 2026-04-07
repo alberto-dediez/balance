@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Property\Infrastructure\UI\Console\Property;
 
-use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Application\Brand\Import\BrandRequest;
 use App\Property\Application\Brand\Import\ImportBrandsRequest;
 use App\Property\Application\Brand\Import\ImportBrandsService;
@@ -28,6 +27,7 @@ use App\Property\Application\Property\Register\RegisterPropertyService;
 use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Infrastructure\ExternalSource\Property\Import\ImportConfiguration;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Doctrine\ORM\EntityManagerInterface;

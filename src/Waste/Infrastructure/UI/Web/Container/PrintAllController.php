@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\UI\Web\Container;
 
-use App\Security\Domain\Model\Account\Account;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\Account;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Waste\Application\Container\PrintAllQr\PrintAllQrContainerRequest;

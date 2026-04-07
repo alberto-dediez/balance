@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace App\Waste\Application\Container\Register;
 
-use App\Security\Domain\Model\Account\AccountId;
 use App\Property\Domain\Model\Property\PropertyId;
-use App\Waste\Domain\Model\Waste\WasteId;
-use App\Waste\Domain\Model\WasteManager\WasteManagerId;
-use App\Waste\Domain\Model\Container\QrCode;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
@@ -20,7 +17,10 @@ use App\Waste\Application\Container\ContainerAuthorizer;
 use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\ContainerRepository;
+use App\Waste\Domain\Model\Container\QrCode;
 use App\Waste\Domain\Model\Container\QrCodeGenerator;
+use App\Waste\Domain\Model\Waste\WasteId;
+use App\Waste\Domain\Model\WasteManager\WasteManagerId;
 
 class RegisterContainerService implements CommandHandler
 {

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Domain\Event\ServiceCategory;
 
-use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Event\ServiceCategory\UnlinkServiceCategorySubscriber;
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRemoved;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRemoved;

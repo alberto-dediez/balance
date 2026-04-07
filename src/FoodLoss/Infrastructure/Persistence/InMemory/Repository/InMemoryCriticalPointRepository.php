@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\InMemory\Repository;
 
-use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointFilter;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
+use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Component\DependencyInjection\Attribute\When;

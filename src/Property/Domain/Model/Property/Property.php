@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Property\Domain\Model\Property;
 
-use App\Shared\Domain\Event\DomainEvent;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
 
 class Property implements \Stringable

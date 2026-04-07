@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\UI\Api\ContainerView;
 
-use App\Waste\Domain\Model\Container\Container;
 use App\Security\Application\Action;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use App\Waste\Application\Container\ContainerAuthorizer;
+use App\Waste\Domain\Model\Container\Container;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Waste\Infrastructure\UI\Api\Container\ContainerResponse;

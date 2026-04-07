@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\DataExchange\Infrastructure\Persistence\PDO\Tools;
 
-use OpenSpout\Common\Entity\Row;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\NotImportedException;
+use OpenSpout\Common\Entity\Row;
 use OpenSpout\Reader\XLSX\Reader;
 
 class FileExtractor

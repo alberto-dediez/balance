@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Property\Domain\Model\Country;
 
-use App\Shared\Domain\Event\DomainEvent;
 use App\Property\Domain\Model\Property\ExternalId;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
 
 class Country implements \Stringable
