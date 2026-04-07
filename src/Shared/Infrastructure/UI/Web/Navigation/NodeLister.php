@@ -183,6 +183,18 @@ class NodeLister
             ],
         );
 
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Doggy Bag'),
+            icon: 'solar:bag-heart-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Envases'),
+                    icon: 'solar:box-line-duotone',
+                    target: $this->router->generate('packagings'),
+                ),
+            ],
+        );
+
         $nodes[] =  new Node(
             label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',

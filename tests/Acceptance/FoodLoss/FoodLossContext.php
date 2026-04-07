@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\Model\Action\ActionRepository;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
+use App\FoodLoss\Domain\Model\Packaging\PackagingRepository;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
 use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
@@ -21,6 +22,7 @@ use App\Tests\Unit\FoodLoss\Domain\Model\Action\ActionMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint\CriticalPointMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\Packaging\PackagingMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Reason\ReasonMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationMother;
@@ -77,6 +79,11 @@ final readonly class FoodLossContext implements Context
     public function getPreventionPlanRepository(): PreventionPlanRepository
     {
         return $this->client->getContainer()->get(PreventionPlanRepository::class);
+    }
+
+    public function getPackagingRepository(): PackagingRepository
+    {
+        return $this->client->getContainer()->get(PackagingRepository::class);
     }
 
     #[Given('action :description with id :id exists')]
@@ -206,6 +213,18 @@ final readonly class FoodLossContext implements Context
         );
 
         $this->getPreventionPlanRepository()->add($preventionPlan);
+    }
+
+    #[Given('packaging :name with id :id of account :accountId exists')]
+    public function packagingWithIdOfAccountExists(string $name, string $id, string $accountId): void
+    {
+        $packaging = PackagingMother::from(
+            name: $name,
+            id: $id,
+            accountId: $accountId,
+        );
+
+        $this->getPackagingRepository()->add($packaging);
     }
 
     #[Given('a dummy PDF file exists in :path')]
