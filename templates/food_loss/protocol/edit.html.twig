@@ -1,0 +1,38 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('protocols') }}" />
+{% endblock %}
+
+{% set page_title = ('Protocolos' | trans)
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ protocol.name %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.name) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.description) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.file) }}
+                    <p class="text-muted small">
+                        <twig:Icon name="solar:info-circle-line-duotone" />
+                        {{ 'Si no seleccionas ningún fichero, se mantendrá el actual.' | trans }}
+                    </p>
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

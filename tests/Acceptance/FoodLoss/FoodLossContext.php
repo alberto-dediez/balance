@@ -10,6 +10,7 @@ use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
 use App\FoodLoss\Domain\Model\Packaging\PackagingRepository;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
+use App\FoodLoss\Domain\Model\Protocol\ProtocolRepository;
 use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationRepository;
@@ -24,6 +25,7 @@ use App\Tests\Unit\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Packaging\PackagingMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\Protocol\ProtocolMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Reason\ReasonMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryMother;
@@ -84,6 +86,11 @@ final readonly class FoodLossContext implements Context
     public function getPackagingRepository(): PackagingRepository
     {
         return $this->client->getContainer()->get(PackagingRepository::class);
+    }
+
+    public function getProtocolRepository(): ProtocolRepository
+    {
+        return $this->client->getContainer()->get(ProtocolRepository::class);
     }
 
     #[Given('action :description with id :id exists')]
@@ -232,5 +239,17 @@ final readonly class FoodLossContext implements Context
     {
         $content = "%PDF-1.4\n1 0 obj\n<< /Title (Test) >>\nendobj\nxref\n0 1\n0000000000 65535 f\ntrailer\n<< /Root 1 0 R >>\n%%EOF";
         file_put_contents($path, $content);
+    }
+
+    #[Given('protocol :name with id :id of account :accountId exists')]
+    public function protocolWithIdOfAccountExists(string $name, string $id, string $accountId): void
+    {
+        $protocol = ProtocolMother::from(
+            name: $name,
+            id: $id,
+            accountId: $accountId,
+        );
+
+        $this->getProtocolRepository()->add($protocol);
     }
 }

@@ -195,6 +195,18 @@ class NodeLister
             ],
         );
 
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Acciones formativas e informativas'),
+            icon: 'solar:book-2-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Protocolos'),
+                    icon: 'solar:file-text-line-duotone',
+                    target: $this->router->generate('protocols'),
+                ),
+            ],
+        );
+
         $nodes[] =  new Node(
             label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',
@@ -230,6 +242,18 @@ class NodeLister
                     label: new TranslatableMessage('Convenios de donación'),
                     icon: 'solar:file-text-line-duotone',
                     target: $this->router->generate('donation_agreements'),
+                ),
+            ],
+        );
+
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Acciones formativas e informativas'),
+            icon: 'solar:book-2-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Protocolos'),
+                    icon: 'solar:file-text-line-duotone',
+                    target: $this->router->generate('protocols'),
                 ),
             ],
         );

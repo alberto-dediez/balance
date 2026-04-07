@@ -18,3 +18,10 @@ services:
     App\FoodLoss\Infrastructure\FileUploader\LocalFileDonationAgreementUploader:
         arguments:
             $uploadsDir: '%kernel.project_dir%/var/uploads'
+
+    App\FoodLoss\Application\Protocol\ProtocolUploader:
+        alias: App\FoodLoss\Infrastructure\FileUploader\LocalFileProtocolUploader
+
+    App\FoodLoss\Infrastructure\FileUploader\LocalFileProtocolUploader:
+        arguments:
+            $uploadsDir: '%kernel.project_dir%/var/uploads'
