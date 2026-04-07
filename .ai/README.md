@@ -19,7 +19,7 @@ Always use the provided `Makefile` for executing project-related commands. This 
 | | `make cs` | Check coding standards (dry-run) |
 | | `make cs-fix` | Automatically fix coding standard violations |
 | | `make rector` | Run Rector for automated refactoring |
-| **Database** | `make migration` | Create a new migration |
+| **Database** | `make migration` | Create a new migration (**never call this** — see note below) |
 | | `make migrate` | Execute migrations |
 | **Symfony** | `make sf c="command:name"` | Run any Symfony console command |
 | | `make cc` | Clear Symfony cache |
@@ -104,6 +104,14 @@ When tasked with resolving PHPStan errors (aiming for Level 8), adhere to these 
 2. **No Scripted Edits:** Do NOT use external scripts to perform automated code modifications. Use native tools only.
 3. **Reference Implementations:** Mirror patterns in `src/Shared` and `src/Security`.
 4. **Validation Pipeline:** Verify each fix with `make phpstan` and ensure all affected tests pass.
+
+## AI-Specific Notes
+
+### Migrations
+**Never run `make migration`.** Migrations are always created manually by the user. After schema changes (new entities, new fields, modified mappings), do NOT run `make migration`. Instead, inform the user that a migration is needed and describe what it should contain.
+
+### Skills
+All skill files live in `.ai/skills/` (project-local, version-controlled). When editing or creating skill files, always write to `/opt/htdocs/food-loss/.ai/skills/<skill-name>/` — never to any global or external directory.
 
 ---
 *For more detailed architectural notes, see [.ai/ARCHITECTURE.md](ARCHITECTURE.md).*

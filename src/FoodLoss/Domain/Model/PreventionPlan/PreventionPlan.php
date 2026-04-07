@@ -6,6 +6,7 @@ namespace App\FoodLoss\Domain\Model\PreventionPlan;
 
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Model\AggregateRoot;
 
 class PreventionPlan implements \Stringable
@@ -14,6 +15,11 @@ class PreventionPlan implements \Stringable
 
     /** @var iterable<PreventionPlanPropertyLink>|PreventionPlanProperties */
     private iterable $properties = [];
+
+    /** @var iterable<PreventionPlanVersion>|PreventionPlanVersions */
+    private iterable $versions = [];
+
+    private int $currentVersion = 0;
 
     /** @param array<\App\Shared\Domain\Event\DomainEvent> $events */
     public function __construct(
@@ -56,6 +62,24 @@ class PreventionPlan implements \Stringable
     public function propertyIds(): array
     {
         return $this->properties()->ids();
+    }
+
+    public function versions(): PreventionPlanVersions
+    {
+        if ($this->versions instanceof PreventionPlanVersions) {
+            return $this->versions;
+        }
+
+        $this->versions = new PreventionPlanVersions(
+            array_values(iterator_to_array($this->versions)),
+        );
+
+        return $this->versions;
+    }
+
+    public function currentVersion(): int
+    {
+        return $this->currentVersion;
     }
 
     public function accountId(): ?AccountId
@@ -108,13 +132,26 @@ class PreventionPlan implements \Stringable
     public function update(
         string $name,
         array $propertyIds,
+        UserId $updatedBy,
     ): void {
+        $propertiesChanged = $this->propertiesChanged($propertyIds);
+
         $this->recordApplyAndPublish(
             new PreventionPlanUpdated(
                 preventionPlanId: $this->id(),
                 name: $name,
             ),
         );
+
+        if ($propertiesChanged) {
+            $this->recordApplyAndPublish(
+                new PreventionPlanVersionCreated(
+                    preventionPlanId: $this->id(),
+                    versionNumber: $this->currentVersion + 1,
+                    createdBy: $updatedBy,
+                ),
+            );
+        }
 
         $this->syncProperties($propertyIds);
     }
@@ -188,6 +225,44 @@ class PreventionPlan implements \Stringable
     {
         $this->removed = true;
         $this->removedAt = $event->occurredOn();
+    }
+
+    public function applyPreventionPlanVersionCreated(PreventionPlanVersionCreated $event): void
+    {
+        $version = new PreventionPlanVersion(
+            preventionPlan: $this,
+            versionNumber: $event->versionNumber(),
+            createdBy: $event->createdBy(),
+            createdAt: $event->occurredOn(),
+        );
+
+        $this->versions()->add($version);
+        $this->currentVersion = $event->versionNumber();
+    }
+
+    /** @param PropertyId[] $newPropertyIds */
+    private function propertiesChanged(array $newPropertyIds): bool
+    {
+        $current = $this->propertyIds();
+
+        if (count($current) !== count($newPropertyIds)) {
+            return true;
+        }
+
+        foreach ($current as $currentId) {
+            $found = false;
+            foreach ($newPropertyIds as $newId) {
+                if ($currentId->equals($newId)) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** @param PropertyId[] $newPropertyIds */

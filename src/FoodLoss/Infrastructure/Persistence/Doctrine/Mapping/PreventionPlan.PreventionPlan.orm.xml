@@ -23,6 +23,20 @@
             </cascade>
         </one-to-many>
 
+        <one-to-many field="versions"
+                     target-entity="App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersion"
+                     mapped-by="preventionPlan"
+                     fetch="EXTRA_LAZY">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+            <order-by>
+                <order-by-field name="versionNumber" direction="ASC"/>
+            </order-by>
+        </one-to-many>
+
+        <field name="currentVersion" type="integer" column="current_version" nullable="false"/>
         <field name="removed" type="boolean" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>

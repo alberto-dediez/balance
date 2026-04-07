@@ -33,7 +33,7 @@ class UnlinkPreventionPlanOnPropertyRemovedSubscriberTest extends TestCase
         $this->preventionPlanRepository = PreventionPlanRepositoryMother::inMemory();
 
         $this->sut = new UnlinkPreventionPlanOnPropertyRemovedSubscriber(
-            $this->preventionPlanRepository
+            $this->preventionPlanRepository,
         );
     }
 
@@ -61,7 +61,7 @@ class UnlinkPreventionPlanOnPropertyRemovedSubscriberTest extends TestCase
         $this->assertNotNull($updated);
         $this->assertFalse($updated->isRemoved());
 
-        $remainingIds = array_map(static fn ($id) => (string) $id, $updated->propertyIds());
+        $remainingIds = array_map(static fn($id) => (string) $id, $updated->propertyIds());
         $this->assertNotContains((string) $this->propertyId, $remainingIds);
         $this->assertContains((string) $otherPropertyId, $remainingIds);
     }
