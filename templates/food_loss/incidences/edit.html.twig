@@ -1,0 +1,46 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('incidences') }}" />
+{% endblock %}
+
+{% set page_title = ('Incidencias' | trans) 
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ incidence.name %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.name) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.exceptionOccurredOn) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.incidenceType) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.originId) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.propertyId) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.description) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.effect) }}
+                </div>
+            </div>    
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

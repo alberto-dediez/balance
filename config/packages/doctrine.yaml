@@ -37,6 +37,7 @@ doctrine:
             protocol_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ProtocolIdType
             doggy_bag_sign_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DoggyBagSignIdType
             doggy_bag_exception_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DoggyBagExceptionIdType
+            incidence_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\IncidenceIdType
 
     orm:
         auto_generate_proxy_classes: true

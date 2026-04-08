@@ -217,6 +217,18 @@ class NodeLister
             ],
         );
 
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Incidencias'),
+            icon: 'solar:shield-warning-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Incidencias'),
+                    icon: 'solar:shield-warning-line-duotone',
+                    target: $this->router->generate('incidences'),
+                ),
+            ],
+        );
+
         $nodes[] =  new Node(
             label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',

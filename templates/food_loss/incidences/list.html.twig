@@ -1,0 +1,46 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Incidencias' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': 'Fecha y hora' | trans,
+            'sortable': true,
+            'sortableBy': 'exceptionOccurredOn'
+        }, {
+            'label': 'Tipología' | trans
+        }, {
+            'label': 'Punto de origen' | trans
+        }, {
+            'label': 'Propiedad' | trans
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="incidences">
+        <td>{{ element.name }}</td>
+        <td>{{ element.exceptionOccurredOn | date('d/m/Y H:i') }}</td>
+        <td>{{ element.incidenceType.value | trans({}, 'incidenceType') }}</td>
+        <td>{{ element.originId | critical_point_name }}</td>
+        <td>{{ element.propertyId | property_name }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('incidences_edit', {'incidenceId': element.id}) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('incidences_remove', {'incidenceId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('incidences_register') }}" />
+{% endblock list_actions %}

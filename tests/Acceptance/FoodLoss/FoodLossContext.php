@@ -10,6 +10,7 @@ use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
 use App\FoodLoss\Domain\Model\DoggyBagException\DoggyBagExceptionRepository;
 use App\FoodLoss\Domain\Model\DoggyBagSign\DoggyBagSignRepository;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
+use App\FoodLoss\Domain\Model\Incidence\IncidenceRepository;
 use App\FoodLoss\Domain\Model\Packaging\PackagingRepository;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
 use App\FoodLoss\Domain\Model\Protocol\ProtocolRepository;
@@ -27,6 +28,7 @@ use App\Tests\Unit\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\DoggyBagException\DoggyBagExceptionMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\DoggyBagSign\DoggyBagSignMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\Incidence\IncidenceMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Packaging\PackagingMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Protocol\ProtocolMother;
@@ -105,6 +107,11 @@ final readonly class FoodLossContext implements Context
     public function getDoggyBagExceptionRepository(): DoggyBagExceptionRepository
     {
         return $this->client->getContainer()->get(DoggyBagExceptionRepository::class);
+    }
+
+    public function getIncidenceRepository(): IncidenceRepository
+    {
+        return $this->client->getContainer()->get(IncidenceRepository::class);
     }
 
     #[Given('action :description with id :id exists')]
@@ -302,5 +309,17 @@ final readonly class FoodLossContext implements Context
         );
 
         $this->getDoggyBagExceptionRepository()->add($doggyBagException);
+    }
+
+    #[Given('incidence :name with id :id of account :accountId exists')]
+    public function incidenceWithIdOfAccountExists(string $name, string $id, string $accountId): void
+    {
+        $incidence = IncidenceMother::from(
+            name: $name,
+            id: $id,
+            accountId: $accountId,
+        );
+
+        $this->getIncidenceRepository()->add($incidence);
     }
 }
