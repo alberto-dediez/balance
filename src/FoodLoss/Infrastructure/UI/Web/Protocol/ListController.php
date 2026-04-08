@@ -48,7 +48,7 @@ class ListController extends AbstractController
             'protocols' => $response->protocols,
             'totalResults' => $response->totalResults,
             'form' => $form->createView(),
-            'dummyProtocol' => new Protocol(id: ProtocolId::generate(), accountId: $loggedAccount()?->id()),
+            'dummy' => new Protocol(id: ProtocolId::generate(), accountId: $loggedAccount()?->id()),
         ]);
     }
 }

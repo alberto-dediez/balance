@@ -192,6 +192,11 @@ class NodeLister
                     icon: 'solar:box-line-duotone',
                     target: $this->router->generate('packagings'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Carteles'),
+                    icon: 'solar:bill-list-line-duotone',
+                    target: $this->router->generate('doggy_bag_signs'),
+                ),
             ],
         );
 
@@ -238,10 +243,17 @@ class NodeLister
                     icon: 'solar:record-minimalistic-line-duotone',
                     target: $this->router->generate('delivery_logs'),
                 ),
+            ],
+        );
+
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Doggy Bag'),
+            icon: 'solar:bag-heart-line-duotone',
+            items: [
                 new Node(
-                    label: new TranslatableMessage('Convenios de donación'),
-                    icon: 'solar:file-text-line-duotone',
-                    target: $this->router->generate('donation_agreements'),
+                    label: new TranslatableMessage('Carteles'),
+                    icon: 'solar:bill-list-line-duotone',
+                    target: $this->router->generate('doggy_bag_signs'),
                 ),
             ],
         );

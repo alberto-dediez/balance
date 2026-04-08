@@ -27,7 +27,7 @@ class DownloadController extends AbstractController
 
         $this->denyAccessUnlessGranted(SecurityAction::View->value, $donationAgreement);
 
-        $path = $this->getParameter('kernel.project_dir') . '/var/uploads/' . $donationAgreement->path();
+        $path = $this->getParameter('app.uploads_dir') . '/' . $donationAgreement->path();
 
         if (!file_exists($path)) {
             throw $this->createNotFoundException('El fichero no existe en el servidor.');

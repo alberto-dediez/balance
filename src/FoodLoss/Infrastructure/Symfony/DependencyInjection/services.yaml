@@ -1,7 +1,12 @@
+parameters:
+    app.uploads_dir: '%kernel.project_dir%/var/uploads'
+
 services:
     _defaults:
         autowire: true
         autoconfigure: true
+        bind:
+            $uploadsDir: '%app.uploads_dir%'
 
     App\FoodLoss\:
         resource: '../../../'
@@ -15,13 +20,8 @@ services:
     App\FoodLoss\Application\DonationAgreement\DonationAgreementUploader:
         alias: App\FoodLoss\Infrastructure\FileUploader\LocalFileDonationAgreementUploader
 
-    App\FoodLoss\Infrastructure\FileUploader\LocalFileDonationAgreementUploader:
-        arguments:
-            $uploadsDir: '%kernel.project_dir%/var/uploads'
-
     App\FoodLoss\Application\Protocol\ProtocolUploader:
         alias: App\FoodLoss\Infrastructure\FileUploader\LocalFileProtocolUploader
 
-    App\FoodLoss\Infrastructure\FileUploader\LocalFileProtocolUploader:
-        arguments:
-            $uploadsDir: '%kernel.project_dir%/var/uploads'
+    App\FoodLoss\Application\DoggyBagSign\DoggyBagSignUploader:
+        alias: App\FoodLoss\Infrastructure\FileUploader\LocalFileDoggyBagSignUploader

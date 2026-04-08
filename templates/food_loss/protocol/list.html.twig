@@ -39,7 +39,7 @@
 {% endblock %}
 
 {% block list_actions %}
-    {% if dummyProtocol | is_authorized('register') %}
+    {% if dummy | is_authorized('register') %}
         <twig:Link:Register path="{{ path('protocols_register') }}" />
     {% endif %}
 {% endblock list_actions %}

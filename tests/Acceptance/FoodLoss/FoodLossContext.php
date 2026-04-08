@@ -7,6 +7,7 @@ namespace App\Tests\Acceptance\FoodLoss;
 use App\FoodLoss\Domain\Model\Action\ActionRepository;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
+use App\FoodLoss\Domain\Model\DoggyBagSign\DoggyBagSignRepository;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
 use App\FoodLoss\Domain\Model\Packaging\PackagingRepository;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
@@ -22,6 +23,7 @@ use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\FoodLoss\Domain\Model\Action\ActionMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint\CriticalPointMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\DoggyBagSign\DoggyBagSignMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Packaging\PackagingMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanMother;
@@ -91,6 +93,11 @@ final readonly class FoodLossContext implements Context
     public function getProtocolRepository(): ProtocolRepository
     {
         return $this->client->getContainer()->get(ProtocolRepository::class);
+    }
+
+    public function getDoggyBagSignRepository(): DoggyBagSignRepository
+    {
+        return $this->client->getContainer()->get(DoggyBagSignRepository::class);
     }
 
     #[Given('action :description with id :id exists')]
@@ -251,5 +258,17 @@ final readonly class FoodLossContext implements Context
         );
 
         $this->getProtocolRepository()->add($protocol);
+    }
+
+    #[Given('doggy bag sign :name with id :id of account :accountId exists')]
+    public function doggyBagSignWithIdOfAccountExists(string $name, string $id, string $accountId): void
+    {
+        $doggyBagSign = DoggyBagSignMother::from(
+            name: $name,
+            id: $id,
+            accountId: $accountId,
+        );
+
+        $this->getDoggyBagSignRepository()->add($doggyBagSign);
     }
 }
