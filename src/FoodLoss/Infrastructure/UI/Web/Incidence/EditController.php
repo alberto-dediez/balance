@@ -6,7 +6,6 @@ namespace App\FoodLoss\Infrastructure\UI\Web\Incidence;
 
 use App\FoodLoss\Application\Incidence\Update\UpdateIncidenceRequest;
 use App\FoodLoss\Application\Incidence\Update\UpdateIncidenceService;
-use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\Incidence\IncidenceRepository;
 use App\FoodLoss\Infrastructure\Symfony\Form\UpdateIncidenceType;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -39,10 +38,8 @@ class EditController extends AbstractController
 
         $exceptionOccurredOn = $incidence->exceptionOccurredOn();
         $incidenceType = $incidence->incidenceType();
-        $originId = $incidence->originId();
         $propertyId = $incidence->propertyId();
 
-        assert($originId instanceof CriticalPointId);
         assert($propertyId instanceof PropertyId);
 
         $incidenceRequest = new UpdateIncidenceRequest(
@@ -50,7 +47,6 @@ class EditController extends AbstractController
             name: $incidence->name(),
             exceptionOccurredOn: $exceptionOccurredOn,
             incidenceType: $incidenceType,
-            originId: $originId,
             description: $incidence->description(),
             effect: $incidence->effect(),
             propertyId: $propertyId,

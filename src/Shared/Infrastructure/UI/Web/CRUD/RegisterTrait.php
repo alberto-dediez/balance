@@ -23,8 +23,6 @@ trait RegisterTrait
             } catch (\Exception) {
                 $this->addFlash('danger', new TranslatableMessage('Error inesperado'));
             }
-        } elseif ($form->isSubmitted()) {
-            dd($form->getData());
         }
 
         return false;

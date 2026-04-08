@@ -13,7 +13,7 @@
         <field name="name" type="string" length="255" nullable="false"/>
         <field name="exceptionOccurredOn" type="datetime_immutable" column="exception_occurred_on" nullable="false"/>
         <field name="incidenceType" type="string" enum-type="App\FoodLoss\Domain\Model\Incidence\IncidenceType" nullable="false"/>
-        <field name="originId" type="critical_point_id" column="origin_id" nullable="false"/>
+
         <field name="description" type="text" nullable="false"/>
         <field name="effect" type="text" nullable="false"/>
         <field name="propertyId" type="property_id" column="property_id" nullable="false"/>

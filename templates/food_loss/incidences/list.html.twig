@@ -15,8 +15,6 @@
         }, {
             'label': 'Tipología' | trans
         }, {
-            'label': 'Punto de origen' | trans
-        }, {
             'label': 'Propiedad' | trans
         }, {
             'label': ''
@@ -27,7 +25,6 @@
         <td>{{ element.name }}</td>
         <td>{{ element.exceptionOccurredOn | date('d/m/Y H:i') }}</td>
         <td>{{ element.incidenceType.value | trans({}, 'incidenceType') }}</td>
-        <td>{{ element.originId | critical_point_name }}</td>
         <td>{{ element.propertyId | property_name }}</td>
         <td>
             {% if element | is_authorized('edit') %}

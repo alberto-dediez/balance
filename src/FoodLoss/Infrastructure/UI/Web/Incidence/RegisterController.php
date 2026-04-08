@@ -6,7 +6,6 @@ namespace App\FoodLoss\Infrastructure\UI\Web\Incidence;
 
 use App\FoodLoss\Application\Incidence\Register\RegisterIncidenceRequest;
 use App\FoodLoss\Application\Incidence\Register\RegisterIncidenceService;
-use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\Incidence\Incidence;
 use App\FoodLoss\Domain\Model\Incidence\IncidenceId;
 use App\FoodLoss\Domain\Model\Incidence\IncidenceType;
@@ -39,7 +38,6 @@ class RegisterController extends AbstractController
             name: '',
             exceptionOccurredOn: new \DateTimeImmutable('NOW'),
             incidenceType: IncidenceType::MachineryFailure,
-            originId: CriticalPointId::generate(),
             description: '',
             effect: '',
             propertyId: PropertyId::generate(),

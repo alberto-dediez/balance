@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Domain\Model\Incidence;
 
-use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\Incidence\Incidence;
 use App\FoodLoss\Domain\Model\Incidence\IncidenceId;
 use App\FoodLoss\Domain\Model\Incidence\IncidenceType;
@@ -46,7 +45,6 @@ class IncidenceMother
             name: $name,
             exceptionOccurredOn: new \DateTimeImmutable('2026-04-08 10:00:00'),
             incidenceType: IncidenceType::MachineryFailure,
-            originId: CriticalPointId::generate(),
             description: 'Description',
             effect: 'Effect',
             propertyId: PropertyId::generate(),

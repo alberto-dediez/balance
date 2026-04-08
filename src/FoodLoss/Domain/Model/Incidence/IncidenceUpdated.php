@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\FoodLoss\Domain\Model\Incidence;
 
 use App\FoodLoss\Domain\DomainEvent;
-use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
@@ -19,7 +18,6 @@ final class IncidenceUpdated extends DomainEvent
         private string $name,
         private \DateTimeImmutable $exceptionOccurredOn,
         private IncidenceType $incidenceType,
-        private CriticalPointId $originId,
         private string $description,
         private string $effect,
         private PropertyId $propertyId,
@@ -49,11 +47,6 @@ final class IncidenceUpdated extends DomainEvent
         return $this->incidenceType;
     }
 
-    public function originId(): CriticalPointId
-    {
-        return $this->originId;
-    }
-
     public function description(): string
     {
         return $this->description;
@@ -81,7 +74,6 @@ final class IncidenceUpdated extends DomainEvent
             'name' => $this->name,
             'exceptionOccurredOn' => $this->exceptionOccurredOn->format(\DateTimeInterface::ATOM),
             'incidenceType' => $this->incidenceType->value,
-            'originId' => (string) $this->originId,
             'description' => $this->description,
             'effect' => $this->effect,
             'propertyId' => (string) $this->propertyId,
@@ -98,7 +90,6 @@ final class IncidenceUpdated extends DomainEvent
             name: $payload['name'],
             exceptionOccurredOn: new \DateTimeImmutable($payload['exceptionOccurredOn']),
             incidenceType: IncidenceType::from($payload['incidenceType']),
-            originId: new CriticalPointId($payload['originId']),
             description: $payload['description'],
             effect: $payload['effect'],
             propertyId: new PropertyId($payload['propertyId']),

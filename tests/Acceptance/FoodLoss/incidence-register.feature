@@ -23,7 +23,7 @@ Feature:
     Given critical point "Test CP" with id "cp-1" of account "mycompany" exists
     When I am logged as "owner@dediez.software"
     When I go to "/es/incidences/register"
-    When I submit a form with "name:Test Incidence|incidenceType:machinery_failure|originId:cp-1|description:A desc|effect:An effect|propertyId:prop-1" and button "Registrar"
+    When I submit a form with "name:Test Incidence|incidenceType:machinery_failure|description:A desc|effect:An effect|propertyId:prop-1" and button "Registrar"
     When I follow redirect
     Then the response status should be 200
     Then I see a text "Incidencia creada correctamente: Test Incidence"

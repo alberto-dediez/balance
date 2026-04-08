@@ -6,7 +6,6 @@ namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
 use App\FoodLoss\Application\Incidence\Update\UpdateIncidenceRequest;
 use App\FoodLoss\Domain\Model\Incidence\IncidenceType;
-use App\FoodLoss\Infrastructure\Symfony\Form\Type\CriticalPointIdType;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -44,11 +43,6 @@ class UpdateIncidenceType extends AbstractType
                 'label' => new TranslatableMessage('Tipología'),
                 'required' => true,
                 'translation_domain' => 'incidenceType',
-                'constraints' => [new Assert\NotNull()],
-            ])
-            ->add('originId', CriticalPointIdType::class, [
-                'label' => new TranslatableMessage('Punto de origen'),
-                'required' => true,
                 'constraints' => [new Assert\NotNull()],
             ])
             ->add('description', TextareaType::class, [

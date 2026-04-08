@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Domain\Model\Incidence;
 
-use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\AggregateRoot;
@@ -15,7 +14,6 @@ class Incidence implements \Stringable
 
     private \DateTimeImmutable $exceptionOccurredOn;
     private IncidenceType $incidenceType = IncidenceType::MachineryFailure;
-    private ?CriticalPointId $originId = null;
     private ?PropertyId $propertyId = null;
     private ?AccountId $accountId = null;
 
@@ -25,7 +23,6 @@ class Incidence implements \Stringable
         private string $name = '',
         ?\DateTimeImmutable $exceptionOccurredOn = null,
         ?IncidenceType $incidenceType = null,
-        ?CriticalPointId $originId = null,
         private string $description = '',
         private string $effect = '',
         ?PropertyId $propertyId = null,
@@ -41,7 +38,6 @@ class Incidence implements \Stringable
         if (null !== $incidenceType) {
             $this->incidenceType = $incidenceType;
         }
-        $this->originId = $originId;
         $this->propertyId = $propertyId;
         $this->accountId = $accountId;
     }
@@ -64,11 +60,6 @@ class Incidence implements \Stringable
     public function incidenceType(): IncidenceType
     {
         return $this->incidenceType;
-    }
-
-    public function originId(): ?CriticalPointId
-    {
-        return $this->originId;
     }
 
     public function description(): string
@@ -115,7 +106,6 @@ class Incidence implements \Stringable
         string $name,
         \DateTimeImmutable $exceptionOccurredOn,
         IncidenceType $incidenceType,
-        CriticalPointId $originId,
         string $description,
         string $effect,
         PropertyId $propertyId,
@@ -127,7 +117,6 @@ class Incidence implements \Stringable
                 name: $name,
                 exceptionOccurredOn: $exceptionOccurredOn,
                 incidenceType: $incidenceType,
-                originId: $originId,
                 description: $description,
                 effect: $effect,
                 propertyId: $propertyId,
@@ -140,7 +129,6 @@ class Incidence implements \Stringable
         string $name,
         \DateTimeImmutable $exceptionOccurredOn,
         IncidenceType $incidenceType,
-        CriticalPointId $originId,
         string $description,
         string $effect,
         PropertyId $propertyId,
@@ -151,7 +139,6 @@ class Incidence implements \Stringable
                 name: $name,
                 exceptionOccurredOn: $exceptionOccurredOn,
                 incidenceType: $incidenceType,
-                originId: $originId,
                 description: $description,
                 effect: $effect,
                 propertyId: $propertyId,
@@ -173,7 +160,6 @@ class Incidence implements \Stringable
         $this->name = $event->name();
         $this->exceptionOccurredOn = $event->exceptionOccurredOn();
         $this->incidenceType = $event->incidenceType();
-        $this->originId = $event->originId();
         $this->description = $event->description();
         $this->effect = $event->effect();
         $this->propertyId = $event->propertyId();
@@ -186,7 +172,6 @@ class Incidence implements \Stringable
         $this->name = $event->name();
         $this->exceptionOccurredOn = $event->exceptionOccurredOn();
         $this->incidenceType = $event->incidenceType();
-        $this->originId = $event->originId();
         $this->description = $event->description();
         $this->effect = $event->effect();
         $this->propertyId = $event->propertyId();

@@ -36,7 +36,6 @@ class RegisterIncidenceService implements CommandHandler
             name: $request->name,
             exceptionOccurredOn: $request->exceptionOccurredOn,
             incidenceType: $request->incidenceType,
-            originId: $request->originId,
             description: $request->description,
             effect: $request->effect,
             propertyId: $request->propertyId,
