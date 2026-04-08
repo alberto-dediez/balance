@@ -1,0 +1,9 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = ('Excepciones Doggy Bag' | trans) 
+    ~ ' > '
+    ~ ('Registrar' | trans)  %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('doggy_bag_exceptions') }}" />
+{% endblock %}

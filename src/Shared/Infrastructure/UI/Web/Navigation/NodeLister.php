@@ -197,6 +197,11 @@ class NodeLister
                     icon: 'solar:bill-list-line-duotone',
                     target: $this->router->generate('doggy_bag_signs'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Excepciones'),
+                    icon: 'solar:shield-warning-line-duotone',
+                    target: $this->router->generate('doggy_bag_exceptions'),
+                ),
             ],
         );
 
@@ -254,6 +259,11 @@ class NodeLister
                     label: new TranslatableMessage('Carteles'),
                     icon: 'solar:bill-list-line-duotone',
                     target: $this->router->generate('doggy_bag_signs'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Excepciones'),
+                    icon: 'solar:shield-warning-line-duotone',
+                    target: $this->router->generate('doggy_bag_exceptions'),
                 ),
             ],
         );

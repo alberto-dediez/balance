@@ -7,6 +7,7 @@ namespace App\Tests\Acceptance\FoodLoss;
 use App\FoodLoss\Domain\Model\Action\ActionRepository;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
+use App\FoodLoss\Domain\Model\DoggyBagException\DoggyBagExceptionRepository;
 use App\FoodLoss\Domain\Model\DoggyBagSign\DoggyBagSignRepository;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
 use App\FoodLoss\Domain\Model\Packaging\PackagingRepository;
@@ -23,6 +24,7 @@ use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\FoodLoss\Domain\Model\Action\ActionMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint\CriticalPointMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\DoggyBagException\DoggyBagExceptionMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\DoggyBagSign\DoggyBagSignMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Packaging\PackagingMother;
@@ -100,6 +102,11 @@ final readonly class FoodLossContext implements Context
         return $this->client->getContainer()->get(DoggyBagSignRepository::class);
     }
 
+    public function getDoggyBagExceptionRepository(): DoggyBagExceptionRepository
+    {
+        return $this->client->getContainer()->get(DoggyBagExceptionRepository::class);
+    }
+
     #[Given('action :description with id :id exists')]
     public function actionWithIdExists(string $description, string $id): void
     {
@@ -120,6 +127,18 @@ final readonly class FoodLossContext implements Context
     public function criticalPointWithIdExists(string $name, string $id): void
     {
         $criticalPoint = CriticalPointMother::fromNameAndId($name, $id);
+
+        $this->getCriticalPointRepository()->add($criticalPoint);
+    }
+
+    #[Given('critical point :name with id :id of account :accountId exists')]
+    public function criticalPointWithIdOfAccountExists(string $name, string $id, string $accountId): void
+    {
+        $criticalPoint = CriticalPointMother::from(
+            name: $name,
+            id: $id,
+            accountId: new AccountId($accountId),
+        );
 
         $this->getCriticalPointRepository()->add($criticalPoint);
     }
@@ -270,5 +289,18 @@ final readonly class FoodLossContext implements Context
         );
 
         $this->getDoggyBagSignRepository()->add($doggyBagSign);
+    }
+
+    #[Given('doggy bag exception :description with id :id of account :accountId exists')]
+    public function doggyBagExceptionWithIdOfAccountExists(string $description, string $id, string $accountId): void
+    {
+        $doggyBagException = DoggyBagExceptionMother::from(
+            description: $description,
+            criticalPointId: (string) \App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId::generate(),
+            accountId: $accountId,
+            id: $id,
+        );
+
+        $this->getDoggyBagExceptionRepository()->add($doggyBagException);
     }
 }
