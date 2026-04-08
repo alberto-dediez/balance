@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
 
 class PreventionPlanMother
 {
@@ -46,6 +47,7 @@ class PreventionPlanMother
             name: $name,
             propertyIds: [],
             accountId: new AccountId($accountId),
+            registeredBy: new UserId('user-id'),
         );
 
         return $preventionPlan;
@@ -77,6 +79,7 @@ class PreventionPlanMother
             name: 'prevention-plan-' . random_int(100, 999),
             propertyIds: $propertyIds,
             accountId: new AccountId('account-' . random_int(100, 999)),
+            registeredBy: new UserId('user-id'),
         );
 
         return $preventionPlan;

@@ -32,6 +32,7 @@ doctrine:
             delivery_log_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DeliveryLogIdType
             donation_agreement_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DonationAgreementIdType
             prevention_plan_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\PreventionPlanIdType
+            prevention_plan_version_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\PreventionPlanVersionIdType
             packaging_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\PackagingIdType
             protocol_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ProtocolIdType
 

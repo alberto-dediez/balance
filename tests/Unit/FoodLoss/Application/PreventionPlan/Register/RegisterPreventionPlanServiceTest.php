@@ -9,6 +9,7 @@ use App\FoodLoss\Application\PreventionPlan\Register\RegisterPreventionPlanReque
 use App\FoodLoss\Application\PreventionPlan\Register\RegisterPreventionPlanService;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRegistered;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
+use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersionCreated;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -52,12 +53,18 @@ class RegisterPreventionPlanServiceTest extends TestCase
 
         $this->assertNotNull($preventionPlanPersisted);
 
-        $lastEvent = $this->spySubscriber->lastEvent();
+        $events = $this->spySubscriber->events();
 
-        $this->assertNotNull($lastEvent);
-        $this->assertTrue($lastEvent instanceof PreventionPlanRegistered);
-        $this->assertEquals('Plan de Prevención 1', $lastEvent->name());
-        $this->assertTrue($preventionPlanPersisted->id()->equals($lastEvent->preventionPlanId()));
+        $this->assertCount(2, $events);
+
+        $registeredEvent = $events[0];
+        $this->assertInstanceOf(PreventionPlanRegistered::class, $registeredEvent);
+        $this->assertEquals('Plan de Prevención 1', $registeredEvent->name());
+        $this->assertTrue($preventionPlanPersisted->id()->equals($registeredEvent->preventionPlanId()));
+
+        $versionCreatedEvent = $events[1];
+        $this->assertInstanceOf(PreventionPlanVersionCreated::class, $versionCreatedEvent);
+        $this->assertEquals(0, $versionCreatedEvent->versionNumber());
     }
 
     public function testIsHandle(): void

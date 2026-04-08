@@ -8,12 +8,25 @@ use App\Security\Domain\Model\User\UserId;
 
 final class PreventionPlanVersion
 {
+    /** @var iterable<ProposedAction>|ProposedActions */
+    private iterable $proposedActions = [];
+
+    private PreventionPlanVersionId $id;
+
     public function __construct(
         private PreventionPlan $preventionPlan,
         private int $versionNumber,
         private UserId $createdBy,
         private \DateTimeImmutable $createdAt,
-    ) {}
+        ?PreventionPlanVersionId $id = null,
+    ) {
+        $this->id = $id ?? PreventionPlanVersionId::generate();
+    }
+
+    public function id(): PreventionPlanVersionId
+    {
+        return $this->id;
+    }
 
     public function preventionPlan(): PreventionPlan
     {
@@ -33,5 +46,18 @@ final class PreventionPlanVersion
     public function createdAt(): \DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function proposedActions(): ProposedActions
+    {
+        if ($this->proposedActions instanceof ProposedActions) {
+            return $this->proposedActions;
+        }
+
+        $this->proposedActions = new ProposedActions(
+            array_values(iterator_to_array($this->proposedActions)),
+        );
+
+        return $this->proposedActions;
     }
 }

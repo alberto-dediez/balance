@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Domain\Model\PreventionPlan;
 
+use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -114,12 +115,21 @@ class PreventionPlan implements \Stringable
         string $name,
         array $propertyIds,
         AccountId $accountId,
+        UserId $registeredBy,
     ): void {
         $this->recordApplyAndPublish(
             new PreventionPlanRegistered(
                 preventionPlanId: $this->id(),
                 name: $name,
                 accountId: $accountId,
+            ),
+        );
+
+        $this->recordApplyAndPublish(
+            new PreventionPlanVersionCreated(
+                preventionPlanId: $this->id(),
+                versionNumber: 0,
+                createdBy: $registeredBy,
             ),
         );
 
@@ -193,6 +203,52 @@ class PreventionPlan implements \Stringable
         );
     }
 
+    public function addProposedAction(
+        PropertyId $propertyId,
+        ActionId $actionId,
+    ): void {
+        $version = $this->versions()->findByVersionNumber($this->currentVersion);
+        if (null === $version) {
+            return;
+        }
+
+        if ($version->proposedActions()->has($propertyId, $actionId)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new ProposedActionAdded(
+                preventionPlanId: $this->id(),
+                versionNumber: $this->currentVersion,
+                propertyId: $propertyId,
+                actionId: $actionId,
+            ),
+        );
+    }
+
+    public function removeProposedAction(
+        PropertyId $propertyId,
+        ActionId $actionId,
+    ): void {
+        $version = $this->versions()->findByVersionNumber($this->currentVersion);
+        if (null === $version) {
+            return;
+        }
+
+        if (!$version->proposedActions()->has($propertyId, $actionId)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new ProposedActionRemoved(
+                preventionPlanId: $this->id(),
+                versionNumber: $this->currentVersion,
+                propertyId: $propertyId,
+                actionId: $actionId,
+            ),
+        );
+    }
+
     public function applyPreventionPlanRegistered(PreventionPlanRegistered $event): void
     {
         $this->name = $event->name();
@@ -238,6 +294,32 @@ class PreventionPlan implements \Stringable
 
         $this->versions()->add($version);
         $this->currentVersion = $event->versionNumber();
+    }
+
+    public function applyProposedActionAdded(ProposedActionAdded $event): void
+    {
+        $version = $this->versions()->findByVersionNumber($event->versionNumber());
+        if (null === $version) {
+            return;
+        }
+
+        $version->proposedActions()->add(
+            new ProposedAction(
+                preventionPlanVersion: $version,
+                propertyId: $event->propertyId(),
+                actionId: $event->actionId(),
+            ),
+        );
+    }
+
+    public function applyProposedActionRemoved(ProposedActionRemoved $event): void
+    {
+        $version = $this->versions()->findByVersionNumber($event->versionNumber());
+        if (null === $version) {
+            return;
+        }
+
+        $version->proposedActions()->removeByIds($event->propertyId(), $event->actionId());
     }
 
     /** @param PropertyId[] $newPropertyIds */
