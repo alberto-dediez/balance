@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\Model\Packaging\Packaging;
 use App\FoodLoss\Domain\Model\Packaging\PackagingFilter;
 use App\FoodLoss\Domain\Model\Packaging\PackagingId;
 use App\FoodLoss\Domain\Model\Packaging\PackagingRepository;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -69,6 +70,13 @@ class InMemoryPackagingRepository implements PackagingRepository
             }
 
             if (true == $packaging->isRemoved()) {
+                continue;
+            }
+
+            if (
+                $filter->propertyId instanceof PropertyId
+                && !$packaging->stocks()->has($filter->propertyId)
+            ) {
                 continue;
             }
 

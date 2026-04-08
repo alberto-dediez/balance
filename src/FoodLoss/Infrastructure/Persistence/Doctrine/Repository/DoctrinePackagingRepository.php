@@ -7,7 +7,9 @@ namespace App\FoodLoss\Infrastructure\Persistence\Doctrine\Repository;
 use App\FoodLoss\Domain\Model\Packaging\Packaging;
 use App\FoodLoss\Domain\Model\Packaging\PackagingFilter;
 use App\FoodLoss\Domain\Model\Packaging\PackagingId;
+use App\FoodLoss\Domain\Model\Packaging\PackagingPropertyStock;
 use App\FoodLoss\Domain\Model\Packaging\PackagingRepository;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
@@ -78,6 +80,16 @@ class DoctrinePackagingRepository implements PackagingRepository
                     $qb->expr()->eq('e.accountId', ':accountId'),
                 )
                 ->setParameter('accountId', $filter->accountId)
+            ;
+        }
+
+        if ($filter->propertyId instanceof PropertyId) {
+            $qb
+                ->join(PackagingPropertyStock::class, 's', 'WITH', 's.packaging = e')
+                ->andWhere(
+                    $qb->expr()->eq('s.propertyId', ':propertyId'),
+                )
+                ->setParameter('propertyId', (string) $filter->propertyId)
             ;
         }
 
