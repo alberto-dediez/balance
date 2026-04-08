@@ -6,6 +6,7 @@ namespace App\Tests\Unit\FoodLoss\Domain\Model\DoggyBagSign;
 
 use App\FoodLoss\Domain\Model\DoggyBagSign\DoggyBagSign;
 use App\FoodLoss\Domain\Model\DoggyBagSign\DoggyBagSignId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 
 class DoggyBagSignMother
@@ -42,10 +43,21 @@ class DoggyBagSignMother
         );
     }
 
+    public static function withPropertyId(PropertyId $propertyId): DoggyBagSign
+    {
+        return self::from(
+            name: 'Cartel-' . random_int(100, 999),
+            id: (string) DoggyBagSignId::generate(),
+            accountId: (string) AccountId::generate(),
+            propertyId: $propertyId,
+        );
+    }
+
     public static function from(
         string $name,
         string $id,
         string $accountId,
+        ?PropertyId $propertyId = null,
         string $location = 'Puerta principal',
         string $path = 'doggy_bag_signs/account-id/test.pdf',
     ): DoggyBagSign {
@@ -56,7 +68,7 @@ class DoggyBagSignMother
             name: $name,
             location: $location,
             path: $path,
-            propertyId: null,
+            propertyId: $propertyId,
             accountId: new AccountId($accountId),
         );
 

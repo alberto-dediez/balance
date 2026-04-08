@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\Model\Incidence\Incidence;
 use App\FoodLoss\Domain\Model\Incidence\IncidenceFilter;
 use App\FoodLoss\Domain\Model\Incidence\IncidenceId;
 use App\FoodLoss\Domain\Model\Incidence\IncidenceRepository;
+use App\Property\Domain\Model\Property\PropertyId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]
@@ -50,6 +51,10 @@ class InMemoryIncidenceRepository implements IncidenceRepository
             }
 
             if (null !== $filter->accountId && !$incidence->accountId()?->equals($filter->accountId)) {
+                continue;
+            }
+
+            if ($filter->propertyId instanceof PropertyId && !$incidence->propertyId()?->equals($filter->propertyId)) {
                 continue;
             }
 

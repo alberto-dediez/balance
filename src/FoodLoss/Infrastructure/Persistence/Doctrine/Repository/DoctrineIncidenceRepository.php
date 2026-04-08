@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\Model\Incidence\Incidence;
 use App\FoodLoss\Domain\Model\Incidence\IncidenceFilter;
 use App\FoodLoss\Domain\Model\Incidence\IncidenceId;
 use App\FoodLoss\Domain\Model\Incidence\IncidenceRepository;
+use App\Property\Domain\Model\Property\PropertyId;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -77,6 +78,15 @@ class DoctrineIncidenceRepository implements IncidenceRepository
                     $qb->expr()->eq('e.accountId', ':accountId'),
                 )
                 ->setParameter('accountId', (string) $filter->accountId)
+            ;
+        }
+
+        if ($filter->propertyId instanceof PropertyId) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('e.propertyId', ':propertyId'),
+                )
+                ->setParameter('propertyId', (string) $filter->propertyId)
             ;
         }
 

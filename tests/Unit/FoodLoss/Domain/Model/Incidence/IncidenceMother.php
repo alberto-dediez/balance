@@ -33,10 +33,21 @@ class IncidenceMother
         );
     }
 
+    public static function withPropertyId(PropertyId $propertyId): Incidence
+    {
+        return self::from(
+            name: 'incidence-' . rand(100, 999),
+            id: (string) IncidenceId::generate(),
+            accountId: (string) AccountId::generate(),
+            propertyId: $propertyId,
+        );
+    }
+
     public static function from(
         string $name,
         string $id,
         string $accountId = 'account-id-test',
+        ?PropertyId $propertyId = null,
     ): Incidence {
         $incidence = new Incidence(
             id: new IncidenceId($id),
@@ -47,7 +58,7 @@ class IncidenceMother
             incidenceType: IncidenceType::MachineryFailure,
             description: 'Description',
             effect: 'Effect',
-            propertyId: PropertyId::generate(),
+            propertyId: $propertyId ?? PropertyId::generate(),
             accountId: new AccountId($accountId),
         );
 
