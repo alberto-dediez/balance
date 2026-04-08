@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\DoggyBagException\DoggyBagException;
 use App\FoodLoss\Domain\Model\DoggyBagException\DoggyBagExceptionFilter;
 use App\FoodLoss\Domain\Model\DoggyBagException\DoggyBagExceptionId;
@@ -79,6 +80,15 @@ class DoctrineDoggyBagExceptionRepository implements DoggyBagExceptionRepository
                     $qb->expr()->eq('e.accountId', ':accountId'),
                 )
                 ->setParameter('accountId', (string) $filter->accountId)
+            ;
+        }
+
+        if ($filter->criticalPointId instanceof CriticalPointId) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('e.criticalPointId', ':criticalPointId'),
+                )
+                ->setParameter('criticalPointId', (string) $filter->criticalPointId)
             ;
         }
 

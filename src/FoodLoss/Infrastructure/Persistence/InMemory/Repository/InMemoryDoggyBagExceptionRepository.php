@@ -72,6 +72,10 @@ class InMemoryDoggyBagExceptionRepository implements DoggyBagExceptionRepository
                 continue;
             }
 
+            if (null !== $filter->criticalPointId && !$doggyBagException->criticalPointId()?->equals($filter->criticalPointId)) {
+                continue;
+            }
+
             if ($filter->propertyId instanceof PropertyId && null !== $this->criticalPointRepository) {
                 $criticalPoint = null !== $doggyBagException->criticalPointId() ? $this->criticalPointRepository->find($doggyBagException->criticalPointId()) : null;
                 $criticalPointPropertyId = $criticalPoint?->propertyId();

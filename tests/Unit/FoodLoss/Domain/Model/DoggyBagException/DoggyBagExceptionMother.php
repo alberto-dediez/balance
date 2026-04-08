@@ -48,4 +48,14 @@ class DoggyBagExceptionMother
             id: (string) DoggyBagExceptionId::generate(),
         );
     }
+
+    public static function withCriticalPointId(CriticalPointId $criticalPointId): DoggyBagException
+    {
+        return self::from(
+            description: 'description-' . rand(100, 999),
+            criticalPointId: (string) $criticalPointId,
+            accountId: 'account-id',
+            id: (string) DoggyBagExceptionId::generate(),
+        );
+    }
 }
