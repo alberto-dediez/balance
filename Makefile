@@ -1,5 +1,5 @@
 # Executables (local)
-DOCKER_COMP = docker compose
+DOCKER_COMP = docker compose --env-file .env $(shell [ -f .env.local ] && echo "--env-file .env.local")
 
 # Docker containers
 PHP_CONT = $(DOCKER_COMP) exec php
@@ -11,7 +11,8 @@ PHP      = $(PHP_CONT) php
 PHP_TEST = $(TEST_CONT) php -d memory_limit=512M
 COMPOSER = $(PHP_CONT) composer
 SYMFONY  = $(PHP) bin/console
-PHP_EXTERNAL = docker run --rm -v $(pwd):/app -w /app php:8.4-cli
+PHP_EXTERNAL = docker run --rm -v $(CURDIR):/app -w /app php:8.4-cli
+COMPOSER_EXTERNAL = docker run --rm -v $(CURDIR):/app -w /app composer:latest
 
 # Misc
 .DEFAULT_GOAL = help
@@ -67,9 +68,9 @@ composer: ## Run composer, pass the parameter "c=" to run a given command, examp
 	@$(eval c ?=)
 	@$(COMPOSER) $(c)
 
-composer-external: ## Run composer from external container, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'
+external-composer: ## Run composer from external container, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'
 	@$(eval c ?=)
-	@$(COMPOSER) $(c)
+	@$(COMPOSER_EXTERNAL) $(c)
 
 vendor: ## Install vendors according to the current composer.lock file
 vendor: c=install --prefer-dist --no-dev --no-progress --no-scripts --no-interaction
