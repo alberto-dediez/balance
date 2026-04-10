@@ -1,0 +1,4 @@
+{% trans with {
+    '{action}': event.description,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado la acción "{action}" por el usuario {user}{% endtrans %}

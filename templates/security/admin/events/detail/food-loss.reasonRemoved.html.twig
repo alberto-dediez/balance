@@ -1,0 +1,4 @@
+{% trans with {
+    '{reason}': event.reasonId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado el motivo {reason} por el usuario {user}{% endtrans %}

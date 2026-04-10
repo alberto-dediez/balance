@@ -1,0 +1,5 @@
+{% trans with {
+    '{incidence}': event.name,
+    '{property}': event.propertyId | property_name,
+    '{user}': element.userId | user_name
+} %}Se ha registrado la incidencia "{incidence}" para la propiedad {property} por el usuario {user}{% endtrans %}

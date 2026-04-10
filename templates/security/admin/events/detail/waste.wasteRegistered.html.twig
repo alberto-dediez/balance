@@ -1,3 +1,4 @@
 {% trans with {
-    '{waste}': event.name
-} %}Se ha registrado el residuo {waste}{% endtrans %}
+    '{waste}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha registrado el residuo {waste} por el usuario {user}{% endtrans %}

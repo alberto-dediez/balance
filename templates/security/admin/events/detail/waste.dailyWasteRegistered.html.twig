@@ -1,0 +1,7 @@
+{% trans with {
+    '{property}': event.propertyId | property_name,
+    '{waste}': event.waste | waste_name,
+    '{load}': event.load,
+    '{day}': event.day,
+    '{user}': element.userId | user_name
+} %}Se ha registrado el residuo diario para {property} ({waste}): carga {load} el día {day} por el usuario {user}{% endtrans %}

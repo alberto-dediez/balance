@@ -1,0 +1,4 @@
+{% trans with {
+    '{category}': event.categoryId | category_name,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado la categoría {category} por el usuario {user}{% endtrans %}

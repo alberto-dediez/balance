@@ -1,0 +1,5 @@
+{% trans with {
+    '{wasteManager}': event.name,
+    '{account}': event.accountId | account_name,
+    '{user}': element.userId | user_name
+} %}Se ha registrado el gestor de residuos {wasteManager} para la cuenta {account} por el usuario {user}{% endtrans %}

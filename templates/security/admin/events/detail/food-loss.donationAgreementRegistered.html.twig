@@ -1,0 +1,6 @@
+{% trans with {
+    '{organization}': event.recipientOrganizationId | recipient_organization_name,
+    '{account}': event.accountId | account_name,
+    '{startDate}': event.startDate | date('d/m/Y'),
+    '{user}': element.userId | user_name
+} %}Se ha registrado un acuerdo de donación con {organization} para la cuenta {account} con inicio {startDate} por el usuario {user}{% endtrans %}

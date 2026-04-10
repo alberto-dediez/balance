@@ -1,0 +1,5 @@
+{% trans with {
+    '{serviceCategory}': event.serviceCategoryId | service_category_name,
+    '{locale}': event.locale,
+    '{user}': element.userId | user_name
+} %}Se ha traducido la categoría de servicio {serviceCategory} al idioma {locale} por el usuario {user}{% endtrans %}

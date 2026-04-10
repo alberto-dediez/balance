@@ -1,10 +1,12 @@
 {% if event.accountId is not null %}
     {% trans with {
         '{property}': event.name,
-        '{account}': event.accountId | account_name
-    } %}Se ha actualizado la propiedad {property} perteneciente a la cuenta {account} {% endtrans %}
+        '{account}': event.accountId | account_name,
+        '{user}': element.userId | user_name
+    } %}Se ha actualizado la propiedad {property} perteneciente a la cuenta {account} por el usuario {user}{% endtrans %}
 {% else %}
     {% trans with {
         '{property}': event.name,
-    } %}Se ha actualizado la propiedad {property} sin cuenta asociada{% endtrans %}
+        '{user}': element.userId | user_name
+    } %}Se ha actualizado la propiedad {property} sin cuenta asociada por el usuario {user}{% endtrans %}
 {% endif %}

@@ -1,4 +1,5 @@
 {% trans with {
     '{account}': event.accountId,
-    '{name}': event.name
-} %}La cuenta {account} ahora se llama {name}{% endtrans %}
+    '{name}': event.name,
+    '{user}': element.userId | user_name
+} %}La cuenta {account} ahora se llama {name}, realizado por el usuario {user}{% endtrans %}

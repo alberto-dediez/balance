@@ -1,0 +1,7 @@
+{% trans with {
+    '{property}': event.propertyId | property_name,
+    '{quantity}': event.quantity,
+    '{productType}': event.productType,
+    '{date}': event.date | date('d/m/Y'),
+    '{user}': element.userId | user_name
+} %}Se ha actualizado la entrega de {quantity} unidades de {productType} para {property} el {date} por el usuario {user}{% endtrans %}

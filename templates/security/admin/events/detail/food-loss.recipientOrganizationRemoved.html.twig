@@ -1,0 +1,4 @@
+{% trans with {
+    '{organization}': event.recipientOrganizationId | recipient_organization_name,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado la organización receptora {organization} por el usuario {user}{% endtrans %}

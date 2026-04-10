@@ -1,0 +1,4 @@
+{% trans with {
+    '{name}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado el cartel doggy bag "{name}" por el usuario {user}{% endtrans %}

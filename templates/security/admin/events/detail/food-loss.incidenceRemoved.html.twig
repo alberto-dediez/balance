@@ -1,0 +1,4 @@
+{% trans with {
+    '{incidence}': event.incidenceId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado la incidencia {incidence} por el usuario {user}{% endtrans %}

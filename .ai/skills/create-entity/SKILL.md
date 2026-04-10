@@ -3274,8 +3274,9 @@ If creating a NEW bounded context (not adding to an existing one), add route gro
 6. Create test files (Mother, RepositoryMother, RepositoryTest, InMemoryTest, EntityTest if translatable, service tests)
 7. Create acceptance test files (.feature files, update Context class)
 8. Update config files (doctrine.yaml types, routes.yaml if new context)
-9. Run `make cs-fix` to fix code style
-10. Run `make phpstan` to check for static analysis issues
+9. **Create event detail templates** for each new domain event (see Important Notes below)
+10. Run `make cs-fix` to fix code style
+11. Run `make phpstan` to check for static analysis issues
 
 ## Important Notes
 
@@ -3298,3 +3299,4 @@ If creating a NEW bounded context (not adding to an existing one), add route gro
 - When using the Acceptance Test step `When I submit a form with "data" and button "text"`, the data fields MUST be separated by a pipe (`|`), not a comma. For example: `When I submit a form with "name:Test Name|priority:High" and button "Registrar"`.
 - **Acceptance Tests Structure**: ALWAYS create four separate `.feature` files (`{entity}-list.feature`, `{entity}-register.feature`, `{entity}-edit.feature`, `{entity}-remove.feature`). Do NOT combine them into a single file.
 - **Twig Form Layout**: In `edit.html.twig`, ALWAYS use a single column layout (`<div class="col-12">`) for ALL form fields to ensure visual consistency with the default single-column rendering of `register.html.twig`.
+- **Event detail templates**: For every domain event generated (`{Entity}Registered`, `{Entity}Updated`, `{Entity}Removed`, etc.), create a Twig template in `templates/security/admin/events/detail/` so that the audit log displays a human-readable description. The file must be named `{context_kebab}.{eventName}.html.twig` (e.g. `food-loss.actionRegistered.html.twig`). Use `{% trans with {...} %}` with the relevant payload fields and always include `'{user}': element.userId | user_name` to show the actor. If the event's payload already uses `{user}` for a target user (e.g. role grants), use `{actor}` instead for `element.userId | user_name`.

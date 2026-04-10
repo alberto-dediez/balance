@@ -1,0 +1,5 @@
+{% trans with {
+    '{criticalPoint}': event.name,
+    '{property}': event.propertyId | property_name,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado el punto crítico "{criticalPoint}" de la propiedad {property} por el usuario {user}{% endtrans %}

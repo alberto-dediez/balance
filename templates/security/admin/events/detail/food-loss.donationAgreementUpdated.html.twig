@@ -1,0 +1,5 @@
+{% trans with {
+    '{organization}': event.recipientOrganizationId | recipient_organization_name,
+    '{startDate}': event.startDate | date('d/m/Y'),
+    '{user}': element.userId | user_name
+} %}Se ha actualizado el acuerdo de donación con {organization} con inicio {startDate} por el usuario {user}{% endtrans %}

@@ -1,0 +1,4 @@
+{% trans with {
+    '{destination}': event.destinationId | destination_name,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado el destino {destination} por el usuario {user}{% endtrans %}

@@ -1,0 +1,4 @@
+{% trans with {
+    '{brand}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha registrado la marca {brand} por el usuario {user}{% endtrans %}

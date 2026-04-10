@@ -1,0 +1,5 @@
+{% trans with {
+    '{criticalPoint}': event.criticalPointId | critical_point_name,
+    '{serviceCategory}': event.serviceCategoryId | service_category_name,
+    '{user}': element.userId | user_name
+} %}Se ha desvinculado la categoría de servicio {serviceCategory} del punto crítico {criticalPoint} por el usuario {user}{% endtrans %}

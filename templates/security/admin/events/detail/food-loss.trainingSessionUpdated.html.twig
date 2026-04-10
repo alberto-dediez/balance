@@ -1,0 +1,5 @@
+{% trans with {
+    '{title}': event.title,
+    '{date}': event.sessionDate | date('d/m/Y'),
+    '{user}': element.userId | user_name
+} %}Se ha actualizado la sesión de formación "{title}" del {date} por el usuario {user}{% endtrans %}

@@ -1,11 +1,12 @@
 {% if event.accountId is not empty %}
     {% trans with {
         '{user}': event.username,
-        '{account}': event.accountId | account_name
-    } %}Registrado el usuario {user} para la cuenta {account}{% endtrans %}
+        '{account}': event.accountId | account_name,
+        '{actor}': element.userId | user_name
+    } %}Registrado el usuario {user} para la cuenta {account} por el usuario {actor}{% endtrans %}
 {% else %}
     {% trans with {
-        '{user}': event.username
-    } %}Registrado el usuario {user} sin cuenta{% endtrans %}
+        '{user}': event.username,
+        '{actor}': element.userId | user_name
+    } %}Registrado el usuario {user} sin cuenta por el usuario {actor}{% endtrans %}
 {% endif %}
-

@@ -1524,8 +1524,9 @@ Add the new Doctrine type under `doctrine.dbal.types`:
 4. Create Infrastructure: `Doctrine{Entity}Repository.php`, `InMemory{Entity}Repository.php`, `{Entity}IdType.php`, ORM mapping XML files
 5. Create test files: `{Entity}Mother.php`, `{Entity}RepositoryMother.php`, `{Entity}RepositoryTest.php`, `InMemory{Entity}RepositoryTest.php`, `Doctrine{Entity}RepositoryTest.php`, `{Entity}Test.php` (if translatable)
 6. Update `config/packages/doctrine.yaml` with the new type
-7. Run `make cs-fix`
-8. Run `make phpstan`
+7. **Create event detail templates** for each new domain event (see Important Notes below)
+8. Run `make cs-fix`
+9. Run `make phpstan`
 
 ## Important Notes
 
@@ -1536,3 +1537,4 @@ Add the new Doctrine type under `doctrine.dbal.types`:
 - Doctrine repositories use `#[AsAlias]` and `#[When]` attributes for DI wiring
 - InMemory repositories use `#[When(env: 'test')]`
 - The services.yaml in each context auto-wires all classes — no manual registration needed
+- **Event detail templates**: For every domain event created (`{Entity}Registered`, `{Entity}Updated`, `{Entity}Removed`, etc.), create a Twig template in `templates/security/admin/events/detail/` so the audit log displays a human-readable description. File name: `{context_kebab}.{eventName}.html.twig` (e.g. `food-loss.actionRegistered.html.twig`). Use `{% trans with {...} %}` with the relevant payload fields and always include `'{user}': element.userId | user_name` to show the actor. If the event payload already uses `{user}` for a different person (e.g. the target of a role grant), use `{actor}` for `element.userId | user_name` instead.

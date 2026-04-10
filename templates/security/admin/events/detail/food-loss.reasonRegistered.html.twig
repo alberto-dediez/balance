@@ -1,0 +1,4 @@
+{% trans with {
+    '{reason}': event.description,
+    '{user}': element.userId | user_name
+} %}Se ha registrado el motivo "{reason}" por el usuario {user}{% endtrans %}

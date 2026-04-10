@@ -1,0 +1,4 @@
+{% trans with {
+    '{serviceCategory}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha registrado la categoría de servicio "{serviceCategory}" por el usuario {user}{% endtrans %}

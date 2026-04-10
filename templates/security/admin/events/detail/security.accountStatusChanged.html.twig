@@ -1,9 +1,11 @@
 {% if event.active %}
     {% trans with {
-        '{account}': event.accountId | account_name
-    } %}Activada la cuenta {account}{% endtrans %}
+        '{account}': event.accountId | account_name,
+        '{user}': element.userId | user_name
+    } %}Activada la cuenta {account} por el usuario {user}{% endtrans %}
 {% else %}
     {% trans with {
-        '{account}': event.accountId | account_name
-    } %}Desactivada la cuenta "{account}"{% endtrans %}
+        '{account}': event.accountId | account_name,
+        '{user}': element.userId | user_name
+    } %}Desactivada la cuenta "{account}" por el usuario {user}{% endtrans %}
 {% endif %}

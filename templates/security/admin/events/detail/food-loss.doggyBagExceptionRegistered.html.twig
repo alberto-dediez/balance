@@ -1,0 +1,5 @@
+{% trans with {
+    '{criticalPoint}': event.criticalPointId | critical_point_name,
+    '{description}': event.description,
+    '{user}': element.userId | user_name
+} %}Se ha registrado una excepción de doggy bag para el punto crítico {criticalPoint}: {description} por el usuario {user}{% endtrans %}

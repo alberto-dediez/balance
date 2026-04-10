@@ -1,0 +1,4 @@
+{% trans with {
+    '{brand}': event.brandId | brand_name,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado la marca {brand} por el usuario {user}{% endtrans %}
