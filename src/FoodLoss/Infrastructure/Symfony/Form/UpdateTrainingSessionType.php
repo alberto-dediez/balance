@@ -1,0 +1,61 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\FoodLoss\Infrastructure\Symfony\Form;
+
+use App\FoodLoss\Application\TrainingSession\Update\UpdateTrainingSessionRequest;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Validator\Constraints as Assert;
+
+/** @extends AbstractType<mixed> */
+class UpdateTrainingSessionType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('sessionDate', DateType::class, [
+                'label' => new TranslatableMessage('Fecha de la sesión'),
+                'required' => true,
+                'widget' => 'single_text',
+                'input' => 'datetime_immutable',
+                'constraints' => [
+                    new Assert\NotNull(),
+                ],
+            ])
+            ->add('title', TextType::class, [
+                'label' => new TranslatableMessage('Título'),
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Length(max: 255),
+                ],
+            ])
+            ->add('topic', TextareaType::class, [
+                'label' => new TranslatableMessage('Tema'),
+                'required' => false,
+                'empty_data' => '',
+            ])
+            ->add('save', SubmitType::class, [
+                'label' => new TranslatableMessage('Guardar'),
+            ])
+            ->add('saveAndReturn', SubmitType::class, [
+                'label' => new TranslatableMessage('Guardar y salir'),
+            ])
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => UpdateTrainingSessionRequest::class,
+        ]);
+    }
+}

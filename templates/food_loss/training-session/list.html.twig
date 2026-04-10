@@ -1,0 +1,47 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Sesiones formativas' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Fecha' | trans,
+            'sortable': true,
+            'sortableBy': 'sessionDate'
+        }, {
+            'label': 'Título' | trans,
+            'sortable': false
+        }, {
+            'label': 'Tema' | trans,
+            'sortable': false
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="trainingSessions">
+        <td>{{ element.sessionDate | date('d/m/Y') }}</td>
+        <td>{{ element.title }}</td>
+        <td>{{ element.topic }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('training_sessions_edit', {'trainingSessionId': element.id}) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('training_sessions_remove', {'trainingSessionId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    {% if dummy | is_authorized('register') %}
+        <twig:Link:Register path="{{ path('training_sessions_register') }}" />
+    {% endif %}
+{% endblock list_actions %}

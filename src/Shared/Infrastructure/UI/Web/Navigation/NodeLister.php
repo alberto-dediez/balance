@@ -214,6 +214,11 @@ class NodeLister
                     icon: 'solar:file-text-line-duotone',
                     target: $this->router->generate('protocols'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Sesiones formativas'),
+                    icon: 'solar:bill-list-line-duotone',
+                    target: $this->router->generate('training_sessions'),
+                ),
             ],
         );
 
@@ -288,6 +293,11 @@ class NodeLister
                     label: new TranslatableMessage('Protocolos'),
                     icon: 'solar:file-text-line-duotone',
                     target: $this->router->generate('protocols'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Sesiones formativas'),
+                    icon: 'solar:bill-list-line-duotone',
+                    target: $this->router->generate('training_sessions'),
                 ),
             ],
         );
