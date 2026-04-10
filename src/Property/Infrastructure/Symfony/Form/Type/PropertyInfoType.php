@@ -115,20 +115,20 @@ class PropertyInfoType extends AbstractType
                 },
                 'required' => false,
             ])
-            ->add('longitude', NumberType::class, [
-                'label' => new TranslatableMessage('Longitud'),
-                'setter' => function (PropertyInfo &$info, ?string $value, FormInterface $form) use ($changePropertyInfo): void {
-                    $info = $changePropertyInfo($info, [
-                        'longitude' => $value,
-                    ]);
-                },
-                'required' => false,
-            ])
             ->add('latitude', NumberType::class, [
                 'label' => new TranslatableMessage('Latitud'),
                 'setter' => function (PropertyInfo &$info, ?string $value, FormInterface $form) use ($changePropertyInfo): void {
                     $info = $changePropertyInfo($info, [
                         'latitude' => $value,
+                    ]);
+                },
+                'required' => false,
+            ])
+            ->add('longitude', NumberType::class, [
+                'label' => new TranslatableMessage('Longitud'),
+                'setter' => function (PropertyInfo &$info, ?string $value, FormInterface $form) use ($changePropertyInfo): void {
+                    $info = $changePropertyInfo($info, [
+                        'longitude' => $value,
                     ]);
                 },
                 'required' => false,
