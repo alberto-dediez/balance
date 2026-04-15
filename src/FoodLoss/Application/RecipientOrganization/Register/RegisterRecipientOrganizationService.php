@@ -28,7 +28,7 @@ class RegisterRecipientOrganizationService implements CommandHandler
 
     public function __invoke(RegisterRecipientOrganizationRequest $request, User $user): RegisterRecipientOrganizationResponse
     {
-        $accountId = $user->accountId();
+        $accountId = $request->accountId;
 
         if (!$accountId instanceof AccountId) {
             throw new \InvalidArgumentException('User must have an account');

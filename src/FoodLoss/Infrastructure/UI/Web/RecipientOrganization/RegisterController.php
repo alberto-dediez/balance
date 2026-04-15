@@ -35,8 +35,9 @@ class RegisterController extends AbstractController
         $form = $this->createForm(RegisterRecipientOrganizationType::class, new RegisterRecipientOrganizationRequest());
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerRecipientOrganization, $loggedUser): true {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerRecipientOrganization, $loggedUser, $loggedAccount): true {
                 $registerRequest = $form->getData();
+                $registerRequest->accountId = $loggedAccount()?->id();
 
                 $response = $registerRecipientOrganization($registerRequest, $loggedUser());
 

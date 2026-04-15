@@ -6,6 +6,7 @@ namespace App\FoodLoss\Application\RecipientOrganization\Register;
 
 use App\FoodLoss\Domain\Model\RecipientOrganization\PickupType;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationType;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Application\CommandBus\Command;
 
 class RegisterRecipientOrganizationRequest implements Command
@@ -22,5 +23,6 @@ class RegisterRecipientOrganizationRequest implements Command
         public string $contactPhone = '',
         public string $operatingHours = '',
         public array $pickupTypes = [],
+        public ?AccountId $accountId = null,
     ) {}
 }

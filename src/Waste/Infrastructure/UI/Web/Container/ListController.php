@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Waste\Infrastructure\UI\Web\Container;
 
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\Symfony\Form\BulkType;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
@@ -27,14 +28,12 @@ class ListController extends AbstractController
 
     public function __invoke(
         LoggedUser $loggedUser,
+        LoggedAccount $loggedAccount,
         ListContainersService $listContainers,
         Request $request,
     ): Response {
-        $user = $loggedUser();
-        $accountId = $user->accountId();
-
         [$filter, $form] = $this->filter($request, fn(): ListContainersRequest => new ListContainersRequest(
-            accountId: $accountId,
+            accountId: $loggedAccount()?->id(),
         ), ListContainersType::class);
 
         try {

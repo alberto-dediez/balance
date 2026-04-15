@@ -49,6 +49,7 @@ class RegisterCriticalPointServiceTest extends TestCase
             name: 'Critical Point 1',
             propertyId: $propertyId,
             supplyChainStage: SupplyChainStage::Receiving,
+            accountId: $accountId,
         );
 
         $result = $sut($request, UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId));
@@ -86,6 +87,7 @@ class RegisterCriticalPointServiceTest extends TestCase
         $request = new RegisterCriticalPointRequest(
             name: 'Critical Point 1',
             propertyId: $propertyId,
+            accountId: $accountId,
         );
 
         $this->expectException(\InvalidArgumentException::class);

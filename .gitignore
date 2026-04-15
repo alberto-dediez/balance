@@ -50,3 +50,5 @@ phpstan.neon
 ###> symfonycasts/sass-bundle ###
 /public/assets/
 ###< symfonycasts/sass-bundle ###
+
+/.ai/results

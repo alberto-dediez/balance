@@ -34,11 +34,13 @@ class RegisterRecipientOrganizationServiceTest extends TestCase
 
         $sut = $this->createSUT($repository);
 
+        $accountId = new AccountId('test-account-id');
         $request = new RegisterRecipientOrganizationRequest(
             name: 'Banco de Alimentos Test',
+            accountId: $accountId,
         );
 
-        $user = UserMother::fromUsernameAndRoleAndAccount('owner@test.com', Role::Owner, new AccountId('test-account-id'));
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner@test.com', Role::Owner, $accountId);
 
         $result = $sut($request, $user);
 

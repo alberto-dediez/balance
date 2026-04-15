@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\UI\Api\MeasurementHistory;
 
-use App\Security\Infrastructure\Symfony\Security\SecurityUser;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Waste\Application\Measurement\List\ListMeasurementsRequest;
 use App\Waste\Application\Measurement\List\ListMeasurementsService;
 use App\Waste\Infrastructure\UI\Api\Measurement\MeasurementResponseGenerator;
@@ -28,15 +29,14 @@ class MeasurementHistoryController extends AbstractController
     public function __invoke(
         ListMeasurementsService $listMeasurements,
         MeasurementResponseGenerator $measurementGenerator,
+        LoggedUser $loggedUser,
+        LoggedAccount $loggedAccount,
     ): JsonResponse {
-        /**
-         * @var SecurityUser $user
-         */
-        $user = $this->getUser();
+        $user = $loggedUser();
 
         $response = $listMeasurements(
             new ListMeasurementsRequest(
-                accountId: $user->accountId(),
+                accountId: $loggedAccount()?->id(),
                 userId: $user->id(),
                 limit: 10,
                 orderBy: 'registeredAt',

@@ -46,9 +46,9 @@ class UpdateCriticalPointService implements CommandHandler
         }
 
         $propertyAccountId = $property->accountId();
-        $userAccountId = $user->accountId();
+        $requestAccountId = $request->accountId;
 
-        if (null == $propertyAccountId || null == $userAccountId || !$propertyAccountId->equals($userAccountId)) {
+        if (null == $propertyAccountId || null == $requestAccountId || !$propertyAccountId->equals($requestAccountId)) {
             throw new \InvalidArgumentException('Property not found or does not belong to your account');
         }
 

@@ -54,6 +54,7 @@ class UpdateCriticalPointServiceTest extends TestCase
             name: 'Updated Name',
             propertyId: $propertyId,
             supplyChainStage: SupplyChainStage::Storage,
+            accountId: $accountId,
         );
 
         $result = $sut($request, UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, $accountId));

@@ -10,6 +10,7 @@ use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
 use App\FoodLoss\Infrastructure\Symfony\Form\UpdateCriticalPointType;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,6 +30,7 @@ class EditController extends AbstractController
         CriticalPointRepository $criticalPointRepository,
         UpdateCriticalPointService $updateCriticalPoint,
         LoggedUser $loggedUser,
+        LoggedAccount $loggedAccount,
         Request $request,
     ): Response {
         $criticalPoint = $this->getCriticalPointFromId($criticalPointId, $criticalPointRepository);
@@ -51,8 +53,9 @@ class EditController extends AbstractController
         $form = $this->createForm(UpdateCriticalPointType::class, $criticalPointRequest);
 
         try {
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateCriticalPoint, $loggedUser): void {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateCriticalPoint, $loggedUser, $loggedAccount): void {
                 $criticalPointRequest = $form->getData();
+                $criticalPointRequest->accountId = $loggedAccount()?->id();
 
                 $updateCriticalPoint($criticalPointRequest, $loggedUser());
 

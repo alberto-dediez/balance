@@ -29,9 +29,9 @@ class RegisterCriticalPointService implements CommandHandler
 
     public function __invoke(RegisterCriticalPointRequest $request, User $user): RegisterCriticalPointResponse
     {
-        $accountId = $user->accountId();
+        $accountId = $request->accountId;
 
-        if (null == $accountId) {
+        if (null === $accountId) {
             throw new \InvalidArgumentException('User must have an account');
         }
 
