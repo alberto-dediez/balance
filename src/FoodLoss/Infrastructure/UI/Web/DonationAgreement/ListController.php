@@ -57,7 +57,7 @@ class ListController extends AbstractController
             throw $this->createAccessDeniedException($e->getMessage());
         }
 
-        return $this->render('@food_loss/donation_agreement/list.html.twig', [
+        return $this->render('@food_loss/donation-agreement/list.html.twig', [
             'donationAgreements' => $response->donationAgreements,
             'totalResults' => $response->totalResults,
             'form' => $form->createView(),

@@ -65,7 +65,7 @@ class RegisterController extends AbstractController
             throw $this->createAccessDeniedException($e->getMessage());
         }
 
-        return $this->render('@food_loss/prevention_plan/register.html.twig', [
+        return $this->render('@food_loss/prevention-plan/register.html.twig', [
             'form' => $form->createView(),
         ]);
     }
