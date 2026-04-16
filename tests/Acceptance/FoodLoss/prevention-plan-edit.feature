@@ -8,16 +8,26 @@ Feature:
     When I go to "/es/prevention-plans/edit/333"
     Then the response status should be 403
 
-  Scenario: As an owner, I can edit my prevention plans
+  Scenario: As an owner, I can edit my prevention plans and return to the list
     Given account "MyCompany" with id "mycompany" exists
     Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
     Given prevention plan "Plan 1" with id "333" of account "mycompany" exists
     When I am logged as "owner@dediez.software"
     When I go to "/es/prevention-plans/edit/333"
     Then the response status should be 200
-    When I submit a form with "name:Plan Actualizado" and button "Guardar"
-    When I follow redirect
+    When I submit a form with "name:Plan Actualizado" and button "Guardar y salir"
+    Then I am redirected to "/es/prevention-plans"
+    Then I see a text "Plan de prevención actualizado con éxito"
+
+  Scenario: As an owner, I can edit my prevention plans and continue to actions
+    Given account "MyCompany" with id "mycompany" exists
+    Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
+    Given prevention plan "Plan 1" with id "333" of account "mycompany" exists
+    When I am logged as "owner@dediez.software"
+    When I go to "/es/prevention-plans/edit/333"
     Then the response status should be 200
+    When I submit a form with "name:Plan Actualizado" and button "Continuar"
+    Then I am redirected to "/es/prevention-plans/edit/333/actions"
     Then I see a text "Plan de prevención actualizado con éxito"
 
   Scenario: As an owner, I cannot access to edit prevention plans of other account

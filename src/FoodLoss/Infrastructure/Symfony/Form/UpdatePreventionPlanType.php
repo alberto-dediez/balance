@@ -33,7 +33,7 @@ class UpdatePreventionPlanType extends AbstractType
                 'placeholder' => new TranslatableMessage('Todas las propiedades'),
             ])
             ->add('save', SubmitType::class, [
-                'label' => new TranslatableMessage('Guardar'),
+                'label' => new TranslatableMessage('Continuar'),
             ])
             ->add('saveAndReturn', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar y salir'),

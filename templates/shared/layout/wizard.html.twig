@@ -1,0 +1,30 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{#
+    Variables expected from the child template:
+      wizard_steps  — array of {label: string, href: string}   (required)
+      wizard_active — 1-based index of the active step          (default: 1)
+#}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <div class="wizard-content">
+                <div class="wizard wizard-circle">
+
+                    <twig:StepList
+                        :steps="wizard_steps ?? []"
+                        :active="wizard_active ?? 1"
+                    />
+
+                    <div class="content">
+                        <div class="body">
+                            {% block wizard_panels %}{% endblock %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

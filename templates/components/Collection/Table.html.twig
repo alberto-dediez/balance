@@ -1,0 +1,70 @@
+{% props elements, columns, proto %}
+
+{% set protoRow %}
+    <tr class="collection-element">
+        {% with { element: proto } %}
+            {% block content %}{% endblock %}
+        {% endwith %}
+
+        <td class="col-2 text-end">
+            <button
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                data-action="collection#remove"
+            >
+                <twig:Icon name="solar:trash-bin-minimalistic-outline" />
+            </button>
+        </td>
+    </tr>
+{% endset %}
+
+{% set columns = columns | merge([
+    {label: ''},
+]) %}
+
+<div
+    data-controller="collection"
+    data-collection-prototype-value="{{ protoRow | e('html_attr') }}"
+>
+    <table class="table">
+        <thead>
+            <tr>
+                {% for column in columns %}
+                    <th>
+                        {{ column.label }}
+                    </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody class="collection">
+            {% for element in elements %}
+                <tr class="collection-element">
+                    {{ block('content') }}
+
+                    <td class="col-2 text-end">
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-outline-danger"
+                            data-action="collection#remove"
+                        >
+                            <twig:Icon name="solar:trash-bin-minimalistic-outline" />
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="mt-2 mb-3">
+        <button
+            type="button"
+            class="btn btn-outline-info"
+            data-action="collection#add"
+        >
+            <twig:Icon name="solar:add-circle-outline" />
+            {% trans %}Añadir{% endtrans %}
+        </button>
+    </div>
+</div>
+
+

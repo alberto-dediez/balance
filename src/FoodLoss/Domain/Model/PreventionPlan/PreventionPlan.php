@@ -154,13 +154,32 @@ class PreventionPlan implements \Stringable
         );
 
         if ($propertiesChanged) {
+            $currentProposedActions = $this->currentPlanVersion()->proposedActions()->toArray();
+            $newVersionNumber = $this->currentVersion + 1;
+
             $this->recordApplyAndPublish(
                 new PreventionPlanVersionCreated(
                     preventionPlanId: $this->id(),
-                    versionNumber: $this->currentVersion + 1,
+                    versionNumber: $newVersionNumber,
                     createdBy: $updatedBy,
                 ),
             );
+
+            foreach ($currentProposedActions as $proposedAction) {
+                foreach ($propertyIds as $propertyId) {
+                    if ($proposedAction->propertyId()->equals($propertyId)) {
+                        $this->recordApplyAndPublish(
+                            new ProposedActionAdded(
+                                preventionPlanId: $this->id(),
+                                versionNumber: $newVersionNumber,
+                                propertyId: $proposedAction->propertyId(),
+                                actionId: $proposedAction->actionId(),
+                            ),
+                        );
+                        break;
+                    }
+                }
+            }
         }
 
         $this->syncProperties($propertyIds);
@@ -203,14 +222,20 @@ class PreventionPlan implements \Stringable
         );
     }
 
+    public function currentPlanVersion(): PreventionPlanVersion
+    {
+        $version = $this->versions()->findByVersionNumber($this->currentVersion);
+
+        assert(null !== $version);
+
+        return $version;
+    }
+
     public function addProposedAction(
         PropertyId $propertyId,
         ActionId $actionId,
     ): void {
-        $version = $this->versions()->findByVersionNumber($this->currentVersion);
-        if (null === $version) {
-            return;
-        }
+        $version = $this->currentPlanVersion();
 
         if ($version->proposedActions()->has($propertyId, $actionId)) {
             return;
@@ -230,10 +255,7 @@ class PreventionPlan implements \Stringable
         PropertyId $propertyId,
         ActionId $actionId,
     ): void {
-        $version = $this->versions()->findByVersionNumber($this->currentVersion);
-        if (null === $version) {
-            return;
-        }
+        $version = $this->currentPlanVersion();
 
         if (!$version->proposedActions()->has($propertyId, $actionId)) {
             return;
@@ -374,6 +396,6 @@ class PreventionPlan implements \Stringable
 
     public function __toString(): string
     {
-        return $this->name();
+        return sprintf('%s #%s', $this->name(), $this->currentVersion());
     }
 }

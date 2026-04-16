@@ -1,4 +1,4 @@
-{% extends '@shared/layout/edit.html.twig' %}
+{% extends '@shared/layout/wizard.html.twig' %}
 
 {% block top_actions %}
     <twig:TopAction:Return path="{{ path('prevention_plans') }}" />
@@ -8,11 +8,19 @@
     ~ ' > '
     ~ ('Editar' | trans)
     ~ ' > '
-    ~ preventionPlan.name %}
+    ~ preventionPlan %}
 
-{% block content %}
-    {{ form_start(form) }}
-        <twig:Card>
+{% set wizard_steps = [
+    {label: 'General'  | trans, href: path('prevention_plans_edit',    {preventionPlanId: preventionPlan.id})},
+    {label: 'Acciones' | trans, href: path('prevention_plans_actions',  {preventionPlanId: preventionPlan.id})},
+    {label: 'Borrador' | trans, href: '#panel-draft'},
+    {label: 'Publicar' | trans, href: '#panel-publish'},
+] %}
+{% set wizard_active = 1 %}
+
+{% block wizard_panels %}
+    <div id="panel-general">
+        {{ form_start(form) }}
             <div class="row">
                 <div class="col-12">
                     {{ form_row(form.name) }}
@@ -26,6 +34,6 @@
                 <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
                 <twig:ActionBar:Button type="primary" :button="form.save" />
             </twig:ActionBar>
-        </twig:Card>
-    {{ form_end(form) }}
+        {{ form_end(form) }}
+    </div>
 {% endblock %}

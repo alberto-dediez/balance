@@ -58,6 +58,10 @@ class EditController extends AbstractController
             if ($needsRedirect) {
                 return $this->redirectToRoute('prevention_plans');
             }
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                return $this->redirectToRoute('prevention_plans_actions', ['preventionPlanId' => $preventionPlanId]);
+            }
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
         }

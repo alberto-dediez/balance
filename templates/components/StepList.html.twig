@@ -1,0 +1,22 @@
+{#
+    steps: array of {label: string, href: string}
+    active: index (1-based) of the current active step (default: 1)
+#}
+{% props steps = [], active = 1 %}
+
+<div class="steps clearfix" {{ attributes }}>
+    <ul role="tablist">
+        {% for step in steps %}
+            {% set loop_index = loop.index %}
+            {% set is_current = loop_index == active %}
+            {% set is_done = loop_index < active %}
+
+            <li role="tab" class="{{ loop.first ? 'first' : '' }}{{ is_current ? ' current' : '' }}{{ not is_current and not is_done ? ' disabled' : '' }}{{ is_done ? ' done' : '' }}">
+                <a href="{{ not is_done and not is_current ? 'javascript:void(0)' : step.href }}" class="{{ not is_done ? 'disabled' : '' }}">
+                    <span class="step">{{ loop_index }}</span>
+                    <span class="d-none d-sm-inline">{{ step.label }}</span>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>

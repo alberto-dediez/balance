@@ -14,7 +14,6 @@ use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,8 +23,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 #[Route('/prevention-plans/register', name: 'prevention_plans_register')]
 class RegisterController extends AbstractController
 {
-    use RegisterTrait;
-
     public function __invoke(
         RegisterPreventionPlanService $registerPreventionPlan,
         LoggedUser $loggedUser,
@@ -45,21 +42,23 @@ class RegisterController extends AbstractController
         $form = $this->createForm(RegisterPreventionPlanType::class, new RegisterPreventionPlanRequest());
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerPreventionPlan, $user, $account): true {
-                /** @var RegisterPreventionPlanRequest $registerRequest */
-                $registerRequest = $form->getData();
+            $form->handleRequest($request);
 
-                $registerRequest->accountId = $account->id();
+            if ($form->isSubmitted() && $form->isValid()) {
+                try {
+                    /** @var RegisterPreventionPlanRequest $registerRequest */
+                    $registerRequest = $form->getData();
 
-                $response = $registerPreventionPlan($registerRequest, $user);
+                    $registerRequest->accountId = $account->id();
 
-                $this->addFlash('success', new TranslatableMessage('Plan de prevención creado correctamente: {name}', ['{name}' => $response->name]));
+                    $response = $registerPreventionPlan($registerRequest, $user);
 
-                return true;
-            });
+                    $this->addFlash('success', new TranslatableMessage('Plan de prevención creado correctamente: {name}', ['{name}' => $response->name]));
 
-            if ($needsRedirect) {
-                return $this->redirectToRoute('prevention_plans');
+                    return $this->redirectToRoute('prevention_plans_actions', ['preventionPlanId' => (string) $response->preventionPlanId]);
+                } catch (\Exception) {
+                    $this->addFlash('danger', new TranslatableMessage('Error inesperado'));
+                }
             }
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());

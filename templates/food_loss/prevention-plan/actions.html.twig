@@ -1,0 +1,40 @@
+{% extends '@shared/layout/wizard.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('prevention_plans') }}" />
+{% endblock %}
+
+{% set page_title = ('Planes de Prevención' | trans)
+    ~ ' > '
+    ~ ('Acciones' | trans)
+    ~ ' > '
+    ~ preventionPlan %}
+
+{% set wizard_steps = [
+    {label: 'General'  | trans, href: path('prevention_plans_edit',    {preventionPlanId: preventionPlan.id})},
+    {label: 'Acciones' | trans, href: path('prevention_plans_actions',  {preventionPlanId: preventionPlan.id})},
+    {label: 'Borrador' | trans, href: '#panel-draft'},
+    {label: 'Publicar' | trans, href: '#panel-publish'},
+] %}
+{% set wizard_active = 2 %}
+
+{% block wizard_panels %}
+    {{ form_start(form) }}
+
+        {% set columns = [
+            {label: 'Propiedad' | trans},
+            {label: 'Acción' | trans},
+        ] %}
+
+        <twig:Collection:Table :columns="columns" :elements="form.proposedActions" :proto="form.proposedActions.vars.prototype">
+            <td class="col-5">{{ form_widget(element.propertyId) }}</td>
+            <td class="col-5">{{ form_widget(element.actionId) }}</td>
+        </twig:Collection:Table>
+
+        <twig:ActionBar>
+            <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+            <twig:ActionBar:Button type="primary" :button="form.save" />
+        </twig:ActionBar>
+
+    {{ form_end(form) }}
+{% endblock %}
