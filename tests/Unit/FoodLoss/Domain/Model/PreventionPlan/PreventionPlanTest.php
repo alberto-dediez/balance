@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan;
 
 use App\FoodLoss\Domain\Model\Action\ActionId;
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
+use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
-use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use PHPUnit\Framework\TestCase;
 
 class PreventionPlanTest extends TestCase
@@ -19,6 +20,7 @@ class PreventionPlanTest extends TestCase
         $propertyA = new PropertyId('property-a');
         $propertyB = new PropertyId('property-b');
         $actionId = new ActionId((string) ActionId::generate());
+        $criticalPointId = CriticalPointId::generate();
 
         $plan = new PreventionPlan(id: PreventionPlanId::generate());
         $plan->register(
@@ -28,8 +30,8 @@ class PreventionPlanTest extends TestCase
             registeredBy: new UserId('user-id'),
         );
 
-        $plan->addProposedAction($propertyA, $actionId);
-        $plan->addProposedAction($propertyB, $actionId);
+        $plan->addProposedAction($propertyA, $actionId, $criticalPointId);
+        $plan->addProposedAction($propertyB, $actionId, $criticalPointId);
 
         $this->assertCount(2, $plan->currentPlanVersion()->proposedActions());
 
@@ -46,8 +48,8 @@ class PreventionPlanTest extends TestCase
 
         // propertyA action is inherited, propertyB action is not
         $this->assertCount(1, $newVersion->proposedActions());
-        $this->assertTrue($newVersion->proposedActions()->has($propertyA, $actionId));
-        $this->assertFalse($newVersion->proposedActions()->has($propertyB, $actionId));
+        $this->assertTrue($newVersion->proposedActions()->has($propertyA, $actionId, $criticalPointId));
+        $this->assertFalse($newVersion->proposedActions()->has($propertyB, $actionId, $criticalPointId));
     }
 
     public function testNewVersionInheritsAllProposedActionsWhenNoPropertyIsRemoved(): void
@@ -56,6 +58,8 @@ class PreventionPlanTest extends TestCase
         $propertyB = new PropertyId('property-b');
         $actionA = new ActionId((string) ActionId::generate());
         $actionB = new ActionId((string) ActionId::generate());
+        $criticalPointIdA = CriticalPointId::generate();
+        $criticalPointIdB = CriticalPointId::generate();
 
         $plan = new PreventionPlan(id: PreventionPlanId::generate());
         $plan->register(
@@ -65,8 +69,8 @@ class PreventionPlanTest extends TestCase
             registeredBy: new UserId('user-id'),
         );
 
-        $plan->addProposedAction($propertyA, $actionA);
-        $plan->addProposedAction($propertyB, $actionB);
+        $plan->addProposedAction($propertyA, $actionA, $criticalPointIdA);
+        $plan->addProposedAction($propertyB, $actionB, $criticalPointIdB);
 
         // Update with same properties but different name — version bumps
         $propertyC = new PropertyId('property-c');
@@ -82,14 +86,15 @@ class PreventionPlanTest extends TestCase
 
         // Both actions are inherited
         $this->assertCount(2, $newVersion->proposedActions());
-        $this->assertTrue($newVersion->proposedActions()->has($propertyA, $actionA));
-        $this->assertTrue($newVersion->proposedActions()->has($propertyB, $actionB));
+        $this->assertTrue($newVersion->proposedActions()->has($propertyA, $actionA, $criticalPointIdA));
+        $this->assertTrue($newVersion->proposedActions()->has($propertyB, $actionB, $criticalPointIdB));
     }
 
     public function testNoNewVersionCreatedWhenPropertiesDoNotChange(): void
     {
         $propertyA = new PropertyId('property-a');
         $actionId = new ActionId((string) ActionId::generate());
+        $criticalPointId = CriticalPointId::generate();
 
         $plan = new PreventionPlan(id: PreventionPlanId::generate());
         $plan->register(
@@ -99,7 +104,7 @@ class PreventionPlanTest extends TestCase
             registeredBy: new UserId('user-id'),
         );
 
-        $plan->addProposedAction($propertyA, $actionId);
+        $plan->addProposedAction($propertyA, $actionId, $criticalPointId);
 
         $plan->update(
             name: 'Plan Renamed',

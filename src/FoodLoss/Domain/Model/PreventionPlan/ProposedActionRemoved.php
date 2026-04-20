@@ -6,6 +6,7 @@ namespace App\FoodLoss\Domain\Model\PreventionPlan;
 
 use App\FoodLoss\Domain\DomainEvent;
 use App\FoodLoss\Domain\Model\Action\ActionId;
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
@@ -19,6 +20,7 @@ final class ProposedActionRemoved extends DomainEvent
         private readonly int $versionNumber,
         private readonly PropertyId $propertyId,
         private readonly ActionId $actionId,
+        private readonly CriticalPointId $criticalPointId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -45,6 +47,11 @@ final class ProposedActionRemoved extends DomainEvent
         return $this->actionId;
     }
 
+    public function criticalPointId(): CriticalPointId
+    {
+        return $this->criticalPointId;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->preventionPlanId;
@@ -57,6 +64,7 @@ final class ProposedActionRemoved extends DomainEvent
             'versionNumber' => $this->versionNumber,
             'propertyId' => (string) $this->propertyId,
             'actionId' => (string) $this->actionId,
+            'criticalPointId' => (string) $this->criticalPointId,
         ];
     }
 
@@ -70,6 +78,7 @@ final class ProposedActionRemoved extends DomainEvent
             versionNumber: (int) $payload['versionNumber'],
             propertyId: new PropertyId($payload['propertyId']),
             actionId: new ActionId($payload['actionId']),
+            criticalPointId: !empty($payload['criticalPointId']) ? new CriticalPointId($payload['criticalPointId']) : CriticalPointId::generate(),
             id: $id,
             occurredOn: $occurredOn,
         );

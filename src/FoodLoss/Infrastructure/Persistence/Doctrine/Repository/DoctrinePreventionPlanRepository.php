@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanFilter;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
@@ -92,6 +93,15 @@ class DoctrinePreventionPlanRepository implements PreventionPlanRepository
                     ),
                 )
                 ->setParameter('propertyId', (string) $filter->propertyId)
+            ;
+        }
+
+        if ($filter->criticalPointId instanceof CriticalPointId) {
+            $qb
+                ->join('e.versions', 'v')
+                ->join('v.proposedActions', 'pa')
+                ->andWhere($qb->expr()->eq('pa.criticalPointId', ':criticalPointId'))
+                ->setParameter('criticalPointId', (string) $filter->criticalPointId)
             ;
         }
 

@@ -19,6 +19,7 @@
         </many-to-one>
 
         <field name="versionNumber" type="integer" column="version_number" nullable="false"/>
+        <field name="status" type="string" enum-type="App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersionStatus" nullable="false"/>
         <field name="createdBy" type="user_id" column="created_by" nullable="false"/>
         <field name="createdAt" type="datetime_immutable" column="created_at" nullable="false"/>
 

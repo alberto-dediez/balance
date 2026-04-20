@@ -37,26 +37,28 @@ class UpdatePreventionPlanActionsService implements CommandHandler
         $currentActions = $version?->proposedActions()->toArray() ?? [];
 
         foreach ($currentActions as $current) {
-            $found = false;
+            $matchFound = false;
             foreach ($request->proposedActions as $data) {
-                if (null === $data->propertyId || null === $data->actionId) {
+                if (null === $data->propertyId || null === $data->actionId || null === $data->criticalPointId) {
                     continue;
                 }
-                if ($current->propertyId()->equals($data->propertyId) && $current->actionId()->equals($data->actionId)) {
-                    $found = true;
+                if ($current->propertyId()->equals($data->propertyId)
+                    && $current->actionId()->equals($data->actionId)
+                    && $current->criticalPointId()->equals($data->criticalPointId)) {
+                    $matchFound = true;
                     break;
                 }
             }
-            if (!$found) {
-                $preventionPlan->removeProposedAction($current->propertyId(), $current->actionId());
+            if (!$matchFound) {
+                $preventionPlan->removeProposedAction($current->propertyId(), $current->actionId(), $current->criticalPointId());
             }
         }
 
         foreach ($request->proposedActions as $data) {
-            if (null === $data->propertyId || null === $data->actionId) {
+            if (null === $data->propertyId || null === $data->actionId || null === $data->criticalPointId) {
                 continue;
             }
-            $preventionPlan->addProposedAction($data->propertyId, $data->actionId);
+            $preventionPlan->addProposedAction($data->propertyId, $data->actionId, $data->criticalPointId);
         }
 
         $this->preventionPlanRepository->add($preventionPlan);

@@ -1,7 +1,7 @@
-{% props elements, columns, proto %}
+{% props elements, columns, proto, row_attr = {} %}
 
 {% set protoRow %}
-    <tr class="collection-element">
+    <tr class="collection-element"{% for key, value in row_attr %} {{ key }}="{{ value }}"{% endfor %}>
         {% with { element: proto } %}
             {% block content %}{% endblock %}
         {% endwith %}
@@ -38,7 +38,7 @@
         </thead>
         <tbody class="collection">
             {% for element in elements %}
-                <tr class="collection-element">
+                <tr class="collection-element"{% for key, value in row_attr %} {{ key }}="{{ value }}"{% endfor %}>
                     {{ block('content') }}
 
                     <td class="col-2 text-end">

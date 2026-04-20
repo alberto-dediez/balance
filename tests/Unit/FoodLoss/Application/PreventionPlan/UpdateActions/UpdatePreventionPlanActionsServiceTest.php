@@ -9,6 +9,7 @@ use App\FoodLoss\Application\PreventionPlan\UpdateActions\ProposedActionData;
 use App\FoodLoss\Application\PreventionPlan\UpdateActions\UpdatePreventionPlanActionsRequest;
 use App\FoodLoss\Application\PreventionPlan\UpdateActions\UpdatePreventionPlanActionsService;
 use App\FoodLoss\Domain\Model\Action\ActionId;
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
 use App\FoodLoss\Domain\Model\PreventionPlan\ProposedActionAdded;
 use App\FoodLoss\Domain\Model\PreventionPlan\ProposedActionRemoved;
@@ -46,11 +47,12 @@ class UpdatePreventionPlanActionsServiceTest extends TestCase
 
         $propertyId = new PropertyId('property-1');
         $actionId = new ActionId('action-1');
+        $criticalPointId = CriticalPointId::generate();
 
         $request = new UpdatePreventionPlanActionsRequest(
             preventionPlanId: $preventionPlan->id(),
             proposedActions: [
-                new ProposedActionData(propertyId: $propertyId, actionId: $actionId),
+                new ProposedActionData(propertyId: $propertyId, actionId: $actionId, criticalPointId: $criticalPointId),
             ],
         );
 
@@ -71,7 +73,8 @@ class UpdatePreventionPlanActionsServiceTest extends TestCase
         $preventionPlan = PreventionPlanMother::forAccount('account-id-test');
         $propertyId = new PropertyId('property-1');
         $actionId = new ActionId('action-1');
-        $preventionPlan->addProposedAction($propertyId, $actionId);
+        $criticalPointId = CriticalPointId::generate();
+        $preventionPlan->addProposedAction($propertyId, $actionId, $criticalPointId);
         $repository->add($preventionPlan);
 
         DomainEventPublisher::instance()->reset();
@@ -100,9 +103,10 @@ class UpdatePreventionPlanActionsServiceTest extends TestCase
     {
         $repository = PreventionPlanRepositoryMother::inMemory();
 
+        $criticalPointId = CriticalPointId::generate();
         $preventionPlan = PreventionPlanMother::forAccount('account-id-test');
-        $preventionPlan->addProposedAction(new PropertyId('property-keep'), new ActionId('action-keep'));
-        $preventionPlan->addProposedAction(new PropertyId('property-remove'), new ActionId('action-remove'));
+        $preventionPlan->addProposedAction(new PropertyId('property-keep'), new ActionId('action-keep'), $criticalPointId);
+        $preventionPlan->addProposedAction(new PropertyId('property-remove'), new ActionId('action-remove'), $criticalPointId);
         $repository->add($preventionPlan);
 
         DomainEventPublisher::instance()->reset();
@@ -115,8 +119,8 @@ class UpdatePreventionPlanActionsServiceTest extends TestCase
         $request = new UpdatePreventionPlanActionsRequest(
             preventionPlanId: $preventionPlan->id(),
             proposedActions: [
-                new ProposedActionData(propertyId: new PropertyId('property-keep'), actionId: new ActionId('action-keep')),
-                new ProposedActionData(propertyId: new PropertyId('property-new'), actionId: new ActionId('action-new')),
+                new ProposedActionData(propertyId: new PropertyId('property-keep'), actionId: new ActionId('action-keep'), criticalPointId: $criticalPointId),
+                new ProposedActionData(propertyId: new PropertyId('property-new'), actionId: new ActionId('action-new'), criticalPointId: $criticalPointId),
             ],
         );
 

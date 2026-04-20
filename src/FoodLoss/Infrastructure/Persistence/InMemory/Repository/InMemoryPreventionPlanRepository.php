@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\InMemory\Repository;
 
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanFilter;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
@@ -81,6 +82,20 @@ class InMemoryPreventionPlanRepository implements PreventionPlanRepository
                     if (!$found) {
                         continue;
                     }
+                }
+            }
+
+            if ($filter->criticalPointId instanceof CriticalPointId) {
+                $hasCriticalPoint = false;
+                $currentVersion = $preventionPlan->currentPlanVersion();
+                foreach ($currentVersion->proposedActions()->toArray() as $pa) {
+                    if ($pa->criticalPointId()->equals($filter->criticalPointId)) {
+                        $hasCriticalPoint = true;
+                        break;
+                    }
+                }
+                if (!$hasCriticalPoint) {
+                    continue;
                 }
             }
 

@@ -10,6 +10,7 @@
         <id name="preventionPlanVersion" association-key="true"/>
         <id name="propertyId" type="property_id" column="property_id"/>
         <id name="actionId" type="action_id" column="action_id"/>
+        <id name="criticalPointId" type="critical_point_id" column="critical_point_id"/>
 
         <many-to-one field="preventionPlanVersion"
                      target-entity="App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersion"

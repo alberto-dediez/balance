@@ -19,6 +19,7 @@ final class PreventionPlanVersion
         private UserId $createdBy,
         private \DateTimeImmutable $createdAt,
         ?PreventionPlanVersionId $id = null,
+        private PreventionPlanVersionStatus $status = PreventionPlanVersionStatus::InProgress,
     ) {
         $this->id = $id ?? PreventionPlanVersionId::generate();
     }
@@ -46,6 +47,31 @@ final class PreventionPlanVersion
     public function createdAt(): \DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function status(): PreventionPlanVersionStatus
+    {
+        return $this->status;
+    }
+
+    public function isInProgress(): bool
+    {
+        return PreventionPlanVersionStatus::InProgress === $this->status;
+    }
+
+    public function isClosed(): bool
+    {
+        return $this->status->isClosed();
+    }
+
+    public function markAsLoaded(): void
+    {
+        $this->status = PreventionPlanVersionStatus::Loaded;
+    }
+
+    public function abandon(): void
+    {
+        $this->status = PreventionPlanVersionStatus::Abandoned;
     }
 
     public function proposedActions(): ProposedActions

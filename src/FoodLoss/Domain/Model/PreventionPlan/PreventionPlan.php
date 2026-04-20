@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Domain\Model\PreventionPlan;
 
 use App\FoodLoss\Domain\Model\Action\ActionId;
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -174,6 +175,7 @@ class PreventionPlan implements \Stringable
                                 versionNumber: $newVersionNumber,
                                 propertyId: $proposedAction->propertyId(),
                                 actionId: $proposedAction->actionId(),
+                                criticalPointId: $proposedAction->criticalPointId(),
                             ),
                         );
                         break;
@@ -234,10 +236,11 @@ class PreventionPlan implements \Stringable
     public function addProposedAction(
         PropertyId $propertyId,
         ActionId $actionId,
+        CriticalPointId $criticalPointId,
     ): void {
         $version = $this->currentPlanVersion();
 
-        if ($version->proposedActions()->has($propertyId, $actionId)) {
+        if ($version->proposedActions()->has($propertyId, $actionId, $criticalPointId)) {
             return;
         }
 
@@ -247,17 +250,30 @@ class PreventionPlan implements \Stringable
                 versionNumber: $this->currentVersion,
                 propertyId: $propertyId,
                 actionId: $actionId,
+                criticalPointId: $criticalPointId,
             ),
         );
+    }
+
+    public function removeProposedActionsByCriticalPoint(CriticalPointId $criticalPointId): void
+    {
+        $version = $this->currentPlanVersion();
+
+        foreach ($version->proposedActions()->toArray() as $proposedAction) {
+            if ($proposedAction->criticalPointId()->equals($criticalPointId)) {
+                $this->removeProposedAction($proposedAction->propertyId(), $proposedAction->actionId(), $criticalPointId);
+            }
+        }
     }
 
     public function removeProposedAction(
         PropertyId $propertyId,
         ActionId $actionId,
+        CriticalPointId $criticalPointId,
     ): void {
         $version = $this->currentPlanVersion();
 
-        if (!$version->proposedActions()->has($propertyId, $actionId)) {
+        if (!$version->proposedActions()->has($propertyId, $actionId, $criticalPointId)) {
             return;
         }
 
@@ -267,6 +283,7 @@ class PreventionPlan implements \Stringable
                 versionNumber: $this->currentVersion,
                 propertyId: $propertyId,
                 actionId: $actionId,
+                criticalPointId: $criticalPointId,
             ),
         );
     }
@@ -307,6 +324,13 @@ class PreventionPlan implements \Stringable
 
     public function applyPreventionPlanVersionCreated(PreventionPlanVersionCreated $event): void
     {
+        if ($event->versionNumber() > 0) {
+            $previousVersion = $this->versions()->findByVersionNumber($this->currentVersion);
+            if (null !== $previousVersion && $previousVersion->isClosed()) {
+                $previousVersion->abandon();
+            }
+        }
+
         $version = new PreventionPlanVersion(
             preventionPlan: $this,
             versionNumber: $event->versionNumber(),
@@ -316,6 +340,26 @@ class PreventionPlan implements \Stringable
 
         $this->versions()->add($version);
         $this->currentVersion = $event->versionNumber();
+    }
+
+    public function markCurrentVersionAsLoaded(): void
+    {
+        $this->recordApplyAndPublish(
+            new PreventionPlanVersionLoaded(
+                preventionPlanId: $this->id(),
+                versionNumber: $this->currentVersion,
+            ),
+        );
+    }
+
+    public function applyPreventionPlanVersionLoaded(PreventionPlanVersionLoaded $event): void
+    {
+        $version = $this->versions()->findByVersionNumber($event->versionNumber());
+        if (null === $version) {
+            return;
+        }
+
+        $version->markAsLoaded();
     }
 
     public function applyProposedActionAdded(ProposedActionAdded $event): void
@@ -330,6 +374,7 @@ class PreventionPlan implements \Stringable
                 preventionPlanVersion: $version,
                 propertyId: $event->propertyId(),
                 actionId: $event->actionId(),
+                criticalPointId: $event->criticalPointId(),
             ),
         );
     }
@@ -341,7 +386,7 @@ class PreventionPlan implements \Stringable
             return;
         }
 
-        $version->proposedActions()->removeByIds($event->propertyId(), $event->actionId());
+        $version->proposedActions()->removeByIds($event->propertyId(), $event->actionId(), $event->criticalPointId());
     }
 
     /** @param PropertyId[] $newPropertyIds */

@@ -39,11 +39,20 @@ class ActionsController extends AbstractController
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $preventionPlan);
 
         $version = $preventionPlan->currentPlanVersion();
+
+        if ($version->isInProgress()) {
+            return $this->render('@food_loss/prevention-plan/actions-loading.html.twig', [
+                'preventionPlan' => $preventionPlan,
+                'statusUrl' => $this->generateUrl('prevention_plans_version_status', ['preventionPlanId' => $preventionPlanId]),
+            ]);
+        }
+
         $currentProposedActions = [];
         foreach ($version->proposedActions()->toArray() as $proposedAction) {
             $currentProposedActions[] = new ProposedActionData(
                 propertyId: $proposedAction->propertyId(),
                 actionId: $proposedAction->actionId(),
+                criticalPointId: $proposedAction->criticalPointId(),
             );
         }
 

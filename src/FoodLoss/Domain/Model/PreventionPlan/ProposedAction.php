@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Domain\Model\PreventionPlan;
 
 use App\FoodLoss\Domain\Model\Action\ActionId;
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\Property\Domain\Model\Property\PropertyId;
 
 final readonly class ProposedAction
@@ -13,6 +14,7 @@ final readonly class ProposedAction
         private PreventionPlanVersion $preventionPlanVersion,
         private PropertyId $propertyId,
         private ActionId $actionId,
+        private CriticalPointId $criticalPointId,
     ) {}
 
     public function preventionPlanVersion(): PreventionPlanVersion
@@ -28,5 +30,10 @@ final readonly class ProposedAction
     public function actionId(): ActionId
     {
         return $this->actionId;
+    }
+
+    public function criticalPointId(): CriticalPointId
+    {
+        return $this->criticalPointId;
     }
 }

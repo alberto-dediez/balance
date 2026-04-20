@@ -23,12 +23,28 @@
 
         {% set columns = [
             {label: 'Propiedad' | trans},
+            {label: 'Punto crítico' | trans},
             {label: 'Acción' | trans},
         ] %}
 
-        <twig:Collection:Table :columns="columns" :elements="form.proposedActions" :proto="form.proposedActions.vars.prototype">
-            <td class="col-5">{{ form_widget(element.propertyId) }}</td>
-            <td class="col-5">{{ form_widget(element.actionId) }}</td>
+        {% set row_attr = {
+            'data-controller': 'proposed-action',
+            'data-proposed-action-url-value': path('prevention_plans_critical_points_by_property'),
+        } %}
+
+        <twig:Collection:Table :columns="columns" :elements="form.proposedActions" :proto="form.proposedActions.vars.prototype" :row_attr="row_attr">
+            <td class="col-3">
+                {{ form_widget(element.propertyId) }}
+                {{ form_errors(element.propertyId) }}
+            </td>
+            <td class="col-3">
+                {{ form_widget(element.criticalPointId) }}
+                {{ form_errors(element.criticalPointId) }}
+            </td>
+            <td class="col-5">
+                {{ form_widget(element.actionId) }}
+                {{ form_errors(element.actionId) }}
+            </td>
         </twig:Collection:Table>
 
         <twig:ActionBar>
