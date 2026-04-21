@@ -1,0 +1,152 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\FoodLoss\Infrastructure\AI;
+
+use App\FoodLoss\Domain\Model\Action\Action;
+use App\FoodLoss\Domain\Model\Action\ActionRepository;
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointFilter;
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
+use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSection;
+use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSectionId;
+use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersion;
+use App\FoodLoss\Domain\Model\PreventionPlan\ProposedAction;
+use App\FoodLoss\Domain\Model\PreventionPlan\SectionsGenerator;
+use App\FoodLoss\Domain\Model\Reason\Reason;
+use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
+use App\FoodLoss\Infrastructure\AI\Gemini\GenerateActionPlanSectionPrompt;
+use App\FoodLoss\Infrastructure\AI\Gemini\GenerateCriticalPointsSectionPrompt;
+use App\FoodLoss\Infrastructure\AI\Gemini\GenerateDonationsSectionPrompt;
+use App\FoodLoss\Infrastructure\AI\Gemini\GenerateIntroductionSectionPrompt;
+use App\FoodLoss\Infrastructure\AI\Gemini\GenerateMeasurementSectionPrompt;
+use App\Property\Domain\Model\Property\Property;
+use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Security\Domain\Model\Account\AccountRepository;
+use App\Shared\Infrastructure\AI\Gemini\GeminiClient;
+use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
+
+class GeminiSectionsGenerator implements SectionsGenerator
+{
+    public function __construct(
+        private readonly AccountRepository $accountRepository,
+        private readonly PropertyRepository $propertyRepository,
+        private readonly CriticalPointRepository $criticalPointRepository,
+        private readonly ActionRepository $actionRepository,
+        private readonly ReasonRepository $reasonRepository,
+        private readonly GeminiClient $geminiClient,
+    ) {}
+
+    public function generate(PreventionPlanVersion $version): void
+    {
+        $plan = $version->preventionPlan();
+
+        $account = null !== $plan->accountId()
+            ? $this->accountRepository->find($plan->accountId())
+            : null;
+
+        /** @var array<string, Property> $propertyMap */
+        $propertyMap = [];
+        foreach ($plan->propertyIds() as $propertyId) {
+            $property = $this->propertyRepository->find($propertyId);
+            if (null !== $property) {
+                $propertyMap[(string) $propertyId] = $property;
+            }
+        }
+
+        /** @var array<string, CriticalPoint[]> $criticalPointsByProperty */
+        $criticalPointsByProperty = [];
+        /** @var array<string, CriticalPoint> $criticalPointMap */
+        $criticalPointMap = [];
+        foreach ($plan->propertyIds() as $propertyId) {
+            $criticalPoints = $this->criticalPointRepository->findByFilter(
+                new CriticalPointFilter(propertyId: $propertyId, limit: 1000),
+            );
+            $criticalPointsByProperty[(string) $propertyId] = $criticalPoints;
+            foreach ($criticalPoints as $cp) {
+                $criticalPointMap[(string) $cp->id()] = $cp;
+            }
+        }
+
+        /** @var array<string, Reason> $reasonMap */
+        $reasonMap = [];
+        foreach ($criticalPointMap as $cp) {
+            foreach ($cp->reasonIds() as $reasonId) {
+                $key = (string) $reasonId;
+                if (!isset($reasonMap[$key])) {
+                    $reason = $this->reasonRepository->find($reasonId);
+                    if (null !== $reason) {
+                        $reasonMap[$key] = $reason;
+                    }
+                }
+            }
+        }
+
+        /** @var ProposedAction[] $proposedActions */
+        $proposedActions = $version->proposedActions()->toArray();
+        /** @var array<string, Action> $actionMap */
+        $actionMap = [];
+        foreach ($proposedActions as $pa) {
+            $key = (string) $pa->actionId();
+            if (!isset($actionMap[$key])) {
+                $action = $this->actionRepository->find($pa->actionId());
+                if (null !== $action) {
+                    $actionMap[$key] = $action;
+                }
+            }
+        }
+
+        $this->generateSection($version, new GenerateIntroductionSectionPrompt(
+            account: $account,
+            plan: $plan,
+            properties: array_values($propertyMap),
+            createdAt: $version->createdAt(),
+        ));
+
+        $this->generateSection($version, new GenerateCriticalPointsSectionPrompt(
+            propertyMap: $propertyMap,
+            criticalPointsByProperty: $criticalPointsByProperty,
+            proposedActions: $proposedActions,
+            actionMap: $actionMap,
+            reasonMap: $reasonMap,
+        ));
+
+        $this->generateSection($version, new GenerateActionPlanSectionPrompt(
+            proposedActions: $proposedActions,
+            propertyMap: $propertyMap,
+            actionMap: $actionMap,
+            criticalPointMap: $criticalPointMap,
+        ));
+
+        $this->generateSection($version, new GenerateDonationsSectionPrompt(
+            proposedActions: $proposedActions,
+            propertyMap: $propertyMap,
+            actionMap: $actionMap,
+            criticalPointMap: $criticalPointMap,
+        ));
+
+        $this->generateSection($version, new GenerateMeasurementSectionPrompt(
+            account: $account,
+            propertyMap: $propertyMap,
+            criticalPointsByProperty: $criticalPointsByProperty,
+        ));
+    }
+
+    private function generateSection(PreventionPlanVersion $version, GeminiPrompt $prompt): void
+    {
+        $response = $this->geminiClient->send($prompt);
+
+        $title = isset($response['title']) && is_string($response['title']) ? $response['title'] : '';
+        $content = isset($response['content']) && is_string($response['content']) ? $response['content'] : '';
+
+        $version->addSection(
+            new PreventionPlanSection(
+                id: PreventionPlanSectionId::generate(),
+                preventionPlanVersion: $version,
+                title: $title,
+                content: $content,
+            ),
+        );
+    }
+}
