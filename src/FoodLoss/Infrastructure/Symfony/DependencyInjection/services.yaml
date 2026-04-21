@@ -27,4 +27,4 @@ services:
         alias: App\FoodLoss\Infrastructure\FileUploader\LocalFileDoggyBagSignUploader
 
     App\FoodLoss\Domain\Model\PreventionPlan\ProposedActionsLoader:
-        alias: App\FoodLoss\Infrastructure\AI\FakeProposedActionsLoader
+        alias: App\FoodLoss\Infrastructure\AI\GeminiProposedActionsLoader
