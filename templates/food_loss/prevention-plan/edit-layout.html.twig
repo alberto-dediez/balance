@@ -1,0 +1,16 @@
+{% extends '@shared/layout/wizard.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('prevention_plans') }}" />
+{% endblock %}
+
+{% block content %}
+    {% set wizard_steps = [
+        {label: 'General'  | trans, href: path('prevention_plans_edit',    {preventionPlanId: preventionPlan.id})},
+        {label: 'Acciones' | trans, href: path('prevention_plans_actions',  {preventionPlanId: preventionPlan.id})},
+        {label: 'Borrador' | trans, href: '#panel-draft'},
+        {label: 'Publicar' | trans, href: '#panel-publish'},
+    ] %}
+
+    {{ parent() }}
+{% endblock content %}

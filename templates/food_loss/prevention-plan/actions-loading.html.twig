@@ -1,22 +1,4 @@
-{% extends '@shared/layout/wizard.html.twig' %}
-
-{% block top_actions %}
-    <twig:TopAction:Return path="{{ path('prevention_plans') }}" />
-{% endblock %}
-
-{% set page_title = ('Planes de Prevención' | trans)
-    ~ ' > '
-    ~ ('Acciones' | trans)
-    ~ ' > '
-    ~ preventionPlan %}
-
-{% set wizard_steps = [
-    {label: 'General'  | trans, href: path('prevention_plans_edit',    {preventionPlanId: preventionPlan.id})},
-    {label: 'Acciones' | trans, href: path('prevention_plans_actions',  {preventionPlanId: preventionPlan.id})},
-    {label: 'Borrador' | trans, href: '#panel-draft'},
-    {label: 'Publicar' | trans, href: '#panel-publish'},
-] %}
-{% set wizard_active = 2 %}
+{% extends '@food_loss/prevention-plan/actions.html.twig' %}
 
 {% block wizard_panels %}
     <div class="d-flex flex-column align-items-center justify-content-center py-5 gap-3"
