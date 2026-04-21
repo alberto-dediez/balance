@@ -59,6 +59,12 @@ class PreventionPlanSection implements Translatable
         return $this->translations;
     }
 
+    public function update(string $title, string $content): void
+    {
+        $this->title = $title;
+        $this->content = $content;
+    }
+
     public function translate(string $title, string $content, Locale $locale): void
     {
         $this->translations()->add(

@@ -28,3 +28,6 @@ services:
 
     App\FoodLoss\Domain\Model\PreventionPlan\ProposedActionsLoader:
         alias: App\FoodLoss\Infrastructure\AI\GeminiProposedActionsLoader
+
+    App\FoodLoss\Domain\Model\PreventionPlan\SectionsGenerator:
+        alias: App\FoodLoss\Infrastructure\AI\FakeSectionsGenerator

@@ -362,6 +362,46 @@ class PreventionPlan implements \Stringable
         $version->markAsLoaded();
     }
 
+    public function markCurrentVersionAsConfigured(): void
+    {
+        $this->recordApplyAndPublish(
+            new PreventionPlanVersionConfigured(
+                preventionPlanId: $this->id(),
+                versionNumber: $this->currentVersion,
+            ),
+        );
+    }
+
+    public function applyPreventionPlanVersionConfigured(PreventionPlanVersionConfigured $event): void
+    {
+        $version = $this->versions()->findByVersionNumber($event->versionNumber());
+        if (null === $version) {
+            return;
+        }
+
+        $version->markAsConfigured();
+    }
+
+    public function markCurrentVersionAsGenerated(): void
+    {
+        $this->recordApplyAndPublish(
+            new PreventionPlanVersionGenerated(
+                preventionPlanId: $this->id(),
+                versionNumber: $this->currentVersion,
+            ),
+        );
+    }
+
+    public function applyPreventionPlanVersionGenerated(PreventionPlanVersionGenerated $event): void
+    {
+        $version = $this->versions()->findByVersionNumber($event->versionNumber());
+        if (null === $version) {
+            return;
+        }
+
+        $version->markAsGenerated();
+    }
+
     public function applyProposedActionAdded(ProposedActionAdded $event): void
     {
         $version = $this->versions()->findByVersionNumber($event->versionNumber());

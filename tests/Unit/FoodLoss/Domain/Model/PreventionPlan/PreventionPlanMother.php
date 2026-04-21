@@ -6,6 +6,8 @@ namespace App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan;
 
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
+use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSection;
+use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSectionId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -69,6 +71,38 @@ class PreventionPlanMother
             id: (string) PreventionPlanId::generate(),
             accountId: 'account-' . random_int(100, 999),
         );
+    }
+
+    public static function withConfiguredStatus(string $name, string $id, string $accountId): PreventionPlan
+    {
+        $plan = self::from(name: $name, id: $id, accountId: $accountId);
+        $plan->markCurrentVersionAsConfigured();
+
+        return $plan;
+    }
+
+    public static function withGeneratedSections(string $name, string $id, string $accountId): PreventionPlan
+    {
+        $plan = self::from(name: $name, id: $id, accountId: $accountId);
+        $plan->markCurrentVersionAsConfigured();
+
+        $version = $plan->currentPlanVersion();
+        $version->addSection(new PreventionPlanSection(
+            id: PreventionPlanSectionId::generate(),
+            preventionPlanVersion: $version,
+            title: 'Introducción',
+            content: 'Contenido de la sección de introducción.',
+        ));
+        $version->addSection(new PreventionPlanSection(
+            id: PreventionPlanSectionId::generate(),
+            preventionPlanVersion: $version,
+            title: 'Diagnóstico',
+            content: 'Contenido de la sección de diagnóstico.',
+        ));
+
+        $plan->markCurrentVersionAsGenerated();
+
+        return $plan;
     }
 
     /** @param PropertyId[] $propertyIds */

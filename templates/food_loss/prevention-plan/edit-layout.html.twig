@@ -8,7 +8,7 @@
     {% set wizard_steps = [
         {label: 'General'  | trans, href: path('prevention_plans_edit',    {preventionPlanId: preventionPlan.id})},
         {label: 'Acciones' | trans, href: path('prevention_plans_actions',  {preventionPlanId: preventionPlan.id})},
-        {label: 'Borrador' | trans, href: '#panel-draft'},
+        {label: 'Borrador' | trans, href: path('prevention_plans_draft', {preventionPlanId: preventionPlan.id})},
         {label: 'Publicar' | trans, href: '#panel-publish'},
     ] %}
 

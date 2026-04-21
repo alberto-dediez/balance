@@ -11,6 +11,7 @@ use App\FoodLoss\Application\PreventionPlan\UpdateActions\UpdatePreventionPlanAc
 use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
+use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersionConfigured;
 use App\FoodLoss\Domain\Model\PreventionPlan\ProposedActionAdded;
 use App\FoodLoss\Domain\Model\PreventionPlan\ProposedActionRemoved;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -60,10 +61,10 @@ class UpdatePreventionPlanActionsServiceTest extends TestCase
 
         $this->assertEquals($preventionPlan->id(), $result->preventionPlanId);
 
-        $lastEvent = $this->spySubscriber->lastEvent();
-
-        $this->assertNotNull($lastEvent);
-        $this->assertInstanceOf(ProposedActionAdded::class, $lastEvent);
+        $events = $this->spySubscriber->events();
+        $this->assertNotEmpty($events);
+        $this->assertInstanceOf(PreventionPlanVersionConfigured::class, $this->spySubscriber->lastEvent());
+        $this->assertNotEmpty(array_filter($events, fn($e) => $e instanceof ProposedActionAdded));
     }
 
     public function testRemoveProposedAction(): void
@@ -93,10 +94,10 @@ class UpdatePreventionPlanActionsServiceTest extends TestCase
 
         $this->assertEquals($preventionPlan->id(), $result->preventionPlanId);
 
-        $lastEvent = $this->spySubscriber->lastEvent();
-
-        $this->assertNotNull($lastEvent);
-        $this->assertInstanceOf(ProposedActionRemoved::class, $lastEvent);
+        $events = $this->spySubscriber->events();
+        $this->assertNotEmpty($events);
+        $this->assertInstanceOf(PreventionPlanVersionConfigured::class, $this->spySubscriber->lastEvent());
+        $this->assertNotEmpty(array_filter($events, fn($e) => $e instanceof ProposedActionRemoved));
     }
 
     public function testSyncProposedActions(): void

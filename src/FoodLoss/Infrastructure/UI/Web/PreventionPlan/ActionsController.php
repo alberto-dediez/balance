@@ -80,7 +80,7 @@ class ActionsController extends AbstractController
             }
 
             if ($form->isSubmitted() && $form->isValid()) {
-                return $this->redirectToRoute('prevention_plans_actions', ['preventionPlanId' => $preventionPlanId]);
+                return $this->redirectToRoute('prevention_plans_draft', ['preventionPlanId' => $preventionPlanId]);
             }
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());

@@ -262,6 +262,22 @@ final readonly class FoodLossContext implements Context
         $this->getPreventionPlanRepository()->add($preventionPlan);
     }
 
+    #[Given('prevention plan :name with id :id of account :accountId with generated sections exists')]
+    public function preventionPlanWithGeneratedSectionsExists(string $name, string $id, string $accountId): void
+    {
+        $preventionPlan = PreventionPlanMother::withGeneratedSections($name, $id, $accountId);
+
+        $this->getPreventionPlanRepository()->add($preventionPlan);
+    }
+
+    #[Given('prevention plan :name with id :id of account :accountId in configured state exists')]
+    public function preventionPlanInConfiguredStateExists(string $name, string $id, string $accountId): void
+    {
+        $preventionPlan = PreventionPlanMother::withConfiguredStatus($name, $id, $accountId);
+
+        $this->getPreventionPlanRepository()->add($preventionPlan);
+    }
+
     #[Given('packaging :name with id :id of account :accountId exists')]
     public function packagingWithIdOfAccountExists(string $name, string $id, string $accountId): void
     {

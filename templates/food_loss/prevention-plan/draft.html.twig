@@ -1,0 +1,38 @@
+{% extends '@food_loss/prevention-plan/edit-layout.html.twig' %}
+
+{% set page_title = ('Planes de Prevención' | trans)
+    ~ ' > '
+    ~ ('Borrador' | trans)
+    ~ ' > '
+    ~ preventionPlan %}
+
+{% set wizard_active = 3 %}
+
+{% block wizard_panels %}
+    {{ form_start(form) }}
+
+        {% for element in form.sections %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    {{ form_widget(element.sectionId) }}
+                    <div class="mb-2">
+                        {{ form_widget(element.title, {attr: {class: 'form-control fw-semibold'}}) }}
+                        {{ form_errors(element.title) }}
+                    </div>
+                    <div>
+                        {{ form_widget(element.content) }}
+                        {{ form_errors(element.content) }}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p class="text-muted">{{ 'No hay secciones generadas.' | trans }}</p>
+        {% endfor %}
+
+        <twig:ActionBar>
+            <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+            <twig:ActionBar:Button type="primary" :button="form.save" />
+        </twig:ActionBar>
+
+    {{ form_end(form) }}
+{% endblock %}

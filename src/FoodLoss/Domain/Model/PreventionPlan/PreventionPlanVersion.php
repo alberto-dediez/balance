@@ -62,6 +62,11 @@ final class PreventionPlanVersion
         return PreventionPlanVersionStatus::InProgress === $this->status;
     }
 
+    public function isGenerating(): bool
+    {
+        return PreventionPlanVersionStatus::Configured === $this->status;
+    }
+
     public function isClosed(): bool
     {
         return $this->status->isClosed();
@@ -70,6 +75,16 @@ final class PreventionPlanVersion
     public function markAsLoaded(): void
     {
         $this->status = PreventionPlanVersionStatus::Loaded;
+    }
+
+    public function markAsConfigured(): void
+    {
+        $this->status = PreventionPlanVersionStatus::Configured;
+    }
+
+    public function markAsGenerated(): void
+    {
+        $this->status = PreventionPlanVersionStatus::Generated;
     }
 
     public function abandon(): void

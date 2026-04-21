@@ -10,6 +10,10 @@ enum PreventionPlanVersionStatus: string
 
     case Loaded = 'Loaded';
 
+    case Configured = 'Configured';
+
+    case Generated = 'Generated';
+
     case Abandoned = 'Abandoned';
 
     case Completed = 'Completed';
