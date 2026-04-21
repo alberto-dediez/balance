@@ -35,6 +35,14 @@
             </cascade>
         </one-to-many>
 
+        <one-to-many field="sections"
+                     target-entity="App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSection"
+                     mapped-by="preventionPlanVersion">
+            <cascade>
+                <cascade-all/>
+            </cascade>
+        </one-to-many>
+
     </entity>
 
 </doctrine-mapping>

@@ -11,6 +11,9 @@ final class PreventionPlanVersion
     /** @var iterable<ProposedAction>|ProposedActions */
     private iterable $proposedActions = [];
 
+    /** @var iterable<PreventionPlanSection>|PreventionPlanSections */
+    private iterable $sections = [];
+
     private PreventionPlanVersionId $id;
 
     public function __construct(
@@ -85,5 +88,23 @@ final class PreventionPlanVersion
         );
 
         return $this->proposedActions;
+    }
+
+    public function sections(): PreventionPlanSections
+    {
+        if ($this->sections instanceof PreventionPlanSections) {
+            return $this->sections;
+        }
+
+        $this->sections = new PreventionPlanSections(
+            array_values(iterator_to_array($this->sections)),
+        );
+
+        return $this->sections;
+    }
+
+    public function addSection(PreventionPlanSection $section): void
+    {
+        $this->sections()->add($section);
     }
 }
