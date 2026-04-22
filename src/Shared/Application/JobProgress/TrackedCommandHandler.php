@@ -59,9 +59,4 @@ class TrackedCommandHandler implements CommandHandler
 
         return null;
     }
-
-    public function register(): void
-    {
-        CommandBusDispatcher::instance()->subscribe($this);
-    }
 }

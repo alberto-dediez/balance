@@ -10,6 +10,7 @@ use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointReasonLink;
 use App\FoodLoss\Domain\Model\PreventionPlan\ProposedAction;
 use App\FoodLoss\Domain\Model\Reason\Reason;
 use App\Property\Domain\Model\Property\Property;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
 
 final class GenerateCriticalPointsSectionPrompt implements GeminiPrompt
@@ -27,6 +28,7 @@ final class GenerateCriticalPointsSectionPrompt implements GeminiPrompt
         private readonly array $proposedActions,
         private readonly array $actionMap,
         private readonly array $reasonMap,
+        private readonly Locale $locale = Locale::Spanish,
         private readonly float $temperature = 0.4,
     ) {}
 
@@ -39,7 +41,7 @@ final class GenerateCriticalPointsSectionPrompt implements GeminiPrompt
             '',
             'Write the "Critical Points Analysis and Current Situation" section of a Food Waste Prevention Plan compliant with Spanish Law 1/2025 (Ley 1/2025) for the HORECA sector.',
             '',
-            'The output must be written in English and formatted in Markdown.',
+            sprintf('The output must be written in %s and formatted in Markdown.', $this->locale->name),
             '',
             'For each property listed below, describe:',
             '1. The critical points where food waste is generated, their supply chain stage, and which types of waste reduction measures are feasible.',

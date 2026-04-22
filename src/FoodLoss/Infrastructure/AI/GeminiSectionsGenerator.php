@@ -25,6 +25,7 @@ use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Shared\Domain\Model\JobProgress\JobProgressTracker;
+use App\Shared\Domain\Model\Locale\LocaleGetter;
 use App\Shared\Infrastructure\AI\Gemini\GeminiClient;
 use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -101,11 +102,14 @@ class GeminiSectionsGenerator implements SectionsGenerator
 
         $version->clearSections();
 
+        $locale = LocaleGetter::locale();
+
         $this->generateSection($version, new GenerateIntroductionSectionPrompt(
             account: $account,
             plan: $plan,
             properties: array_values($propertyMap),
             createdAt: $version->createdAt(),
+            locale: $locale,
         ));
         JobProgressTracker::instance()->advance((string) new TranslatableMessage('Introducción'));
 
@@ -115,6 +119,7 @@ class GeminiSectionsGenerator implements SectionsGenerator
             proposedActions: $proposedActions,
             actionMap: $actionMap,
             reasonMap: $reasonMap,
+            locale: $locale,
         ));
         JobProgressTracker::instance()->advance((string) new TranslatableMessage('Puntos críticos'));
 
@@ -123,6 +128,7 @@ class GeminiSectionsGenerator implements SectionsGenerator
             propertyMap: $propertyMap,
             actionMap: $actionMap,
             criticalPointMap: $criticalPointMap,
+            locale: $locale,
         ));
         JobProgressTracker::instance()->advance((string) new TranslatableMessage('Plan de acción'));
 
@@ -131,6 +137,7 @@ class GeminiSectionsGenerator implements SectionsGenerator
             propertyMap: $propertyMap,
             actionMap: $actionMap,
             criticalPointMap: $criticalPointMap,
+            locale: $locale,
         ));
         JobProgressTracker::instance()->advance((string) new TranslatableMessage('Donaciones'));
 
@@ -138,6 +145,7 @@ class GeminiSectionsGenerator implements SectionsGenerator
             account: $account,
             propertyMap: $propertyMap,
             criticalPointsByProperty: $criticalPointsByProperty,
+            locale: $locale,
         ));
         JobProgressTracker::instance()->advance((string) new TranslatableMessage('Medición'));
     }

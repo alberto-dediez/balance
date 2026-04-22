@@ -9,6 +9,7 @@ use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\PreventionPlan\ProposedAction;
 use App\Property\Domain\Model\Property\Property;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
 
 final class GenerateActionPlanSectionPrompt implements GeminiPrompt
@@ -24,6 +25,7 @@ final class GenerateActionPlanSectionPrompt implements GeminiPrompt
         private readonly array $propertyMap,
         private readonly array $actionMap,
         private readonly array $criticalPointMap,
+        private readonly Locale $locale = Locale::Spanish,
         private readonly float $temperature = 0.4,
     ) {}
 
@@ -36,7 +38,7 @@ final class GenerateActionPlanSectionPrompt implements GeminiPrompt
             '',
             'Write the "Action Plan and Prevention Hierarchy" section of a Food Waste Prevention Plan compliant with Spanish Law 1/2025 (Ley 1/2025) for the HORECA sector.',
             '',
-            'The output must be written in English and formatted in Markdown.',
+            sprintf('The output must be written in %s and formatted in Markdown.', $this->locale->name),
             '',
             'Spanish Law 1/2025 establishes a strict five-level hierarchy for managing food surplus. Present the agreed actions following this legal order.',
             'For each action, explain proactively how it complies with the law.',

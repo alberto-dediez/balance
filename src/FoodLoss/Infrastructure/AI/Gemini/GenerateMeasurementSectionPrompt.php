@@ -7,6 +7,7 @@ namespace App\FoodLoss\Infrastructure\AI\Gemini;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\Property\Domain\Model\Property\Property;
 use App\Security\Domain\Model\Account\Account;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
 
 final class GenerateMeasurementSectionPrompt implements GeminiPrompt
@@ -19,6 +20,7 @@ final class GenerateMeasurementSectionPrompt implements GeminiPrompt
         private readonly ?Account $account,
         private readonly array $propertyMap,
         private readonly array $criticalPointsByProperty,
+        private readonly Locale $locale = Locale::Spanish,
         private readonly float $temperature = 0.4,
     ) {}
 
@@ -29,7 +31,7 @@ final class GenerateMeasurementSectionPrompt implements GeminiPrompt
             '',
             'Write the "Monitoring, KPIs and Staff Training" section of a Food Waste Prevention Plan compliant with Spanish Law 1/2025 (Ley 1/2025) for the HORECA sector.',
             '',
-            'The output must be written in English and formatted in Markdown.',
+            sprintf('The output must be written in %s and formatted in Markdown.', $this->locale->name),
             '',
             'Law 1/2025 requires companies to: (1) measure and report food waste annually, and (2) train staff to prevent it.',
             'This section must demonstrate to authorities that the plan is a living, audited document.',

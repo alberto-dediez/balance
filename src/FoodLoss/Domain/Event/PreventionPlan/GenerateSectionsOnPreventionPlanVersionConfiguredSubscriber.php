@@ -10,10 +10,12 @@ use App\FoodLoss\Domain\Model\PreventionPlan\SectionsGenerator;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\DeferredCommand;
+use App\Shared\Application\CommandBus\LocalizedCommand;
 use App\Shared\Application\CommandBus\TrackedCommand;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
+use App\Shared\Domain\Model\Locale\LocaleGetter;
 
 final class GenerateSectionsOnPreventionPlanVersionConfiguredSubscriber implements DomainEventSubscriber
 {
@@ -36,8 +38,11 @@ final class GenerateSectionsOnPreventionPlanVersionConfiguredSubscriber implemen
         CommandBusDispatcher::instance()->dispatch(
             new DeferredCommand(
                 command: new TrackedCommand(
-                    command: new GenerateSectionsRequest(
-                        preventionPlanId: $event->preventionPlanId(),
+                    command: new LocalizedCommand(
+                        command: new GenerateSectionsRequest(
+                            preventionPlanId: $event->preventionPlanId(),
+                        ),
+                        locale: LocaleGetter::locale(),
                     ),
                     progressKey: (string) $event->preventionPlanId(),
                     progressTotal: SectionsGenerator::DEFAULT_SECTIONS_COUNT,

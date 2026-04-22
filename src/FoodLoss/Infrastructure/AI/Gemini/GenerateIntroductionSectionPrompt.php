@@ -7,6 +7,7 @@ namespace App\FoodLoss\Infrastructure\AI\Gemini;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\Property\Domain\Model\Property\Property;
 use App\Security\Domain\Model\Account\Account;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
 
 final class GenerateIntroductionSectionPrompt implements GeminiPrompt
@@ -17,6 +18,7 @@ final class GenerateIntroductionSectionPrompt implements GeminiPrompt
         private readonly PreventionPlan $plan,
         private readonly array $properties,
         private readonly \DateTimeImmutable $createdAt,
+        private readonly Locale $locale = Locale::Spanish,
         private readonly float $temperature = 0.4,
     ) {}
 
@@ -27,7 +29,7 @@ final class GenerateIntroductionSectionPrompt implements GeminiPrompt
             '',
             'Write the "Introduction and Basic Information" section of a Food Waste Prevention Plan compliant with Spanish Law 1/2025 (Ley 1/2025 de Prevención de las Pérdidas y el Desperdicio Alimentario) for the HORECA sector.',
             '',
-            'The output must be written in English and formatted in Markdown.',
+            sprintf('The output must be written in %s and formatted in Markdown.', $this->locale->name),
             '',
             'Available company data:',
             sprintf('- Company name: %s', $this->account?->name() ?? '[Company Name]'),

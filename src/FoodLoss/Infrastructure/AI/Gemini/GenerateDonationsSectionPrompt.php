@@ -9,6 +9,7 @@ use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\PreventionPlan\ProposedAction;
 use App\Property\Domain\Model\Property\Property;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
 
 final class GenerateDonationsSectionPrompt implements GeminiPrompt
@@ -24,6 +25,7 @@ final class GenerateDonationsSectionPrompt implements GeminiPrompt
         private readonly array $propertyMap,
         private readonly array $actionMap,
         private readonly array $criticalPointMap,
+        private readonly Locale $locale = Locale::Spanish,
         private readonly float $temperature = 0.4,
     ) {}
 
@@ -36,7 +38,7 @@ final class GenerateDonationsSectionPrompt implements GeminiPrompt
             '',
             'Write the "Surplus Management and Donations" section of a Food Waste Prevention Plan compliant with Spanish Law 1/2025 (Ley 1/2025) for the HORECA sector.',
             '',
-            'The output must be written in English and formatted in Markdown.',
+            sprintf('The output must be written in %s and formatted in Markdown.', $this->locale->name),
             '',
             'Law 1/2025 establishes human consumption as the highest-priority destination for surplus food that is still safe to eat.',
             'This section must document: the donation actions planned, the receiving entities, the logistics protocol, and the food safety guarantees.',
