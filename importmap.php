@@ -60,4 +60,48 @@ return [
     'apexcharts' => [
         'version' => '5.3.3',
     ],
+    '@toast-ui/editor' => [
+        'version' => '3.2.2',
+    ],
+    'prosemirror-model' => [
+        'version' => '1.19.0',
+    ],
+    'prosemirror-view' => [
+        'version' => '1.30.1',
+    ],
+    'prosemirror-transform' => [
+        'version' => '1.12.0',
+    ],
+    'prosemirror-state' => [
+        'version' => '1.4.2',
+    ],
+    'prosemirror-keymap' => [
+        'version' => '1.2.1',
+    ],
+    'prosemirror-commands' => [
+        'version' => '1.5.0',
+    ],
+    'prosemirror-inputrules' => [
+        'version' => '1.2.0',
+    ],
+    'prosemirror-history' => [
+        'version' => '1.3.0',
+    ],
+    'orderedmap' => [
+        'version' => '2.1.0',
+    ],
+    'w3c-keyname' => [
+        'version' => '2.2.6',
+    ],
+    'rope-sequence' => [
+        'version' => '1.3.3',
+    ],
+    'prosemirror-view/style/prosemirror.min.css' => [
+        'version' => '1.30.1',
+        'type' => 'css',
+    ],
+    '@toast-ui/editor/dist/toastui-editor.min.css' => [
+        'version' => '3.2.2',
+        'type' => 'css',
+    ],
 ];
