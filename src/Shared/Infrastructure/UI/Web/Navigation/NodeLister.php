@@ -49,6 +49,11 @@ class NodeLister
                     target: $this->router->generate('admin_properties'),
                 ),
                 new Node(
+                    label: new TranslatableMessage('Empresas'),
+                    icon: 'solar:case-line-duotone',
+                    target: $this->router->generate('admin_companies'),
+                ),
+                new Node(
                     label: new TranslatableMessage('Categorías'),
                     icon: 'solar:folder-favourite-star-line-duotone',
                     target: $this->router->generate('admin_categories'),
@@ -133,6 +138,11 @@ class NodeLister
                     label: new TranslatableMessage('Propiedades'),
                     icon: 'solar:buildings-2-line-duotone',
                     target: $this->router->generate('properties'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Empresas'),
+                    icon: 'solar:case-line-duotone',
+                    target: $this->router->generate('companies'),
                 ),
             ],
         );

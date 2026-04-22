@@ -1,0 +1,144 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Property\Domain\Model\Company;
+
+use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Event\DomainEvent;
+use App\Shared\Domain\Model\AggregateRoot;
+
+class Company implements \Stringable
+{
+    use AggregateRoot;
+
+    /** @param array<DomainEvent> $events */
+    public function __construct(
+        private CompanyId $id,
+        private string $name = '',
+        private string $vatNumber = '',
+        private ?CompanyAddress $address = null,
+        private ?AccountId $accountId = null,
+        private ?bool $removed = false,
+        array $events = [],
+        private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
+        private ?\DateTimeImmutable $updatedAt = null,
+        private ?\DateTimeImmutable $removedAt = null,
+    ) {
+        $this->events = $events;
+    }
+
+    public function id(): CompanyId
+    {
+        return $this->id;
+    }
+
+    public function name(): string
+    {
+        return $this->name;
+    }
+
+    public function vatNumber(): string
+    {
+        return $this->vatNumber;
+    }
+
+    public function address(): ?CompanyAddress
+    {
+        return $this->address;
+    }
+
+    public function accountId(): ?AccountId
+    {
+        return $this->accountId;
+    }
+
+    public function isRemoved(): bool
+    {
+        return $this->removed ?? false;
+    }
+
+    public function registeredAt(): \DateTimeImmutable
+    {
+        return $this->registeredAt;
+    }
+
+    public function updatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function removedAt(): ?\DateTimeImmutable
+    {
+        return $this->removedAt;
+    }
+
+    public function register(
+        string $name,
+        string $vatNumber,
+        ?CompanyAddress $address,
+        ?AccountId $accountId,
+    ): void {
+        $this->recordApplyAndPublish(
+            new CompanyRegistered(
+                companyId: $this->id(),
+                name: $name,
+                vatNumber: $vatNumber,
+                address: $address,
+                accountId: $accountId,
+            ),
+        );
+    }
+
+    public function update(
+        string $name,
+        string $vatNumber,
+        ?CompanyAddress $address,
+    ): void {
+        $this->recordApplyAndPublish(
+            new CompanyUpdated(
+                companyId: $this->id(),
+                name: $name,
+                vatNumber: $vatNumber,
+                address: $address,
+            ),
+        );
+    }
+
+    public function remove(): void
+    {
+        $this->recordApplyAndPublish(
+            new CompanyRemoved(
+                companyId: $this->id(),
+            ),
+        );
+    }
+
+    public function applyCompanyRegistered(CompanyRegistered $event): void
+    {
+        $this->name = $event->name();
+        $this->vatNumber = $event->vatNumber();
+        $this->address = $event->address();
+        $this->accountId = $event->accountId();
+        $this->registeredAt = $event->occurredOn();
+    }
+
+    public function applyCompanyUpdated(CompanyUpdated $event): void
+    {
+        $this->name = $event->name();
+        $this->vatNumber = $event->vatNumber();
+        $this->address = $event->address();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyCompanyRemoved(CompanyRemoved $event): void
+    {
+        $this->removed = true;
+        $this->removedAt = $event->occurredOn();
+    }
+
+    public function __toString(): string
+    {
+        return $this->name();
+    }
+}

@@ -21,6 +21,7 @@ doctrine:
             property_id: App\Property\Infrastructure\Persistence\Doctrine\Type\PropertyIdType
             category_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CategoryIdType
             brand_id: App\Property\Infrastructure\Persistence\Doctrine\Type\BrandIdType
+            company_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CompanyIdType
             container_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\ContainerIdType
             measurement_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\MeasurementIdType
             waste_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\WasteIdType

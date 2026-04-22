@@ -6,12 +6,14 @@ namespace App\Tests\Acceptance\Property;
 
 use App\Property\Domain\Model\Brand\BrandRepository;
 use App\Property\Domain\Model\Category\CategoryRepository;
+use App\Property\Domain\Model\Company\CompanyRepository;
 use App\Property\Domain\Model\Country\CountryRepository;
 use App\Property\Domain\Model\Destination\DestinationRepository;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Property\Domain\Model\Brand\BrandMother;
 use App\Tests\Unit\Property\Domain\Model\Category\CategoryMother;
+use App\Tests\Unit\Property\Domain\Model\Company\CompanyMother;
 use App\Tests\Unit\Property\Domain\Model\Country\CountryMother;
 use App\Tests\Unit\Property\Domain\Model\Destination\DestinationMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
@@ -52,6 +54,11 @@ final readonly class PropertyContext implements Context
     private function getBrandRepository(): BrandRepository
     {
         return $this->client->getContainer()->get(BrandRepository::class);
+    }
+
+    private function getCompanyRepository(): CompanyRepository
+    {
+        return $this->client->getContainer()->get(CompanyRepository::class);
     }
 
     #[Given('property :name with id :id exists')]
@@ -108,5 +115,21 @@ final readonly class PropertyContext implements Context
         $brand = BrandMother::fromNameAndId($name, $id);
 
         $this->getBrandRepository()->add($brand);
+    }
+
+    #[Given('company :name with id :id exists')]
+    public function companyWithIdExists(string $name, string $id): void
+    {
+        $company = CompanyMother::fromNameAndId($name, $id);
+
+        $this->getCompanyRepository()->add($company);
+    }
+
+    #[Given('company :name with id :id of account :account exists')]
+    public function companyWithIdOfAccountExists(string $name, string $id, string $account): void
+    {
+        $company = CompanyMother::fromNameAndAccountAndId($name, $account, $id);
+
+        $this->getCompanyRepository()->add($company);
     }
 }
