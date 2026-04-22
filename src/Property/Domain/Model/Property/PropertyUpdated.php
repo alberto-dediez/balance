@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Property\Domain\Model\Property;
 
 use App\Property\Domain\DomainEvent;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
@@ -19,6 +20,7 @@ final class PropertyUpdated extends DomainEvent
         private readonly ?PropertyInfo $info = null,
         private readonly ?ExternalId $externalId = null,
         private readonly ?AccountId $accountId = null,
+        private readonly ?CompanyId $companyId = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -50,6 +52,11 @@ final class PropertyUpdated extends DomainEvent
         return $this->accountId;
     }
 
+    public function companyId(): ?CompanyId
+    {
+        return $this->companyId;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->propertyId;
@@ -60,6 +67,7 @@ final class PropertyUpdated extends DomainEvent
         return [
             'propertyId' => (string) $this->propertyId,
             'accountId' => $this->accountId instanceof AccountId ? ((string) $this->accountId) : null,
+            'companyId' => $this->companyId instanceof CompanyId ? ((string) $this->companyId) : null,
             'name' => $this->name,
             'info' => $this->info,
             'externalId' => $this->externalId,
@@ -76,7 +84,8 @@ final class PropertyUpdated extends DomainEvent
             name: $payload['name'],
             info: $payload['info'] ?? null,
             externalId: $payload['externalId'] ?? null,
-            accountId: null !== $payload['accountId'] ? new AccountId($payload['accountId']) : null,
+            accountId: null !== ($payload['accountId'] ?? null) ? new AccountId($payload['accountId']) : null,
+            companyId: null !== ($payload['companyId'] ?? null) ? new CompanyId($payload['companyId']) : null,
             id: $id,
             occurredOn: $occurredOn,
         );

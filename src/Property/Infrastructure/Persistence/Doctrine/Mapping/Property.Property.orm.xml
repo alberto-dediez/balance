@@ -15,6 +15,7 @@
 
         <field name="name" type="string" length="255" nullable="false" />
         <field name="accountId" type="account_id" nullable="true" />
+        <field name="companyId" type="company_id" column="company_id" nullable="true" />
         
         <field name="removed" type="boolean" nullable="true" />
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />

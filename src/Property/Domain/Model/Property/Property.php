@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Property\Domain\Model\Property;
 
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
@@ -21,6 +22,7 @@ class Property implements \Stringable
         private ?PropertyInfo $info = null,
         private ?ExternalId $externalId = null,
         private ?AccountId $accountId = null,
+        private ?CompanyId $companyId = null,
         private ?bool $removed = false,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
@@ -62,6 +64,11 @@ class Property implements \Stringable
         return $this->accountId;
     }
 
+    public function companyId(): ?CompanyId
+    {
+        return $this->companyId;
+    }
+
     public function isRemoved(): bool
     {
         return $this->removed ?? false;
@@ -77,7 +84,7 @@ class Property implements \Stringable
         return $this->removedAt;
     }
 
-    public function register(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null): void
+    public function register(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null): void
     {
         $this->recordApplyAndPublish(
             new PropertyRegistered(
@@ -86,11 +93,12 @@ class Property implements \Stringable
                 info: $info,
                 externalId: $externalId,
                 accountId: $accountId,
+                companyId: $companyId,
             ),
         );
     }
 
-    public function update(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null): void
+    public function update(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null): void
     {
         $this->recordApplyAndPublish(
             new PropertyUpdated(
@@ -99,6 +107,7 @@ class Property implements \Stringable
                 info: $info,
                 externalId: $externalId,
                 accountId: $accountId,
+                companyId: $companyId,
             ),
         );
     }
@@ -128,6 +137,7 @@ class Property implements \Stringable
     {
         $this->name = $event->name();
         $this->accountId = $event->accountId();
+        $this->companyId = $event->companyId();
 
         $this->info = $event->info() ?? new PropertyInfo();
         $this->externalId = $event->externalId() ?? new ExternalId();
@@ -157,6 +167,7 @@ class Property implements \Stringable
     {
         $this->name = $event->name();
         $this->accountId = $event->accountId();
+        $this->companyId = $event->companyId();
 
         $this->info = $event->info() ?? $this->info();
         $this->externalId = $event->externalId() ?? $this->externalId();

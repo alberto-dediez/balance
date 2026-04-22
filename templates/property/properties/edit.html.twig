@@ -4,7 +4,7 @@
     <twig:TopAction:Return path="{{ path('properties') }}" />
 {% endblock %}
 
-{% set page_title = ('Propiedades' | trans) 
+{% set page_title = ('Propiedades' | trans)
     ~ ' > '
     ~ ('Editar' | trans)
     ~ ' > '
@@ -17,10 +17,15 @@
                 <div class="col-12">
                     {{ form_row(form.name) }}
                 </div>
+                {% if form.companyId is defined %}
+                    <div class="col-12">
+                        {{ form_row(form.companyId) }}
+                    </div>
+                {% endif %}
                 <div class="col-12">
                     {{ form_row(form.info) }}
                 </div>
-            </div>    
+            </div>
 
             <twig:ActionBar>
                 <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />

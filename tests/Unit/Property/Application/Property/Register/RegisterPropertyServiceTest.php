@@ -12,6 +12,7 @@ use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryProperty
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Property\Domain\Model\Company\CompanyRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
@@ -74,6 +75,6 @@ class RegisterPropertyServiceTest extends TestCase
 
     private function createSUT(InMemoryPropertyRepository $repository): RegisterPropertyService
     {
-        return new RegisterPropertyService($repository, new PropertyAuthorizer());
+        return new RegisterPropertyService($repository, CompanyRepositoryMother::inMemory(), new PropertyAuthorizer());
     }
 }

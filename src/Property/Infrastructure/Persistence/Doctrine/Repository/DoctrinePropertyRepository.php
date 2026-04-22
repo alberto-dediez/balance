@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Property\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Destination\DestinationId;
 use App\Property\Domain\Model\Property\ExternalId;
@@ -126,6 +127,21 @@ class DoctrinePropertyRepository implements PropertyRepository
             ->getQuery()
             ->setMaxResults(1)
             ->getOneOrNullResult()
+        ;
+    }
+
+    /** @return Property[] */
+    public function findByCompanyId(CompanyId $companyId): array
+    {
+        $qb = $this->createQueryBuilderFromFilter(new PropertyFilter());
+
+        return (array) $qb
+            ->andWhere(
+                $qb->expr()->eq('p.companyId', ':companyId'),
+            )
+            ->setParameter('companyId', (string) $companyId)
+            ->getQuery()
+            ->getResult()
         ;
     }
 

@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Property\Application\Property\Update;
 
 use App\Property\Application\Property\PropertyAuthorizer;
+use App\Property\Domain\Model\Company\CompanyRepository;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
@@ -18,7 +20,7 @@ class UpdatePropertyService implements CommandHandler
     use RegisterHandlerTrait;
     use CommandInvokeHandlerTrait;
 
-    public function __construct(private PropertyRepository $repository, private PropertyAuthorizer $authorizer) {}
+    public function __construct(private PropertyRepository $repository, private CompanyRepository $companyRepository, private PropertyAuthorizer $authorizer) {}
 
     public function __invoke(UpdatePropertyRequest $request, User $user): UpdatePropertyResponse
     {
@@ -30,11 +32,32 @@ class UpdatePropertyService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($property, Action::Edit, $user);
 
+        $accountChanged = $request->accountId instanceof AccountId
+            ? (null === $property->accountId() || !$request->accountId->equals($property->accountId()))
+            : null !== $property->accountId();
+
+        $companyId = $request->companyId;
+
+        if ($accountChanged) {
+            $companyId = null;
+        } elseif (null !== $companyId) {
+            if (null === $request->accountId) {
+                throw new \InvalidArgumentException('Cannot assign a company to a property without an account');
+            }
+
+            $company = $this->companyRepository->find($companyId);
+
+            if (null === $company || null === $company->accountId() || !$company->accountId()->equals($request->accountId)) {
+                throw new \InvalidArgumentException('Company does not belong to the same account as the property');
+            }
+        }
+
         $property->update(
             name: $request->name,
             accountId: $request->accountId,
             info: $request->info,
             externalId: $request->externalId,
+            companyId: $companyId,
         );
 
         $this->repository->add($property);
@@ -45,6 +68,7 @@ class UpdatePropertyService implements CommandHandler
             accountId: $property->accountId(),
             info: $property->info(),
             externalId: $property->externalId(),
+            companyId: $property->companyId(),
         );
     }
 

@@ -12,6 +12,7 @@ use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryProperty
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Property\Domain\Model\Company\CompanyRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -81,6 +82,6 @@ class UpdatePropertyServiceTest extends TestCase
 
     private function createSUT(InMemoryPropertyRepository $repository): UpdatePropertyService
     {
-        return new UpdatePropertyService($repository, new PropertyAuthorizer());
+        return new UpdatePropertyService($repository, CompanyRepositoryMother::inMemory(), new PropertyAuthorizer());
     }
 }

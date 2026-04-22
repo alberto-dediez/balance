@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Property\Infrastructure\Persistence\InMemory\Repository;
 
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Destination\DestinationId;
 use App\Property\Domain\Model\Property\ExternalId;
@@ -105,6 +106,24 @@ class InMemoryPropertyRepository implements PropertyRepository
         }
 
         return null;
+    }
+
+    /** @return Property[] */
+    public function findByCompanyId(CompanyId $companyId): array
+    {
+        $results = [];
+
+        foreach ($this->properties as $property) {
+            if (true == $property->isRemoved()) {
+                continue;
+            }
+
+            if (null !== $property->companyId() && $property->companyId()->equals($companyId)) {
+                $results[] = $property;
+            }
+        }
+
+        return $results;
     }
 
     public function findByGeoPosition(string $latitude, string $longitude): ?Property

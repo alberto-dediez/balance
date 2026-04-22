@@ -13,6 +13,8 @@
         }, {
             'label': 'País' | trans
         },  {
+            'label': 'Empresa' | trans
+        },  {
             'label': 'Fecha de registro' | trans,
             'sortable': true,
             'sortableBy': 'registeredAt'
@@ -25,6 +27,7 @@
         <td>{{ element.name }}</td>
         <td>{{ element.info.destinationId | destination_name }}</td>
         <td>{{ element.info.countryId | country_name }}</td>
+        <td>{{ element.companyId | company_name }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
             {% if element | is_authorized('edit') %}

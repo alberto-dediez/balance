@@ -41,6 +41,7 @@ class EditController extends AbstractController
             name: $property->name(),
             accountId: $property->accountId(),
             info: $property->info(),
+            companyId: $property->companyId(),
         );
 
         $form = $this->createForm(UpdatePropertyType::class, $propertyRequest);
