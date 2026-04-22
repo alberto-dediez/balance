@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\AI;
 
-use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSection;
-use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSectionId;
-use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersion;
+use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\SectionsGenerator;
 use App\Shared\Domain\Model\JobProgress\JobProgressTracker;
 
 class FakeSectionsGenerator implements SectionsGenerator
 {
-    public function generate(PreventionPlanVersion $version): void
+    public function generate(PreventionPlan $plan): void
     {
         $fakeSections = [
             ['Introducción', 'Este plan de prevención describe las medidas adoptadas para reducir las pérdidas alimentarias en las propiedades asociadas.'],
@@ -21,14 +19,7 @@ class FakeSectionsGenerator implements SectionsGenerator
         ];
 
         foreach ($fakeSections as [$title, $content]) {
-            $version->addSection(
-                new PreventionPlanSection(
-                    id: PreventionPlanSectionId::generate(),
-                    preventionPlanVersion: $version,
-                    title: $title,
-                    content: $content,
-                ),
-            );
+            $plan->addSection($title, $content);
 
             JobProgressTracker::instance()->advance($title);
         }

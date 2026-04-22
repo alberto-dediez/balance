@@ -342,7 +342,7 @@ class PreventionPlan implements \Stringable
         $this->currentVersion = $event->versionNumber();
     }
 
-    public function markCurrentVersionAsLoaded(): void
+    public function markAsLoaded(): void
     {
         $this->recordApplyAndPublish(
             new PreventionPlanVersionLoaded(
@@ -362,7 +362,7 @@ class PreventionPlan implements \Stringable
         $version->markAsLoaded();
     }
 
-    public function markCurrentVersionAsConfigured(): void
+    public function markAsConfigured(): void
     {
         $this->recordApplyAndPublish(
             new PreventionPlanVersionConfigured(
@@ -382,7 +382,7 @@ class PreventionPlan implements \Stringable
         $version->markAsConfigured();
     }
 
-    public function markCurrentVersionAsGenerated(): void
+    public function markAsGenerated(): void
     {
         $this->recordApplyAndPublish(
             new PreventionPlanVersionGenerated(
@@ -400,6 +400,61 @@ class PreventionPlan implements \Stringable
         }
 
         $version->markAsGenerated();
+    }
+
+    public function clearSections(): void
+    {
+        $this->recordApplyAndPublish(
+            new PreventionPlanVersionSectionsCleared(
+                preventionPlanId: $this->id(),
+                versionNumber: $this->currentVersion,
+            ),
+        );
+    }
+
+    public function addSection(string $title, string $content): void
+    {
+        $this->recordApplyAndPublish(
+            new PreventionPlanSectionAdded(
+                preventionPlanId: $this->id(),
+                versionNumber: $this->currentVersion,
+                sectionId: PreventionPlanSectionId::generate(),
+                title: $title,
+                content: $content,
+            ),
+        );
+    }
+
+    public function sections(): PreventionPlanSections
+    {
+        return $this->currentPlanVersion()->sections();
+    }
+
+    public function applyPreventionPlanVersionSectionsCleared(PreventionPlanVersionSectionsCleared $event): void
+    {
+        $version = $this->versions()->findByVersionNumber($event->versionNumber());
+        if (null === $version) {
+            return;
+        }
+
+        $version->sections()->clear();
+    }
+
+    public function applyPreventionPlanSectionAdded(PreventionPlanSectionAdded $event): void
+    {
+        $version = $this->versions()->findByVersionNumber($event->versionNumber());
+        if (null === $version) {
+            return;
+        }
+
+        $version->sections()->add(
+            new PreventionPlanSection(
+                id: $event->sectionId(),
+                preventionPlanVersion: $version,
+                title: $event->title(),
+                content: $event->content(),
+            ),
+        );
     }
 
     public function applyProposedActionAdded(ProposedActionAdded $event): void

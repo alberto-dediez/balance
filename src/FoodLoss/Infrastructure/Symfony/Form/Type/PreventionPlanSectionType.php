@@ -6,10 +6,10 @@ namespace App\FoodLoss\Infrastructure\Symfony\Form\Type;
 
 use App\FoodLoss\Application\PreventionPlan\UpdateSections\SectionData;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSectionId;
+use App\Shared\Infrastructure\Symfony\Form\Type\MarkdownEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,9 +24,8 @@ class PreventionPlanSectionType extends AbstractType
             ->add('title', TextType::class, [
                 'label' => false,
             ])
-            ->add('content', TextareaType::class, [
+            ->add('content', MarkdownEditorType::class, [
                 'label' => false,
-                'attr' => ['rows' => 6],
             ])
         ;
 

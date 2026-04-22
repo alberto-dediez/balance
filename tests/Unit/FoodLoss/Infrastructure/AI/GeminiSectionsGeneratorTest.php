@@ -37,11 +37,10 @@ class GeminiSectionsGeneratorTest extends TestCase
         $sut = $this->buildGenerator($geminiClient);
 
         $plan = $this->buildPlan(accountId: 'account-id', propertyIds: []);
-        $version = $plan->currentPlanVersion();
 
-        $sut->generate($version);
+        $sut->generate($plan);
 
-        $this->assertCount(5, $version->sections()->toArray());
+        $this->assertCount(5, $plan->sections()->toArray());
     }
 
     public function testGeneratesFiveSectionsForPlanWithPropertyAndCriticalPoints(): void
@@ -78,11 +77,10 @@ class GeminiSectionsGeneratorTest extends TestCase
 
         $plan = $this->buildPlan(accountId: $accountId, propertyIds: [$propertyId]);
         $plan->addProposedAction($propertyId, new ActionId($actionId), new CriticalPointId($criticalPointId));
-        $version = $plan->currentPlanVersion();
 
-        $sut->generate($version);
+        $sut->generate($plan);
 
-        $this->assertCount(5, $version->sections()->toArray());
+        $this->assertCount(5, $plan->sections()->toArray());
     }
 
     public function testSectionsContainTitleAndContentFromGeminiResponse(): void
@@ -90,10 +88,10 @@ class GeminiSectionsGeneratorTest extends TestCase
         $geminiClient = new InMemoryGeminiClient(['title' => self::GEMINI_TITLE, 'content' => self::GEMINI_CONTENT]);
         $sut = $this->buildGenerator($geminiClient);
 
-        $version = $this->buildPlan(accountId: 'account-id', propertyIds: [])->currentPlanVersion();
-        $sut->generate($version);
+        $plan = $this->buildPlan(accountId: 'account-id', propertyIds: []);
+        $sut->generate($plan);
 
-        foreach ($version->sections()->toArray() as $section) {
+        foreach ($plan->sections()->toArray() as $section) {
             $this->assertSame(self::GEMINI_TITLE, $section->title());
             $this->assertSame(self::GEMINI_CONTENT, $section->content());
         }
@@ -117,7 +115,7 @@ class GeminiSectionsGeneratorTest extends TestCase
         );
 
         $plan = $this->buildPlan(accountId: 'account-id', propertyIds: [$propertyId]);
-        $sut->generate($plan->currentPlanVersion());
+        $sut->generate($plan);
 
         $this->assertInstanceOf(GenerateMeasurementSectionPrompt::class, $geminiClient->lastPrompt());
     }
@@ -127,12 +125,12 @@ class GeminiSectionsGeneratorTest extends TestCase
         $geminiClient = new InMemoryGeminiClient(['title' => self::GEMINI_TITLE, 'content' => self::GEMINI_CONTENT]);
         $sut = $this->buildGenerator($geminiClient);
 
-        $version = $this->buildPlan(accountId: 'account-id', propertyIds: [])->currentPlanVersion();
-        $sut->generate($version);
-        $this->assertCount(5, $version->sections()->toArray());
+        $plan = $this->buildPlan(accountId: 'account-id', propertyIds: []);
+        $sut->generate($plan);
+        $this->assertCount(5, $plan->sections()->toArray());
 
-        $sut->generate($version);
-        $this->assertCount(5, $version->sections()->toArray());
+        $sut->generate($plan);
+        $this->assertCount(5, $plan->sections()->toArray());
     }
 
     public function testHandlesMissingGeminiFieldsGracefully(): void
@@ -140,10 +138,10 @@ class GeminiSectionsGeneratorTest extends TestCase
         $geminiClient = new InMemoryGeminiClient([]);
         $sut = $this->buildGenerator($geminiClient);
 
-        $version = $this->buildPlan(accountId: 'account-id', propertyIds: [])->currentPlanVersion();
-        $sut->generate($version);
+        $plan = $this->buildPlan(accountId: 'account-id', propertyIds: []);
+        $sut->generate($plan);
 
-        $sections = $version->sections()->toArray();
+        $sections = $plan->sections()->toArray();
         $this->assertCount(5, $sections);
         foreach ($sections as $section) {
             $this->assertSame('', $section->title());

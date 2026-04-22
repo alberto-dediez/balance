@@ -58,7 +58,7 @@ class LoadActionsService implements CommandHandler
             }
         }
 
-        $preventionPlan->markCurrentVersionAsLoaded();
+        $preventionPlan->markAsLoaded();
         $this->preventionPlanRepository->add($preventionPlan);
 
         return null;

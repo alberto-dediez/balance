@@ -6,8 +6,6 @@ namespace App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan;
 
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
-use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSection;
-use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSectionId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -76,7 +74,7 @@ class PreventionPlanMother
     public static function withConfiguredStatus(string $name, string $id, string $accountId): PreventionPlan
     {
         $plan = self::from(name: $name, id: $id, accountId: $accountId);
-        $plan->markCurrentVersionAsConfigured();
+        $plan->markAsConfigured();
 
         return $plan;
     }
@@ -84,23 +82,12 @@ class PreventionPlanMother
     public static function withGeneratedSections(string $name, string $id, string $accountId): PreventionPlan
     {
         $plan = self::from(name: $name, id: $id, accountId: $accountId);
-        $plan->markCurrentVersionAsConfigured();
+        $plan->markAsConfigured();
 
-        $version = $plan->currentPlanVersion();
-        $version->addSection(new PreventionPlanSection(
-            id: PreventionPlanSectionId::generate(),
-            preventionPlanVersion: $version,
-            title: 'Introducción',
-            content: 'Contenido de la sección de introducción.',
-        ));
-        $version->addSection(new PreventionPlanSection(
-            id: PreventionPlanSectionId::generate(),
-            preventionPlanVersion: $version,
-            title: 'Diagnóstico',
-            content: 'Contenido de la sección de diagnóstico.',
-        ));
+        $plan->addSection('Introducción', 'Contenido de la sección de introducción.');
+        $plan->addSection('Diagnóstico', 'Contenido de la sección de diagnóstico.');
 
-        $plan->markCurrentVersionAsGenerated();
+        $plan->markAsGenerated();
 
         return $plan;
     }

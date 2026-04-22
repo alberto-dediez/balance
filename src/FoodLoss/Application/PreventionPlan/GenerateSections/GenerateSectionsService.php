@@ -36,11 +36,9 @@ class GenerateSectionsService implements CommandHandler
             return null;
         }
 
-        $version = $preventionPlan->currentPlanVersion();
+        $this->sectionsGenerator->generate($preventionPlan);
 
-        $this->sectionsGenerator->generate($version);
-
-        $preventionPlan->markCurrentVersionAsGenerated();
+        $preventionPlan->markAsGenerated();
         $this->preventionPlanRepository->add($preventionPlan);
 
         return null;

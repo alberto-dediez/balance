@@ -117,14 +117,4 @@ final class PreventionPlanVersion
 
         return $this->sections;
     }
-
-    public function clearSections(): void
-    {
-        $this->sections = new PreventionPlanSections([]);
-    }
-
-    public function addSection(PreventionPlanSection $section): void
-    {
-        $this->sections()->add($section);
-    }
 }

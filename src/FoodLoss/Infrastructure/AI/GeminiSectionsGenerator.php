@@ -9,9 +9,7 @@ use App\FoodLoss\Domain\Model\Action\ActionRepository;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointFilter;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
-use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSection;
-use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSectionId;
-use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersion;
+use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\ProposedAction;
 use App\FoodLoss\Domain\Model\PreventionPlan\SectionsGenerator;
 use App\FoodLoss\Domain\Model\Reason\Reason;
@@ -41,9 +39,9 @@ class GeminiSectionsGenerator implements SectionsGenerator
         private readonly GeminiClient $geminiClient,
     ) {}
 
-    public function generate(PreventionPlanVersion $version): void
+    public function generate(PreventionPlan $plan): void
     {
-        $plan = $version->preventionPlan();
+        $version = $plan->currentPlanVersion();
 
         $account = null !== $plan->accountId()
             ? $this->accountRepository->find($plan->accountId())
@@ -100,11 +98,11 @@ class GeminiSectionsGenerator implements SectionsGenerator
             }
         }
 
-        $version->clearSections();
+        $plan->clearSections();
 
         $locale = LocaleGetter::locale();
 
-        $this->generateSection($version, new GenerateIntroductionSectionPrompt(
+        $this->generateSection($plan, new GenerateIntroductionSectionPrompt(
             account: $account,
             plan: $plan,
             properties: array_values($propertyMap),
@@ -113,7 +111,7 @@ class GeminiSectionsGenerator implements SectionsGenerator
         ));
         JobProgressTracker::instance()->advance((string) new TranslatableMessage('Introducción'));
 
-        $this->generateSection($version, new GenerateCriticalPointsSectionPrompt(
+        $this->generateSection($plan, new GenerateCriticalPointsSectionPrompt(
             propertyMap: $propertyMap,
             criticalPointsByProperty: $criticalPointsByProperty,
             proposedActions: $proposedActions,
@@ -123,7 +121,7 @@ class GeminiSectionsGenerator implements SectionsGenerator
         ));
         JobProgressTracker::instance()->advance((string) new TranslatableMessage('Puntos críticos'));
 
-        $this->generateSection($version, new GenerateActionPlanSectionPrompt(
+        $this->generateSection($plan, new GenerateActionPlanSectionPrompt(
             proposedActions: $proposedActions,
             propertyMap: $propertyMap,
             actionMap: $actionMap,
@@ -132,7 +130,7 @@ class GeminiSectionsGenerator implements SectionsGenerator
         ));
         JobProgressTracker::instance()->advance((string) new TranslatableMessage('Plan de acción'));
 
-        $this->generateSection($version, new GenerateDonationsSectionPrompt(
+        $this->generateSection($plan, new GenerateDonationsSectionPrompt(
             proposedActions: $proposedActions,
             propertyMap: $propertyMap,
             actionMap: $actionMap,
@@ -141,7 +139,7 @@ class GeminiSectionsGenerator implements SectionsGenerator
         ));
         JobProgressTracker::instance()->advance((string) new TranslatableMessage('Donaciones'));
 
-        $this->generateSection($version, new GenerateMeasurementSectionPrompt(
+        $this->generateSection($plan, new GenerateMeasurementSectionPrompt(
             account: $account,
             propertyMap: $propertyMap,
             criticalPointsByProperty: $criticalPointsByProperty,
@@ -150,20 +148,13 @@ class GeminiSectionsGenerator implements SectionsGenerator
         JobProgressTracker::instance()->advance((string) new TranslatableMessage('Medición'));
     }
 
-    private function generateSection(PreventionPlanVersion $version, GeminiPrompt $prompt): void
+    private function generateSection(PreventionPlan $plan, GeminiPrompt $prompt): void
     {
         $response = $this->geminiClient->send($prompt);
 
         $title = isset($response['title']) && is_string($response['title']) ? $response['title'] : '';
         $content = isset($response['content']) && is_string($response['content']) ? $response['content'] : '';
 
-        $version->addSection(
-            new PreventionPlanSection(
-                id: PreventionPlanSectionId::generate(),
-                preventionPlanVersion: $version,
-                title: $title,
-                content: $content,
-            ),
-        );
+        $plan->addSection($title, $content);
     }
 }

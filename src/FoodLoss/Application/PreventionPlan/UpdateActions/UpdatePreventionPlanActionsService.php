@@ -61,7 +61,7 @@ class UpdatePreventionPlanActionsService implements CommandHandler
             $preventionPlan->addProposedAction($data->propertyId, $data->actionId, $data->criticalPointId);
         }
 
-        $preventionPlan->markCurrentVersionAsConfigured();
+        $preventionPlan->markAsConfigured();
         $this->preventionPlanRepository->add($preventionPlan);
 
         return new UpdatePreventionPlanActionsResponse(

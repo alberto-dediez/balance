@@ -60,7 +60,7 @@ class UpdatePreventionPlanSectionsServiceTest extends TestCase
         $persisted = $repository->find($preventionPlan->id());
         $this->assertNotNull($persisted);
 
-        $updatedSections = $persisted->currentPlanVersion()->sections()->toArray();
+        $updatedSections = $persisted->sections()->toArray();
         $this->assertCount(2, $updatedSections);
         $this->assertEquals('Título actualizado', $updatedSections[0]->title());
         $this->assertEquals('Contenido actualizado', $updatedSections[0]->content());
@@ -95,7 +95,7 @@ class UpdatePreventionPlanSectionsServiceTest extends TestCase
         $persisted = $repository->find($preventionPlan->id());
         $this->assertNotNull($persisted);
 
-        $updatedSections = $persisted->currentPlanVersion()->sections()->toArray();
+        $updatedSections = $persisted->sections()->toArray();
         $this->assertEquals($originalTitle, $updatedSections[0]->title());
     }
 

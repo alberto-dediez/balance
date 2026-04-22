@@ -8,5 +8,5 @@ interface SectionsGenerator
 {
     public const int DEFAULT_SECTIONS_COUNT = 5;
 
-    public function generate(PreventionPlanVersion $version): void;
+    public function generate(PreventionPlan $plan): void;
 }
