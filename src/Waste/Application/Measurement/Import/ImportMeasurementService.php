@@ -118,9 +118,11 @@ class ImportMeasurementService implements CommandHandler
                 throw new \InvalidArgumentException('Debe indicar el destino de la medición');
             }
 
+            $containerAccountId = $property->accountId();
+            assert(null !== $containerAccountId);
             $container = new Container(
                 id: ContainerId::generate(),
-                accountId: $user->accountId(),
+                accountId: $containerAccountId,
                 propertyId: $property->id(),
                 wasteId: $waste->id(),
                 purpose: $purpose,
