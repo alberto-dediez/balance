@@ -9,6 +9,25 @@
     {%- endif -%}
 {%- endblock number_unit_widget %}
 
+{% block markdown_editor_widget %}
+    <div
+        data-controller="markdown-editor"
+        data-markdown-editor-height-value="{{ height|default('400px') }}"
+        data-markdown-editor-initial-edit-type-value="{{ initial_edit_type|default('wysiwyg') }}"
+        data-markdown-editor-hide-image-value="{{ hide_image is defined and hide_image ? 'true' : 'false' }}"
+        data-markdown-editor-hide-link-value="{{ hide_link is defined and hide_link ? 'true' : 'false' }}"
+        data-markdown-editor-hide-mode-switch-value="{{ hide_mode_switch is defined and hide_mode_switch ? 'true' : 'false' }}"
+    >
+        <div data-markdown-editor-target="container"></div>
+        <textarea
+            id="{{ id }}"
+            name="{{ full_name }}"
+            data-markdown-editor-target="input"
+            style="display:none"
+        >{{ value }}</textarea>
+    </div>
+{% endblock markdown_editor_widget %}
+
 {% block autocomplete_remote_widget -%}
     <select {{ block('widget_attributes') }}>
         {% if placeholder is defined and placeholder is not empty %}
