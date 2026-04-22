@@ -24,8 +24,10 @@ use App\FoodLoss\Infrastructure\AI\Gemini\GenerateMeasurementSectionPrompt;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Domain\Model\Account\AccountRepository;
+use App\Shared\Domain\Model\JobProgress\JobProgressTracker;
 use App\Shared\Infrastructure\AI\Gemini\GeminiClient;
 use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class GeminiSectionsGenerator implements SectionsGenerator
 {
@@ -97,12 +99,15 @@ class GeminiSectionsGenerator implements SectionsGenerator
             }
         }
 
+        $version->clearSections();
+
         $this->generateSection($version, new GenerateIntroductionSectionPrompt(
             account: $account,
             plan: $plan,
             properties: array_values($propertyMap),
             createdAt: $version->createdAt(),
         ));
+        JobProgressTracker::instance()->advance((string) new TranslatableMessage('Introducción'));
 
         $this->generateSection($version, new GenerateCriticalPointsSectionPrompt(
             propertyMap: $propertyMap,
@@ -111,6 +116,7 @@ class GeminiSectionsGenerator implements SectionsGenerator
             actionMap: $actionMap,
             reasonMap: $reasonMap,
         ));
+        JobProgressTracker::instance()->advance((string) new TranslatableMessage('Puntos críticos'));
 
         $this->generateSection($version, new GenerateActionPlanSectionPrompt(
             proposedActions: $proposedActions,
@@ -118,6 +124,7 @@ class GeminiSectionsGenerator implements SectionsGenerator
             actionMap: $actionMap,
             criticalPointMap: $criticalPointMap,
         ));
+        JobProgressTracker::instance()->advance((string) new TranslatableMessage('Plan de acción'));
 
         $this->generateSection($version, new GenerateDonationsSectionPrompt(
             proposedActions: $proposedActions,
@@ -125,12 +132,14 @@ class GeminiSectionsGenerator implements SectionsGenerator
             actionMap: $actionMap,
             criticalPointMap: $criticalPointMap,
         ));
+        JobProgressTracker::instance()->advance((string) new TranslatableMessage('Donaciones'));
 
         $this->generateSection($version, new GenerateMeasurementSectionPrompt(
             account: $account,
             propertyMap: $propertyMap,
             criticalPointsByProperty: $criticalPointsByProperty,
         ));
+        JobProgressTracker::instance()->advance((string) new TranslatableMessage('Medición'));
     }
 
     private function generateSection(PreventionPlanVersion $version, GeminiPrompt $prompt): void

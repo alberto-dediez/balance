@@ -1,0 +1,19 @@
+{% props key %}
+
+<div class="d-flex flex-column align-items-center justify-content-center py-5 gap-3"
+     data-controller="job-progress"
+     data-job-progress-url-value="{{ path('job_progress', {'key': key}) }}">
+
+    <p class="text-muted mb-0">{% block content %}{% endblock %}</p>
+
+    <div class="w-100" style="max-width: 480px;">
+        <div class="progress" style="height: 1.25rem;" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                 data-job-progress-target="bar"
+                 style="width: 0%">
+                0%
+            </div>
+        </div>
+        <p class="text-muted text-center mt-2 small" data-job-progress-target="step">&nbsp;</p>
+    </div>
+</div>

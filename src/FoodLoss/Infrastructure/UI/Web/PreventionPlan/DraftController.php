@@ -43,7 +43,6 @@ class DraftController extends AbstractController
         if ($version->isGenerating()) {
             return $this->render('@food_loss/prevention-plan/draft-loading.html.twig', [
                 'preventionPlan' => $preventionPlan,
-                'statusUrl' => $this->generateUrl('prevention_plans_version_status', ['preventionPlanId' => $preventionPlanId]),
             ]);
         }
 

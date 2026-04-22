@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSection;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSectionId;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersion;
 use App\FoodLoss\Domain\Model\PreventionPlan\SectionsGenerator;
+use App\Shared\Domain\Model\JobProgress\JobProgressTracker;
 
 class FakeSectionsGenerator implements SectionsGenerator
 {
@@ -28,6 +29,8 @@ class FakeSectionsGenerator implements SectionsGenerator
                     content: $content,
                 ),
             );
+
+            JobProgressTracker::instance()->advance($title);
         }
     }
 }

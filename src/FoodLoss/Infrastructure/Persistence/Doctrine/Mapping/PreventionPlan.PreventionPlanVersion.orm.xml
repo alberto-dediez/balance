@@ -37,7 +37,8 @@
 
         <one-to-many field="sections"
                      target-entity="App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSection"
-                     mapped-by="preventionPlanVersion">
+                     mapped-by="preventionPlanVersion"
+                     orphan-removal="true">
             <cascade>
                 <cascade-all/>
             </cascade>

@@ -1,18 +1,11 @@
 {% extends '@food_loss/prevention-plan/draft.html.twig' %}
 
 {% block wizard_panels %}
-    <div class="d-flex flex-column align-items-center justify-content-center py-5 gap-3"
-         data-status-url="{{ statusUrl }}">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">{{ 'Cargando...' | trans }}</span>
-        </div>
-        <p class="text-muted">{{ 'Generando borrador del plan...' | trans }}</p>
-    </div>
+    <twig:JobProgress key="{{ preventionPlan.id }}">{{ 'Generando borrador del plan...' | trans }}</twig:JobProgress>
 
     <script>
         (function () {
-            const container = document.querySelector('[data-status-url]');
-            const url = container.dataset.statusUrl;
+            const url = '{{ path('prevention_plans_version_status', {'preventionPlanId': preventionPlan.id}) }}';
 
             function poll() {
                 fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })

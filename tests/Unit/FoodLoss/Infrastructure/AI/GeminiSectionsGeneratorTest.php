@@ -7,9 +7,10 @@ namespace App\Tests\Unit\FoodLoss\Infrastructure\AI;
 use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
-use App\FoodLoss\Infrastructure\AI\GeminiSectionsGenerator;
-use App\FoodLoss\Infrastructure\AI\Gemini\GenerateIntroductionSectionPrompt;
+use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
+use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
 use App\FoodLoss\Infrastructure\AI\Gemini\GenerateMeasurementSectionPrompt;
+use App\FoodLoss\Infrastructure\AI\GeminiSectionsGenerator;
 use App\FoodLoss\Infrastructure\Persistence\InMemory\Repository\InMemoryActionRepository;
 use App\FoodLoss\Infrastructure\Persistence\InMemory\Repository\InMemoryCriticalPointRepository;
 use App\FoodLoss\Infrastructure\Persistence\InMemory\Repository\InMemoryReasonRepository;
@@ -23,8 +24,6 @@ use App\Tests\Unit\FoodLoss\Domain\Model\Action\ActionMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint\CriticalPointMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
-use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
-use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
 use PHPUnit\Framework\TestCase;
 
 class GeminiSectionsGeneratorTest extends TestCase
@@ -121,6 +120,19 @@ class GeminiSectionsGeneratorTest extends TestCase
         $sut->generate($plan->currentPlanVersion());
 
         $this->assertInstanceOf(GenerateMeasurementSectionPrompt::class, $geminiClient->lastPrompt());
+    }
+
+    public function testClearsExistingSectionsBeforeGenerating(): void
+    {
+        $geminiClient = new InMemoryGeminiClient(['title' => self::GEMINI_TITLE, 'content' => self::GEMINI_CONTENT]);
+        $sut = $this->buildGenerator($geminiClient);
+
+        $version = $this->buildPlan(accountId: 'account-id', propertyIds: [])->currentPlanVersion();
+        $sut->generate($version);
+        $this->assertCount(5, $version->sections()->toArray());
+
+        $sut->generate($version);
+        $this->assertCount(5, $version->sections()->toArray());
     }
 
     public function testHandlesMissingGeminiFieldsGracefully(): void
