@@ -821,30 +821,30 @@ Do NOT execute translations (`make translation`).
 
 ```gherkin
 Feature:
-  I want to make sure that the software allow to register a {entity_label}
+    I want to make sure that the software allow to register a {entity_label}
 
-  Scenario: As an admin, I can access to register new {entities_label}
-    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
-    When I am logged as "admin@dediez.software"
-    When I go to "/es/admin/{entities_kebab}/register"
-    Then the response status should be 200
-    Then I see a form
+    Scenario: As an admin, I can access to register new {entities_label}
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/{entities_kebab}/register"
+        Then the response status should be 200
+        Then I see a form
 
-  Scenario: As normal user I can't register new {entities_label}
-    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
-    Given user "user1@dediez.software" with role "ROLE_USER" exists
-    When I am logged as "user1@dediez.software"
-    When I go to "/es/admin/{entities_kebab}/register"
-    Then the response status should be 403
+    Scenario: As normal user I can't register new {entities_label}
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/admin/{entities_kebab}/register"
+        Then the response status should be 403
 
-  Scenario: As an admin, I can register new {entities_label}
-    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
-    When I am logged as "admin@dediez.software"
-    When I go to "/es/admin/{entities_kebab}/register"
-    When I submit a form with "name:Test Name" and button "Registrar"
-    When I follow redirect
-    Then the response status should be 200
-    Then I see a text "{Entity_label} creado correctamente: Test Name"
+    Scenario: As an admin, I can register new {entities_label}
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/{entities_kebab}/register"
+        When I submit a form with "name:Test Name" and button "Registrar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "{Entity_label} creado correctamente: Test Name"
 ```
 
 #### {entity}-list.feature
@@ -876,49 +876,49 @@ Feature:
 
 ```gherkin
 Feature:
-  I want to make sure that the system is allow to access the details of a {entity_label}
+    I want to make sure that the system is allow to access the details of a {entity_label}
 
-  Scenario: As an admin, I can access to edit {entities_label}
-    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
-    Given {entity_label} "Item 1" with id "333" exists
-    When I am logged as "admin@dediez.software"
-    When I go to "/es/admin/{entities_kebab}/edit/333"
-    When I submit a form with "name:A new name" and button "Guardar"
-    When I follow redirect
-    Then the response status should be 200
-    Then I see a text "{Entity_label} actualizado con éxito"
+    Scenario: As an admin, I can access to edit {entities_label}
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given {entity_label} "Item 1" with id "333" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/{entities_kebab}/edit/333"
+        When I submit a form with "name:A new name" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "{Entity_label} actualizado con éxito"
 
-  Scenario: As an owner, I can't access to edit {entities_label}
-    Given account "MyCompany" with id "mycompany" exists
-    Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
-    Given {entity_label} "An item" with id "333" exists
-    When I am logged as "owner@dediez.software"
-    When I go to "/es/admin/{entities_kebab}/edit/333"
-    Then the response status should be 403
+    Scenario: As an owner, I can't access to edit {entities_label}
+        Given account "MyCompany" with id "mycompany" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
+        Given {entity_label} "An item" with id "333" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/admin/{entities_kebab}/edit/333"
+        Then the response status should be 403
 ```
 
 #### {entity}-remove.feature
 
 ```gherkin
 Feature:
-  I want to make sure that the system is allow to remove a {entity_label}
+    I want to make sure that the system is allow to remove a {entity_label}
 
-  Scenario: As an admin, I can access to remove {entities_label}
-    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
-    Given {entity_label} "Item 1" with id "333" exists
-    When I am logged as "admin@dediez.software"
-    When I go to "/es/admin/{entities_kebab}/remove/333"
-    When I follow redirect
-    Then the response status should be 200
-    Then I see a text "Se ha eliminado {entity_label} Item 1"
+    Scenario: As an admin, I can access to remove {entities_label}
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given {entity_label} "Item 1" with id "333" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/{entities_kebab}/remove/333"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "Se ha eliminado {entity_label} Item 1"
 
-  Scenario: As normal user I can't remove {entities_label}
-    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
-    Given user "user1@dediez.software" with role "ROLE_USER" exists
-    Given {entity_label} "Item 1" with id "333" exists
-    When I am logged as "user1@dediez.software"
-    When I go to "/es/admin/{entities_kebab}/remove/333"
-    Then the response status should be 403
+    Scenario: As normal user I can't remove {entities_label}
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        Given {entity_label} "Item 1" with id "333" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/admin/{entities_kebab}/remove/333"
+        Then the response status should be 403
 ```
 
 #### {Context}Context.php — Add steps for new entity

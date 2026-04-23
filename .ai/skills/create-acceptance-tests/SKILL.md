@@ -108,62 +108,62 @@ Then I am redirected to "{path}"
 
 ```gherkin
 Feature:
-  I want to make sure that the software allow to register a {entity name}
+    I want to make sure that the software allow to register a {entity name}
 
-  Scenario: As an admin, I can access to register new {entity plural}
-    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
-    When I am logged as "admin@dediez.software"
-    When I go to "/es/admin/{entities-kebab}/register"
-    Then the response status should be 200
-    Then I see a form
+    Scenario: As an admin, I can access to register new {entity plural}
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/{entities-kebab}/register"
+        Then the response status should be 200
+        Then I see a form
 
-  Scenario: As normal user I can't register new {entity plural}
-    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
-    Given user "user1@dediez.software" with role "ROLE_USER" exists
-    When I am logged as "user1@dediez.software"
-    When I go to "/es/admin/{entities-kebab}/register"
-    Then the response status should be 403
+    Scenario: As normal user I can't register new {entity plural}
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/admin/{entities-kebab}/register"
+        Then the response status should be 403
 
-  Scenario: As an admin, I can register new {entity plural}
-    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
-    When I am logged as "admin@dediez.software"
-    When I go to "/es/admin/{entities-kebab}/register"
-    When I submit a form with "{field1}:{value1}|{field2}:{value2}" and button "Registrar"
-    When I follow redirect
-    Then the response status should be 200
-    Then I see a text "{success message}"
+    Scenario: As an admin, I can register new {entity plural}
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/{entities-kebab}/register"
+        When I submit a form with "{field1}:{value1}|{field2}:{value2}" and button "Registrar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "{success message}"
 ```
 
 #### Owner/Owner-User access pattern:
 
 ```gherkin
 Feature:
-  I want to make sure that the software allow to register a {entity name}
+    I want to make sure that the software allow to register a {entity name}
 
-  Scenario: As an admin, I can't access to register new {entity plural}
-    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
-    When I am logged as "admin@dediez.software"
-    When I go to "/es/{entities-kebab}/register"
-    Then the response status should be 403
-
-  Scenario: As an owner, I can register a new {entity}
-    Given account "MyCompany" with id "mycompany" exists
-    Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
-    # ... other prerequisites (related entities) ...
-    When I am logged as "owner@diedez.software"
-    When I go to "/es/{entities-kebab}/register"
-    Then the response status should be 200
-    When I submit a form with "{field1}:{value1}|{field2}:{value2}" and button "Registrar"
-    When I follow redirect
-    Then the response status should be 200
-    Then I see a text "{success message}"
-
-  Scenario: As normal user I can't register new {entity plural}
-    Given account "MyCompany" with id "mycompany" exists
-    Given user "user1@dediez.software" with role "ROLE_USER" of account "mycompany" exists
-    When I am logged as "user1@dediez.software"
-    When I go to "/es/{entities-kebab}/register"
-    Then the response status should be 403
+    Scenario: As an admin, I can't access to register new {entity plural}
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/{entities-kebab}/register"
+        Then the response status should be 403
+    
+    Scenario: As an owner, I can register a new {entity}
+        Given account "MyCompany" with id "mycompany" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
+        # ... other prerequisites (related entities) ...
+        When I am logged as "owner@diedez.software"
+        When I go to "/es/{entities-kebab}/register"
+        Then the response status should be 200
+        When I submit a form with "{field1}:{value1}|{field2}:{value2}" and button "Registrar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "{success message}"
+    
+    Scenario: As normal user I can't register new {entity plural}
+        Given account "MyCompany" with id "mycompany" exists
+        Given user "user1@dediez.software" with role "ROLE_USER" of account "mycompany" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/{entities-kebab}/register"
+        Then the response status should be 403
 ```
 
 ---
@@ -237,69 +237,69 @@ Feature:
 
 ```gherkin
 Feature:
-  I want to make sure that the system is allow to access the details of a {entity name}
+    I want to make sure that the system is allow to access the details of a {entity name}
 
-  Scenario: As an admin, I can access to edit {entity plural} of my account
-    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
-    Given {entity} "{name}" with id "333" exists
-    When I am logged as "admin@dediez.software"
-    When I go to "/es/admin/{entities-kebab}/edit/333"
-    When I submit a form with "{field1}:{value1}|{field2}:{value2}" and button "Guardar"
-    When I follow redirect
-    Then the response status should be 200
-    Then I see a text "{success message}"
-
-  Scenario: As an owner, I can't access to edit {entity plural}
-    Given account "MyCompany" with id "mycompany" exists
-    Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
-    Given {entity} "{name}" with id "333" exists
-    When I am logged as "owner@dediez.software"
-    When I go to "/es/admin/{entities-kebab}/edit/333"
-    Then the response status should be 403
+    Scenario: As an admin, I can access to edit {entity plural} of my account
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given {entity} "{name}" with id "333" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/{entities-kebab}/edit/333"
+        When I submit a form with "{field1}:{value1}|{field2}:{value2}" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "{success message}"
+    
+    Scenario: As an owner, I can't access to edit {entity plural}
+        Given account "MyCompany" with id "mycompany" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
+        Given {entity} "{name}" with id "333" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/admin/{entities-kebab}/edit/333"
+        Then the response status should be 403
 ```
 
 #### Owner/Owner-User access pattern:
 
 ```gherkin
 Feature:
-  I want to make sure that the system is allow to access the details of a {entity name}
+    I want to make sure that the system is allow to access the details of a {entity name}
 
-  Scenario: As an admin, I can't access to edit {entity plural}
-    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
-    Given {entity} with id "333" exists
-    When I am logged as "admin@dediez.software"
-    When I go to "/es/{entities-kebab}/edit/333"
-    Then the response status should be 403
-
-  Scenario: As an owner, I can edit my {entity plural}
-    Given account "MyCompany" with id "mycompany" exists
-    Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
-    # ... other prerequisites ...
-    Given {entity} with id "333" of account "mycompany" exists
-    When I am logged as "owner@dediez.software"
-    When I go to "/es/{entities-kebab}/edit/333"
-    Then the response status should be 200
-    When I submit a form with "{field1}:{value1}|{field2}:{value2}" and button "Guardar"
-    When I follow redirect
-    Then the response status should be 200
-    Then I see a text "{success message}"
-
-  Scenario: As an owner, I cannot access to edit {entity plural} of other account
-    Given account "MyCompany" with id "mycompany" exists
-    Given account "OtherCompany" with id "othercompany" exists
-    Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
-    Given {entity} with id "333" of account "othercompany" exists
-    When I am logged as "owner@dediez.software"
-    When I go to "/es/{entities-kebab}/edit/333"
-    Then the response status should be 403
-
-  Scenario: As normal user I can't access to edit {entity plural}
-    Given account "MyCompany" with id "mycompany" exists
-    Given user "user1@dediez.software" with role "ROLE_USER" of account "mycompany" exists
-    Given {entity} with id "333" of account "mycompany" exists
-    When I am logged as "user1@dediez.software"
-    When I go to "/es/{entities-kebab}/edit/333"
-    Then the response status should be 403
+    Scenario: As an admin, I can't access to edit {entity plural}
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given {entity} with id "333" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/{entities-kebab}/edit/333"
+        Then the response status should be 403
+    
+    Scenario: As an owner, I can edit my {entity plural}
+        Given account "MyCompany" with id "mycompany" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
+        # ... other prerequisites ...
+        Given {entity} with id "333" of account "mycompany" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/{entities-kebab}/edit/333"
+        Then the response status should be 200
+        When I submit a form with "{field1}:{value1}|{field2}:{value2}" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "{success message}"
+    
+    Scenario: As an owner, I cannot access to edit {entity plural} of other account
+        Given account "MyCompany" with id "mycompany" exists
+        Given account "OtherCompany" with id "othercompany" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
+        Given {entity} with id "333" of account "othercompany" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/{entities-kebab}/edit/333"
+        Then the response status should be 403
+    
+    Scenario: As normal user I can't access to edit {entity plural}
+        Given account "MyCompany" with id "mycompany" exists
+        Given user "user1@dediez.software" with role "ROLE_USER" of account "mycompany" exists
+        Given {entity} with id "333" of account "mycompany" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/{entities-kebab}/edit/333"
+        Then the response status should be 403
 ```
 
 ---
@@ -310,65 +310,65 @@ Feature:
 
 ```gherkin
 Feature:
-  I want to make sure that the system is allow to remove a {entity name}
+    I want to make sure that the system is allow to remove a {entity name}
 
-  Scenario: As an admin, I can access to remove {entity plural}
-    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
-    Given {entity} "{name}" with id "333" exists
-    When I am logged as "admin@dediez.software"
-    When I go to "/es/admin/{entities-kebab}/remove/333"
-    When I follow redirect
-    Then the response status should be 200
-    Then I see a text "{success message}"
-
-  Scenario: As normal user I can't remove {entity plural}
-    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
-    Given user "user1@dediez.software" with role "ROLE_USER" exists
-    Given {entity} "{name}" with id "333" exists
-    When I am logged as "user1@dediez.software"
-    When I go to "/es/admin/{entities-kebab}/remove/333"
-    Then the response status should be 403
+    Scenario: As an admin, I can access to remove {entity plural}
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given {entity} "{name}" with id "333" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/{entities-kebab}/remove/333"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "{success message}"
+    
+    Scenario: As normal user I can't remove {entity plural}
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        Given {entity} "{name}" with id "333" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/admin/{entities-kebab}/remove/333"
+        Then the response status should be 403
 ```
 
 #### Owner/Owner-User access pattern:
 
 ```gherkin
 Feature:
-  I want to make sure that the system is allow to remove a {entity name}
+    I want to make sure that the system is allow to remove a {entity name}
 
-  Scenario: As an admin, I can't access to remove {entity plural}
-    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
-    Given {entity} with id "333" exists
-    When I am logged as "admin@dediez.software"
-    When I go to "/es/{entities-kebab}/remove/333"
-    Then the response status should be 403
-
-  Scenario: As an owner, I can remove my {entity plural}
-    Given account "MyCompany" with id "mycompany" exists
-    Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
-    Given {entity} with id "333" of account "mycompany" exists
-    When I am logged as "owner@dediez.software"
-    When I go to "/es/{entities-kebab}/remove/333"
-    When I follow redirect
-    Then the response status should be 200
-    Then I see a text "{success message}"
-
-  Scenario: As an owner, I cannot remove {entity plural} of other account
-    Given account "MyCompany" with id "mycompany" exists
-    Given account "OtherCompany" with id "othercompany" exists
-    Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
-    Given {entity} with id "333" of account "othercompany" exists
-    When I am logged as "owner@dediez.software"
-    When I go to "/es/{entities-kebab}/remove/333"
-    Then the response status should be 403
-
-  Scenario: As normal user I can't remove {entity plural}
-    Given account "MyCompany" with id "mycompany" exists
-    Given user "user1@dediez.software" with role "ROLE_USER" of account "mycompany" exists
-    Given {entity} with id "333" of account "mycompany" exists
-    When I am logged as "user1@dediez.software"
-    When I go to "/es/{entities-kebab}/remove/333"
-    Then the response status should be 403
+    Scenario: As an admin, I can't access to remove {entity plural}
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given {entity} with id "333" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/{entities-kebab}/remove/333"
+        Then the response status should be 403
+    
+    Scenario: As an owner, I can remove my {entity plural}
+        Given account "MyCompany" with id "mycompany" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
+        Given {entity} with id "333" of account "mycompany" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/{entities-kebab}/remove/333"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "{success message}"
+    
+    Scenario: As an owner, I cannot remove {entity plural} of other account
+        Given account "MyCompany" with id "mycompany" exists
+        Given account "OtherCompany" with id "othercompany" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
+        Given {entity} with id "333" of account "othercompany" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/{entities-kebab}/remove/333"
+        Then the response status should be 403
+    
+    Scenario: As normal user I can't remove {entity plural}
+        Given account "MyCompany" with id "mycompany" exists
+        Given user "user1@dediez.software" with role "ROLE_USER" of account "mycompany" exists
+        Given {entity} with id "333" of account "mycompany" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/{entities-kebab}/remove/333"
+        Then the response status should be 403
 ```
 
 ---
