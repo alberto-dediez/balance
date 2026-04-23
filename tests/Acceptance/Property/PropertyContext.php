@@ -6,9 +6,11 @@ namespace App\Tests\Acceptance\Property;
 
 use App\Property\Domain\Model\Brand\BrandRepository;
 use App\Property\Domain\Model\Category\CategoryRepository;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Company\CompanyRepository;
 use App\Property\Domain\Model\Country\CountryRepository;
 use App\Property\Domain\Model\Destination\DestinationRepository;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Property\Domain\Model\Brand\BrandMother;
@@ -131,5 +133,22 @@ final readonly class PropertyContext implements Context
         $company = CompanyMother::fromNameAndAccountAndId($name, $account, $id);
 
         $this->getCompanyRepository()->add($company);
+    }
+
+    #[Given('property :property has company :company assigned')]
+    public function propertyHasCompanyAssigned(string $property, string $company): void
+    {
+        $property = $this->getPropertyRepository()->find(new PropertyId($property));
+        $company = $this->getCompanyRepository()->find(new CompanyId($company));
+
+        assert(null !== $property && null !== $company);
+
+        $property->update(
+            name: $property->name(),
+            accountId: $property->accountId(),
+            info: $property->info(),
+            externalId: $property->externalId(),
+            companyId: $company->id(),
+        );
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Domain\Event\PreventionPlan;
 
 use App\FoodLoss\Application\PreventionPlan\LoadActions\LoadActionsRequest;
-use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersionCreated;
+use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersionValidated;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\DeferredCommand;
@@ -13,7 +13,7 @@ use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
 
-final class LoadActionsOnPreventionPlanVersionCreatedSubscriber implements DomainEventSubscriber
+final class LoadActionsOnPreventionPlanVersionValidatedSubscriber implements DomainEventSubscriber
 {
     use RegisterTrait;
 
@@ -24,12 +24,12 @@ final class LoadActionsOnPreventionPlanVersionCreatedSubscriber implements Domai
 
     public function isSubscribedTo(DomainEvent $event): bool
     {
-        return $event instanceof PreventionPlanVersionCreated;
+        return $event instanceof PreventionPlanVersionValidated;
     }
 
     public function handle(DomainEvent $event): void
     {
-        assert($event instanceof PreventionPlanVersionCreated);
+        assert($event instanceof PreventionPlanVersionValidated);
 
         CommandBusDispatcher::instance()->dispatch(
             new DeferredCommand(

@@ -12,6 +12,7 @@ use App\FoodLoss\Domain\Model\DoggyBagSign\DoggyBagSignRepository;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
 use App\FoodLoss\Domain\Model\Incidence\IncidenceRepository;
 use App\FoodLoss\Domain\Model\Packaging\PackagingRepository;
+use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
 use App\FoodLoss\Domain\Model\Protocol\ProtocolRepository;
 use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
@@ -248,6 +249,16 @@ final readonly class FoodLossContext implements Context
         $preventionPlan = PreventionPlanMother::fromNameAndId($name, $id);
 
         $this->getPreventionPlanRepository()->add($preventionPlan);
+    }
+
+    #[Given('prevention plan :id is mark as validated')]
+    public function preventionPlanIsMarkAsValidated(string $id): void
+    {
+        $preventionPlan = $this->getPreventionPlanRepository()->find(new PreventionPlanId($id));
+
+        assert(null !== $preventionPlan);
+
+        $preventionPlan->markAsValidated();
     }
 
     #[Given('prevention plan :name with id :id of account :accountId exists')]

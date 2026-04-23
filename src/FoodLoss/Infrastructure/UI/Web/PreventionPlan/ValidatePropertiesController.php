@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\UI\Web\PreventionPlan;
 
-use App\FoodLoss\Application\PreventionPlan\ValidateProperty\ValidatePropertyRequest;
-use App\FoodLoss\Application\PreventionPlan\ValidateProperty\ValidatePropertyService;
+use App\FoodLoss\Application\PreventionPlan\ValidatePreventionPlan\ValidatePreventionPlanRequest;
+use App\FoodLoss\Application\PreventionPlan\ValidatePreventionPlan\ValidatePreventionPlanService;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
 use App\Security\Application\Action as SecurityAction;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,32 +20,21 @@ class ValidatePropertiesController extends AbstractController
     public function __invoke(
         string $preventionPlanId,
         PreventionPlanRepository $preventionPlanRepository,
-        ValidatePropertyService $validateProperty,
+        ValidatePreventionPlanService $validatePreventionPlan,
     ): Response {
         $preventionPlan = $this->getPreventionPlanFromId($preventionPlanId, $preventionPlanRepository);
 
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $preventionPlan);
 
-        $invalidProperties = [];
+        $response = $validatePreventionPlan(new ValidatePreventionPlanRequest($preventionPlan->id()));
 
-        foreach ($preventionPlan->propertyIds() as $propertyId) {
-            $response = $validateProperty(new ValidatePropertyRequest($propertyId));
-
-            if ($response->hasErrors) {
-                $invalidProperties[] = [
-                    'propertyName' => $response->propertyName,
-                    'errors' => $response->errors,
-                ];
-            }
-        }
-
-        if ([] === $invalidProperties) {
+        if (!$response->hasInvalidProperties) {
             return $this->redirectToRoute('prevention_plans_actions', ['preventionPlanId' => $preventionPlanId]);
         }
 
         return $this->render('@food_loss/prevention-plan/validate.html.twig', [
             'preventionPlan' => $preventionPlan,
-            'invalidProperties' => $invalidProperties,
+            'invalidProperties' => $response->invalidProperties,
         ]);
     }
 }

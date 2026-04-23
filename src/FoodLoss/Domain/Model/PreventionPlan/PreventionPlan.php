@@ -342,6 +342,26 @@ class PreventionPlan implements \Stringable
         $this->currentVersion = $event->versionNumber();
     }
 
+    public function markAsValidated(): void
+    {
+        $this->recordApplyAndPublish(
+            new PreventionPlanVersionValidated(
+                preventionPlanId: $this->id(),
+                versionNumber: $this->currentVersion,
+            ),
+        );
+    }
+
+    public function applyPreventionPlanVersionValidated(PreventionPlanVersionValidated $event): void
+    {
+        $version = $this->versions()->findByVersionNumber($event->versionNumber());
+        if (null === $version) {
+            return;
+        }
+
+        $version->markAsValidated();
+    }
+
     public function markAsLoaded(): void
     {
         $this->recordApplyAndPublish(

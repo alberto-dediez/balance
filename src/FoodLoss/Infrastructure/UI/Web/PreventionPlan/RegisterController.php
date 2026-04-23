@@ -55,7 +55,7 @@ class RegisterController extends AbstractController
 
                     $this->addFlash('success', new TranslatableMessage('Plan de prevención creado correctamente: {name}', ['{name}' => $response->name]));
 
-                    return $this->redirectToRoute('prevention_plans_actions', ['preventionPlanId' => (string) $response->preventionPlanId]);
+                    return $this->redirectToRoute('prevention_plans_validate', ['preventionPlanId' => (string) $response->preventionPlanId]);
                 } catch (\Exception) {
                     $this->addFlash('danger', new TranslatableMessage('Error inesperado'));
                 }

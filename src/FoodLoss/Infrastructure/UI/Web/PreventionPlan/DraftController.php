@@ -40,7 +40,15 @@ class DraftController extends AbstractController
 
         $version = $preventionPlan->currentPlanVersion();
 
-        if ($version->isGenerating()) {
+        if (!$version->isValidated()) {
+            return $this->redirectToRoute('prevention_plans_validate', ['preventionPlanId' => $preventionPlanId]);
+        }
+
+        if (!$version->isLoaded()) {
+            return $this->redirectToRoute('prevention_plans_actions', ['preventionPlanId' => $preventionPlanId]);
+        }
+
+        if (!$version->isGenerated()) {
             return $this->render('@food_loss/prevention-plan/draft-loading.html.twig', [
                 'preventionPlan' => $preventionPlan,
             ]);

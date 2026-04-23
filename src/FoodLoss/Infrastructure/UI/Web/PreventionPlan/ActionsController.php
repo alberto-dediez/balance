@@ -40,7 +40,11 @@ class ActionsController extends AbstractController
 
         $version = $preventionPlan->currentPlanVersion();
 
-        if ($version->isInProgress()) {
+        if (!$version->isValidated()) {
+            return $this->redirectToRoute('prevention_plans_validate', ['preventionPlanId' => $preventionPlanId]);
+        }
+
+        if (!$version->isLoaded()) {
             return $this->render('@food_loss/prevention-plan/actions-loading.html.twig', [
                 'preventionPlan' => $preventionPlan,
                 'statusUrl' => $this->generateUrl('prevention_plans_version_status', ['preventionPlanId' => $preventionPlanId]),

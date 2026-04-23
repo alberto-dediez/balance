@@ -8,6 +8,8 @@ enum PreventionPlanVersionStatus: string
 {
     case InProgress = 'InProgress';
 
+    case Validated = 'Validated';
+
     case Loaded = 'Loaded';
 
     case Configured = 'Configured';
@@ -17,6 +19,30 @@ enum PreventionPlanVersionStatus: string
     case Abandoned = 'Abandoned';
 
     case Completed = 'Completed';
+
+    public function isValidated(): bool
+    {
+        return match ($this) {
+            self::InProgress => false,
+            default => true
+        };
+    }
+
+    public function isLoaded(): bool
+    {
+        return match ($this) {
+            self::InProgress, self::Validated => false,
+            default => true
+        };
+    }
+
+    public function isGenerated(): bool
+    {
+        return match ($this) {
+            self::InProgress, self::Validated, self::Loaded, self::Configured => false,
+            default => true
+        };
+    }
 
     public function isClosed(): bool
     {
