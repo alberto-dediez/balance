@@ -59,6 +59,15 @@ class CompanyMother
         return $company;
     }
 
+    public static function withoutVatNumber(): Company
+    {
+        return self::from(
+            name: 'company-no-vat',
+            id: (string) CompanyId::generate(),
+            vatNumber: '',
+        );
+    }
+
     public static function random(): Company
     {
         return self::from(

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Property\Domain\Model\Property;
 
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -72,6 +73,14 @@ class PropertyMother
             info: $info,
             externalId: $externalId,
         );
+
+        return $property;
+    }
+
+    public static function fromNameAndCompanyId(string $name, CompanyId $companyId): Property
+    {
+        $property = new Property(id: PropertyId::generate());
+        $property->register(name: $name, accountId: null, companyId: $companyId);
 
         return $property;
     }

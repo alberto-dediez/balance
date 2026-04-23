@@ -92,6 +92,19 @@ class PreventionPlanMother
         return $plan;
     }
 
+    public static function fromWithProperty(string $name, string $id, string $accountId, string $propertyId): PreventionPlan
+    {
+        $preventionPlan = new PreventionPlan(id: new PreventionPlanId($id));
+        $preventionPlan->register(
+            name: $name,
+            propertyIds: [new PropertyId($propertyId)],
+            accountId: new AccountId($accountId),
+            registeredBy: new UserId('user-id'),
+        );
+
+        return $preventionPlan;
+    }
+
     /** @param PropertyId[] $propertyIds */
     public static function withPropertyIds(array $propertyIds): PreventionPlan
     {

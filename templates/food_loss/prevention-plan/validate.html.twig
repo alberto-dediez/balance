@@ -1,0 +1,37 @@
+{% extends '@food_loss/prevention-plan/edit-layout.html.twig' %}
+
+{% set page_title = ('Planes de Prevención' | trans)
+    ~ ' > '
+    ~ ('Validación' | trans)
+    ~ ' > '
+    ~ preventionPlan %}
+
+{% set wizard_active = 2 %}
+
+{% block wizard_panels %}
+    <twig:Alert type="danger">
+        <p class="mb-3">{{ 'Las siguientes propiedades tienen datos incompletos y deben ser corregidos para poder generar correctamente el plan.' | trans }}</p>
+
+        <ul class="ps-3 mb-0">
+            {% for item in invalidProperties %}
+                <li class="mb-1">
+                    <strong>{{ item.propertyName }}</strong>:
+                    {{ item.errors | join(', ') | trans }}
+                </li>
+            {% endfor %}
+        </ul>
+    </twig:Alert>
+
+    <twig:ActionBar>
+        <div class="col-sm-6 col-md-3 col-lg-2">
+            <twig:Link path="{{ path('prevention_plans') }}" color="outlinePrimary">
+                {{ 'Salir' | trans }}
+            </twig:Link>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-2">
+            <twig:Link path="{{ path('prevention_plans_edit', {preventionPlanId: preventionPlan.id}) }}" color="primary">
+                {{ 'Retroceder' | trans }}
+            </twig:Link>
+        </div>
+    </twig:ActionBar>
+{% endblock %}
