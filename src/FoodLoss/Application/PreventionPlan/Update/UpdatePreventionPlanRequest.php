@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Application\PreventionPlan\Update;
 
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Shared\Application\CommandBus\Command;
 
@@ -15,5 +16,6 @@ class UpdatePreventionPlanRequest implements Command
         public PreventionPlanId $preventionPlanId,
         public string $name,
         public array $properties = [],
+        public ?CompanyId $companyId = null,
     ) {}
 }

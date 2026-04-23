@@ -6,6 +6,7 @@ namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
 use App\FoodLoss\Application\PreventionPlan\Register\RegisterPreventionPlanRequest;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\PropertyIdsType;
+use App\Property\Infrastructure\Symfony\Form\Type\CompanyIdType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -26,6 +27,13 @@ class RegisterPreventionPlanType extends AbstractType
                 'constraints' => [
                     new Assert\NotBlank(),
                     new Assert\Length(max: 255),
+                ],
+            ])
+            ->add('companyId', CompanyIdType::class, [
+                'label' => new TranslatableMessage('Empresa'),
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotNull(message: 'Debes seleccionar una empresa'),
                 ],
             ])
             ->add('properties', PropertyIdsType::class, [

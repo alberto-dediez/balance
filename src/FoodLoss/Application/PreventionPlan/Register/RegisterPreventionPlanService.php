@@ -8,6 +8,7 @@ use App\FoodLoss\Application\PreventionPlan\PreventionPlanAuthorizer;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
@@ -30,6 +31,7 @@ class RegisterPreventionPlanService implements CommandHandler
     {
         $id = PreventionPlanId::generate();
 
+        assert($request->companyId instanceof CompanyId);
         assert($request->accountId instanceof AccountId);
 
         $this->authorizer->denyUnlessCanDoThat(
@@ -42,6 +44,7 @@ class RegisterPreventionPlanService implements CommandHandler
         $preventionPlan->register(
             name: $request->name,
             propertyIds: $request->properties,
+            companyId: $request->companyId,
             accountId: $request->accountId,
             registeredBy: $user->id(),
         );

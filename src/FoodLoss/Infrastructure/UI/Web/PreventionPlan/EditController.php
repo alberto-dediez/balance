@@ -41,6 +41,7 @@ class EditController extends AbstractController
             preventionPlanId: $preventionPlan->id(),
             name: $preventionPlan->name(),
             properties: $preventionPlan->propertyIds(),
+            companyId: $preventionPlan->companyId(),
         );
 
         $form = $this->createForm(UpdatePreventionPlanType::class, $updateRequest);

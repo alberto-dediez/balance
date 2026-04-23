@@ -11,11 +11,12 @@ Feature:
         Given account "MyCompany" with id "mycompany" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
         Given property "Property 1" with id "prop1" of account "mycompany" exists
+        Given company "Company 1" with id "comp1" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/prevention-plans/register"
         Then the response status should be 200
         Then I see a form
-        When I submit a form with "name:Plan de Prevención Test|properties:[prop1]" and button "Registrar"
+        When I submit a form with "name:Plan de Prevención Test|properties:[prop1]|companyId:comp1" and button "Registrar"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Plan de prevención creado correctamente: Plan de Prevención Test"

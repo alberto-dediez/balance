@@ -6,6 +6,7 @@ namespace App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan;
 
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -39,6 +40,7 @@ class PreventionPlanMother
         string $name,
         string $id,
         string $accountId = 'account-id',
+        string $companyId = 'company-id',
     ): PreventionPlan {
         $preventionPlan = new PreventionPlan(
             id: new PreventionPlanId($id),
@@ -46,6 +48,7 @@ class PreventionPlanMother
         $preventionPlan->register(
             name: $name,
             propertyIds: [],
+            companyId: new CompanyId($companyId),
             accountId: new AccountId($accountId),
             registeredBy: new UserId('user-id'),
         );
@@ -98,6 +101,7 @@ class PreventionPlanMother
         $preventionPlan->register(
             name: $name,
             propertyIds: [new PropertyId($propertyId)],
+            companyId: new CompanyId('company-id'),
             accountId: new AccountId($accountId),
             registeredBy: new UserId('user-id'),
         );
@@ -112,6 +116,7 @@ class PreventionPlanMother
         $preventionPlan->register(
             name: 'prevention-plan-' . random_int(100, 999),
             propertyIds: $propertyIds,
+            companyId: new CompanyId('company-id'),
             accountId: new AccountId('account-' . random_int(100, 999)),
             registeredBy: new UserId('user-id'),
         );

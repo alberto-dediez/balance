@@ -168,6 +168,7 @@ class GeminiSectionsGeneratorTest extends TestCase
         $plan->register(
             name: 'Test Prevention Plan',
             propertyIds: $propertyIds,
+            companyId: new \App\Property\Domain\Model\Company\CompanyId('company-id'),
             accountId: new AccountId($accountId),
             registeredBy: new UserId('user-id'),
         );

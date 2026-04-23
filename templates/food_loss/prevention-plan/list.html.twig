@@ -9,6 +9,8 @@
             'sortable': true,
             'sortableBy': 'name'
         }, {
+            'label': 'Empresa' | trans,
+        }, {
             'label': 'Propiedades' | trans,
         }, {
             'label': 'Fecha de registro' | trans,
@@ -25,6 +27,7 @@
 
     <twig:List:Table :columns="columns" :elements="preventionPlans">
         <td>{{ element.name }}</td>
+        <td>{{ element.companyId | company_name }}</td>
         <td>
             {% set propertyIds = element.propertyIds %}
             {% if propertyIds | length == 0 %}

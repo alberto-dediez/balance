@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Domain\Model\PreventionPlan;
 
 use App\FoodLoss\Domain\DomainEvent;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
@@ -16,6 +17,7 @@ final class PreventionPlanRegistered extends DomainEvent
     public function __construct(
         private PreventionPlanId $preventionPlanId,
         private string $name,
+        private CompanyId $companyId,
         private AccountId $accountId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
@@ -33,6 +35,11 @@ final class PreventionPlanRegistered extends DomainEvent
         return $this->name;
     }
 
+    public function companyId(): CompanyId
+    {
+        return $this->companyId;
+    }
+
     public function accountId(): AccountId
     {
         return $this->accountId;
@@ -48,6 +55,7 @@ final class PreventionPlanRegistered extends DomainEvent
         return [
             'preventionPlanId' => (string) $this->preventionPlanId,
             'name' => $this->name,
+            'companyId' => (string) $this->companyId,
             'accountId' => (string) $this->accountId,
         ];
     }
@@ -60,6 +68,7 @@ final class PreventionPlanRegistered extends DomainEvent
         return new PreventionPlanRegistered(
             preventionPlanId: new PreventionPlanId($payload['preventionPlanId']),
             name: $payload['name'],
+            companyId: !empty($payload['companyId']) ? new CompanyId($payload['companyId']) : CompanyId::generate(),
             accountId: new AccountId($payload['accountId']),
             id: $id,
             occurredOn: $occurredOn,

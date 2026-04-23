@@ -9,6 +9,7 @@ use App\FoodLoss\Application\PreventionPlan\Update\UpdatePreventionPlanRequest;
 use App\FoodLoss\Application\PreventionPlan\Update\UpdatePreventionPlanService;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanUpdated;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -44,6 +45,7 @@ class UpdatePreventionPlanServiceTest extends TestCase
             preventionPlanId: $preventionPlan->id(),
             name: 'Plan Actualizado',
             properties: [],
+            companyId: new CompanyId('company-id-test'),
         );
 
         $result = $sut($request, $user);
@@ -68,6 +70,7 @@ class UpdatePreventionPlanServiceTest extends TestCase
         $result = $sut->isHandled(new UpdatePreventionPlanRequest(
             preventionPlanId: $preventionPlan->id(),
             name: 'test',
+            companyId: new CompanyId('company-id-test'),
         ));
 
         $this->assertTrue($result);

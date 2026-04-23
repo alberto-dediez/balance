@@ -9,6 +9,7 @@ use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanFilter;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use Doctrine\DBAL\Types\Types;
@@ -71,6 +72,15 @@ class DoctrinePreventionPlanRepository implements PreventionPlanRepository
                     $qb->expr()->like('e.name', ':name'),
                 )
                 ->setParameter('name', "%{$filter->name}%")
+            ;
+        }
+
+        if ($filter->companyId instanceof CompanyId) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('e.companyId', ':companyId'),
+                )
+                ->setParameter('companyId', (string) $filter->companyId)
             ;
         }
 

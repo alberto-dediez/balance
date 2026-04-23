@@ -6,6 +6,7 @@ namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
 use App\FoodLoss\Application\PreventionPlan\List\ListPreventionPlansRequest;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\PropertyIdType;
+use App\Property\Infrastructure\Symfony\Form\Type\CompanyIdType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,6 +21,11 @@ class ListPreventionPlansType extends BaseFilterType
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('Nombre'),
                 'required' => false,
+            ])
+            ->add('companyId', CompanyIdType::class, [
+                'label' => new TranslatableMessage('Empresa'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Todas las empresas'),
             ])
             ->add('propertyId', PropertyIdType::class, [
                 'label' => new TranslatableMessage('Propiedad'),

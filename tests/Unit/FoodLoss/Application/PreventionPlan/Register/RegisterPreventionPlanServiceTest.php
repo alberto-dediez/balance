@@ -10,6 +10,7 @@ use App\FoodLoss\Application\PreventionPlan\Register\RegisterPreventionPlanServi
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRegistered;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersionCreated;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -38,6 +39,7 @@ class RegisterPreventionPlanServiceTest extends TestCase
         $request = new RegisterPreventionPlanRequest(
             name: 'Plan de Prevención 1',
             properties: [],
+            companyId: new CompanyId('company-id-test'),
             accountId: new AccountId('account-id-test'),
         );
 
@@ -75,6 +77,7 @@ class RegisterPreventionPlanServiceTest extends TestCase
 
         $result = $sut->isHandled(new RegisterPreventionPlanRequest(
             name: 'test',
+            companyId: new CompanyId('company-id-test'),
             accountId: new AccountId('account-id-test'),
         ));
 

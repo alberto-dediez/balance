@@ -6,6 +6,7 @@ namespace App\FoodLoss\Application\PreventionPlan\Update;
 
 use App\FoodLoss\Application\PreventionPlan\PreventionPlanAuthorizer;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -31,11 +32,14 @@ class UpdatePreventionPlanService implements CommandHandler
             throw new \InvalidArgumentException('Prevention plan not found');
         }
 
+        assert($request->companyId instanceof CompanyId);
+
         $this->authorizer->denyUnlessCanDoThat($preventionPlan, SecurityAction::Edit, $user);
 
         $preventionPlan->update(
             name: $request->name,
             propertyIds: $request->properties,
+            companyId: $request->companyId,
             updatedBy: $user->id(),
         );
 

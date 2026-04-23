@@ -11,6 +11,7 @@
         </id>
 
         <field name="name" type="string" length="255" nullable="false"/>
+        <field name="companyId" type="company_id" column="company_id" nullable="false"/>
         <field name="accountId" type="account_id" column="account_id" nullable="false"/>
 
         <one-to-many field="properties"

@@ -6,6 +6,7 @@ namespace App\FoodLoss\Domain\Model\PreventionPlan;
 
 use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -27,6 +28,7 @@ class PreventionPlan implements \Stringable
     public function __construct(
         private PreventionPlanId $id,
         private string $name = '',
+        private ?CompanyId $companyId = null,
         private ?AccountId $accountId = null,
         private bool $removed = false,
         array $events = [],
@@ -84,6 +86,11 @@ class PreventionPlan implements \Stringable
         return $this->currentVersion;
     }
 
+    public function companyId(): ?CompanyId
+    {
+        return $this->companyId;
+    }
+
     public function accountId(): ?AccountId
     {
         return $this->accountId;
@@ -115,6 +122,7 @@ class PreventionPlan implements \Stringable
     public function register(
         string $name,
         array $propertyIds,
+        CompanyId $companyId,
         AccountId $accountId,
         UserId $registeredBy,
     ): void {
@@ -122,6 +130,7 @@ class PreventionPlan implements \Stringable
             new PreventionPlanRegistered(
                 preventionPlanId: $this->id(),
                 name: $name,
+                companyId: $companyId,
                 accountId: $accountId,
             ),
         );
@@ -143,6 +152,7 @@ class PreventionPlan implements \Stringable
     public function update(
         string $name,
         array $propertyIds,
+        CompanyId $companyId,
         UserId $updatedBy,
     ): void {
         $propertiesChanged = $this->propertiesChanged($propertyIds);
@@ -151,6 +161,7 @@ class PreventionPlan implements \Stringable
             new PreventionPlanUpdated(
                 preventionPlanId: $this->id(),
                 name: $name,
+                companyId: $companyId,
             ),
         );
 
@@ -291,6 +302,7 @@ class PreventionPlan implements \Stringable
     public function applyPreventionPlanRegistered(PreventionPlanRegistered $event): void
     {
         $this->name = $event->name();
+        $this->companyId = $event->companyId();
         $this->accountId = $event->accountId();
         $this->registeredAt = $event->occurredOn();
     }
@@ -298,6 +310,7 @@ class PreventionPlan implements \Stringable
     public function applyPreventionPlanUpdated(PreventionPlanUpdated $event): void
     {
         $this->name = $event->name();
+        $this->companyId = $event->companyId();
         $this->updatedAt = $event->occurredOn();
     }
 

@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -26,6 +27,7 @@ class PreventionPlanTest extends TestCase
         $plan->register(
             name: 'Plan',
             propertyIds: [$propertyA, $propertyB],
+            companyId: new CompanyId('company-id'),
             accountId: new AccountId('account-id'),
             registeredBy: new UserId('user-id'),
         );
@@ -39,6 +41,7 @@ class PreventionPlanTest extends TestCase
         $plan->update(
             name: 'Plan',
             propertyIds: [$propertyA],
+            companyId: new CompanyId('company-id'),
             updatedBy: new UserId('user-id'),
         );
 
@@ -65,6 +68,7 @@ class PreventionPlanTest extends TestCase
         $plan->register(
             name: 'Plan',
             propertyIds: [$propertyA, $propertyB],
+            companyId: new CompanyId('company-id'),
             accountId: new AccountId('account-id'),
             registeredBy: new UserId('user-id'),
         );
@@ -77,6 +81,7 @@ class PreventionPlanTest extends TestCase
         $plan->update(
             name: 'Plan Updated',
             propertyIds: [$propertyA, $propertyB, $propertyC],
+            companyId: new CompanyId('company-id'),
             updatedBy: new UserId('user-id'),
         );
 
@@ -100,6 +105,7 @@ class PreventionPlanTest extends TestCase
         $plan->register(
             name: 'Plan',
             propertyIds: [$propertyA],
+            companyId: new CompanyId('company-id'),
             accountId: new AccountId('account-id'),
             registeredBy: new UserId('user-id'),
         );
@@ -109,6 +115,7 @@ class PreventionPlanTest extends TestCase
         $plan->update(
             name: 'Plan Renamed',
             propertyIds: [$propertyA],
+            companyId: new CompanyId('company-id'),
             updatedBy: new UserId('user-id'),
         );
 

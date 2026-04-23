@@ -9,6 +9,7 @@ use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanFilter;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -60,6 +61,13 @@ class InMemoryPreventionPlanRepository implements PreventionPlanRepository
                 && !str_contains(strtolower((string) $preventionPlan->name()), strtolower($filter->name))
             ) {
                 continue;
+            }
+
+            if ($filter->companyId instanceof CompanyId) {
+                $planCompanyId = $preventionPlan->companyId();
+                if (!$planCompanyId instanceof CompanyId || !$filter->companyId->equals($planCompanyId)) {
+                    continue;
+                }
             }
 
             if ($filter->accountId instanceof AccountId) {

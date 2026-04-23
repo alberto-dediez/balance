@@ -38,6 +38,8 @@
                             {% set value = value | service_category_name %}
                         {% elseif field == 'serviceCategoryIds' %}
                             {% set value = value | map(v => v | service_category_name) | join(', ') %}
+                        {% elseif field == 'companyId' %}
+                            {% set value = value | company_name %}
                         {% endif %}
 
                         <twig:List:FilterShow
