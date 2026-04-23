@@ -8,6 +8,7 @@ use App\FoodLoss\Application\PreventionPlan\Update\UpdatePreventionPlanRequest;
 use App\FoodLoss\Application\PreventionPlan\Update\UpdatePreventionPlanService;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
 use App\FoodLoss\Infrastructure\Symfony\Form\UpdatePreventionPlanType;
+use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
@@ -28,6 +29,7 @@ class EditController extends AbstractController
         string $preventionPlanId,
         PreventionPlanRepository $preventionPlanRepository,
         UpdatePreventionPlanService $updatePreventionPlan,
+        PropertyRepository $propertyRepository,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -47,9 +49,19 @@ class EditController extends AbstractController
         $form = $this->createForm(UpdatePreventionPlanType::class, $updateRequest);
 
         try {
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updatePreventionPlan, $user): void {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updatePreventionPlan, $propertyRepository, $user): void {
                 /** @var UpdatePreventionPlanRequest $updateRequest */
                 $updateRequest = $form->getData();
+
+                assert(null !== $updateRequest->companyId);
+
+                if (empty($updateRequest->properties)) {
+                    $allProperties = $propertyRepository->findByCompanyId($updateRequest->companyId);
+                    $updateRequest->properties = array_map(
+                        static fn($property) => $property->id(),
+                        $allProperties,
+                    );
+                }
 
                 $updatePreventionPlan($updateRequest, $user);
 

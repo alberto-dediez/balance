@@ -30,6 +30,7 @@ class ListPreventionPlansType extends BaseFilterType
             ->add('propertyId', PropertyIdType::class, [
                 'label' => new TranslatableMessage('Propiedad'),
                 'required' => false,
+                'placeholder' => new TranslatableMessage('Todas las propiedades'),
             ])
         ;
 

@@ -29,6 +29,8 @@ class VersionStatusController extends AbstractController
 
         return $this->json([
             'status' => $preventionPlan->currentPlanVersion()->status()->value,
+            'is_loaded' => $preventionPlan->currentPlanVersion()->status()->isLoaded(),
+            'is_generated' => $preventionPlan->currentPlanVersion()->status()->isGenerated(),
         ]);
     }
 }

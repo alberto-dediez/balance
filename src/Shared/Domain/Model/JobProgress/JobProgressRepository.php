@@ -6,7 +6,7 @@ namespace App\Shared\Domain\Model\JobProgress;
 
 interface JobProgressRepository
 {
-    public function save(JobProgress $jobProgress): void;
+    public function add(JobProgress $jobProgress): void;
 
     public function find(JobProgressId $id): ?JobProgress;
 

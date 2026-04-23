@@ -16,7 +16,7 @@ class InMemoryJobProgressRepository implements JobProgressRepository
     /** @param array<string, JobProgress> $jobProgresses */
     public function __construct(private array $jobProgresses = []) {}
 
-    public function save(JobProgress $jobProgress): void
+    public function add(JobProgress $jobProgress): void
     {
         $this->jobProgresses[(string) $jobProgress->id()] = $jobProgress;
     }

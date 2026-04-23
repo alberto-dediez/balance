@@ -39,9 +39,7 @@ class RegisterPreventionPlanType extends AbstractType
             ->add('properties', PropertyIdsType::class, [
                 'label' => new TranslatableMessage('Propiedades'),
                 'placeholder' => new TranslatableMessage('Todas las propiedades'),
-                'constraints' => [
-                    new Assert\Count(min: 1, minMessage: 'Debes seleccionar al menos una propiedad'),
-                ],
+                'required' => false,
             ])
             ->add('register', SubmitType::class, [
                 'label' => new TranslatableMessage('Registrar'),

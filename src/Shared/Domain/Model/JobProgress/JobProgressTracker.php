@@ -31,7 +31,7 @@ final class JobProgressTracker
         $this->current = $jobProgress;
     }
 
-    public function advance(string $step): void
+    public function advance(string $step = ''): void
     {
         $this->current?->advance($step);
     }

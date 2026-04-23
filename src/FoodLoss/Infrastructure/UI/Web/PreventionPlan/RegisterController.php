@@ -9,6 +9,7 @@ use App\FoodLoss\Application\PreventionPlan\Register\RegisterPreventionPlanServi
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
 use App\FoodLoss\Infrastructure\Symfony\Form\RegisterPreventionPlanType;
+use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\Account;
@@ -25,6 +26,7 @@ class RegisterController extends AbstractController
 {
     public function __invoke(
         RegisterPreventionPlanService $registerPreventionPlan,
+        PropertyRepository $propertyRepository,
         LoggedUser $loggedUser,
         LoggedAccount $loggedAccount,
         Request $request,
@@ -50,6 +52,16 @@ class RegisterController extends AbstractController
                     $registerRequest = $form->getData();
 
                     $registerRequest->accountId = $account->id();
+
+                    assert(null !== $registerRequest->companyId);
+
+                    if (empty($registerRequest->properties)) {
+                        $allProperties = $propertyRepository->findByCompanyId($registerRequest->companyId);
+                        $registerRequest->properties = array_map(
+                            static fn($property) => $property->id(),
+                            $allProperties,
+                        );
+                    }
 
                     $response = $registerPreventionPlan($registerRequest, $user);
 

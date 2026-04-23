@@ -13,6 +13,7 @@ use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Shared\Domain\Model\JobProgress\JobProgressTracker;
 
 class LoadActionsService implements CommandHandler
 {
@@ -50,13 +51,19 @@ class LoadActionsService implements CommandHandler
             fn(PropertyId $id) => !isset($propertiesWithActions[(string) $id]),
         ));
 
+        JobProgressTracker::instance()->resize(count($propertyIdsWithoutActions));
+
         foreach ($propertyIdsWithoutActions as $propertyId) {
             $suggestions = $this->proposedActionsLoader->suggestFor($propertyId);
 
             foreach ($suggestions as $suggestion) {
                 $preventionPlan->addProposedAction($propertyId, $suggestion->actionId, $suggestion->criticalPointId);
             }
+
+            JobProgressTracker::instance()->advance();
         }
+
+        JobProgressTracker::instance()->clear();
 
         $preventionPlan->markAsLoaded();
         $this->preventionPlanRepository->add($preventionPlan);

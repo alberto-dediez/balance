@@ -36,6 +36,7 @@ class TrackedCommandHandler implements CommandHandler
 
         if (null !== $jobProgress) {
             $jobProgress->reset();
+            $jobProgress->resize($command->progressTotal());
         } else {
             $jobProgress = JobProgress::start(
                 key: $key,
@@ -43,7 +44,7 @@ class TrackedCommandHandler implements CommandHandler
             );
         }
 
-        $this->jobProgressRepository->save($jobProgress);
+        $this->jobProgressRepository->add($jobProgress);
 
         JobProgressTracker::instance()->set($jobProgress);
 

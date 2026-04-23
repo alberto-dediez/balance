@@ -19,7 +19,7 @@ class DoctrineJobProgressRepository implements JobProgressRepository
 {
     public function __construct(private readonly EntityManagerInterface $manager) {}
 
-    public function save(JobProgress $jobProgress): void
+    public function add(JobProgress $jobProgress): void
     {
         $this->manager->persist($jobProgress);
         $this->manager->flush();
