@@ -12,7 +12,12 @@ class InMemoryGeminiClient implements GeminiClient
     private ?GeminiPrompt $lastPrompt = null;
 
     /** @param array<mixed> $response */
-    public function __construct(private readonly array $response = []) {}
+    public function __construct(private array $response = []) {}
+
+    public function setResponse(array $response): void
+    {
+        $this->response = $response;
+    }
 
     /** @return array<mixed> */
     public function send(GeminiPrompt $prompt): array

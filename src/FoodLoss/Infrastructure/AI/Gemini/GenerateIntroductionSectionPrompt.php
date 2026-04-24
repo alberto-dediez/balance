@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\FoodLoss\Infrastructure\AI\Gemini;
 
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
+use App\Property\Domain\Model\Company\Company;
 use App\Property\Domain\Model\Property\Property;
-use App\Security\Domain\Model\Account\Account;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
 
@@ -14,8 +14,8 @@ final class GenerateIntroductionSectionPrompt implements GeminiPrompt
 {
     /** @param Property[] $properties */
     public function __construct(
-        private readonly ?Account $account,
         private readonly PreventionPlan $plan,
+        private readonly Company $company,
         private readonly array $properties,
         private readonly \DateTimeImmutable $createdAt,
         private readonly Locale $locale = Locale::Spanish,
@@ -32,7 +32,7 @@ final class GenerateIntroductionSectionPrompt implements GeminiPrompt
             sprintf('The output must be written in %s and formatted in Markdown.', $this->locale->name),
             '',
             'Available company data:',
-            sprintf('- Company name: %s', $this->account?->name() ?? '[Company Name]'),
+            sprintf('- Company name: %s', $this->company->name()),
             sprintf('- Plan name: %s', $this->plan->name()),
             sprintf('- Plan date: %s', $this->createdAt->format('d/m/Y')),
             '',
@@ -55,8 +55,8 @@ final class GenerateIntroductionSectionPrompt implements GeminiPrompt
 
         $lines[] = '';
         $lines[] = 'Use the following placeholders for data that must be completed manually by the responsible person:';
-        $lines[] = '- [Company NIF]';
-        $lines[] = '- [Fiscal address of the company]';
+        $lines[] = sprintf('- Company vat number: %s', $this->company->vatNumber());
+        $lines[] = sprintf('- Fiscal address of the company: %s, Postal Code %s, %s (%s)', $this->company->address()->street(), $this->company->address()->postalCode(), $this->company->address()->city(), $this->company->address()->country());
         $lines[] = '- [Responsible person for plan implementation]';
         $lines[] = '- [Approximate number of employees]';
         $lines[] = '- [Approximate number of daily diners / guests]';

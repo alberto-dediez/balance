@@ -5,23 +5,33 @@ declare(strict_types=1);
 namespace App\Tests\Unit\FoodLoss\Infrastructure\AI;
 
 use App\FoodLoss\Domain\Model\Action\ActionId;
+use App\FoodLoss\Domain\Model\Action\ActionRepository;
 use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
+use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
 use App\FoodLoss\Infrastructure\AI\Gemini\GenerateMeasurementSectionPrompt;
 use App\FoodLoss\Infrastructure\AI\GeminiSectionsGenerator;
 use App\FoodLoss\Infrastructure\Persistence\InMemory\Repository\InMemoryActionRepository;
 use App\FoodLoss\Infrastructure\Persistence\InMemory\Repository\InMemoryCriticalPointRepository;
 use App\FoodLoss\Infrastructure\Persistence\InMemory\Repository\InMemoryReasonRepository;
+use App\Property\Domain\Model\Company\CompanyId;
+use App\Property\Domain\Model\Company\CompanyRepository;
 use App\Property\Domain\Model\Property\PropertyId;
+use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCompanyRepository;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
+use App\Shared\Infrastructure\AI\Gemini\GeminiClient;
 use App\Shared\Infrastructure\AI\Gemini\InMemoryGeminiClient;
 use App\Tests\Unit\FoodLoss\Domain\Model\Action\ActionMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint\CriticalPointMother;
+use App\Tests\Unit\Property\Domain\Model\Company\CompanyMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use PHPUnit\Framework\TestCase;
@@ -31,14 +41,47 @@ class GeminiSectionsGeneratorTest extends TestCase
     private const GEMINI_TITLE = 'Generated Section Title';
     private const GEMINI_CONTENT = '## Introduction\n\nThis is the generated content.';
 
+    private GeminiSectionsGenerator $sut;
+    private AccountRepository $accountRepository;
+    private CompanyRepository $companyRepository;
+    private PropertyRepository $propertyRepository;
+    private CriticalPointRepository $criticalPointRepository;
+    private ActionRepository $actionRepository;
+    private ReasonRepository $reasonRepository;
+    private GeminiClient $geminiClient;
+
+    private CompanyId $companyId;
+
+    public function setUp(): void
+    {
+        $this->accountRepository = new InMemoryAccountRepository();
+        $this->companyRepository = new InMemoryCompanyRepository();
+        $this->propertyRepository = new InMemoryPropertyRepository();
+        $this->criticalPointRepository = new InMemoryCriticalPointRepository();
+        $this->actionRepository = new InMemoryActionRepository();
+        $this->reasonRepository = new InMemoryReasonRepository();
+
+        $this->geminiClient = new InMemoryGeminiClient(['title' => self::GEMINI_TITLE, 'content' => self::GEMINI_CONTENT]);
+
+        $this->sut = new GeminiSectionsGenerator(
+            accountRepository: $this->accountRepository,
+            propertyRepository: $this->propertyRepository,
+            criticalPointRepository: $this->criticalPointRepository,
+            actionRepository: $this->actionRepository,
+            reasonRepository: $this->reasonRepository,
+            companyRepository: $this->companyRepository,
+            geminiClient: $this->geminiClient,
+        );
+
+        $this->companyId = CompanyId::generate();
+        $this->companyRepository->add(CompanyMother::fromNameAndId('ACME Hotels', (string) $this->companyId));
+    }
+
     public function testGeneratesFiveSectionsForEmptyPlan(): void
     {
-        $geminiClient = new InMemoryGeminiClient(['title' => self::GEMINI_TITLE, 'content' => self::GEMINI_CONTENT]);
-        $sut = $this->buildGenerator($geminiClient);
-
         $plan = $this->buildPlan(accountId: 'account-id', propertyIds: []);
 
-        $sut->generate($plan);
+        $this->sut->generate($plan);
 
         $this->assertCount(5, $plan->sections()->toArray());
     }
@@ -50,46 +93,25 @@ class GeminiSectionsGeneratorTest extends TestCase
         $criticalPointId = (string) CriticalPointId::generate();
         $actionId = (string) ActionId::generate();
 
-        $accountRepository = new InMemoryAccountRepository();
-        $accountRepository->add(AccountMother::fromNameAndId('ACME Hotels', $accountId));
-
-        $propertyRepository = new InMemoryPropertyRepository();
-        $propertyRepository->add(PropertyMother::fromNameAndId('Hotel Central', (string) $propertyId));
-
-        $criticalPointRepository = new InMemoryCriticalPointRepository();
-        $criticalPointRepository->add(
+        $this->accountRepository->add(AccountMother::fromNameAndId('ACME Hotels', $accountId));
+        $this->propertyRepository->add(PropertyMother::fromNameAndCompanyIdAndId('Hotel Central', $this->companyId, $propertyId));
+        $this->criticalPointRepository->add(
             CriticalPointMother::fromNameAndAccountAndProperty('Kitchen waste', AccountId::fromString($accountId), $propertyId),
         );
-
-        $actionRepository = new InMemoryActionRepository();
-        $actionRepository->add(ActionMother::fromPriorityAndId(Priority::Prevention, $actionId));
-
-        $geminiClient = new InMemoryGeminiClient(['title' => self::GEMINI_TITLE, 'content' => self::GEMINI_CONTENT]);
-
-        $sut = new GeminiSectionsGenerator(
-            $accountRepository,
-            $propertyRepository,
-            $criticalPointRepository,
-            $actionRepository,
-            new InMemoryReasonRepository(),
-            $geminiClient,
-        );
+        $this->actionRepository->add(ActionMother::fromPriorityAndId(Priority::Prevention, $actionId));
 
         $plan = $this->buildPlan(accountId: $accountId, propertyIds: [$propertyId]);
         $plan->addProposedAction($propertyId, new ActionId($actionId), new CriticalPointId($criticalPointId));
 
-        $sut->generate($plan);
+        $this->sut->generate($plan);
 
         $this->assertCount(5, $plan->sections()->toArray());
     }
 
     public function testSectionsContainTitleAndContentFromGeminiResponse(): void
     {
-        $geminiClient = new InMemoryGeminiClient(['title' => self::GEMINI_TITLE, 'content' => self::GEMINI_CONTENT]);
-        $sut = $this->buildGenerator($geminiClient);
-
         $plan = $this->buildPlan(accountId: 'account-id', propertyIds: []);
-        $sut->generate($plan);
+        $this->sut->generate($plan);
 
         foreach ($plan->sections()->toArray() as $section) {
             $this->assertSame(self::GEMINI_TITLE, $section->title());
@@ -100,46 +122,30 @@ class GeminiSectionsGeneratorTest extends TestCase
     public function testFirstPromptIsIntroductionAndLastIsMeasurement(): void
     {
         $propertyId = PropertyId::generate();
-        $propertyRepository = new InMemoryPropertyRepository();
-        $propertyRepository->add(PropertyMother::fromNameAndId('Test Hotel', (string) $propertyId));
-
-        $geminiClient = new InMemoryGeminiClient(['title' => self::GEMINI_TITLE, 'content' => self::GEMINI_CONTENT]);
-
-        $sut = new GeminiSectionsGenerator(
-            new InMemoryAccountRepository(),
-            $propertyRepository,
-            new InMemoryCriticalPointRepository(),
-            new InMemoryActionRepository(),
-            new InMemoryReasonRepository(),
-            $geminiClient,
-        );
+        $this->propertyRepository->add(PropertyMother::fromNameAndCompanyIdAndId('Test Hotel', $this->companyId, $propertyId));
 
         $plan = $this->buildPlan(accountId: 'account-id', propertyIds: [$propertyId]);
-        $sut->generate($plan);
+        $this->sut->generate($plan);
 
-        $this->assertInstanceOf(GenerateMeasurementSectionPrompt::class, $geminiClient->lastPrompt());
+        $this->assertInstanceOf(GenerateMeasurementSectionPrompt::class, $this->geminiClient->lastPrompt());
     }
 
     public function testClearsExistingSectionsBeforeGenerating(): void
     {
-        $geminiClient = new InMemoryGeminiClient(['title' => self::GEMINI_TITLE, 'content' => self::GEMINI_CONTENT]);
-        $sut = $this->buildGenerator($geminiClient);
-
         $plan = $this->buildPlan(accountId: 'account-id', propertyIds: []);
-        $sut->generate($plan);
+        $this->sut->generate($plan);
         $this->assertCount(5, $plan->sections()->toArray());
 
-        $sut->generate($plan);
+        $this->sut->generate($plan);
         $this->assertCount(5, $plan->sections()->toArray());
     }
 
     public function testHandlesMissingGeminiFieldsGracefully(): void
     {
-        $geminiClient = new InMemoryGeminiClient([]);
-        $sut = $this->buildGenerator($geminiClient);
+        $this->geminiClient->setResponse([]);
 
         $plan = $this->buildPlan(accountId: 'account-id', propertyIds: []);
-        $sut->generate($plan);
+        $this->sut->generate($plan);
 
         $sections = $plan->sections()->toArray();
         $this->assertCount(5, $sections);
@@ -149,18 +155,6 @@ class GeminiSectionsGeneratorTest extends TestCase
         }
     }
 
-    private function buildGenerator(InMemoryGeminiClient $geminiClient): GeminiSectionsGenerator
-    {
-        return new GeminiSectionsGenerator(
-            new InMemoryAccountRepository(),
-            new InMemoryPropertyRepository(),
-            new InMemoryCriticalPointRepository(),
-            new InMemoryActionRepository(),
-            new InMemoryReasonRepository(),
-            $geminiClient,
-        );
-    }
-
     /** @param PropertyId[] $propertyIds */
     private function buildPlan(string $accountId, array $propertyIds): PreventionPlan
     {
@@ -168,7 +162,7 @@ class GeminiSectionsGeneratorTest extends TestCase
         $plan->register(
             name: 'Test Prevention Plan',
             propertyIds: $propertyIds,
-            companyId: new \App\Property\Domain\Model\Company\CompanyId('company-id'),
+            companyId: $this->companyId,
             accountId: new AccountId($accountId),
             registeredBy: new UserId('user-id'),
         );

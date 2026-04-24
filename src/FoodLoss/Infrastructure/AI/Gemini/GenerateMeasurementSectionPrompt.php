@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\FoodLoss\Infrastructure\AI\Gemini;
 
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
+use App\Property\Domain\Model\Company\Company;
 use App\Property\Domain\Model\Property\Property;
-use App\Security\Domain\Model\Account\Account;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
 
@@ -17,7 +17,7 @@ final class GenerateMeasurementSectionPrompt implements GeminiPrompt
      * @param array<string, CriticalPoint[]> $criticalPointsByProperty indexed by property ID string
      */
     public function __construct(
-        private readonly ?Account $account,
+        private readonly Company $company,
         private readonly array $propertyMap,
         private readonly array $criticalPointsByProperty,
         private readonly Locale $locale = Locale::Spanish,
@@ -36,7 +36,7 @@ final class GenerateMeasurementSectionPrompt implements GeminiPrompt
             'Law 1/2025 requires companies to: (1) measure and report food waste annually, and (2) train staff to prevent it.',
             'This section must demonstrate to authorities that the plan is a living, audited document.',
             '',
-            sprintf('Company: %s', $this->account?->name() ?? '[Company Name]'),
+            sprintf('Company: %s', $this->company->name()),
             '',
             'Properties and their critical supply chain stages:',
         ];

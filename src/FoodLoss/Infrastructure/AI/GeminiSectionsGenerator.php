@@ -9,6 +9,7 @@ use App\FoodLoss\Domain\Model\Action\ActionRepository;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointFilter;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
+use App\FoodLoss\Domain\Model\PreventionPlan\PlanWithoutCompanyException;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\ProposedAction;
 use App\FoodLoss\Domain\Model\PreventionPlan\SectionsGenerator;
@@ -19,6 +20,8 @@ use App\FoodLoss\Infrastructure\AI\Gemini\GenerateCriticalPointsSectionPrompt;
 use App\FoodLoss\Infrastructure\AI\Gemini\GenerateDonationsSectionPrompt;
 use App\FoodLoss\Infrastructure\AI\Gemini\GenerateIntroductionSectionPrompt;
 use App\FoodLoss\Infrastructure\AI\Gemini\GenerateMeasurementSectionPrompt;
+use App\Property\Domain\Model\Company\Company;
+use App\Property\Domain\Model\Company\CompanyRepository;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Domain\Model\Account\AccountRepository;
@@ -36,6 +39,7 @@ class GeminiSectionsGenerator implements SectionsGenerator
         private readonly CriticalPointRepository $criticalPointRepository,
         private readonly ActionRepository $actionRepository,
         private readonly ReasonRepository $reasonRepository,
+        private readonly CompanyRepository $companyRepository,
         private readonly GeminiClient $geminiClient,
     ) {}
 
@@ -102,9 +106,15 @@ class GeminiSectionsGenerator implements SectionsGenerator
 
         $locale = LocaleGetter::locale();
 
+        $company = $this->companyRepository->find($plan->companyId());
+
+        if (!$company instanceof Company) {
+            throw new PlanWithoutCompanyException($plan->id());
+        }
+
         $this->generateSection($plan, new GenerateIntroductionSectionPrompt(
-            account: $account,
             plan: $plan,
+            company: $company,
             properties: array_values($propertyMap),
             createdAt: $version->createdAt(),
             locale: $locale,
@@ -140,7 +150,7 @@ class GeminiSectionsGenerator implements SectionsGenerator
         JobProgressTracker::instance()->advance((string) new TranslatableMessage('Donaciones'));
 
         $this->generateSection($plan, new GenerateMeasurementSectionPrompt(
-            account: $account,
+            company: $company,
             propertyMap: $propertyMap,
             criticalPointsByProperty: $criticalPointsByProperty,
             locale: $locale,

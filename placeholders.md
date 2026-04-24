@@ -10,13 +10,10 @@ Placeholders que se piden al modelo que incluya en el output generado:
 
 | Placeholder | Propósito |
 |---|---|
-| `[Company NIF]` | NIF de la empresa |
-| `[Fiscal address of the company]` | Dirección fiscal |
 | `[Responsible person for plan implementation]` | Responsable del plan |
 | `[Approximate number of employees]` | Nº de empleados |
 | `[Approximate number of daily diners / guests]` | Nº de comensales/día |
 
-Además, si no hay `Account`, el nombre de empresa se rellena con `[Company Name]` (línea 33).
 
 ---
 
@@ -30,7 +27,6 @@ Además, si no hay `Account`, el nombre de empresa se rellena con `[Company Name
 | `[Staff training plan: courses, workshops, frequency]` | Plan de formación |
 | `[Date of next scheduled plan review]` | Fecha próxima revisión |
 
-También usa `[Company Name]` si no hay `Account` (línea 37).
 
 ---
 
@@ -60,8 +56,6 @@ También usa `[Company Name]` si no hay `Account` (línea 37).
 | Prompt | Placeholders para completar manualmente | Placeholders de error/guardia |
 |---|---|---|
 | `SuggestActionsPrompt` | 0 | 0 |
-| `GenerateIntroductionSectionPrompt` | 5 | 1 (`[Company Name]`) |
-| `GenerateMeasurementSectionPrompt` | 6 | 1 (`[Company Name]`) |
 | `GenerateDonationsSectionPrompt` | 5 | 0 |
 | `GenerateCriticalPointsSectionPrompt` | 0 | 0 |
 | `GenerateActionPlanSectionPrompt` | 0 | 2 (`[Unknown property/critical point]`) |

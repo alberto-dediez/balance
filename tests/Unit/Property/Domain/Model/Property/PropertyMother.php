@@ -85,6 +85,14 @@ class PropertyMother
         return $property;
     }
 
+    public static function fromNameAndCompanyIdAndId(string $name, CompanyId $companyId, PropertyId $propertyId): Property
+    {
+        $property = new Property(id: $propertyId);
+        $property->register(name: $name, accountId: null, companyId: $companyId);
+
+        return $property;
+    }
+
     public static function random(): Property
     {
         return self::fromName('property-' . random_int(100, 999));
