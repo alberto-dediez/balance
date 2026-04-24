@@ -39,10 +39,10 @@ class EditController extends AbstractController
             companyId: $company->id(),
             name: $company->name(),
             vatNumber: $company->vatNumber(),
-            street: $company->address()?->street() ?? '',
-            postalCode: $company->address()?->postalCode() ?? '',
-            city: $company->address()?->city() ?? '',
-            country: $company->address()?->country() ?? '',
+            street: $company->address()->street() ?? '',
+            postalCode: $company->address()->postalCode() ?? '',
+            city: $company->address()->city() ?? '',
+            country: $company->address()->country() ?? '',
         );
 
         try {

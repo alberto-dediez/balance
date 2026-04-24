@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Property\Domain\Model\Company;
 use App\Property\Domain\Model\Company\Company;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Model\Address;
 
 class CompanyMother
 {
@@ -52,7 +53,7 @@ class CompanyMother
         $company->register(
             name: $name,
             vatNumber: $vatNumber,
-            address: null,
+            address: new Address(),
             accountId: null !== $accountId ? new AccountId($accountId) : null,
         );
 

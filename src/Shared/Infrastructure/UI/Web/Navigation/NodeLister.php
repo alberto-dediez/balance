@@ -108,6 +108,11 @@ class NodeLister
                     target: $this->router->generate('admin_accounts'),
                 ),
                 new Node(
+                    label: new TranslatableMessage('Empleados'),
+                    icon: 'solar:user-id-line-duotone',
+                    target: $this->router->generate('admin_employees'),
+                ),
+                new Node(
                     label: new TranslatableMessage('Usuarios'),
                     icon: 'solar:users-group-rounded-line-duotone',
                     target: $this->router->generate('admin_users'),
@@ -248,6 +253,11 @@ class NodeLister
             label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',
             items: [
+                new Node(
+                    label: new TranslatableMessage('Empleados'),
+                    icon: 'solar:user-id-line-duotone',
+                    target: $this->router->generate('employees'),
+                ),
                 new Node(
                     label: new TranslatableMessage('Usuarios'),
                     icon: 'solar:users-group-rounded-line-duotone',

@@ -6,6 +6,7 @@ namespace App\Property\Domain\Model\Company;
 
 use App\Property\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
+use App\Shared\Domain\Model\Address;
 use App\Shared\Domain\Model\AggregateRootId;
 
 final class CompanyUpdated extends DomainEvent
@@ -16,7 +17,7 @@ final class CompanyUpdated extends DomainEvent
         private CompanyId $companyId,
         private string $name,
         private string $vatNumber,
-        private ?CompanyAddress $address,
+        private Address $address,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -38,7 +39,7 @@ final class CompanyUpdated extends DomainEvent
         return $this->vatNumber;
     }
 
-    public function address(): ?CompanyAddress
+    public function address(): Address
     {
         return $this->address;
     }
@@ -54,10 +55,10 @@ final class CompanyUpdated extends DomainEvent
             'companyId' => (string) $this->companyId,
             'name' => $this->name,
             'vatNumber' => $this->vatNumber,
-            'street' => $this->address?->street(),
-            'postalCode' => $this->address?->postalCode(),
-            'city' => $this->address?->city(),
-            'country' => $this->address?->country(),
+            'street' => $this->address->street(),
+            'postalCode' => $this->address->postalCode(),
+            'city' => $this->address->city(),
+            'country' => $this->address->country(),
         ];
     }
 
@@ -66,7 +67,7 @@ final class CompanyUpdated extends DomainEvent
         \DateTimeImmutable $occurredOn,
         array $payload = [],
     ): static {
-        $address = new CompanyAddress(
+        $address = new Address(
             street: $payload['street'] ?? null,
             postalCode: $payload['postalCode'] ?? null,
             city: $payload['city'] ?? null,

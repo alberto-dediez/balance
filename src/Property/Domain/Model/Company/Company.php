@@ -6,6 +6,7 @@ namespace App\Property\Domain\Model\Company;
 
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEvent;
+use App\Shared\Domain\Model\Address;
 use App\Shared\Domain\Model\AggregateRoot;
 
 class Company implements \Stringable
@@ -17,7 +18,7 @@ class Company implements \Stringable
         private CompanyId $id,
         private string $name = '',
         private string $vatNumber = '',
-        private ?CompanyAddress $address = null,
+        private Address $address = new Address(),
         private ?AccountId $accountId = null,
         private ?bool $removed = false,
         array $events = [],
@@ -43,7 +44,7 @@ class Company implements \Stringable
         return $this->vatNumber;
     }
 
-    public function address(): ?CompanyAddress
+    public function address(): Address
     {
         return $this->address;
     }
@@ -76,7 +77,7 @@ class Company implements \Stringable
     public function register(
         string $name,
         string $vatNumber,
-        ?CompanyAddress $address,
+        Address $address,
         ?AccountId $accountId,
     ): void {
         $this->recordApplyAndPublish(
@@ -93,7 +94,7 @@ class Company implements \Stringable
     public function update(
         string $name,
         string $vatNumber,
-        ?CompanyAddress $address,
+        Address $address,
     ): void {
         $this->recordApplyAndPublish(
             new CompanyUpdated(

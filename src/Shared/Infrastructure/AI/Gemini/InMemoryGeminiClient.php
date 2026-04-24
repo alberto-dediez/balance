@@ -14,6 +14,7 @@ class InMemoryGeminiClient implements GeminiClient
     /** @param array<mixed> $response */
     public function __construct(private array $response = []) {}
 
+    /** @param array<mixed> $response */
     public function setResponse(array $response): void
     {
         $this->response = $response;

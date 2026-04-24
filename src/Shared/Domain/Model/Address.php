@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Property\Domain\Model\Company;
+namespace App\Shared\Domain\Model;
 
-class CompanyAddress implements \Stringable
+class Address implements \Stringable
 {
     public function __construct(
         private readonly ?string $street = null,

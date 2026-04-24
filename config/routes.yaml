@@ -89,6 +89,17 @@ data-exchange-web:
     defaults:
         _locale: '%app.locale_default%'
 
+human-resources-web:
+    resource:
+        path: ../src/HumanResources/Infrastructure/UI/Web/
+        namespace: App\HumanResources\Infrastructure\UI\Web
+    type: attribute
+    prefix: /{_locale}
+    requirements:
+        _locale: '%app.locale_list%'
+    defaults:
+        _locale: '%app.locale_default%'
+
 home_fallback:
     path: /
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction

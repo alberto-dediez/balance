@@ -10,7 +10,7 @@
             <generator strategy="NONE" />
         </id>
 
-        <embedded name="address" class="App\Property\Domain\Model\Company\CompanyAddress" use-column-prefix="false" />
+        <embedded name="address" class="App\Shared\Domain\Model\Address" use-column-prefix="false" />
 
         <field name="name" type="string" length="255" nullable="false" />
         <field name="vatNumber" type="string" length="100" column="vat_number" nullable="false" />

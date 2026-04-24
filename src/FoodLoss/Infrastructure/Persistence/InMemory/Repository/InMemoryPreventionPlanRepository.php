@@ -65,7 +65,7 @@ class InMemoryPreventionPlanRepository implements PreventionPlanRepository
 
             if ($filter->companyId instanceof CompanyId) {
                 $planCompanyId = $preventionPlan->companyId();
-                if (!$planCompanyId instanceof CompanyId || !$filter->companyId->equals($planCompanyId)) {
+                if (!$filter->companyId->equals($planCompanyId)) {
                     continue;
                 }
             }

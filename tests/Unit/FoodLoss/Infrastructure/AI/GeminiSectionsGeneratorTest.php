@@ -27,7 +27,6 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
-use App\Shared\Infrastructure\AI\Gemini\GeminiClient;
 use App\Shared\Infrastructure\AI\Gemini\InMemoryGeminiClient;
 use App\Tests\Unit\FoodLoss\Domain\Model\Action\ActionMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint\CriticalPointMother;
@@ -48,7 +47,7 @@ class GeminiSectionsGeneratorTest extends TestCase
     private CriticalPointRepository $criticalPointRepository;
     private ActionRepository $actionRepository;
     private ReasonRepository $reasonRepository;
-    private GeminiClient $geminiClient;
+    private InMemoryGeminiClient $geminiClient;
 
     private CompanyId $companyId;
 

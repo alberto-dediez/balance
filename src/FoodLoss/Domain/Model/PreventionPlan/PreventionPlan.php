@@ -28,7 +28,7 @@ class PreventionPlan implements \Stringable
     public function __construct(
         private PreventionPlanId $id,
         private string $name = '',
-        private ?CompanyId $companyId = null,
+        private CompanyId $companyId = new CompanyId(''),
         private ?AccountId $accountId = null,
         private bool $removed = false,
         array $events = [],
@@ -86,7 +86,7 @@ class PreventionPlan implements \Stringable
         return $this->currentVersion;
     }
 
-    public function companyId(): ?CompanyId
+    public function companyId(): CompanyId
     {
         return $this->companyId;
     }

@@ -6,7 +6,6 @@ namespace App\Property\Application\Company\Register;
 
 use App\Property\Application\Company\CompanyAuthorizer;
 use App\Property\Domain\Model\Company\Company;
-use App\Property\Domain\Model\Company\CompanyAddress;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Company\CompanyRepository;
 use App\Security\Application\Action as SecurityAction;
@@ -15,6 +14,7 @@ use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Shared\Domain\Model\Address;
 
 class RegisterCompanyService implements CommandHandler
 {
@@ -35,7 +35,7 @@ class RegisterCompanyService implements CommandHandler
             accountId: $request->accountId,
         ), SecurityAction::Register, $user);
 
-        $address = new CompanyAddress(
+        $address = new Address(
             street: $request->street ?: null,
             postalCode: $request->postalCode ?: null,
             city: $request->city ?: null,
