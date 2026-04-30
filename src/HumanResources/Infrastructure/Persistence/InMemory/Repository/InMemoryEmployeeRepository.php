@@ -74,6 +74,10 @@ class InMemoryEmployeeRepository implements EmployeeRepository
                 continue;
             }
 
+            if (null !== $filter->userId && (null === $employee->userId() || !$filter->userId->equals($employee->userId()))) {
+                continue;
+            }
+
             if (true == $employee->isRemoved()) {
                 continue;
             }

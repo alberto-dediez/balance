@@ -128,6 +128,25 @@ class Employee implements \Stringable
         );
     }
 
+    public function linkUser(UserId $userId): void
+    {
+        $this->recordApplyAndPublish(
+            new EmployeeAndUserLinked(
+                employeeId: $this->id(),
+                userId: $userId,
+            ),
+        );
+    }
+
+    public function unlinkUser(): void
+    {
+        $this->recordApplyAndPublish(
+            new EmployeeAndUserUnlinked(
+                employeeId: $this->id(),
+            ),
+        );
+    }
+
     public function remove(): void
     {
         $this->recordApplyAndPublish(
@@ -156,6 +175,18 @@ class Employee implements \Stringable
         $this->address = $event->address();
         $this->accountId = $event->accountId();
         $this->userId = $event->userId();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyEmployeeAndUserLinked(EmployeeAndUserLinked $event): void
+    {
+        $this->userId = $event->userId();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyEmployeeAndUserUnlinked(EmployeeAndUserUnlinked $event): void
+    {
+        $this->userId = null;
         $this->updatedAt = $event->occurredOn();
     }
 

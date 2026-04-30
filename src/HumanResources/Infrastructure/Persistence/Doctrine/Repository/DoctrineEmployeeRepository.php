@@ -89,6 +89,15 @@ class DoctrineEmployeeRepository implements EmployeeRepository
             ;
         }
 
+        if (null !== $filter->userId) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('e.userId', ':userId'),
+                )
+                ->setParameter('userId', (string) $filter->userId)
+            ;
+        }
+
         $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
