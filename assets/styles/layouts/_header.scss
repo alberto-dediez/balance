@@ -1,31 +1,31 @@
-// 
+//
 // Header
-// 
+//
 .topbar {
     position: fixed;
     top: 0;
     width: 100%;
     background: var(--bs-body-bg);
-    z-index: 9;
+    z-index: 9999;
     padding: 0 25px;
 
     .navbar {
         min-height: $headerHeight;
-        
+
         .navbar-toggler:focus {
             box-shadow: none;
         }
-    
+
         .navbar-nav {
             .dropdown-toggle::after {
                 margin-left: 1.2em;
             }
-            
+
             .dropdown-menu {
                 position: absolute;
                 min-width: 200px;
             }
-      
+
             .nav-item {
                 &.dropdown {
                     .dropdown-menu-end {
@@ -33,18 +33,18 @@
                         left: auto;
                         top: 100%;
                     }
-                
+
                     &:hover {
                         .nav-link {
                             color: var(--bs-primary);
                         }
-            
+
                         .dropdown-menu {
                             display: block;
                         }
                     }
                 }
-        
+
                 .nav-link {
                     display: flex;
                     align-items: center;
@@ -53,11 +53,11 @@
                     padding: $linkSpacer;
                     font-size: 14px;
                     color: var(--bs-body-color);
-            
+
                     i {
                         font-size: $linkFontSize;
                     }
-                
+
                     &:hover {
                         color: var(--bs-primary);
                     }
@@ -110,13 +110,13 @@
 @include media-breakpoint-down(md) {
     .topbar {
         left: 0;
-    
+
         .navbar-nav {
             .dropdown-menu {
                 position: absolute;
                 width: 100%;
             }
-      
+
             .nav-item.dropdown {
                 position: static;
             }
