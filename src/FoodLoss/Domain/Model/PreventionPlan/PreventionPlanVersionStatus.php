@@ -16,6 +16,8 @@ enum PreventionPlanVersionStatus: string
 
     case Generated = 'Generated';
 
+    case DraftApproved = 'DraftApproved';
+
     case Abandoned = 'Abandoned';
 
     case Completed = 'Completed';
@@ -23,24 +25,32 @@ enum PreventionPlanVersionStatus: string
     public function isValidated(): bool
     {
         return match ($this) {
-            self::InProgress => false,
-            default => true
+            self::Validated, self::Loaded, self::Configured, self::Generated, self::DraftApproved => true,
+            default => false
         };
     }
 
     public function isLoaded(): bool
     {
         return match ($this) {
-            self::InProgress, self::Validated => false,
-            default => true
+            self::Loaded, self::Configured, self::Generated, self::DraftApproved => true,
+            default => false
         };
     }
 
     public function isGenerated(): bool
     {
         return match ($this) {
-            self::InProgress, self::Validated, self::Loaded, self::Configured => false,
-            default => true
+            self::Generated, self::DraftApproved => true,
+            default => false
+        };
+    }
+
+    public function isDraftApproved(): bool
+    {
+        return match ($this) {
+            self::DraftApproved => true,
+            default => false
         };
     }
 
@@ -50,5 +60,26 @@ enum PreventionPlanVersionStatus: string
             self::Completed => true,
             default => false
         };
+    }
+
+    public function stepActive(): PreventionPlanStep
+    {
+        if ($this->isDraftApproved()) {
+            return PreventionPlanStep::Publish;
+        }
+
+        if ($this->isGenerated()) {
+            return PreventionPlanStep::Draft;
+        }
+
+        if ($this->isLoaded()) {
+            return PreventionPlanStep::Actions;
+        }
+
+        if ($this->isValidated()) {
+            return PreventionPlanStep::Validate;
+        }
+
+        return PreventionPlanStep::General;
     }
 }

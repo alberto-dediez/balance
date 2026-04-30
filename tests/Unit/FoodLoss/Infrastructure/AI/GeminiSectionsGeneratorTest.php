@@ -175,7 +175,7 @@ class GeminiSectionsGeneratorTest extends TestCase
         $cleanedContent = "## Title\n\nThis is content with proper newlines.";
         $sections = array_fill(0, 5, [
             'title' => 'Title',
-            'content' => "## Title\\n\\nThis is content with proper newlines.",
+            'content' => '## Title\\n\\nThis is content with proper newlines.',
         ]);
         $this->geminiClient->setResponse($sections);
 

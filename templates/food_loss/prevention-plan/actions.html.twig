@@ -6,7 +6,8 @@
     ~ ' > '
     ~ preventionPlan %}
 
-{% set wizard_active = 3 %}
+{% set wizard_active = preventionPlan.status.stepActive.value %}
+{% set wizard_selected = 3 %}
 
 {% block wizard_panels %}
     {{ form_start(form) }}

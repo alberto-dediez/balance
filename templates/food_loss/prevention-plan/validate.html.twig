@@ -6,7 +6,8 @@
     ~ ' > '
     ~ preventionPlan %}
 
-{% set wizard_active = 2 %}
+{% set wizard_active = preventionPlan.status.stepActive.value %}
+{% set wizard_selected = 2 %}
 
 {% block wizard_panels %}
     <twig:Alert type="danger">

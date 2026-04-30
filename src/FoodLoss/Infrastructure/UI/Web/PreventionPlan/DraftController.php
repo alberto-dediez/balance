@@ -40,12 +40,8 @@ class DraftController extends AbstractController
 
         $version = $preventionPlan->currentPlanVersion();
 
-        if (!$version->isValidated()) {
-            return $this->redirectToRoute('prevention_plans_validate', ['preventionPlanId' => $preventionPlanId]);
-        }
-
         if (!$version->isLoaded()) {
-            return $this->redirectToRoute('prevention_plans_actions', ['preventionPlanId' => $preventionPlanId]);
+            return $this->redirectToRoute('prevention_plans_edit', ['preventionPlanId' => $preventionPlanId]);
         }
 
         if (!$version->isGenerated()) {

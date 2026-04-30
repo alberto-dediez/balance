@@ -20,6 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/prevention-plans/edit/{preventionPlanId}', name: 'prevention_plans_edit')]
+#[Route('/prevention-plans/edit/{preventionPlanId}/general', name: 'prevention_plans_general')]
 class EditController extends AbstractController
 {
     use EditTrait;
@@ -38,6 +39,10 @@ class EditController extends AbstractController
         $preventionPlan = $this->getPreventionPlanFromId($preventionPlanId, $preventionPlanRepository);
 
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $preventionPlan);
+
+        if ('prevention_plans_edit' === $request->attributes->get('_route')) {
+            return $this->redirectToRoute($preventionPlan->status()->stepActive()->routeName(), ['preventionPlanId' => $preventionPlanId]);
+        }
 
         $updateRequest = new UpdatePreventionPlanRequest(
             preventionPlanId: $preventionPlan->id(),

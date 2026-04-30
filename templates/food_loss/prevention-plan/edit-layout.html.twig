@@ -6,7 +6,7 @@
 
 {% block content %}
     {% set wizard_steps = [
-        {label: 'General'    | trans, href: path('prevention_plans_edit',     {preventionPlanId: preventionPlan.id})},
+        {label: 'General'    | trans, href: path('prevention_plans_general',     {preventionPlanId: preventionPlan.id})},
         {label: 'Validación' | trans, href: path('prevention_plans_validate', {preventionPlanId: preventionPlan.id})},
         {label: 'Acciones'   | trans, href: path('prevention_plans_actions',  {preventionPlanId: preventionPlan.id})},
         {label: 'Borrador'   | trans, href: path('prevention_plans_draft',    {preventionPlanId: preventionPlan.id})},

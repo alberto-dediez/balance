@@ -49,6 +49,11 @@ class PreventionPlan implements \Stringable
         return $this->name;
     }
 
+    public function status(): PreventionPlanVersionStatus
+    {
+        return $this->currentPlanVersion()->status();
+    }
+
     public function properties(): PreventionPlanProperties
     {
         if ($this->properties instanceof PreventionPlanProperties) {
@@ -339,7 +344,7 @@ class PreventionPlan implements \Stringable
     {
         if ($event->versionNumber() > 0) {
             $previousVersion = $this->versions()->findByVersionNumber($this->currentVersion);
-            if (null !== $previousVersion && $previousVersion->isClosed()) {
+            if (null !== $previousVersion && !$previousVersion->isClosed()) {
                 $previousVersion->abandon();
             }
         }

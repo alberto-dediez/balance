@@ -19,13 +19,13 @@ use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
 final class GenerateAllSectionsPrompt implements GeminiPrompt
 {
     /**
-     * @param Property[]                     $properties              unindexed array
-     * @param array<string, Property>        $propertyMap             indexed by property ID string
+     * @param Property[]                     $properties               unindexed array
+     * @param array<string, Property>        $propertyMap              indexed by property ID string
      * @param array<string, CriticalPoint[]> $criticalPointsByProperty indexed by property ID string
      * @param ProposedAction[]               $proposedActions
-     * @param array<string, Action>          $actionMap               indexed by action ID string
-     * @param array<string, CriticalPoint>   $criticalPointMap        indexed by critical point ID string
-     * @param array<string, Reason>          $reasonMap               indexed by reason ID string
+     * @param array<string, Action>          $actionMap                indexed by action ID string
+     * @param array<string, CriticalPoint>   $criticalPointMap         indexed by critical point ID string
+     * @param array<string, Reason>          $reasonMap                indexed by reason ID string
      */
     public function __construct(
         private readonly PreventionPlan $plan,

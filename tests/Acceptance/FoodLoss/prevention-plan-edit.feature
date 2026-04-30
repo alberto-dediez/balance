@@ -15,7 +15,7 @@ Feature:
         Given property "Property 1" with id "prop1" of account "mycompany" exists
         Given company "Company" with id "comp1" exists
         When I am logged as "owner@dediez.software"
-        When I go to "/es/prevention-plans/edit/333"
+        When I go to "/es/prevention-plans/edit/333/general"
         Then the response status should be 200
         When I submit a form with "name:Plan Actualizado|properties:[prop1]|companyId:comp1" and button "Guardar y salir"
         Then I am redirected to "/es/prevention-plans"
@@ -28,7 +28,7 @@ Feature:
         Given property "Property 1" with id "prop1" of account "mycompany" exists
         Given company "Company" with id "comp1" exists
         When I am logged as "owner@dediez.software"
-        When I go to "/es/prevention-plans/edit/333"
+        When I go to "/es/prevention-plans/edit/333/general"
         Then the response status should be 200
         When I submit a form with "name:Plan Actualizado|properties:[prop1]|companyId:comp1" and button "Continuar"
         Then I am redirected to "/es/prevention-plans/edit/333/validate"
