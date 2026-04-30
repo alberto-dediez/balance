@@ -7,4 +7,16 @@ namespace App\FoodLoss\Domain\Model\PreventionPlan;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /** @extends ArrayCollection<int, PreventionPlanSection> */
-final class PreventionPlanSections extends ArrayCollection {}
+final class PreventionPlanSections extends ArrayCollection
+{
+    public function findByOrder(int $order): ?PreventionPlanSection
+    {
+        foreach ($this as $section) {
+            if ($section->sectionOrder() === $order) {
+                return $section;
+            }
+        }
+
+        return null;
+    }
+}

@@ -18,8 +18,8 @@ class FakeSectionsGenerator implements SectionsGenerator
             ['Acciones Propuestas', 'A continuación se detallan las acciones concretas acordadas para reducir las pérdidas en cada punto crítico identificado.'],
         ];
 
-        foreach ($fakeSections as [$title, $content]) {
-            $plan->addSection($title, $content);
+        foreach ($fakeSections as $order => [$title, $content]) {
+            $plan->addSection($title, $content, $order);
 
             JobProgressTracker::instance()->advance($title);
         }

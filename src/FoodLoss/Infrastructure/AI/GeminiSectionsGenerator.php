@@ -15,11 +15,7 @@ use App\FoodLoss\Domain\Model\PreventionPlan\ProposedAction;
 use App\FoodLoss\Domain\Model\PreventionPlan\SectionsGenerator;
 use App\FoodLoss\Domain\Model\Reason\Reason;
 use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
-use App\FoodLoss\Infrastructure\AI\Gemini\GenerateActionPlanSectionPrompt;
-use App\FoodLoss\Infrastructure\AI\Gemini\GenerateCriticalPointsSectionPrompt;
-use App\FoodLoss\Infrastructure\AI\Gemini\GenerateDonationsSectionPrompt;
-use App\FoodLoss\Infrastructure\AI\Gemini\GenerateIntroductionSectionPrompt;
-use App\FoodLoss\Infrastructure\AI\Gemini\GenerateMeasurementSectionPrompt;
+use App\FoodLoss\Infrastructure\AI\Gemini\GenerateAllSectionsPrompt;
 use App\Property\Domain\Model\Company\Company;
 use App\Property\Domain\Model\Company\CompanyRepository;
 use App\Property\Domain\Model\Property\Property;
@@ -28,7 +24,6 @@ use App\Security\Domain\Model\Account\AccountRepository;
 use App\Shared\Domain\Model\JobProgress\JobProgressTracker;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
 use App\Shared\Infrastructure\AI\Gemini\GeminiClient;
-use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class GeminiSectionsGenerator implements SectionsGenerator
@@ -102,8 +97,6 @@ class GeminiSectionsGenerator implements SectionsGenerator
             }
         }
 
-        $plan->clearSections();
-
         $locale = LocaleGetter::locale();
 
         $company = $this->companyRepository->find($plan->companyId());
@@ -112,59 +105,44 @@ class GeminiSectionsGenerator implements SectionsGenerator
             throw new PlanWithoutCompanyException($plan->id());
         }
 
-        $this->generateSection($plan, new GenerateIntroductionSectionPrompt(
+        JobProgressTracker::instance()->advance((string) new TranslatableMessage('Generando secciones'));
+
+        $response = $this->geminiClient->send(new GenerateAllSectionsPrompt(
             plan: $plan,
             company: $company,
             properties: array_values($propertyMap),
             createdAt: $version->createdAt(),
-            locale: $locale,
-        ));
-        JobProgressTracker::instance()->advance((string) new TranslatableMessage('Introducción'));
-
-        $this->generateSection($plan, new GenerateCriticalPointsSectionPrompt(
             propertyMap: $propertyMap,
             criticalPointsByProperty: $criticalPointsByProperty,
             proposedActions: $proposedActions,
             actionMap: $actionMap,
+            criticalPointMap: $criticalPointMap,
             reasonMap: $reasonMap,
             locale: $locale,
         ));
-        JobProgressTracker::instance()->advance((string) new TranslatableMessage('Puntos críticos'));
 
-        $this->generateSection($plan, new GenerateActionPlanSectionPrompt(
-            proposedActions: $proposedActions,
-            propertyMap: $propertyMap,
-            actionMap: $actionMap,
-            criticalPointMap: $criticalPointMap,
-            locale: $locale,
-        ));
-        JobProgressTracker::instance()->advance((string) new TranslatableMessage('Plan de acción'));
+        JobProgressTracker::instance()->advance((string) new TranslatableMessage('Revisando contenidos'));
+        JobProgressTracker::instance()->advance((string) new TranslatableMessage('Revisando contenidos'));
+        JobProgressTracker::instance()->advance((string) new TranslatableMessage('Revisando contenidos'));
 
-        $this->generateSection($plan, new GenerateDonationsSectionPrompt(
-            proposedActions: $proposedActions,
-            propertyMap: $propertyMap,
-            actionMap: $actionMap,
-            criticalPointMap: $criticalPointMap,
-            locale: $locale,
-        ));
-        JobProgressTracker::instance()->advance((string) new TranslatableMessage('Donaciones'));
+        foreach ($response as $order => $section) {
+            $title = isset($section['title']) && is_string($section['title']) ? $section['title'] : '';
+            $content = isset($section['content']) && is_string($section['content']) ? $section['content'] : '';
+            $content = $this->cleanMarkdownContent($content);
+            $plan->addSection($title, $content, $order);
+        }
 
-        $this->generateSection($plan, new GenerateMeasurementSectionPrompt(
-            company: $company,
-            propertyMap: $propertyMap,
-            criticalPointsByProperty: $criticalPointsByProperty,
-            locale: $locale,
-        ));
-        JobProgressTracker::instance()->advance((string) new TranslatableMessage('Medición'));
+        JobProgressTracker::instance()->advance((string) new TranslatableMessage('Guardando contenidos'));
     }
 
-    private function generateSection(PreventionPlan $plan, GeminiPrompt $prompt): void
+    private function cleanMarkdownContent(string $content): string
     {
-        $response = $this->geminiClient->send($prompt);
+        $content = str_replace('\\n', "\n", $content);
+        $content = str_replace('\\r', "\r", $content);
+        $content = str_replace('\\t', "\t", $content);
+        $content = str_replace('\\\\', '\\', $content);
+        $content = trim($content);
 
-        $title = isset($response['title']) && is_string($response['title']) ? $response['title'] : '';
-        $content = isset($response['content']) && is_string($response['content']) ? $response['content'] : '';
-
-        $plan->addSection($title, $content);
+        return $content;
     }
 }

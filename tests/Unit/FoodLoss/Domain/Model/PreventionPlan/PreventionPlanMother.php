@@ -87,8 +87,8 @@ class PreventionPlanMother
         $plan = self::from(name: $name, id: $id, accountId: $accountId);
         $plan->markAsConfigured();
 
-        $plan->addSection('Introducción', 'Contenido de la sección de introducción.');
-        $plan->addSection('Diagnóstico', 'Contenido de la sección de diagnóstico.');
+        $plan->addSection('Introducción', 'Contenido de la sección de introducción.', 0);
+        $plan->addSection('Diagnóstico', 'Contenido de la sección de diagnóstico.', 1);
 
         $plan->markAsGenerated();
 

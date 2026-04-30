@@ -37,11 +37,13 @@
 
         <one-to-many field="sections"
                      target-entity="App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSection"
-                     mapped-by="preventionPlanVersion"
-                     orphan-removal="true">
+                     mapped-by="preventionPlanVersion">
             <cascade>
                 <cascade-all/>
             </cascade>
+            <order-by>
+                <order-by-field name="sectionOrder" direction="ASC"/>
+            </order-by>
         </one-to-many>
 
     </entity>

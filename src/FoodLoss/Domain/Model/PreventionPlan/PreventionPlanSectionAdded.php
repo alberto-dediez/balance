@@ -18,6 +18,7 @@ final class PreventionPlanSectionAdded extends DomainEvent
         private readonly PreventionPlanSectionId $sectionId,
         private readonly string $title,
         private readonly string $content,
+        private readonly int $sectionOrder = 0,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -49,6 +50,11 @@ final class PreventionPlanSectionAdded extends DomainEvent
         return $this->content;
     }
 
+    public function sectionOrder(): int
+    {
+        return $this->sectionOrder;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->preventionPlanId;
@@ -62,6 +68,7 @@ final class PreventionPlanSectionAdded extends DomainEvent
             'sectionId' => (string) $this->sectionId,
             'title' => $this->title,
             'content' => $this->content,
+            'sectionOrder' => $this->sectionOrder,
         ];
     }
 
@@ -76,6 +83,7 @@ final class PreventionPlanSectionAdded extends DomainEvent
             sectionId: new PreventionPlanSectionId($payload['sectionId']),
             title: $payload['title'],
             content: $payload['content'],
+            sectionOrder: (int) ($payload['sectionOrder'] ?? 0),
             id: $id,
             occurredOn: $occurredOn,
         );

@@ -18,6 +18,7 @@ class PreventionPlanSection implements Translatable
         private readonly PreventionPlanVersion $preventionPlanVersion,
         private string $title,
         private string $content,
+        private int $sectionOrder = 0,
     ) {
         $this->translations = new Translations();
     }
@@ -30,6 +31,11 @@ class PreventionPlanSection implements Translatable
     public function preventionPlanVersion(): PreventionPlanVersion
     {
         return $this->preventionPlanVersion;
+    }
+
+    public function sectionOrder(): int
+    {
+        return $this->sectionOrder;
     }
 
     public function title(): string

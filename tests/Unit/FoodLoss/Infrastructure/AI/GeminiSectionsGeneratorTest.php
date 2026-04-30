@@ -12,7 +12,7 @@ use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
 use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
-use App\FoodLoss\Infrastructure\AI\Gemini\GenerateMeasurementSectionPrompt;
+use App\FoodLoss\Infrastructure\AI\Gemini\GenerateAllSectionsPrompt;
 use App\FoodLoss\Infrastructure\AI\GeminiSectionsGenerator;
 use App\FoodLoss\Infrastructure\Persistence\InMemory\Repository\InMemoryActionRepository;
 use App\FoodLoss\Infrastructure\Persistence\InMemory\Repository\InMemoryCriticalPointRepository;
@@ -60,7 +60,15 @@ class GeminiSectionsGeneratorTest extends TestCase
         $this->actionRepository = new InMemoryActionRepository();
         $this->reasonRepository = new InMemoryReasonRepository();
 
-        $this->geminiClient = new InMemoryGeminiClient(['title' => self::GEMINI_TITLE, 'content' => self::GEMINI_CONTENT]);
+        $sections = [
+            ['title' => self::GEMINI_TITLE, 'content' => self::GEMINI_CONTENT],
+            ['title' => self::GEMINI_TITLE, 'content' => self::GEMINI_CONTENT],
+            ['title' => self::GEMINI_TITLE, 'content' => self::GEMINI_CONTENT],
+            ['title' => self::GEMINI_TITLE, 'content' => self::GEMINI_CONTENT],
+            ['title' => self::GEMINI_TITLE, 'content' => self::GEMINI_CONTENT],
+        ];
+
+        $this->geminiClient = new InMemoryGeminiClient($sections);
 
         $this->sut = new GeminiSectionsGenerator(
             accountRepository: $this->accountRepository,
@@ -114,11 +122,12 @@ class GeminiSectionsGeneratorTest extends TestCase
 
         foreach ($plan->sections()->toArray() as $section) {
             $this->assertSame(self::GEMINI_TITLE, $section->title());
-            $this->assertSame(self::GEMINI_CONTENT, $section->content());
+            $this->assertStringContainsString('Introduction', $section->content());
+            $this->assertStringContainsString('generated content', $section->content());
         }
     }
 
-    public function testFirstPromptIsIntroductionAndLastIsMeasurement(): void
+    public function testUsesConsolidatedPrompt(): void
     {
         $propertyId = PropertyId::generate();
         $this->propertyRepository->add(PropertyMother::fromNameAndCompanyIdAndId('Test Hotel', $this->companyId, $propertyId));
@@ -126,7 +135,7 @@ class GeminiSectionsGeneratorTest extends TestCase
         $plan = $this->buildPlan(accountId: 'account-id', propertyIds: [$propertyId]);
         $this->sut->generate($plan);
 
-        $this->assertInstanceOf(GenerateMeasurementSectionPrompt::class, $this->geminiClient->lastPrompt());
+        $this->assertInstanceOf(GenerateAllSectionsPrompt::class, $this->geminiClient->lastPrompt());
     }
 
     public function testClearsExistingSectionsBeforeGenerating(): void
@@ -141,7 +150,14 @@ class GeminiSectionsGeneratorTest extends TestCase
 
     public function testHandlesMissingGeminiFieldsGracefully(): void
     {
-        $this->geminiClient->setResponse([]);
+        $sections = [
+            [],
+            [],
+            [],
+            [],
+            [],
+        ];
+        $this->geminiClient->setResponse($sections);
 
         $plan = $this->buildPlan(accountId: 'account-id', propertyIds: []);
         $this->sut->generate($plan);
@@ -151,6 +167,23 @@ class GeminiSectionsGeneratorTest extends TestCase
         foreach ($sections as $section) {
             $this->assertSame('', $section->title());
             $this->assertSame('', $section->content());
+        }
+    }
+
+    public function testCleansEscapedMarkdownContent(): void
+    {
+        $cleanedContent = "## Title\n\nThis is content with proper newlines.";
+        $sections = array_fill(0, 5, [
+            'title' => 'Title',
+            'content' => "## Title\\n\\nThis is content with proper newlines.",
+        ]);
+        $this->geminiClient->setResponse($sections);
+
+        $plan = $this->buildPlan(accountId: 'account-id', propertyIds: []);
+        $this->sut->generate($plan);
+
+        foreach ($plan->sections()->toArray() as $section) {
+            $this->assertSame($cleanedContent, $section->content());
         }
     }
 

@@ -445,7 +445,7 @@ class PreventionPlan implements \Stringable
         );
     }
 
-    public function addSection(string $title, string $content): void
+    public function addSection(string $title, string $content, int $order): void
     {
         $this->recordApplyAndPublish(
             new PreventionPlanSectionAdded(
@@ -454,6 +454,7 @@ class PreventionPlan implements \Stringable
                 sectionId: PreventionPlanSectionId::generate(),
                 title: $title,
                 content: $content,
+                sectionOrder: $order,
             ),
         );
     }
@@ -480,12 +481,20 @@ class PreventionPlan implements \Stringable
             return;
         }
 
+        $existing = $version->sections()->findByOrder($event->sectionOrder());
+        if (null !== $existing) {
+            $existing->update($event->title(), $event->content());
+
+            return;
+        }
+
         $version->sections()->add(
             new PreventionPlanSection(
                 id: $event->sectionId(),
                 preventionPlanVersion: $version,
                 title: $event->title(),
                 content: $event->content(),
+                sectionOrder: $event->sectionOrder(),
             ),
         );
     }
