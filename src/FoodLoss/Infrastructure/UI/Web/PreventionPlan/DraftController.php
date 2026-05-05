@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\UI\Web\PreventionPlan;
 
+use App\FoodLoss\Application\PreventionPlan\ApproveDraft\ApproveDraftPreventionPlanRequest;
+use App\FoodLoss\Application\PreventionPlan\ApproveDraft\ApproveDraftPreventionPlanService;
 use App\FoodLoss\Application\PreventionPlan\UpdateSections\SectionData;
 use App\FoodLoss\Application\PreventionPlan\UpdateSections\UpdatePreventionPlanSectionsRequest;
 use App\FoodLoss\Application\PreventionPlan\UpdateSections\UpdatePreventionPlanSectionsService;
@@ -29,6 +31,7 @@ class DraftController extends AbstractController
         string $preventionPlanId,
         PreventionPlanRepository $preventionPlanRepository,
         UpdatePreventionPlanSectionsService $updatePreventionPlanSections,
+        ApproveDraftPreventionPlanService $approveDraft,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -81,7 +84,9 @@ class DraftController extends AbstractController
             }
 
             if ($form->isSubmitted() && $form->isValid()) {
-                return $this->redirectToRoute('prevention_plans_draft', ['preventionPlanId' => $preventionPlanId]);
+                $approveDraft(new ApproveDraftPreventionPlanRequest($preventionPlan->id()), $user);
+
+                return $this->redirectToRoute('prevention_plans_publish', ['preventionPlanId' => $preventionPlanId]);
             }
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());

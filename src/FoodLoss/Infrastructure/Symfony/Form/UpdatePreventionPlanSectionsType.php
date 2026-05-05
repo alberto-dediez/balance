@@ -27,7 +27,7 @@ class UpdatePreventionPlanSectionsType extends AbstractType
                 'by_reference' => false,
             ])
             ->add('save', SubmitType::class, [
-                'label' => new TranslatableMessage('Guardar'),
+                'label' => new TranslatableMessage('Continuar'),
             ])
             ->add('saveAndReturn', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar y salir'),

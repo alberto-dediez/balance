@@ -1,0 +1,64 @@
+{% extends '@food_loss/prevention-plan/edit-layout.html.twig' %}
+
+{% set page_title = ('Planes de Prevención' | trans)
+    ~ ' > '
+    ~ preventionPlan
+    ~ ' > '
+    ~ ('Publicar' | trans) %}
+
+{% set wizard_active = preventionPlan.status.stepActive.value %}
+{% set wizard_selected = 5 %}
+
+{% block wizard_panels %}
+    <div id="panel-publish">
+
+        <dl class="row mb-0">
+            <dt class="col-sm-3">{{ 'Nombre' | trans }}</dt>
+            <dd class="col-sm-9">{{ preventionPlan.name }}</dd>
+
+            <dt class="col-sm-3">{{ 'Empresa' | trans }}</dt>
+            <dd class="col-sm-9">{{ preventionPlan.companyId | company_name }}</dd>
+
+            <dt class="col-sm-3">{{ 'Propiedades' | trans }}</dt>
+            <dd class="col-sm-9">
+                {% set propertyIds = preventionPlan.propertyIds %}
+                {% if propertyIds | length == 0 %}
+                    {{ 'Todas las propiedades' | trans }}
+                {% else %}
+                    {% for propertyId in propertyIds %}
+                        {{ propertyId | property_name }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </dd>
+
+            <dt class="col-sm-3">{{ 'Versión' | trans }}</dt>
+            <dd class="col-sm-9">{{ preventionPlan.currentVersion }}</dd>
+
+            <dt class="col-sm-3">{{ 'Secciones' | trans }}</dt>
+            <dd class="col-sm-9">
+                <ul>
+                    {% for section in preventionPlan.sections %}
+                        <li>{{ section.title }}</li>
+                    {% endfor %}
+                </ul>
+            </dd>
+
+            <dt class="col-sm-3">{{ 'Fecha de registro' | trans }}</dt>
+            <dd class="col-sm-9 mb-0">{{ preventionPlan.registeredAt | date('d/m/Y') }}</dd>
+        </dl>
+
+        {{ form_start(form) }}
+        <div class="row mt-3">
+            <div class="col-12">
+                {{ form_row(form.signed) }}
+            </div>
+        </div>
+
+        <twig:ActionBar>
+            <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+            <twig:ActionBar:Button type="primary" :button="form.publish" />
+        </twig:ActionBar>
+        {{ form_end(form) }}
+
+    </div>
+{% endblock %}

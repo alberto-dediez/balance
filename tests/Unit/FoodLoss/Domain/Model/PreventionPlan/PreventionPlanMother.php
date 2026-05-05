@@ -99,6 +99,14 @@ class PreventionPlanMother
         return $plan;
     }
 
+    public static function withDraftApprovedStatus(string $name, string $id, string $accountId): PreventionPlan
+    {
+        $plan = self::withGeneratedSections($name, $id, $accountId);
+        $plan->markAsDraftApproved();
+
+        return $plan;
+    }
+
     public static function fromWithProperty(string $name, string $id, string $accountId, string $propertyId): PreventionPlan
     {
         return self::from(

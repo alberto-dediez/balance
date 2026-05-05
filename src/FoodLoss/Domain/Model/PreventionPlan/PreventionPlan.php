@@ -457,6 +457,46 @@ class PreventionPlan implements \Stringable
         $version->markAsGenerated();
     }
 
+    public function markAsDraftApproved(): void
+    {
+        $this->recordApplyAndPublish(
+            new PreventionPlanVersionDraftApproved(
+                preventionPlanId: $this->id(),
+                versionNumber: $this->currentVersion,
+            ),
+        );
+    }
+
+    public function applyPreventionPlanVersionDraftApproved(PreventionPlanVersionDraftApproved $event): void
+    {
+        $version = $this->versions()->findByVersionNumber($event->versionNumber());
+        if (null === $version) {
+            return;
+        }
+
+        $version->markAsDraftApproved();
+    }
+
+    public function markAsCompleted(): void
+    {
+        $this->recordApplyAndPublish(
+            new PreventionPlanVersionCompleted(
+                preventionPlanId: $this->id(),
+                versionNumber: $this->currentVersion,
+            ),
+        );
+    }
+
+    public function applyPreventionPlanVersionCompleted(PreventionPlanVersionCompleted $event): void
+    {
+        $version = $this->versions()->findByVersionNumber($event->versionNumber());
+        if (null === $version) {
+            return;
+        }
+
+        $version->markAsCompleted();
+    }
+
     public function clearSections(): void
     {
         $this->recordApplyAndPublish(

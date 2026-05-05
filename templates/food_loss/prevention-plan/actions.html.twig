@@ -2,9 +2,9 @@
 
 {% set page_title = ('Planes de Prevención' | trans)
     ~ ' > '
-    ~ ('Acciones' | trans)
+    ~ preventionPlan
     ~ ' > '
-    ~ preventionPlan %}
+    ~ ('Acciones' | trans) %}
 
 {% set wizard_active = preventionPlan.status.stepActive.value %}
 {% set wizard_selected = 3 %}

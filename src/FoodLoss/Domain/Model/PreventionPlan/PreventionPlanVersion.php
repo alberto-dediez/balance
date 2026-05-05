@@ -84,6 +84,11 @@ final class PreventionPlanVersion
         return $this->status->isGenerated();
     }
 
+    public function isDraftApproved(): bool
+    {
+        return $this->status->isDraftApproved();
+    }
+
     public function isClosed(): bool
     {
         return $this->status->isClosed();
@@ -107,6 +112,16 @@ final class PreventionPlanVersion
     public function markAsGenerated(): void
     {
         $this->status = PreventionPlanVersionStatus::Generated;
+    }
+
+    public function markAsDraftApproved(): void
+    {
+        $this->status = PreventionPlanVersionStatus::DraftApproved;
+    }
+
+    public function markAsCompleted(): void
+    {
+        $this->status = PreventionPlanVersionStatus::Completed;
     }
 
     public function abandon(): void

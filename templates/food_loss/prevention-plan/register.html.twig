@@ -1,9 +1,33 @@
-{% extends '@shared/layout/register.html.twig' %}
+{% extends '@food_loss/prevention-plan/edit-layout.html.twig' %}
 
 {% set page_title = ('Planes de Prevención' | trans)
     ~ ' > '
     ~ ('Registrar' | trans) %}
 
-{% block top_actions %}
-    <twig:TopAction:Return path="{{ path('prevention_plans') }}" />
+{% set wizard_active = 1 %}
+{% set wizard_selected = 1 %}
+
+{% block wizard_panels %}
+    <div id="panel-general">
+        {{ form_start(form) }}
+        <div class="row">
+            <div class="col-12">
+                {{ form_row(form.name) }}
+            </div>
+            <div class="col-12">
+                {{ form_row(form.companyId) }}
+            </div>
+            <div class="col-12">
+                {{ form_row(form.properties) }}
+            </div>
+            <div class="col-12">
+                {{ form_row(form.responsible) }}
+            </div>
+        </div>
+
+        <twig:ActionBar>
+            <twig:ActionBar:Button type="primary" :button="form.register" />
+        </twig:ActionBar>
+        {{ form_end(form) }}
+    </div>
 {% endblock %}
