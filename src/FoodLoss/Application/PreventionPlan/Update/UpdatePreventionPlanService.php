@@ -41,6 +41,7 @@ class UpdatePreventionPlanService implements CommandHandler
             propertyIds: $request->properties,
             companyId: $request->companyId,
             updatedBy: $user->id(),
+            responsible: $request->responsible,
         );
 
         $this->preventionPlanRepository->add($preventionPlan);

@@ -47,6 +47,7 @@ class RegisterPreventionPlanService implements CommandHandler
             companyId: $request->companyId,
             accountId: $request->accountId,
             registeredBy: $user->id(),
+            responsible: $request->responsible,
         );
 
         $this->preventionPlanRepository->add($preventionPlan);

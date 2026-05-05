@@ -16,6 +16,8 @@ use App\FoodLoss\Domain\Model\PreventionPlan\SectionsGenerator;
 use App\FoodLoss\Domain\Model\Reason\Reason;
 use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
 use App\FoodLoss\Infrastructure\AI\Gemini\GenerateAllSectionsPrompt;
+use App\HumanResources\Domain\Model\Employee\Employee;
+use App\HumanResources\Domain\Model\Employee\EmployeeRepository;
 use App\Property\Domain\Model\Company\Company;
 use App\Property\Domain\Model\Company\CompanyRepository;
 use App\Property\Domain\Model\Property\Property;
@@ -36,6 +38,7 @@ class GeminiSectionsGenerator implements SectionsGenerator
         private readonly ReasonRepository $reasonRepository,
         private readonly CompanyRepository $companyRepository,
         private readonly GeminiClient $geminiClient,
+        private readonly EmployeeRepository $employeeRepository,
     ) {}
 
     public function generate(PreventionPlan $plan): void
@@ -105,6 +108,10 @@ class GeminiSectionsGenerator implements SectionsGenerator
             throw new PlanWithoutCompanyException($plan->id());
         }
 
+        $responsible = null !== $plan->responsible()
+            ? $this->employeeRepository->find($plan->responsible())
+            : null;
+
         JobProgressTracker::instance()->advance((string) new TranslatableMessage('Generando secciones'));
 
         $response = $this->geminiClient->send(new GenerateAllSectionsPrompt(
@@ -119,6 +126,7 @@ class GeminiSectionsGenerator implements SectionsGenerator
             criticalPointMap: $criticalPointMap,
             reasonMap: $reasonMap,
             locale: $locale,
+            responsible: $responsible instanceof Employee ? $responsible : null,
         ));
 
         JobProgressTracker::instance()->advance((string) new TranslatableMessage('Revisando contenidos'));

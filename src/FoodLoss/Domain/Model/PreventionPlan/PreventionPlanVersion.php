@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Domain\Model\PreventionPlan;
 
+use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Security\Domain\Model\User\UserId;
 
 final class PreventionPlanVersion
@@ -23,6 +24,7 @@ final class PreventionPlanVersion
         private \DateTimeImmutable $createdAt,
         ?PreventionPlanVersionId $id = null,
         private PreventionPlanVersionStatus $status = PreventionPlanVersionStatus::InProgress,
+        private ?EmployeeId $responsible = null,
     ) {
         $this->id = $id ?? PreventionPlanVersionId::generate();
     }
@@ -50,6 +52,11 @@ final class PreventionPlanVersion
     public function createdAt(): \DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function responsible(): ?EmployeeId
+    {
+        return $this->responsible;
     }
 
     public function status(): PreventionPlanVersionStatus

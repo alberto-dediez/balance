@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Domain\Model\PreventionPlan;
 
 use App\FoodLoss\Domain\DomainEvent;
+use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
@@ -17,6 +18,7 @@ final class PreventionPlanVersionCreated extends DomainEvent
         private PreventionPlanId $preventionPlanId,
         private int $versionNumber,
         private UserId $createdBy,
+        private ?EmployeeId $responsible = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -38,6 +40,11 @@ final class PreventionPlanVersionCreated extends DomainEvent
         return $this->createdBy;
     }
 
+    public function responsible(): ?EmployeeId
+    {
+        return $this->responsible;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->preventionPlanId();
@@ -49,6 +56,7 @@ final class PreventionPlanVersionCreated extends DomainEvent
             'preventionPlanId' => (string) $this->preventionPlanId,
             'versionNumber' => $this->versionNumber,
             'createdBy' => (string) $this->createdBy,
+            'responsible' => null !== $this->responsible ? (string) $this->responsible : null,
         ];
     }
 
@@ -61,6 +69,7 @@ final class PreventionPlanVersionCreated extends DomainEvent
             preventionPlanId: new PreventionPlanId($payload['preventionPlanId']),
             versionNumber: (int) $payload['versionNumber'],
             createdBy: new UserId($payload['createdBy']),
+            responsible: !empty($payload['responsible']) ? new EmployeeId($payload['responsible']) : null,
             id: $id,
             occurredOn: $occurredOn,
         );

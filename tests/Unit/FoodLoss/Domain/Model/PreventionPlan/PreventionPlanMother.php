@@ -6,6 +6,7 @@ namespace App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan;
 
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
+use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -36,21 +37,24 @@ class PreventionPlanMother
         );
     }
 
+    /** @param PropertyId[] $propertyIds */
     public static function from(
         string $name,
         string $id,
         string $accountId = 'account-id',
         string $companyId = 'company-id',
+        array $propertyIds = [],
     ): PreventionPlan {
         $preventionPlan = new PreventionPlan(
             id: new PreventionPlanId($id),
         );
         $preventionPlan->register(
             name: $name,
-            propertyIds: [],
+            propertyIds: $propertyIds,
             companyId: new CompanyId($companyId),
             accountId: new AccountId($accountId),
             registeredBy: new UserId('user-id'),
+            responsible: EmployeeId::generate(),
         );
 
         return $preventionPlan;
@@ -97,30 +101,22 @@ class PreventionPlanMother
 
     public static function fromWithProperty(string $name, string $id, string $accountId, string $propertyId): PreventionPlan
     {
-        $preventionPlan = new PreventionPlan(id: new PreventionPlanId($id));
-        $preventionPlan->register(
+        return self::from(
             name: $name,
+            id: $id,
+            accountId: $accountId,
             propertyIds: [new PropertyId($propertyId)],
-            companyId: new CompanyId('company-id'),
-            accountId: new AccountId($accountId),
-            registeredBy: new UserId('user-id'),
         );
-
-        return $preventionPlan;
     }
 
     /** @param PropertyId[] $propertyIds */
     public static function withPropertyIds(array $propertyIds): PreventionPlan
     {
-        $preventionPlan = new PreventionPlan(id: PreventionPlanId::generate());
-        $preventionPlan->register(
+        return self::from(
             name: 'prevention-plan-' . random_int(100, 999),
+            id: (string) PreventionPlanId::generate(),
+            accountId: 'account-' . random_int(100, 999),
             propertyIds: $propertyIds,
-            companyId: new CompanyId('company-id'),
-            accountId: new AccountId('account-' . random_int(100, 999)),
-            registeredBy: new UserId('user-id'),
         );
-
-        return $preventionPlan;
     }
 }

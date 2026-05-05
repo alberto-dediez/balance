@@ -6,6 +6,7 @@ namespace App\FoodLoss\Domain\Model\PreventionPlan;
 
 use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
+use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -30,6 +31,7 @@ class PreventionPlan implements \Stringable
         private string $name = '',
         private CompanyId $companyId = new CompanyId(''),
         private ?AccountId $accountId = null,
+        private ?EmployeeId $responsible = null,
         private bool $removed = false,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
@@ -101,6 +103,11 @@ class PreventionPlan implements \Stringable
         return $this->accountId;
     }
 
+    public function responsible(): ?EmployeeId
+    {
+        return $this->responsible;
+    }
+
     public function isRemoved(): bool
     {
         return $this->removed;
@@ -130,6 +137,7 @@ class PreventionPlan implements \Stringable
         CompanyId $companyId,
         AccountId $accountId,
         UserId $registeredBy,
+        ?EmployeeId $responsible = null,
     ): void {
         $this->recordApplyAndPublish(
             new PreventionPlanRegistered(
@@ -137,6 +145,7 @@ class PreventionPlan implements \Stringable
                 name: $name,
                 companyId: $companyId,
                 accountId: $accountId,
+                responsible: $responsible,
             ),
         );
 
@@ -145,6 +154,7 @@ class PreventionPlan implements \Stringable
                 preventionPlanId: $this->id(),
                 versionNumber: 0,
                 createdBy: $registeredBy,
+                responsible: $responsible,
             ),
         );
 
@@ -159,18 +169,21 @@ class PreventionPlan implements \Stringable
         array $propertyIds,
         CompanyId $companyId,
         UserId $updatedBy,
+        ?EmployeeId $responsible = null,
     ): void {
         $propertiesChanged = $this->propertiesChanged($propertyIds);
+        $responsibleChanged = $this->responsibleChanged($responsible);
 
         $this->recordApplyAndPublish(
             new PreventionPlanUpdated(
                 preventionPlanId: $this->id(),
                 name: $name,
                 companyId: $companyId,
+                responsible: $responsible,
             ),
         );
 
-        if ($propertiesChanged) {
+        if ($propertiesChanged || $responsibleChanged) {
             $currentProposedActions = $this->currentPlanVersion()->proposedActions()->toArray();
             $newVersionNumber = $this->currentVersion + 1;
 
@@ -179,6 +192,7 @@ class PreventionPlan implements \Stringable
                     preventionPlanId: $this->id(),
                     versionNumber: $newVersionNumber,
                     createdBy: $updatedBy,
+                    responsible: $responsible,
                 ),
             );
 
@@ -309,6 +323,7 @@ class PreventionPlan implements \Stringable
         $this->name = $event->name();
         $this->companyId = $event->companyId();
         $this->accountId = $event->accountId();
+        $this->responsible = $event->responsible();
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -316,6 +331,7 @@ class PreventionPlan implements \Stringable
     {
         $this->name = $event->name();
         $this->companyId = $event->companyId();
+        $this->responsible = $event->responsible();
         $this->updatedAt = $event->occurredOn();
     }
 
@@ -354,6 +370,7 @@ class PreventionPlan implements \Stringable
             versionNumber: $event->versionNumber(),
             createdBy: $event->createdBy(),
             createdAt: $event->occurredOn(),
+            responsible: $event->responsible(),
         );
 
         $this->versions()->add($version);
@@ -554,6 +571,19 @@ class PreventionPlan implements \Stringable
         }
 
         return false;
+    }
+
+    private function responsibleChanged(?EmployeeId $newResponsibleEmployeeId): bool
+    {
+        if (null === $this->responsible && null === $newResponsibleEmployeeId) {
+            return false;
+        }
+
+        if (null === $this->responsible || null === $newResponsibleEmployeeId) {
+            return true;
+        }
+
+        return !$this->responsible->equals($newResponsibleEmployeeId);
     }
 
     /** @param PropertyId[] $newPropertyIds */

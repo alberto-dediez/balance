@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Application\PreventionPlan\Register;
 
+use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -17,5 +18,6 @@ class RegisterPreventionPlanRequest implements Command
         public array $properties = [],
         public ?CompanyId $companyId = null,
         public ?AccountId $accountId = null,
+        public ?EmployeeId $responsible = null,
     ) {}
 }

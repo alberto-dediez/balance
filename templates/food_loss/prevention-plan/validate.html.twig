@@ -10,18 +10,32 @@
 {% set wizard_selected = 2 %}
 
 {% block wizard_panels %}
-    <twig:Alert type="danger">
-        <p class="mb-3">{{ 'Las siguientes propiedades tienen datos incompletos y deben ser corregidos para poder generar correctamente el plan.' | trans }}</p>
+    {% if planErrors is not empty %}
+        <twig:Alert type="danger">
+            <p class="mb-3">{{ 'El plan tiene datos incompletos que deben ser corregidos.' | trans }}</p>
 
-        <ul class="ps-3 mb-0">
-            {% for item in invalidProperties %}
-                <li class="mb-1">
-                    <strong>{{ item.propertyName }}</strong>:
-                    {{ item.errors | join(', ') | trans }}
-                </li>
-            {% endfor %}
-        </ul>
-    </twig:Alert>
+            <ul class="ps-3 mb-0">
+                {% for error in planErrors %}
+                    <li class="mb-1">{{ error | trans }}</li>
+                {% endfor %}
+            </ul>
+        </twig:Alert>
+    {% endif %}
+
+    {% if invalidProperties is not empty %}
+        <twig:Alert type="danger">
+            <p class="mb-3">{{ 'Las siguientes propiedades tienen datos incompletos y deben ser corregidos para poder generar correctamente el plan.' | trans }}</p>
+
+            <ul class="ps-3 mb-0">
+                {% for item in invalidProperties %}
+                    <li class="mb-1">
+                        <strong>{{ item.propertyName }}</strong>:
+                        {{ item.errors | join(', ') | trans }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </twig:Alert>
+    {% endif %}
 
     <twig:ActionBar>
         <div class="col-sm-6 col-md-3 col-lg-2">

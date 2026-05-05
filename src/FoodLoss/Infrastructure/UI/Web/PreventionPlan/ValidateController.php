@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/prevention-plans/edit/{preventionPlanId}/validate', name: 'prevention_plans_validate')]
-class ValidatePropertiesController extends AbstractController
+class ValidateController extends AbstractController
 {
     use GetPreventionPlanFromIdTrait;
 
@@ -28,12 +28,13 @@ class ValidatePropertiesController extends AbstractController
 
         $response = $validatePreventionPlan(new ValidatePreventionPlanRequest($preventionPlan->id()));
 
-        if (!$response->hasInvalidProperties) {
+        if (!$response->hasErrors) {
             return $this->redirectToRoute('prevention_plans_actions', ['preventionPlanId' => $preventionPlanId]);
         }
 
         return $this->render('@food_loss/prevention-plan/validate.html.twig', [
             'preventionPlan' => $preventionPlan,
+            'planErrors' => $response->planErrors,
             'invalidProperties' => $response->invalidProperties,
         ]);
     }

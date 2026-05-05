@@ -7,6 +7,7 @@ namespace App\FoodLoss\Application\PreventionPlan\ValidatePreventionPlan;
 use App\FoodLoss\Application\PreventionPlan\ValidateProperty\ValidatePropertyRequest;
 use App\FoodLoss\Application\PreventionPlan\ValidateProperty\ValidatePropertyService;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class ValidatePreventionPlanService
 {
@@ -23,27 +24,36 @@ class ValidatePreventionPlanService
             return new ValidatePreventionPlanResponse(hasInvalidProperties: false);
         }
 
+        $planErrors = [];
+
+        if (null === $preventionPlan->responsible()) {
+            $planErrors[] = new TranslatableMessage('El plan no tiene un responsable asignado');
+        }
+
         $invalidProperties = [];
 
         foreach ($preventionPlan->propertyIds() as $propertyId) {
-            $response = ($this->validateProperty)(new ValidatePropertyRequest($propertyId));
+            $propertyResponse = ($this->validateProperty)(new ValidatePropertyRequest($propertyId));
 
-            if ($response->hasErrors) {
+            if ($propertyResponse->hasErrors) {
                 $invalidProperties[] = [
-                    'propertyName' => $response->propertyName,
-                    'errors' => $response->errors,
+                    'propertyName' => $propertyResponse->propertyName,
+                    'errors' => $propertyResponse->errors,
                 ];
             }
         }
 
-        if ([] === $invalidProperties) {
+        $response = new ValidatePreventionPlanResponse(
+            hasInvalidProperties: [] !== $invalidProperties,
+            invalidProperties: $invalidProperties,
+            planErrors: $planErrors,
+        );
+
+        if (!$response->hasErrors) {
             $preventionPlan->markAsValidated();
             $this->preventionPlanRepository->add($preventionPlan);
         }
 
-        return new ValidatePreventionPlanResponse(
-            hasInvalidProperties: [] !== $invalidProperties,
-            invalidProperties: $invalidProperties,
-        );
+        return $response;
     }
 }

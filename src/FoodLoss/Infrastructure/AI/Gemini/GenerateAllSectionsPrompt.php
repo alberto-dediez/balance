@@ -11,6 +11,7 @@ use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointReasonLink;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\ProposedAction;
 use App\FoodLoss\Domain\Model\Reason\Reason;
+use App\HumanResources\Domain\Model\Employee\Employee;
 use App\Property\Domain\Model\Company\Company;
 use App\Property\Domain\Model\Property\Property;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -40,6 +41,7 @@ final class GenerateAllSectionsPrompt implements GeminiPrompt
         private readonly array $reasonMap,
         private readonly Locale $locale = Locale::Spanish,
         private readonly float $temperature = 0.4,
+        private readonly ?Employee $responsible = null,
     ) {}
 
     public function text(): string
@@ -65,6 +67,7 @@ final class GenerateAllSectionsPrompt implements GeminiPrompt
             'Plan information:',
             sprintf('- Plan name: %s', $this->plan->name()),
             sprintf('- Plan date: %s', $this->createdAt->format('d/m/Y')),
+            ...(null !== $this->responsible ? [sprintf('- Responsible person: %s', $this->responsible->name())] : []),
             '',
             'Properties included in this plan:',
         ];
@@ -152,7 +155,10 @@ final class GenerateAllSectionsPrompt implements GeminiPrompt
         $lines[] = '- Identifies the company and scope of the plan';
         $lines[] = '- States company commitment to food waste reduction';
         $lines[] = '- Lists properties covered by the plan';
-        $lines[] = 'Use H2 headings and structured paragraphs. Include placeholders: [Responsible person], [Approximate number of employees], [Approximate number of daily diners/guests].';
+        $placeholders = null !== $this->responsible
+            ? '[Approximate number of employees], [Approximate number of daily diners/guests]'
+            : '[Responsible person], [Approximate number of employees], [Approximate number of daily diners/guests]';
+        $lines[] = sprintf('Use H2 headings and structured paragraphs. Include placeholders: %s.', $placeholders);
         $lines[] = '';
         $lines[] = '## SECTION 2: Critical Points Analysis and Current Situation';
         $lines[] = 'For each property, describe:';

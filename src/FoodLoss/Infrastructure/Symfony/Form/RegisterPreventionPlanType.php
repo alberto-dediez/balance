@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
 use App\FoodLoss\Application\PreventionPlan\Register\RegisterPreventionPlanRequest;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\EmployeeIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\PropertyIdsType;
 use App\Property\Infrastructure\Symfony\Form\Type\CompanyIdType;
 use Symfony\Component\Form\AbstractType;
@@ -39,6 +40,11 @@ class RegisterPreventionPlanType extends AbstractType
             ->add('properties', PropertyIdsType::class, [
                 'label' => new TranslatableMessage('Propiedades'),
                 'placeholder' => new TranslatableMessage('Todas las propiedades'),
+                'required' => false,
+            ])
+            ->add('responsible', EmployeeIdType::class, [
+                'label' => new TranslatableMessage('Responsable'),
+                'placeholder' => new TranslatableMessage('Sin responsable'),
                 'required' => false,
             ])
             ->add('register', SubmitType::class, [

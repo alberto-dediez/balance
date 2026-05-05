@@ -22,6 +22,7 @@
         <field name="status" type="string" enum-type="App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersionStatus" nullable="false"/>
         <field name="createdBy" type="user_id" column="created_by" nullable="false"/>
         <field name="createdAt" type="datetime_immutable" column="created_at" nullable="false"/>
+        <field name="responsible" type="employee_id" column="responsible_employee_id" nullable="true"/>
 
         <unique-constraints>
             <unique-constraint columns="prevention_plan_id,version_number" name="uq_prevention_plan_version"/>

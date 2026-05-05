@@ -52,11 +52,12 @@ class UpdatePreventionPlanServiceTest extends TestCase
 
         $this->assertEquals('Plan Actualizado', $result->name);
 
-        $lastEvent = $this->spySubscriber->lastEvent();
+        $events = $this->spySubscriber->events();
 
-        $this->assertNotNull($lastEvent);
-        $this->assertTrue($lastEvent instanceof PreventionPlanUpdated);
-        $this->assertEquals('Plan Actualizado', $lastEvent->name());
+        $updatedEvents = array_filter($events, fn ($event) => $event instanceof PreventionPlanUpdated);
+
+        $this->assertCount(1, $updatedEvents);
+        $this->assertEquals('Plan Actualizado', array_pop($updatedEvents)?->name());
     }
 
     public function testIsHandle(): void
