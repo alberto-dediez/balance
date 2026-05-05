@@ -53,6 +53,8 @@ class RegisterPropertyService implements CommandHandler
             info: $request->info,
             externalId: $request->externalId,
             companyId: $companyId,
+            numberOfEmployees: $request->numberOfEmployees,
+            dailyClients: $request->dailyClients,
         );
 
         $this->propertyRepository->add($property);
@@ -64,6 +66,8 @@ class RegisterPropertyService implements CommandHandler
             info: $property->info(),
             externalId: $property->externalId(),
             companyId: $property->companyId(),
+            numberOfEmployees: $property->numberOfEmployees(),
+            dailyClients: $property->dailyClients(),
         );
     }
 

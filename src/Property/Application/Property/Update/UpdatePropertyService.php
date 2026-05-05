@@ -58,6 +58,8 @@ class UpdatePropertyService implements CommandHandler
             info: $request->info,
             externalId: $request->externalId,
             companyId: $companyId,
+            numberOfEmployees: $request->numberOfEmployees,
+            dailyClients: $request->dailyClients,
         );
 
         $this->repository->add($property);
@@ -69,6 +71,8 @@ class UpdatePropertyService implements CommandHandler
             info: $property->info(),
             externalId: $property->externalId(),
             companyId: $property->companyId(),
+            numberOfEmployees: $property->numberOfEmployees(),
+            dailyClients: $property->dailyClients(),
         );
     }
 

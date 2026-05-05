@@ -17,9 +17,12 @@
         <field name="accountId" type="account_id" nullable="true" />
         <field name="companyId" type="company_id" column="company_id" nullable="true" />
         
+        <field name="numberOfEmployees" type="integer" column="number_of_employees" nullable="true" />
+        <field name="dailyClients" type="integer" column="daily_clients" nullable="true" />
+
         <field name="removed" type="boolean" nullable="true" />
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
-        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true" />        
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true" />
     </entity>
 
 </doctrine-mapping>

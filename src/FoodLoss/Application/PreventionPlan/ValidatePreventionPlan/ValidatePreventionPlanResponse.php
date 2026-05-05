@@ -12,7 +12,7 @@ class ValidatePreventionPlanResponse
 
     /**
      * @param array<array{propertyName: string, errors: array<mixed>}> $invalidProperties
-     * @param TranslatableMessage[]                                     $planErrors
+     * @param TranslatableMessage[]                                    $planErrors
      */
     public function __construct(
         public bool $hasInvalidProperties,

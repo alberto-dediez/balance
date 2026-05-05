@@ -82,6 +82,8 @@ final class GenerateAllSectionsPrompt implements GeminiPrompt
             $detail = implode(' | ', array_filter([
                 $location ?: null,
                 null !== $rooms && $rooms > 0 ? "{$rooms} rooms" : null,
+                null !== $property->numberOfEmployees() ? "{$property->numberOfEmployees()} employees" : null,
+                null !== $property->dailyClients() ? "{$property->dailyClients()} daily clients" : null,
             ]));
             $lines[] = sprintf('- %s (%s)%s', $property->name(), $type, $detail ? ": {$detail}" : '');
         }
@@ -155,10 +157,9 @@ final class GenerateAllSectionsPrompt implements GeminiPrompt
         $lines[] = '- Identifies the company and scope of the plan';
         $lines[] = '- States company commitment to food waste reduction';
         $lines[] = '- Lists properties covered by the plan';
-        $placeholders = null !== $this->responsible
-            ? '[Approximate number of employees], [Approximate number of daily diners/guests]'
-            : '[Responsible person], [Approximate number of employees], [Approximate number of daily diners/guests]';
-        $lines[] = sprintf('Use H2 headings and structured paragraphs. Include placeholders: %s.', $placeholders);
+        $lines[] = null !== $this->responsible
+            ? 'Use H2 headings and structured paragraphs.'
+            : 'Use H2 headings and structured paragraphs. Do not include any placeholder for the responsible person — simply omit that detail.';
         $lines[] = '';
         $lines[] = '## SECTION 2: Critical Points Analysis and Current Situation';
         $lines[] = 'For each property, describe:';
@@ -210,13 +211,13 @@ final class GenerateAllSectionsPrompt implements GeminiPrompt
             $lines[] = 'No specific donation actions proposed yet. Write generically about establishing donation agreements.';
         }
 
-        $lines[] = 'Include placeholders: [Receiving entity name], [Agreement date], [Collection frequency], [Cold chain responsible], [Max time between preparation and handover].';
+        $lines[] = 'Do not include any placeholders. Write generic but complete content for any details not provided (receiving entities, agreement dates, logistics, cold chain).';
         $lines[] = 'Cover: (1) Legal basis of Law 1/2025, (2) Receiving entities and agreements, (3) Logistics protocol, (4) Food safety and traceability guarantees.';
         $lines[] = '';
         $lines[] = '## SECTION 5: Monitoring, KPIs and Staff Training';
         $lines[] = 'Demonstrate that the plan is a living, audited document. Law 1/2025 requires measuring and reporting food waste annually and training staff.';
         $lines[] = 'Suggest specific, measurable KPIs relevant to the identified critical stages (kg waste/week, % waste by stage, plates returned uneaten, kg donated/month).';
-        $lines[] = 'Include placeholders: [KPI 1 name/unit], [KPI 2 name/unit], [Plan review frequency], [Monitoring responsible], [Staff training plan], [Next review date].';
+        $lines[] = 'Do not include any placeholders. Propose concrete KPI names and units based on the identified critical stages. Write generic but complete content for review frequency, responsible, and training plan.';
         $lines[] = 'Cover: (1) Measurement indicators (KPIs) in a table, (2) Review and reporting schedule, (3) Staff awareness and training plan.';
         $lines[] = 'Present KPIs in a table. Use H2/H3 headings.';
         $lines[] = '';

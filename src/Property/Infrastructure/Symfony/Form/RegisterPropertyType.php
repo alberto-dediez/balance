@@ -9,6 +9,7 @@ use App\Property\Infrastructure\Symfony\Form\Type\ExternalIdType;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyInfoType;
 use App\Security\Infrastructure\Symfony\Form\Type\AccountIdType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -27,6 +28,14 @@ class RegisterPropertyType extends AbstractType
             ])
             ->add('info', PropertyInfoType::class, [
                 'label' => new TranslatableMessage('Información'),
+            ])
+            ->add('numberOfEmployees', IntegerType::class, [
+                'label' => new TranslatableMessage('Nº de empleados'),
+                'required' => false,
+            ])
+            ->add('dailyClients', IntegerType::class, [
+                'label' => new TranslatableMessage('Nº de clientes diarios'),
+                'required' => false,
             ])
         ;
 

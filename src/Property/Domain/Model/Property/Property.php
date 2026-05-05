@@ -27,6 +27,8 @@ class Property implements \Stringable
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $removedAt = null,
+        private ?int $numberOfEmployees = null,
+        private ?int $dailyClients = null,
     ) {
         $this->events = $events;
     }
@@ -69,6 +71,16 @@ class Property implements \Stringable
         return $this->companyId;
     }
 
+    public function numberOfEmployees(): ?int
+    {
+        return $this->numberOfEmployees;
+    }
+
+    public function dailyClients(): ?int
+    {
+        return $this->dailyClients;
+    }
+
     public function isRemoved(): bool
     {
         return $this->removed ?? false;
@@ -84,7 +96,7 @@ class Property implements \Stringable
         return $this->removedAt;
     }
 
-    public function register(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null): void
+    public function register(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null, ?int $numberOfEmployees = null, ?int $dailyClients = null): void
     {
         $this->recordApplyAndPublish(
             new PropertyRegistered(
@@ -94,11 +106,13 @@ class Property implements \Stringable
                 externalId: $externalId,
                 accountId: $accountId,
                 companyId: $companyId,
+                numberOfEmployees: $numberOfEmployees,
+                dailyClients: $dailyClients,
             ),
         );
     }
 
-    public function update(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null): void
+    public function update(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null, ?int $numberOfEmployees = null, ?int $dailyClients = null): void
     {
         $this->recordApplyAndPublish(
             new PropertyUpdated(
@@ -108,6 +122,8 @@ class Property implements \Stringable
                 externalId: $externalId,
                 accountId: $accountId,
                 companyId: $companyId,
+                numberOfEmployees: $numberOfEmployees,
+                dailyClients: $dailyClients,
             ),
         );
     }
@@ -142,6 +158,9 @@ class Property implements \Stringable
         $this->info = $event->info() ?? new PropertyInfo();
         $this->externalId = $event->externalId() ?? new ExternalId();
 
+        $this->numberOfEmployees = $event->numberOfEmployees();
+        $this->dailyClients = $event->dailyClients();
+
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -171,6 +190,9 @@ class Property implements \Stringable
 
         $this->info = $event->info() ?? $this->info();
         $this->externalId = $event->externalId() ?? $this->externalId();
+
+        $this->numberOfEmployees = $event->numberOfEmployees();
+        $this->dailyClients = $event->dailyClients();
     }
 
     public function applyPropertyRemoved(PropertyRemoved $event): void

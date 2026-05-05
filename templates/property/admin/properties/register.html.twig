@@ -1,6 +1,6 @@
 {% extends '@shared/layout/register.html.twig' %}
 
-{% set page_title = ('Propiedades' | trans) 
+{% set page_title = ('Propiedades' | trans)
     ~ ' > '
     ~ ('Registrar' | trans)  %}
 
@@ -20,9 +20,15 @@
                     {{ form_row(form.info) }}
                 </div>
                 <div class="col-12">
+                    {{ form_row(form.numberOfEmployees) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.dailyClients) }}
+                </div>
+                <div class="col-12">
                     {{ form_row(form.externalId) }}
                 </div>
-            </div>    
+            </div>
 
             <twig:ActionBar>
                 <twig:ActionBar:Button type="primary" :button="form.register" />

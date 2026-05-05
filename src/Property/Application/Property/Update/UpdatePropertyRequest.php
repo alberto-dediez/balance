@@ -13,5 +13,5 @@ use App\Shared\Application\CommandBus\Command;
 
 class UpdatePropertyRequest implements Command
 {
-    public function __construct(public PropertyId $propertyId, public string $name, public ?AccountId $accountId, public ?PropertyInfo $info = null, public ?ExternalId $externalId = null, public ?CompanyId $companyId = null) {}
+    public function __construct(public PropertyId $propertyId, public string $name, public ?AccountId $accountId, public ?PropertyInfo $info = null, public ?ExternalId $externalId = null, public ?CompanyId $companyId = null, public ?int $numberOfEmployees = null, public ?int $dailyClients = null) {}
 }

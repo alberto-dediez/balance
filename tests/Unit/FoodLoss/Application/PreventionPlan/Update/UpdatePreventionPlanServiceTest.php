@@ -54,7 +54,7 @@ class UpdatePreventionPlanServiceTest extends TestCase
 
         $events = $this->spySubscriber->events();
 
-        $updatedEvents = array_filter($events, fn ($event) => $event instanceof PreventionPlanUpdated);
+        $updatedEvents = array_filter($events, fn($event) => $event instanceof PreventionPlanUpdated);
 
         $this->assertCount(1, $updatedEvents);
         $this->assertEquals('Plan Actualizado', array_pop($updatedEvents)?->name());

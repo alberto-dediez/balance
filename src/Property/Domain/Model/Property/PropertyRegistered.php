@@ -21,6 +21,8 @@ final class PropertyRegistered extends DomainEvent
         private readonly ?ExternalId $externalId = null,
         private readonly ?AccountId $accountId = null,
         private readonly ?CompanyId $companyId = null,
+        private readonly ?int $numberOfEmployees = null,
+        private readonly ?int $dailyClients = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -57,6 +59,16 @@ final class PropertyRegistered extends DomainEvent
         return $this->companyId;
     }
 
+    public function numberOfEmployees(): ?int
+    {
+        return $this->numberOfEmployees;
+    }
+
+    public function dailyClients(): ?int
+    {
+        return $this->dailyClients;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->propertyId;
@@ -71,6 +83,8 @@ final class PropertyRegistered extends DomainEvent
             'name' => $this->name,
             'info' => $this->info,
             'externalId' => $this->externalId,
+            'numberOfEmployees' => $this->numberOfEmployees,
+            'dailyClients' => $this->dailyClients,
         ];
     }
 
@@ -86,6 +100,8 @@ final class PropertyRegistered extends DomainEvent
             externalId: $payload['externalId'] ?? null,
             accountId: null !== ($payload['accountId'] ?? null) ? new AccountId($payload['accountId']) : null,
             companyId: null !== ($payload['companyId'] ?? null) ? new CompanyId($payload['companyId']) : null,
+            numberOfEmployees: $payload['numberOfEmployees'] ?? null,
+            dailyClients: $payload['dailyClients'] ?? null,
             id: $id,
             occurredOn: $occurredOn,
         );
