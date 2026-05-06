@@ -12,9 +12,9 @@
 
 {% block content %}
     {{ form_start(form) }}
-        <twig:Card>
-            {% include '@food_loss/critical-points/_form.html.twig' %}
 
+    {% include '@food_loss/critical-points/_form.html.twig' %}
+        <twig:Card>
             <twig:ActionBar>
                 <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
                 <twig:ActionBar:Button type="primary" :button="form.save" />

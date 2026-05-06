@@ -1,4 +1,9 @@
-<div class="card">
+{% props title = null %}
+
+<div class="card {{ attributes.render('class') }}" {{ attributes.without('class') }}>
+    {% if title %}
+        <div class="card-header fw-semibold">{{ title }}</div>
+    {% endif %}
     <div class="card-body">
         {% block content %}{% endblock %}
     </div>
