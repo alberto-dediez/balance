@@ -11,7 +11,7 @@ use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersion;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
 use App\Waste\Infrastructure\Tcpdf\GenericGenerator;
-use League\CommonMark\CommonMarkConverter;
+use League\CommonMark\GithubFlavoredMarkdownConverter;
 
 class TcpdfPreventionPlanPdfGenerator implements PreventionPlanPdfGenerator
 {
@@ -45,11 +45,7 @@ class TcpdfPreventionPlanPdfGenerator implements PreventionPlanPdfGenerator
         foreach ($sections as $section) {
             $pdf->AddPage();
 
-            $this->setFont($pdf, 28, self::FONT_STYLE_BOLD, self::COLOR_PRIMARY);
-            $pdf->setXY(16, 16);
-            $pdf->MultiCell(w: 178, h: 12, txt: $section->title(), border: 0, align: 'L');
-
-            $pdf->setY($pdf->getY() + 6);
+            $pdf->setY(16);
 
             $this->setFont($pdf, 11, self::FONT_STYLE_REGULAR, self::COLOR_NEUTRAL_900);
 
@@ -72,7 +68,7 @@ class TcpdfPreventionPlanPdfGenerator implements PreventionPlanPdfGenerator
 
     private function markdownToHtml(string $markdown): string
     {
-        $converter = new CommonMarkConverter();
+        $converter = new GithubFlavoredMarkdownConverter();
 
         return $converter->convert($markdown)->getContent();
     }

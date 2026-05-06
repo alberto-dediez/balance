@@ -1,0 +1,96 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set page_title = ('Planes de Prevención' | trans)
+    ~ ' > '
+    ~ preventionPlan.name
+    ~ ' > '
+    ~ ('Versión' | trans)
+    ~ ' '
+    ~ version.versionNumber %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('prevention_plans_history', {preventionPlanId: preventionPlan.id}) }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="card mb-4">
+        <div class="card-header fw-semibold">{{ 'Datos generales' | trans }}</div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">{{ 'Nombre' | trans }}</dt>
+                <dd class="col-sm-9">{{ preventionPlan.name }}</dd>
+
+                <dt class="col-sm-3">{{ 'Empresa' | trans }}</dt>
+                <dd class="col-sm-9">{{ preventionPlan.companyId | company_name }}</dd>
+
+                <dt class="col-sm-3">{{ 'Propiedades' | trans }}</dt>
+                <dd class="col-sm-9">
+                    {% set propertyIds = preventionPlan.propertyIds %}
+                    {% if propertyIds | length == 0 %}
+                        {{ 'Todas las propiedades' | trans }}
+                    {% else %}
+                        {% for propertyId in propertyIds %}
+                            {{ propertyId | property_name }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </dd>
+
+                <dt class="col-sm-3">{{ 'Versión' | trans }}</dt>
+                <dd class="col-sm-9">{{ version.versionNumber }}</dd>
+
+                <dt class="col-sm-3">{{ 'Estado' | trans }}</dt>
+                <dd class="col-sm-9">
+                    <span class="badge {{ version.status.style }}">{{ version.status.value | trans({}, 'preventionPlanVersionStatus') }}</span>
+                </dd>
+
+                <dt class="col-sm-3 mb-0">{{ 'Fecha de creación' | trans }}</dt>
+                <dd class="col-sm-9 mb-0">{{ version.createdAt | date('d/m/Y') }}</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header fw-semibold">{{ 'Acciones propuestas' | trans }}</div>
+        <div class="card-body p-0">
+            {% set proposedActions = version.proposedActions.toArray %}
+            {% if proposedActions | length > 0 %}
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>{{ 'Propiedad' | trans }}</th>
+                            <th>{{ 'Punto crítico' | trans }}</th>
+                            <th>{{ 'Acción' | trans }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for proposedAction in proposedActions %}
+                            <tr>
+                                <td>{{ proposedAction.propertyId | property_name }}</td>
+                                <td>{{ proposedAction.criticalPointId | critical_point_name }}</td>
+                                <td>{{ proposedAction.actionId | action_name }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-muted p-3 mb-0">{{ 'No hay acciones propuestas.' | trans }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header fw-semibold">{{ 'Plan generado' | trans }}</div>
+        <div class="card-body">
+            {% set sections = version.sections.toArray %}
+            {% if sections | length > 0 %}
+                {% for section in sections %}
+                    <div class="mb-2">
+                        {{ section.content | md_to_html }}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted mb-0">{{ 'No hay secciones generadas.' | trans }}</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -82,4 +82,18 @@ enum PreventionPlanVersionStatus: string
 
         return PreventionPlanStep::General;
     }
+
+    public function style(): string
+    {
+        return match ($this) {
+            self::InProgress => 'bg-light text-dark',
+            self::Validated => 'bg-warning',
+            self::Loaded => 'bg-dark',
+            self::Configured => 'bg-info',
+            self::Generated => 'bg-primary',
+            self::DraftApproved => 'bg-secondary',
+            self::Abandoned => 'bg-danger',
+            self::Completed => 'bg-success',
+        };
+    }
 }

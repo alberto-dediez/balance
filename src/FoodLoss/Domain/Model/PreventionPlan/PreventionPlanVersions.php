@@ -19,4 +19,20 @@ final class PreventionPlanVersions extends ArrayCollection
 
         return null;
     }
+
+    public function lastCompletedVersion(): ?PreventionPlanVersion
+    {
+        $completed = array_filter(
+            $this->toArray(),
+            static fn(PreventionPlanVersion $version) => $version->isClosed(),
+        );
+
+        if ([] === $completed) {
+            return null;
+        }
+
+        usort($completed, static fn(PreventionPlanVersion $a, PreventionPlanVersion $b) => $b->versionNumber() - $a->versionNumber());
+
+        return $completed[0];
+    }
 }

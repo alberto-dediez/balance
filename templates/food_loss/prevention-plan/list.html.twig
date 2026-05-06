@@ -45,13 +45,20 @@
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>{{ element.updatedAt ? (element.updatedAt | date('d/m/Y')) : '-' }}</td>
         <td>
-            {% if element.PDF is not null %}
-                <twig:List:Action:Download path="{{ path('prevention_plans_download_pdf', {'preventionPlanId': element.id}) }}" />
+            {% set lastCompletedVersion = element.lastCompletedVersion %}
+            {% if lastCompletedVersion is not null %}
+                <twig:List:Action:View path="{{ path('prevention_plans_version_detail', {'preventionPlanId': element.id, 'versionNumber': lastCompletedVersion.versionNumber}) }}" />
             {% endif %}
 
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('prevention_plans_edit', {'preventionPlanId': element.id}) }}" />
             {% endif %}
+
+            {% if element.PDF is not null %}
+                <twig:List:Action:Download path="{{ path('prevention_plans_download_pdf', {'preventionPlanId': element.id}) }}" />
+            {% endif %}
+
+            <twig:List:Action:History path="{{ path('prevention_plans_history', {'preventionPlanId': element.id}) }}" />
 
             {% if element | is_authorized('remove') %}
                 <twig:List:Action:Delete path="{{ path('prevention_plans_remove', {'preventionPlanId': element.id}) }}" />

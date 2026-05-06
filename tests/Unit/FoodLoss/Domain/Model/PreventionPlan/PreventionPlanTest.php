@@ -45,7 +45,7 @@ class PreventionPlanTest extends TestCase
             updatedBy: new UserId('user-id'),
         );
 
-        $this->assertEquals(1, $plan->currentVersion());
+        $this->assertEquals(2, $plan->currentVersion());
 
         $newVersion = $plan->currentPlanVersion();
 
@@ -85,7 +85,7 @@ class PreventionPlanTest extends TestCase
             updatedBy: new UserId('user-id'),
         );
 
-        $this->assertEquals(1, $plan->currentVersion());
+        $this->assertEquals(2, $plan->currentVersion());
 
         $newVersion = $plan->currentPlanVersion();
 
@@ -120,7 +120,7 @@ class PreventionPlanTest extends TestCase
         );
 
         // No version bump — properties unchanged
-        $this->assertEquals(0, $plan->currentVersion());
+        $this->assertEquals(1, $plan->currentVersion());
         $this->assertCount(1, $plan->versions());
     }
 }

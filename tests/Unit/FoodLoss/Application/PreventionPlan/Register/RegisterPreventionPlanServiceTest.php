@@ -66,7 +66,7 @@ class RegisterPreventionPlanServiceTest extends TestCase
 
         $versionCreatedEvent = $events[1];
         $this->assertInstanceOf(PreventionPlanVersionCreated::class, $versionCreatedEvent);
-        $this->assertEquals(0, $versionCreatedEvent->versionNumber());
+        $this->assertEquals(1, $versionCreatedEvent->versionNumber());
     }
 
     public function testIsHandle(): void

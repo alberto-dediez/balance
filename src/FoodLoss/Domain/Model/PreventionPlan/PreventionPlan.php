@@ -89,6 +89,11 @@ class PreventionPlan implements \Stringable
         return $this->versions;
     }
 
+    public function lastCompletedVersion(): ?PreventionPlanVersion
+    {
+        return $this->versions()->lastCompletedVersion();
+    }
+
     public function currentVersion(): int
     {
         return $this->currentVersion;
@@ -153,7 +158,7 @@ class PreventionPlan implements \Stringable
         $this->recordApplyAndPublish(
             new PreventionPlanVersionCreated(
                 preventionPlanId: $this->id(),
-                versionNumber: 0,
+                versionNumber: 1,
                 createdBy: $registeredBy,
                 responsible: $responsible,
             ),
