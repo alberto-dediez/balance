@@ -6,14 +6,20 @@ namespace App\FoodLoss\Domain\Model\PreventionPlan;
 
 use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Security\Domain\Model\User\UserId;
+use App\Shared\Domain\Model\Locale\Locale;
+use App\Shared\Domain\Model\Locale\Translatable;
+use App\Shared\Domain\Model\Locale\Translations;
 
-final class PreventionPlanVersion
+final class PreventionPlanVersion implements Translatable
 {
     /** @var iterable<ProposedAction>|ProposedActions */
     private iterable $proposedActions = [];
 
     /** @var iterable<PreventionPlanSection>|PreventionPlanSections */
     private iterable $sections = [];
+
+    /** @var iterable<PreventionPlanVersionTranslation>|Translations */
+    private iterable $translations;
 
     private PreventionPlanVersionId $id;
 
@@ -27,6 +33,7 @@ final class PreventionPlanVersion
         private ?EmployeeId $responsible = null,
     ) {
         $this->id = $id ?? PreventionPlanVersionId::generate();
+        $this->translations = new Translations();
     }
 
     public function id(): PreventionPlanVersionId
@@ -127,6 +134,36 @@ final class PreventionPlanVersion
     public function abandon(): void
     {
         $this->status = PreventionPlanVersionStatus::Abandoned;
+    }
+
+    public function pdfPath(): ?string
+    {
+        /** @var PreventionPlanVersionTranslation|null $translation */
+        $translation = $this->translations()->currentTranslation();
+
+        return null !== $translation ? $translation->pdfPath() : null;
+    }
+
+    public function translations(): Translations
+    {
+        if ($this->translations instanceof Translations) {
+            return $this->translations;
+        }
+
+        $this->translations = new Translations(iterator_to_array($this->translations));
+
+        return $this->translations;
+    }
+
+    public function savePDF(string $pdfPath, Locale $locale): void
+    {
+        $this->translations()->add(
+            new PreventionPlanVersionTranslation(
+                pdfPath: $pdfPath,
+                locale: $locale,
+                translatable: $this,
+            ),
+        );
     }
 
     public function proposedActions(): ProposedActions

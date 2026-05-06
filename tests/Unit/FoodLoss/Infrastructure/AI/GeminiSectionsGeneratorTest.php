@@ -17,6 +17,7 @@ use App\FoodLoss\Infrastructure\AI\GeminiSectionsGenerator;
 use App\FoodLoss\Infrastructure\Persistence\InMemory\Repository\InMemoryActionRepository;
 use App\FoodLoss\Infrastructure\Persistence\InMemory\Repository\InMemoryCriticalPointRepository;
 use App\FoodLoss\Infrastructure\Persistence\InMemory\Repository\InMemoryReasonRepository;
+use App\FoodLoss\Infrastructure\Persistence\InMemory\Repository\InMemorySurplusCauseRepository;
 use App\HumanResources\Infrastructure\Persistence\InMemory\Repository\InMemoryEmployeeRepository;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Company\CompanyRepository;
@@ -77,6 +78,7 @@ class GeminiSectionsGeneratorTest extends TestCase
             criticalPointRepository: $this->criticalPointRepository,
             actionRepository: $this->actionRepository,
             reasonRepository: $this->reasonRepository,
+            surplusCauseRepository: new InMemorySurplusCauseRepository(),
             companyRepository: $this->companyRepository,
             geminiClient: $this->geminiClient,
             employeeRepository: new InMemoryEmployeeRepository(),

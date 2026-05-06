@@ -1,0 +1,5 @@
+{% trans with {
+    '{surplusCause}': event.surplusCauseId | surplus_cause_name,
+    '{locale}': event.locale,
+    '{user}': element.userId | user_name
+} %}Se ha traducido la causa de excedente {surplusCause} al idioma {locale} por el usuario {user}{% endtrans %}

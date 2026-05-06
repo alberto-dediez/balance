@@ -62,6 +62,7 @@ class RegisterCriticalPointService implements CommandHandler
             transformation: $request->transformation,
             composting: $request->composting,
             serviceCategoryIds: $request->serviceCategoryIds,
+            surplusCauseIds: $request->surplusCauseIds,
         );
 
         $this->criticalPointRepository->add($criticalPoint);
@@ -70,6 +71,7 @@ class RegisterCriticalPointService implements CommandHandler
             criticalPointId: $criticalPoint->id(),
             name: $criticalPoint->name(),
             serviceCategoryIds: $criticalPoint->serviceCategoryIds(),
+            surplusCauseIds: $criticalPoint->surplusCauseIds(),
             prevention: $criticalPoint->prevention(),
             humanDonation: $criticalPoint->humanDonation(),
             animalFeed: $criticalPoint->animalFeed(),

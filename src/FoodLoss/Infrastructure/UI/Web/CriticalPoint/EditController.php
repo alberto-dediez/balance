@@ -43,6 +43,7 @@ class EditController extends AbstractController
             propertyId: $criticalPoint->propertyId(),
             supplyChainStage: $criticalPoint->supplyChainStage(),
             serviceCategoryIds: $criticalPoint->serviceCategoryIds(),
+            surplusCauseIds: $criticalPoint->surplusCauseIds(),
             prevention: $criticalPoint->prevention(),
             humanDonation: $criticalPoint->humanDonation(),
             animalFeed: $criticalPoint->animalFeed(),

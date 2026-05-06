@@ -43,8 +43,8 @@
                 </ul>
             </dd>
 
-            <dt class="col-sm-3">{{ 'Fecha de registro' | trans }}</dt>
-            <dd class="col-sm-9 mb-0">{{ preventionPlan.registeredAt | date('d/m/Y') }}</dd>
+            <dt class="col-sm-3">{{ 'Fecha de última modificación' | trans }}</dt>
+            <dd class="col-sm-9 mb-0">{{ preventionPlan.updatedAt | date('d/m/Y') }}</dd>
         </dl>
 
         {{ form_start(form) }}

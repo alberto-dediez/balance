@@ -41,6 +41,7 @@ doctrine:
             doggy_bag_exception_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DoggyBagExceptionIdType
             incidence_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\IncidenceIdType
             training_session_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\TrainingSessionIdType
+            surplus_cause_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\SurplusCauseIdType
             job_progress_id: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressIdType
             job_progress_key: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressKeyType
             employee_id: App\HumanResources\Infrastructure\Persistence\Doctrine\Type\EmployeeIdType

@@ -8,9 +8,11 @@ use App\FoodLoss\Domain\Model\Action\Action;
 use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointReasonLink;
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointSurplusCauseLink;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\ProposedAction;
 use App\FoodLoss\Domain\Model\Reason\Reason;
+use App\FoodLoss\Domain\Model\SurplusCause\SurplusCause;
 use App\HumanResources\Domain\Model\Employee\Employee;
 use App\Property\Domain\Model\Company\Company;
 use App\Property\Domain\Model\Property\Property;
@@ -27,6 +29,7 @@ final class GenerateAllSectionsPrompt implements GeminiPrompt
      * @param array<string, Action>          $actionMap                indexed by action ID string
      * @param array<string, CriticalPoint>   $criticalPointMap         indexed by critical point ID string
      * @param array<string, Reason>          $reasonMap                indexed by reason ID string
+     * @param array<string, SurplusCause>    $surplusCauseMap          indexed by surplus cause ID string
      */
     public function __construct(
         private readonly PreventionPlan $plan,
@@ -39,6 +42,7 @@ final class GenerateAllSectionsPrompt implements GeminiPrompt
         private readonly array $actionMap,
         private readonly array $criticalPointMap,
         private readonly array $reasonMap,
+        private readonly array $surplusCauseMap = [],
         private readonly Locale $locale = Locale::Spanish,
         private readonly float $temperature = 0.4,
         private readonly ?Employee $responsible = null,
@@ -140,6 +144,19 @@ final class GenerateAllSectionsPrompt implements GeminiPrompt
                         $reason = $this->reasonMap[(string) $reasonLink->reasonId()] ?? null;
                         if (null !== $reason) {
                             $lines[] = sprintf('    - [%s] %s', $reasonLink->priority()->value, $reason->description());
+                        }
+                    }
+                }
+
+                /** @var CriticalPointSurplusCauseLink[] $surplusCauseLinks */
+                $surplusCauseLinks = $cp->surplusCauses()->toArray();
+
+                if ([] !== $surplusCauseLinks) {
+                    $lines[] = '  - Surplus causes:';
+                    foreach ($surplusCauseLinks as $surplusCauseLink) {
+                        $surplusCause = $this->surplusCauseMap[(string) $surplusCauseLink->surplusCauseId()] ?? null;
+                        if (null !== $surplusCause) {
+                            $lines[] = sprintf('    - %s', $surplusCause->name());
                         }
                     }
                 }

@@ -7,6 +7,7 @@ namespace App\FoodLoss\Infrastructure\Symfony\Form;
 use App\FoodLoss\Application\CriticalPoint\List\ListCriticalPointsRequest;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\ActionIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\ServiceCategoryIdType;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\SurplusCauseIdType;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -33,6 +34,10 @@ class ListCriticalPointsType extends BaseFilterType
             ])
             ->add('actionId', ActionIdType::class, [
                 'label' => new TranslatableMessage('Acción'),
+                'required' => false,
+            ])
+            ->add('surplusCauseId', SurplusCauseIdType::class, [
+                'label' => new TranslatableMessage('Causa de excedente'),
                 'required' => false,
             ])
         ;

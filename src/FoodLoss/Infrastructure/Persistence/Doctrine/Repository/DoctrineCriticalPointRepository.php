@@ -10,6 +10,7 @@ use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointFilter;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
+use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use Doctrine\DBAL\Types\Types;
@@ -107,6 +108,16 @@ class DoctrineCriticalPointRepository implements CriticalPointRepository
             $qb->join('e.actions', 'a')
                ->andWhere('a.actionId = :actionId')
                ->setParameter('actionId', (string) $filter->actionId);
+        }
+
+        if ($filter->surplusCauseId instanceof SurplusCauseId) {
+            $qb
+                ->join('e.surplusCauses', 'sus')
+                ->andWhere(
+                    $qb->expr()->eq('sus.surplusCauseId', ':surplusCauseId'),
+                )
+                ->setParameter('surplusCauseId', (string) $filter->surplusCauseId)
+            ;
         }
 
         $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';

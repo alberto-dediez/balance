@@ -1,0 +1,4 @@
+{% trans with {
+    '{surplusCause}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado la causa de excedente "{surplusCause}" por el usuario {user}{% endtrans %}

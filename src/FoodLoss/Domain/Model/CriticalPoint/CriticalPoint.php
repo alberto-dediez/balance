@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\Reason\ReasonId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
+use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEvent;
@@ -41,6 +42,8 @@ class CriticalPoint implements \Stringable
         private iterable $actions = [],
         /** @var iterable<CriticalPointReasonLink>|CriticalPointReasons */
         private iterable $reasons = [],
+        /** @var iterable<CriticalPointSurplusCauseLink>|CriticalPointSurplusCauses */
+        private iterable $surplusCauses = [],
     ) {
         $this->events = $events;
     }
@@ -140,7 +143,10 @@ class CriticalPoint implements \Stringable
         return $this->removedAt;
     }
 
-    /** @param ServiceCategoryId[] $serviceCategoryIds */
+    /**
+     * @param ServiceCategoryId[] $serviceCategoryIds
+     * @param SurplusCauseId[]    $surplusCauseIds
+     */
     public function register(
         string $name,
         PropertyId $propertyId,
@@ -152,6 +158,7 @@ class CriticalPoint implements \Stringable
         PriorityAssessment $transformation,
         PriorityAssessment $composting,
         array $serviceCategoryIds = [],
+        array $surplusCauseIds = [],
     ): void {
         $this->recordApplyAndPublish(
             new CriticalPointRegistered(
@@ -171,9 +178,13 @@ class CriticalPoint implements \Stringable
         $this->syncServiceCategories($serviceCategoryIds);
         $this->syncActionsFromAssessments($prevention, $humanDonation, $animalFeed, $transformation, $composting);
         $this->syncReasonsFromAssessments($prevention, $humanDonation, $animalFeed, $transformation, $composting);
+        $this->syncSurplusCauses($surplusCauseIds);
     }
 
-    /** @param ServiceCategoryId[] $serviceCategoryIds */
+    /**
+     * @param ServiceCategoryId[] $serviceCategoryIds
+     * @param SurplusCauseId[]    $surplusCauseIds
+     */
     public function update(
         string $name,
         PropertyId $propertyId,
@@ -184,6 +195,7 @@ class CriticalPoint implements \Stringable
         PriorityAssessment $transformation,
         PriorityAssessment $composting,
         array $serviceCategoryIds = [],
+        array $surplusCauseIds = [],
     ): void {
         $this->recordApplyAndPublish(
             new CriticalPointUpdated(
@@ -202,6 +214,7 @@ class CriticalPoint implements \Stringable
         $this->syncServiceCategories($serviceCategoryIds);
         $this->syncActionsFromAssessments($prevention, $humanDonation, $animalFeed, $transformation, $composting);
         $this->syncReasonsFromAssessments($prevention, $humanDonation, $animalFeed, $transformation, $composting);
+        $this->syncSurplusCauses($surplusCauseIds);
     }
 
     public function remove(): void
@@ -449,6 +462,97 @@ class CriticalPoint implements \Stringable
                 $this->linkReason($reasonId, $priority);
             }
         }
+    }
+
+    public function surplusCauses(): CriticalPointSurplusCauses
+    {
+        if ($this->surplusCauses instanceof CriticalPointSurplusCauses) {
+            return $this->surplusCauses;
+        }
+
+        $this->surplusCauses = new CriticalPointSurplusCauses(
+            array_values(iterator_to_array($this->surplusCauses)),
+        );
+
+        return $this->surplusCauses;
+    }
+
+    /**
+     * @return SurplusCauseId[]
+     */
+    public function surplusCauseIds(): array
+    {
+        return $this->surplusCauses()->ids();
+    }
+
+    public function linkSurplusCause(SurplusCauseId $surplusCauseId): void
+    {
+        if ($this->surplusCauses()->has($surplusCauseId)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CriticalPointSurplusCauseLinked(
+                criticalPointId: $this->id(),
+                surplusCauseId: $surplusCauseId,
+            ),
+        );
+    }
+
+    public function unlinkSurplusCause(SurplusCauseId $surplusCauseId): void
+    {
+        if (!$this->surplusCauses()->has($surplusCauseId)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CriticalPointSurplusCauseUnlinked(
+                criticalPointId: $this->id(),
+                surplusCauseId: $surplusCauseId,
+            ),
+        );
+    }
+
+    /**
+     * @param SurplusCauseId[] $newSurplusCauseIds
+     */
+    private function syncSurplusCauses(array $newSurplusCauseIds): void
+    {
+        $current = $this->surplusCauses();
+
+        foreach ($current->ids() as $currentId) {
+            $found = false;
+            foreach ($newSurplusCauseIds as $newId) {
+                if ($currentId->equals($newId)) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $this->unlinkSurplusCause($currentId);
+            }
+        }
+
+        foreach ($newSurplusCauseIds as $newId) {
+            if (!$current->has($newId)) {
+                $this->linkSurplusCause($newId);
+            }
+        }
+    }
+
+    public function applyCriticalPointSurplusCauseLinked(CriticalPointSurplusCauseLinked $event): void
+    {
+        $link = new CriticalPointSurplusCauseLink(
+            criticalPoint: $this,
+            surplusCauseId: $event->surplusCauseId(),
+        );
+
+        $this->surplusCauses()->add($link);
+    }
+
+    public function applyCriticalPointSurplusCauseUnlinked(CriticalPointSurplusCauseUnlinked $event): void
+    {
+        $this->surplusCauses()->removeById($event->surplusCauseId());
     }
 
     public function applyCriticalPointRegistered(CriticalPointRegistered $event): void

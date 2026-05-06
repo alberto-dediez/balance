@@ -95,6 +95,11 @@ class NodeLister
                     icon: 'solar:folder-with-files-line-duotone',
                     target: $this->router->generate('admin_service_categories'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Causas de excedente'),
+                    icon: 'solar:trash-bin-trash-line-duotone',
+                    target: $this->router->generate('admin_surplus_causes'),
+                ),
             ],
         );
 

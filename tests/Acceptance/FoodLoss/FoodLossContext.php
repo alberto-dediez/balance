@@ -19,6 +19,7 @@ use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationRepository;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepository;
+use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseRepository;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -37,6 +38,7 @@ use App\Tests\Unit\FoodLoss\Domain\Model\Protocol\ProtocolMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Reason\ReasonMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\SurplusCause\SurplusCauseMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\TrainingSession\TrainingSessionMother;
 use Behat\Behat\Context\Context;
 use Behat\Step\Given;
@@ -120,6 +122,11 @@ final readonly class FoodLossContext implements Context
     public function getTrainingSessionRepository(): TrainingSessionRepository
     {
         return $this->client->getContainer()->get(TrainingSessionRepository::class);
+    }
+
+    public function getSurplusCauseRepository(): SurplusCauseRepository
+    {
+        return $this->client->getContainer()->get(SurplusCauseRepository::class);
     }
 
     #[Given('action :description with id :id exists')]
@@ -383,5 +390,13 @@ final readonly class FoodLossContext implements Context
         );
 
         $this->getTrainingSessionRepository()->add($trainingSession);
+    }
+
+    #[Given('surplus cause :name with id :id exists')]
+    public function surplusCauseWithIdExists(string $name, string $id): void
+    {
+        $surplusCause = SurplusCauseMother::fromNameAndId($name, $id);
+
+        $this->getSurplusCauseRepository()->add($surplusCause);
     }
 }

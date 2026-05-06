@@ -9,6 +9,7 @@ use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\PriorityAssessmentType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\ServiceCategoryIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\SupplyChainStageType;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\SurplusCauseIdType;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -57,6 +58,11 @@ class RegisterCriticalPointType extends AbstractType
             ])
             ->add('serviceCategoryIds', ServiceCategoryIdType::class, [
                 'label' => new TranslatableMessage('Categorías de servicio'),
+                'required' => false,
+                'multiple' => true,
+            ])
+            ->add('surplusCauseIds', SurplusCauseIdType::class, [
+                'label' => new TranslatableMessage('Causas de excedente'),
                 'required' => false,
                 'multiple' => true,
             ])

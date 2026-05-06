@@ -7,6 +7,7 @@ services:
         autoconfigure: true
         bind:
             $uploadsDir: '%app.uploads_dir%'
+            $localeList: '%app.locale_list%'
 
     App\FoodLoss\:
         resource: '../../../'
@@ -31,3 +32,9 @@ services:
 
     App\FoodLoss\Domain\Model\PreventionPlan\SectionsGenerator:
         alias: App\FoodLoss\Infrastructure\AI\GeminiSectionsGenerator
+
+    App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanPdfGenerator:
+        alias: App\FoodLoss\Infrastructure\Tcpdf\TcpdfPreventionPlanPdfGenerator
+
+    App\FoodLoss\Application\PreventionPlan\PreventionPlanPdfUploader:
+        alias: App\FoodLoss\Infrastructure\FileUploader\LocalFilePreventionPlanPdfUploader

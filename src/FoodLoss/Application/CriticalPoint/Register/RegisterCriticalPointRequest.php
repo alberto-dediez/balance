@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\CriticalPoint\PriorityAssessment;
 use App\FoodLoss\Domain\Model\CriticalPoint\SupplyChainStage;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
+use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Application\CommandBus\Command;
@@ -22,12 +23,14 @@ class RegisterCriticalPointRequest implements Command
 
     /**
      * @param ServiceCategoryId[] $serviceCategoryIds
+     * @param SurplusCauseId[]    $surplusCauseIds
      */
     public function __construct(
         public string $name = '',
         public ?PropertyId $propertyId = null,
         public SupplyChainStage $supplyChainStage = SupplyChainStage::Receiving,
         public array $serviceCategoryIds = [],
+        public array $surplusCauseIds = [],
         public ?AccountId $accountId = null,
     ) {
         $this->prevention = new PriorityAssessment(Priority::Prevention);

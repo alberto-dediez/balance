@@ -15,6 +15,8 @@ use App\FoodLoss\Domain\Model\PreventionPlan\ProposedAction;
 use App\FoodLoss\Domain\Model\PreventionPlan\SectionsGenerator;
 use App\FoodLoss\Domain\Model\Reason\Reason;
 use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
+use App\FoodLoss\Domain\Model\SurplusCause\SurplusCause;
+use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseRepository;
 use App\FoodLoss\Infrastructure\AI\Gemini\GenerateAllSectionsPrompt;
 use App\HumanResources\Domain\Model\Employee\Employee;
 use App\HumanResources\Domain\Model\Employee\EmployeeRepository;
@@ -36,6 +38,7 @@ class GeminiSectionsGenerator implements SectionsGenerator
         private readonly CriticalPointRepository $criticalPointRepository,
         private readonly ActionRepository $actionRepository,
         private readonly ReasonRepository $reasonRepository,
+        private readonly SurplusCauseRepository $surplusCauseRepository,
         private readonly CompanyRepository $companyRepository,
         private readonly GeminiClient $geminiClient,
         private readonly EmployeeRepository $employeeRepository,
@@ -74,6 +77,8 @@ class GeminiSectionsGenerator implements SectionsGenerator
 
         /** @var array<string, Reason> $reasonMap */
         $reasonMap = [];
+        /** @var array<string, SurplusCause> $surplusCauseMap */
+        $surplusCauseMap = [];
         foreach ($criticalPointMap as $cp) {
             foreach ($cp->reasonIds() as $reasonId) {
                 $key = (string) $reasonId;
@@ -81,6 +86,16 @@ class GeminiSectionsGenerator implements SectionsGenerator
                     $reason = $this->reasonRepository->find($reasonId);
                     if (null !== $reason) {
                         $reasonMap[$key] = $reason;
+                    }
+                }
+            }
+
+            foreach ($cp->surplusCauseIds() as $surplusCauseId) {
+                $key = (string) $surplusCauseId;
+                if (!isset($surplusCauseMap[$key])) {
+                    $surplusCause = $this->surplusCauseRepository->find($surplusCauseId);
+                    if (null !== $surplusCause) {
+                        $surplusCauseMap[$key] = $surplusCause;
                     }
                 }
             }
@@ -125,6 +140,7 @@ class GeminiSectionsGenerator implements SectionsGenerator
             actionMap: $actionMap,
             criticalPointMap: $criticalPointMap,
             reasonMap: $reasonMap,
+            surplusCauseMap: $surplusCauseMap,
             locale: $locale,
             responsible: $responsible instanceof Employee ? $responsible : null,
         ));

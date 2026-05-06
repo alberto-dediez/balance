@@ -10,6 +10,7 @@ use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointFilter;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
+use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -93,6 +94,19 @@ class InMemoryCriticalPointRepository implements CriticalPointRepository
 
             if ($filter->actionId instanceof ActionId && !$criticalPoint->actions()->has($filter->actionId)) {
                 continue;
+            }
+
+            if ($filter->surplusCauseId instanceof SurplusCauseId) {
+                $linked = false;
+                foreach ($criticalPoint->surplusCauseIds() as $id) {
+                    if ($id->equals($filter->surplusCauseId)) {
+                        $linked = true;
+                        break;
+                    }
+                }
+                if (!$linked) {
+                    continue;
+                }
             }
 
             if (true == $criticalPoint->isRemoved()) {

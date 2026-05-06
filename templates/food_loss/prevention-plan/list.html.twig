@@ -45,6 +45,10 @@
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>{{ element.updatedAt ? (element.updatedAt | date('d/m/Y')) : '-' }}</td>
         <td>
+            {% if element.PDF is not null %}
+                <twig:List:Action:Download path="{{ path('prevention_plans_download_pdf', {'preventionPlanId': element.id}) }}" />
+            {% endif %}
+
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('prevention_plans_edit', {'preventionPlanId': element.id}) }}" />
             {% endif %}

@@ -12,6 +12,7 @@ use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Model\AggregateRoot;
+use App\Shared\Domain\Model\Locale\Locale;
 
 class PreventionPlan implements \Stringable
 {
@@ -183,7 +184,7 @@ class PreventionPlan implements \Stringable
             ),
         );
 
-        if ($propertiesChanged || $responsibleChanged) {
+        if ($propertiesChanged || $responsibleChanged || $this->currentPlanVersion()->isClosed()) {
             $currentProposedActions = $this->currentPlanVersion()->proposedActions()->toArray();
             $newVersionNumber = $this->currentVersion + 1;
 
@@ -495,6 +496,43 @@ class PreventionPlan implements \Stringable
         }
 
         $version->markAsCompleted();
+    }
+
+    public function savePDF(string $pdfPath, Locale $locale): void
+    {
+        $this->recordApplyAndPublish(
+            new PreventionPlanVersionPDFSaved(
+                preventionPlanId: $this->id(),
+                versionNumber: $this->currentVersion,
+                pdfPath: $pdfPath,
+                locale: $locale,
+            ),
+        );
+    }
+
+    public function applyPreventionPlanVersionPDFSaved(PreventionPlanVersionPDFSaved $event): void
+    {
+        $version = $this->versions()->findByVersionNumber($event->versionNumber());
+        if (null === $version) {
+            return;
+        }
+
+        $version->savePDF($event->pdfPath(), $event->locale());
+    }
+
+    public function getPDF(): ?string
+    {
+        $versions = $this->versions()->toArray();
+        usort($versions, static fn(PreventionPlanVersion $a, PreventionPlanVersion $b) => $b->versionNumber() - $a->versionNumber());
+
+        foreach ($versions as $version) {
+            $pdfPath = $version->pdfPath();
+            if (null !== $pdfPath) {
+                return $pdfPath;
+            }
+        }
+
+        return null;
     }
 
     public function clearSections(): void
