@@ -35,6 +35,7 @@ class UpdatePreventionPlanSectionsServiceTest extends TestCase
 
         $version = $preventionPlan->currentPlanVersion();
         $sections = $version->sections()->toArray();
+
         $this->assertCount(2, $sections);
 
         $request = new UpdatePreventionPlanSectionsRequest(
@@ -67,7 +68,7 @@ class UpdatePreventionPlanSectionsServiceTest extends TestCase
         $this->assertEquals('Segundo título actualizado', $updatedSections[1]->title());
     }
 
-    public function testUnknownSectionIdIsIgnored(): void
+    public function testRemoveSectionWhenNotInRequest(): void
     {
         $repository = PreventionPlanRepositoryMother::inMemory();
 
@@ -77,15 +78,16 @@ class UpdatePreventionPlanSectionsServiceTest extends TestCase
         $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
 
         $version = $preventionPlan->currentPlanVersion();
-        $originalTitle = $version->sections()->toArray()[0]->title();
+        $sections = $version->sections()->toArray();
+        $this->assertCount(2, $sections);
 
         $request = new UpdatePreventionPlanSectionsRequest(
             preventionPlanId: $preventionPlan->id(),
             sections: [
                 new SectionData(
-                    sectionId: \App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSectionId::generate(),
-                    title: 'No debería aplicarse',
-                    content: 'No debería aplicarse',
+                    sectionId: $sections[0]->id(),
+                    title: $sections[0]->title(),
+                    content: $sections[0]->content(),
                 ),
             ],
         );
@@ -96,7 +98,50 @@ class UpdatePreventionPlanSectionsServiceTest extends TestCase
         $this->assertNotNull($persisted);
 
         $updatedSections = $persisted->sections()->toArray();
-        $this->assertEquals($originalTitle, $updatedSections[0]->title());
+        $this->assertCount(1, $updatedSections);
+    }
+
+    public function testAddNewSectionWhenSectionIdIsNull(): void
+    {
+        $repository = PreventionPlanRepositoryMother::inMemory();
+
+        $preventionPlan = PreventionPlanMother::withGeneratedSections('Plan 1', 'plan-1', 'account-id-test');
+        $repository->add($preventionPlan);
+
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+
+        $version = $preventionPlan->currentPlanVersion();
+        $sections = $version->sections()->toArray();
+        $this->assertCount(2, $sections);
+
+        $request = new UpdatePreventionPlanSectionsRequest(
+            preventionPlanId: $preventionPlan->id(),
+            sections: [
+                new SectionData(
+                    sectionId: $sections[0]->id(),
+                    title: $sections[0]->title(),
+                    content: $sections[0]->content(),
+                ),
+                new SectionData(
+                    sectionId: $sections[1]->id(),
+                    title: $sections[1]->title(),
+                    content: $sections[1]->content(),
+                ),
+                new SectionData(
+                    sectionId: null,
+                    title: 'Nueva sección',
+                    content: 'Contenido nuevo',
+                ),
+            ],
+        );
+
+        $this->createSUT($repository)($request, $user);
+
+        $persisted = $repository->find($preventionPlan->id());
+        $this->assertNotNull($persisted);
+
+        $updatedSections = $persisted->sections()->toArray();
+        $this->assertCount(3, $updatedSections);
     }
 
     public function testIsHandled(): void

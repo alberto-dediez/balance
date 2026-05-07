@@ -112,17 +112,21 @@ migrations/
    - Constructor with `private {Source} ${source}` and `private {Target}Id ${targetId}`
    - Simple getters for both
 4. **Create collection wrapper** (`{Source}{Target}s.php`)
-   - Class-level PHPDoc: `/** @extends ArrayCollection<int, {Source}{Target}Link> */`
-   - Extends: `Doctrine\Common\Collections\ArrayCollection`
-   - Methods: `removeById()`, `ids()`, `has()`, and `contains()`
-   - `ids()` return type PHPDoc: `/** @return {Target}Id[] */`, iterates over `$this->toArray()`
-   - `has({Target}Id $id): bool`: checks if the ID exists in `$this->toArray()`
-   - `contains(mixed $element): bool`: overrides parent to delegate to `has()` if `$element instanceof {Target}Id`, otherwise calls `parent::contains($element)`
+   - Class-level PHPDoc: `/** @implements \IteratorAggregate<int, {Source}{Target}Link> */`
+   - Implements: `\IteratorAggregate, \Countable` (composition over inheritance — does NOT extend `ArrayCollection`)
+   - Private property: `/** @var Collection<int, {Source}{Target}Link> $items */ private Collection $items;`
+   - Constructor: `/** @param iterable<int, {Source}{Target}Link> $items */ public function __construct(iterable &$items)` — takes by reference, normalizes to `ArrayCollection` if not already a `Collection`, assigns to `$this->items`
+   - Methods: `removeById()`, `ids()`, `has()`, `count()`, `getIterator()`
+   - `ids()` return type PHPDoc: `/** @return {Target}Id[] */`, iterates over `$this->items->toArray()`
+   - `has({Target}Id $id): bool`: checks if the ID exists in `$this->items->toArray()`
+   - `removeById({Target}Id $id): void`: iterates `$this->items->toArray()`, calls `$this->items->removeElement()` on match
+   - `count(): int`: delegates to `$this->items->count()`
+   - `getIterator(): \Traversable`: delegates to `$this->items->getIterator()`
 5. **Modify source aggregate** (`{Source}.php`)
    - Add property typed as `iterable` (NOT the wrapper class): `private iterable ${target_pluralized} = []`
-     - **Why `iterable`**: Doctrine hydrates the field with its own `PersistentCollection`; the getter wraps it lazily into the domain wrapper on first access
-   - Add PHPDoc on the constructor parameter: `/** @var iterable<{Source}{Target}Link>|{Source}{Target}s */`
-   - Add public getter: `{target_pluralized}(): {Source}{Target}s` (lazy-wraps iterable in collection on first call)
+     - **Why `iterable`**: Doctrine hydrates the field with its own `PersistentCollection`; the property must remain `iterable` so Doctrine can hydrate it freely
+   - Add PHPDoc above the property: `/** @var iterable<int, {Source}{Target}Link> */`
+   - Add public getter: `{target_pluralized}(): {Source}{Target}s` — creates a new wrapper on every call: `return new {Source}{Target}s($this->{target_pluralized});`. The by-reference constructor normalizes the property to a `Collection` on first call, so subsequent wrappers still point to the same underlying `PersistentCollection`
    - Add public getter: `{target}Ids(): array` with `/** @return {Target}Id[] */`
    - Add `link{Target}({Target}Id $id)`: guard with `has()` check before firing event
    - Add `unlink{Target}({Target}Id $id)`: guard with `!has()` check before firing event (symmetric with link)
@@ -181,8 +185,9 @@ migrations/
 
 - **Link entity in domain** (not infrastructure): The link is a domain concept because it's part of the aggregate boundary and event sourcing
 - **ID-only references**: Collection wrapper exposes only target IDs, never full aggregate objects — maintains aggregate isolation
-- **Lazy initialization**: `${target_pluralized}()` getter wraps the Doctrine `PersistentCollection` (or plain array) in the domain wrapper only on first access; the property is typed as `iterable` so Doctrine can hydrate it freely without touching domain code
-- **ArrayCollection wrapper**: Collection wrapper extends Doctrine's `ArrayCollection` to avoid `TypeError`s during Doctrine's `UnitOfWork` flush operations. This is a pragmatic DDD trade-off to ensure hydration works seamlessly.
+- **Composition over inheritance**: Collection wrapper implements `\IteratorAggregate, \Countable` and wraps a `Collection` internally — it does NOT extend `ArrayCollection`. This keeps the domain class free of Doctrine coupling while still delegating to the underlying `PersistentCollection`.
+- **By-reference constructor normalization**: The wrapper constructor takes `iterable &$items` by reference and converts it to an `ArrayCollection` if it is not already a `Collection`. This mutates the aggregate's property in-place on first access, so the Doctrine `PersistentCollection` is preserved and `removeElement()` calls continue to be tracked by Doctrine's `UnitOfWork`.
+- **New wrapper per call, same underlying collection**: The getter returns `new {Source}{Target}s($this->{target_pluralized})` on every call. Because the constructor normalizes the reference on the first call, all subsequent wrapper instances share the same underlying `Collection`, so mutations (add/remove) remain consistent.
 - **Symmetric guards**: Both `link{Target}()` and `unlink{Target}()` guard against no-ops — link checks `has()` before firing, unlink checks `!has()` before firing. This prevents spurious domain events when calling them directly (outside of `sync{Target}s`)
 - **Sync method**: Optional but recommended — allows register/update to accept `{target}Ids` and sync links automatically via link/unlink events
 - **Filter uses VO, not string**: `{Source}Filter::${target}Id` is typed `?{Target}Id`, never `?string`. The VO allows `equals()` in InMemory and is cast to `(string)` only at the Doctrine `setParameter()` boundary
@@ -201,7 +206,7 @@ Skill will:
 1. Generate CriticalPointServiceCategoryLinked.php event
 2. Generate CriticalPointServiceCategoryUnlinked.php event
 3. Generate CriticalPointServiceCategoryLink.php entity
-4. Generate CriticalPointServiceCategories.php wrapper
+4. Generate CriticalPointServiceCategories.php wrapper (implements \IteratorAggregate, \Countable — wraps Collection internally via by-reference constructor)
 5. Modify CriticalPoint.php:
    - Add $serviceCategories property
    - Add serviceCategories(): CriticalPointServiceCategories getter
@@ -238,7 +243,7 @@ Skill will:
 ## Caveats & Limitations
 
 - **Same Bounded Context only**: Cross-context relationships must use ID references, not full aggregates
-- **Pragmatic Doctrine coupling**: The wrapper extends `ArrayCollection` to prevent hydration type errors, representing a pragmatic trade-off between strict DDD isolation and framework compatibility
+- **Pragmatic Doctrine coupling**: The wrapper uses composition (implements `\IteratorAggregate, \Countable`) and normalizes the aggregate's `iterable` property to a `Collection` via a by-reference constructor. This preserves the Doctrine `PersistentCollection` reference so `UnitOfWork` tracking continues to work without extending any Doctrine class.
 - **Many-to-many only**: One-to-many and one-to-one are out of scope; implement those patterns manually if needed
 - **No cascade operations from target at DB level**: The join table uses ON DELETE CASCADE only for the source side. Removing a `{Target}` does not automatically unlink at the DB level — that is handled by `Unlink{Target}Subscriber` at the domain level
 

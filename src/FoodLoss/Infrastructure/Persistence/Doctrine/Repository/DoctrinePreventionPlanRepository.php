@@ -119,6 +119,8 @@ class DoctrinePreventionPlanRepository implements PreventionPlanRepository
 
         match ($filter->orderBy) {
             'registeredAt' => $qb->orderBy('e.registeredAt', $way),
+            'updatedAt' => $qb->orderBy('e.updatedAt', $way),
+            'name' => $qb->orderBy('e.name', $way),
             default => $qb->orderBy('e.name', $way),
         };
 

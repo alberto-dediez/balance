@@ -49,7 +49,8 @@ class TcpdfPreventionPlanPdfGenerator implements PreventionPlanPdfGenerator
 
             $this->setFont($pdf, 11, self::FONT_STYLE_REGULAR, self::COLOR_NEUTRAL_900);
 
-            $html = $this->markdownToHtml($section->content());
+            $html = '<h1>' . $section->title() . '</h1>';
+            $html .= $this->markdownToHtml($section->content());
 
             $this->secureMultiCell($pdf, $html, 178, function (\TCPDF $pdf): void {
                 $pdf->AddPage();

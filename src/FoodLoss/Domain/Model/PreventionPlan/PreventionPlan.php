@@ -564,9 +564,36 @@ class PreventionPlan implements \Stringable
         );
     }
 
+    public function removeSection(PreventionPlanSectionId $sectionId): void
+    {
+        $version = $this->currentPlanVersion();
+
+        if (null === $version->sections()->findById($sectionId)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new PreventionPlanSectionRemoved(
+                preventionPlanId: $this->id(),
+                versionNumber: $this->currentVersion,
+                sectionId: $sectionId,
+            ),
+        );
+    }
+
     public function sections(): PreventionPlanSections
     {
         return $this->currentPlanVersion()->sections();
+    }
+
+    public function applyPreventionPlanSectionRemoved(PreventionPlanSectionRemoved $event): void
+    {
+        $version = $this->versions()->findByVersionNumber($event->versionNumber());
+        if (null === $version) {
+            return;
+        }
+
+        $version->sections()->removeById($event->sectionId());
     }
 
     public function applyPreventionPlanVersionSectionsCleared(PreventionPlanVersionSectionsCleared $event): void
@@ -586,7 +613,7 @@ class PreventionPlan implements \Stringable
             return;
         }
 
-        $existing = $version->sections()->findByOrder($event->sectionOrder());
+        $existing = $version->sections()->findById($event->sectionId());
         if (null !== $existing) {
             $existing->update($event->title(), $event->content());
 

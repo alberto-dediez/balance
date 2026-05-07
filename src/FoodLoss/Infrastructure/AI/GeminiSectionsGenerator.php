@@ -149,6 +149,8 @@ class GeminiSectionsGenerator implements SectionsGenerator
         JobProgressTracker::instance()->advance((string) new TranslatableMessage('Revisando contenidos'));
         JobProgressTracker::instance()->advance((string) new TranslatableMessage('Revisando contenidos'));
 
+        $plan->clearSections();
+
         foreach ($response as $order => $section) {
             $title = isset($section['title']) && is_string($section['title']) ? $section['title'] : '';
             $content = isset($section['content']) && is_string($section['content']) ? $section['content'] : '';

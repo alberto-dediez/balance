@@ -16,12 +16,12 @@ export default class extends Controller {
 
         if (!collection) return;
 
-        const temp = document.createElement('tbody');
+        const temp = document.createElement('template');
         temp.innerHTML = prototype;
 
-        const newRow = temp.firstElementChild;
-        if (newRow) {
-            collection.appendChild(newRow);
+        const newEl = temp.content.firstElementChild;
+        if (newEl) {
+            collection.appendChild(newEl);
             this.indexValue++;
         }
     }

@@ -15,7 +15,7 @@ final class PreventionPlanVersion implements Translatable
     /** @var iterable<ProposedAction>|ProposedActions */
     private iterable $proposedActions = [];
 
-    /** @var iterable<PreventionPlanSection>|PreventionPlanSections */
+    /** @var iterable<int, PreventionPlanSection> */
     private iterable $sections = [];
 
     /** @var iterable<PreventionPlanVersionTranslation>|Translations */
@@ -181,14 +181,6 @@ final class PreventionPlanVersion implements Translatable
 
     public function sections(): PreventionPlanSections
     {
-        if ($this->sections instanceof PreventionPlanSections) {
-            return $this->sections;
-        }
-
-        $this->sections = new PreventionPlanSections(
-            array_values(iterator_to_array($this->sections)),
-        );
-
-        return $this->sections;
+        return new PreventionPlanSections($this->sections);
     }
 }

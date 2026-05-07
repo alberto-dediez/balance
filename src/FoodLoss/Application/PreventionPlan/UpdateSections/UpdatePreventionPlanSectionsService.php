@@ -41,11 +41,34 @@ class UpdatePreventionPlanSectionsService implements CommandHandler
         $version = $preventionPlan->currentPlanVersion();
         $sections = $version->sections()->toArray();
 
-        foreach ($request->sections as $sectionData) {
-            foreach ($sections as $section) {
-                if ($section->id()->equals($sectionData->sectionId)) {
-                    $section->update($sectionData->title, $sectionData->content);
+        foreach ($sections as $section) {
+            $found = false;
+            foreach ($request->sections as $sectionData) {
+                if (null !== $sectionData->sectionId && $section->id()->equals($sectionData->sectionId)) {
+                    $found = true;
                     break;
+                }
+            }
+            if (!$found) {
+                $preventionPlan->removeSection($section->id());
+            }
+        }
+
+        $maxOrder = 0;
+        foreach ($sections as $section) {
+            $maxOrder = max($maxOrder, $section->sectionOrder());
+        }
+
+        $newSectionOffset = 0;
+        foreach ($request->sections as $sectionData) {
+            if (null === $sectionData->sectionId) {
+                $preventionPlan->addSection($sectionData->title, $sectionData->content, $maxOrder + ++$newSectionOffset);
+            } else {
+                foreach ($sections as $section) {
+                    if ($section->id()->equals($sectionData->sectionId)) {
+                        $section->update($sectionData->title, $sectionData->content);
+                        break;
+                    }
                 }
             }
         }

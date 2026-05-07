@@ -22,8 +22,8 @@ class UpdatePreventionPlanSectionsType extends AbstractType
             ->add('sections', CollectionType::class, [
                 'entry_type' => PreventionPlanSectionType::class,
                 'label' => false,
-                'allow_add' => false,
-                'allow_delete' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
                 'by_reference' => false,
             ])
             ->add('save', SubmitType::class, [

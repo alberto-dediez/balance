@@ -9,8 +9,8 @@ use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSectionId;
 final class SectionData
 {
     public function __construct(
-        public PreventionPlanSectionId $sectionId,
-        public string $title,
-        public string $content,
+        public ?PreventionPlanSectionId $sectionId = null,
+        public string $title = '',
+        public string $content = '',
     ) {}
 }

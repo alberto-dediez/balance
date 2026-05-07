@@ -32,7 +32,7 @@ class PreventionPlanSectionType extends AbstractType
         $builder->get('sectionId')->addModelTransformer(
             new CallbackTransformer(
                 fn(?PreventionPlanSectionId $id): string => null !== $id ? (string) $id : '',
-                fn(string $value): PreventionPlanSectionId => new PreventionPlanSectionId($value),
+                fn(?string $value): ?PreventionPlanSectionId => !empty($value) ? new PreventionPlanSectionId($value) : null,
             ),
         );
     }
