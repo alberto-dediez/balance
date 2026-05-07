@@ -1,0 +1,4 @@
+{% trans with {
+    '{employee}': event.employeeId | employee_name,
+    '{actor}': element.userId | user_name
+} %}Se ha desvinculado el empleado {employee} de su usuario por el usuario {actor}{% endtrans %}

@@ -1,0 +1,4 @@
+{% trans with {
+    '{importation}': event.importationId,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado la configuración de la importación {importation} por el usuario {user}{% endtrans %}

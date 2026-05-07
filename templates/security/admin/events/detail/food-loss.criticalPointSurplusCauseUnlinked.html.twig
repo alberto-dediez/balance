@@ -1,0 +1,5 @@
+{% trans with {
+    '{criticalPoint}': event.criticalPointId | critical_point_name,
+    '{surplusCause}': event.surplusCauseId | surplus_cause_name,
+    '{user}': element.userId | user_name
+} %}Se ha desvinculado la causa de excedente {surplusCause} del punto crítico {criticalPoint} por el usuario {user}{% endtrans %}

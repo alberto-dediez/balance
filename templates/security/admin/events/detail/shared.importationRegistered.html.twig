@@ -1,0 +1,5 @@
+{% trans with {
+    '{name}': event.name,
+    '{type}': event.type,
+    '{user}': element.userId | user_name
+} %}Se ha registrado la importación "{name}" (tipo: {type}) por el usuario {user}{% endtrans %}

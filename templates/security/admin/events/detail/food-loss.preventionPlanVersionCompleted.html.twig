@@ -1,0 +1,5 @@
+{% trans with {
+    '{preventionPlan}': event.preventionPlanId,
+    '{version}': event.versionNumber,
+    '{user}': element.userId | user_name
+} %}Se ha completado la versión {version} del plan de prevención {preventionPlan} por el usuario {user}{% endtrans %}
