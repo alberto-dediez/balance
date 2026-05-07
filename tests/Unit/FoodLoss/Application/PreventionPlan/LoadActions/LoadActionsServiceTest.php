@@ -8,15 +8,19 @@ use App\FoodLoss\Application\PreventionPlan\LoadActions\LoadActionsRequest;
 use App\FoodLoss\Application\PreventionPlan\LoadActions\LoadActionsService;
 use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersionLoaded;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersionStatus;
 use App\FoodLoss\Domain\Model\PreventionPlan\ProposedActionAdded;
+use App\FoodLoss\Domain\Model\PreventionPlan\ProposedActionRemoved;
 use App\FoodLoss\Domain\Model\PreventionPlan\ProposedActionsLoader;
 use App\FoodLoss\Domain\Model\PreventionPlan\ProposedActionSuggestion;
 use App\FoodLoss\Infrastructure\AI\FakeProposedActionsLoader;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint\CriticalPointMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepositoryMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -107,6 +111,33 @@ class LoadActionsServiceTest extends TestCase
         $this->assertTrue($plan->currentPlanVersion()->proposedActions()->has($propertyWithAction, $existingActionId, $criticalPointId));
     }
 
+    public function testRemovesProposedActionsAlreadyImplementedInCriticalPoint(): void
+    {
+        $propertyId = new PropertyId('property-1');
+        $implementedActionId = new ActionId('action-implemented');
+        $criticalPointId = CriticalPointId::generate();
+
+        $criticalPointRepository = CriticalPointRepositoryMother::inMemory();
+        $criticalPoint = CriticalPointMother::withImplementedAction($propertyId, $criticalPointId, $implementedActionId);
+        $criticalPointRepository->add($criticalPoint);
+
+        $repository = PreventionPlanRepositoryMother::inMemory();
+        $plan = PreventionPlanMother::withPropertyIds([$propertyId]);
+        $plan->addProposedAction($propertyId, $implementedActionId, $criticalPointId);
+        $repository->add($plan);
+
+        DomainEventPublisher::instance()->reset();
+        $this->spy = new SpyDomainEventSubscriber();
+
+        $this->createSUT($repository, null, $criticalPointRepository)(new LoadActionsRequest($plan->id()), UserMother::adminUser());
+
+        $this->assertFalse($plan->currentPlanVersion()->proposedActions()->has($propertyId, $implementedActionId, $criticalPointId));
+
+        $events = $this->spy->events();
+        $removedEvents = array_values(array_filter($events, fn($e) => $e instanceof ProposedActionRemoved));
+        $this->assertCount(1, $removedEvents);
+    }
+
     public function testDoesNothingWhenPlanNotFound(): void
     {
         $repository = PreventionPlanRepositoryMother::inMemory();
@@ -120,11 +151,12 @@ class LoadActionsServiceTest extends TestCase
         $this->assertEmpty($this->spy->events());
     }
 
-    private function createSUT(PreventionPlanRepository $repository, ?ProposedActionsLoader $loader = null): LoadActionsService
+    private function createSUT(PreventionPlanRepository $repository, ?ProposedActionsLoader $loader = null, ?CriticalPointRepository $criticalPointRepository = null): LoadActionsService
     {
         return new LoadActionsService(
             preventionPlanRepository: $repository,
             proposedActionsLoader: $loader ?? $this->loaderReturning([]),
+            criticalPointRepository: $criticalPointRepository ?? CriticalPointRepositoryMother::inMemory(),
         );
     }
 

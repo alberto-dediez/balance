@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Domain\Model\CriticalPoint;
 
+use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
@@ -84,6 +85,24 @@ class CriticalPointMother
             transformation: new PriorityAssessment(Priority::Transformation, false),
             composting: new PriorityAssessment(Priority::Composting, false),
             serviceCategoryIds: array_values($ids),
+        );
+
+        return $criticalPoint;
+    }
+
+    public static function withImplementedAction(PropertyId $propertyId, CriticalPointId $criticalPointId, ActionId $actionId): CriticalPoint
+    {
+        $criticalPoint = new CriticalPoint(id: $criticalPointId);
+        $criticalPoint->register(
+            name: 'critical-point-' . random_int(100, 999),
+            propertyId: $propertyId,
+            accountId: AccountId::generate(),
+            supplyChainStage: SupplyChainStage::Receiving,
+            prevention: new PriorityAssessment(Priority::Prevention, true, actionIds: [$actionId]),
+            humanDonation: new PriorityAssessment(Priority::HumanDonation, false),
+            animalFeed: new PriorityAssessment(Priority::AnimalFeed, false),
+            transformation: new PriorityAssessment(Priority::Transformation, false),
+            composting: new PriorityAssessment(Priority::Composting, false),
         );
 
         return $criticalPoint;

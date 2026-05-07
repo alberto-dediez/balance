@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Application\PreventionPlan\LoadActions;
 
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointFilter;
+use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
 use App\FoodLoss\Domain\Model\PreventionPlan\ProposedActionsLoader;
@@ -23,6 +25,7 @@ class LoadActionsService implements CommandHandler
     public function __construct(
         private PreventionPlanRepository $preventionPlanRepository,
         private ProposedActionsLoader $proposedActionsLoader,
+        private CriticalPointRepository $criticalPointRepository,
     ) {}
 
     public function isHandled(Command $command): bool
@@ -41,8 +44,35 @@ class LoadActionsService implements CommandHandler
         $version = $preventionPlan->currentPlanVersion();
         $existingActions = $version->proposedActions()->toArray();
 
+        $criticalPointsByProperty = [];
+        foreach ($existingActions as $proposedAction) {
+            $propertyIdStr = (string) $proposedAction->propertyId();
+            if (!isset($criticalPointsByProperty[$propertyIdStr])) {
+                $criticalPointsByProperty[$propertyIdStr] = $this->criticalPointRepository->findByFilter(
+                    new CriticalPointFilter(propertyId: $proposedAction->propertyId(), limit: 1000),
+                );
+            }
+        }
+
+        foreach ($existingActions as $proposedAction) {
+            $criticalPoints = $criticalPointsByProperty[(string) $proposedAction->propertyId()] ?? [];
+            foreach ($criticalPoints as $criticalPoint) {
+                if (
+                    $criticalPoint->id()->equals($proposedAction->criticalPointId())
+                    && $criticalPoint->actions()->has($proposedAction->actionId())
+                ) {
+                    $preventionPlan->removeProposedAction(
+                        $proposedAction->propertyId(),
+                        $proposedAction->actionId(),
+                        $proposedAction->criticalPointId(),
+                    );
+                    break;
+                }
+            }
+        }
+
         $propertiesWithActions = [];
-        foreach ($existingActions as $action) {
+        foreach ($version->proposedActions()->toArray() as $action) {
             $propertiesWithActions[(string) $action->propertyId()] = true;
         }
 
