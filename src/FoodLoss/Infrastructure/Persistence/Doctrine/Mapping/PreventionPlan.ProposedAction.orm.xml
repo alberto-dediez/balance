@@ -7,10 +7,9 @@
     <entity name="App\FoodLoss\Domain\Model\PreventionPlan\ProposedAction"
             table="prevention_plan_proposed_actions">
 
-        <id name="preventionPlanVersion" association-key="true"/>
-        <id name="propertyId" type="property_id" column="property_id"/>
-        <id name="actionId" type="action_id" column="action_id"/>
-        <id name="criticalPointId" type="critical_point_id" column="critical_point_id"/>
+        <id name="id" type="proposed_action_id" column="id">
+            <generator strategy="NONE"/>
+        </id>
 
         <many-to-one field="preventionPlanVersion"
                      target-entity="App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersion"
@@ -20,6 +19,15 @@
                          nullable="false"
                          on-delete="CASCADE"/>
         </many-to-one>
+
+        <field name="propertyId" type="property_id" column="property_id" nullable="false"/>
+        <field name="actionId" type="action_id" column="action_id" nullable="false"/>
+        <field name="criticalPointId" type="critical_point_id" column="critical_point_id" nullable="false"/>
+
+        <unique-constraints>
+            <unique-constraint columns="prevention_plan_version_id,property_id,action_id,critical_point_id"
+                               name="uq_prevention_plan_proposed_action"/>
+        </unique-constraints>
 
     </entity>
 

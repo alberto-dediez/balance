@@ -35,6 +35,7 @@ doctrine:
             prevention_plan_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\PreventionPlanIdType
             prevention_plan_version_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\PreventionPlanVersionIdType
             prevention_plan_section_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\PreventionPlanSectionIdType
+            proposed_action_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ProposedActionIdType
             packaging_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\PackagingIdType
             protocol_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ProtocolIdType
             doggy_bag_sign_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DoggyBagSignIdType

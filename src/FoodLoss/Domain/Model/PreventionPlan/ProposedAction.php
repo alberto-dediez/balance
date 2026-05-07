@@ -8,14 +8,20 @@ use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\Property\Domain\Model\Property\PropertyId;
 
-final readonly class ProposedAction
+final class ProposedAction
 {
     public function __construct(
+        private ProposedActionId $id,
         private PreventionPlanVersion $preventionPlanVersion,
         private PropertyId $propertyId,
         private ActionId $actionId,
         private CriticalPointId $criticalPointId,
     ) {}
+
+    public function id(): ProposedActionId
+    {
+        return $this->id;
+    }
 
     public function preventionPlanVersion(): PreventionPlanVersion
     {

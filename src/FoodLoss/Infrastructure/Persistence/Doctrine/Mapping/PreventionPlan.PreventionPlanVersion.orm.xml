@@ -30,9 +30,10 @@
 
         <one-to-many field="proposedActions"
                      target-entity="App\FoodLoss\Domain\Model\PreventionPlan\ProposedAction"
-                     mapped-by="preventionPlanVersion">
+                     mapped-by="preventionPlanVersion"
+                     orphan-removal="true">
             <cascade>
-                <cascade-all/>
+                <cascade-persist />
             </cascade>
         </one-to-many>
 

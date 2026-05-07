@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\Collection;
 /** @implements \IteratorAggregate<int, PreventionPlanSection> */
 final class PreventionPlanSections implements \IteratorAggregate, \Countable
 {
-    /** @var Collection<int, PreventionPlanSection> $items */
+    /** @var Collection<int, PreventionPlanSection> */
     private Collection $items;
 
     /** @param iterable<int, PreventionPlanSection> $items */

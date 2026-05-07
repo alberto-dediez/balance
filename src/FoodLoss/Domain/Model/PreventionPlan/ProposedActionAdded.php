@@ -18,6 +18,7 @@ final class ProposedActionAdded extends DomainEvent
     public function __construct(
         private readonly PreventionPlanId $preventionPlanId,
         private readonly int $versionNumber,
+        private readonly ProposedActionId $proposedActionId,
         private readonly PropertyId $propertyId,
         private readonly ActionId $actionId,
         private readonly CriticalPointId $criticalPointId,
@@ -35,6 +36,11 @@ final class ProposedActionAdded extends DomainEvent
     public function versionNumber(): int
     {
         return $this->versionNumber;
+    }
+
+    public function proposedActionId(): ProposedActionId
+    {
+        return $this->proposedActionId;
     }
 
     public function propertyId(): PropertyId
@@ -62,6 +68,7 @@ final class ProposedActionAdded extends DomainEvent
         return [
             'preventionPlanId' => (string) $this->preventionPlanId,
             'versionNumber' => $this->versionNumber,
+            'proposedActionId' => (string) $this->proposedActionId,
             'propertyId' => (string) $this->propertyId,
             'actionId' => (string) $this->actionId,
             'criticalPointId' => (string) $this->criticalPointId,
@@ -76,6 +83,7 @@ final class ProposedActionAdded extends DomainEvent
         return new ProposedActionAdded(
             preventionPlanId: new PreventionPlanId($payload['preventionPlanId']),
             versionNumber: (int) $payload['versionNumber'],
+            proposedActionId: !empty($payload['proposedActionId']) ? new ProposedActionId($payload['proposedActionId']) : ProposedActionId::generate(),
             propertyId: new PropertyId($payload['propertyId']),
             actionId: new ActionId($payload['actionId']),
             criticalPointId: !empty($payload['criticalPointId']) ? new CriticalPointId($payload['criticalPointId']) : CriticalPointId::generate(),

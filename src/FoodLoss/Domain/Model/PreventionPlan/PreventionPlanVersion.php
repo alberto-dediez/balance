@@ -12,7 +12,7 @@ use App\Shared\Domain\Model\Locale\Translations;
 
 final class PreventionPlanVersion implements Translatable
 {
-    /** @var iterable<ProposedAction>|ProposedActions */
+    /** @var iterable<int, ProposedAction> */
     private iterable $proposedActions = [];
 
     /** @var iterable<int, PreventionPlanSection> */
@@ -168,15 +168,7 @@ final class PreventionPlanVersion implements Translatable
 
     public function proposedActions(): ProposedActions
     {
-        if ($this->proposedActions instanceof ProposedActions) {
-            return $this->proposedActions;
-        }
-
-        $this->proposedActions = new ProposedActions(
-            array_values(iterator_to_array($this->proposedActions)),
-        );
-
-        return $this->proposedActions;
+        return new ProposedActions($this->proposedActions);
     }
 
     public function sections(): PreventionPlanSections

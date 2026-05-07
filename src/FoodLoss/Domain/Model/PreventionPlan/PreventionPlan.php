@@ -209,6 +209,7 @@ class PreventionPlan implements \Stringable
                             new ProposedActionAdded(
                                 preventionPlanId: $this->id(),
                                 versionNumber: $newVersionNumber,
+                                proposedActionId: ProposedActionId::generate(),
                                 propertyId: $proposedAction->propertyId(),
                                 actionId: $proposedAction->actionId(),
                                 criticalPointId: $proposedAction->criticalPointId(),
@@ -284,6 +285,7 @@ class PreventionPlan implements \Stringable
             new ProposedActionAdded(
                 preventionPlanId: $this->id(),
                 versionNumber: $this->currentVersion,
+                proposedActionId: ProposedActionId::generate(),
                 propertyId: $propertyId,
                 actionId: $actionId,
                 criticalPointId: $criticalPointId,
@@ -640,6 +642,7 @@ class PreventionPlan implements \Stringable
 
         $version->proposedActions()->add(
             new ProposedAction(
+                id: $event->proposedActionId(),
                 preventionPlanVersion: $version,
                 propertyId: $event->propertyId(),
                 actionId: $event->actionId(),
