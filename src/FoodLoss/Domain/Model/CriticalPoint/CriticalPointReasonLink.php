@@ -7,13 +7,19 @@ namespace App\FoodLoss\Domain\Model\CriticalPoint;
 use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\Reason\ReasonId;
 
-final readonly class CriticalPointReasonLink
+final class CriticalPointReasonLink
 {
     public function __construct(
+        private CriticalPointReasonLinkId $id,
         private CriticalPoint $criticalPoint,
         private ReasonId $reasonId,
         private Priority $priority,
     ) {}
+
+    public function id(): CriticalPointReasonLinkId
+    {
+        return $this->id;
+    }
 
     public function criticalPoint(): CriticalPoint
     {

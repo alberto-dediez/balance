@@ -21,11 +21,10 @@ class ReasonIdType extends AggregateRootIdType
     {
         $resolver->setDefaults([
             'class' => ReasonId::class,
-            'action_priority' => null,
         ]);
 
         $resolver->setNormalizer('choices', function (Options $options, $value): array {
-            $filter = new ReasonFilter(priority: $options['action_priority'] ?? null, limit: 0);
+            $filter = new ReasonFilter(limit: 0);
 
             $reasons = $this->reasonRepository->findByFilter($filter);
 

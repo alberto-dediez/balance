@@ -7,7 +7,6 @@ namespace App\Tests\Unit\FoodLoss\Application\Reason\Register;
 use App\FoodLoss\Application\Reason\ReasonAuthorizer;
 use App\FoodLoss\Application\Reason\Register\RegisterReasonRequest;
 use App\FoodLoss\Application\Reason\Register\RegisterReasonService;
-use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\Reason\ReasonRegistered;
 use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -38,7 +37,6 @@ class RegisterReasonServiceTest extends TestCase
 
         $request = new RegisterReasonRequest(
             description: 'Reason 1',
-            priority: Priority::Prevention,
         );
 
         $result = $sut($request, UserMother::adminUser());

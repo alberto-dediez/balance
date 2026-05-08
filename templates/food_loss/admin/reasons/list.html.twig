@@ -9,8 +9,6 @@
             'sortable': true,
             'sortableBy': 'description'
         }, {
-            'label': 'Prioridad' | trans
-        }, {
             'label': 'Fecha de registro' | trans,
             'sortable': true,
             'sortableBy': 'registeredAt'
@@ -25,7 +23,6 @@
 
     <twig:List:Table :columns="columns" :elements="reasons" :bulkForm="bulkForm">
         <td>{{ element.description }}</td>
-        <td>{{ element.priority.value | trans({}, 'priorityType') }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>{{ element.updatedAt ? element.updatedAt | date('d/m/Y') : '' }}</td>
         <td>

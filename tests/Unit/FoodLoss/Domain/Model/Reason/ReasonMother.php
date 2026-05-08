@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Domain\Model\Reason;
 
-use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\Reason\Reason;
 use App\FoodLoss\Domain\Model\Reason\ReasonId;
 
@@ -34,12 +33,11 @@ class ReasonMother
     public static function from(
         string $description,
         string $id,
-        Priority $priority = Priority::Prevention,
     ): Reason {
         $reason = new Reason(
             id: new ReasonId($id),
         );
-        $reason->register($description, $priority);
+        $reason->register($description);
 
         return $reason;
     }

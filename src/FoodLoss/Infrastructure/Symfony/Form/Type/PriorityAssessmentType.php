@@ -36,7 +36,6 @@ class PriorityAssessmentType extends AbstractType
             'label' => 'Motivos',
             'multiple' => true,
             'required' => false,
-            'action_priority' => $options['action_priority'],
             'row_attr' => [
                 'data-controller' => 'showable',
                 'data-showable-selector-value' => '[name$="[' . $builder->getName() . '][isPossible]"]',

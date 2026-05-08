@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Domain\Model\Reason;
 
-use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\Reason\Reason;
 use App\FoodLoss\Domain\Model\Reason\ReasonId;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -23,7 +22,6 @@ class ReasonTest extends TestCase
         $reason = new Reason(
             id: ReasonId::generate(),
             description: 'reason-description',
-            priority: Priority::Prevention,
         );
 
         $this->assertCount(0, $reason->translations());
@@ -36,7 +34,6 @@ class ReasonTest extends TestCase
         $reason = new Reason(
             id: ReasonId::generate(),
             description: 'reason-description',
-            priority: Priority::Prevention,
         );
         $reason->translate('translated-description-en', Locale::English);
         $reason->translate('translated-description-it', Locale::Italian);
@@ -50,7 +47,6 @@ class ReasonTest extends TestCase
         $reason = new Reason(
             id: ReasonId::generate(),
             description: 'reason-description',
-            priority: Priority::Prevention,
         );
         $reason->translate('translated-description-en', Locale::English);
         $reason->translate('translated-description-it', Locale::Italian);

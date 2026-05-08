@@ -11,7 +11,6 @@
         </id>
 
         <field name="description" type="string" length="1024" nullable="false"/>
-        <field name="priority" type="string" enum-type="App\FoodLoss\Domain\Model\Action\Priority" nullable="false"/>
         <field name="removed" type="boolean" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>

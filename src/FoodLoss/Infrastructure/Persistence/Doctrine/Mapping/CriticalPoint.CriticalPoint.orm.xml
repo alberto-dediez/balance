@@ -69,7 +69,8 @@
         <one-to-many field="reasons"
                      target-entity="App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointReasonLink"
                      mapped-by="criticalPoint"
-                     fetch="EXTRA_LAZY">
+                     fetch="EXTRA_LAZY"
+                     orphan-removal="true">
             <cascade>
                 <cascade-persist/>
                 <cascade-remove/>

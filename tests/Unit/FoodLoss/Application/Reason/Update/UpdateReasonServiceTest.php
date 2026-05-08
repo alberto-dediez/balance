@@ -7,7 +7,6 @@ namespace App\Tests\Unit\FoodLoss\Application\Reason\Update;
 use App\FoodLoss\Application\Reason\ReasonAuthorizer;
 use App\FoodLoss\Application\Reason\Update\UpdateReasonRequest;
 use App\FoodLoss\Application\Reason\Update\UpdateReasonService;
-use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
 use App\FoodLoss\Domain\Model\Reason\ReasonUpdated;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -43,7 +42,6 @@ class UpdateReasonServiceTest extends TestCase
         $request = new UpdateReasonRequest(
             reasonId: $reason->id(),
             description: 'Updated description',
-            priority: Priority::Transformation,
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -68,7 +66,6 @@ class UpdateReasonServiceTest extends TestCase
         $result = $sut->isHandled(new UpdateReasonRequest(
             reasonId: $reason->id(),
             description: 'test',
-            priority: Priority::Prevention,
         ));
 
         $this->assertTrue($result);

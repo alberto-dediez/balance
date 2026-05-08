@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\FoodLoss\Domain\Model\Reason;
 
 use App\FoodLoss\Domain\DomainEvent;
-use App\FoodLoss\Domain\Model\Action\Priority;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
@@ -16,7 +15,6 @@ final class ReasonRegistered extends DomainEvent
     public function __construct(
         private readonly ReasonId $reasonId,
         private readonly string $description,
-        private readonly Priority $priority,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -33,11 +31,6 @@ final class ReasonRegistered extends DomainEvent
         return $this->description;
     }
 
-    public function priority(): Priority
-    {
-        return $this->priority;
-    }
-
     public function aggregateRootId(): AggregateRootId
     {
         return $this->reasonId;
@@ -48,7 +41,6 @@ final class ReasonRegistered extends DomainEvent
         return [
             'reasonId' => (string) $this->reasonId,
             'description' => $this->description,
-            'priority' => $this->priority->value,
         ];
     }
 
@@ -57,13 +49,9 @@ final class ReasonRegistered extends DomainEvent
         \DateTimeImmutable $occurredOn,
         array $payload = [],
     ): static {
-        $priority = Priority::tryFrom($payload['priority']);
-        assert(null !== $priority);
-
         return new ReasonRegistered(
             reasonId: new ReasonId($payload['reasonId']),
             description: $payload['description'],
-            priority: $priority,
             id: $id,
             occurredOn: $occurredOn,
         );

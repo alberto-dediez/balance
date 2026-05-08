@@ -29,6 +29,7 @@ doctrine:
             daily_waste_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\DailyWasteIdType
             critical_point_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointIdType
             reason_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ReasonIdType
+            critical_point_reason_link_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointReasonLinkIdType
             recipient_organization_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\RecipientOrganizationIdType
             delivery_log_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DeliveryLogIdType
             donation_agreement_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DonationAgreementIdType

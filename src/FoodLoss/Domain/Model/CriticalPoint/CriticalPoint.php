@@ -386,15 +386,7 @@ class CriticalPoint implements \Stringable
 
     public function reasons(): CriticalPointReasons
     {
-        if ($this->reasons instanceof CriticalPointReasons) {
-            return $this->reasons;
-        }
-
-        $this->reasons = new CriticalPointReasons(
-            array_values(iterator_to_array($this->reasons)),
-        );
-
-        return $this->reasons;
+        return new CriticalPointReasons($this->reasons);
     }
 
     /**
@@ -416,6 +408,7 @@ class CriticalPoint implements \Stringable
                 criticalPointId: $this->id(),
                 reasonId: $reasonId,
                 priority: $priority,
+                linkId: CriticalPointReasonLinkId::generate(),
             ),
         );
     }
@@ -622,6 +615,7 @@ class CriticalPoint implements \Stringable
     public function applyCriticalPointReasonLinked(CriticalPointReasonLinked $event): void
     {
         $link = new CriticalPointReasonLink(
+            id: $event->linkId(),
             criticalPoint: $this,
             reasonId: $event->reasonId(),
             priority: $event->priority(),

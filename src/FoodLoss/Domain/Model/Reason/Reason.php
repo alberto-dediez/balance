@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Domain\Model\Reason;
 
-use App\FoodLoss\Domain\Model\Action\Priority;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\Translatable;
@@ -21,7 +20,6 @@ class Reason implements Translatable, \Stringable
     public function __construct(
         private ReasonId $id,
         private string $description = '',
-        private Priority $priority = Priority::Prevention,
         private bool $removed = false,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
@@ -44,11 +42,6 @@ class Reason implements Translatable, \Stringable
         $translation = $this->translations()->currentTranslation();
 
         return null !== $translation ? $translation->description() : $this->description;
-    }
-
-    public function priority(): Priority
-    {
-        return $this->priority;
     }
 
     public function translations(): Translations
@@ -84,14 +77,12 @@ class Reason implements Translatable, \Stringable
 
     public function register(
         string $description,
-        Priority $priority,
         ?Locale $locale = null,
     ): void {
         $this->recordApplyAndPublish(
             new ReasonRegistered(
                 reasonId: $this->id(),
                 description: $description,
-                priority: $priority,
             ),
         );
 
@@ -102,14 +93,12 @@ class Reason implements Translatable, \Stringable
 
     public function update(
         string $description,
-        Priority $priority,
         ?Locale $locale = null,
     ): void {
         $this->recordApplyAndPublish(
             new ReasonUpdated(
                 reasonId: $this->id(),
                 description: $locale instanceof Locale ? $this->description : $description,
-                priority: $priority,
             ),
         );
 
@@ -141,14 +130,12 @@ class Reason implements Translatable, \Stringable
     public function applyReasonRegistered(ReasonRegistered $event): void
     {
         $this->description = $event->description();
-        $this->priority = $event->priority();
         $this->registeredAt = $event->occurredOn();
     }
 
     public function applyReasonUpdated(ReasonUpdated $event): void
     {
         $this->description = $event->description();
-        $this->priority = $event->priority();
         $this->updatedAt = $event->occurredOn();
     }
 

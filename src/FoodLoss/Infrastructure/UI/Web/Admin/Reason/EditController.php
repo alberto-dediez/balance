@@ -38,7 +38,6 @@ class EditController extends AbstractController
         $reasonRequest = new UpdateReasonRequest(
             reasonId: $reason->id(),
             description: $reason->description(),
-            priority: $reason->priority(),
         );
 
         try {

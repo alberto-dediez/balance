@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
 use App\FoodLoss\Application\Reason\Register\RegisterReasonRequest;
-use App\FoodLoss\Infrastructure\Symfony\Form\Type\PriorityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -21,10 +20,6 @@ class RegisterReasonType extends AbstractType
         $builder
             ->add('description', TextType::class, [
                 'label' => new TranslatableMessage('Descripción'),
-                'required' => true,
-            ])
-            ->add('priority', PriorityType::class, [
-                'label' => new TranslatableMessage('Prioridad'),
                 'required' => true,
             ])
             ->add('register', SubmitType::class, [

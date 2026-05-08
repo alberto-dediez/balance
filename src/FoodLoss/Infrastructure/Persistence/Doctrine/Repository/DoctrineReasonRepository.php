@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\Doctrine\Repository;
 
-use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\Reason\Reason;
 use App\FoodLoss\Domain\Model\Reason\ReasonFilter;
 use App\FoodLoss\Domain\Model\Reason\ReasonId;
@@ -86,20 +85,10 @@ class DoctrineReasonRepository implements ReasonRepository
             ;
         }
 
-        if ($filter->priority instanceof Priority) {
-            $qb
-                ->andWhere(
-                    $qb->expr()->eq('e.priority', ':priority'),
-                )
-                ->setParameter('priority', $filter->priority->value)
-            ;
-        }
-
         $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
             'registeredAt' => $qb->orderBy('e.registeredAt', $way),
-            'priority' => $qb->orderBy('e.priority', $way),
             default => $qb->orderBy('e.description', $way),
         };
 

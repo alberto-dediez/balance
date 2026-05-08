@@ -38,7 +38,6 @@ class RegisterReasonService implements CommandHandler
         $reason = new Reason($id);
         $reason->register(
             $request->description,
-            $request->priority,
             $isDefaultLocale ? null : $locale,
         );
 

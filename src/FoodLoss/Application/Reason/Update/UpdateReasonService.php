@@ -39,7 +39,6 @@ class UpdateReasonService implements CommandHandler
 
         $reason->update(
             description: $request->description,
-            priority: $request->priority,
             locale: $isDefaultLocale ? null : $locale,
         );
 
