@@ -7,9 +7,11 @@
     <entity name="App\FoodLoss\Domain\Model\Packaging\PackagingPropertyStock"
             table="packaging_property_stocks">
 
-        <id name="packaging" association-key="true"/>
-        <id name="propertyId" type="property_id" column="property_id"/>
+        <id name="id" type="packaging_property_stock_id" column="id">
+            <generator strategy="NONE"/>
+        </id>
 
+        <field name="propertyId" type="property_id" column="property_id" nullable="false"/>
         <field name="stock" type="integer" nullable="false"/>
 
         <many-to-one field="packaging"
@@ -20,6 +22,10 @@
                          nullable="false"
                          on-delete="CASCADE"/>
         </many-to-one>
+
+        <unique-constraints>
+            <unique-constraint columns="packaging_id,property_id" name="uq_packaging_property_stock"/>
+        </unique-constraints>
 
     </entity>
 

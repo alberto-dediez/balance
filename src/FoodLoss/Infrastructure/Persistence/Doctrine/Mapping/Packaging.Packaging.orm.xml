@@ -21,9 +21,12 @@
 
         <one-to-many field="stocks"
                      target-entity="App\FoodLoss\Domain\Model\Packaging\PackagingPropertyStock"
-                     mapped-by="packaging">
+                     mapped-by="packaging"
+                     fetch="EXTRA_LAZY"
+                     orphan-removal="true">
             <cascade>
-                <cascade-all/>
+                <cascade-persist/>
+                <cascade-remove/>
             </cascade>
         </one-to-many>
     </entity>

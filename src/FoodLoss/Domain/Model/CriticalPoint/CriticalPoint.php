@@ -36,13 +36,13 @@ class CriticalPoint implements \Stringable
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $updatedAt = null,
         private ?\DateTimeImmutable $removedAt = null,
-        /** @var iterable<CriticalPointServiceCategoryLink>|CriticalPointServiceCategories */
+        /** @var iterable<int, CriticalPointServiceCategoryLink> */
         private iterable $serviceCategories = [],
-        /** @var iterable<CriticalPointActionLink>|CriticalPointActions */
+        /** @var iterable<int, CriticalPointActionLink> */
         private iterable $actions = [],
-        /** @var iterable<CriticalPointReasonLink>|CriticalPointReasons */
+        /** @var iterable<int, CriticalPointReasonLink> */
         private iterable $reasons = [],
-        /** @var iterable<CriticalPointSurplusCauseLink>|CriticalPointSurplusCauses */
+        /** @var iterable<int, CriticalPointSurplusCauseLink> */
         private iterable $surplusCauses = [],
     ) {
         $this->events = $events;
@@ -228,15 +228,7 @@ class CriticalPoint implements \Stringable
 
     public function serviceCategories(): CriticalPointServiceCategories
     {
-        if ($this->serviceCategories instanceof CriticalPointServiceCategories) {
-            return $this->serviceCategories;
-        }
-
-        $this->serviceCategories = new CriticalPointServiceCategories(
-            array_values(iterator_to_array($this->serviceCategories)),
-        );
-
-        return $this->serviceCategories;
+        return new CriticalPointServiceCategories($this->serviceCategories);
     }
 
     /**
@@ -257,6 +249,7 @@ class CriticalPoint implements \Stringable
             new CriticalPointServiceCategoryLinked(
                 criticalPointId: $this->id(),
                 serviceCategoryId: $serviceCategoryId,
+                linkId: CriticalPointServiceCategoryLinkId::generate(),
             ),
         );
     }
@@ -306,15 +299,7 @@ class CriticalPoint implements \Stringable
 
     public function actions(): CriticalPointActions
     {
-        if ($this->actions instanceof CriticalPointActions) {
-            return $this->actions;
-        }
-
-        $this->actions = new CriticalPointActions(
-            array_values(iterator_to_array($this->actions)),
-        );
-
-        return $this->actions;
+        return new CriticalPointActions($this->actions);
     }
 
     /**
@@ -336,6 +321,7 @@ class CriticalPoint implements \Stringable
                 criticalPointId: $this->id(),
                 actionId: $actionId,
                 priority: $priority,
+                linkId: CriticalPointActionLinkId::generate(),
             ),
         );
     }
@@ -459,15 +445,7 @@ class CriticalPoint implements \Stringable
 
     public function surplusCauses(): CriticalPointSurplusCauses
     {
-        if ($this->surplusCauses instanceof CriticalPointSurplusCauses) {
-            return $this->surplusCauses;
-        }
-
-        $this->surplusCauses = new CriticalPointSurplusCauses(
-            array_values(iterator_to_array($this->surplusCauses)),
-        );
-
-        return $this->surplusCauses;
+        return new CriticalPointSurplusCauses($this->surplusCauses);
     }
 
     /**
@@ -488,6 +466,7 @@ class CriticalPoint implements \Stringable
             new CriticalPointSurplusCauseLinked(
                 criticalPointId: $this->id(),
                 surplusCauseId: $surplusCauseId,
+                linkId: CriticalPointSurplusCauseLinkId::generate(),
             ),
         );
     }
@@ -536,6 +515,7 @@ class CriticalPoint implements \Stringable
     public function applyCriticalPointSurplusCauseLinked(CriticalPointSurplusCauseLinked $event): void
     {
         $link = new CriticalPointSurplusCauseLink(
+            id: $event->linkId(),
             criticalPoint: $this,
             surplusCauseId: $event->surplusCauseId(),
         );
@@ -584,6 +564,7 @@ class CriticalPoint implements \Stringable
     public function applyCriticalPointServiceCategoryLinked(CriticalPointServiceCategoryLinked $event): void
     {
         $link = new CriticalPointServiceCategoryLink(
+            id: $event->linkId(),
             criticalPoint: $this,
             serviceCategoryId: $event->serviceCategoryId(),
         );
@@ -599,6 +580,7 @@ class CriticalPoint implements \Stringable
     public function applyCriticalPointActionLinked(CriticalPointActionLinked $event): void
     {
         $link = new CriticalPointActionLink(
+            id: $event->linkId(),
             criticalPoint: $this,
             actionId: $event->actionId(),
             priority: $event->priority(),

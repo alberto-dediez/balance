@@ -49,7 +49,8 @@
         <one-to-many field="serviceCategories"
                      target-entity="App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointServiceCategoryLink"
                      mapped-by="criticalPoint"
-                     fetch="EXTRA_LAZY">
+                     fetch="EXTRA_LAZY"
+                     orphan-removal="true">
             <cascade>
                 <cascade-persist/>
                 <cascade-remove/>
@@ -59,7 +60,8 @@
         <one-to-many field="actions"
                      target-entity="App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointActionLink"
                      mapped-by="criticalPoint"
-                     fetch="EXTRA_LAZY">
+                     fetch="EXTRA_LAZY"
+                     orphan-removal="true">
             <cascade>
                 <cascade-persist/>
                 <cascade-remove/>
@@ -80,7 +82,8 @@
         <one-to-many field="surplusCauses"
                      target-entity="App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointSurplusCauseLink"
                      mapped-by="criticalPoint"
-                     fetch="EXTRA_LAZY">
+                     fetch="EXTRA_LAZY"
+                     orphan-removal="true">
             <cascade>
                 <cascade-persist/>
                 <cascade-remove/>

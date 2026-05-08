@@ -12,7 +12,7 @@ class Packaging implements \Stringable
 {
     use AggregateRoot;
 
-    /** @var iterable<PackagingPropertyStock>|PackagingPropertyStocks */
+    /** @var iterable<int, PackagingPropertyStock> */
     private iterable $stocks = [];
 
     /** @param array<\App\Shared\Domain\Event\DomainEvent> $events */
@@ -72,15 +72,7 @@ class Packaging implements \Stringable
 
     public function stocks(): PackagingPropertyStocks
     {
-        if ($this->stocks instanceof PackagingPropertyStocks) {
-            return $this->stocks;
-        }
-
-        $this->stocks = new PackagingPropertyStocks(
-            array_values(iterator_to_array($this->stocks)),
-        );
-
-        return $this->stocks;
+        return new PackagingPropertyStocks($this->stocks);
     }
 
     public function setPropertyStock(PropertyId $propertyId, int $stock): void
@@ -96,6 +88,9 @@ class Packaging implements \Stringable
                 packagingId: $this->id(),
                 propertyId: $propertyId,
                 stock: $stock,
+                stockId: $existing instanceof PackagingPropertyStock
+                    ? $existing->id()
+                    : PackagingPropertyStockId::generate(),
             ),
         );
     }
@@ -183,6 +178,7 @@ class Packaging implements \Stringable
         }
 
         $this->stocks()->add(new PackagingPropertyStock(
+            id: $event->stockId(),
             packaging: $this,
             propertyId: $event->propertyId(),
             stock: $event->stock(),

@@ -7,8 +7,11 @@
     <entity name="App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointSurplusCauseLink"
             table="critical_point_surplus_causes">
 
-        <id name="criticalPoint" association-key="true"/>
-        <id name="surplusCauseId" type="surplus_cause_id" column="surplus_cause_id"/>
+        <id name="id" type="critical_point_surplus_cause_link_id" column="id">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="surplusCauseId" type="surplus_cause_id" column="surplus_cause_id" nullable="false"/>
 
         <many-to-one field="criticalPoint"
                      target-entity="App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint"
@@ -18,6 +21,10 @@
                          nullable="false"
                          on-delete="CASCADE"/>
         </many-to-one>
+
+        <unique-constraints>
+            <unique-constraint columns="critical_point_id,surplus_cause_id" name="uq_critical_point_surplus_cause_link"/>
+        </unique-constraints>
 
     </entity>
 

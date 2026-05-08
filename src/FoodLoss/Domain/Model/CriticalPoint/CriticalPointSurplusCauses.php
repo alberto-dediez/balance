@@ -6,15 +6,34 @@ namespace App\FoodLoss\Domain\Model\CriticalPoint;
 
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseId;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
-/** @extends ArrayCollection<int, CriticalPointSurplusCauseLink> */
-final class CriticalPointSurplusCauses extends ArrayCollection
+/** @implements \IteratorAggregate<int, CriticalPointSurplusCauseLink> */
+final class CriticalPointSurplusCauses implements \IteratorAggregate, \Countable
 {
+    /** @var Collection<int, CriticalPointSurplusCauseLink> */
+    private Collection $items;
+
+    /** @param iterable<int, CriticalPointSurplusCauseLink> $items */
+    public function __construct(iterable &$items)
+    {
+        if (!$items instanceof Collection) {
+            $items = new ArrayCollection(is_array($items) ? $items : iterator_to_array($items));
+        }
+
+        $this->items = $items;
+    }
+
+    public function add(CriticalPointSurplusCauseLink $link): void
+    {
+        $this->items->add($link);
+    }
+
     public function removeById(SurplusCauseId $surplusCauseId): void
     {
-        foreach ($this->toArray() as $link) {
+        foreach ($this->items->toArray() as $link) {
             if ($link->surplusCauseId()->equals($surplusCauseId)) {
-                $this->removeElement($link);
+                $this->items->removeElement($link);
             }
         }
     }
@@ -24,27 +43,34 @@ final class CriticalPointSurplusCauses extends ArrayCollection
     {
         return array_map(
             fn(CriticalPointSurplusCauseLink $link): SurplusCauseId => $link->surplusCauseId(),
-            $this->toArray(),
+            $this->items->toArray(),
         );
-    }
-
-    public function contains(mixed $element): bool
-    {
-        if ($element instanceof SurplusCauseId) {
-            return $this->has($element);
-        }
-
-        return parent::contains($element);
     }
 
     public function has(SurplusCauseId $surplusCauseId): bool
     {
-        foreach ($this->toArray() as $link) {
+        foreach ($this->items->toArray() as $link) {
             if ($link->surplusCauseId()->equals($surplusCauseId)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /** @return CriticalPointSurplusCauseLink[] */
+    public function toArray(): array
+    {
+        return $this->items->toArray();
+    }
+
+    public function count(): int
+    {
+        return $this->items->count();
+    }
+
+    public function getIterator(): \Traversable
+    {
+        return $this->items->getIterator();
     }
 }

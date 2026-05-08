@@ -9,10 +9,16 @@ use App\Property\Domain\Model\Property\PropertyId;
 final class PackagingPropertyStock
 {
     public function __construct(
+        private PackagingPropertyStockId $id,
         private Packaging $packaging,
         private PropertyId $propertyId,
         private int $stock = 0,
     ) {}
+
+    public function id(): PackagingPropertyStockId
+    {
+        return $this->id;
+    }
 
     public function packaging(): Packaging
     {

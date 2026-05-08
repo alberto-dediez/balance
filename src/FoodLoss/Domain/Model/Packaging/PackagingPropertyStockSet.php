@@ -17,6 +17,7 @@ final class PackagingPropertyStockSet extends DomainEvent
         private readonly PackagingId $packagingId,
         private readonly PropertyId $propertyId,
         private readonly int $stock,
+        private readonly PackagingPropertyStockId $stockId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -38,6 +39,11 @@ final class PackagingPropertyStockSet extends DomainEvent
         return $this->stock;
     }
 
+    public function stockId(): PackagingPropertyStockId
+    {
+        return $this->stockId;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->packagingId;
@@ -49,6 +55,7 @@ final class PackagingPropertyStockSet extends DomainEvent
             'packagingId' => (string) $this->packagingId,
             'propertyId' => (string) $this->propertyId,
             'stock' => $this->stock,
+            'stockId' => (string) $this->stockId,
         ];
     }
 
@@ -61,6 +68,9 @@ final class PackagingPropertyStockSet extends DomainEvent
             packagingId: new PackagingId($payload['packagingId']),
             propertyId: new PropertyId($payload['propertyId']),
             stock: (int) $payload['stock'],
+            stockId: isset($payload['stockId'])
+                ? new PackagingPropertyStockId($payload['stockId'])
+                : PackagingPropertyStockId::generate(),
             id: $id,
             occurredOn: $occurredOn,
         );

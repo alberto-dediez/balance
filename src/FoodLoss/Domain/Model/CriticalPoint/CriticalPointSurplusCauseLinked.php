@@ -16,6 +16,7 @@ final class CriticalPointSurplusCauseLinked extends DomainEvent
     public function __construct(
         private readonly CriticalPointId $criticalPointId,
         private readonly SurplusCauseId $surplusCauseId,
+        private readonly CriticalPointSurplusCauseLinkId $linkId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -32,6 +33,11 @@ final class CriticalPointSurplusCauseLinked extends DomainEvent
         return $this->surplusCauseId;
     }
 
+    public function linkId(): CriticalPointSurplusCauseLinkId
+    {
+        return $this->linkId;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->criticalPointId;
@@ -42,6 +48,7 @@ final class CriticalPointSurplusCauseLinked extends DomainEvent
         return [
             'criticalPointId' => (string) $this->criticalPointId,
             'surplusCauseId' => (string) $this->surplusCauseId,
+            'linkId' => (string) $this->linkId,
         ];
     }
 
@@ -53,6 +60,9 @@ final class CriticalPointSurplusCauseLinked extends DomainEvent
         return new CriticalPointSurplusCauseLinked(
             criticalPointId: new CriticalPointId($payload['criticalPointId']),
             surplusCauseId: new SurplusCauseId($payload['surplusCauseId']),
+            linkId: isset($payload['linkId'])
+                ? new CriticalPointSurplusCauseLinkId($payload['linkId'])
+                : CriticalPointSurplusCauseLinkId::generate(),
             id: $id,
             occurredOn: $occurredOn,
         );

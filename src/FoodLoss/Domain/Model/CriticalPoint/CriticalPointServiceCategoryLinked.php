@@ -16,6 +16,7 @@ final class CriticalPointServiceCategoryLinked extends DomainEvent
     public function __construct(
         private readonly CriticalPointId $criticalPointId,
         private readonly ServiceCategoryId $serviceCategoryId,
+        private readonly CriticalPointServiceCategoryLinkId $linkId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -32,6 +33,11 @@ final class CriticalPointServiceCategoryLinked extends DomainEvent
         return $this->serviceCategoryId;
     }
 
+    public function linkId(): CriticalPointServiceCategoryLinkId
+    {
+        return $this->linkId;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->criticalPointId;
@@ -42,6 +48,7 @@ final class CriticalPointServiceCategoryLinked extends DomainEvent
         return [
             'criticalPointId' => (string) $this->criticalPointId,
             'serviceCategoryId' => (string) $this->serviceCategoryId,
+            'linkId' => (string) $this->linkId,
         ];
     }
 
@@ -53,6 +60,9 @@ final class CriticalPointServiceCategoryLinked extends DomainEvent
         return new CriticalPointServiceCategoryLinked(
             criticalPointId: new CriticalPointId($payload['criticalPointId']),
             serviceCategoryId: new ServiceCategoryId($payload['serviceCategoryId']),
+            linkId: isset($payload['linkId'])
+                ? new CriticalPointServiceCategoryLinkId($payload['linkId'])
+                : CriticalPointServiceCategoryLinkId::generate(),
             id: $id,
             occurredOn: $occurredOn,
         );

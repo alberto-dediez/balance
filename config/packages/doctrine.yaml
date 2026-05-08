@@ -30,6 +30,10 @@ doctrine:
             critical_point_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointIdType
             reason_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ReasonIdType
             critical_point_reason_link_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointReasonLinkIdType
+            critical_point_service_category_link_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointServiceCategoryLinkIdType
+            critical_point_action_link_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointActionLinkIdType
+            critical_point_surplus_cause_link_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointSurplusCauseLinkIdType
+            packaging_property_stock_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\PackagingPropertyStockIdType
             recipient_organization_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\RecipientOrganizationIdType
             delivery_log_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DeliveryLogIdType
             donation_agreement_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DonationAgreementIdType

@@ -18,6 +18,7 @@ final class CriticalPointActionLinked extends DomainEvent
         private readonly CriticalPointId $criticalPointId,
         private readonly ActionId $actionId,
         private readonly Priority $priority,
+        private readonly CriticalPointActionLinkId $linkId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -39,6 +40,11 @@ final class CriticalPointActionLinked extends DomainEvent
         return $this->priority;
     }
 
+    public function linkId(): CriticalPointActionLinkId
+    {
+        return $this->linkId;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->criticalPointId;
@@ -50,6 +56,7 @@ final class CriticalPointActionLinked extends DomainEvent
             'criticalPointId' => (string) $this->criticalPointId,
             'actionId' => (string) $this->actionId,
             'priority' => $this->priority->value,
+            'linkId' => (string) $this->linkId,
         ];
     }
 
@@ -62,6 +69,9 @@ final class CriticalPointActionLinked extends DomainEvent
             criticalPointId: new CriticalPointId($payload['criticalPointId']),
             actionId: new ActionId($payload['actionId']),
             priority: Priority::from($payload['priority']),
+            linkId: isset($payload['linkId'])
+                ? new CriticalPointActionLinkId($payload['linkId'])
+                : CriticalPointActionLinkId::generate(),
             id: $id,
             occurredOn: $occurredOn,
         );

@@ -18,7 +18,7 @@ class PreventionPlan implements \Stringable
 {
     use AggregateRoot;
 
-    /** @var iterable<PreventionPlanVersion>|PreventionPlanVersions */
+    /** @var iterable<int, PreventionPlanVersion> */
     private iterable $versions = [];
 
     private int $currentVersion = 0;
@@ -63,15 +63,7 @@ class PreventionPlan implements \Stringable
 
     public function versions(): PreventionPlanVersions
     {
-        if ($this->versions instanceof PreventionPlanVersions) {
-            return $this->versions;
-        }
-
-        $this->versions = new PreventionPlanVersions(
-            array_values(iterator_to_array($this->versions)),
-        );
-
-        return $this->versions;
+        return new PreventionPlanVersions($this->versions);
     }
 
     public function lastCompletedVersion(): ?PreventionPlanVersion
