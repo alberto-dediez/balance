@@ -18,9 +18,6 @@ class PreventionPlan implements \Stringable
 {
     use AggregateRoot;
 
-    /** @var iterable<PreventionPlanPropertyLink>|PreventionPlanProperties */
-    private iterable $properties = [];
-
     /** @var iterable<PreventionPlanVersion>|PreventionPlanVersions */
     private iterable $versions = [];
 
@@ -34,6 +31,7 @@ class PreventionPlan implements \Stringable
         private ?AccountId $accountId = null,
         private ?EmployeeId $responsible = null,
         private bool $removed = false,
+        private bool $useAllCompanyProperties = false,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $updatedAt = null,
@@ -57,23 +55,10 @@ class PreventionPlan implements \Stringable
         return $this->currentPlanVersion()->status();
     }
 
-    public function properties(): PreventionPlanProperties
-    {
-        if ($this->properties instanceof PreventionPlanProperties) {
-            return $this->properties;
-        }
-
-        $this->properties = new PreventionPlanProperties(
-            array_values(iterator_to_array($this->properties)),
-        );
-
-        return $this->properties;
-    }
-
     /** @return PropertyId[] */
     public function propertyIds(): array
     {
-        return $this->properties()->ids();
+        return $this->currentPlanVersion()->propertyIds();
     }
 
     public function versions(): PreventionPlanVersions
@@ -114,6 +99,11 @@ class PreventionPlan implements \Stringable
         return $this->responsible;
     }
 
+    public function useAllCompanyProperties(): bool
+    {
+        return $this->useAllCompanyProperties;
+    }
+
     public function isRemoved(): bool
     {
         return $this->removed;
@@ -144,6 +134,7 @@ class PreventionPlan implements \Stringable
         AccountId $accountId,
         UserId $registeredBy,
         ?EmployeeId $responsible = null,
+        bool $useAllCompanyProperties = false,
     ): void {
         $this->recordApplyAndPublish(
             new PreventionPlanRegistered(
@@ -152,6 +143,7 @@ class PreventionPlan implements \Stringable
                 companyId: $companyId,
                 accountId: $accountId,
                 responsible: $responsible,
+                useAllCompanyProperties: $useAllCompanyProperties,
             ),
         );
 
@@ -161,10 +153,9 @@ class PreventionPlan implements \Stringable
                 versionNumber: 1,
                 createdBy: $registeredBy,
                 responsible: $responsible,
+                propertyIds: $propertyIds,
             ),
         );
-
-        $this->syncProperties($propertyIds);
     }
 
     /**
@@ -176,9 +167,11 @@ class PreventionPlan implements \Stringable
         CompanyId $companyId,
         UserId $updatedBy,
         ?EmployeeId $responsible = null,
+        bool $useAllCompanyProperties = false,
     ): void {
         $propertiesChanged = $this->propertiesChanged($propertyIds);
         $responsibleChanged = $this->responsibleChanged($responsible);
+        $useAllCompanyPropertiesChanged = $this->useAllCompanyProperties !== $useAllCompanyProperties;
 
         $this->recordApplyAndPublish(
             new PreventionPlanUpdated(
@@ -186,10 +179,11 @@ class PreventionPlan implements \Stringable
                 name: $name,
                 companyId: $companyId,
                 responsible: $responsible,
+                useAllCompanyProperties: $useAllCompanyProperties,
             ),
         );
 
-        if ($propertiesChanged || $responsibleChanged || $this->currentPlanVersion()->isClosed()) {
+        if ($propertiesChanged || $useAllCompanyPropertiesChanged || $responsibleChanged || $this->currentPlanVersion()->isClosed()) {
             $currentProposedActions = $this->currentPlanVersion()->proposedActions()->toArray();
             $newVersionNumber = $this->currentVersion + 1;
 
@@ -199,6 +193,7 @@ class PreventionPlan implements \Stringable
                     versionNumber: $newVersionNumber,
                     createdBy: $updatedBy,
                     responsible: $responsible,
+                    propertyIds: $propertyIds,
                 ),
             );
 
@@ -220,27 +215,11 @@ class PreventionPlan implements \Stringable
                 }
             }
         }
-
-        $this->syncProperties($propertyIds);
-    }
-
-    public function linkProperty(PropertyId $propertyId): void
-    {
-        if ($this->properties()->has($propertyId)) {
-            return;
-        }
-
-        $this->recordApplyAndPublish(
-            new PreventionPlanPropertyLinked(
-                preventionPlanId: $this->id(),
-                propertyId: $propertyId,
-            ),
-        );
     }
 
     public function unlinkProperty(PropertyId $propertyId): void
     {
-        if (!$this->properties()->has($propertyId)) {
+        if (!$this->currentPlanVersion()->properties()->has($propertyId)) {
             return;
         }
 
@@ -332,6 +311,7 @@ class PreventionPlan implements \Stringable
         $this->companyId = $event->companyId();
         $this->accountId = $event->accountId();
         $this->responsible = $event->responsible();
+        $this->useAllCompanyProperties = $event->useAllCompanyProperties();
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -340,22 +320,13 @@ class PreventionPlan implements \Stringable
         $this->name = $event->name();
         $this->companyId = $event->companyId();
         $this->responsible = $event->responsible();
+        $this->useAllCompanyProperties = $event->useAllCompanyProperties();
         $this->updatedAt = $event->occurredOn();
-    }
-
-    public function applyPreventionPlanPropertyLinked(PreventionPlanPropertyLinked $event): void
-    {
-        $link = new PreventionPlanPropertyLink(
-            preventionPlan: $this,
-            propertyId: $event->propertyId(),
-        );
-
-        $this->properties()->add($link);
     }
 
     public function applyPreventionPlanPropertyUnlinked(PreventionPlanPropertyUnlinked $event): void
     {
-        $this->properties()->removeById($event->propertyId());
+        $this->currentPlanVersion()->properties()->removeById($event->propertyId());
     }
 
     public function applyPreventionPlanRemoved(PreventionPlanRemoved $event): void
@@ -380,6 +351,10 @@ class PreventionPlan implements \Stringable
             createdAt: $event->occurredOn(),
             responsible: $event->responsible(),
         );
+
+        foreach ($event->propertyIds() as $propertyId) {
+            $version->addPropertyLink($propertyId);
+        }
 
         $this->versions()->add($version);
         $this->currentVersion = $event->versionNumber();
@@ -664,21 +639,14 @@ class PreventionPlan implements \Stringable
     /** @param PropertyId[] $newPropertyIds */
     private function propertiesChanged(array $newPropertyIds): bool
     {
-        $current = $this->propertyIds();
+        $current = $this->currentPlanVersion()->properties();
 
-        if (count($current) !== count($newPropertyIds)) {
+        if ($current->count() !== count($newPropertyIds)) {
             return true;
         }
 
-        foreach ($current as $currentId) {
-            $found = false;
-            foreach ($newPropertyIds as $newId) {
-                if ($currentId->equals($newId)) {
-                    $found = true;
-                    break;
-                }
-            }
-            if (!$found) {
+        foreach ($newPropertyIds as $newId) {
+            if (!$current->has($newId)) {
                 return true;
             }
         }
@@ -697,31 +665,6 @@ class PreventionPlan implements \Stringable
         }
 
         return !$this->responsible->equals($newResponsibleEmployeeId);
-    }
-
-    /** @param PropertyId[] $newPropertyIds */
-    private function syncProperties(array $newPropertyIds): void
-    {
-        $current = $this->properties();
-
-        foreach ($current->ids() as $currentId) {
-            $found = false;
-            foreach ($newPropertyIds as $newId) {
-                if ($currentId->equals($newId)) {
-                    $found = true;
-                    break;
-                }
-            }
-            if (!$found) {
-                $this->unlinkProperty($currentId);
-            }
-        }
-
-        foreach ($newPropertyIds as $newId) {
-            if (!$current->has($newId)) {
-                $this->linkProperty($newId);
-            }
-        }
     }
 
     public function __toString(): string

@@ -56,10 +56,10 @@ class RegisterController extends AbstractController
                     assert(null !== $registerRequest->companyId);
 
                     if (empty($registerRequest->properties)) {
-                        $allProperties = $propertyRepository->findByCompanyId($registerRequest->companyId);
+                        $registerRequest->useAllCompanyProperties = true;
                         $registerRequest->properties = array_map(
                             static fn($property) => $property->id(),
-                            $allProperties,
+                            $propertyRepository->findByCompanyId($registerRequest->companyId),
                         );
                     }
 

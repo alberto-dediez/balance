@@ -19,5 +19,6 @@ class RegisterPreventionPlanRequest implements Command
         public ?CompanyId $companyId = null,
         public ?AccountId $accountId = null,
         public ?EmployeeId $responsible = null,
+        public bool $useAllCompanyProperties = false,
     ) {}
 }

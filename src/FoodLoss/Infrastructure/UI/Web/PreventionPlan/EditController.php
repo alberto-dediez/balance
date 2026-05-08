@@ -47,9 +47,10 @@ class EditController extends AbstractController
         $updateRequest = new UpdatePreventionPlanRequest(
             preventionPlanId: $preventionPlan->id(),
             name: $preventionPlan->name(),
-            properties: $preventionPlan->propertyIds(),
+            properties: $preventionPlan->useAllCompanyProperties() ? [] : $preventionPlan->propertyIds(),
             companyId: $preventionPlan->companyId(),
             responsible: $preventionPlan->responsible(),
+            useAllCompanyProperties: $preventionPlan->useAllCompanyProperties(),
         );
 
         $form = $this->createForm(UpdatePreventionPlanType::class, $updateRequest);
@@ -62,11 +63,13 @@ class EditController extends AbstractController
                 assert(null !== $updateRequest->companyId);
 
                 if (empty($updateRequest->properties)) {
-                    $allProperties = $propertyRepository->findByCompanyId($updateRequest->companyId);
+                    $updateRequest->useAllCompanyProperties = true;
                     $updateRequest->properties = array_map(
                         static fn($property) => $property->id(),
-                        $allProperties,
+                        $propertyRepository->findByCompanyId($updateRequest->companyId),
                     );
+                } else {
+                    $updateRequest->useAllCompanyProperties = false;
                 }
 
                 $updatePreventionPlan($updateRequest, $user);

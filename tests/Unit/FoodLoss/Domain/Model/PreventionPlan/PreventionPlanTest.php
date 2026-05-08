@@ -123,4 +123,89 @@ class PreventionPlanTest extends TestCase
         $this->assertEquals(1, $plan->currentVersion());
         $this->assertCount(1, $plan->versions());
     }
+
+    public function testNoNewVersionWhenUpdatingWithSameExplicitProperties(): void
+    {
+        $propertyA = new PropertyId('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+        $propertyB = new PropertyId('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb');
+
+        $plan = new PreventionPlan(id: PreventionPlanId::generate());
+        $plan->register(
+            name: 'Plan',
+            propertyIds: [$propertyA, $propertyB],
+            companyId: new CompanyId('company-id'),
+            accountId: new AccountId('account-id'),
+            registeredBy: new UserId('user-id'),
+        );
+
+        $plan->update(
+            name: 'Plan Renamed',
+            propertyIds: [
+                new PropertyId('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+                new PropertyId('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'),
+            ],
+            companyId: new CompanyId('company-id'),
+            updatedBy: new UserId('user-id'),
+        );
+
+        $this->assertEquals(1, $plan->currentVersion());
+    }
+
+    public function testNoNewVersionWhenUpdatingUseAllCompanyPropertiesWithSameSnapshot(): void
+    {
+        $propertyA = new PropertyId('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+        $propertyB = new PropertyId('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb');
+
+        $plan = new PreventionPlan(id: PreventionPlanId::generate());
+        $plan->register(
+            name: 'Plan',
+            propertyIds: [$propertyA, $propertyB],
+            companyId: new CompanyId('company-id'),
+            accountId: new AccountId('account-id'),
+            registeredBy: new UserId('user-id'),
+            useAllCompanyProperties: true,
+        );
+
+        $plan->update(
+            name: 'Plan',
+            propertyIds: [
+                new PropertyId('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+                new PropertyId('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'),
+            ],
+            companyId: new CompanyId('company-id'),
+            updatedBy: new UserId('user-id'),
+            useAllCompanyProperties: true,
+        );
+
+        $this->assertEquals(1, $plan->currentVersion());
+    }
+
+    public function testNewVersionCreatedWhenCompanyPropertyAddedInAllPropertiesMode(): void
+    {
+        $propertyA = new PropertyId('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+        $propertyB = new PropertyId('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb');
+        $propertyC = new PropertyId('cccccccc-cccc-cccc-cccc-cccccccccccc');
+
+        $plan = new PreventionPlan(id: PreventionPlanId::generate());
+        $plan->register(
+            name: 'Plan',
+            propertyIds: [$propertyA, $propertyB],
+            companyId: new CompanyId('company-id'),
+            accountId: new AccountId('account-id'),
+            registeredBy: new UserId('user-id'),
+            useAllCompanyProperties: true,
+        );
+
+        // Company added a new property — controller resolves [A, B, C]
+        $plan->update(
+            name: 'Plan',
+            propertyIds: [$propertyA, $propertyB, $propertyC],
+            companyId: new CompanyId('company-id'),
+            updatedBy: new UserId('user-id'),
+            useAllCompanyProperties: true,
+        );
+
+        $this->assertEquals(2, $plan->currentVersion());
+        $this->assertCount(3, $plan->currentPlanVersion()->propertyIds());
+    }
 }

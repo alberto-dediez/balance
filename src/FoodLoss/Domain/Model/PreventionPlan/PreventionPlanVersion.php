@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Domain\Model\PreventionPlan;
 
 use App\HumanResources\Domain\Model\Employee\EmployeeId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\Translatable;
@@ -12,6 +13,9 @@ use App\Shared\Domain\Model\Locale\Translations;
 
 final class PreventionPlanVersion implements Translatable
 {
+    /** @var iterable<int, PreventionPlanVersionPropertyLink> */
+    private iterable $properties = [];
+
     /** @var iterable<int, ProposedAction> */
     private iterable $proposedActions = [];
 
@@ -162,6 +166,31 @@ final class PreventionPlanVersion implements Translatable
                 pdfPath: $pdfPath,
                 locale: $locale,
                 translatable: $this,
+            ),
+        );
+    }
+
+    public function properties(): PreventionPlanVersionProperties
+    {
+        return new PreventionPlanVersionProperties($this->properties);
+    }
+
+    /** @return PropertyId[] */
+    public function propertyIds(): array
+    {
+        return $this->properties()->ids();
+    }
+
+    public function addPropertyLink(PropertyId $propertyId): void
+    {
+        if ($this->properties()->has($propertyId)) {
+            return;
+        }
+
+        $this->properties()->add(
+            new PreventionPlanVersionPropertyLink(
+                preventionPlanVersion: $this,
+                propertyId: $propertyId,
             ),
         );
     }

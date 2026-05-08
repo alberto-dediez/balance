@@ -28,12 +28,23 @@
             <unique-constraint columns="prevention_plan_id,version_number" name="uq_prevention_plan_version"/>
         </unique-constraints>
 
+        <one-to-many field="properties"
+                     target-entity="App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersionPropertyLink"
+                     mapped-by="preventionPlanVersion"
+                     orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
         <one-to-many field="proposedActions"
                      target-entity="App\FoodLoss\Domain\Model\PreventionPlan\ProposedAction"
                      mapped-by="preventionPlanVersion"
                      orphan-removal="true">
             <cascade>
                 <cascade-persist />
+                <cascade-remove />
             </cascade>
         </one-to-many>
 

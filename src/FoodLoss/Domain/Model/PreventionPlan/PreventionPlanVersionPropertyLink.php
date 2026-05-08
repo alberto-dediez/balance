@@ -6,16 +6,16 @@ namespace App\FoodLoss\Domain\Model\PreventionPlan;
 
 use App\Property\Domain\Model\Property\PropertyId;
 
-final readonly class PreventionPlanPropertyLink
+final readonly class PreventionPlanVersionPropertyLink
 {
     public function __construct(
-        private PreventionPlan $preventionPlan,
+        private PreventionPlanVersion $preventionPlanVersion,
         private PropertyId $propertyId,
     ) {}
 
-    public function preventionPlan(): PreventionPlan
+    public function preventionPlanVersion(): PreventionPlanVersion
     {
-        return $this->preventionPlan;
+        return $this->preventionPlanVersion;
     }
 
     public function propertyId(): PropertyId

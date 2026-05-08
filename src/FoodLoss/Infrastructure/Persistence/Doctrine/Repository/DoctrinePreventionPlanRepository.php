@@ -95,13 +95,9 @@ class DoctrinePreventionPlanRepository implements PreventionPlanRepository
 
         if ($filter->propertyId instanceof PropertyId) {
             $qb
-                ->leftJoin('e.properties', 'p')
-                ->andWhere(
-                    $qb->expr()->orX(
-                        $qb->expr()->eq('p.propertyId', ':propertyId'),
-                        $qb->expr()->isNull('p.propertyId'),
-                    ),
-                )
+                ->join('e.versions', 'pv', 'WITH', 'pv.versionNumber = e.currentVersion')
+                ->join('pv.properties', 'pvp')
+                ->andWhere($qb->expr()->eq('pvp.propertyId', ':propertyId'))
                 ->setParameter('propertyId', (string) $filter->propertyId)
             ;
         }

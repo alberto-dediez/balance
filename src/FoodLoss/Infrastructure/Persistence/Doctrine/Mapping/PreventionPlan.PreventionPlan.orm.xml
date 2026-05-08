@@ -14,16 +14,7 @@
         <field name="companyId" type="company_id" column="company_id" nullable="false"/>
         <field name="accountId" type="account_id" column="account_id" nullable="false"/>
         <field name="responsible" type="employee_id" column="responsible_employee_id" nullable="true"/>
-
-        <one-to-many field="properties"
-                     target-entity="App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanPropertyLink"
-                     mapped-by="preventionPlan"
-                     fetch="EXTRA_LAZY">
-            <cascade>
-                <cascade-persist/>
-                <cascade-remove/>
-            </cascade>
-        </one-to-many>
+        <field name="useAllCompanyProperties" type="boolean" column="use_all_company_properties" nullable="false"/>
 
         <one-to-many field="versions"
                      target-entity="App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersion"

@@ -19,5 +19,6 @@ class UpdatePreventionPlanRequest implements Command
         public array $properties = [],
         public ?CompanyId $companyId = null,
         public ?EmployeeId $responsible = null,
+        public bool $useAllCompanyProperties = false,
     ) {}
 }

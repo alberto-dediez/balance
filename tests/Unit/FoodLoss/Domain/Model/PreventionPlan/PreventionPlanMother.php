@@ -44,6 +44,7 @@ class PreventionPlanMother
         string $accountId = 'account-id',
         string $companyId = 'company-id',
         array $propertyIds = [],
+        bool $useAllCompanyProperties = false,
     ): PreventionPlan {
         $preventionPlan = new PreventionPlan(
             id: new PreventionPlanId($id),
@@ -55,6 +56,7 @@ class PreventionPlanMother
             accountId: new AccountId($accountId),
             registeredBy: new UserId('user-id'),
             responsible: EmployeeId::generate(),
+            useAllCompanyProperties: $useAllCompanyProperties,
         );
 
         return $preventionPlan;

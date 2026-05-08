@@ -19,6 +19,7 @@ final class PreventionPlanUpdated extends DomainEvent
         private string $name,
         private CompanyId $companyId,
         private ?EmployeeId $responsible = null,
+        private bool $useAllCompanyProperties = false,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -45,6 +46,11 @@ final class PreventionPlanUpdated extends DomainEvent
         return $this->responsible;
     }
 
+    public function useAllCompanyProperties(): bool
+    {
+        return $this->useAllCompanyProperties;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->preventionPlanId();
@@ -57,6 +63,7 @@ final class PreventionPlanUpdated extends DomainEvent
             'name' => $this->name,
             'companyId' => (string) $this->companyId,
             'responsible' => null !== $this->responsible ? (string) $this->responsible : null,
+            'useAllCompanyProperties' => $this->useAllCompanyProperties,
         ];
     }
 
@@ -70,6 +77,7 @@ final class PreventionPlanUpdated extends DomainEvent
             name: $payload['name'],
             companyId: new CompanyId($payload['companyId']),
             responsible: !empty($payload['responsible']) ? new EmployeeId($payload['responsible']) : null,
+            useAllCompanyProperties: (bool) ($payload['useAllCompanyProperties'] ?? false),
             id: $id,
             occurredOn: $occurredOn,
         );
