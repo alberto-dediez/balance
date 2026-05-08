@@ -7,6 +7,7 @@ namespace App\FoodLoss\Domain\Model\PreventionPlan;
 use App\FoodLoss\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
+use App\Shared\Domain\Model\Locale\Locale;
 
 final class PreventionPlanSectionAdded extends DomainEvent
 {
@@ -19,6 +20,7 @@ final class PreventionPlanSectionAdded extends DomainEvent
         private readonly string $title,
         private readonly string $content,
         private readonly int $sectionOrder = 0,
+        private readonly Locale $locale = Locale::Spanish,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -55,6 +57,11 @@ final class PreventionPlanSectionAdded extends DomainEvent
         return $this->sectionOrder;
     }
 
+    public function locale(): Locale
+    {
+        return $this->locale;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->preventionPlanId;
@@ -69,6 +76,7 @@ final class PreventionPlanSectionAdded extends DomainEvent
             'title' => $this->title,
             'content' => $this->content,
             'sectionOrder' => $this->sectionOrder,
+            'locale' => $this->locale->value,
         ];
     }
 
@@ -84,6 +92,7 @@ final class PreventionPlanSectionAdded extends DomainEvent
             title: $payload['title'],
             content: $payload['content'],
             sectionOrder: (int) ($payload['sectionOrder'] ?? 0),
+            locale: Locale::tryFrom($payload['locale'] ?? 'es') ?? Locale::Spanish,
             id: $id,
             occurredOn: $occurredOn,
         );

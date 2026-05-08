@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Application\PreventionPlan\GeneratePdf;
 
+use App\FoodLoss\Application\PreventionPlan\PreventionPlanDraftTranslator;
 use App\FoodLoss\Application\PreventionPlan\PreventionPlanPdfUploader;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanPdfGenerator;
@@ -24,6 +25,7 @@ class GeneratePdfPreventionPlanService implements CommandHandler
         private PreventionPlanRepository $preventionPlanRepository,
         private PreventionPlanPdfGenerator $pdfGenerator,
         private PreventionPlanPdfUploader $pdfUploader,
+        private PreventionPlanDraftTranslator $draftTranslator,
     ) {}
 
     public function isHandled(Command $command): bool
@@ -44,6 +46,8 @@ class GeneratePdfPreventionPlanService implements CommandHandler
         if (!$version instanceof PreventionPlanVersion) {
             return null;
         }
+
+        $this->draftTranslator->translate($version, $request->locale);
 
         $tempPath = $this->pdfGenerator->generate($preventionPlan, $version, $request->locale);
 

@@ -155,7 +155,12 @@ class GeminiSectionsGenerator implements SectionsGenerator
             $title = isset($section['title']) && is_string($section['title']) ? $section['title'] : '';
             $content = isset($section['content']) && is_string($section['content']) ? $section['content'] : '';
             $content = $this->cleanMarkdownContent($content);
-            $plan->addSection($title, $content, $order);
+            $plan->addSection(
+                title: $title,
+                content: $content,
+                order: $order,
+                locale: $locale,
+            );
         }
 
         JobProgressTracker::instance()->advance((string) new TranslatableMessage('Guardando contenidos'));

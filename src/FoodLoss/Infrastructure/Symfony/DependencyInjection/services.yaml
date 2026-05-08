@@ -38,3 +38,6 @@ services:
 
     App\FoodLoss\Application\PreventionPlan\PreventionPlanPdfUploader:
         alias: App\FoodLoss\Infrastructure\FileUploader\LocalFilePreventionPlanPdfUploader
+
+    App\FoodLoss\Application\PreventionPlan\PreventionPlanDraftTranslator:
+        alias: App\FoodLoss\Infrastructure\AI\GeminiPreventionPlanDraftTranslator

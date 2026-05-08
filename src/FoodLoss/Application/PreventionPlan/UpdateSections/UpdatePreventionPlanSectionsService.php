@@ -12,6 +12,7 @@ use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Shared\Domain\Model\Locale\LocaleGetter;
 
 class UpdatePreventionPlanSectionsService implements CommandHandler
 {
@@ -59,18 +60,16 @@ class UpdatePreventionPlanSectionsService implements CommandHandler
             $maxOrder = max($maxOrder, $section->sectionOrder());
         }
 
-        $newSectionOffset = 0;
+        $locale = LocaleGetter::locale();
+        $order = 0;
         foreach ($request->sections as $sectionData) {
-            if (null === $sectionData->sectionId) {
-                $preventionPlan->addSection($sectionData->title, $sectionData->content, $maxOrder + ++$newSectionOffset);
-            } else {
-                foreach ($sections as $section) {
-                    if ($section->id()->equals($sectionData->sectionId)) {
-                        $section->update($sectionData->title, $sectionData->content);
-                        break;
-                    }
-                }
-            }
+            $preventionPlan->addSection(
+                title: $sectionData->title,
+                content: $sectionData->content,
+                order: ++$order,
+                locale: $locale,
+                sectionId: $sectionData->sectionId,
+            );
         }
 
         $this->preventionPlanRepository->add($preventionPlan);

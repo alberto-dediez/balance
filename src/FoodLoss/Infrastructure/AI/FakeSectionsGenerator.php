@@ -7,6 +7,7 @@ namespace App\FoodLoss\Infrastructure\AI;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
 use App\FoodLoss\Domain\Model\PreventionPlan\SectionsGenerator;
 use App\Shared\Domain\Model\JobProgress\JobProgressTracker;
+use App\Shared\Domain\Model\Locale\Locale;
 
 class FakeSectionsGenerator implements SectionsGenerator
 {
@@ -19,7 +20,7 @@ class FakeSectionsGenerator implements SectionsGenerator
         ];
 
         foreach ($fakeSections as $order => [$title, $content]) {
-            $plan->addSection($title, $content, $order);
+            $plan->addSection($title, $content, $order, Locale::Spanish);
 
             JobProgressTracker::instance()->advance($title);
         }

@@ -6,16 +6,15 @@ namespace App\Tests\Unit\FoodLoss\Application\PreventionPlan\GeneratePdf;
 
 use App\FoodLoss\Application\PreventionPlan\GeneratePdf\GeneratePdfPreventionPlanRequest;
 use App\FoodLoss\Application\PreventionPlan\GeneratePdf\GeneratePdfPreventionPlanService;
-use App\FoodLoss\Application\PreventionPlan\PreventionPlanPdfUploader;
-use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlan;
-use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanPdfGenerator;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
-use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersion;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\FoodLoss\Application\PreventionPlan\NullPreventionPlanDraftTranslator;
+use App\Tests\Unit\FoodLoss\Application\PreventionPlan\NullPreventionPlanPdfUploader;
 use App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepositoryMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan\SpyPreventionPlanPdfGenerator;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 
@@ -93,42 +92,7 @@ class GeneratePdfPreventionPlanServiceTest extends TestCase
             preventionPlanRepository: $repository,
             pdfGenerator: $generator ?? new SpyPreventionPlanPdfGenerator(),
             pdfUploader: new NullPreventionPlanPdfUploader(),
+            draftTranslator: new NullPreventionPlanDraftTranslator(),
         );
-    }
-}
-
-final class NullPreventionPlanPdfUploader implements PreventionPlanPdfUploader
-{
-    public function upload(string $sourcePath, PreventionPlanId $preventionPlanId, int $versionNumber, Locale $locale): string
-    {
-        return 'prevention_plans/test.pdf';
-    }
-}
-
-final class SpyPreventionPlanPdfGenerator implements PreventionPlanPdfGenerator
-{
-    /** @var array<int, array{plan: PreventionPlan, version: PreventionPlanVersion}> */
-    private array $calls = [];
-
-    public function generate(PreventionPlan $preventionPlan, PreventionPlanVersion $version, Locale $locale): string
-    {
-        $this->calls[] = ['plan' => $preventionPlan, 'version' => $version];
-
-        return '/tmp/test.pdf';
-    }
-
-    public function callCount(): int
-    {
-        return count($this->calls);
-    }
-
-    public function lastPlan(): ?PreventionPlan
-    {
-        return $this->calls[count($this->calls) - 1]['plan'] ?? null;
-    }
-
-    public function lastVersion(): ?PreventionPlanVersion
-    {
-        return $this->calls[count($this->calls) - 1]['version'] ?? null;
     }
 }

@@ -527,16 +527,17 @@ class PreventionPlan implements \Stringable
         );
     }
 
-    public function addSection(string $title, string $content, int $order): void
+    public function addSection(string $title, string $content, int $order, Locale $locale = Locale::Spanish, ?PreventionPlanSectionId $sectionId = null): void
     {
         $this->recordApplyAndPublish(
             new PreventionPlanSectionAdded(
                 preventionPlanId: $this->id(),
                 versionNumber: $this->currentVersion,
-                sectionId: PreventionPlanSectionId::generate(),
+                sectionId: $sectionId ?? PreventionPlanSectionId::generate(),
                 title: $title,
                 content: $content,
                 sectionOrder: $order,
+                locale: $locale,
             ),
         );
     }
@@ -593,19 +594,21 @@ class PreventionPlan implements \Stringable
         $existing = $version->sections()->findById($event->sectionId());
         if (null !== $existing) {
             $existing->update($event->title(), $event->content());
+            $existing->translate($event->title(), $event->content(), $event->locale());
 
             return;
         }
 
-        $version->sections()->add(
-            new PreventionPlanSection(
-                id: $event->sectionId(),
-                preventionPlanVersion: $version,
-                title: $event->title(),
-                content: $event->content(),
-                sectionOrder: $event->sectionOrder(),
-            ),
+        $section = new PreventionPlanSection(
+            id: $event->sectionId(),
+            preventionPlanVersion: $version,
+            title: $event->title(),
+            content: $event->content(),
+            sectionOrder: $event->sectionOrder(),
         );
+
+        $section->translate($event->title(), $event->content(), $event->locale());
+        $version->sections()->add($section);
     }
 
     public function applyProposedActionAdded(ProposedActionAdded $event): void

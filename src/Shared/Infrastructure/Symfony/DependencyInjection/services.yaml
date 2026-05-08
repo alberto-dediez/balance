@@ -5,6 +5,7 @@ parameters:
     mailer.from: '%env(MAILER_FROM)%'
     app.gemini_api_key: '%env(GEMINI_API_KEY)%'
     app.gemini_model: '%env(GEMINI_MODEL)%'
+    app.gemini_log_enabled: '%env(bool:GEMINI_LOG_ENABLED)%'
 
 services:
     _defaults:
@@ -41,6 +42,8 @@ services:
         arguments:
             $apiKey: '%app.gemini_api_key%'
             $model: '%app.gemini_model%'
+            $logEnabled: '%app.gemini_log_enabled%'
+            $logDir: '%kernel.project_dir%/var/gemini-logs'
 
     App\Shared\Infrastructure\AI\Gemini\GeminiClient:
         alias: App\Shared\Infrastructure\AI\Gemini\GeminiHttpClient

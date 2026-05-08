@@ -60,6 +60,8 @@ final class GenerateAllSectionsPrompt implements GeminiPrompt
             'You will generate EXACTLY 5 sections for a Food Waste Prevention Plan compliant with Spanish Law 1/2025 (Ley 1/2025 de Prevención de las Pérdidas y el Desperdicio Alimentario) for the HORECA sector.',
             '',
             sprintf('Write all output in %s and format in Markdown.', $this->locale->name),
+            'Use proper Markdown with headings, paragraphs, and bullet lists separated by blank lines.',
+            'IMPORTANT: Do NOT start the content of any section with the section title or any heading that repeats the section title. The title is stored separately.',
             '',
             '## COMMON DATA (for all 5 sections):',
             '',
@@ -238,14 +240,15 @@ final class GenerateAllSectionsPrompt implements GeminiPrompt
         $lines[] = 'Cover: (1) Measurement indicators (KPIs) in a table, (2) Review and reporting schedule, (3) Staff awareness and training plan.';
         $lines[] = 'Present KPIs in a table. Use H2/H3 headings.';
         $lines[] = '';
-        $lines[] = 'CRITICAL: Output must be valid JSON. Return an array of exactly 5 objects:';
+        $lines[] = sprintf('CRITICAL: Output must be valid JSON. Return an array of exactly 5 objects. The "title" field for each section must be translated into %s:', $this->locale->name);
         $lines[] = '[';
-        $lines[] = '  { "title": "Introduction and Basic Information", "content": "..." },';
-        $lines[] = '  { "title": "Critical Points Analysis and Current Situation", "content": "..." },';
-        $lines[] = '  { "title": "Action Plan and Prevention Hierarchy", "content": "..." },';
-        $lines[] = '  { "title": "Surplus Management and Donations", "content": "..." },';
-        $lines[] = '  { "title": "Monitoring, KPIs and Staff Training", "content": "..." }';
+        $lines[] = '  { "title": "<Section 1 title translated>", "content": "..." },';
+        $lines[] = '  { "title": "<Section 2 title translated>", "content": "..." },';
+        $lines[] = '  { "title": "<Section 3 title translated>", "content": "..." },';
+        $lines[] = '  { "title": "<Section 4 title translated>", "content": "..." },';
+        $lines[] = '  { "title": "<Section 5 title translated>", "content": "..." }';
         $lines[] = ']';
+        $lines[] = sprintf('Each "title" must be a concise, professional translation of the corresponding section name into %s. Do not use English titles.', $this->locale->name);
 
         return implode("\n", $lines);
     }
