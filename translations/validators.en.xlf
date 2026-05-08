@@ -689,6 +689,10 @@
         <source>Please enter a valid week.</source>
         <target>Please enter a valid week.</target>
       </trans-unit>
+      <trans-unit id="g12F6jA" resname="Debes seleccionar una empresa">
+        <source>Debes seleccionar una empresa</source>
+        <target>You must select a company</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -1485,6 +1485,1326 @@
         <source>Etapa</source>
         <target>Stage</target>
       </trans-unit>
+      <trans-unit id="nAHrx2o" resname="Empresas">
+        <source>Empresas</source>
+        <target>Companies</target>
+      </trans-unit>
+      <trans-unit id="x2pos5B" resname="Motivos">
+        <source>Motivos</source>
+        <target>Reasons</target>
+      </trans-unit>
+      <trans-unit id="EqVgqiW" resname="Causas de excedente">
+        <source>Causas de excedente</source>
+        <target>Surplus Causes</target>
+      </trans-unit>
+      <trans-unit id="z4f8Sn." resname="Empleados">
+        <source>Empleados</source>
+        <target>Employees</target>
+      </trans-unit>
+      <trans-unit id="hUghQyO" resname="Plan de Prevención">
+        <source>Plan de Prevención</source>
+        <target>Prevention Plan</target>
+      </trans-unit>
+      <trans-unit id="bx9fnf8" resname="Planes de Prevención">
+        <source>Planes de Prevención</source>
+        <target>Prevention Plans</target>
+      </trans-unit>
+      <trans-unit id="jhiJa0h" resname="Donaciones">
+        <source>Donaciones</source>
+        <target>Donations</target>
+      </trans-unit>
+      <trans-unit id="bFnNWaX" resname="Entidades Receptoras">
+        <source>Entidades Receptoras</source>
+        <target>Recipient Organisations</target>
+      </trans-unit>
+      <trans-unit id="WJYSyRa" resname="Registro de entregas">
+        <source>Registro de entregas</source>
+        <target>Delivery Log</target>
+      </trans-unit>
+      <trans-unit id="ab5mTVg" resname="Convenios de donación">
+        <source>Convenios de donación</source>
+        <target>Donation Agreements</target>
+      </trans-unit>
+      <trans-unit id="fjyrm0d" resname="Doggy Bag">
+        <source>Doggy Bag</source>
+        <target>Doggy Bag</target>
+      </trans-unit>
+      <trans-unit id="osY5hrO" resname="Envases">
+        <source>Envases</source>
+        <target>Packaging</target>
+      </trans-unit>
+      <trans-unit id="G0GWRyG" resname="Carteles">
+        <source>Carteles</source>
+        <target>Signs</target>
+      </trans-unit>
+      <trans-unit id="6gipVEC" resname="Excepciones">
+        <source>Excepciones</source>
+        <target>Exceptions</target>
+      </trans-unit>
+      <trans-unit id="ruHSSQ1" resname="Acciones formativas e informativas">
+        <source>Acciones formativas e informativas</source>
+        <target>Training and Information Actions</target>
+      </trans-unit>
+      <trans-unit id="DfiqSLI" resname="Protocolos">
+        <source>Protocolos</source>
+        <target>Protocols</target>
+      </trans-unit>
+      <trans-unit id="UEth6vy" resname="Sesiones formativas">
+        <source>Sesiones formativas</source>
+        <target>Training Sessions</target>
+      </trans-unit>
+      <trans-unit id="DQ8D2U3" resname="Incidencias">
+        <source>Incidencias</source>
+        <target>Incidents</target>
+      </trans-unit>
+      <trans-unit id="ZWmR.Pa" resname="Empresa creada correctamente: {name}">
+        <source>Empresa creada correctamente: {name}</source>
+        <target>Company created successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="qhxubTB" resname="Empresa actualizada con éxito">
+        <source>Empresa actualizada con éxito</source>
+        <target>Company updated successfully</target>
+      </trans-unit>
+      <trans-unit id="pw1f_P_" resname="Se ha eliminado la empresa {company}">
+        <source>Se ha eliminado la empresa {company}</source>
+        <target>Company {company} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="52oT2Kk" resname="No se ha podido eliminar la empresa {company}">
+        <source>No se ha podido eliminar la empresa {company}</source>
+        <target>Could not delete company {company}</target>
+      </trans-unit>
+      <trans-unit id="huWlqsU" resname="Se ha eliminado la empresa {id}">
+        <source>Se ha eliminado la empresa {id}</source>
+        <target>Company {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="NI.e6fi" resname="No se ha podido eliminar la empresa {id}">
+        <source>No se ha podido eliminar la empresa {id}</source>
+        <target>Could not delete company {id}</target>
+      </trans-unit>
+      <trans-unit id="tUcRTlF" resname="CIF">
+        <source>CIF</source>
+        <target>CIF</target>
+      </trans-unit>
+      <trans-unit id="cUMIhoK" resname="Calle">
+        <source>Calle</source>
+        <target>Street</target>
+      </trans-unit>
+      <trans-unit id="nG27WsZ" resname="Ciudad">
+        <source>Ciudad</source>
+        <target>City</target>
+      </trans-unit>
+      <trans-unit id="8ydxLJ_" resname="Selecciona una cuenta">
+        <source>Selecciona una cuenta</source>
+        <target>Select an account</target>
+      </trans-unit>
+      <trans-unit id="J92As0p" resname="Nº de empleados">
+        <source>Nº de empleados</source>
+        <target>No. of employees</target>
+      </trans-unit>
+      <trans-unit id="zrzeML1" resname="Nº de clientes diarios">
+        <source>Nº de clientes diarios</source>
+        <target>No. of daily customers</target>
+      </trans-unit>
+      <trans-unit id="PwfpTDJ" resname="Empresa">
+        <source>Empresa</source>
+        <target>Company</target>
+      </trans-unit>
+      <trans-unit id="vOMbN2s" resname="Sin empresa">
+        <source>Sin empresa</source>
+        <target>No company</target>
+      </trans-unit>
+      <trans-unit id="ZY3FvAH" resname="Employee created successfully: {name}">
+        <source>Employee created successfully: {name}</source>
+        <target>Employee created successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="yTl7Wmy" resname="Employee updated successfully">
+        <source>Employee updated successfully</source>
+        <target>Employee updated successfully</target>
+      </trans-unit>
+      <trans-unit id="NW5i4fj" resname="Employee {name} has been deleted">
+        <source>Employee {name} has been deleted</source>
+        <target>Employee {name} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="7hKeBZ3" resname="Could not delete employee {name}">
+        <source>Could not delete employee {name}</source>
+        <target>Could not delete employee {name}</target>
+      </trans-unit>
+      <trans-unit id="ULm6hFS" resname="Employee {id} has been deleted">
+        <source>Employee {id} has been deleted</source>
+        <target>Employee {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="9Wfx6zh" resname="Could not delete employee {id}">
+        <source>Could not delete employee {id}</source>
+        <target>Could not delete employee {id}</target>
+      </trans-unit>
+      <trans-unit id="OXsOU6E" resname="Nombre completo">
+        <source>Nombre completo</source>
+        <target>Full name</target>
+      </trans-unit>
+      <trans-unit id="yhue5qm" resname="Teléfono">
+        <source>Teléfono</source>
+        <target>Phone</target>
+      </trans-unit>
+      <trans-unit id="QjvIIVf" resname="Sin empresa asignada">
+        <source>Sin empresa asignada</source>
+        <target>No company assigned</target>
+      </trans-unit>
+      <trans-unit id="AFVrA.D" resname="La empresa no tiene CIF">
+        <source>La empresa no tiene CIF</source>
+        <target>The company has no CIF</target>
+      </trans-unit>
+      <trans-unit id="pjjd0M8" resname="Sin puntos críticos asignados">
+        <source>Sin puntos críticos asignados</source>
+        <target>No critical points assigned</target>
+      </trans-unit>
+      <trans-unit id="DuERCz." resname="El plan no tiene un responsable asignado">
+        <source>El plan no tiene un responsable asignado</source>
+        <target>The plan has no responsible person assigned</target>
+      </trans-unit>
+      <trans-unit id="rupRuUY" resname="Convenio de donación creado correctamente">
+        <source>Convenio de donación creado correctamente</source>
+        <target>Donation agreement created successfully</target>
+      </trans-unit>
+      <trans-unit id="JlH.gri" resname="Convenio de donación actualizado con éxito">
+        <source>Convenio de donación actualizado con éxito</source>
+        <target>Donation agreement updated successfully</target>
+      </trans-unit>
+      <trans-unit id="LhlXviS" resname="Se ha eliminado el convenio de donación">
+        <source>Se ha eliminado el convenio de donación</source>
+        <target>The donation agreement has been deleted</target>
+      </trans-unit>
+      <trans-unit id="kCMwpK5" resname="No se ha podido eliminar el convenio de donación">
+        <source>No se ha podido eliminar el convenio de donación</source>
+        <target>Could not delete the donation agreement</target>
+      </trans-unit>
+      <trans-unit id="l3RgJe3" resname="Envase creado correctamente: {name}">
+        <source>Envase creado correctamente: {name}</source>
+        <target>Packaging created successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="1M.DPuc" resname="Envase actualizado con éxito">
+        <source>Envase actualizado con éxito</source>
+        <target>Packaging updated successfully</target>
+      </trans-unit>
+      <trans-unit id="O1GbPB2" resname="Se ha eliminado el envase {name}">
+        <source>Se ha eliminado el envase {name}</source>
+        <target>Packaging {name} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="Gq43TI." resname="No se ha podido eliminar el envase {name}">
+        <source>No se ha podido eliminar el envase {name}</source>
+        <target>Could not delete packaging {name}</target>
+      </trans-unit>
+      <trans-unit id="PX2Hc0Y" resname="Se ha eliminado el envase {id}">
+        <source>Se ha eliminado el envase {id}</source>
+        <target>Packaging {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="tXeYpxS" resname="No se ha podido eliminar el envase {id}">
+        <source>No se ha podido eliminar el envase {id}</source>
+        <target>Could not delete packaging {id}</target>
+      </trans-unit>
+      <trans-unit id="eQPB4j6" resname="Incidencia creada correctamente: {name}">
+        <source>Incidencia creada correctamente: {name}</source>
+        <target>Incident created successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="s5DoqHq" resname="Incidencia actualizada con éxito">
+        <source>Incidencia actualizada con éxito</source>
+        <target>Incident updated successfully</target>
+      </trans-unit>
+      <trans-unit id="zExsO.T" resname="Se ha eliminado la incidencia {incidence}">
+        <source>Se ha eliminado la incidencia {incidence}</source>
+        <target>Incident {incidence} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="GQUt7qB" resname="No se ha podido eliminar la incidencia {incidence}">
+        <source>No se ha podido eliminar la incidencia {incidence}</source>
+        <target>Could not delete incident {incidence}</target>
+      </trans-unit>
+      <trans-unit id="NDamJrv" resname="Causa de excedente creada correctamente: {name}">
+        <source>Causa de excedente creada correctamente: {name}</source>
+        <target>Surplus cause created successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="0zrBeRV" resname="Causa de excedente actualizada con éxito">
+        <source>Causa de excedente actualizada con éxito</source>
+        <target>Surplus cause updated successfully</target>
+      </trans-unit>
+      <trans-unit id="rwTYTQo" resname="Se ha eliminado la causa de excedente {surplusCause}">
+        <source>Se ha eliminado la causa de excedente {surplusCause}</source>
+        <target>Surplus cause {surplusCause} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="uoEDvNu" resname="No se ha podido eliminar la causa de excedente {surplusCause}">
+        <source>No se ha podido eliminar la causa de excedente {surplusCause}</source>
+        <target>Could not delete surplus cause {surplusCause}</target>
+      </trans-unit>
+      <trans-unit id="P5kzUvO" resname="Se ha eliminado la causa de excedente {id}">
+        <source>Se ha eliminado la causa de excedente {id}</source>
+        <target>Surplus cause {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="XBe0fVq" resname="No se ha podido eliminar la causa de excedente {id}">
+        <source>No se ha podido eliminar la causa de excedente {id}</source>
+        <target>Could not delete surplus cause {id}</target>
+      </trans-unit>
+      <trans-unit id="UdHeqdz" resname="Motivo creado correctamente: {description}">
+        <source>Motivo creado correctamente: {description}</source>
+        <target>Reason created successfully: {description}</target>
+      </trans-unit>
+      <trans-unit id="TcEOSl_" resname="Motivo actualizado con éxito">
+        <source>Motivo actualizado con éxito</source>
+        <target>Reason updated successfully</target>
+      </trans-unit>
+      <trans-unit id="dBP4GWX" resname="Se ha eliminado el motivo {reason}">
+        <source>Se ha eliminado el motivo {reason}</source>
+        <target>Reason {reason} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="GpI0Am8" resname="No se ha podido eliminar el motivo {reason}">
+        <source>No se ha podido eliminar el motivo {reason}</source>
+        <target>Could not delete reason {reason}</target>
+      </trans-unit>
+      <trans-unit id="RI.fht_" resname="Se ha eliminado el motivo {id}">
+        <source>Se ha eliminado el motivo {id}</source>
+        <target>Reason {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="v1POFHu" resname="No se ha podido eliminar el motivo {id}">
+        <source>No se ha podido eliminar el motivo {id}</source>
+        <target>Could not delete reason {id}</target>
+      </trans-unit>
+      <trans-unit id="y74pCFC" resname="Cartel Doggy Bag creado correctamente">
+        <source>Cartel Doggy Bag creado correctamente</source>
+        <target>Doggy Bag sign created successfully</target>
+      </trans-unit>
+      <trans-unit id="S5412i9" resname="Cartel Doggy Bag actualizado con éxito">
+        <source>Cartel Doggy Bag actualizado con éxito</source>
+        <target>Doggy Bag sign updated successfully</target>
+      </trans-unit>
+      <trans-unit id=".d2vFRL" resname="Se ha eliminado el cartel {name}">
+        <source>Se ha eliminado el cartel {name}</source>
+        <target>Sign {name} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="qsivq7S" resname="No se ha podido eliminar el cartel {name}">
+        <source>No se ha podido eliminar el cartel {name}</source>
+        <target>Could not delete sign {name}</target>
+      </trans-unit>
+      <trans-unit id="kqid4bD" resname="Se ha eliminado el cartel {id}">
+        <source>Se ha eliminado el cartel {id}</source>
+        <target>Sign {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="NKHlrNM" resname="No se ha podido eliminar el cartel {id}">
+        <source>No se ha podido eliminar el cartel {id}</source>
+        <target>Could not delete sign {id}</target>
+      </trans-unit>
+      <trans-unit id="eqVW9xp" resname="Sesión formativa creada correctamente: {title}">
+        <source>Sesión formativa creada correctamente: {title}</source>
+        <target>Training session created successfully: {title}</target>
+      </trans-unit>
+      <trans-unit id="LQZr918" resname="Sesión formativa actualizada con éxito">
+        <source>Sesión formativa actualizada con éxito</source>
+        <target>Training session updated successfully</target>
+      </trans-unit>
+      <trans-unit id="Skb7yZg" resname="Se ha eliminado la sesión formativa {title}">
+        <source>Se ha eliminado la sesión formativa {title}</source>
+        <target>Training session {title} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="elJZApU" resname="No se ha podido eliminar la sesión formativa {title}">
+        <source>No se ha podido eliminar la sesión formativa {title}</source>
+        <target>Could not delete training session {title}</target>
+      </trans-unit>
+      <trans-unit id="omqKyua" resname="Protocolo creado correctamente: {name}">
+        <source>Protocolo creado correctamente: {name}</source>
+        <target>Protocol created successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="7JGNsDi" resname="Protocolo actualizado con éxito">
+        <source>Protocolo actualizado con éxito</source>
+        <target>Protocol updated successfully</target>
+      </trans-unit>
+      <trans-unit id="EjHruvG" resname="Se ha eliminado el protocolo {name}">
+        <source>Se ha eliminado el protocolo {name}</source>
+        <target>Protocol {name} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="XAk2CfB" resname="No se ha podido eliminar el protocolo {name}">
+        <source>No se ha podido eliminar el protocolo {name}</source>
+        <target>Could not delete protocol {name}</target>
+      </trans-unit>
+      <trans-unit id="VhH9uHI" resname="Entidad receptora creada correctamente: {name}">
+        <source>Entidad receptora creada correctamente: {name}</source>
+        <target>Recipient organisation created successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="PZGxINh" resname="Entidad receptora actualizada con éxito">
+        <source>Entidad receptora actualizada con éxito</source>
+        <target>Recipient organisation updated successfully</target>
+      </trans-unit>
+      <trans-unit id="xd86M5v" resname="Se ha eliminado la entidad receptora {name}">
+        <source>Se ha eliminado la entidad receptora {name}</source>
+        <target>Recipient organisation {name} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="ivdWR20" resname="No se ha podido eliminar la entidad receptora {name}">
+        <source>No se ha podido eliminar la entidad receptora {name}</source>
+        <target>Could not delete recipient organisation {name}</target>
+      </trans-unit>
+      <trans-unit id="twT0Hkc" resname="Se ha eliminado la entidad receptora {id}">
+        <source>Se ha eliminado la entidad receptora {id}</source>
+        <target>Recipient organisation {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="K7DM3XO" resname="No se ha podido eliminar la entidad receptora {id}">
+        <source>No se ha podido eliminar la entidad receptora {id}</source>
+        <target>Could not delete recipient organisation {id}</target>
+      </trans-unit>
+      <trans-unit id="X22Fl93" resname="Registro de entrega creado correctamente: {productType}">
+        <source>Registro de entrega creado correctamente: {productType}</source>
+        <target>Delivery log created successfully: {productType}</target>
+      </trans-unit>
+      <trans-unit id=".Lew5PR" resname="Registro de entrega actualizado con éxito">
+        <source>Registro de entrega actualizado con éxito</source>
+        <target>Delivery log updated successfully</target>
+      </trans-unit>
+      <trans-unit id=".G1tBTN" resname="Se ha eliminado el registro de entrega de {productType}">
+        <source>Se ha eliminado el registro de entrega de {productType}</source>
+        <target>Delivery log for {productType} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="aA3SSuU" resname="No se ha podido eliminar el registro de entrega">
+        <source>No se ha podido eliminar el registro de entrega</source>
+        <target>Could not delete delivery log</target>
+      </trans-unit>
+      <trans-unit id="05ayKDL" resname="Plan de prevención creado correctamente: {name}">
+        <source>Plan de prevención creado correctamente: {name}</source>
+        <target>Prevention plan created successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="8XgKA1K" resname="Acciones del plan actualizadas con éxito">
+        <source>Acciones del plan actualizadas con éxito</source>
+        <target>Plan actions updated successfully</target>
+      </trans-unit>
+      <trans-unit id="Qp2G96l" resname="Plan de prevención actualizado con éxito">
+        <source>Plan de prevención actualizado con éxito</source>
+        <target>Prevention plan updated successfully</target>
+      </trans-unit>
+      <trans-unit id="uriau.a" resname="Se ha eliminado el plan de prevención {name}">
+        <source>Se ha eliminado el plan de prevención {name}</source>
+        <target>Prevention plan {name} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="nvH8kHu" resname="No se ha podido eliminar el plan de prevención {name}">
+        <source>No se ha podido eliminar el plan de prevención {name}</source>
+        <target>Could not delete prevention plan {name}</target>
+      </trans-unit>
+      <trans-unit id="l3388LC" resname="Borrador del plan actualizado con éxito">
+        <source>Borrador del plan actualizado con éxito</source>
+        <target>Plan draft updated successfully</target>
+      </trans-unit>
+      <trans-unit id="BmTFGqs" resname="¿Estas seguro de que quieres publicar una nueva versión de este plan de prevención?">
+        <source>¿Estas seguro de que quieres publicar una nueva versión de este plan de prevención?</source>
+        <target>Are you sure you want to publish a new version of this prevention plan?</target>
+      </trans-unit>
+      <trans-unit id="OEnsybj" resname="Publicar">
+        <source>Publicar</source>
+        <target>Publish</target>
+      </trans-unit>
+      <trans-unit id="AyXNSF9" resname="Plan publicado con éxito">
+        <source>Plan publicado con éxito</source>
+        <target>Plan published successfully</target>
+      </trans-unit>
+      <trans-unit id="4t_7XEe" resname="Excepción Doggy Bag creada correctamente">
+        <source>Excepción Doggy Bag creada correctamente</source>
+        <target>Doggy Bag exception created successfully</target>
+      </trans-unit>
+      <trans-unit id="lorzs.E" resname="Excepción Doggy Bag actualizada con éxito">
+        <source>Excepción Doggy Bag actualizada con éxito</source>
+        <target>Doggy Bag exception updated successfully</target>
+      </trans-unit>
+      <trans-unit id="XyyhAI5" resname="Se ha eliminado la excepción Doggy Bag">
+        <source>Se ha eliminado la excepción Doggy Bag</source>
+        <target>The Doggy Bag exception has been deleted</target>
+      </trans-unit>
+      <trans-unit id="ayoEmai" resname="No se ha podido eliminar la excepción Doggy Bag">
+        <source>No se ha podido eliminar la excepción Doggy Bag</source>
+        <target>Could not delete the Doggy Bag exception</target>
+      </trans-unit>
+      <trans-unit id="TamjuCo" resname="Se ha eliminado la excepción Doggy Bag {id}">
+        <source>Se ha eliminado la excepción Doggy Bag {id}</source>
+        <target>Doggy Bag exception {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="kz6SnQc" resname="No se ha podido eliminar la excepción Doggy Bag {id}">
+        <source>No se ha podido eliminar la excepción Doggy Bag {id}</source>
+        <target>Could not delete Doggy Bag exception {id}</target>
+      </trans-unit>
+      <trans-unit id="i0geen_" resname="Fecha de la sesión">
+        <source>Fecha de la sesión</source>
+        <target>Session date</target>
+      </trans-unit>
+      <trans-unit id="4ln2Gzy" resname="Título">
+        <source>Título</source>
+        <target>Title</target>
+      </trans-unit>
+      <trans-unit id="PNU9NLu" resname="Tema">
+        <source>Tema</source>
+        <target>Topic</target>
+      </trans-unit>
+      <trans-unit id="CB8rBcS" resname="Ubicación del cartel">
+        <source>Ubicación del cartel</source>
+        <target>Sign location</target>
+      </trans-unit>
+      <trans-unit id="1rDZYRr" resname="Fichero PDF">
+        <source>Fichero PDF</source>
+        <target>PDF file</target>
+      </trans-unit>
+      <trans-unit id="InthcrL" resname="Por favor, sube un fichero PDF válido.">
+        <source>Por favor, sube un fichero PDF válido.</source>
+        <target>Please upload a valid PDF file.</target>
+      </trans-unit>
+      <trans-unit id="vie_phA" resname="Punto crítico">
+        <source>Punto crítico</source>
+        <target>Critical point</target>
+      </trans-unit>
+      <trans-unit id="aIyFF31" resname="Contacto">
+        <source>Contacto</source>
+        <target>Contact</target>
+      </trans-unit>
+      <trans-unit id="EsPtZAB" resname="Fecha y hora">
+        <source>Fecha y hora</source>
+        <target>Date and time</target>
+      </trans-unit>
+      <trans-unit id="ZcPCr3q" resname="Efecto o daño causado">
+        <source>Efecto o daño causado</source>
+        <target>Effect or damage caused</target>
+      </trans-unit>
+      <trans-unit id="Hv17YRr" resname="¿Se podía haber prevenido el desperdicio?">
+        <source>¿Se podía haber prevenido el desperdicio?</source>
+        <target>Could the waste have been prevented?</target>
+      </trans-unit>
+      <trans-unit id="3xEQxJQ" resname="¿Se puede donar?">
+        <source>¿Se puede donar?</source>
+        <target>Can it be donated?</target>
+      </trans-unit>
+      <trans-unit id="J19G6Vg" resname="¿Se puede usar para alimentación animal?">
+        <source>¿Se puede usar para alimentación animal?</source>
+        <target>Can it be used for animal feed?</target>
+      </trans-unit>
+      <trans-unit id="9bEbuJZ" resname="¿Se puede transformar para consumo humano?">
+        <source>¿Se puede transformar para consumo humano?</source>
+        <target>Can it be transformed for human consumption?</target>
+      </trans-unit>
+      <trans-unit id="T0GRayt" resname="¿Se puede dar un uso no humano (ej. compostaje)?">
+        <source>¿Se puede dar un uso no humano (ej. compostaje)?</source>
+        <target>Can it be given a non-human use (e.g. composting)?</target>
+      </trans-unit>
+      <trans-unit id="5.Yfy_B" resname="Tipo de envase">
+        <source>Tipo de envase</source>
+        <target>Packaging type</target>
+      </trans-unit>
+      <trans-unit id="aqbeMBp" resname="Entidad receptora">
+        <source>Entidad receptora</source>
+        <target>Recipient organisation</target>
+      </trans-unit>
+      <trans-unit id="uRRYcYn" resname="Fecha de inicio">
+        <source>Fecha de inicio</source>
+        <target>Start date</target>
+      </trans-unit>
+      <trans-unit id="AorlCe0" resname="Fecha de expiración">
+        <source>Fecha de expiración</source>
+        <target>Expiry date</target>
+      </trans-unit>
+      <trans-unit id="yW71GEt" resname="Convenio (PDF)">
+        <source>Convenio (PDF)</source>
+        <target>Agreement (PDF)</target>
+      </trans-unit>
+      <trans-unit id="7qNRVTm" resname="Responsable">
+        <source>Responsable</source>
+        <target>Responsible</target>
+      </trans-unit>
+      <trans-unit id="VfMjQMM" resname="Sin responsable">
+        <source>Sin responsable</source>
+        <target>No responsible person</target>
+      </trans-unit>
+      <trans-unit id="iOezdmA" resname="Fichero">
+        <source>Fichero</source>
+        <target>File</target>
+      </trans-unit>
+      <trans-unit id="YhFFYzA" resname="Tipo de producto">
+        <source>Tipo de producto</source>
+        <target>Product type</target>
+      </trans-unit>
+      <trans-unit id="8P.hcgT" resname="Unidad">
+        <source>Unidad</source>
+        <target>Unit</target>
+      </trans-unit>
+      <trans-unit id="uWUKhKG" resname="Lote">
+        <source>Lote</source>
+        <target>Batch</target>
+      </trans-unit>
+      <trans-unit id="2gUNh9r" resname="Acción">
+        <source>Acción</source>
+        <target>Action</target>
+      </trans-unit>
+      <trans-unit id="vSIaw4i" resname="Tipo">
+        <source>Tipo</source>
+        <target>Type</target>
+      </trans-unit>
+      <trans-unit id="5ft5fw1" resname="NIF">
+        <source>NIF</source>
+        <target>NIF</target>
+      </trans-unit>
+      <trans-unit id="TaQH4ZC" resname="Razón social">
+        <source>Razón social</source>
+        <target>Business name</target>
+      </trans-unit>
+      <trans-unit id="_HBC_Nj" resname="Nombre del contacto">
+        <source>Nombre del contacto</source>
+        <target>Contact name</target>
+      </trans-unit>
+      <trans-unit id="JtkpVUQ" resname="Email del contacto">
+        <source>Email del contacto</source>
+        <target>Contact email</target>
+      </trans-unit>
+      <trans-unit id="rzgDsq1" resname="Teléfono del contacto">
+        <source>Teléfono del contacto</source>
+        <target>Contact phone</target>
+      </trans-unit>
+      <trans-unit id="OzIAIxK" resname="Horario operativo">
+        <source>Horario operativo</source>
+        <target>Operating hours</target>
+      </trans-unit>
+      <trans-unit id="RxX7oq5" resname="Tipo de recogida">
+        <source>Tipo de recogida</source>
+        <target>Pickup type</target>
+      </trans-unit>
+      <trans-unit id="N2jrYjN" resname="Todas las entidades">
+        <source>Todas las entidades</source>
+        <target>All organisations</target>
+      </trans-unit>
+      <trans-unit id="IDAEaL8" resname="Todas las empresas">
+        <source>Todas las empresas</source>
+        <target>All companies</target>
+      </trans-unit>
+      <trans-unit id="dAXNCYh" resname="Categoría de servicio">
+        <source>Categoría de servicio</source>
+        <target>Service category</target>
+      </trans-unit>
+      <trans-unit id="SDrpiUs" resname="Causa de excedente">
+        <source>Causa de excedente</source>
+        <target>Surplus cause</target>
+      </trans-unit>
+      <trans-unit id="0_V8Wh0" resname="Generando secciones">
+        <source>Generando secciones</source>
+        <target>Generating sections</target>
+      </trans-unit>
+      <trans-unit id="_dTtVCJ" resname="Revisando contenidos">
+        <source>Revisando contenidos</source>
+        <target>Reviewing content</target>
+      </trans-unit>
+      <trans-unit id="4hK_JTK" resname="Guardando contenidos">
+        <source>Guardando contenidos</source>
+        <target>Saving content</target>
+      </trans-unit>
+      <trans-unit id="_it4S3r" resname="Añadir">
+        <source>Añadir</source>
+        <target>Add</target>
+      </trans-unit>
+      <trans-unit id="MR_NqT7" resname="Descargar">
+        <source>Descargar</source>
+        <target>Download</target>
+      </trans-unit>
+      <trans-unit id="5wkxlYg" resname="Histórico">
+        <source>Histórico</source>
+        <target>History</target>
+      </trans-unit>
+      <trans-unit id="hztpjSV" resname="Se ha eliminado el punto crítico {criticalPoint} por el usuario {user}">
+        <source>Se ha eliminado el punto crítico {criticalPoint} por el usuario {user}</source>
+        <target>Critical point {criticalPoint} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="xo0_lGa" resname="Se ha establecido el stock del envase {packaging} para la propiedad {property}: {stock} unidades por el usuario {user}">
+        <source>Se ha establecido el stock del envase {packaging} para la propiedad {property}: {stock} unidades por el usuario {user}</source>
+        <target>Packaging stock {packaging} for property {property} was set to {stock} units by user {user}</target>
+      </trans-unit>
+      <trans-unit id="M9oAR7Y" resname="Se ha registrado la categoría de servicio &quot;{serviceCategory}&quot; por el usuario {user}">
+        <source>Se ha registrado la categoría de servicio "{serviceCategory}" por el usuario {user}</source>
+        <target>Service category "{serviceCategory}" was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="mAznsf9" resname="Se ha registrado una excepción de doggy bag para el punto crítico {criticalPoint}: {description} por el usuario {user}">
+        <source>Se ha registrado una excepción de doggy bag para el punto crítico {criticalPoint}: {description} por el usuario {user}</source>
+        <target>A doggy bag exception was registered for critical point {criticalPoint}: {description} by user {user}</target>
+      </trans-unit>
+      <trans-unit id=".uUeYfH" resname="Se ha eliminado el stock del envase {packaging} para la propiedad {property} por el usuario {user}">
+        <source>Se ha eliminado el stock del envase {packaging} para la propiedad {property} por el usuario {user}</source>
+        <target>Packaging stock {packaging} for property {property} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="21aGVWr" resname="Se ha guardado el PDF ({locale}) de la versión {version} del plan de prevención {preventionPlan} por el usuario {user}">
+        <source>Se ha guardado el PDF ({locale}) de la versión {version} del plan de prevención {preventionPlan} por el usuario {user}</source>
+        <target>The PDF ({locale}) of version {version} of prevention plan {preventionPlan} was saved by user {user}</target>
+      </trans-unit>
+      <trans-unit id="RjyCRE2" resname="Eliminada la medición &quot;{measurement}&quot; por el usuario {user}">
+        <source>Eliminada la medición "{measurement}" por el usuario {user}</source>
+        <target>Measurement "{measurement}" was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="i6cGQh2" resname="Se ha desvinculado el motivo {reason} del punto crítico {criticalPoint} por el usuario {user}">
+        <source>Se ha desvinculado el motivo {reason} del punto crítico {criticalPoint} por el usuario {user}</source>
+        <target>Reason {reason} was unlinked from critical point {criticalPoint} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="0KLoUr5" resname="La propiedad {property} ha sido desvinculada del establecimiento externo por el usuario {user}">
+        <source>La propiedad {property} ha sido desvinculada del establecimiento externo por el usuario {user}</source>
+        <target>Property {property} was unlinked from the external establishment by user {user}</target>
+      </trans-unit>
+      <trans-unit id="7UfxPy9" resname="Se ha eliminado la incidencia {incidence} por el usuario {user}">
+        <source>Se ha eliminado la incidencia {incidence} por el usuario {user}</source>
+        <target>Incident {incidence} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="ZlYvMHh" resname="Employee {name} ({email}) was registered by {actor}">
+        <source>Employee {name} ({email}) was registered by {actor}</source>
+        <target>Employee {name} ({email}) was registered by {actor}</target>
+      </trans-unit>
+      <trans-unit id="9dASM.." resname="El usuario {user} ha recuperado su contraseña por el usuario {actor}">
+        <source>El usuario {user} ha recuperado su contraseña por el usuario {actor}</source>
+        <target>User {user} recovered their password by user {actor}</target>
+      </trans-unit>
+      <trans-unit id="1nXQWrr" resname="Se ha registrado el punto crítico &quot;{criticalPoint}&quot; para la propiedad {property} por el usuario {user}">
+        <source>Se ha registrado el punto crítico "{criticalPoint}" para la propiedad {property} por el usuario {user}</source>
+        <target>Critical point "{criticalPoint}" was registered for property {property} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="BWnbulh" resname="Se ha actualizado el gestor de residuos {wasteManager} por el usuario {user}">
+        <source>Se ha actualizado el gestor de residuos {wasteManager} por el usuario {user}</source>
+        <target>Waste manager {wasteManager} was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="V7RK6_s" resname="Se ha vinculado el empleado {employee} con el usuario {linkedUser} por el usuario {actor}">
+        <source>Se ha vinculado el empleado {employee} con el usuario {linkedUser} por el usuario {actor}</source>
+        <target>Employee {employee} was linked to user {linkedUser} by user {actor}</target>
+      </trans-unit>
+      <trans-unit id="M18WB_l" resname="Se ha eliminado la empresa &quot;{company}&quot; por el usuario {user}">
+        <source>Se ha eliminado la empresa "{company}" por el usuario {user}</source>
+        <target>Company "{company}" was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="Mzv8twV" resname="Se ha registrado el destino {destination} por el usuario {user}">
+        <source>Se ha registrado el destino {destination} por el usuario {user}</source>
+        <target>Destination {destination} was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="LkIs1IL" resname="El trabajo {key} ha finalizado correctamente">
+        <source>El trabajo {key} ha finalizado correctamente</source>
+        <target>Job {key} has completed successfully</target>
+      </trans-unit>
+      <trans-unit id="_JL4qlg" resname="Se ha registrado la importación &quot;{name}&quot; (tipo: {type}) por el usuario {user}">
+        <source>Se ha registrado la importación "{name}" (tipo: {type}) por el usuario {user}</source>
+        <target>Importation "{name}" (type: {type}) was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="HystTxM" resname="Eliminado permiso &quot;{role}&quot; al usuario {user} por el usuario {actor}">
+        <source>Eliminado permiso "{role}" al usuario {user} por el usuario {actor}</source>
+        <target>Permission "{role}" was removed from user {user} by user {actor}</target>
+      </trans-unit>
+      <trans-unit id="d1XMgja" resname="Se ha actualizado el protocolo &quot;{protocol}&quot; por el usuario {user}">
+        <source>Se ha actualizado el protocolo "{protocol}" por el usuario {user}</source>
+        <target>Protocol "{protocol}" was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="vT3VbT3" resname="Se ha eliminado el gestor de residuos {wasteManager} por el usuario {user}">
+        <source>Se ha eliminado el gestor de residuos {wasteManager} por el usuario {user}</source>
+        <target>Waste manager {wasteManager} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="BAsihx9" resname="Se ha eliminado el acuerdo de donación {donationAgreement} por el usuario {user}">
+        <source>Se ha eliminado el acuerdo de donación {donationAgreement} por el usuario {user}</source>
+        <target>Donation agreement {donationAgreement} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="tZnwefM" resname="Se ha registrado el motivo &quot;{reason}&quot; por el usuario {user}">
+        <source>Se ha registrado el motivo "{reason}" por el usuario {user}</source>
+        <target>Reason "{reason}" was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="I6m4Q4J" resname="Se ha actualizado la propiedad {property} perteneciente a la cuenta {account} por el usuario {user}">
+        <source>Se ha actualizado la propiedad {property} perteneciente a la cuenta {account} por el usuario {user}</source>
+        <target>Property {property} belonging to account {account} was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="P7YRU6P" resname="Se ha actualizado la propiedad {property} sin cuenta asociada por el usuario {user}">
+        <source>Se ha actualizado la propiedad {property} sin cuenta asociada por el usuario {user}</source>
+        <target>Property {property} with no associated account was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="iGsE3nY" resname="Se ha eliminado la causa de excedente {surplusCause} por el usuario {user}">
+        <source>Se ha eliminado la causa de excedente {surplusCause} por el usuario {user}</source>
+        <target>Surplus cause {surplusCause} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="fhF60PV" resname="Concedido permiso &quot;{role}&quot; al usuario {user} por el usuario {actor}">
+        <source>Concedido permiso "{role}" al usuario {user} por el usuario {actor}</source>
+        <target>Permission "{role}" was granted to user {user} by user {actor}</target>
+      </trans-unit>
+      <trans-unit id="tND3r3p" resname="La propiedad {property} ha sido vinculada a un establecimiento externo por el usuario {user}">
+        <source>La propiedad {property} ha sido vinculada a un establecimiento externo por el usuario {user}</source>
+        <target>Property {property} was linked to an external establishment by user {user}</target>
+      </trans-unit>
+      <trans-unit id="IS4UX0i" resname="Se ha registrado la marca {brand} por el usuario {user}">
+        <source>Se ha registrado la marca {brand} por el usuario {user}</source>
+        <target>Brand {brand} was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="KXqcWVe" resname="Se ha eliminado la categoría {category} por el usuario {user}">
+        <source>Se ha eliminado la categoría {category} por el usuario {user}</source>
+        <target>Category {category} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="fx0tVRI" resname="Se ha iniciado la recuperación de contraseña para el usuario {user} por el usuario {actor}">
+        <source>Se ha iniciado la recuperación de contraseña para el usuario {user} por el usuario {actor}</source>
+        <target>Password recovery was initiated for user {user} by user {actor}</target>
+      </trans-unit>
+      <trans-unit id="pX3jTRo" resname="Se ha eliminado el envase {packaging} por el usuario {user}">
+        <source>Se ha eliminado el envase {packaging} por el usuario {user}</source>
+        <target>Packaging {packaging} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="XwMVPB3" resname="Registrado el usuario {user} para la cuenta {account} por el usuario {actor}">
+        <source>Registrado el usuario {user} para la cuenta {account} por el usuario {actor}</source>
+        <target>User {user} was registered for account {account} by user {actor}</target>
+      </trans-unit>
+      <trans-unit id="85t3XA4" resname="Registrado el usuario {user} sin cuenta por el usuario {actor}">
+        <source>Registrado el usuario {user} sin cuenta por el usuario {actor}</source>
+        <target>User {user} was registered without account by user {actor}</target>
+      </trans-unit>
+      <trans-unit id="tApmc.T" resname="Se ha eliminado la categoría de servicio {serviceCategory} por el usuario {user}">
+        <source>Se ha eliminado la categoría de servicio {serviceCategory} por el usuario {user}</source>
+        <target>Service category {serviceCategory} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="ka0cwjT" resname="Se ha configurado la versión {version} del plan de prevención {preventionPlan} por el usuario {user}">
+        <source>Se ha configurado la versión {version} del plan de prevención {preventionPlan} por el usuario {user}</source>
+        <target>Version {version} of prevention plan {preventionPlan} was configured by user {user}</target>
+      </trans-unit>
+      <trans-unit id="umu.4qw" resname="Se ha desvinculado la propiedad {property} del plan de prevención {preventionPlan} por el usuario {user}">
+        <source>Se ha desvinculado la propiedad {property} del plan de prevención {preventionPlan} por el usuario {user}</source>
+        <target>Property {property} was unlinked from prevention plan {preventionPlan} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="LDrtSIN" resname="Se ha actualizado la categoría de servicio &quot;{serviceCategory}&quot; por el usuario {user}">
+        <source>Se ha actualizado la categoría de servicio "{serviceCategory}" por el usuario {user}</source>
+        <target>Service category "{serviceCategory}" was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="2BaNDDE" resname="Se ha enviado un email a {recipient} con el asunto &quot;{subject}&quot;">
+        <source>Se ha enviado un email a {recipient} con el asunto "{subject}"</source>
+        <target>An email was sent to {recipient} with subject "{subject}"</target>
+      </trans-unit>
+      <trans-unit id="NN1LQ9V" resname="Se ha registrado el residuo diario para {property} ({waste}): carga {load} el día {day} por el usuario {user}">
+        <source>Se ha registrado el residuo diario para {property} ({waste}): carga {load} el día {day} por el usuario {user}</source>
+        <target>Daily waste for {property} ({waste}): load {load} on {day} was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="IEWjIdU" resname="Se ha actualizado la sesión de formación &quot;{title}&quot; del {date} por el usuario {user}">
+        <source>Se ha actualizado la sesión de formación "{title}" del {date} por el usuario {user}</source>
+        <target>Training session "{title}" of {date} was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="d4OVDnc" resname="Se ha registrado el gestor de residuos {wasteManager} para la cuenta {account} por el usuario {user}">
+        <source>Se ha registrado el gestor de residuos {wasteManager} para la cuenta {account} por el usuario {user}</source>
+        <target>Waste manager {wasteManager} was registered for account {account} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="5z41O5F" resname="Se ha eliminado una sección de la versión {version} del plan de prevención {preventionPlan} por el usuario {user}">
+        <source>Se ha eliminado una sección de la versión {version} del plan de prevención {preventionPlan} por el usuario {user}</source>
+        <target>A section of version {version} of prevention plan {preventionPlan} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="sfW_CEy" resname="Se ha registrado la categoría {category} por el usuario {user}">
+        <source>Se ha registrado la categoría {category} por el usuario {user}</source>
+        <target>Category {category} was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="qL0q1FQ" resname="Se ha eliminado el protocolo {protocol} por el usuario {user}">
+        <source>Se ha eliminado el protocolo {protocol} por el usuario {user}</source>
+        <target>Protocol {protocol} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="YN8..Xt" resname="Se ha actualizado el destino {destination} por el usuario {user}">
+        <source>Se ha actualizado el destino {destination} por el usuario {user}</source>
+        <target>Destination {destination} was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="BIAbJ71" resname="Se ha creado la versión {version} del plan de prevención {preventionPlan} por el usuario {user}">
+        <source>Se ha creado la versión {version} del plan de prevención {preventionPlan} por el usuario {user}</source>
+        <target>Version {version} of prevention plan {preventionPlan} was created by user {user}</target>
+      </trans-unit>
+      <trans-unit id="442KNg_" resname="Progreso del trabajo {key}: {current}/{total}">
+        <source>Progreso del trabajo {key}: {current}/{total}</source>
+        <target>Job {key} progress: {current}/{total}</target>
+      </trans-unit>
+      <trans-unit id="FJYcXye" resname="Se ha traducido el residuo {waste} al idioma {locale}: &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha traducido el residuo {waste} al idioma {locale}: "{name}" por el usuario {user}</source>
+        <target>Waste {waste} was translated to {locale}: "{name}" by user {user}</target>
+      </trans-unit>
+      <trans-unit id="JoyGFoY" resname="Employee was removed by {actor}">
+        <source>Employee was removed by {actor}</source>
+        <target>Employee was removed by {actor}</target>
+      </trans-unit>
+      <trans-unit id="7e8Gmui" resname="Se ha registrado el plan de prevención &quot;{preventionPlan}&quot; para la cuenta {account} por el usuario {user}">
+        <source>Se ha registrado el plan de prevención "{preventionPlan}" para la cuenta {account} por el usuario {user}</source>
+        <target>Prevention plan "{preventionPlan}" was registered for account {account} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="3v1HUH6" resname="Se ha actualizado el punto crítico &quot;{criticalPoint}&quot; de la propiedad {property} por el usuario {user}">
+        <source>Se ha actualizado el punto crítico "{criticalPoint}" de la propiedad {property} por el usuario {user}</source>
+        <target>Critical point "{criticalPoint}" of property {property} was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="D3hzGIs" resname="Se ha actualizado la empresa &quot;{company}&quot; por el usuario {user}">
+        <source>Se ha actualizado la empresa "{company}" por el usuario {user}</source>
+        <target>Company "{company}" was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="o568YNr" resname="Se ha añadido la sección &quot;{title}&quot; a la versión {version} del plan de prevención {preventionPlan} por el usuario {user}">
+        <source>Se ha añadido la sección "{title}" a la versión {version} del plan de prevención {preventionPlan} por el usuario {user}</source>
+        <target>Section "{title}" was added to version {version} of prevention plan {preventionPlan} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="8A4RjVg" resname="Se ha desvinculado la categoría de servicio {serviceCategory} del punto crítico {criticalPoint} por el usuario {user}">
+        <source>Se ha desvinculado la categoría de servicio {serviceCategory} del punto crítico {criticalPoint} por el usuario {user}</source>
+        <target>Service category {serviceCategory} was unlinked from critical point {criticalPoint} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="iHcvYg7" resname="Se han eliminado las secciones de la versión {version} del plan de prevención {preventionPlan} por el usuario {user}">
+        <source>Se han eliminado las secciones de la versión {version} del plan de prevención {preventionPlan} por el usuario {user}</source>
+        <target>Sections of version {version} of prevention plan {preventionPlan} were deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="xfu6WXC" resname="La cuenta {account} ahora se llama {name}, realizado por el usuario {user}">
+        <source>La cuenta {account} ahora se llama {name}, realizado por el usuario {user}</source>
+        <target>Account {account} has been renamed to {name} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="d5Syhhc" resname="Se ha actualizado la incidencia &quot;{incidence}&quot; de la propiedad {property} por el usuario {user}">
+        <source>Se ha actualizado la incidencia "{incidence}" de la propiedad {property} por el usuario {user}</source>
+        <target>Incident "{incidence}" of property {property} was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="c2iJaXA" resname="Se ha eliminado el destino {destination} por el usuario {user}">
+        <source>Se ha eliminado el destino {destination} por el usuario {user}</source>
+        <target>Destination {destination} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="qheh.zl" resname="Se ha registrado el país {country} ({iso}) por el usuario {user}">
+        <source>Se ha registrado el país {country} ({iso}) por el usuario {user}</source>
+        <target>Country {country} ({iso}) was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="s5On2Pp" resname="Se ha actualizado el plan de prevención &quot;{preventionPlan}&quot; por el usuario {user}">
+        <source>Se ha actualizado el plan de prevención "{preventionPlan}" por el usuario {user}</source>
+        <target>Prevention plan "{preventionPlan}" was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="8qiRki5" resname="Se ha eliminado la sesión de formación {trainingSession} por el usuario {user}">
+        <source>Se ha eliminado la sesión de formación {trainingSession} por el usuario {user}</source>
+        <target>Training session {trainingSession} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="bRsWp.A" resname="Se ha vinculado la propiedad {property} al plan de prevención {preventionPlan} por el usuario {user}">
+        <source>Se ha vinculado la propiedad {property} al plan de prevención {preventionPlan} por el usuario {user}</source>
+        <target>Property {property} was linked to prevention plan {preventionPlan} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="nqIgynU" resname="Se ha registrado un acuerdo de donación con {organization} para la cuenta {account} con inicio {startDate} por el usuario {user}">
+        <source>Se ha registrado un acuerdo de donación con {organization} para la cuenta {account} con inicio {startDate} por el usuario {user}</source>
+        <target>A donation agreement with {organization} for account {account} starting {startDate} was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="TMGBJ31" resname="Se ha registrado la incidencia &quot;{incidence}&quot; para la propiedad {property} por el usuario {user}">
+        <source>Se ha registrado la incidencia "{incidence}" para la propiedad {property} por el usuario {user}</source>
+        <target>Incident "{incidence}" was registered for property {property} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="nSBXlM7" resname="Se ha aprobado el borrador de la versión {version} del plan de prevención {preventionPlan} por el usuario {user}">
+        <source>Se ha aprobado el borrador de la versión {version} del plan de prevención {preventionPlan} por el usuario {user}</source>
+        <target>Draft of version {version} of prevention plan {preventionPlan} was approved by user {user}</target>
+      </trans-unit>
+      <trans-unit id="N2AIfqr" resname="Se ha eliminado el país {country} por el usuario {user}">
+        <source>Se ha eliminado el país {country} por el usuario {user}</source>
+        <target>Country {country} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="qnTP0YY" resname="Se ha actualizado el residuo {waste} por el usuario {user}">
+        <source>Se ha actualizado el residuo {waste} por el usuario {user}</source>
+        <target>Waste {waste} was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="kdoUUUs" resname="Se ha ejecutado la importación {importation} por el usuario {user}">
+        <source>Se ha ejecutado la importación {importation} por el usuario {user}</source>
+        <target>Importation {importation} was executed by user {user}</target>
+      </trans-unit>
+      <trans-unit id="hAyMbg_" resname="Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod} por el usuario {user}">
+        <source>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod} por el usuario {user}</source>
+        <target>A new container for {property} for waste of type {waste}, purpose {purpose} and measurement method {measurementMethod} was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="e0TadTr" resname="Se ha eliminado el contenedor {container} por el usuario {user}">
+        <source>Se ha eliminado el contenedor {container} por el usuario {user}</source>
+        <target>Container {container} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="_pfUgva" resname="Se ha validado la versión {version} del plan de prevención {preventionPlan} por el usuario {user}">
+        <source>Se ha validado la versión {version} del plan de prevención {preventionPlan} por el usuario {user}</source>
+        <target>Version {version} of prevention plan {preventionPlan} was validated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="8OLBEpU" resname="Se ha registrado la acción &quot;{action}&quot; por el usuario {user}">
+        <source>Se ha registrado la acción "{action}" por el usuario {user}</source>
+        <target>Action "{action}" was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="t7c1gzy" resname="Se ha impreso el QR del contenedor {container} por el usuario {user}">
+        <source>Se ha impreso el QR del contenedor {container} por el usuario {user}</source>
+        <target>QR code of container {container} was printed by user {user}</target>
+      </trans-unit>
+      <trans-unit id="K3V3JUn" resname="Se ha eliminado la organización receptora {organization} por el usuario {user}">
+        <source>Se ha eliminado la organización receptora {organization} por el usuario {user}</source>
+        <target>Recipient organisation {organization} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="GMo_YzL" resname="Se ha traducido la acción {action} al idioma {locale} por el usuario {user}">
+        <source>Se ha traducido la acción {action} al idioma {locale} por el usuario {user}</source>
+        <target>Action {action} was translated to {locale} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="COjSCpX" resname="Se ha actualizado el residuo diario {dailyWaste}: nueva carga {load} por el usuario {user}">
+        <source>Se ha actualizado el residuo diario {dailyWaste}: nueva carga {load} por el usuario {user}</source>
+        <target>Daily waste {dailyWaste} was updated: new load {load} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="YR3EdvB" resname="Se ha registrado el residuo {waste} por el usuario {user}">
+        <source>Se ha registrado el residuo {waste} por el usuario {user}</source>
+        <target>Waste {waste} was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="6cmVdwc" resname="Se ha eliminado el cartel doggy bag {doggyBagSign} por el usuario {user}">
+        <source>Se ha eliminado el cartel doggy bag {doggyBagSign} por el usuario {user}</source>
+        <target>Doggy bag sign {doggyBagSign} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="i7eXNtG" resname="Se ha registrado una entrega de {quantity} unidades de {productType} para {property} el {date} por el usuario {user}">
+        <source>Se ha registrado una entrega de {quantity} unidades de {productType} para {property} el {date} por el usuario {user}</source>
+        <target>A delivery of {quantity} units of {productType} for {property} on {date} was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="dj8wYMR" resname="Se ha vinculado el motivo {reason} al punto crítico {criticalPoint} por el usuario {user}">
+        <source>Se ha vinculado el motivo {reason} al punto crítico {criticalPoint} por el usuario {user}</source>
+        <target>Reason {reason} was linked to critical point {criticalPoint} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="nn7_2A8" resname="Se ha traducido el motivo {reason} al idioma {locale} por el usuario {user}">
+        <source>Se ha traducido el motivo {reason} al idioma {locale} por el usuario {user}</source>
+        <target>Reason {reason} was translated to {locale} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="GMGntoP" resname="Se ha actualizado la acción &quot;{action}&quot; por el usuario {user}">
+        <source>Se ha actualizado la acción "{action}" por el usuario {user}</source>
+        <target>Action "{action}" was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="J6O7VLf" resname="Se ha vinculado la categoría de servicio {serviceCategory} al punto crítico {criticalPoint} por el usuario {user}">
+        <source>Se ha vinculado la categoría de servicio {serviceCategory} al punto crítico {criticalPoint} por el usuario {user}</source>
+        <target>Service category {serviceCategory} was linked to critical point {criticalPoint} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="cO2nW_v" resname="Se ha actualizado el acuerdo de donación con {organization} con inicio {startDate} por el usuario {user}">
+        <source>Se ha actualizado el acuerdo de donación con {organization} con inicio {startDate} por el usuario {user}</source>
+        <target>Donation agreement with {organization} starting {startDate} was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="U2aMZHa" resname="Se ha desvinculado el empleado {employee} de su usuario por el usuario {actor}">
+        <source>Se ha desvinculado el empleado {employee} de su usuario por el usuario {actor}</source>
+        <target>Employee {employee} was unlinked from their user by user {actor}</target>
+      </trans-unit>
+      <trans-unit id="j.dEcjh" resname="Se ha eliminado el motivo {reason} por el usuario {user}">
+        <source>Se ha eliminado el motivo {reason} por el usuario {user}</source>
+        <target>Reason {reason} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="BfrAw1X" resname="Se ha actualizado la causa de excedente &quot;{surplusCause}&quot; por el usuario {user}">
+        <source>Se ha actualizado la causa de excedente "{surplusCause}" por el usuario {user}</source>
+        <target>Surplus cause "{surplusCause}" was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="yDnVwFM" resname="Se ha completado la versión {version} del plan de prevención {preventionPlan} por el usuario {user}">
+        <source>Se ha completado la versión {version} del plan de prevención {preventionPlan} por el usuario {user}</source>
+        <target>Version {version} of prevention plan {preventionPlan} was completed by user {user}</target>
+      </trans-unit>
+      <trans-unit id="EIo_hhB" resname="Se ha añadido la acción {action} a la versión {version} del plan de prevención {preventionPlan} para {property} por el usuario {user}">
+        <source>Se ha añadido la acción {action} a la versión {version} del plan de prevención {preventionPlan} para {property} por el usuario {user}</source>
+        <target>Action {action} was added to version {version} of prevention plan {preventionPlan} for {property} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="cEqVASw" resname="Se ha actualizado la categoría {category} por el usuario {user}">
+        <source>Se ha actualizado la categoría {category} por el usuario {user}</source>
+        <target>Category {category} was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="wWrqOpN" resname="Eliminada la cuenta &quot;{account}&quot; por el usuario {user}">
+        <source>Eliminada la cuenta "{account}" por el usuario {user}</source>
+        <target>Account "{account}" was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="Ab0ONnO" resname="Se ha actualizado el motivo &quot;{reason}&quot; por el usuario {user}">
+        <source>Se ha actualizado el motivo "{reason}" por el usuario {user}</source>
+        <target>Reason "{reason}" was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="QAAqjxF" resname="Se ha generado la versión {version} del plan de prevención {preventionPlan} por el usuario {user}">
+        <source>Se ha generado la versión {version} del plan de prevención {preventionPlan} por el usuario {user}</source>
+        <target>Version {version} of prevention plan {preventionPlan} was generated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="ljfkPB7" resname="Se ha actualizado la excepción de doggy bag del punto crítico {criticalPoint}: {description} por el usuario {user}">
+        <source>Se ha actualizado la excepción de doggy bag del punto crítico {criticalPoint}: {description} por el usuario {user}</source>
+        <target>Doggy bag exception for critical point {criticalPoint}: {description} was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="VQKLKH7" resname="Activada la cuenta {account} por el usuario {user}">
+        <source>Activada la cuenta {account} por el usuario {user}</source>
+        <target>Account {account} was activated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="lm3zuS8" resname="Desactivada la cuenta &quot;{account}&quot; por el usuario {user}">
+        <source>Desactivada la cuenta "{account}" por el usuario {user}</source>
+        <target>Account "{account}" was deactivated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="t8ZvDqB" resname="Eliminado el usuario &quot;{user}&quot; por el usuario {actor}">
+        <source>Eliminado el usuario "{user}" por el usuario {actor}</source>
+        <target>User "{user}" was deleted by user {actor}</target>
+      </trans-unit>
+      <trans-unit id="Sry6JcZ" resname="Se ha registrado el envase &quot;{packaging}&quot; para la cuenta {account} por el usuario {user}">
+        <source>Se ha registrado el envase "{packaging}" para la cuenta {account} por el usuario {user}</source>
+        <target>Packaging "{packaging}" was registered for account {account} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="gYx7N49" resname="Se ha actualizado el cartel doggy bag &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha actualizado el cartel doggy bag "{name}" por el usuario {user}</source>
+        <target>Doggy bag sign "{name}" was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="oSHNuVG" resname="Se ha registrado la propiedad {property} perteneciente a la cuenta {account} por el usuario {user}">
+        <source>Se ha registrado la propiedad {property} perteneciente a la cuenta {account} por el usuario {user}</source>
+        <target>Property {property} belonging to account {account} was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="5l_Jinf" resname="Se ha registrado la propiedad {property} sin cuenta asociada por el usuario {user}">
+        <source>Se ha registrado la propiedad {property} sin cuenta asociada por el usuario {user}</source>
+        <target>Property {property} with no associated account was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="F7oLjU3" resname="Se ha registrado la empresa &quot;{company}&quot; por el usuario {user}">
+        <source>Se ha registrado la empresa "{company}" por el usuario {user}</source>
+        <target>Company "{company}" was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="I.wNWND" resname="Se ha actualizado la organización receptora &quot;{organization}&quot; por el usuario {user}">
+        <source>Se ha actualizado la organización receptora "{organization}" por el usuario {user}</source>
+        <target>Recipient organisation "{organization}" was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="2tGfyro" resname="Se ha registrado el cartel doggy bag &quot;{name}&quot; para la propiedad {property} por el usuario {user}">
+        <source>Se ha registrado el cartel doggy bag "{name}" para la propiedad {property} por el usuario {user}</source>
+        <target>Doggy bag sign "{name}" was registered for property {property} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="pe8Q4aq" resname="Se ha registrado el cartel doggy bag &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha registrado el cartel doggy bag "{name}" por el usuario {user}</source>
+        <target>Doggy bag sign "{name}" was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="q4AtUnb" resname="Se ha actualizado la medición {measurement}: {quantity} contenedores de carga {load} por el usuario {user}">
+        <source>Se ha actualizado la medición {measurement}: {quantity} contenedores de carga {load} por el usuario {user}</source>
+        <target>Measurement {measurement} was updated: {quantity} containers of load {load} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="Mr52E9C" resname="Se ha vinculado la causa de excedente {surplusCause} al punto crítico {criticalPoint} por el usuario {user}">
+        <source>Se ha vinculado la causa de excedente {surplusCause} al punto crítico {criticalPoint} por el usuario {user}</source>
+        <target>Surplus cause {surplusCause} was linked to critical point {criticalPoint} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="4vPV.RW" resname="Se ha eliminado la acción {action} de la versión {version} del plan de prevención {preventionPlan} para {property} por el usuario {user}">
+        <source>Se ha eliminado la acción {action} de la versión {version} del plan de prevención {preventionPlan} para {property} por el usuario {user}</source>
+        <target>Action {action} was removed from version {version} of prevention plan {preventionPlan} for {property} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="tD8Icu2" resname="Se han actualizado los valores por defecto de la importación {importation} por el usuario {user}">
+        <source>Se han actualizado los valores por defecto de la importación {importation} por el usuario {user}</source>
+        <target>Default values of importation {importation} were updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="6WdYOHg" resname="Se ha registrado el protocolo &quot;{protocol}&quot; para la cuenta {account} por el usuario {user}">
+        <source>Se ha registrado el protocolo "{protocol}" para la cuenta {account} por el usuario {user}</source>
+        <target>Protocol "{protocol}" was registered for account {account} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="rfKaq2i" resname="Se ha eliminado la propiedad {property} por el usuario {user}">
+        <source>Se ha eliminado la propiedad {property} por el usuario {user}</source>
+        <target>Property {property} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="qQCN6Ra" resname="Se ha vinculado la acción {action} al punto crítico {criticalPoint} por el usuario {user}">
+        <source>Se ha vinculado la acción {action} al punto crítico {criticalPoint} por el usuario {user}</source>
+        <target>Action {action} was linked to critical point {criticalPoint} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="kUdT0C6" resname="Se ha actualizado la entrega de {quantity} unidades de {productType} para {property} el {date} por el usuario {user}">
+        <source>Se ha actualizado la entrega de {quantity} unidades de {productType} para {property} el {date} por el usuario {user}</source>
+        <target>Delivery of {quantity} units of {productType} for {property} on {date} was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="OVmjm4y" resname="El trabajo {key} ha fallado">
+        <source>El trabajo {key} ha fallado</source>
+        <target>Job {key} has failed</target>
+      </trans-unit>
+      <trans-unit id="sg1USX_" resname="Se ha registrado la sesión de formación &quot;{title}&quot; para la cuenta {account} el {date} por el usuario {user}">
+        <source>Se ha registrado la sesión de formación "{title}" para la cuenta {account} el {date} por el usuario {user}</source>
+        <target>Training session "{title}" for account {account} on {date} was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="5oApTq0" resname="Se ha actualizado la marca {brand} por el usuario {user}">
+        <source>Se ha actualizado la marca {brand} por el usuario {user}</source>
+        <target>Brand {brand} was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="N8XcTPQ" resname="Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod} por el usuario {user}">
+        <source>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod} por el usuario {user}</source>
+        <target>Container {container} for waste of type {waste}, purpose {purpose} and measurement method {measurementMethod} was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="1G2ofdd" resname="Se ha actualizado el envase &quot;{packaging}&quot; por el usuario {user}">
+        <source>Se ha actualizado el envase "{packaging}" por el usuario {user}</source>
+        <target>Packaging "{packaging}" was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="f.b1Ye3" resname="Se ha eliminado el plan de prevención {preventionPlan} por el usuario {user}">
+        <source>Se ha eliminado el plan de prevención {preventionPlan} por el usuario {user}</source>
+        <target>Prevention plan {preventionPlan} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="Wa4mRSP" resname="Employee {name} ({email}) was updated by {actor}">
+        <source>Employee {name} ({email}) was updated by {actor}</source>
+        <target>Employee {name} ({email}) was updated by {actor}</target>
+      </trans-unit>
+      <trans-unit id="bkja5gg" resname="Se ha eliminado la acción {action} por el usuario {user}">
+        <source>Se ha eliminado la acción {action} por el usuario {user}</source>
+        <target>Action {action} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="4FNfgBk" resname="Se ha modificado la contraseña del usuario &quot;{user}&quot; por el usuario {actor}">
+        <source>Se ha modificado la contraseña del usuario "{user}" por el usuario {actor}</source>
+        <target>Password of user "{user}" was changed by user {actor}</target>
+      </trans-unit>
+      <trans-unit id="F1e8RFY" resname="Se ha eliminado el registro de entrega {deliveryLog} por el usuario {user}">
+        <source>Se ha eliminado el registro de entrega {deliveryLog} por el usuario {user}</source>
+        <target>Delivery log {deliveryLog} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="jqdOD28" resname="Se ha desvinculado la acción {action} del punto crítico {criticalPoint} por el usuario {user}">
+        <source>Se ha desvinculado la acción {action} del punto crítico {criticalPoint} por el usuario {user}</source>
+        <target>Action {action} was unlinked from critical point {criticalPoint} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="5i45FNT" resname="Se ha eliminado la excepción de doggy bag {doggyBagException} por el usuario {user}">
+        <source>Se ha eliminado la excepción de doggy bag {doggyBagException} por el usuario {user}</source>
+        <target>Doggy bag exception {doggyBagException} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="I7SlPO8" resname="Se ha traducido la causa de excedente {surplusCause} al idioma {locale} por el usuario {user}">
+        <source>Se ha traducido la causa de excedente {surplusCause} al idioma {locale} por el usuario {user}</source>
+        <target>Surplus cause {surplusCause} was translated to {locale} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="uYKHwJx" resname="Se ha registrado la causa de excedente &quot;{surplusCause}&quot; por el usuario {user}">
+        <source>Se ha registrado la causa de excedente "{surplusCause}" por el usuario {user}</source>
+        <target>Surplus cause "{surplusCause}" was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="IVKWsP2" resname="Se ha eliminado la marca {brand} por el usuario {user}">
+        <source>Se ha eliminado la marca {brand} por el usuario {user}</source>
+        <target>Brand {brand} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="GXELKm0" resname="Se ha iniciado la ejecución de la importación {importation} por el usuario {user}">
+        <source>Se ha iniciado la ejecución de la importación {importation} por el usuario {user}</source>
+        <target>Execution of importation {importation} was started by user {user}</target>
+      </trans-unit>
+      <trans-unit id="PPLD1LS" resname="Se ha traducido la categoría de servicio {serviceCategory} al idioma {locale} por el usuario {user}">
+        <source>Se ha traducido la categoría de servicio {serviceCategory} al idioma {locale} por el usuario {user}</source>
+        <target>Service category {serviceCategory} was translated to {locale} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="32nPLlb" resname="Se ha registrado la organización receptora &quot;{organization}&quot; para la cuenta {account} por el usuario {user}">
+        <source>Se ha registrado la organización receptora "{organization}" para la cuenta {account} por el usuario {user}</source>
+        <target>Recipient organisation "{organization}" was registered for account {account} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="NljwUXg" resname="Se ha actualizado la configuración de la importación {importation} por el usuario {user}">
+        <source>Se ha actualizado la configuración de la importación {importation} por el usuario {user}</source>
+        <target>Configuration of importation {importation} was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="3yKDWsS" resname="Se ha desvinculado la causa de excedente {surplusCause} del punto crítico {criticalPoint} por el usuario {user}">
+        <source>Se ha desvinculado la causa de excedente {surplusCause} del punto crítico {criticalPoint} por el usuario {user}</source>
+        <target>Surplus cause {surplusCause} was unlinked from critical point {criticalPoint} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="4aXJgOd" resname="Se ha eliminado el residuo {waste} por el usuario {user}">
+        <source>Se ha eliminado el residuo {waste} por el usuario {user}</source>
+        <target>Waste {waste} was deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="SScoDBD" resname="Registrada una nueva cuenta {account} en estado {status} por el usuario {user}">
+        <source>Registrada una nueva cuenta {account} en estado {status} por el usuario {user}</source>
+        <target>A new account {account} in status {status} was registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="DjP2z7A" resname="Se ha actualizado el país {country} ({iso}) por el usuario {user}">
+        <source>Se ha actualizado el país {country} ({iso}) por el usuario {user}</source>
+        <target>Country {country} ({iso}) was updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="R2igIBD" resname="Se ha cargado la versión {version} del plan de prevención {preventionPlan} por el usuario {user}">
+        <source>Se ha cargado la versión {version} del plan de prevención {preventionPlan} por el usuario {user}</source>
+        <target>Version {version} of prevention plan {preventionPlan} was loaded by user {user}</target>
+      </trans-unit>
+      <trans-unit id="C4rbvw9" resname="Si no seleccionas ningún fichero, se mantendrá el actual.">
+        <source>Si no seleccionas ningún fichero, se mantendrá el actual.</source>
+        <target>If you do not select any file, the current one will be kept.</target>
+      </trans-unit>
+      <trans-unit id="KhkS_pC" resname="Borrador">
+        <source>Borrador</source>
+        <target>Draft</target>
+      </trans-unit>
+      <trans-unit id="ZsoPZB2" resname="No hay secciones generadas.">
+        <source>No hay secciones generadas.</source>
+        <target>No sections have been generated.</target>
+      </trans-unit>
+      <trans-unit id="kHWsAz_" resname="Añadir sección">
+        <source>Añadir sección</source>
+        <target>Add section</target>
+      </trans-unit>
+      <trans-unit id="fhFa8zD" resname="Versión">
+        <source>Versión</source>
+        <target>Version</target>
+      </trans-unit>
+      <trans-unit id="EywxYDk" resname="Secciones">
+        <source>Secciones</source>
+        <target>Sections</target>
+      </trans-unit>
+      <trans-unit id="s9mfieb" resname="Fecha de última modificación">
+        <source>Fecha de última modificación</source>
+        <target>Last modification date</target>
+      </trans-unit>
+      <trans-unit id="RUgkzRS" resname="Generando acciones sugeridas...">
+        <source>Generando acciones sugeridas...</source>
+        <target>Generating suggested actions...</target>
+      </trans-unit>
+      <trans-unit id="S.3cQ_b" resname="Estado">
+        <source>Estado</source>
+        <target>Status</target>
+      </trans-unit>
+      <trans-unit id="J8shuoP" resname="Fecha de creación">
+        <source>Fecha de creación</source>
+        <target>Creation date</target>
+      </trans-unit>
+      <trans-unit id="w8j319M" resname="No hay acciones propuestas.">
+        <source>No hay acciones propuestas.</source>
+        <target>No proposed actions.</target>
+      </trans-unit>
+      <trans-unit id="0joaW2r" resname="Datos generales">
+        <source>Datos generales</source>
+        <target>General data</target>
+      </trans-unit>
+      <trans-unit id="wnerJ0a" resname="Acciones propuestas">
+        <source>Acciones propuestas</source>
+        <target>Proposed actions</target>
+      </trans-unit>
+      <trans-unit id="w2sEu2." resname="Plan generado">
+        <source>Plan generado</source>
+        <target>Generated plan</target>
+      </trans-unit>
+      <trans-unit id="k_cilTN" resname="El plan tiene datos incompletos que deben ser corregidos.">
+        <source>El plan tiene datos incompletos que deben ser corregidos.</source>
+        <target>The plan has incomplete data that must be corrected.</target>
+      </trans-unit>
+      <trans-unit id="B9vmeok" resname="Las siguientes propiedades tienen datos incompletos y deben ser corregidos para poder generar correctamente el plan.">
+        <source>Las siguientes propiedades tienen datos incompletos y deben ser corregidos para poder generar correctamente el plan.</source>
+        <target>The following properties have incomplete data that must be corrected to generate the plan correctly.</target>
+      </trans-unit>
+      <trans-unit id="hJcxSmi" resname="Salir">
+        <source>Salir</source>
+        <target>Exit</target>
+      </trans-unit>
+      <trans-unit id="TrNxnqV" resname="Retroceder">
+        <source>Retroceder</source>
+        <target>Back</target>
+      </trans-unit>
+      <trans-unit id="ZKHCCvM" resname="Validación">
+        <source>Validación</source>
+        <target>Validation</target>
+      </trans-unit>
+      <trans-unit id="gEcArhl" resname="General">
+        <source>General</source>
+        <target>General</target>
+      </trans-unit>
+      <trans-unit id="ie2Ym1H" resname="Generando borrador del plan...">
+        <source>Generando borrador del plan...</source>
+        <target>Generating plan draft...</target>
+      </trans-unit>
+      <trans-unit id="2_lQ1Fv" resname="Historial de versiones">
+        <source>Historial de versiones</source>
+        <target>Version history</target>
+      </trans-unit>
+      <trans-unit id="uyFPMzG" resname="No hay versiones registradas.">
+        <source>No hay versiones registradas.</source>
+        <target>No versions registered.</target>
+      </trans-unit>
+      <trans-unit id="LzmuvTH" resname="Excepciones Doggy Bag">
+        <source>Excepciones Doggy Bag</source>
+        <target>Doggy Bag Exceptions</target>
+      </trans-unit>
+      <trans-unit id="6KR.Cg3" resname="Punto Crítico">
+        <source>Punto Crítico</source>
+        <target>Critical Point</target>
+      </trans-unit>
+      <trans-unit id="znXBmxk" resname="Stock por propiedad">
+        <source>Stock por propiedad</source>
+        <target>Stock by property</target>
+      </trans-unit>
+      <trans-unit id="PEtLRE_" resname="Stock">
+        <source>Stock</source>
+        <target>Stock</target>
+      </trans-unit>
+      <trans-unit id="D0UJnAV" resname="Prevención">
+        <source>Prevención</source>
+        <target>Prevention</target>
+      </trans-unit>
+      <trans-unit id="03.xgQd" resname="Transformación para consumo humano">
+        <source>Transformación para consumo humano</source>
+        <target>Transformation for human consumption</target>
+      </trans-unit>
+      <trans-unit id="LcF2UcI" resname="Donación">
+        <source>Donación</source>
+        <target>Donation</target>
+      </trans-unit>
+      <trans-unit id="lKLA0uY" resname="Alimentación animal">
+        <source>Alimentación animal</source>
+        <target>Animal feed</target>
+      </trans-unit>
+      <trans-unit id="h6uyrNY" resname="Consumo no humano">
+        <source>Consumo no humano</source>
+        <target>Non-human consumption</target>
+      </trans-unit>
+      <trans-unit id="qVAdYFr" resname="Carteles Doggy Bag">
+        <source>Carteles Doggy Bag</source>
+        <target>Doggy Bag Signs</target>
+      </trans-unit>
+      <trans-unit id="BFk.XQu" resname="Ubicación">
+        <source>Ubicación</source>
+        <target>Location</target>
+      </trans-unit>
+      <trans-unit id="TNhLCa3" resname="Registrado">
+        <source>Registrado</source>
+        <target>Registered</target>
+      </trans-unit>
+      <trans-unit id="M.l1CPU" resname="Edit">
+        <source>Edit</source>
+        <target>Edit</target>
+      </trans-unit>
+      <trans-unit id="fGfBzt6" resname="Register">
+        <source>Register</source>
+        <target>Register</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

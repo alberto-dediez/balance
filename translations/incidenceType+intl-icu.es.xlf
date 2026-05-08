@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="es" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="QytWu6q" resname="machinery_failure">
+        <source>machinery_failure</source>
+        <target>Fallo de maquinaria</target>
+      </trans-unit>
+      <trans-unit id="XqIq.K4" resname="ngo_rejection">
+        <source>ngo_rejection</source>
+        <target>Rechazo de las ONG</target>
+      </trans-unit>
+      <trans-unit id="pVxIT_5" resname="spoiled_food">
+        <source>spoiled_food</source>
+        <target>Alimentos en mal estado</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
