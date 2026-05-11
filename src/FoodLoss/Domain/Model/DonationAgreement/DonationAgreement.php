@@ -29,6 +29,7 @@ class DonationAgreement implements \Stringable
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $updatedAt = null,
         private ?\DateTimeImmutable $removedAt = null,
+        private ?\DateTimeImmutable $expirationWarningNotifiedAt = null,
     ) {
         $this->events = $events;
     }
@@ -86,6 +87,20 @@ class DonationAgreement implements \Stringable
     public function removedAt(): ?\DateTimeImmutable
     {
         return $this->removedAt;
+    }
+
+    public function expirationWarningNotifiedAt(): ?\DateTimeImmutable
+    {
+        return $this->expirationWarningNotifiedAt;
+    }
+
+    public function markExpirationWarningNotified(): void
+    {
+        $this->recordApplyAndPublish(
+            new DonationAgreementExpirationWarningNotified(
+                donationAgreementId: $this->id(),
+            ),
+        );
     }
 
     public function register(
@@ -150,12 +165,21 @@ class DonationAgreement implements \Stringable
 
     public function applyDonationAgreementUpdated(DonationAgreementUpdated $event): void
     {
+        if ($this->expirationDate->format('Y-m-d') !== $event->expirationDate()->format('Y-m-d')) {
+            $this->expirationWarningNotifiedAt = null;
+        }
+
         $this->recipientOrganizationId = $event->recipientOrganizationId();
         $this->startDate = $event->startDate();
         $this->expirationDate = $event->expirationDate();
         $this->uploadedBy = $event->uploadedBy();
         $this->path = $event->path();
         $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyDonationAgreementExpirationWarningNotified(DonationAgreementExpirationWarningNotified $event): void
+    {
+        $this->expirationWarningNotifiedAt = $event->occurredOn();
     }
 
     public function applyDonationAgreementRemoved(DonationAgreementRemoved $event): void

@@ -21,5 +21,6 @@
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+        <field name="expirationWarningNotifiedAt" type="datetime_immutable" column="expiration_warning_notified_at" nullable="true"/>
     </entity>
 </doctrine-mapping>

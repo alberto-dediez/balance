@@ -16,4 +16,7 @@ interface DonationAgreementRepository
     public function findByFilter(DonationAgreementFilter $filter): array;
 
     public function totalResultsByFilter(DonationAgreementFilter $filter): int;
+
+    /** @return array<DonationAgreement> */
+    public function findExpiringSoon(int $days): array;
 }

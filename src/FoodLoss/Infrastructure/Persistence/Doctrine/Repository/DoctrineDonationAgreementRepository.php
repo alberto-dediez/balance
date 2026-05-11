@@ -9,6 +9,7 @@ use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementFilter;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementId;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
+use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
@@ -118,6 +119,37 @@ class DoctrineDonationAgreementRepository implements DonationAgreementRepository
         return (int) $qb->select('COUNT(DISTINCT e)')
             ->getQuery()
             ->getSingleScalarResult()
+        ;
+    }
+
+    /** @return array<DonationAgreement> */
+    public function findExpiringSoon(int $days): array
+    {
+        $now = new \DateTimeImmutable('today');
+        $limit = $now->modify(sprintf('+%d days', $days));
+
+        $qb = $this->createQueryBuilderFromFilter(new DonationAgreementFilter(limit: 0));
+
+        $qb->join(Account::class, 'a', 'ON', 'e.accountId = a.id')
+            ->andWhere(
+                $qb->expr()->andX(
+                    $qb->expr()->eq('a.active', ':accountActive'),
+                    $qb->expr()->eq('a.removed', ':accountRemoved'),
+                ),
+            )
+            ->andWhere($qb->expr()->gte('e.expirationDate', ':now'))
+            ->andWhere($qb->expr()->lte('e.expirationDate', ':limit'))
+            ->andWhere($qb->expr()->isNull('e.expirationWarningNotifiedAt'))
+            ->setParameter('removed', false, Types::BOOLEAN)
+            ->setParameter('now', $now)
+            ->setParameter('limit', $limit)
+            ->setParameter('accountActive', true, Types::BOOLEAN)
+            ->setParameter('accountRemoved', false, Types::BOOLEAN)
+        ;
+
+        return (array) $qb
+            ->getQuery()
+            ->getResult()
         ;
     }
 }

@@ -10,6 +10,8 @@ use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementId;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\Account\AccountRepository;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]
@@ -18,6 +20,7 @@ class InMemoryDonationAgreementRepository implements DonationAgreementRepository
     /** @param array<string, DonationAgreement> $donationAgreements */
     public function __construct(
         private array $donationAgreements = [],
+        private readonly AccountRepository $accountRepository = new InMemoryAccountRepository(),
     ) {}
 
     public function add(DonationAgreement $donationAgreement): void
@@ -99,5 +102,46 @@ class InMemoryDonationAgreementRepository implements DonationAgreementRepository
         $clonedFilter->limit = 0;
 
         return count($this->findByFilter($clonedFilter));
+    }
+
+    /** @return array<DonationAgreement> */
+    public function findExpiringSoon(int $days): array
+    {
+        $now = new \DateTimeImmutable('today');
+        $limit = $now->modify(sprintf('+%d days', $days));
+
+        $results = [];
+
+        foreach ($this->donationAgreements as $donationAgreement) {
+            if ($donationAgreement->isRemoved()) {
+                continue;
+            }
+
+            if (null !== $donationAgreement->expirationWarningNotifiedAt()) {
+                continue;
+            }
+
+            $accountId = $donationAgreement->accountId();
+
+            if (null === $accountId) {
+                continue;
+            }
+
+            $account = $this->accountRepository->find($accountId);
+
+            if (null === $account || !$account->isActive()) {
+                continue;
+            }
+
+            $expirationDate = $donationAgreement->expirationDate();
+
+            if ($expirationDate < $now || $expirationDate > $limit) {
+                continue;
+            }
+
+            $results[] = $donationAgreement;
+        }
+
+        return $results;
     }
 }
