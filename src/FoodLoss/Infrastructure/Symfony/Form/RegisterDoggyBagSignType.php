@@ -30,18 +30,18 @@ class RegisterDoggyBagSignType extends AbstractType
                     new Assert\Length(max: 255),
                 ],
             ])
-            ->add('location', TextareaType::class, [
-                'label' => new TranslatableMessage('Ubicación del cartel'),
-                'required' => true,
-                'constraints' => [
-                    new Assert\NotBlank(),
-                ],
-            ])
             ->add('propertyId', PropertyIdType::class, [
                 'label' => new TranslatableMessage('Propiedad'),
                 'required' => true,
                 'constraints' => [
                     new Assert\NotNull(),
+                ],
+            ])
+            ->add('location', TextareaType::class, [
+                'label' => new TranslatableMessage('Ubicación del cartel'),
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(),
                 ],
             ])
             ->add('pdfFile', FileType::class, [
