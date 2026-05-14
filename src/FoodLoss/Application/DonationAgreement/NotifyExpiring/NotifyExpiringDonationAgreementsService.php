@@ -28,7 +28,7 @@ class NotifyExpiringDonationAgreementsService
 
         $owners = array_filter(
             $this->userRepository->findByAccountId($accountId),
-            static fn (User $user): bool => $user->hasRole(Role::Owner) && !$user->isRemoved(),
+            static fn(User $user): bool => $user->hasRole(Role::Owner) && !$user->isRemoved(),
         );
 
         if (0 === count($owners)) {

@@ -21,6 +21,12 @@ services:
     App\FoodLoss\Application\DonationAgreement\DonationAgreementUploader:
         alias: App\FoodLoss\Infrastructure\FileUploader\LocalFileDonationAgreementUploader
 
+    App\FoodLoss\Application\Incidence\IncidenceEvidenceUploader:
+        alias: App\FoodLoss\Infrastructure\FileUploader\LocalFileIncidenceEvidenceUploader
+
+    App\FoodLoss\Application\Incidence\IncidenceEvidenceFileRemover:
+        alias: App\FoodLoss\Infrastructure\FileUploader\LocalFileIncidenceEvidenceRemover
+
     App\FoodLoss\Application\Protocol\ProtocolUploader:
         alias: App\FoodLoss\Infrastructure\FileUploader\LocalFileProtocolUploader
 

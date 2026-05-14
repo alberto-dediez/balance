@@ -17,7 +17,10 @@ class Incidence implements \Stringable
     private ?PropertyId $propertyId = null;
     private ?AccountId $accountId = null;
 
-    /** @param array<\App\Shared\Domain\Event\DomainEvent> $events */
+    /**
+     * @param array<\App\Shared\Domain\Event\DomainEvent> $events
+     * @param iterable<int, IncidenceEvidence>            $evidences
+     */
     public function __construct(
         private IncidenceId $id,
         private string $name = '',
@@ -32,6 +35,7 @@ class Incidence implements \Stringable
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $updatedAt = null,
         private ?\DateTimeImmutable $removedAt = null,
+        private iterable $evidences = [],
     ) {
         $this->events = $events;
         $this->exceptionOccurredOn = $exceptionOccurredOn ?? new \DateTimeImmutable('NOW');
@@ -155,6 +159,38 @@ class Incidence implements \Stringable
         );
     }
 
+    public function evidences(): IncidenceEvidences
+    {
+        return new IncidenceEvidences($this->evidences);
+    }
+
+    public function addEvidence(IncidenceEvidenceId $evidenceId, string $path, string $originalName, string $mimeType): void
+    {
+        $this->recordApplyAndPublish(
+            new IncidenceEvidenceAdded(
+                incidenceId: $this->id(),
+                evidenceId: $evidenceId,
+                path: $path,
+                originalName: $originalName,
+                mimeType: $mimeType,
+            ),
+        );
+    }
+
+    public function removeEvidence(IncidenceEvidenceId $evidenceId): void
+    {
+        if (!$this->evidences()->has($evidenceId)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new IncidenceEvidenceRemoved(
+                incidenceId: $this->id(),
+                evidenceId: $evidenceId,
+            ),
+        );
+    }
+
     public function applyIncidenceRegistered(IncidenceRegistered $event): void
     {
         $this->name = $event->name();
@@ -182,6 +218,25 @@ class Incidence implements \Stringable
     {
         $this->removed = true;
         $this->removedAt = $event->occurredOn();
+    }
+
+    public function applyIncidenceEvidenceAdded(IncidenceEvidenceAdded $event): void
+    {
+        $evidence = new IncidenceEvidence(
+            id: $event->evidenceId(),
+            incidence: $this,
+            path: $event->path(),
+            originalName: $event->originalName(),
+            mimeType: $event->mimeType(),
+            uploadedAt: $event->occurredOn(),
+        );
+
+        $this->evidences()->add($evidence);
+    }
+
+    public function applyIncidenceEvidenceRemoved(IncidenceEvidenceRemoved $event): void
+    {
+        $this->evidences()->removeById($event->evidenceId());
     }
 
     public function __toString(): string

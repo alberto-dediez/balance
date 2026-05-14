@@ -6,8 +6,10 @@ namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
 use App\FoodLoss\Application\Incidence\Register\RegisterIncidenceRequest;
 use App\FoodLoss\Domain\Model\Incidence\IncidenceType;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\IncidenceEvidenceType;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -43,6 +45,7 @@ class RegisterIncidenceType extends AbstractType
                 'label' => new TranslatableMessage('Tipología'),
                 'required' => true,
                 'translation_domain' => 'incidenceType',
+                'choice_label' => fn(IncidenceType $type) => $type->value,
                 'constraints' => [new Assert\NotNull()],
             ])
             ->add('description', TextareaType::class, [
@@ -59,6 +62,14 @@ class RegisterIncidenceType extends AbstractType
                 'label' => new TranslatableMessage('Propiedad'),
                 'required' => true,
                 'constraints' => [new Assert\NotNull()],
+            ])
+            ->add('evidences', CollectionType::class, [
+                'entry_type' => IncidenceEvidenceType::class,
+                'label' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'mapped' => false,
             ])
             ->add('register', SubmitType::class, [
                 'label' => new TranslatableMessage('Registrar'),

@@ -6,8 +6,10 @@ namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
 use App\FoodLoss\Application\Incidence\Update\UpdateIncidenceRequest;
 use App\FoodLoss\Domain\Model\Incidence\IncidenceType;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\IncidenceEvidenceType;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -43,6 +45,7 @@ class UpdateIncidenceType extends AbstractType
                 'label' => new TranslatableMessage('Tipología'),
                 'required' => true,
                 'translation_domain' => 'incidenceType',
+                'choice_label' => fn(IncidenceType $type) => $type->value,
                 'constraints' => [new Assert\NotNull()],
             ])
             ->add('description', TextareaType::class, [
@@ -60,6 +63,15 @@ class UpdateIncidenceType extends AbstractType
                 'required' => true,
                 'constraints' => [new Assert\NotNull()],
             ])
+            ->add('evidences', CollectionType::class, [
+                'entry_type' => IncidenceEvidenceType::class,
+                'label' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'mapped' => false,
+                'data' => $options['existing_evidence_datas'],
+            ])
             ->add('save', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar'),
             ])
@@ -73,6 +85,9 @@ class UpdateIncidenceType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => UpdateIncidenceRequest::class,
+            'existing_evidence_datas' => [],
         ]);
+
+        $resolver->setAllowedTypes('existing_evidence_datas', 'array');
     }
 }

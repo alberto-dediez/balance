@@ -10,6 +10,8 @@ use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
 use App\FoodLoss\Domain\Model\DoggyBagException\DoggyBagExceptionRepository;
 use App\FoodLoss\Domain\Model\DoggyBagSign\DoggyBagSignRepository;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
+use App\FoodLoss\Domain\Model\Incidence\IncidenceEvidenceId;
+use App\FoodLoss\Domain\Model\Incidence\IncidenceId;
 use App\FoodLoss\Domain\Model\Incidence\IncidenceRepository;
 use App\FoodLoss\Domain\Model\Packaging\PackagingRepository;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
@@ -42,7 +44,11 @@ use App\Tests\Unit\FoodLoss\Domain\Model\SurplusCause\SurplusCauseMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\TrainingSession\TrainingSessionMother;
 use Behat\Behat\Context\Context;
 use Behat\Step\Given;
+use Behat\Step\Then;
+use Behat\Step\When;
+use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 final readonly class FoodLossContext implements Context
 {
@@ -398,5 +404,105 @@ final readonly class FoodLossContext implements Context
         $surplusCause = SurplusCauseMother::fromNameAndId($name, $id);
 
         $this->getSurplusCauseRepository()->add($surplusCause);
+    }
+
+    #[Given('incidence :name with id :id of account :accountId with evidence :evidenceId at :filePath exists')]
+    public function incidenceWithEvidenceAtPathExists(
+        string $name,
+        string $id,
+        string $accountId,
+        string $evidenceId,
+        string $filePath,
+    ): void {
+        $incidence = IncidenceMother::from(
+            name: $name,
+            id: $id,
+            accountId: $accountId,
+        );
+
+        $incidence->addEvidence(
+            evidenceId: new IncidenceEvidenceId($evidenceId),
+            path: $filePath,
+            originalName: basename($filePath),
+            mimeType: 'application/pdf',
+        );
+
+        $this->getIncidenceRepository()->add($incidence);
+
+        $uploadsDir = (string) $this->client->getContainer()->getParameter('app.uploads_dir');
+        $absolutePath = $uploadsDir . '/' . $filePath;
+        @mkdir(dirname($absolutePath), 0777, true);
+        file_put_contents($absolutePath, "%PDF-1.4\n%%EOF");
+    }
+
+    #[Then('incidence :id should have :count evidences')]
+    public function incidenceShouldHaveNEvidences(string $id, int $count): void
+    {
+        $incidence = $this->getIncidenceRepository()->find(new IncidenceId($id));
+        Assert::assertNotNull($incidence);
+        Assert::assertCount($count, $incidence->evidences()->toArray());
+    }
+
+    #[When('I submit the form with :data and button :button adding evidence file :filePath')]
+    public function iSubmitFormWithEvidenceFile(string $data, string $button, string $filePath): void
+    {
+        $crawler = $this->client->getCrawler();
+        $buttonNode = $crawler->selectButton($button);
+        $form = $buttonNode->form();
+        $formName = (string) $crawler->filter('form')->attr('name');
+        $action = $form->getUri();
+
+        $values = $form->getPhpValues();
+
+        foreach (explode('|', $data) as $argument) {
+            if ('' === $argument) {
+                continue;
+            }
+            [$fieldName, $value] = explode(':', $argument, 2);
+            $values[$formName][$fieldName] = $value;
+        }
+
+        $currentEvidences = $values[$formName]['evidences'] ?? [];
+        $nextIndex = count($currentEvidences);
+        $values[$formName]['evidences'][$nextIndex] = ['id' => ''];
+
+        $projectDir = (string) $this->client->getContainer()->getParameter('kernel.project_dir');
+        $absoluteFilePath = $projectDir . '/' . $filePath;
+
+        $files = [
+            $formName => [
+                'evidences' => [
+                    $nextIndex => [
+                        'file' => new UploadedFile($absoluteFilePath, basename($filePath), null, null, true),
+                    ],
+                ],
+            ],
+        ];
+
+        $this->client->getKernelBrowser()->request('POST', $action, $values, $files);
+    }
+
+    #[When('I submit the form with :data and button :button removing all evidences')]
+    public function iSubmitFormRemovingAllEvidences(string $data, string $button): void
+    {
+        $crawler = $this->client->getCrawler();
+        $buttonNode = $crawler->selectButton($button);
+        $form = $buttonNode->form();
+        $formName = (string) $crawler->filter('form')->attr('name');
+        $action = $form->getUri();
+
+        $values = $form->getPhpValues();
+
+        foreach (explode('|', $data) as $argument) {
+            if ('' === $argument) {
+                continue;
+            }
+            [$fieldName, $value] = explode(':', $argument, 2);
+            $values[$formName][$fieldName] = $value;
+        }
+
+        $values[$formName]['evidences'] = [];
+
+        $this->client->getKernelBrowser()->request('POST', $action, $values, []);
     }
 }

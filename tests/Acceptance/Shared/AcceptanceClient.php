@@ -128,6 +128,11 @@ final class AcceptanceClient
         $this->server['HTTP_AUTHORIZATION'] = sprintf('Bearer %s', $token);
     }
 
+    public function getKernelBrowser(): KernelBrowser
+    {
+        return $this->client;
+    }
+
     public function reset(): void
     {
         $this->server = [];
