@@ -8,6 +8,7 @@ use App\HumanResources\Domain\Model\Employee\Employee;
 use App\HumanResources\Domain\Model\Employee\EmployeeFilter;
 use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\HumanResources\Domain\Model\Employee\EmployeeRepository;
+use App\Security\Domain\Model\User\UserId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]
@@ -34,6 +35,13 @@ class InMemoryEmployeeRepository implements EmployeeRepository
         }
 
         unset($this->employees[(string) $employee->id()]);
+    }
+
+    public function findByUserId(UserId $userId): ?Employee
+    {
+        $results = $this->findByFilter(new EmployeeFilter(userId: $userId, limit: 1));
+
+        return $results[0] ?? null;
     }
 
     public function find(EmployeeId $employeeId): ?Employee

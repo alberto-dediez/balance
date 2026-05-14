@@ -43,6 +43,7 @@ doctrine:
             proposed_action_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ProposedActionIdType
             packaging_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\PackagingIdType
             protocol_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ProtocolIdType
+            protocol_access_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ProtocolAccessIdType
             doggy_bag_sign_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DoggyBagSignIdType
             doggy_bag_exception_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DoggyBagExceptionIdType
             incidence_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\IncidenceIdType

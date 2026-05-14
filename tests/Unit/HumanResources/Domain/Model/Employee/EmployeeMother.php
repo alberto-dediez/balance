@@ -7,6 +7,7 @@ namespace App\Tests\Unit\HumanResources\Domain\Model\Employee;
 use App\HumanResources\Domain\Model\Employee\Employee;
 use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
 
 class EmployeeMother
 {
@@ -56,6 +57,34 @@ class EmployeeMother
         );
 
         return $employee;
+    }
+
+    public static function withUserId(string $id, string $userId, string $accountId = 'account-id'): Employee
+    {
+        $employee = new Employee(
+            id: new EmployeeId($id),
+            accountId: new AccountId($accountId),
+        );
+        $employee->register(
+            name: 'Employee ' . $id,
+            email: 'employee' . $id . '@example.com',
+            phone: null,
+            address: null,
+            accountId: new AccountId($accountId),
+            userId: new UserId($userId),
+        );
+
+        return $employee;
+    }
+
+    public static function forAccount(string $accountId): Employee
+    {
+        return self::from(
+            name: 'Employee-' . rand(100, 999),
+            email: 'employee' . rand(100, 999) . '@example.com',
+            id: (string) EmployeeId::generate(),
+            accountId: $accountId,
+        );
     }
 
     public static function random(): Employee

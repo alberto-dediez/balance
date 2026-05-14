@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Domain\Model\Protocol;
 
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
 
@@ -114,6 +115,17 @@ class Protocol implements \Stringable
         );
     }
 
+    public function access(AccountId $accountId, UserId $userId): void
+    {
+        $this->recordApplyAndPublish(
+            new ProtocolAccessed(
+                protocolId: $this->id(),
+                accountId: $accountId,
+                userId: $userId,
+            ),
+        );
+    }
+
     public function applyProtocolRegistered(ProtocolRegistered $event): void
     {
         $this->name = $event->name();
@@ -136,6 +148,8 @@ class Protocol implements \Stringable
         $this->removed = true;
         $this->removedAt = $event->occurredOn();
     }
+
+    public function applyProtocolAccessed(ProtocolAccessed $event): void {}
 
     public function __toString(): string
     {

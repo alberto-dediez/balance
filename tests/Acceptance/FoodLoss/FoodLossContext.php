@@ -17,12 +17,14 @@ use App\FoodLoss\Domain\Model\Packaging\PackagingRepository;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
 use App\FoodLoss\Domain\Model\Protocol\ProtocolRepository;
+use App\FoodLoss\Domain\Model\ProtocolAccess\ProtocolAccessRepository;
 use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationRepository;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepository;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseRepository;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionRepository;
+use App\HumanResources\Domain\Model\Employee\EmployeeRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -37,11 +39,13 @@ use App\Tests\Unit\FoodLoss\Domain\Model\Incidence\IncidenceMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Packaging\PackagingMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Protocol\ProtocolMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\ProtocolAccess\ProtocolAccessMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Reason\ReasonMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\SurplusCause\SurplusCauseMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\TrainingSession\TrainingSessionMother;
+use App\Tests\Unit\HumanResources\Domain\Model\Employee\EmployeeMother;
 use Behat\Behat\Context\Context;
 use Behat\Step\Given;
 use Behat\Step\Then;
@@ -108,6 +112,16 @@ final readonly class FoodLossContext implements Context
     public function getProtocolRepository(): ProtocolRepository
     {
         return $this->client->getContainer()->get(ProtocolRepository::class);
+    }
+
+    public function getProtocolAccessRepository(): ProtocolAccessRepository
+    {
+        return $this->client->getContainer()->get(ProtocolAccessRepository::class);
+    }
+
+    public function getEmployeeRepository(): EmployeeRepository
+    {
+        return $this->client->getContainer()->get(EmployeeRepository::class);
     }
 
     public function getDoggyBagSignRepository(): DoggyBagSignRepository
@@ -480,6 +494,27 @@ final readonly class FoodLossContext implements Context
         ];
 
         $this->client->getKernelBrowser()->request('POST', $action, $values, $files);
+    }
+
+    #[Given('employee :name with id :id of account :accountId exists')]
+    public function employeeWithIdOfAccountExists(string $name, string $id, string $accountId): void
+    {
+        $employee = EmployeeMother::from(
+            name: $name,
+            email: strtolower($name) . '@test.com',
+            id: $id,
+            accountId: $accountId,
+        );
+
+        $this->getEmployeeRepository()->add($employee);
+    }
+
+    #[Given('protocol access for employee :employeeId of protocol :protocolId of account :accountId exists')]
+    public function protocolAccessForEmployeeOfProtocolExists(string $employeeId, string $protocolId, string $accountId): void
+    {
+        $access = ProtocolAccessMother::forProtocolAndEmployee($protocolId, $employeeId, $accountId);
+
+        $this->getProtocolAccessRepository()->add($access);
     }
 
     #[When('I submit the form with :data and button :button removing all evidences')]

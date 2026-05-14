@@ -31,6 +31,14 @@
                 <twig:List:Action:Edit path="{{ path('protocols_edit', {'protocolId': element.id}) }}" />
             {% endif %}
 
+            {% if is_granted('ROLE_OWNER') %}
+                <twig:List:Action path="{{ path('protocols_accesses', {'protocolId': element.id}) }}"
+                                  title="{{ 'Accesos' | trans }}"
+                >
+                    <twig:Icon name="solar:chart-square-line-duotone" size="lg" />
+                </twig:List:Action>
+            {% endif %}
+
             {% if element | is_authorized('remove') %}
                 <twig:List:Action:Delete path="{{ path('protocols_remove', {'protocolId': element.id}) }}" />
             {% endif %}

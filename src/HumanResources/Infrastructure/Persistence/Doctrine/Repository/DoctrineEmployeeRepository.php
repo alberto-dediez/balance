@@ -8,6 +8,7 @@ use App\HumanResources\Domain\Model\Employee\Employee;
 use App\HumanResources\Domain\Model\Employee\EmployeeFilter;
 use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\HumanResources\Domain\Model\Employee\EmployeeRepository;
+use App\Security\Domain\Model\User\UserId;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -45,6 +46,13 @@ class DoctrineEmployeeRepository implements EmployeeRepository
             ->getQuery()
             ->getOneOrNullResult()
         ;
+    }
+
+    public function findByUserId(UserId $userId): ?Employee
+    {
+        $results = $this->findByFilter(new EmployeeFilter(userId: $userId, limit: 1));
+
+        return $results[0] ?? null;
     }
 
     private function createQueryBuilderFromFilter(EmployeeFilter $filter): QueryBuilder
