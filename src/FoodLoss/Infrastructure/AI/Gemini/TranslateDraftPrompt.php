@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Infrastructure\AI\Gemini;
 
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Shared\Infrastructure\AI\Gemini\GeminiModelTier;
 use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
 
 final class TranslateDraftPrompt implements GeminiPrompt
@@ -68,5 +69,10 @@ final class TranslateDraftPrompt implements GeminiPrompt
     public function temperature(): float
     {
         return $this->temperature;
+    }
+
+    public function modelTier(): GeminiModelTier
+    {
+        return GeminiModelTier::LOW;
     }
 }

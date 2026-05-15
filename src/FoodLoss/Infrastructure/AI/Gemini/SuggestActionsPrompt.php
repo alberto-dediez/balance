@@ -6,6 +6,7 @@ namespace App\FoodLoss\Infrastructure\AI\Gemini;
 
 use App\FoodLoss\Domain\Model\Action\Action;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
+use App\Shared\Infrastructure\AI\Gemini\GeminiModelTier;
 use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
 
 final class SuggestActionsPrompt implements GeminiPrompt
@@ -88,5 +89,10 @@ final class SuggestActionsPrompt implements GeminiPrompt
     public function temperature(): float
     {
         return $this->temperature;
+    }
+
+    public function modelTier(): GeminiModelTier
+    {
+        return GeminiModelTier::LOW;
     }
 }

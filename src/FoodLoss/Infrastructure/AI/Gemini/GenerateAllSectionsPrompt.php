@@ -17,6 +17,7 @@ use App\HumanResources\Domain\Model\Employee\Employee;
 use App\Property\Domain\Model\Company\Company;
 use App\Property\Domain\Model\Property\Property;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Shared\Infrastructure\AI\Gemini\GeminiModelTier;
 use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
 
 final class GenerateAllSectionsPrompt implements GeminiPrompt
@@ -272,6 +273,11 @@ final class GenerateAllSectionsPrompt implements GeminiPrompt
     public function temperature(): float
     {
         return $this->temperature;
+    }
+
+    public function modelTier(): GeminiModelTier
+    {
+        return GeminiModelTier::MEDIUM;
     }
 
     /** @return array<string, ProposedAction[]> */

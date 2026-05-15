@@ -15,7 +15,9 @@ class GeminiHttpClient implements GeminiClient
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly string $apiKey,
-        private readonly string $model,
+        private readonly string $modelLow,
+        private readonly string $modelMedium,
+        private readonly string $modelHigh,
         private readonly bool $logEnabled = false,
         private readonly string $logDir = '',
     ) {}
@@ -39,7 +41,7 @@ class GeminiHttpClient implements GeminiClient
             $this->writeLog($prompt, $request, [], []);
         }
 
-        $response = $this->httpClient->request('POST', $this->getApiUrl(), [
+        $response = $this->httpClient->request('POST', $this->getApiUrl($prompt->modelTier()), [
             'query' => ['key' => $this->apiKey],
             'json' => $request,
         ]);
@@ -55,9 +57,15 @@ class GeminiHttpClient implements GeminiClient
         return $result;
     }
 
-    private function getApiUrl(): string
+    private function getApiUrl(GeminiModelTier $tier): string
     {
-        return str_replace('{model}', $this->model, self::API_URL);
+        $model = match ($tier) {
+            GeminiModelTier::LOW => $this->modelLow,
+            GeminiModelTier::MEDIUM => $this->modelMedium,
+            GeminiModelTier::HIGH => $this->modelHigh,
+        };
+
+        return str_replace('{model}', $model, self::API_URL);
     }
 
     /**
@@ -75,9 +83,17 @@ class GeminiHttpClient implements GeminiClient
         $promptClass = (new \ReflectionClass($prompt))->getShortName();
         $filename = sprintf('%s/%s_%s.json', $this->logDir, $timestamp, $promptClass);
 
+        $tier = $prompt->modelTier();
+        $model = match ($tier) {
+            GeminiModelTier::LOW => $this->modelLow,
+            GeminiModelTier::MEDIUM => $this->modelMedium,
+            GeminiModelTier::HIGH => $this->modelHigh,
+        };
+
         $log = [
             'timestamp' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
-            'model' => $this->model,
+            'model' => $model,
+            'model_tier' => $tier->name,
             'prompt_class' => $prompt::class,
             'request' => [
                 'text' => $prompt->text(),

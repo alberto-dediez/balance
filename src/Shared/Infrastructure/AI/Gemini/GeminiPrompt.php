@@ -12,4 +12,6 @@ interface GeminiPrompt
     public function responseSchema(): array;
 
     public function temperature(): float;
+
+    public function modelTier(): GeminiModelTier;
 }
