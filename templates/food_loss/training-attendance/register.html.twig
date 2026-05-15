@@ -1,0 +1,11 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = ('Sesiones formativas' | trans)
+    ~ ' > '
+    ~ trainingSession.title
+    ~ ' > '
+    ~ ('Registrar hoja de asistencia' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('training_attendances', {'trainingSessionId': trainingSession.id}) }}" />
+{% endblock %}

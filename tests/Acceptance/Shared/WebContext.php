@@ -12,6 +12,7 @@ use Behat\Step\Then;
 use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\DomCrawler\Field\FileFormField;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -83,7 +84,20 @@ final class WebContext implements Context
                 $value = explode(',', substr($value, 1, -1));
             }
 
-            $formData[$key] = $value;
+            $compoundField = $formData[$key];
+            try {
+                $formData[$key] = $value;
+            } catch (\InvalidArgumentException $e) {
+                if (!str_contains($e->getMessage(), 'compound field')) {
+                    throw $e;
+                }
+                $values = is_array($value) ? $value : [$value];
+                array_walk_recursive($compoundField, static function (mixed $field) use ($values): void {
+                    if ($field instanceof ChoiceFormField && [] !== array_intersect($field->availableOptionValues(), $values)) {
+                        $field->tick();
+                    }
+                });
+            }
         }
 
         foreach ($this->files as $field => $path) {

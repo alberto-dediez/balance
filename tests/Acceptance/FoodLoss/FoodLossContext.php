@@ -23,7 +23,11 @@ use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationRepository;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepository;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseRepository;
+use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceId;
+use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceRepository;
+use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionId;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionRepository;
+use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\HumanResources\Domain\Model\Employee\EmployeeRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -44,6 +48,7 @@ use App\Tests\Unit\FoodLoss\Domain\Model\Reason\ReasonMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\SurplusCause\SurplusCauseMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\TrainingSession\TrainingSessionMother;
 use App\Tests\Unit\HumanResources\Domain\Model\Employee\EmployeeMother;
 use Behat\Behat\Context\Context;
@@ -142,6 +147,11 @@ final readonly class FoodLossContext implements Context
     public function getTrainingSessionRepository(): TrainingSessionRepository
     {
         return $this->client->getContainer()->get(TrainingSessionRepository::class);
+    }
+
+    public function getTrainingAttendanceRepository(): TrainingAttendanceRepository
+    {
+        return $this->client->getContainer()->get(TrainingAttendanceRepository::class);
     }
 
     public function getSurplusCauseRepository(): SurplusCauseRepository
@@ -515,6 +525,35 @@ final readonly class FoodLossContext implements Context
         $access = ProtocolAccessMother::forProtocolAndEmployee($protocolId, $employeeId, $accountId);
 
         $this->getProtocolAccessRepository()->add($access);
+    }
+
+    #[Given('training attendance for employee :employeeId of session :sessionId of account :accountId exists')]
+    public function trainingAttendanceForEmployeeOfSessionExists(string $employeeId, string $sessionId, string $accountId): void
+    {
+        $attendance = TrainingAttendanceMother::forSessionAndEmployee(
+            $sessionId,
+            $employeeId,
+            $accountId,
+        );
+
+        $this->getTrainingAttendanceRepository()->add($attendance);
+    }
+
+    #[Given('training attendance :attendanceId for employee :employeeId of session :sessionId of account :accountId at :filePath exists')]
+    public function trainingAttendanceWithIdExists(string $attendanceId, string $employeeId, string $sessionId, string $accountId, string $filePath): void
+    {
+        $attendance = new \App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendance(
+            id: new TrainingAttendanceId($attendanceId),
+        );
+        $attendance->register(
+            trainingSessionId: new TrainingSessionId($sessionId),
+            employeeId: new EmployeeId($employeeId),
+            accountId: new AccountId($accountId),
+            attendedAt: new \DateTimeImmutable('2024-03-15'),
+            filePath: $filePath,
+        );
+
+        $this->getTrainingAttendanceRepository()->add($attendance);
     }
 
     #[When('I submit the form with :data and button :button removing all evidences')]

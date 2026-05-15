@@ -1,0 +1,76 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    {% if dummy | is_authorized('register') %}
+        <twig:TopAction path="{{ path('training_attendances_register', {'trainingSessionId': trainingSession.id}) }}">
+            <twig:Icon name="solar:add-square-line-duotone" size="lg" class="me-2" />
+
+            {{ 'Subir hoja de asistencia' | trans }}
+        </twig:TopAction>
+    {% endif %}
+
+    <twig:TopAction:Return path="{{ path('training_sessions') }}" />
+{% endblock %}
+
+{% set page_title = ('Sesiones formativas' | trans)
+    ~ ' > '
+    ~ ('Detalles' | trans)
+    ~ ' > '
+    ~ trainingSession.title %}
+
+{% block content %}
+    <twig:Card>
+        <div class="row">
+            <div class="col-12">
+                <dl class="row mb-0 ps-4">
+                    <dt class="col-sm-3">{{ 'Fecha de la sesión' | trans }}</dt>
+                    <dd class="col-sm-9">{{ trainingSession.sessionDate | date('d/m/Y') }}</dd>
+
+                    <dt class="col-sm-3">{{ 'Título' | trans }}</dt>
+                    <dd class="col-sm-9">{{ trainingSession.title }}</dd>
+
+                    <dt class="col-sm-3">{{ 'Tema' | trans }}</dt>
+                    <dd class="col-sm-9">{{ trainingSession.topic }}</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                {% set columns = [
+                    {'label': 'Nombre' | trans},
+                    {'label': 'email' | trans},
+                    {'label': 'Estado' | trans},
+                    {'label': 'Evidencias' | trans},
+                ] %}
+
+                <twig:List:Table :columns="columns" :elements="summaries">
+                    <td class="col-5">{{ element.employee.name }}</td>
+                    <td class="col-5">{{ element.employee.email }}</td>
+                    <td class="col-2">
+                        {% if element.hasAttended %}
+                            <span class="badge bg-success">{{ 'Asistió' | trans }}</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">{{ 'No asistió' | trans }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="col-3">
+                        {% for attendance in element.attendances %}
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <span class="text-muted small">{{ attendance.attendedAt | date('d/m/Y') }}</span>
+
+                                {% if attendance | is_authorized('view') %}
+                                    <twig:List:Action:Download path="{{ path('training_attendances_download', {'trainingSessionId': trainingSession.id, 'trainingAttendanceId': attendance.id}) }}" target="_blank" />
+                                {% endif %}
+
+                                {% if attendance | is_authorized('remove') %}
+                                    <twig:List:Action:Delete path="{{ path('training_attendances_remove', {'trainingSessionId': trainingSession.id, 'trainingAttendanceId': attendance.id}) }}" />
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </td>
+                </twig:List:Table>
+            </div>
+        </div>
+    </twig:Card>
+{% endblock %}

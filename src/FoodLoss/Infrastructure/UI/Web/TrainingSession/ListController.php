@@ -6,6 +6,8 @@ namespace App\FoodLoss\Infrastructure\UI\Web\TrainingSession;
 
 use App\FoodLoss\Application\TrainingSession\List\ListTrainingSessionsRequest;
 use App\FoodLoss\Application\TrainingSession\List\ListTrainingSessionsService;
+use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendance;
+use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceId;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSession;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionId;
 use App\FoodLoss\Infrastructure\Symfony\Form\ListTrainingSessionsType;
@@ -49,6 +51,7 @@ class ListController extends AbstractController
             'totalResults' => $response->totalResults,
             'form' => $form->createView(),
             'dummy' => new TrainingSession(id: TrainingSessionId::generate(), accountId: $loggedAccount()?->id()),
+            'dummyAttendance' => new TrainingAttendance(id: TrainingAttendanceId::generate(), accountId: $loggedAccount()?->id()),
         ]);
     }
 }

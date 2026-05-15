@@ -47,3 +47,9 @@ services:
 
     App\FoodLoss\Application\PreventionPlan\PreventionPlanDraftTranslator:
         alias: App\FoodLoss\Infrastructure\AI\GeminiPreventionPlanDraftTranslator
+
+    App\FoodLoss\Application\TrainingAttendance\TrainingAttendanceUploader:
+        alias: App\FoodLoss\Infrastructure\FileUploader\LocalFileTrainingAttendanceUploader
+
+    App\FoodLoss\Application\TrainingAttendance\TrainingAttendanceFileRemover:
+        alias: App\FoodLoss\Infrastructure\FileUploader\LocalFileTrainingAttendanceRemover

@@ -49,6 +49,7 @@ doctrine:
             incidence_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\IncidenceIdType
             incidence_evidence_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\IncidenceEvidenceIdType
             training_session_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\TrainingSessionIdType
+            training_attendance_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\TrainingAttendanceIdType
             surplus_cause_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\SurplusCauseIdType
             job_progress_id: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressIdType
             job_progress_key: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressKeyType

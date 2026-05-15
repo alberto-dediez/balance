@@ -1,7 +1,8 @@
 {% props path %}
 
-<twig:List:Action :path="path" 
-    title="{{ 'Editar' | trans }}" 
+<twig:List:Action :path="path"
+    title="{{ 'Editar' | trans }}"
+    :attributes="attributes"
 >
     <twig:Icon name="solar:pen-new-square-line-duotone" size="lg" />
 </twig:List:Action>

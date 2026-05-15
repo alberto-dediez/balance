@@ -1,7 +1,8 @@
 {% props path %}
 
-<twig:List:Action :path="path" 
-    title="{{ 'Descargar' | trans }}" 
+<twig:List:Action :path="path"
+    title="{{ 'Descargar' | trans }}"
+    :attributes="attributes"
 >
     <twig:Icon name="solar:file-download-line-duotone" size="lg" />
 </twig:List:Action>

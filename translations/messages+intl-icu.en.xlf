@@ -2805,6 +2805,114 @@
         <source>Register</source>
         <target>Register</target>
       </trans-unit>
+      <trans-unit id="p2lIdfU" resname="Asistencias registradas correctamente">
+        <source>Asistencias registradas correctamente</source>
+        <target>Attendance records successfully saved</target>
+      </trans-unit>
+      <trans-unit id="qJu1xWK" resname="Se ha eliminado la asistencia">
+        <source>Se ha eliminado la asistencia</source>
+        <target>Attendance record deleted</target>
+      </trans-unit>
+      <trans-unit id="SSkumBG" resname="No se ha podido eliminar la asistencia">
+        <source>No se ha podido eliminar la asistencia</source>
+        <target>Unable to delete attendance record</target>
+      </trans-unit>
+      <trans-unit id="bLxaZ6H" resname="Fecha de asistencia">
+        <source>Fecha de asistencia</source>
+        <target>Attendance date</target>
+      </trans-unit>
+      <trans-unit id="wKNsvWl" resname="Hoja de asistencia (PDF)">
+        <source>Hoja de asistencia (PDF)</source>
+        <target>Attendance sheet (PDF)</target>
+      </trans-unit>
+      <trans-unit id="bmhlh7J" resname="Registrar asistencias">
+        <source>Registrar asistencias</source>
+        <target>Record attendance</target>
+      </trans-unit>
+      <trans-unit id="cEZO4hG" resname="Por favor, sube una imagen (JPG, PNG, GIF) o un PDF.">
+        <source>Por favor, sube una imagen (JPG, PNG, GIF) o un PDF.</source>
+        <target>Please upload an image (JPG, PNG, GIF) or a PDF.</target>
+      </trans-unit>
+      <trans-unit id="bK6D8xn" resname="Acuerdo de donación próximo a caducar">
+        <source>Acuerdo de donación próximo a caducar</source>
+        <target>Donation agreement about to expire</target>
+      </trans-unit>
+      <trans-unit id="PvEC2bh" resname="Subir">
+        <source>Subir</source>
+        <target>Upload</target>
+      </trans-unit>
+      <trans-unit id="6N76hSk" resname="Accesos">
+        <source>Accesos</source>
+        <target>Accesses</target>
+      </trans-unit>
+      <trans-unit id="2eT1VIk" resname="Accesos de empleados">
+        <source>Accesos de empleados</source>
+        <target>Employee accesses</target>
+      </trans-unit>
+      <trans-unit id="h8X6gHI" resname="Protocolo">
+        <source>Protocolo</source>
+        <target>Protocol</target>
+      </trans-unit>
+      <trans-unit id="TypO6xI" resname="Empleado">
+        <source>Empleado</source>
+        <target>Employee</target>
+      </trans-unit>
+      <trans-unit id="OWyAZam" resname="Último acceso">
+        <source>Último acceso</source>
+        <target>Last access</target>
+      </trans-unit>
+      <trans-unit id="4yLd2Bh" resname="Sin acceso">
+        <source>Sin acceso</source>
+        <target>No access</target>
+      </trans-unit>
+      <trans-unit id="fQx3Xwg" resname="No hay empleados registrados.">
+        <source>No hay empleados registrados.</source>
+        <target>No employees registered.</target>
+      </trans-unit>
+      <trans-unit id="stCKgiD" resname="Fecha de acceso">
+        <source>Fecha de acceso</source>
+        <target>Access date</target>
+      </trans-unit>
+      <trans-unit id="HuF4p3N" resname="Este empleado no ha accedido al protocolo.">
+        <source>Este empleado no ha accedido al protocolo.</source>
+        <target>This employee has not accessed the protocol.</target>
+      </trans-unit>
+      <trans-unit id="zFU.EXM" resname="Subir hoja de asistencia">
+        <source>Subir hoja de asistencia</source>
+        <target>Upload attendance sheet</target>
+      </trans-unit>
+      <trans-unit id="VcLasbf" resname="Asistió">
+        <source>Asistió</source>
+        <target>Attended</target>
+      </trans-unit>
+      <trans-unit id=".2Ga33A" resname="No asistió">
+        <source>No asistió</source>
+        <target>Did not attend</target>
+      </trans-unit>
+      <trans-unit id="haruZz2" resname="email">
+        <source>email</source>
+        <target>Email</target>
+      </trans-unit>
+      <trans-unit id="LxSEB17" resname="Evidencias">
+        <source>Evidencias</source>
+        <target>Evidence</target>
+      </trans-unit>
+      <trans-unit id="qIEJS7c" resname="Registrar hoja de asistencia">
+        <source>Registrar hoja de asistencia</source>
+        <target>Record attendance sheet</target>
+      </trans-unit>
+      <trans-unit id="ZBdRry3" resname="El acuerdo de donación con {org} caduca el {date}.">
+        <source>El acuerdo de donación con {org} caduca el {date}.</source>
+        <target>The donation agreement with {org} expires on {date}.</target>
+      </trans-unit>
+      <trans-unit id="ALDx3d7" resname="Por favor, renueve el acuerdo antes de su fecha de caducidad para evitar interrupciones.">
+        <source>Por favor, renueve el acuerdo antes de su fecha de caducidad para evitar interrupciones.</source>
+        <target>Please renew the agreement before its expiration date to avoid interruptions.</target>
+      </trans-unit>
+      <trans-unit id="4ewAP_O" resname="Ver acuerdos de donación">
+        <source>Ver acuerdos de donación</source>
+        <target>View donation agreements</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
