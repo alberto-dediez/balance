@@ -2913,6 +2913,14 @@
         <source>Ver acuerdos de donación</source>
         <target>Ver acuerdos de donación</target>
       </trans-unit>
+      <trans-unit id="9D8e7V0" resname="Plan de Prevención del Desperdicio Alimentario">
+        <source>Plan de Prevención del Desperdicio Alimentario</source>
+        <target>Plan de Prevención del Desperdicio Alimentario</target>
+      </trans-unit>
+      <trans-unit id="8.Dzv7f" resname="Documento Oficial">
+        <source>Documento Oficial</source>
+        <target>Documento Oficial</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
