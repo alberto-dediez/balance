@@ -7,6 +7,7 @@ namespace App\Tests\Unit\FoodLoss\Infrastructure\Tcpdf;
 use App\FoodLoss\Infrastructure\Tcpdf\TcpdfPreventionPlanPdfGenerator;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanMother;
+use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
 use PHPUnit\Framework\TestCase;
 
 class TcpdfPreventionPlanPdfGeneratorTest extends TestCase
@@ -111,6 +112,6 @@ class TcpdfPreventionPlanPdfGeneratorTest extends TestCase
 
     private function createSUT(): TcpdfPreventionPlanPdfGenerator
     {
-        return new TcpdfPreventionPlanPdfGenerator();
+        return new TcpdfPreventionPlanPdfGenerator(new FakeTranslator());
     }
 }
