@@ -110,7 +110,7 @@ class TcpdfPreventionPlanPdfGenerator implements PreventionPlanPdfGenerator
         $pdf->setXY(20, 45);
         $this->setFont($pdf, 8, self::FONT_STYLE_MEDIUM, self::COLOR_CREAM);
         $pdf->setFontSpacing(0.6);
-        $pdf->Cell(180, 4, mb_strtoupper($this->translator->trans('Plan de Prevención del Desperdicio Alimentario')), 0, 0, 'L');
+        $pdf->Cell(180, 4, mb_strtoupper($this->translator->trans(id: 'Plan de Prevención del Desperdicio Alimentario', locale: LocaleGetter::locale()->value)), 0, 0, 'L');
         $pdf->setFontSpacing(0);
 
         $pdf->SetDrawColor(self::COLOR_LIME_RGB[0], self::COLOR_LIME_RGB[1], self::COLOR_LIME_RGB[2]);
@@ -120,7 +120,7 @@ class TcpdfPreventionPlanPdfGenerator implements PreventionPlanPdfGenerator
         $pdf->setXY(32, 211);
         $this->setFont($pdf, 9, self::FONT_STYLE_SEMIBOLD, self::COLOR_LIME_RGB);
         $pdf->setFontSpacing(0.8);
-        $pdf->Cell(80, 6, mb_strtoupper($this->translator->trans('Documento Oficial')), 0, 0, 'L');
+        $pdf->Cell(80, 6, mb_strtoupper($this->translator->trans(id: 'Documento Oficial', locale: LocaleGetter::locale()->value)), 0, 0, 'L');
         $pdf->setFontSpacing(0);
 
         $pdf->setXY(14, 217);
