@@ -99,7 +99,7 @@ class DoctrineDestinationRepository implements DestinationRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('d.removed'),
-                    $qb->expr()->eq('d.removed', ':removed')
+                    $qb->expr()->eq('d.removed', ':removed'),
                 ),
             )
             ->setParameter('removed', false, Types::BOOLEAN)

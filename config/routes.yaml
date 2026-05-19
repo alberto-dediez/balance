@@ -56,6 +56,17 @@ waste-api:
     defaults:
         _locale: '%app.locale_default%'
 
+property-api:
+    resource:
+        path: ../src/Property/Infrastructure/UI/Api/
+        namespace: App\Property\Infrastructure\UI\Api
+    type: attribute
+    prefix: /api/{_locale}
+    requirements:
+        _locale: '%app.locale_list%'
+    defaults:
+        _locale: '%app.locale_default%'
+
 property-web:
     resource:
         path: ../src/Property/Infrastructure/UI/Web/

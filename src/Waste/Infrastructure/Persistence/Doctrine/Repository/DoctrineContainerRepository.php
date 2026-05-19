@@ -62,7 +62,7 @@ class DoctrineContainerRepository implements ContainerRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('c.removed'),
-                    $qb->expr()->eq('c.removed', ':removed')
+                    $qb->expr()->eq('c.removed', ':removed'),
                 ),
             )
             ->setParameter('removed', false, Types::BOOLEAN)

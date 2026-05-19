@@ -57,7 +57,7 @@ class DoctrineWasteManagerRepository implements WasteManagerRepository
             ->where(
                 $qb->expr()->orX(
                     $qb->expr()->isNull('wm.removed'),
-                    $qb->expr()->eq('wm.removed', ':removed')
+                    $qb->expr()->eq('wm.removed', ':removed'),
                 ),
             )
             ->setParameter('removed', false, Types::BOOLEAN)
