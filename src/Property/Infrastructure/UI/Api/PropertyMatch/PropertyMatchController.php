@@ -21,7 +21,7 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/properties/match', name: 'api_properties_match', methods: ['POST'])]
-#[Areas(['mobile', 'admin'])]
+#[Areas(['admin'])]
 #[OA\Post(description: 'Match an external property with an existing one in the system', summary: 'Match Property', tags: ['Property'])]
 #[OA\Response(
     response: 200,
