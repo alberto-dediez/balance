@@ -35,7 +35,8 @@ Feature:
     And the response JSON should be equal to:
     """
     {
-        "property_id": null
+        "property_id": null,
+        "account_id": null
     }
     """
 

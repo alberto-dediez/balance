@@ -72,17 +72,16 @@ class PropertyMatchController extends AbstractController
         );
 
         $propertyId = $response->propertyId;
+        $matchedAccountId = null;
 
-        if (null !== $propertyId && null !== $request->accountId) {
-            $accountId = new AccountId($request->accountId);
+        if (null !== $propertyId) {
             $property = $propertyRepository->find($propertyId);
 
             if (null !== $property) {
-                $propertyAccountId = $property->accountId();
+                $matchedAccountId = $property->accountId();
 
-                if (null !== $propertyAccountId && !$propertyAccountId->equals($accountId)) {
-                    $propertyId = null;
-                } elseif (null === $propertyAccountId) {
+                if (null !== $request->accountId && null === $matchedAccountId) {
+                    $accountId = new AccountId($request->accountId);
                     $updateProperty(
                         new UpdatePropertyRequest(
                             propertyId: $propertyId,
@@ -93,6 +92,7 @@ class PropertyMatchController extends AbstractController
                         ),
                         $user,
                     );
+                    $matchedAccountId = $accountId;
                 }
             }
         }
@@ -100,6 +100,7 @@ class PropertyMatchController extends AbstractController
         return $this->json(
             new PropertyMatchResponse(
                 propertyId: null !== $propertyId ? (string) $propertyId : null,
+                accountId: null !== $matchedAccountId ? (string) $matchedAccountId : null,
             ),
         );
     }

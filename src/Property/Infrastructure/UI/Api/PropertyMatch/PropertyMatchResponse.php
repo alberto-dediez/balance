@@ -15,5 +15,11 @@ class PropertyMatchResponse
             nullable: true,
         )]
         public ?string $propertyId,
+        #[OA\Property(
+            type: 'string',
+            example: 'mycompany',
+            nullable: true,
+        )]
+        public ?string $accountId = null,
     ) {}
 }
