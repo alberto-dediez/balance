@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Security\Infrastructure\SSO;
 
-use App\Security\Infrastructure\SSO\SSOJwtDecoder;
+use App\Security\Infrastructure\SSO\Bioscore\BioscoreSSOJwtDecoder;
 use Lcobucci\JWT\Encoding\ChainedFormatter;
 use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer\Key\InMemory;
@@ -35,7 +35,7 @@ class SSOJwtDecoderTest extends TestCase
 
     public function testDecodeValidToken(): void
     {
-        $decoder = new SSOJwtDecoder($this->publicKey);
+        $decoder = new BioscoreSSOJwtDecoder($this->publicKey);
         $token = $this->createToken(['email' => 'test@example.com']);
 
         $payload = $decoder->decode($token);
@@ -50,7 +50,7 @@ class SSOJwtDecoderTest extends TestCase
         self::assertNotFalse($res);
         openssl_pkey_export($res, $otherPrivateKey);
 
-        $decoder = new SSOJwtDecoder($this->publicKey);
+        $decoder = new BioscoreSSOJwtDecoder($this->publicKey);
         $token = $this->createToken(['sub' => 'user-123'], $otherPrivateKey);
 
         $this->expectException(\Exception::class);
@@ -61,7 +61,7 @@ class SSOJwtDecoderTest extends TestCase
 
     public function testDecodeExpiredToken(): void
     {
-        $decoder = new SSOJwtDecoder($this->publicKey);
+        $decoder = new BioscoreSSOJwtDecoder($this->publicKey);
         $token = $this->createToken(['sub' => 'user-123'], $this->privateKey, (new \DateTimeImmutable())->modify('-1 hour'));
 
         $this->expectException(\Exception::class);
@@ -72,7 +72,7 @@ class SSOJwtDecoderTest extends TestCase
 
     public function testDecodeMalformedToken(): void
     {
-        $decoder = new SSOJwtDecoder($this->publicKey);
+        $decoder = new BioscoreSSOJwtDecoder($this->publicKey);
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Failed to parse JWT token.');

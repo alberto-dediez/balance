@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Security\Infrastructure\SSO;
+namespace App\Security\Infrastructure\SSO\Bioscore;
 
+use App\Security\Infrastructure\SSO\SSOJwtDecoderInterface;
 use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
@@ -13,8 +14,11 @@ use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Validator;
 use Symfony\Component\Clock\NativeClock;
+use Symfony\Component\DependencyInjection\Attribute\When;
 
-class SSOJwtDecoder
+#[When(env: 'dev')]
+#[When(env: 'prod')]
+class BioscoreSSOJwtDecoder implements SSOJwtDecoderInterface
 {
     public function __construct(
         private readonly string $publicKeyPath,

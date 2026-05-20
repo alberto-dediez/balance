@@ -9,6 +9,8 @@ use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
+use App\Security\Infrastructure\SSO\InMemory\InMemorySSOClient;
+use App\Security\Infrastructure\SSO\InMemory\InMemorySSOJwtDecoder;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -117,5 +119,19 @@ final readonly class SecurityContext implements Context
         $user = UserMother::fromUsernameAndRecoverToken($username, $token);
 
         $this->getUserRepository()->add($user);
+    }
+
+    #[Given('the SSO client rejects all tokens')]
+    public function theSSOClientRejectsAllTokens(): void
+    {
+        $ssoClient = $this->client->getContainer()->get(InMemorySSOClient::class);
+        $ssoClient->setValidToken(false);
+    }
+
+    #[Given('the SSO token decodes to email :email')]
+    public function theSSOTokenDecodesToEmail(string $email): void
+    {
+        $jwtDecoder = $this->client->getContainer()->get(InMemorySSOJwtDecoder::class);
+        $jwtDecoder->setEmail($email);
     }
 }

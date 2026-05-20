@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Security\Infrastructure\Symfony\Security;
 
+use App\Security\Infrastructure\SSO\Bioscore\BioscoreSSOJwtDecoder;
 use App\Security\Infrastructure\SSO\InMemory\InMemorySSOClient;
-use App\Security\Infrastructure\SSO\SSOJwtDecoder;
 use App\Security\Infrastructure\Symfony\Security\SSOAuthenticator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +27,7 @@ class SSOAuthenticatorTest extends TestCase
     private InMemorySSOClient $ssoClient;
     /** @var UserProviderInterface<UserInterface>&MockObject */
     private UserProviderInterface&MockObject $userProvider;
-    private SSOJwtDecoder&MockObject $jwtDecoder;
+    private BioscoreSSOJwtDecoder&MockObject $jwtDecoder;
     private UrlGeneratorInterface&MockObject $urlGenerator;
     private SSOAuthenticator $authenticator;
 
@@ -35,7 +35,7 @@ class SSOAuthenticatorTest extends TestCase
     {
         $this->ssoClient = new InMemorySSOClient('https://sso.test', true);
         $this->userProvider = $this->createMock(UserProviderInterface::class);
-        $this->jwtDecoder = $this->createMock(SSOJwtDecoder::class);
+        $this->jwtDecoder = $this->createMock(BioscoreSSOJwtDecoder::class);
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
 
         $this->authenticator = new SSOAuthenticator(

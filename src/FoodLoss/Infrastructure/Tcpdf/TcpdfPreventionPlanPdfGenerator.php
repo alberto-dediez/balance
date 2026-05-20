@@ -39,10 +39,7 @@ class TcpdfPreventionPlanPdfGenerator implements PreventionPlanPdfGenerator
     private const HEX_TEAL = '#40738E';
     private const HEX_BODY = '#37414B';
 
-    public function __construct(private TranslatorInterface $translator)
-    {
-
-    }
+    public function __construct(private TranslatorInterface $translator) {}
 
     public function generate(PreventionPlan $preventionPlan, PreventionPlanVersion $version, Locale $locale): string
     {
