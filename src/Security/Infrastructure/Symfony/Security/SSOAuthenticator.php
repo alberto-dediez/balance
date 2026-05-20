@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Security\Infrastructure\Symfony\Security;
 
 use App\Security\Infrastructure\SSO\SSOClient;
-use App\Security\Infrastructure\SSO\SSOJwtDecoder;
+use App\Security\Infrastructure\SSO\SSOJwtDecoderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +32,7 @@ class SSOAuthenticator extends AbstractAuthenticator implements AuthenticationEn
     public function __construct(
         private readonly SSOClient $ssoClient,
         private readonly UserProviderInterface $userProvider,
-        private readonly SSOJwtDecoder $jwtDecoder,
+        private readonly SSOJwtDecoderInterface $jwtDecoder,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {}
 

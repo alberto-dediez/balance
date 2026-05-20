@@ -16,6 +16,13 @@ app.redocly:
         _controller: nelmio_api_doc.controller.redocly
         area: default
 
+app.swagger:
+    path: /openapi/documentation.json
+    methods: GET
+    defaults:
+        _controller: nelmio_api_doc.controller.swagger
+        area: default
+
 app.redocly.mobile:
     path: /openapi/mobile/documentation
     methods: GET
@@ -23,9 +30,23 @@ app.redocly.mobile:
         _controller: nelmio_api_doc.controller.redocly
         area: mobile
 
+app.swagger.mobile:
+    path: /openapi/mobile/documentation.json
+    methods: GET
+    defaults:
+        _controller: nelmio_api_doc.controller.swagger
+        area: mobile
+
 app.redocly.admin:
     path: /openapi/admin/documentation
     methods: GET
     defaults:
         _controller: nelmio_api_doc.controller.redocly
+        area: admin
+
+app.swagger.admin:
+    path: /openapi/admin/documentation.json
+    methods: GET
+    defaults:
+        _controller: nelmio_api_doc.controller.swagger
         area: admin

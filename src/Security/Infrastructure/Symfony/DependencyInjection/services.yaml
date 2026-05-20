@@ -24,7 +24,7 @@ services:
             $apiBaseUrl: '%sso_api_url%'
             $origin: '%sso_origin%'
 
-    App\Security\Infrastructure\SSO\SSOJwtDecoder:
+    App\Security\Infrastructure\SSO\Bioscore\BioscoreSSOJwtDecoder:
         arguments:
             $publicKeyPath: '%sso_jwt_public_key%'
 
