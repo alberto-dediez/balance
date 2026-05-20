@@ -6,11 +6,15 @@ namespace App\Property\Infrastructure\UI\Api\PropertyMatch;
 
 use App\Property\Application\Property\Match\MatchPropertyRequest;
 use App\Property\Application\Property\Match\MatchPropertyService;
+use App\Property\Application\Property\Update\UpdatePropertyRequest;
+use App\Property\Application\Property\Update\UpdatePropertyService;
 use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Destination\DestinationId;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
 use App\Property\Domain\Model\Property\PropertyInfo;
+use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use Nelmio\ApiDocBundle\Attribute\Areas;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -34,6 +38,8 @@ class PropertyMatchController extends AbstractController
         #[MapRequestPayload()]
         PropertyMatchRequest $request,
         MatchPropertyService $matchProperty,
+        UpdatePropertyService $updateProperty,
+        PropertyRepository $propertyRepository,
     ): JsonResponse {
         /** @var SecurityUser $user */
         $user = $this->getUser();
@@ -65,9 +71,35 @@ class PropertyMatchController extends AbstractController
             $user,
         );
 
+        $propertyId = $response->propertyId;
+
+        if (null !== $propertyId && null !== $request->accountId) {
+            $accountId = new AccountId($request->accountId);
+            $property = $propertyRepository->find($propertyId);
+
+            if (null !== $property) {
+                $propertyAccountId = $property->accountId();
+
+                if (null !== $propertyAccountId && !$propertyAccountId->equals($accountId)) {
+                    $propertyId = null;
+                } elseif (null === $propertyAccountId) {
+                    $updateProperty(
+                        new UpdatePropertyRequest(
+                            propertyId: $propertyId,
+                            name: $property->name(),
+                            accountId: $accountId,
+                            info: $property->info(),
+                            externalId: $property->externalId(),
+                        ),
+                        $user,
+                    );
+                }
+            }
+        }
+
         return $this->json(
             new PropertyMatchResponse(
-                propertyId: null !== $response->propertyId ? (string) $response->propertyId : null,
+                propertyId: null !== $propertyId ? (string) $propertyId : null,
             ),
         );
     }

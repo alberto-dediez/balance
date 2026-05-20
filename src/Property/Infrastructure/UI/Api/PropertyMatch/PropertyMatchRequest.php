@@ -65,5 +65,10 @@ class PropertyMatchRequest
             example: 120,
         )]
         public ?int $rooms = null,
+        #[OA\Property(
+            type: 'string',
+            example: 'account-uuid',
+        )]
+        public ?string $accountId = null,
     ) {}
 }
