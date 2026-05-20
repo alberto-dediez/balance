@@ -11,6 +11,7 @@ use App\Property\Domain\Model\Category\CategoryId;
 use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Destination\DestinationId;
 use App\Property\Domain\Model\Property\ExternalId;
+use App\Property\Domain\Model\Property\ExternalSource;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Domain\Model\Property\PropertyRepository;
@@ -62,11 +63,9 @@ class PropertyRegisterController extends AbstractController
             countryId: null !== $request->countryId ? new CountryId($request->countryId) : null,
         );
 
-        $externalId = new ExternalId(
-            hotelbeds: $request->hotelbeds,
-            restel: $request->restel,
-            bioscore: $request->bioscore,
-        );
+        $externalId = (null !== $request->source && null !== $request->externalId)
+            ? ExternalId::fromSourceAndId(ExternalSource::from($request->source), $request->externalId)
+            : new ExternalId();
 
         $response = $registerProperty(
             new RegisterPropertyRequest(

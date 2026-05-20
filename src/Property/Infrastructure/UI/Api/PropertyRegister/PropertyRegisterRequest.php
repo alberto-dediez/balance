@@ -39,11 +39,9 @@ class PropertyRegisterRequest
         #[OA\Property(type: 'string', example: null, nullable: true)]
         public ?string $countryId = null,
         // ExternalId fields
+        #[OA\Property(type: 'string', example: 'hotelbeds', nullable: true, enum: ['hotelbeds', 'restel', 'bioscore'])]
+        public ?string $source = null,
         #[OA\Property(type: 'string', example: null, nullable: true)]
-        public ?string $hotelbeds = null,
-        #[OA\Property(type: 'string', example: null, nullable: true)]
-        public ?string $restel = null,
-        #[OA\Property(type: 'string', example: null, nullable: true)]
-        public ?string $bioscore = null,
+        public ?string $externalId = null,
     ) {}
 }
