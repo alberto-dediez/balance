@@ -242,8 +242,8 @@ class TcpdfPreventionPlanPdfGenerator implements PreventionPlanPdfGenerator
         $html = str_replace('<strong>', '<strong><font color="' . self::HEX_TEAL . '">', $html);
         $html = str_replace('</strong>', '</font></strong>', $html);
 
-        $html = preg_replace('/<li>\s*<p[^>]*>/i', '<li>', $html);
-        $html = preg_replace('/<\/p>\s*<\/li>/i', '</li>', $html);
+        $html = preg_replace('/<li>\s*<p[^>]*>/i', '<li>', $html) ?? $html;
+        $html = preg_replace('/<\/p>\s*<\/li>/i', '</li>', $html) ?? $html;
 
         $html = str_replace('<p>', '<p><font color="' . self::HEX_BODY . '">', $html);
         $html = str_replace('</p>', '</font></p>', $html);
