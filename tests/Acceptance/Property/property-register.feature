@@ -33,3 +33,47 @@ Feature:
     When I follow redirect
     Then the response status should be 200
     Then I see a text "Propiedad creada correctamente"
+
+  Scenario: As an owner, I can register a property for my account via API
+    Given account "MyCompany" with id "mycompany" exists
+    Given user "owner@dediez.software" with role "ROLE_OWNER" with id "owner" of account "mycompany" exists
+    When I am authenticated in API as "owner@dediez.software"
+    And I send a POST request to "/api/es/properties" with body:
+    """
+    {
+        "name": "Hotel Test",
+        "account_id": "mycompany"
+    }
+    """
+    Then the status code should be 200
+    And the response JSON should be similar to:
+    """
+    {
+        "name": "Hotel Test",
+        "account_id": "mycompany"
+    }
+    """
+
+  Scenario: As an owner, I cannot register a property for another account via API
+    Given account "MyCompany" with id "mycompany" exists
+    Given account "OtherCompany" with id "othercompany" exists
+    Given user "owner@dediez.software" with role "ROLE_OWNER" with id "owner" of account "mycompany" exists
+    When I am authenticated in API as "owner@dediez.software"
+    And I send a POST request to "/api/es/properties" with body:
+    """
+    {
+        "name": "Hotel Test",
+        "account_id": "othercompany"
+    }
+    """
+    Then the status code should be 403
+
+  Scenario: Not authenticated user cannot register a property via API
+    When I send a POST request to "/api/es/properties" with body:
+    """
+    {
+        "name": "Hotel Test",
+        "account_id": "mycompany"
+    }
+    """
+    Then the status code should be 403
