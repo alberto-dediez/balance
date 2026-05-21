@@ -50,16 +50,10 @@ class PropertyMatchRequest
             example: 'Centro',
         )]
         public ?string $zone = null,
-        #[OA\Property(
-            type: 'string',
-            example: 'spain',
-        )]
-        public ?string $countryId = null,
-        #[OA\Property(
-            type: 'string',
-            example: 'sevilla',
-        )]
-        public ?string $destinationId = null,
+        #[OA\Property(type: PropertyMatchCountryRequest::class)]
+        public ?PropertyMatchCountryRequest $country = null,
+        #[OA\Property(type: PropertyMatchDestinationRequest::class)]
+        public ?PropertyMatchDestinationRequest $destination = null,
         #[OA\Property(
             type: 'integer',
             example: 120,

@@ -16,10 +16,10 @@ class PropertyRegisterRequest
         // PropertyInfo fields
         #[OA\Property(type: 'string', example: 'Hotel', nullable: true)]
         public ?string $propertyType = null,
-        #[OA\Property(type: 'string', example: null, nullable: true)]
-        public ?string $categoryId = null,
-        #[OA\Property(type: 'string', example: null, nullable: true)]
-        public ?string $brandId = null,
+        #[OA\Property(type: PropertyRegisterCategoryRequest::class)]
+        public ?PropertyRegisterCategoryRequest $category = null,
+        #[OA\Property(type: PropertyRegisterBrandRequest::class)]
+        public ?PropertyRegisterBrandRequest $brand = null,
         #[OA\Property(type: 'string', example: 'Calle Mayor 1', nullable: true)]
         public ?string $address = null,
         #[OA\Property(type: 'string', example: '28001', nullable: true)]
@@ -34,10 +34,10 @@ class PropertyRegisterRequest
         public ?string $zone = null,
         #[OA\Property(type: 'string', example: 'https://hotelabaco.com', nullable: true)]
         public ?string $web = null,
-        #[OA\Property(type: 'string', example: null, nullable: true)]
-        public ?string $destinationId = null,
-        #[OA\Property(type: 'string', example: null, nullable: true)]
-        public ?string $countryId = null,
+        #[OA\Property(type: PropertyRegisterDestinationRequest::class)]
+        public ?PropertyRegisterDestinationRequest $destination = null,
+        #[OA\Property(type: PropertyRegisterCountryRequest::class)]
+        public ?PropertyRegisterCountryRequest $country = null,
         // ExternalId fields
         #[OA\Property(type: 'string', example: 'hotelbeds', nullable: true, enum: ['hotelbeds', 'restel', 'bioscore'])]
         public ?string $source = null,
