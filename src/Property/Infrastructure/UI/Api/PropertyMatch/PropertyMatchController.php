@@ -9,7 +9,9 @@ use App\Property\Application\Property\Match\MatchPropertyService;
 use App\Property\Application\Property\Update\UpdatePropertyRequest;
 use App\Property\Application\Property\Update\UpdatePropertyService;
 use App\Property\Domain\Model\Country\CountryId;
+use App\Property\Domain\Model\Country\CountryRepository;
 use App\Property\Domain\Model\Destination\DestinationId;
+use App\Property\Domain\Model\Destination\DestinationRepository;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
 use App\Property\Domain\Model\Property\PropertyInfo;
@@ -40,6 +42,8 @@ class PropertyMatchController extends AbstractController
         MatchPropertyService $matchProperty,
         UpdatePropertyService $updateProperty,
         PropertyRepository $propertyRepository,
+        CountryRepository $countryRepository,
+        DestinationRepository $destinationRepository,
     ): JsonResponse {
         /** @var SecurityUser $user */
         $user = $this->getUser();
@@ -50,14 +54,17 @@ class PropertyMatchController extends AbstractController
             ? ExternalId::fromSourceAndId($source, $request->externalId)
             : new ExternalId();
 
+        $countryId = $this->resolveCountryId($request, $source, $countryRepository);
+        $destinationId = $this->resolveDestinationId($request, $source, $countryId, $destinationRepository);
+
         $info = new PropertyInfo(
             latitude: $request->latitude,
             longitude: $request->longitude,
             address: $request->address,
             postalCode: $request->postalCode,
             zone: $request->zone,
-            countryId: null !== $request->countryId ? new CountryId($request->countryId) : null,
-            destinationId: null !== $request->destinationId ? new DestinationId($request->destinationId) : null,
+            countryId: $countryId,
+            destinationId: $destinationId,
             rooms: $request->rooms,
         );
 
@@ -103,5 +110,57 @@ class PropertyMatchController extends AbstractController
                 accountId: null !== $matchedAccountId ? (string) $matchedAccountId : null,
             ),
         );
+    }
+
+    private function resolveCountryId(PropertyMatchRequest $request, ExternalSource $source, CountryRepository $countryRepository): ?CountryId
+    {
+        if (null === $request->country) {
+            return null;
+        }
+
+        if (!empty($request->country->externalId)) {
+            $country = $countryRepository->findBySourceAndExternalId(
+                $source,
+                ExternalId::fromSourceAndId($source, $request->country->externalId),
+            );
+            if (null !== $country) {
+                return $country->id();
+            }
+        }
+
+        if (!empty($request->country->iso)) {
+            $country = $countryRepository->findByIso($request->country->iso);
+            if (null !== $country) {
+                return $country->id();
+            }
+        }
+
+        return null;
+    }
+
+    private function resolveDestinationId(PropertyMatchRequest $request, ExternalSource $source, ?CountryId $countryId, DestinationRepository $destinationRepository): ?DestinationId
+    {
+        if (null === $request->destination) {
+            return null;
+        }
+
+        if (!empty($request->destination->externalId)) {
+            $destination = $destinationRepository->findBySourceAndExternalId(
+                $source,
+                ExternalId::fromSourceAndId($source, $request->destination->externalId),
+            );
+            if (null !== $destination) {
+                return $destination->id();
+            }
+        }
+
+        if (!empty($request->destination->name) && null !== $countryId) {
+            $destination = $destinationRepository->findByNameAndCountry($request->destination->name, $countryId);
+            if (null !== $destination) {
+                return $destination->id();
+            }
+        }
+
+        return null;
     }
 }
