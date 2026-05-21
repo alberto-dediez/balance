@@ -1,0 +1,1258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="tr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="11cZA2S" resname="Se ha eliminado al usuario {user}">
+        <source>Se ha eliminado al usuario {user}</source>
+        <target>{user} kullanıcısı silindi</target>
+      </trans-unit>
+      <trans-unit id="M9oyZS7" resname="No se ha podido eliminar al usuario {user}">
+        <source>No se ha podido eliminar al usuario {user}</source>
+        <target>{user} kullanıcısı silinemedi</target>
+      </trans-unit>
+      <trans-unit id="nWQhPu9" resname="Cuenta creada correctamente: {name}">
+        <source>Cuenta creada correctamente: {name}</source>
+        <target>Hesap başarıyla oluşturuldu: {name}</target>
+      </trans-unit>
+      <trans-unit id="Y969eNN" resname="Cuenta actualizada con éxito">
+        <source>Cuenta actualizada con éxito</source>
+        <target>Hesap başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="nwo_D8G" resname="Se ha eliminado la cuenta {account}">
+        <source>Se ha eliminado la cuenta {account}</source>
+        <target>{account} hesabı silindi</target>
+      </trans-unit>
+      <trans-unit id="RGkWzHR" resname="No se ha podido eliminar la cuenta {account}">
+        <source>No se ha podido eliminar la cuenta {account}</source>
+        <target>{account} hesabı silinemedi</target>
+      </trans-unit>
+      <trans-unit id="fxWYBxa" resname="Se ha eliminado la cuenta {id}">
+        <source>Se ha eliminado la cuenta {id}</source>
+        <target>{id} hesabı silindi</target>
+      </trans-unit>
+      <trans-unit id="7kYPmWS" resname="No se ha podido eliminar la cuenta {id}">
+        <source>No se ha podido eliminar la cuenta {id}</source>
+        <target>{id} hesabı silinemedi</target>
+      </trans-unit>
+      <trans-unit id="T55wh1j" resname="Contraseña">
+        <source>Contraseña</source>
+        <target>Şifre</target>
+      </trans-unit>
+      <trans-unit id="ovSSGz4" resname="Repetir Contraseña">
+        <source>Repetir Contraseña</source>
+        <target>Şifreyi Tekrarla</target>
+      </trans-unit>
+      <trans-unit id="eASLQUc" resname="Las contraseñas no coinciden.">
+        <source>Las contraseñas no coinciden.</source>
+        <target>Şifreler eşleşmiyor.</target>
+      </trans-unit>
+      <trans-unit id="uYqSEiY" resname="Debes pertenecer a una cuenta para poder acceder al listado de usuarios">
+        <source>Debes pertenecer a una cuenta para poder acceder al listado de usuarios</source>
+        <target>Kullanıcı listesine erişmek için bir hesaba ait olmanız gerekir</target>
+      </trans-unit>
+      <trans-unit id="IidMCo3" resname="El usuario no existe">
+        <source>El usuario no existe</source>
+        <target>Kullanıcı mevcut değil</target>
+      </trans-unit>
+      <trans-unit id="9MxJ92I" resname="Debes pertenecer a una cuenta para poder acceder">
+        <source>Debes pertenecer a una cuenta para poder acceder</source>
+        <target>Erişmek için bir hesaba ait olmanız gerekir</target>
+      </trans-unit>
+      <trans-unit id="8XiO84w" resname="Concedido acceso como {role}">
+        <source>Concedido acceso como {role}</source>
+        <target>{role} olarak erişim verildi</target>
+      </trans-unit>
+      <trans-unit id="GZj63sm" resname="No se ha podido conceder acceso como {role}">
+        <source>No se ha podido conceder acceso como {role}</source>
+        <target>{role} olarak erişim verilemedi</target>
+      </trans-unit>
+      <trans-unit id="gWXOVsW" resname="Retirado acceso como {role}">
+        <source>Retirado acceso como {role}</source>
+        <target>{role} olarak erişim kaldırıldı</target>
+      </trans-unit>
+      <trans-unit id="oTF9A8j" resname="No se ha podido retirar acceso como {role}">
+        <source>No se ha podido retirar acceso como {role}</source>
+        <target>{role} olarak erişim kaldırılamadı</target>
+      </trans-unit>
+      <trans-unit id="q8yh3.F" resname="Se ha eliminado el usuario {id}">
+        <source>Se ha eliminado el usuario {id}</source>
+        <target>{id} kullanıcısı silindi</target>
+      </trans-unit>
+      <trans-unit id="LxWfMYN" resname="No se ha podido eliminar el usuario {id}">
+        <source>No se ha podido eliminar el usuario {id}</source>
+        <target>{id} kullanıcısı silinemedi</target>
+      </trans-unit>
+      <trans-unit id="8BZPY16" resname="Eliminar rol">
+        <source>Eliminar rol</source>
+        <target>Rolü kaldır</target>
+      </trans-unit>
+      <trans-unit id="o0nlpma" resname="Se ha eliminado el rol seleccionado al usuario {id}">
+        <source>Se ha eliminado el rol seleccionado al usuario {id}</source>
+        <target>{id} kullanıcısından seçilen rol kaldırıldı</target>
+      </trans-unit>
+      <trans-unit id="R2XRcZ6" resname="No se ha podido eliminar el rol seleccionado al usuario {id}">
+        <source>No se ha podido eliminar el rol seleccionado al usuario {id}</source>
+        <target>{id} kullanıcısından seçilen rol kaldırılamadı</target>
+      </trans-unit>
+      <trans-unit id="iUbgb7n" resname="Asignar rol">
+        <source>Asignar rol</source>
+        <target>Rol ata</target>
+      </trans-unit>
+      <trans-unit id="ekEmsFL" resname="Se ha añadido el rol seleccionado al usuario {id}">
+        <source>Se ha añadido el rol seleccionado al usuario {id}</source>
+        <target>{id} kullanıcısına seçilen rol eklendi</target>
+      </trans-unit>
+      <trans-unit id="IkXibvV" resname="No se ha podido añadir el rol seleccionado al usuario {id}">
+        <source>No se ha podido añadir el rol seleccionado al usuario {id}</source>
+        <target>{id} kullanıcısına seçilen rol eklenemedi</target>
+      </trans-unit>
+      <trans-unit id="y9G.oa8" resname="Usuario creado correctamente: {username}">
+        <source>Usuario creado correctamente: {username}</source>
+        <target>Kullanıcı başarıyla oluşturuldu: {username}</target>
+      </trans-unit>
+      <trans-unit id="BeJqJmP" resname="El formulario contiene errores, por favor, reviselos antes de continuar.">
+        <source>El formulario contiene errores, por favor, reviselos antes de continuar.</source>
+        <target>Form hatalar içeriyor, lütfen devam etmeden önce kontrol edin.</target>
+      </trans-unit>
+      <trans-unit id="YdAqJ7r" resname="Hay errores en el formulario. No se ha actualizado tu contraseña">
+        <source>Hay errores en el formulario. No se ha actualizado tu contraseña</source>
+        <target>Formda hatalar var. Şifreniz güncellenmedi</target>
+      </trans-unit>
+      <trans-unit id="._MY2PL" resname="La contraseña se ha actualizado correctamente">
+        <source>La contraseña se ha actualizado correctamente</source>
+        <target>Şifre başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="wlfqMBE" resname="Error inesperado. No se ha actualizado tu contraseña">
+        <source>Error inesperado. No se ha actualizado tu contraseña</source>
+        <target>Beklenmedik hata. Şifreniz güncellenmedi</target>
+      </trans-unit>
+      <trans-unit id="TAjhO07" resname="Nombre de usuario">
+        <source>Nombre de usuario</source>
+        <target>Kullanıcı adı</target>
+      </trans-unit>
+      <trans-unit id="1G65xme" resname="Cuenta">
+        <source>Cuenta</source>
+        <target>Hesap</target>
+      </trans-unit>
+      <trans-unit id="6G5MEIB" resname="Todas las cuentas">
+        <source>Todas las cuentas</source>
+        <target>Tüm hesaplar</target>
+      </trans-unit>
+      <trans-unit id="LT3kO0l" resname="Rol de usuario">
+        <source>Rol de usuario</source>
+        <target>Kullanıcı rolü</target>
+      </trans-unit>
+      <trans-unit id="w4agWIZ" resname="Todos los roles de usuario">
+        <source>Todos los roles de usuario</source>
+        <target>Tüm kullanıcı rolleri</target>
+      </trans-unit>
+      <trans-unit id="hrL9ZOh" resname="Guardar">
+        <source>Guardar</source>
+        <target>Kaydet</target>
+      </trans-unit>
+      <trans-unit id="0WQ3rNG" resname="Guardar y salir">
+        <source>Guardar y salir</source>
+        <target>Kaydet ve çık</target>
+      </trans-unit>
+      <trans-unit id="396rRbt" resname="Nombre">
+        <source>Nombre</source>
+        <target>Ad</target>
+      </trans-unit>
+      <trans-unit id="7FzE1Mk" resname="Contexto">
+        <source>Contexto</source>
+        <target>Bağlam</target>
+      </trans-unit>
+      <trans-unit id="PhtswPE" resname="Usuario">
+        <source>Usuario</source>
+        <target>Kullanıcı</target>
+      </trans-unit>
+      <trans-unit id="ikQf2pj" resname="Entidad">
+        <source>Entidad</source>
+        <target>Varlık</target>
+      </trans-unit>
+      <trans-unit id="kcELu06" resname="Activa">
+        <source>Activa</source>
+        <target>Aktif</target>
+      </trans-unit>
+      <trans-unit id="6H6ZzuL" resname="Registrar">
+        <source>Registrar</source>
+        <target>Kayıt et</target>
+      </trans-unit>
+      <trans-unit id="dqQvuHD" resname="Todos los estados">
+        <source>Todos los estados</source>
+        <target>Tüm durumlar</target>
+      </trans-unit>
+      <trans-unit id="1fa2tNs" resname="&lt;s&gt;{userId}&lt;/s&gt;">
+        <source>&lt;s&gt;{userId}&lt;/s&gt;</source>
+        <target><![CDATA[<s>{userId}</s>]]></target>
+      </trans-unit>
+      <trans-unit id="CnMwVmK" resname="Bienvenido {user}">
+        <source>Bienvenido {user}</source>
+        <target>Hoş geldiniz {user}</target>
+      </trans-unit>
+      <trans-unit id="BWmiYyq" resname="Instrucciones para recuperar contraseña">
+        <source>Instrucciones para recuperar contraseña</source>
+        <target>Şifre kurtarma talimatları</target>
+      </trans-unit>
+      <trans-unit id="Tug2gG_" resname="Mediciones">
+        <source>Mediciones</source>
+        <target>Ölçümler</target>
+      </trans-unit>
+      <trans-unit id="ZizSr6s" resname="Contenedor {containerId}">
+        <source>Contenedor {containerId}</source>
+        <target>{containerId} konteyneri</target>
+      </trans-unit>
+      <trans-unit id="3mO2ZHk" resname="{volume} LITROS">
+        <source>{volume} LITROS</source>
+        <target>{volume} LİTRE</target>
+      </trans-unit>
+      <trans-unit id="v2iDkEY" resname="FECHA EMISIÓN QR">
+        <source>FECHA EMISIÓN QR</source>
+        <target>QR YAYINLAMA TARİHİ</target>
+      </trans-unit>
+      <trans-unit id="2RgOMg5" resname="bioscore.info">
+        <source>bioscore.info</source>
+        <target>bioscore.info</target>
+      </trans-unit>
+      <trans-unit id="SN7PltV" resname="Tipología creada correctamente: {name}">
+        <source>Tipología creada correctamente: {name}</source>
+        <target>Tipoloji başarıyla oluşturuldu: {name}</target>
+      </trans-unit>
+      <trans-unit id="YJsuJR7" resname="Tipología actualizada con éxito">
+        <source>Tipología actualizada con éxito</source>
+        <target>Tipoloji başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="lIu.3.r" resname="Se ha eliminado el residuo {waste}">
+        <source>Se ha eliminado el residuo {waste}</source>
+        <target>{waste} atığı silindi</target>
+      </trans-unit>
+      <trans-unit id="ixdpT3M" resname="No se ha podido eliminar el residuo {waste}">
+        <source>No se ha podido eliminar el residuo {waste}</source>
+        <target>{waste} atığı silinemedi</target>
+      </trans-unit>
+      <trans-unit id="4NIBy_1" resname="Se ha eliminado el tipo de residuo {id}">
+        <source>Se ha eliminado el tipo de residuo {id}</source>
+        <target>{id} atık türü silindi</target>
+      </trans-unit>
+      <trans-unit id="mwLhGji" resname="No se ha podido eliminar el tipo de residuo {id}">
+        <source>No se ha podido eliminar el tipo de residuo {id}</source>
+        <target>{id} atık türü silinemedi</target>
+      </trans-unit>
+      <trans-unit id="U4wD_i." resname="Contenedor creado correctamente">
+        <source>Contenedor creado correctamente</source>
+        <target>Konteyner başarıyla oluşturuldu</target>
+      </trans-unit>
+      <trans-unit id="XDIjNpr" resname="No hay contenedores disponibles para impresión">
+        <source>No hay contenedores disponibles para impresión</source>
+        <target>Yazdırma için kullanılabilir konteyner yok</target>
+      </trans-unit>
+      <trans-unit id="EV0CwcZ" resname="No se ha podido generar los carteles de los contenedores de la cuenta">
+        <source>No se ha podido generar los carteles de los contenedores de la cuenta</source>
+        <target>Hesabın konteyner posterleri oluşturulamadı</target>
+      </trans-unit>
+      <trans-unit id="gBwm9.E" resname="Propiedad actualizada con éxito">
+        <source>Propiedad actualizada con éxito</source>
+        <target>Mülk başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="pps06Tp" resname="Se ha eliminado el contenedor">
+        <source>Se ha eliminado el contenedor</source>
+        <target>Konteyner silindi</target>
+      </trans-unit>
+      <trans-unit id="P0hfzdu" resname="No se ha podido eliminar el contenedor">
+        <source>No se ha podido eliminar el contenedor</source>
+        <target>Konteyner silinemedi</target>
+      </trans-unit>
+      <trans-unit id="KuBojp0" resname="No se ha podido generar el cartel del contenedor escogido">
+        <source>No se ha podido generar el cartel del contenedor escogido</source>
+        <target>Seçilen konteynerin posteri oluşturulamadı</target>
+      </trans-unit>
+      <trans-unit id="1MkwyZ7" resname="Se ha eliminado el contenedor {id}">
+        <source>Se ha eliminado el contenedor {id}</source>
+        <target>{id} konteyneri silindi</target>
+      </trans-unit>
+      <trans-unit id="JybpvgC" resname="No se ha podido eliminar el contenedor {id}">
+        <source>No se ha podido eliminar el contenedor {id}</source>
+        <target>{id} konteyneri silinemedi</target>
+      </trans-unit>
+      <trans-unit id="EJjda4J" resname="Gestor de residuos creado correctamente: {name}">
+        <source>Gestor de residuos creado correctamente: {name}</source>
+        <target>Atık yöneticisi başarıyla oluşturuldu: {name}</target>
+      </trans-unit>
+      <trans-unit id="qDQwn.7" resname="Gestor de residuos actualizado con éxito">
+        <source>Gestor de residuos actualizado con éxito</source>
+        <target>Atık yöneticisi başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="hk7eAFb" resname="Se ha eliminado el gestor de residuos {wasteManager}">
+        <source>Se ha eliminado el gestor de residuos {wasteManager}</source>
+        <target>{wasteManager} atık yöneticisi silindi</target>
+      </trans-unit>
+      <trans-unit id="gdHvF9X" resname="No se ha podido eliminar el gestor de residuos {wasteManager}">
+        <source>No se ha podido eliminar el gestor de residuos {wasteManager}</source>
+        <target>{wasteManager} atık yöneticisi silinemedi</target>
+      </trans-unit>
+      <trans-unit id="MLDkYG." resname="Se ha eliminado el gestor {id}">
+        <source>Se ha eliminado el gestor {id}</source>
+        <target>{id} yöneticisi silindi</target>
+      </trans-unit>
+      <trans-unit id="5A6qIzI" resname="No se ha podido eliminar el gestor {id}">
+        <source>No se ha podido eliminar el gestor {id}</source>
+        <target>{id} yöneticisi silinemedi</target>
+      </trans-unit>
+      <trans-unit id="SPrx9_0" resname="Medición registrada correctamente">
+        <source>Medición registrada correctamente</source>
+        <target>Ölçüm başarıyla kaydedildi</target>
+      </trans-unit>
+      <trans-unit id="TAEF06B" resname="Medición actualizada con éxito">
+        <source>Medición actualizada con éxito</source>
+        <target>Ölçüm başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="WTS_zFT" resname="Se ha eliminado la medición">
+        <source>Se ha eliminado la medición</source>
+        <target>Ölçüm silindi</target>
+      </trans-unit>
+      <trans-unit id="w6amyGa" resname="No se ha podido eliminar la medición">
+        <source>No se ha podido eliminar la medición</source>
+        <target>Ölçüm silinemedi</target>
+      </trans-unit>
+      <trans-unit id="CEyVzKY" resname="Se ha eliminado la medición {id}">
+        <source>Se ha eliminado la medición {id}</source>
+        <target>{id} ölçümü silindi</target>
+      </trans-unit>
+      <trans-unit id="e.iyYnz" resname="No se ha podido eliminar la medición {id}">
+        <source>No se ha podido eliminar la medición {id}</source>
+        <target>{id} ölçümü silinemedi</target>
+      </trans-unit>
+      <trans-unit id="1T4wAdT" resname="Propiedad">
+        <source>Propiedad</source>
+        <target>Mülk</target>
+      </trans-unit>
+      <trans-unit id="IpJqp6i" resname="Tipología de residuo">
+        <source>Tipología de residuo</source>
+        <target>Atık tipolojisi</target>
+      </trans-unit>
+      <trans-unit id="CYjDz35" resname="Destino">
+        <source>Destino</source>
+        <target>Hedef</target>
+      </trans-unit>
+      <trans-unit id="FeWnC08" resname="Método de medida">
+        <source>Método de medida</source>
+        <target>Ölçüm yöntemi</target>
+      </trans-unit>
+      <trans-unit id="fZg3BZC" resname="Gestor de residuos">
+        <source>Gestor de residuos</source>
+        <target>Atık yöneticisi</target>
+      </trans-unit>
+      <trans-unit id="BRp_EDK" resname="¿Es público?">
+        <source>¿Es público?</source>
+        <target>Kamuya açık mı?</target>
+      </trans-unit>
+      <trans-unit id="3t62TyH" resname="¿Es peligroso?">
+        <source>¿Es peligroso?</source>
+        <target>Tehlikeli mi?</target>
+      </trans-unit>
+      <trans-unit id="ChfIWAg" resname="Cantidad de contenedores">
+        <source>Cantidad de contenedores</source>
+        <target>Konteyner sayısı</target>
+      </trans-unit>
+      <trans-unit id="6GPAM5E" resname="Capacidad del contenedor (%)">
+        <source>Capacidad del contenedor (%)</source>
+        <target>Konteyner kapasitesi (%)</target>
+      </trans-unit>
+      <trans-unit id="rGN5PRk" resname="Peso del contenedor (Kg)">
+        <source>Peso del contenedor (Kg)</source>
+        <target>Konteyner ağırlığı (Kg)</target>
+      </trans-unit>
+      <trans-unit id="aiu6WNf" resname="Carga del contenedor ({unit})">
+        <source>Carga del contenedor ({unit})</source>
+        <target>Konteyner yükü ({unit})</target>
+      </trans-unit>
+      <trans-unit id="GIF0Jom" resname="Justificación">
+        <source>Justificación</source>
+        <target>Gerekçe</target>
+      </trans-unit>
+      <trans-unit id="KMyT1mh" resname="Referencia">
+        <source>Referencia</source>
+        <target>Referans</target>
+      </trans-unit>
+      <trans-unit id="jD7D9pi" resname="Todas las propiedades">
+        <source>Todas las propiedades</source>
+        <target>Tüm mülkler</target>
+      </trans-unit>
+      <trans-unit id="Mg3KJIT" resname="Todas las tipologías">
+        <source>Todas las tipologías</source>
+        <target>Tüm tipolojiler</target>
+      </trans-unit>
+      <trans-unit id="N2BY8Cc" resname="Todos los destinos">
+        <source>Todos los destinos</source>
+        <target>Tüm hedefler</target>
+      </trans-unit>
+      <trans-unit id="YHG2xH_" resname="Todos los métodos">
+        <source>Todos los métodos</source>
+        <target>Tüm yöntemler</target>
+      </trans-unit>
+      <trans-unit id="K8cOz.c" resname="Todos los gestores">
+        <source>Todos los gestores</source>
+        <target>Tüm yöneticiler</target>
+      </trans-unit>
+      <trans-unit id="DHOrJji" resname="Densidad">
+        <source>Densidad</source>
+        <target>Yoğunluk</target>
+      </trans-unit>
+      <trans-unit id="VjYOput" resname="Color">
+        <source>Color</source>
+        <target>Renk</target>
+      </trans-unit>
+      <trans-unit id="FEKO0T5" resname="Propiedades">
+        <source>Propiedades</source>
+        <target>Mülkler</target>
+      </trans-unit>
+      <trans-unit id="aE2zlZ5" resname="Fecha desde">
+        <source>Fecha desde</source>
+        <target>Başlangıç tarihi</target>
+      </trans-unit>
+      <trans-unit id="nMhu5Wv" resname="Todas las fechas">
+        <source>Todas las fechas</source>
+        <target>Tüm tarihler</target>
+      </trans-unit>
+      <trans-unit id="wPCYMqC" resname="Fecha hasta">
+        <source>Fecha hasta</source>
+        <target>Bitiş tarihi</target>
+      </trans-unit>
+      <trans-unit id="jXYhaHY" resname="Fecha de registro">
+        <source>Fecha de registro</source>
+        <target>Kayıt tarihi</target>
+      </trans-unit>
+      <trans-unit id="KVklRqL" resname="Capacidad (l)">
+        <source>Capacidad (l)</source>
+        <target>Kapasite (l)</target>
+      </trans-unit>
+      <trans-unit id="RiJxmO2" resname="Todas las referencias">
+        <source>Todas las referencias</source>
+        <target>Tüm referanslar</target>
+      </trans-unit>
+      <trans-unit id="ePG.vUe" resname="Fecha">
+        <source>Fecha</source>
+        <target>Tarih</target>
+      </trans-unit>
+      <trans-unit id="AjWDJWW" resname="Sin cuenta">
+        <source>Sin cuenta</source>
+        <target>Hesapsız</target>
+      </trans-unit>
+      <trans-unit id="BjsEsAb" resname="Error inesperado. No se ha podido actualizar correctamente.">
+        <source>Error inesperado. No se ha podido actualizar correctamente.</source>
+        <target>Beklenmedik hata. Güncelleme yapılamadı.</target>
+      </trans-unit>
+      <trans-unit id="hWeDKhP" resname="Error inesperado">
+        <source>Error inesperado</source>
+        <target>Beklenmedik hata</target>
+      </trans-unit>
+      <trans-unit id="thhXFc5" resname="Debes seleccionar algún elemento sobre el que poder realizar la acción">
+        <source>Debes seleccionar algún elemento sobre el que poder realizar la acción</source>
+        <target>İşlem yapabilmek için bir öğe seçmelisiniz</target>
+      </trans-unit>
+      <trans-unit id="KGKa4jq" resname="Categorías">
+        <source>Categorías</source>
+        <target>Kategoriler</target>
+      </trans-unit>
+      <trans-unit id="JtBXpvI" resname="Marcas">
+        <source>Marcas</source>
+        <target>Markalar</target>
+      </trans-unit>
+      <trans-unit id="1KMTGV1" resname="Países">
+        <source>Países</source>
+        <target>Ülkeler</target>
+      </trans-unit>
+      <trans-unit id="zzcPDy." resname="Destinos">
+        <source>Destinos</source>
+        <target>Hedefler</target>
+      </trans-unit>
+      <trans-unit id="0STCb1o" resname="Residuos">
+        <source>Residuos</source>
+        <target>Atıklar</target>
+      </trans-unit>
+      <trans-unit id="PphKNpv" resname="Tipologias">
+        <source>Tipologias</source>
+        <target>Tipolojiler</target>
+      </trans-unit>
+      <trans-unit id="oHGi0.j" resname="Administración">
+        <source>Administración</source>
+        <target>Yönetim</target>
+      </trans-unit>
+      <trans-unit id="0JhmRr_" resname="Cuentas">
+        <source>Cuentas</source>
+        <target>Hesaplar</target>
+      </trans-unit>
+      <trans-unit id=".mgkmfW" resname="Usuarios">
+        <source>Usuarios</source>
+        <target>Kullanıcılar</target>
+      </trans-unit>
+      <trans-unit id="Q86yj6e" resname="Registro">
+        <source>Registro</source>
+        <target>Kayıt</target>
+      </trans-unit>
+      <trans-unit id="BjvdtYl" resname="Gestores">
+        <source>Gestores</source>
+        <target>Yöneticiler</target>
+      </trans-unit>
+      <trans-unit id="mwNdjwj" resname="Contenedores">
+        <source>Contenedores</source>
+        <target>Konteynerler</target>
+      </trans-unit>
+      <trans-unit id="Up1JIXN" resname="Cantidades totales">
+        <source>Cantidades totales</source>
+        <target>Toplam miktarlar</target>
+      </trans-unit>
+      <trans-unit id="oqeQruJ" resname="Estadísticas">
+        <source>Estadísticas</source>
+        <target>İstatistikler</target>
+      </trans-unit>
+      <trans-unit id="q_BYO8S" resname="Eliminar">
+        <source>Eliminar</source>
+        <target>Sil</target>
+      </trans-unit>
+      <trans-unit id="4wVKnvn" resname="Acción a realizar">
+        <source>Acción a realizar</source>
+        <target>Yapılacak işlem</target>
+      </trans-unit>
+      <trans-unit id="4aG1PV3" resname="Realizar">
+        <source>Realizar</source>
+        <target>Gerçekleştir</target>
+      </trans-unit>
+      <trans-unit id="K2Wi.LU" resname="Resetear filtro">
+        <source>Resetear filtro</source>
+        <target>Filtreyi sıfırla</target>
+      </trans-unit>
+      <trans-unit id="V2Mw_bu" resname="Filtrar">
+        <source>Filtrar</source>
+        <target>Filtrele</target>
+      </trans-unit>
+      <trans-unit id="NHivGAB" resname="Sí">
+        <source>Sí</source>
+        <target>Evet</target>
+      </trans-unit>
+      <trans-unit id="wd1MvZW" resname="No">
+        <source>No</source>
+        <target>Hayır</target>
+      </trans-unit>
+      <trans-unit id="Lm0PXyJ" resname="Continuar">
+        <source>Continuar</source>
+        <target>Devam et</target>
+      </trans-unit>
+      <trans-unit id="2CzITS8" resname="Ignorar">
+        <source>Ignorar</source>
+        <target>Yoksay</target>
+      </trans-unit>
+      <trans-unit id="CmihYJr" resname="Fichero a importar">
+        <source>Fichero a importar</source>
+        <target>İçe aktarılacak dosya</target>
+      </trans-unit>
+      <trans-unit id="hLmVPgJ" resname="Por favor, selecciona un fichero.">
+        <source>Por favor, selecciona un fichero.</source>
+        <target>Lütfen bir dosya seçin.</target>
+      </trans-unit>
+      <trans-unit id="OTuR23r" resname="El fichero es demasiado grande ({{ size }} {{ suffix }}). El tamaño máximo permitido es {{ limit }} {{ suffix }}.">
+        <source>El fichero es demasiado grande ({{ size }} {{ suffix }}). El tamaño máximo permitido es {{ limit }} {{ suffix }}.</source>
+        <target>Dosya çok büyük ({{ size }} {{ suffix }}). İzin verilen maksimum boyut {{ limit }} {{ suffix }}.</target>
+      </trans-unit>
+      <trans-unit id="GbvRix2" resname="Por favor, sube un fichero CSV o Excel válido.">
+        <source>Por favor, sube un fichero CSV o Excel válido.</source>
+        <target>Lütfen geçerli bir CSV veya Excel dosyası yükleyin.</target>
+      </trans-unit>
+      <trans-unit id="GkdmIqv" resname="Líneas a ignorar del inicio del fichero">
+        <source>Líneas a ignorar del inicio del fichero</source>
+        <target>Dosyanın başından itibaren yoksayılacak satır sayısı</target>
+      </trans-unit>
+      <trans-unit id="v2d6aJR" resname="Importar">
+        <source>Importar</source>
+        <target>İçe aktar</target>
+      </trans-unit>
+      <trans-unit id="wVuBAIJ" resname="No se ha importado el fichero correctamente. Revise la configuración o contacte con un administrador.">
+        <source>No se ha importado el fichero correctamente. Revise la configuración o contacte con un administrador.</source>
+        <target>Dosya doğru şekilde içe aktarılamadı. Yapılandırmayı kontrol edin veya bir yönetici ile iletişime geçin.</target>
+      </trans-unit>
+      <trans-unit id="3uQmFLV" resname="Hay errores en la configuración de los distintos campos. Por favor, revise el formulario.">
+        <source>Hay errores en la configuración de los distintos campos. Por favor, revise el formulario.</source>
+        <target>Çeşitli alanlardaki yapılandırmada hatalar var. Lütfen formu kontrol edin.</target>
+      </trans-unit>
+      <trans-unit id="7hGVql5" resname="Hay errores en el emparejamiento. Por favor, revise el formulario.">
+        <source>Hay errores en el emparejamiento. Por favor, revise el formulario.</source>
+        <target>Eşleştirmede hatalar var. Lütfen formu kontrol edin.</target>
+      </trans-unit>
+      <trans-unit id="F1EyIWj" resname="El fichero no es válido.">
+        <source>El fichero no es válido.</source>
+        <target>Dosya geçerli değil.</target>
+      </trans-unit>
+      <trans-unit id="Jv0nOp1" resname="Error importando el fichero {file}">
+        <source>Error importando el fichero {file}</source>
+        <target>{file} dosyası içe aktarılırken hata oluştu</target>
+      </trans-unit>
+      <trans-unit id="yzfqoSM" resname="Fichero {file} subido con éxito">
+        <source>Fichero {file} subido con éxito</source>
+        <target>{file} dosyası başarıyla yüklendi</target>
+      </trans-unit>
+      <trans-unit id="NamIU1s" resname="Importación de {file} finalizada">
+        <source>Importación de {file} finalizada</source>
+        <target>{file} içe aktarma işlemi tamamlandı</target>
+      </trans-unit>
+      <trans-unit id="KM5QfVP" resname="País creado correctamente: {name}">
+        <source>País creado correctamente: {name}</source>
+        <target>Ülke başarıyla oluşturuldu: {name}</target>
+      </trans-unit>
+      <trans-unit id="runTJyx" resname="País actualizado con éxito">
+        <source>País actualizado con éxito</source>
+        <target>Ülke başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="Dyg58SB" resname="Se ha eliminado el país {country}">
+        <source>Se ha eliminado el país {country}</source>
+        <target>{country} ülkesi silindi</target>
+      </trans-unit>
+      <trans-unit id="nuMmeX4" resname="No se ha podido eliminar el país {country}">
+        <source>No se ha podido eliminar el país {country}</source>
+        <target>{country} ülkesi silinemedi</target>
+      </trans-unit>
+      <trans-unit id="HNTWrpA" resname="Se ha eliminado el país {id}">
+        <source>Se ha eliminado el país {id}</source>
+        <target>{id} ülkesi silindi</target>
+      </trans-unit>
+      <trans-unit id="8VmMHaJ" resname="No se ha podido eliminar el país {id}">
+        <source>No se ha podido eliminar el país {id}</source>
+        <target>{id} ülkesi silinemedi</target>
+      </trans-unit>
+      <trans-unit id="d8pC_oo" resname="Destino creado correctamente: {name}">
+        <source>Destino creado correctamente: {name}</source>
+        <target>Hedef başarıyla oluşturuldu: {name}</target>
+      </trans-unit>
+      <trans-unit id="12DNpH5" resname="Destino actualizado con éxito">
+        <source>Destino actualizado con éxito</source>
+        <target>Hedef başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="BQJ.6IG" resname="Se ha eliminado el destino {destination}">
+        <source>Se ha eliminado el destino {destination}</source>
+        <target>{destination} hedefi silindi</target>
+      </trans-unit>
+      <trans-unit id="_oktkiv" resname="No se ha podido eliminar el destino {destination}">
+        <source>No se ha podido eliminar el destino {destination}</source>
+        <target>{destination} hedefi silinemedi</target>
+      </trans-unit>
+      <trans-unit id="Q.F5kZu" resname="Se ha eliminado el destino {id}">
+        <source>Se ha eliminado el destino {id}</source>
+        <target>{id} hedefi silindi</target>
+      </trans-unit>
+      <trans-unit id="wIuKPIL" resname="No se ha podido eliminar el destino {id}">
+        <source>No se ha podido eliminar el destino {id}</source>
+        <target>{id} hedefi silinemedi</target>
+      </trans-unit>
+      <trans-unit id="nylhCg0" resname="Categoría creada correctamente: {name}">
+        <source>Categoría creada correctamente: {name}</source>
+        <target>Kategori başarıyla oluşturuldu: {name}</target>
+      </trans-unit>
+      <trans-unit id="IYPzrmi" resname="Categoría actualizada con éxito">
+        <source>Categoría actualizada con éxito</source>
+        <target>Kategori başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="Y4d3l5i" resname="Se ha eliminado la categoría {category}">
+        <source>Se ha eliminado la categoría {category}</source>
+        <target>{category} kategorisi silindi</target>
+      </trans-unit>
+      <trans-unit id="Fos1KtJ" resname="No se ha podido eliminar la categoría {category}">
+        <source>No se ha podido eliminar la categoría {category}</source>
+        <target>{category} kategorisi silinemedi</target>
+      </trans-unit>
+      <trans-unit id="H5N9b9D" resname="La categoría no existe">
+        <source>La categoría no existe</source>
+        <target>Kategori mevcut değil</target>
+      </trans-unit>
+      <trans-unit id="9C_6ig." resname="Se ha eliminado la categoría {id}">
+        <source>Se ha eliminado la categoría {id}</source>
+        <target>{id} kategorisi silindi</target>
+      </trans-unit>
+      <trans-unit id="_H1vk6y" resname="No se ha podido eliminar la categoría {id}">
+        <source>No se ha podido eliminar la categoría {id}</source>
+        <target>{id} kategorisi silinemedi</target>
+      </trans-unit>
+      <trans-unit id="OO9DDVv" resname="Marca creada correctamente: {name}">
+        <source>Marca creada correctamente: {name}</source>
+        <target>Marka başarıyla oluşturuldu: {name}</target>
+      </trans-unit>
+      <trans-unit id="TZAI1eq" resname="Marca actualizada con éxito">
+        <source>Marca actualizada con éxito</source>
+        <target>Marka başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="2QKem0h" resname="Se ha eliminado la marca {brand}">
+        <source>Se ha eliminado la marca {brand}</source>
+        <target>{brand} markası silindi</target>
+      </trans-unit>
+      <trans-unit id="2mcekp0" resname="No se ha podido eliminar la marca {brand}">
+        <source>No se ha podido eliminar la marca {brand}</source>
+        <target>{brand} markası silinemedi</target>
+      </trans-unit>
+      <trans-unit id="_QfaRp8" resname="La marca no existe">
+        <source>La marca no existe</source>
+        <target>Marka mevcut değil</target>
+      </trans-unit>
+      <trans-unit id="IxTU9cy" resname="Se ha eliminado la marca {id}">
+        <source>Se ha eliminado la marca {id}</source>
+        <target>{id} markası silindi</target>
+      </trans-unit>
+      <trans-unit id="S.PQYgo" resname="No se ha podido eliminar la marca {id}">
+        <source>No se ha podido eliminar la marca {id}</source>
+        <target>{id} markası silinemedi</target>
+      </trans-unit>
+      <trans-unit id="V8ehQ_Q" resname="Propiedad creada correctamente: {name}">
+        <source>Propiedad creada correctamente: {name}</source>
+        <target>Mülk başarıyla oluşturuldu: {name}</target>
+      </trans-unit>
+      <trans-unit id=".NWZJFk" resname="Se ha eliminado la propiedad {property}">
+        <source>Se ha eliminado la propiedad {property}</source>
+        <target>{property} mülkü silindi</target>
+      </trans-unit>
+      <trans-unit id="kdSLytn" resname="No se ha podido eliminar la propiedad {property}">
+        <source>No se ha podido eliminar la propiedad {property}</source>
+        <target>{property} mülkü silinemedi</target>
+      </trans-unit>
+      <trans-unit id="pHeK_TK" resname="Se ha eliminado la propiedad {id}">
+        <source>Se ha eliminado la propiedad {id}</source>
+        <target>{id} mülkü silindi</target>
+      </trans-unit>
+      <trans-unit id="qvczJw3" resname="No se ha podido eliminar la propiedad {id}">
+        <source>No se ha podido eliminar la propiedad {id}</source>
+        <target>{id} mülkü silinemedi</target>
+      </trans-unit>
+      <trans-unit id="chRKHBH" resname="Asignar cuenta">
+        <source>Asignar cuenta</source>
+        <target>Hesap ata</target>
+      </trans-unit>
+      <trans-unit id="KHUrBAA" resname="Se ha asignado la cuenta seleccionada a la propiedad {id}">
+        <source>Se ha asignado la cuenta seleccionada a la propiedad {id}</source>
+        <target>Seçilen hesap {id} mülküne atandı</target>
+      </trans-unit>
+      <trans-unit id="kGiXazz" resname="Se ha eliminado la cuenta de la propiedad {id}">
+        <source>Se ha eliminado la cuenta de la propiedad {id}</source>
+        <target>{id} mülkündeki hesap kaldırıldı</target>
+      </trans-unit>
+      <trans-unit id="78iRgdD" resname="No se ha podido modificar la propiedad {id}">
+        <source>No se ha podido modificar la propiedad {id}</source>
+        <target>{id} mülkü değiştirilemedi</target>
+      </trans-unit>
+      <trans-unit id="VGKzIKB" resname="Identificadores externos">
+        <source>Identificadores externos</source>
+        <target>Harici tanımlayıcılar</target>
+      </trans-unit>
+      <trans-unit id="z_EeVDq" resname="ISO">
+        <source>ISO</source>
+        <target>ISO</target>
+      </trans-unit>
+      <trans-unit id="ltSGShh" resname="Información">
+        <source>Información</source>
+        <target>Bilgi</target>
+      </trans-unit>
+      <trans-unit id="4m.VV3Y" resname="País">
+        <source>País</source>
+        <target>Ülke</target>
+      </trans-unit>
+      <trans-unit id="w2bgSWD" resname="Todos los países">
+        <source>Todos los países</source>
+        <target>Tüm ülkeler</target>
+      </trans-unit>
+      <trans-unit id="0SZHsl5" resname="Hotelbeds ID">
+        <source>Hotelbeds ID</source>
+        <target>Hotelbeds ID</target>
+      </trans-unit>
+      <trans-unit id="qmKS9Da" resname="Restel ID">
+        <source>Restel ID</source>
+        <target>Restel ID</target>
+      </trans-unit>
+      <trans-unit id="2vr28qr" resname="Bioscore ID">
+        <source>Bioscore ID</source>
+        <target>Bioscore ID</target>
+      </trans-unit>
+      <trans-unit id="a_Trx3v" resname="Tipo de propiedad">
+        <source>Tipo de propiedad</source>
+        <target>Mülk türü</target>
+      </trans-unit>
+      <trans-unit id="gu6issl" resname="Categoría">
+        <source>Categoría</source>
+        <target>Kategori</target>
+      </trans-unit>
+      <trans-unit id="4qEgKNS" resname="Marca">
+        <source>Marca</source>
+        <target>Marka</target>
+      </trans-unit>
+      <trans-unit id="BvlrmlV" resname="Dirección">
+        <source>Dirección</source>
+        <target>Adres</target>
+      </trans-unit>
+      <trans-unit id="sml34K." resname="Código postal">
+        <source>Código postal</source>
+        <target>Posta kodu</target>
+      </trans-unit>
+      <trans-unit id="_grJJIp" resname="Latitud">
+        <source>Latitud</source>
+        <target>Enlem</target>
+      </trans-unit>
+      <trans-unit id="eQ8eyl8" resname="Longitud">
+        <source>Longitud</source>
+        <target>Boylam</target>
+      </trans-unit>
+      <trans-unit id="9rlBSxd" resname="Habitaciones">
+        <source>Habitaciones</source>
+        <target>Odalar</target>
+      </trans-unit>
+      <trans-unit id="XjvvlPc" resname="Web">
+        <source>Web</source>
+        <target>Web</target>
+      </trans-unit>
+      <trans-unit id="IFpbEWO" resname="Zone">
+        <source>Zone</source>
+        <target>Bölge</target>
+      </trans-unit>
+      <trans-unit id="dYwPN5J" resname="Volver">
+        <source>Volver</source>
+        <target>Geri</target>
+      </trans-unit>
+      <trans-unit id="wfxgcdT" resname="Perfil del usuario">
+        <source>Perfil del usuario</source>
+        <target>Kullanıcı profili</target>
+      </trans-unit>
+      <trans-unit id="oix8GCH" resname="Editar perfil">
+        <source>Editar perfil</source>
+        <target>Profili düzenle</target>
+      </trans-unit>
+      <trans-unit id="1abz9lf" resname="Volver a mi usuario">
+        <source>Volver a mi usuario</source>
+        <target>Kendi kullanıcıma dön</target>
+      </trans-unit>
+      <trans-unit id="pT4ZQ8S" resname="Cerrar sesión">
+        <source>Cerrar sesión</source>
+        <target>Çıkış yap</target>
+      </trans-unit>
+      <trans-unit id="5UN.g1g" resname="Idioma">
+        <source>Idioma</source>
+        <target>Dil</target>
+      </trans-unit>
+      <trans-unit id="i6Y9osD" resname="Filtrar resultados">
+        <source>Filtrar resultados</source>
+        <target>Sonuçları filtrele</target>
+      </trans-unit>
+      <trans-unit id="5pGvRN8" resname="Paginación">
+        <source>Paginación</source>
+        <target>Sayfalama</target>
+      </trans-unit>
+      <trans-unit id="XjDlcMX" resname="{number} resultados">
+        <source>{number} resultados</source>
+        <target>{number} sonuç</target>
+      </trans-unit>
+      <trans-unit id="J6Nx4aQ" resname="Marcar / desmarcar todos">
+        <source>Marcar / desmarcar todos</source>
+        <target>Tümünü seç / seçimi kaldır</target>
+      </trans-unit>
+      <trans-unit id="aJSgJVx" resname="Cerrar">
+        <source>Cerrar</source>
+        <target>Kapat</target>
+      </trans-unit>
+      <trans-unit id="102bb11" resname="Editar">
+        <source>Editar</source>
+        <target>Düzenle</target>
+      </trans-unit>
+      <trans-unit id="FmcpbUN" resname="Detalles">
+        <source>Detalles</source>
+        <target>Detaylar</target>
+      </trans-unit>
+      <trans-unit id="Tj8j4iw" resname="¿Esta seguro de que desea eliminar este elemento? Esta acción no se puede deshacer">
+        <source>¿Esta seguro de que desea eliminar este elemento? Esta acción no se puede deshacer</source>
+        <target>Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz</target>
+      </trans-unit>
+      <trans-unit id="rbU_r8w" resname="Elementos por página">
+        <source>Elementos por página</source>
+        <target>Sayfa başına öğe</target>
+      </trans-unit>
+      <trans-unit id="rlww.KL" resname="Mi perfil">
+        <source>Mi perfil</source>
+        <target>Profilim</target>
+      </trans-unit>
+      <trans-unit id="JZi_tm0" resname="Email">
+        <source>Email</source>
+        <target>E-posta</target>
+      </trans-unit>
+      <trans-unit id="lkL86AB" resname="Introduce tu email">
+        <source>Introduce tu email</source>
+        <target>E-posta adresinizi girin</target>
+      </trans-unit>
+      <trans-unit id="WqcEd4z" resname="Introduce tu contraseña">
+        <source>Introduce tu contraseña</source>
+        <target>Şifrenizi girin</target>
+      </trans-unit>
+      <trans-unit id="BD9oj7j" resname="Mostrar / ocultar contraseña">
+        <source>Mostrar / ocultar contraseña</source>
+        <target>Şifreyi göster / gizle</target>
+      </trans-unit>
+      <trans-unit id="5.OG8VU" resname="Recuerdame">
+        <source>Recuerdame</source>
+        <target>Beni hatırla</target>
+      </trans-unit>
+      <trans-unit id="KjzATP0" resname="Acceder">
+        <source>Acceder</source>
+        <target>Giriş yap</target>
+      </trans-unit>
+      <trans-unit id=".yxSs_P" resname="Login con Bioscore">
+        <source>Login con Bioscore</source>
+        <target>Bioscore ile giriş yap</target>
+      </trans-unit>
+      <trans-unit id="__KqZ1F" resname="¿Ha olvidado su contraseña?">
+        <source>¿Ha olvidado su contraseña?</source>
+        <target>Şifrenizi mi unuttunuz?</target>
+      </trans-unit>
+      <trans-unit id="W0dxA_2" resname="Zona privada">
+        <source>Zona privada</source>
+        <target>Özel alan</target>
+      </trans-unit>
+      <trans-unit id="9pFS2nJ" resname="Se ha dado de alta un usuario con el email {user} en la cuenta {account}.">
+        <source>Se ha dado de alta un usuario con el email {user} en la cuenta {account}.</source>
+        <target>{account} hesabına {user} e-postasıyla bir kullanıcı kaydedildi.</target>
+      </trans-unit>
+      <trans-unit id="HDTYqtE" resname="Se ha dado de alta un usuario con el email {user} sin cuenta asignada.">
+        <source>Se ha dado de alta un usuario con el email {user} sin cuenta asignada.</source>
+        <target>{user} e-postasıyla hesap atanmadan bir kullanıcı kaydedildi.</target>
+      </trans-unit>
+      <trans-unit id="m42u3Y1" resname="Si no dispone de la contraseña para acceder puede generar una nueva contraseña visitando el siguiente enlace:">
+        <source>Si no dispone de la contraseña para acceder puede generar una nueva contraseña visitando el siguiente enlace:</source>
+        <target>Erişim için şifreniz yoksa aşağıdaki bağlantıyı ziyaret ederek yeni bir şifre oluşturabilirsiniz:</target>
+      </trans-unit>
+      <trans-unit id="XmT7AbV" resname="Generar nueva contraseña">
+        <source>Generar nueva contraseña</source>
+        <target>Yeni şifre oluştur</target>
+      </trans-unit>
+      <trans-unit id="aq2eM8Q" resname="Roles">
+        <source>Roles</source>
+        <target>Roller</target>
+      </trans-unit>
+      <trans-unit id="ai4KovW" resname="Activo">
+        <source>Activo</source>
+        <target>Aktif</target>
+      </trans-unit>
+      <trans-unit id="41PaaAu" resname="Recuperar contraseña">
+        <source>Recuperar contraseña</source>
+        <target>Şifreyi kurtar</target>
+      </trans-unit>
+      <trans-unit id="IZPle9z" resname="Contraseña no modificada">
+        <source>Contraseña no modificada</source>
+        <target>Şifre değiştirilmedi</target>
+      </trans-unit>
+      <trans-unit id="iz7645h" resname="El email indicado o el código de recuperación no es correcto. ¿Puede que haya pasado demasiado tiempo?">
+        <source>El email indicado o el código de recuperación no es correcto. ¿Puede que haya pasado demasiado tiempo?</source>
+        <target>Belirtilen e-posta veya kurtarma kodu doğru değil. Çok fazla zaman geçmiş olabilir mi?</target>
+      </trans-unit>
+      <trans-unit id="GCKbwF1" resname="Puede solicitar un nuevo código en el siguiente enlace.">
+        <source>Puede solicitar un nuevo código en el siguiente enlace.</source>
+        <target>Aşağıdaki bağlantıdan yeni bir kod talep edebilirsiniz.</target>
+      </trans-unit>
+      <trans-unit id="dQ4ftj4" resname="Modificar contraseña">
+        <source>Modificar contraseña</source>
+        <target>Şifreyi değiştir</target>
+      </trans-unit>
+      <trans-unit id="oBfBIUj" resname="Contraseña modificada">
+        <source>Contraseña modificada</source>
+        <target>Şifre değiştirildi</target>
+      </trans-unit>
+      <trans-unit id="5RtaHwu" resname="Se ha establecido la nueva contraseña. Pulsa en el siguiente enlace para acceder:">
+        <source>Se ha establecido la nueva contraseña. Pulsa en el siguiente enlace para acceder:</source>
+        <target>Yeni şifre belirlendi. Erişmek için aşağıdaki bağlantıya tıklayın:</target>
+      </trans-unit>
+      <trans-unit id="MvjyNik" resname="Gracias">
+        <source>Gracias</source>
+        <target>Teşekkürler</target>
+      </trans-unit>
+      <trans-unit id="uAnRzZS" resname="Si el email indicado corresponde a un usuario del sistema, deberías recibir un mensaje con las instrucciones para modificar tu contraseña.">
+        <source>Si el email indicado corresponde a un usuario del sistema, deberías recibir un mensaje con las instrucciones para modificar tu contraseña.</source>
+        <target>Belirtilen e-posta sistemdeki bir kullanıcıya aitse, şifrenizi değiştirmek için talimatları içeren bir mesaj almalısınız.</target>
+      </trans-unit>
+      <trans-unit id="L7nVIYX" resname="En caso contrario, contacta con un administrador.">
+        <source>En caso contrario, contacta con un administrador.</source>
+        <target>Aksi takdirde bir yönetici ile iletişime geçin.</target>
+      </trans-unit>
+      <trans-unit id="2mP7Qaf" resname="Se ha solicitado recuperar la contraseña:">
+        <source>Se ha solicitado recuperar la contraseña:</source>
+        <target>Şifre kurtarma talep edildi:</target>
+      </trans-unit>
+      <trans-unit id="EixoCzu" resname="Se ha solicitado la recuperación de la contraseña para la cuenta de {user}.">
+        <source>Se ha solicitado la recuperación de la contraseña para la cuenta de {user}.</source>
+        <target>{user} hesabı için şifre kurtarma talep edildi.</target>
+      </trans-unit>
+      <trans-unit id="e3s0v3I" resname="Puede recuperar su contraseña visitando el siguiente enlace:">
+        <source>Puede recuperar su contraseña visitando el siguiente enlace:</source>
+        <target>Aşağıdaki bağlantıyı ziyaret ederek şifrenizi kurtarabilirsiniz:</target>
+      </trans-unit>
+      <trans-unit id="Ro.5ud0" resname="Eventos">
+        <source>Eventos</source>
+        <target>Etkinlikler</target>
+      </trans-unit>
+      <trans-unit id="WPys2XC" resname="Detalle">
+        <source>Detalle</source>
+        <target>Detay</target>
+      </trans-unit>
+      <trans-unit id="jt8tUSu" resname="Eliminada la medición &quot;{measurement}&quot;">
+        <source>Eliminada la medición "{measurement}"</source>
+        <target>"{measurement}" ölçümü silindi</target>
+      </trans-unit>
+      <trans-unit id="ZdviEtQ" resname="Eliminado permiso &quot;{role}&quot; al usuario {user}">
+        <source>Eliminado permiso "{role}" al usuario {user}</source>
+        <target>{user} kullanıcısından "{role}" izni kaldırıldı</target>
+      </trans-unit>
+      <trans-unit id="eQqlSBE" resname="Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}">
+        <source>Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}</source>
+        <target>{property} için yeni bir ölçüm kaydedildi: {load} yüklü {quantity} konteyner</target>
+      </trans-unit>
+      <trans-unit id="T6LvZom" resname="Se ha actualizado la propiedad {property} perteneciente a la cuenta {account}">
+        <source>Se ha actualizado la propiedad {property} perteneciente a la cuenta {account}</source>
+        <target>{account} hesabına ait {property} mülkü güncellendi</target>
+      </trans-unit>
+      <trans-unit id="t6_8eTh" resname="Se ha actualizado la propiedad {property} sin cuenta asociada">
+        <source>Se ha actualizado la propiedad {property} sin cuenta asociada</source>
+        <target>Hesap ilişkilendirilmeden {property} mülkü güncellendi</target>
+      </trans-unit>
+      <trans-unit id="QgkN2aD" resname="Concedido permiso &quot;{role}&quot; al usuario {user}">
+        <source>Concedido permiso "{role}" al usuario {user}</source>
+        <target>{user} kullanıcısına "{role}" izni verildi</target>
+      </trans-unit>
+      <trans-unit id="rZM4y9N" resname="Registrado el usuario {user} para la cuenta {account}">
+        <source>Registrado el usuario {user} para la cuenta {account}</source>
+        <target>{account} hesabı için {user} kullanıcısı kaydedildi</target>
+      </trans-unit>
+      <trans-unit id="N8LNcr." resname="Registrado el usuario {user} sin cuenta">
+        <source>Registrado el usuario {user} sin cuenta</source>
+        <target>{user} kullanıcısı hesapsız kaydedildi</target>
+      </trans-unit>
+      <trans-unit id="v_skWdx" resname="Intento fallido de login con el usuario {username}">
+        <source>Intento fallido de login con el usuario {username}</source>
+        <target>{username} kullanıcısıyla başarısız giriş denemesi</target>
+      </trans-unit>
+      <trans-unit id="h5KEY1P" resname="La cuenta {account} ahora se llama {name}">
+        <source>La cuenta {account} ahora se llama {name}</source>
+        <target>{account} hesabı artık {name} olarak adlandırılıyor</target>
+      </trans-unit>
+      <trans-unit id="KSPRggE" resname="Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
+        <source>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</source>
+        <target>{property} için {waste} türü atık, {purpose} hedefi ve {measurementMethod} ölçüm sistemi kaydı için yeni bir konteyner kaydedildi</target>
+      </trans-unit>
+      <trans-unit id="kQ3nDVP" resname="Se ha eliminado el contenedor {container}">
+        <source>Se ha eliminado el contenedor {container}</source>
+        <target>{container} konteyneri silindi</target>
+      </trans-unit>
+      <trans-unit id="rIifooP" resname="El usuario {user} ha salido del sistema">
+        <source>El usuario {user} ha salido del sistema</source>
+        <target>{user} kullanıcısı sistemden çıktı</target>
+      </trans-unit>
+      <trans-unit id="3ThkoYD" resname="Se ha registrado el residuo {waste}">
+        <source>Se ha registrado el residuo {waste}</source>
+        <target>{waste} atığı kaydedildi</target>
+      </trans-unit>
+      <trans-unit id="PoFfv4r" resname="Eliminada la cuenta &quot;{account}&quot;">
+        <source>Eliminada la cuenta "{account}"</source>
+        <target>"{account}" hesabı silindi</target>
+      </trans-unit>
+      <trans-unit id="oyqvcQF" resname="Activada la cuenta {account}">
+        <source>Activada la cuenta {account}</source>
+        <target>{account} hesabı etkinleştirildi</target>
+      </trans-unit>
+      <trans-unit id="1OaMllt" resname="Desactivada la cuenta &quot;{account}&quot;">
+        <source>Desactivada la cuenta "{account}"</source>
+        <target>"{account}" hesabı devre dışı bırakıldı</target>
+      </trans-unit>
+      <trans-unit id="gIzOsY6" resname="Eliminado el usuario &quot;{user}&quot;">
+        <source>Eliminado el usuario "{user}"</source>
+        <target>"{user}" kullanıcısı silindi</target>
+      </trans-unit>
+      <trans-unit id="gDelopd" resname="Se ha registrado la propiedad {property} perteneciente a la cuenta {account}">
+        <source>Se ha registrado la propiedad {property} perteneciente a la cuenta {account}</source>
+        <target>{account} hesabına ait {property} mülkü kaydedildi</target>
+      </trans-unit>
+      <trans-unit id="2AlJdHW" resname="Se ha registrado la propiedad {property} sin cuenta asociada">
+        <source>Se ha registrado la propiedad {property} sin cuenta asociada</source>
+        <target>Hesap ilişkilendirilmeden {property} mülkü kaydedildi</target>
+      </trans-unit>
+      <trans-unit id="D4BfiJO" resname="El usuario {user} ha entrado en el sistema">
+        <source>El usuario {user} ha entrado en el sistema</source>
+        <target>{user} kullanıcısı sisteme giriş yaptı</target>
+      </trans-unit>
+      <trans-unit id="ttK8k4Q" resname="Se ha actualizado la medición {measurement}: {quantity} contenedores de carga {load}">
+        <source>Se ha actualizado la medición {measurement}: {quantity} contenedores de carga {load}</source>
+        <target>{measurement} ölçümü güncellendi: {load} yüklü {quantity} konteyner</target>
+      </trans-unit>
+      <trans-unit id="laa3xhA" resname="Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
+        <source>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</source>
+        <target>{waste} türü atık, {purpose} hedefi ve {measurementMethod} ölçüm sistemi kaydı için {container} konteyneri güncellendi</target>
+      </trans-unit>
+      <trans-unit id="86Bl9iH" resname="Se ha modificado la contraseña del usuario &quot;{user}&quot;">
+        <source>Se ha modificado la contraseña del usuario "{user}"</source>
+        <target>"{user}" kullanıcısının şifresi değiştirildi</target>
+      </trans-unit>
+      <trans-unit id="demL2sW" resname="Registrada una nueva cuenta {account} en estado {status}">
+        <source>Registrada una nueva cuenta {account} en estado {status}</source>
+        <target>{status} durumunda yeni bir {account} hesabı kaydedildi</target>
+      </trans-unit>
+      <trans-unit id="6SYISZa" resname="activo">
+        <source>activo</source>
+        <target>aktif</target>
+      </trans-unit>
+      <trans-unit id="LFkY6WK" resname="inactivo">
+        <source>inactivo</source>
+        <target>pasif</target>
+      </trans-unit>
+      <trans-unit id="oaO4qOc" resname="&amp;copy; {year}">
+        <source>&amp;copy; {year}</source>
+        <target><![CDATA[&copy; {year}]]></target>
+      </trans-unit>
+      <trans-unit id="evfFBRo" resname="Acciones">
+        <source>Acciones</source>
+        <target>İşlemler</target>
+      </trans-unit>
+      <trans-unit id="fewNgWT" resname="Bienvenido">
+        <source>Bienvenido</source>
+        <target>Hoş geldiniz</target>
+      </trans-unit>
+      <trans-unit id="vsHqef5" resname="Inicio">
+        <source>Inicio</source>
+        <target>Başlangıç</target>
+      </trans-unit>
+      <trans-unit id="MFkbtIu" resname="Importación en curso">
+        <source>Importación en curso</source>
+        <target>İçe aktarma devam ediyor</target>
+      </trans-unit>
+      <trans-unit id="ElKrQyQ" resname="El proceso de importación ha comenzado en segundo plano, por lo que puedes seguir trabajando en otras cosas mientras tanto. Le enviaremos un correo electrónico en cuanto finalice.">
+        <source>El proceso de importación ha comenzado en segundo plano, por lo que puedes seguir trabajando en otras cosas mientras tanto. Le enviaremos un correo electrónico en cuanto finalice.</source>
+        <target>İçe aktarma işlemi arka planda başladı, bu nedenle bu süre zarfında başka şeyler üzerinde çalışmaya devam edebilirsiniz. Tamamlandığında size bir e-posta göndereceğiz.</target>
+      </trans-unit>
+      <trans-unit id="kgyeLBr" resname="En curso">
+        <source>En curso</source>
+        <target>Devam ediyor</target>
+      </trans-unit>
+      <trans-unit id="F6fPFql" resname="Columna">
+        <source>Columna</source>
+        <target>Sütun</target>
+      </trans-unit>
+      <trans-unit id="uk97hXA" resname="Campo">
+        <source>Campo</source>
+        <target>Alan</target>
+      </trans-unit>
+      <trans-unit id="Shuo4D2" resname="Ejemplos">
+        <source>Ejemplos</source>
+        <target>Örnekler</target>
+      </trans-unit>
+      <trans-unit id="5zYTrOq" resname="Emparejar campos">
+        <source>Emparejar campos</source>
+        <target>Alanları eşleştir</target>
+      </trans-unit>
+      <trans-unit id="p2Nc5Bg" resname="Resultado de la importación">
+        <source>Resultado de la importación</source>
+        <target>İçe aktarma sonucu</target>
+      </trans-unit>
+      <trans-unit id="WkGlyGK" resname="Resultados">
+        <source>Resultados</source>
+        <target>Sonuçlar</target>
+      </trans-unit>
+      <trans-unit id="nw4FBBq" resname="Campo no emparejado">
+        <source>Campo no emparejado</source>
+        <target>Eşleştirilmemiş alan</target>
+      </trans-unit>
+      <trans-unit id="TUO0uXy" resname="Asignar valor">
+        <source>Asignar valor</source>
+        <target>Değer ata</target>
+      </trans-unit>
+      <trans-unit id="z8TXQN1" resname="Asignar valores">
+        <source>Asignar valores</source>
+        <target>Değerleri ata</target>
+      </trans-unit>
+      <trans-unit id="L7a_5lL" resname="Valor original">
+        <source>Valor original</source>
+        <target>Orijinal değer</target>
+      </trans-unit>
+      <trans-unit id="Z5jNTXt" resname="Traducir valores">
+        <source>Traducir valores</source>
+        <target>Değerleri çevir</target>
+      </trans-unit>
+      <trans-unit id="rpLRMsp" resname="El proceso de importación ha finalizado. Puede comprobar el resultado en el siguiente enlace:">
+        <source>El proceso de importación ha finalizado. Puede comprobar el resultado en el siguiente enlace:</source>
+        <target>İçe aktarma işlemi tamamlandı. Sonucu aşağıdaki bağlantıdan kontrol edebilirsiniz:</target>
+      </trans-unit>
+      <trans-unit id="g8qj0jz" resname="Ver resultado">
+        <source>Ver resultado</source>
+        <target>Sonucu görüntüle</target>
+      </trans-unit>
+      <trans-unit id="aWpxIiE" resname="Carga">
+        <source>Carga</source>
+        <target>Yük</target>
+      </trans-unit>
+      <trans-unit id="n4e6UQn" resname="Registrado por">
+        <source>Registrado por</source>
+        <target>Kaydeden</target>
+      </trans-unit>
+      <trans-unit id="HC2bbm2" resname="Seleccionar">
+        <source>Seleccionar</source>
+        <target>Seç</target>
+      </trans-unit>
+      <trans-unit id="77cKa6C" resname="Gestores de residuos">
+        <source>Gestores de residuos</source>
+        <target>Atık yöneticileri</target>
+      </trans-unit>
+      <trans-unit id="81ybIPy" resname="Cantidad">
+        <source>Cantidad</source>
+        <target>Miktar</target>
+      </trans-unit>
+      <trans-unit id="6pwORPG" resname="Total residuos">
+        <source>Total residuos</source>
+        <target>Toplam atıklar</target>
+      </trans-unit>
+      <trans-unit id="wzQ6dbG" resname="Mes">
+        <source>Mes</source>
+        <target>Ay</target>
+      </trans-unit>
+      <trans-unit id="dB_UXWH" resname="Residuos generados">
+        <source>Residuos generados</source>
+        <target>Üretilen atıklar</target>
+      </trans-unit>
+      <trans-unit id="1priXlr" resname="Residuo por propiedad">
+        <source>Residuo por propiedad</source>
+        <target>Mülk başına atık</target>
+      </trans-unit>
+      <trans-unit id="HHxDAWi" resname="Tipo de residuo">
+        <source>Tipo de residuo</source>
+        <target>Atık türü</target>
+      </trans-unit>
+      <trans-unit id="JC348u7" resname="Residuos por destino">
+        <source>Residuos por destino</source>
+        <target>Hedefe göre atıklar</target>
+      </trans-unit>
+      <trans-unit id="MPTOGeX" resname="Porcentaje por destino">
+        <source>Porcentaje por destino</source>
+        <target>Hedefe göre yüzde</target>
+      </trans-unit>
+      <trans-unit id="F5gDcaj" resname="Imprimir QR">
+        <source>Imprimir QR</source>
+        <target>QR yazdır</target>
+      </trans-unit>
+      <trans-unit id="5XYaWe0" resname="Imprimir QRs">
+        <source>Imprimir QRs</source>
+        <target>QR'ları yazdır</target>
+      </trans-unit>
+      <trans-unit id="iYhZhUc" resname="Últimas mediciones">
+        <source>Últimas mediciones</source>
+        <target>Son ölçümler</target>
+      </trans-unit>
+      <trans-unit id="EwptmCw" resname="Tipología">
+        <source>Tipología</source>
+        <target>Tipoloji</target>
+      </trans-unit>
+      <trans-unit id="5xEP3iD" resname="Residuos por propiedad">
+        <source>Residuos por propiedad</source>
+        <target>Mülke göre atıklar</target>
+      </trans-unit>
+      <trans-unit id="h5Erb3t" resname="Residuos diarios">
+        <source>Residuos diarios</source>
+        <target>Günlük atıklar</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1365,6 +1365,10 @@
         <source>Login con Bioscore</source>
         <target>Login con Bioscore</target>
       </trans-unit>
+      <trans-unit id="F1EyIWj" resname="El fichero no es válido.">
+        <source>El fichero no es válido.</source>
+        <target>El fichero no es válido.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
