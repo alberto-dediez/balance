@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
 use App\FoodLoss\Application\Surplus\Update\UpdateSurplusRequest;
-use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
-use App\FoodLoss\Domain\Model\Surplus\FoodType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\CriticalPointIdType;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\DeliveryLogUnitType;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\FoodTypeType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\ServiceCategoryIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\SurplusCauseIdType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -45,11 +44,9 @@ class UpdateSurplusType extends AbstractType
                 'placeholder' => new TranslatableMessage('Seleccionar punto crítico'),
                 'constraints' => [new Assert\NotNull()],
             ])
-            ->add('foodType', EnumType::class, [
+            ->add('foodType', FoodTypeType::class, [
                 'label' => new TranslatableMessage('Tipo de alimento'),
-                'class' => FoodType::class,
                 'required' => true,
-                'translation_domain' => 'foodType',
                 'constraints' => [new Assert\NotNull()],
             ])
             ->add('surplusCauseId', SurplusCauseIdType::class, [
@@ -64,11 +61,9 @@ class UpdateSurplusType extends AbstractType
                 'scale' => 2,
                 'constraints' => [new Assert\NotBlank()],
             ])
-            ->add('unit', EnumType::class, [
+            ->add('unit', DeliveryLogUnitType::class, [
                 'label' => new TranslatableMessage('Unidad'),
-                'class' => DeliveryLogUnit::class,
                 'required' => true,
-                'translation_domain' => 'deliveryLogUnit',
                 'constraints' => [new Assert\NotNull()],
             ])
             ->add('save', SubmitType::class, [

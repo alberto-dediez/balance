@@ -28,8 +28,8 @@
     <twig:List:Table :columns="columns" :elements="surpluses">
         <td>{{ element.date | date('d/m/Y') }}</td>
         {% set criticalPoint = element.criticalPointId | critical_point_name %}
-        <td>{{ criticalPoint.propertyId | property_name }}</td>
-        <td>{{ criticalPoint.name }}</td>
+        <td>{{ criticalPoint ? (criticalPoint.propertyId | property_name) : '' }}</td>
+        <td>{{ criticalPoint ? criticalPoint.name : '' }}</td>
         <td>{{ element.foodType.value | trans({}, 'foodType') }}</td>
         <td>{{ element.quantity }} {{ element.unit.value | trans({}, 'deliveryLogUnit') }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>

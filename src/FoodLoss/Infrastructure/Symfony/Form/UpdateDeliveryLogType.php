@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
 use App\FoodLoss\Application\DeliveryLog\Update\UpdateDeliveryLogRequest;
-use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\DeliveryLogUnitType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\RecipientOrganizationIdType;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -37,9 +36,8 @@ class UpdateDeliveryLogType extends AbstractType
                 'required' => true,
                 'constraints' => [new Assert\NotBlank()],
             ])
-            ->add('unit', EnumType::class, [
+            ->add('unit', DeliveryLogUnitType::class, [
                 'label' => new TranslatableMessage('Unidad'),
-                'class' => DeliveryLogUnit::class,
                 'required' => true,
                 'constraints' => [new Assert\NotNull()],
             ])

@@ -2439,6 +2439,55 @@ File: `templates/{context_snake}/translations/{enum_name}.html.twig`
 
 Don't execute translations
 
+#### Custom Enum Form Type (required when enum is used in forms)
+
+Whenever you create a new enum that will be used in a form field, you **must** also create a custom form type for it. **Never use `EnumType::class` directly** in form builders — it uses the enum name as the HTML value and doesn't support proper translation domains.
+
+Place the file at: `src/{Context}/Infrastructure/Symfony/Form/Type/{EnumClass}Type.php`
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\{Context}\Infrastructure\Symfony\Form\Type;
+
+use App\{Context}\Domain\Model\{Entity}\{EnumClass};
+use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+/** @extends AbstractType<mixed> */
+class {EnumClass}Type extends AbstractType
+{
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $choices = [];
+
+        foreach ({EnumClass}::cases() as $case) {
+            $choices[$case->value] = $case;
+        }
+
+        $resolver->setDefaults([
+            'choices' => $choices,
+            'choice_value' => fn(?{EnumClass} $case) => $case?->value,
+            'translation_domain' => '{enum_name}',
+        ]);
+    }
+
+    public function getParent(): string
+    {
+        return AutocompleteType::class;
+    }
+}
+```
+
+Key rules:
+- `$choices[$case->value] = $case` — key is the value string (used as label for translation), value is the enum case
+- `'choice_value' => fn(?{EnumClass} $case) => $case?->value` — **required** so HTML form values match the enum's string value (not integer array indices)
+- `'translation_domain'` — same name as used in the `{enum_name}.html.twig` dummy translation template (see naming rule above)
+- In the form builder, use it as: `->add('field', {EnumClass}Type::class, ['required' => true/false])`
+
 ### 7. Tests
 
 #### {Entity}Mother.php

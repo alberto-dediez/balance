@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
 use App\FoodLoss\Application\Incidence\Update\UpdateIncidenceRequest;
-use App\FoodLoss\Domain\Model\Incidence\IncidenceType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\IncidenceEvidenceType;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\IncidenceTypeType;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -40,12 +39,9 @@ class UpdateIncidenceType extends AbstractType
                 'widget' => 'single_text',
                 'constraints' => [new Assert\NotBlank()],
             ])
-            ->add('incidenceType', EnumType::class, [
-                'class' => IncidenceType::class,
+            ->add('incidenceType', IncidenceTypeType::class, [
                 'label' => new TranslatableMessage('Tipología'),
                 'required' => true,
-                'translation_domain' => 'incidenceType',
-                'choice_label' => fn(IncidenceType $type) => $type->value,
                 'constraints' => [new Assert\NotNull()],
             ])
             ->add('description', TextareaType::class, [

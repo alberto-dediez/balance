@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
 use App\FoodLoss\Application\Surplus\List\ListSurplusesRequest;
-use App\FoodLoss\Domain\Model\Surplus\FoodType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\CriticalPointIdType;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\FoodTypeType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\ServiceCategoryIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\SurplusCauseIdType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -33,11 +32,9 @@ class ListSurplusesType extends BaseFilterType
                 'widget' => 'single_text',
                 'input' => 'datetime_immutable',
             ])
-            ->add('foodType', EnumType::class, [
+            ->add('foodType', FoodTypeType::class, [
                 'label' => new TranslatableMessage('Tipo de alimento'),
-                'class' => FoodType::class,
                 'required' => false,
-                'translation_domain' => 'foodType',
                 'placeholder' => new TranslatableMessage('Todos'),
             ])
             ->add('serviceCategoryId', ServiceCategoryIdType::class, [
