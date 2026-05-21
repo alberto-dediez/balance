@@ -170,6 +170,18 @@ class NodeLister
         );
 
         $nodes[] = new Node(
+            label: new TranslatableMessage('Declaración de excedente'),
+            icon: 'solar:box-minimalistic-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Excedentes'),
+                    icon: 'solar:box-minimalistic-line-duotone',
+                    target: $this->router->generate('surpluses'),
+                ),
+            ],
+        );
+
+        $nodes[] = new Node(
             label: new TranslatableMessage('Plan de Prevención'),
             icon: 'solar:shield-check-line-duotone',
             items: [
@@ -280,6 +292,18 @@ class NodeLister
     private function toUsers(): array
     {
         $nodes = [];
+
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Declaración de excedente'),
+            icon: 'solar:box-minimalistic-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Excedentes'),
+                    icon: 'solar:box-minimalistic-line-duotone',
+                    target: $this->router->generate('surpluses'),
+                ),
+            ],
+        );
 
         $nodes[] = new Node(
             label: new TranslatableMessage('Donaciones'),

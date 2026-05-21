@@ -34,6 +34,8 @@
                             {% set value = value.value | trans({}, 'purpose') %}
                         {% elseif field == 'actionId' %}
                             {% set value = value | action_name %}
+                        {% elseif field == 'criticalPointId' %}
+                            {% set value = value | critical_point_name %}
                         {% elseif field == 'serviceCategoryId' %}
                             {% set value = value | service_category_name %}
                         {% elseif field == 'serviceCategoryIds' %}
@@ -44,6 +46,8 @@
                             {% set value = value | map(v => v | surplus_cause_name) | join(', ') %}
                         {% elseif field == 'companyId' %}
                             {% set value = value | company_name %}
+                        {% elseif field == 'foodType' %}
+                            {% set value = value.value | trans({}, 'foodType') %}
                         {% endif %}
 
                         <twig:List:FilterShow

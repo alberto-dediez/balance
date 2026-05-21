@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="fb2lJIE" resname="meat">
+        <source>meat</source>
+        <target>Meat</target>
+      </trans-unit>
+      <trans-unit id="751qRKk" resname="fish">
+        <source>fish</source>
+        <target>Fish</target>
+      </trans-unit>
+      <trans-unit id="Tb0_857" resname="vegetables">
+        <source>vegetables</source>
+        <target>Vegetables</target>
+      </trans-unit>
+      <trans-unit id="QZTMNZn" resname="processed">
+        <source>processed</source>
+        <target>Processed</target>
+      </trans-unit>
+      <trans-unit id="0Nq2YZs" resname="fruit">
+        <source>fruit</source>
+        <target>Fruit</target>
+      </trans-unit>
+      <trans-unit id="1n55D7V" resname="dairy_products">
+        <source>dairy_products</source>
+        <target>Dairy Products</target>
+      </trans-unit>
+      <trans-unit id="BB51T6Z" resname="eggs">
+        <source>eggs</source>
+        <target>Eggs</target>
+      </trans-unit>
+      <trans-unit id="BcyPUqi" resname="others">
+        <source>others</source>
+        <target>Others</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

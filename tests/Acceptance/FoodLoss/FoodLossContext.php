@@ -22,6 +22,7 @@ use App\FoodLoss\Domain\Model\Reason\ReasonRepository;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationRepository;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepository;
+use App\FoodLoss\Domain\Model\Surplus\SurplusRepository;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseRepository;
 use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceId;
 use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceRepository;
@@ -47,6 +48,7 @@ use App\Tests\Unit\FoodLoss\Domain\Model\ProtocolAccess\ProtocolAccessMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Reason\ReasonMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\Surplus\SurplusMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\SurplusCause\SurplusCauseMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\TrainingSession\TrainingSessionMother;
@@ -157,6 +159,19 @@ final readonly class FoodLossContext implements Context
     public function getSurplusCauseRepository(): SurplusCauseRepository
     {
         return $this->client->getContainer()->get(SurplusCauseRepository::class);
+    }
+
+    public function getSurplusRepository(): SurplusRepository
+    {
+        return $this->client->getContainer()->get(SurplusRepository::class);
+    }
+
+    #[Given('surplus with id :id of account :accountId exists')]
+    public function surplusWithIdOfAccountExists(string $id, string $accountId): void
+    {
+        $surplus = SurplusMother::fromIdAndAccount($id, $accountId);
+
+        $this->getSurplusRepository()->add($surplus);
     }
 
     #[Given('action :description with id :id exists')]

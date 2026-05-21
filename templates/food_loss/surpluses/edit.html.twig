@@ -1,0 +1,50 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('surpluses') }}" />
+{% endblock %}
+
+{% set page_title = ('Declaración de excedente' | trans)
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ surplus.date | date('d/m/Y') %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.date) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.serviceCategoryId) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.criticalPointId) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.foodType) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.surplusCauseId) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.quantity) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.unit) }}
+                </div>
+                <div class="col-12">
+                    <twig:View:Field label="{{ 'Fecha de registro' | trans }}">{{ surplus.registeredAt | date('H:i d/m/Y') }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Registrado por' | trans }}">{{ surplus.registeredBy | user_name }}</twig:View:Field>
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form) }}
+{% endblock %}

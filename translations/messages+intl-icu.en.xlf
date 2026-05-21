@@ -2921,6 +2921,82 @@
         <source>Documento Oficial</source>
         <target>Official Document</target>
       </trans-unit>
+      <trans-unit id="P76Hu4b" resname="Declaración de excedente">
+        <source>Declaración de excedente</source>
+        <target>Surplus Declaration</target>
+      </trans-unit>
+      <trans-unit id="2YzZfIG" resname="Excedentes">
+        <source>Excedentes</source>
+        <target>Surpluses</target>
+      </trans-unit>
+      <trans-unit id="W6DRLeS" resname="Excedente registrado correctamente: {date}">
+        <source>Excedente registrado correctamente: {date}</source>
+        <target>Surplus successfully recorded: {date}</target>
+      </trans-unit>
+      <trans-unit id="q0Hk7k3" resname="Excedente actualizado con éxito">
+        <source>Excedente actualizado con éxito</source>
+        <target>Surplus successfully updated</target>
+      </trans-unit>
+      <trans-unit id="VFdtO6A" resname="Se ha eliminado el excedente {surplus}">
+        <source>Se ha eliminado el excedente {surplus}</source>
+        <target>Surplus {surplus} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="__BzibC" resname="No se ha podido eliminar el excedente {surplus}">
+        <source>No se ha podido eliminar el excedente {surplus}</source>
+        <target>Surplus {surplus} could not be deleted</target>
+      </trans-unit>
+      <trans-unit id="3x3e4E2" resname="Se ha eliminado el excedente {id}">
+        <source>Se ha eliminado el excedente {id}</source>
+        <target>Surplus {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="I1ktuuI" resname="No se ha podido eliminar el excedente {id}">
+        <source>No se ha podido eliminar el excedente {id}</source>
+        <target>Surplus {id} could not be deleted</target>
+      </trans-unit>
+      <trans-unit id="D4Y_.nR" resname="Turno">
+        <source>Turno</source>
+        <target>Shift</target>
+      </trans-unit>
+      <trans-unit id="Q9F7_fm" resname="Seleccionar turno">
+        <source>Seleccionar turno</source>
+        <target>Select shift</target>
+      </trans-unit>
+      <trans-unit id="ScZT274" resname="Punto crítico de origen">
+        <source>Punto crítico de origen</source>
+        <target>Source critical point</target>
+      </trans-unit>
+      <trans-unit id="kA_pvOm" resname="Seleccionar punto crítico">
+        <source>Seleccionar punto crítico</source>
+        <target>Select critical point</target>
+      </trans-unit>
+      <trans-unit id="Am_zeWD" resname="Tipo de alimento">
+        <source>Tipo de alimento</source>
+        <target>Food type</target>
+      </trans-unit>
+      <trans-unit id="5Tqo5nC" resname="Motivo">
+        <source>Motivo</source>
+        <target>Reason</target>
+      </trans-unit>
+      <trans-unit id="xM3lWlK" resname="Seleccionar motivo">
+        <source>Seleccionar motivo</source>
+        <target>Select reason</target>
+      </trans-unit>
+      <trans-unit id="daS5l.A" resname="Todos">
+        <source>Todos</source>
+        <target>All</target>
+      </trans-unit>
+      <trans-unit id="M_HbZut" resname="Se ha registrado un excedente de {quantity} {unit} de {foodType} el {date} por el usuario {user}">
+        <source>Se ha registrado un excedente de {quantity} {unit} de {foodType} el {date} por el usuario {user}</source>
+        <target>A surplus of {quantity} {unit} of {foodType} was recorded on {date} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="p22Ox3j" resname="Se ha actualizado un excedente de {quantity} {unit} de {foodType} el {date} por el usuario {user}">
+        <source>Se ha actualizado un excedente de {quantity} {unit} de {foodType} el {date} por el usuario {user}</source>
+        <target>A surplus of {quantity} {unit} of {foodType} was updated on {date} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="v5WEmo7" resname="Se ha eliminado un excedente por el usuario {user}">
+        <source>Se ha eliminado un excedente por el usuario {user}</source>
+        <target>A surplus was deleted by user {user}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
