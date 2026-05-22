@@ -20,6 +20,13 @@
         <field name="accountId" type="account_id" column="account_id" nullable="false"/>
         <field name="registeredBy" type="user_id" column="registered_by" nullable="false"/>
 
+        <embedded name="preventionAssessment" class="App\FoodLoss\Domain\Model\Surplus\PreventionAssessment" column-prefix="prevention_" />
+        <embedded name="transformationAssessment" class="App\FoodLoss\Domain\Model\Surplus\TransformationAssessment" column-prefix="transformation_" />
+        <embedded name="humanDonationAssessment" class="App\FoodLoss\Domain\Model\Surplus\HumanDonationAssessment" column-prefix="human_donation_" />
+        <embedded name="animalFeedAssessment" class="App\FoodLoss\Domain\Model\Surplus\AnimalFeedAssessment" column-prefix="animal_feed_" />
+        <embedded name="compostingAssessment" class="App\FoodLoss\Domain\Model\Surplus\CompostingAssessment" column-prefix="composting_" />
+        <embedded name="eliminationAssessment" class="App\FoodLoss\Domain\Model\Surplus\EliminationAssessment" column-prefix="elimination_" />
+
         <field name="removed" type="boolean" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>

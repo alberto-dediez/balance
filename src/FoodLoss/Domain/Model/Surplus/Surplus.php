@@ -29,6 +29,12 @@ class Surplus implements \Stringable
         private DeliveryLogUnit $unit = DeliveryLogUnit::Kg,
         private AccountId $accountId = new AccountId('00000000-0000-0000-0000-000000000000'),
         private UserId $registeredBy = new UserId('00000000-0000-0000-0000-000000000000'),
+        private PreventionAssessment $preventionAssessment = new PreventionAssessment(),
+        private TransformationAssessment $transformationAssessment = new TransformationAssessment(),
+        private HumanDonationAssessment $humanDonationAssessment = new HumanDonationAssessment(),
+        private AnimalFeedAssessment $animalFeedAssessment = new AnimalFeedAssessment(),
+        private CompostingAssessment $compostingAssessment = new CompostingAssessment(),
+        private EliminationAssessment $eliminationAssessment = new EliminationAssessment(),
         private bool $removed = false,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
@@ -88,6 +94,36 @@ class Surplus implements \Stringable
         return $this->registeredBy;
     }
 
+    public function preventionAssessment(): PreventionAssessment
+    {
+        return $this->preventionAssessment;
+    }
+
+    public function transformationAssessment(): TransformationAssessment
+    {
+        return $this->transformationAssessment;
+    }
+
+    public function humanDonationAssessment(): HumanDonationAssessment
+    {
+        return $this->humanDonationAssessment;
+    }
+
+    public function animalFeedAssessment(): AnimalFeedAssessment
+    {
+        return $this->animalFeedAssessment;
+    }
+
+    public function compostingAssessment(): CompostingAssessment
+    {
+        return $this->compostingAssessment;
+    }
+
+    public function eliminationAssessment(): EliminationAssessment
+    {
+        return $this->eliminationAssessment;
+    }
+
     public function isRemoved(): bool
     {
         return $this->removed;
@@ -118,6 +154,12 @@ class Surplus implements \Stringable
         DeliveryLogUnit $unit,
         AccountId $accountId,
         UserId $registeredBy,
+        PreventionAssessment $preventionAssessment,
+        TransformationAssessment $transformationAssessment,
+        HumanDonationAssessment $humanDonationAssessment,
+        AnimalFeedAssessment $animalFeedAssessment,
+        CompostingAssessment $compostingAssessment,
+        EliminationAssessment $eliminationAssessment,
     ): void {
         $this->recordApplyAndPublish(
             new SurplusRegistered(
@@ -131,6 +173,12 @@ class Surplus implements \Stringable
                 unit: $unit,
                 accountId: $accountId,
                 registeredBy: $registeredBy,
+                preventionAssessment: $preventionAssessment,
+                transformationAssessment: $transformationAssessment,
+                humanDonationAssessment: $humanDonationAssessment,
+                animalFeedAssessment: $animalFeedAssessment,
+                compostingAssessment: $compostingAssessment,
+                eliminationAssessment: $eliminationAssessment,
             ),
         );
     }
@@ -143,6 +191,12 @@ class Surplus implements \Stringable
         FoodType $foodType,
         float $quantity,
         DeliveryLogUnit $unit,
+        PreventionAssessment $preventionAssessment,
+        TransformationAssessment $transformationAssessment,
+        HumanDonationAssessment $humanDonationAssessment,
+        AnimalFeedAssessment $animalFeedAssessment,
+        CompostingAssessment $compostingAssessment,
+        EliminationAssessment $eliminationAssessment,
     ): void {
         $this->recordApplyAndPublish(
             new SurplusUpdated(
@@ -154,6 +208,12 @@ class Surplus implements \Stringable
                 foodType: $foodType,
                 quantity: $quantity,
                 unit: $unit,
+                preventionAssessment: $preventionAssessment,
+                transformationAssessment: $transformationAssessment,
+                humanDonationAssessment: $humanDonationAssessment,
+                animalFeedAssessment: $animalFeedAssessment,
+                compostingAssessment: $compostingAssessment,
+                eliminationAssessment: $eliminationAssessment,
             ),
         );
     }
@@ -178,6 +238,12 @@ class Surplus implements \Stringable
         $this->unit = $event->unit();
         $this->accountId = $event->accountId();
         $this->registeredBy = $event->registeredBy();
+        $this->preventionAssessment = $event->preventionAssessment();
+        $this->transformationAssessment = $event->transformationAssessment();
+        $this->humanDonationAssessment = $event->humanDonationAssessment();
+        $this->animalFeedAssessment = $event->animalFeedAssessment();
+        $this->compostingAssessment = $event->compostingAssessment();
+        $this->eliminationAssessment = $event->eliminationAssessment();
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -190,6 +256,12 @@ class Surplus implements \Stringable
         $this->foodType = $event->foodType();
         $this->quantity = $event->quantity();
         $this->unit = $event->unit();
+        $this->preventionAssessment = $event->preventionAssessment();
+        $this->transformationAssessment = $event->transformationAssessment();
+        $this->humanDonationAssessment = $event->humanDonationAssessment();
+        $this->animalFeedAssessment = $event->animalFeedAssessment();
+        $this->compostingAssessment = $event->compostingAssessment();
+        $this->eliminationAssessment = $event->eliminationAssessment();
         $this->updatedAt = $event->occurredOn();
     }
 

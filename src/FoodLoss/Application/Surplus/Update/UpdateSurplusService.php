@@ -48,6 +48,12 @@ class UpdateSurplusService implements CommandHandler
             foodType: $request->foodType,
             quantity: $request->quantity,
             unit: $request->unit,
+            preventionAssessment: $request->preventionAssessment,
+            transformationAssessment: $request->transformationAssessment,
+            humanDonationAssessment: $request->humanDonationAssessment,
+            animalFeedAssessment: $request->animalFeedAssessment,
+            compostingAssessment: $request->compostingAssessment,
+            eliminationAssessment: $request->eliminationAssessment,
         );
 
         $this->surplusRepository->add($surplus);
