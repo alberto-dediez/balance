@@ -2997,6 +2997,118 @@
         <source>Se ha eliminado un excedente por el usuario {user}</source>
         <target>A surplus was deleted by user {user}</target>
       </trans-unit>
+      <trans-unit id="zmJr1xD" resname="Eliminación actualizada con éxito">
+        <source>Eliminación actualizada con éxito</source>
+        <target>Disposal successfully updated</target>
+      </trans-unit>
+      <trans-unit id="Rv_kXRd" resname="Reiniciamos el proceso de clasificacion para aprovechar el excedente">
+        <source>Reiniciamos el proceso de clasificacion para aprovechar el excedente</source>
+        <target>We have restarted the sorting process to make use of the surplus</target>
+      </trans-unit>
+      <trans-unit id="jAxRaaa" resname="Donación humana actualizada con éxito">
+        <source>Donación humana actualizada con éxito</source>
+        <target>Human donation successfully updated</target>
+      </trans-unit>
+      <trans-unit id="Xar4sJA" resname="Compostaje actualizado con éxito">
+        <source>Compostaje actualizado con éxito</source>
+        <target>Composting successfully updated</target>
+      </trans-unit>
+      <trans-unit id="_lg6UQd" resname="Transformación actualizada con éxito">
+        <source>Transformación actualizada con éxito</source>
+        <target>Processing successfully updated</target>
+      </trans-unit>
+      <trans-unit id="n_sj5OQ" resname="Alimentación animal actualizada con éxito">
+        <source>Alimentación animal actualizada con éxito</source>
+        <target>Animal feed successfully updated</target>
+      </trans-unit>
+      <trans-unit id="1COUTXU" resname="Prevención actualizada con éxito">
+        <source>Prevención actualizada con éxito</source>
+        <target>Prevention successfully updated</target>
+      </trans-unit>
+      <trans-unit id="Ek6X8W1" resname="¿Se destinará a compostaje agrícola o generación de biogás?">
+        <source>¿Se destinará a compostaje agrícola o generación de biogás?</source>
+        <target>Will it be used for agricultural composting or biogas production?</target>
+      </trans-unit>
+      <trans-unit id="2AW_PiZ" resname="Motivo por el que no se puede compostar">
+        <source>Motivo por el que no se puede compostar</source>
+        <target>Reason why it cannot be composted</target>
+      </trans-unit>
+      <trans-unit id="ublkaf6" resname="Seleccionar motivo (opcional)">
+        <source>Seleccionar motivo (opcional)</source>
+        <target>Select reason (optional)</target>
+      </trans-unit>
+      <trans-unit id="0m0tPSL" resname="¿Este excedente es apto y seguro para ser donado a entidades sociales?">
+        <source>¿Este excedente es apto y seguro para ser donado a entidades sociales?</source>
+        <target>Is this surplus suitable and safe to be donated to social organizations?</target>
+      </trans-unit>
+      <trans-unit id="Fm0qdH4" resname="Motivo por el que no se puede donar">
+        <source>Motivo por el que no se puede donar</source>
+        <target>Reason why it cannot be donated</target>
+      </trans-unit>
+      <trans-unit id="eoAMyPz" resname="¿Es apto para ser recogido para alimentación animal o fabricación de piensos?">
+        <source>¿Es apto para ser recogido para alimentación animal o fabricación de piensos?</source>
+        <target>Is it suitable to be collected for animal feed or feed production?</target>
+      </trans-unit>
+      <trans-unit id="BAg05J_" resname="Motivo por el que no se puede usar para alimentación animal">
+        <source>Motivo por el que no se puede usar para alimentación animal</source>
+        <target>Reason why it cannot be used for animal feed</target>
+      </trans-unit>
+      <trans-unit id="NzIa7pu" resname="¿Está seguro de que el excedente debe eliminarse?">
+        <source>¿Está seguro de que el excedente debe eliminarse?</source>
+        <target>Are you sure the surplus must be disposed of?</target>
+      </trans-unit>
+      <trans-unit id="tV.xog2" resname="Acción de prevención">
+        <source>Acción de prevención</source>
+        <target>Preventive action</target>
+      </trans-unit>
+      <trans-unit id="m2Vm75e" resname="La acción escogida se agregará al punto crítico para prevenir futuros excedentes como este">
+        <source>La acción escogida se agregará al punto crítico para prevenir futuros excedentes como este</source>
+        <target>The selected action will be added to the critical point to prevent future surpluses like this one</target>
+      </trans-unit>
+      <trans-unit id="eNTx5.P" resname="Seleccionar acción (opcional)">
+        <source>Seleccionar acción (opcional)</source>
+        <target>Select action (optional)</target>
+      </trans-unit>
+      <trans-unit id="Q291.N_" resname="¿Se puede transformar en el propio establecimiento? (Ej. fruta madura para mermeladas, pan de ayer para pan rallado).">
+        <source>¿Se puede transformar en el propio establecimiento? (Ej. fruta madura para mermeladas, pan de ayer para pan rallado).</source>
+        <target>Can it be processed on-site? (e.g., ripe fruit for jam, yesterday’s bread for breadcrumbs).</target>
+      </trans-unit>
+      <trans-unit id="DPMeH74" resname="¿En qué se va a transformar?">
+        <source>¿En qué se va a transformar?</source>
+        <target>What will it be processed into?</target>
+      </trans-unit>
+      <trans-unit id="UARo8Hg" resname="Seleccionar tipo de transformación">
+        <source>Seleccionar tipo de transformación</source>
+        <target>Select type of processing</target>
+      </trans-unit>
+      <trans-unit id="NuVvIJu" resname="Canal de distribución">
+        <source>Canal de distribución</source>
+        <target>Distribution channel</target>
+      </trans-unit>
+      <trans-unit id="SSZZFFZ" resname="Seleccionar canal">
+        <source>Seleccionar canal</source>
+        <target>Select channel</target>
+      </trans-unit>
+      <trans-unit id="VHJFpPP" resname="Motivo por el que no se puede transformar">
+        <source>Motivo por el que no se puede transformar</source>
+        <target>Reason why it cannot be processed</target>
+      </trans-unit>
+      <trans-unit id="aKDjfLo" resname="Eliminación">
+        <source>Eliminación</source>
+        <target>Disposal</target>
+      </trans-unit>
+      <trans-unit id="x3HBISp" resname="Compostaje">
+        <source>Compostaje</source>
+        <target>Composting</target>
+      </trans-unit>
+      <trans-unit id="Iw6pJ_D" resname="Transformación">
+        <source>Transformación</source>
+        <target>Processing</target>
+      </trans-unit>
+      <trans-unit id="KXOyzvP" resname="Donación humana">
+        <source>Donación humana</source>
+        <target>Donation for human consumption</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

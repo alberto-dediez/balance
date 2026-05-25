@@ -226,6 +226,25 @@ class CriticalPoint implements \Stringable
         );
     }
 
+    public function activatePrevention(): void
+    {
+        if ($this->preventionPossible) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CriticalPointPreventionActivated(
+                criticalPointId: $this->id(),
+            ),
+        );
+    }
+
+    public function applyCriticalPointPreventionActivated(CriticalPointPreventionActivated $event): void
+    {
+        $this->preventionPossible = true;
+        $this->updatedAt = $event->occurredOn();
+    }
+
     public function serviceCategories(): CriticalPointServiceCategories
     {
         return new CriticalPointServiceCategories($this->serviceCategories);

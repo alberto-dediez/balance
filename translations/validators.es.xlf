@@ -693,6 +693,14 @@
         <source>Debes seleccionar una empresa</source>
         <target>Debes seleccionar una empresa</target>
       </trans-unit>
+      <trans-unit id="TrPdNt1" resname="transformation.product.not_null">
+        <source>transformation.product.not_null</source>
+        <target>Indica en qué se va a transformar el excedente</target>
+      </trans-unit>
+      <trans-unit id="TrChnl1" resname="transformation.channel.not_null">
+        <source>transformation.channel.not_null</source>
+        <target>Indica el canal de distribución</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

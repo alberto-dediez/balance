@@ -16,7 +16,7 @@ Feature:
         Given surplus with id "surplus-1" of account "my-account" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/surpluses/edit/surplus-1/transformation"
-        When I submit a form with "canBeTransformed:1" and button "Continuar"
+        When I submit a form with "canBeTransformed:1|product:broths_and_sauces|channel:staff_meals" and button "Continuar"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Transformación actualizada con éxito"

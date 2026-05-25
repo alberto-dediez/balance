@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace App\FoodLoss\Domain\Model\Surplus;
 
 use App\FoodLoss\Domain\DomainEvent;
+use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
-final class SurplusAssessed extends DomainEvent
+final class SurplusPreventionAssessed extends DomainEvent
 {
-    protected static string $eventName = 'surplusAssessed';
+    protected static string $eventName = 'surplusPreventionAssessed';
 
     public function __construct(
         private readonly SurplusId $surplusId,
-        private readonly SurplusDestination $destination,
+        private readonly bool $canBePrevented,
+        private readonly ?ActionId $actionId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -26,9 +28,14 @@ final class SurplusAssessed extends DomainEvent
         return $this->surplusId;
     }
 
-    public function destination(): SurplusDestination
+    public function canBePrevented(): bool
     {
-        return $this->destination;
+        return $this->canBePrevented;
+    }
+
+    public function actionId(): ?ActionId
+    {
+        return $this->actionId;
     }
 
     public function aggregateRootId(): AggregateRootId
@@ -40,7 +47,8 @@ final class SurplusAssessed extends DomainEvent
     {
         return [
             'surplusId' => (string) $this->surplusId,
-            'destination' => $this->destination->value,
+            'canBePrevented' => $this->canBePrevented,
+            'actionId' => null !== $this->actionId ? (string) $this->actionId : null,
         ];
     }
 
@@ -49,9 +57,10 @@ final class SurplusAssessed extends DomainEvent
         \DateTimeImmutable $occurredOn,
         array $payload = [],
     ): static {
-        return new SurplusAssessed(
+        return new SurplusPreventionAssessed(
             surplusId: new SurplusId($payload['surplusId']),
-            destination: SurplusDestination::from($payload['destination']),
+            canBePrevented: (bool) $payload['canBePrevented'],
+            actionId: isset($payload['actionId']) ? new ActionId((string) $payload['actionId']) : null,
             id: $id,
             occurredOn: $occurredOn,
         );

@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\UI\Web\Surplus;
 
-use App\FoodLoss\Application\Surplus\Assess\AssessSurplusRequest;
-use App\FoodLoss\Application\Surplus\Assess\AssessSurplusService;
-use App\FoodLoss\Application\Surplus\Update\UpdateSurplusRequest;
-use App\FoodLoss\Application\Surplus\Update\UpdateSurplusService;
-use App\FoodLoss\Domain\Model\Surplus\CompostingAssessment;
-use App\FoodLoss\Domain\Model\Surplus\SurplusDestination;
+use App\FoodLoss\Application\Surplus\Assess\Composting\AssessCompostingRequest;
+use App\FoodLoss\Application\Surplus\Assess\Composting\AssessCompostingService;
 use App\FoodLoss\Domain\Model\Surplus\SurplusRepository;
 use App\FoodLoss\Infrastructure\Symfony\Form\SurplusCompostingAssessmentType;
 use App\Security\Application\Action as SecurityAction;
@@ -31,8 +27,7 @@ class CompostingAssessmentController extends AbstractController
     public function __invoke(
         string $surplusId,
         SurplusRepository $surplusRepository,
-        UpdateSurplusService $updateSurplus,
-        AssessSurplusService $assessSurplus,
+        AssessCompostingService $assessComposting,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -57,38 +52,14 @@ class CompostingAssessmentController extends AbstractController
                 $data = $form->getData();
                 $canBeComposted = $data['canBeComposted'];
 
-                if (true === $canBeComposted) {
-                    $assessSurplus(
-                        new AssessSurplusRequest(
-                            surplusId: $surplus->id(),
-                            destination: SurplusDestination::Composting,
-                        ),
-                        $loggedUser(),
-                    );
-                } else {
-                    $updateSurplus(
-                        new UpdateSurplusRequest(
-                            surplusId: $surplus->id(),
-                            date: $surplus->date(),
-                            serviceCategoryId: $surplus->serviceCategoryId(),
-                            criticalPointId: $surplus->criticalPointId(),
-                            surplusCauseId: $surplus->surplusCauseId(),
-                            foodType: $surplus->foodType(),
-                            quantity: $surplus->quantity(),
-                            unit: $surplus->unit(),
-                            preventionAssessment: $surplus->preventionAssessment(),
-                            transformationAssessment: $surplus->transformationAssessment(),
-                            humanDonationAssessment: $surplus->humanDonationAssessment(),
-                            animalFeedAssessment: $surplus->animalFeedAssessment(),
-                            compostingAssessment: new CompostingAssessment(
-                                canBeComposted: $canBeComposted,
-                                reasonId: $data['reasonId'],
-                            ),
-                            eliminationAssessment: $surplus->eliminationAssessment(),
-                        ),
-                        $loggedUser(),
-                    );
-                }
+                $assessComposting(
+                    new AssessCompostingRequest(
+                        surplusId: $surplus->id(),
+                        canBeComposted: $canBeComposted,
+                        reasonId: $data['reasonId'],
+                    ),
+                    $loggedUser(),
+                );
 
                 $this->addFlash('success', new TranslatableMessage('Compostaje actualizado con éxito'));
             } catch (UnauthorizedActionException $e) {

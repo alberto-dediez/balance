@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /** @extends AbstractType<mixed> */
 class SurplusPreventionAssessmentType extends AbstractType
@@ -21,12 +22,14 @@ class SurplusPreventionAssessmentType extends AbstractType
         $builder
             ->add('canBePrevented', BooleanType::class, [
                 'label' => new TranslatableMessage('¿Se podía haber prevenido el desperdicio?'),
-                'required' => false,
+                'required' => true,
                 'placeholder' => new TranslatableMessage('Seleccionar'),
+                'constraints' => [new Assert\NotNull()],
             ])
             ->add('actionId', ActionIdType::class, [
                 'label' => new TranslatableMessage('Acción de prevención'),
                 'required' => false,
+                'help' => new TranslatableMessage('La acción escogida se agregará al punto crítico para prevenir futuros excedentes como este'),
                 'action_priority' => Priority::Prevention,
                 'placeholder' => new TranslatableMessage('Seleccionar acción (opcional)'),
                 'row_attr' => [

@@ -7,15 +7,9 @@ namespace App\Tests\Unit\FoodLoss\Domain\Model\Surplus;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
-use App\FoodLoss\Domain\Model\Surplus\AnimalFeedAssessment;
-use App\FoodLoss\Domain\Model\Surplus\CompostingAssessment;
-use App\FoodLoss\Domain\Model\Surplus\EliminationAssessment;
 use App\FoodLoss\Domain\Model\Surplus\FoodType;
-use App\FoodLoss\Domain\Model\Surplus\HumanDonationAssessment;
-use App\FoodLoss\Domain\Model\Surplus\PreventionAssessment;
 use App\FoodLoss\Domain\Model\Surplus\Surplus;
 use App\FoodLoss\Domain\Model\Surplus\SurplusId;
-use App\FoodLoss\Domain\Model\Surplus\TransformationAssessment;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -52,12 +46,6 @@ class SurplusMother
             unit: $unit,
             accountId: new AccountId($accountId),
             registeredBy: new UserId('user-id-test'),
-            preventionAssessment: new PreventionAssessment(),
-            transformationAssessment: new TransformationAssessment(),
-            humanDonationAssessment: new HumanDonationAssessment(),
-            animalFeedAssessment: new AnimalFeedAssessment(),
-            compostingAssessment: new CompostingAssessment(),
-            eliminationAssessment: new EliminationAssessment(),
         );
 
         return $surplus;
@@ -88,21 +76,12 @@ class SurplusMother
     {
         $surplus = self::withAccountId($accountId);
 
-        $surplus->update(
-            date: $surplus->date(),
-            serviceCategoryId: $surplus->serviceCategoryId(),
-            criticalPointId: $surplus->criticalPointId(),
-            surplusCauseId: $surplus->surplusCauseId(),
-            foodType: $surplus->foodType(),
-            quantity: $surplus->quantity(),
-            unit: $surplus->unit(),
-            preventionAssessment: new PreventionAssessment(canBePrevented: false),
-            transformationAssessment: new TransformationAssessment(canBeTransformed: false),
-            humanDonationAssessment: new HumanDonationAssessment(canBeHumanDonated: false),
-            animalFeedAssessment: new AnimalFeedAssessment(canBeAnimalFed: false),
-            compostingAssessment: new CompostingAssessment(canBeComposted: false),
-            eliminationAssessment: new EliminationAssessment(canBeEliminated: false),
-        );
+        $surplus->assessPrevention(false, null);
+        $surplus->assessTransformation(false, null);
+        $surplus->assessHumanDonation(false, null);
+        $surplus->assessAnimalFeed(false, null);
+        $surplus->assessComposting(false, null);
+        $surplus->assessElimination(false);
 
         return $surplus;
     }

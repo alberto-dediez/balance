@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /** @extends AbstractType<mixed> */
 class SurplusAnimalFeedAssessmentType extends AbstractType
@@ -20,8 +21,9 @@ class SurplusAnimalFeedAssessmentType extends AbstractType
         $builder
             ->add('canBeAnimalFed', BooleanType::class, [
                 'label' => new TranslatableMessage('¿Es apto para ser recogido para alimentación animal o fabricación de piensos?'),
-                'required' => false,
+                'required' => true,
                 'placeholder' => new TranslatableMessage('Seleccionar'),
+                'constraints' => [new Assert\NotNull()],
             ])
             ->add('reasonId', ReasonIdType::class, [
                 'label' => new TranslatableMessage('Motivo por el que no se puede usar para alimentación animal'),

@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\UI\Web\Surplus;
 
-use App\FoodLoss\Application\Surplus\Assess\AssessSurplusRequest;
-use App\FoodLoss\Application\Surplus\Assess\AssessSurplusService;
-use App\FoodLoss\Application\Surplus\Update\UpdateSurplusRequest;
-use App\FoodLoss\Application\Surplus\Update\UpdateSurplusService;
-use App\FoodLoss\Domain\Model\Surplus\SurplusDestination;
+use App\FoodLoss\Application\Surplus\Assess\Transformation\AssessTransformationRequest;
+use App\FoodLoss\Application\Surplus\Assess\Transformation\AssessTransformationService;
 use App\FoodLoss\Domain\Model\Surplus\SurplusRepository;
-use App\FoodLoss\Domain\Model\Surplus\TransformationAssessment;
 use App\FoodLoss\Infrastructure\Symfony\Form\SurplusTransformationAssessmentType;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Application\UnauthorizedActionException;
@@ -31,8 +27,7 @@ class TransformationAssessmentController extends AbstractController
     public function __invoke(
         string $surplusId,
         SurplusRepository $surplusRepository,
-        UpdateSurplusService $updateSurplus,
-        AssessSurplusService $assessSurplus,
+        AssessTransformationService $assessTransformation,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -46,6 +41,8 @@ class TransformationAssessmentController extends AbstractController
         $form = $this->createForm(SurplusTransformationAssessmentType::class, [
             'canBeTransformed' => $currentCanBeTransformed,
             'reasonId' => $transformation->reasonId(),
+            'product' => $transformation->product(),
+            'channel' => $transformation->channel(),
         ]);
 
         $form->handleRequest($request);
@@ -57,38 +54,16 @@ class TransformationAssessmentController extends AbstractController
                 $data = $form->getData();
                 $canBeTransformed = $data['canBeTransformed'];
 
-                if (true === $canBeTransformed) {
-                    $assessSurplus(
-                        new AssessSurplusRequest(
-                            surplusId: $surplus->id(),
-                            destination: SurplusDestination::Transformation,
-                        ),
-                        $loggedUser(),
-                    );
-                } else {
-                    $updateSurplus(
-                        new UpdateSurplusRequest(
-                            surplusId: $surplus->id(),
-                            date: $surplus->date(),
-                            serviceCategoryId: $surplus->serviceCategoryId(),
-                            criticalPointId: $surplus->criticalPointId(),
-                            surplusCauseId: $surplus->surplusCauseId(),
-                            foodType: $surplus->foodType(),
-                            quantity: $surplus->quantity(),
-                            unit: $surplus->unit(),
-                            preventionAssessment: $surplus->preventionAssessment(),
-                            transformationAssessment: new TransformationAssessment(
-                                canBeTransformed: $canBeTransformed,
-                                reasonId: $data['reasonId'],
-                            ),
-                            humanDonationAssessment: $surplus->humanDonationAssessment(),
-                            animalFeedAssessment: $surplus->animalFeedAssessment(),
-                            compostingAssessment: $surplus->compostingAssessment(),
-                            eliminationAssessment: $surplus->eliminationAssessment(),
-                        ),
-                        $loggedUser(),
-                    );
-                }
+                $assessTransformation(
+                    new AssessTransformationRequest(
+                        surplusId: $surplus->id(),
+                        canBeTransformed: $canBeTransformed,
+                        reasonId: $data['reasonId'],
+                        product: $data['product'],
+                        channel: $data['channel'],
+                    ),
+                    $loggedUser(),
+                );
 
                 $this->addFlash('success', new TranslatableMessage('Transformación actualizada con éxito'));
             } catch (UnauthorizedActionException $e) {

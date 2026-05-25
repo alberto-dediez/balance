@@ -11,6 +11,8 @@ class TransformationAssessment
     public function __construct(
         private readonly ?bool $canBeTransformed = null,
         private readonly ?ReasonId $reasonId = null,
+        private readonly ?TransformationProduct $product = null,
+        private readonly ?TransformationChannel $channel = null,
     ) {}
 
     public function canBeTransformed(): bool
@@ -21,6 +23,16 @@ class TransformationAssessment
     public function reasonId(): ?ReasonId
     {
         return $this->reasonId;
+    }
+
+    public function product(): ?TransformationProduct
+    {
+        return $this->product;
+    }
+
+    public function channel(): ?TransformationChannel
+    {
+        return $this->channel;
     }
 
     public function isAnswered(): bool

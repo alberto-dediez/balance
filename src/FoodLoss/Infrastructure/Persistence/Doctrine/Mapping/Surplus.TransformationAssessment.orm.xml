@@ -8,5 +8,7 @@
     <embeddable name="App\FoodLoss\Domain\Model\Surplus\TransformationAssessment">
         <field name="canBeTransformed" type="boolean" column="can_be_transformed" nullable="true"/>
         <field name="reasonId" type="reason_id" column="reason_id" nullable="true"/>
+        <field name="product" type="string" enum-type="App\FoodLoss\Domain\Model\Surplus\TransformationProduct" column="product" nullable="true"/>
+        <field name="channel" type="string" enum-type="App\FoodLoss\Domain\Model\Surplus\TransformationChannel" column="channel" nullable="true"/>
     </embeddable>
 </doctrine-mapping>

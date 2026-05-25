@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Domain\Model\Surplus;
 
+use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
+use App\FoodLoss\Domain\Model\Reason\ReasonId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -160,12 +162,6 @@ class Surplus implements \Stringable
         DeliveryLogUnit $unit,
         AccountId $accountId,
         UserId $registeredBy,
-        PreventionAssessment $preventionAssessment,
-        TransformationAssessment $transformationAssessment,
-        HumanDonationAssessment $humanDonationAssessment,
-        AnimalFeedAssessment $animalFeedAssessment,
-        CompostingAssessment $compostingAssessment,
-        EliminationAssessment $eliminationAssessment,
     ): void {
         $this->recordApplyAndPublish(
             new SurplusRegistered(
@@ -179,12 +175,6 @@ class Surplus implements \Stringable
                 unit: $unit,
                 accountId: $accountId,
                 registeredBy: $registeredBy,
-                preventionAssessment: $preventionAssessment,
-                transformationAssessment: $transformationAssessment,
-                humanDonationAssessment: $humanDonationAssessment,
-                animalFeedAssessment: $animalFeedAssessment,
-                compostingAssessment: $compostingAssessment,
-                eliminationAssessment: $eliminationAssessment,
             ),
         );
     }
@@ -197,12 +187,6 @@ class Surplus implements \Stringable
         FoodType $foodType,
         float $quantity,
         DeliveryLogUnit $unit,
-        PreventionAssessment $preventionAssessment,
-        TransformationAssessment $transformationAssessment,
-        HumanDonationAssessment $humanDonationAssessment,
-        AnimalFeedAssessment $animalFeedAssessment,
-        CompostingAssessment $compostingAssessment,
-        EliminationAssessment $eliminationAssessment,
     ): void {
         $this->recordApplyAndPublish(
             new SurplusUpdated(
@@ -214,12 +198,6 @@ class Surplus implements \Stringable
                 foodType: $foodType,
                 quantity: $quantity,
                 unit: $unit,
-                preventionAssessment: $preventionAssessment,
-                transformationAssessment: $transformationAssessment,
-                humanDonationAssessment: $humanDonationAssessment,
-                animalFeedAssessment: $animalFeedAssessment,
-                compostingAssessment: $compostingAssessment,
-                eliminationAssessment: $eliminationAssessment,
             ),
         );
     }
@@ -233,103 +211,175 @@ class Surplus implements \Stringable
         );
     }
 
-    public function transformationAssess(): void
+    public function assessPrevention(bool $canBePrevented, ?ActionId $actionId): void
     {
         $this->recordApplyAndPublish(
-            new SurplusAssessed(
+            new SurplusPreventionAssessed(
                 surplusId: $this->id(),
-                destination: SurplusDestination::Transformation,
+                canBePrevented: $canBePrevented,
+                actionId: $actionId,
             ),
         );
     }
 
-    public function humanDonationAssess(): void
-    {
+    public function assessTransformation(
+        bool $canBeTransformed,
+        ?ReasonId $reasonId,
+        ?TransformationProduct $product = null,
+        ?TransformationChannel $channel = null,
+    ): void {
         $this->recordApplyAndPublish(
-            new SurplusAssessed(
+            new SurplusTransformationAssessed(
                 surplusId: $this->id(),
-                destination: SurplusDestination::HumanDonation,
+                canBeTransformed: $canBeTransformed,
+                reasonId: $reasonId,
+                product: $product,
+                channel: $channel,
             ),
         );
     }
 
-    public function animalFeedAssess(): void
+    public function assessHumanDonation(bool $canBeHumanDonated, ?ReasonId $reasonId): void
     {
         $this->recordApplyAndPublish(
-            new SurplusAssessed(
+            new SurplusHumanDonationAssessed(
                 surplusId: $this->id(),
-                destination: SurplusDestination::AnimalFeed,
+                canBeHumanDonated: $canBeHumanDonated,
+                reasonId: $reasonId,
             ),
         );
     }
 
-    public function compostingAssess(): void
+    public function assessAnimalFeed(bool $canBeAnimalFed, ?ReasonId $reasonId): void
     {
         $this->recordApplyAndPublish(
-            new SurplusAssessed(
+            new SurplusAnimalFeedAssessed(
                 surplusId: $this->id(),
-                destination: SurplusDestination::Composting,
+                canBeAnimalFed: $canBeAnimalFed,
+                reasonId: $reasonId,
             ),
         );
     }
 
-    public function eliminationAssess(): void
+    public function assessComposting(bool $canBeComposted, ?ReasonId $reasonId): void
     {
         $this->recordApplyAndPublish(
-            new SurplusAssessed(
+            new SurplusCompostingAssessed(
                 surplusId: $this->id(),
-                destination: SurplusDestination::Elimination,
+                canBeComposted: $canBeComposted,
+                reasonId: $reasonId,
             ),
         );
     }
 
-    public function applySurplusAssessed(SurplusAssessed $event): void
+    public function assessElimination(bool $canBeEliminated): void
     {
-        $this->destination = $event->destination();
+        $this->recordApplyAndPublish(
+            new SurplusEliminationAssessed(
+                surplusId: $this->id(),
+                canBeEliminated: $canBeEliminated,
+            ),
+        );
+    }
+
+    public function applySurplusPreventionAssessed(SurplusPreventionAssessed $event): void
+    {
+        $this->preventionAssessment = new PreventionAssessment(
+            canBePrevented: $event->canBePrevented(),
+            actionId: $event->actionId(),
+        );
         $this->updatedAt = $event->occurredOn();
-
-        match ($event->destination()) {
-            SurplusDestination::Transformation => $this->applyTransformationAssessedState(),
-            SurplusDestination::HumanDonation => $this->applyHumanDonationAssessedState(),
-            SurplusDestination::AnimalFeed => $this->applyAnimalFeedAssessedState(),
-            SurplusDestination::Composting => $this->applyCompostingAssessedState(),
-            SurplusDestination::Elimination => $this->applyEliminationAssessedState(),
-        };
     }
 
-    private function applyTransformationAssessedState(): void
+    public function applySurplusTransformationAssessed(SurplusTransformationAssessed $event): void
     {
-        $this->transformationAssessment = new TransformationAssessment(canBeTransformed: true, reasonId: null);
-        $this->humanDonationAssessment = new HumanDonationAssessment();
-        $this->animalFeedAssessment = new AnimalFeedAssessment();
-        $this->compostingAssessment = new CompostingAssessment();
-        $this->eliminationAssessment = new EliminationAssessment();
+        $this->transformationAssessment = new TransformationAssessment(
+            canBeTransformed: $event->canBeTransformed(),
+            reasonId: $event->reasonId(),
+            product: $event->product(),
+            channel: $event->channel(),
+        );
+
+        if ($event->canBeTransformed()) {
+            $this->destination = SurplusDestination::Transformation;
+            $this->humanDonationAssessment = new HumanDonationAssessment();
+            $this->animalFeedAssessment = new AnimalFeedAssessment();
+            $this->compostingAssessment = new CompostingAssessment();
+            $this->eliminationAssessment = new EliminationAssessment();
+        } elseif (SurplusDestination::Transformation === $this->destination) {
+            $this->destination = null;
+        }
+
+        $this->updatedAt = $event->occurredOn();
     }
 
-    private function applyHumanDonationAssessedState(): void
+    public function applySurplusHumanDonationAssessed(SurplusHumanDonationAssessed $event): void
     {
-        $this->humanDonationAssessment = new HumanDonationAssessment(canBeHumanDonated: true, reasonId: null);
-        $this->animalFeedAssessment = new AnimalFeedAssessment();
-        $this->compostingAssessment = new CompostingAssessment();
-        $this->eliminationAssessment = new EliminationAssessment();
+        $this->humanDonationAssessment = new HumanDonationAssessment(
+            canBeHumanDonated: $event->canBeHumanDonated(),
+            reasonId: $event->reasonId(),
+        );
+
+        if ($event->canBeHumanDonated()) {
+            $this->destination = SurplusDestination::HumanDonation;
+            $this->animalFeedAssessment = new AnimalFeedAssessment();
+            $this->compostingAssessment = new CompostingAssessment();
+            $this->eliminationAssessment = new EliminationAssessment();
+        } elseif (SurplusDestination::HumanDonation === $this->destination) {
+            $this->destination = null;
+        }
+
+        $this->updatedAt = $event->occurredOn();
     }
 
-    private function applyAnimalFeedAssessedState(): void
+    public function applySurplusAnimalFeedAssessed(SurplusAnimalFeedAssessed $event): void
     {
-        $this->animalFeedAssessment = new AnimalFeedAssessment(canBeAnimalFed: true, reasonId: null);
-        $this->compostingAssessment = new CompostingAssessment();
-        $this->eliminationAssessment = new EliminationAssessment();
+        $this->animalFeedAssessment = new AnimalFeedAssessment(
+            canBeAnimalFed: $event->canBeAnimalFed(),
+            reasonId: $event->reasonId(),
+        );
+
+        if ($event->canBeAnimalFed()) {
+            $this->destination = SurplusDestination::AnimalFeed;
+            $this->compostingAssessment = new CompostingAssessment();
+            $this->eliminationAssessment = new EliminationAssessment();
+        } elseif (SurplusDestination::AnimalFeed === $this->destination) {
+            $this->destination = null;
+        }
+
+        $this->updatedAt = $event->occurredOn();
     }
 
-    private function applyCompostingAssessedState(): void
+    public function applySurplusCompostingAssessed(SurplusCompostingAssessed $event): void
     {
-        $this->compostingAssessment = new CompostingAssessment(canBeComposted: true, reasonId: null);
-        $this->eliminationAssessment = new EliminationAssessment();
+        $this->compostingAssessment = new CompostingAssessment(
+            canBeComposted: $event->canBeComposted(),
+            reasonId: $event->reasonId(),
+        );
+
+        if ($event->canBeComposted()) {
+            $this->destination = SurplusDestination::Composting;
+            $this->eliminationAssessment = new EliminationAssessment();
+        } elseif (SurplusDestination::Composting === $this->destination) {
+            $this->destination = null;
+        }
+
+        $this->updatedAt = $event->occurredOn();
     }
 
-    private function applyEliminationAssessedState(): void
+    public function applySurplusEliminationAssessed(SurplusEliminationAssessed $event): void
     {
-        $this->eliminationAssessment = new EliminationAssessment(canBeEliminated: true);
+        $this->eliminationAssessment = new EliminationAssessment(
+            canBeEliminated: $event->canBeEliminated(),
+        );
+
+        if ($event->canBeEliminated()) {
+            $this->destination = SurplusDestination::Elimination;
+        } elseif (SurplusDestination::Elimination === $this->destination) {
+            $this->destination = null;
+        }
+
+        $this->updatedAt = $event->occurredOn();
     }
 
     public function applySurplusRegistered(SurplusRegistered $event): void
@@ -343,12 +393,6 @@ class Surplus implements \Stringable
         $this->unit = $event->unit();
         $this->accountId = $event->accountId();
         $this->registeredBy = $event->registeredBy();
-        $this->preventionAssessment = $event->preventionAssessment();
-        $this->transformationAssessment = $event->transformationAssessment();
-        $this->humanDonationAssessment = $event->humanDonationAssessment();
-        $this->animalFeedAssessment = $event->animalFeedAssessment();
-        $this->compostingAssessment = $event->compostingAssessment();
-        $this->eliminationAssessment = $event->eliminationAssessment();
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -361,12 +405,6 @@ class Surplus implements \Stringable
         $this->foodType = $event->foodType();
         $this->quantity = $event->quantity();
         $this->unit = $event->unit();
-        $this->preventionAssessment = $event->preventionAssessment();
-        $this->transformationAssessment = $event->transformationAssessment();
-        $this->humanDonationAssessment = $event->humanDonationAssessment();
-        $this->animalFeedAssessment = $event->animalFeedAssessment();
-        $this->compostingAssessment = $event->compostingAssessment();
-        $this->eliminationAssessment = $event->eliminationAssessment();
         $this->updatedAt = $event->occurredOn();
     }
 
@@ -378,6 +416,6 @@ class Surplus implements \Stringable
 
     public function __toString(): string
     {
-        return sprintf('%s - %s', $this->date->format('Y-m-d'), $this->foodType->value);
+        return  $this->date->format('d/m/Y');
     }
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="2io75v1" resname="broths_and_sauces">
+        <source>broths_and_sauces</source>
+        <target>Broths, stocks and sauces</target>
+      </trans-unit>
+      <trans-unit id="ybVuOgx" resname="creams_and_purees">
+        <source>creams_and_purees</source>
+        <target>Creams and purées</target>
+      </trans-unit>
+      <trans-unit id="F6nbvc7" resname="juices_and_compotes">
+        <source>juices_and_compotes</source>
+        <target>Juices, smoothies and compotes</target>
+      </trans-unit>
+      <trans-unit id="mCI1YJQ" resname="preserves_and_pickles">
+        <source>preserves_and_pickles</source>
+        <target>Preserves, jams and pickles</target>
+      </trans-unit>
+      <trans-unit id="rdw1O7U" resname="baking_and_pastry">
+        <source>baking_and_pastry</source>
+        <target>Baking and pastry</target>
+      </trans-unit>
+      <trans-unit id="frhvejM" resname="daily_special">
+        <source>daily_special</source>
+        <target>Daily special / Chef's suggestion</target>
+      </trans-unit>
+      <trans-unit id="8aHe0YP" resname="other">
+        <source>other</source>
+        <target>Other</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /** @extends AbstractType<mixed> */
 class SurplusEliminationAssessmentType extends AbstractType
@@ -19,8 +20,9 @@ class SurplusEliminationAssessmentType extends AbstractType
         $builder
             ->add('canBeEliminated', BooleanType::class, [
                 'label' => new TranslatableMessage('¿Está seguro de que el excedente debe eliminarse?'),
-                'required' => false,
+                'required' => true,
                 'placeholder' => new TranslatableMessage('Seleccionar'),
+                'constraints' => [new Assert\NotNull()],
             ])
             ->add('saveAndReturn', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar y salir'),

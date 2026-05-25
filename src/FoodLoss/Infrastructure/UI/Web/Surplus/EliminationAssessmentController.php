@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\UI\Web\Surplus;
 
-use App\FoodLoss\Application\Surplus\Assess\AssessSurplusRequest;
-use App\FoodLoss\Application\Surplus\Assess\AssessSurplusService;
-use App\FoodLoss\Application\Surplus\Update\UpdateSurplusRequest;
-use App\FoodLoss\Application\Surplus\Update\UpdateSurplusService;
-use App\FoodLoss\Domain\Model\Surplus\EliminationAssessment;
-use App\FoodLoss\Domain\Model\Surplus\SurplusDestination;
+use App\FoodLoss\Application\Surplus\Assess\Elimination\AssessEliminationRequest;
+use App\FoodLoss\Application\Surplus\Assess\Elimination\AssessEliminationService;
 use App\FoodLoss\Domain\Model\Surplus\SurplusRepository;
 use App\FoodLoss\Infrastructure\Symfony\Form\SurplusEliminationAssessmentType;
 use App\Security\Application\Action as SecurityAction;
@@ -31,8 +27,7 @@ class EliminationAssessmentController extends AbstractController
     public function __invoke(
         string $surplusId,
         SurplusRepository $surplusRepository,
-        UpdateSurplusService $updateSurplus,
-        AssessSurplusService $assessSurplus,
+        AssessEliminationService $assessElimination,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -56,37 +51,13 @@ class EliminationAssessmentController extends AbstractController
                 $data = $form->getData();
                 $canBeEliminated = $data['canBeEliminated'];
 
-                if (true === $canBeEliminated) {
-                    $assessSurplus(
-                        new AssessSurplusRequest(
-                            surplusId: $surplus->id(),
-                            destination: SurplusDestination::Elimination,
-                        ),
-                        $loggedUser(),
-                    );
-                } else {
-                    $updateSurplus(
-                        new UpdateSurplusRequest(
-                            surplusId: $surplus->id(),
-                            date: $surplus->date(),
-                            serviceCategoryId: $surplus->serviceCategoryId(),
-                            criticalPointId: $surplus->criticalPointId(),
-                            surplusCauseId: $surplus->surplusCauseId(),
-                            foodType: $surplus->foodType(),
-                            quantity: $surplus->quantity(),
-                            unit: $surplus->unit(),
-                            preventionAssessment: $surplus->preventionAssessment(),
-                            transformationAssessment: $surplus->transformationAssessment(),
-                            humanDonationAssessment: $surplus->humanDonationAssessment(),
-                            animalFeedAssessment: $surplus->animalFeedAssessment(),
-                            compostingAssessment: $surplus->compostingAssessment(),
-                            eliminationAssessment: new EliminationAssessment(
-                                canBeEliminated: $canBeEliminated,
-                            ),
-                        ),
-                        $loggedUser(),
-                    );
-                }
+                $assessElimination(
+                    new AssessEliminationRequest(
+                        surplusId: $surplus->id(),
+                        canBeEliminated: $canBeEliminated,
+                    ),
+                    $loggedUser(),
+                );
 
                 $this->addFlash('success', new TranslatableMessage('Eliminación actualizada con éxito'));
             } catch (UnauthorizedActionException $e) {

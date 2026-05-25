@@ -44,12 +44,6 @@ class EditController extends AbstractController
             foodType: $surplus->foodType(),
             quantity: $surplus->quantity(),
             unit: $surplus->unit(),
-            preventionAssessment: $surplus->preventionAssessment(),
-            transformationAssessment: $surplus->transformationAssessment(),
-            humanDonationAssessment: $surplus->humanDonationAssessment(),
-            animalFeedAssessment: $surplus->animalFeedAssessment(),
-            compostingAssessment: $surplus->compostingAssessment(),
-            eliminationAssessment: $surplus->eliminationAssessment(),
         );
 
         try {

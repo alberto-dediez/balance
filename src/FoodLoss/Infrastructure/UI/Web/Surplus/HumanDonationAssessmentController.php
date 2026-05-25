@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\UI\Web\Surplus;
 
-use App\FoodLoss\Application\Surplus\Assess\AssessSurplusRequest;
-use App\FoodLoss\Application\Surplus\Assess\AssessSurplusService;
-use App\FoodLoss\Application\Surplus\Update\UpdateSurplusRequest;
-use App\FoodLoss\Application\Surplus\Update\UpdateSurplusService;
-use App\FoodLoss\Domain\Model\Surplus\HumanDonationAssessment;
-use App\FoodLoss\Domain\Model\Surplus\SurplusDestination;
+use App\FoodLoss\Application\Surplus\Assess\HumanDonation\AssessHumanDonationRequest;
+use App\FoodLoss\Application\Surplus\Assess\HumanDonation\AssessHumanDonationService;
 use App\FoodLoss\Domain\Model\Surplus\SurplusRepository;
 use App\FoodLoss\Infrastructure\Symfony\Form\SurplusHumanDonationAssessmentType;
 use App\Security\Application\Action as SecurityAction;
@@ -31,8 +27,7 @@ class HumanDonationAssessmentController extends AbstractController
     public function __invoke(
         string $surplusId,
         SurplusRepository $surplusRepository,
-        UpdateSurplusService $updateSurplus,
-        AssessSurplusService $assessSurplus,
+        AssessHumanDonationService $assessHumanDonation,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -57,38 +52,14 @@ class HumanDonationAssessmentController extends AbstractController
                 $data = $form->getData();
                 $canBeHumanDonated = $data['canBeHumanDonated'];
 
-                if (true === $canBeHumanDonated) {
-                    $assessSurplus(
-                        new AssessSurplusRequest(
-                            surplusId: $surplus->id(),
-                            destination: SurplusDestination::HumanDonation,
-                        ),
-                        $loggedUser(),
-                    );
-                } else {
-                    $updateSurplus(
-                        new UpdateSurplusRequest(
-                            surplusId: $surplus->id(),
-                            date: $surplus->date(),
-                            serviceCategoryId: $surplus->serviceCategoryId(),
-                            criticalPointId: $surplus->criticalPointId(),
-                            surplusCauseId: $surplus->surplusCauseId(),
-                            foodType: $surplus->foodType(),
-                            quantity: $surplus->quantity(),
-                            unit: $surplus->unit(),
-                            preventionAssessment: $surplus->preventionAssessment(),
-                            transformationAssessment: $surplus->transformationAssessment(),
-                            humanDonationAssessment: new HumanDonationAssessment(
-                                canBeHumanDonated: $canBeHumanDonated,
-                                reasonId: $data['reasonId'],
-                            ),
-                            animalFeedAssessment: $surplus->animalFeedAssessment(),
-                            compostingAssessment: $surplus->compostingAssessment(),
-                            eliminationAssessment: $surplus->eliminationAssessment(),
-                        ),
-                        $loggedUser(),
-                    );
-                }
+                $assessHumanDonation(
+                    new AssessHumanDonationRequest(
+                        surplusId: $surplus->id(),
+                        canBeHumanDonated: $canBeHumanDonated,
+                        reasonId: $data['reasonId'],
+                    ),
+                    $loggedUser(),
+                );
 
                 $this->addFlash('success', new TranslatableMessage('Donación humana actualizada con éxito'));
             } catch (UnauthorizedActionException $e) {

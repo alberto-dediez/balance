@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\UI\Web\Surplus;
 
-use App\FoodLoss\Application\Surplus\Assess\AssessSurplusRequest;
-use App\FoodLoss\Application\Surplus\Assess\AssessSurplusService;
-use App\FoodLoss\Application\Surplus\Update\UpdateSurplusRequest;
-use App\FoodLoss\Application\Surplus\Update\UpdateSurplusService;
-use App\FoodLoss\Domain\Model\Surplus\AnimalFeedAssessment;
-use App\FoodLoss\Domain\Model\Surplus\SurplusDestination;
+use App\FoodLoss\Application\Surplus\Assess\AnimalFeed\AssessAnimalFeedRequest;
+use App\FoodLoss\Application\Surplus\Assess\AnimalFeed\AssessAnimalFeedService;
 use App\FoodLoss\Domain\Model\Surplus\SurplusRepository;
 use App\FoodLoss\Infrastructure\Symfony\Form\SurplusAnimalFeedAssessmentType;
 use App\Security\Application\Action as SecurityAction;
@@ -31,8 +27,7 @@ class AnimalFeedAssessmentController extends AbstractController
     public function __invoke(
         string $surplusId,
         SurplusRepository $surplusRepository,
-        UpdateSurplusService $updateSurplus,
-        AssessSurplusService $assessSurplus,
+        AssessAnimalFeedService $assessAnimalFeed,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -57,38 +52,14 @@ class AnimalFeedAssessmentController extends AbstractController
                 $data = $form->getData();
                 $canBeAnimalFed = $data['canBeAnimalFed'];
 
-                if (true === $canBeAnimalFed) {
-                    $assessSurplus(
-                        new AssessSurplusRequest(
-                            surplusId: $surplus->id(),
-                            destination: SurplusDestination::AnimalFeed,
-                        ),
-                        $loggedUser(),
-                    );
-                } else {
-                    $updateSurplus(
-                        new UpdateSurplusRequest(
-                            surplusId: $surplus->id(),
-                            date: $surplus->date(),
-                            serviceCategoryId: $surplus->serviceCategoryId(),
-                            criticalPointId: $surplus->criticalPointId(),
-                            surplusCauseId: $surplus->surplusCauseId(),
-                            foodType: $surplus->foodType(),
-                            quantity: $surplus->quantity(),
-                            unit: $surplus->unit(),
-                            preventionAssessment: $surplus->preventionAssessment(),
-                            transformationAssessment: $surplus->transformationAssessment(),
-                            humanDonationAssessment: $surplus->humanDonationAssessment(),
-                            animalFeedAssessment: new AnimalFeedAssessment(
-                                canBeAnimalFed: $canBeAnimalFed,
-                                reasonId: $data['reasonId'],
-                            ),
-                            compostingAssessment: $surplus->compostingAssessment(),
-                            eliminationAssessment: $surplus->eliminationAssessment(),
-                        ),
-                        $loggedUser(),
-                    );
-                }
+                $assessAnimalFeed(
+                    new AssessAnimalFeedRequest(
+                        surplusId: $surplus->id(),
+                        canBeAnimalFed: $canBeAnimalFed,
+                        reasonId: $data['reasonId'],
+                    ),
+                    $loggedUser(),
+                );
 
                 $this->addFlash('success', new TranslatableMessage('Alimentación animal actualizada con éxito'));
             } catch (UnauthorizedActionException $e) {

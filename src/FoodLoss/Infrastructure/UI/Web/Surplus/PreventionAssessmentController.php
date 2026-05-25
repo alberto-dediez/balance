@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\UI\Web\Surplus;
 
-use App\FoodLoss\Application\Surplus\Update\UpdateSurplusRequest;
-use App\FoodLoss\Application\Surplus\Update\UpdateSurplusService;
-use App\FoodLoss\Domain\Model\Surplus\PreventionAssessment;
+use App\FoodLoss\Application\Surplus\Assess\Prevention\AssessPreventionRequest;
+use App\FoodLoss\Application\Surplus\Assess\Prevention\AssessPreventionService;
 use App\FoodLoss\Domain\Model\Surplus\SurplusRepository;
 use App\FoodLoss\Infrastructure\Symfony\Form\SurplusPreventionAssessmentType;
 use App\Security\Application\Action as SecurityAction;
@@ -28,7 +27,7 @@ class PreventionAssessmentController extends AbstractController
     public function __invoke(
         string $surplusId,
         SurplusRepository $surplusRepository,
-        UpdateSurplusService $updateSurplus,
+        AssessPreventionService $assessPrevention,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -50,27 +49,14 @@ class PreventionAssessmentController extends AbstractController
             try {
                 $data = $form->getData();
 
-                $updateRequest = new UpdateSurplusRequest(
-                    surplusId: $surplus->id(),
-                    date: $surplus->date(),
-                    serviceCategoryId: $surplus->serviceCategoryId(),
-                    criticalPointId: $surplus->criticalPointId(),
-                    surplusCauseId: $surplus->surplusCauseId(),
-                    foodType: $surplus->foodType(),
-                    quantity: $surplus->quantity(),
-                    unit: $surplus->unit(),
-                    preventionAssessment: new PreventionAssessment(
+                $assessPrevention(
+                    new AssessPreventionRequest(
+                        surplusId: $surplus->id(),
                         canBePrevented: $data['canBePrevented'],
                         actionId: $data['actionId'],
                     ),
-                    transformationAssessment: $surplus->transformationAssessment(),
-                    humanDonationAssessment: $surplus->humanDonationAssessment(),
-                    animalFeedAssessment: $surplus->animalFeedAssessment(),
-                    compostingAssessment: $surplus->compostingAssessment(),
-                    eliminationAssessment: $surplus->eliminationAssessment(),
+                    $loggedUser(),
                 );
-
-                $updateSurplus($updateRequest, $loggedUser());
 
                 $this->addFlash('success', new TranslatableMessage('Prevención actualizada con éxito'));
             } catch (UnauthorizedActionException $e) {

@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /** @extends AbstractType<mixed> */
 class SurplusCompostingAssessmentType extends AbstractType
@@ -20,8 +21,9 @@ class SurplusCompostingAssessmentType extends AbstractType
         $builder
             ->add('canBeComposted', BooleanType::class, [
                 'label' => new TranslatableMessage('¿Se destinará a compostaje agrícola o generación de biogás?'),
-                'required' => false,
+                'required' => true,
                 'placeholder' => new TranslatableMessage('Seleccionar'),
+                'constraints' => [new Assert\NotNull()],
             ])
             ->add('reasonId', ReasonIdType::class, [
                 'label' => new TranslatableMessage('Motivo por el que no se puede compostar'),

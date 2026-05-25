@@ -7,13 +7,7 @@ namespace App\FoodLoss\Application\Surplus\Register;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
-use App\FoodLoss\Domain\Model\Surplus\AnimalFeedAssessment;
-use App\FoodLoss\Domain\Model\Surplus\CompostingAssessment;
-use App\FoodLoss\Domain\Model\Surplus\EliminationAssessment;
 use App\FoodLoss\Domain\Model\Surplus\FoodType;
-use App\FoodLoss\Domain\Model\Surplus\HumanDonationAssessment;
-use App\FoodLoss\Domain\Model\Surplus\PreventionAssessment;
-use App\FoodLoss\Domain\Model\Surplus\TransformationAssessment;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -31,11 +25,5 @@ class RegisterSurplusRequest implements Command
         public DeliveryLogUnit $unit = DeliveryLogUnit::Kg,
         public ?AccountId $accountId = null,
         public ?UserId $registeredBy = null,
-        public PreventionAssessment $preventionAssessment = new PreventionAssessment(),
-        public TransformationAssessment $transformationAssessment = new TransformationAssessment(),
-        public HumanDonationAssessment $humanDonationAssessment = new HumanDonationAssessment(),
-        public AnimalFeedAssessment $animalFeedAssessment = new AnimalFeedAssessment(),
-        public CompostingAssessment $compostingAssessment = new CompostingAssessment(),
-        public EliminationAssessment $eliminationAssessment = new EliminationAssessment(),
     ) {}
 }

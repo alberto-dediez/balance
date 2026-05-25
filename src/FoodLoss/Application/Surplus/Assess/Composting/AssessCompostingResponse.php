@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\FoodLoss\Application\Surplus\Assess;
+namespace App\FoodLoss\Application\Surplus\Assess\Composting;
 
 use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\Shared\Application\CommandBus\CommandResponse;
 
-class AssessSurplusResponse implements CommandResponse
+class AssessCompostingResponse implements CommandResponse
 {
     public function __construct(
-        public SurplusId $surplusId,
+        public readonly SurplusId $surplusId,
     ) {}
 }

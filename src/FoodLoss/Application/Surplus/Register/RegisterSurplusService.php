@@ -55,12 +55,6 @@ class RegisterSurplusService implements CommandHandler
             unit: $request->unit,
             accountId: $request->accountId,
             registeredBy: $request->registeredBy,
-            preventionAssessment: $request->preventionAssessment,
-            transformationAssessment: $request->transformationAssessment,
-            humanDonationAssessment: $request->humanDonationAssessment,
-            animalFeedAssessment: $request->animalFeedAssessment,
-            compostingAssessment: $request->compostingAssessment,
-            eliminationAssessment: $request->eliminationAssessment,
         );
 
         $this->surplusRepository->add($surplus);
