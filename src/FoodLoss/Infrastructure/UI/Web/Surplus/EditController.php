@@ -44,21 +44,29 @@ class EditController extends AbstractController
             foodType: $surplus->foodType(),
             quantity: $surplus->quantity(),
             unit: $surplus->unit(),
+            preventionAssessment: $surplus->preventionAssessment(),
+            transformationAssessment: $surplus->transformationAssessment(),
+            humanDonationAssessment: $surplus->humanDonationAssessment(),
+            animalFeedAssessment: $surplus->animalFeedAssessment(),
+            compostingAssessment: $surplus->compostingAssessment(),
+            eliminationAssessment: $surplus->eliminationAssessment(),
         );
 
         try {
             $form = $this->createForm(UpdateSurplusType::class, $surplusRequest);
 
             $needsRedirect = $this->edit($request, $form, function ($form) use ($updateSurplus, $loggedUser): void {
-                $surplusRequest = $form->getData();
-
-                $updateSurplus($surplusRequest, $loggedUser());
+                $updateSurplus($form->getData(), $loggedUser());
 
                 $this->addFlash('success', new TranslatableMessage('Excedente actualizado con éxito'));
             });
 
             if ($needsRedirect) {
                 return $this->redirectToRoute('surpluses');
+            }
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                return $this->redirectToRoute('surpluses_prevention', ['surplusId' => $surplusId]);
             }
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());

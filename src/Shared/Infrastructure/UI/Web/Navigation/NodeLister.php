@@ -171,11 +171,11 @@ class NodeLister
 
         $nodes[] = new Node(
             label: new TranslatableMessage('Declaración de excedente'),
-            icon: 'solar:box-minimalistic-line-duotone',
+            icon: 'solar:cart-plus-line-duotone',
             items: [
                 new Node(
                     label: new TranslatableMessage('Excedentes'),
-                    icon: 'solar:box-minimalistic-line-duotone',
+                    icon: 'solar:cart-plus-line-duotone',
                     target: $this->router->generate('surpluses'),
                 ),
             ],
@@ -187,7 +187,7 @@ class NodeLister
             items: [
                 new Node(
                     label: new TranslatableMessage('Planes de Prevención'),
-                    icon: 'solar:document-text-line-duotone',
+                    icon: 'solar:shield-check-line-duotone',
                     target: $this->router->generate('prevention_plans'),
                 ),
             ],
@@ -295,11 +295,11 @@ class NodeLister
 
         $nodes[] = new Node(
             label: new TranslatableMessage('Declaración de excedente'),
-            icon: 'solar:box-minimalistic-line-duotone',
+            icon: 'solar:cart-plus-line-duotone',
             items: [
                 new Node(
                     label: new TranslatableMessage('Excedentes'),
-                    icon: 'solar:box-minimalistic-line-duotone',
+                    icon: 'solar:cart-plus-line-duotone',
                     target: $this->router->generate('surpluses'),
                 ),
             ],

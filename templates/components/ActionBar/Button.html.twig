@@ -1,5 +1,5 @@
-{% props button, type='primary' %}
+{% props button, type='primary', offset='' %}
 
-<div class="col-sm-6 col-md-3 col-lg-2">
+<div class="col-sm-6 col-md-3 col-lg-2 {{ offset }}">
     {{ form_widget(button, {'attr': {'class': 'w-100 btn btn-' ~ type}}) }}
 </div>

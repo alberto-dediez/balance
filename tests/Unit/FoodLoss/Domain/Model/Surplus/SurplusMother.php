@@ -83,4 +83,27 @@ class SurplusMother
             accountId: (string) $accountId,
         );
     }
+
+    public static function withAllAssessmentsAnsweredNo(AccountId $accountId): Surplus
+    {
+        $surplus = self::withAccountId($accountId);
+
+        $surplus->update(
+            date: $surplus->date(),
+            serviceCategoryId: $surplus->serviceCategoryId(),
+            criticalPointId: $surplus->criticalPointId(),
+            surplusCauseId: $surplus->surplusCauseId(),
+            foodType: $surplus->foodType(),
+            quantity: $surplus->quantity(),
+            unit: $surplus->unit(),
+            preventionAssessment: new PreventionAssessment(canBePrevented: false),
+            transformationAssessment: new TransformationAssessment(canBeTransformed: false),
+            humanDonationAssessment: new HumanDonationAssessment(canBeHumanDonated: false),
+            animalFeedAssessment: new AnimalFeedAssessment(canBeAnimalFed: false),
+            compostingAssessment: new CompostingAssessment(canBeComposted: false),
+            eliminationAssessment: new EliminationAssessment(canBeEliminated: false),
+        );
+
+        return $surplus;
+    }
 }

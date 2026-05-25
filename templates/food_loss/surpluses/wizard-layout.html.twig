@@ -1,0 +1,31 @@
+{% extends '@shared/layout/wizard.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('surpluses') }}" />
+{% endblock %}
+
+{% block content %}
+    {% if surplus is not defined %}
+        {% set wizard_steps = [
+            {label: 'General'             | trans, href: '#'},
+            {label: 'Prevención'          | trans, href: '#'},
+            {label: 'Transformación'      | trans, href: '#'},
+            {label: 'Donación humana'     | trans, href: '#'},
+            {label: 'Alimentación animal' | trans, href: '#'},
+            {label: 'Compostaje'          | trans, href: '#'},
+            {label: 'Eliminación'         | trans, href: '#'},
+        ] %}
+    {% else %}
+        {% set wizard_steps = [
+            {label: 'General'             | trans, href: path('surpluses_edit',           {surplusId: surplus.id}) },
+            {label: 'Prevención'          | trans, href: path('surpluses_prevention',     {surplusId: surplus.id}) },
+            {label: 'Transformación'      | trans, href: path('surpluses_transformation', {surplusId: surplus.id}) },
+            {label: 'Donación humana'     | trans, href: path('surpluses_human_donation', {surplusId: surplus.id}) },
+            {label: 'Alimentación animal' | trans, href: path('surpluses_animal_feed',    {surplusId: surplus.id}) },
+            {label: 'Compostaje'          | trans, href: path('surpluses_composting',     {surplusId: surplus.id}) },
+            {label: 'Eliminación'         | trans, href: path('surpluses_elimination',    {surplusId: surplus.id}) },
+        ] %}
+    {% endif %}
+
+    {{ parent() }}
+{% endblock content %}

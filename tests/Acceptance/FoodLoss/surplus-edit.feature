@@ -10,7 +10,7 @@ Feature:
         Given surplus with id "surplus-1" of account "my-account" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/surpluses/edit/surplus-1"
-        When I submit a form with "date:2026-05-22|serviceCategoryId:00000000-0000-0000-0000-000000000001|criticalPointId:00000000-0000-0000-0000-000000000001|surplusCauseId:00000000-0000-0000-0000-000000000001|foodType:fish|quantity:3|unit:kg" and button "Guardar"
+        When I submit a form with "date:2026-05-22|serviceCategoryId:00000000-0000-0000-0000-000000000001|criticalPointId:00000000-0000-0000-0000-000000000001|surplusCauseId:00000000-0000-0000-0000-000000000001|foodType:fish|quantity:3|unit:kg" and button "Continuar"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Excedente actualizado con éxito"

@@ -116,7 +116,7 @@
 .wizard {
 	display: block;
 	width: 100%;
-	overflow: hidden
+	overflow: visible
 }
 
 .wizard a {
@@ -241,7 +241,7 @@
 	background: var(--bs-body-bg);
 	display: block;
 	margin: .5em;
-	overflow: hidden;
+	overflow: visible;
 	position: relative;
 	width: auto;
 	border-radius: 30px
@@ -394,7 +394,7 @@
 
 .wizard-content .wizard {
 	width: 100%;
-	overflow: hidden
+	overflow: visible;
 }
 
 .wizard-content .wizard>.steps {
@@ -548,7 +548,7 @@
 
 .wizard-content .wizard>.content {
 	background: 0 0;
-	overflow: hidden;
+	overflow: visible;
 	position: relative;
 	width: auto;
 	padding: 0;

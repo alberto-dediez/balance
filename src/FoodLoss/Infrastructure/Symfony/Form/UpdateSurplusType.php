@@ -66,11 +66,11 @@ class UpdateSurplusType extends AbstractType
                 'required' => true,
                 'constraints' => [new Assert\NotNull()],
             ])
-            ->add('save', SubmitType::class, [
-                'label' => new TranslatableMessage('Guardar'),
-            ])
             ->add('saveAndReturn', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar y salir'),
+            ])
+            ->add('continue', SubmitType::class, [
+                'label' => new TranslatableMessage('Continuar'),
             ])
         ;
     }

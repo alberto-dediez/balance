@@ -1,0 +1,33 @@
+{% extends '@food_loss/surpluses/wizard-layout.html.twig' %}
+
+{% set page_title = ('Declaración de excedente' | trans)
+    ~ ' > '
+    ~ surplus
+    ~ ' > '
+    ~ ('Compostaje' | trans) %}
+
+{% set wizard_active = 6 %}
+{% set wizard_selected = 6 %}
+
+{% block wizard_panels %}
+    {{ form_start(form) }}
+        <div class="row">
+            <div class="col-12">
+                {{ form_row(form.canBeComposted) }}
+            </div>
+            <div class="col-12">
+                {{ form_row(form.reasonId) }}
+            </div>
+        </div>
+
+        <twig:ActionBar>
+            <div class="col-sm-6 col-md-3 col-lg-2">
+                <twig:Link path="{{ path('surpluses_animal_feed', {surplusId: surplus.id}) }}" color="light">
+                    {{ 'Volver' | trans }}
+                </twig:Link>
+            </div>
+            <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" offset="offset-lg-6 offset-md-3" />
+            <twig:ActionBar:Button type="primary" :button="form.continue" />
+        </twig:ActionBar>
+    {{ form_end(form) }}
+{% endblock %}

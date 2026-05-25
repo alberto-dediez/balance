@@ -40,6 +40,7 @@ class Surplus implements \Stringable
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $updatedAt = null,
         private ?\DateTimeImmutable $removedAt = null,
+        private ?SurplusDestination $destination = null,
     ) {
         $this->events = $events;
     }
@@ -144,6 +145,11 @@ class Surplus implements \Stringable
         return $this->removedAt;
     }
 
+    public function destination(): ?SurplusDestination
+    {
+        return $this->destination;
+    }
+
     public function register(
         \DateTimeImmutable $date,
         ServiceCategoryId $serviceCategoryId,
@@ -225,6 +231,105 @@ class Surplus implements \Stringable
                 surplusId: $this->id(),
             ),
         );
+    }
+
+    public function transformationAssess(): void
+    {
+        $this->recordApplyAndPublish(
+            new SurplusAssessed(
+                surplusId: $this->id(),
+                destination: SurplusDestination::Transformation,
+            ),
+        );
+    }
+
+    public function humanDonationAssess(): void
+    {
+        $this->recordApplyAndPublish(
+            new SurplusAssessed(
+                surplusId: $this->id(),
+                destination: SurplusDestination::HumanDonation,
+            ),
+        );
+    }
+
+    public function animalFeedAssess(): void
+    {
+        $this->recordApplyAndPublish(
+            new SurplusAssessed(
+                surplusId: $this->id(),
+                destination: SurplusDestination::AnimalFeed,
+            ),
+        );
+    }
+
+    public function compostingAssess(): void
+    {
+        $this->recordApplyAndPublish(
+            new SurplusAssessed(
+                surplusId: $this->id(),
+                destination: SurplusDestination::Composting,
+            ),
+        );
+    }
+
+    public function eliminationAssess(): void
+    {
+        $this->recordApplyAndPublish(
+            new SurplusAssessed(
+                surplusId: $this->id(),
+                destination: SurplusDestination::Elimination,
+            ),
+        );
+    }
+
+    public function applySurplusAssessed(SurplusAssessed $event): void
+    {
+        $this->destination = $event->destination();
+        $this->updatedAt = $event->occurredOn();
+
+        match ($event->destination()) {
+            SurplusDestination::Transformation => $this->applyTransformationAssessedState(),
+            SurplusDestination::HumanDonation => $this->applyHumanDonationAssessedState(),
+            SurplusDestination::AnimalFeed => $this->applyAnimalFeedAssessedState(),
+            SurplusDestination::Composting => $this->applyCompostingAssessedState(),
+            SurplusDestination::Elimination => $this->applyEliminationAssessedState(),
+        };
+    }
+
+    private function applyTransformationAssessedState(): void
+    {
+        $this->transformationAssessment = new TransformationAssessment(canBeTransformed: true, reasonId: null);
+        $this->humanDonationAssessment = new HumanDonationAssessment();
+        $this->animalFeedAssessment = new AnimalFeedAssessment();
+        $this->compostingAssessment = new CompostingAssessment();
+        $this->eliminationAssessment = new EliminationAssessment();
+    }
+
+    private function applyHumanDonationAssessedState(): void
+    {
+        $this->humanDonationAssessment = new HumanDonationAssessment(canBeHumanDonated: true, reasonId: null);
+        $this->animalFeedAssessment = new AnimalFeedAssessment();
+        $this->compostingAssessment = new CompostingAssessment();
+        $this->eliminationAssessment = new EliminationAssessment();
+    }
+
+    private function applyAnimalFeedAssessedState(): void
+    {
+        $this->animalFeedAssessment = new AnimalFeedAssessment(canBeAnimalFed: true, reasonId: null);
+        $this->compostingAssessment = new CompostingAssessment();
+        $this->eliminationAssessment = new EliminationAssessment();
+    }
+
+    private function applyCompostingAssessedState(): void
+    {
+        $this->compostingAssessment = new CompostingAssessment(canBeComposted: true, reasonId: null);
+        $this->eliminationAssessment = new EliminationAssessment();
+    }
+
+    private function applyEliminationAssessedState(): void
+    {
+        $this->eliminationAssessment = new EliminationAssessment(canBeEliminated: true);
     }
 
     public function applySurplusRegistered(SurplusRegistered $event): void

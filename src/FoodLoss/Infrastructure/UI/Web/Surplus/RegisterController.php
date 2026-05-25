@@ -32,21 +32,25 @@ class RegisterController extends AbstractController
 
         $form = $this->createForm(RegisterSurplusType::class, new RegisterSurplusRequest());
 
+        $surplusId = null;
+
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerSurplus, $loggedUser, $loggedAccount): true {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerSurplus, $loggedUser, $loggedAccount, &$surplusId): true {
                 $registerRequest = $form->getData();
                 $registerRequest->accountId = $loggedAccount()?->id();
                 $registerRequest->registeredBy = $loggedUser()->id();
 
                 $response = $registerSurplus($registerRequest, $loggedUser());
 
+                $surplusId = (string) $response->surplusId;
+
                 $this->addFlash('success', new TranslatableMessage('Excedente registrado correctamente: {date}', ['{date}' => $response->date->format('d/m/Y')]));
 
                 return true;
             });
 
-            if ($needsRedirect) {
-                return $this->redirectToRoute('surpluses');
+            if ($needsRedirect && null !== $surplusId) {
+                return $this->redirectToRoute('surpluses_prevention', ['surplusId' => $surplusId]);
             }
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
