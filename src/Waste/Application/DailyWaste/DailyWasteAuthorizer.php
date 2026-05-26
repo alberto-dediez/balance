@@ -34,7 +34,15 @@ final class DailyWasteAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        if (null == $user->accountId() || null == $subject->accountId() || false === $user->accountId()->equals($subject->accountId())) {
+        if (null == $subject->accountId()) {
+            return false;
+        }
+
+        if ($user->hasRole(Role::Admin)) {
+            return true;
+        }
+
+        if (null == $user->accountId() || false === $user->accountId()->equals($subject->accountId())) {
             return false;
         }
 
