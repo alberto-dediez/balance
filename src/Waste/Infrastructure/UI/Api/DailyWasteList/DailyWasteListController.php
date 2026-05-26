@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\UI\Api\DailyWasteList;
 
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Waste\Application\DailyWaste\List\ListDailyWastesRequest;
@@ -44,6 +45,7 @@ class DailyWasteListController extends AbstractController
         $response = $listDailyWastes(
             new ListDailyWastesRequest(
                 accountId: null !== $payload->accountId ? new AccountId($payload->accountId) : null,
+                properties: null !== $payload->propertyId ? [new PropertyId($payload->propertyId)] : [],
                 dayFrom: null !== $payload->dayFrom ? new \DateTimeImmutable($payload->dayFrom) : null,
                 dayTo: null !== $payload->dayTo ? new \DateTimeImmutable($payload->dayTo) : null,
             ),
