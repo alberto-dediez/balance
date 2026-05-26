@@ -19,7 +19,7 @@ Feature:
         When I submit a form with "canBeEliminated:1" and button "Continuar"
         When I follow redirect
         Then the response status should be 200
-        Then I see a text "Eliminación actualizada con éxito"
+        Then I see a text "Se ha registrado un nuevo excedente que no ha podido ser aprovechado y por tanto ha sido destinado a eliminación"
 
     Scenario: As an owner, denying elimination restarts the classification from transformation
         Given account "MyAccount" with id "my-account" exists
@@ -41,7 +41,7 @@ Feature:
         When I submit a form with "canBeEliminated:1" and button "Guardar y salir"
         When I follow redirect
         Then the response status should be 200
-        Then I see a text "Eliminación actualizada con éxito"
+        Then I see a text "Se ha registrado un nuevo excedente que no ha podido ser aprovechado y por tanto ha sido destinado a eliminación"
 
     Scenario: As an owner, I can't access the elimination assessment of a surplus from another account
         Given account "MyAccount" with id "my-account" exists

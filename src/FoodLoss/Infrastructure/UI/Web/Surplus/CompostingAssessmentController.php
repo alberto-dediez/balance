@@ -61,7 +61,9 @@ class CompostingAssessmentController extends AbstractController
                     $loggedUser(),
                 );
 
-                $this->addFlash('success', new TranslatableMessage('Compostaje actualizado con éxito'));
+                if ($canBeComposted) {
+                    $this->addFlash('success', new TranslatableMessage('Se ha registrado un nuevo excedente con destino a compostaje o consumo no alimentario.'));
+                }
             } catch (UnauthorizedActionException $e) {
                 throw $this->createAccessDeniedException($e->getMessage());
             } catch (\Exception) {

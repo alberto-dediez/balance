@@ -33,7 +33,10 @@ class AssessPreventionService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($surplus, SecurityAction::Edit, $user);
 
-        $surplus->assessPrevention($request->canBePrevented, $request->actionId);
+        $surplus->assessPrevention(
+            canBePrevented: $request->canBePrevented,
+            actionId: $request->canBePrevented ? $request->actionId : null,
+        );
 
         $this->surplusRepository->add($surplus);
 

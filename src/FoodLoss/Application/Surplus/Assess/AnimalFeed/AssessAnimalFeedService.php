@@ -33,7 +33,10 @@ class AssessAnimalFeedService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($surplus, SecurityAction::Edit, $user);
 
-        $surplus->assessAnimalFeed($request->canBeAnimalFed, $request->reasonId);
+        $surplus->assessAnimalFeed(
+            canBeAnimalFed: $request->canBeAnimalFed,
+            reasonId: !$request->canBeAnimalFed ? $request->reasonId : null,
+        );
 
         $this->surplusRepository->add($surplus);
 

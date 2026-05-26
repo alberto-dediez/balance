@@ -57,8 +57,6 @@ class PreventionAssessmentController extends AbstractController
                     ),
                     $loggedUser(),
                 );
-
-                $this->addFlash('success', new TranslatableMessage('Prevención actualizada con éxito'));
             } catch (UnauthorizedActionException $e) {
                 throw $this->createAccessDeniedException($e->getMessage());
             } catch (\Exception) {

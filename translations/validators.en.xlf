@@ -701,6 +701,18 @@
         <source>transformation.channel.not_null</source>
         <target>Please indicate the distribution channel</target>
       </trans-unit>
+      <trans-unit id="HdDtNt1" resname="human_donation.donation_date.not_null">
+        <source>human_donation.donation_date.not_null</source>
+        <target>The donation date is required</target>
+      </trans-unit>
+      <trans-unit id="HdRoNt1" resname="human_donation.recipient_organization.not_null">
+        <source>human_donation.recipient_organization.not_null</source>
+        <target>The recipient organisation is required</target>
+      </trans-unit>
+      <trans-unit id="HdDlNt1" resname="human_donation.create_delivery_log.not_null">
+        <source>human_donation.create_delivery_log.not_null</source>
+        <target>Please indicate whether you want to record the donation in the delivery log</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

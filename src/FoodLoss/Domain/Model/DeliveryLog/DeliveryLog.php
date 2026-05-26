@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Domain\Model\DeliveryLog;
 
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
+use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEvent;
@@ -30,6 +31,7 @@ class DeliveryLog implements \Stringable
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $updatedAt = null,
         private ?\DateTimeImmutable $removedAt = null,
+        private ?SurplusId $surplusId = null,
     ) {
         $this->events = $events;
     }
@@ -99,6 +101,11 @@ class DeliveryLog implements \Stringable
         return $this->removedAt;
     }
 
+    public function surplusId(): ?SurplusId
+    {
+        return $this->surplusId;
+    }
+
     public function register(
         \DateTimeImmutable $date,
         float $quantity,
@@ -108,6 +115,7 @@ class DeliveryLog implements \Stringable
         RecipientOrganizationId $recipientOrganizationId,
         AccountId $accountId,
         PropertyId $propertyId,
+        ?SurplusId $surplusId = null,
     ): void {
         $this->recordApplyAndPublish(
             new DeliveryLogRegistered(
@@ -120,6 +128,7 @@ class DeliveryLog implements \Stringable
                 recipientOrganizationId: $recipientOrganizationId,
                 accountId: $accountId,
                 propertyId: $propertyId,
+                surplusId: $surplusId,
             ),
         );
     }
@@ -166,6 +175,7 @@ class DeliveryLog implements \Stringable
         $this->recipientOrganizationId = $event->recipientOrganizationId();
         $this->accountId = $event->accountId();
         $this->propertyId = $event->propertyId();
+        $this->surplusId = $event->surplusId();
         $this->registeredAt = $event->occurredOn();
     }
 

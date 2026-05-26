@@ -8,5 +8,9 @@
     <embeddable name="App\FoodLoss\Domain\Model\Surplus\HumanDonationAssessment">
         <field name="canBeHumanDonated" type="boolean" column="can_be_human_donated" nullable="true"/>
         <field name="reasonId" type="reason_id" column="reason_id" nullable="true"/>
+        <field name="donationDate" type="datetime_immutable" column="donation_date" nullable="true"/>
+        <field name="batch" type="string" column="batch" nullable="true"/>
+        <field name="recipientOrganizationId" type="recipient_organization_id" column="recipient_organization_id" nullable="true"/>
+        <field name="createDeliveryLog" type="boolean" column="create_delivery_log" nullable="false" />
     </embeddable>
 </doctrine-mapping>

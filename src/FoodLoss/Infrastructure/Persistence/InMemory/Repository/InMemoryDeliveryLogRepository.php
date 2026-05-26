@@ -9,6 +9,7 @@ use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogFilter;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
+use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -45,6 +46,21 @@ class InMemoryDeliveryLogRepository implements DeliveryLogRepository
             ? $this->deliveryLogs[(string) $deliveryLogId]
             : null
         ;
+    }
+
+    public function findBySurplusId(SurplusId $surplusId): ?DeliveryLog
+    {
+        foreach ($this->deliveryLogs as $deliveryLog) {
+            if ($deliveryLog->isRemoved()) {
+                continue;
+            }
+
+            if (null !== $deliveryLog->surplusId() && $deliveryLog->surplusId()->equals($surplusId)) {
+                return $deliveryLog;
+            }
+        }
+
+        return null;
     }
 
     /** @return array<int, DeliveryLog> */

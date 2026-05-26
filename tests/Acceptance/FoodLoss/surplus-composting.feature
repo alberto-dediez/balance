@@ -19,7 +19,7 @@ Feature:
         When I submit a form with "canBeComposted:1" and button "Continuar"
         When I follow redirect
         Then the response status should be 200
-        Then I see a text "Compostaje actualizado con éxito"
+        Then I see a text "Se ha registrado un nuevo excedente con destino a compostaje o consumo no alimentario"
 
     Scenario: As an owner, answering no continues to the elimination step
         Given account "MyAccount" with id "my-account" exists
@@ -30,7 +30,6 @@ Feature:
         When I submit a form with "canBeComposted:0" and button "Continuar"
         When I follow redirect
         Then the response status should be 200
-        Then I see a text "Compostaje actualizado con éxito"
 
     Scenario: As an owner, I can save and return to the surplus list
         Given account "MyAccount" with id "my-account" exists
@@ -41,7 +40,6 @@ Feature:
         When I submit a form with "canBeComposted:0" and button "Guardar y salir"
         When I follow redirect
         Then the response status should be 200
-        Then I see a text "Compostaje actualizado con éxito"
 
     Scenario: As an owner, I can't access the composting assessment of a surplus from another account
         Given account "MyAccount" with id "my-account" exists

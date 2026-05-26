@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
 use App\FoodLoss\Domain\Model\Reason\ReasonId;
+use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -222,9 +223,54 @@ class Surplus implements \Stringable
         );
     }
 
+    public function unassessTransformation(): void
+    {
+        if ($this->transformationAssessment->isAnswered()) {
+            $this->recordApplyAndPublish(
+                new SurplusTransformationUnassessed(surplusId: $this->id()),
+            );
+        }
+    }
+
+    public function unassessHumanDonation(): void
+    {
+        if ($this->humanDonationAssessment->isAnswered()) {
+            $this->recordApplyAndPublish(
+                new SurplusHumanDonationUnassessed(surplusId: $this->id()),
+            );
+        }
+    }
+
+    public function unassessAnimalFeed(): void
+    {
+        if ($this->animalFeedAssessment->isAnswered()) {
+            $this->recordApplyAndPublish(
+                new SurplusAnimalFeedUnassessed(surplusId: $this->id()),
+            );
+        }
+    }
+
+    public function unassessComposting(): void
+    {
+        if ($this->compostingAssessment->isAnswered()) {
+            $this->recordApplyAndPublish(
+                new SurplusCompostingUnassessed(surplusId: $this->id()),
+            );
+        }
+    }
+
+    public function unassessElimination(): void
+    {
+        if ($this->eliminationAssessment->isAnswered()) {
+            $this->recordApplyAndPublish(
+                new SurplusEliminationUnassessed(surplusId: $this->id()),
+            );
+        }
+    }
+
     public function assessTransformation(
         bool $canBeTransformed,
-        ?ReasonId $reasonId,
+        ?ReasonId $reasonId = null,
         ?TransformationProduct $product = null,
         ?TransformationChannel $channel = null,
     ): void {
@@ -239,18 +285,28 @@ class Surplus implements \Stringable
         );
     }
 
-    public function assessHumanDonation(bool $canBeHumanDonated, ?ReasonId $reasonId): void
-    {
+    public function assessHumanDonation(
+        bool $canBeHumanDonated,
+        ?ReasonId $reasonId = null,
+        ?\DateTimeImmutable $donationDate = null,
+        ?string $batch = null,
+        ?RecipientOrganizationId $recipientOrganizationId = null,
+        ?bool $createDeliveryLog = false,
+    ): void {
         $this->recordApplyAndPublish(
             new SurplusHumanDonationAssessed(
                 surplusId: $this->id(),
                 canBeHumanDonated: $canBeHumanDonated,
                 reasonId: $reasonId,
+                donationDate: $donationDate,
+                batch: $batch,
+                recipientOrganizationId: $recipientOrganizationId,
+                createDeliveryLog: true === $createDeliveryLog,
             ),
         );
     }
 
-    public function assessAnimalFeed(bool $canBeAnimalFed, ?ReasonId $reasonId): void
+    public function assessAnimalFeed(bool $canBeAnimalFed, ?ReasonId $reasonId = null): void
     {
         $this->recordApplyAndPublish(
             new SurplusAnimalFeedAssessed(
@@ -261,7 +317,7 @@ class Surplus implements \Stringable
         );
     }
 
-    public function assessComposting(bool $canBeComposted, ?ReasonId $reasonId): void
+    public function assessComposting(bool $canBeComposted, ?ReasonId $reasonId = null): void
     {
         $this->recordApplyAndPublish(
             new SurplusCompostingAssessed(
@@ -302,10 +358,10 @@ class Surplus implements \Stringable
 
         if ($event->canBeTransformed()) {
             $this->destination = SurplusDestination::Transformation;
-            $this->humanDonationAssessment = new HumanDonationAssessment();
-            $this->animalFeedAssessment = new AnimalFeedAssessment();
-            $this->compostingAssessment = new CompostingAssessment();
-            $this->eliminationAssessment = new EliminationAssessment();
+            $this->unassessHumanDonation();
+            $this->unassessAnimalFeed();
+            $this->unassessComposting();
+            $this->unassessElimination();
         } elseif (SurplusDestination::Transformation === $this->destination) {
             $this->destination = null;
         }
@@ -318,13 +374,17 @@ class Surplus implements \Stringable
         $this->humanDonationAssessment = new HumanDonationAssessment(
             canBeHumanDonated: $event->canBeHumanDonated(),
             reasonId: $event->reasonId(),
+            donationDate: $event->donationDate(),
+            batch: $event->batch(),
+            recipientOrganizationId: $event->recipientOrganizationId(),
+            createDeliveryLog: $event->createDeliveryLog(),
         );
 
         if ($event->canBeHumanDonated()) {
             $this->destination = SurplusDestination::HumanDonation;
-            $this->animalFeedAssessment = new AnimalFeedAssessment();
-            $this->compostingAssessment = new CompostingAssessment();
-            $this->eliminationAssessment = new EliminationAssessment();
+            $this->unassessAnimalFeed();
+            $this->unassessComposting();
+            $this->unassessElimination();
         } elseif (SurplusDestination::HumanDonation === $this->destination) {
             $this->destination = null;
         }
@@ -341,8 +401,8 @@ class Surplus implements \Stringable
 
         if ($event->canBeAnimalFed()) {
             $this->destination = SurplusDestination::AnimalFeed;
-            $this->compostingAssessment = new CompostingAssessment();
-            $this->eliminationAssessment = new EliminationAssessment();
+            $this->unassessComposting();
+            $this->unassessElimination();
         } elseif (SurplusDestination::AnimalFeed === $this->destination) {
             $this->destination = null;
         }
@@ -359,7 +419,7 @@ class Surplus implements \Stringable
 
         if ($event->canBeComposted()) {
             $this->destination = SurplusDestination::Composting;
-            $this->eliminationAssessment = new EliminationAssessment();
+            $this->unassessElimination();
         } elseif (SurplusDestination::Composting === $this->destination) {
             $this->destination = null;
         }
@@ -379,6 +439,36 @@ class Surplus implements \Stringable
             $this->destination = null;
         }
 
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applySurplusTransformationUnassessed(SurplusTransformationUnassessed $event): void
+    {
+        $this->transformationAssessment = new TransformationAssessment();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applySurplusHumanDonationUnassessed(SurplusHumanDonationUnassessed $event): void
+    {
+        $this->humanDonationAssessment = new HumanDonationAssessment();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applySurplusAnimalFeedUnassessed(SurplusAnimalFeedUnassessed $event): void
+    {
+        $this->animalFeedAssessment = new AnimalFeedAssessment();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applySurplusCompostingUnassessed(SurplusCompostingUnassessed $event): void
+    {
+        $this->compostingAssessment = new CompostingAssessment();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applySurplusEliminationUnassessed(SurplusEliminationUnassessed $event): void
+    {
+        $this->eliminationAssessment = new EliminationAssessment();
         $this->updatedAt = $event->occurredOn();
     }
 

@@ -33,7 +33,10 @@ class AssessCompostingService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($surplus, SecurityAction::Edit, $user);
 
-        $surplus->assessComposting($request->canBeComposted, $request->reasonId);
+        $surplus->assessComposting(
+            canBeComposted: $request->canBeComposted,
+            reasonId: !$request->canBeComposted ? $request->reasonId : null,
+        );
 
         $this->surplusRepository->add($surplus);
 

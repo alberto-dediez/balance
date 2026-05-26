@@ -83,6 +83,7 @@ Infrastructure/
 - **Repository Queries:** Always use a `XxxFilter` value object for search, sorting, and pagination.
 - **Multi-language:** Implement `Translatable` and `XxxTranslation` entities for translatable fields. Supported locales: ES, EN, FR, DE, IT, TR. Use `LocaleGetter`.
 - **User Roles:** `SuperAdmin` > `Admin` > `Owner` > `User`.
+- **Aggregate Creation:** **Never instantiate an Aggregate Root directly** — always go through its corresponding Application Service (e.g. `RegisterXxxService`). This applies especially when creating an aggregate from within another aggregate's flow: even cross-aggregate creation must be delegated to the target aggregate's own service, never done inline.
 
 ## Workflow & Verification
 

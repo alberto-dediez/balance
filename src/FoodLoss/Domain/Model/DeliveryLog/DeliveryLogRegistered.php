@@ -6,6 +6,7 @@ namespace App\FoodLoss\Domain\Model\DeliveryLog;
 
 use App\FoodLoss\Domain\DomainEvent;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
+use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
@@ -25,6 +26,7 @@ final class DeliveryLogRegistered extends DomainEvent
         private readonly RecipientOrganizationId $recipientOrganizationId,
         private readonly AccountId $accountId,
         private readonly PropertyId $propertyId,
+        private readonly ?SurplusId $surplusId = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -76,6 +78,11 @@ final class DeliveryLogRegistered extends DomainEvent
         return $this->propertyId;
     }
 
+    public function surplusId(): ?SurplusId
+    {
+        return $this->surplusId;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->deliveryLogId;
@@ -93,6 +100,7 @@ final class DeliveryLogRegistered extends DomainEvent
             'recipientOrganizationId' => (string) $this->recipientOrganizationId,
             'accountId' => (string) $this->accountId,
             'propertyId' => (string) $this->propertyId,
+            'surplusId' => null !== $this->surplusId ? (string) $this->surplusId : null,
         ];
     }
 
@@ -111,6 +119,7 @@ final class DeliveryLogRegistered extends DomainEvent
             recipientOrganizationId: new RecipientOrganizationId($payload['recipientOrganizationId']),
             accountId: new AccountId($payload['accountId']),
             propertyId: new PropertyId($payload['propertyId']),
+            surplusId: isset($payload['surplusId']) ? new SurplusId($payload['surplusId']) : null,
             id: $id,
             occurredOn: $occurredOn,
         );

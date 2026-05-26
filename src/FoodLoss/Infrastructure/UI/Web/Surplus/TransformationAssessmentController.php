@@ -65,7 +65,9 @@ class TransformationAssessmentController extends AbstractController
                     $loggedUser(),
                 );
 
-                $this->addFlash('success', new TranslatableMessage('Transformación actualizada con éxito'));
+                if ($canBeTransformed) {
+                    $this->addFlash('success', new TranslatableMessage('Se ha registrado un excedente que ha sido transformado para consumo humano'));
+                }
             } catch (UnauthorizedActionException $e) {
                 throw $this->createAccessDeniedException($e->getMessage());
             } catch (\Exception) {

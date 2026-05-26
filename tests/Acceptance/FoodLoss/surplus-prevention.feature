@@ -19,7 +19,6 @@ Feature:
         When I submit a form with "canBePrevented:1" and button "Continuar"
         When I follow redirect
         Then the response status should be 200
-        Then I see a text "Prevención actualizada con éxito"
 
     Scenario: As an owner, I can save and return to the surplus list
         Given account "MyAccount" with id "my-account" exists
@@ -30,7 +29,6 @@ Feature:
         When I submit a form with "canBePrevented:0" and button "Guardar y salir"
         When I follow redirect
         Then the response status should be 200
-        Then I see a text "Prevención actualizada con éxito"
 
     Scenario: As an owner, I can't access the prevention assessment of a surplus from another account
         Given account "MyAccount" with id "my-account" exists

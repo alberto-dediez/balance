@@ -33,7 +33,14 @@ class AssessHumanDonationService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($surplus, SecurityAction::Edit, $user);
 
-        $surplus->assessHumanDonation($request->canBeHumanDonated, $request->reasonId);
+        $surplus->assessHumanDonation(
+            canBeHumanDonated: $request->canBeHumanDonated,
+            reasonId: !$request->canBeHumanDonated ? $request->reasonId : null,
+            donationDate: $request->donationDate,
+            batch: $request->batch,
+            recipientOrganizationId: $request->recipientOrganizationId,
+            createDeliveryLog: $request->createDeliveryLog,
+        );
 
         $this->surplusRepository->add($surplus);
 

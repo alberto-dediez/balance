@@ -33,7 +33,12 @@ class AssessTransformationService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($surplus, SecurityAction::Edit, $user);
 
-        $surplus->assessTransformation($request->canBeTransformed, $request->reasonId, $request->product, $request->channel);
+        $surplus->assessTransformation(
+            canBeTransformed: $request->canBeTransformed,
+            reasonId: !$request->canBeTransformed ? $request->reasonId : null,
+            product: $request->canBeTransformed ? $request->product : null,
+            channel: $request->canBeTransformed ? $request->channel : null,
+        );
 
         $this->surplusRepository->add($surplus);
 

@@ -41,6 +41,10 @@ class HumanDonationAssessmentController extends AbstractController
         $form = $this->createForm(SurplusHumanDonationAssessmentType::class, [
             'canBeHumanDonated' => $currentCanBeHumanDonated,
             'reasonId' => $humanDonation->reasonId(),
+            'donationDate' => $humanDonation->donationDate(),
+            'batch' => $humanDonation->batch(),
+            'recipientOrganizationId' => $humanDonation->recipientOrganizationId(),
+            'createDeliveryLog' => $humanDonation->isAnswered() ? $humanDonation->createDeliveryLog() : null,
         ]);
 
         $form->handleRequest($request);
@@ -57,11 +61,17 @@ class HumanDonationAssessmentController extends AbstractController
                         surplusId: $surplus->id(),
                         canBeHumanDonated: $canBeHumanDonated,
                         reasonId: $data['reasonId'],
+                        donationDate: $data['donationDate'],
+                        batch: '' !== ($data['batch'] ?? '') ? $data['batch'] : null,
+                        recipientOrganizationId: $data['recipientOrganizationId'],
+                        createDeliveryLog: true === $data['createDeliveryLog'],
                     ),
                     $loggedUser(),
                 );
 
-                $this->addFlash('success', new TranslatableMessage('Donación humana actualizada con éxito'));
+                if ($canBeHumanDonated) {
+                    $this->addFlash('success', new TranslatableMessage('Se ha registrado un nuevo excedente que ha sido donado con éxito. Puede revisar la nueva donación en el registro de entregas.'));
+                }
             } catch (UnauthorizedActionException $e) {
                 throw $this->createAccessDeniedException($e->getMessage());
             } catch (\Exception) {

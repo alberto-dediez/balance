@@ -57,6 +57,7 @@ class RegisterDeliveryLogService implements CommandHandler
             recipientOrganizationId: $request->recipientOrganizationId,
             accountId: $request->accountId,
             propertyId: $request->propertyId,
+            surplusId: $request->surplusId,
         );
 
         $this->repository->add($deliveryLog);

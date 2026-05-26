@@ -59,7 +59,9 @@ class EliminationAssessmentController extends AbstractController
                     $loggedUser(),
                 );
 
-                $this->addFlash('success', new TranslatableMessage('Eliminación actualizada con éxito'));
+                if ($canBeEliminated) {
+                    $this->addFlash('success', new TranslatableMessage('Se ha registrado un nuevo excedente que no ha podido ser aprovechado y por tanto ha sido destinado a eliminación.'));
+                }
             } catch (UnauthorizedActionException $e) {
                 throw $this->createAccessDeniedException($e->getMessage());
             } catch (\Exception) {

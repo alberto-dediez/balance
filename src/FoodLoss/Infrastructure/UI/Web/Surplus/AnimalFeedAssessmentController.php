@@ -61,7 +61,9 @@ class AnimalFeedAssessmentController extends AbstractController
                     $loggedUser(),
                 );
 
-                $this->addFlash('success', new TranslatableMessage('Alimentación animal actualizada con éxito'));
+                if ($canBeAnimalFed) {
+                    $this->addFlash('success', new TranslatableMessage('Se ha registrado un nuevo excedente con destino a alimentación animal'));
+                }
             } catch (UnauthorizedActionException $e) {
                 throw $this->createAccessDeniedException($e->getMessage());
             } catch (\Exception) {

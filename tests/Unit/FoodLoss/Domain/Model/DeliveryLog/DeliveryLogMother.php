@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLog;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
+use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 
@@ -32,6 +33,7 @@ class DeliveryLogMother
         DeliveryLogUnit $unit = DeliveryLogUnit::Kg,
         string $batch = 'B123',
         ?\DateTimeImmutable $date = null,
+        ?SurplusId $surplusId = null,
     ): DeliveryLog {
         $deliveryLog = new DeliveryLog(
             id: new DeliveryLogId($id),
@@ -46,9 +48,20 @@ class DeliveryLogMother
             recipientOrganizationId: new RecipientOrganizationId($recipientOrganizationId),
             accountId: new AccountId($accountId),
             propertyId: new PropertyId($propertyId),
+            surplusId: $surplusId,
         );
 
         return $deliveryLog;
+    }
+
+    public static function withSurplusId(SurplusId $surplusId, AccountId $accountId): DeliveryLog
+    {
+        return self::from(
+            productType: 'Product-' . random_int(100, 999),
+            id: (string) DeliveryLogId::generate(),
+            accountId: (string) $accountId,
+            surplusId: $surplusId,
+        );
     }
 
     public static function random(): DeliveryLog

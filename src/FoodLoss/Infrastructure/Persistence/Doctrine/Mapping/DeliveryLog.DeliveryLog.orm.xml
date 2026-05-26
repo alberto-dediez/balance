@@ -19,6 +19,8 @@
         <field name="accountId" type="account_id" column="account_id" nullable="false"/>
         <field name="propertyId" type="property_id" column="property_id" nullable="false"/>
 
+        <field name="surplusId" type="surplus_id" column="surplus_id" nullable="true"/>
+
         <field name="removed" type="boolean" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>

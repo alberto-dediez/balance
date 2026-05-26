@@ -701,6 +701,18 @@
         <source>transformation.channel.not_null</source>
         <target>Indica el canal de distribución</target>
       </trans-unit>
+      <trans-unit id="HdDtNt1" resname="human_donation.donation_date.not_null">
+        <source>human_donation.donation_date.not_null</source>
+        <target>La fecha de la donación es obligatoria</target>
+      </trans-unit>
+      <trans-unit id="HdRoNt1" resname="human_donation.recipient_organization.not_null">
+        <source>human_donation.recipient_organization.not_null</source>
+        <target>La entidad receptora es obligatoria</target>
+      </trans-unit>
+      <trans-unit id="HdDlNt1" resname="human_donation.create_delivery_log.not_null">
+        <source>human_donation.create_delivery_log.not_null</source>
+        <target>Debe indicar si desea registrar la donación en el registro de entregas</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

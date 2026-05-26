@@ -9,6 +9,7 @@ use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogFilter;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
+use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use Doctrine\DBAL\Types\Types;
@@ -45,6 +46,20 @@ class DoctrineDeliveryLogRepository implements DeliveryLogRepository
                 $qb->expr()->eq('e.id', ':id'),
             )
             ->setParameter('id', (string) $deliveryLogId)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    public function findBySurplusId(SurplusId $surplusId): ?DeliveryLog
+    {
+        $qb = $this->createQueryBuilderFromFilter(new DeliveryLogFilter());
+
+        return $qb
+            ->andWhere(
+                $qb->expr()->eq('e.surplusId', ':surplusId'),
+            )
+            ->setParameter('surplusId', (string) $surplusId)
             ->getQuery()
             ->getOneOrNullResult()
         ;

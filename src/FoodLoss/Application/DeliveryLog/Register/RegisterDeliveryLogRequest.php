@@ -6,6 +6,7 @@ namespace App\FoodLoss\Application\DeliveryLog\Register;
 
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
+use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Application\CommandBus\Command;
@@ -21,6 +22,7 @@ class RegisterDeliveryLogRequest implements Command
         public ?RecipientOrganizationId $recipientOrganizationId = null,
         public ?PropertyId $propertyId = null,
         public ?AccountId $accountId = null,
+        public ?SurplusId $surplusId = null,
     ) {
         if (!$this->date instanceof \DateTimeImmutable) {
             $this->date = new \DateTimeImmutable('NOW');

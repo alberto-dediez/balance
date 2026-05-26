@@ -16,7 +16,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/surpluses/edit/{surplusId}', name: 'surpluses_edit')]
 class EditController extends AbstractController
@@ -51,8 +50,6 @@ class EditController extends AbstractController
 
             $needsRedirect = $this->edit($request, $form, function ($form) use ($updateSurplus, $loggedUser): void {
                 $updateSurplus($form->getData(), $loggedUser());
-
-                $this->addFlash('success', new TranslatableMessage('Excedente actualizado con éxito'));
             });
 
             if ($needsRedirect) {
