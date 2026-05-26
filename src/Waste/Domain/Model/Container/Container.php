@@ -133,7 +133,7 @@ class Container implements \Stringable
                 propertyId: $propertyId,
                 wasteId: $wasteId,
                 measurementMethod: $measurementMethod,
-                volume: (string) $volume,
+                volume: null !== $volume ? (string) $volume : null,
                 purpose: $purpose,
                 wasteManagerId: $wasteManagerId,
                 qrCode: $qrCode,
