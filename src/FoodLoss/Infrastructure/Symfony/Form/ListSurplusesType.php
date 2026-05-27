@@ -7,6 +7,7 @@ namespace App\FoodLoss\Infrastructure\Symfony\Form;
 use App\FoodLoss\Application\Surplus\List\ListSurplusesRequest;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\CriticalPointIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\FoodTypeType;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\IncidenceIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\ServiceCategoryIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\SurplusCauseIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\SurplusDestinationType;
@@ -57,6 +58,11 @@ class ListSurplusesType extends BaseFilterType
                 'label' => new TranslatableMessage('Motivo'),
                 'required' => false,
                 'placeholder' => new TranslatableMessage('Todos'),
+            ])
+            ->add('incidenceId', IncidenceIdType::class, [
+                'label' => new TranslatableMessage('Incidencia'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Todas'),
             ])
         ;
 

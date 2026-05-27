@@ -48,6 +48,7 @@ class UpdateSurplusService implements CommandHandler
             foodType: $request->foodType,
             quantity: $request->quantity,
             unit: $request->unit,
+            incidenceId: $request->incidenceId,
         );
 
         $this->surplusRepository->add($surplus);

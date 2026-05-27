@@ -55,6 +55,7 @@ class RegisterSurplusService implements CommandHandler
             unit: $request->unit,
             accountId: $request->accountId,
             registeredBy: $request->registeredBy,
+            incidenceId: $request->incidenceId,
         );
 
         $this->surplusRepository->add($surplus);

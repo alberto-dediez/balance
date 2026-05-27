@@ -7,6 +7,7 @@ namespace App\FoodLoss\Application\Surplus\Update;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
 use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
+use App\FoodLoss\Domain\Model\Incidence\IncidenceId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseId;
@@ -23,5 +24,6 @@ class UpdateSurplusRequest implements Command
         public FoodType $foodType,
         public float $quantity,
         public DeliveryLogUnit $unit,
+        public ?IncidenceId $incidenceId = null,
     ) {}
 }

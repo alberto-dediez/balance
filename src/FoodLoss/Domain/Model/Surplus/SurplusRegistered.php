@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\DomainEvent;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
 use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
+use App\FoodLoss\Domain\Model\Incidence\IncidenceId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -30,6 +31,7 @@ final class SurplusRegistered extends DomainEvent
         private readonly DeliveryLogUnit $unit,
         private readonly AccountId $accountId,
         private readonly UserId $registeredBy,
+        private readonly ?IncidenceId $incidenceId = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -86,6 +88,11 @@ final class SurplusRegistered extends DomainEvent
         return $this->registeredBy;
     }
 
+    public function incidenceId(): ?IncidenceId
+    {
+        return $this->incidenceId;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->surplusId;
@@ -104,6 +111,7 @@ final class SurplusRegistered extends DomainEvent
             'unit' => $this->unit->value,
             'accountId' => (string) $this->accountId,
             'registeredBy' => (string) $this->registeredBy,
+            'incidenceId' => null !== $this->incidenceId ? (string) $this->incidenceId : null,
         ];
     }
 
@@ -123,6 +131,7 @@ final class SurplusRegistered extends DomainEvent
             unit: DeliveryLogUnit::from($payload['unit']),
             accountId: new AccountId($payload['accountId']),
             registeredBy: new UserId($payload['registeredBy']),
+            incidenceId: is_string($payload['incidenceId'] ?? null) ? new IncidenceId($payload['incidenceId']) : null,
             id: $id,
             occurredOn: $occurredOn,
         );

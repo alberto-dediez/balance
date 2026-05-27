@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Infrastructure\Persistence\InMemory\Repository;
 
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
+use App\FoodLoss\Domain\Model\Incidence\IncidenceId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\FoodLoss\Domain\Model\Surplus\Surplus;
 use App\FoodLoss\Domain\Model\Surplus\SurplusDestination;
@@ -90,6 +91,10 @@ class InMemorySurplusRepository implements SurplusRepository
             }
 
             if ($filter->surplusCauseId instanceof SurplusCauseId && !$surplus->surplusCauseId()->equals($filter->surplusCauseId)) {
+                continue;
+            }
+
+            if ($filter->incidenceId instanceof IncidenceId && (null === $surplus->incidenceId() || !$surplus->incidenceId()->equals($filter->incidenceId))) {
                 continue;
             }
 

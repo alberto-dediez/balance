@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\DomainEvent;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
 use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
+use App\FoodLoss\Domain\Model\Incidence\IncidenceId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseId;
 use App\Shared\Domain\Event\DomainEventId;
@@ -26,6 +27,7 @@ final class SurplusUpdated extends DomainEvent
         private readonly FoodType $foodType,
         private readonly float $quantity,
         private readonly DeliveryLogUnit $unit,
+        private readonly ?IncidenceId $incidenceId = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -72,6 +74,11 @@ final class SurplusUpdated extends DomainEvent
         return $this->unit;
     }
 
+    public function incidenceId(): ?IncidenceId
+    {
+        return $this->incidenceId;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->surplusId;
@@ -88,6 +95,7 @@ final class SurplusUpdated extends DomainEvent
             'foodType' => $this->foodType->value,
             'quantity' => $this->quantity,
             'unit' => $this->unit->value,
+            'incidenceId' => null !== $this->incidenceId ? (string) $this->incidenceId : null,
         ];
     }
 
@@ -105,6 +113,7 @@ final class SurplusUpdated extends DomainEvent
             foodType: FoodType::from($payload['foodType']),
             quantity: (float) $payload['quantity'],
             unit: DeliveryLogUnit::from($payload['unit']),
+            incidenceId: is_string($payload['incidenceId'] ?? null) ? new IncidenceId($payload['incidenceId']) : null,
             id: $id,
             occurredOn: $occurredOn,
         );

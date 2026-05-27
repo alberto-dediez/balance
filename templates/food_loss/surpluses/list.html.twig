@@ -19,6 +19,8 @@
         }, {
             'label': 'Destino' | trans,
         }, {
+            'label': 'Incidencia' | trans,
+        }, {
             'label': 'Fecha de registro' | trans,
             'sortable': true,
             'sortableBy': 'registeredAt'
@@ -37,6 +39,14 @@
         <td>
             {% if element.destination %}
                 <span class="badge {{ element.destination.style }}">{{ element.destination.value | trans({}, 'surplusDestination') }}</span>
+            {% endif %}
+        </td>
+        <td>
+            {% if element.incidenceId %}
+                {% set incidence = element.incidenceId | incidence_name %}
+                {% if incidence %}
+                    <a href="{{ path('incidences', {}) }}" class="text-decoration-none">{{ incidence.name }}</a>
+                {% endif %}
             {% endif %}
         </td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>

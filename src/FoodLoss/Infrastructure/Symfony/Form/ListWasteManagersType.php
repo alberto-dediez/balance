@@ -7,7 +7,6 @@ namespace App\FoodLoss\Infrastructure\Symfony\Form;
 use App\FoodLoss\Application\WasteManager\List\ListWasteManagersRequest;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
 use App\Shared\Infrastructure\Symfony\Form\Type\BooleanType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;

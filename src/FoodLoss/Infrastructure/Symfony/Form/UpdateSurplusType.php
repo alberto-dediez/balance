@@ -8,6 +8,7 @@ use App\FoodLoss\Application\Surplus\Update\UpdateSurplusRequest;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\CriticalPointIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\DeliveryLogUnitType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\FoodTypeType;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\IncidenceIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\ServiceCategoryIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\SurplusCauseIdType;
 use Symfony\Component\Form\AbstractType;
@@ -65,6 +66,11 @@ class UpdateSurplusType extends AbstractType
                 'label' => new TranslatableMessage('Unidad'),
                 'required' => true,
                 'constraints' => [new Assert\NotNull()],
+            ])
+            ->add('incidenceId', IncidenceIdType::class, [
+                'label' => new TranslatableMessage('Incidencia relacionada'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Ninguna'),
             ])
             ->add('saveAndReturn', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar y salir'),

@@ -27,6 +27,9 @@
         <td>{{ element.incidenceType.value | trans({}, 'incidenceType') }}</td>
         <td>{{ element.propertyId | property_name }}</td>
         <td>
+            <twig:List:Action path="{{ path('surpluses_register', {'incidenceId': element.id}) }}" title="{{ 'Declarar excedente' | trans }}">
+                <twig:Icon name="solar:cart-plus-line-duotone" size="lg" />
+            </twig:List:Action>
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('incidences_edit', {'incidenceId': element.id}) }}" />
             {% endif %}

@@ -6,6 +6,7 @@ namespace App\FoodLoss\Domain\Model\Surplus;
 
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
+use App\FoodLoss\Domain\Model\Incidence\IncidenceId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -24,6 +25,7 @@ class SurplusFilter
         public ?ServiceCategoryId $serviceCategoryId = null,
         public ?CriticalPointId $criticalPointId = null,
         public ?SurplusCauseId $surplusCauseId = null,
+        public ?IncidenceId $incidenceId = null,
         int $limit = 10,
     ) {
         $this->limit = $limit;

@@ -8,11 +8,12 @@ use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
 use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
+use App\FoodLoss\Domain\Model\Incidence\IncidenceId;
 use App\FoodLoss\Domain\Model\Reason\ReasonId;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
-use App\FoodLoss\Domain\Model\WasteManager\WasteManagerId;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseId;
+use App\FoodLoss\Domain\Model\WasteManager\WasteManagerId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEvent;
@@ -46,6 +47,7 @@ class Surplus implements \Stringable
         private ?\DateTimeImmutable $updatedAt = null,
         private ?\DateTimeImmutable $removedAt = null,
         private ?SurplusDestination $destination = null,
+        private ?IncidenceId $incidenceId = null,
     ) {
         $this->events = $events;
     }
@@ -155,6 +157,11 @@ class Surplus implements \Stringable
         return $this->destination;
     }
 
+    public function incidenceId(): ?IncidenceId
+    {
+        return $this->incidenceId;
+    }
+
     public function register(
         \DateTimeImmutable $date,
         ServiceCategoryId $serviceCategoryId,
@@ -165,6 +172,7 @@ class Surplus implements \Stringable
         DeliveryLogUnit $unit,
         AccountId $accountId,
         UserId $registeredBy,
+        ?IncidenceId $incidenceId = null,
     ): void {
         $this->recordApplyAndPublish(
             new SurplusRegistered(
@@ -178,6 +186,7 @@ class Surplus implements \Stringable
                 unit: $unit,
                 accountId: $accountId,
                 registeredBy: $registeredBy,
+                incidenceId: $incidenceId,
             ),
         );
     }
@@ -190,6 +199,7 @@ class Surplus implements \Stringable
         FoodType $foodType,
         float $quantity,
         DeliveryLogUnit $unit,
+        ?IncidenceId $incidenceId = null,
     ): void {
         $this->recordApplyAndPublish(
             new SurplusUpdated(
@@ -201,6 +211,7 @@ class Surplus implements \Stringable
                 foodType: $foodType,
                 quantity: $quantity,
                 unit: $unit,
+                incidenceId: $incidenceId,
             ),
         );
     }
@@ -495,6 +506,7 @@ class Surplus implements \Stringable
         $this->unit = $event->unit();
         $this->accountId = $event->accountId();
         $this->registeredBy = $event->registeredBy();
+        $this->incidenceId = $event->incidenceId();
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -507,6 +519,7 @@ class Surplus implements \Stringable
         $this->foodType = $event->foodType();
         $this->quantity = $event->quantity();
         $this->unit = $event->unit();
+        $this->incidenceId = $event->incidenceId();
         $this->updatedAt = $event->occurredOn();
     }
 

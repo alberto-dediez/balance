@@ -43,6 +43,7 @@ class EditController extends AbstractController
             foodType: $surplus->foodType(),
             quantity: $surplus->quantity(),
             unit: $surplus->unit(),
+            incidenceId: $surplus->incidenceId(),
         );
 
         try {

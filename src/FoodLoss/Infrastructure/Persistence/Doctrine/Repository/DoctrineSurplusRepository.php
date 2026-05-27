@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
+use App\FoodLoss\Domain\Model\Incidence\IncidenceId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\FoodLoss\Domain\Model\Surplus\Surplus;
 use App\FoodLoss\Domain\Model\Surplus\SurplusDestination;
@@ -136,6 +137,15 @@ class DoctrineSurplusRepository implements SurplusRepository
                     $qb->expr()->eq('e.surplusCauseId', ':surplusCauseId'),
                 )
                 ->setParameter('surplusCauseId', (string) $filter->surplusCauseId)
+            ;
+        }
+
+        if ($filter->incidenceId instanceof IncidenceId) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('e.incidenceId', ':incidenceId'),
+                )
+                ->setParameter('incidenceId', (string) $filter->incidenceId)
             ;
         }
 

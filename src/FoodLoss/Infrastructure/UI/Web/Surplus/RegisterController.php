@@ -6,6 +6,7 @@ namespace App\FoodLoss\Infrastructure\UI\Web\Surplus;
 
 use App\FoodLoss\Application\Surplus\Register\RegisterSurplusRequest;
 use App\FoodLoss\Application\Surplus\Register\RegisterSurplusService;
+use App\FoodLoss\Domain\Model\Incidence\IncidenceId;
 use App\FoodLoss\Domain\Model\Surplus\Surplus;
 use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\FoodLoss\Infrastructure\Symfony\Form\RegisterSurplusType;
@@ -30,7 +31,13 @@ class RegisterController extends AbstractController
     {
         $this->denyAccessUnlessGranted(SecurityAction::Register->value, new Surplus(SurplusId::generate(), accountId: $loggedAccount()?->id() ?? AccountId::generate()));
 
-        $form = $this->createForm(RegisterSurplusType::class, new RegisterSurplusRequest());
+        $registerRequest = new RegisterSurplusRequest();
+        $incidenceIdParam = $request->query->get('incidenceId');
+        if (null !== $incidenceIdParam && '' !== $incidenceIdParam) {
+            $registerRequest->incidenceId = new IncidenceId((string) $incidenceIdParam);
+        }
+
+        $form = $this->createForm(RegisterSurplusType::class, $registerRequest);
 
         $surplusId = null;
 

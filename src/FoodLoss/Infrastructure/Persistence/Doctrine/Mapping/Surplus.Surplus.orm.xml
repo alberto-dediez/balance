@@ -28,6 +28,7 @@
         <embedded name="eliminationAssessment" class="App\FoodLoss\Domain\Model\Surplus\EliminationAssessment" column-prefix="elimination_" />
 
         <field name="destination" type="string" enum-type="App\FoodLoss\Domain\Model\Surplus\SurplusDestination" column="destination" nullable="true"/>
+        <field name="incidenceId" type="incidence_id" column="incidence_id" nullable="true"/>
 
         <field name="removed" type="boolean" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>

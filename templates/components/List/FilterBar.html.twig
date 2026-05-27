@@ -48,6 +48,8 @@
                             {% set value = value | company_name %}
                         {% elseif field == 'foodType' %}
                             {% set value = value.value | trans({}, 'foodType') %}
+                        {% elseif field == 'incidenceId' %}
+                            {% set value = value | incidence_name %}
                         {% endif %}
 
                         <twig:List:FilterShow
