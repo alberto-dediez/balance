@@ -10,7 +10,7 @@
     ~ ' > '
     ~ ('Editar' | trans)
     ~ ' > '
-    ~ deliveryLog.productType %}
+    ~ deliveryLog.productType.value | trans({}, 'foodType') %}
 
 {% block content %}
     {{ form_start(form) }}

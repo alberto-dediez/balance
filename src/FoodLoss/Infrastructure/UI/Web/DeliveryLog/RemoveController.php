@@ -30,7 +30,7 @@ class RemoveController extends AbstractController
         try {
             $removeDeliveryLog(new RemoveDeliveryLogRequest($deliveryLog->id()), $loggedUser());
 
-            $this->addFlash('success', new TranslatableMessage('Se ha eliminado el registro de entrega de {productType}', ['{productType}' => $deliveryLog->productType()]));
+            $this->addFlash('success', new TranslatableMessage('Se ha eliminado el registro de entrega de {productType}', ['{productType}' => $deliveryLog->batch()]));
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
         } catch (\Exception) {

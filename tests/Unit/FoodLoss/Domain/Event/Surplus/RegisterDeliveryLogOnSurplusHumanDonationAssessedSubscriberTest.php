@@ -99,7 +99,7 @@ class RegisterDeliveryLogOnSurplusHumanDonationAssessedSubscriberTest extends Te
         $deliveryLog = $deliveryLogs[0];
         $this->assertSame($surplus->quantity(), $deliveryLog->quantity());
         $this->assertSame($surplus->unit(), $deliveryLog->unit());
-        $this->assertSame($surplus->foodType()->value, $deliveryLog->productType());
+        $this->assertSame($surplus->foodType(), $deliveryLog->productType());
         $this->assertNotNull($deliveryLog->recipientOrganizationId());
         $this->assertTrue($deliveryLog->recipientOrganizationId()->equals($recipientOrganizationId));
         $this->assertNotNull($deliveryLog->accountId());

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Application\DeliveryLog\Register;
 
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
+use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -17,7 +18,7 @@ class RegisterDeliveryLogRequest implements Command
         public ?\DateTimeImmutable $date = null,
         public float $quantity = 0.0,
         public DeliveryLogUnit $unit = DeliveryLogUnit::Kg,
-        public string $productType = '',
+        public FoodType $productType = FoodType::Others,
         public string $batch = '',
         public ?RecipientOrganizationId $recipientOrganizationId = null,
         public ?PropertyId $propertyId = null,

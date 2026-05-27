@@ -7,6 +7,7 @@ namespace App\Tests\Acceptance\FoodLoss;
 use App\FoodLoss\Domain\Model\Action\ActionRepository;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
+use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
 use App\FoodLoss\Domain\Model\DoggyBagException\DoggyBagExceptionRepository;
 use App\FoodLoss\Domain\Model\DoggyBagSign\DoggyBagSignRepository;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
@@ -255,7 +256,7 @@ final readonly class FoodLossContext implements Context
     public function deliveryLogWithIdOfAccountExists(string $productType, string $id, string $accountId): void
     {
         $deliveryLog = DeliveryLogMother::from(
-            productType: $productType,
+            productType: FoodType::from($productType),
             id: $id,
             accountId: $accountId,
         );

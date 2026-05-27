@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Symfony\Form\Type;
 
-use App\FoodLoss\Domain\Model\Surplus\FoodType;
+use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
 use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;

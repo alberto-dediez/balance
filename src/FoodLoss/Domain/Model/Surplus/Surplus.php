@@ -7,6 +7,7 @@ namespace App\FoodLoss\Domain\Model\Surplus;
 use App\FoodLoss\Domain\Model\Action\ActionId;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
+use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
 use App\FoodLoss\Domain\Model\Reason\ReasonId;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;

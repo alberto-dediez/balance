@@ -6,6 +6,7 @@ namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
 use App\FoodLoss\Application\DeliveryLog\Update\UpdateDeliveryLogRequest;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\DeliveryLogUnitType;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\FoodTypeType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\RecipientOrganizationIdType;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use Symfony\Component\Form\AbstractType;
@@ -41,13 +42,10 @@ class UpdateDeliveryLogType extends AbstractType
                 'required' => true,
                 'constraints' => [new Assert\NotNull()],
             ])
-            ->add('productType', TextType::class, [
+            ->add('productType', FoodTypeType::class, [
                 'label' => new TranslatableMessage('Tipo de producto'),
-                'required' => false,
-                'empty_data' => '',
-                'constraints' => [
-                    new Assert\Length(max: 255),
-                ],
+                'required' => true,
+                'constraints' => [new Assert\NotNull()],
             ])
             ->add('batch', TextType::class, [
                 'label' => new TranslatableMessage('Lote'),

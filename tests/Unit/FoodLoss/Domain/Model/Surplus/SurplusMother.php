@@ -6,8 +6,8 @@ namespace App\Tests\Unit\FoodLoss\Domain\Model\Surplus;
 
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
+use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
-use App\FoodLoss\Domain\Model\Surplus\FoodType;
 use App\FoodLoss\Domain\Model\Surplus\Surplus;
 use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseId;

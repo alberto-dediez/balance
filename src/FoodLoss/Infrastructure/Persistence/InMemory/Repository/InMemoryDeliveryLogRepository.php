@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLog;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogFilter;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
+use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -91,7 +92,7 @@ class InMemoryDeliveryLogRepository implements DeliveryLogRepository
                 continue;
             }
 
-            if (!empty($filter->productType) && !str_contains(strtolower($deliveryLog->productType()), strtolower($filter->productType))) {
+            if ($filter->productType instanceof FoodType && $filter->productType !== $deliveryLog->productType()) {
                 continue;
             }
 

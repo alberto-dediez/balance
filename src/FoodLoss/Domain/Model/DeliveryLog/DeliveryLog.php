@@ -21,7 +21,7 @@ class DeliveryLog implements \Stringable
         private \DateTimeImmutable $date = new \DateTimeImmutable('NOW'),
         private float $quantity = 0.0,
         private DeliveryLogUnit $unit = DeliveryLogUnit::Kg,
-        private string $productType = '',
+        private FoodType $productType = FoodType::Others,
         private string $batch = '',
         private ?RecipientOrganizationId $recipientOrganizationId = null,
         private ?AccountId $accountId = null,
@@ -56,7 +56,7 @@ class DeliveryLog implements \Stringable
         return $this->unit;
     }
 
-    public function productType(): string
+    public function productType(): FoodType
     {
         return $this->productType;
     }
@@ -110,7 +110,7 @@ class DeliveryLog implements \Stringable
         \DateTimeImmutable $date,
         float $quantity,
         DeliveryLogUnit $unit,
-        string $productType,
+        FoodType $productType,
         string $batch,
         RecipientOrganizationId $recipientOrganizationId,
         AccountId $accountId,
@@ -137,7 +137,7 @@ class DeliveryLog implements \Stringable
         \DateTimeImmutable $date,
         float $quantity,
         DeliveryLogUnit $unit,
-        string $productType,
+        FoodType $productType,
         string $batch,
         RecipientOrganizationId $recipientOrganizationId,
         PropertyId $propertyId,
@@ -199,6 +199,6 @@ class DeliveryLog implements \Stringable
 
     public function __toString(): string
     {
-        return sprintf('%s - %s', $this->date->format('Y-m-d'), $this->productType);
+        return sprintf('%s - %s', $this->date->format('Y-m-d'), $this->productType->value);
     }
 }

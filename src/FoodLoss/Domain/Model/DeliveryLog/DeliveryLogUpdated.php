@@ -19,7 +19,7 @@ final class DeliveryLogUpdated extends DomainEvent
         private readonly \DateTimeImmutable $date,
         private readonly float $quantity,
         private readonly DeliveryLogUnit $unit,
-        private readonly string $productType,
+        private readonly FoodType $productType,
         private readonly string $batch,
         private readonly RecipientOrganizationId $recipientOrganizationId,
         private readonly PropertyId $propertyId,
@@ -49,7 +49,7 @@ final class DeliveryLogUpdated extends DomainEvent
         return $this->unit;
     }
 
-    public function productType(): string
+    public function productType(): FoodType
     {
         return $this->productType;
     }
@@ -81,7 +81,7 @@ final class DeliveryLogUpdated extends DomainEvent
             'date' => $this->date->format(\DateTimeInterface::ATOM),
             'quantity' => $this->quantity,
             'unit' => $this->unit->value,
-            'productType' => $this->productType,
+            'productType' => $this->productType->value,
             'batch' => $this->batch,
             'recipientOrganizationId' => (string) $this->recipientOrganizationId,
             'propertyId' => (string) $this->propertyId,
@@ -98,7 +98,7 @@ final class DeliveryLogUpdated extends DomainEvent
             date: new \DateTimeImmutable($payload['date']),
             quantity: (float) $payload['quantity'],
             unit: DeliveryLogUnit::from($payload['unit']),
-            productType: $payload['productType'],
+            productType: FoodType::from($payload['productType']),
             batch: $payload['batch'],
             recipientOrganizationId: new RecipientOrganizationId($payload['recipientOrganizationId']),
             propertyId: new PropertyId($payload['propertyId']),

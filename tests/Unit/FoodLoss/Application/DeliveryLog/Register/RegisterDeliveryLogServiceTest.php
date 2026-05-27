@@ -10,6 +10,7 @@ use App\FoodLoss\Application\DeliveryLog\Register\RegisterDeliveryLogService;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRegistered;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
+use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -43,7 +44,7 @@ class RegisterDeliveryLogServiceTest extends TestCase
             date: new \DateTimeImmutable('2026-04-06'),
             quantity: 15.5,
             unit: DeliveryLogUnit::Rations,
-            productType: 'Meals',
+            productType: FoodType::Processed,
             batch: 'LOT-99',
             recipientOrganizationId: new RecipientOrganizationId('recipient-id'),
             propertyId: new PropertyId('property-id'),
@@ -53,7 +54,7 @@ class RegisterDeliveryLogServiceTest extends TestCase
         $result = $sut($request, $user);
 
         $this->assertNotEmpty((string) $result->deliveryLogId);
-        $this->assertEquals('Meals', $result->productType);
+        $this->assertEquals(FoodType::Processed, $result->productType);
 
         $deliveryLogPersisted = $repository->find($result->deliveryLogId);
 

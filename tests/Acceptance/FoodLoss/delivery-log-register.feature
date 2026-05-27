@@ -22,7 +22,7 @@ Feature:
         Given recipient organization "FoodBank" with id "bank-1" of account "my-account" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/delivery-logs/register"
-        When I submit a form with "date:2026-04-06|quantity:10|unit:kg|productType:Bananas|recipientOrganizationId:bank-1|propertyId:prop-1" and button "Registrar"
+        When I submit a form with "date:2026-04-06|quantity:10|unit:kg|productType:fruit|recipientOrganizationId:bank-1|propertyId:prop-1" and button "Registrar"
         When I follow redirect
         Then the response status should be 200
-        Then I see a text "Registro de entrega creado correctamente: Bananas"
+        Then I see a text "Registro de entrega creado correctamente: fruit"

@@ -7,6 +7,7 @@ namespace App\Tests\Unit\FoodLoss\Domain\Model\DeliveryLog;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLog;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
+use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -17,14 +18,14 @@ class DeliveryLogMother
     public static function registeredDeliveryLog(): DeliveryLog
     {
         return self::from(
-            productType: 'Apples',
+            productType: FoodType::Fruit,
             id: (string) DeliveryLogId::generate(),
             accountId: 'account-id-test',
         );
     }
 
     public static function from(
-        string $productType,
+        FoodType $productType,
         string $id,
         string $accountId,
         string $recipientOrganizationId = 'recipient-org-id-test',
@@ -57,7 +58,7 @@ class DeliveryLogMother
     public static function withSurplusId(SurplusId $surplusId, AccountId $accountId): DeliveryLog
     {
         return self::from(
-            productType: 'Product-' . random_int(100, 999),
+            productType: FoodType::Others,
             id: (string) DeliveryLogId::generate(),
             accountId: (string) $accountId,
             surplusId: $surplusId,
@@ -66,8 +67,10 @@ class DeliveryLogMother
 
     public static function random(): DeliveryLog
     {
+        $cases = FoodType::cases();
+
         return self::from(
-            productType: 'Product-' . random_int(100, 999),
+            productType: $cases[array_rand($cases)],
             id: (string) DeliveryLogId::generate(),
             accountId: (string) AccountId::generate(),
         );
@@ -76,7 +79,7 @@ class DeliveryLogMother
     public static function withPropertyId(PropertyId $propertyId): DeliveryLog
     {
         return self::from(
-            productType: 'Product-' . random_int(100, 999),
+            productType: FoodType::Others,
             id: (string) DeliveryLogId::generate(),
             accountId: (string) AccountId::generate(),
             propertyId: (string) $propertyId,
@@ -86,7 +89,7 @@ class DeliveryLogMother
     public static function withRecipientOrganizationId(RecipientOrganizationId $recipientOrganizationId): DeliveryLog
     {
         return self::from(
-            productType: 'Product-' . random_int(100, 999),
+            productType: FoodType::Others,
             id: (string) DeliveryLogId::generate(),
             accountId: (string) AccountId::generate(),
             recipientOrganizationId: (string) $recipientOrganizationId,

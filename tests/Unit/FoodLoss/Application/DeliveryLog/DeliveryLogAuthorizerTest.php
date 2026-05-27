@@ -7,6 +7,7 @@ namespace App\Tests\Unit\FoodLoss\Application\DeliveryLog;
 use App\FoodLoss\Application\DeliveryLog\DeliveryLogAuthorizer;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLog;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogId;
+use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
@@ -27,7 +28,7 @@ class DeliveryLogAuthorizerTest extends TestCase
     public function testOwnerCanEditDeliveryLogFromSameAccount(): void
     {
         $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
-        $subject = DeliveryLogMother::from(productType: 'Test', id: (string) DeliveryLogId::generate(), accountId: 'account-id-test');
+        $subject = DeliveryLogMother::from(productType: FoodType::Others, id: (string) DeliveryLogId::generate(), accountId: 'account-id-test');
 
         $this->assertTrue($this->createSUT()->canDoThat($subject, Action::Edit, $user));
     }
@@ -35,7 +36,7 @@ class DeliveryLogAuthorizerTest extends TestCase
     public function testOwnerCannotEditDeliveryLogFromOtherAccount(): void
     {
         $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
-        $subject = DeliveryLogMother::from(productType: 'Test', id: (string) DeliveryLogId::generate(), accountId: 'other-account-id');
+        $subject = DeliveryLogMother::from(productType: FoodType::Others, id: (string) DeliveryLogId::generate(), accountId: 'other-account-id');
 
         $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Edit, $user));
     }

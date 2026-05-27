@@ -38,7 +38,7 @@ class RegisterController extends AbstractController
 
                 $response = $registerDeliveryLog($registerRequest, $loggedUser());
 
-                $this->addFlash('success', new TranslatableMessage('Registro de entrega creado correctamente: {productType}', ['{productType}' => $response->productType]));
+                $this->addFlash('success', new TranslatableMessage('Registro de entrega creado correctamente: {productType}', ['{productType}' => $response->productType->value]));
 
                 return true;
             });

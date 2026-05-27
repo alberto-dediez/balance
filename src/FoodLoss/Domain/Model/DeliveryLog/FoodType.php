@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\FoodLoss\Domain\Model\Surplus;
+namespace App\FoodLoss\Domain\Model\DeliveryLog;
 
 enum FoodType: string
 {

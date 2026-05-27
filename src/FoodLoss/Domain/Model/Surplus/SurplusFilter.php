@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Domain\Model\Surplus;
 
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
+use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseId;
 use App\Security\Domain\Model\Account\AccountId;

@@ -17,7 +17,7 @@ class DeliveryLogFilter
         public ?AccountId $accountId = null,
         public ?RecipientOrganizationId $recipientOrganizationId = null,
         public ?PropertyId $propertyId = null,
-        public ?string $productType = null,
+        public ?FoodType $productType = null,
         public ?\DateTimeImmutable $dateFrom = null,
         public ?\DateTimeImmutable $dateTo = null,
         int $limit = 10,

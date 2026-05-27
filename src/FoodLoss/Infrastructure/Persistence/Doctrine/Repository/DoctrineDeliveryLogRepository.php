@@ -8,6 +8,7 @@ use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLog;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogFilter;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
+use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -107,12 +108,12 @@ class DoctrineDeliveryLogRepository implements DeliveryLogRepository
             ;
         }
 
-        if (!empty($filter->productType)) {
+        if ($filter->productType instanceof FoodType) {
             $qb
                 ->andWhere(
-                    $qb->expr()->like('e.productType', ':productType'),
+                    $qb->expr()->eq('e.productType', ':productType'),
                 )
-                ->setParameter('productType', "%{$filter->productType}%")
+                ->setParameter('productType', $filter->productType->value)
             ;
         }
 

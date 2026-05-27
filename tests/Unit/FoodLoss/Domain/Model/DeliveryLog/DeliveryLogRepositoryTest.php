@@ -6,6 +6,7 @@ namespace App\Tests\Unit\FoodLoss\Domain\Model\DeliveryLog;
 
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogFilter;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
+use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class DeliveryLogRepositoryTest extends KernelTestCase
@@ -48,12 +49,12 @@ abstract class DeliveryLogRepositoryTest extends KernelTestCase
     {
         $repository = $this->createSUT();
 
-        $repository->add(DeliveryLogMother::random());
-        $repository->add(DeliveryLogMother::random());
-        $repository->add(DeliveryLogMother::random());
-        $repository->add(DeliveryLogMother::random());
-        $repository->add(DeliveryLogMother::random());
-        $repository->add(DeliveryLogMother::from(productType: 'Specific Product', id: '1', accountId: 'acc1'));
+        $repository->add(DeliveryLogMother::from(productType: FoodType::Fish, id: '2', accountId: 'acc2'));
+        $repository->add(DeliveryLogMother::from(productType: FoodType::Fruit, id: '3', accountId: 'acc3'));
+        $repository->add(DeliveryLogMother::from(productType: FoodType::Eggs, id: '4', accountId: 'acc4'));
+        $repository->add(DeliveryLogMother::from(productType: FoodType::Others, id: '5', accountId: 'acc5'));
+        $repository->add(DeliveryLogMother::from(productType: FoodType::Vegetables, id: '6', accountId: 'acc6'));
+        $repository->add(DeliveryLogMother::from(productType: FoodType::Meat, id: '1', accountId: 'acc1'));
 
         $filter = new DeliveryLogFilter();
 
@@ -62,7 +63,7 @@ abstract class DeliveryLogRepositoryTest extends KernelTestCase
         $this->assertCount(6, $resultUnfiltered);
 
         $filter = new DeliveryLogFilter(
-            productType: 'Specific Product',
+            productType: FoodType::Meat,
         );
 
         $result = $repository->findByFilter($filter);

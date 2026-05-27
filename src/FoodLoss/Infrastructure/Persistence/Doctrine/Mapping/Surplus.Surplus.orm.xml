@@ -14,7 +14,7 @@
         <field name="serviceCategoryId" type="service_category_id" column="service_category_id" nullable="false"/>
         <field name="criticalPointId" type="critical_point_id" column="critical_point_id" nullable="false"/>
         <field name="surplusCauseId" type="surplus_cause_id" column="surplus_cause_id" nullable="false"/>
-        <field name="foodType" type="string" enum-type="App\FoodLoss\Domain\Model\Surplus\FoodType" column="food_type" nullable="false"/>
+        <field name="foodType" type="string" enum-type="App\FoodLoss\Domain\Model\DeliveryLog\FoodType" column="food_type" nullable="false"/>
         <field name="quantity" type="float" nullable="false"/>
         <field name="unit" type="string" enum-type="App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit" nullable="false"/>
         <field name="accountId" type="account_id" column="account_id" nullable="false"/>

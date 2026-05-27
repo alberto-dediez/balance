@@ -26,7 +26,7 @@
     <twig:List:Table :columns="columns" :elements="deliveryLogs">
         <td>{{ element.date | date('d/m/Y') }}</td>
         <td>{{ element.quantity }} {{ element.unit.value | trans({}, 'deliveryLogUnit') }}</td>
-        <td>{{ element.productType }}</td>
+        <td>{{ element.productType.value | trans({}, 'foodType') }}</td>
         <td>{{ element.recipientOrganizationId | recipient_organization_name }}</td>
         <td>{{ element.propertyId | property_name }}</td>
         <td>
