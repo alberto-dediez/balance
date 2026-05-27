@@ -15,4 +15,15 @@ enum SurplusDestination: string
     case Composting = 'Composting';
 
     case Elimination = 'Elimination';
+
+    public function style(): string
+    {
+        return match ($this) {
+            self::Transformation => 'bg-success',
+            self::HumanDonation  => 'bg-primary',
+            self::AnimalFeed     => 'bg-info',
+            self::Composting     => 'bg-warning',
+            self::Elimination    => 'bg-danger',
+        };
+    }
 }

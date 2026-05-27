@@ -19,6 +19,7 @@ class SurplusFilter
         public ?\DateTimeImmutable $dateFrom = null,
         public ?\DateTimeImmutable $dateTo = null,
         public ?FoodType $foodType = null,
+        public ?SurplusDestination $destination = null,
         public ?ServiceCategoryId $serviceCategoryId = null,
         public ?CriticalPointId $criticalPointId = null,
         public ?SurplusCauseId $surplusCauseId = null,

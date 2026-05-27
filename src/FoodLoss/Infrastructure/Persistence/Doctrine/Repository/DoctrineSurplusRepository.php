@@ -7,6 +7,7 @@ namespace App\FoodLoss\Infrastructure\Persistence\Doctrine\Repository;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\FoodLoss\Domain\Model\Surplus\Surplus;
+use App\FoodLoss\Domain\Model\Surplus\SurplusDestination;
 use App\FoodLoss\Domain\Model\Surplus\SurplusFilter;
 use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\FoodLoss\Domain\Model\Surplus\SurplusRepository;
@@ -99,6 +100,15 @@ class DoctrineSurplusRepository implements SurplusRepository
                     $qb->expr()->eq('e.foodType', ':foodType'),
                 )
                 ->setParameter('foodType', $filter->foodType->value)
+            ;
+        }
+
+        if ($filter->destination instanceof SurplusDestination) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('e.destination', ':destination'),
+                )
+                ->setParameter('destination', $filter->destination->value)
             ;
         }
 

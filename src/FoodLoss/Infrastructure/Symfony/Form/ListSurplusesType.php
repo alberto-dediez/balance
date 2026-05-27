@@ -9,6 +9,7 @@ use App\FoodLoss\Infrastructure\Symfony\Form\Type\CriticalPointIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\FoodTypeType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\ServiceCategoryIdType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\SurplusCauseIdType;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\SurplusDestinationType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -34,6 +35,11 @@ class ListSurplusesType extends BaseFilterType
             ])
             ->add('foodType', FoodTypeType::class, [
                 'label' => new TranslatableMessage('Tipo de alimento'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Todos'),
+            ])
+            ->add('destination', SurplusDestinationType::class, [
+                'label' => new TranslatableMessage('Destino'),
                 'required' => false,
                 'placeholder' => new TranslatableMessage('Todos'),
             ])

@@ -7,6 +7,7 @@ namespace App\FoodLoss\Infrastructure\Persistence\InMemory\Repository;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
 use App\FoodLoss\Domain\Model\Surplus\Surplus;
+use App\FoodLoss\Domain\Model\Surplus\SurplusDestination;
 use App\FoodLoss\Domain\Model\Surplus\SurplusFilter;
 use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\FoodLoss\Domain\Model\Surplus\SurplusRepository;
@@ -73,6 +74,10 @@ class InMemorySurplusRepository implements SurplusRepository
             }
 
             if (null !== $filter->foodType && $surplus->foodType() !== $filter->foodType) {
+                continue;
+            }
+
+            if ($filter->destination instanceof SurplusDestination && $surplus->destination() !== $filter->destination) {
                 continue;
             }
 

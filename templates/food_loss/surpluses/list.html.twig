@@ -17,6 +17,8 @@
         }, {
             'label': 'Cantidad' | trans,
         }, {
+            'label': 'Destino' | trans,
+        }, {
             'label': 'Fecha de registro' | trans,
             'sortable': true,
             'sortableBy': 'registeredAt'
@@ -32,6 +34,11 @@
         <td>{{ criticalPoint ? criticalPoint.name : '' }}</td>
         <td>{{ element.foodType.value | trans({}, 'foodType') }}</td>
         <td>{{ element.quantity }} {{ element.unit.value | trans({}, 'deliveryLogUnit') }}</td>
+        <td>
+            {% if element.destination %}
+                <span class="badge {{ element.destination.style }}">{{ element.destination.value | trans({}, 'surplusDestination') }}</span>
+            {% endif %}
+        </td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
             {% if element | is_authorized('edit') %}
