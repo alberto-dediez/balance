@@ -29,6 +29,7 @@ use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceId;
 use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceRepository;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionId;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionRepository;
+use App\FoodLoss\Domain\Model\WasteManager\WasteManagerRepository;
 use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\HumanResources\Domain\Model\Employee\EmployeeRepository;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -53,6 +54,7 @@ use App\Tests\Unit\FoodLoss\Domain\Model\Surplus\SurplusMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\SurplusCause\SurplusCauseMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\TrainingSession\TrainingSessionMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\WasteManager\WasteManagerMother;
 use App\Tests\Unit\HumanResources\Domain\Model\Employee\EmployeeMother;
 use Behat\Behat\Context\Context;
 use Behat\Step\Given;
@@ -165,6 +167,11 @@ final readonly class FoodLossContext implements Context
     public function getSurplusRepository(): SurplusRepository
     {
         return $this->client->getContainer()->get(SurplusRepository::class);
+    }
+
+    public function getWasteManagerRepository(): WasteManagerRepository
+    {
+        return $this->client->getContainer()->get(WasteManagerRepository::class);
     }
 
     #[Given('surplus with id :id of account :accountId exists')]
@@ -594,5 +601,17 @@ final readonly class FoodLossContext implements Context
         $values[$formName]['evidences'] = [];
 
         $this->client->getKernelBrowser()->request('POST', $action, $values, []);
+    }
+
+    #[Given('a waste manager :name with id :id of account :accountId exists')]
+    public function wasteManagerWithIdOfAccountExists(string $name, string $id, string $accountId): void
+    {
+        $wasteManager = WasteManagerMother::from(
+            name: $name,
+            id: $id,
+            accountId: $accountId,
+        );
+
+        $this->getWasteManagerRepository()->add($wasteManager);
     }
 }

@@ -52,6 +52,8 @@ doctrine:
             training_attendance_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\TrainingAttendanceIdType
             surplus_cause_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\SurplusCauseIdType
             surplus_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\SurplusIdType
+            food_waste_manager_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\WasteManagerIdType
+            fl_waste_manager_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\WasteManagerIdType
             job_progress_id: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressIdType
             job_progress_key: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressKeyType
             employee_id: App\HumanResources\Infrastructure\Persistence\Doctrine\Type\EmployeeIdType

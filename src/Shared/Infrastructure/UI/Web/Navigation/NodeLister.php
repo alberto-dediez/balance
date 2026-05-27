@@ -178,6 +178,11 @@ class NodeLister
                     icon: 'solar:cart-plus-line-duotone',
                     target: $this->router->generate('surpluses'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Gestores de residuos'),
+                    icon: 'solar:trash-bin-trash-line-duotone',
+                    target: $this->router->generate('food_waste_managers'),
+                ),
             ],
         );
 
