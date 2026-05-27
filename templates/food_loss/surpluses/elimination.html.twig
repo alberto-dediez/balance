@@ -13,6 +13,7 @@
     {{ form_start(form) }}
         <div class="row">
             <div class="col-12">
+                <twig:Alert type="warning">{{ 'De acuerdo con la normativa vigente, la eliminación del excedente alimentario únicamente está permitida cuando ninguna de las alternativas de valorización previstas en la jerarquía de gestión de alimentos resulte viable.' | trans }}</twig:Alert>
                 {{ form_row(form.canBeEliminated) }}
             </div>
         </div>
