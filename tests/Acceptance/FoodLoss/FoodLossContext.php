@@ -614,4 +614,30 @@ final readonly class FoodLossContext implements Context
 
         $this->getWasteManagerRepository()->add($wasteManager);
     }
+
+    #[Given('a waste manager :name with id :id of account :accountId with animal feed authorized exists')]
+    public function wasteManagerWithAnimalFeedAuthorizedExists(string $name, string $id, string $accountId): void
+    {
+        $wasteManager = WasteManagerMother::from(
+            name: $name,
+            id: $id,
+            accountId: $accountId,
+            animalFeedAuthorized: true,
+        );
+
+        $this->getWasteManagerRepository()->add($wasteManager);
+    }
+
+    #[Given('a waste manager :name with id :id of account :accountId with compost authorized exists')]
+    public function wasteManagerWithCompostAuthorizedExists(string $name, string $id, string $accountId): void
+    {
+        $wasteManager = WasteManagerMother::from(
+            name: $name,
+            id: $id,
+            accountId: $accountId,
+            compostAuthorized: true,
+        );
+
+        $this->getWasteManagerRepository()->add($wasteManager);
+    }
 }

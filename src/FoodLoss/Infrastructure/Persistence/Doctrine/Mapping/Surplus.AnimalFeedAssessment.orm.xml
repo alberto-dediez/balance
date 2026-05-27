@@ -8,5 +8,6 @@
     <embeddable name="App\FoodLoss\Domain\Model\Surplus\AnimalFeedAssessment">
         <field name="canBeAnimalFed" type="boolean" column="can_be_animal_fed" nullable="true"/>
         <field name="reasonId" type="reason_id" column="reason_id" nullable="true"/>
+        <field name="wasteManagerId" type="food_waste_manager_id" column="waste_manager_id" nullable="true"/>
     </embeddable>
 </doctrine-mapping>

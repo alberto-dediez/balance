@@ -36,6 +36,7 @@ class AssessAnimalFeedService implements CommandHandler
         $surplus->assessAnimalFeed(
             canBeAnimalFed: $request->canBeAnimalFed,
             reasonId: !$request->canBeAnimalFed ? $request->reasonId : null,
+            wasteManagerId: $request->canBeAnimalFed ? $request->wasteManagerId : null,
         );
 
         $this->surplusRepository->add($surplus);

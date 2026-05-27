@@ -11,6 +11,7 @@ use App\FoodLoss\Domain\Model\DeliveryLog\FoodType;
 use App\FoodLoss\Domain\Model\Reason\ReasonId;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryId;
+use App\FoodLoss\Domain\Model\WasteManager\WasteManagerId;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -307,24 +308,32 @@ class Surplus implements \Stringable
         );
     }
 
-    public function assessAnimalFeed(bool $canBeAnimalFed, ?ReasonId $reasonId = null): void
-    {
+    public function assessAnimalFeed(
+        bool $canBeAnimalFed,
+        ?ReasonId $reasonId = null,
+        ?WasteManagerId $wasteManagerId = null,
+    ): void {
         $this->recordApplyAndPublish(
             new SurplusAnimalFeedAssessed(
                 surplusId: $this->id(),
                 canBeAnimalFed: $canBeAnimalFed,
                 reasonId: $reasonId,
+                wasteManagerId: $wasteManagerId,
             ),
         );
     }
 
-    public function assessComposting(bool $canBeComposted, ?ReasonId $reasonId = null): void
-    {
+    public function assessComposting(
+        bool $canBeComposted,
+        ?ReasonId $reasonId = null,
+        ?WasteManagerId $wasteManagerId = null,
+    ): void {
         $this->recordApplyAndPublish(
             new SurplusCompostingAssessed(
                 surplusId: $this->id(),
                 canBeComposted: $canBeComposted,
                 reasonId: $reasonId,
+                wasteManagerId: $wasteManagerId,
             ),
         );
     }
@@ -398,6 +407,7 @@ class Surplus implements \Stringable
         $this->animalFeedAssessment = new AnimalFeedAssessment(
             canBeAnimalFed: $event->canBeAnimalFed(),
             reasonId: $event->reasonId(),
+            wasteManagerId: $event->wasteManagerId(),
         );
 
         if ($event->canBeAnimalFed()) {
@@ -416,6 +426,7 @@ class Surplus implements \Stringable
         $this->compostingAssessment = new CompostingAssessment(
             canBeComposted: $event->canBeComposted(),
             reasonId: $event->reasonId(),
+            wasteManagerId: $event->wasteManagerId(),
         );
 
         if ($event->canBeComposted()) {

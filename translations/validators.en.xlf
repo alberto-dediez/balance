@@ -701,6 +701,14 @@
         <source>transformation.channel.not_null</source>
         <target>Please indicate the distribution channel</target>
       </trans-unit>
+      <trans-unit id="AfWmNt1" resname="animal_feed.waste_manager_id.not_null">
+        <source>animal_feed.waste_manager_id.not_null</source>
+        <target>The waste manager is required</target>
+      </trans-unit>
+      <trans-unit id="CpWmNt1" resname="composting.waste_manager_id.not_null">
+        <source>composting.waste_manager_id.not_null</source>
+        <target>The waste manager is required</target>
+      </trans-unit>
       <trans-unit id="HdDtNt1" resname="human_donation.donation_date.not_null">
         <source>human_donation.donation_date.not_null</source>
         <target>The donation date is required</target>

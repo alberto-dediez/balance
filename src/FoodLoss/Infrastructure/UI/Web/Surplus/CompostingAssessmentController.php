@@ -41,6 +41,7 @@ class CompostingAssessmentController extends AbstractController
         $form = $this->createForm(SurplusCompostingAssessmentType::class, [
             'canBeComposted' => $currentCanBeComposted,
             'reasonId' => $composting->reasonId(),
+            'wasteManagerId' => $composting->wasteManagerId(),
         ]);
 
         $form->handleRequest($request);
@@ -57,6 +58,7 @@ class CompostingAssessmentController extends AbstractController
                         surplusId: $surplus->id(),
                         canBeComposted: $canBeComposted,
                         reasonId: $data['reasonId'],
+                        wasteManagerId: $data['wasteManagerId'],
                     ),
                     $loggedUser(),
                 );

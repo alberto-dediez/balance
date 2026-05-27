@@ -6,6 +6,7 @@ namespace App\FoodLoss\Domain\Model\Surplus;
 
 use App\FoodLoss\Domain\DomainEvent;
 use App\FoodLoss\Domain\Model\Reason\ReasonId;
+use App\FoodLoss\Domain\Model\WasteManager\WasteManagerId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
@@ -17,6 +18,7 @@ final class SurplusCompostingAssessed extends DomainEvent
         private readonly SurplusId $surplusId,
         private readonly bool $canBeComposted,
         private readonly ?ReasonId $reasonId,
+        private readonly ?WasteManagerId $wasteManagerId = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -38,6 +40,11 @@ final class SurplusCompostingAssessed extends DomainEvent
         return $this->reasonId;
     }
 
+    public function wasteManagerId(): ?WasteManagerId
+    {
+        return $this->wasteManagerId;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->surplusId;
@@ -49,6 +56,7 @@ final class SurplusCompostingAssessed extends DomainEvent
             'surplusId' => (string) $this->surplusId,
             'canBeComposted' => $this->canBeComposted,
             'reasonId' => null !== $this->reasonId ? (string) $this->reasonId : null,
+            'wasteManagerId' => null !== $this->wasteManagerId ? (string) $this->wasteManagerId : null,
         ];
     }
 
@@ -61,6 +69,7 @@ final class SurplusCompostingAssessed extends DomainEvent
             surplusId: new SurplusId($payload['surplusId']),
             canBeComposted: (bool) $payload['canBeComposted'],
             reasonId: isset($payload['reasonId']) ? new ReasonId((string) $payload['reasonId']) : null,
+            wasteManagerId: isset($payload['wasteManagerId']) ? new WasteManagerId((string) $payload['wasteManagerId']) : null,
             id: $id,
             occurredOn: $occurredOn,
         );

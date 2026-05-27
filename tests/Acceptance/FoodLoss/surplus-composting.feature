@@ -14,9 +14,10 @@ Feature:
         Given account "MyAccount" with id "my-account" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "my-account" exists
         Given surplus with id "surplus-1" of account "my-account" exists
+        Given a waste manager "Gestor Compostaje" with id "waste-manager-1" of account "my-account" with compost authorized exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/surpluses/edit/surplus-1/composting"
-        When I submit a form with "canBeComposted:1" and button "Continuar"
+        When I submit a form with "canBeComposted:1|wasteManagerId:waste-manager-1" and button "Continuar"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Se ha registrado un nuevo excedente con destino a compostaje o consumo no alimentario"

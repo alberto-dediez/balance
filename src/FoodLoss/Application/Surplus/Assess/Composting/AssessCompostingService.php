@@ -36,6 +36,7 @@ class AssessCompostingService implements CommandHandler
         $surplus->assessComposting(
             canBeComposted: $request->canBeComposted,
             reasonId: !$request->canBeComposted ? $request->reasonId : null,
+            wasteManagerId: $request->canBeComposted ? $request->wasteManagerId : null,
         );
 
         $this->surplusRepository->add($surplus);

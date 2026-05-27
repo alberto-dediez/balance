@@ -41,6 +41,7 @@ class AnimalFeedAssessmentController extends AbstractController
         $form = $this->createForm(SurplusAnimalFeedAssessmentType::class, [
             'canBeAnimalFed' => $currentCanBeAnimalFed,
             'reasonId' => $animalFeed->reasonId(),
+            'wasteManagerId' => $animalFeed->wasteManagerId(),
         ]);
 
         $form->handleRequest($request);
@@ -57,6 +58,7 @@ class AnimalFeedAssessmentController extends AbstractController
                         surplusId: $surplus->id(),
                         canBeAnimalFed: $canBeAnimalFed,
                         reasonId: $data['reasonId'],
+                        wasteManagerId: $data['wasteManagerId'],
                     ),
                     $loggedUser(),
                 );
