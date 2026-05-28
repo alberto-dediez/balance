@@ -3,6 +3,7 @@ parameters:
     app.locale_list: '%env(LANGUAGE_LIST)%'
     company.name: '%env(COMPANY_NAME)%'
     mailer.from: '%env(MAILER_FROM)%'
+    app.uploads_dir: '%kernel.project_dir%/var/uploads'
 
 services:
     _defaults:
@@ -19,6 +20,10 @@ services:
     App\Shared\Infrastructure\UI\Console\:
         resource: '../../../Infrastructure/UI/Console/'
         tags: ['console.command']
+
+    App\Shared\Infrastructure\Symfony\Form\Type\LocaleType:
+        arguments:
+            $localeList: '%app.locale_list%'
 
     App\Shared\Infrastructure\Locale\RequestStackLocaleSetter:
         arguments:

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <embeddable name="App\Security\Domain\Model\SignatureRequest\SignatureProof">
+        <field name="signedAt" type="datetime_immutable" column="signed_at" nullable="true"/>
+        <field name="documentHashAtSigning" type="string" length="64" column="document_hash_at_signing" nullable="true"/>
+        <field name="signedDocumentSha256" type="string" length="64" column="signed_document_sha256" nullable="true"/>
+        <field name="driver" type="string" length="255" nullable="true"/>
+        <field name="proofPayload" type="text" column="proof_payload" nullable="true"/>
+        <field name="signerIp" type="string" length="45" column="signer_ip" nullable="true"/>
+        <field name="signerUserAgent" type="string" length="512" column="signer_user_agent" nullable="true"/>
+        <field name="signerAcceptLanguage" type="string" length="255" column="signer_accept_language" nullable="true"/>
+    </embeddable>
+
+</doctrine-mapping>

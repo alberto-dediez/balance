@@ -141,6 +141,14 @@
         <source>Error</source>
         <target>NEW_Error</target>
       </trans-unit>
+      <trans-unit id="sReq_em" resname="notification_channel.signer_email_required">
+        <source>notification_channel.signer_email_required</source>
+        <target>Signer email is required when notification channel is Email.</target>
+      </trans-unit>
+      <trans-unit id="sReq_ph" resname="notification_channel.signer_phone_required">
+        <source>notification_channel.signer_phone_required</source>
+        <target>Signer phone is required when notification channel is SMS.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

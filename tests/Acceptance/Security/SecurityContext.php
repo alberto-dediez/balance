@@ -6,11 +6,13 @@ namespace App\Tests\Acceptance\Security;
 
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
+use App\Tests\Unit\Security\Domain\Model\SignatureRequest\SignatureRequestMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
@@ -45,6 +47,11 @@ final readonly class SecurityContext implements Context
     private function getAccountRepository(): AccountRepository
     {
         return $this->client->getContainer()->get(AccountRepository::class);
+    }
+
+    private function getSignatureRequestRepository(): SignatureRequestRepository
+    {
+        return $this->client->getContainer()->get(SignatureRequestRepository::class);
     }
 
     #[Given('user :username with role :role exists')]
@@ -117,5 +124,13 @@ final readonly class SecurityContext implements Context
         $user = UserMother::fromUsernameAndRecoverToken($username, $token);
 
         $this->getUserRepository()->add($user);
+    }
+
+    #[Given('signature request with id :id and account :accountId exists')]
+    public function signatureRequestWithIdAndAccountExists(string $id, string $accountId): void
+    {
+        $signatureRequest = SignatureRequestMother::fromIdAndAccountId($id, $accountId);
+
+        $this->getSignatureRequestRepository()->add($signatureRequest);
     }
 }

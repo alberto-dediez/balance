@@ -23,3 +23,7 @@ services:
     App\Security\Application\User\RecoverPassword\RecoverPasswordService:
         arguments:
             $passwordHasher: '@App\Security\Infrastructure\Symfony\Security\UserPasswordHasher'
+
+    App\Shared\Infrastructure\Storage\LocalFileUploader:
+        arguments:
+            $rootDir: '%app.uploads_dir%'

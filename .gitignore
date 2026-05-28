@@ -50,3 +50,6 @@ phpstan.neon
 ###> symfonycasts/sass-bundle ###
 /public/assets/
 ###< symfonycasts/sass-bundle ###
+
+.claude
+CLAUDE.md

@@ -13,6 +13,7 @@ doctrine:
             user_id: App\Security\Infrastructure\Persistence\Doctrine\Type\UserIdType
             account_id: App\Security\Infrastructure\Persistence\Doctrine\Type\AccountIdType
             recorded_event_id: App\Security\Infrastructure\Persistence\Doctrine\Type\RecordedEventIdType
+            signature_request_id: App\Security\Infrastructure\Persistence\Doctrine\Type\SignatureRequestIdType
 
     orm:
         auto_generate_proxy_classes: true
