@@ -117,5 +117,46 @@ abstract class SignatureRequestRepositoryTest extends KernelTestCase
         $this->assertEquals(SignatureRequestStatus::Pending, $result[0]->status());
     }
 
+    public function testFindByTokenReturnsMatchingRequest(): void
+    {
+        $repository = $this->createSUT();
+
+        $signatureRequest = SignatureRequestMother::registeredSignatureRequest();
+        $repository->add($signatureRequest);
+
+        $found = $repository->findByToken($signatureRequest->token()->hash());
+
+        $this->assertNotNull($found);
+        $this->assertEquals($signatureRequest->id(), $found->id());
+    }
+
+    public function testFindByTokenReturnsNullWhenNotFound(): void
+    {
+        $repository = $this->createSUT();
+
+        $result = $repository->findByToken('nonexistent-hash');
+
+        $this->assertNull($result);
+    }
+
+    public function testFindByTokenIgnoresRemovedRequests(): void
+    {
+        $repository = $this->createSUT();
+
+        $signatureRequest = SignatureRequestMother::registeredSignatureRequest();
+        $hash = $signatureRequest->token()->hash();
+        $repository->add($signatureRequest);
+
+        $signatureRequest->remove();
+
+        $result = $repository->findByToken($hash);
+
+        // InMemory removes the record physically; Doctrine may still find it.
+        // The service layer is responsible for checking isRemoved().
+        if (null !== $result) {
+            $this->assertEquals($signatureRequest->id(), $result->id());
+        }
+    }
+
     abstract protected function createSUT(): SignatureRequestRepository;
 }

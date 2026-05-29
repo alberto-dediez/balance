@@ -1,0 +1,65 @@
+{% extends '@shared/base.html.twig' %}
+
+{% set page_title = 'Verificación de firma' | trans %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">{{ 'Verificación de firma' | trans }}</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">{{ 'ID de solicitud' | trans }}</dt>
+                        <dd class="col-sm-8"><code>{{ signatureRequest.id }}</code></dd>
+                        <dt class="col-sm-4">{{ 'Firmante' | trans }}</dt>
+                        <dd class="col-sm-8">
+                            {{ signatureRequest.signer.name }}
+                            {% if signatureRequest.signer.email %}
+                                <span class="text-muted">&lt;{{ signatureRequest.signer.email }}&gt;</span>
+                            {% elseif signatureRequest.signer.phone %}
+                                <span class="text-muted">({{ signatureRequest.signer.phone }})</span>
+                            {% endif %}
+                        </dd>
+                        <dt class="col-sm-4">{{ 'Estado' | trans }}</dt>
+                        <dd class="col-sm-8">{{ signatureRequest.status.value | trans({}, 'signatureRequestStatusType') }}</dd>
+                    </dl>
+
+                    {% if signatureRequest.signatureProof %}
+                        <hr>
+                        <h6>{{ 'Datos de la firma' | trans }}</h6>
+                        <dl class="row">
+                            <dt class="col-sm-4">{{ 'Fecha de firma' | trans }}</dt>
+                            <dd class="col-sm-8">{{ signatureRequest.signatureProof.signedAt | date('d/m/Y H:i:s') }} UTC</dd>
+                            <dt class="col-sm-4">{{ 'Driver' | trans }}</dt>
+                            <dd class="col-sm-8"><code>{{ signatureRequest.signatureProof.driver }}</code></dd>
+                            <dt class="col-sm-4">{{ 'Hash del original' | trans }}</dt>
+                            <dd class="col-sm-8"><small><code>{{ signatureRequest.signatureProof.documentHashAtSigning }}</code></small></dd>
+                            <dt class="col-sm-4">{{ 'Hash del firmado' | trans }}</dt>
+                            <dd class="col-sm-8"><small><code>{{ signatureRequest.signatureProof.signedDocumentSha256 }}</code></small></dd>
+                        </dl>
+
+                        {% if verificationResult is not null %}
+                            <div class="alert alert-{{ verificationResult.valid ? 'success' : 'danger' }} mt-3">
+                                {% if verificationResult.valid %}
+                                    <strong>✓ {{ 'Firma válida' | trans }}</strong><br>
+                                    {{ verificationResult.details }}
+                                {% else %}
+                                    <strong>✗ {{ 'Firma NO válida' | trans }}</strong><br>
+                                    {{ verificationResult.details }}
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-warning">
+                            {{ 'Este documento aún no ha sido firmado.' | trans }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

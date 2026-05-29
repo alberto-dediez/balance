@@ -47,6 +47,19 @@ class DoctrineSignatureRequestRepository implements SignatureRequestRepository
         ;
     }
 
+    public function findByToken(string $tokenHash): ?SignatureRequest
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        return $qb->select('sr')
+            ->from(SignatureRequest::class, 'sr')
+            ->where($qb->expr()->eq('sr.token.hash', ':hash'))
+            ->setParameter('hash', $tokenHash)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     private function createQueryBuilderFromFilter(SignatureRequestFilter $filter): QueryBuilder
     {
         $qb = $this->manager->createQueryBuilder();

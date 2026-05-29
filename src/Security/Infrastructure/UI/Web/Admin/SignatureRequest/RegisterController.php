@@ -33,7 +33,7 @@ class RegisterController extends AbstractController
         LoggedAccount $loggedAccount,
         TranslatorInterface $translator,
         Request $request,
-        FileUploader $fileUploader
+        FileUploader $fileUploader,
     ): Response {
         $account = $loggedAccount();
 

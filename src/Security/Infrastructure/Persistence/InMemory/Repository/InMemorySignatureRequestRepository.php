@@ -44,6 +44,17 @@ class InMemorySignatureRequestRepository implements SignatureRequestRepository
         ;
     }
 
+    public function findByToken(string $tokenHash): ?SignatureRequest
+    {
+        foreach ($this->signatureRequests as $signatureRequest) {
+            if ($signatureRequest->token()->hash() === $tokenHash) {
+                return $signatureRequest;
+            }
+        }
+
+        return null;
+    }
+
     /** @return array<int, SignatureRequest> */
     public function findByFilter(SignatureRequestFilter $filter): array
     {

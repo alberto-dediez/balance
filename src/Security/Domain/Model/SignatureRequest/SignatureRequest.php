@@ -122,6 +122,45 @@ class SignatureRequest implements \Stringable
         );
     }
 
+    public function recordView(string $signerIp, string $signerUserAgent): void
+    {
+        $this->recordApplyAndPublish(
+            new SignatureDocumentViewed(
+                signatureRequestId: $this->id(),
+                signerIp: $signerIp,
+                signerUserAgent: $signerUserAgent,
+            ),
+        );
+    }
+
+    public function sign(SignatureProof $proof, DocumentReference $documentSigned): void
+    {
+        if (SignatureRequestStatus::Signed === $this->status) {
+            throw new SignatureAlreadySignedException($this->id());
+        }
+
+        if ($this->removed || SignatureRequestStatus::Expired === $this->status) {
+            throw new SignatureRequestNotPendingException($this->id());
+        }
+
+        $this->recordApplyAndPublish(
+            new DocumentSigned(
+                signatureRequestId: $this->id(),
+                signatureProof: $proof,
+                documentSigned: $documentSigned,
+            ),
+        );
+    }
+
+    public function expire(): void
+    {
+        $this->recordApplyAndPublish(
+            new SignatureRequestExpired(
+                signatureRequestId: $this->id(),
+            ),
+        );
+    }
+
     public function remove(): void
     {
         $this->recordApplyAndPublish(
@@ -140,6 +179,28 @@ class SignatureRequest implements \Stringable
         $this->accountId = $event->accountId();
         $this->status = SignatureRequestStatus::Pending;
         $this->registeredAt = $event->occurredOn();
+    }
+
+    public function applySignatureDocumentViewed(SignatureDocumentViewed $event): void
+    {
+        if (SignatureRequestStatus::Pending === $this->status) {
+            $this->status = SignatureRequestStatus::Viewed;
+        }
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyDocumentSigned(DocumentSigned $event): void
+    {
+        $this->status = SignatureRequestStatus::Signed;
+        $this->signatureProof = $event->signatureProof();
+        $this->documentSigned = $event->documentSigned();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applySignatureRequestExpired(SignatureRequestExpired $event): void
+    {
+        $this->status = SignatureRequestStatus::Expired;
+        $this->updatedAt = $event->occurredOn();
     }
 
     public function applySignatureRequestRemoved(SignatureRequestRemoved $event): void

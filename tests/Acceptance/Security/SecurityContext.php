@@ -6,10 +6,17 @@ namespace App\Tests\Acceptance\Security;
 
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
+use App\Security\Domain\Model\SignatureRequest\DocumentReference;
+use App\Security\Domain\Model\SignatureRequest\SignatureProof;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequest;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestRepository;
+use App\Security\Domain\Model\SignatureRequest\Signer;
+use App\Security\Domain\Model\SignatureRequest\Token;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Security\Domain\Model\SignatureRequest\SignatureRequestMother;
@@ -130,6 +137,106 @@ final readonly class SecurityContext implements Context
     public function signatureRequestWithIdAndAccountExists(string $id, string $accountId): void
     {
         $signatureRequest = SignatureRequestMother::fromIdAndAccountId($id, $accountId);
+
+        $this->getSignatureRequestRepository()->add($signatureRequest);
+    }
+
+    #[Given('a readable temp pdf file exists at :path')]
+    public function aReadableTempPdfFileExistsAt(string $path): void
+    {
+        file_put_contents($path, '%PDF-1.4 test content');
+    }
+
+    #[Given('signature request with id :id and account :accountId and token :plainValue exists')]
+    public function signatureRequestWithTokenExists(string $id, string $accountId, string $plainValue): void
+    {
+        $appSecret = $this->client->getContainer()->getParameter('kernel.secret');
+
+        $token = new Token(
+            hash: Token::hashFor($plainValue, $appSecret),
+            plainValue: $plainValue,
+        );
+
+        $signatureRequest = new SignatureRequest(id: new SignatureRequestId($id));
+        $signatureRequest->register(
+            token: $token,
+            documentToSign: new DocumentReference(
+                sha256: hash('sha256', 'test-content'),
+                size: 100,
+                filename: 'test.pdf',
+                path: '/tmp/test.pdf',
+            ),
+            signer: new Signer(name: 'Test Signer', locale: Locale::Spanish, email: 'signer@example.com'),
+            accountId: new AccountId($accountId),
+        );
+
+        $this->getSignatureRequestRepository()->add($signatureRequest);
+    }
+
+    #[Given('signed signature request with id :id and account :accountId and token :plainValue exists')]
+    public function signedSignatureRequestWithTokenExists(string $id, string $accountId, string $plainValue): void
+    {
+        $appSecret = $this->client->getContainer()->getParameter('kernel.secret');
+
+        $token = new Token(
+            hash: Token::hashFor($plainValue, $appSecret),
+            plainValue: $plainValue,
+        );
+
+        $signatureRequest = new SignatureRequest(id: new SignatureRequestId($id));
+        $signatureRequest->register(
+            token: $token,
+            documentToSign: new DocumentReference(
+                sha256: hash('sha256', 'test-content'),
+                size: 100,
+                filename: 'test.pdf',
+                path: '/tmp/test.pdf',
+            ),
+            signer: new Signer(name: 'Test Signer', locale: Locale::Spanish, email: 'signer@example.com'),
+            accountId: new AccountId($accountId),
+        );
+
+        $proof = SignatureProof::create(
+            signedAt: new \DateTimeImmutable(),
+            documentHashAtSigning: hash('sha256', 'original'),
+            signedDocumentSha256: hash('sha256', 'signed'),
+            driver: 'hmac',
+            proofPayload: 'test-proof',
+            signerIp: '127.0.0.1',
+        );
+        $signatureRequest->sign($proof, new DocumentReference(
+            sha256: hash('sha256', 'signed'),
+            size: 100,
+            filename: 'signed.pdf',
+            path: '/tmp/signed.pdf',
+        ));
+
+        $this->getSignatureRequestRepository()->add($signatureRequest);
+    }
+
+    #[Given('signed signature request with id :id and account :accountId exists')]
+    public function signedSignatureRequestWithIdAndAccountExists(string $id, string $accountId): void
+    {
+        $signatureRequest = SignatureRequestMother::fromIdAndAccountId($id, $accountId);
+
+        $proof = SignatureProof::create(
+            signedAt: new \DateTimeImmutable(),
+            documentHashAtSigning: hash('sha256', 'original'),
+            signedDocumentSha256: hash('sha256', 'signed'),
+            driver: 'hmac',
+            proofPayload: 'test-proof',
+            signerIp: '127.0.0.1',
+            signerUserAgent: 'TestAgent',
+        );
+
+        $documentSigned = new DocumentReference(
+            sha256: hash('sha256', 'signed'),
+            size: 100,
+            filename: 'signed.pdf',
+            path: '/tmp/signed.pdf',
+        );
+
+        $signatureRequest->sign($proof, $documentSigned);
 
         $this->getSignatureRequestRepository()->add($signatureRequest);
     }

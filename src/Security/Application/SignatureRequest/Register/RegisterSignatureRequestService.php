@@ -26,6 +26,8 @@ class RegisterSignatureRequestService implements CommandHandler
     public function __construct(
         private SignatureRequestRepository $signatureRequestRepository,
         private SignatureRequestAuthorizer $authorizer,
+        #[\SensitiveParameter]
+        private string $appSecret = '',
     ) {}
 
     public function __invoke(RegisterSignatureRequestRequest $request, User $user): RegisterSignatureRequestResponse
@@ -34,7 +36,7 @@ class RegisterSignatureRequestService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat(new SignatureRequest(id: $id), SecurityAction::List, $user);
 
-        $token = Token::generate();
+        $token = Token::generate($this->appSecret);
         $documentToSign = DocumentReference::fromPath($request->documentToSignPath);
         $signer = new Signer(
             name: $request->signerName,
@@ -43,8 +45,6 @@ class RegisterSignatureRequestService implements CommandHandler
             phone: $request->signerPhone,
             notificationChannel: $request->notificationChannel,
         );
-
-        assert(null !== $request->accountId);
 
         $signatureRequest = new SignatureRequest($id);
         $signatureRequest->register(

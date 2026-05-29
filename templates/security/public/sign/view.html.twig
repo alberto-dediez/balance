@@ -1,0 +1,63 @@
+{% extends '@shared/base.html.twig' %}
+
+{% set page_title = 'Firmar documento' | trans %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">{{ 'Documento para firmar' | trans }}</h5>
+                </div>
+                <div class="card-body p-0">
+                    <iframe src="{{ path('public_sign_stream_document', {'token': token}) }}"
+                            style="width:100%; height:600px; border:none;"
+                            title="{{ 'Documento PDF' | trans }}">
+                    </iframe>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">{{ 'Firma el documento' | trans }}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">
+                        {{ 'Por favor, lea el documento completo antes de firmarlo. Al firmar, acepta el contenido del documento.' | trans }}
+                    </p>
+                    <p>
+                        <strong>{{ 'Firmante' | trans }}:</strong> {{ signatureRequest.signer.name }}
+                        {% if signatureRequest.signer.email %}
+                            &lt;{{ signatureRequest.signer.email }}&gt;
+                        {% elseif signatureRequest.signer.phone %}
+                            ({{ signatureRequest.signer.phone }})
+                        {% endif %}
+                        <br>
+                        <strong>{{ 'Expira el' | trans }}:</strong> {{ signatureRequest.expiresAt | date('d/m/Y H:i') }}
+                    </p>
+
+                    <form method="POST" action="{{ path('public_sign_document', {'token': token}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('sign_document_' ~ token) }}">
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="acceptTerms" name="accepted" value="1" required>
+                                <label class="form-check-label" for="acceptTerms">
+                                    {{ 'He leído y acepto el contenido del documento.' | trans }}
+                                </label>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="acceptance_text" value="{{ 'He leído y acepto el contenido del documento.' | trans }}">
+
+                        <button type="submit" class="btn btn-success btn-lg">
+                            {{ 'Firmar documento' | trans }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

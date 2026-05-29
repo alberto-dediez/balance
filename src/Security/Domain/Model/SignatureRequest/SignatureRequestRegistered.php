@@ -68,7 +68,6 @@ final class SignatureRequestRegistered extends DomainEvent
             'signatureRequestId' => (string) $this->signatureRequestId,
             'accountId' => (string) $this->accountId,
             'tokenHash' => $this->token->hash(),
-            'tokenPlainValue' => $this->token->plainValue(),
             'documentToSignSha256' => $this->documentToSign->sha256(),
             'documentToSignSize' => $this->documentToSign->size(),
             'documentToSignFilename' => $this->documentToSign->filename(),
@@ -103,7 +102,7 @@ final class SignatureRequestRegistered extends DomainEvent
 
         return new SignatureRequestRegistered(
             signatureRequestId: new SignatureRequestId($payload['signatureRequestId']),
-            token: new Token(hash: $payload['tokenHash'], plainValue: $payload['tokenPlainValue']),
+            token: new Token(hash: $payload['tokenHash']),
             documentToSign: new DocumentReference(
                 sha256: $payload['documentToSignSha256'],
                 size: $payload['documentToSignSize'],

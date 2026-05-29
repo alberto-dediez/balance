@@ -12,6 +12,8 @@ interface SignatureRequestRepository
 
     public function find(SignatureRequestId $signatureRequestId): ?SignatureRequest;
 
+    public function findByToken(string $tokenHash): ?SignatureRequest;
+
     /** @return array<SignatureRequest> */
     public function findByFilter(SignatureRequestFilter $filter): array;
 

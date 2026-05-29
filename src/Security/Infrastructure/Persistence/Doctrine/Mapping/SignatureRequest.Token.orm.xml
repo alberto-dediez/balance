@@ -7,7 +7,6 @@
 
     <embeddable name="App\Security\Domain\Model\SignatureRequest\Token">
         <field name="hash" type="string" length="64" nullable="false"/>
-        <field name="plainValue" type="string" length="255" column="plain_value" nullable="false"/>
     </embeddable>
 
 </doctrine-mapping>

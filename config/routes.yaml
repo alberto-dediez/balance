@@ -20,12 +20,19 @@ security-web:
     resource:
         path: ../src/Security/Infrastructure/UI/Web/
         namespace: App\Security\Infrastructure\UI\Web
+        exclude: '../src/Security/Infrastructure/UI/Web/Public/'
     type: attribute
     prefix: /{_locale}
     requirements:
         _locale: '%app.locale_list%'
     defaults:
         _locale: '%app.locale_default%'
+
+security-public-sign:
+    resource:
+        path: ../src/Security/Infrastructure/UI/Web/Public/
+        namespace: App\Security\Infrastructure\UI\Web\Public
+    type: attribute
 
 security-api:
     resource:

@@ -24,6 +24,40 @@ services:
         arguments:
             $passwordHasher: '@App\Security\Infrastructure\Symfony\Security\UserPasswordHasher'
 
+    App\Security\Application\SignatureRequest\Register\RegisterSignatureRequestService:
+        arguments:
+            $appSecret: '%kernel.secret%'
+
+    App\Security\Application\SignatureRequest\RecordView\RecordSignatureViewService:
+        arguments:
+            $appSecret: '%kernel.secret%'
+
+    App\Security\Application\SignatureRequest\Sign\SignDocumentService:
+        arguments:
+            $appSecret: '%kernel.secret%'
+
+    App\Security\Infrastructure\Pdf\HmacPdfSigner:
+        arguments:
+            $appSecret: '%kernel.secret%'
+
+    App\Security\Infrastructure\FileStorage\LocalSignatureFileStorage:
+        arguments:
+            $uploadsDir: '%app.uploads_dir%'
+
+    App\Security\Domain\Model\SignatureRequest\PdfSigner:
+        alias: App\Security\Infrastructure\Pdf\HmacPdfSigner
+
+    App\Security\Domain\Model\SignatureRequest\SignatureFileStorage:
+        alias: App\Security\Infrastructure\FileStorage\LocalSignatureFileStorage
+
+    App\Security\Infrastructure\UI\Web\Public\SignatureRequest\ViewSignatureController:
+        arguments:
+            $signatureTokenLimiter: '@limiter.signature_token'
+
+    App\Security\Infrastructure\UI\Web\Public\SignatureRequest\SignDocumentController:
+        arguments:
+            $signatureTokenLimiter: '@limiter.signature_token'
+
     App\Shared\Infrastructure\Storage\LocalFileUploader:
         arguments:
             $rootDir: '%app.uploads_dir%'

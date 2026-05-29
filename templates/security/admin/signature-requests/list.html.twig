@@ -5,6 +5,9 @@
 {% block table %}
     {% set columns = [
         {
+            'label': 'Documento' | trans,
+            'sortable': false
+        }, {
             'label': 'Firmante' | trans,
             'sortable': false
         }, {
@@ -28,12 +31,14 @@
     ] %}
 
     <twig:List:Table :columns="columns" :elements="signatureRequests" :bulkForm="bulkForm">
+        <td>{{ element.documentToSign.filename }}</td>
         <td>{{ element.signer.name }}</td>
         <td>{{ element.status.value | trans({}, 'signatureRequestStatusType') }}</td>
-        <td>{{ element.accountId }}</td>
+        <td>{{ element.accountId is not empty ? (element.accountId | account_name) : '---' }}</td>
         <td>{{ element.expiresAt | date('d/m/Y H:i') }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
+            <twig:List:Action:View path="{{ path('admin_signature_requests_show', {'signatureRequestId': element.id}) }}" />
             {% if element | is_authorized('remove') %}
                 <twig:List:Action:Delete path="{{ path('admin_signature_requests_remove', {'signatureRequestId': element.id}) }}" />
             {% endif %}

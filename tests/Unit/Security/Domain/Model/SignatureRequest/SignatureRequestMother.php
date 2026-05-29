@@ -39,17 +39,18 @@ class SignatureRequestMother
         string $id,
         string $accountId = 'account-id-test',
         string $signerEmail = 'signer@example.com',
+        ?string $documentPath = null,
     ): SignatureRequest {
         $signatureRequest = new SignatureRequest(
             id: new SignatureRequestId($id),
         );
 
-        $token = new Token(hash: hash('sha256', 'test-token'), plainValue: 'test-token');
+        $token = Token::generate('test-app-secret');
         $documentToSign = new DocumentReference(
             sha256: hash('sha256', 'test-document-content'),
             size: 1024,
             filename: 'test.pdf',
-            path: '/tmp/test.pdf',
+            path: $documentPath ?? '/tmp/test.pdf',
         );
         $signer = new Signer(
             name: 'Test Signer',

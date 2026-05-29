@@ -62,6 +62,10 @@ class RegisterSignatureRequestServiceTest extends TestCase
         $this->assertInstanceOf(SignatureRequestRegistered::class, $lastEvent);
         $this->assertEquals('Test Signer', $lastEvent->signer()->name());
         $this->assertTrue($persisted->id()->equals($lastEvent->signatureRequestId()));
+
+        $payload = $lastEvent->payload();
+        $this->assertArrayHasKey('tokenHash', $payload);
+        $this->assertArrayNotHasKey('tokenPlainValue', $payload);
     }
 
     public function testIsHandle(): void
@@ -80,6 +84,7 @@ class RegisterSignatureRequestServiceTest extends TestCase
         return new RegisterSignatureRequestService(
             signatureRequestRepository: $repository,
             authorizer: new SignatureRequestAuthorizer(),
+            appSecret: 'test-app-secret',
         );
     }
 }

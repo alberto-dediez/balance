@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	acl \
 	file \
 	gettext \
+	ghostscript \
 	git \
 	make \
 	libgd-dev \
