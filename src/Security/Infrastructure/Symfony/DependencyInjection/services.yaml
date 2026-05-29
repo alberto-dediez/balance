@@ -1,5 +1,6 @@
 parameters:
     app.signature_hmac_secret: '%env(SIGNATURE_HMAC_SECRET)%'
+    app.signature_sms_enabled: '%env(bool:SIGNATURE_SMS_ENABLED)%'
     
 services:
     _defaults:
@@ -30,6 +31,12 @@ services:
     App\Security\Application\SignatureRequest\Register\RegisterSignatureRequestService:
         arguments:
             $appSecret: '%app.signature_hmac_secret%'
+            $smsEnabled: '%app.signature_sms_enabled%'
+
+    App\Security\Infrastructure\Symfony\Form\RegisterSignatureRequestType:
+        arguments:
+            $smsEnabled: '%app.signature_sms_enabled%'
+        tags: ['form.type']
 
     App\Security\Application\SignatureRequest\RecordView\RecordSignatureViewService:
         arguments:

@@ -22,6 +22,8 @@ use Symfony\Component\Translation\TranslatableMessage;
 /** @extends AbstractType<mixed> */
 class RegisterSignatureRequestType extends AbstractType
 {
+    public function __construct(private readonly bool $smsEnabled) {}
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -41,21 +43,26 @@ class RegisterSignatureRequestType extends AbstractType
             ->add('notificationChannel', NotificationChannelType::class, [
                 'label' => new TranslatableMessage('Canal de notificación'),
                 'required' => true,
+                'sms_enabled' => $this->smsEnabled,
             ])
             ->add('signerEmail', EmailType::class, [
                 'label' => new TranslatableMessage('Email del firmante'),
                 'required' => false,
                 'empty_data' => null,
             ])
-            ->add('signerPhone', TextType::class, [
+        ;
+
+        if ($this->smsEnabled) {
+            $builder->add('signerPhone', TextType::class, [
                 'label' => new TranslatableMessage('Teléfono del firmante'),
                 'required' => false,
                 'empty_data' => null,
-            ])
-            ->add('register', SubmitType::class, [
-                'label' => new TranslatableMessage('Registrar'),
-            ])
-        ;
+            ]);
+        }
+
+        $builder->add('register', SubmitType::class, [
+            'label' => new TranslatableMessage('Registrar'),
+        ]);
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, static function (\Symfony\Component\Form\FormEvent $event): void {
             $form = $event->getForm();

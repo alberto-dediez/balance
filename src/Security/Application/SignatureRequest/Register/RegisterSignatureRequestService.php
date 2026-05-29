@@ -7,10 +7,12 @@ namespace App\Security\Application\SignatureRequest\Register;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Application\SignatureRequest\SignatureRequestAuthorizer;
 use App\Security\Domain\Model\SignatureRequest\DocumentReference;
+use App\Security\Domain\Model\SignatureRequest\NotificationChannel;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequest;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestRepository;
 use App\Security\Domain\Model\SignatureRequest\Signer;
+use App\Security\Domain\Model\SignatureRequest\SmsChannelNotEnabledException;
 use App\Security\Domain\Model\SignatureRequest\Token;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -28,6 +30,7 @@ class RegisterSignatureRequestService implements CommandHandler
         private SignatureRequestAuthorizer $authorizer,
         #[\SensitiveParameter]
         private string $appSecret = '',
+        private bool $smsEnabled = false,
     ) {}
 
     public function __invoke(RegisterSignatureRequestRequest $request, User $user): RegisterSignatureRequestResponse
@@ -35,6 +38,10 @@ class RegisterSignatureRequestService implements CommandHandler
         $id = SignatureRequestId::generate();
 
         $this->authorizer->denyUnlessCanDoThat(new SignatureRequest(id: $id), SecurityAction::Register, $user);
+
+        if (!$this->smsEnabled && NotificationChannel::Sms === $request->notificationChannel) {
+            throw new SmsChannelNotEnabledException();
+        }
 
         $token = Token::generate($this->appSecret);
         $documentToSign = DocumentReference::fromPath($request->documentToSignPath);

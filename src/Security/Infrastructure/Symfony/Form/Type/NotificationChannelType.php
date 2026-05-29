@@ -14,17 +14,25 @@ class NotificationChannelType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $choices = [];
-
-        foreach (NotificationChannel::cases() as $case) {
-            $choices[$case->value] = $case;
-        }
-
         $resolver->setDefaults([
-            'choices' => $choices,
+            'sms_enabled' => false,
             'choice_value' => fn(?NotificationChannel $case) => $case?->value,
             'translation_domain' => 'notificationChannelType',
         ]);
+
+        $resolver->setAllowedTypes('sms_enabled', 'bool');
+
+        $resolver->setNormalizer('choices', static function (OptionsResolver $options, mixed $value): array {
+            $choices = [];
+            foreach (NotificationChannel::cases() as $case) {
+                if (!$options['sms_enabled'] && NotificationChannel::Sms === $case) {
+                    continue;
+                }
+                $choices[$case->value] = $case;
+            }
+
+            return $choices;
+        });
     }
 
     public function getParent(): string
