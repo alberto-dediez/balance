@@ -109,7 +109,7 @@ abstract class SignatureRequestRepositoryTest extends KernelTestCase
         $pending = SignatureRequestMother::registeredSignatureRequest();
         $repository->add($pending);
 
-        $filter = new SignatureRequestFilter(status: SignatureRequestStatus::Pending);
+        $filter = new SignatureRequestFilter(signatureStatus: SignatureRequestStatus::Pending);
 
         $result = $repository->findByFilter($filter);
 

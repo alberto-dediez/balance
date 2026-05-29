@@ -84,12 +84,12 @@ class DoctrineSignatureRequestRepository implements SignatureRequestRepository
             ;
         }
 
-        if (null !== $filter->status) {
+        if (null !== $filter->signatureStatus) {
             $qb
                 ->andWhere(
                     $qb->expr()->eq('sr.status', ':status'),
                 )
-                ->setParameter('status', $filter->status->value)
+                ->setParameter('status', $filter->signatureStatus->value)
             ;
         }
 

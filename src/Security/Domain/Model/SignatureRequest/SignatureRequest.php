@@ -23,6 +23,7 @@ class SignatureRequest implements \Stringable
         private ?DocumentReference $documentSigned = null,
         private ?SignatureProof $signatureProof = null,
         private SignatureRequestStatus $status = SignatureRequestStatus::Pending,
+        private ?OtpChallenge $otpChallenge = null,
         private ?AccountId $accountId = null,
         private bool $removed = false,
         array $events = [],
@@ -72,6 +73,16 @@ class SignatureRequest implements \Stringable
     public function isPending(): bool
     {
         return SignatureRequestStatus::Pending === $this->status();
+    }
+
+    public function isSigned(): bool
+    {
+        return SignatureRequestStatus::Signed === $this->status();
+    }
+
+    public function isExpired(): bool
+    {
+        return SignatureRequestStatus::Expired === $this->status();
     }
 
     public function expiresAt(): \DateTimeImmutable
@@ -170,6 +181,62 @@ class SignatureRequest implements \Stringable
         );
     }
 
+    public function sendOtp(OtpChallenge $challenge): void
+    {
+        $signer = $this->signer;
+        $channel = $signer->notificationChannel();
+        $isSms = NotificationChannel::Sms === $channel;
+        $actualDestination = $isSms ? ($signer->phone() ?? '') : ($signer->email() ?? '');
+        $maskedDestination = $isSms
+            ? $this->maskPhone($actualDestination)
+            : $this->maskEmail($actualDestination);
+
+        $this->recordApplyAndPublish(
+            new SignatureOtpRequested(
+                signatureRequestId: $this->id(),
+                notificationChannel: $channel,
+                maskedDestination: $maskedDestination,
+                expiresAt: $challenge->expiresAt() ?? new \DateTimeImmutable('+15 minutes'),
+                otpChallenge: $challenge,
+                actualDestination: $actualDestination,
+            ),
+        );
+    }
+
+    public function verifyOtp(string $code, #[\SensitiveParameter] string $appSecret, string $signerIp = ''): bool
+    {
+        if (null === $this->otpChallenge) {
+            return false;
+        }
+
+        $verified = $this->otpChallenge->verify($code, $appSecret);
+
+        if ($verified) {
+            $verifiedAt = new \DateTimeImmutable('NOW');
+            $this->recordApplyAndPublish(
+                new SignatureOtpVerified(
+                    signatureRequestId: $this->id(),
+                    verifiedAt: $verifiedAt,
+                    signerIp: $signerIp,
+                ),
+            );
+        } else {
+            $this->otpChallenge = $this->otpChallenge->withFailedAttempt();
+        }
+
+        return $verified;
+    }
+
+    public function otpChallenge(): ?OtpChallenge
+    {
+        return $this->otpChallenge;
+    }
+
+    public function isOtpVerified(): bool
+    {
+        return $this->otpChallenge?->isVerified() ?? false;
+    }
+
     public function applySignatureRequestRegistered(SignatureRequestRegistered $event): void
     {
         $this->token = $event->token();
@@ -209,8 +276,37 @@ class SignatureRequest implements \Stringable
         $this->removedAt = $event->occurredOn();
     }
 
+    public function applySignatureOtpRequested(SignatureOtpRequested $event): void
+    {
+        $this->otpChallenge = $event->otpChallenge();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applySignatureOtpVerified(SignatureOtpVerified $event): void
+    {
+        $this->otpChallenge = $this->otpChallenge?->withVerified($event->verifiedAt());
+        $this->updatedAt = $event->occurredOn();
+    }
+
     public function __toString(): string
     {
         return (string) $this->id();
+    }
+
+    private function maskEmail(string $email): string
+    {
+        $parts = explode('@', $email, 2);
+        $local = $parts[0];
+        $domain = $parts[1] ?? '';
+        $masked = substr($local, 0, 1) . str_repeat('*', max(0, strlen($local) - 1));
+
+        return $masked . '@' . $domain;
+    }
+
+    private function maskPhone(string $phone): string
+    {
+        $len = strlen($phone);
+
+        return str_repeat('*', max(0, $len - 3)) . substr($phone, -3);
     }
 }

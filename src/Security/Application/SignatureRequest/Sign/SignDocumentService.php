@@ -43,20 +43,32 @@ class SignDocumentService
             throw new \RuntimeException('El documento original ha sido modificado desde que se registró la solicitud de firma.');
         }
 
+        $signedAt = new \DateTimeImmutable('NOW');
+
+        $acceptanceTextSha256 = '' !== $request->acceptanceText
+            ? hash('sha256', $request->acceptanceText)
+            : null;
+
         $proofPayload = $this->pdfSigner->sign(
             source: $signatureRequest->documentToSign(),
             destinationPath: $destinationPath,
             request: $signatureRequest,
+            signedAt: $signedAt,
+            acceptanceTextSha256: $acceptanceTextSha256,
         );
 
         $signedDocumentSha256 = hash_file('sha256', $destinationPath);
-        assert(false !== $signedDocumentSha256);
+        if (false === $signedDocumentSha256) {
+            throw new \RuntimeException('No se pudo calcular el hash SHA-256 del documento firmado.');
+        }
 
         $signedDocumentSize = filesize($destinationPath);
-        assert(false !== $signedDocumentSize);
+        if (false === $signedDocumentSize) {
+            throw new \RuntimeException('No se pudo obtener el tamaño del documento firmado.');
+        }
 
         $proof = SignatureProof::create(
-            signedAt: new \DateTimeImmutable('NOW'),
+            signedAt: $signedAt,
             documentHashAtSigning: $documentHashAtSigning,
             signedDocumentSha256: $signedDocumentSha256,
             driver: $this->pdfSigner->driverName(),
@@ -64,6 +76,7 @@ class SignDocumentService
             signerIp: $request->signerIp ?: null,
             signerUserAgent: $request->signerUserAgent ?: null,
             signerAcceptLanguage: $request->signerAcceptLanguage ?: null,
+            acceptanceTextSha256: $acceptanceTextSha256,
         );
 
         $documentSigned = new DocumentReference(

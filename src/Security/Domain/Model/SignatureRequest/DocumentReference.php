@@ -23,8 +23,13 @@ class DocumentReference
         $size = filesize($path);
         $filename = basename($path);
 
-        assert(false !== $sha256);
-        assert(false !== $size);
+        if (false === $sha256) {
+            throw new \RuntimeException(sprintf('No se pudo calcular el hash SHA-256 del fichero "%s".', $path));
+        }
+
+        if (false === $size) {
+            throw new \RuntimeException(sprintf('No se pudo obtener el tamaño del fichero "%s".', $path));
+        }
 
         return new self(
             sha256: $sha256,

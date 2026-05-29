@@ -541,6 +541,318 @@
         <source>{number} resultados</source>
         <target>{number} resultados</target>
       </trans-unit>
+      <trans-unit id="NlEKxeo" resname="Solicitud de firma creada correctamente">
+        <source>Solicitud de firma creada correctamente</source>
+        <target>Solicitud de firma creada correctamente</target>
+      </trans-unit>
+      <trans-unit id="YH05n6H" resname="Se ha eliminado la solicitud de firma {id}">
+        <source>Se ha eliminado la solicitud de firma {id}</source>
+        <target>Se ha eliminado la solicitud de firma {id}</target>
+      </trans-unit>
+      <trans-unit id="WAbaEE6" resname="No se ha podido eliminar la solicitud de firma {id}">
+        <source>No se ha podido eliminar la solicitud de firma {id}</source>
+        <target>No se ha podido eliminar la solicitud de firma {id}</target>
+      </trans-unit>
+      <trans-unit id="S.3cQ_b" resname="Estado">
+        <source>Estado</source>
+        <target>Estado</target>
+      </trans-unit>
+      <trans-unit id="TWti7sg" resname="Documento a firmar (PDF)">
+        <source>Documento a firmar (PDF)</source>
+        <target>Documento a firmar (PDF)</target>
+      </trans-unit>
+      <trans-unit id="UMHTYpe" resname="Nombre del firmante">
+        <source>Nombre del firmante</source>
+        <target>Nombre del firmante</target>
+      </trans-unit>
+      <trans-unit id="JggvJjX" resname="Idioma del firmante">
+        <source>Idioma del firmante</source>
+        <target>Idioma del firmante</target>
+      </trans-unit>
+      <trans-unit id="OKSMnfp" resname="Canal de notificación">
+        <source>Canal de notificación</source>
+        <target>Canal de notificación</target>
+      </trans-unit>
+      <trans-unit id="cPN5nP6" resname="Email del firmante">
+        <source>Email del firmante</source>
+        <target>Email del firmante</target>
+      </trans-unit>
+      <trans-unit id="a290a6B" resname="Teléfono del firmante">
+        <source>Teléfono del firmante</source>
+        <target>Teléfono del firmante</target>
+      </trans-unit>
+      <trans-unit id="c4H.dmO" resname="Solicitud de firma de documento">
+        <source>Solicitud de firma de documento</source>
+        <target>Solicitud de firma de documento</target>
+      </trans-unit>
+      <trans-unit id="nRO9X0l" resname="Tu código de verificación es: {code}. Válido durante 15 minutos.">
+        <source>Tu código de verificación es: {code}. Válido durante 15 minutos.</source>
+        <target>Tu código de verificación es: {code}. Válido durante 15 minutos.</target>
+      </trans-unit>
+      <trans-unit id="0XZRGxy" resname="Código de verificación">
+        <source>Código de verificación</source>
+        <target>Código de verificación</target>
+      </trans-unit>
+      <trans-unit id="BxHkmXR" resname="Firma de documentos">
+        <source>Firma de documentos</source>
+        <target>Firma de documentos</target>
+      </trans-unit>
+      <trans-unit id="BfkEvk." resname="Hola {name}, se ha solicitado tu firma en un documento.">
+        <source>Hola {name}, se ha solicitado tu firma en un documento.</source>
+        <target>Hola {name}, se ha solicitado tu firma en un documento.</target>
+      </trans-unit>
+      <trans-unit id="1tBamaM" resname="Por favor, accede al siguiente enlace para ver y firmar el documento:">
+        <source>Por favor, accede al siguiente enlace para ver y firmar el documento:</source>
+        <target>Por favor, accede al siguiente enlace para ver y firmar el documento:</target>
+      </trans-unit>
+      <trans-unit id="Iv73ner" resname="Ver y firmar documento">
+        <source>Ver y firmar documento</source>
+        <target>Ver y firmar documento</target>
+      </trans-unit>
+      <trans-unit id="4KKJGF1" resname="Este enlace expira el {date}.">
+        <source>Este enlace expira el {date}.</source>
+        <target>Este enlace expira el {date}.</target>
+      </trans-unit>
+      <trans-unit id="ArLUlMA" resname="Documento ya firmado">
+        <source>Documento ya firmado</source>
+        <target>Documento ya firmado</target>
+      </trans-unit>
+      <trans-unit id="PrQd37I" resname="Este documento ya ha sido firmado">
+        <source>Este documento ya ha sido firmado</source>
+        <target>Este documento ya ha sido firmado</target>
+      </trans-unit>
+      <trans-unit id="z9ICg0G" resname="Firmado el">
+        <source>Firmado el</source>
+        <target>Firmado el</target>
+      </trans-unit>
+      <trans-unit id="fts7THf" resname="Verificar la firma">
+        <source>Verificar la firma</source>
+        <target>Verificar la firma</target>
+      </trans-unit>
+      <trans-unit id="uMDPKTq" resname="Verificación de identidad">
+        <source>Verificación de identidad</source>
+        <target>Verificación de identidad</target>
+      </trans-unit>
+      <trans-unit id="h..ICXX" resname="Has superado el número máximo de intentos. El enlace ha quedado bloqueado.">
+        <source>Has superado el número máximo de intentos. El enlace ha quedado bloqueado.</source>
+        <target>Has superado el número máximo de intentos. El enlace ha quedado bloqueado.</target>
+      </trans-unit>
+      <trans-unit id="114.WcV" resname="Se ha enviado un nuevo código.">
+        <source>Se ha enviado un nuevo código.</source>
+        <target>Se ha enviado un nuevo código.</target>
+      </trans-unit>
+      <trans-unit id="YwB7hUb" resname="Hemos enviado un código de 6 dígitos al número">
+        <source>Hemos enviado un código de 6 dígitos al número</source>
+        <target>Hemos enviado un código de 6 dígitos al número</target>
+      </trans-unit>
+      <trans-unit id="ozf0AQQ" resname="Hemos enviado un código de 6 dígitos al email">
+        <source>Hemos enviado un código de 6 dígitos al email</source>
+        <target>Hemos enviado un código de 6 dígitos al email</target>
+      </trans-unit>
+      <trans-unit id="9x9aFJ0" resname="Código incorrecto.">
+        <source>Código incorrecto.</source>
+        <target>Código incorrecto.</target>
+      </trans-unit>
+      <trans-unit id="cXxD2Ir" resname="Te quedan %n% intentos.">
+        <source>Te quedan %n% intentos.</source>
+        <target>Te quedan %n% intentos.</target>
+      </trans-unit>
+      <trans-unit id="5187CUS" resname="Verificar">
+        <source>Verificar</source>
+        <target>Verificar</target>
+      </trans-unit>
+      <trans-unit id="VAPQ6ut" resname="¿No has recibido el código? Reenviar">
+        <source>¿No has recibido el código? Reenviar</source>
+        <target>¿No has recibido el código? Reenviar</target>
+      </trans-unit>
+      <trans-unit id="yaV6LkI" resname="Firmar documento">
+        <source>Firmar documento</source>
+        <target>Firmar documento</target>
+      </trans-unit>
+      <trans-unit id="uPIDozK" resname="Documento para firmar">
+        <source>Documento para firmar</source>
+        <target>Documento para firmar</target>
+      </trans-unit>
+      <trans-unit id="2FUlmbk" resname="Documento PDF">
+        <source>Documento PDF</source>
+        <target>Documento PDF</target>
+      </trans-unit>
+      <trans-unit id="L.MXjOX" resname="Firma el documento">
+        <source>Firma el documento</source>
+        <target>Firma el documento</target>
+      </trans-unit>
+      <trans-unit id="6J2WB9A" resname="Por favor, lea el documento completo antes de firmarlo. Al firmar, acepta el contenido del documento.">
+        <source>Por favor, lea el documento completo antes de firmarlo. Al firmar, acepta el contenido del documento.</source>
+        <target>Por favor, lea el documento completo antes de firmarlo. Al firmar, acepta el contenido del documento.</target>
+      </trans-unit>
+      <trans-unit id="W6UF2fO" resname="Firmante">
+        <source>Firmante</source>
+        <target>Firmante</target>
+      </trans-unit>
+      <trans-unit id="Kn5pwW1" resname="Expira el">
+        <source>Expira el</source>
+        <target>Expira el</target>
+      </trans-unit>
+      <trans-unit id="FoBqJ4R" resname="He leído y acepto el contenido del documento.">
+        <source>He leído y acepto el contenido del documento.</source>
+        <target>He leído y acepto el contenido del documento.</target>
+      </trans-unit>
+      <trans-unit id="Kp_.k5q" resname="Documento firmado">
+        <source>Documento firmado</source>
+        <target>Documento firmado</target>
+      </trans-unit>
+      <trans-unit id="05XuC1S" resname="Documento firmado correctamente">
+        <source>Documento firmado correctamente</source>
+        <target>Documento firmado correctamente</target>
+      </trans-unit>
+      <trans-unit id="8hPRU4V" resname="La firma ha quedado registrada.">
+        <source>La firma ha quedado registrada.</source>
+        <target>La firma ha quedado registrada.</target>
+      </trans-unit>
+      <trans-unit id="IJOPTsY" resname="ID de la solicitud">
+        <source>ID de la solicitud</source>
+        <target>ID de la solicitud</target>
+      </trans-unit>
+      <trans-unit id="nIDlTac" resname="Tu código de verificación para firmar el documento es:">
+        <source>Tu código de verificación para firmar el documento es:</source>
+        <target>Tu código de verificación para firmar el documento es:</target>
+      </trans-unit>
+      <trans-unit id="rfF7OsI" resname="Este código expira el {date}.">
+        <source>Este código expira el {date}.</source>
+        <target>Este código expira el {date}.</target>
+      </trans-unit>
+      <trans-unit id="Q89dM7o" resname="Si no has solicitado este código, ignora este mensaje.">
+        <source>Si no has solicitado este código, ignora este mensaje.</source>
+        <target>Si no has solicitado este código, ignora este mensaje.</target>
+      </trans-unit>
+      <trans-unit id="AoCvuwi" resname="Verificación de firma">
+        <source>Verificación de firma</source>
+        <target>Verificación de firma</target>
+      </trans-unit>
+      <trans-unit id="oBzXpbq" resname="ID de solicitud">
+        <source>ID de solicitud</source>
+        <target>ID de solicitud</target>
+      </trans-unit>
+      <trans-unit id="t7m23wM" resname="Datos de la firma">
+        <source>Datos de la firma</source>
+        <target>Datos de la firma</target>
+      </trans-unit>
+      <trans-unit id="yScbeW1" resname="Fecha de firma">
+        <source>Fecha de firma</source>
+        <target>Fecha de firma</target>
+      </trans-unit>
+      <trans-unit id="xnBUuOs" resname="Driver">
+        <source>Driver</source>
+        <target>Driver</target>
+      </trans-unit>
+      <trans-unit id="QLvUq5A" resname="Hash del original">
+        <source>Hash del original</source>
+        <target>Hash del original</target>
+      </trans-unit>
+      <trans-unit id="9HJBRH8" resname="Hash del firmado">
+        <source>Hash del firmado</source>
+        <target>Hash del firmado</target>
+      </trans-unit>
+      <trans-unit id="4BPy0_P" resname="Firma válida">
+        <source>Firma válida</source>
+        <target>Firma válida</target>
+      </trans-unit>
+      <trans-unit id="TPKIHiW" resname="Firma NO válida">
+        <source>Firma NO válida</source>
+        <target>Firma NO válida</target>
+      </trans-unit>
+      <trans-unit id="XUtSydT" resname="Este documento aún no ha sido firmado.">
+        <source>Este documento aún no ha sido firmado.</source>
+        <target>Este documento aún no ha sido firmado.</target>
+      </trans-unit>
+      <trans-unit id="Zr4Io6K" resname="Enlace inválido">
+        <source>Enlace inválido</source>
+        <target>Enlace inválido</target>
+      </trans-unit>
+      <trans-unit id=".BdJuzV" resname="Este enlace no es válido o ha expirado">
+        <source>Este enlace no es válido o ha expirado</source>
+        <target>Este enlace no es válido o ha expirado</target>
+      </trans-unit>
+      <trans-unit id="w7oPZNY" resname="El enlace de firma que ha utilizado no es válido, ha expirado o ya no está disponible.">
+        <source>El enlace de firma que ha utilizado no es válido, ha expirado o ya no está disponible.</source>
+        <target>El enlace de firma que ha utilizado no es válido, ha expirado o ya no está disponible.</target>
+      </trans-unit>
+      <trans-unit id="pvGWBMz" resname="Solicitudes de firma">
+        <source>Solicitudes de firma</source>
+        <target>Solicitudes de firma</target>
+      </trans-unit>
+      <trans-unit id="RoiG_Ui" resname="Documento">
+        <source>Documento</source>
+        <target>Documento</target>
+      </trans-unit>
+      <trans-unit id="AorlCe0" resname="Fecha de expiración">
+        <source>Fecha de expiración</source>
+        <target>Fecha de expiración</target>
+      </trans-unit>
+      <trans-unit id="3KsJtNw" resname="Descargar documento firmado">
+        <source>Descargar documento firmado</source>
+        <target>Descargar documento firmado</target>
+      </trans-unit>
+      <trans-unit id="oLtzftI" resname="Verificar firma">
+        <source>Verificar firma</source>
+        <target>Verificar firma</target>
+      </trans-unit>
+      <trans-unit id="yhue5qm" resname="Teléfono">
+        <source>Teléfono</source>
+        <target>Teléfono</target>
+      </trans-unit>
+      <trans-unit id="Dg1lLxW" resname="Canal">
+        <source>Canal</source>
+        <target>Canal</target>
+      </trans-unit>
+      <trans-unit id="gTVHpFE" resname="Solicitud">
+        <source>Solicitud</source>
+        <target>Solicitud</target>
+      </trans-unit>
+      <trans-unit id="04WIWP2" resname="Registrada">
+        <source>Registrada</source>
+        <target>Registrada</target>
+      </trans-unit>
+      <trans-unit id="YhBkKc6" resname="Actualizada">
+        <source>Actualizada</source>
+        <target>Actualizada</target>
+      </trans-unit>
+      <trans-unit id="O7sB3vC" resname="La firma es válida.">
+        <source>La firma es válida.</source>
+        <target>La firma es válida.</target>
+      </trans-unit>
+      <trans-unit id="Rz0_zYd" resname="La firma NO es válida.">
+        <source>La firma NO es válida.</source>
+        <target>La firma NO es válida.</target>
+      </trans-unit>
+      <trans-unit id="P0DsxcE" resname="Datos forenses de la firma">
+        <source>Datos forenses de la firma</source>
+        <target>Datos forenses de la firma</target>
+      </trans-unit>
+      <trans-unit id="Wj3q5fQ" resname="Hash original">
+        <source>Hash original</source>
+        <target>Hash original</target>
+      </trans-unit>
+      <trans-unit id="lbiKI1K" resname="Hash firmado">
+        <source>Hash firmado</source>
+        <target>Hash firmado</target>
+      </trans-unit>
+      <trans-unit id="7373c8A" resname="IP del firmante">
+        <source>IP del firmante</source>
+        <target>IP del firmante</target>
+      </trans-unit>
+      <trans-unit id="wvo4He3" resname="User-Agent">
+        <source>User-Agent</source>
+        <target>User-Agent</target>
+      </trans-unit>
+      <trans-unit id="Vt_CBrl" resname="Solicitud de firma {id} registrada por {user} para firmante {signer}">
+        <source>Solicitud de firma {id} registrada por {user} para firmante {signer}</source>
+        <target>Solicitud de firma {id} registrada por {user} para firmante {signer}</target>
+      </trans-unit>
+      <trans-unit id="68cSaSf" resname="Solicitud de firma {id} eliminada por {user}">
+        <source>Solicitud de firma {id} eliminada por {user}</source>
+        <target>Solicitud de firma {id} eliminada por {user}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

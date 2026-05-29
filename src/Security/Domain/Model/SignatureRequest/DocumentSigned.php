@@ -58,6 +58,7 @@ final class DocumentSigned extends DomainEvent
             'proofSignerIp' => $this->signatureProof->signerIp(),
             'proofSignerUserAgent' => $this->signatureProof->signerUserAgent(),
             'proofSignerAcceptLanguage' => $this->signatureProof->signerAcceptLanguage(),
+            'proofAcceptanceTextSha256' => $this->signatureProof->acceptanceTextSha256(),
         ];
     }
 
@@ -68,7 +69,9 @@ final class DocumentSigned extends DomainEvent
     ): static {
         $signedAt = isset($payload['proofSignedAt']) ? new \DateTimeImmutable($payload['proofSignedAt']) : null;
 
-        assert(null !== $signedAt);
+        if (null === $signedAt) {
+            throw new \RuntimeException('El payload del evento DocumentSigned no contiene proofSignedAt.');
+        }
 
         $proof = SignatureProof::create(
             signedAt: $signedAt,
@@ -79,6 +82,7 @@ final class DocumentSigned extends DomainEvent
             signerIp: $payload['proofSignerIp'] ?? null,
             signerUserAgent: $payload['proofSignerUserAgent'] ?? null,
             signerAcceptLanguage: $payload['proofSignerAcceptLanguage'] ?? null,
+            acceptanceTextSha256: $payload['proofAcceptanceTextSha256'] ?? null,
         );
 
         $documentSigned = new DocumentReference(

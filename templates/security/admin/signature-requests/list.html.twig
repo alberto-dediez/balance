@@ -11,12 +11,12 @@
             'label': 'Firmante' | trans,
             'sortable': false
         }, {
+            'label': 'Cuenta' | trans,
+            'sortable': false
+        }, {
             'label': 'Estado' | trans,
             'sortable': true,
             'sortableBy': 'status'
-        }, {
-            'label': 'Cuenta' | trans,
-            'sortable': false
         }, {
             'label': 'Fecha de expiración' | trans,
             'sortable': true,
@@ -33,9 +33,21 @@
     <twig:List:Table :columns="columns" :elements="signatureRequests" :bulkForm="bulkForm">
         <td>{{ element.documentToSign.filename }}</td>
         <td>{{ element.signer.name }}</td>
-        <td>{{ element.status.value | trans({}, 'signatureRequestStatusType') }}</td>
         <td>{{ element.accountId is not empty ? (element.accountId | account_name) : '---' }}</td>
-        <td>{{ element.expiresAt | date('d/m/Y H:i') }}</td>
+        <td>
+            <div class="badge {{ element.status.style }}">
+                {{ element.status.value | trans({}, 'signatureRequestStatus') }}
+            </div>
+        </td>
+        <td>
+            {% if element.isSigned %}
+                ---
+            {% elseif element.isExpired %}
+                <div class="text-danger">{{ element.expiresAt | date('d/m/Y H:i') }}</div>
+            {% else %}
+                {{ element.expiresAt | date('d/m/Y H:i') }}
+            {% endif %}
+        </td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
             <twig:List:Action:View path="{{ path('admin_signature_requests_show', {'signatureRequestId': element.id}) }}" />

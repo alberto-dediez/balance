@@ -15,6 +15,7 @@ class SignatureProof
         private readonly ?string $signerIp = null,
         private readonly ?string $signerUserAgent = null,
         private readonly ?string $signerAcceptLanguage = null,
+        private readonly ?string $acceptanceTextSha256 = null,
     ) {}
 
     public static function create(
@@ -26,6 +27,7 @@ class SignatureProof
         ?string $signerIp = null,
         ?string $signerUserAgent = null,
         ?string $signerAcceptLanguage = null,
+        ?string $acceptanceTextSha256 = null,
     ): self {
         return new self(
             signedAt: $signedAt,
@@ -36,6 +38,7 @@ class SignatureProof
             signerIp: $signerIp,
             signerUserAgent: $signerUserAgent,
             signerAcceptLanguage: $signerAcceptLanguage,
+            acceptanceTextSha256: $acceptanceTextSha256,
         );
     }
 
@@ -77,5 +80,10 @@ class SignatureProof
     public function signerAcceptLanguage(): ?string
     {
         return $this->signerAcceptLanguage;
+    }
+
+    public function acceptanceTextSha256(): ?string
+    {
+        return $this->acceptanceTextSha256;
     }
 }

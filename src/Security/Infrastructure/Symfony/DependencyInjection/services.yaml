@@ -1,3 +1,6 @@
+parameters:
+    app.signature_hmac_secret: '%env(SIGNATURE_HMAC_SECRET)%'
+    
 services:
     _defaults:
         autowire: true
@@ -26,19 +29,19 @@ services:
 
     App\Security\Application\SignatureRequest\Register\RegisterSignatureRequestService:
         arguments:
-            $appSecret: '%kernel.secret%'
+            $appSecret: '%app.signature_hmac_secret%'
 
     App\Security\Application\SignatureRequest\RecordView\RecordSignatureViewService:
         arguments:
-            $appSecret: '%kernel.secret%'
+            $appSecret: '%app.signature_hmac_secret%'
 
     App\Security\Application\SignatureRequest\Sign\SignDocumentService:
         arguments:
-            $appSecret: '%kernel.secret%'
+            $appSecret: '%app.signature_hmac_secret%'
 
     App\Security\Infrastructure\Pdf\HmacPdfSigner:
         arguments:
-            $appSecret: '%kernel.secret%'
+            $appSecret: '%app.signature_hmac_secret%'
 
     App\Security\Infrastructure\FileStorage\LocalSignatureFileStorage:
         arguments:
@@ -57,6 +60,25 @@ services:
     App\Security\Infrastructure\UI\Web\Public\SignatureRequest\SignDocumentController:
         arguments:
             $signatureTokenLimiter: '@limiter.signature_token'
+
+    App\Security\Infrastructure\UI\Web\Public\SignatureRequest\StreamDocumentController:
+        arguments:
+            $signatureTokenLimiter: '@limiter.signature_token'
+
+    App\Security\Infrastructure\UI\Web\Public\SignatureRequest\OtpController:
+        arguments:
+            $signatureTokenLimiter: '@limiter.signature_token'
+
+    App\Security\Application\SignatureRequest\SendOtp\SendOtpService:
+        arguments:
+            $appSecret: '%app.signature_hmac_secret%'
+
+    App\Security\Application\SignatureRequest\VerifyOtp\VerifyOtpService:
+        arguments:
+            $appSecret: '%app.signature_hmac_secret%'
+
+    App\Shared\Domain\Model\Sms\SmsSender:
+        alias: App\Shared\Infrastructure\Sms\InMemorySmsSender
 
     App\Shared\Infrastructure\Storage\LocalFileUploader:
         arguments:

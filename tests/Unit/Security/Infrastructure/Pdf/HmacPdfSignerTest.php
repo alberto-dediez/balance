@@ -29,7 +29,7 @@ class HmacPdfSignerTest extends TestCase
         $signatureRequest = SignatureRequestMother::registeredSignatureRequest();
         $source = DocumentReference::fromPath($sourcePath);
 
-        $proofPayload = $this->signer->sign($source, $destPath, $signatureRequest);
+        $proofPayload = $this->signer->sign($source, $destPath, $signatureRequest, new \DateTimeImmutable());
 
         $this->assertNotEmpty($proofPayload);
         $this->assertFileExists($destPath);
@@ -61,7 +61,7 @@ class HmacPdfSignerTest extends TestCase
         $signatureRequest = SignatureRequestMother::registeredSignatureRequest();
         $source = DocumentReference::fromPath($sourcePath);
 
-        $proofPayload = $this->signer->sign($source, $destPath, $signatureRequest);
+        $proofPayload = $this->signer->sign($source, $destPath, $signatureRequest, new \DateTimeImmutable());
 
         $signedDocumentSha256 = hash_file('sha256', $destPath);
         $this->assertNotFalse($signedDocumentSha256);

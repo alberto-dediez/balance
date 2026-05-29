@@ -23,7 +23,7 @@ class SignatureRequestStatusType extends AbstractType
         $resolver->setDefaults([
             'choices' => $choices,
             'choice_value' => fn(?SignatureRequestStatus $case) => $case?->value,
-            'translation_domain' => 'signatureRequestStatusType',
+            'translation_domain' => 'signatureRequestStatus',
         ]);
     }
 

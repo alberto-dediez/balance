@@ -16,7 +16,7 @@ class ListSignatureRequestsType extends BaseFilterType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('status', SignatureRequestStatusType::class, [
+            ->add('signatureStatus', SignatureRequestStatusType::class, [
                 'label' => new TranslatableMessage('Estado'),
                 'required' => false,
             ])

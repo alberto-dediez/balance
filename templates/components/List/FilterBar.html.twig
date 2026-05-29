@@ -14,17 +14,19 @@
                             {% set value = value | user_name %}
                         {% elseif field == 'accountId' %}
                             {% set value = value | account_name %}
+                        {% elseif field == 'signatureStatus' %}
+                            {% set value = value.value | trans({}, 'signatureRequestStatus') %}
                         {% endif %}
 
-                        <twig:List:FilterShow 
-                            label="{{ formField.vars.label }}" 
-                            value="{{ value }}" 
+                        <twig:List:FilterShow
+                            label="{{ formField.vars.label }}"
+                            value="{{ value }}"
                             id="#{{ formField.vars.id }}"
                         />
                     {% endif %}
                 {% endfor %}
             {% endblock %}
-            
+
             <button class="btn btn-secondary d-flex align-items-center justify-content-start ms-auto"
                 type="button" data-bs-toggle="offcanvas" data-bs-target="#right-bar" aria-controls="filter"
                 title="{% trans -%}Filtrar resultados{%- endtrans %}"

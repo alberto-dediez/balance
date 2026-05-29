@@ -34,7 +34,7 @@
                 <h6 class="fw-semibold mb-3">{{ 'Solicitud' | trans }}</h6>
                 <twig:View:Field label="{{ 'Estado' | trans }}">
                     <span class="badge {{ signatureRequest.status.style }}">
-                        {{ signatureRequest.status.value | trans({}, 'signatureRequestStatusType') }}
+                        {{ signatureRequest.status.value | trans({}, 'signatureRequestStatus') }}
                     </span>
                 </twig:View:Field>
                 <twig:View:Field label="{{ 'Registrada' | trans }}">{{ signatureRequest.registeredAt | date('d/m/Y H:i') }}</twig:View:Field>

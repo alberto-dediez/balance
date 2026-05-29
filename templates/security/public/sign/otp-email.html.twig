@@ -1,0 +1,19 @@
+{% extends '@shared/layout/email.html.twig' %}
+
+{% block content %}
+    <h3>{% trans -%}Código de verificación{%- endtrans %}</h3>
+    <p>{% trans -%}Tu código de verificación para firmar el documento es:{%- endtrans %}</p>
+    <p style="font-size: 2rem; font-weight: bold; letter-spacing: 0.5rem; text-align: center;">
+        {{ otpCode }}
+    </p>
+    <p>
+        <small>
+            {% trans with {'{date}': expiresAt | date('d/m/Y H:i')} -%}
+                Este código expira el {date}.
+            {%- endtrans %}
+        </small>
+    </p>
+    <p>
+        <small>{% trans -%}Si no has solicitado este código, ignora este mensaje.{%- endtrans %}</small>
+    </p>
+{% endblock %}

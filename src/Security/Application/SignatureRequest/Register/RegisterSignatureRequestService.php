@@ -34,7 +34,7 @@ class RegisterSignatureRequestService implements CommandHandler
     {
         $id = SignatureRequestId::generate();
 
-        $this->authorizer->denyUnlessCanDoThat(new SignatureRequest(id: $id), SecurityAction::List, $user);
+        $this->authorizer->denyUnlessCanDoThat(new SignatureRequest(id: $id), SecurityAction::Register, $user);
 
         $token = Token::generate($this->appSecret);
         $documentToSign = DocumentReference::fromPath($request->documentToSignPath);

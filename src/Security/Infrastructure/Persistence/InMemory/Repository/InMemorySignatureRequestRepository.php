@@ -71,7 +71,7 @@ class InMemorySignatureRequestRepository implements SignatureRequestRepository
                 continue;
             }
 
-            if (null !== $filter->status && $filter->status !== $signatureRequest->status()) {
+            if (null !== $filter->signatureStatus && $filter->signatureStatus !== $signatureRequest->status()) {
                 continue;
             }
 

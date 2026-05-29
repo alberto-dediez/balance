@@ -27,7 +27,7 @@ class RemoveSignatureRequestService implements CommandHandler
     {
         $signatureRequest = $this->repository->find($request->signatureRequestId);
 
-        if (null == $signatureRequest) {
+        if (null === $signatureRequest) {
             throw new \InvalidArgumentException('SignatureRequest not found');
         }
 

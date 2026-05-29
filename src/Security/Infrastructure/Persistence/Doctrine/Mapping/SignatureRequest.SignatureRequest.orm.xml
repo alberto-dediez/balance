@@ -10,11 +10,16 @@
             <generator strategy="NONE" />
         </id>
 
+        <unique-constraints>
+            <unique-constraint columns="token_hash" name="uq_signature_request_token_hash"/>
+        </unique-constraints>
+
         <embedded name="token" class="App\Security\Domain\Model\SignatureRequest\Token" use-column-prefix="true" column-prefix="token_" />
         <embedded name="documentToSign" class="App\Security\Domain\Model\SignatureRequest\DocumentReference" use-column-prefix="true" column-prefix="doc_to_sign_" />
         <embedded name="documentSigned" class="App\Security\Domain\Model\SignatureRequest\DocumentReference" use-column-prefix="true" column-prefix="doc_signed_" />
         <embedded name="signer" class="App\Security\Domain\Model\SignatureRequest\Signer" use-column-prefix="true" column-prefix="signer_" />
         <embedded name="signatureProof" class="App\Security\Domain\Model\SignatureRequest\SignatureProof" use-column-prefix="true" column-prefix="proof_" />
+        <embedded name="otpChallenge" class="App\Security\Domain\Model\SignatureRequest\OtpChallenge" use-column-prefix="true" column-prefix="otp_" />
 
         <field name="status" type="string" enum-type="App\Security\Domain\Model\SignatureRequest\SignatureRequestStatus" nullable="false"/>
         <field name="expiresAt" type="datetime_immutable" column="expires_at" nullable="false"/>

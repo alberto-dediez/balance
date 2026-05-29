@@ -32,6 +32,11 @@ class SignDocumentController extends AbstractController
             return new Response('Demasiados intentos. Por favor espere.', Response::HTTP_TOO_MANY_REQUESTS);
         }
 
+        $sessionKey = 'signature_otp_verified_' . hash('sha256', $token);
+        if (!$request->getSession()->get($sessionKey)) {
+            throw $this->createAccessDeniedException('Verificación OTP requerida.');
+        }
+
         if (!$this->isCsrfTokenValid('sign_document_' . $token, $request->request->getString('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF inválido.');
         }

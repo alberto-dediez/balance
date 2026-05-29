@@ -24,7 +24,7 @@
                             {% endif %}
                         </dd>
                         <dt class="col-sm-4">{{ 'Estado' | trans }}</dt>
-                        <dd class="col-sm-8">{{ signatureRequest.status.value | trans({}, 'signatureRequestStatusType') }}</dd>
+                        <dd class="col-sm-8">{{ signatureRequest.status.value | trans({}, 'signatureRequestStatus') }}</dd>
                     </dl>
 
                     {% if signatureRequest.signatureProof %}

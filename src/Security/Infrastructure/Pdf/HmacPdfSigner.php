@@ -22,10 +22,12 @@ class HmacPdfSigner implements PdfSigner
         private string $appSecret,
     ) {}
 
-    public function sign(DocumentReference $source, string $destinationPath, SignatureRequest $request): string
+    public function sign(DocumentReference $source, string $destinationPath, SignatureRequest $request, \DateTimeImmutable $signedAt, ?string $acceptanceTextSha256 = null): string
     {
         $sourceFile = $source->path();
-        assert(null !== $sourceFile && is_readable($sourceFile));
+        if (null === $sourceFile || !is_readable($sourceFile)) {
+            throw new \RuntimeException('El documento fuente no existe o no es legible.');
+        }
 
         $dir = dirname($destinationPath);
         if (!is_dir($dir)) {
@@ -48,8 +50,7 @@ class HmacPdfSigner implements PdfSigner
         }
 
         try {
-            $signedAt = new \DateTimeImmutable('NOW');
-            $this->appendAttestationPage($pdf, $request, $source, $signedAt);
+            $this->appendAttestationPage($pdf, $request, $source, $signedAt, $acceptanceTextSha256);
             $pdf->Output($destinationPath, 'F');
         } finally {
             if (null !== $compatPath) {
@@ -58,7 +59,9 @@ class HmacPdfSigner implements PdfSigner
         }
 
         $fileHash = hash_file('sha256', $destinationPath);
-        assert(false !== $fileHash);
+        if (false === $fileHash) {
+            throw new \RuntimeException('No se pudo calcular el hash SHA-256 del documento firmado.');
+        }
 
         return $this->computeHmac($fileHash);
     }
@@ -95,6 +98,7 @@ class HmacPdfSigner implements PdfSigner
         SignatureRequest $request,
         DocumentReference $source,
         \DateTimeImmutable $signedAt,
+        ?string $acceptanceTextSha256,
     ): void {
         $pdf->AddPage();
         $pdf->setFont('helvetica', 'B', 14);
@@ -111,6 +115,7 @@ class HmacPdfSigner implements PdfSigner
             'Fecha y hora (UTC)' => $signedAt->setTimezone(new \DateTimeZone('UTC'))->format(\DateTimeInterface::ATOM),
             'Hash documento original (SHA-256)' => $source->sha256() ?? 'n/a',
             'Documento original' => $source->filename() ?? 'document.pdf',
+            'Hash del texto de aceptacion (SHA-256)' => $acceptanceTextSha256 ?? 'n/a',
         ];
 
         foreach ($rows as $label => $value) {

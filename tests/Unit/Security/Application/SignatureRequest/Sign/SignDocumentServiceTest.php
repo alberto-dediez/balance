@@ -47,7 +47,7 @@ class SignDocumentServiceTest extends TestCase
         $repository->add($signatureRequest);
 
         $pdfSigner = new class implements PdfSigner {
-            public function sign(DocumentReference $source, string $destinationPath, SignatureRequest $request): string
+            public function sign(DocumentReference $source, string $destinationPath, SignatureRequest $request, \DateTimeImmutable $signedAt, ?string $acceptanceTextSha256 = null): string
             {
                 $path = $source->path();
                 assert(null !== $path);

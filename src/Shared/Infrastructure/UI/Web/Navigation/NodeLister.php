@@ -54,6 +54,11 @@ class NodeLister
                     target: $this->router->generate('admin_users'),
                 ),
                 new Node(
+                    label: new TranslatableMessage('Firma de documentos'),
+                    icon: 'solar:verified-check-line-duotone',
+                    target: $this->router->generate('admin_signature_requests'),
+                ),
+                new Node(
                     label: new TranslatableMessage('Registro'),
                     icon: 'solar:record-minimalistic-line-duotone',
                     target: $this->router->generate('admin_events'),
