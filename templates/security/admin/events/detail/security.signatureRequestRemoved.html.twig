@@ -1,4 +1,4 @@
 {% trans with {
-    '{user}': element.userId | user_name,
-    '{id}': element.payload.signatureRequestId
+    '{user}': event.userId | user_name,
+    '{id}': event.payload.signatureRequestId
 } %}Solicitud de firma {id} eliminada por {user}{% endtrans %}

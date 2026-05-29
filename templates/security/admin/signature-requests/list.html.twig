@@ -51,6 +51,11 @@
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
             <twig:List:Action:View path="{{ path('admin_signature_requests_show', {'signatureRequestId': element.id}) }}" />
+
+            {% if element | is_authorized('history') %}
+                <twig:List:Action:History path="{{ path('admin_signature_requests_history', {'signatureRequestId': element.id}) }}" />
+            {% endif %}
+
             {% if element | is_authorized('remove') %}
                 <twig:List:Action:Delete path="{{ path('admin_signature_requests_remove', {'signatureRequestId': element.id}) }}" />
             {% endif %}

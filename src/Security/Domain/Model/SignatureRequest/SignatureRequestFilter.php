@@ -12,9 +12,9 @@ class SignatureRequestFilter
     use Filter;
 
     public function __construct(
-        public ?AccountId              $accountId = null,
+        public ?AccountId $accountId = null,
         public ?SignatureRequestStatus $signatureStatus = null,
-        int                            $limit = 10,
+        int $limit = 10,
     ) {
         $this->limit = $limit;
     }

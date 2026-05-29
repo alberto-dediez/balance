@@ -1,5 +1,4 @@
 {% trans with {
-    '{user}': element.userId | user_name,
-    '{id}': element.payload.signatureRequestId,
-    '{signer}': element.payload.signerName
-} %}Solicitud de firma {id} registrada por {user} para firmante {signer}{% endtrans %}
+    '{id}': event.payload.signatureRequestId,
+    '{signer}': event.payload.signerName
+} %}Solicitud de firma {id} registrada para firmante {signer}{% endtrans %}

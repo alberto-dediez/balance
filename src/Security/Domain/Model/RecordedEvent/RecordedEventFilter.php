@@ -16,6 +16,10 @@ class RecordedEventFilter
         public ?string $eventName = null,
         public ?string $context = null,
         public ?string $aggregateRootId = null,
+        /**
+         * @var list<string>|null
+         */
+        public ?array $allowedEventNames = null,
         int $limit = 10,
     ) {
         $this->limit = $limit;

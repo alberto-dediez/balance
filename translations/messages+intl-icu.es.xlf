@@ -853,6 +853,58 @@
         <source>Solicitud de firma {id} eliminada por {user}</source>
         <target>Solicitud de firma {id} eliminada por {user}</target>
       </trans-unit>
+      <trans-unit id="5wkxlYg" resname="Histórico">
+        <source>Histórico</source>
+        <target>Histórico</target>
+      </trans-unit>
+      <trans-unit id=".yoInHy" resname="Contraseña recuperada para el usuario {user}">
+        <source>Contraseña recuperada para el usuario {user}</source>
+        <target>Contraseña recuperada para el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="THD2JdW" resname="Documento &quot;{filename}&quot; firmado para la solicitud {id} el {signedAt}">
+        <source>Documento "{filename}" firmado para la solicitud {id} el {signedAt}</source>
+        <target>Documento "{filename}" firmado para la solicitud {id} el {signedAt}</target>
+      </trans-unit>
+      <trans-unit id="5tplUBz" resname="Solicitud de firma {id} expirada">
+        <source>Solicitud de firma {id} expirada</source>
+        <target>Solicitud de firma {id} expirada</target>
+      </trans-unit>
+      <trans-unit id="5QDR8pW" resname="Recuperación de contraseña iniciada para el usuario {user}">
+        <source>Recuperación de contraseña iniciada para el usuario {user}</source>
+        <target>Recuperación de contraseña iniciada para el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="juOiASs" resname="Solicitud de firma {id} registrada para firmante {signer}">
+        <source>Solicitud de firma {id} registrada para firmante {signer}</source>
+        <target>Solicitud de firma {id} registrada para firmante {signer}</target>
+      </trans-unit>
+      <trans-unit id="zypoQj2" resname="OTP solicitado para la solicitud de firma {id} via {channel} a {destination}">
+        <source>OTP solicitado para la solicitud de firma {id} via {channel} a {destination}</source>
+        <target>OTP solicitado para la solicitud de firma {id} via {channel} a {destination}</target>
+      </trans-unit>
+      <trans-unit id="PM3c2Tc" resname="OTP verificado para la solicitud de firma {id} desde {ip}">
+        <source>OTP verificado para la solicitud de firma {id} desde {ip}</source>
+        <target>OTP verificado para la solicitud de firma {id} desde {ip}</target>
+      </trans-unit>
+      <trans-unit id="skqnCMO" resname="Documento de la solicitud de firma {id} visualizado desde {ip}">
+        <source>Documento de la solicitud de firma {id} visualizado desde {ip}</source>
+        <target>Documento de la solicitud de firma {id} visualizado desde {ip}</target>
+      </trans-unit>
+      <trans-unit id="z2pVfhE" resname="Evento">
+        <source>Evento</source>
+        <target>Evento</target>
+      </trans-unit>
+      <trans-unit id="tHIk6cC" resname="Realizado por">
+        <source>Realizado por</source>
+        <target>Realizado por</target>
+      </trans-unit>
+      <trans-unit id="ePG.vUe" resname="Fecha">
+        <source>Fecha</source>
+        <target>Fecha</target>
+      </trans-unit>
+      <trans-unit id="SY1yoG3" resname="Sin eventos registrados">
+        <source>Sin eventos registrados</source>
+        <target>Sin eventos registrados</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

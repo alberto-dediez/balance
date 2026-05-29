@@ -91,6 +91,15 @@ class DoctrineRecordedEventRepository implements RecordedEventRepository
             ;
         }
 
+        if (null !== $filter->allowedEventNames && [] !== $filter->allowedEventNames) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->in('e.eventName', ':allowedEventNames'),
+                )
+                ->setParameter('allowedEventNames', $filter->allowedEventNames)
+            ;
+        }
+
         $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {

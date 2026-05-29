@@ -73,6 +73,10 @@ class InMemoryRecordedEventRepository implements RecordedEventRepository
                 continue;
             }
 
+            if (null !== $filter->allowedEventNames && [] !== $filter->allowedEventNames && !in_array($event->eventName(), $filter->allowedEventNames, true)) {
+                continue;
+            }
+
             if ($offset > 0) {
                 --$offset;
 

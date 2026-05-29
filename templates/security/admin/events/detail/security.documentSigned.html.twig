@@ -1,0 +1,5 @@
+{% trans with {
+    '{id}': event.payload.signatureRequestId,
+    '{filename}': event.payload.documentSignedFilename,
+    '{signedAt}': event.payload.proofSignedAt
+} %}Documento "{filename}" firmado para la solicitud {id} el {signedAt}{% endtrans %}
