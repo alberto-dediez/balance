@@ -21,6 +21,7 @@ final class SignatureRequestRegistered extends DomainEvent
         private Signer $signer,
         private \DateTimeImmutable $expiresAt,
         private ?AccountId $accountId = null,
+        private bool $otpRequired = true,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -57,6 +58,11 @@ final class SignatureRequestRegistered extends DomainEvent
         return $this->accountId;
     }
 
+    public function otpRequired(): bool
+    {
+        return $this->otpRequired;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->signatureRequestId();
@@ -78,6 +84,7 @@ final class SignatureRequestRegistered extends DomainEvent
             'signerPhone' => $this->signer->phone(),
             'signerNotificationChannel' => $this->signer->notificationChannel()->value,
             'expiresAt' => $this->expiresAt->format(\DateTimeInterface::ATOM),
+            'otpRequired' => $this->otpRequired,
         ];
     }
 
@@ -112,6 +119,7 @@ final class SignatureRequestRegistered extends DomainEvent
             signer: $signer,
             expiresAt: new \DateTimeImmutable($payload['expiresAt']),
             accountId: null !== $payload['accountId'] ? new AccountId($payload['accountId']) : null,
+            otpRequired: $payload['otpRequired'] ?? true,
             id: $id,
             occurredOn: $occurredOn,
         );

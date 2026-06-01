@@ -79,6 +79,7 @@ services:
     App\Security\Application\SignatureRequest\SendOtp\SendOtpService:
         arguments:
             $appSecret: '%app.signature_hmac_secret%'
+            $smsEnabled: '%app.signature_sms_enabled%'
 
     App\Security\Application\SignatureRequest\VerifyOtp\VerifyOtpService:
         arguments:

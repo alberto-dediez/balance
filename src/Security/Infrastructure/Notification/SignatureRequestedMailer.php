@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Security\Infrastructure\Notification;
 
+use App\Security\Domain\Model\SignatureRequest\NotificationChannel;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestRegistered;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
 use App\Shared\Domain\Model\Email\EmailRecipient;
 use App\Shared\Domain\Model\Email\EmailSender;
+use App\Shared\Domain\Model\Sms\SmsSender;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -19,6 +21,7 @@ class SignatureRequestedMailer implements DomainEventSubscriber
 
     public function __construct(
         private EmailSender $emailSender,
+        private SmsSender $smsSender,
         private TranslatorInterface $translator,
         private UrlGeneratorInterface $urlGenerator,
     ) {
@@ -40,15 +43,29 @@ class SignatureRequestedMailer implements DomainEventSubscriber
     {
         $signer = $event->signer();
 
-        if (null === $signer->email()) {
-            return;
-        }
-
         $signingUrl = $this->urlGenerator->generate(
             'public_sign_view',
             ['token' => $event->token()->plainValue()],
             UrlGeneratorInterface::ABSOLUTE_URL,
         );
+
+        if (NotificationChannel::Sms === $signer->notificationChannel()) {
+            if (null === $signer->phone()) {
+                return;
+            }
+
+            $body = $this->translator->trans(
+                'Firma el documento aquí: {url}',
+                ['{url}' => $signingUrl],
+            );
+            ($this->smsSender)($signer->phone(), $body);
+
+            return;
+        }
+
+        if (null === $signer->email()) {
+            return;
+        }
 
         $this->emailSender->__invoke(
             recipient: new EmailRecipient(name: $signer->name(), email: $signer->email()),

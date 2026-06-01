@@ -25,7 +25,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route('/admin/signature-requests/{signatureRequestId}/history', name: 'admin_signature_requests_history')]
 class HistoryController extends AbstractController
 {
-    use AggregateHistoryTrait, GetSignatureRequestFromIdTrait;
+    use AggregateHistoryTrait;
+    use GetSignatureRequestFromIdTrait;
 
     protected function allowedEventNames(): array
     {
@@ -51,7 +52,7 @@ class HistoryController extends AbstractController
         SignatureRequestRepository $signatureRepository,
         LoggedUser $loggedUser,
         TranslatorInterface $translator,
-        Request $request
+        Request $request,
     ): Response {
         $signature = $this->getSignatureRequestFromId($signatureRequestId, $signatureRepository);
 

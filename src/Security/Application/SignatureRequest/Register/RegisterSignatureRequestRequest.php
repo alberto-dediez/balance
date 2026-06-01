@@ -19,5 +19,6 @@ class RegisterSignatureRequestRequest implements Command
         public ?string $signerPhone = null,
         public NotificationChannel $notificationChannel = NotificationChannel::Email,
         public ?AccountId $accountId = null,
+        public bool $otpRequired = true,
     ) {}
 }

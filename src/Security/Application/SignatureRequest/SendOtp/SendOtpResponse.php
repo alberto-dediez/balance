@@ -14,5 +14,6 @@ class SendOtpResponse
         public NotificationChannel $notificationChannel,
         public string $maskedDestination,
         public bool $alreadyVerified,
+        public bool $otpRequired = true,
     ) {}
 }

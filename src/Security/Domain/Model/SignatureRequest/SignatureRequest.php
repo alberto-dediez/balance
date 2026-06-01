@@ -31,6 +31,7 @@ class SignatureRequest implements \Stringable
         private \DateTimeImmutable $expiresAt = new \DateTimeImmutable('NOW ' . self::EXPIRATION_TIME),
         private ?\DateTimeImmutable $updatedAt = null,
         private ?\DateTimeImmutable $removedAt = null,
+        private bool $otpRequired = true,
     ) {
         $this->events = $events;
     }
@@ -100,6 +101,11 @@ class SignatureRequest implements \Stringable
         return $this->removed;
     }
 
+    public function otpRequired(): bool
+    {
+        return $this->otpRequired;
+    }
+
     public function registeredAt(): \DateTimeImmutable
     {
         return $this->registeredAt;
@@ -120,6 +126,7 @@ class SignatureRequest implements \Stringable
         DocumentReference $documentToSign,
         Signer $signer,
         ?AccountId $accountId = null,
+        bool $otpRequired = true,
     ): void {
         $this->recordApplyAndPublish(
             new SignatureRequestRegistered(
@@ -129,6 +136,7 @@ class SignatureRequest implements \Stringable
                 signer: $signer,
                 expiresAt: new \DateTimeImmutable('NOW ' . self::EXPIRATION_TIME),
                 accountId: $accountId,
+                otpRequired: $otpRequired,
             ),
         );
     }
@@ -181,10 +189,10 @@ class SignatureRequest implements \Stringable
         );
     }
 
-    public function sendOtp(OtpChallenge $challenge): void
+    public function sendOtp(OtpChallenge $challenge, ?NotificationChannel $otpChannel = null): void
     {
         $signer = $this->signer;
-        $channel = $signer->notificationChannel();
+        $channel = $otpChannel ?? $signer->notificationChannel();
         $isSms = NotificationChannel::Sms === $channel;
         $actualDestination = $isSms ? ($signer->phone() ?? '') : ($signer->email() ?? '');
         $maskedDestination = $isSms
@@ -246,6 +254,7 @@ class SignatureRequest implements \Stringable
         $this->accountId = $event->accountId();
         $this->status = SignatureRequestStatus::Pending;
         $this->registeredAt = $event->occurredOn();
+        $this->otpRequired = $event->otpRequired();
     }
 
     public function applySignatureDocumentViewed(SignatureDocumentViewed $event): void

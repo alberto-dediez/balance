@@ -26,7 +26,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route('/admin/users/{userId}/history', name: 'admin_user_history')]
 class HistoryController extends AbstractController
 {
-    use AggregateHistoryTrait, GetUserFromIdTrait;
+    use AggregateHistoryTrait;
+    use GetUserFromIdTrait;
 
     protected function allowedEventNames(): array
     {
@@ -52,7 +53,7 @@ class HistoryController extends AbstractController
         UserRepository $userRepository,
         LoggedUser $loggedUser,
         TranslatorInterface $translator,
-        Request $request
+        Request $request,
     ): Response {
         $user = $this->getUserFromId($userId, $userRepository);
 

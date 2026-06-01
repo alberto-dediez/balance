@@ -9,6 +9,7 @@ use App\Security\Domain\Model\SignatureRequest\OtpChallenge;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestRepository;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestStatus;
 use App\Security\Domain\Model\SignatureRequest\SignatureTokenInvalidException;
+use App\Security\Domain\Model\SignatureRequest\Signer;
 use App\Security\Domain\Model\SignatureRequest\Token;
 
 class SendOtpService
@@ -17,6 +18,7 @@ class SendOtpService
         private SignatureRequestRepository $repository,
         #[\SensitiveParameter]
         private string $appSecret = '',
+        private bool $smsEnabled = false,
     ) {}
 
     public function __invoke(SendOtpRequest $request): SendOtpResponse
@@ -34,12 +36,23 @@ class SendOtpService
         }
 
         $signer = $signatureRequest->signer();
+        $otpChannel = $this->effectiveOtpChannel($signer);
+
+        if (!$signatureRequest->otpRequired()) {
+            return new SendOtpResponse(
+                signatureRequestId: $signatureRequest->id(),
+                notificationChannel: $signer->notificationChannel(),
+                maskedDestination: '',
+                alreadyVerified: true,
+                otpRequired: false,
+            );
+        }
 
         if ($signatureRequest->isOtpVerified()) {
             return new SendOtpResponse(
                 signatureRequestId: $signatureRequest->id(),
-                notificationChannel: $signer->notificationChannel(),
-                maskedDestination: $this->maskedDestination($signer->notificationChannel(), $signer->email(), $signer->phone()),
+                notificationChannel: $otpChannel,
+                maskedDestination: $this->maskedDestination($otpChannel, $signer->email(), $signer->phone()),
                 alreadyVerified: true,
             );
         }
@@ -51,16 +64,28 @@ class SendOtpService
 
         if ($needsNew) {
             $challenge = OtpChallenge::generate($this->appSecret);
-            $signatureRequest->sendOtp($challenge);
+            $signatureRequest->sendOtp($challenge, $otpChannel);
             $this->repository->add($signatureRequest);
         }
 
         return new SendOtpResponse(
             signatureRequestId: $signatureRequest->id(),
-            notificationChannel: $signer->notificationChannel(),
-            maskedDestination: $this->maskedDestination($signer->notificationChannel(), $signer->email(), $signer->phone()),
+            notificationChannel: $otpChannel,
+            maskedDestination: $this->maskedDestination($otpChannel, $signer->email(), $signer->phone()),
             alreadyVerified: false,
         );
+    }
+
+    private function effectiveOtpChannel(Signer $signer): NotificationChannel
+    {
+        if (NotificationChannel::Email === $signer->notificationChannel()
+            && null !== $signer->phone()
+            && $this->smsEnabled
+        ) {
+            return NotificationChannel::Sms;
+        }
+
+        return $signer->notificationChannel();
     }
 
     private function maskedDestination(NotificationChannel $channel, ?string $email, ?string $phone): string

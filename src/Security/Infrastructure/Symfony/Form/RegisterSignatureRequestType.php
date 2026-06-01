@@ -9,6 +9,7 @@ use App\Security\Domain\Model\SignatureRequest\NotificationChannel;
 use App\Security\Infrastructure\Symfony\Form\Type\NotificationChannelType;
 use App\Shared\Infrastructure\Symfony\Form\Type\LocaleType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -60,9 +61,14 @@ class RegisterSignatureRequestType extends AbstractType
             ]);
         }
 
-        $builder->add('register', SubmitType::class, [
-            'label' => new TranslatableMessage('Registrar'),
-        ]);
+        $builder
+            ->add('otpRequired', CheckboxType::class, [
+                'label' => new TranslatableMessage('Requerir verificación OTP'),
+                'required' => false,
+            ])
+            ->add('register', SubmitType::class, [
+                'label' => new TranslatableMessage('Registrar'),
+            ]);
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, static function (\Symfony\Component\Form\FormEvent $event): void {
             $form = $event->getForm();
