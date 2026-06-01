@@ -16,16 +16,21 @@ class NotificationChannelType extends AbstractType
     {
         $resolver->setDefaults([
             'sms_enabled' => false,
+            'whatsapp_enabled' => false,
             'choice_value' => fn(?NotificationChannel $case) => $case?->value,
             'translation_domain' => 'notificationChannelType',
         ]);
 
         $resolver->setAllowedTypes('sms_enabled', 'bool');
+        $resolver->setAllowedTypes('whatsapp_enabled', 'bool');
 
         $resolver->setNormalizer('choices', static function (OptionsResolver $options, mixed $value): array {
             $choices = [];
             foreach (NotificationChannel::cases() as $case) {
                 if (!$options['sms_enabled'] && NotificationChannel::Sms === $case) {
+                    continue;
+                }
+                if (!$options['whatsapp_enabled'] && NotificationChannel::Whatsapp === $case) {
                     continue;
                 }
                 $choices[$case->value] = $case;

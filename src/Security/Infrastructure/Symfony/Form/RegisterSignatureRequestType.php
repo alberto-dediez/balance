@@ -23,7 +23,10 @@ use Symfony\Component\Translation\TranslatableMessage;
 /** @extends AbstractType<mixed> */
 class RegisterSignatureRequestType extends AbstractType
 {
-    public function __construct(private readonly bool $smsEnabled) {}
+    public function __construct(
+        private readonly bool $smsEnabled,
+        private readonly bool $whatsappEnabled,
+    ) {}
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -45,6 +48,7 @@ class RegisterSignatureRequestType extends AbstractType
                 'label' => new TranslatableMessage('Canal de notificación'),
                 'required' => true,
                 'sms_enabled' => $this->smsEnabled,
+                'whatsapp_enabled' => $this->whatsappEnabled,
             ])
             ->add('signerEmail', EmailType::class, [
                 'label' => new TranslatableMessage('Email del firmante'),
@@ -53,7 +57,7 @@ class RegisterSignatureRequestType extends AbstractType
             ])
         ;
 
-        if ($this->smsEnabled) {
+        if ($this->smsEnabled || $this->whatsappEnabled) {
             $builder->add('signerPhone', TextType::class, [
                 'label' => new TranslatableMessage('Teléfono del firmante'),
                 'required' => false,
@@ -83,6 +87,10 @@ class RegisterSignatureRequestType extends AbstractType
             }
 
             if (NotificationChannel::Sms === $data->notificationChannel && empty($data->signerPhone)) {
+                $form->get('signerPhone')->addError(new FormError('notification_channel.signer_phone_required'));
+            }
+
+            if (NotificationChannel::Whatsapp === $data->notificationChannel && empty($data->signerPhone)) {
                 $form->get('signerPhone')->addError(new FormError('notification_channel.signer_phone_required'));
             }
         });

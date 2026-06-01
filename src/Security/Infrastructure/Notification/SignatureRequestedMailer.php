@@ -12,6 +12,7 @@ use App\Shared\Domain\Event\RegisterTrait;
 use App\Shared\Domain\Model\Email\EmailRecipient;
 use App\Shared\Domain\Model\Email\EmailSender;
 use App\Shared\Domain\Model\Sms\SmsSender;
+use App\Shared\Domain\Model\WhatsApp\WhatsAppSender;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -22,6 +23,7 @@ class SignatureRequestedMailer implements DomainEventSubscriber
     public function __construct(
         private EmailSender $emailSender,
         private SmsSender $smsSender,
+        private WhatsAppSender $whatsAppSender,
         private TranslatorInterface $translator,
         private UrlGeneratorInterface $urlGenerator,
     ) {
@@ -59,6 +61,20 @@ class SignatureRequestedMailer implements DomainEventSubscriber
                 ['{url}' => $signingUrl],
             );
             ($this->smsSender)($signer->phone(), $body);
+
+            return;
+        }
+
+        if (NotificationChannel::Whatsapp === $signer->notificationChannel()) {
+            if (null === $signer->phone()) {
+                return;
+            }
+
+            $body = $this->translator->trans(
+                'Firma el documento aquí: {url}',
+                ['{url}' => $signingUrl],
+            );
+            ($this->whatsAppSender)($signer->phone(), $body);
 
             return;
         }

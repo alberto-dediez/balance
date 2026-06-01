@@ -12,6 +12,7 @@ use App\Shared\Domain\Event\RegisterTrait;
 use App\Shared\Domain\Model\Email\EmailRecipient;
 use App\Shared\Domain\Model\Email\EmailSender;
 use App\Shared\Domain\Model\Sms\SmsSender;
+use App\Shared\Domain\Model\WhatsApp\WhatsAppSender;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SignatureOtpNotifier implements DomainEventSubscriber
@@ -21,6 +22,7 @@ class SignatureOtpNotifier implements DomainEventSubscriber
     public function __construct(
         private EmailSender $emailSender,
         private SmsSender $smsSender,
+        private WhatsAppSender $whatsAppSender,
         private TranslatorInterface $translator,
     ) {
         $this->register();
@@ -57,6 +59,16 @@ class SignatureOtpNotifier implements DomainEventSubscriber
                 ['{code}' => $plainCode],
             );
             ($this->smsSender)($destination, $body);
+
+            return;
+        }
+
+        if (NotificationChannel::Whatsapp === $event->notificationChannel()) {
+            $body = $this->translator->trans(
+                'Tu código de verificación es: {code}. Válido durante 15 minutos.',
+                ['{code}' => $plainCode],
+            );
+            ($this->whatsAppSender)($destination, $body);
 
             return;
         }

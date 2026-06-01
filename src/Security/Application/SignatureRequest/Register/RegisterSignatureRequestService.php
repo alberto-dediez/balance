@@ -14,6 +14,7 @@ use App\Security\Domain\Model\SignatureRequest\SignatureRequestRepository;
 use App\Security\Domain\Model\SignatureRequest\Signer;
 use App\Security\Domain\Model\SignatureRequest\SmsChannelNotEnabledException;
 use App\Security\Domain\Model\SignatureRequest\Token;
+use App\Security\Domain\Model\SignatureRequest\WhatsAppChannelNotEnabledException;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
@@ -31,6 +32,7 @@ class RegisterSignatureRequestService implements CommandHandler
         #[\SensitiveParameter]
         private string $appSecret = '',
         private bool $smsEnabled = false,
+        private bool $whatsappEnabled = false,
     ) {}
 
     public function __invoke(RegisterSignatureRequestRequest $request, User $user): RegisterSignatureRequestResponse
@@ -41,6 +43,10 @@ class RegisterSignatureRequestService implements CommandHandler
 
         if (!$this->smsEnabled && NotificationChannel::Sms === $request->notificationChannel) {
             throw new SmsChannelNotEnabledException();
+        }
+
+        if (!$this->whatsappEnabled && NotificationChannel::Whatsapp === $request->notificationChannel) {
+            throw new WhatsAppChannelNotEnabledException();
         }
 
         $token = Token::generate($this->appSecret);

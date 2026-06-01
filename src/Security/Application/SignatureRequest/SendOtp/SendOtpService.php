@@ -19,6 +19,7 @@ class SendOtpService
         #[\SensitiveParameter]
         private string $appSecret = '',
         private bool $smsEnabled = false,
+        private bool $whatsappEnabled = false,
     ) {}
 
     public function __invoke(SendOtpRequest $request): SendOtpResponse
@@ -78,19 +79,28 @@ class SendOtpService
 
     private function effectiveOtpChannel(Signer $signer): NotificationChannel
     {
-        if (NotificationChannel::Email === $signer->notificationChannel()
-            && null !== $signer->phone()
-            && $this->smsEnabled
-        ) {
-            return NotificationChannel::Sms;
+        $channel = $signer->notificationChannel();
+
+        if (NotificationChannel::Sms === $channel || NotificationChannel::Whatsapp === $channel) {
+            return $channel;
         }
 
-        return $signer->notificationChannel();
+        if (null !== $signer->phone()) {
+            if ($this->smsEnabled) {
+                return NotificationChannel::Sms;
+            }
+
+            if ($this->whatsappEnabled) {
+                return NotificationChannel::Whatsapp;
+            }
+        }
+
+        return NotificationChannel::Email;
     }
 
     private function maskedDestination(NotificationChannel $channel, ?string $email, ?string $phone): string
     {
-        if (NotificationChannel::Sms === $channel && null !== $phone) {
+        if ((NotificationChannel::Sms === $channel || NotificationChannel::Whatsapp === $channel) && null !== $phone) {
             $len = strlen($phone);
 
             return str_repeat('*', max(0, $len - 3)) . substr($phone, -3);
