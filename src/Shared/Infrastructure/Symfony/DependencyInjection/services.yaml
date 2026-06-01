@@ -12,7 +12,7 @@ services:
 
     App\Shared\:
         resource: '../../../'
-        
+
     App\Fixtures\:
         resource: '../../../../../fixtures/'
         tags: ['doctrine.fixture.orm']
@@ -39,3 +39,5 @@ services:
     App\Shared\Infrastructure\Symfony\Event\EmailListener:
         public: true
         shared: true
+
+    App\Shared\Domain\Model\Sms\SmsSender: '@App\Shared\Infrastructure\Sms\TwilioSmsSender'

@@ -27,7 +27,9 @@
         "symfony/framework-bundle": "7.3.*",
         "symfony/http-client": "7.3.*",
         "symfony/mailer": "7.3.*",
+        "symfony/messenger": "^7.3",
         "symfony/monolog-bundle": "^4.0",
+        "symfony/notifier": "*",
         "symfony/property-access": "7.3.*",
         "symfony/property-info": "7.3.*",
         "symfony/rate-limiter": "7.3.*",
@@ -38,6 +40,7 @@
         "symfony/stimulus-bundle": "^2.23",
         "symfony/translation": "7.3.*",
         "symfony/twig-bundle": "7.3.*",
+        "symfony/twilio-notifier": "*",
         "symfony/uid": "7.3.*",
         "symfony/ux-icons": "^2.23",
         "symfony/ux-live-component": "^2.23",
@@ -58,7 +61,13 @@
             "symfony/flex": true,
             "symfony/runtime": true
         },
-        "sort-packages": true
+        "sort-packages": true,
+        "policy": {
+            "advisories": {
+                "ignore": ["symfony/twilio-notifier"],
+                "ignore-id": ["PKSA-fgw6-3k5j-cfkn"]
+            }
+        }
     },
     "autoload": {
         "psr-4": {
