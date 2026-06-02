@@ -11,3 +11,28 @@ services:
     App\Waste\Infrastructure\UI\Console\:
         resource: '../../../Infrastructure/UI/Console/'
         tags: ['console.command']
+
+    App\Waste\Application\Alert\Check\Checker\NoMeasurementsAlertChecker:
+        tags: ['app.alert_checker']
+
+    App\Waste\Application\Alert\Check\Checker\AbnormallyHighValueAlertChecker:
+        tags: ['app.alert_checker']
+
+    App\Waste\Application\Alert\Check\Checker\ThresholdExceededAlertChecker:
+        tags: ['app.alert_checker']
+
+    App\Waste\Application\Alert\Check\Checker\FixedThresholdAlertChecker:
+        tags: ['app.alert_checker']
+
+    App\Waste\Application\Alert\Check\Checker\AbnormallyLowValueAlertChecker:
+        tags: ['app.alert_checker']
+
+    App\Waste\Application\Alert\Check\Checker\UnusedContainerAlertChecker:
+        tags: ['app.alert_checker']
+
+    App\Waste\Application\Alert\Check\Checker\InactiveUserAlertChecker:
+        tags: ['app.alert_checker']
+
+    App\Waste\Application\Alert\Check\CheckAlertsService:
+        arguments:
+            $checkers: !tagged_iterator app.alert_checker

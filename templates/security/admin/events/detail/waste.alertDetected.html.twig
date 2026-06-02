@@ -1,0 +1,6 @@
+{% trans with {
+    '{type}': element.payload.type,
+    '{propertyId}': element.payload.propertyId,
+    '{accountId}': element.payload.accountId,
+    '{user}': element.userId | user_name
+} %}Se ha detectado una alerta de tipo {type} en la propiedad {propertyId} de la cuenta {accountId} por {user}{% endtrans %}

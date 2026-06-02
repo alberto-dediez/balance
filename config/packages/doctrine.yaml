@@ -24,6 +24,9 @@ doctrine:
             waste_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\WasteIdType
             waste_manager_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\WasteManagerIdType
             daily_waste_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\DailyWasteIdType
+            alert_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\AlertIdType
+            alert_configuration_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\AlertConfigurationIdType
+            alert_configuration_item_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\AlertConfigurationItemIdType
     orm:
         auto_generate_proxy_classes: true
         enable_native_lazy_objects: true

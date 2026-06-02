@@ -98,6 +98,11 @@ class NodeLister
                     target: $this->router->generate('admin_users'),
                 ),
                 new Node(
+                    label: new TranslatableMessage('Configuraciones de alertas'),
+                    icon: 'solar:bell-bing-line-duotone',
+                    target: $this->router->generate('admin_alert_configurations'),
+                ),
+                new Node(
                     label: new TranslatableMessage('Registro'),
                     icon: 'solar:record-minimalistic-line-duotone',
                     target: $this->router->generate('admin_events'),
@@ -156,6 +161,11 @@ class NodeLister
                     icon: 'solar:chart-square-line-duotone',
                     target: $this->router->generate('daily_wastes_statistics'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Alertas'),
+                    icon: 'solar:bell-bing-line-duotone',
+                    target: $this->router->generate('alerts'),
+                ),
             ],
         );
 
@@ -189,6 +199,11 @@ class NodeLister
                     label: new TranslatableMessage('Mediciones'),
                     icon: 'solar:ruler-line-duotone',
                     target: $this->router->generate('measurements'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Alertas'),
+                    icon: 'solar:bell-bing-line-duotone',
+                    target: $this->router->generate('alerts'),
                 ),
             ],
         );

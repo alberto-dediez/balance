@@ -1,0 +1,31 @@
+{% extends '@shared/layout/email.html.twig' %}
+
+{% block content %}
+    <h3>{% trans with {'{month}': month | date('Y-m')} %}Resumen mensual de alertas: {month}{% endtrans %}</h3>
+    <p>{% trans %}Se han detectado las siguientes alertas durante el mes:{% endtrans %}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>{% trans %}Tipo{% endtrans %}</th>
+                <th>{% trans %}Propiedad{% endtrans %}</th>
+                <th>{% trans %}Valor{% endtrans %}</th>
+                <th>{% trans %}Umbral{% endtrans %}</th>
+                <th>{% trans %}Detectada{% endtrans %}</th>
+                <th>{% trans %}Estado{% endtrans %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for alert in alerts %}
+                <tr>
+                    <td>{{ alert.type.value }}</td>
+                    <td>{{ alert.propertyId }}</td>
+                    <td>{{ alert.value ?? '-' }}</td>
+                    <td>{{ alert.threshold ?? '-' }}</td>
+                    <td>{{ alert.detectedAt | date('d/m/Y H:i') }}</td>
+                    <td>{{ alert.status.value }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

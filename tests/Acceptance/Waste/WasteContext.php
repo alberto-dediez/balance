@@ -9,11 +9,15 @@ use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
+use App\Tests\Unit\Waste\Domain\Model\Alert\AlertMother;
+use App\Tests\Unit\Waste\Domain\Model\AlertConfiguration\AlertConfigurationMother;
 use App\Tests\Unit\Waste\Domain\Model\Container\ContainerMother;
 use App\Tests\Unit\Waste\Domain\Model\DailyWaste\DailyWasteMother;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
 use App\Tests\Unit\Waste\Domain\Model\Waste\WasteMother;
 use App\Tests\Unit\Waste\Domain\Model\WasteManager\WasteManagerMother;
+use App\Waste\Domain\Model\Alert\AlertRepository;
+use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationRepository;
 use App\Waste\Domain\Model\Container\ContainerId;
 use App\Waste\Domain\Model\Container\ContainerRepository;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
@@ -64,6 +68,16 @@ final readonly class WasteContext implements Context
     public function getDailyWasteRepository(): DailyWasteRepository
     {
         return $this->client->getContainer()->get(DailyWasteRepository::class);
+    }
+
+    public function getAlertRepository(): AlertRepository
+    {
+        return $this->client->getContainer()->get(AlertRepository::class);
+    }
+
+    public function getAlertConfigurationRepository(): AlertConfigurationRepository
+    {
+        return $this->client->getContainer()->get(AlertConfigurationRepository::class);
     }
 
     #[Given('waste :name with id :id exists')]
@@ -144,5 +158,21 @@ final readonly class WasteContext implements Context
         $dailyWaste = DailyWasteMother::fromDayAndIdAndAccount($day, $dailyWasteId, $accountId);
 
         $this->getDailyWasteRepository()->add($dailyWaste);
+    }
+
+    #[Given('alert with id :id for account :accountId exists')]
+    public function alertWithIdForAccountExists(string $id, string $accountId): void
+    {
+        $alert = AlertMother::fromIdAndAccount($id, $accountId);
+
+        $this->getAlertRepository()->add($alert);
+    }
+
+    #[Given('alert configuration with id :id for account :accountId exists')]
+    public function alertConfigurationWithIdForAccountExists(string $id, string $accountId): void
+    {
+        $config = AlertConfigurationMother::fromIdAndAccount($id, $accountId);
+
+        $this->getAlertConfigurationRepository()->add($config);
     }
 }

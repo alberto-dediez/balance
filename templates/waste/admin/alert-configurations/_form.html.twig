@@ -1,0 +1,32 @@
+<div class="row mb-3">
+    <div class="col-12 col-md-6">
+        {% if form.accountId is defined %}
+            {{ form_row(form.accountId) }}
+        {% else %}
+            <twig:View:Field label="{{ 'Cuenta' | trans }}">{{ alertConfiguration.accountId | account_name }}</twig:View:Field>
+        {% endif %}
+    </div>
+</div>
+
+<table class="table table-bordered align-middle">
+    <thead>
+    <tr>
+        <th>{{ 'Tipo de alerta' | trans }}</th>
+        <th class="text-center" style="width: 120px">{{ 'Activa' | trans }}</th>
+        <th>{{ 'Parámetros' | trans }}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for itemForm in form.items %}
+        <tr>
+            <td class="fw-semibold">{{ itemForm.vars.label }}</td>
+            <td class="text-center">{{ form_widget(itemForm.enabled) }}</td>
+            <td>
+                {% for paramField in itemForm.parameters %}
+                    {{ form_row(paramField) }}
+                {% endfor %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
