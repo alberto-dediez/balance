@@ -34,9 +34,32 @@ class AlertConfigurationItems implements \IteratorAggregate, \Countable
         return null;
     }
 
+    /** @return AlertConfigurationItem[] */
+    public function getAllByType(AlertType $type): array
+    {
+        return array_values(array_filter(
+            $this->items->toArray(),
+            fn(AlertConfigurationItem $item) => $item->type() === $type,
+        ));
+    }
+
+    /** @return AlertConfigurationItem[] */
+    public function enabledItems(): array
+    {
+        return array_values(array_filter(
+            $this->items->toArray(),
+            fn(AlertConfigurationItem $item) => $item->enabled(),
+        ));
+    }
+
     public function addItem(AlertConfigurationItem $item): void
     {
         $this->items->add($item);
+    }
+
+    public function removeItem(AlertConfigurationItem $item): void
+    {
+        $this->items->removeElement($item);
     }
 
     public function has(AlertType $type): bool

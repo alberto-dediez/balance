@@ -46,7 +46,7 @@ class UnusedContainerAlertCheckerTest extends TestCase
         );
 
         $checker = new UnusedContainerAlertChecker($containerRepository, $measurementRepository, $alertRepository);
-        $alerts = $checker->check($accountId, $config, new \DateTimeImmutable('today'));
+        $alerts = $checker->check($accountId, $config->enabledItemsForType($checker->type()), new \DateTimeImmutable('today'));
 
         $this->assertCount(1, $alerts);
         $this->assertNotNull($alerts[0]->propertyId());
@@ -93,7 +93,7 @@ class UnusedContainerAlertCheckerTest extends TestCase
         );
 
         $checker = new UnusedContainerAlertChecker($containerRepository, $measurementRepository, $alertRepository);
-        $alerts = $checker->check($accountId, $config, new \DateTimeImmutable('today'));
+        $alerts = $checker->check($accountId, $config->enabledItemsForType($checker->type()), new \DateTimeImmutable('today'));
 
         $this->assertCount(0, $alerts);
     }
@@ -129,7 +129,7 @@ class UnusedContainerAlertCheckerTest extends TestCase
         );
 
         $checker = new UnusedContainerAlertChecker($containerRepository, $measurementRepository, $alertRepository);
-        $alerts = $checker->check($accountId, $config, new \DateTimeImmutable('today'));
+        $alerts = $checker->check($accountId, $config->enabledItemsForType($checker->type()), new \DateTimeImmutable('today'));
 
         $this->assertCount(1, $alerts);
     }

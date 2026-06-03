@@ -7,16 +7,20 @@ namespace App\Waste\Application\Alert\Check\Checker;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Alert\Alert;
 use App\Waste\Domain\Model\Alert\AlertType;
-use App\Waste\Domain\Model\AlertConfiguration\AlertConfiguration;
+use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationItem;
 
 interface AlertChecker
 {
     public function type(): AlertType;
 
-    /** @return Alert[] */
+    /**
+     * @param AlertConfigurationItem[] $rules enabled items of this checker's type
+     *
+     * @return Alert[]
+     */
     public function check(
         AccountId $accountId,
-        AlertConfiguration $config,
+        array $rules,
         \DateTimeImmutable $checkDate,
     ): array;
 }

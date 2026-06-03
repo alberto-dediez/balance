@@ -41,9 +41,19 @@ class AlertConfiguration implements \Stringable
         return new AlertConfigurationItems($this->items);
     }
 
-    public function isTypeEnabled(AlertType $type): bool
+    /** @return AlertConfigurationItem[] */
+    public function getItemsForType(AlertType $type): array
     {
-        return $this->items()->getByType($type)?->enabled() ?? false;
+        return $this->items()->getAllByType($type);
+    }
+
+    /** @return AlertConfigurationItem[] */
+    public function enabledItemsForType(AlertType $type): array
+    {
+        return array_values(array_filter(
+            $this->getItemsForType($type),
+            static fn(AlertConfigurationItem $item) => $item->enabled(),
+        ));
     }
 
     public function registeredAt(): \DateTimeImmutable
@@ -56,9 +66,11 @@ class AlertConfiguration implements \Stringable
         return $this->updatedAt;
     }
 
-    /** @param array<string, array<string, mixed>> $items */
+    /** @param list<AlertConfigurationItem> $items */
     public function register(AccountId $accountId, array $items): void
     {
+        self::guardAgainstDuplicateItems($items);
+
         $this->recordApplyAndPublish(
             new AlertConfigurationRegistered(
                 alertConfigurationId: $this->id(),
@@ -68,9 +80,11 @@ class AlertConfiguration implements \Stringable
         );
     }
 
-    /** @param array<string, array<string, mixed>> $items */
+    /** @param list<AlertConfigurationItem> $items */
     public function update(array $items): void
     {
+        self::guardAgainstDuplicateItems($items);
+
         $this->recordApplyAndPublish(
             new AlertConfigurationUpdated(
                 alertConfigurationId: $this->id(),
@@ -79,20 +93,35 @@ class AlertConfiguration implements \Stringable
         );
     }
 
+    /**
+     * Ensures there are no duplicate items for the same combination of type, property and waste.
+     * The account is implicit, since every configuration belongs to a single account.
+     *
+     * @param list<AlertConfigurationItem> $items
+     */
+    private static function guardAgainstDuplicateItems(array $items): void
+    {
+        $seen = [];
+
+        foreach ($items as $item) {
+            $key = sprintf('%s|%s|%s', $item->type()->value, $item->propertyId()?->__toString() ?? '', $item->wasteId()?->__toString() ?? '');
+
+            if (isset($seen[$key])) {
+                throw new DuplicateAlertConfigurationItemException($item->type(), $item->propertyId()?->__toString(), $item->wasteId()?->__toString());
+            }
+
+            $seen[$key] = true;
+        }
+    }
+
     public function applyAlertConfigurationRegistered(AlertConfigurationRegistered $event): void
     {
         $this->accountId = $event->accountId();
         $this->registeredAt = $event->occurredOn();
 
-        foreach ($event->items() as $typeStr => $data) {
-            $type = AlertType::from($typeStr);
-            $this->items()->addItem(new AlertConfigurationItem(
-                id: AlertConfigurationItemId::generate(),
-                alertConfiguration: $this,
-                type: $type,
-                enabled: (bool) $data['enabled'],
-                parameters: (array) ($data['parameters'] ?? []),
-            ));
+        foreach ($event->items() as $item) {
+            $item->assignTo($this);
+            $this->items()->addItem($item);
         }
     }
 
@@ -100,24 +129,13 @@ class AlertConfiguration implements \Stringable
     {
         $this->updatedAt = $event->occurredOn();
 
-        foreach ($event->items() as $typeStr => $data) {
-            $type = AlertType::from($typeStr);
-            $existing = $this->items()->getByType($type);
+        foreach (iterator_to_array($this->items()) as $item) {
+            $this->items()->removeItem($item);
+        }
 
-            if (null !== $existing) {
-                $existing->update(
-                    enabled: (bool) $data['enabled'],
-                    parameters: (array) ($data['parameters'] ?? []),
-                );
-            } else {
-                $this->items()->addItem(new AlertConfigurationItem(
-                    id: AlertConfigurationItemId::generate(),
-                    alertConfiguration: $this,
-                    type: $type,
-                    enabled: (bool) $data['enabled'],
-                    parameters: (array) ($data['parameters'] ?? []),
-                ));
-            }
+        foreach ($event->items() as $item) {
+            $item->assignTo($this);
+            $this->items()->addItem($item);
         }
     }
 

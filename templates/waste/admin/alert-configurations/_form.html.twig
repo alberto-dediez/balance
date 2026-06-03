@@ -8,25 +8,24 @@
     </div>
 </div>
 
-<table class="table table-bordered align-middle">
-    <thead>
-    <tr>
-        <th>{{ 'Tipo de alerta' | trans }}</th>
-        <th class="text-center" style="width: 120px">{{ 'Activa' | trans }}</th>
-        <th>{{ 'Parámetros' | trans }}</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for itemForm in form.items %}
-        <tr>
-            <td class="fw-semibold">{{ itemForm.vars.label }}</td>
-            <td class="text-center">{{ form_widget(itemForm.enabled) }}</td>
-            <td>
-                {% for paramField in itemForm.parameters %}
-                    {{ form_row(paramField) }}
-                {% endfor %}
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+{% set protoCard %}
+    {% with { element: form.items.vars.prototype } %}
+        {% include '@waste/admin/alert-configurations/_item_row.html.twig' %}
+    {% endwith %}
+{% endset %}
+
+<div data-controller="collection"
+     data-collection-prototype-value="{{ protoCard | e('html_attr') }}">
+    <div class="collection">
+        {% for element in form.items %}
+            {% include '@waste/admin/alert-configurations/_item_row.html.twig' %}
+        {% else %}
+            <p class="collection-empty text-muted">{{ 'No hay configuraciones de alerta. Añade una.' | trans }}</p>
+        {% endfor %}
+    </div>
+
+    <div class="mb-3">
+        <button type="button" class="btn btn-outline-info"
+                data-action="collection#add">{{ '+ Añadir' | trans }}</button>
+    </div>
+</div>

@@ -12,8 +12,11 @@ use App\Waste\Application\Alert\Check\Checker\InactiveUserAlertChecker;
 use App\Waste\Application\Alert\Check\Checker\NoMeasurementsAlertChecker;
 use App\Waste\Application\Alert\Check\Checker\ThresholdExceededAlertChecker;
 use App\Waste\Application\Alert\Check\Checker\UnusedContainerAlertChecker;
+use App\Waste\Domain\Model\Alert\AlertType;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfiguration;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationId;
+use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationItem;
+use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationItemId;
 
 class AlertConfigurationMother
 {
@@ -45,17 +48,28 @@ class AlertConfigurationMother
         $config->register(
             accountId: new AccountId($accountId),
             items: [
-                'NoMeasurements' => ['enabled' => $noMeasurementsEnabled, 'parameters' => ['noMeasurementsDays' => $noMeasurementsDays]],
-                'AbnormallyHigh' => ['enabled' => $abnormallyHighEnabled, 'parameters' => ['deviationMultiplier' => $deviationMultiplier]],
-                'ThresholdExceeded' => ['enabled' => $thresholdExceededEnabled, 'parameters' => ['thresholdPercentage' => $thresholdPercentage]],
-                'FixedThreshold' => ['enabled' => $fixedThresholdEnabled, 'parameters' => ['thresholdKg' => $thresholdKg]],
-                'AbnormallyLow' => ['enabled' => $abnormallyLowEnabled, 'parameters' => ['deviationMultiplier' => $abnormallyLowMultiplier]],
-                'UnusedContainer' => ['enabled' => $unusedContainerEnabled, 'parameters' => ['unusedDays' => $unusedDays]],
-                'InactiveUser' => ['enabled' => $inactiveUserEnabled, 'parameters' => ['inactiveDays' => $inactiveDays]],
+                self::item(AlertType::NoMeasurements, $noMeasurementsEnabled, ['noMeasurementsDays' => $noMeasurementsDays]),
+                self::item(AlertType::AbnormallyHigh, $abnormallyHighEnabled, ['deviationMultiplier' => $deviationMultiplier]),
+                self::item(AlertType::ThresholdExceeded, $thresholdExceededEnabled, ['thresholdPercentage' => $thresholdPercentage]),
+                self::item(AlertType::FixedThreshold, $fixedThresholdEnabled, ['thresholdKg' => $thresholdKg]),
+                self::item(AlertType::AbnormallyLow, $abnormallyLowEnabled, ['deviationMultiplier' => $abnormallyLowMultiplier]),
+                self::item(AlertType::UnusedContainer, $unusedContainerEnabled, ['unusedDays' => $unusedDays]),
+                self::item(AlertType::InactiveUser, $inactiveUserEnabled, ['inactiveDays' => $inactiveDays]),
             ],
         );
 
         return $config;
+    }
+
+    /** @param array<string, mixed> $parameters */
+    private static function item(AlertType $type, bool $enabled, array $parameters): AlertConfigurationItem
+    {
+        return new AlertConfigurationItem(
+            id: AlertConfigurationItemId::generate(),
+            type: $type,
+            enabled: $enabled,
+            parameters: $parameters,
+        );
     }
 
     public static function fromIdAndAccount(string $id, string $accountId): AlertConfiguration

@@ -12,7 +12,7 @@ use App\Waste\Domain\Model\Alert\AlertId;
 use App\Waste\Domain\Model\Alert\AlertRepository;
 use App\Waste\Domain\Model\Alert\AlertStatus;
 use App\Waste\Domain\Model\Alert\AlertType;
-use App\Waste\Domain\Model\AlertConfiguration\AlertConfiguration;
+use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationItem;
 use App\Waste\Domain\Model\Measurement\MeasurementFilter;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
 
@@ -31,14 +31,18 @@ class InactiveUserAlertChecker implements AlertChecker
         return AlertType::InactiveUser;
     }
 
-    /** @return Alert[] */
+    /**
+     * @param AlertConfigurationItem[] $rules
+     *
+     * @return Alert[]
+     */
     public function check(
         AccountId $accountId,
-        AlertConfiguration $config,
+        array $rules,
         \DateTimeImmutable $checkDate,
     ): array {
         $alerts = [];
-        $inactiveDays = (int) ($config->items()->getByType(AlertType::InactiveUser)?->parameters()['inactiveDays'] ?? self::DEFAULT_INACTIVE_DAYS);
+        $inactiveDays = (int) ($rules[0]->parameters()['inactiveDays'] ?? self::DEFAULT_INACTIVE_DAYS);
         $periodFrom = $checkDate->modify(sprintf('-%d days', $inactiveDays));
 
         $existing = $this->alertRepository->findByFilter(new AlertFilter(

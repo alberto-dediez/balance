@@ -11,6 +11,7 @@ use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use App\Waste\Application\AlertConfiguration\AlertConfigurationAuthorizer;
+use App\Waste\Application\AlertConfiguration\AlertConfigurationItemDto;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationRepository;
 
 class UpdateAlertConfigurationService implements CommandHandler
@@ -33,7 +34,10 @@ class UpdateAlertConfigurationService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($config, SecurityAction::Edit, $user);
 
-        $config->update(items: $request->items);
+        $config->update(items: array_map(
+            static fn(AlertConfigurationItemDto $dto) => $dto->toItem(),
+            $request->items,
+        ));
 
         $this->alertConfigurationRepository->save($config);
 

@@ -17,10 +17,8 @@
         <field name="type" type="string" enum-type="App\Waste\Domain\Model\Alert\AlertType" nullable="false" />
         <field name="enabled" type="boolean" nullable="false" />
         <field name="parameters" type="json" column="parameters" nullable="false" />
-
-        <unique-constraints>
-            <unique-constraint name="uq_alert_config_item_type" columns="alert_configuration_id,type" />
-        </unique-constraints>
+        <field name="propertyId" type="property_id" column="property_id" nullable="true" />
+        <field name="wasteId" type="waste_id" column="waste_id" nullable="true" />
     </entity>
 
 </doctrine-mapping>

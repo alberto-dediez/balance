@@ -42,12 +42,13 @@ class CheckAlertsService
 
             foreach ($this->checkers as $checker) {
                 $type = $checker->type();
+                $rules = $config->enabledItemsForType($type);
 
-                if (!$config->isTypeEnabled($type)) {
+                if (0 === count($rules)) {
                     continue;
                 }
 
-                $alerts = $checker->check($accountId, $config, $checkDate);
+                $alerts = $checker->check($accountId, $rules, $checkDate);
 
                 foreach ($alerts as $alert) {
                     $this->alertRepository->add($alert);

@@ -53,7 +53,7 @@ class FixedThresholdAlertCheckerTest extends TestCase
         );
 
         $checker = new FixedThresholdAlertChecker($propertyRepository, $dailyWasteRepository, $alertRepository);
-        $alerts = $checker->check($accountId, $config, new \DateTimeImmutable('today'));
+        $alerts = $checker->check($accountId, $config->enabledItemsForType($checker->type()), new \DateTimeImmutable('today'));
 
         $this->assertCount(1, $alerts);
         $this->assertSame(600.0, $alerts[0]->value());
@@ -93,7 +93,7 @@ class FixedThresholdAlertCheckerTest extends TestCase
         );
 
         $checker = new FixedThresholdAlertChecker($propertyRepository, $dailyWasteRepository, $alertRepository);
-        $alerts = $checker->check($accountId, $config, new \DateTimeImmutable('today'));
+        $alerts = $checker->check($accountId, $config->enabledItemsForType($checker->type()), new \DateTimeImmutable('today'));
 
         $this->assertCount(0, $alerts);
     }
@@ -133,12 +133,12 @@ class FixedThresholdAlertCheckerTest extends TestCase
 
         $checker = new FixedThresholdAlertChecker($propertyRepository, $dailyWasteRepository, $alertRepository);
 
-        $firstRun = $checker->check($accountId, $config, new \DateTimeImmutable('today'));
+        $firstRun = $checker->check($accountId, $config->enabledItemsForType($checker->type()), new \DateTimeImmutable('today'));
         foreach ($firstRun as $alert) {
             $alertRepository->add($alert);
         }
 
-        $secondRun = $checker->check($accountId, $config, new \DateTimeImmutable('today'));
+        $secondRun = $checker->check($accountId, $config->enabledItemsForType($checker->type()), new \DateTimeImmutable('today'));
 
         $this->assertCount(1, $firstRun);
         $this->assertCount(0, $secondRun);

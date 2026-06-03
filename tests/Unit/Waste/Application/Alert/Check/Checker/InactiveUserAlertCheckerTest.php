@@ -40,7 +40,7 @@ class InactiveUserAlertCheckerTest extends TestCase
         );
 
         $checker = new InactiveUserAlertChecker($userRepository, $measurementRepository, $alertRepository);
-        $alerts = $checker->check($accountId, $config, new \DateTimeImmutable('today'));
+        $alerts = $checker->check($accountId, $config->enabledItemsForType($checker->type()), new \DateTimeImmutable('today'));
 
         $this->assertCount(1, $alerts);
         $this->assertNull($alerts[0]->propertyId());
@@ -78,7 +78,7 @@ class InactiveUserAlertCheckerTest extends TestCase
         );
 
         $checker = new InactiveUserAlertChecker($userRepository, $measurementRepository, $alertRepository);
-        $alerts = $checker->check($accountId, $config, new \DateTimeImmutable('today'));
+        $alerts = $checker->check($accountId, $config->enabledItemsForType($checker->type()), new \DateTimeImmutable('today'));
 
         $this->assertCount(0, $alerts);
     }
@@ -104,12 +104,12 @@ class InactiveUserAlertCheckerTest extends TestCase
 
         $checker = new InactiveUserAlertChecker($userRepository, $measurementRepository, $alertRepository);
 
-        $firstRun = $checker->check($accountId, $config, new \DateTimeImmutable('today'));
+        $firstRun = $checker->check($accountId, $config->enabledItemsForType($checker->type()), new \DateTimeImmutable('today'));
         foreach ($firstRun as $alert) {
             $alertRepository->add($alert);
         }
 
-        $secondRun = $checker->check($accountId, $config, new \DateTimeImmutable('today'));
+        $secondRun = $checker->check($accountId, $config->enabledItemsForType($checker->type()), new \DateTimeImmutable('today'));
 
         $this->assertCount(1, $firstRun);
         $this->assertCount(0, $secondRun);

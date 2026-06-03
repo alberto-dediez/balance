@@ -8,11 +8,12 @@ use App\Security\Application\Action as SecurityAction;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
+use App\Waste\Application\AlertConfiguration\AlertConfigurationItemDto;
 use App\Waste\Application\AlertConfiguration\Register\RegisterAlertConfigurationRequest;
 use App\Waste\Application\AlertConfiguration\Register\RegisterAlertConfigurationService;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfiguration;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationId;
-use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\AlertConfigurationItemType;
+use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\AlertConfigurationItemData;
 use App\Waste\Infrastructure\Symfony\Form\RegisterAlertConfigurationType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,15 +30,19 @@ class RegisterController extends AbstractController
     {
         $this->denyAccessUnlessGranted(SecurityAction::Register->value, new AlertConfiguration(AlertConfigurationId::generate()));
 
-        $registerRequest = new RegisterAlertConfigurationRequest(
-            items: AlertConfigurationItemType::allDefaults(),
-        );
-
-        $form = $this->createForm(RegisterAlertConfigurationType::class, $registerRequest);
+        $form = $this->createForm(RegisterAlertConfigurationType::class, [
+            'accountId' => null,
+            'items' => [],
+        ]);
 
         try {
             $needsRedirect = $this->register($request, $form, function ($form) use ($registerAlertConfiguration, $loggedUser) {
-                $registerAlertConfiguration($form->getData(), $loggedUser());
+                /** @var array{accountId: \App\Security\Domain\Model\Account\AccountId, items: list<AlertConfigurationItemData>} $data */
+                $data = $form->getData();
+                $registerAlertConfiguration(new RegisterAlertConfigurationRequest(
+                    accountId: $data['accountId'],
+                    items: self::convertItemsToList($data['items']),
+                ), $loggedUser());
 
                 $this->addFlash('success', new TranslatableMessage('Configuración de alerta creada correctamente'));
 
@@ -54,5 +59,27 @@ class RegisterController extends AbstractController
         return $this->render('@waste/admin/alert-configurations/register.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @param list<AlertConfigurationItemData> $items
+     *
+     * @return list<AlertConfigurationItemDto>
+     */
+    private static function convertItemsToList(array $items): array
+    {
+        $list = [];
+        foreach ($items as $item) {
+            $type = (string) $item->type;
+            $list[] = new AlertConfigurationItemDto(
+                type: $type,
+                enabled: $item->enabled,
+                propertyId: $item->propertyId,
+                wasteId: $item->wasteId,
+                parameters: $item->parameters[$type] ?? [],
+            );
+        }
+
+        return $list;
     }
 }

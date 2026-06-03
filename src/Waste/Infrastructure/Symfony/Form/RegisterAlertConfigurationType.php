@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Waste\Infrastructure\Symfony\Form;
 
-use App\Waste\Application\AlertConfiguration\Register\RegisterAlertConfigurationRequest;
 use App\Waste\Domain\Model\Alert\AlertType;
+use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\AlertConfigurationItemData;
 use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\AlertConfigurationItemType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,19 +24,18 @@ class RegisterAlertConfigurationType extends AbstractType
             'required' => true,
         ]);
 
-        $itemsBuilder = $builder->create('items', FormType::class, [
-            'compound' => true,
+        $builder->add('items', CollectionType::class, [
+            'entry_type' => AlertConfigurationItemType::class,
             'label' => false,
+            'allow_add' => true,
+            'allow_delete' => true,
+            'by_reference' => false,
+            'prototype_data' => new AlertConfigurationItemData(
+                type: AlertType::cases()[0]->value,
+                parameters: AlertConfigurationItemType::parameterDefaults(),
+            ),
+            'constraints' => [AlertConfigurationItemType::uniqueItemsConstraint()],
         ]);
-
-        foreach (AlertType::cases() as $alertType) {
-            $itemsBuilder->add($alertType->value, AlertConfigurationItemType::class, [
-                'label' => new TranslatableMessage($alertType->value, [], 'alertType'),
-                'alert_type' => $alertType,
-            ]);
-        }
-
-        $builder->add($itemsBuilder);
 
         $builder->add('register', SubmitType::class, [
             'label' => new TranslatableMessage('Registrar'),
@@ -46,7 +45,7 @@ class RegisterAlertConfigurationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => RegisterAlertConfigurationRequest::class,
+            'data_class' => null,
         ]);
     }
 }

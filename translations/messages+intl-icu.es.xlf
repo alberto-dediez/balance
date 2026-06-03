@@ -1369,6 +1369,146 @@
         <source>El fichero no es válido.</source>
         <target>El fichero no es válido.</target>
       </trans-unit>
+      <trans-unit id="1K2HY.h" resname="Configuración de alerta creada correctamente">
+        <source>Configuración de alerta creada correctamente</source>
+        <target>Configuración de alerta creada correctamente</target>
+      </trans-unit>
+      <trans-unit id="Bf24N_J" resname="Configuración de alerta actualizada con éxito">
+        <source>Configuración de alerta actualizada con éxito</source>
+        <target>Configuración de alerta actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id="L7RNeby" resname="Se ha eliminado la configuración de alerta {config}">
+        <source>Se ha eliminado la configuración de alerta {config}</source>
+        <target>Se ha eliminado la configuración de alerta {config}</target>
+      </trans-unit>
+      <trans-unit id="sCv8UjS" resname="No se ha podido eliminar la configuración de alerta {config}">
+        <source>No se ha podido eliminar la configuración de alerta {config}</source>
+        <target>No se ha podido eliminar la configuración de alerta {config}</target>
+      </trans-unit>
+      <trans-unit id="VG4b.tp" resname="Se ha eliminado la configuración de alerta {id}">
+        <source>Se ha eliminado la configuración de alerta {id}</source>
+        <target>Se ha eliminado la configuración de alerta {id}</target>
+      </trans-unit>
+      <trans-unit id="2.G57RF" resname="No se ha podido eliminar la configuración de alerta {id}">
+        <source>No se ha podido eliminar la configuración de alerta {id}</source>
+        <target>No se ha podido eliminar la configuración de alerta {id}</target>
+      </trans-unit>
+      <trans-unit id="GK_kvLI" resname="Alerta marcada como leída">
+        <source>Alerta marcada como leída</source>
+        <target>Alerta marcada como leída</target>
+      </trans-unit>
+      <trans-unit id="Yqud0Vl" resname="Umbral (kg)">
+        <source>Umbral (kg)</source>
+        <target>Umbral (kg)</target>
+      </trans-unit>
+      <trans-unit id="ZfQMUME" resname="Días sin mediciones">
+        <source>Días sin mediciones</source>
+        <target>Días sin mediciones</target>
+      </trans-unit>
+      <trans-unit id="VR7N9CX" resname="Días sin uso">
+        <source>Días sin uso</source>
+        <target>Días sin uso</target>
+      </trans-unit>
+      <trans-unit id="8casaGZ" resname="Umbral (%)">
+        <source>Umbral (%)</source>
+        <target>Umbral (%)</target>
+      </trans-unit>
+      <trans-unit id="y_y62zB" resname="Multiplicador de desviación">
+        <source>Multiplicador de desviación</source>
+        <target>Multiplicador de desviación</target>
+      </trans-unit>
+      <trans-unit id="k5KJRMD" resname="Tipo de alerta">
+        <source>Tipo de alerta</source>
+        <target>Tipo de alerta</target>
+      </trans-unit>
+      <trans-unit id="iY3rTua" resname="Residuo">
+        <source>Residuo</source>
+        <target>Residuo</target>
+      </trans-unit>
+      <trans-unit id="qv1d_7Z" resname="Todos los residuos">
+        <source>Todos los residuos</source>
+        <target>Todos los residuos</target>
+      </trans-unit>
+      <trans-unit id="_Tg04nQ" resname="Días sin actividad">
+        <source>Días sin actividad</source>
+        <target>Días sin actividad</target>
+      </trans-unit>
+      <trans-unit id="vSIaw4i" resname="Tipo">
+        <source>Tipo</source>
+        <target>Tipo</target>
+      </trans-unit>
+      <trans-unit id="sUU2pd0" resname="Todos los tipos">
+        <source>Todos los tipos</source>
+        <target>Todos los tipos</target>
+      </trans-unit>
+      <trans-unit id="S.3cQ_b" resname="Estado">
+        <source>Estado</source>
+        <target>Estado</target>
+      </trans-unit>
+      <trans-unit id="XrlbE9X" resname="Desde">
+        <source>Desde</source>
+        <target>Desde</target>
+      </trans-unit>
+      <trans-unit id="3PIwCM1" resname="Hasta">
+        <source>Hasta</source>
+        <target>Hasta</target>
+      </trans-unit>
+      <trans-unit id="xuO0HLq" resname="Resumen mensual de alertas: {month}">
+        <source>Resumen mensual de alertas: {month}</source>
+        <target>Resumen mensual de alertas: {month}</target>
+      </trans-unit>
+      <trans-unit id="ABeQqbs" resname="Configuraciones de alertas">
+        <source>Configuraciones de alertas</source>
+        <target>Configuraciones de alertas</target>
+      </trans-unit>
+      <trans-unit id="xOtMi1m" resname="Alertas">
+        <source>Alertas</source>
+        <target>Alertas</target>
+      </trans-unit>
+      <trans-unit id="lYGgc2b" resname="Se ha marcado como leída la alerta {alertId} por {user}">
+        <source>Se ha marcado como leída la alerta {alertId} por {user}</source>
+        <target>Se ha marcado como leída la alerta {alertId} por {user}</target>
+      </trans-unit>
+      <trans-unit id="wwTN5kp" resname="Se ha actualizado la configuración de alerta {alertConfigurationId} por {user}">
+        <source>Se ha actualizado la configuración de alerta {alertConfigurationId} por {user}</source>
+        <target>Se ha actualizado la configuración de alerta {alertConfigurationId} por {user}</target>
+      </trans-unit>
+      <trans-unit id="4yLAlIy" resname="Se ha registrado la configuración de alertas para la cuenta {accountId} por {user}">
+        <source>Se ha registrado la configuración de alertas para la cuenta {accountId} por {user}</source>
+        <target>Se ha registrado la configuración de alertas para la cuenta {accountId} por {user}</target>
+      </trans-unit>
+      <trans-unit id="WpjVok8" resname="Se ha detectado una alerta de tipo {type} en la propiedad {propertyId} de la cuenta {accountId} por {user}">
+        <source>Se ha detectado una alerta de tipo {type} en la propiedad {propertyId} de la cuenta {accountId} por {user}</source>
+        <target>Se ha detectado una alerta de tipo {type} en la propiedad {propertyId} de la cuenta {accountId} por {user}</target>
+      </trans-unit>
+      <trans-unit id="S5yFLi6" resname="Debes crear contenedores antes de poder registrar mediciones">
+        <source>Debes crear contenedores antes de poder registrar mediciones</source>
+        <target>Debes crear contenedores antes de poder registrar mediciones</target>
+      </trans-unit>
+      <trans-unit id="7jvpLSj" resname="Se han detectado las siguientes alertas durante el mes:">
+        <source>Se han detectado las siguientes alertas durante el mes:</source>
+        <target>Se han detectado las siguientes alertas durante el mes:</target>
+      </trans-unit>
+      <trans-unit id=".ApDO_p" resname="Valor">
+        <source>Valor</source>
+        <target>Valor</target>
+      </trans-unit>
+      <trans-unit id="cu6xJS4" resname="Umbral">
+        <source>Umbral</source>
+        <target>Umbral</target>
+      </trans-unit>
+      <trans-unit id="XM6t5Zj" resname="Detectada">
+        <source>Detectada</source>
+        <target>Detectada</target>
+      </trans-unit>
+      <trans-unit id="HUv7t93" resname="No hay configuraciones de alerta. Añade una.">
+        <source>No hay configuraciones de alerta. Añade una.</source>
+        <target>No hay configuraciones de alerta. Añade una.</target>
+      </trans-unit>
+      <trans-unit id="8Q7409I" resname="+ Añadir">
+        <source>+ Añadir</source>
+        <target>+ Añadir</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

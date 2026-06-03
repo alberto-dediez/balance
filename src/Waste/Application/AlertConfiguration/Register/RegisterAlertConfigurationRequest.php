@@ -6,11 +6,12 @@ namespace App\Waste\Application\AlertConfiguration\Register;
 
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Application\CommandBus\Command;
+use App\Waste\Application\AlertConfiguration\AlertConfigurationItemDto;
 
 class RegisterAlertConfigurationRequest implements Command
 {
     /**
-     * @param array<string, array{enabled: bool, parameters: array<string, mixed>}> $items
+     * @param list<AlertConfigurationItemDto> $items
      */
     public function __construct(
         public ?AccountId $accountId = null,

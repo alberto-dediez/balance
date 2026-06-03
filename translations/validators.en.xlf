@@ -689,6 +689,10 @@
         <source>Please enter a valid week.</source>
         <target>Please enter a valid week.</target>
       </trans-unit>
+      <trans-unit id="CT0IlBq" resname="alert_configuration.item_cannot_be_duplicated">
+        <source>alert_configuration.item_cannot_be_duplicated</source>
+        <target>There cannot be two configurations with the same property, waste and alert type.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

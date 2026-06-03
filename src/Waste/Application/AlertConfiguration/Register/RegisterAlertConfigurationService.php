@@ -11,6 +11,7 @@ use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use App\Waste\Application\AlertConfiguration\AlertConfigurationAuthorizer;
+use App\Waste\Application\AlertConfiguration\AlertConfigurationItemDto;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfiguration;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationAlreadyExistsForAccountException;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationId;
@@ -41,7 +42,10 @@ class RegisterAlertConfigurationService implements CommandHandler
         $config = new AlertConfiguration($id);
         $config->register(
             accountId: $request->accountId,
-            items: $request->items,
+            items: array_map(
+                static fn(AlertConfigurationItemDto $dto) => $dto->toItem(),
+                $request->items,
+            ),
         );
 
         $this->alertConfigurationRepository->add($config);

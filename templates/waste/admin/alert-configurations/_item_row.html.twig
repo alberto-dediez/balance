@@ -1,0 +1,33 @@
+<div class="collection-element card mb-3" data-controller="alert-config-item">
+    <div class="card-body">
+        <div class="row g-3 align-items-start">
+            <div class="col-12 col-md-3">
+                {{ form_row(element.type, {attr: {
+                    'data-alert-config-item-target': 'type',
+                    'data-action': 'change->alert-config-item#toggle',
+                }}) }}
+            </div>
+            <div class="col-12 col-md-3">{{ form_row(element.propertyId) }}</div>
+            <div class="col-12 col-md-3">{{ form_row(element.wasteId) }}</div>
+            <div class="col-6 col-md-2">{{ form_row(element.enabled) }}</div>
+            <div class="col-6 col-md-1 text-end">
+                <button type="button" class="text-danger border-0 bg-transparent"
+                        data-action="collection#remove">
+                    <twig:Icon name="solar:close-square-line-duotone" size="lg" />
+                </button>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            {% for typeValue, paramGroup in element.parameters %}
+                <div class="d-none"
+                     data-alert-config-item-target="parameters"
+                     data-alert-type="{{ typeValue }}">
+                    {% for paramField in paramGroup %}
+                        {{ form_row(paramField) }}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

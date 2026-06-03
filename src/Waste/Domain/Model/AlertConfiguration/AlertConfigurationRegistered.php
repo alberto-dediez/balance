@@ -13,7 +13,7 @@ final class AlertConfigurationRegistered extends DomainEvent
 {
     protected static string $eventName = 'alertConfigurationRegistered';
 
-    /** @param array<string, array<string, mixed>> $items */
+    /** @param list<AlertConfigurationItem> $items */
     public function __construct(
         private readonly AlertConfigurationId $alertConfigurationId,
         private readonly AccountId $accountId,
@@ -34,7 +34,7 @@ final class AlertConfigurationRegistered extends DomainEvent
         return $this->accountId;
     }
 
-    /** @return array<string, array<string, mixed>> */
+    /** @return list<AlertConfigurationItem> */
     public function items(): array
     {
         return $this->items;
@@ -50,7 +50,7 @@ final class AlertConfigurationRegistered extends DomainEvent
         return [
             'alertConfigurationId' => (string) $this->alertConfigurationId,
             'accountId' => (string) $this->accountId,
-            'items' => $this->items,
+            'items' => array_map(static fn(AlertConfigurationItem $item) => $item->toArray(), $this->items),
         ];
     }
 
@@ -59,10 +59,13 @@ final class AlertConfigurationRegistered extends DomainEvent
         \DateTimeImmutable $occurredOn,
         array $payload = [],
     ): static {
+        /** @var list<array{id?: string, type: string, enabled: bool, propertyId: string|null, wasteId: string|null, parameters: array<string, mixed>}> $itemsData */
+        $itemsData = (array) $payload['items'];
+
         return new AlertConfigurationRegistered(
             alertConfigurationId: new AlertConfigurationId($payload['alertConfigurationId']),
             accountId: new AccountId($payload['accountId']),
-            items: (array) $payload['items'],
+            items: array_map(static fn(array $data) => AlertConfigurationItem::fromArray($data), $itemsData),
             id: $id,
             occurredOn: $occurredOn,
         );

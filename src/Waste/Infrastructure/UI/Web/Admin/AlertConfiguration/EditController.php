@@ -8,10 +8,11 @@ use App\Security\Application\Action as SecurityAction;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
+use App\Waste\Application\AlertConfiguration\AlertConfigurationItemDto;
 use App\Waste\Application\AlertConfiguration\Update\UpdateAlertConfigurationRequest;
 use App\Waste\Application\AlertConfiguration\Update\UpdateAlertConfigurationService;
-use App\Waste\Domain\Model\Alert\AlertType;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationRepository;
+use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\AlertConfigurationItemData;
 use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\AlertConfigurationItemType;
 use App\Waste\Infrastructure\Symfony\Form\UpdateAlertConfigurationType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,27 +38,30 @@ class EditController extends AbstractController
 
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $config);
 
-        $items = AlertConfigurationItemType::allDefaults();
-        foreach (AlertType::cases() as $type) {
-            $item = $config->items()->getByType($type);
-            if (null !== $item) {
-                $items[$type->value] = [
-                    'enabled' => $item->enabled(),
-                    'parameters' => $item->parameters(),
-                ];
-            }
+        $items = [];
+        foreach ($config->items() as $item) {
+            $parameters = AlertConfigurationItemType::parameterDefaults();
+            $parameters[$item->type()->value] = $item->parameters();
+
+            $items[] = new AlertConfigurationItemData(
+                type: $item->type()->value,
+                enabled: $item->enabled(),
+                propertyId: $item->propertyId(),
+                wasteId: $item->wasteId(),
+                parameters: $parameters,
+            );
         }
 
-        $configRequest = new UpdateAlertConfigurationRequest(
-            alertConfigurationId: $config->id(),
-            items: $items,
-        );
-
         try {
-            $form = $this->createForm(UpdateAlertConfigurationType::class, $configRequest);
+            $form = $this->createForm(UpdateAlertConfigurationType::class, ['items' => $items]);
 
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateAlertConfiguration, $loggedUser) {
-                $updateAlertConfiguration($form->getData(), $loggedUser());
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateAlertConfiguration, $loggedUser, $config) {
+                /** @var array{items: list<AlertConfigurationItemData>} $data */
+                $data = $form->getData();
+                $updateAlertConfiguration(new UpdateAlertConfigurationRequest(
+                    alertConfigurationId: $config->id(),
+                    items: self::convertItemsToList($data['items']),
+                ), $loggedUser());
 
                 $this->addFlash('success', new TranslatableMessage('Configuración de alerta actualizada con éxito'));
             });
@@ -73,5 +77,27 @@ class EditController extends AbstractController
             'alertConfiguration' => $config,
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @param list<AlertConfigurationItemData> $items
+     *
+     * @return list<AlertConfigurationItemDto>
+     */
+    private static function convertItemsToList(array $items): array
+    {
+        $list = [];
+        foreach ($items as $item) {
+            $type = (string) $item->type;
+            $list[] = new AlertConfigurationItemDto(
+                type: $type,
+                enabled: $item->enabled,
+                propertyId: $item->propertyId,
+                wasteId: $item->wasteId,
+                parameters: $item->parameters[$type] ?? [],
+            );
+        }
+
+        return $list;
     }
 }

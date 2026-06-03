@@ -18,7 +18,7 @@ use App\Waste\Application\Alert\Check\CheckAlertsService;
 use App\Waste\Application\Alert\Check\Checker\AlertChecker;
 use App\Waste\Domain\Model\Alert\Alert;
 use App\Waste\Domain\Model\Alert\AlertType;
-use App\Waste\Domain\Model\AlertConfiguration\AlertConfiguration;
+use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationItem;
 use PHPUnit\Framework\TestCase;
 
 class CheckAlertsServiceTest extends TestCase
@@ -158,7 +158,8 @@ class CheckAlertsServiceTest extends TestCase
                 return $this->alertType;
             }
 
-            public function check(AccountId $accountId, AlertConfiguration $config, \DateTimeImmutable $checkDate): array
+            /** @param AlertConfigurationItem[] $rules */
+            public function check(AccountId $accountId, array $rules, \DateTimeImmutable $checkDate): array
             {
                 return $this->alerts;
             }

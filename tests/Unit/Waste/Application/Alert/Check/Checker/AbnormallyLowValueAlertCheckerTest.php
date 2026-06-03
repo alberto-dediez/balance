@@ -69,7 +69,7 @@ class AbnormallyLowValueAlertCheckerTest extends TestCase
         );
 
         $checker = new AbnormallyLowValueAlertChecker($propertyRepository, $dailyWasteRepository, $alertRepository);
-        $alerts = $checker->check($accountId, $config, $today);
+        $alerts = $checker->check($accountId, $config->enabledItemsForType($checker->type()), $today);
 
         // Since all historical values are 100 and stddev=0, threshold = 100 - 2*0 = 100
         // 5 < 100, so alert should fire
@@ -124,7 +124,7 @@ class AbnormallyLowValueAlertCheckerTest extends TestCase
         );
 
         $checker = new AbnormallyLowValueAlertChecker($propertyRepository, $dailyWasteRepository, $alertRepository);
-        $alerts = $checker->check($accountId, $config, $today);
+        $alerts = $checker->check($accountId, $config->enabledItemsForType($checker->type()), $today);
 
         $this->assertCount(0, $alerts);
     }
@@ -173,7 +173,7 @@ class AbnormallyLowValueAlertCheckerTest extends TestCase
         );
 
         $checker = new AbnormallyLowValueAlertChecker($propertyRepository, $dailyWasteRepository, $alertRepository);
-        $alerts = $checker->check($accountId, $config, $today);
+        $alerts = $checker->check($accountId, $config->enabledItemsForType($checker->type()), $today);
 
         $this->assertCount(0, $alerts);
     }

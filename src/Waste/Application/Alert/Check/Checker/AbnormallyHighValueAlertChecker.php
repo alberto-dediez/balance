@@ -10,7 +10,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Alert\Alert;
 use App\Waste\Domain\Model\Alert\AlertId;
 use App\Waste\Domain\Model\Alert\AlertType;
-use App\Waste\Domain\Model\AlertConfiguration\AlertConfiguration;
+use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationItem;
 use App\Waste\Domain\Model\DailyWaste\DailyWaste;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteFilter;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
@@ -30,70 +30,91 @@ class AbnormallyHighValueAlertChecker implements AlertChecker
         return AlertType::AbnormallyHigh;
     }
 
-    /** @return Alert[] */
+    /**
+     * @param AlertConfigurationItem[] $rules
+     *
+     * @return Alert[]
+     */
     public function check(
         AccountId $accountId,
-        AlertConfiguration $config,
+        array $rules,
         \DateTimeImmutable $checkDate,
     ): array {
         $alerts = [];
         $yesterday = $checkDate->modify('-1 day');
         $thirtyDaysAgo = $checkDate->modify('-30 days');
-        $multiplier = (float) ($config->items()->getByType(AlertType::AbnormallyHigh)?->parameters()['deviationMultiplier'] ?? self::DEFAULT_DEVIATION_MULTIPLIER);
 
-        $properties = $this->propertyRepository->findByFilter(new PropertyFilter(
-            accountId: $accountId,
-            limit: 0,
-        ));
+        foreach ($rules as $rule) {
+            $multiplier = (float) ($rule->parameters()['deviationMultiplier'] ?? self::DEFAULT_DEVIATION_MULTIPLIER);
 
-        foreach ($properties as $property) {
-            $recentData = $this->dailyWasteRepository->findByFilter(new DailyWasteFilter(
-                properties: [$property->id()],
-                accountId: $accountId,
-                dayFrom: $thirtyDaysAgo,
-                limit: 0,
-            ));
+            if (null !== $rule->propertyId()) {
+                $property = $this->propertyRepository->find($rule->propertyId());
+                $properties = null !== $property ? [$property] : [];
+            } else {
+                $properties = $this->propertyRepository->findByFilter(new PropertyFilter(
+                    accountId: $accountId,
+                    limit: 0,
+                ));
+            }
 
-            $byWaste = $this->groupByWaste($recentData);
+            if (0 === count($properties)) {
+                continue;
+            }
 
-            foreach ($byWaste as $wasteKey => [$wasteId, $dailyWastes]) {
-                $yesterdayEntry = $this->findForDay($dailyWastes, $yesterday);
+            foreach ($properties as $property) {
+                $recentData = $this->dailyWasteRepository->findByFilter(new DailyWasteFilter(
+                    properties: [$property->id()],
+                    accountId: $accountId,
+                    dayFrom: $thirtyDaysAgo,
+                    limit: 0,
+                ));
 
-                if (null === $yesterdayEntry) {
-                    continue;
+                $byWaste = $this->groupByWaste($recentData);
+
+                if (null !== $rule->wasteId()) {
+                    $ruleWasteKey = (string) $rule->wasteId();
+                    $byWaste = isset($byWaste[$ruleWasteKey]) ? [$ruleWasteKey => $byWaste[$ruleWasteKey]] : [];
                 }
 
-                $historicalValues = array_filter(
-                    array_map(fn(DailyWaste $dw) => (float) $dw->load(), $dailyWastes),
-                    fn(float $v) => $v > 0,
-                );
+                foreach ($byWaste as $wasteKey => [$wasteId, $dailyWastes]) {
+                    $yesterdayEntry = $this->findForDay($dailyWastes, $yesterday);
 
-                if (count($historicalValues) < 2) {
-                    continue;
-                }
+                    if (null === $yesterdayEntry) {
+                        continue;
+                    }
 
-                $mean = array_sum($historicalValues) / count($historicalValues);
-                $variance = array_sum(array_map(fn(float $v) => ($v - $mean) ** 2, $historicalValues)) / count($historicalValues);
-                $stddev = sqrt($variance);
-
-                $threshold = $mean + $multiplier * $stddev;
-                $value = (float) $yesterdayEntry->load();
-
-                if ($value > $threshold) {
-                    $alert = new Alert(id: AlertId::generate());
-                    $alert->detect(
-                        type: AlertType::AbnormallyHigh,
-                        propertyId: $property->id(),
-                        wasteId: $wasteId,
-                        accountId: $accountId,
-                        detectedAt: $checkDate,
-                        from: $thirtyDaysAgo,
-                        to: $checkDate,
-                        value: $value,
-                        threshold: $threshold,
+                    $historicalValues = array_filter(
+                        array_map(fn(DailyWaste $dw) => (float) $dw->load(), $dailyWastes),
+                        fn(float $v) => $v > 0,
                     );
 
-                    $alerts[] = $alert;
+                    if (count($historicalValues) < 2) {
+                        continue;
+                    }
+
+                    $mean = array_sum($historicalValues) / count($historicalValues);
+                    $variance = array_sum(array_map(fn(float $v) => ($v - $mean) ** 2, $historicalValues)) / count($historicalValues);
+                    $stddev = sqrt($variance);
+
+                    $threshold = $mean + $multiplier * $stddev;
+                    $value = (float) $yesterdayEntry->load();
+
+                    if ($value > $threshold) {
+                        $alert = new Alert(id: AlertId::generate());
+                        $alert->detect(
+                            type: AlertType::AbnormallyHigh,
+                            propertyId: $property->id(),
+                            wasteId: $wasteId,
+                            accountId: $accountId,
+                            detectedAt: $checkDate,
+                            from: $thirtyDaysAgo,
+                            to: $checkDate,
+                            value: $value,
+                            threshold: $threshold,
+                        );
+
+                        $alerts[] = $alert;
+                    }
                 }
             }
         }
