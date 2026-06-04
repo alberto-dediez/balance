@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="B5IwT3t" resname="FixedThreshold">
         <source>FixedThreshold</source>
-        <target>Umbral fijo</target>
+        <target>Umbral fijo superado</target>
       </trans-unit>
       <trans-unit id="TNrVLgL" resname="AbnormallyLow">
         <source>AbnormallyLow</source>

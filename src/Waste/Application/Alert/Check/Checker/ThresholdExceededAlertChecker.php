@@ -20,6 +20,7 @@ class ThresholdExceededAlertChecker implements AlertChecker
     use GroupByWasteTrait;
 
     public const DEFAULT_THRESHOLD_PERCENTAGE = 150.0;
+    public const DEFAULT_STATS_DAYS = 30;
 
     public function __construct(
         private readonly PropertyRepository $propertyRepository,
@@ -43,10 +44,11 @@ class ThresholdExceededAlertChecker implements AlertChecker
         ExistingAlertsIndex $existingAlerts,
     ): array {
         $alerts = [];
-        $previousDays = $checkDate->modify('-30 days');
 
         foreach ($rules as $rule) {
             $thresholdPercentage = (float) ($rule->parameters()['thresholdPercentage'] ?? self::DEFAULT_THRESHOLD_PERCENTAGE);
+            $statsDays = (int) ($rule->parameters()['statisticsDays'] ?? self::DEFAULT_STATS_DAYS);
+            $previousDays = $checkDate->modify("-{$statsDays} days");
 
             if (null !== $rule->propertyId()) {
                 $property = $this->propertyRepository->find($rule->propertyId());

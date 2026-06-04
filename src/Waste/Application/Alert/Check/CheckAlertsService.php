@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\Waste\Application\Alert\Check;
 
+use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Waste\Application\Alert\AlertAuthorizer;
 use App\Waste\Application\Alert\Check\Checker\AlertChecker;
+use App\Waste\Domain\Model\Alert\Alert;
 use App\Waste\Domain\Model\Alert\AlertFilter;
+use App\Waste\Domain\Model\Alert\AlertId;
 use App\Waste\Domain\Model\Alert\AlertRepository;
 use App\Waste\Domain\Model\Alert\AlertStatus;
 use App\Waste\Domain\Model\Alert\ExistingAlertsIndex;
@@ -26,6 +30,7 @@ class CheckAlertsService implements CommandHandler
         private readonly AlertRepository $alertRepository,
         private readonly AlertConfigurationRepository $alertConfigurationRepository,
         private readonly DailyWasteWindowProvider $dailyWasteWindowProvider,
+        private readonly AlertAuthorizer $authorizer,
         private readonly iterable $checkers,
     ) {}
 
@@ -33,6 +38,8 @@ class CheckAlertsService implements CommandHandler
     {
         $accountId = $request->accountId;
         $checkDate = $request->checkDate;
+
+        $this->authorizer->denyUnlessCanDoThat(new Alert(id: AlertId::generate(), accountId: $accountId), Action::Register, $user);
 
         $config = $this->alertConfigurationRepository->findByAccount($accountId);
 

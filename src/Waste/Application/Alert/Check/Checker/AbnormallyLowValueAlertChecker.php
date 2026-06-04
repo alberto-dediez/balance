@@ -20,6 +20,7 @@ class AbnormallyLowValueAlertChecker implements AlertChecker
     use GroupByWasteTrait;
 
     public const DEFAULT_DEVIATION_MULTIPLIER = 2.0;
+    public const DEFAULT_STATS_DAYS = 30;
 
     public function __construct(
         private readonly PropertyRepository $propertyRepository,
@@ -43,10 +44,11 @@ class AbnormallyLowValueAlertChecker implements AlertChecker
         ExistingAlertsIndex $existingAlerts,
     ): array {
         $alerts = [];
-        $previousDays = $checkDate->modify('-30 days');
 
         foreach ($rules as $rule) {
             $multiplier = (float) ($rule->parameters()['deviationMultiplier'] ?? self::DEFAULT_DEVIATION_MULTIPLIER);
+            $statsDays = (int) ($rule->parameters()['statisticsDays'] ?? self::DEFAULT_STATS_DAYS);
+            $previousDays = $checkDate->modify("-{$statsDays} days");
 
             if (null !== $rule->propertyId()) {
                 $property = $this->propertyRepository->find($rule->propertyId());

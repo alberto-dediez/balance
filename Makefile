@@ -8,7 +8,7 @@ TEST_CONT     = $(DOCKER_COMP) exec -e APP_ENV=test -e DATABASE_URL="sqlite:///.
 
 # Executables
 PHP      = $(PHP_CONT) php
-PHP_TEST = $(TEST_CONT) php
+PHP_TEST = $(TEST_CONT) php -d memory_limit=512M
 COMPOSER = $(PHP_CONT) composer
 SYMFONY  = $(PHP) bin/console
 PHP_EXTERNAL = docker run --rm -v $(CURDIR):/app -w /app php:8.4-cli

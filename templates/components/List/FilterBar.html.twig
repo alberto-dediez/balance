@@ -32,6 +32,10 @@
                             {% set value = value | category_name %}
                         {% elseif field == 'purpose' %}
                             {% set value = value.value | trans({}, 'purpose') %}
+                        {% elseif field == 'status' %}
+                            {% set value = value.value | trans({}, 'alertStatus') %}
+                        {% elseif field == 'type' %}
+                            {% set value = value.value | trans({}, 'alertType') %}
                         {% endif %}
 
                         <twig:List:FilterShow

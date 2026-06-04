@@ -6,10 +6,11 @@ namespace App\Waste\Infrastructure\Symfony\Form;
 
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
 use App\Waste\Application\Alert\List\ListAlertsRequest;
-use App\Waste\Domain\Model\Alert\AlertStatus;
-use App\Waste\Domain\Model\Alert\AlertType;
+use App\Waste\Infrastructure\Symfony\Form\Type\AlertStatusType;
+use App\Waste\Infrastructure\Symfony\Form\Type\AlertTypeType;
+use App\Waste\Infrastructure\Symfony\Form\Type\PropertyIdType;
+use App\Waste\Infrastructure\Symfony\Form\Type\WasteIdType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -19,14 +20,22 @@ class ListAlertsType extends BaseFilterType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('type', EnumType::class, [
-                'class' => AlertType::class,
+            ->add('propertyId', PropertyIdType::class, [
+                'label' => new TranslatableMessage('Propiedad'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Todas las propiedades'),
+            ])
+            ->add('wasteId', WasteIdType::class, [
+                'label' => new TranslatableMessage('Tipología de residuo'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Todas las tipologías'),
+            ])
+            ->add('type', AlertTypeType::class, [
                 'label' => new TranslatableMessage('Tipo'),
                 'required' => false,
                 'placeholder' => new TranslatableMessage('Todos los tipos'),
             ])
-            ->add('status', EnumType::class, [
-                'class' => AlertStatus::class,
+            ->add('status', AlertStatusType::class, [
                 'label' => new TranslatableMessage('Estado'),
                 'required' => false,
                 'placeholder' => new TranslatableMessage('Todos los estados'),

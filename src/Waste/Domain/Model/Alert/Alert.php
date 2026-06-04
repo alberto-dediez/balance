@@ -76,6 +76,11 @@ class Alert implements \Stringable
         return $this->periodTo;
     }
 
+    public function singleDayPeriod(): bool
+    {
+        return $this->periodFrom()->format('Y-m-d') === $this->periodTo()->format('Y-m-d');
+    }
+
     public function value(): ?float
     {
         return $this->value;

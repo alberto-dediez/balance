@@ -41,6 +41,13 @@ class AlertConfiguration implements \Stringable
         return new AlertConfigurationItems($this->items);
     }
 
+    public function hasActiveItems(): bool
+    {
+        $activeItems = array_filter(iterator_to_array($this->items()->getIterator()), static fn(AlertConfigurationItem $item): bool => $item->enabled());
+
+        return count($activeItems) > 0;
+    }
+
     /** @return AlertConfigurationItem[] */
     public function getItemsForType(AlertType $type): array
     {

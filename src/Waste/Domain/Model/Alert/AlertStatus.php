@@ -8,4 +8,12 @@ enum AlertStatus: string
 {
     case New = 'New';
     case Acknowledged = 'Acknowledged';
+
+    public function style(): string
+    {
+        return match ($this) {
+            self::Acknowledged => 'bg-light',
+            self::New => 'bg-warning',
+        };
+    }
 }

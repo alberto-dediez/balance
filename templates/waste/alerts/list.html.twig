@@ -15,6 +15,8 @@
         }, {
             'label': 'Umbral' | trans,
         }, {
+            'label': 'Período' | trans,
+        }, {
             'label': 'Detectada' | trans,
             'sortable': true,
             'sortableBy': 'detectedAt'
@@ -31,11 +33,23 @@
         <td>{{ element.wasteId ? (element.wasteId | waste_name) : '-' }}</td>
         <td>{{ element.value is not null ? element.value : '-' }}</td>
         <td>{{ element.threshold is not null ? element.threshold : '-' }}</td>
-        <td>{{ element.detectedAt | date('d/m/Y H:i') }}</td>
-        <td>{{ element.status.value | trans({}, 'alertStatus') }}</td>
+        <td>
+            {% if element.singleDayPeriod %}
+                {{ element.periodFrom | date('d/m/Y') }}
+            {% else %}
+                {{ element.periodFrom | date('d/m/Y') }} - {{ element.periodTo | date('d/m/Y') }}
+            {% endif %}
+        </td>
+        <td>{{ element.detectedAt | date('H:i d/m/Y') }}</td>
+        <td>
+            <span class="badge {{ element.status.style }}">{{ element.status.value | trans({}, 'alertStatus') }}</span></td>
         <td>
             {% if element.status.value == 'New' %}
-                <twig:List:Action:Edit path="{{ path('alerts_acknowledge', {'alertId': element.id}) }}" />
+                <twig:List:Action path="{{ path('alerts_acknowledge', {'alertId': element.id}) }}"
+                                  title="{{ 'Marcar como vista' | trans }}"
+                >
+                    <twig:Icon name="solar:check-square-line-duotone" size="lg" />
+                </twig:List:Action>
             {% endif %}
         </td>
     </twig:List:Table>
