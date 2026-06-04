@@ -10,10 +10,13 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Domain\Model\Email\EmailRecipient;
 use App\Shared\Domain\Model\Email\EmailSender;
+use App\Waste\Application\Alert\MonthlyReport\MonthlyReportNotifier;
 use App\Waste\Application\Alert\MonthlyReport\MonthlyReportResponse;
+use App\Waste\Domain\Model\Alert\Alert;
+use App\Waste\Domain\Model\Alert\AlertStatus;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class AlertMonthlyReportMailer
+class AlertMonthlyReportMailer implements MonthlyReportNotifier
 {
     public function __construct(
         private readonly EmailSender $emailSender,
@@ -51,6 +54,7 @@ class AlertMonthlyReportMailer
                     params: [
                         'account' => $account,
                         'alerts' => $alerts,
+                        'unreadAlerts' => array_filter($alerts, fn (Alert $alert) => $alert->status() === AlertStatus::New),
                         'month' => $month,
                     ],
                 );

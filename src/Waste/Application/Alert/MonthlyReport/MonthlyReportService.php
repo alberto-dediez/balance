@@ -7,14 +7,17 @@ namespace App\Waste\Application\Alert\MonthlyReport;
 use App\Security\Domain\Model\Account\AccountFilter;
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\User\User;
+use App\Waste\Domain\Model\Alert\Alert;
 use App\Waste\Domain\Model\Alert\AlertFilter;
 use App\Waste\Domain\Model\Alert\AlertRepository;
+use App\Waste\Domain\Model\Alert\AlertStatus;
 
 class MonthlyReportService
 {
     public function __construct(
         private readonly AlertRepository $alertRepository,
         private readonly AccountRepository $accountRepository,
+        private readonly MonthlyReportNotifier $notifier,
     ) {}
 
     public function __invoke(MonthlyReportRequest $request, User $user): MonthlyReportResponse
@@ -42,9 +45,15 @@ class MonthlyReportService
             $totalAlerts += count($alerts);
         }
 
-        return new MonthlyReportResponse(
+        $response = new MonthlyReportResponse(
             alertsByAccount: $alertsByAccount,
             totalAlerts: $totalAlerts,
         );
+
+        if ($totalAlerts > 0) {
+            $this->notifier->send($response, $request->month);
+        }
+
+        return $response;
     }
 }

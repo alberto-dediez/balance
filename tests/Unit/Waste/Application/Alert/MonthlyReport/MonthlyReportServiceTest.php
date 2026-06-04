@@ -10,6 +10,7 @@ use App\Tests\Unit\Security\Domain\Model\Account\AccountRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Waste\Domain\Model\Alert\AlertMother;
 use App\Tests\Unit\Waste\Domain\Model\Alert\AlertRepositoryMother;
+use App\Waste\Application\Alert\MonthlyReport\MonthlyReportNotifier;
 use App\Waste\Application\Alert\MonthlyReport\MonthlyReportRequest;
 use App\Waste\Application\Alert\MonthlyReport\MonthlyReportService;
 use PHPUnit\Framework\TestCase;
@@ -35,6 +36,7 @@ class MonthlyReportServiceTest extends TestCase
         $sut = new MonthlyReportService(
             alertRepository: $alertRepository,
             accountRepository: $accountRepository,
+            notifier: $this->createMock(MonthlyReportNotifier::class),
         );
 
         $month = new \DateTimeImmutable('2026-06-01');
@@ -56,6 +58,7 @@ class MonthlyReportServiceTest extends TestCase
         $sut = new MonthlyReportService(
             alertRepository: $alertRepository,
             accountRepository: $accountRepository,
+            notifier: $this->createMock(MonthlyReportNotifier::class),
         );
 
         $month = new \DateTimeImmutable('2026-06-01');
@@ -82,6 +85,7 @@ class MonthlyReportServiceTest extends TestCase
         $sut = new MonthlyReportService(
             alertRepository: $alertRepository,
             accountRepository: $accountRepository,
+            notifier: $this->createMock(MonthlyReportNotifier::class),
         );
 
         $month = new \DateTimeImmutable('2026-06-01');

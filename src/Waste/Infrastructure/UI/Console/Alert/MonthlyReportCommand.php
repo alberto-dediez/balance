@@ -8,7 +8,6 @@ use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Waste\Application\Alert\MonthlyReport\MonthlyReportRequest;
 use App\Waste\Application\Alert\MonthlyReport\MonthlyReportService;
-use App\Waste\Infrastructure\Notification\AlertMonthlyReportMailer;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,7 +23,6 @@ class MonthlyReportCommand extends Command
 {
     public function __construct(
         private readonly MonthlyReportService $monthlyReportService,
-        private readonly AlertMonthlyReportMailer $mailer,
     ) {
         parent::__construct();
     }
@@ -65,8 +63,6 @@ class MonthlyReportCommand extends Command
 
             return Command::SUCCESS;
         }
-
-        $this->mailer->send($response, $month);
 
         $io->success(sprintf(
             'Se han enviado %d alertas de %d cuentas',
