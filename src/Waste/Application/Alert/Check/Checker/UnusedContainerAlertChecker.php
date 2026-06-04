@@ -6,11 +6,9 @@ namespace App\Waste\Application\Alert\Check\Checker;
 
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Alert\Alert;
-use App\Waste\Domain\Model\Alert\AlertFilter;
 use App\Waste\Domain\Model\Alert\AlertId;
-use App\Waste\Domain\Model\Alert\AlertRepository;
-use App\Waste\Domain\Model\Alert\AlertStatus;
 use App\Waste\Domain\Model\Alert\AlertType;
+use App\Waste\Domain\Model\Alert\ExistingAlertsIndex;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationItem;
 use App\Waste\Domain\Model\Container\ContainerFilter;
 use App\Waste\Domain\Model\Container\ContainerRepository;
@@ -24,7 +22,6 @@ class UnusedContainerAlertChecker implements AlertChecker
     public function __construct(
         private readonly ContainerRepository $containerRepository,
         private readonly MeasurementRepository $measurementRepository,
-        private readonly AlertRepository $alertRepository,
     ) {}
 
     public function type(): AlertType
@@ -41,18 +38,18 @@ class UnusedContainerAlertChecker implements AlertChecker
         AccountId $accountId,
         array $rules,
         \DateTimeImmutable $checkDate,
+        ExistingAlertsIndex $existingAlerts,
     ): array {
         $alerts = [];
-        $alertedKeys = [];
 
         foreach ($rules as $rule) {
             $unusedDays = (int) ($rule->parameters()['unusedDays'] ?? self::DEFAULT_UNUSED_DAYS);
             $periodFrom = $checkDate->modify(sprintf('-%d days', $unusedDays));
 
             $containerFilter = new ContainerFilter(
-                accountId: $accountId,
                 propertyId: $rule->propertyId(),
                 wasteId: $rule->wasteId(),
+                accountId: $accountId,
                 limit: 0,
             );
 
@@ -61,6 +58,7 @@ class UnusedContainerAlertChecker implements AlertChecker
             if (0 === count($containers)) {
                 continue;
             }
+
             foreach ($containers as $container) {
                 $propertyId = $container->propertyId();
                 $wasteId = $container->wasteId();
@@ -69,9 +67,7 @@ class UnusedContainerAlertChecker implements AlertChecker
                     continue;
                 }
 
-                $alertKey = (string) $propertyId . '|' . (string) $wasteId;
-
-                if (isset($alertedKeys[$alertKey])) {
+                if ($existingAlerts->has(AlertType::UnusedContainer, $propertyId, $wasteId)) {
                     continue;
                 }
 
@@ -87,28 +83,13 @@ class UnusedContainerAlertChecker implements AlertChecker
                     continue;
                 }
 
-                $existing = $this->alertRepository->findByFilter(new AlertFilter(
-                    accountId: $accountId,
-                    propertyId: $propertyId,
-                    wasteId: $wasteId,
-                    type: AlertType::UnusedContainer,
-                    status: AlertStatus::New,
-                    limit: 1,
-                ));
-
-                if (count($existing) > 0) {
-                    $alertedKeys[$alertKey] = true;
-
-                    continue;
-                }
-
                 $alert = new Alert(id: AlertId::generate());
                 $alert->detect(
                     type: AlertType::UnusedContainer,
                     propertyId: $propertyId,
                     wasteId: $wasteId,
                     accountId: $accountId,
-                    detectedAt: $checkDate,
+                    detectedAt: new \DateTimeImmutable('NOW'),
                     from: $periodFrom,
                     to: $checkDate,
                     value: null,
@@ -116,7 +97,8 @@ class UnusedContainerAlertChecker implements AlertChecker
                 );
 
                 $alerts[] = $alert;
-                $alertedKeys[$alertKey] = true;
+
+                $existingAlerts->add(AlertType::UnusedContainer, $propertyId, $wasteId);
             }
         }
 

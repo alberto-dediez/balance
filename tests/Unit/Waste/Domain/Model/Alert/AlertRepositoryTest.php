@@ -35,7 +35,7 @@ abstract class AlertRepositoryTest extends KernelTestCase
         $repository->add($alert);
 
         $alert->acknowledge();
-        $repository->save($alert);
+        $repository->add($alert);
 
         $recovered = $repository->find($alert->id());
 

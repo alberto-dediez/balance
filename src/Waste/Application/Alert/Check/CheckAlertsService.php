@@ -4,59 +4,72 @@ declare(strict_types=1);
 
 namespace App\Waste\Application\Alert\Check;
 
-use App\Security\Domain\Model\Account\AccountFilter;
-use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CommandBus\Command;
+use App\Shared\Application\CommandBus\CommandHandler;
+use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use App\Waste\Application\Alert\Check\Checker\AlertChecker;
+use App\Waste\Domain\Model\Alert\AlertFilter;
 use App\Waste\Domain\Model\Alert\AlertRepository;
+use App\Waste\Domain\Model\Alert\AlertStatus;
+use App\Waste\Domain\Model\Alert\ExistingAlertsIndex;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationRepository;
 
-class CheckAlertsService
+class CheckAlertsService implements CommandHandler
 {
+    use RegisterHandlerTrait;
+    use CommandInvokeHandlerTrait;
+
     /** @param iterable<AlertChecker> $checkers */
     public function __construct(
         private readonly AlertRepository $alertRepository,
         private readonly AlertConfigurationRepository $alertConfigurationRepository,
-        private readonly AccountRepository $accountRepository,
+        private readonly DailyWasteWindowProvider $dailyWasteWindowProvider,
         private readonly iterable $checkers,
     ) {}
 
     public function __invoke(CheckAlertsRequest $request, User $user): CheckAlertsResponse
     {
-        $checkDate = $request->checkDate ?? new \DateTimeImmutable('NOW');
-        $detectedCount = 0;
+        $accountId = $request->accountId;
+        $checkDate = $request->checkDate;
 
-        if (null !== $request->accountId) {
-            $accountIds = [$request->accountId];
-        } else {
-            $accounts = $this->accountRepository->findByFilter(new AccountFilter(limit: 0));
-            $accountIds = array_map(fn($account) => $account->id(), $accounts);
+        $config = $this->alertConfigurationRepository->findByAccount($accountId);
+
+        if (null === $config) {
+            return new CheckAlertsResponse(0);
         }
 
-        foreach ($accountIds as $accountId) {
-            $config = $this->alertConfigurationRepository->findByAccount($accountId);
+        $existingAlerts = new ExistingAlertsIndex($this->alertRepository->findByFilter(new AlertFilter(
+            accountId: $accountId,
+            status: AlertStatus::New,
+            limit: 0,
+        )));
 
-            if (null === $config) {
+        $alerts = [];
+
+        foreach ($this->checkers as $checker) {
+            $rules = $config->enabledItemsForType($checker->type());
+
+            if (0 === count($rules)) {
                 continue;
             }
 
-            foreach ($this->checkers as $checker) {
-                $type = $checker->type();
-                $rules = $config->enabledItemsForType($type);
+            $newAlerts = $checker->check($accountId, $rules, $checkDate, $existingAlerts);
 
-                if (0 === count($rules)) {
-                    continue;
-                }
-
-                $alerts = $checker->check($accountId, $rules, $checkDate);
-
-                foreach ($alerts as $alert) {
-                    $this->alertRepository->add($alert);
-                    ++$detectedCount;
-                }
+            if (count($newAlerts) > 0) {
+                $alerts = array_merge($alerts, $newAlerts);
             }
         }
 
-        return new CheckAlertsResponse(detectedAlerts: $detectedCount);
+        $this->alertRepository->addMultiple($alerts);
+        $this->dailyWasteWindowProvider->clear();
+
+        return new CheckAlertsResponse(detectedAlerts: count($alerts));
+    }
+
+    public function isHandled(Command $command): bool
+    {
+        return $command instanceof CheckAlertsRequest;
     }
 }

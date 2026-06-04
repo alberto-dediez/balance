@@ -30,9 +30,18 @@ class InMemoryAlertRepository implements AlertRepository
         $this->alerts[(string) $alert->id()] = $alert;
     }
 
-    public function save(Alert $alert): void
+    /**
+     * @param array<Alert> $alerts
+     */
+    public function addMultiple(array $alerts): void
     {
-        $this->alerts[(string) $alert->id()] = $alert;
+        if (0 === count($alerts)) {
+            return;
+        }
+
+        foreach ($alerts as $alert) {
+            $this->add($alert);
+        }
     }
 
     public function find(AlertId $alertId): ?Alert

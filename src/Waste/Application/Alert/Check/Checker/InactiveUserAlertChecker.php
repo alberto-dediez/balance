@@ -7,11 +7,9 @@ namespace App\Waste\Application\Alert\Check\Checker;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Waste\Domain\Model\Alert\Alert;
-use App\Waste\Domain\Model\Alert\AlertFilter;
 use App\Waste\Domain\Model\Alert\AlertId;
-use App\Waste\Domain\Model\Alert\AlertRepository;
-use App\Waste\Domain\Model\Alert\AlertStatus;
 use App\Waste\Domain\Model\Alert\AlertType;
+use App\Waste\Domain\Model\Alert\ExistingAlertsIndex;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationItem;
 use App\Waste\Domain\Model\Measurement\MeasurementFilter;
 use App\Waste\Domain\Model\Measurement\MeasurementRepository;
@@ -23,7 +21,6 @@ class InactiveUserAlertChecker implements AlertChecker
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly MeasurementRepository $measurementRepository,
-        private readonly AlertRepository $alertRepository,
     ) {}
 
     public function type(): AlertType
@@ -40,19 +37,13 @@ class InactiveUserAlertChecker implements AlertChecker
         AccountId $accountId,
         array $rules,
         \DateTimeImmutable $checkDate,
+        ExistingAlertsIndex $existingAlerts,
     ): array {
         $alerts = [];
         $inactiveDays = (int) ($rules[0]->parameters()['inactiveDays'] ?? self::DEFAULT_INACTIVE_DAYS);
         $periodFrom = $checkDate->modify(sprintf('-%d days', $inactiveDays));
 
-        $existing = $this->alertRepository->findByFilter(new AlertFilter(
-            accountId: $accountId,
-            type: AlertType::InactiveUser,
-            status: AlertStatus::New,
-            limit: 1,
-        ));
-
-        if (count($existing) > 0) {
+        if ($existingAlerts->has(AlertType::InactiveUser, null, null)) {
             return $alerts;
         }
 
@@ -82,7 +73,7 @@ class InactiveUserAlertChecker implements AlertChecker
                 propertyId: null,
                 wasteId: null,
                 accountId: $accountId,
-                detectedAt: $checkDate,
+                detectedAt: new \DateTimeImmutable('NOW'),
                 from: $periodFrom,
                 to: $checkDate,
                 value: null,
@@ -90,6 +81,7 @@ class InactiveUserAlertChecker implements AlertChecker
             );
 
             $alerts[] = $alert;
+            $existingAlerts->add(AlertType::InactiveUser, null, null);
         }
 
         return $alerts;

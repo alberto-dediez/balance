@@ -8,11 +8,9 @@ use App\Property\Domain\Model\Property\PropertyFilter;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Alert\Alert;
-use App\Waste\Domain\Model\Alert\AlertFilter;
 use App\Waste\Domain\Model\Alert\AlertId;
-use App\Waste\Domain\Model\Alert\AlertRepository;
-use App\Waste\Domain\Model\Alert\AlertStatus;
 use App\Waste\Domain\Model\Alert\AlertType;
+use App\Waste\Domain\Model\Alert\ExistingAlertsIndex;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationItem;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteFilter;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
@@ -24,7 +22,6 @@ class NoMeasurementsAlertChecker implements AlertChecker
     public function __construct(
         private readonly PropertyRepository $propertyRepository,
         private readonly DailyWasteRepository $dailyWasteRepository,
-        private readonly AlertRepository $alertRepository,
     ) {}
 
     public function type(): AlertType
@@ -41,6 +38,7 @@ class NoMeasurementsAlertChecker implements AlertChecker
         AccountId $accountId,
         array $rules,
         \DateTimeImmutable $checkDate,
+        ExistingAlertsIndex $existingAlerts,
     ): array {
         $alerts = [];
 
@@ -67,24 +65,15 @@ class NoMeasurementsAlertChecker implements AlertChecker
             foreach ($properties as $property) {
                 $dailyWastes = $this->dailyWasteRepository->findByFilter(new DailyWasteFilter(
                     properties: [$property->id()],
+                    wasteId: $rule->wasteId(),
                     accountId: $accountId,
                     dayFrom: $periodFrom,
                     dayTo: $periodTo,
-                    wasteId: $rule->wasteId(),
                     limit: 0,
                 ));
 
                 if (0 === count($dailyWastes)) {
-                    $existing = $this->alertRepository->findByFilter(new AlertFilter(
-                        accountId: $accountId,
-                        propertyId: $property->id(),
-                        wasteId: $rule->wasteId(),
-                        type: AlertType::NoMeasurements,
-                        status: AlertStatus::New,
-                        limit: 1,
-                    ));
-
-                    if (count($existing) > 0) {
+                    if ($existingAlerts->has(AlertType::NoMeasurements, $property->id(), $rule->wasteId())) {
                         continue;
                     }
 
@@ -94,7 +83,7 @@ class NoMeasurementsAlertChecker implements AlertChecker
                         propertyId: $property->id(),
                         wasteId: $rule->wasteId(),
                         accountId: $accountId,
-                        detectedAt: $checkDate,
+                        detectedAt: new \DateTimeImmutable('NOW'),
                         from: $periodFrom,
                         to: $periodTo,
                         value: null,
@@ -102,6 +91,8 @@ class NoMeasurementsAlertChecker implements AlertChecker
                     );
 
                     $alerts[] = $alert;
+
+                    $existingAlerts->add(AlertType::NoMeasurements, $property->id(), $rule->wasteId());
                 }
             }
         }

@@ -134,7 +134,7 @@ class InMemoryDailyWasteRepository implements DailyWasteRepository
                 $filter->dayFrom instanceof \DateTimeImmutable
                 && (
                     null == $dailyWaste->day()
-                    || $dailyWaste->day()->format('Y-m-d') <= $filter->dayFrom->format('Y-m-d')
+                    || $dailyWaste->day()->format('Y-m-d') < $filter->dayFrom->format('Y-m-d')
                 )
             ) {
                 continue;
@@ -144,7 +144,7 @@ class InMemoryDailyWasteRepository implements DailyWasteRepository
                 $filter->dayTo instanceof \DateTimeImmutable
                 && (
                     null == $dailyWaste->day()
-                    || $dailyWaste->day()->format('Y-m-d') >= $filter->dayTo->format('Y-m-d')
+                    || $dailyWaste->day()->format('Y-m-d') > $filter->dayTo->format('Y-m-d')
                 )
             ) {
                 continue;

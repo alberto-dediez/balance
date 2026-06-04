@@ -31,9 +31,19 @@ class DoctrineAlertRepository implements AlertRepository
         $this->manager->flush();
     }
 
-    public function save(Alert $alert): void
+    /**
+     * @param array<Alert> $alerts
+     */
+    public function addMultiple(array $alerts): void
     {
-        $this->manager->persist($alert);
+        if (0 === count($alerts)) {
+            return;
+        }
+
+        foreach ($alerts as $alert) {
+            $this->manager->persist($alert);
+        }
+
         $this->manager->flush();
     }
 

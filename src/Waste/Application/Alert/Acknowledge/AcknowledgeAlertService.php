@@ -35,7 +35,7 @@ class AcknowledgeAlertService implements CommandHandler
 
         $alert->acknowledge();
 
-        $this->alertRepository->save($alert);
+        $this->alertRepository->add($alert);
 
         return new AcknowledgeAlertResponse(
             alertId: $alert->id(),

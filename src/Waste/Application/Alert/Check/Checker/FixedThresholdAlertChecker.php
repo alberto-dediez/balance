@@ -8,11 +8,9 @@ use App\Property\Domain\Model\Property\PropertyFilter;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Alert\Alert;
-use App\Waste\Domain\Model\Alert\AlertFilter;
 use App\Waste\Domain\Model\Alert\AlertId;
-use App\Waste\Domain\Model\Alert\AlertRepository;
-use App\Waste\Domain\Model\Alert\AlertStatus;
 use App\Waste\Domain\Model\Alert\AlertType;
+use App\Waste\Domain\Model\Alert\ExistingAlertsIndex;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationItem;
 use App\Waste\Domain\Model\DailyWaste\DailyWaste;
 use App\Waste\Domain\Model\DailyWaste\DailyWasteFilter;
@@ -26,7 +24,6 @@ class FixedThresholdAlertChecker implements AlertChecker
     public function __construct(
         private readonly PropertyRepository $propertyRepository,
         private readonly DailyWasteRepository $dailyWasteRepository,
-        private readonly AlertRepository $alertRepository,
     ) {}
 
     public function type(): AlertType
@@ -43,9 +40,9 @@ class FixedThresholdAlertChecker implements AlertChecker
         AccountId $accountId,
         array $rules,
         \DateTimeImmutable $checkDate,
+        ExistingAlertsIndex $existingAlerts,
     ): array {
         $alerts = [];
-        $yesterday = $checkDate->modify('-1 day');
 
         foreach ($rules as $rule) {
             $thresholdKg = (float) ($rule->parameters()['thresholdKg'] ?? self::DEFAULT_THRESHOLD_KG);
@@ -67,23 +64,14 @@ class FixedThresholdAlertChecker implements AlertChecker
             foreach ($properties as $property) {
                 $dailyWastes = $this->dailyWasteRepository->findByFilter(new DailyWasteFilter(
                     properties: [$property->id()],
+                    wasteId: $rule->wasteId(),
                     accountId: $accountId,
-                    dayFrom: $checkDate->modify('-2 days'),
+                    dayFrom: $checkDate,
                     dayTo: $checkDate,
                     limit: 0,
                 ));
 
-                $yesterdayWastes = array_filter(
-                    $dailyWastes,
-                    fn(DailyWaste $dw) => $dw->day()->format('Y-m-d') === $yesterday->format('Y-m-d'),
-                );
-
-                $byWaste = $this->groupByWaste($yesterdayWastes);
-
-                if (null !== $rule->wasteId()) {
-                    $ruleWasteKey = (string) $rule->wasteId();
-                    $byWaste = isset($byWaste[$ruleWasteKey]) ? [$ruleWasteKey => $byWaste[$ruleWasteKey]] : [];
-                }
+                $byWaste = $this->groupByWaste($dailyWastes);
 
                 foreach ($byWaste as [$wasteId, $entries]) {
                     $total = array_sum(array_map(fn(DailyWaste $dw) => (float) $dw->load(), $entries));
@@ -92,16 +80,7 @@ class FixedThresholdAlertChecker implements AlertChecker
                         continue;
                     }
 
-                    $existing = $this->alertRepository->findByFilter(new AlertFilter(
-                        accountId: $accountId,
-                        propertyId: $property->id(),
-                        wasteId: $wasteId,
-                        type: AlertType::FixedThreshold,
-                        status: AlertStatus::New,
-                        limit: 1,
-                    ));
-
-                    if (count($existing) > 0) {
+                    if ($existingAlerts->has(AlertType::FixedThreshold, $property->id(), $wasteId, $checkDate)) {
                         continue;
                     }
 
@@ -111,14 +90,15 @@ class FixedThresholdAlertChecker implements AlertChecker
                         propertyId: $property->id(),
                         wasteId: $wasteId,
                         accountId: $accountId,
-                        detectedAt: $checkDate,
-                        from: $yesterday,
-                        to: $yesterday,
+                        detectedAt: new \DateTimeImmutable('NOW'),
+                        from: $checkDate,
+                        to: $checkDate,
                         value: $total,
                         threshold: $thresholdKg,
                     );
 
                     $alerts[] = $alert;
+                    $existingAlerts->add(AlertType::FixedThreshold, $property->id(), $wasteId, $checkDate);
                 }
             }
         }

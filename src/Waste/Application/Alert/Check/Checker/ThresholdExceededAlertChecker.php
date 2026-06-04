@@ -7,22 +7,23 @@ namespace App\Waste\Application\Alert\Check\Checker;
 use App\Property\Domain\Model\Property\PropertyFilter;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Waste\Application\Alert\Check\DailyWasteWindowProvider;
 use App\Waste\Domain\Model\Alert\Alert;
 use App\Waste\Domain\Model\Alert\AlertId;
 use App\Waste\Domain\Model\Alert\AlertType;
+use App\Waste\Domain\Model\Alert\ExistingAlertsIndex;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationItem;
 use App\Waste\Domain\Model\DailyWaste\DailyWaste;
-use App\Waste\Domain\Model\DailyWaste\DailyWasteFilter;
-use App\Waste\Domain\Model\DailyWaste\DailyWasteRepository;
-use App\Waste\Domain\Model\Waste\WasteId;
 
 class ThresholdExceededAlertChecker implements AlertChecker
 {
+    use GroupByWasteTrait;
+
     public const DEFAULT_THRESHOLD_PERCENTAGE = 150.0;
 
     public function __construct(
         private readonly PropertyRepository $propertyRepository,
-        private readonly DailyWasteRepository $dailyWasteRepository,
+        private readonly DailyWasteWindowProvider $dailyWasteWindowProvider,
     ) {}
 
     public function type(): AlertType
@@ -39,10 +40,10 @@ class ThresholdExceededAlertChecker implements AlertChecker
         AccountId $accountId,
         array $rules,
         \DateTimeImmutable $checkDate,
+        ExistingAlertsIndex $existingAlerts,
     ): array {
         $alerts = [];
-        $yesterday = $checkDate->modify('-1 day');
-        $thirtyDaysAgo = $checkDate->modify('-30 days');
+        $previousDays = $checkDate->modify('-30 days');
 
         foreach ($rules as $rule) {
             $thresholdPercentage = (float) ($rule->parameters()['thresholdPercentage'] ?? self::DEFAULT_THRESHOLD_PERCENTAGE);
@@ -62,12 +63,13 @@ class ThresholdExceededAlertChecker implements AlertChecker
             }
 
             foreach ($properties as $property) {
-                $recentData = $this->dailyWasteRepository->findByFilter(new DailyWasteFilter(
-                    properties: [$property->id()],
+                $recentData = $this->dailyWasteWindowProvider->windowFor(
                     accountId: $accountId,
-                    dayFrom: $thirtyDaysAgo,
-                    limit: 0,
-                ));
+                    propertyId: $property->id(),
+                    dayFrom: $previousDays,
+                    dayTo: $checkDate,
+                    wasteId: $rule->wasteId(),
+                );
 
                 $byWaste = $this->groupByWaste($recentData);
 
@@ -77,92 +79,58 @@ class ThresholdExceededAlertChecker implements AlertChecker
                 }
 
                 foreach ($byWaste as $wasteKey => [$wasteId, $dailyWastes]) {
-                    $yesterdayEntry = $this->findForDay($dailyWastes, $yesterday);
+                    $entryToCheck = $this->findForDay($dailyWastes, $checkDate);
 
-                    if (null === $yesterdayEntry) {
+                    if (null === $entryToCheck) {
                         continue;
                     }
 
                     $historical = array_filter(
                         $dailyWastes,
-                        fn(DailyWaste $dw) => $dw->day()->format('Y-m-d') !== $yesterday->format('Y-m-d'),
+                        fn(DailyWaste $dw) => $dw->day()->format('Y-m-d') !== $checkDate->format('Y-m-d'),
                     );
 
-                    $values = array_filter(
+                    $historicalValues = array_filter(
                         array_map(fn(DailyWaste $dw) => (float) $dw->load(), $historical),
                         fn(float $v) => $v > 0,
                     );
 
-                    if (0 === count($values)) {
+                    if (0 === count($historicalValues)) {
                         continue;
                     }
 
-                    $mean = array_sum($values) / count($values);
+                    $mean = array_sum($historicalValues) / count($historicalValues);
                     $threshold = $mean * ($thresholdPercentage / 100);
-                    $value = (float) $yesterdayEntry->load();
+                    $value = (float) $entryToCheck->load();
 
-                    if ($value > $threshold) {
-                        $alert = new Alert(id: AlertId::generate());
-                        $alert->detect(
-                            type: AlertType::ThresholdExceeded,
-                            propertyId: $property->id(),
-                            wasteId: $wasteId,
-                            accountId: $accountId,
-                            detectedAt: $checkDate,
-                            from: $thirtyDaysAgo,
-                            to: $checkDate,
-                            value: $value,
-                            threshold: $threshold,
-                        );
-
-                        $alerts[] = $alert;
+                    if ($value <= $threshold) {
+                        continue;
                     }
+
+                    if ($existingAlerts->has(AlertType::ThresholdExceeded, $property->id(), $wasteId, $checkDate)) {
+                        continue;
+                    }
+
+                    $alert = new Alert(id: AlertId::generate());
+                    $alert->detect(
+                        type: AlertType::ThresholdExceeded,
+                        propertyId: $property->id(),
+                        wasteId: $wasteId,
+                        accountId: $accountId,
+                        detectedAt: new \DateTimeImmutable('NOW'),
+                        from: $checkDate,
+                        to: $checkDate,
+                        value: $value,
+                        threshold: $threshold,
+                    );
+
+                    $alerts[] = $alert;
+
+                    $existingAlerts->add(AlertType::ThresholdExceeded, $property->id(), $wasteId, $checkDate);
                 }
             }
         }
 
         return $alerts;
-    }
-
-    /**
-     * @param DailyWaste[] $dailyWastes
-     *
-     * @return array<string, array{WasteId, DailyWaste[]}>
-     */
-    private function groupByWaste(array $dailyWastes): array
-    {
-        $grouped = [];
-
-        foreach ($dailyWastes as $dw) {
-            $wasteId = $dw->wasteId();
-
-            if (null === $wasteId) {
-                continue;
-            }
-
-            $key = (string) $wasteId;
-
-            if (!isset($grouped[$key])) {
-                $grouped[$key] = [$wasteId, []];
-            }
-
-            $grouped[$key][1][] = $dw;
-        }
-
-        return $grouped;
-    }
-
-    /**
-     * @param DailyWaste[] $dailyWastes
-     */
-    private function findForDay(array $dailyWastes, \DateTimeImmutable $day): ?DailyWaste
-    {
-        foreach ($dailyWastes as $dw) {
-            if ($dw->day()->format('Y-m-d') === $day->format('Y-m-d')) {
-                return $dw;
-            }
-        }
-
-        return null;
     }
 }
