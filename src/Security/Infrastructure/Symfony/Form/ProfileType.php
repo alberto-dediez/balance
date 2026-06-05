@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Security\Infrastructure\Symfony\Form;
 
-use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\Symfony\Form\Type\LocaleType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -23,7 +22,7 @@ class ProfileType extends AbstractType
                 'label' => 'Idioma preferido',
                 'required' => true,
                 'mapped' => false,
-                'help' => new TranslatableMessage('Será usado en las comunicaciones fuera de la plataforma')
+                'help' => new TranslatableMessage('Será usado en las comunicaciones fuera de la plataforma'),
             ])
             ->add('save', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar'),
