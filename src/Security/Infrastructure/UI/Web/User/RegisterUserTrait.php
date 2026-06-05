@@ -8,11 +8,14 @@ use App\Security\Application\User\GrantRole\GrantRoleRequest;
 use App\Security\Application\User\GrantRole\GrantRoleService;
 use App\Security\Application\User\Register\RegisterUserRequest;
 use App\Security\Application\User\Register\RegisterUserService;
+use App\Security\Application\User\UpdateProfile\UpdateProfileRequest;
+use App\Security\Application\User\UpdateProfile\UpdateProfileService;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\User\DuplicatedUsernameException;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
+use App\Shared\Domain\Model\Locale\Locale;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -22,12 +25,13 @@ trait RegisterUserTrait
     public function __construct(
         private RegisterUserService $registerUser,
         private GrantRoleService $grantRole,
+        private UpdateProfileService $updateProfile,
     ) {}
 
     /**
      * @param FormInterface<mixed> $form
      */
-    private function registerUser(FormInterface $form, ?Account $account, User $performBy): bool
+    private function registerUser(FormInterface $form, ?Account $account, User $performBy, ?Locale $preferredLocale = null): bool
     {
         $registerRequest = new RegisterUserRequest(
             $form->get('username')->getData(),
@@ -43,6 +47,11 @@ trait RegisterUserTrait
             $this->addFlash('success', new TranslatableMessage('Usuario creado correctamente: {username}', ['{username}' => $response->username]));
 
             $this->grantRoles($response->userId, $form->get('roles')->getData(), $performBy);
+
+            if ($preferredLocale instanceof Locale) {
+                $updateProfile = $this->updateProfile;
+                $updateProfile(new UpdateProfileRequest(userId: $response->userId, preferredLocale: $preferredLocale), $performBy);
+            }
 
             return true;
         } catch (DuplicatedUsernameException) {

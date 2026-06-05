@@ -1,0 +1,4 @@
+{% trans with {
+    '{user}': event.userId | user_name,
+    '{locale}': event.locale.value | locale_name
+} %}El usuario {user} ha cambiado su idioma preferido a {locale}{% endtrans %}

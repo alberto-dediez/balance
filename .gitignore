@@ -51,4 +51,7 @@ phpstan.neon
 /public/assets/
 ###< symfonycasts/sass-bundle ###
 
+.claude
+CLAUDE.md
+
 .ai/results

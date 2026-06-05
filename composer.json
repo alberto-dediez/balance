@@ -20,6 +20,7 @@
         "phpdocumentor/reflection-docblock": "^5.6",
         "phpstan/phpdoc-parser": "^2.2",
         "runtime/frankenphp-symfony": "*",
+        "setasign/fpdi-tcpdf": "^2.3",
         "symfony/asset": "7.3.*",
         "symfony/asset-mapper": "7.3.*",
         "symfony/console": "7.3.*",
@@ -32,6 +33,7 @@
         "symfony/mailer": "7.3.*",
         "symfony/messenger": "7.3.*",
         "symfony/monolog-bundle": "^4.0",
+        "symfony/notifier": "*",
         "symfony/property-access": "7.3.*",
         "symfony/property-info": "7.3.*",
         "symfony/rate-limiter": "7.3.*",
@@ -42,6 +44,7 @@
         "symfony/stimulus-bundle": "^2.23",
         "symfony/translation": "7.3.*",
         "symfony/twig-bundle": "7.3.*",
+        "symfony/twilio-notifier": "*",
         "symfony/uid": "7.3.*",
         "symfony/ux-icons": "^2.23",
         "symfony/ux-live-component": "^2.23",
@@ -49,7 +52,7 @@
         "symfony/validator": "7.3.*",
         "symfony/yaml": "7.3.*",
         "symfonycasts/sass-bundle": "^0.8.2",
-        "tecnickcom/tcpdf": "^6.10",
+        "tecnickcom/tcpdf": "^6.11",
         "twbs/bootstrap": "^5.3",
         "twig/cssinliner-extra": "^3.21",
         "twig/extra-bundle": "^2.12|^3.0",
@@ -64,7 +67,22 @@
             "symfony/flex": true,
             "symfony/runtime": true
         },
-        "sort-packages": true
+        "sort-packages": true,
+        "policy": {
+            "advisories": {
+                "ignore": ["symfony/twilio-notifier"],
+                "ignore-id": [
+                "PKSA-fgw6-3k5j-cfkn",
+                "PKSA-28rh-rzzn-djk4",
+                "PKSA-py8y-z9q7-q197",
+                "PKSA-v5yj-8nmz-sk2q",
+                "PKSA-ft77-7h5f-p3r6",
+                "PKSA-b14r-zh1d-vdrc",
+                "PKSA-rg9h-crk2-m8zt",
+                "PKSA-d1rr-z8zb-qnm7"
+            ]
+            }
+        }
     },
     "autoload": {
         "psr-4": {

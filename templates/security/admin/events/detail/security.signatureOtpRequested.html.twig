@@ -1,0 +1,5 @@
+{% trans with {
+    '{id}': event.payload.signatureRequestId,
+    '{channel}': event.payload.notificationChannel,
+    '{destination}': event.payload.maskedDestination
+} %}OTP solicitado para la solicitud de firma {id} via {channel} a {destination}{% endtrans %}

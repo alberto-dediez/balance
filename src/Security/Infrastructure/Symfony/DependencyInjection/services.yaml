@@ -3,7 +3,10 @@ parameters:
     sso_origin: '%env(SSO_PLATFORM)%'
     sso_api_url: '%env(SSO_API_URL)%'
     sso_jwt_public_key: '%env(resolve:SSO_JWT_PUBLIC_KEY)%'
-
+    app.signature_hmac_secret: '%env(SIGNATURE_HMAC_SECRET)%'
+    app.signature_sms_enabled: '%env(bool:SIGNATURE_SMS_ENABLED)%'
+    app.signature_whatsapp_enabled: '%env(bool:SIGNATURE_WHATSAPP_ENABLED)%'
+    
 services:
     _defaults:
         autowire: true
@@ -39,3 +42,74 @@ services:
     App\Security\Application\User\RecoverPassword\RecoverPasswordService:
         arguments:
             $passwordHasher: '@App\Security\Infrastructure\Symfony\Security\UserPasswordHasher'
+
+    App\Security\Application\SignatureRequest\Register\RegisterSignatureRequestService:
+        arguments:
+            $appSecret: '%app.signature_hmac_secret%'
+            $smsEnabled: '%app.signature_sms_enabled%'
+            $whatsappEnabled: '%app.signature_whatsapp_enabled%'
+
+    App\Security\Infrastructure\Symfony\Form\RegisterSignatureRequestType:
+        arguments:
+            $smsEnabled: '%app.signature_sms_enabled%'
+            $whatsappEnabled: '%app.signature_whatsapp_enabled%'
+        tags: ['form.type']
+
+    App\Security\Application\SignatureRequest\RecordView\RecordSignatureViewService:
+        arguments:
+            $appSecret: '%app.signature_hmac_secret%'
+
+    App\Security\Application\SignatureRequest\Sign\SignDocumentService:
+        arguments:
+            $appSecret: '%app.signature_hmac_secret%'
+
+    App\Security\Infrastructure\Pdf\HmacPdfSigner:
+        arguments:
+            $appSecret: '%app.signature_hmac_secret%'
+
+    App\Security\Infrastructure\FileStorage\LocalSignatureFileStorage:
+        arguments:
+            $uploadsDir: '%app.uploads_dir%'
+
+    App\Security\Domain\Model\SignatureRequest\PdfSigner:
+        alias: App\Security\Infrastructure\Pdf\HmacPdfSigner
+
+    App\Security\Domain\Model\SignatureRequest\SignatureFileStorage:
+        alias: App\Security\Infrastructure\FileStorage\LocalSignatureFileStorage
+
+    App\Security\Infrastructure\UI\Web\Public\SignatureRequest\ViewSignatureController:
+        arguments:
+            $signatureTokenLimiter: '@limiter.signature_token'
+
+    App\Security\Infrastructure\UI\Web\Public\SignatureRequest\SignDocumentController:
+        arguments:
+            $signatureTokenLimiter: '@limiter.signature_token'
+
+    App\Security\Infrastructure\UI\Web\Public\SignatureRequest\StreamDocumentController:
+        arguments:
+            $signatureTokenLimiter: '@limiter.signature_token'
+
+    App\Security\Infrastructure\UI\Web\Public\SignatureRequest\OtpController:
+        arguments:
+            $signatureTokenLimiter: '@limiter.signature_token'
+
+    App\Security\Application\SignatureRequest\SendOtp\SendOtpService:
+        arguments:
+            $appSecret: '%app.signature_hmac_secret%'
+            $smsEnabled: '%app.signature_sms_enabled%'
+            $whatsappEnabled: '%app.signature_whatsapp_enabled%'
+
+    App\Security\Application\SignatureRequest\VerifyOtp\VerifyOtpService:
+        arguments:
+            $appSecret: '%app.signature_hmac_secret%'
+
+    App\Shared\Domain\Model\Sms\SmsSender:
+        alias: App\Shared\Infrastructure\Sms\InMemorySmsSender
+
+    App\Shared\Domain\Model\WhatsApp\WhatsAppSender:
+        alias: App\Shared\Infrastructure\WhatsApp\InMemoryWhatsAppSender
+
+    App\Shared\Infrastructure\Storage\LocalFileUploader:
+        arguments:
+            $rootDir: '%app.uploads_dir%'
+

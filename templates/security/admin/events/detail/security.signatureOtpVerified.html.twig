@@ -1,0 +1,4 @@
+{% trans with {
+    '{id}': event.payload.signatureRequestId,
+    '{ip}': event.payload.signerIp
+} %}OTP verificado para la solicitud de firma {id} desde {ip}{% endtrans %}

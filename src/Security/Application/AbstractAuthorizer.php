@@ -25,6 +25,7 @@ abstract class AbstractAuthorizer implements Authorizer
             Action::Autocomplete => $this->canAutocomplete($subject, $user),
             Action::Import => $this->canImport($subject, $user),
             Action::Export => $this->canExport($subject, $user),
+            Action::History => $this->canHistory($subject, $user),
         };
     }
 
@@ -47,6 +48,11 @@ abstract class AbstractAuthorizer implements Authorizer
     protected function canAutocomplete(mixed $subject, User $user): bool
     {
         return true;
+    }
+
+    protected function canHistory(mixed $subject, User $user): bool
+    {
+        return $this->canAdmin($subject, $user);
     }
 
     protected function canImport(mixed $subject, User $user): bool

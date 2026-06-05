@@ -1,0 +1,4 @@
+{% trans with {
+    '{id}': event.payload.signatureRequestId,
+    '{signer}': event.payload.signerName
+} %}Solicitud de firma {id} registrada para firmante {signer}{% endtrans %}

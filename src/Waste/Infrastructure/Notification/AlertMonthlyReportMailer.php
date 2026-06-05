@@ -54,7 +54,7 @@ class AlertMonthlyReportMailer implements MonthlyReportNotifier
                     params: [
                         'account' => $account,
                         'alerts' => $alerts,
-                        'unreadAlerts' => array_filter($alerts, fn (Alert $alert) => $alert->status() === AlertStatus::New),
+                        'unreadAlerts' => array_filter($alerts, fn(Alert $alert) => AlertStatus::New === $alert->status()),
                         'month' => $month,
                     ],
                 );

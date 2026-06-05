@@ -7,10 +7,8 @@ namespace App\Waste\Application\Alert\MonthlyReport;
 use App\Security\Domain\Model\Account\AccountFilter;
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\User\User;
-use App\Waste\Domain\Model\Alert\Alert;
 use App\Waste\Domain\Model\Alert\AlertFilter;
 use App\Waste\Domain\Model\Alert\AlertRepository;
-use App\Waste\Domain\Model\Alert\AlertStatus;
 
 class MonthlyReportService
 {

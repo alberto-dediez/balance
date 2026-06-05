@@ -1,7 +1,6 @@
 framework:
     messenger:
-        # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
-        # failure_transport: failed
+        failure_transport: failed
 
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
@@ -17,6 +16,7 @@ framework:
                     max_retries: 3
                     delay: 1000
                     multiplier: 2
+            failed: 'doctrine://default?queue_name=failed'
 
 when@test:
     framework:
@@ -24,3 +24,4 @@ when@test:
             transports:
                 # Process account alert checks synchronously in tests.
                 alerts: 'sync://'
+                async: 'in-memory://'

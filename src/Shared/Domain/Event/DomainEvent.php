@@ -32,7 +32,7 @@ abstract class DomainEvent
         return $this->occurredOn;
     }
 
-    public function eventName(): string
+    public static function eventName(): string
     {
         return static::$eventName;
     }

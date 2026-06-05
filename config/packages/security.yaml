@@ -61,6 +61,7 @@ security:
         - { path: ^/openapi/mobile/documentation, roles: ROLE_ADMIN }
         - { path: ^/openapi/admin/documentation, roles: ROLE_ADMIN }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/sign, roles: PUBLIC_ACCESS }
         - { path: /recover-password, roles: PUBLIC_ACCESS }
         - { path: /login, roles: PUBLIC_ACCESS }
         - { path: /logout, role: PUBLIC_ACCESS }

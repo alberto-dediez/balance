@@ -1,1 +1,1 @@
-{{ element.payload | map( (v,n) => n ~ ': ' ~ v ) | join(', ') }}
+{{ event.payload | map( (v,n) => n ~ ': ' ~ v ) | join(', ') }}

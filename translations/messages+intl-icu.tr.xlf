@@ -1275,7 +1275,7 @@
       </trans-unit>
       <trans-unit id="2.G57RF" resname="No se ha podido eliminar la configuración de alerta {id}">
         <source>No se ha podido eliminar la configuración de alerta {id}</source>
-        <target>{id} uyarı ayarı silinemedi {id}</target>
+        <target>{id} uyarı ayarı silinemedi</target>
       </trans-unit>
       <trans-unit id="GK_kvLI" resname="Alerta marcada como leída">
         <source>Alerta marcada como leída</source>
