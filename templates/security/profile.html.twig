@@ -9,10 +9,9 @@
             <div class="col-12">
                 <twig:View:Field label="{{ 'Nombre de usuario' | trans }}">{{ user.username }}</twig:View:Field>
 
-                {{ form_row(form.oldPassword) }}
-                {{ form_row(form.password) }}
+                {{ form_row(form.preferredLocale) }}
             </div>
-        </div>    
+        </div>
 
         <twig:ActionBar>
             <twig:ActionBar:Button type="primary" :button="form.save" />

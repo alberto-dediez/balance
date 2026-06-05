@@ -6,6 +6,7 @@ namespace App\Security\Infrastructure\Symfony\Form;
 
 use App\Security\Domain\Model\User\Role;
 use App\Security\Infrastructure\Symfony\Form\Type\RoleType;
+use App\Shared\Infrastructure\Symfony\Form\Type\LocaleType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -25,6 +26,10 @@ class AdminEditUserType extends AbstractType
                 'choices' => Role::casesForAdmins(),
                 'required' => false,
                 'multiple' => true,
+            ])
+            ->add('preferredLocale', LocaleType::class, [
+                'label' => new TranslatableMessage('Idioma preferido'),
+                'required' => false,
             ])
             ->add('save', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar'),

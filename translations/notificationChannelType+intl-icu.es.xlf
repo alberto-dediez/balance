@@ -13,6 +13,10 @@
         <source>Sms</source>
         <target>Sms</target>
       </trans-unit>
+      <trans-unit id="h4yaFro" resname="Whatsapp">
+        <source>Whatsapp</source>
+        <target>Whatsapp</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

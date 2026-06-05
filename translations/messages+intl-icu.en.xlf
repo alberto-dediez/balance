@@ -905,6 +905,42 @@
         <source>Sin eventos registrados</source>
         <target>No events recorded</target>
       </trans-unit>
+      <trans-unit id="vcl.w1H" resname="Tu perfil se ha actualizado correctamente">
+        <source>Tu perfil se ha actualizado correctamente</source>
+        <target>Your profile has been successfully updated</target>
+      </trans-unit>
+      <trans-unit id="PRHtUFO" resname="Error inesperado. No se ha actualizado tu perfil">
+        <source>Error inesperado. No se ha actualizado tu perfil</source>
+        <target>Unexpected error. Your profile was not updated</target>
+      </trans-unit>
+      <trans-unit id="DQelTSF" resname="Idioma preferido">
+        <source>Idioma preferido</source>
+        <target>Preferred language</target>
+      </trans-unit>
+      <trans-unit id="ewm0YV9" resname="Requerir verificación OTP">
+        <source>Requerir verificación OTP</source>
+        <target>Require OTP verification</target>
+      </trans-unit>
+      <trans-unit id="vyDwme_" resname="Será usado en las comunicaciones fuera de la plataforma">
+        <source>Será usado en las comunicaciones fuera de la plataforma</source>
+        <target>Will be used in off-platform communications</target>
+      </trans-unit>
+      <trans-unit id="_5M95__" resname="Firma el documento aquí: {url}">
+        <source>Firma el documento aquí: {url}</source>
+        <target>Sign the document here: {url}</target>
+      </trans-unit>
+      <trans-unit id="Ib7E.MM" resname="Cambiar contraseña">
+        <source>Cambiar contraseña</source>
+        <target>Change password</target>
+      </trans-unit>
+      <trans-unit id="9FEN5GN" resname="Actualizar mi contraseña">
+        <source>Actualizar mi contraseña</source>
+        <target>Update my password</target>
+      </trans-unit>
+      <trans-unit id="3llH4Ds" resname="El usuario {user} ha cambiado su idioma preferido a {locale}">
+        <source>El usuario {user} ha cambiado su idioma preferido a {locale}</source>
+        <target>The user {user} has changed their preferred language to {locale}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

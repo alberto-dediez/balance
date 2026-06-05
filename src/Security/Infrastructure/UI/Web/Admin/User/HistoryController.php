@@ -9,6 +9,7 @@ use App\Security\Application\RecordedEvent\List\ListRecordedEventsService;
 use App\Security\Domain\Model\User\PasswordChanged;
 use App\Security\Domain\Model\User\PasswordRecovered;
 use App\Security\Domain\Model\User\PasswordRecoveryInitialized;
+use App\Security\Domain\Model\User\PreferredLocaleChanged;
 use App\Security\Domain\Model\User\RoleGranted;
 use App\Security\Domain\Model\User\RoleUngranted;
 use App\Security\Domain\Model\User\UserRegistered;
@@ -39,6 +40,7 @@ class HistoryController extends AbstractController
             PasswordChanged::eventName(),
             PasswordRecovered::eventName(),
             PasswordRecoveryInitialized::eventName(),
+            PreferredLocaleChanged::eventName(),
         ];
     }
 

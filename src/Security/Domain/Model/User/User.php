@@ -8,6 +8,7 @@ use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
+use App\Shared\Domain\Model\Locale\Locale;
 
 class User implements \Stringable
 {
@@ -29,6 +30,7 @@ class User implements \Stringable
         protected bool $removed = false,
         protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         protected ?\DateTimeImmutable $removedAt = null,
+        protected ?Locale $preferredLocale = null,
     ) {
         $this->events = $events;
     }
@@ -116,6 +118,11 @@ class User implements \Stringable
         return $this->removedAt;
     }
 
+    public function preferredLocale(): ?Locale
+    {
+        return $this->preferredLocale;
+    }
+
     public function register(string $username, string $password, ?AccountId $accountId = null): void
     {
         $this->recordApplyAndPublish(
@@ -154,6 +161,16 @@ class User implements \Stringable
             new PasswordChanged(
                 userId: $this->id(),
                 password: $password,
+            ),
+        );
+    }
+
+    public function changePreferredLocale(Locale $locale): void
+    {
+        $this->recordApplyAndPublish(
+            new PreferredLocaleChanged(
+                userId: $this->id(),
+                locale: $locale,
             ),
         );
     }
@@ -225,6 +242,11 @@ class User implements \Stringable
     public function applyPasswordChanged(PasswordChanged $event): void
     {
         $this->password = $event->password();
+    }
+
+    public function applyPreferredLocaleChanged(PreferredLocaleChanged $event): void
+    {
+        $this->preferredLocale = $event->locale();
     }
 
     public function applyPasswordRecoveryInitialized(PasswordRecoveryInitialized $event): void
