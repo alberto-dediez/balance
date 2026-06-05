@@ -6,6 +6,7 @@ namespace App\Waste\Domain\Model\Alert;
 
 use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\AbnormallyHighParametersType;
 use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\AbnormallyLowParametersType;
+use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\AlertParametersType;
 use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\FixedThresholdParametersType;
 use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\InactiveUserParametersType;
 use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\NoMeasurementsParametersType;
@@ -22,6 +23,7 @@ enum AlertType: string
     case UnusedContainer = 'UnusedContainer';
     case InactiveUser = 'InactiveUser';
 
+    /** @return class-string<AlertParametersType> */
     public function parametersFormType(): string
     {
         return match ($this) {

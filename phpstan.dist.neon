@@ -1,7 +1,3 @@
-includes:
-    - vendor/phpstan/phpstan-symfony/extension.neon
-    - vendor/phpstan/phpstan-doctrine/extension.neon
-
 parameters:
     level: 8
     paths:
@@ -9,10 +5,10 @@ parameters:
         - tests/
     symfony:
         # You have to provide a path to srcDevDebugProjectContainer.xml or similar XML file describing your container.
-        containerXmlPath: var/cache/dev/App_Shared_Infrastructure_Symfony_KernelDevDebugContainer.xml
+        containerXmlPath: var/cache/test/App_Shared_Infrastructure_Symfony_KernelTestDebugContainer.xml
     # If you're using PHP config files for Symfony 5.3+, you also need this for auto-loading of `Symfony\Config`:
     scanDirectories:
-        - var/cache/dev/Symfony/Config
+        - var/cache/test/Symfony/Config
     # If you're using PHP config files (including the ones under packages/*.php) for Symfony 5.3+,
     # you need this to load the helper functions (i.e. service(), env()):
     scanFiles:
@@ -24,7 +20,13 @@ parameters:
             message: '#Instanceof between App\\Shared\\Domain\\Model\\Locale\\Translation and App\\Shared\\Domain\\Model\\Locale\\Translation will always evaluate to true\.#'
             identifier: instanceof.alwaysTrue
         -
+            identifier: doctrine.associationType
+            message: '#Collection.+iterable|iterable.+Collection#'
+        -
             message: '#Trait App\\Security\\Infrastructure\\UI\\Web\\User\\OnlyUsersFromAccountTrait is used zero times and is not analysed\.#'
         -
             message: '#Parameter \#1 .* of method .*::__invoke\(\) expects .*, .*Command given\.#'
             path: src/Shared/Application/CommandBus/CommandInvokeHandlerTrait.php
+        -
+            identifier: symfonyContainer.privateService
+            path: tests/Acceptance/

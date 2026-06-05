@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace App\Waste\Infrastructure\Symfony\Form\AlertConfiguration;
 
 use App\Waste\Application\Alert\Check\Checker\InactiveUserAlertChecker;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/** @extends AbstractType<mixed> */
-class InactiveUserParametersType extends AbstractType
+class InactiveUserParametersType extends AlertParametersType
 {
     /** @return array<string, mixed> */
     public static function defaults(): array

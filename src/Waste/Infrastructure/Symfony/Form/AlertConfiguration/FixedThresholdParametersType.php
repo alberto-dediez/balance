@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace App\Waste\Infrastructure\Symfony\Form\AlertConfiguration;
 
 use App\Waste\Application\Alert\Check\Checker\FixedThresholdAlertChecker;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/** @extends AbstractType<mixed> */
-class FixedThresholdParametersType extends AbstractType
+class FixedThresholdParametersType extends AlertParametersType
 {
     /** @return array<string, mixed> */
     public static function defaults(): array
