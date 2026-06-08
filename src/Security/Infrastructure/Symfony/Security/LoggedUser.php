@@ -13,19 +13,25 @@ class LoggedUser
 {
     private ?User $user = null;
 
+    private ?User $forcedUser = null;
+
     public function __construct(private readonly Security $security, private readonly UserRepository $userRepository) {}
 
     public function getLoggedUserOrNull(): ?User
     {
-        if (!$this->user instanceof User) {
-            $this->loadUser();
+        try {
+            return $this->__invoke();
+        } catch (\Throwable) {
+            return null;
         }
-
-        return $this->user;
     }
 
     public function __invoke(): User
     {
+        if ($this->forcedUser instanceof User) {
+            return $this->forcedUser;
+        }
+
         if (!$this->user instanceof User) {
             $this->loadUser();
         }
@@ -35,6 +41,11 @@ class LoggedUser
         }
 
         return $this->user;
+    }
+
+    public function forceUser(?User $user): void
+    {
+        $this->forcedUser = $user;
     }
 
     private function loadUser(): void
