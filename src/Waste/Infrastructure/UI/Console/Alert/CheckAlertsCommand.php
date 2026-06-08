@@ -8,6 +8,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\DeferredCommand;
+use App\Shared\Application\CommandBus\Priority;
 use App\Waste\Application\Alert\Check\CheckAlertsRequest;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationFilter;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationRepository;
@@ -62,6 +63,7 @@ class CheckAlertsCommand extends Command
                             checkDate: $checkDate,
                             accountId: $accountId,
                         ),
+                        priority: Priority::LOW
                     ),
                     $user,
                 );
