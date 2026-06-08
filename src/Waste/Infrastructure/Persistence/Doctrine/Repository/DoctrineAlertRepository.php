@@ -49,7 +49,7 @@ class DoctrineAlertRepository implements AlertRepository
 
     public function find(AlertId $alertId): ?Alert
     {
-        $qb = $this->createQueryBuilderFromFilter(new AlertFilter());
+        $qb = $this->createQueryBuilderFromFilter(new AlertFilter(status: null));
 
         return $qb
             ->andWhere(

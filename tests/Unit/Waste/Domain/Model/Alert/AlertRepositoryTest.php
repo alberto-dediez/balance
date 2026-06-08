@@ -51,7 +51,7 @@ abstract class AlertRepositoryTest extends KernelTestCase
         $repository->add(AlertMother::random());
         $repository->add(AlertMother::fromIdAndAccount('alert-1', 'specific-account'));
 
-        $filter = new AlertFilter();
+        $filter = new AlertFilter(status: null);
         $allResults = $repository->findByFilter($filter);
 
         $this->assertCount(3, $allResults);
@@ -65,7 +65,7 @@ abstract class AlertRepositoryTest extends KernelTestCase
         $repository->add(AlertMother::random());
         $repository->add(AlertMother::random());
 
-        $filter = new AlertFilter(limit: 0);
+        $filter = new AlertFilter(status: null, limit: 0);
         $results = $repository->findByFilter($filter);
 
         $this->assertCount(3, $results);

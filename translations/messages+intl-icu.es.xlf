@@ -445,7 +445,7 @@
         <source>Se ha registrado la propiedad {property} sin cuenta asociada</source>
         <target>Se ha registrado la propiedad {property} sin cuenta asociada</target>
       </trans-unit>
-      <trans-unit id="gSfjrLI" resname="Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
+      <trans-unit id="KSPRggE" resname="Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
         <source>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</source>
         <target>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</target>
       </trans-unit>
@@ -485,7 +485,7 @@
         <source>Concedido permiso "{role}" al usuario {user}</source>
         <target>Concedido permiso "{role}" al usuario {user}</target>
       </trans-unit>
-      <trans-unit id="3T9hrIV" resname="Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
+      <trans-unit id="laa3xhA" resname="Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
         <source>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</source>
         <target>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</target>
       </trans-unit>
@@ -617,17 +617,9 @@
         <source>Eliminada la medición "{measurement}"</source>
         <target>Eliminada la medición "{measurement}"</target>
       </trans-unit>
-      <trans-unit id="KSPRggE" resname="Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
-        <source>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</source>
-        <target>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</target>
-      </trans-unit>
       <trans-unit id="eQqlSBE" resname="Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}">
         <source>Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}</source>
         <target>Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}</target>
-      </trans-unit>
-      <trans-unit id="laa3xhA" resname="Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
-        <source>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</source>
-        <target>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</target>
       </trans-unit>
       <trans-unit id="77cKa6C" resname="Gestores de residuos">
         <source>Gestores de residuos</source>
@@ -1900,6 +1892,42 @@
       <trans-unit id="3llH4Ds" resname="El usuario {user} ha cambiado su idioma preferido a {locale}">
         <source>El usuario {user} ha cambiado su idioma preferido a {locale}</source>
         <target>El usuario {user} ha cambiado su idioma preferido a {locale}</target>
+      </trans-unit>
+      <trans-unit id="xp3IHX2" resname="Días para calcular la estadística">
+        <source>Días para calcular la estadística</source>
+        <target>NEW_Días para calcular la estadística</target>
+      </trans-unit>
+      <trans-unit id="CJ3llDA" resname="Notificaciones">
+        <source>Notificaciones</source>
+        <target>NEW_Notificaciones</target>
+      </trans-unit>
+      <trans-unit id="TFtgJ82" resname="No hay alertas pendientes">
+        <source>No hay alertas pendientes</source>
+        <target>NEW_No hay alertas pendientes</target>
+      </trans-unit>
+      <trans-unit id="9eXkai3" resname="Ver todas las alertas">
+        <source>Ver todas las alertas</source>
+        <target>NEW_Ver todas las alertas</target>
+      </trans-unit>
+      <trans-unit id="Y17EBKt" resname="Se han detectado {count} alertas durante el mes.">
+        <source>Se han detectado {count} alertas durante el mes.</source>
+        <target>NEW_Se han detectado {count} alertas durante el mes.</target>
+      </trans-unit>
+      <trans-unit id="qXuzTc." resname="Mostramos algunas de las alertas no vistas del mes.">
+        <source>Mostramos algunas de las alertas no vistas del mes.</source>
+        <target>NEW_Mostramos algunas de las alertas no vistas del mes.</target>
+      </trans-unit>
+      <trans-unit id="GXvObws" resname="Puede revisarlas desde su zona de &lt;a href=&quot;{link}&quot;&gt;alertas&lt;/a&gt;.">
+        <source>Puede revisarlas desde su zona de &lt;a href="{link}"&gt;alertas&lt;/a&gt;.</source>
+        <target><![CDATA[NEW_Puede revisarlas desde su zona de <a href="{link}">alertas</a>.]]></target>
+      </trans-unit>
+      <trans-unit id="nmqibEr" resname="Marcar como vista">
+        <source>Marcar como vista</source>
+        <target>NEW_Marcar como vista</target>
+      </trans-unit>
+      <trans-unit id="kLt98dy" resname="Período">
+        <source>Período</source>
+        <target>NEW_Período</target>
       </trans-unit>
     </body>
   </file>

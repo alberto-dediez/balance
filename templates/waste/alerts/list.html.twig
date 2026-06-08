@@ -44,6 +44,7 @@
         <td>
             <span class="badge {{ element.status.style }}">{{ element.status.value | trans({}, 'alertStatus') }}</span></td>
         <td>
+            <twig:List:Action:View path="{{ path('alerts_view', {'alertId': element.id}) }}" />
             {% if element.status.value == 'New' %}
                 <twig:List:Action path="{{ path('alerts_acknowledge', {'alertId': element.id}) }}"
                                   title="{{ 'Marcar como vista' | trans }}"
