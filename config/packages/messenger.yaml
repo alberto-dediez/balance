@@ -3,9 +3,18 @@ framework:
         failure_transport: failed
 
         transports:
-            async_high: '%env(MESSENGER_TRANSPORT_DSN)%'
-            async: '%env(MESSENGER_TRANSPORT_DSN)%'
-            async_low: '%env(MESSENGER_TRANSPORT_DSN)%'
+            async_high:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: high
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: medium
+            async_low:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: low
             failed: 'doctrine://default?queue_name=failed'
             sync: 'sync://'
 
