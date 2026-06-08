@@ -3,7 +3,7 @@ framework:
         failure_transport: failed
 
         transports:
-            sync_high:
+            async_high:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 options:
                     queue_name: high
@@ -11,22 +11,22 @@ framework:
                     max_retries: 5
                     delay: 1000
                     multiplier: 2
-                async:
-                    dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
-                    options:
-                        queue_name: medium
-                    retry_strategy:
-                        max_retries: 3
-                        delay: 1000
-                        multiplier: 2
-                async_low:
-                    dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
-                    options:
-                        queue_name: low
-                    retry_strategy:
-                        max_retries: 2
-                        delay: 1000
-                        multiplier: 2
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: medium
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1000
+                    multiplier: 2
+            async_low:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: low
+                retry_strategy:
+                    max_retries: 2
+                    delay: 1000
+                    multiplier: 2
             failed: 'doctrine://default?queue_name=failed'
             sync: 'sync://'
 
