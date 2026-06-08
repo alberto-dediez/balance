@@ -6,9 +6,7 @@ namespace App\Shared\Infrastructure\Messenger;
 
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Application\CommandBus\Command;
-use Symfony\Component\Messenger\Attribute\AsMessage;
 
-#[AsMessage('async')]
 class DeferredMessage
 {
     public function __construct(

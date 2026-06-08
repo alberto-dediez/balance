@@ -3,11 +3,9 @@ framework:
         failure_transport: failed
 
         transports:
-            # https://symfony.com/doc/current/messenger.html#transport-configuration
-            # async: '%env(MESSENGER_TRANSPORT_DSN)%'
-            # failed: 'doctrine://default?queue_name=failed'
-            sync: 'sync://'
+            async_high: '%env(MESSENGER_TRANSPORT_DSN)%'
             async: '%env(MESSENGER_TRANSPORT_DSN)%'
+            async_low: '%env(MESSENGER_TRANSPORT_DSN)%'
             alerts:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 options:
@@ -17,11 +15,12 @@ framework:
                     delay: 1000
                     multiplier: 2
             failed: 'doctrine://default?queue_name=failed'
+            sync: 'sync://'
 
 when@test:
     framework:
         messenger:
             transports:
-                # Process account alert checks synchronously in tests.
-                alerts: 'sync://'
+                async_high: 'in-memory://'
                 async: 'in-memory://'
+                async_low: 'in-memory://'

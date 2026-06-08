@@ -58,6 +58,7 @@ class SecurityUser extends User implements UserInterface, PasswordAuthenticatedU
             roles: $user->roles(),
             events: $user->recordedEvents(),
             registeredAt: $user->registeredAt() ?? new \DateTimeImmutable('NOW'),
+            preferredLocale: $user->preferredLocale(),
         );
     }
 }
