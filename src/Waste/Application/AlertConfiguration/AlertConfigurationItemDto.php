@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Waste\Application\AlertConfiguration;
 
 use App\Property\Domain\Model\Property\PropertyId;
+use App\Waste\Domain\Model\Alert\AlertPriority;
 use App\Waste\Domain\Model\Alert\AlertType;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationItem;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationItemId;
@@ -19,6 +20,7 @@ final class AlertConfigurationItemDto
         public readonly ?PropertyId $propertyId = null,
         public readonly ?WasteId $wasteId = null,
         public readonly array $parameters = [],
+        public readonly AlertPriority $priority = AlertPriority::Info,
     ) {}
 
     public function toItem(): AlertConfigurationItem
@@ -30,6 +32,7 @@ final class AlertConfigurationItemDto
             parameters: $this->parameters,
             propertyId: $this->propertyId,
             wasteId: $this->wasteId,
+            priority: $this->priority,
         );
     }
 }

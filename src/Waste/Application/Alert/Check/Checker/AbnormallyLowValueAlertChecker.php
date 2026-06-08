@@ -112,7 +112,7 @@ class AbnormallyLowValueAlertChecker implements AlertChecker
                         continue;
                     }
 
-                    if ($existingAlerts->has(AlertType::AbnormallyLow, $property->id(), $wasteId, $checkDate)) {
+                    if ($existingAlerts->has(AlertType::AbnormallyLow, $property->id(), $wasteId, $checkDate, $rule->priority())) {
                         continue;
                     }
 
@@ -127,11 +127,12 @@ class AbnormallyLowValueAlertChecker implements AlertChecker
                         to: $checkDate,
                         value: $value,
                         threshold: $threshold,
+                        priority: $rule->priority(),
                     );
 
                     $alerts[] = $alert;
 
-                    $existingAlerts->add(AlertType::AbnormallyLow, $property->id(), $wasteId, $checkDate);
+                    $existingAlerts->add(AlertType::AbnormallyLow, $property->id(), $wasteId, $checkDate, $rule->priority());
                 }
             }
         }

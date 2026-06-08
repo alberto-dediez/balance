@@ -109,7 +109,7 @@ class ThresholdExceededAlertChecker implements AlertChecker
                         continue;
                     }
 
-                    if ($existingAlerts->has(AlertType::ThresholdExceeded, $property->id(), $wasteId, $checkDate)) {
+                    if ($existingAlerts->has(type: AlertType::ThresholdExceeded, propertyId: $property->id(), wasteId: $wasteId, checkDate: $checkDate, alertPriority: $rule->priority())) {
                         continue;
                     }
 
@@ -124,11 +124,12 @@ class ThresholdExceededAlertChecker implements AlertChecker
                         to: $checkDate,
                         value: $value,
                         threshold: $threshold,
+                        priority: $rule->priority(),
                     );
 
                     $alerts[] = $alert;
 
-                    $existingAlerts->add(AlertType::ThresholdExceeded, $property->id(), $wasteId, $checkDate);
+                    $existingAlerts->add(type: AlertType::ThresholdExceeded, propertyId: $property->id(), wasteId: $wasteId, checkDate: $checkDate, alertPriority: $rule->priority());
                 }
             }
         }

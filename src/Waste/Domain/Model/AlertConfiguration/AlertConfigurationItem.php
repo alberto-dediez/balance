@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Waste\Domain\Model\AlertConfiguration;
 
 use App\Property\Domain\Model\Property\PropertyId;
+use App\Waste\Domain\Model\Alert\AlertPriority;
 use App\Waste\Domain\Model\Alert\AlertType;
 use App\Waste\Domain\Model\Waste\WasteId;
 
@@ -24,6 +25,7 @@ class AlertConfigurationItem
         private array $parameters = [],
         private ?PropertyId $propertyId = null,
         private ?WasteId $wasteId = null,
+        private AlertPriority $priority = AlertPriority::Info,
     ) {}
 
     public function id(): AlertConfigurationItemId
@@ -67,16 +69,22 @@ class AlertConfigurationItem
         return $this->wasteId;
     }
 
+    public function priority(): AlertPriority
+    {
+        return $this->priority;
+    }
+
     /** @param array<string, mixed> $parameters */
-    public function update(bool $enabled, array $parameters, ?PropertyId $propertyId = null, ?WasteId $wasteId = null): void
+    public function update(bool $enabled, array $parameters, ?PropertyId $propertyId = null, ?WasteId $wasteId = null, AlertPriority $priority = AlertPriority::Info): void
     {
         $this->enabled = $enabled;
         $this->parameters = $parameters;
         $this->propertyId = $propertyId;
         $this->wasteId = $wasteId;
+        $this->priority = $priority;
     }
 
-    /** @return array{id: string, type: string, enabled: bool, propertyId: string|null, wasteId: string|null, parameters: array<string, mixed>} */
+    /** @return array{id: string, type: string, enabled: bool, propertyId: string|null, wasteId: string|null, parameters: array<string, mixed>, priority: string} */
     public function toArray(): array
     {
         return [
@@ -86,10 +94,11 @@ class AlertConfigurationItem
             'propertyId' => $this->propertyId?->__toString(),
             'wasteId' => $this->wasteId?->__toString(),
             'parameters' => $this->parameters,
+            'priority' => $this->priority->value,
         ];
     }
 
-    /** @param array{id?: string, type: string, enabled: bool, propertyId: string|null, wasteId: string|null, parameters: array<string, mixed>} $data */
+    /** @param array{id?: string, type: string, enabled: bool, propertyId: string|null, wasteId: string|null, parameters: array<string, mixed>, priority?: string} $data */
     public static function fromArray(array $data): self
     {
         return new self(
@@ -99,6 +108,7 @@ class AlertConfigurationItem
             parameters: $data['parameters'],
             propertyId: null !== $data['propertyId'] ? new PropertyId($data['propertyId']) : null,
             wasteId: null !== $data['wasteId'] ? new WasteId($data['wasteId']) : null,
+            priority: isset($data['priority']) ? AlertPriority::from($data['priority']) : AlertPriority::Info,
         );
     }
 }

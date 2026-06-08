@@ -6,6 +6,7 @@ namespace App\Waste\Infrastructure\Symfony\Form\AlertConfiguration;
 
 use App\Shared\Infrastructure\Symfony\Form\Type\BooleanType;
 use App\Waste\Domain\Model\Alert\AlertType;
+use App\Waste\Infrastructure\Symfony\Form\Type\AlertPriorityType;
 use App\Waste\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use App\Waste\Infrastructure\Symfony\Form\Type\WasteIdType;
 use Symfony\Component\Form\AbstractType;
@@ -20,11 +21,6 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 /** @extends AbstractType<AlertConfigurationItemData> */
 class AlertConfigurationItemType extends AbstractType
 {
-    /**
-     * Validates that no two items in the collection share the same combination of
-     * propertyId, wasteId and alert type. Meant to be applied as a `constraints`
-     * option on the `items` CollectionType field.
-     */
     public static function uniqueItemsConstraint(): Callback
     {
         return new Callback(static function (mixed $items, ExecutionContextInterface $context): void {
@@ -44,6 +40,7 @@ class AlertConfigurationItemType extends AbstractType
                     $item->type ?? '',
                     $item->propertyId?->__toString() ?? '',
                     $item->wasteId?->__toString() ?? '',
+                    $item->priority->value,
                 ]);
 
                 if (isset($seen[$key])) {
@@ -92,6 +89,7 @@ class AlertConfigurationItemType extends AbstractType
                 'label' => new TranslatableMessage('Propiedad'),
                 'required' => false,
                 'placeholder' => new TranslatableMessage('Todas las propiedades'),
+                'account_id' => $options['account_id'],
             ])
             ->add('wasteId', WasteIdType::class, [
                 'label' => new TranslatableMessage('Residuo'),
@@ -101,6 +99,11 @@ class AlertConfigurationItemType extends AbstractType
             ->add('enabled', BooleanType::class, [
                 'label' => new TranslatableMessage('Activa'),
                 'required' => true,
+            ])
+            ->add('priority', AlertPriorityType::class, [
+                'label' => new TranslatableMessage('Prioridad'),
+                'required' => true,
+                'placeholder' => false,
             ]);
 
         $parametersBuilder = $builder->create('parameters', FormType::class, [
@@ -121,6 +124,9 @@ class AlertConfigurationItemType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => AlertConfigurationItemData::class,
+            'account_id' => null,
         ]);
+
+        $resolver->setAllowedTypes('account_id', ['null', \App\Security\Domain\Model\Account\AccountId::class]);
     }
 }

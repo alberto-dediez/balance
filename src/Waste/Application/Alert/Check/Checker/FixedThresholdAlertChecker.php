@@ -80,7 +80,7 @@ class FixedThresholdAlertChecker implements AlertChecker
                         continue;
                     }
 
-                    if ($existingAlerts->has(AlertType::FixedThreshold, $property->id(), $wasteId, $checkDate)) {
+                    if ($existingAlerts->has(AlertType::FixedThreshold, $property->id(), $wasteId, $checkDate, $rule->priority())) {
                         continue;
                     }
 
@@ -95,10 +95,11 @@ class FixedThresholdAlertChecker implements AlertChecker
                         to: $checkDate,
                         value: $total,
                         threshold: $thresholdKg,
+                        priority: $rule->priority(),
                     );
 
                     $alerts[] = $alert;
-                    $existingAlerts->add(AlertType::FixedThreshold, $property->id(), $wasteId, $checkDate);
+                    $existingAlerts->add(AlertType::FixedThreshold, $property->id(), $wasteId, $checkDate, $rule->priority());
                 }
             }
         }

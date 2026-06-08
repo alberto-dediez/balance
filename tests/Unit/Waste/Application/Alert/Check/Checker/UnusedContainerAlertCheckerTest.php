@@ -10,6 +10,7 @@ use App\Tests\Unit\Waste\Domain\Model\Container\ContainerRepositoryMother;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementMother;
 use App\Tests\Unit\Waste\Domain\Model\Measurement\MeasurementRepositoryMother;
 use App\Waste\Application\Alert\Check\Checker\UnusedContainerAlertChecker;
+use App\Waste\Domain\Model\Alert\AlertPriority;
 use App\Waste\Domain\Model\Alert\AlertType;
 use App\Waste\Domain\Model\Alert\ExistingAlertsIndex;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationItem;
@@ -95,9 +96,10 @@ class UnusedContainerAlertCheckerTest extends TestCase
 
         $existingAlerts = new ExistingAlertsIndex();
         $existingAlerts->add(
-            AlertType::UnusedContainer,
-            $container->propertyId(),
-            $container->wasteId(),
+            type: AlertType::UnusedContainer,
+            propertyId: $container->propertyId(),
+            wasteId: $container->wasteId(),
+            alertPriority: AlertPriority::Warning
         );
 
         $alerts = $sut->check($accountId, [$this->createRule()], $checkDate, $existingAlerts);
@@ -135,6 +137,7 @@ class UnusedContainerAlertCheckerTest extends TestCase
             type: AlertType::UnusedContainer,
             enabled: true,
             parameters: ['unusedDays' => 7],
+            priority: AlertPriority::Warning,
         );
     }
 }

@@ -19,6 +19,7 @@
         <field name="parameters" type="json" column="parameters" nullable="false" />
         <field name="propertyId" type="property_id" column="property_id" nullable="true" />
         <field name="wasteId" type="waste_id" column="waste_id" nullable="true" />
+        <field name="priority" type="string" enum-type="App\Waste\Domain\Model\Alert\AlertPriority" nullable="false" />
     </entity>
 
 </doctrine-mapping>

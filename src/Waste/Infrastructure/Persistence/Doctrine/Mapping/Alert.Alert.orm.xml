@@ -20,6 +20,7 @@
         <field name="periodTo" type="datetime_immutable" column="period_to" nullable="false" />
         <field name="value" type="float" nullable="true" />
         <field name="threshold" type="float" nullable="true" />
+        <field name="priority" type="string" enum-type="App\Waste\Domain\Model\Alert\AlertPriority" nullable="false" />
     </entity>
 
 </doctrine-mapping>

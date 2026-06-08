@@ -63,7 +63,7 @@ class CheckAlertsCommand extends Command
                             checkDate: $checkDate,
                             accountId: $accountId,
                         ),
-                        priority: Priority::LOW
+                        priority: Priority::LOW,
                     ),
                     $user,
                 );

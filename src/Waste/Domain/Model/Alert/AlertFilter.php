@@ -19,6 +19,7 @@ class AlertFilter
         public ?WasteId $wasteId = null,
         public ?AlertType $type = null,
         public ?AlertStatus $status = AlertStatus::New,
+        public ?AlertPriority $priority = null,
         public ?\DateTimeImmutable $from = null,
         public ?\DateTimeImmutable $to = null,
         int $limit = 50,

@@ -40,48 +40,52 @@ class InactiveUserAlertChecker implements AlertChecker
         ExistingAlertsIndex $existingAlerts,
     ): array {
         $alerts = [];
-        $inactiveDays = (int) ($rules[0]->parameters()['inactiveDays'] ?? self::DEFAULT_INACTIVE_DAYS);
-        $periodFrom = $checkDate->modify(sprintf('-%d days', $inactiveDays));
 
-        if ($existingAlerts->has(AlertType::InactiveUser, null, null)) {
-            return $alerts;
-        }
+        foreach ($rules as $rule) {
+            $inactiveDays = (int) ($rule->parameters()['inactiveDays'] ?? self::DEFAULT_INACTIVE_DAYS);
+            $periodFrom = $checkDate->modify(sprintf('-%d days', $inactiveDays));
 
-        $users = $this->userRepository->findByAccountId($accountId);
-        $hasInactiveUser = false;
-
-        foreach ($users as $user) {
-            $measurements = $this->measurementRepository->findByFilter(new MeasurementFilter(
-                accountId: $accountId,
-                userId: $user->id(),
-                registeredAtFrom: $periodFrom,
-                registeredAtTo: $checkDate,
-                limit: 1,
-            ));
-
-            if (0 === count($measurements)) {
-                $hasInactiveUser = true;
-
-                break;
+            if ($existingAlerts->has(type: AlertType::InactiveUser, propertyId: null, wasteId: null, checkDate: null, alertPriority: $rule->priority())) {
+                return $alerts;
             }
-        }
 
-        if ($hasInactiveUser) {
-            $alert = new Alert(id: AlertId::generate());
-            $alert->detect(
-                type: AlertType::InactiveUser,
-                propertyId: null,
-                wasteId: null,
-                accountId: $accountId,
-                detectedAt: new \DateTimeImmutable('NOW'),
-                from: $periodFrom,
-                to: $checkDate,
-                value: null,
-                threshold: null,
-            );
+            $users = $this->userRepository->findByAccountId($accountId);
+            $hasInactiveUser = false;
 
-            $alerts[] = $alert;
-            $existingAlerts->add(AlertType::InactiveUser, null, null);
+            foreach ($users as $user) {
+                $measurements = $this->measurementRepository->findByFilter(new MeasurementFilter(
+                    accountId: $accountId,
+                    userId: $user->id(),
+                    registeredAtFrom: $periodFrom,
+                    registeredAtTo: $checkDate,
+                    limit: 1,
+                ));
+
+                if (0 === count($measurements)) {
+                    $hasInactiveUser = true;
+
+                    break;
+                }
+            }
+
+            if ($hasInactiveUser) {
+                $alert = new Alert(id: AlertId::generate());
+                $alert->detect(
+                    type: AlertType::InactiveUser,
+                    propertyId: null,
+                    wasteId: null,
+                    accountId: $accountId,
+                    detectedAt: new \DateTimeImmutable('NOW'),
+                    from: $periodFrom,
+                    to: $checkDate,
+                    value: null,
+                    threshold: null,
+                    priority: $rule->priority(),
+                );
+
+                $alerts[] = $alert;
+                $existingAlerts->add(type: AlertType::InactiveUser, propertyId: null, wasteId: null, checkDate: null, alertPriority: $rule->priority());
+            }
         }
 
         return $alerts;

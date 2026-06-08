@@ -25,7 +25,7 @@
         {% else %}
             {% for alert in pending %}
                 <a href="{{ path('alerts_view', {'alertId': alert.id}) }}" class="py-6 px-7 d-flex align-items-start dropdown-item">
-                    <span class="d-flex align-items-center justify-content-center bg-warning-subtle text-warning rounded round flex-shrink-0">
+                    <span class="d-flex align-items-center justify-content-center {{ alert.priority.style }} rounded round flex-shrink-0">
                         <twig:Icon name="solar:danger-triangle-line-duotone" size="lg" />
                     </span>
                     <div class="ps-3 w-75">

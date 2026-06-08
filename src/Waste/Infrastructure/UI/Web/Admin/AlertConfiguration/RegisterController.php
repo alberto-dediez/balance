@@ -77,6 +77,7 @@ class RegisterController extends AbstractController
                 propertyId: $item->propertyId,
                 wasteId: $item->wasteId,
                 parameters: $item->parameters[$type] ?? [],
+                priority: $item->priority,
             );
         }
 

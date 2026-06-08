@@ -73,7 +73,7 @@ class NoMeasurementsAlertChecker implements AlertChecker
                 ));
 
                 if (0 === count($dailyWastes)) {
-                    if ($existingAlerts->has(AlertType::NoMeasurements, $property->id(), $rule->wasteId())) {
+                    if ($existingAlerts->has(type: AlertType::NoMeasurements, propertyId: $property->id(), wasteId: $rule->wasteId(), checkDate: null, alertPriority: $rule->priority())) {
                         continue;
                     }
 
@@ -88,11 +88,12 @@ class NoMeasurementsAlertChecker implements AlertChecker
                         to: $periodTo,
                         value: null,
                         threshold: null,
+                        priority: $rule->priority(),
                     );
 
                     $alerts[] = $alert;
 
-                    $existingAlerts->add(AlertType::NoMeasurements, $property->id(), $rule->wasteId());
+                    $existingAlerts->add(type: AlertType::NoMeasurements, propertyId: $property->id(), wasteId: $rule->wasteId(), checkDate: null, alertPriority: $rule->priority());
                 }
             }
         }

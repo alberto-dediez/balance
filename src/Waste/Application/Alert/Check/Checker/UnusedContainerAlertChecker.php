@@ -67,7 +67,7 @@ class UnusedContainerAlertChecker implements AlertChecker
                     continue;
                 }
 
-                if ($existingAlerts->has(AlertType::UnusedContainer, $propertyId, $wasteId)) {
+                if ($existingAlerts->has(type: AlertType::UnusedContainer, propertyId: $propertyId, wasteId: $wasteId, checkDate: null, alertPriority: $rule->priority())) {
                     continue;
                 }
 
@@ -94,11 +94,12 @@ class UnusedContainerAlertChecker implements AlertChecker
                     to: $checkDate,
                     value: null,
                     threshold: null,
+                    priority: $rule->priority(),
                 );
 
                 $alerts[] = $alert;
 
-                $existingAlerts->add(AlertType::UnusedContainer, $propertyId, $wasteId);
+                $existingAlerts->add(type: AlertType::UnusedContainer, propertyId: $propertyId, wasteId: $wasteId, checkDate: null, alertPriority: $rule->priority());
             }
         }
 

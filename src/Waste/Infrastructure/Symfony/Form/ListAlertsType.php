@@ -6,6 +6,7 @@ namespace App\Waste\Infrastructure\Symfony\Form;
 
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
 use App\Waste\Application\Alert\List\ListAlertsRequest;
+use App\Waste\Infrastructure\Symfony\Form\Type\AlertPriorityType;
 use App\Waste\Infrastructure\Symfony\Form\Type\AlertStatusType;
 use App\Waste\Infrastructure\Symfony\Form\Type\AlertTypeType;
 use App\Waste\Infrastructure\Symfony\Form\Type\PropertyIdType;
@@ -39,6 +40,11 @@ class ListAlertsType extends BaseFilterType
                 'label' => new TranslatableMessage('Estado'),
                 'required' => false,
                 'placeholder' => new TranslatableMessage('Todos los estados'),
+            ])
+            ->add('priority', AlertPriorityType::class, [
+                'label' => new TranslatableMessage('Prioridad'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Todas las prioridades'),
             ])
             ->add('from', DateType::class, [
                 'label' => new TranslatableMessage('Desde'),

@@ -21,6 +21,8 @@
             'sortable': true,
             'sortableBy': 'detectedAt'
         }, {
+            'label': 'Prioridad' | trans,
+        }, {
             'label': 'Estado' | trans,
         }, {
             'label': ''
@@ -41,6 +43,9 @@
             {% endif %}
         </td>
         <td>{{ element.detectedAt | date('H:i d/m/Y') }}</td>
+        <td>
+            <span class="badge {{ element.priority.style }}">{{ element.priority.value | trans({}, 'alertPriority') }}</span>
+        </td>
         <td>
             <span class="badge {{ element.status.style }}">{{ element.status.value | trans({}, 'alertStatus') }}</span></td>
         <td>

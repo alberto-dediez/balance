@@ -26,6 +26,7 @@ final class AlertDetected extends DomainEvent
         private readonly \DateTimeImmutable $periodTo,
         private readonly ?float $value,
         private readonly ?float $threshold,
+        private readonly AlertPriority $priority = AlertPriority::Info,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -82,6 +83,11 @@ final class AlertDetected extends DomainEvent
         return $this->threshold;
     }
 
+    public function priority(): AlertPriority
+    {
+        return $this->priority;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->alertId;
@@ -100,6 +106,7 @@ final class AlertDetected extends DomainEvent
             'periodTo' => $this->periodTo->format('Y-m-d'),
             'value' => $this->value,
             'threshold' => $this->threshold,
+            'priority' => $this->priority->value,
         ];
     }
 
@@ -121,6 +128,7 @@ final class AlertDetected extends DomainEvent
             periodTo: new \DateTimeImmutable($payload['periodTo']),
             value: isset($payload['value']) ? (float) $payload['value'] : null,
             threshold: isset($payload['threshold']) ? (float) $payload['threshold'] : null,
+            priority: isset($payload['priority']) ? AlertPriority::from($payload['priority']) : AlertPriority::Info,
             id: $id,
             occurredOn: $occurredOn,
         );

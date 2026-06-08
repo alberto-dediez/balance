@@ -9,6 +9,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Alert\Alert;
 use App\Waste\Domain\Model\Alert\AlertFilter;
 use App\Waste\Domain\Model\Alert\AlertId;
+use App\Waste\Domain\Model\Alert\AlertPriority;
 use App\Waste\Domain\Model\Alert\AlertRepository;
 use App\Waste\Domain\Model\Alert\AlertStatus;
 use App\Waste\Domain\Model\Alert\AlertType;
@@ -96,6 +97,10 @@ class InMemoryAlertRepository implements AlertRepository
             }
 
             if ($filter->status instanceof AlertStatus && $filter->status !== $alert->status()) {
+                continue;
+            }
+
+            if ($filter->priority instanceof AlertPriority && $filter->priority !== $alert->priority()) {
                 continue;
             }
 

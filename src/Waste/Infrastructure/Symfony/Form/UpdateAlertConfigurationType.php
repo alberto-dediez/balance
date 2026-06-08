@@ -21,6 +21,7 @@ class UpdateAlertConfigurationType extends AbstractType
     {
         $builder->add('items', CollectionType::class, [
             'entry_type' => AlertConfigurationItemType::class,
+            'entry_options' => ['account_id' => $options['account_id']],
             'label' => false,
             'allow_add' => true,
             'allow_delete' => true,
@@ -44,6 +45,9 @@ class UpdateAlertConfigurationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => null,
+            'account_id' => null,
         ]);
+
+        $resolver->setAllowedTypes('account_id', ['null', \App\Security\Domain\Model\Account\AccountId::class]);
     }
 }

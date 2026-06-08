@@ -49,11 +49,14 @@ class EditController extends AbstractController
                 propertyId: $item->propertyId(),
                 wasteId: $item->wasteId(),
                 parameters: $parameters,
+                priority: $item->priority(),
             );
         }
 
         try {
-            $form = $this->createForm(UpdateAlertConfigurationType::class, ['items' => $items]);
+            $form = $this->createForm(UpdateAlertConfigurationType::class, ['items' => $items], [
+                'account_id' => $config->accountId(),
+            ]);
 
             $needsRedirect = $this->edit($request, $form, function ($form) use ($updateAlertConfiguration, $loggedUser, $config) {
                 /** @var array{items: list<AlertConfigurationItemData>} $data */
@@ -95,6 +98,7 @@ class EditController extends AbstractController
                 propertyId: $item->propertyId,
                 wasteId: $item->wasteId,
                 parameters: $item->parameters[$type] ?? [],
+                priority: $item->priority,
             );
         }
 

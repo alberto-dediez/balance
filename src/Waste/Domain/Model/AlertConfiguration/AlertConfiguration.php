@@ -111,7 +111,7 @@ class AlertConfiguration implements \Stringable
         $seen = [];
 
         foreach ($items as $item) {
-            $key = sprintf('%s|%s|%s', $item->type()->value, $item->propertyId()?->__toString() ?? '', $item->wasteId()?->__toString() ?? '');
+            $key = sprintf('%s|%s|%s|%s', $item->type()->value, $item->propertyId()?->__toString() ?? '', $item->wasteId()?->__toString() ?? '', $item->priority()->value);
 
             if (isset($seen[$key])) {
                 throw new DuplicateAlertConfigurationItemException($item->type(), $item->propertyId()?->__toString(), $item->wasteId()?->__toString());

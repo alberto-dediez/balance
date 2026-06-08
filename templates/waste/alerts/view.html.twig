@@ -29,6 +29,9 @@
             <twig:View:Field label="{{ 'Umbral' | trans }}">{{ alert.threshold is not null ? alert.threshold : '-' }}</twig:View:Field>
             <twig:View:Field label="{{ 'Período' | trans }}">{{ period }}</twig:View:Field>
             <twig:View:Field label="{{ 'Detectada' | trans }}">{{ alert.detectedAt | date('H:i d/m/Y') }}</twig:View:Field>
+            <twig:View:Field label="{{ 'Prioridad' | trans }}">
+                {{ alert.priority.value | trans({}, 'alertPriority') }}
+            </twig:View:Field>
             <twig:View:Field label="{{ 'Estado' | trans }}">
                 {{ alert.status.value | trans({}, 'alertStatus') }}
             </twig:View:Field>

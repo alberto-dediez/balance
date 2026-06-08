@@ -36,6 +36,8 @@
                             {% set value = value.value | trans({}, 'alertStatus') %}
                         {% elseif field == 'type' %}
                             {% set value = value.value | trans({}, 'alertType') %}
+                        {% elseif field == 'priority' %}
+                            {% set value = value.value | trans({}, 'alertPriority') %}
                         {% elseif field == 'signatureStatus' %}
                             {% set value = value.value | trans({}, 'signatureRequestStatus') %}
                         {% endif %}

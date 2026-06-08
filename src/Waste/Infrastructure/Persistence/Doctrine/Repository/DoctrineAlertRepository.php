@@ -9,6 +9,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Waste\Domain\Model\Alert\Alert;
 use App\Waste\Domain\Model\Alert\AlertFilter;
 use App\Waste\Domain\Model\Alert\AlertId;
+use App\Waste\Domain\Model\Alert\AlertPriority;
 use App\Waste\Domain\Model\Alert\AlertRepository;
 use App\Waste\Domain\Model\Alert\AlertStatus;
 use App\Waste\Domain\Model\Alert\AlertType;
@@ -101,6 +102,13 @@ class DoctrineAlertRepository implements AlertRepository
             $qb
                 ->andWhere($qb->expr()->eq('a.status', ':status'))
                 ->setParameter('status', $filter->status->value)
+            ;
+        }
+
+        if ($filter->priority instanceof AlertPriority) {
+            $qb
+                ->andWhere($qb->expr()->eq('a.priority', ':priority'))
+                ->setParameter('priority', $filter->priority->value)
             ;
         }
 

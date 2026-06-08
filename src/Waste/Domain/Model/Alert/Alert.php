@@ -26,6 +26,7 @@ class Alert implements \Stringable
         private \DateTimeImmutable $periodTo = new \DateTimeImmutable('NOW'),
         private ?float $value = null,
         private ?float $threshold = null,
+        private AlertPriority $priority = AlertPriority::Info,
         array $events = [],
     ) {
         $this->events = $events;
@@ -91,6 +92,11 @@ class Alert implements \Stringable
         return $this->threshold;
     }
 
+    public function priority(): AlertPriority
+    {
+        return $this->priority;
+    }
+
     public function detect(
         AlertType $type,
         ?PropertyId $propertyId,
@@ -101,6 +107,7 @@ class Alert implements \Stringable
         \DateTimeImmutable $to,
         ?float $value,
         ?float $threshold,
+        AlertPriority $priority = AlertPriority::Info,
     ): void {
         $this->recordApplyAndPublish(
             new AlertDetected(
@@ -114,6 +121,7 @@ class Alert implements \Stringable
                 periodTo: $to,
                 value: $value,
                 threshold: $threshold,
+                priority: $priority,
             ),
         );
     }
@@ -139,6 +147,7 @@ class Alert implements \Stringable
         $this->periodTo = $event->periodTo();
         $this->value = $event->value();
         $this->threshold = $event->threshold();
+        $this->priority = $event->priority();
     }
 
     public function applyAlertAcknowledged(AlertAcknowledged $event): void
