@@ -9,6 +9,7 @@ use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandResponse;
 use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Application\CommandBus\DeferredCommandHandler;
+use App\Shared\Application\CommandBus\Priority;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -28,7 +29,13 @@ class DeferredCommandMessenger implements DeferredCommandHandler
      */
     public function handle(Command $command, User $user): ?CommandResponse
     {
-        $this->messageBus->dispatch(new DeferredMessage($command->command(), $user->id()));
+        $message = match ($command->priority()) {
+            Priority::HIGH => new DeferredHighMessage($command->command(), $user->id()),
+            Priority::LOW  => new DeferredLowMessage($command->command(), $user->id()),
+            default        => new DeferredMediumMessage($command->command(), $user->id()),
+        };
+
+        $this->messageBus->dispatch($message);
 
         return new EnqueueCommandResponse();
     }

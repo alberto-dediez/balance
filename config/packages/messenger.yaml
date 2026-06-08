@@ -3,7 +3,9 @@ framework:
         failure_transport: failed
 
         transports:
+            async_high: '%env(MESSENGER_TRANSPORT_DSN)%'
             async: '%env(MESSENGER_TRANSPORT_DSN)%'
+            async_low: '%env(MESSENGER_TRANSPORT_DSN)%'
             failed: 'doctrine://default?queue_name=failed'
             sync: 'sync://'
 
@@ -11,4 +13,6 @@ when@test:
     framework:
         messenger:
             transports:
+                async_high: 'in-memory://'
                 async: 'in-memory://'
+                async_low: 'in-memory://'
