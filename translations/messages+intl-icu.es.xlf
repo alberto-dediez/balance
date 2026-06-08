@@ -1895,39 +1895,39 @@
       </trans-unit>
       <trans-unit id="xp3IHX2" resname="Días para calcular la estadística">
         <source>Días para calcular la estadística</source>
-        <target>NEW_Días para calcular la estadística</target>
+        <target>Días para calcular la estadística</target>
       </trans-unit>
       <trans-unit id="CJ3llDA" resname="Notificaciones">
         <source>Notificaciones</source>
-        <target>NEW_Notificaciones</target>
+        <target>Notificaciones</target>
       </trans-unit>
       <trans-unit id="TFtgJ82" resname="No hay alertas pendientes">
         <source>No hay alertas pendientes</source>
-        <target>NEW_No hay alertas pendientes</target>
+        <target>No hay alertas pendientes</target>
       </trans-unit>
       <trans-unit id="9eXkai3" resname="Ver todas las alertas">
         <source>Ver todas las alertas</source>
-        <target>NEW_Ver todas las alertas</target>
+        <target>Ver todas las alertas</target>
       </trans-unit>
       <trans-unit id="Y17EBKt" resname="Se han detectado {count} alertas durante el mes.">
         <source>Se han detectado {count} alertas durante el mes.</source>
-        <target>NEW_Se han detectado {count} alertas durante el mes.</target>
+        <target>Se han detectado {count} alertas durante el mes.</target>
       </trans-unit>
       <trans-unit id="qXuzTc." resname="Mostramos algunas de las alertas no vistas del mes.">
         <source>Mostramos algunas de las alertas no vistas del mes.</source>
-        <target>NEW_Mostramos algunas de las alertas no vistas del mes.</target>
+        <target>Mostramos algunas de las alertas no vistas del mes.</target>
       </trans-unit>
       <trans-unit id="GXvObws" resname="Puede revisarlas desde su zona de &lt;a href=&quot;{link}&quot;&gt;alertas&lt;/a&gt;.">
         <source>Puede revisarlas desde su zona de &lt;a href="{link}"&gt;alertas&lt;/a&gt;.</source>
-        <target><![CDATA[NEW_Puede revisarlas desde su zona de <a href="{link}">alertas</a>.]]></target>
+        <target><![CDATA[Puede revisarlas desde su zona de <a href="{link}">alertas</a>.]]></target>
       </trans-unit>
       <trans-unit id="nmqibEr" resname="Marcar como vista">
         <source>Marcar como vista</source>
-        <target>NEW_Marcar como vista</target>
+        <target>Marcar como vista</target>
       </trans-unit>
       <trans-unit id="kLt98dy" resname="Período">
         <source>Período</source>
-        <target>NEW_Período</target>
+        <target>Período</target>
       </trans-unit>
     </body>
   </file>

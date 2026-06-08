@@ -180,10 +180,6 @@ translation:
 	@$(PHP) ./bin/console trans:extract tr --force --prefix="NEW_" -q
 
 ## —— Messages ————————————————————————————————————————————————————————————
-queues:
-	@$(PHP) bin/console messenger:consume async -vv
-
-## —— Messages ————————————————————————————————————————————————————————————
 queues: ## Start workers for all priority queues (high, medium, low)
 	@$(PHP) bin/console messenger:consume async_high -vv &
 	@$(PHP) bin/console messenger:consume async -vv &

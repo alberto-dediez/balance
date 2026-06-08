@@ -7,19 +7,19 @@
     <body>
       <trans-unit id=".ku3jMu" resname="Pending">
         <source>Pending</source>
-        <target>NEW_Pending</target>
+        <target>Beklemede</target>
       </trans-unit>
       <trans-unit id="8Ql_h_n" resname="Viewed">
         <source>Viewed</source>
-        <target>NEW_Viewed</target>
+        <target>Görüntülendi</target>
       </trans-unit>
       <trans-unit id="FvIJG6I" resname="Signed">
         <source>Signed</source>
-        <target>NEW_Signed</target>
+        <target>İmzalandı</target>
       </trans-unit>
       <trans-unit id="srrpRxM" resname="Expired">
         <source>Expired</source>
-        <target>NEW_Expired</target>
+        <target>Süresi doldu</target>
       </trans-unit>
     </body>
   </file>

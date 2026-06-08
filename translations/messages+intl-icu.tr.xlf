@@ -1395,423 +1395,423 @@
       </trans-unit>
       <trans-unit id="5wkxlYg" resname="Histórico">
         <source>Histórico</source>
-        <target>NEW_Histórico</target>
+        <target>Geçmiş</target>
       </trans-unit>
       <trans-unit id="NlEKxeo" resname="Solicitud de firma creada correctamente">
         <source>Solicitud de firma creada correctamente</source>
-        <target>NEW_Solicitud de firma creada correctamente</target>
+        <target>İmza talebi başarıyla oluşturuldu</target>
       </trans-unit>
       <trans-unit id="YH05n6H" resname="Se ha eliminado la solicitud de firma {id}">
         <source>Se ha eliminado la solicitud de firma {id}</source>
-        <target>NEW_Se ha eliminado la solicitud de firma {id}</target>
+        <target>{id} imza talebi silindi</target>
       </trans-unit>
       <trans-unit id="WAbaEE6" resname="No se ha podido eliminar la solicitud de firma {id}">
         <source>No se ha podido eliminar la solicitud de firma {id}</source>
-        <target>NEW_No se ha podido eliminar la solicitud de firma {id}</target>
+        <target>{id} imza talebi silinemedi</target>
       </trans-unit>
       <trans-unit id="pvGWBMz" resname="Solicitudes de firma">
         <source>Solicitudes de firma</source>
-        <target>NEW_Solicitudes de firma</target>
+        <target>İmza talepleri</target>
       </trans-unit>
       <trans-unit id="vcl.w1H" resname="Tu perfil se ha actualizado correctamente">
         <source>Tu perfil se ha actualizado correctamente</source>
-        <target>NEW_Tu perfil se ha actualizado correctamente</target>
+        <target>Profiliniz başarıyla güncellendi</target>
       </trans-unit>
       <trans-unit id="PRHtUFO" resname="Error inesperado. No se ha actualizado tu perfil">
         <source>Error inesperado. No se ha actualizado tu perfil</source>
-        <target>NEW_Error inesperado. No se ha actualizado tu perfil</target>
+        <target>Beklenmedik hata. Profiliniz güncellenmedi</target>
       </trans-unit>
       <trans-unit id="DQelTSF" resname="Idioma preferido">
         <source>Idioma preferido</source>
-        <target>NEW_Idioma preferido</target>
+        <target>Tercih edilen dil</target>
       </trans-unit>
       <trans-unit id="TWti7sg" resname="Documento a firmar (PDF)">
         <source>Documento a firmar (PDF)</source>
-        <target>NEW_Documento a firmar (PDF)</target>
+        <target>İmzalanacak belge (PDF)</target>
       </trans-unit>
       <trans-unit id="UMHTYpe" resname="Nombre del firmante">
         <source>Nombre del firmante</source>
-        <target>NEW_Nombre del firmante</target>
+        <target>İmzacının adı</target>
       </trans-unit>
       <trans-unit id="JggvJjX" resname="Idioma del firmante">
         <source>Idioma del firmante</source>
-        <target>NEW_Idioma del firmante</target>
+        <target>İmzacının dili</target>
       </trans-unit>
       <trans-unit id="OKSMnfp" resname="Canal de notificación">
         <source>Canal de notificación</source>
-        <target>NEW_Canal de notificación</target>
+        <target>Bildirim kanalı</target>
       </trans-unit>
       <trans-unit id="cPN5nP6" resname="Email del firmante">
         <source>Email del firmante</source>
-        <target>NEW_Email del firmante</target>
+        <target>İmzacının e-postası</target>
       </trans-unit>
       <trans-unit id="a290a6B" resname="Teléfono del firmante">
         <source>Teléfono del firmante</source>
-        <target>NEW_Teléfono del firmante</target>
+        <target>İmzacının telefonu</target>
       </trans-unit>
       <trans-unit id="ewm0YV9" resname="Requerir verificación OTP">
         <source>Requerir verificación OTP</source>
-        <target>NEW_Requerir verificación OTP</target>
+        <target>OTP doğrulaması gerektir</target>
       </trans-unit>
       <trans-unit id="vyDwme_" resname="Será usado en las comunicaciones fuera de la plataforma">
         <source>Será usado en las comunicaciones fuera de la plataforma</source>
-        <target>NEW_Será usado en las comunicaciones fuera de la plataforma</target>
+        <target>Platform dışı iletişimlerde kullanılacaktır</target>
       </trans-unit>
       <trans-unit id="_5M95__" resname="Firma el documento aquí: {url}">
         <source>Firma el documento aquí: {url}</source>
-        <target>NEW_Firma el documento aquí: {url}</target>
+        <target>Belgeyi burada imzalayın: {url}</target>
       </trans-unit>
       <trans-unit id="c4H.dmO" resname="Solicitud de firma de documento">
         <source>Solicitud de firma de documento</source>
-        <target>NEW_Solicitud de firma de documento</target>
+        <target>Belge imza talebi</target>
       </trans-unit>
       <trans-unit id="nRO9X0l" resname="Tu código de verificación es: {code}. Válido durante 15 minutos.">
         <source>Tu código de verificación es: {code}. Válido durante 15 minutos.</source>
-        <target>NEW_Tu código de verificación es: {code}. Válido durante 15 minutos.</target>
+        <target>Doğrulama kodunuz: {code}. 15 dakika geçerlidir.</target>
       </trans-unit>
       <trans-unit id="0XZRGxy" resname="Código de verificación">
         <source>Código de verificación</source>
-        <target>NEW_Código de verificación</target>
+        <target>Doğrulama kodu</target>
       </trans-unit>
       <trans-unit id="xp3IHX2" resname="Días para calcular la estadística">
         <source>Días para calcular la estadística</source>
-        <target>NEW_Días para calcular la estadística</target>
+        <target>İstatistik hesaplamak için gün sayısı</target>
       </trans-unit>
       <trans-unit id="CJ3llDA" resname="Notificaciones">
         <source>Notificaciones</source>
-        <target>NEW_Notificaciones</target>
+        <target>Bildirimler</target>
       </trans-unit>
       <trans-unit id="TFtgJ82" resname="No hay alertas pendientes">
         <source>No hay alertas pendientes</source>
-        <target>NEW_No hay alertas pendientes</target>
+        <target>Bekleyen uyarı yok</target>
       </trans-unit>
       <trans-unit id="9eXkai3" resname="Ver todas las alertas">
         <source>Ver todas las alertas</source>
-        <target>NEW_Ver todas las alertas</target>
+        <target>Tüm uyarıları görüntüle</target>
       </trans-unit>
       <trans-unit id="Ib7E.MM" resname="Cambiar contraseña">
         <source>Cambiar contraseña</source>
-        <target>NEW_Cambiar contraseña</target>
+        <target>Şifreyi değiştir</target>
       </trans-unit>
       <trans-unit id="9FEN5GN" resname="Actualizar mi contraseña">
         <source>Actualizar mi contraseña</source>
-        <target>NEW_Actualizar mi contraseña</target>
+        <target>Şifremi güncelle</target>
       </trans-unit>
       <trans-unit id="BfkEvk." resname="Hola {name}, se ha solicitado tu firma en un documento.">
         <source>Hola {name}, se ha solicitado tu firma en un documento.</source>
-        <target>NEW_Hola {name}, se ha solicitado tu firma en un documento.</target>
+        <target>Merhaba {name}, bir belgede imzanız talep edildi.</target>
       </trans-unit>
       <trans-unit id="1tBamaM" resname="Por favor, accede al siguiente enlace para ver y firmar el documento:">
         <source>Por favor, accede al siguiente enlace para ver y firmar el documento:</source>
-        <target>NEW_Por favor, accede al siguiente enlace para ver y firmar el documento:</target>
+        <target>Lütfen belgeyi görüntülemek ve imzalamak için aşağıdaki bağlantıya erişin:</target>
       </trans-unit>
       <trans-unit id="Iv73ner" resname="Ver y firmar documento">
         <source>Ver y firmar documento</source>
-        <target>NEW_Ver y firmar documento</target>
+        <target>Belgeyi görüntüle ve imzala</target>
       </trans-unit>
       <trans-unit id="4KKJGF1" resname="Este enlace expira el {date}.">
         <source>Este enlace expira el {date}.</source>
-        <target>NEW_Este enlace expira el {date}.</target>
+        <target>Bu bağlantı {date} tarihinde sona erer.</target>
       </trans-unit>
       <trans-unit id="ArLUlMA" resname="Documento ya firmado">
         <source>Documento ya firmado</source>
-        <target>NEW_Documento ya firmado</target>
+        <target>Belge zaten imzalandı</target>
       </trans-unit>
       <trans-unit id="PrQd37I" resname="Este documento ya ha sido firmado">
         <source>Este documento ya ha sido firmado</source>
-        <target>NEW_Este documento ya ha sido firmado</target>
+        <target>Bu belge zaten imzalanmış</target>
       </trans-unit>
       <trans-unit id="z9ICg0G" resname="Firmado el">
         <source>Firmado el</source>
-        <target>NEW_Firmado el</target>
+        <target>İmzalandı:</target>
       </trans-unit>
       <trans-unit id="fts7THf" resname="Verificar la firma">
         <source>Verificar la firma</source>
-        <target>NEW_Verificar la firma</target>
+        <target>İmzayı doğrula</target>
       </trans-unit>
       <trans-unit id="uMDPKTq" resname="Verificación de identidad">
         <source>Verificación de identidad</source>
-        <target>NEW_Verificación de identidad</target>
+        <target>Kimlik doğrulama</target>
       </trans-unit>
       <trans-unit id="h..ICXX" resname="Has superado el número máximo de intentos. El enlace ha quedado bloqueado.">
         <source>Has superado el número máximo de intentos. El enlace ha quedado bloqueado.</source>
-        <target>NEW_Has superado el número máximo de intentos. El enlace ha quedado bloqueado.</target>
+        <target>Maksimum deneme sayısını aştınız. Bağlantı engellendi.</target>
       </trans-unit>
       <trans-unit id="114.WcV" resname="Se ha enviado un nuevo código.">
         <source>Se ha enviado un nuevo código.</source>
-        <target>NEW_Se ha enviado un nuevo código.</target>
+        <target>Yeni bir kod gönderildi.</target>
       </trans-unit>
       <trans-unit id="YwB7hUb" resname="Hemos enviado un código de 6 dígitos al número">
         <source>Hemos enviado un código de 6 dígitos al número</source>
-        <target>NEW_Hemos enviado un código de 6 dígitos al número</target>
+        <target>Numaraya 6 haneli bir kod gönderdik</target>
       </trans-unit>
       <trans-unit id="ozf0AQQ" resname="Hemos enviado un código de 6 dígitos al email">
         <source>Hemos enviado un código de 6 dígitos al email</source>
-        <target>NEW_Hemos enviado un código de 6 dígitos al email</target>
+        <target>E-postaya 6 haneli bir kod gönderdik</target>
       </trans-unit>
       <trans-unit id="9x9aFJ0" resname="Código incorrecto.">
         <source>Código incorrecto.</source>
-        <target>NEW_Código incorrecto.</target>
+        <target>Yanlış kod.</target>
       </trans-unit>
       <trans-unit id="cXxD2Ir" resname="Te quedan %n% intentos.">
         <source>Te quedan %n% intentos.</source>
-        <target>NEW_Te quedan %n% intentos.</target>
+        <target>%n% deneme hakkınız kaldı.</target>
       </trans-unit>
       <trans-unit id="5187CUS" resname="Verificar">
         <source>Verificar</source>
-        <target>NEW_Verificar</target>
+        <target>Doğrula</target>
       </trans-unit>
       <trans-unit id="VAPQ6ut" resname="¿No has recibido el código? Reenviar">
         <source>¿No has recibido el código? Reenviar</source>
-        <target>NEW_¿No has recibido el código? Reenviar</target>
+        <target>Kodu almadınız mı? Yeniden gönder</target>
       </trans-unit>
       <trans-unit id="yaV6LkI" resname="Firmar documento">
         <source>Firmar documento</source>
-        <target>NEW_Firmar documento</target>
+        <target>Belgeyi imzala</target>
       </trans-unit>
       <trans-unit id="uPIDozK" resname="Documento para firmar">
         <source>Documento para firmar</source>
-        <target>NEW_Documento para firmar</target>
+        <target>İmzalanacak belge</target>
       </trans-unit>
       <trans-unit id="2FUlmbk" resname="Documento PDF">
         <source>Documento PDF</source>
-        <target>NEW_Documento PDF</target>
+        <target>PDF belgesi</target>
       </trans-unit>
       <trans-unit id="L.MXjOX" resname="Firma el documento">
         <source>Firma el documento</source>
-        <target>NEW_Firma el documento</target>
+        <target>Belgeyi imzalayın</target>
       </trans-unit>
       <trans-unit id="6J2WB9A" resname="Por favor, lea el documento completo antes de firmarlo. Al firmar, acepta el contenido del documento.">
         <source>Por favor, lea el documento completo antes de firmarlo. Al firmar, acepta el contenido del documento.</source>
-        <target>NEW_Por favor, lea el documento completo antes de firmarlo. Al firmar, acepta el contenido del documento.</target>
+        <target>Lütfen belgeyi imzalamadan önce tamamını okuyun. İmzalayarak belgenin içeriğini kabul etmiş olursunuz.</target>
       </trans-unit>
       <trans-unit id="W6UF2fO" resname="Firmante">
         <source>Firmante</source>
-        <target>NEW_Firmante</target>
+        <target>İmzacı</target>
       </trans-unit>
       <trans-unit id="Kn5pwW1" resname="Expira el">
         <source>Expira el</source>
-        <target>NEW_Expira el</target>
+        <target>Son kullanma tarihi:</target>
       </trans-unit>
       <trans-unit id="FoBqJ4R" resname="He leído y acepto el contenido del documento.">
         <source>He leído y acepto el contenido del documento.</source>
-        <target>NEW_He leído y acepto el contenido del documento.</target>
+        <target>Belgenin içeriğini okudum ve kabul ediyorum.</target>
       </trans-unit>
       <trans-unit id="Kp_.k5q" resname="Documento firmado">
         <source>Documento firmado</source>
-        <target>NEW_Documento firmado</target>
+        <target>İmzalanmış belge</target>
       </trans-unit>
       <trans-unit id="05XuC1S" resname="Documento firmado correctamente">
         <source>Documento firmado correctamente</source>
-        <target>NEW_Documento firmado correctamente</target>
+        <target>Belge başarıyla imzalandı</target>
       </trans-unit>
       <trans-unit id="8hPRU4V" resname="La firma ha quedado registrada.">
         <source>La firma ha quedado registrada.</source>
-        <target>NEW_La firma ha quedado registrada.</target>
+        <target>İmza kaydedildi.</target>
       </trans-unit>
       <trans-unit id="IJOPTsY" resname="ID de la solicitud">
         <source>ID de la solicitud</source>
-        <target>NEW_ID de la solicitud</target>
+        <target>Talep ID'si</target>
       </trans-unit>
       <trans-unit id="nIDlTac" resname="Tu código de verificación para firmar el documento es:">
         <source>Tu código de verificación para firmar el documento es:</source>
-        <target>NEW_Tu código de verificación para firmar el documento es:</target>
+        <target>Belgeyi imzalamak için doğrulama kodunuz:</target>
       </trans-unit>
       <trans-unit id="rfF7OsI" resname="Este código expira el {date}.">
         <source>Este código expira el {date}.</source>
-        <target>NEW_Este código expira el {date}.</target>
+        <target>Bu kod {date} tarihinde sona erer.</target>
       </trans-unit>
       <trans-unit id="Q89dM7o" resname="Si no has solicitado este código, ignora este mensaje.">
         <source>Si no has solicitado este código, ignora este mensaje.</source>
-        <target>NEW_Si no has solicitado este código, ignora este mensaje.</target>
+        <target>Bu kodu talep etmediyseniz bu mesajı görmezden gelin.</target>
       </trans-unit>
       <trans-unit id="AoCvuwi" resname="Verificación de firma">
         <source>Verificación de firma</source>
-        <target>NEW_Verificación de firma</target>
+        <target>İmza doğrulama</target>
       </trans-unit>
       <trans-unit id="oBzXpbq" resname="ID de solicitud">
         <source>ID de solicitud</source>
-        <target>NEW_ID de solicitud</target>
+        <target>Talep ID'si</target>
       </trans-unit>
       <trans-unit id="t7m23wM" resname="Datos de la firma">
         <source>Datos de la firma</source>
-        <target>NEW_Datos de la firma</target>
+        <target>İmza verileri</target>
       </trans-unit>
       <trans-unit id="yScbeW1" resname="Fecha de firma">
         <source>Fecha de firma</source>
-        <target>NEW_Fecha de firma</target>
+        <target>İmza tarihi</target>
       </trans-unit>
       <trans-unit id="xnBUuOs" resname="Driver">
         <source>Driver</source>
-        <target>NEW_Driver</target>
+        <target>Driver</target>
       </trans-unit>
       <trans-unit id="QLvUq5A" resname="Hash del original">
         <source>Hash del original</source>
-        <target>NEW_Hash del original</target>
+        <target>Orijinalin hash'i</target>
       </trans-unit>
       <trans-unit id="9HJBRH8" resname="Hash del firmado">
         <source>Hash del firmado</source>
-        <target>NEW_Hash del firmado</target>
+        <target>İmzalananın hash'i</target>
       </trans-unit>
       <trans-unit id="4BPy0_P" resname="Firma válida">
         <source>Firma válida</source>
-        <target>NEW_Firma válida</target>
+        <target>Geçerli imza</target>
       </trans-unit>
       <trans-unit id="TPKIHiW" resname="Firma NO válida">
         <source>Firma NO válida</source>
-        <target>NEW_Firma NO válida</target>
+        <target>Geçersiz imza</target>
       </trans-unit>
       <trans-unit id="XUtSydT" resname="Este documento aún no ha sido firmado.">
         <source>Este documento aún no ha sido firmado.</source>
-        <target>NEW_Este documento aún no ha sido firmado.</target>
+        <target>Bu belge henüz imzalanmamış.</target>
       </trans-unit>
       <trans-unit id="Zr4Io6K" resname="Enlace inválido">
         <source>Enlace inválido</source>
-        <target>NEW_Enlace inválido</target>
+        <target>Geçersiz bağlantı</target>
       </trans-unit>
       <trans-unit id=".BdJuzV" resname="Este enlace no es válido o ha expirado">
         <source>Este enlace no es válido o ha expirado</source>
-        <target>NEW_Este enlace no es válido o ha expirado</target>
+        <target>Bu bağlantı geçerli değil veya süresi dolmuş</target>
       </trans-unit>
       <trans-unit id="w7oPZNY" resname="El enlace de firma que ha utilizado no es válido, ha expirado o ya no está disponible.">
         <source>El enlace de firma que ha utilizado no es válido, ha expirado o ya no está disponible.</source>
-        <target>NEW_El enlace de firma que ha utilizado no es válido, ha expirado o ya no está disponible.</target>
+        <target>Kullandığınız imza bağlantısı geçerli değil, süresi dolmuş veya artık mevcut değil.</target>
       </trans-unit>
       <trans-unit id="RoiG_Ui" resname="Documento">
         <source>Documento</source>
-        <target>NEW_Documento</target>
+        <target>Belge</target>
       </trans-unit>
       <trans-unit id="AorlCe0" resname="Fecha de expiración">
         <source>Fecha de expiración</source>
-        <target>NEW_Fecha de expiración</target>
+        <target>Son kullanma tarihi</target>
       </trans-unit>
       <trans-unit id="3KsJtNw" resname="Descargar documento firmado">
         <source>Descargar documento firmado</source>
-        <target>NEW_Descargar documento firmado</target>
+        <target>İmzalanmış belgeyi indir</target>
       </trans-unit>
       <trans-unit id="oLtzftI" resname="Verificar firma">
         <source>Verificar firma</source>
-        <target>NEW_Verificar firma</target>
+        <target>İmzayı doğrula</target>
       </trans-unit>
       <trans-unit id="yhue5qm" resname="Teléfono">
         <source>Teléfono</source>
-        <target>NEW_Teléfono</target>
+        <target>Telefon</target>
       </trans-unit>
       <trans-unit id="Dg1lLxW" resname="Canal">
         <source>Canal</source>
-        <target>NEW_Canal</target>
+        <target>Kanal</target>
       </trans-unit>
       <trans-unit id="gTVHpFE" resname="Solicitud">
         <source>Solicitud</source>
-        <target>NEW_Solicitud</target>
+        <target>Talep</target>
       </trans-unit>
       <trans-unit id="04WIWP2" resname="Registrada">
         <source>Registrada</source>
-        <target>NEW_Registrada</target>
+        <target>Kaydedildi</target>
       </trans-unit>
       <trans-unit id="YhBkKc6" resname="Actualizada">
         <source>Actualizada</source>
-        <target>NEW_Actualizada</target>
+        <target>Güncellendi</target>
       </trans-unit>
       <trans-unit id="O7sB3vC" resname="La firma es válida.">
         <source>La firma es válida.</source>
-        <target>NEW_La firma es válida.</target>
+        <target>İmza geçerlidir.</target>
       </trans-unit>
       <trans-unit id="Rz0_zYd" resname="La firma NO es válida.">
         <source>La firma NO es válida.</source>
-        <target>NEW_La firma NO es válida.</target>
+        <target>İmza geçerli DEĞİLDİR.</target>
       </trans-unit>
       <trans-unit id="P0DsxcE" resname="Datos forenses de la firma">
         <source>Datos forenses de la firma</source>
-        <target>NEW_Datos forenses de la firma</target>
+        <target>İmzanın adli verileri</target>
       </trans-unit>
       <trans-unit id="Wj3q5fQ" resname="Hash original">
         <source>Hash original</source>
-        <target>NEW_Hash original</target>
+        <target>Orijinal hash</target>
       </trans-unit>
       <trans-unit id="lbiKI1K" resname="Hash firmado">
         <source>Hash firmado</source>
-        <target>NEW_Hash firmado</target>
+        <target>İmzalanmış hash</target>
       </trans-unit>
       <trans-unit id="7373c8A" resname="IP del firmante">
         <source>IP del firmante</source>
-        <target>NEW_IP del firmante</target>
+        <target>İmzacının IP'si</target>
       </trans-unit>
       <trans-unit id="wvo4He3" resname="User-Agent">
         <source>User-Agent</source>
-        <target>NEW_User-Agent</target>
+        <target>User-Agent</target>
       </trans-unit>
       <trans-unit id=".yoInHy" resname="Contraseña recuperada para el usuario {user}">
         <source>Contraseña recuperada para el usuario {user}</source>
-        <target>NEW_Contraseña recuperada para el usuario {user}</target>
+        <target>{user} kullanıcısı için şifre kurtarıldı</target>
       </trans-unit>
       <trans-unit id="THD2JdW" resname="Documento &quot;{filename}&quot; firmado para la solicitud {id} el {signedAt}">
         <source>Documento "{filename}" firmado para la solicitud {id} el {signedAt}</source>
-        <target>NEW_Documento "{filename}" firmado para la solicitud {id} el {signedAt}</target>
+        <target>"{filename}" belgesi {signedAt} tarihinde {id} talebi için imzalandı</target>
       </trans-unit>
       <trans-unit id="5tplUBz" resname="Solicitud de firma {id} expirada">
         <source>Solicitud de firma {id} expirada</source>
-        <target>NEW_Solicitud de firma {id} expirada</target>
+        <target>{id} imza talebinin süresi doldu</target>
       </trans-unit>
       <trans-unit id="5QDR8pW" resname="Recuperación de contraseña iniciada para el usuario {user}">
         <source>Recuperación de contraseña iniciada para el usuario {user}</source>
-        <target>NEW_Recuperación de contraseña iniciada para el usuario {user}</target>
+        <target>{user} kullanıcısı için şifre kurtarma başlatıldı</target>
       </trans-unit>
       <trans-unit id="juOiASs" resname="Solicitud de firma {id} registrada para firmante {signer}">
         <source>Solicitud de firma {id} registrada para firmante {signer}</source>
-        <target>NEW_Solicitud de firma {id} registrada para firmante {signer}</target>
+        <target>{signer} imzacısı için {id} imza talebi kaydedildi</target>
       </trans-unit>
       <trans-unit id="zypoQj2" resname="OTP solicitado para la solicitud de firma {id} via {channel} a {destination}">
         <source>OTP solicitado para la solicitud de firma {id} via {channel} a {destination}</source>
-        <target>NEW_OTP solicitado para la solicitud de firma {id} via {channel} a {destination}</target>
+        <target>{id} imza talebi için {channel} kanalıyla {destination} adresine OTP talep edildi</target>
       </trans-unit>
       <trans-unit id="PM3c2Tc" resname="OTP verificado para la solicitud de firma {id} desde {ip}">
         <source>OTP verificado para la solicitud de firma {id} desde {ip}</source>
-        <target>NEW_OTP verificado para la solicitud de firma {id} desde {ip}</target>
+        <target>{id} imza talebi için {ip} adresinden OTP doğrulandı</target>
       </trans-unit>
       <trans-unit id="skqnCMO" resname="Documento de la solicitud de firma {id} visualizado desde {ip}">
         <source>Documento de la solicitud de firma {id} visualizado desde {ip}</source>
-        <target>NEW_Documento de la solicitud de firma {id} visualizado desde {ip}</target>
+        <target>{id} imza talebinin belgesi {ip} adresinden görüntülendi</target>
       </trans-unit>
       <trans-unit id="68cSaSf" resname="Solicitud de firma {id} eliminada por {user}">
         <source>Solicitud de firma {id} eliminada por {user}</source>
-        <target>NEW_Solicitud de firma {id} eliminada por {user}</target>
+        <target>{id} imza talebi {user} tarafından silindi</target>
       </trans-unit>
       <trans-unit id="3llH4Ds" resname="El usuario {user} ha cambiado su idioma preferido a {locale}">
         <source>El usuario {user} ha cambiado su idioma preferido a {locale}</source>
-        <target>NEW_El usuario {user} ha cambiado su idioma preferido a {locale}</target>
+        <target>{user} kullanıcısı tercih ettiği dili {locale} olarak değiştirdi</target>
       </trans-unit>
       <trans-unit id="z2pVfhE" resname="Evento">
         <source>Evento</source>
-        <target>NEW_Evento</target>
+        <target>Olay</target>
       </trans-unit>
       <trans-unit id="tHIk6cC" resname="Realizado por">
         <source>Realizado por</source>
-        <target>NEW_Realizado por</target>
+        <target>Gerçekleştiren</target>
       </trans-unit>
       <trans-unit id="SY1yoG3" resname="Sin eventos registrados">
         <source>Sin eventos registrados</source>
-        <target>NEW_Sin eventos registrados</target>
+        <target>Kayıtlı olay yok</target>
       </trans-unit>
       <trans-unit id="Y17EBKt" resname="Se han detectado {count} alertas durante el mes.">
         <source>Se han detectado {count} alertas durante el mes.</source>
-        <target>NEW_Se han detectado {count} alertas durante el mes.</target>
+        <target>Bu ay {count} uyarı tespit edildi.</target>
       </trans-unit>
       <trans-unit id="qXuzTc." resname="Mostramos algunas de las alertas no vistas del mes.">
         <source>Mostramos algunas de las alertas no vistas del mes.</source>
-        <target>NEW_Mostramos algunas de las alertas no vistas del mes.</target>
+        <target>Bu ayın görülmemiş uyarılarından bazılarını gösteriyoruz.</target>
       </trans-unit>
       <trans-unit id="GXvObws" resname="Puede revisarlas desde su zona de &lt;a href=&quot;{link}&quot;&gt;alertas&lt;/a&gt;.">
         <source>Puede revisarlas desde su zona de &lt;a href="{link}"&gt;alertas&lt;/a&gt;.</source>
-        <target><![CDATA[NEW_Puede revisarlas desde su zona de <a href="{link}">alertas</a>.]]></target>
+        <target><![CDATA[<a href="{link}">uyarılar</a> bölümünden inceleyebilirsiniz.]]></target>
       </trans-unit>
       <trans-unit id="nmqibEr" resname="Marcar como vista">
         <source>Marcar como vista</source>
-        <target>NEW_Marcar como vista</target>
+        <target>Görüldü olarak işaretle</target>
       </trans-unit>
       <trans-unit id="kLt98dy" resname="Período">
         <source>Período</source>
-        <target>NEW_Período</target>
+        <target>Dönem</target>
       </trans-unit>
     </body>
   </file>

@@ -7,15 +7,15 @@
     <body>
       <trans-unit id="JZi_tm0" resname="Email">
         <source>Email</source>
-        <target>NEW_Email</target>
+        <target>E-posta</target>
       </trans-unit>
       <trans-unit id="B6AcFkX" resname="Sms">
         <source>Sms</source>
-        <target>NEW_Sms</target>
+        <target>SMS</target>
       </trans-unit>
       <trans-unit id="h4yaFro" resname="Whatsapp">
         <source>Whatsapp</source>
-        <target>NEW_Whatsapp</target>
+        <target>WhatsApp</target>
       </trans-unit>
     </body>
   </file>
