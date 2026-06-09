@@ -16,7 +16,6 @@ use App\Waste\Domain\Model\Alert\Alert;
 use App\Waste\Domain\Model\Alert\AlertFilter;
 use App\Waste\Domain\Model\Alert\AlertId;
 use App\Waste\Domain\Model\Alert\AlertRepository;
-use App\Waste\Domain\Model\Alert\AlertStatus;
 use App\Waste\Domain\Model\Alert\ExistingAlertsIndex;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationRepository;
 

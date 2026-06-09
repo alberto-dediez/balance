@@ -92,9 +92,13 @@ class DailyWaste implements \Stringable
     public function update(
         float $load,
     ): void {
+        assert(null !== $this->accountId);
+
         $this->recordApplyAndPublish(
             new DailyWasteUpdated(
                 dailyWasteId: $this->id(),
+                accountId: $this->accountId,
+                day: $this->day,
                 load: $load,
             ),
         );

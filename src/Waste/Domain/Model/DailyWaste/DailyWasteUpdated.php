@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Waste\Domain\Model\DailyWaste;
 
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 use App\Waste\Domain\DomainEvent;
@@ -14,6 +15,8 @@ final class DailyWasteUpdated extends DomainEvent
 
     public function __construct(
         private readonly DailyWasteId $dailyWasteId,
+        private readonly AccountId $accountId,
+        private readonly \DateTimeImmutable $day,
         private readonly float $load = 0,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
@@ -24,6 +27,16 @@ final class DailyWasteUpdated extends DomainEvent
     public function dailyWasteId(): DailyWasteId
     {
         return $this->dailyWasteId;
+    }
+
+    public function accountId(): AccountId
+    {
+        return $this->accountId;
+    }
+
+    public function day(): \DateTimeImmutable
+    {
+        return $this->day;
     }
 
     public function load(): float
@@ -40,6 +53,8 @@ final class DailyWasteUpdated extends DomainEvent
     {
         return [
             'dailyWasteId' => (string) $this->dailyWasteId,
+            'accountId' => (string) $this->accountId,
+            'day' => $this->day->format('Y-m-d'),
             'load' => $this->load,
         ];
     }
@@ -51,6 +66,8 @@ final class DailyWasteUpdated extends DomainEvent
     ): static {
         return new DailyWasteUpdated(
             dailyWasteId: new DailyWasteId($payload['dailyWasteId']),
+            accountId: new AccountId($payload['accountId']),
+            day: new \DateTimeImmutable($payload['day']),
             load: $payload['load'],
             id: $id,
             occurredOn: $occurredOn,

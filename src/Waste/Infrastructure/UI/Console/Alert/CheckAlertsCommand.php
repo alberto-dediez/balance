@@ -10,6 +10,9 @@ use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Application\CommandBus\Priority;
 use App\Waste\Application\Alert\Check\CheckAlertsRequest;
+use App\Waste\Application\AlertCheckQueue\Register\RegisterAlertCheckQueueRequest;
+use App\Waste\Application\AlertCheckQueue\Remove\RemoveAlertCheckQueueRequest;
+use App\Waste\Domain\Model\AlertCheckQueue\AlertCheckQueueRepository;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationFilter;
 use App\Waste\Domain\Model\AlertConfiguration\AlertConfigurationRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -21,11 +24,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'waste:alerts:check',
-    description: 'Enqueue an alert check per account',
+    description: 'Process the alert check queue and dispatch one check per pending account+date entry',
 )]
 class CheckAlertsCommand extends Command
 {
     public function __construct(
+        private readonly AlertCheckQueueRepository $alertCheckQueueRepository,
         private readonly AlertConfigurationRepository $alertConfigurationRepository,
         private readonly UserRepository $userRepository,
     ) {
@@ -51,25 +55,50 @@ class CheckAlertsCommand extends Command
             return Command::FAILURE;
         }
 
+        $accountIds = $this->resolveAccountIds();
         $checkDate = new \DateTimeImmutable('YESTERDAY');
 
-        $accountIds = $this->resolveAccountIds();
+        if (count($accountIds) > 0) {
+            foreach ($accountIds as $accountId) {
+                CommandBusDispatcher::instance()
+                    ->dispatch(
+                        new RegisterAlertCheckQueueRequest($accountId, $checkDate),
+                        $user,
+                    );
+            }
+        }
 
-        foreach ($accountIds as $accountId) {
+        $pending = $this->alertCheckQueueRepository->findAll();
+
+        if (0 === count($pending)) {
+            $io->info('No hay entradas pendientes en la cola de comprobación de alertas');
+
+            return Command::SUCCESS;
+        }
+
+        foreach ($pending as $entry) {
+            assert(null !== $entry->accountId());
+
             CommandBusDispatcher::instance()
                 ->dispatch(
                     new DeferredCommand(
                         command: new CheckAlertsRequest(
-                            checkDate: $checkDate,
-                            accountId: $accountId,
+                            checkDate: $entry->checkDate(),
+                            accountId: $entry->accountId(),
                         ),
                         priority: Priority::LOW,
                     ),
                     $user,
                 );
+
+            CommandBusDispatcher::instance()
+                ->dispatch(
+                    new RemoveAlertCheckQueueRequest($entry->id()),
+                    $user,
+                );
         }
 
-        $io->success(sprintf('Se han encolado %d comprobaciones de cuenta', count($accountIds)));
+        $io->success(sprintf('Se han encolado %d comprobaciones de alertas', count($pending)));
 
         return Command::SUCCESS;
     }

@@ -1945,6 +1945,14 @@
         <source>Todas las prioridades</source>
         <target>Todas las prioridades</target>
       </trans-unit>
+      <trans-unit id="P6EyIcE" resname="Se ha eliminado la revisión de alertas para la cuenta {accountId} con fecha {checkDate}">
+        <source>Se ha eliminado la revisión de alertas para la cuenta {accountId} con fecha {checkDate}</source>
+        <target>Se ha eliminado la revisión de alertas para la cuenta {accountId} con fecha {checkDate}</target>
+      </trans-unit>
+      <trans-unit id="s3M20ss" resname="Se ha registrado una revisión de alertas para la cuenta {accountId} con fecha {checkDate}">
+        <source>Se ha registrado una revisión de alertas para la cuenta {accountId} con fecha {checkDate}</source>
+        <target>Se ha registrado una revisión de alertas para la cuenta {accountId} con fecha {checkDate}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

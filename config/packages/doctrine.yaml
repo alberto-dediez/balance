@@ -27,6 +27,7 @@ doctrine:
             alert_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\AlertIdType
             alert_configuration_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\AlertConfigurationIdType
             alert_configuration_item_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\AlertConfigurationItemIdType
+            alert_check_queue_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\AlertCheckQueueIdType
             signature_request_id: App\Security\Infrastructure\Persistence\Doctrine\Type\SignatureRequestIdType
 
     orm:
