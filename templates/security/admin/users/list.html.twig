@@ -48,5 +48,7 @@
 {% endblock %}
 
 {% block list_actions %}
+    <twig:Link:Export path="{{ path('export', {'code': 'users'}) }}" />
+
     <twig:Link:Register path="{{ path('admin_users_register') }}" />
 {% endblock list_actions %}

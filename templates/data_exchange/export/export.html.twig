@@ -1,0 +1,30 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = exportationType.name
+    ~ ' > '
+    ~ ('Exportar' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path(exportationType.returnRoute) }}" />
+{% endblock %}
+
+{% block content %}
+    {{ form_start(filterForm) }}
+        <twig:Card>
+            <h3>{{ 'Filtrar datos' | trans }}</h3>
+            {{ form_widget(filterForm) }}
+        </twig:Card>
+    {{ form_end(filterForm) }}
+
+    {{ form_start(optionsForm) }}
+        <twig:Card>
+            <h3>{{ 'Columnas y formato' | trans }}</h3>
+            {{ form_row(optionsForm.columns) }}
+            {{ form_row(optionsForm.format) }}
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="optionsForm.export" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(optionsForm) }}
+{% endblock %}

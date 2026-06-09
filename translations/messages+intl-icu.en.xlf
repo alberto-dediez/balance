@@ -941,6 +941,186 @@
         <source>El usuario {user} ha cambiado su idioma preferido a {locale}</source>
         <target>The user {user} has changed their preferred language to {locale}</target>
       </trans-unit>
+      <trans-unit id="Lm0PXyJ" resname="Continuar">
+        <source>Continuar</source>
+        <target>Continue</target>
+      </trans-unit>
+      <trans-unit id="LUzU1.q" resname="Columnas a exportar">
+        <source>Columnas a exportar</source>
+        <target>Columns to export</target>
+      </trans-unit>
+      <trans-unit id="xoRoVPD" resname="Formato">
+        <source>Formato</source>
+        <target>Format</target>
+      </trans-unit>
+      <trans-unit id="QuxquRE" resname="Exportar">
+        <source>Exportar</source>
+        <target>Export</target>
+      </trans-unit>
+      <trans-unit id="2CzITS8" resname="Ignorar">
+        <source>Ignorar</source>
+        <target>Ignore</target>
+      </trans-unit>
+      <trans-unit id="CmihYJr" resname="Fichero a importar">
+        <source>Fichero a importar</source>
+        <target>File to import</target>
+      </trans-unit>
+      <trans-unit id="hLmVPgJ" resname="Por favor, selecciona un fichero.">
+        <source>Por favor, selecciona un fichero.</source>
+        <target>Please select a file.</target>
+      </trans-unit>
+      <trans-unit id="OTuR23r" resname="El fichero es demasiado grande ({{ size }} {{ suffix }}). El tamaño máximo permitido es {{ limit }} {{ suffix }}.">
+        <source>El fichero es demasiado grande ({{ size }} {{ suffix }}). El tamaño máximo permitido es {{ limit }} {{ suffix }}.</source>
+        <target>The file is too large ({{ size }} {{ suffix }}). The maximum allowed size is {{ limit }} {{ suffix }}.</target>
+      </trans-unit>
+      <trans-unit id="GbvRix2" resname="Por favor, sube un fichero CSV o Excel válido.">
+        <source>Por favor, sube un fichero CSV o Excel válido.</source>
+        <target>Please upload a valid CSV or Excel file.</target>
+      </trans-unit>
+      <trans-unit id="GkdmIqv" resname="Líneas a ignorar del inicio del fichero">
+        <source>Líneas a ignorar del inicio del fichero</source>
+        <target>Lines to skip from the beginning of the file</target>
+      </trans-unit>
+      <trans-unit id="v2d6aJR" resname="Importar">
+        <source>Importar</source>
+        <target>Import</target>
+      </trans-unit>
+      <trans-unit id="nHFUZv0" resname="No se ha podido iniciar la exportación.">
+        <source>No se ha podido iniciar la exportación.</source>
+        <target>The export could not be started.</target>
+      </trans-unit>
+      <trans-unit id="KOwvoR2" resname="La exportación se está generando. Recibirás un email con el enlace de descarga cuando esté lista.">
+        <source>La exportación se está generando. Recibirás un email con el enlace de descarga cuando esté lista.</source>
+        <target>The export is being generated. You will receive an email with the download link when it is ready.</target>
+      </trans-unit>
+      <trans-unit id="wVuBAIJ" resname="No se ha importado el fichero correctamente. Revise la configuración o contacte con un administrador.">
+        <source>No se ha importado el fichero correctamente. Revise la configuración o contacte con un administrador.</source>
+        <target>The file was not imported correctly. Please review the configuration or contact an administrator.</target>
+      </trans-unit>
+      <trans-unit id="3uQmFLV" resname="Hay errores en la configuración de los distintos campos. Por favor, revise el formulario.">
+        <source>Hay errores en la configuración de los distintos campos. Por favor, revise el formulario.</source>
+        <target>There are errors in the field configuration. Please review the form.</target>
+      </trans-unit>
+      <trans-unit id="7hGVql5" resname="Hay errores en el emparejamiento. Por favor, revise el formulario.">
+        <source>Hay errores en el emparejamiento. Por favor, revise el formulario.</source>
+        <target>There are errors in the field matching. Please review the form.</target>
+      </trans-unit>
+      <trans-unit id="F1EyIWj" resname="El fichero no es válido.">
+        <source>El fichero no es válido.</source>
+        <target>The file is not valid.</target>
+      </trans-unit>
+      <trans-unit id="Jv0nOp1" resname="Error importando el fichero {file}">
+        <source>Error importando el fichero {file}</source>
+        <target>Error importing file {file}</target>
+      </trans-unit>
+      <trans-unit id="yzfqoSM" resname="Fichero {file} subido con éxito">
+        <source>Fichero {file} subido con éxito</source>
+        <target>File {file} uploaded successfully</target>
+      </trans-unit>
+      <trans-unit id="NamIU1s" resname="Importación de {file} finalizada">
+        <source>Importación de {file} finalizada</source>
+        <target>Import of {file} completed</target>
+      </trans-unit>
+      <trans-unit id="yyAH1qW" resname="La exportación no se ha podido generar">
+        <source>La exportación no se ha podido generar</source>
+        <target>The export could not be generated</target>
+      </trans-unit>
+      <trans-unit id="ASN.cCP" resname="Exportación finalizada">
+        <source>Exportación finalizada</source>
+        <target>Export completed</target>
+      </trans-unit>
+      <trans-unit id="uoUfYxf" resname="Filtrar datos">
+        <source>Filtrar datos</source>
+        <target>Filter data</target>
+      </trans-unit>
+      <trans-unit id="93EX1aH" resname="Columnas y formato">
+        <source>Columnas y formato</source>
+        <target>Columns and format</target>
+      </trans-unit>
+      <trans-unit id="j6Ca6Qv" resname="Exportación en curso">
+        <source>Exportación en curso</source>
+        <target>Export in progress</target>
+      </trans-unit>
+      <trans-unit id="MFkbtIu" resname="Importación en curso">
+        <source>Importación en curso</source>
+        <target>Import in progress</target>
+      </trans-unit>
+      <trans-unit id="ElKrQyQ" resname="El proceso de importación ha comenzado en segundo plano, por lo que puedes seguir trabajando en otras cosas mientras tanto. Le enviaremos un correo electrónico en cuanto finalice.">
+        <source>El proceso de importación ha comenzado en segundo plano, por lo que puedes seguir trabajando en otras cosas mientras tanto. Le enviaremos un correo electrónico en cuanto finalice.</source>
+        <target>The import process has started in the background, so you can continue working on other things in the meantime. We will send you an email once it is complete.</target>
+      </trans-unit>
+      <trans-unit id="kgyeLBr" resname="En curso">
+        <source>En curso</source>
+        <target>In progress</target>
+      </trans-unit>
+      <trans-unit id="F6fPFql" resname="Columna">
+        <source>Columna</source>
+        <target>Column</target>
+      </trans-unit>
+      <trans-unit id="uk97hXA" resname="Campo">
+        <source>Campo</source>
+        <target>Field</target>
+      </trans-unit>
+      <trans-unit id="Shuo4D2" resname="Ejemplos">
+        <source>Ejemplos</source>
+        <target>Examples</target>
+      </trans-unit>
+      <trans-unit id="5zYTrOq" resname="Emparejar campos">
+        <source>Emparejar campos</source>
+        <target>Match fields</target>
+      </trans-unit>
+      <trans-unit id="p2Nc5Bg" resname="Resultado de la importación">
+        <source>Resultado de la importación</source>
+        <target>Import result</target>
+      </trans-unit>
+      <trans-unit id="WkGlyGK" resname="Resultados">
+        <source>Resultados</source>
+        <target>Results</target>
+      </trans-unit>
+      <trans-unit id="nw4FBBq" resname="Campo no emparejado">
+        <source>Campo no emparejado</source>
+        <target>Unmatched field</target>
+      </trans-unit>
+      <trans-unit id="TUO0uXy" resname="Asignar valor">
+        <source>Asignar valor</source>
+        <target>Assign value</target>
+      </trans-unit>
+      <trans-unit id="z8TXQN1" resname="Asignar valores">
+        <source>Asignar valores</source>
+        <target>Assign values</target>
+      </trans-unit>
+      <trans-unit id="L7a_5lL" resname="Valor original">
+        <source>Valor original</source>
+        <target>Original value</target>
+      </trans-unit>
+      <trans-unit id="Z5jNTXt" resname="Traducir valores">
+        <source>Traducir valores</source>
+        <target>Translate values</target>
+      </trans-unit>
+      <trans-unit id="3omL6oD" resname="El proceso de exportación ha finalizado. Puede descargar el fichero en el siguiente enlace:">
+        <source>El proceso de exportación ha finalizado. Puede descargar el fichero en el siguiente enlace:</source>
+        <target>The export process has completed. You can download the file at the following link:</target>
+      </trans-unit>
+      <trans-unit id="jRNp3.2" resname="Descargar fichero">
+        <source>Descargar fichero</source>
+        <target>Download file</target>
+      </trans-unit>
+      <trans-unit id="ttQvknx" resname="El enlace estará disponible hasta el {date}.">
+        <source>El enlace estará disponible hasta el {date}.</source>
+        <target>The link will be available until {date}.</target>
+      </trans-unit>
+      <trans-unit id="slSA9gG" resname="Se ha producido un error al generar la exportación. Inténtelo de nuevo o contacte con un administrador.">
+        <source>Se ha producido un error al generar la exportación. Inténtelo de nuevo o contacte con un administrador.</source>
+        <target>An error occurred while generating the export. Please try again or contact an administrator.</target>
+      </trans-unit>
+      <trans-unit id="rpLRMsp" resname="El proceso de importación ha finalizado. Puede comprobar el resultado en el siguiente enlace:">
+        <source>El proceso de importación ha finalizado. Puede comprobar el resultado en el siguiente enlace:</source>
+        <target>The import process has completed. You can check the result at the following link:</target>
+      </trans-unit>
+      <trans-unit id="g8qj0jz" resname="Ver resultado">
+        <source>Ver resultado</source>
+        <target>View result</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
