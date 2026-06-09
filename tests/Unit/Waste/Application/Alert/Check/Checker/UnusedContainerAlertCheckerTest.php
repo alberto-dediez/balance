@@ -99,7 +99,7 @@ class UnusedContainerAlertCheckerTest extends TestCase
             type: AlertType::UnusedContainer,
             propertyId: $container->propertyId(),
             wasteId: $container->wasteId(),
-            alertPriority: AlertPriority::Warning
+            alertPriority: AlertPriority::Warning,
         );
 
         $alerts = $sut->check($accountId, [$this->createRule()], $checkDate, $existingAlerts);

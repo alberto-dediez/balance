@@ -21,7 +21,7 @@ class AlertConfigurationItem
     public function __construct(
         private AlertConfigurationItemId $id,
         private AlertType $type,
-        private bool $enabled = false,
+        private bool $enabled = true,
         private array $parameters = [],
         private ?PropertyId $propertyId = null,
         private ?WasteId $wasteId = null,

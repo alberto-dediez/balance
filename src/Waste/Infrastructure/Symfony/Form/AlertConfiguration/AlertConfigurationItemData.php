@@ -13,7 +13,7 @@ final class AlertConfigurationItemData
     /** @param array<string, array<string, mixed>> $parameters keyed by AlertType value */
     public function __construct(
         public ?string $type = null,
-        public bool $enabled = false,
+        public bool $enabled = true,
         public ?PropertyId $propertyId = null,
         public ?WasteId $wasteId = null,
         public array $parameters = [],
