@@ -1929,6 +1929,22 @@
         <source>Período</source>
         <target>Period</target>
       </trans-unit>
+      <trans-unit id="EzuWm0g" resname="Ya existe una configuración de alertas para esta cuenta.">
+        <source>Ya existe una configuración de alertas para esta cuenta.</source>
+        <target>There is already an alert configuration for this account.</target>
+      </trans-unit>
+      <trans-unit id="KNu5C76" resname="Umbral mínimo (kg)">
+        <source>Umbral mínimo (kg)</source>
+        <target>Minimum threshold (kg)</target>
+      </trans-unit>
+      <trans-unit id="pPoeLHH" resname="Prioridad">
+        <source>Prioridad</source>
+        <target>Priority</target>
+      </trans-unit>
+      <trans-unit id="n.vrGDD" resname="Todas las prioridades">
+        <source>Todas las prioridades</source>
+        <target>All priorities</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

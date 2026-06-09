@@ -1813,6 +1813,22 @@
         <source>Período</source>
         <target>Dönem</target>
       </trans-unit>
+      <trans-unit id="EzuWm0g" resname="Ya existe una configuración de alertas para esta cuenta.">
+        <source>Ya existe una configuración de alertas para esta cuenta.</source>
+        <target>Bu hesap için zaten bir uyarı yapılandırması mevcut.</target>
+      </trans-unit>
+      <trans-unit id="KNu5C76" resname="Umbral mínimo (kg)">
+        <source>Umbral mínimo (kg)</source>
+        <target>Minimum eşik (kg)</target>
+      </trans-unit>
+      <trans-unit id="pPoeLHH" resname="Prioridad">
+        <source>Prioridad</source>
+        <target>Öncelik</target>
+      </trans-unit>
+      <trans-unit id="n.vrGDD" resname="Todas las prioridades">
+        <source>Todas las prioridades</source>
+        <target>Tüm öncelikler</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

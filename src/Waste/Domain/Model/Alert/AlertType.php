@@ -7,6 +7,7 @@ namespace App\Waste\Domain\Model\Alert;
 use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\AbnormallyHighParametersType;
 use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\AbnormallyLowParametersType;
 use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\AlertParametersType;
+use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\FixedMinimumThresholdParametersType;
 use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\FixedThresholdParametersType;
 use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\InactiveUserParametersType;
 use App\Waste\Infrastructure\Symfony\Form\AlertConfiguration\NoMeasurementsParametersType;
@@ -19,6 +20,7 @@ enum AlertType: string
     case AbnormallyHigh = 'AbnormallyHigh';
     case ThresholdExceeded = 'ThresholdExceeded';
     case FixedThreshold = 'FixedThreshold';
+    case FixedMinimumThreshold = 'FixedMinimumThreshold';
     case AbnormallyLow = 'AbnormallyLow';
     case UnusedContainer = 'UnusedContainer';
     case InactiveUser = 'InactiveUser';
@@ -31,6 +33,7 @@ enum AlertType: string
             self::AbnormallyHigh => AbnormallyHighParametersType::class,
             self::ThresholdExceeded => ThresholdExceededParametersType::class,
             self::FixedThreshold => FixedThresholdParametersType::class,
+            self::FixedMinimumThreshold => FixedMinimumThresholdParametersType::class,
             self::AbnormallyLow => AbnormallyLowParametersType::class,
             self::UnusedContainer => UnusedContainerParametersType::class,
             self::InactiveUser => InactiveUserParametersType::class,

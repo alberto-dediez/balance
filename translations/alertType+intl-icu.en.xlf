@@ -33,6 +33,10 @@
         <source>InactiveUser</source>
         <target>Inactive user</target>
       </trans-unit>
+      <trans-unit id="td9d0I5" resname="FixedMinimumThreshold">
+        <source>FixedMinimumThreshold</source>
+        <target>Fixed minimum threshold</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -33,6 +33,10 @@
         <source>InactiveUser</source>
         <target>Pasif kullanıcı</target>
       </trans-unit>
+      <trans-unit id="td9d0I5" resname="FixedMinimumThreshold">
+        <source>FixedMinimumThreshold</source>
+        <target>Sabit minimum eşik</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

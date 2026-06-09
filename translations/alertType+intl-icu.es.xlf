@@ -33,6 +33,10 @@
         <source>InactiveUser</source>
         <target>Usuario inactivo</target>
       </trans-unit>
+      <trans-unit id="td9d0I5" resname="FixedMinimumThreshold">
+        <source>FixedMinimumThreshold</source>
+        <target>Umbral fijo mínimo</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -5,15 +5,15 @@
       <tool tool-id="symfony" tool-name="Symfony"/>
     </header>
     <body>
-      <trans-unit id="alertPriority.Info" resname="Info">
+      <trans-unit id="RmnBdRa" resname="Info">
         <source>Info</source>
         <target>Info</target>
       </trans-unit>
-      <trans-unit id="alertPriority.Warning" resname="Warning">
+      <trans-unit id="V9XnrRt" resname="Warning">
         <source>Warning</source>
         <target>Aviso</target>
       </trans-unit>
-      <trans-unit id="alertPriority.Critical" resname="Critical">
+      <trans-unit id="lzkhA5b" resname="Critical">
         <source>Critical</source>
         <target>Crítica</target>
       </trans-unit>
