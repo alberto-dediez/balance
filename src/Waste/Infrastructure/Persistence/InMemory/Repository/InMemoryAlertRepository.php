@@ -118,6 +118,16 @@ class InMemoryAlertRepository implements AlertRepository
                 continue;
             }
 
+            if (
+                $filter->periodDate instanceof \DateTimeImmutable
+                && (
+                    $alert->periodFrom() > $filter->periodDate
+                    || $alert->periodTo() < $filter->periodDate
+                )
+            ) {
+                continue;
+            }
+
             if ($offset > 0) {
                 --$offset;
 

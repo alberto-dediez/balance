@@ -22,6 +22,7 @@ class AlertFilter
         public ?AlertPriority $priority = null,
         public ?\DateTimeImmutable $from = null,
         public ?\DateTimeImmutable $to = null,
+        public ?\DateTimeImmutable $periodDate = null,
         int $limit = 50,
         string $orderBy = 'detectedAt',
         string $orderWay = 'DESC',

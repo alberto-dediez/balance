@@ -126,6 +126,14 @@ class DoctrineAlertRepository implements AlertRepository
             ;
         }
 
+        if ($filter->periodDate instanceof \DateTimeImmutable) {
+            $qb
+                ->andWhere($qb->expr()->lte('a.periodFrom', ':periodDate'))
+                ->andWhere($qb->expr()->gte('a.periodTo', ':periodDate'))
+                ->setParameter('periodDate', $filter->periodDate->format('Y-m-d'))
+            ;
+        }
+
         $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {

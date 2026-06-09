@@ -49,7 +49,8 @@ class CheckAlertsService implements CommandHandler
 
         $existingAlerts = new ExistingAlertsIndex($this->alertRepository->findByFilter(new AlertFilter(
             accountId: $accountId,
-            status: AlertStatus::New,
+            status: null,
+            periodDate: $checkDate,
             limit: 0,
         )));
 
