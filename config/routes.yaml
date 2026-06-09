@@ -41,6 +41,16 @@ security-api:
     type: attribute
     prefix: '/api'
 
+data-exchange-web:
+    resource:
+        path: ../src/DataExchange/Infrastructure/UI/Web/
+        namespace: App\DataExchange\Infrastructure\UI\Web
+    type: attribute
+    prefix: /{_locale}
+    requirements:
+        _locale: '%app.locale_list%'
+    defaults:
+        _locale: '%app.locale_default%'
 
 home_fallback:
     path: /

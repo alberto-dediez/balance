@@ -1,0 +1,42 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = importationType.name
+    ~ ' > '
+    ~ ('Importar' | trans)
+    ~ ' > '
+    ~ ('Asignar valores' | trans)
+%}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path(importationType.returnRoute) }}" />
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+    <twig:Card>
+        {% set notPairedFields = form | filter(v => v.vars.name in notConfiguredFields) %}
+
+        {% set columns = [
+            {
+                'label': 'Campo no emparejado' | trans,
+            }, {
+                'label': 'Asignar valor' | trans,
+            }
+        ] %}
+
+        <twig:List:Table :columns="columns" :elements="notPairedFields">
+            <td class="col-6">
+                <label class="form-label" for="{{ element.vars.id }}">{{ element.vars.name | trans({}, 'fields') }}</label>
+            </td>
+            <td class="col-6">
+                {{ form_widget(element) }}
+                {{ form_errors(element) }}
+            </td>
+        </twig:List:Table>
+
+        <twig:ActionBar>
+            <twig:ActionBar:Button type="outline-primary" :button="form.continue" />
+        </twig:ActionBar>
+    </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

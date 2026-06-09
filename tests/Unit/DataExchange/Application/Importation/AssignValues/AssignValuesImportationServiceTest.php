@@ -1,0 +1,124 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\DataExchange\Application\Importation\AssignValues;
+
+use App\DataExchange\Application\Importation\AssignValues\AssignValuesImportationRequest;
+use App\DataExchange\Application\Importation\AssignValues\AssignValuesImportationService;
+use App\DataExchange\Domain\Model\Importation\ImportationDefaultValuesUpdated;
+use App\DataExchange\Domain\Model\Importation\ImportationFile;
+use App\DataExchange\Domain\Model\Importation\ImportationId;
+use App\DataExchange\Infrastructure\Persistence\InMemory\Repository\InMemoryImportationRepository;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\DataExchange\Application\Importation\ImportationAuthorizerMother;
+use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
+
+class AssignValuesImportationServiceTest extends TestCase
+{
+    private SpyDomainEventSubscriber $spySubscriber;
+
+    protected function setUp(): void
+    {
+        DomainEventPublisher::instance()->reset();
+
+        $this->spySubscriber = new SpyDomainEventSubscriber();
+    }
+
+    public function testUseCase(): void
+    {
+        $importationFile = new ImportationFile(
+            path: __DIR__ . '/../Register/superheroes.csv',
+        );
+
+        $importation = ImportationMother::fromNameAndFile('superheroes.csv', $importationFile);
+
+        $repository = new InMemoryImportationRepository();
+        $repository->add($importation);
+
+        $accountId = $importation->accountId();
+        self::assertNotNull($accountId);
+        $user = UserMother::fromUsernameAndRoleAndAccount(
+            username: 'owner',
+            role: Role::Owner,
+            accountId: $accountId,
+        );
+
+        $sut = $this->createSUT($repository);
+
+        $request = new AssignValuesImportationRequest(
+            importationId: $importation->id(),
+            defaultValues: [
+                'name' => null,
+                'age' => '35',
+            ],
+        );
+
+        $result = $sut($request, $user);
+
+        $this->assertNotEmpty((string) $result->importationId);
+        $this->assertEquals(36, strlen((string) $result->importationId));
+
+        $importationPersisted = $repository->find($result->importationId);
+
+        $this->assertNotNull($importationPersisted);
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertNotNull($lastEvent);
+        $this->assertTrue($lastEvent instanceof ImportationDefaultValuesUpdated);
+        $this->assertTrue($importationPersisted->id()->equals($lastEvent->importationId()));
+    }
+
+    public function testUnauthorizedAccess(): void
+    {
+        $this->expectException(UnauthorizedActionException::class);
+
+        $importation = ImportationMother::random();
+
+        $repository = new InMemoryImportationRepository();
+        $repository->add($importation);
+
+        $user = UserMother::fromUsernameAndRoleAndAccount(
+            username: 'owner',
+            role: Role::Owner,
+            accountId: AccountId::generate(),
+        );
+
+        $sut = $this->createSUT($repository);
+
+        $request = new AssignValuesImportationRequest(
+            importationId: $importation->id(),
+            defaultValues: [],
+        );
+
+        $sut($request, $user);
+    }
+
+    public function testIsHandle(): void
+    {
+        $repository = new InMemoryImportationRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $result = $sut->isHandled(new AssignValuesImportationRequest(
+            importationId: ImportationId::generate(),
+            defaultValues: [],
+        ));
+
+        $this->assertTrue($result);
+    }
+
+    private function createSUT(InMemoryImportationRepository $repository): AssignValuesImportationService
+    {
+        $authorizer = ImportationAuthorizerMother::create();
+
+        return new AssignValuesImportationService($repository, $authorizer);
+    }
+}

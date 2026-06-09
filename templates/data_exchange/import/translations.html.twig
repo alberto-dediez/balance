@@ -1,0 +1,45 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = importationType.name
+    ~ ' > '
+    ~ ('Importar' | trans)
+    ~ ' > '
+    ~ ('Traducir valores' | trans)
+%}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path(importationType.returnRoute) }}" />
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+    <twig:Card>
+        {% for configuration in form.pairedConfigurations | filter(c => c.translations is defined) %}
+            {% set columns = [
+                {
+                    'label': 'Valor original' | trans,
+                }, {
+                    'label': 'Asignar valor' | trans,
+                }
+            ] %}
+
+            <h4 class="ps-4 mt-0">{{ configuration.vars.value.field | trans([], 'fields') }}</h4>
+            <twig:List:Table :columns="columns" :elements="configuration.translations">
+                <td class="col-6">
+                    <label class="form-label" for="{{ element.translation.vars.id }}">{{ element.vars.value.value }}</label>
+                </td>
+                <td class="col-6">
+                    {{ form_widget(element.translation) }}
+                    {{ form_errors(element.translation) }}
+                </td>
+            </twig:List:Table>
+        {% endfor %}
+
+        {% do form.pairedConfigurations.setRendered %}
+
+        <twig:ActionBar>
+            <twig:ActionBar:Button type="outline-primary" :button="form.continue" />
+        </twig:ActionBar>
+    </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

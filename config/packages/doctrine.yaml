@@ -9,7 +9,8 @@ doctrine:
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
         types:
-            locale: App\Shared\Infrastructure\Persistence\Doctrine\Type\LocaleType
+            locale: App\Shared\Infrastructure\Persistence\Doctrine\Type\LocaleType  
+            importation_id: App\DataExchange\Infrastructure\Persistence\Doctrine\Type\ImportationIdType
             user_id: App\Security\Infrastructure\Persistence\Doctrine\Type\UserIdType
             account_id: App\Security\Infrastructure\Persistence\Doctrine\Type\AccountIdType
             recorded_event_id: App\Security\Infrastructure\Persistence\Doctrine\Type\RecordedEventIdType
@@ -32,6 +33,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Security/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Security\Domain\Model'
                 alias: Security
+            DataExchange:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/DataExchange/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\DataExchange\Domain\Model'
+                alias: DataExchange
         controller_resolver:
             auto_mapping: false
 
