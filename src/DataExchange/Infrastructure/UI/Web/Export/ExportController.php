@@ -10,7 +10,6 @@ use App\DataExchange\Infrastructure\UI\Web\DTO\ExportOptionsRequest;
 use App\DataExchange\Infrastructure\UI\Web\Form\ExportOptionsType;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +20,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 class ExportController extends AbstractController
 {
     use AuthorizeTrait;
-    use FilterTrait;
 
     public function __invoke(
         string $code,
@@ -34,12 +32,6 @@ class ExportController extends AbstractController
 
         $this->denyUnlessTypeAllowed($exportationType, $loggedUser());
 
-        [$filter, $filterForm] = $this->filter(
-            $request,
-            fn(): object => $exportationType->createFilter(),
-            $exportationType->filterFormClass(),
-        );
-
         $defaultColumns = [];
         foreach ($exportationType->columnDefinitions() as $definition) {
             if ($definition->selectedByDefault) {
@@ -49,8 +41,14 @@ class ExportController extends AbstractController
 
         $optionsForm = $this->createForm(
             ExportOptionsType::class,
-            new ExportOptionsRequest(columns: $defaultColumns),
-            ['definitions' => $exportationType->columnDefinitions()],
+            new ExportOptionsRequest(
+                columns: $defaultColumns,
+                filter: $exportationType->createFilter(),
+            ),
+            [
+                'definitions' => $exportationType->columnDefinitions(),
+                'filter_form_class' => $exportationType->filterFormClass(),
+            ],
         );
 
         $optionsForm->handleRequest($request);
@@ -65,7 +63,7 @@ class ExportController extends AbstractController
                         type: $exportationType->code(),
                         format: $data->format,
                         columns: $data->columns,
-                        filter: $filter,
+                        filter: $data->filter ?? $exportationType->createFilter(),
                         accountId: $loggedAccount()?->id(),
                     ),
                     $loggedUser(),
@@ -85,7 +83,6 @@ class ExportController extends AbstractController
 
         return $this->render('@data_exchange/export/export.html.twig', [
             'exportationType' => $exportationType,
-            'filterForm' => $filterForm->createView(),
             'optionsForm' => $optionsForm->createView(),
         ]);
     }
