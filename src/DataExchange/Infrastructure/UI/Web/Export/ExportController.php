@@ -72,7 +72,6 @@ class ExportController extends AbstractController
                 );
             } catch (\Throwable $e) {
                 $this->addFlash('danger', new TranslatableMessage('No se ha podido iniciar la exportación.'));
-                $this->addFlash('danger', $e->getMessage());
 
                 return $this->redirectToRoute('export', ['code' => $exportationType->code()]);
             }

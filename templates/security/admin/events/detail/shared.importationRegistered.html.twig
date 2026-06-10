@@ -1,0 +1,5 @@
+{% trans with {
+    '{name}': event.name,
+    '{type}': event.type,
+    '{registeredBy}': event.registeredBy ? (event.registeredBy | user_name) : ('sistema' | trans)
+} %}Registrada importación "{name}" de tipo {type} por {registeredBy}{% endtrans %}
