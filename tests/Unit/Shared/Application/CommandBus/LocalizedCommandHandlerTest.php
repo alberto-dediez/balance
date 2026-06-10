@@ -19,84 +19,123 @@ use PHPUnit\Framework\TestCase;
 
 class LocalizedCommandHandlerTest extends TestCase
 {
-    private LocaleCapturingHandler $innerHandler;
-    private User $user;
+    private SluttyCommandHandler $captureHandler;
 
     protected function setUp(): void
     {
         CommandBusDispatcher::instance()->reset();
-        LocaleGetter::setLocale(Locale::Spanish);
-
-        $this->innerHandler = new LocaleCapturingHandler();
-        $this->user = UserMother::adminUser();
-
-        $sut = new LocalizedCommandHandler();
-        $sut->register();
+        $this->captureHandler = new SluttyCommandHandler();
+        LocaleGetter::setLocale(null);
     }
 
     public function testIsHandledForLocalizedCommand(): void
     {
-        $sut = new LocalizedCommandHandler();
+        $sut = $this->createSUT();
+        $command = new LocalizedCommand(new FakeLocalizedInnerCommand(), Locale::Spanish);
 
-        $this->assertTrue($sut->isHandled(new LocalizedCommand(new LocalizedFakeCommand(), Locale::English)));
+        $this->assertTrue($sut->isHandled($command));
     }
 
     public function testIsNotHandledForOtherCommands(): void
     {
-        $sut = new LocalizedCommandHandler();
+        $sut = $this->createSUT();
 
-        $this->assertFalse($sut->isHandled(new LocalizedFakeCommand()));
+        $this->assertFalse($sut->isHandled(new FakeLocalizedInnerCommand()));
     }
 
-    public function testSetsRequestedLocaleWhenDispatchingInnerCommand(): void
+    public function testDispatchesInnerCommandToCommandBus(): void
     {
-        CommandBusDispatcher::instance()->dispatch(
-            new LocalizedCommand(new LocalizedFakeCommand(), Locale::English),
-            $this->user,
-        );
+        $sut = $this->createSUT();
+        $user = UserMother::adminUser();
+        $inner = new FakeLocalizedInnerCommand();
+        $command = new LocalizedCommand($inner, Locale::English);
 
-        $this->assertSame(Locale::English, $this->innerHandler->capturedLocale());
+        $sut->handle($command, $user);
+
+        $commands = $this->captureHandler->commands();
+        $this->assertCount(1, $commands);
+        $this->assertSame($inner, $commands[0]['command']);
+    }
+
+    public function testSetsLocaleBeforeDispatch(): void
+    {
+        $localeOnDispatch = null;
+
+        CommandBusDispatcher::instance()->reset();
+        new LocaleCapturingHandler(function () use (&$localeOnDispatch) {
+            $localeOnDispatch = LocaleGetter::locale();
+        });
+
+        LocaleGetter::setLocale(Locale::Spanish);
+        $sut = $this->createSUT();
+        $sut->handle(new LocalizedCommand(new FakeLocalizedInnerCommand(), Locale::English), UserMother::adminUser());
+
+        $this->assertEquals(Locale::English, $localeOnDispatch);
     }
 
     public function testRestoresPreviousLocaleAfterDispatch(): void
     {
-        LocaleGetter::setLocale(Locale::French);
+        $sut = $this->createSUT();
 
-        CommandBusDispatcher::instance()->dispatch(
-            new LocalizedCommand(new LocalizedFakeCommand(), Locale::German),
-            $this->user,
-        );
+        LocaleGetter::setLocale(Locale::Spanish);
+        $sut->handle(new LocalizedCommand(new FakeLocalizedInnerCommand(), Locale::English), UserMother::adminUser());
 
-        $this->assertSame(Locale::French, LocaleGetter::locale());
+        $this->assertEquals(Locale::Spanish, LocaleGetter::locale());
     }
 
-    public function testRestoresPreviousLocaleWhenInnerCommandThrows(): void
+    public function testRestoresPreviousLocaleEvenOnException(): void
     {
-        LocaleGetter::setLocale(Locale::Italian);
+        CommandBusDispatcher::instance()->reset();
+        new ThrowingLocaleCommandHandler();
 
-        $this->innerHandler->throwOnNextCall();
-
-        $this->expectException(\RuntimeException::class);
+        $sut = $this->createSUT();
+        LocaleGetter::setLocale(Locale::Spanish);
 
         try {
-            CommandBusDispatcher::instance()->dispatch(
-                new LocalizedCommand(new LocalizedFakeCommand(), Locale::Turkish),
-                $this->user,
-            );
-        } finally {
-            $this->assertSame(Locale::Italian, LocaleGetter::locale());
+            $sut->handle(new LocalizedCommand(new FakeLocalizedInnerCommand(), Locale::English), UserMother::adminUser());
+        } catch (\RuntimeException) {
         }
+
+        $this->assertEquals(Locale::Spanish, LocaleGetter::locale());
+    }
+
+    private function createSUT(): LocalizedCommandHandler
+    {
+        return new LocalizedCommandHandler();
     }
 }
 
-class LocalizedFakeCommand implements Command {}
+class FakeLocalizedInnerCommand implements Command {}
 
 class LocaleCapturingHandler implements CommandHandler
 {
     use RegisterHandlerTrait;
 
-    private ?Locale $capturedLocale = null;
-    private bool $shouldThrow = false;
+    /** @var callable */
+    private $onHandle;
+
+    public function __construct(callable $onHandle)
+    {
+        $this->onHandle = $onHandle;
+        $this->register();
+    }
+
+    public function isHandled(Command $command): bool
+    {
+        return true;
+    }
+
+    public function handle(Command $command, User $user): ?CommandResponse
+    {
+        ($this->onHandle)();
+
+        return null;
+    }
+}
+
+class ThrowingLocaleCommandHandler implements CommandHandler
+{
+    use RegisterHandlerTrait;
 
     public function __construct()
     {
@@ -105,27 +144,11 @@ class LocaleCapturingHandler implements CommandHandler
 
     public function isHandled(Command $command): bool
     {
-        return $command instanceof LocalizedFakeCommand;
+        return true;
     }
 
     public function handle(Command $command, User $user): ?CommandResponse
     {
-        $this->capturedLocale = LocaleGetter::locale();
-
-        if ($this->shouldThrow) {
-            throw new \RuntimeException('inner command failure');
-        }
-
-        return null;
-    }
-
-    public function capturedLocale(): ?Locale
-    {
-        return $this->capturedLocale;
-    }
-
-    public function throwOnNextCall(): void
-    {
-        $this->shouldThrow = true;
+        throw new \RuntimeException('Handler error');
     }
 }

@@ -177,10 +177,20 @@ icon-lock:
 translation:
 	@$(PHP) ./bin/console trans:extract es --force --prefix="NEW_" -q
 	@$(PHP) ./bin/console trans:extract en --force --prefix="NEW_" -q
+	@$(PHP) ./bin/console trans:extract tr --force --prefix="NEW_" -q
 
 ## —— Messages ————————————————————————————————————————————————————————————
-queues:
+queues: ## Start workers for all priority queues (high, medium, low)
+	@$(PHP) bin/console messenger:consume --all --exclude-receivers=failed -vv
+
+queues-high: ## Start worker for the high priority queue
+	@$(PHP) bin/console messenger:consume async_high -vv
+
+queues-medium: ## Start worker for the medium priority queue
 	@$(PHP) bin/console messenger:consume async -vv
+
+queues-low: ## Start worker for the low priority queue
+	@$(PHP) bin/console messenger:consume async_low -vv
 
 ## —— Production ————————————————————————————————————————————————————————————
 asset-prod:

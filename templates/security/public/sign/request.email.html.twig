@@ -1,0 +1,23 @@
+{% extends '@shared/layout/email.html.twig' %}
+
+{% block content %}
+    <h3>{% trans -%}Solicitud de firma de documento{%- endtrans %}</h3>
+    <p>
+        {% trans with {'{name}': signerName} -%}
+            Hola {name}, se ha solicitado tu firma en un documento.
+        {%- endtrans %}
+    </p>
+    <p>{% trans -%}Por favor, accede al siguiente enlace para ver y firmar el documento:{%- endtrans %}</p>
+    <p>
+        <a href="{{ signingUrl }}" class="btn btn-primary">
+            {% trans -%}Ver y firmar documento{%- endtrans %}
+        </a>
+    </p>
+    <p>
+        <small>
+            {% trans with {'{date}': expiresAt | date('d/m/Y H:i')} -%}
+                Este enlace expira el {date}.
+            {%- endtrans %}
+        </small>
+    </p>
+{% endblock %}

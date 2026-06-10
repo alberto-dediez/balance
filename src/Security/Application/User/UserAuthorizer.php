@@ -48,6 +48,11 @@ final class UserAuthorizer extends AbstractAuthorizer
         return $this->canEdit($subject, $user);
     }
 
+    protected function canExport(mixed $subject, User $user): bool
+    {
+        return $this->canList($subject, $user);
+    }
+
     protected function canAutocomplete(mixed $subject, User $user): bool
     {
         if ($user->hasRole(Role::Admin)) {

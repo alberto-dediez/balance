@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Waste\Domain\Model\AlertCheckQueue\AlertCheckQueue" table="alert_check_queue">
+        <id name="id" type="alert_check_queue_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="accountId" type="account_id" column="account_id" nullable="false" />
+        <field name="checkDate" type="datetime_immutable" column="check_date" nullable="false" />
+        <field name="createdAt" type="datetime_immutable" column="created_at" nullable="false" />
+
+        <unique-constraints>
+            <unique-constraint columns="account_id,check_date" name="uq_alert_check_queue_account_date" />
+        </unique-constraints>
+    </entity>
+
+</doctrine-mapping>

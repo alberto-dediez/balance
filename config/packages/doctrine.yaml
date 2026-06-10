@@ -9,8 +9,9 @@ doctrine:
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
         types:
-            locale: App\Shared\Infrastructure\Persistence\Doctrine\Type\LocaleType
+            locale: App\Shared\Infrastructure\Persistence\Doctrine\Type\LocaleType  
             importation_id: App\DataExchange\Infrastructure\Persistence\Doctrine\Type\ImportationIdType
+            exportation_id: App\DataExchange\Infrastructure\Persistence\Doctrine\Type\ExportationIdType
             user_id: App\Security\Infrastructure\Persistence\Doctrine\Type\UserIdType
             account_id: App\Security\Infrastructure\Persistence\Doctrine\Type\AccountIdType
             recorded_event_id: App\Security\Infrastructure\Persistence\Doctrine\Type\RecordedEventIdType
@@ -27,6 +28,11 @@ doctrine:
             waste_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\WasteIdType
             waste_manager_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\WasteManagerIdType
             daily_waste_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\DailyWasteIdType
+            alert_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\AlertIdType
+            alert_configuration_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\AlertConfigurationIdType
+            alert_configuration_item_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\AlertConfigurationItemIdType
+            alert_check_queue_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\AlertCheckQueueIdType
+            signature_request_id: App\Security\Infrastructure\Persistence\Doctrine\Type\SignatureRequestIdType
             critical_point_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointIdType
             reason_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ReasonIdType
             critical_point_reason_link_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointReasonLinkIdType

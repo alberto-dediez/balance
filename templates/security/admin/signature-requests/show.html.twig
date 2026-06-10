@@ -1,0 +1,100 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set page_title = ('Solicitudes de firma' | trans) ~ ' > ' ~ signatureRequest.signer.name %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_signature_requests') }}" />
+    {% if signatureRequest.documentSigned %}
+        <twig:TopAction path="{{ path('admin_signature_requests_download', {'signatureRequestId': signatureRequest.id}) }}">
+            <twig:Icon name="solar:download-square-line-duotone" size="lg" class="me-2" />
+            {{ 'Descargar documento firmado' | trans }}
+        </twig:TopAction>
+    {% endif %}
+    <twig:TopAction path="{{ path('public_sign_verify', {'signatureRequestId': signatureRequest.id}) }}" target="_blank">
+        <twig:Icon name="solar:shield-check-line-duotone" size="lg" class="me-2" />
+        {{ 'Verificar firma' | trans }}
+    </twig:TopAction>
+{% endblock %}
+
+{% block content %}
+    <twig:Card>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <h6 class="fw-semibold mb-3">{{ 'Firmante' | trans }}</h6>
+                <twig:View:Field label="{{ 'Nombre' | trans }}">{{ signatureRequest.signer.name }}</twig:View:Field>
+                {% if signatureRequest.signer.email %}
+                    <twig:View:Field label="{{ 'Email' | trans }}">{{ signatureRequest.signer.email }}</twig:View:Field>
+                {% endif %}
+                {% if signatureRequest.signer.phone %}
+                    <twig:View:Field label="{{ 'Teléfono' | trans }}">{{ signatureRequest.signer.phone }}</twig:View:Field>
+                {% endif %}
+                <twig:View:Field label="{{ 'Canal' | trans }}">{{ signatureRequest.signer.notificationChannel.value | trans }}</twig:View:Field>
+            </div>
+            <div class="col-md-6">
+                <h6 class="fw-semibold mb-3">{{ 'Solicitud' | trans }}</h6>
+                <twig:View:Field label="{{ 'Estado' | trans }}">
+                    <span class="badge {{ signatureRequest.status.style }}">
+                        {{ signatureRequest.status.value | trans({}, 'signatureRequestStatus') }}
+                    </span>
+                </twig:View:Field>
+                <twig:View:Field label="{{ 'Registrada' | trans }}">{{ signatureRequest.registeredAt | date('d/m/Y H:i') }}</twig:View:Field>
+                {% if signatureRequest.updatedAt %}
+                    <twig:View:Field label="{{ 'Actualizada' | trans }}">{{ signatureRequest.updatedAt | date('d/m/Y H:i') }}</twig:View:Field>
+                {% else %}
+                    <twig:View:Field label="{{ 'Expira el' | trans }}">{{ signatureRequest.expiresAt | date('d/m/Y H:i') }}</twig:View:Field>
+                {% endif %}
+            </div>
+        </div>
+    </twig:Card>
+
+    {% if signatureRequest.signatureProof %}
+        <twig:Card>
+            <h6 class="fw-semibold mb-3">{{ 'Datos forenses de la firma' | trans }}</h6>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <twig:View:Field label="{{ 'Firmado el' | trans }}">
+                        {{ signatureRequest.signatureProof.signedAt | date('d/m/Y H:i:s') }} UTC
+                    </twig:View:Field>
+                </div>
+                <div class="col-md-4">
+                    <twig:View:Field label="{{ 'Hash original' | trans }}">
+                        <small><code>{{ signatureRequest.signatureProof.documentHashAtSigning }}</code></small>
+                    </twig:View:Field>
+                </div>
+                <div class="col-md-4">
+                    <twig:View:Field label="{{ 'Hash firmado' | trans }}">
+                        <small><code>{{ signatureRequest.signatureProof.signedDocumentSha256 }}</code></small>
+                    </twig:View:Field>
+                </div>
+                <div class="col-md-3">
+                    <twig:View:Field label="{{ 'IP del firmante' | trans }}">
+                        <code>{{ signatureRequest.signatureProof.signerIp ?? '-' }}</code>
+                    </twig:View:Field>
+                </div>
+                <div class="col-md-3">
+                    <twig:View:Field label="{{ 'Driver' | trans }}">
+                        <code>{{ signatureRequest.signatureProof.driver }}</code>
+                    </twig:View:Field>
+                </div>
+
+                {% if signatureRequest.signatureProof.signerUserAgent %}
+                    <div class="col-md-6">
+                        <twig:View:Field label="{{ 'User-Agent' | trans }}">
+                            <small><code>{{ signatureRequest.signatureProof.signerUserAgent }}</code></small>
+                        </twig:View:Field>
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if verificationResult is not null %}
+                <twig:Alert:Alert type="{{ verificationResult.valid ? 'success' : 'danger' }}">
+                    {% if verificationResult.valid %}
+                        ✓ {{ 'La firma es válida.' | trans }}
+                    {% else %}
+                        ✗ {{ 'La firma NO es válida.' | trans }} {{ verificationResult.details }}
+                    {% endif %}
+                </twig:Alert:Alert>
+            {% endif %}
+        </twig:Card>
+    {% endif %}
+{% endblock %}

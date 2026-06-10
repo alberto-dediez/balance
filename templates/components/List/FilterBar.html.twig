@@ -50,6 +50,8 @@
                             {% set value = value.value | trans({}, 'foodType') %}
                         {% elseif field == 'incidenceId' %}
                             {% set value = value | incidence_name %}
+                        {% elseif field == 'signatureStatus' %}
+                            {% set value = value.value | trans({}, 'signatureRequestStatus') %}
                         {% endif %}
 
                         <twig:List:FilterShow

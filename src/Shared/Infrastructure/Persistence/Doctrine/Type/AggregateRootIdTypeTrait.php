@@ -24,12 +24,10 @@ trait AggregateRootIdTypeTrait
             return null;
         }
 
-        $className = $this->getClassName();
+        /** @var AggregateRootId $id */
+        $id = new ($this->getClassName())($value);
 
-        /** @var AggregateRootId $instance */
-        $instance = new $className($value);
-
-        return $instance;
+        return $id;
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string

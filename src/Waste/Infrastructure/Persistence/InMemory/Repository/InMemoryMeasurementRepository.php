@@ -163,6 +163,26 @@ class InMemoryMeasurementRepository implements MeasurementRepository
                 continue;
             }
 
+            if (
+                $filter->registeredAtFrom instanceof \DateTimeImmutable
+                && (
+                    null == $measurement->registeredAt()
+                    || $measurement->registeredAt() < $filter->registeredAtFrom->setTime(0, 0, 0)
+                )
+            ) {
+                continue;
+            }
+
+            if (
+                $filter->registeredAtTo instanceof \DateTimeImmutable
+                && (
+                    null == $measurement->registeredAt()
+                    || $measurement->registeredAt() > $filter->registeredAtTo->setTime(23, 59, 59)
+                )
+            ) {
+                continue;
+            }
+
             if ($offset > 0) {
                 --$offset;
 

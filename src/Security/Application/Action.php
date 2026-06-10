@@ -8,6 +8,8 @@ enum Action: string
 {
     case Autocomplete = 'autocomplete';
 
+    case History = 'history';
+
     case List = 'list';
 
     case Edit = 'edit';

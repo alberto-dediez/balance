@@ -4,7 +4,7 @@
     <twig:TopAction:Return path="{{ path('admin_users') }}" />
 {% endblock %}
 
-{% set page_title = ('Usuarios' | trans) 
+{% set page_title = ('Usuarios' | trans)
     ~ ' > '
     ~ ('Editar' | trans)
     ~ ' > '
@@ -19,8 +19,9 @@
                     <twig:View:Field label="{{ 'Cuenta' | trans }}">{{ user.account != null ? user.account.name : '---' }}</twig:View:Field>
 
                     {{ form_row(form.roles) }}
+                    {{ form_row(form.preferredLocale) }}
                 </div>
-            </div>    
+            </div>
 
             <twig:ActionBar>
                 <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />

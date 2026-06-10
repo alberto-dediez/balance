@@ -1,0 +1,4 @@
+{% trans with {
+    '{user}': event.userId | user_name,
+    '{id}': event.payload.signatureRequestId
+} %}Solicitud de firma {id} eliminada por {user}{% endtrans %}

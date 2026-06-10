@@ -21,6 +21,9 @@ export default class extends Controller {
 
         const newEl = temp.content.firstElementChild;
         if (newEl) {
+            const placeholder = collection.querySelector('.collection-empty');
+            if (placeholder) placeholder.remove();
+
             collection.appendChild(newEl);
             this.indexValue++;
         }

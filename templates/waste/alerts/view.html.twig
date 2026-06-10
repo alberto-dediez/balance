@@ -1,0 +1,40 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('alerts') }}" />
+{% endblock %}
+
+{% if alert.singleDayPeriod %}
+    {% set period = (alert.periodFrom | date('d/m/Y')) %}
+{% else %}
+    {% set period = (alert.periodFrom | date('d/m/Y')) ~ ' - ' ~ (alert.periodTo | date('d/m/Y')) %}
+{% endif %}
+
+{% set page_title = ('Alertas' | trans)
+    ~ ' > '
+    ~ ('Detalles' | trans)
+    ~ ' > '
+    ~ (alert.type.value | trans({}, 'alertType'))
+    ~ ' ('
+    ~ period
+    ~ ')' %}
+
+{% block content %}
+    <twig:Card>
+        <div class="row">
+            <twig:View:Field label="{{ 'Tipo' | trans }}">{{ alert.type.value | trans({}, 'alertType') }}</twig:View:Field>
+            <twig:View:Field label="{{ 'Propiedad' | trans }}">{{ alert.propertyId | property_name }}</twig:View:Field>
+            <twig:View:Field label="{{ 'Residuo' | trans }}">{{ alert.wasteId ? (alert.wasteId | waste_name) : '-' }}</twig:View:Field>
+            <twig:View:Field label="{{ 'Valor' | trans }}">{{ alert.value is not null ? alert.value : '-' }}</twig:View:Field>
+            <twig:View:Field label="{{ 'Umbral' | trans }}">{{ alert.threshold is not null ? alert.threshold : '-' }}</twig:View:Field>
+            <twig:View:Field label="{{ 'Período' | trans }}">{{ period }}</twig:View:Field>
+            <twig:View:Field label="{{ 'Detectada' | trans }}">{{ alert.detectedAt | date('H:i d/m/Y') }}</twig:View:Field>
+            <twig:View:Field label="{{ 'Prioridad' | trans }}">
+                {{ alert.priority.value | trans({}, 'alertPriority') }}
+            </twig:View:Field>
+            <twig:View:Field label="{{ 'Estado' | trans }}">
+                {{ alert.status.value | trans({}, 'alertStatus') }}
+            </twig:View:Field>
+        </div>
+    </twig:Card>
+{% endblock %}

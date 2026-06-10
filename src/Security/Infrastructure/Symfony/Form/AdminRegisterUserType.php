@@ -8,6 +8,7 @@ use App\Security\Application\User\Register\RegisterUserRequest;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Infrastructure\Symfony\Form\Type\AccountType;
 use App\Security\Infrastructure\Symfony\Form\Type\RoleType;
+use App\Shared\Infrastructure\Symfony\Form\Type\LocaleType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -40,6 +41,11 @@ class AdminRegisterUserType extends AbstractType
                 'choices' => Role::casesForAdmins(),
                 'required' => false,
                 'multiple' => true,
+            ])
+            ->add('preferredLocale', LocaleType::class, [
+                'label' => new TranslatableMessage('Idioma preferido'),
+                'required' => false,
+                'mapped' => false,
             ])
             ->add('register', SubmitType::class, [
                 'label' => new TranslatableMessage('Registrar'),

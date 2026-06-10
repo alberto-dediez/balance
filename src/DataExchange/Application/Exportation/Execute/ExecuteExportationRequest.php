@@ -1,0 +1,15 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\DataExchange\Application\Exportation\Execute;
+
+use App\DataExchange\Domain\Model\Exportation\ExportationId;
+use App\Shared\Application\CommandBus\Command;
+
+class ExecuteExportationRequest implements Command
+{
+    public function __construct(
+        public ExportationId $exportationId,
+    ) {}
+}

@@ -28,6 +28,8 @@ class MeasurementFilter
         public ?AccountId $accountId = null,
         public ?UserId $userId = null,
         public ?\DateTimeImmutable $registeredAt = null,
+        public ?\DateTimeImmutable $registeredAtFrom = null,
+        public ?\DateTimeImmutable $registeredAtTo = null,
         public ?string $reference = null,
         int $limit = 10,
         string $orderBy = 'default',

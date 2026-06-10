@@ -168,6 +168,20 @@ class DoctrineMeasurementRepository implements MeasurementRepository
             ;
         }
 
+        if ($filter->registeredAtFrom instanceof \DateTimeImmutable) {
+            $qb
+                ->andWhere($qb->expr()->gte('m.registeredAt', ':registeredAtFrom'))
+                ->setParameter('registeredAtFrom', $filter->registeredAtFrom->format('Y-m-d') . ' 00:00:00')
+            ;
+        }
+
+        if ($filter->registeredAtTo instanceof \DateTimeImmutable) {
+            $qb
+                ->andWhere($qb->expr()->lte('m.registeredAt', ':registeredAtTo'))
+                ->setParameter('registeredAtTo', $filter->registeredAtTo->format('Y-m-d') . ' 23:59:59')
+            ;
+        }
+
         $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {

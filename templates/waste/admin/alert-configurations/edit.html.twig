@@ -1,0 +1,24 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_alert_configurations') }}" />
+{% endblock %}
+
+{% set page_title = ('Configuraciones de alertas' | trans)
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ alertConfiguration.accountId | account_name %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            {% include '@waste/admin/alert-configurations/_form.html.twig' %}
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form) }}
+{% endblock %}

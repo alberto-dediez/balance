@@ -612,8 +612,6 @@ class ImportCommand extends Command
 
                 $propertyId = $registerResponse->propertyId;
             } elseif (!$propertyId instanceof PropertyId) {
-                assert(!empty($outputFile));
-
                 fputcsv($outputFile, [
                     $externalId->bioscore() ?? '',
                     $externalId->hotelbeds() ?? '',
@@ -644,8 +642,6 @@ class ImportCommand extends Command
         }
 
         if (!$createIfNotExists) {
-            assert(!empty($outputFile));
-
             fclose($outputFile);
         }
 

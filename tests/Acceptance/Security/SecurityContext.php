@@ -6,26 +6,41 @@ namespace App\Tests\Acceptance\Security;
 
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
+use App\Security\Domain\Model\SignatureRequest\DocumentReference;
+use App\Security\Domain\Model\SignatureRequest\NotificationChannel;
+use App\Security\Domain\Model\SignatureRequest\OtpChallenge;
+use App\Security\Domain\Model\SignatureRequest\SignatureProof;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequest;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestRepository;
+use App\Security\Domain\Model\SignatureRequest\Signer;
+use App\Security\Domain\Model\SignatureRequest\Token;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\SSO\InMemory\InMemorySSOClient;
 use App\Security\Infrastructure\SSO\InMemory\InMemorySSOJwtDecoder;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
+use App\Tests\Unit\Security\Domain\Model\SignatureRequest\SignatureRequestMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Hook\AfterScenario;
 use Behat\Step\Given;
+use Behat\Step\When;
+use PHPUnit\Framework\Assert;
 
 use function PHPUnit\Framework\assertNotEmpty;
 
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
-final readonly class SecurityContext implements Context
+final class SecurityContext implements Context
 {
     private AcceptanceClient $client;
+
+    private string $lastOtpCode = '';
 
     public function __construct(
         KernelBrowser $kernelBrowser,
@@ -47,6 +62,11 @@ final readonly class SecurityContext implements Context
     private function getAccountRepository(): AccountRepository
     {
         return $this->client->getContainer()->get(AccountRepository::class);
+    }
+
+    private function getSignatureRequestRepository(): SignatureRequestRepository
+    {
+        return $this->client->getContainer()->get(SignatureRequestRepository::class);
     }
 
     #[Given('user :username with role :role exists')]
@@ -119,6 +139,200 @@ final readonly class SecurityContext implements Context
         $user = UserMother::fromUsernameAndRecoverToken($username, $token);
 
         $this->getUserRepository()->add($user);
+    }
+
+    #[Given('signature request with id :id and account :accountId exists')]
+    public function signatureRequestWithIdAndAccountExists(string $id, string $accountId): void
+    {
+        $signatureRequest = SignatureRequestMother::fromIdAndAccountId($id, $accountId);
+
+        $this->getSignatureRequestRepository()->add($signatureRequest);
+    }
+
+    #[Given('a readable temp pdf file exists at :path')]
+    public function aReadableTempPdfFileExistsAt(string $path): void
+    {
+        file_put_contents($path, '%PDF-1.4 test content');
+    }
+
+    #[Given('signature request with id :id and account :accountId and token :plainValue exists')]
+    public function signatureRequestWithTokenExists(string $id, string $accountId, string $plainValue): void
+    {
+        /** @var string $appSecret */
+        $appSecret = $this->client->getContainer()->getParameter('app.signature_hmac_secret');
+
+        $token = new Token(
+            hash: Token::hashFor($plainValue, $appSecret),
+            plainValue: $plainValue,
+        );
+
+        $signatureRequest = new SignatureRequest(id: new SignatureRequestId($id));
+        $signatureRequest->register(
+            token: $token,
+            documentToSign: new DocumentReference(
+                sha256: hash('sha256', 'test-content'),
+                size: 100,
+                filename: 'test.pdf',
+                path: '/tmp/test.pdf',
+            ),
+            signer: new Signer(name: 'Test Signer', locale: Locale::Spanish, email: 'signer@example.com'),
+            accountId: new AccountId($accountId),
+        );
+
+        $this->getSignatureRequestRepository()->add($signatureRequest);
+
+        $this->setOtpVerifiedInSession($plainValue);
+    }
+
+    #[Given('signed signature request with id :id and account :accountId and token :plainValue exists')]
+    public function signedSignatureRequestWithTokenExists(string $id, string $accountId, string $plainValue): void
+    {
+        /** @var string $appSecret */
+        $appSecret = $this->client->getContainer()->getParameter('app.signature_hmac_secret');
+
+        $token = new Token(
+            hash: Token::hashFor($plainValue, $appSecret),
+            plainValue: $plainValue,
+        );
+
+        $signatureRequest = new SignatureRequest(id: new SignatureRequestId($id));
+        $signatureRequest->register(
+            token: $token,
+            documentToSign: new DocumentReference(
+                sha256: hash('sha256', 'test-content'),
+                size: 100,
+                filename: 'test.pdf',
+                path: '/tmp/test.pdf',
+            ),
+            signer: new Signer(name: 'Test Signer', locale: Locale::Spanish, email: 'signer@example.com'),
+            accountId: new AccountId($accountId),
+        );
+
+        $proof = SignatureProof::create(
+            signedAt: new \DateTimeImmutable(),
+            documentHashAtSigning: hash('sha256', 'original'),
+            signedDocumentSha256: hash('sha256', 'signed'),
+            driver: 'hmac',
+            proofPayload: 'test-proof',
+            signerIp: '127.0.0.1',
+        );
+        $signatureRequest->sign($proof, new DocumentReference(
+            sha256: hash('sha256', 'signed'),
+            size: 100,
+            filename: 'signed.pdf',
+            path: '/tmp/signed.pdf',
+        ));
+
+        $this->getSignatureRequestRepository()->add($signatureRequest);
+
+        $this->setOtpVerifiedInSession($plainValue);
+    }
+
+    #[Given('signed signature request with id :id and account :accountId exists')]
+    public function signedSignatureRequestWithIdAndAccountExists(string $id, string $accountId): void
+    {
+        $signatureRequest = SignatureRequestMother::fromIdAndAccountId($id, $accountId);
+
+        $proof = SignatureProof::create(
+            signedAt: new \DateTimeImmutable(),
+            documentHashAtSigning: hash('sha256', 'original'),
+            signedDocumentSha256: hash('sha256', 'signed'),
+            driver: 'hmac',
+            proofPayload: 'test-proof',
+            signerIp: '127.0.0.1',
+            signerUserAgent: 'TestAgent',
+        );
+
+        $documentSigned = new DocumentReference(
+            sha256: hash('sha256', 'signed'),
+            size: 100,
+            filename: 'signed.pdf',
+            path: '/tmp/signed.pdf',
+        );
+
+        $signatureRequest->sign($proof, $documentSigned);
+
+        $this->getSignatureRequestRepository()->add($signatureRequest);
+    }
+
+    #[Given('signature request with id :id and account :accountId and token :plainValue and SMS channel exists')]
+    public function signatureRequestWithSmsChannelExists(string $id, string $accountId, string $plainValue): void
+    {
+        /** @var string $appSecret */
+        $appSecret = $this->client->getContainer()->getParameter('app.signature_hmac_secret');
+
+        $token = new Token(
+            hash: Token::hashFor($plainValue, $appSecret),
+            plainValue: $plainValue,
+        );
+
+        $signatureRequest = new SignatureRequest(id: new SignatureRequestId($id));
+        $signatureRequest->register(
+            token: $token,
+            documentToSign: new DocumentReference(
+                sha256: hash('sha256', 'test-content'),
+                size: 100,
+                filename: 'test.pdf',
+                path: '/tmp/test.pdf',
+            ),
+            signer: new Signer(
+                name: 'SMS Signer',
+                locale: Locale::Spanish,
+                email: 'signer@example.com',
+                phone: '+34600000000',
+                notificationChannel: NotificationChannel::Sms,
+            ),
+            accountId: new AccountId($accountId),
+        );
+
+        $challenge = OtpChallenge::generate($appSecret);
+        $this->lastOtpCode = $challenge->plainCode();
+        $signatureRequest->sendOtp($challenge);
+
+        $this->getSignatureRequestRepository()->add($signatureRequest);
+    }
+
+    #[When('I submit the OTP from the last SMS to :path')]
+    public function iSubmitTheOtpFromTheLastSmsTo(string $path): void
+    {
+        Assert::assertNotEmpty($this->lastOtpCode, 'No se generó ningún OTP en el paso Given');
+
+        $form = $this->client->getCrawler()->filter('form')->first()->form();
+        $form['otp_code'] = $this->lastOtpCode;
+        $this->client->submit($form);
+    }
+
+    #[When('I submit a wrong OTP to :path')]
+    public function iSubmitAWrongOtpTo(string $path): void
+    {
+        $form = $this->client->getCrawler()->filter('form')->first()->form();
+        $form['otp_code'] = '000000';
+        $this->client->submit($form);
+    }
+
+    #[When('I resend the OTP to :path')]
+    public function iResendTheOtpTo(string $path): void
+    {
+        $forms = $this->client->getCrawler()->filter('form');
+        $resendForm = $forms->count() > 1 ? $forms->last()->form() : $forms->first()->form();
+        $this->client->submit($resendForm);
+    }
+
+    private function setOtpVerifiedInSession(string $plainToken): void
+    {
+        /** @var string $appSecret */
+        $appSecret = $this->client->getContainer()->getParameter('app.signature_hmac_secret');
+        $tokenHash = Token::hashFor($plainToken, $appSecret);
+        $signatureRequest = $this->getSignatureRequestRepository()->findByToken($tokenHash);
+
+        if (null === $signatureRequest) {
+            return;
+        }
+
+        $challenge = OtpChallenge::generate($appSecret);
+        $signatureRequest->sendOtp($challenge);
+        $signatureRequest->verifyOtp($challenge->plainCode(), $appSecret);
+        $this->getSignatureRequestRepository()->add($signatureRequest);
     }
 
     #[Given('the SSO client rejects all tokens')]

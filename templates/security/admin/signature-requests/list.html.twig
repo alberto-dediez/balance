@@ -1,0 +1,68 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Solicitudes de firma' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Documento' | trans,
+            'sortable': false
+        }, {
+            'label': 'Firmante' | trans,
+            'sortable': false
+        }, {
+            'label': 'Cuenta' | trans,
+            'sortable': false
+        }, {
+            'label': 'Estado' | trans,
+            'sortable': true,
+            'sortableBy': 'status'
+        }, {
+            'label': 'Fecha de expiración' | trans,
+            'sortable': true,
+            'sortableBy': 'expiresAt'
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="signatureRequests" :bulkForm="bulkForm">
+        <td>{{ element.documentToSign.filename }}</td>
+        <td>{{ element.signer.name }}</td>
+        <td>{{ element.accountId is not empty ? (element.accountId | account_name) : '---' }}</td>
+        <td>
+            <div class="badge {{ element.status.style }}">
+                {{ element.status.value | trans({}, 'signatureRequestStatus') }}
+            </div>
+        </td>
+        <td>
+            {% if element.isSigned %}
+                ---
+            {% elseif element.isExpired %}
+                <div class="text-danger">{{ element.expiresAt | date('d/m/Y H:i') }}</div>
+            {% else %}
+                {{ element.expiresAt | date('d/m/Y H:i') }}
+            {% endif %}
+        </td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            <twig:List:Action:View path="{{ path('admin_signature_requests_show', {'signatureRequestId': element.id}) }}" />
+
+            {% if element | is_authorized('history') %}
+                <twig:List:Action:History path="{{ path('admin_signature_requests_history', {'signatureRequestId': element.id}) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('admin_signature_requests_remove', {'signatureRequestId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('admin_signature_requests_register') }}" />
+{% endblock list_actions %}

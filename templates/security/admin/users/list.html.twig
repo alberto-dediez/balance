@@ -32,6 +32,10 @@
         <td>{{ element.active | show_field_value | trans }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
+            {% if element | is_authorized('history') %}
+                <twig:List:Action:History path="{{ path('admin_user_history', {'userId': element.id}) }}" />
+            {% endif %}
+
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('admin_users_edit', {'userId': element.id}) }}" />
             {% endif %}
@@ -44,5 +48,7 @@
 {% endblock %}
 
 {% block list_actions %}
+    <twig:Link:Export path="{{ path('export', {'code': 'users'}) }}" />
+
     <twig:Link:Register path="{{ path('admin_users_register') }}" />
 {% endblock list_actions %}

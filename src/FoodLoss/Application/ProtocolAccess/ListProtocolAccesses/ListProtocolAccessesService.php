@@ -54,7 +54,7 @@ class ListProtocolAccessesService
             static fn(ProtocolAccessSummary $a, ProtocolAccessSummary $b) => match (true) {
                 null !== $a->lastAccessedAt && null === $b->lastAccessedAt => -1,
                 null === $a->lastAccessedAt && null !== $b->lastAccessedAt => 1,
-                null !== $a->lastAccessedAt && null !== $b->lastAccessedAt => $b->lastAccessedAt <=> $a->lastAccessedAt,
+                null !== $a->lastAccessedAt => $b->lastAccessedAt <=> $a->lastAccessedAt,
                 default => strcmp((string) $a->employee, (string) $b->employee),
             },
         );

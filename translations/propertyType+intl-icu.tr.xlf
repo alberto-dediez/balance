@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="tr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="7fuJpR8" resname="Hotel">
+        <source>Hotel</source>
+        <target>Otel</target>
+      </trans-unit>
+      <trans-unit id="RIReX8D" resname="Aparthotel">
+        <source>Aparthotel</source>
+        <target>Apart otel</target>
+      </trans-unit>
+      <trans-unit id="_p_Nk4w" resname="VacationalHotel">
+        <source>VacationalHotel</source>
+        <target>Tatil oteli</target>
+      </trans-unit>
+      <trans-unit id="te13B_t" resname="ResortHotel">
+        <source>ResortHotel</source>
+        <target>Resort otel</target>
+      </trans-unit>
+      <trans-unit id="IZxGN3E" resname="BusinessHotel">
+        <source>BusinessHotel</source>
+        <target>İş oteli</target>
+      </trans-unit>
+      <trans-unit id="1TEc9bY" resname="SpaHotel">
+        <source>SpaHotel</source>
+        <target>Spa oteli</target>
+      </trans-unit>
+      <trans-unit id="CclE28G" resname="RuralAccommodation">
+        <source>RuralAccommodation</source>
+        <target>Kırsal konaklama</target>
+      </trans-unit>
+      <trans-unit id="i4ksW70" resname="Camping">
+        <source>Camping</source>
+        <target>Kamp alanı</target>
+      </trans-unit>
+      <trans-unit id="ApCCcRU" resname="CityHotel">
+        <source>CityHotel</source>
+        <target>Şehir oteli</target>
+      </trans-unit>
+      <trans-unit id="1NTwK5V" resname="Flat">
+        <source>Flat</source>
+        <target>Daire</target>
+      </trans-unit>
+      <trans-unit id="S7CeWOm" resname="Hostel">
+        <source>Hostel</source>
+        <target>Hostel</target>
+      </trans-unit>
+      <trans-unit id="3BtAjgw" resname="Apartment">
+        <source>Apartment</source>
+        <target>Apart</target>
+      </trans-unit>
+      <trans-unit id=".gUASAl" resname="Motel">
+        <source>Motel</source>
+        <target>Motel</target>
+      </trans-unit>
+      <trans-unit id="aiFSOsy" resname="Other">
+        <source>Other</source>
+        <target>Diğer</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

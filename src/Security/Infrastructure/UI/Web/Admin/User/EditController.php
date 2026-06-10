@@ -6,12 +6,15 @@ namespace App\Security\Infrastructure\UI\Web\Admin\User;
 
 use App\Security\Application\Action;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Application\User\UpdateProfile\UpdateProfileRequest;
+use App\Security\Application\User\UpdateProfile\UpdateProfileService;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Symfony\Form\AdminEditUserType;
 use App\Security\Infrastructure\Symfony\Form\EditUser;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Security\Infrastructure\UI\Web\User\EditUserTrait;
 use App\Security\Infrastructure\UI\Web\User\GetUserFromIdTrait;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,6 +34,7 @@ class EditController extends AbstractController
         string $userId,
         LoggedUser $loggedUser,
         UserRepository $userRepository,
+        UpdateProfileService $updateProfile,
         Request $request,
     ): Response {
         $user = $this->getUserFromId($userId, $userRepository);
@@ -39,11 +43,18 @@ class EditController extends AbstractController
 
         $performBy = $loggedUser();
 
-        $form = $this->createForm(AdminEditUserType::class, new EditUser($user->roles()));
+        $form = $this->createForm(AdminEditUserType::class, new EditUser($user->roles(), $user->preferredLocale()));
 
         try {
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($user, $performBy): void {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($user, $performBy, $updateProfile): void {
                 $this->updateRoles($user, $form->get('roles')->getData(), $performBy);
+
+                /** @var Locale|null $preferredLocale */
+                $preferredLocale = $form->get('preferredLocale')->getData() ?: null;
+
+                if ($preferredLocale instanceof Locale) {
+                    $updateProfile(new UpdateProfileRequest(userId: $user->id(), preferredLocale: $preferredLocale), $performBy);
+                }
             });
 
             if ($needsRedirect) {

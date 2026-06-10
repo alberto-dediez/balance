@@ -1,0 +1,4 @@
+{% trans with {
+    '{exportationId}': event.exportationId,
+    '{errorMessage}': event.errorMessage
+} %}Falló la exportación {exportationId}: {errorMessage}{% endtrans %}

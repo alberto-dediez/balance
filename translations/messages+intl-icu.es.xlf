@@ -445,9 +445,9 @@
         <source>Se ha registrado la propiedad {property} sin cuenta asociada</source>
         <target>Se ha registrado la propiedad {property} sin cuenta asociada</target>
       </trans-unit>
-      <trans-unit id="gSfjrLI" resname="Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}">
-        <source>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}</source>
-        <target>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}</target>
+      <trans-unit id="KSPRggE" resname="Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
+        <source>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</source>
+        <target>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</target>
       </trans-unit>
       <trans-unit id="oyqvcQF" resname="Activada la cuenta {account}">
         <source>Activada la cuenta {account}</source>
@@ -485,9 +485,9 @@
         <source>Concedido permiso "{role}" al usuario {user}</source>
         <target>Concedido permiso "{role}" al usuario {user}</target>
       </trans-unit>
-      <trans-unit id="3T9hrIV" resname="Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}">
-        <source>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}</source>
-        <target>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, propóstio {purpose} y sistema de medición {measurementMethod}</target>
+      <trans-unit id="laa3xhA" resname="Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
+        <source>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</source>
+        <target>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</target>
       </trans-unit>
       <trans-unit id="3ThkoYD" resname="Se ha registrado el residuo {waste}">
         <source>Se ha registrado el residuo {waste}</source>
@@ -617,17 +617,9 @@
         <source>Eliminada la medición "{measurement}"</source>
         <target>Eliminada la medición "{measurement}"</target>
       </trans-unit>
-      <trans-unit id="KSPRggE" resname="Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
-        <source>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</source>
-        <target>Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</target>
-      </trans-unit>
       <trans-unit id="eQqlSBE" resname="Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}">
         <source>Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}</source>
         <target>Se ha registrado una nueva medición para {property}: {quantity} contenedores de carga {load}</target>
-      </trans-unit>
-      <trans-unit id="laa3xhA" resname="Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}">
-        <source>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</source>
-        <target>Se ha actualizado el contenedor {container} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod}</target>
       </trans-unit>
       <trans-unit id="77cKa6C" resname="Gestores de residuos">
         <source>Gestores de residuos</source>
@@ -1365,6 +1357,706 @@
         <source>Login con Bioscore</source>
         <target>Login con Bioscore</target>
       </trans-unit>
+      <trans-unit id="F1EyIWj" resname="El fichero no es válido.">
+        <source>El fichero no es válido.</source>
+        <target>El fichero no es válido.</target>
+      </trans-unit>
+      <trans-unit id="1K2HY.h" resname="Configuración de alerta creada correctamente">
+        <source>Configuración de alerta creada correctamente</source>
+        <target>Configuración de alerta creada correctamente</target>
+      </trans-unit>
+      <trans-unit id="Bf24N_J" resname="Configuración de alerta actualizada con éxito">
+        <source>Configuración de alerta actualizada con éxito</source>
+        <target>Configuración de alerta actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id="L7RNeby" resname="Se ha eliminado la configuración de alerta {config}">
+        <source>Se ha eliminado la configuración de alerta {config}</source>
+        <target>Se ha eliminado la configuración de alerta {config}</target>
+      </trans-unit>
+      <trans-unit id="sCv8UjS" resname="No se ha podido eliminar la configuración de alerta {config}">
+        <source>No se ha podido eliminar la configuración de alerta {config}</source>
+        <target>No se ha podido eliminar la configuración de alerta {config}</target>
+      </trans-unit>
+      <trans-unit id="VG4b.tp" resname="Se ha eliminado la configuración de alerta {id}">
+        <source>Se ha eliminado la configuración de alerta {id}</source>
+        <target>Se ha eliminado la configuración de alerta {id}</target>
+      </trans-unit>
+      <trans-unit id="2.G57RF" resname="No se ha podido eliminar la configuración de alerta {id}">
+        <source>No se ha podido eliminar la configuración de alerta {id}</source>
+        <target>No se ha podido eliminar la configuración de alerta {id}</target>
+      </trans-unit>
+      <trans-unit id="GK_kvLI" resname="Alerta marcada como leída">
+        <source>Alerta marcada como leída</source>
+        <target>Alerta marcada como leída</target>
+      </trans-unit>
+      <trans-unit id="Yqud0Vl" resname="Umbral (kg)">
+        <source>Umbral (kg)</source>
+        <target>Umbral (kg)</target>
+      </trans-unit>
+      <trans-unit id="ZfQMUME" resname="Días sin mediciones">
+        <source>Días sin mediciones</source>
+        <target>Días sin mediciones</target>
+      </trans-unit>
+      <trans-unit id="VR7N9CX" resname="Días sin uso">
+        <source>Días sin uso</source>
+        <target>Días sin uso</target>
+      </trans-unit>
+      <trans-unit id="8casaGZ" resname="Umbral (%)">
+        <source>Umbral (%)</source>
+        <target>Umbral (%)</target>
+      </trans-unit>
+      <trans-unit id="y_y62zB" resname="Multiplicador de desviación">
+        <source>Multiplicador de desviación</source>
+        <target>Multiplicador de desviación</target>
+      </trans-unit>
+      <trans-unit id="k5KJRMD" resname="Tipo de alerta">
+        <source>Tipo de alerta</source>
+        <target>Tipo de alerta</target>
+      </trans-unit>
+      <trans-unit id="iY3rTua" resname="Residuo">
+        <source>Residuo</source>
+        <target>Residuo</target>
+      </trans-unit>
+      <trans-unit id="qv1d_7Z" resname="Todos los residuos">
+        <source>Todos los residuos</source>
+        <target>Todos los residuos</target>
+      </trans-unit>
+      <trans-unit id="_Tg04nQ" resname="Días sin actividad">
+        <source>Días sin actividad</source>
+        <target>Días sin actividad</target>
+      </trans-unit>
+      <trans-unit id="vSIaw4i" resname="Tipo">
+        <source>Tipo</source>
+        <target>Tipo</target>
+      </trans-unit>
+      <trans-unit id="sUU2pd0" resname="Todos los tipos">
+        <source>Todos los tipos</source>
+        <target>Todos los tipos</target>
+      </trans-unit>
+      <trans-unit id="S.3cQ_b" resname="Estado">
+        <source>Estado</source>
+        <target>Estado</target>
+      </trans-unit>
+      <trans-unit id="XrlbE9X" resname="Desde">
+        <source>Desde</source>
+        <target>Desde</target>
+      </trans-unit>
+      <trans-unit id="3PIwCM1" resname="Hasta">
+        <source>Hasta</source>
+        <target>Hasta</target>
+      </trans-unit>
+      <trans-unit id="xuO0HLq" resname="Resumen mensual de alertas: {month}">
+        <source>Resumen mensual de alertas: {month}</source>
+        <target>Resumen mensual de alertas: {month}</target>
+      </trans-unit>
+      <trans-unit id="ABeQqbs" resname="Configuraciones de alertas">
+        <source>Configuraciones de alertas</source>
+        <target>Configuraciones de alertas</target>
+      </trans-unit>
+      <trans-unit id="xOtMi1m" resname="Alertas">
+        <source>Alertas</source>
+        <target>Alertas</target>
+      </trans-unit>
+      <trans-unit id="lYGgc2b" resname="Se ha marcado como leída la alerta {alertId} por {user}">
+        <source>Se ha marcado como leída la alerta {alertId} por {user}</source>
+        <target>Se ha marcado como leída la alerta {alertId} por {user}</target>
+      </trans-unit>
+      <trans-unit id="wwTN5kp" resname="Se ha actualizado la configuración de alerta {alertConfigurationId} por {user}">
+        <source>Se ha actualizado la configuración de alerta {alertConfigurationId} por {user}</source>
+        <target>Se ha actualizado la configuración de alerta {alertConfigurationId} por {user}</target>
+      </trans-unit>
+      <trans-unit id="4yLAlIy" resname="Se ha registrado la configuración de alertas para la cuenta {accountId} por {user}">
+        <source>Se ha registrado la configuración de alertas para la cuenta {accountId} por {user}</source>
+        <target>Se ha registrado la configuración de alertas para la cuenta {accountId} por {user}</target>
+      </trans-unit>
+      <trans-unit id="WpjVok8" resname="Se ha detectado una alerta de tipo {type} en la propiedad {propertyId} de la cuenta {accountId} por {user}">
+        <source>Se ha detectado una alerta de tipo {type} en la propiedad {propertyId} de la cuenta {accountId} por {user}</source>
+        <target>Se ha detectado una alerta de tipo {type} en la propiedad {propertyId} de la cuenta {accountId} por {user}</target>
+      </trans-unit>
+      <trans-unit id="S5yFLi6" resname="Debes crear contenedores antes de poder registrar mediciones">
+        <source>Debes crear contenedores antes de poder registrar mediciones</source>
+        <target>Debes crear contenedores antes de poder registrar mediciones</target>
+      </trans-unit>
+      <trans-unit id="7jvpLSj" resname="Se han detectado las siguientes alertas durante el mes:">
+        <source>Se han detectado las siguientes alertas durante el mes:</source>
+        <target>Se han detectado las siguientes alertas durante el mes:</target>
+      </trans-unit>
+      <trans-unit id=".ApDO_p" resname="Valor">
+        <source>Valor</source>
+        <target>Valor</target>
+      </trans-unit>
+      <trans-unit id="cu6xJS4" resname="Umbral">
+        <source>Umbral</source>
+        <target>Umbral</target>
+      </trans-unit>
+      <trans-unit id="XM6t5Zj" resname="Detectada">
+        <source>Detectada</source>
+        <target>Detectada</target>
+      </trans-unit>
+      <trans-unit id="HUv7t93" resname="No hay configuraciones de alerta. Añade una.">
+        <source>No hay configuraciones de alerta. Añade una.</source>
+        <target>No hay configuraciones de alerta. Añade una.</target>
+      </trans-unit>
+      <trans-unit id="8Q7409I" resname="+ Añadir">
+        <source>+ Añadir</source>
+        <target>+ Añadir</target>
+      </trans-unit>
+      <trans-unit id="NlEKxeo" resname="Solicitud de firma creada correctamente">
+        <source>Solicitud de firma creada correctamente</source>
+        <target>Solicitud de firma creada correctamente</target>
+      </trans-unit>
+      <trans-unit id="YH05n6H" resname="Se ha eliminado la solicitud de firma {id}">
+        <source>Se ha eliminado la solicitud de firma {id}</source>
+        <target>Se ha eliminado la solicitud de firma {id}</target>
+      </trans-unit>
+      <trans-unit id="WAbaEE6" resname="No se ha podido eliminar la solicitud de firma {id}">
+        <source>No se ha podido eliminar la solicitud de firma {id}</source>
+        <target>No se ha podido eliminar la solicitud de firma {id}</target>
+      </trans-unit>
+      <trans-unit id="TWti7sg" resname="Documento a firmar (PDF)">
+        <source>Documento a firmar (PDF)</source>
+        <target>Documento a firmar (PDF)</target>
+      </trans-unit>
+      <trans-unit id="UMHTYpe" resname="Nombre del firmante">
+        <source>Nombre del firmante</source>
+        <target>Nombre del firmante</target>
+      </trans-unit>
+      <trans-unit id="JggvJjX" resname="Idioma del firmante">
+        <source>Idioma del firmante</source>
+        <target>Idioma del firmante</target>
+      </trans-unit>
+      <trans-unit id="OKSMnfp" resname="Canal de notificación">
+        <source>Canal de notificación</source>
+        <target>Canal de notificación</target>
+      </trans-unit>
+      <trans-unit id="cPN5nP6" resname="Email del firmante">
+        <source>Email del firmante</source>
+        <target>Email del firmante</target>
+      </trans-unit>
+      <trans-unit id="a290a6B" resname="Teléfono del firmante">
+        <source>Teléfono del firmante</source>
+        <target>Teléfono del firmante</target>
+      </trans-unit>
+      <trans-unit id="c4H.dmO" resname="Solicitud de firma de documento">
+        <source>Solicitud de firma de documento</source>
+        <target>Solicitud de firma de documento</target>
+      </trans-unit>
+      <trans-unit id="nRO9X0l" resname="Tu código de verificación es: {code}. Válido durante 15 minutos.">
+        <source>Tu código de verificación es: {code}. Válido durante 15 minutos.</source>
+        <target>Tu código de verificación es: {code}. Válido durante 15 minutos.</target>
+      </trans-unit>
+      <trans-unit id="0XZRGxy" resname="Código de verificación">
+        <source>Código de verificación</source>
+        <target>Código de verificación</target>
+      </trans-unit>
+      <trans-unit id="BxHkmXR" resname="Firma de documentos">
+        <source>Firma de documentos</source>
+        <target>Firma de documentos</target>
+      </trans-unit>
+      <trans-unit id="BfkEvk." resname="Hola {name}, se ha solicitado tu firma en un documento.">
+        <source>Hola {name}, se ha solicitado tu firma en un documento.</source>
+        <target>Hola {name}, se ha solicitado tu firma en un documento.</target>
+      </trans-unit>
+      <trans-unit id="1tBamaM" resname="Por favor, accede al siguiente enlace para ver y firmar el documento:">
+        <source>Por favor, accede al siguiente enlace para ver y firmar el documento:</source>
+        <target>Por favor, accede al siguiente enlace para ver y firmar el documento:</target>
+      </trans-unit>
+      <trans-unit id="Iv73ner" resname="Ver y firmar documento">
+        <source>Ver y firmar documento</source>
+        <target>Ver y firmar documento</target>
+      </trans-unit>
+      <trans-unit id="4KKJGF1" resname="Este enlace expira el {date}.">
+        <source>Este enlace expira el {date}.</source>
+        <target>Este enlace expira el {date}.</target>
+      </trans-unit>
+      <trans-unit id="ArLUlMA" resname="Documento ya firmado">
+        <source>Documento ya firmado</source>
+        <target>Documento ya firmado</target>
+      </trans-unit>
+      <trans-unit id="PrQd37I" resname="Este documento ya ha sido firmado">
+        <source>Este documento ya ha sido firmado</source>
+        <target>Este documento ya ha sido firmado</target>
+      </trans-unit>
+      <trans-unit id="z9ICg0G" resname="Firmado el">
+        <source>Firmado el</source>
+        <target>Firmado el</target>
+      </trans-unit>
+      <trans-unit id="fts7THf" resname="Verificar la firma">
+        <source>Verificar la firma</source>
+        <target>Verificar la firma</target>
+      </trans-unit>
+      <trans-unit id="uMDPKTq" resname="Verificación de identidad">
+        <source>Verificación de identidad</source>
+        <target>Verificación de identidad</target>
+      </trans-unit>
+      <trans-unit id="h..ICXX" resname="Has superado el número máximo de intentos. El enlace ha quedado bloqueado.">
+        <source>Has superado el número máximo de intentos. El enlace ha quedado bloqueado.</source>
+        <target>Has superado el número máximo de intentos. El enlace ha quedado bloqueado.</target>
+      </trans-unit>
+      <trans-unit id="114.WcV" resname="Se ha enviado un nuevo código.">
+        <source>Se ha enviado un nuevo código.</source>
+        <target>Se ha enviado un nuevo código.</target>
+      </trans-unit>
+      <trans-unit id="YwB7hUb" resname="Hemos enviado un código de 6 dígitos al número">
+        <source>Hemos enviado un código de 6 dígitos al número</source>
+        <target>Hemos enviado un código de 6 dígitos al número</target>
+      </trans-unit>
+      <trans-unit id="ozf0AQQ" resname="Hemos enviado un código de 6 dígitos al email">
+        <source>Hemos enviado un código de 6 dígitos al email</source>
+        <target>Hemos enviado un código de 6 dígitos al email</target>
+      </trans-unit>
+      <trans-unit id="9x9aFJ0" resname="Código incorrecto.">
+        <source>Código incorrecto.</source>
+        <target>Código incorrecto.</target>
+      </trans-unit>
+      <trans-unit id="cXxD2Ir" resname="Te quedan %n% intentos.">
+        <source>Te quedan %n% intentos.</source>
+        <target>Te quedan %n% intentos.</target>
+      </trans-unit>
+      <trans-unit id="5187CUS" resname="Verificar">
+        <source>Verificar</source>
+        <target>Verificar</target>
+      </trans-unit>
+      <trans-unit id="VAPQ6ut" resname="¿No has recibido el código? Reenviar">
+        <source>¿No has recibido el código? Reenviar</source>
+        <target>¿No has recibido el código? Reenviar</target>
+      </trans-unit>
+      <trans-unit id="yaV6LkI" resname="Firmar documento">
+        <source>Firmar documento</source>
+        <target>Firmar documento</target>
+      </trans-unit>
+      <trans-unit id="uPIDozK" resname="Documento para firmar">
+        <source>Documento para firmar</source>
+        <target>Documento para firmar</target>
+      </trans-unit>
+      <trans-unit id="2FUlmbk" resname="Documento PDF">
+        <source>Documento PDF</source>
+        <target>Documento PDF</target>
+      </trans-unit>
+      <trans-unit id="L.MXjOX" resname="Firma el documento">
+        <source>Firma el documento</source>
+        <target>Firma el documento</target>
+      </trans-unit>
+      <trans-unit id="6J2WB9A" resname="Por favor, lea el documento completo antes de firmarlo. Al firmar, acepta el contenido del documento.">
+        <source>Por favor, lea el documento completo antes de firmarlo. Al firmar, acepta el contenido del documento.</source>
+        <target>Por favor, lea el documento completo antes de firmarlo. Al firmar, acepta el contenido del documento.</target>
+      </trans-unit>
+      <trans-unit id="W6UF2fO" resname="Firmante">
+        <source>Firmante</source>
+        <target>Firmante</target>
+      </trans-unit>
+      <trans-unit id="Kn5pwW1" resname="Expira el">
+        <source>Expira el</source>
+        <target>Expira el</target>
+      </trans-unit>
+      <trans-unit id="FoBqJ4R" resname="He leído y acepto el contenido del documento.">
+        <source>He leído y acepto el contenido del documento.</source>
+        <target>He leído y acepto el contenido del documento.</target>
+      </trans-unit>
+      <trans-unit id="Kp_.k5q" resname="Documento firmado">
+        <source>Documento firmado</source>
+        <target>Documento firmado</target>
+      </trans-unit>
+      <trans-unit id="05XuC1S" resname="Documento firmado correctamente">
+        <source>Documento firmado correctamente</source>
+        <target>Documento firmado correctamente</target>
+      </trans-unit>
+      <trans-unit id="8hPRU4V" resname="La firma ha quedado registrada.">
+        <source>La firma ha quedado registrada.</source>
+        <target>La firma ha quedado registrada.</target>
+      </trans-unit>
+      <trans-unit id="IJOPTsY" resname="ID de la solicitud">
+        <source>ID de la solicitud</source>
+        <target>ID de la solicitud</target>
+      </trans-unit>
+      <trans-unit id="nIDlTac" resname="Tu código de verificación para firmar el documento es:">
+        <source>Tu código de verificación para firmar el documento es:</source>
+        <target>Tu código de verificación para firmar el documento es:</target>
+      </trans-unit>
+      <trans-unit id="rfF7OsI" resname="Este código expira el {date}.">
+        <source>Este código expira el {date}.</source>
+        <target>Este código expira el {date}.</target>
+      </trans-unit>
+      <trans-unit id="Q89dM7o" resname="Si no has solicitado este código, ignora este mensaje.">
+        <source>Si no has solicitado este código, ignora este mensaje.</source>
+        <target>Si no has solicitado este código, ignora este mensaje.</target>
+      </trans-unit>
+      <trans-unit id="AoCvuwi" resname="Verificación de firma">
+        <source>Verificación de firma</source>
+        <target>Verificación de firma</target>
+      </trans-unit>
+      <trans-unit id="oBzXpbq" resname="ID de solicitud">
+        <source>ID de solicitud</source>
+        <target>ID de solicitud</target>
+      </trans-unit>
+      <trans-unit id="t7m23wM" resname="Datos de la firma">
+        <source>Datos de la firma</source>
+        <target>Datos de la firma</target>
+      </trans-unit>
+      <trans-unit id="yScbeW1" resname="Fecha de firma">
+        <source>Fecha de firma</source>
+        <target>Fecha de firma</target>
+      </trans-unit>
+      <trans-unit id="xnBUuOs" resname="Driver">
+        <source>Driver</source>
+        <target>Driver</target>
+      </trans-unit>
+      <trans-unit id="QLvUq5A" resname="Hash del original">
+        <source>Hash del original</source>
+        <target>Hash del original</target>
+      </trans-unit>
+      <trans-unit id="9HJBRH8" resname="Hash del firmado">
+        <source>Hash del firmado</source>
+        <target>Hash del firmado</target>
+      </trans-unit>
+      <trans-unit id="4BPy0_P" resname="Firma válida">
+        <source>Firma válida</source>
+        <target>Firma válida</target>
+      </trans-unit>
+      <trans-unit id="TPKIHiW" resname="Firma NO válida">
+        <source>Firma NO válida</source>
+        <target>Firma NO válida</target>
+      </trans-unit>
+      <trans-unit id="XUtSydT" resname="Este documento aún no ha sido firmado.">
+        <source>Este documento aún no ha sido firmado.</source>
+        <target>Este documento aún no ha sido firmado.</target>
+      </trans-unit>
+      <trans-unit id="Zr4Io6K" resname="Enlace inválido">
+        <source>Enlace inválido</source>
+        <target>Enlace inválido</target>
+      </trans-unit>
+      <trans-unit id=".BdJuzV" resname="Este enlace no es válido o ha expirado">
+        <source>Este enlace no es válido o ha expirado</source>
+        <target>Este enlace no es válido o ha expirado</target>
+      </trans-unit>
+      <trans-unit id="w7oPZNY" resname="El enlace de firma que ha utilizado no es válido, ha expirado o ya no está disponible.">
+        <source>El enlace de firma que ha utilizado no es válido, ha expirado o ya no está disponible.</source>
+        <target>El enlace de firma que ha utilizado no es válido, ha expirado o ya no está disponible.</target>
+      </trans-unit>
+      <trans-unit id="pvGWBMz" resname="Solicitudes de firma">
+        <source>Solicitudes de firma</source>
+        <target>Solicitudes de firma</target>
+      </trans-unit>
+      <trans-unit id="RoiG_Ui" resname="Documento">
+        <source>Documento</source>
+        <target>Documento</target>
+      </trans-unit>
+      <trans-unit id="AorlCe0" resname="Fecha de expiración">
+        <source>Fecha de expiración</source>
+        <target>Fecha de expiración</target>
+      </trans-unit>
+      <trans-unit id="3KsJtNw" resname="Descargar documento firmado">
+        <source>Descargar documento firmado</source>
+        <target>Descargar documento firmado</target>
+      </trans-unit>
+      <trans-unit id="oLtzftI" resname="Verificar firma">
+        <source>Verificar firma</source>
+        <target>Verificar firma</target>
+      </trans-unit>
+      <trans-unit id="yhue5qm" resname="Teléfono">
+        <source>Teléfono</source>
+        <target>Teléfono</target>
+      </trans-unit>
+      <trans-unit id="Dg1lLxW" resname="Canal">
+        <source>Canal</source>
+        <target>Canal</target>
+      </trans-unit>
+      <trans-unit id="gTVHpFE" resname="Solicitud">
+        <source>Solicitud</source>
+        <target>Solicitud</target>
+      </trans-unit>
+      <trans-unit id="04WIWP2" resname="Registrada">
+        <source>Registrada</source>
+        <target>Registrada</target>
+      </trans-unit>
+      <trans-unit id="YhBkKc6" resname="Actualizada">
+        <source>Actualizada</source>
+        <target>Actualizada</target>
+      </trans-unit>
+      <trans-unit id="O7sB3vC" resname="La firma es válida.">
+        <source>La firma es válida.</source>
+        <target>La firma es válida.</target>
+      </trans-unit>
+      <trans-unit id="Rz0_zYd" resname="La firma NO es válida.">
+        <source>La firma NO es válida.</source>
+        <target>La firma NO es válida.</target>
+      </trans-unit>
+      <trans-unit id="P0DsxcE" resname="Datos forenses de la firma">
+        <source>Datos forenses de la firma</source>
+        <target>Datos forenses de la firma</target>
+      </trans-unit>
+      <trans-unit id="Wj3q5fQ" resname="Hash original">
+        <source>Hash original</source>
+        <target>Hash original</target>
+      </trans-unit>
+      <trans-unit id="lbiKI1K" resname="Hash firmado">
+        <source>Hash firmado</source>
+        <target>Hash firmado</target>
+      </trans-unit>
+      <trans-unit id="7373c8A" resname="IP del firmante">
+        <source>IP del firmante</source>
+        <target>IP del firmante</target>
+      </trans-unit>
+      <trans-unit id="wvo4He3" resname="User-Agent">
+        <source>User-Agent</source>
+        <target>User-Agent</target>
+      </trans-unit>
+      <trans-unit id="Vt_CBrl" resname="Solicitud de firma {id} registrada por {user} para firmante {signer}">
+        <source>Solicitud de firma {id} registrada por {user} para firmante {signer}</source>
+        <target>Solicitud de firma {id} registrada por {user} para firmante {signer}</target>
+      </trans-unit>
+      <trans-unit id="68cSaSf" resname="Solicitud de firma {id} eliminada por {user}">
+        <source>Solicitud de firma {id} eliminada por {user}</source>
+        <target>Solicitud de firma {id} eliminada por {user}</target>
+      </trans-unit>
+      <trans-unit id="5wkxlYg" resname="Histórico">
+        <source>Histórico</source>
+        <target>Histórico</target>
+      </trans-unit>
+      <trans-unit id=".yoInHy" resname="Contraseña recuperada para el usuario {user}">
+        <source>Contraseña recuperada para el usuario {user}</source>
+        <target>Contraseña recuperada para el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="THD2JdW" resname="Documento &quot;{filename}&quot; firmado para la solicitud {id} el {signedAt}">
+        <source>Documento "{filename}" firmado para la solicitud {id} el {signedAt}</source>
+        <target>Documento "{filename}" firmado para la solicitud {id} el {signedAt}</target>
+      </trans-unit>
+      <trans-unit id="5tplUBz" resname="Solicitud de firma {id} expirada">
+        <source>Solicitud de firma {id} expirada</source>
+        <target>Solicitud de firma {id} expirada</target>
+      </trans-unit>
+      <trans-unit id="5QDR8pW" resname="Recuperación de contraseña iniciada para el usuario {user}">
+        <source>Recuperación de contraseña iniciada para el usuario {user}</source>
+        <target>Recuperación de contraseña iniciada para el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="juOiASs" resname="Solicitud de firma {id} registrada para firmante {signer}">
+        <source>Solicitud de firma {id} registrada para firmante {signer}</source>
+        <target>Solicitud de firma {id} registrada para firmante {signer}</target>
+      </trans-unit>
+      <trans-unit id="zypoQj2" resname="OTP solicitado para la solicitud de firma {id} via {channel} a {destination}">
+        <source>OTP solicitado para la solicitud de firma {id} via {channel} a {destination}</source>
+        <target>OTP solicitado para la solicitud de firma {id} via {channel} a {destination}</target>
+      </trans-unit>
+      <trans-unit id="PM3c2Tc" resname="OTP verificado para la solicitud de firma {id} desde {ip}">
+        <source>OTP verificado para la solicitud de firma {id} desde {ip}</source>
+        <target>OTP verificado para la solicitud de firma {id} desde {ip}</target>
+      </trans-unit>
+      <trans-unit id="skqnCMO" resname="Documento de la solicitud de firma {id} visualizado desde {ip}">
+        <source>Documento de la solicitud de firma {id} visualizado desde {ip}</source>
+        <target>Documento de la solicitud de firma {id} visualizado desde {ip}</target>
+      </trans-unit>
+      <trans-unit id="z2pVfhE" resname="Evento">
+        <source>Evento</source>
+        <target>Evento</target>
+      </trans-unit>
+      <trans-unit id="tHIk6cC" resname="Realizado por">
+        <source>Realizado por</source>
+        <target>Realizado por</target>
+      </trans-unit>
+      <trans-unit id="SY1yoG3" resname="Sin eventos registrados">
+        <source>Sin eventos registrados</source>
+        <target>Sin eventos registrados</target>
+      </trans-unit>
+      <trans-unit id="vcl.w1H" resname="Tu perfil se ha actualizado correctamente">
+        <source>Tu perfil se ha actualizado correctamente</source>
+        <target>Tu perfil se ha actualizado correctamente</target>
+      </trans-unit>
+      <trans-unit id="PRHtUFO" resname="Error inesperado. No se ha actualizado tu perfil">
+        <source>Error inesperado. No se ha actualizado tu perfil</source>
+        <target>Error inesperado. No se ha actualizado tu perfil</target>
+      </trans-unit>
+      <trans-unit id="DQelTSF" resname="Idioma preferido">
+        <source>Idioma preferido</source>
+        <target>Idioma preferido</target>
+      </trans-unit>
+      <trans-unit id="ewm0YV9" resname="Requerir verificación OTP">
+        <source>Requerir verificación OTP</source>
+        <target>Requerir verificación OTP</target>
+      </trans-unit>
+      <trans-unit id="vyDwme_" resname="Será usado en las comunicaciones fuera de la plataforma">
+        <source>Será usado en las comunicaciones fuera de la plataforma</source>
+        <target>Será usado en las comunicaciones fuera de la plataforma</target>
+      </trans-unit>
+      <trans-unit id="_5M95__" resname="Firma el documento aquí: {url}">
+        <source>Firma el documento aquí: {url}</source>
+        <target>Firma el documento aquí: {url}</target>
+      </trans-unit>
+      <trans-unit id="Ib7E.MM" resname="Cambiar contraseña">
+        <source>Cambiar contraseña</source>
+        <target>Cambiar contraseña</target>
+      </trans-unit>
+      <trans-unit id="9FEN5GN" resname="Actualizar mi contraseña">
+        <source>Actualizar mi contraseña</source>
+        <target>Actualizar mi contraseña</target>
+      </trans-unit>
+      <trans-unit id="3llH4Ds" resname="El usuario {user} ha cambiado su idioma preferido a {locale}">
+        <source>El usuario {user} ha cambiado su idioma preferido a {locale}</source>
+        <target>El usuario {user} ha cambiado su idioma preferido a {locale}</target>
+      </trans-unit>
+      <trans-unit id="xp3IHX2" resname="Días para calcular la estadística">
+        <source>Días para calcular la estadística</source>
+        <target>Días para calcular la estadística</target>
+      </trans-unit>
+      <trans-unit id="CJ3llDA" resname="Notificaciones">
+        <source>Notificaciones</source>
+        <target>Notificaciones</target>
+      </trans-unit>
+      <trans-unit id="TFtgJ82" resname="No hay alertas pendientes">
+        <source>No hay alertas pendientes</source>
+        <target>No hay alertas pendientes</target>
+      </trans-unit>
+      <trans-unit id="9eXkai3" resname="Ver todas las alertas">
+        <source>Ver todas las alertas</source>
+        <target>Ver todas las alertas</target>
+      </trans-unit>
+      <trans-unit id="Y17EBKt" resname="Se han detectado {count} alertas durante el mes.">
+        <source>Se han detectado {count} alertas durante el mes.</source>
+        <target>Se han detectado {count} alertas durante el mes.</target>
+      </trans-unit>
+      <trans-unit id="qXuzTc." resname="Mostramos algunas de las alertas no vistas del mes.">
+        <source>Mostramos algunas de las alertas no vistas del mes.</source>
+        <target>Mostramos algunas de las alertas no vistas del mes.</target>
+      </trans-unit>
+      <trans-unit id="GXvObws" resname="Puede revisarlas desde su zona de &lt;a href=&quot;{link}&quot;&gt;alertas&lt;/a&gt;.">
+        <source>Puede revisarlas desde su zona de &lt;a href="{link}"&gt;alertas&lt;/a&gt;.</source>
+        <target><![CDATA[Puede revisarlas desde su zona de <a href="{link}">alertas</a>.]]></target>
+      </trans-unit>
+      <trans-unit id="nmqibEr" resname="Marcar como vista">
+        <source>Marcar como vista</source>
+        <target>Marcar como vista</target>
+      </trans-unit>
+      <trans-unit id="kLt98dy" resname="Período">
+        <source>Período</source>
+        <target>Período</target>
+      </trans-unit>
+      <trans-unit id="EzuWm0g" resname="Ya existe una configuración de alertas para esta cuenta.">
+        <source>Ya existe una configuración de alertas para esta cuenta.</source>
+        <target>Ya existe una configuración de alertas para esta cuenta.</target>
+      </trans-unit>
+      <trans-unit id="KNu5C76" resname="Umbral mínimo (kg)">
+        <source>Umbral mínimo (kg)</source>
+        <target>Umbral mínimo (kg)</target>
+      </trans-unit>
+      <trans-unit id="pPoeLHH" resname="Prioridad">
+        <source>Prioridad</source>
+        <target>Prioridad</target>
+      </trans-unit>
+      <trans-unit id="n.vrGDD" resname="Todas las prioridades">
+        <source>Todas las prioridades</source>
+        <target>Todas las prioridades</target>
+      </trans-unit>
+      <trans-unit id="P6EyIcE" resname="Se ha eliminado la revisión de alertas para la cuenta {accountId} con fecha {checkDate}">
+        <source>Se ha eliminado la revisión de alertas para la cuenta {accountId} con fecha {checkDate}</source>
+        <target>Se ha eliminado la revisión de alertas para la cuenta {accountId} con fecha {checkDate}</target>
+      </trans-unit>
+      <trans-unit id="s3M20ss" resname="Se ha registrado una revisión de alertas para la cuenta {accountId} con fecha {checkDate}">
+        <source>Se ha registrado una revisión de alertas para la cuenta {accountId} con fecha {checkDate}</source>
+        <target>Se ha registrado una revisión de alertas para la cuenta {accountId} con fecha {checkDate}</target>
+      </trans-unit>
+      <trans-unit id="LUzU1.q" resname="Columnas a exportar">
+        <source>Columnas a exportar</source>
+        <target>Columnas a exportar</target>
+      </trans-unit>
+      <trans-unit id="xoRoVPD" resname="Formato">
+        <source>Formato</source>
+        <target>Formato</target>
+      </trans-unit>
+      <trans-unit id="QuxquRE" resname="Exportar">
+        <source>Exportar</source>
+        <target>Exportar</target>
+      </trans-unit>
+      <trans-unit id="nHFUZv0" resname="No se ha podido iniciar la exportación.">
+        <source>No se ha podido iniciar la exportación.</source>
+        <target>No se ha podido iniciar la exportación.</target>
+      </trans-unit>
+      <trans-unit id="KOwvoR2" resname="La exportación se está generando. Recibirás un email con el enlace de descarga cuando esté lista.">
+        <source>La exportación se está generando. Recibirás un email con el enlace de descarga cuando esté lista.</source>
+        <target>La exportación se está generando. Recibirás un email con el enlace de descarga cuando esté lista.</target>
+      </trans-unit>
+      <trans-unit id="yyAH1qW" resname="La exportación no se ha podido generar">
+        <source>La exportación no se ha podido generar</source>
+        <target>La exportación no se ha podido generar</target>
+      </trans-unit>
+      <trans-unit id="ASN.cCP" resname="Exportación finalizada">
+        <source>Exportación finalizada</source>
+        <target>Exportación finalizada</target>
+      </trans-unit>
+      <trans-unit id="uoUfYxf" resname="Filtrar datos">
+        <source>Filtrar datos</source>
+        <target>Filtrar datos</target>
+      </trans-unit>
+      <trans-unit id="93EX1aH" resname="Columnas y formato">
+        <source>Columnas y formato</source>
+        <target>Columnas y formato</target>
+      </trans-unit>
+      <trans-unit id="j6Ca6Qv" resname="Exportación en curso">
+        <source>Exportación en curso</source>
+        <target>Exportación en curso</target>
+      </trans-unit>
+      <trans-unit id="3omL6oD" resname="El proceso de exportación ha finalizado. Puede descargar el fichero en el siguiente enlace:">
+        <source>El proceso de exportación ha finalizado. Puede descargar el fichero en el siguiente enlace:</source>
+        <target>El proceso de exportación ha finalizado. Puede descargar el fichero en el siguiente enlace:</target>
+      </trans-unit>
+      <trans-unit id="jRNp3.2" resname="Descargar fichero">
+        <source>Descargar fichero</source>
+        <target>Descargar fichero</target>
+      </trans-unit>
+      <trans-unit id="ttQvknx" resname="El enlace estará disponible hasta el {date}.">
+        <source>El enlace estará disponible hasta el {date}.</source>
+        <target>El enlace estará disponible hasta el {date}.</target>
+      </trans-unit>
+      <trans-unit id="slSA9gG" resname="Se ha producido un error al generar la exportación. Inténtelo de nuevo o contacte con un administrador.">
+        <source>Se ha producido un error al generar la exportación. Inténtelo de nuevo o contacte con un administrador.</source>
+        <target>Se ha producido un error al generar la exportación. Inténtelo de nuevo o contacte con un administrador.</target>
+      </trans-unit>
+      <trans-unit id="yWnafl_" resname="Registrada importación &quot;{name}&quot; de tipo {type} por {registeredBy}">
+        <source>Registrada importación "{name}" de tipo {type} por {registeredBy}</source>
+        <target>Registrada importación "{name}" de tipo {type} por {registeredBy}</target>
+      </trans-unit>
+      <trans-unit id="uZir14u" resname="sistema">
+        <source>sistema</source>
+        <target>sistema</target>
+      </trans-unit>
+      <trans-unit id="QFHaNsD" resname="Enviado email con asunto &quot;{subject}&quot; a {recipient}">
+        <source>Enviado email con asunto "{subject}" a {recipient}</source>
+        <target>Enviado email con asunto "{subject}" a {recipient}</target>
+      </trans-unit>
+      <trans-unit id="P8PrcFM" resname="Importación {importationId} ejecutada con éxito">
+        <source>Importación {importationId} ejecutada con éxito</source>
+        <target>Importación {importationId} ejecutada con éxito</target>
+      </trans-unit>
+      <trans-unit id="6UoTci5" resname="Falló la exportación {exportationId}: {errorMessage}">
+        <source>Falló la exportación {exportationId}: {errorMessage}</source>
+        <target>Falló la exportación {exportationId}: {errorMessage}</target>
+      </trans-unit>
+      <trans-unit id="oQFW44S" resname="Exportación {exportationId} ejecutada con éxito">
+        <source>Exportación {exportationId} ejecutada con éxito</source>
+        <target>Exportación {exportationId} ejecutada con éxito</target>
+      </trans-unit>
+      <trans-unit id="eR0.Fys" resname="Registrada exportación de tipo {type} en formato {format} por {registeredBy}">
+        <source>Registrada exportación de tipo {type} en formato {format} por {registeredBy}</source>
+        <target>Registrada exportación de tipo {type} en formato {format} por {registeredBy}</target>
+      </trans-unit>
+      <trans-unit id="VjYnaI." resname="Iniciada la ejecución de la exportación {exportationId}">
+        <source>Iniciada la ejecución de la exportación {exportationId}</source>
+        <target>Iniciada la ejecución de la exportación {exportationId}</target>
+      </trans-unit>
+      <trans-unit id="GHFjLBl" resname="Actualizados los valores por defecto de la importación {importationId}">
+        <source>Actualizados los valores por defecto de la importación {importationId}</source>
+        <target>Actualizados los valores por defecto de la importación {importationId}</target>
+      </trans-unit>
+      <trans-unit id="dEsqPBN" resname="Expirada la exportación {exportationId}">
+        <source>Expirada la exportación {exportationId}</source>
+        <target>Expirada la exportación {exportationId}</target>
+      </trans-unit>
+      <trans-unit id="YtrofM7" resname="Iniciada la ejecución de la importación {importationId}">
+        <source>Iniciada la ejecución de la importación {importationId}</source>
+        <target>Iniciada la ejecución de la importación {importationId}</target>
+      </trans-unit>
+      <trans-unit id="6YEh2SE" resname="Actualizada la configuración de la importación {importationId}">
+        <source>Actualizada la configuración de la importación {importationId}</source>
+        <target>Actualizada la configuración de la importación {importationId}</target>
+      </trans-unit>
       <trans-unit id="240TF6R" resname="Puntos críticos">
         <source>Puntos críticos</source>
         <target>Puntos críticos</target>
@@ -1372,10 +2064,6 @@
       <trans-unit id="PFvFnoX" resname="Descripción">
         <source>Descripción</source>
         <target>Descripción</target>
-      </trans-unit>
-      <trans-unit id="pPoeLHH" resname="Prioridad">
-        <source>Prioridad</source>
-        <target>Prioridad</target>
       </trans-unit>
       <trans-unit id="tIgOWaK" resname="Acción actualizada con éxito">
         <source>Acción actualizada con éxito</source>
@@ -1444,10 +2132,6 @@
       <trans-unit id="ijP65K5" resname="Jerarquía de prioridades">
         <source>Jerarquía de prioridades</source>
         <target>Jerarquía de prioridades</target>
-      </trans-unit>
-      <trans-unit id="F1EyIWj" resname="El fichero no es válido.">
-        <source>El fichero no es válido.</source>
-        <target>El fichero no es válido.</target>
       </trans-unit>
       <trans-unit id="Q4SsLBF" resname="Punto crítico creado correctamente: {name}">
         <source>Punto crítico creado correctamente: {name}</source>
@@ -1640,10 +2324,6 @@
       <trans-unit id="OXsOU6E" resname="Nombre completo">
         <source>Nombre completo</source>
         <target>Nombre completo</target>
-      </trans-unit>
-      <trans-unit id="yhue5qm" resname="Teléfono">
-        <source>Teléfono</source>
-        <target>Teléfono</target>
       </trans-unit>
       <trans-unit id="QjvIIVf" resname="Sin empresa asignada">
         <source>Sin empresa asignada</source>
@@ -1993,10 +2673,6 @@
         <source>Fecha de inicio</source>
         <target>Fecha de inicio</target>
       </trans-unit>
-      <trans-unit id="AorlCe0" resname="Fecha de expiración">
-        <source>Fecha de expiración</source>
-        <target>Fecha de expiración</target>
-      </trans-unit>
       <trans-unit id="yW71GEt" resname="Convenio (PDF)">
         <source>Convenio (PDF)</source>
         <target>Convenio (PDF)</target>
@@ -2028,10 +2704,6 @@
       <trans-unit id="2gUNh9r" resname="Acción">
         <source>Acción</source>
         <target>Acción</target>
-      </trans-unit>
-      <trans-unit id="vSIaw4i" resname="Tipo">
-        <source>Tipo</source>
-        <target>Tipo</target>
       </trans-unit>
       <trans-unit id="5ft5fw1" resname="NIF">
         <source>NIF</source>
@@ -2096,10 +2768,6 @@
       <trans-unit id="MR_NqT7" resname="Descargar">
         <source>Descargar</source>
         <target>Descargar</target>
-      </trans-unit>
-      <trans-unit id="5wkxlYg" resname="Histórico">
-        <source>Histórico</source>
-        <target>Histórico</target>
       </trans-unit>
       <trans-unit id="hztpjSV" resname="Se ha eliminado el punto crítico {criticalPoint} por el usuario {user}">
         <source>Se ha eliminado el punto crítico {criticalPoint} por el usuario {user}</source>
@@ -2688,10 +3356,6 @@
       <trans-unit id="RUgkzRS" resname="Generando acciones sugeridas...">
         <source>Generando acciones sugeridas...</source>
         <target>Generando acciones sugeridas...</target>
-      </trans-unit>
-      <trans-unit id="S.3cQ_b" resname="Estado">
-        <source>Estado</source>
-        <target>Estado</target>
       </trans-unit>
       <trans-unit id="J8shuoP" resname="Fecha de creación">
         <source>Fecha de creación</source>

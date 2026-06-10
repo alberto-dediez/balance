@@ -1,0 +1,50 @@
+{% set pending = this.pendingAlerts() %}
+{% set count = this.pendingCount() %}
+
+<a class="nav-link position-relative" href="javascript:void(0)" id="drop-notifications" aria-expanded="false">
+    <twig:Icon name="solar:bell-line-duotone" size="lg" />
+    {% if count > 0 %}
+        <span class="badge rounded-pill bg-danger position-absolute top-0 end-0 fs-1 py-1 px-2" style="margin-top: 10px;">
+            {{ count > 99 ? '99+' : count }}
+        </span>
+    {% endif %}
+</a>
+<div class="dropdown-menu content-dd dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop-notifications" style="min-width:22rem">
+    <div class="d-flex align-items-center justify-content-between py-3 px-7">
+        <h5 class="mb-0 fs-5 fw-semibold">{% trans %}Notificaciones{% endtrans %}</h5>
+        {% if count > 0 %}
+            <span class="badge bg-danger rounded-pill">{{ count }}</span>
+        {% endif %}
+    </div>
+    <div class="message-body" data-simplebar>
+        {% if pending is empty %}
+            <div class="py-6 px-7 text-body-secondary text-center">
+                <twig:Icon name="solar:bell-off-line-duotone" size="xl" />
+                <p class="mb-0 mt-2 fs-2">{% trans %}No hay alertas pendientes{% endtrans %}</p>
+            </div>
+        {% else %}
+            {% for alert in pending %}
+                <a href="{{ path('alerts_view', {'alertId': alert.id}) }}" class="py-6 px-7 d-flex align-items-start dropdown-item">
+                    <span class="d-flex align-items-center justify-content-center {{ alert.priority.style }} rounded round flex-shrink-0">
+                        <twig:Icon name="solar:danger-triangle-line-duotone" size="lg" />
+                    </span>
+                    <div class="ps-3 w-75">
+                        <h6 class="mb-1 fs-3 fw-medium">{{ alert.type.value | trans({}, 'alertType') }}</h6>
+                        <span class="fs-2 d-block text-body-secondary">
+                            {% if alert.singleDayPeriod %}
+                                {{ alert.periodFrom | date('d/m/Y') }}
+                            {% else %}
+                                {{ alert.periodFrom | date('d/m/Y') }} – {{ alert.periodTo | date('d/m/Y') }}
+                            {% endif %}
+                        </span>
+                    </div>
+                </a>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="py-4 px-7">
+        <a href="{{ path('alerts') }}" class="btn btn-outline-primary w-100 btn-sm">
+            {% trans %}Ver todas las alertas{% endtrans %}
+        </a>
+    </div>
+</div>

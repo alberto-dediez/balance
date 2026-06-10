@@ -44,6 +44,7 @@ class RegisterController extends AbstractController
                 form: $form,
                 account: $form->get('account')->getData(),
                 performBy: $performBy,
+                preferredLocale: $form->get('preferredLocale')->getData() ?: null,
             ));
 
             if ($needsRedirect) {

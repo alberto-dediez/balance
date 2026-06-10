@@ -5,10 +5,10 @@ parameters:
         - tests/
     symfony:
         # You have to provide a path to srcDevDebugProjectContainer.xml or similar XML file describing your container.
-        containerXmlPath: var/cache/dev/App_Shared_Infrastructure_Symfony_KernelDevDebugContainer.xml
+        containerXmlPath: var/cache/test/App_Shared_Infrastructure_Symfony_KernelTestDebugContainer.xml
     # If you're using PHP config files for Symfony 5.3+, you also need this for auto-loading of `Symfony\Config`:
     scanDirectories:
-        - var/cache/dev/Symfony/Config
+        - var/cache/test/Symfony/Config
     # If you're using PHP config files (including the ones under packages/*.php) for Symfony 5.3+,
     # you need this to load the helper functions (i.e. service(), env()):
     scanFiles:
@@ -31,6 +31,5 @@ parameters:
             message: '#Parameter \#1 .* of method .*::__invoke\(\) expects .*, .*Command given\.#'
             path: src/Shared/Application/CommandBus/CommandInvokeHandlerTrait.php
         -
-            message: '#Service ".*" is private\.#'
-            paths:
-                - tests/*
+            identifier: symfonyContainer.privateService
+            path: tests/Acceptance/

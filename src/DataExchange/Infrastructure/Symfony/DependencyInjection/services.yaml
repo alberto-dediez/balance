@@ -1,5 +1,7 @@
 parameters:
     storage.path: '%kernel.project_dir%/var/sqlite/'
+    export.storage.path: '%kernel.project_dir%/var/export/'
+    export.valid_for_days: 7
 services:
     _defaults:
         autowire: true
@@ -9,7 +11,19 @@ services:
         resource: '../../../'
         exclude:
             - '../../../Infrastructure/Symfony/DependencyInjection/'
-                
+
     App\DataExchange\Infrastructure\Persistence\PDO\Repository\SqliteImportationDataRepository:
         arguments:
             $storagePath: '%storage.path%'
+
+    App\DataExchange\Infrastructure\Storage\FilesystemExportStorage:
+        arguments:
+            $basePath: '%export.storage.path%'
+
+    App\DataExchange\Domain\Model\Exportation\ExportStorage: '@App\DataExchange\Infrastructure\Storage\FilesystemExportStorage'
+
+    App\DataExchange\Domain\Model\Exportation\ExportWriter: '@App\DataExchange\Infrastructure\Persistence\Writer\SpreadsheetWriter'
+
+    App\DataExchange\Application\Exportation\Register\RegisterExportationService:
+        arguments:
+            $validForDays: '%export.valid_for_days%'

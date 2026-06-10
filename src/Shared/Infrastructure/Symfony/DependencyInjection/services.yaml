@@ -8,6 +8,7 @@ parameters:
     app.gemini_model_medium: '%env(GEMINI_MODEL_MEDIUM)%'
     app.gemini_model_high: '%env(GEMINI_MODEL_HIGH)%'
     app.gemini_log_enabled: '%env(bool:GEMINI_LOG_ENABLED)%'
+    app.uploads_dir: '%kernel.project_dir%/var/uploads'
 
 services:
     _defaults:
@@ -25,6 +26,10 @@ services:
         resource: '../../../Infrastructure/UI/Console/'
         tags: ['console.command']
 
+    App\Shared\Infrastructure\Symfony\Form\Type\LocaleType:
+        arguments:
+            $localeList: '%app.locale_list%'
+
     App\Shared\Infrastructure\Locale\RequestStackLocaleSetter:
         arguments:
             $defaultLocale: '%app.locale_default%'
@@ -39,6 +44,10 @@ services:
     App\Shared\Infrastructure\Symfony\Event\EmailListener:
         public: true
         shared: true
+
+    App\Shared\Domain\Model\Sms\SmsSender: '@App\Shared\Infrastructure\Sms\TwilioSmsSender'
+
+    App\Shared\Domain\Model\WhatsApp\WhatsAppSender: '@App\Shared\Infrastructure\WhatsApp\TwilioWhatsAppSender'
 
     App\Shared\Infrastructure\AI\Gemini\GeminiHttpClient:
         arguments:

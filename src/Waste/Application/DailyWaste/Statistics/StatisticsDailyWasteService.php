@@ -218,6 +218,8 @@ class StatisticsDailyWasteService
             $byPurpose->percentage = 0 == $total ? 0 : $byPurpose->load / $total;
         });
 
+        usort($byPurpose, fn(ByPurpose $a, ByPurpose $b) => $a->purpose->value <=> $b->purpose->value);
+
         return [
             $byMonth,
             $byDate,

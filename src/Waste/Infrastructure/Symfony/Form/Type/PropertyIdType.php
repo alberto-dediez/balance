@@ -20,20 +20,26 @@ class PropertyIdType extends AggregateRootIdType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $loggedAccount = $this->loggedAccount;
-
-        $account = $loggedAccount();
-
-        $properties = $this->propertyRepository->findByFilter(
-            new PropertyFilter(
-                accountId: null == $account ? null : $account->id(),
-                limit: 0,
-            ),
-        );
-
         $resolver->setDefaults([
-            'choices' => $this->getChoices($properties),
             'class' => PropertyId::class,
+            'account_id' => null,
         ]);
+
+        $resolver->setAllowedTypes('account_id', ['null', \App\Security\Domain\Model\Account\AccountId::class]);
+
+        $resolver->setNormalizer('choices', function (OptionsResolver $options, mixed $value): array {
+            $accountId = $options['account_id'] ?? null;
+
+            if (null === $accountId) {
+                $account = ($this->loggedAccount)();
+                $accountId = $account?->id();
+            }
+
+            $properties = $this->propertyRepository->findByFilter(
+                new PropertyFilter(accountId: $accountId, limit: 0),
+            );
+
+            return $this->getChoices($properties);
+        });
     }
 }

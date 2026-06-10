@@ -1,0 +1,4 @@
+{% trans with {
+    '{alertConfigurationId}': element.payload.alertConfigurationId,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado la configuración de alerta {alertConfigurationId} por {user}{% endtrans %}

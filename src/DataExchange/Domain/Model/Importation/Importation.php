@@ -12,6 +12,9 @@ class Importation implements \Stringable
 {
     use AggregateRoot;
 
+    /** @var ImportationColumnConfiguration[] */
+    protected array $configurations = [];
+
     /**
      * @param ImportationColumnConfiguration[] $configurations
      * @param array<string, mixed>             $events
@@ -25,13 +28,14 @@ class Importation implements \Stringable
         protected ?AccountId $accountId = null,
         protected ?ImportationFile $file = null,
         array $events = [],
-        protected array $configurations = [],
+        array $configurations = [],
         protected array $defaultValues = [],
         protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         protected ?\DateTimeImmutable $executedAt = null,
         protected ?UserId $registeredBy = null,
     ) {
         $this->events = $events;
+        $this->configurations = $configurations;
     }
 
     public function id(): ImportationId
