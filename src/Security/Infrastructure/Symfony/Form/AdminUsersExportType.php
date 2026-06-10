@@ -14,6 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use App\Security\Application\User\Export\UsersExportFilter;
 
+/** @extends AbstractType<UsersExportFilter> */
 class AdminUsersExportType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
