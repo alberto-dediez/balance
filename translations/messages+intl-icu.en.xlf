@@ -1953,6 +1953,110 @@
         <source>Se ha registrado una revisión de alertas para la cuenta {accountId} con fecha {checkDate}</source>
         <target>The alert check for account {accountId} on {checkDate} has been registered</target>
       </trans-unit>
+      <trans-unit id="LUzU1.q" resname="Columnas a exportar">
+        <source>Columnas a exportar</source>
+        <target>Columns to export</target>
+      </trans-unit>
+      <trans-unit id="xoRoVPD" resname="Formato">
+        <source>Formato</source>
+        <target>Format</target>
+      </trans-unit>
+      <trans-unit id="QuxquRE" resname="Exportar">
+        <source>Exportar</source>
+        <target>Export</target>
+      </trans-unit>
+      <trans-unit id="nHFUZv0" resname="No se ha podido iniciar la exportación.">
+        <source>No se ha podido iniciar la exportación.</source>
+        <target>The export could not be started.</target>
+      </trans-unit>
+      <trans-unit id="KOwvoR2" resname="La exportación se está generando. Recibirás un email con el enlace de descarga cuando esté lista.">
+        <source>La exportación se está generando. Recibirás un email con el enlace de descarga cuando esté lista.</source>
+        <target>The export is being generated. You will receive an email with the download link when it is ready.</target>
+      </trans-unit>
+      <trans-unit id="yyAH1qW" resname="La exportación no se ha podido generar">
+        <source>La exportación no se ha podido generar</source>
+        <target>The export could not be generated</target>
+      </trans-unit>
+      <trans-unit id="ASN.cCP" resname="Exportación finalizada">
+        <source>Exportación finalizada</source>
+        <target>Export completed</target>
+      </trans-unit>
+      <trans-unit id="uoUfYxf" resname="Filtrar datos">
+        <source>Filtrar datos</source>
+        <target>Filter data</target>
+      </trans-unit>
+      <trans-unit id="93EX1aH" resname="Columnas y formato">
+        <source>Columnas y formato</source>
+        <target>Columns and format</target>
+      </trans-unit>
+      <trans-unit id="j6Ca6Qv" resname="Exportación en curso">
+        <source>Exportación en curso</source>
+        <target>Export in progress</target>
+      </trans-unit>
+      <trans-unit id="3omL6oD" resname="El proceso de exportación ha finalizado. Puede descargar el fichero en el siguiente enlace:">
+        <source>El proceso de exportación ha finalizado. Puede descargar el fichero en el siguiente enlace:</source>
+        <target>The export process has completed. You can download the file at the following link:</target>
+      </trans-unit>
+      <trans-unit id="jRNp3.2" resname="Descargar fichero">
+        <source>Descargar fichero</source>
+        <target>Download file</target>
+      </trans-unit>
+      <trans-unit id="ttQvknx" resname="El enlace estará disponible hasta el {date}.">
+        <source>El enlace estará disponible hasta el {date}.</source>
+        <target>The link will be available until {date}.</target>
+      </trans-unit>
+      <trans-unit id="slSA9gG" resname="Se ha producido un error al generar la exportación. Inténtelo de nuevo o contacte con un administrador.">
+        <source>Se ha producido un error al generar la exportación. Inténtelo de nuevo o contacte con un administrador.</source>
+        <target>An error occurred while generating the export. Please try again or contact an administrator.</target>
+      </trans-unit>
+      <trans-unit id="yWnafl_" resname="Registrada importación &quot;{name}&quot; de tipo {type} por {registeredBy}">
+        <source>Registrada importación "{name}" de tipo {type} por {registeredBy}</source>
+        <target>Import “{name}” of type {type} registered by {registeredBy}</target>
+      </trans-unit>
+      <trans-unit id="uZir14u" resname="sistema">
+        <source>sistema</source>
+        <target>system</target>
+      </trans-unit>
+      <trans-unit id="QFHaNsD" resname="Enviado email con asunto &quot;{subject}&quot; a {recipient}">
+        <source>Enviado email con asunto "{subject}" a {recipient}</source>
+        <target>Email with subject “{subject}” sent to {recipient}</target>
+      </trans-unit>
+      <trans-unit id="P8PrcFM" resname="Importación {importationId} ejecutada con éxito">
+        <source>Importación {importationId} ejecutada con éxito</source>
+        <target>Import {importationId} successfully executed</target>
+      </trans-unit>
+      <trans-unit id="6UoTci5" resname="Falló la exportación {exportationId}: {errorMessage}">
+        <source>Falló la exportación {exportationId}: {errorMessage}</source>
+        <target>Export {exportationId} failed: {errorMessage}</target>
+      </trans-unit>
+      <trans-unit id="oQFW44S" resname="Exportación {exportationId} ejecutada con éxito">
+        <source>Exportación {exportationId} ejecutada con éxito</source>
+        <target>Export {exportationId} successfully executed</target>
+      </trans-unit>
+      <trans-unit id="eR0.Fys" resname="Registrada exportación de tipo {type} en formato {format} por {registeredBy}">
+        <source>Registrada exportación de tipo {type} en formato {format} por {registeredBy}</source>
+        <target>Export of type {type} in format {format} registered by {registeredBy}</target>
+      </trans-unit>
+      <trans-unit id="VjYnaI." resname="Iniciada la ejecución de la exportación {exportationId}">
+        <source>Iniciada la ejecución de la exportación {exportationId}</source>
+        <target>Execution of export {exportationId} started</target>
+      </trans-unit>
+      <trans-unit id="GHFjLBl" resname="Actualizados los valores por defecto de la importación {importationId}">
+        <source>Actualizados los valores por defecto de la importación {importationId}</source>
+        <target>Default values for import {importationId} updated</target>
+      </trans-unit>
+      <trans-unit id="dEsqPBN" resname="Expirada la exportación {exportationId}">
+        <source>Expirada la exportación {exportationId}</source>
+        <target>Export {exportationId} has expired</target>
+      </trans-unit>
+      <trans-unit id="YtrofM7" resname="Iniciada la ejecución de la importación {importationId}">
+        <source>Iniciada la ejecución de la importación {importationId}</source>
+        <target>Execution of import {importationId} has started</target>
+      </trans-unit>
+      <trans-unit id="6YEh2SE" resname="Actualizada la configuración de la importación {importationId}">
+        <source>Actualizada la configuración de la importación {importationId}</source>
+        <target>Configuration of import {importationId} has been updated</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

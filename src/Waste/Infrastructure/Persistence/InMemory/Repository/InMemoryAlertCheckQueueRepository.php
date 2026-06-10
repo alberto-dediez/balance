@@ -32,8 +32,7 @@ class InMemoryAlertCheckQueueRepository implements AlertCheckQueueRepository
     {
         foreach ($this->entries as $entry) {
             if (
-                null !== $entry->accountId()
-                && $entry->accountId()->equals($accountId)
+                $entry->accountId()->equals($accountId)
                 && $entry->checkDate()->format('Y-m-d') === $checkDate->format('Y-m-d')
             ) {
                 return true;

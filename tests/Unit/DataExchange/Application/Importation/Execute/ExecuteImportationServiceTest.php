@@ -16,6 +16,7 @@ use App\DataExchange\Infrastructure\Persistence\InMemory\Repository\InMemoryImpo
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
+use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -24,7 +25,6 @@ use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Application\CommandBus\SluttyCommandHandler;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
-use App\Waste\Application\Measurement\Import\ImportMeasurementRequest;
 use PHPUnit\Framework\TestCase;
 
 class ExecuteImportationServiceTest extends TestCase
@@ -133,7 +133,7 @@ class ExecuteImportationServiceTest extends TestCase
 
         $importationType = $this->createMock(ImportationType::class);
         $importationType->method('code')->willReturn('measurements');
-        $importationType->method('commandBuilder')->willReturnCallback(fn(array $data) => new ImportMeasurementRequest(
+        $importationType->method('commandBuilder')->willReturnCallback(fn(array $data) => new FakeImportRequest(
             containerId: $data['containerId'] ?? null,
             propertyId: $data['propertyId'] ?? null,
             wasteId: $data['wasteId'] ?? null,
@@ -153,4 +153,21 @@ class ExecuteImportationServiceTest extends TestCase
 
         return new ExecuteImportationService($repository, $importationTypeFactory, $authorizer);
     }
+}
+
+class FakeImportRequest implements Command
+{
+    public function __construct(
+        public ?string $containerId,
+        public ?string $propertyId,
+        public ?string $wasteId,
+        public ?string $purpose,
+        public ?string $wasteManagerId,
+        public ?string $quantity,
+        public ?string $load,
+        public ?string $justification,
+        public ?string $unit,
+        public ?string $day,
+        public ?string $reference,
+    ) {}
 }

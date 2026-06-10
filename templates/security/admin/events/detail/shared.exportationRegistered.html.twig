@@ -1,0 +1,5 @@
+{% trans with {
+    '{type}': event.type,
+    '{format}': event.format.value,
+    '{registeredBy}': event.registeredBy ? (event.registeredBy | user_name) : ('sistema' | trans)
+} %}Registrada exportación de tipo {type} en formato {format} por {registeredBy}{% endtrans %}

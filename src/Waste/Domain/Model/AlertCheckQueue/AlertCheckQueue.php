@@ -51,8 +51,6 @@ class AlertCheckQueue
 
     public function remove(): void
     {
-        assert(null !== $this->accountId);
-
         $this->recordApplyAndPublish(
             new AlertCheckQueueRemoved(
                 alertCheckQueueId: $this->id,

@@ -181,9 +181,7 @@ translation:
 
 ## —— Messages ————————————————————————————————————————————————————————————
 queues: ## Start workers for all priority queues (high, medium, low)
-	@$(PHP) bin/console messenger:consume async_high -vv &
-	@$(PHP) bin/console messenger:consume async -vv &
-	@$(PHP) bin/console messenger:consume async_low -vv
+	@$(PHP) bin/console messenger:consume --all --exclude-receivers=failed -vv
 
 queues-high: ## Start worker for the high priority queue
 	@$(PHP) bin/console messenger:consume async_high -vv

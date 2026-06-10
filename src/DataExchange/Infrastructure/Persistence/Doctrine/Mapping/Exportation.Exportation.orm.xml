@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\DataExchange\Domain\Model\Exportation\Exportation" table="exportation">
+        <id name="id" type="exportation_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="type" type="string" length="255" nullable="false" />
+        <field name="status" type="string" enum-type="App\DataExchange\Domain\Model\Exportation\ExportationStatus" nullable="false" />
+        <field name="format" type="string" enum-type="App\DataExchange\Domain\Model\Exportation\ExportationFormat" nullable="false" />
+        <field name="columns" type="json" nullable="false" />
+        <field name="filterCriteria" type="json" column="filter_criteria" nullable="false" />
+        <embedded name="file" class="App\DataExchange\Domain\Model\Exportation\StoredFile" use-column-prefix="false" />
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
+        <field name="validUntil" type="datetime_immutable" column="valid_until" nullable="false" />
+        <field name="executedAt" type="datetime_immutable" column="executed_at" nullable="true" />
+        <field name="accountId" type="account_id" column="account_id" nullable="true" />
+        <field name="registeredBy" type="user_id" column="registered_by" nullable="true" />
+        <field name="errorMessage" type="text" column="error_message" nullable="true" />
+
+        <indexes>
+            <index name="idx_exportation_valid_until" columns="valid_until" />
+            <index name="idx_exportation_account_id" columns="account_id" />
+        </indexes>
+    </entity>
+
+</doctrine-mapping>

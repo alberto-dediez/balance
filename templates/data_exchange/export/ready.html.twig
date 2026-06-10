@@ -1,0 +1,20 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = exportationType.name
+    ~ ' > '
+    ~ ('Exportar' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path(exportationType.returnRoute) }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card>
+        <h3>{{ 'Exportación en curso' | trans }}</h3>
+        <p>
+            {% trans -%}
+                La exportación se está generando. Recibirás un email con el enlace de descarga cuando esté lista.
+            {%- endtrans %}
+        </p>
+    </twig:Card>
+{% endblock %}

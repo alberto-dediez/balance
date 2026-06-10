@@ -77,8 +77,6 @@ class CheckAlertsCommand extends Command
         }
 
         foreach ($pending as $entry) {
-            assert(null !== $entry->accountId());
-
             CommandBusDispatcher::instance()
                 ->dispatch(
                     new DeferredCommand(
