@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -24,6 +25,9 @@ class ExportOptionsType extends AbstractType
         /** @var ExportColumnDefinition[] $definitions */
         $definitions = $options['definitions'];
 
+        /** @var class-string<FormTypeInterface<mixed>> $filterFormClass */
+        $filterFormClass = $options['filter_form_class'];
+
         $choices = [];
         $labels = [];
         foreach ($definitions as $definition) {
@@ -32,6 +36,9 @@ class ExportOptionsType extends AbstractType
         }
 
         $builder
+            ->add('filter', $filterFormClass, [
+                'label' => false,
+            ])
             ->add('columns', ChoiceType::class, [
                 'label' => new TranslatableMessage('Columnas a exportar'),
                 'choices' => $choices,
@@ -58,5 +65,8 @@ class ExportOptionsType extends AbstractType
             'data_class' => ExportOptionsRequest::class,
             'definitions' => [],
         ]);
+
+        $resolver->setRequired('filter_form_class');
+        $resolver->setAllowedTypes('filter_form_class', 'string');
     }
 }

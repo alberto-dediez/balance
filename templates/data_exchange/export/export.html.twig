@@ -9,22 +9,20 @@
 {% endblock %}
 
 {% block content %}
-    {{ form_start(filterForm) }}
-        <twig:Card>
-            <h3>{{ 'Filtrar datos' | trans }}</h3>
-            {{ form_widget(filterForm) }}
-        </twig:Card>
-    {{ form_end(filterForm) }}
-
     {{ form_start(optionsForm) }}
-        <twig:Card>
-            <h3>{{ 'Columnas y formato' | trans }}</h3>
-            {{ form_row(optionsForm.columns) }}
-            {{ form_row(optionsForm.format) }}
+    <twig:Card>
+        <h3>{{ 'Filtrar datos' | trans }}</h3>
+        {{ form_widget(optionsForm.filter) }}
+    </twig:Card>
 
-            <twig:ActionBar>
-                <twig:ActionBar:Button type="outline-primary" :button="optionsForm.export" />
-            </twig:ActionBar>
-        </twig:Card>
+    <twig:Card>
+        <h3>{{ 'Columnas y formato' | trans }}</h3>
+        {{ form_row(optionsForm.columns) }}
+        {{ form_row(optionsForm.format) }}
+
+        <twig:ActionBar>
+            <twig:ActionBar:Button type="outline-primary" :button="optionsForm.export" />
+        </twig:ActionBar>
+    </twig:Card>
     {{ form_end(optionsForm) }}
 {% endblock %}

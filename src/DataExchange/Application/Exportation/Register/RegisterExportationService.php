@@ -63,7 +63,7 @@ class RegisterExportationService implements CommandHandler
                 command: new ExecuteExportationRequest(
                     exportationId: $exportation->id(),
                 ),
-                priority: Priority::LOW
+                priority: Priority::LOW,
             ),
             $user,
         );

@@ -12,5 +12,6 @@ class ExportOptionsRequest
     public function __construct(
         public array $columns = [],
         public ExportationFormat $format = ExportationFormat::Xlsx,
+        public ?object $filter = null,
     ) {}
 }
