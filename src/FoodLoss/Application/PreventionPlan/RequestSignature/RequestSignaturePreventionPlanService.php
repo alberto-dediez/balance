@@ -52,10 +52,13 @@ class RequestSignaturePreventionPlanService implements CommandHandler
         }
 
         if (null !== $version->signatureRequestId()) {
-            // Intentamos eliminarla para que no se firme algo incorrecto
-            /*($this->removeSignatureRequestService)(new RemoveSignatureRequestRequest(
-                signatureRequestId: $version->signatureRequestId(),
-            ), $user);*/
+            try {
+                ($this->removeSignatureRequestService)(new RemoveSignatureRequestRequest(
+                    signatureRequestId: $version->signatureRequestId(),
+                ), $user);
+            } catch (\Throwable) {
+
+            }
         }
 
         $responsible = $version->responsible();

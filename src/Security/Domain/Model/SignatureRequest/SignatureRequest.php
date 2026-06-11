@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Security\Domain\Model\SignatureRequest;
 
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Model\AggregateRoot;
 
 class SignatureRequest implements \Stringable
@@ -25,6 +26,7 @@ class SignatureRequest implements \Stringable
         private SignatureRequestStatus $status = SignatureRequestStatus::Pending,
         private ?OtpChallenge $otpChallenge = null,
         private ?AccountId $accountId = null,
+        private ?UserId $requestedBy = null,
         private bool $removed = false,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
@@ -96,6 +98,11 @@ class SignatureRequest implements \Stringable
         return $this->accountId;
     }
 
+    public function requestedBy(): ?UserId
+    {
+        return $this->requestedBy;
+    }
+
     public function isRemoved(): bool
     {
         return $this->removed;
@@ -127,6 +134,7 @@ class SignatureRequest implements \Stringable
         Signer $signer,
         ?AccountId $accountId = null,
         bool $otpRequired = true,
+        ?UserId $requestedBy = null,
     ): void {
         $this->recordApplyAndPublish(
             new SignatureRequestRegistered(
@@ -137,6 +145,7 @@ class SignatureRequest implements \Stringable
                 expiresAt: new \DateTimeImmutable('NOW ' . self::EXPIRATION_TIME),
                 accountId: $accountId,
                 otpRequired: $otpRequired,
+                requestedBy: $requestedBy,
             ),
         );
     }
@@ -252,6 +261,7 @@ class SignatureRequest implements \Stringable
         $this->signer = $event->signer();
         $this->expiresAt = $event->expiresAt();
         $this->accountId = $event->accountId();
+        $this->requestedBy = $event->requestedBy();
         $this->status = SignatureRequestStatus::Pending;
         $this->registeredAt = $event->occurredOn();
         $this->otpRequired = $event->otpRequired();

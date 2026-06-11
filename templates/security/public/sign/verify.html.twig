@@ -45,10 +45,10 @@
                             <div class="alert alert-{{ verificationResult.valid ? 'success' : 'danger' }} mt-3">
                                 {% if verificationResult.valid %}
                                     <strong>✓ {{ 'Firma válida' | trans }}</strong><br>
-                                    {{ verificationResult.details }}
+                                    {{ verificationResult.details | trans }}
                                 {% else %}
                                     <strong>✗ {{ 'Firma NO válida' | trans }}</strong><br>
-                                    {{ verificationResult.details }}
+                                    {{ verificationResult.details | trans }}
                                 {% endif %}
                             </div>
                         {% endif %}

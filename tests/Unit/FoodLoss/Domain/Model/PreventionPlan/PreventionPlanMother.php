@@ -10,6 +10,7 @@ use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use App\Security\Domain\Model\User\UserId;
 
 class PreventionPlanMother
@@ -111,11 +112,13 @@ class PreventionPlanMother
 
     public static function withPendingSignature(string $name, string $id, string $accountId): PreventionPlan
     {
+        return self::withPendingSignatureWithId($name, $id, $accountId, SignatureRequestId::generate());
+    }
+
+    public static function withPendingSignatureWithId(string $name, string $id, string $accountId, SignatureRequestId $signatureRequestId): PreventionPlan
+    {
         $plan = self::withDraftApprovedStatus($name, $id, $accountId);
-        $plan->requestSignature(
-            \App\Security\Domain\Model\SignatureRequest\SignatureRequestId::generate(),
-            $plan->currentVersion(),
-        );
+        $plan->requestSignature($signatureRequestId, $plan->currentVersion());
 
         return $plan;
     }

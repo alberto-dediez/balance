@@ -19,6 +19,7 @@ use App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserRepositoryMother;
+use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -129,17 +130,7 @@ class PreventionPlanVersionCompletedMailerTest extends TestCase
 
     private function createTranslator(): TranslatorInterface
     {
-        return new class implements TranslatorInterface {
-            public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
-            {
-                return $id;
-            }
-
-            public function getLocale(): string
-            {
-                return 'es';
-            }
-        };
+        return new FakeTranslator();
     }
 }
 

@@ -3773,6 +3773,142 @@
         <source>Donación humana</source>
         <target>Donación humana</target>
       </trans-unit>
+      <trans-unit id="oYPWpH8" resname="El documento firmado no se encontró o no es legible.">
+        <source>El documento firmado no se encontró o no es legible.</source>
+        <target>El documento firmado no se encontró o no es legible.</target>
+      </trans-unit>
+      <trans-unit id="N71ivwf" resname="El documento ha sido modificado desde que fue firmado.">
+        <source>El documento ha sido modificado desde que fue firmado.</source>
+        <target>El documento ha sido modificado desde que fue firmado.</target>
+      </trans-unit>
+      <trans-unit id="po8lhDM" resname="La firma HMAC no es válida.">
+        <source>La firma HMAC no es válida.</source>
+        <target>La firma HMAC no es válida.</target>
+      </trans-unit>
+      <trans-unit id="pnsdDoQ" resname="Firma HMAC verificada correctamente.">
+        <source>Firma HMAC verificada correctamente.</source>
+        <target>Firma HMAC verificada correctamente.</target>
+      </trans-unit>
+      <trans-unit id="AG0140U" resname="Se ha registrado un nuevo excedente que no ha podido ser aprovechado y por tanto ha sido destinado a eliminación.">
+        <source>Se ha registrado un nuevo excedente que no ha podido ser aprovechado y por tanto ha sido destinado a eliminación.</source>
+        <target>Se ha registrado un nuevo excedente que no ha podido ser aprovechado y por tanto ha sido destinado a eliminación.</target>
+      </trans-unit>
+      <trans-unit id="LQsnVtd" resname="Se ha registrado un nuevo excedente que ha sido donado con éxito. Puede revisar la nueva donación en el registro de entregas.">
+        <source>Se ha registrado un nuevo excedente que ha sido donado con éxito. Puede revisar la nueva donación en el registro de entregas.</source>
+        <target>Se ha registrado un nuevo excedente que ha sido donado con éxito. Puede revisar la nueva donación en el registro de entregas.</target>
+      </trans-unit>
+      <trans-unit id="YcdPZmv" resname="Se ha registrado un nuevo excedente con destino a compostaje o consumo no alimentario.">
+        <source>Se ha registrado un nuevo excedente con destino a compostaje o consumo no alimentario.</source>
+        <target>Se ha registrado un nuevo excedente con destino a compostaje o consumo no alimentario.</target>
+      </trans-unit>
+      <trans-unit id="JoU6KCg" resname="Se ha registrado un excedente que ha sido transformado para consumo humano">
+        <source>Se ha registrado un excedente que ha sido transformado para consumo humano</source>
+        <target>Se ha registrado un excedente que ha sido transformado para consumo humano</target>
+      </trans-unit>
+      <trans-unit id="__8fco6" resname="Se ha registrado un nuevo excedente con destino a alimentación animal">
+        <source>Se ha registrado un nuevo excedente con destino a alimentación animal</source>
+        <target>Se ha registrado un nuevo excedente con destino a alimentación animal</target>
+      </trans-unit>
+      <trans-unit id="aN6iYg_" resname="Se ha eliminado el gestor de residuos {id}">
+        <source>Se ha eliminado el gestor de residuos {id}</source>
+        <target>Se ha eliminado el gestor de residuos {id}</target>
+      </trans-unit>
+      <trans-unit id="l2mtuhQ" resname="No se ha podido eliminar el gestor de residuos {id}">
+        <source>No se ha podido eliminar el gestor de residuos {id}</source>
+        <target>No se ha podido eliminar el gestor de residuos {id}</target>
+      </trans-unit>
+      <trans-unit id="erneiZR" resname="Seleccionar gestor de residuos">
+        <source>Seleccionar gestor de residuos</source>
+        <target>Seleccionar gestor de residuos</target>
+      </trans-unit>
+      <trans-unit id="yhhXood" resname="Autorizado para alimentación animal">
+        <source>Autorizado para alimentación animal</source>
+        <target>Autorizado para alimentación animal</target>
+      </trans-unit>
+      <trans-unit id="asHjOW4" resname="Autorizado para subproductos orgánicos (compost, biogás, etc.)">
+        <source>Autorizado para subproductos orgánicos (compost, biogás, etc.)</source>
+        <target>Autorizado para subproductos orgánicos (compost, biogás, etc.)</target>
+      </trans-unit>
+      <trans-unit id="8DMhw_8" resname="Fecha de la donación">
+        <source>Fecha de la donación</source>
+        <target>Fecha de la donación</target>
+      </trans-unit>
+      <trans-unit id="iWuQYeh" resname="Seleccionar entidad receptora">
+        <source>Seleccionar entidad receptora</source>
+        <target>Seleccionar entidad receptora</target>
+      </trans-unit>
+      <trans-unit id="9TAADFm" resname="¿Desea registrar esta donación en el registro de entregas?">
+        <source>¿Desea registrar esta donación en el registro de entregas?</source>
+        <target>¿Desea registrar esta donación en el registro de entregas?</target>
+      </trans-unit>
+      <trans-unit id="MIM.f4V" resname="Incidencia relacionada">
+        <source>Incidencia relacionada</source>
+        <target>Incidencia relacionada</target>
+      </trans-unit>
+      <trans-unit id="OFc3lK5" resname="Ninguna">
+        <source>Ninguna</source>
+        <target>Ninguna</target>
+      </trans-unit>
+      <trans-unit id="uyq.PQ7" resname="Incidencia">
+        <source>Incidencia</source>
+        <target>Incidencia</target>
+      </trans-unit>
+      <trans-unit id="FOoqele" resname="Todas">
+        <source>Todas</source>
+        <target>Todas</target>
+      </trans-unit>
+      <trans-unit id="FUP1Nah" resname="Compost / Biogás">
+        <source>Compost / Biogás</source>
+        <target>Compost / Biogás</target>
+      </trans-unit>
+      <trans-unit id="AQs.2W5" resname="Plan de prevención publicado">
+        <source>Plan de prevención publicado</source>
+        <target>Plan de prevención publicado</target>
+      </trans-unit>
+      <trans-unit id="bamA25t" resname="Gestor de residuos &quot;{ name }&quot; actualizado por {user}">
+        <source>Gestor de residuos "{ name }" actualizado por {user}</source>
+        <target>Gestor de residuos "{ name }" actualizado por {user}</target>
+      </trans-unit>
+      <trans-unit id="St1VdO." resname="Gestor de residuos {id} eliminado por {user}">
+        <source>Gestor de residuos {id} eliminado por {user}</source>
+        <target>Gestor de residuos {id} eliminado por {user}</target>
+      </trans-unit>
+      <trans-unit id="8gFTzFh" resname="Gestor de residuos &quot;{ name }&quot; registrado por {user}">
+        <source>Gestor de residuos "{ name }" registrado por {user}</source>
+        <target>Gestor de residuos "{ name }" registrado por {user}</target>
+      </trans-unit>
+      <trans-unit id="T3Ee7im" resname="De acuerdo con la normativa vigente, la eliminación del excedente alimentario únicamente está permitida cuando ninguna de las alternativas de valorización previstas en la jerarquía de gestión de alimentos resulte viable.">
+        <source>De acuerdo con la normativa vigente, la eliminación del excedente alimentario únicamente está permitida cuando ninguna de las alternativas de valorización previstas en la jerarquía de gestión de alimentos resulte viable.</source>
+        <target>De acuerdo con la normativa vigente, la eliminación del excedente alimentario únicamente está permitida cuando ninguna de las alternativas de valorización previstas en la jerarquía de gestión de alimentos resulte viable.</target>
+      </trans-unit>
+      <trans-unit id="9GMoAr1" resname="Subproductos orgánicos">
+        <source>Subproductos orgánicos</source>
+        <target>Subproductos orgánicos</target>
+      </trans-unit>
+      <trans-unit id="jaYmNPy" resname="El plan está pendiente de firma por el responsable. Se ha enviado un correo electrónico con el enlace de firma.">
+        <source>El plan está pendiente de firma por el responsable. Se ha enviado un correo electrónico con el enlace de firma.</source>
+        <target>El plan está pendiente de firma por el responsable. Se ha enviado un correo electrónico con el enlace de firma.</target>
+      </trans-unit>
+      <trans-unit id="aa9VpY0" resname="Generando el documento PDF. En breve se enviará el enlace de firma al responsable por correo electrónico.">
+        <source>Generando el documento PDF. En breve se enviará el enlace de firma al responsable por correo electrónico.</source>
+        <target>Generando el documento PDF. En breve se enviará el enlace de firma al responsable por correo electrónico.</target>
+      </trans-unit>
+      <trans-unit id="tcioSLB" resname="La versión {version} del plan de prevención {name} ha sido publicada.">
+        <source>La versión {version} del plan de prevención {name} ha sido publicada.</source>
+        <target>La versión {version} del plan de prevención {name} ha sido publicada.</target>
+      </trans-unit>
+      <trans-unit id="xzXDSmM" resname="Ver plan de prevención">
+        <source>Ver plan de prevención</source>
+        <target>Ver plan de prevención</target>
+      </trans-unit>
+      <trans-unit id="A4.nVE0" resname="Prueba de firma">
+        <source>Prueba de firma</source>
+        <target>Prueba de firma</target>
+      </trans-unit>
+      <trans-unit id="lxpHTvx" resname="Declarar excedente">
+        <source>Declarar excedente</source>
+        <target>Declarar excedente</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

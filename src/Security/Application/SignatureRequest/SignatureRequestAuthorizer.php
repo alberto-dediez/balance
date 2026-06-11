@@ -39,6 +39,10 @@ final class SignatureRequestAuthorizer extends AbstractAuthorizer
             return false;
         }
 
+        if (null !== $subject->requestedBy() && $subject->requestedBy()->equals($user->id())) {
+            return true;
+        }
+
         return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin);
     }
 

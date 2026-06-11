@@ -34,6 +34,8 @@ use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\HumanResources\Domain\Model\Employee\EmployeeRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestRepository;
 use App\Security\Domain\Model\User\UserId;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\FoodLoss\Domain\Model\Action\ActionMother;
@@ -56,6 +58,7 @@ use App\Tests\Unit\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceMo
 use App\Tests\Unit\FoodLoss\Domain\Model\TrainingSession\TrainingSessionMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\WasteManager\WasteManagerMother;
 use App\Tests\Unit\HumanResources\Domain\Model\Employee\EmployeeMother;
+use App\Tests\Unit\Security\Domain\Model\SignatureRequest\SignatureRequestMother;
 use Behat\Behat\Context\Context;
 use Behat\Step\Given;
 use Behat\Step\Then;
@@ -172,6 +175,11 @@ final readonly class FoodLossContext implements Context
     public function getWasteManagerRepository(): WasteManagerRepository
     {
         return $this->client->getContainer()->get(WasteManagerRepository::class);
+    }
+
+    public function getSignatureRequestRepository(): SignatureRequestRepository
+    {
+        return $this->client->getContainer()->get(SignatureRequestRepository::class);
     }
 
     #[Given('surplus with id :id of account :accountId exists')]
@@ -647,5 +655,31 @@ final readonly class FoodLossContext implements Context
         );
 
         $this->getWasteManagerRepository()->add($wasteManager);
+    }
+
+    #[Given('prevention plan :name with id :id of account :accountId with signed document at :documentPath and signature request :signatureRequestId exists')]
+    public function preventionPlanWithSignedDocumentExists(string $name, string $id, string $accountId, string $documentPath, string $signatureRequestId): void
+    {
+        touch($documentPath);
+
+        $sigRequestId = new SignatureRequestId($signatureRequestId);
+
+        $plan = PreventionPlanMother::withPendingSignatureWithId($name, $id, $accountId, $sigRequestId);
+        $this->getPreventionPlanRepository()->add($plan);
+
+        $signatureRequest = SignatureRequestMother::signedWithDocumentPath($signatureRequestId, $accountId, $documentPath);
+        $this->getSignatureRequestRepository()->add($signatureRequest);
+    }
+
+    #[Given('prevention plan :name with id :id of account :accountId with pending signature request :signatureRequestId exists')]
+    public function preventionPlanWithPendingSignatureRequestExists(string $name, string $id, string $accountId, string $signatureRequestId): void
+    {
+        $sigRequestId = new SignatureRequestId($signatureRequestId);
+
+        $plan = PreventionPlanMother::withPendingSignatureWithId($name, $id, $accountId, $sigRequestId);
+        $this->getPreventionPlanRepository()->add($plan);
+
+        $signatureRequest = SignatureRequestMother::fromIdAndAccountId($signatureRequestId, $accountId);
+        $this->getSignatureRequestRepository()->add($signatureRequest);
     }
 }

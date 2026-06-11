@@ -9,6 +9,14 @@
     ~ version.versionNumber %}
 
 {% block top_actions %}
+    {% if version.signatureRequestId is not null and version.isClosed %}
+        <twig:TopAction path="{{ path('prevention_plans_version_download_signature_proof', {preventionPlanId: preventionPlan.id, versionNumber: version.versionNumber}) }}">
+            <twig:Icon name="solar:folder-security-line-duotone" size="lg" class="me-2" />
+
+            {{ 'Prueba de firma' | trans }}
+        </twig:TopAction>
+    {% endif %}
+
     <twig:TopAction:Return path="{{ path('prevention_plans_history', {preventionPlanId: preventionPlan.id}) }}" />
 {% endblock %}
 

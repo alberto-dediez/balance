@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Security\Domain\Model\SignatureRequest;
 
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\SignatureRequest\DocumentReference;
+use App\Security\Domain\Model\SignatureRequest\SignatureProof;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequest;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use App\Security\Domain\Model\SignatureRequest\Signer;
@@ -64,6 +65,23 @@ class SignatureRequestMother
             documentToSign: $documentToSign,
             signer: $signer,
             accountId: new AccountId($accountId),
+        );
+
+        return $signatureRequest;
+    }
+
+    public static function signedWithDocumentPath(string $id, string $accountId, string $documentPath): SignatureRequest
+    {
+        $signatureRequest = self::from(id: $id, accountId: $accountId, documentPath: $documentPath);
+        $signatureRequest->sign(
+            SignatureProof::create(
+                signedAt: new \DateTimeImmutable(),
+                documentHashAtSigning: hash('sha256', 'test-document-content'),
+                signedDocumentSha256: hash('sha256', 'signed-document-content'),
+                driver: 'test',
+                proofPayload: '{}',
+            ),
+            DocumentReference::fromPath($documentPath),
         );
 
         return $signatureRequest;

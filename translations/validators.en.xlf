@@ -705,31 +705,31 @@
         <source>Debes seleccionar una empresa</source>
         <target>You must select a company</target>
       </trans-unit>
-      <trans-unit id="TrPdNt1" resname="transformation.product.not_null">
+      <trans-unit id="bibTEku" resname="transformation.product.not_null">
         <source>transformation.product.not_null</source>
         <target>Please indicate how the surplus will be transformed</target>
       </trans-unit>
-      <trans-unit id="TrChnl1" resname="transformation.channel.not_null">
+      <trans-unit id="K08h16n" resname="transformation.channel.not_null">
         <source>transformation.channel.not_null</source>
         <target>Please indicate the distribution channel</target>
       </trans-unit>
-      <trans-unit id="AfWmNt1" resname="animal_feed.waste_manager_id.not_null">
+      <trans-unit id="oIQmldK" resname="animal_feed.waste_manager_id.not_null">
         <source>animal_feed.waste_manager_id.not_null</source>
         <target>The waste manager is required</target>
       </trans-unit>
-      <trans-unit id="CpWmNt1" resname="composting.waste_manager_id.not_null">
+      <trans-unit id="jO81mjc" resname="composting.waste_manager_id.not_null">
         <source>composting.waste_manager_id.not_null</source>
         <target>The waste manager is required</target>
       </trans-unit>
-      <trans-unit id="HdDtNt1" resname="human_donation.donation_date.not_null">
+      <trans-unit id="D_awn7f" resname="human_donation.donation_date.not_null">
         <source>human_donation.donation_date.not_null</source>
         <target>The donation date is required</target>
       </trans-unit>
-      <trans-unit id="HdRoNt1" resname="human_donation.recipient_organization.not_null">
+      <trans-unit id="TeLCoSr" resname="human_donation.recipient_organization.not_null">
         <source>human_donation.recipient_organization.not_null</source>
         <target>The recipient organisation is required</target>
       </trans-unit>
-      <trans-unit id="HdDlNt1" resname="human_donation.create_delivery_log.not_null">
+      <trans-unit id="xc9Ah5K" resname="human_donation.create_delivery_log.not_null">
         <source>human_donation.create_delivery_log.not_null</source>
         <target>Please indicate whether you want to record the donation in the delivery log</target>
       </trans-unit>
