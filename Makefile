@@ -184,3 +184,6 @@ queues-low: ## Start worker for the low priority queue
 asset-prod:
 	@$(PHP) bin/console sass:build
 	@$(PHP) bin/console asset-map:compile
+
+asset-email:
+	./var/dart-sass/sass assets/styles/email.scss assets/styles/email.css --no-source-map

@@ -1,29 +1,124 @@
-@import "email/fonts";
+//
+// Email stylesheet
+//
+// Este CSS se aplica inline en los emails mediante el filtro Twig `inline_css`
+// (ver templates/shared/layout/email.html.twig). Los clientes de correo
+// (Gmail, Outlook...) NO soportan variables CSS (var(--bs-*)), calc(),
+// media queries ni @import, por lo que NO se importa el CSS de Bootstrap:
+// solo sus variables SCSS, que compilan a valores concretos.
+//
+// Tras modificar este fichero hay que recompilarlo manualmente:
+//   ./var/dart-sass/sass assets/styles/email.scss assets/styles/email.css --no-source-map
+//
+@use "sass:math";
 
 $font-family-secondary: 'Karla', sans-serif;
 
-//Core files
+// Variables del tema de la web + valores por defecto de Bootstrap.
+// Estos imports no emiten CSS: solo resuelven $primary, $btn-*, $gray-*, etc.
+@import "../../vendor/twbs/bootstrap/scss/functions";
 @import "variables/variables";
+@import "../../vendor/twbs/bootstrap/scss/variables";
 
-// Import Bootstrap source files (Required file)
-@import '../../vendor/twbs/bootstrap/scss/bootstrap';
+// Convierte rem a px (los clientes de correo no manejan bien rem) y añade
+// px a valores sin unidad (p. ej. $btn-font-size: 14).
+@function email-px($value) {
+	@if math.is-unitless($value) {
+		@return $value * 1px;
+	}
+	@if math.unit($value) == "rem" {
+		@return math.div($value, 1rem) * 16px;
+	}
+	@return $value;
+}
+
+// Color de texto plano: $body-color lleva alfa (#111c2d99) y Outlook no
+// soporta colores con transparencia, así que se aplana sobre blanco.
+$email-body-color: mix(rgba($body-color, 1), $white, alpha($body-color) * 100%);
+
+// Base (sustituye al reboot de Bootstrap con valores email-safe)
+body {
+	margin: 0;
+	padding: 0;
+	background-color: $gray-200;
+	font-family: $font-family-sans-serif;
+	font-size: email-px($font-size-base);
+	font-weight: $font-weight-base;
+	line-height: $line-height-base;
+	color: $email-body-color;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+img {
+	border: 0;
+	outline: none;
+	text-decoration: none;
+}
+
+a {
+	color: $link-color;
+	text-decoration: $link-decoration;
+}
+
+p {
+	margin: 0 0 email-px($paragraph-margin-bottom);
+}
+
+small {
+	font-size: $small-font-size;
+}
+
+h1, .h1 { font-size: email-px($h1-font-size); }
+h2, .h2 { font-size: email-px($h2-font-size); }
+h3, .h3 { font-size: email-px($h3-font-size); }
+h4, .h4 { font-size: email-px($h4-font-size); }
+h5, .h5 { font-size: email-px($h5-font-size); }
+h6, .h6 { font-size: email-px($h6-font-size); }
+
+// Botones (equivalente email-safe de .btn de Bootstrap, sin var())
+.btn {
+	display: inline-block;
+	padding: $btn-padding-y $btn-padding-x;
+	font-family: $font-family-sans-serif;
+	font-size: email-px($btn-font-size);
+	font-weight: $btn-font-weight;
+	line-height: $btn-line-height;
+	color: $email-body-color;
+	text-align: center;
+	text-decoration: none;
+	vertical-align: middle;
+	border: 1px solid transparent;
+	border-radius: $btn-border-radius;
+	background-color: transparent;
+}
+
+.btn-primary {
+	color: color-contrast($primary);
+	background-color: $primary;
+	border-color: $primary;
+}
+
+.btn-secondary {
+	color: color-contrast($secondary);
+	background-color: $secondary;
+	border-color: $secondary;
+}
 
 //Components
 @import "email/reboot";
 @import "email/tables";
 @import "email/type";
 
-body {
-	background-color: $gray-200; 
-}
-
+// Layout
 table.body-wrap {
-	box-sizing: border-box; 
-	background-color: $white; 
-	box-sizing: border-box; 
-	display: block !important; 
-	max-width: 600px !important; 
-	clear: both !important; 
+	box-sizing: border-box;
+	background-color: $white;
+	display: block !important;
+	max-width: 600px !important;
+	clear: both !important;
 	margin: 0 auto;
 }
 
@@ -31,6 +126,13 @@ table.body-wrap {
 	background: $light;
 	text-align: center;
 	padding: 20px 10px;
+    display: block;
+    width: 101.5%;
+}
+
+.container {
+	width: 100%;
+	padding: 0 15px;
 }
 
 .footer {
