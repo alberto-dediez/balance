@@ -63,5 +63,9 @@
 {% endblock %}
 
 {% block list_actions %}
+    {% if is_granted('ROLE_OWNER') %}
+        <twig:Link:Statistics path="{{ path('surpluses_dashboard') }}" color="light" />
+    {% endif %}
+
     <twig:Link:Register path="{{ path('surpluses_register') }}" />
 {% endblock list_actions %}

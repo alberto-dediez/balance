@@ -72,6 +72,15 @@ class SurplusMother
         );
     }
 
+    public static function withAccountIdAndDate(AccountId $accountId, \DateTimeImmutable $date): Surplus
+    {
+        return self::from(
+            id: (string) SurplusId::generate(),
+            accountId: (string) $accountId,
+            date: $date,
+        );
+    }
+
     public static function withAllAssessmentsAnsweredNo(AccountId $accountId): Surplus
     {
         $surplus = self::withAccountId($accountId);

@@ -174,6 +174,11 @@ class NodeLister
             icon: 'solar:cart-plus-line-duotone',
             items: [
                 new Node(
+                    label: new TranslatableMessage('Dashboard'),
+                    icon: 'solar:chart-square-line-duotone',
+                    target: $this->router->generate('surpluses_dashboard'),
+                ),
+                new Node(
                     label: new TranslatableMessage('Excedentes'),
                     icon: 'solar:cart-plus-line-duotone',
                     target: $this->router->generate('surpluses'),

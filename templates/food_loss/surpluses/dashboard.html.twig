@@ -1,0 +1,184 @@
+{% extends '@shared/layout/app.html.twig' %}
+
+{% set page_title = 'Dashboard de excedentes' | trans %}
+
+{% block page_title %}
+    {{ parent() }}
+
+    <div class="ms-auto d-flex gap-2" role="group">
+        <twig:Link path="{{ path('surpluses') }}" color="light">
+            <twig:Icon name="solar:cart-plus-line-duotone" size="lg" class="me-2" />
+
+            {% trans %}Excedentes{% endtrans %}
+        </twig:Link>
+    </div>
+{% endblock %}
+
+{% block content %}
+    {% set unitLabel = dashboard.displayUnit.value | trans({}, 'deliveryLogUnit') %}
+
+    <twig:Card class="mb-3">
+        <twig:List:FilterBar :form="form"></twig:List:FilterBar>
+    </twig:Card>
+
+    <div class="row">
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-primary-subtle text-primary rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:cart-plus-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.totalSurpluses }}</h4>
+                        <span class="text-muted">{% trans %}Excedentes declarados{% endtrans %}</span>
+                        <div class="text-muted fs-2">
+                            &asymp; {{ dashboard.totalQuantity }} {{ unitLabel }}
+                            {% if dashboard.totalRations > 0 and dashboard.totalKg > 0 %}
+                                ({{ dashboard.totalKg }} {% trans %}kg{% endtrans %} · {{ dashboard.totalRations }} {% trans %}raciones{% endtrans %})
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-success-subtle text-success rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:hand-heart-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.recoveredSurpluses }}</h4>
+                        <span class="text-muted">{% trans %}Excedentes aprovechados{% endtrans %}</span>
+                        <div class="text-success fs-2">{{ dashboard.recoveredPercentage }} %</div>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-danger-subtle text-danger rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:trash-bin-trash-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.eliminatedSurpluses }}</h4>
+                        <span class="text-muted">{% trans %}Excedentes no aprovechados{% endtrans %}</span>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-warning-subtle text-warning rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:shield-warning-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.unassessedSurpluses }}</h4>
+                        <span class="text-muted">{% trans %}Pendientes de valorar{% endtrans %}</span>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+    </div>
+
+    {% if dashboard.totalSurpluses == 0 %}
+        <twig:Alert type="info">{% trans %}No hay excedentes declarados para los filtros seleccionados{% endtrans %}</twig:Alert>
+    {% else %}
+        {% set destinationLabels = dashboard.byDestination.labels | map(
+            label => label == 'Unassessed' ? ('Sin valorar' | trans) : (label | trans({}, 'surplusDestination'))
+        ) %}
+
+        <div class="row">
+            <div class="col-lg-6 d-flex">
+                <twig:Card title="{{ 'Clasificación por prioridad de destino' | trans }}" class="mb-3 flex-fill">
+                    <twig:Chart:Donut
+                        title="{{ 'Excedentes' | trans }}"
+                        :values="dashboard.byDestination.values"
+                        :categories="destinationLabels"
+                        :colors="dashboard.byDestination.colors"
+                        :decimals="0"
+                        :legend="true"
+                    />
+                </twig:Card>
+            </div>
+            <div class="col-lg-6 d-flex">
+                <twig:Card title="{{ 'Evolución mensual' | trans }} ({{ unitLabel }})" class="mb-3 flex-fill">
+                    <twig:Chart:Line
+                        title="{{ 'Cantidad de excedente' | trans }}"
+                        :values="dashboard.quantityByMonth.values"
+                        :categories="dashboard.quantityByMonth.labels"
+                        unit="{{ unitLabel }}"
+                        :decimals="0"
+                        :dataLabels="true"
+                    />
+                </twig:Card>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 d-flex">
+                <twig:Card title="{{ 'Excedentes por punto crítico' | trans }}" class="mb-3 flex-fill">
+                    <twig:Chart:Bar
+                        title="{{ 'Excedentes' | trans }}"
+                        :values="dashboard.byCriticalPoint.values"
+                        :categories="dashboard.byCriticalPoint.labels"
+                        :decimals="0"
+                    />
+                </twig:Card>
+            </div>
+            <div class="col-lg-6 d-flex">
+                <twig:Card title="{{ 'Excedentes por propiedad' | trans }}" class="mb-3 flex-fill">
+                    <twig:Chart:Bar
+                        title="{{ 'Excedentes' | trans }}"
+                        :values="dashboard.byProperty.values"
+                        :categories="dashboard.byProperty.labels"
+                        :decimals="0"
+                    />
+                </twig:Card>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4 d-flex">
+                <twig:Card title="{{ 'Motivos más frecuentes' | trans }}" class="mb-3 flex-fill">
+                    <twig:Chart:Bar
+                        title="{{ 'Excedentes' | trans }}"
+                        :values="dashboard.bySurplusCause.values"
+                        :categories="dashboard.bySurplusCause.labels"
+                        :decimals="0"
+                    />
+                </twig:Card>
+            </div>
+            <div class="col-lg-4 d-flex">
+                <twig:Card title="{{ 'Excedentes por turno' | trans }}" class="mb-3 flex-fill">
+                    <twig:Chart:Donut
+                        title="{{ 'Excedentes' | trans }}"
+                        :values="dashboard.byServiceCategory.values"
+                        :categories="dashboard.byServiceCategory.labels"
+                        :decimals="0"
+                        :legend="true"
+                    />
+                </twig:Card>
+            </div>
+            <div class="col-lg-4 d-flex">
+                <twig:Card title="{{ 'Excedentes por tipo de alimento' | trans }}" class="mb-3 flex-fill">
+                    <twig:Chart:Donut
+                        title="{{ 'Excedentes' | trans }}"
+                        :values="dashboard.byFoodType.values"
+                        :categories="dashboard.byFoodType.labels | map(label => label | trans({}, 'foodType'))"
+                        :decimals="0"
+                        :legend="true"
+                    />
+                </twig:Card>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block right_bar %}
+    <twig:Sidebar:Right>
+        <twig:List:Filter title="{{ 'Filtrar resultados' | trans }}"></twig:List:Filter>
+    </twig:Sidebar:Right>
+{% endblock %}
