@@ -3909,6 +3909,38 @@
         <source>Declarar excedente</source>
         <target>Declare surplus</target>
       </trans-unit>
+      <trans-unit id="xpvYnKu" resname="Identificador de firma">
+        <source>Identificador de firma</source>
+        <target>Signature ID</target>
+      </trans-unit>
+      <trans-unit id="8tCFk.V" resname="Driver criptografico">
+        <source>Driver criptografico</source>
+        <target>Cryptographic driver</target>
+      </trans-unit>
+      <trans-unit id="ww9FOdu" resname="Email firmante">
+        <source>Email firmante</source>
+        <target>Signer's email</target>
+      </trans-unit>
+      <trans-unit id="P8fFhdw" resname="Fecha y hora (UTC)">
+        <source>Fecha y hora (UTC)</source>
+        <target>Date and time (UTC)</target>
+      </trans-unit>
+      <trans-unit id="CsAPV.3" resname="Hash documento original (SHA-256)">
+        <source>Hash documento original (SHA-256)</source>
+        <target>Original document hash (SHA-256)</target>
+      </trans-unit>
+      <trans-unit id="ENxECOT" resname="Documento original">
+        <source>Documento original</source>
+        <target>Original document</target>
+      </trans-unit>
+      <trans-unit id="vK5gEZS" resname="Hash del texto de aceptacion (SHA-256)">
+        <source>Hash del texto de aceptacion (SHA-256)</source>
+        <target>Acceptance text hash (SHA-256)</target>
+      </trans-unit>
+      <trans-unit id="hkO1gNI" resname="Certificado de firma electronica">
+        <source>Certificado de firma electronica</source>
+        <target>Electronic signature certificate</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
