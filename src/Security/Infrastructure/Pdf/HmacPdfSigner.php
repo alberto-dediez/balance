@@ -130,7 +130,7 @@ class HmacPdfSigner implements PdfSigner
 
         $pdf->Ln(4);
         $pdf->setFont('helvetica', 'I', 8);
-        $pdf->MultiCell(0, 5, 'Este documento ha sido firmado electronicamente. Cualquier modificacion posterior invalidara la firma.', 0, 'L');
+        $pdf->MultiCell(0, 5, $this->translator->trans('Este documento ha sido firmado electronicamente. Cualquier modificacion posterior invalidara la firma.'), 0, 'L');
     }
 
     private function importPages(Fpdi $pdf, string $sourcePath): void
