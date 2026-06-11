@@ -1217,6 +1217,10 @@
         <source>Certificado de firma electronica</source>
         <target>Certificado de firma electronica</target>
       </trans-unit>
+      <trans-unit id="AjVatL." resname="Este documento ha sido firmado electronicamente. Cualquier modificacion posterior invalidara la firma.">
+        <source>Este documento ha sido firmado electronicamente. Cualquier modificacion posterior invalidara la firma.</source>
+        <target>Este documento ha sido firmado electronicamente. Cualquier modificacion posterior invalidara la firma.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
