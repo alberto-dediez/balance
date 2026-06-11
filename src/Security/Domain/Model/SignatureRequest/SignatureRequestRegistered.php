@@ -6,6 +6,7 @@ namespace App\Security\Domain\Model\SignatureRequest;
 
 use App\Security\Domain\DomainEvent;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -22,6 +23,7 @@ final class SignatureRequestRegistered extends DomainEvent
         private \DateTimeImmutable $expiresAt,
         private ?AccountId $accountId = null,
         private bool $otpRequired = true,
+        private ?UserId $requestedBy = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -63,6 +65,11 @@ final class SignatureRequestRegistered extends DomainEvent
         return $this->otpRequired;
     }
 
+    public function requestedBy(): ?UserId
+    {
+        return $this->requestedBy;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->signatureRequestId();
@@ -85,6 +92,7 @@ final class SignatureRequestRegistered extends DomainEvent
             'signerNotificationChannel' => $this->signer->notificationChannel()->value,
             'expiresAt' => $this->expiresAt->format(\DateTimeInterface::ATOM),
             'otpRequired' => $this->otpRequired,
+            'requestedBy' => null !== $this->requestedBy ? (string) $this->requestedBy : null,
         ];
     }
 
@@ -120,6 +128,7 @@ final class SignatureRequestRegistered extends DomainEvent
             expiresAt: new \DateTimeImmutable($payload['expiresAt']),
             accountId: null !== $payload['accountId'] ? new AccountId($payload['accountId']) : null,
             otpRequired: $payload['otpRequired'] ?? true,
+            requestedBy: isset($payload['requestedBy']) ? new UserId($payload['requestedBy']) : null,
             id: $id,
             occurredOn: $occurredOn,
         );

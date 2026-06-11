@@ -66,6 +66,7 @@ class RegisterSignatureRequestService implements CommandHandler
             signer: $signer,
             accountId: $request->accountId,
             otpRequired: $request->otpRequired,
+            requestedBy: $user->id(),
         );
 
         $this->signatureRequestRepository->add($signatureRequest);
