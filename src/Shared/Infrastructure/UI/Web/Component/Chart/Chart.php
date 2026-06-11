@@ -26,6 +26,12 @@ class Chart
 
     public ?string $unit = '';
 
+    public ?string $labelUnit = null;
+
+    public int $decimals = 2;
+
+    public ?int $labelDecimals = null;
+
     /**
      * @var array<int, mixed>
      */
