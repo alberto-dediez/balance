@@ -10,6 +10,7 @@ use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -450,6 +451,27 @@ class PreventionPlan implements \Stringable
         }
 
         $version->markAsDraftApproved();
+    }
+
+    public function requestSignature(SignatureRequestId $signatureRequestId, int $versionNumber): void
+    {
+        $this->recordApplyAndPublish(
+            new PreventionPlanSignatureRequested(
+                preventionPlanId: $this->id(),
+                versionNumber: $versionNumber,
+                signatureRequestId: $signatureRequestId,
+            ),
+        );
+    }
+
+    public function applyPreventionPlanSignatureRequested(PreventionPlanSignatureRequested $event): void
+    {
+        $version = $this->versions()->findByVersionNumber($event->versionNumber());
+        if (null === $version) {
+            return;
+        }
+
+        $version->attachSignatureRequest($event->signatureRequestId());
     }
 
     public function markAsCompleted(): void

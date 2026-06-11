@@ -8,14 +8,23 @@ Feature:
         When I go to "/es/prevention-plans/edit/333/publish"
         Then the response status should be 403
 
-    Scenario: As an owner, I can access the publish step when the draft is approved
+    Scenario: As an owner, I can access the publish step when the draft is approved and signature is being generated
         Given account "MyCompany" with id "mycompany" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
         Given prevention plan "Plan 1" with id "333" of account "mycompany" with draft approved status exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/prevention-plans/edit/333/publish"
         Then the response status should be 200
-        Then I see a form field "signed"
+        Then I see a text "Generando el documento PDF"
+
+    Scenario: As an owner, I can access the publish step when the signature request is pending
+        Given account "MyCompany" with id "mycompany" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
+        Given prevention plan "Plan 1" with id "333" of account "mycompany" with pending signature exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/prevention-plans/edit/333/publish"
+        Then the response status should be 200
+        Then I see a text "El plan está pendiente de firma por el responsable"
 
     Scenario: As an owner, I am redirected to edit when plan is not yet draft approved
         Given account "MyCompany" with id "mycompany" exists
@@ -41,12 +50,3 @@ Feature:
         When I am logged as "user1@dediez.software"
         When I go to "/es/prevention-plans/edit/333/publish"
         Then the response status should be 403
-
-    Scenario: As an owner, submitting the signed checkbox completes the plan and redirects to list
-        Given account "MyCompany" with id "mycompany" exists
-        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "mycompany" exists
-        Given prevention plan "Plan 1" with id "333" of account "mycompany" with draft approved status exists
-        When I am logged as "owner@dediez.software"
-        When I go to "/es/prevention-plans/edit/333/publish"
-        When I submit a form with "signed:1" and button "Publicar"
-        Then I am redirected to "/es/prevention-plans"

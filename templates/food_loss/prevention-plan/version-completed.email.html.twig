@@ -1,0 +1,16 @@
+{% extends '@shared/layout/email.html.twig' %}
+
+{% block content %}
+    <h3>{% trans -%}Plan de prevención publicado{%- endtrans %}</h3>
+    <p>
+        {% trans with {
+            '{name}': preventionPlan.name,
+            '{version}': version.versionNumber
+        } -%}
+            La versión {version} del plan de prevención {name} ha sido publicada.
+        {%- endtrans %}
+    </p>
+    <a href="{{ url('prevention_plans_version_detail', {'preventionPlanId': preventionPlan.id, 'versionNumber': version.versionNumber}) }}" class="btn btn-primary">
+        {% trans -%}Ver plan de prevención{%- endtrans %}
+    </a>
+{% endblock %}

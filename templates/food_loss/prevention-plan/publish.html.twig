@@ -47,18 +47,17 @@
             <dd class="col-sm-9 mb-0">{{ preventionPlan.updatedAt | date('d/m/Y') }}</dd>
         </dl>
 
-        {{ form_start(form) }}
-        <div class="row mt-3">
-            <div class="col-12">
-                {{ form_row(form.signed) }}
-            </div>
+        <div class="mt-4">
+            {% if signatureRequestId is not null %}
+                <twig:Alert type="info">
+                    {{ 'El plan está pendiente de firma por el responsable. Se ha enviado un correo electrónico con el enlace de firma.' | trans }}
+                </twig:Alert>
+            {% else %}
+                <twig:Alert type="warning">
+                    {{ 'Generando el documento PDF. En breve se enviará el enlace de firma al responsable por correo electrónico.' | trans }}
+                </twig:Alert>
+            {% endif %}
         </div>
-
-        <twig:ActionBar>
-            <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
-            <twig:ActionBar:Button type="primary" :button="form.publish" />
-        </twig:ActionBar>
-        {{ form_end(form) }}
 
     </div>
 {% endblock %}

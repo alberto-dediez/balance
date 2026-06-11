@@ -109,6 +109,17 @@ class PreventionPlanMother
         return $plan;
     }
 
+    public static function withPendingSignature(string $name, string $id, string $accountId): PreventionPlan
+    {
+        $plan = self::withDraftApprovedStatus($name, $id, $accountId);
+        $plan->requestSignature(
+            \App\Security\Domain\Model\SignatureRequest\SignatureRequestId::generate(),
+            $plan->currentVersion(),
+        );
+
+        return $plan;
+    }
+
     public static function fromWithProperty(string $name, string $id, string $accountId, string $propertyId): PreventionPlan
     {
         return self::from(
@@ -117,6 +128,38 @@ class PreventionPlanMother
             accountId: $accountId,
             propertyIds: [new PropertyId($propertyId)],
         );
+    }
+
+    public static function withResponsibleId(EmployeeId $responsibleId): PreventionPlan
+    {
+        $plan = new PreventionPlan(id: PreventionPlanId::generate());
+        $plan->register(
+            name: 'prevention-plan-' . random_int(100, 999),
+            propertyIds: [],
+            companyId: new CompanyId('company-id'),
+            accountId: new AccountId('account-id'),
+            registeredBy: new UserId('user-id'),
+            responsible: $responsibleId,
+            useAllCompanyProperties: false,
+        );
+
+        return $plan;
+    }
+
+    public static function withoutResponsible(): PreventionPlan
+    {
+        $preventionPlan = new PreventionPlan(id: PreventionPlanId::generate());
+        $preventionPlan->register(
+            name: 'prevention-plan-' . random_int(100, 999),
+            propertyIds: [],
+            companyId: new CompanyId('company-id'),
+            accountId: new AccountId('account-id'),
+            registeredBy: new UserId('user-id'),
+            responsible: null,
+            useAllCompanyProperties: false,
+        );
+
+        return $preventionPlan;
     }
 
     /** @param PropertyId[] $propertyIds */

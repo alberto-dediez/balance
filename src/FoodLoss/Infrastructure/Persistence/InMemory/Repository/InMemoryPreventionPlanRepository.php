@@ -12,6 +12,7 @@ use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]
@@ -42,6 +43,23 @@ class InMemoryPreventionPlanRepository implements PreventionPlanRepository
             ? $this->preventionPlans[(string) $preventionPlanId]
             : null
         ;
+    }
+
+    public function findBySignatureRequestId(SignatureRequestId $signatureRequestId): ?PreventionPlan
+    {
+        foreach ($this->preventionPlans as $preventionPlan) {
+            if ($preventionPlan->isRemoved()) {
+                continue;
+            }
+
+            $versionSignatureRequestId = $preventionPlan->currentPlanVersion()->signatureRequestId();
+
+            if (null !== $versionSignatureRequestId && $versionSignatureRequestId->equals($signatureRequestId)) {
+                return $preventionPlan;
+            }
+        }
+
+        return null;
     }
 
     /** @return array<int, PreventionPlan> */

@@ -1359,7 +1359,7 @@
       </trans-unit>
       <trans-unit id="F1EyIWj" resname="El fichero no es válido.">
         <source>El fichero no es válido.</source>
-        <target>File is invalid</target>
+        <target>The file is invalid.</target>
       </trans-unit>
       <trans-unit id="1K2HY.h" resname="Configuración de alerta creada correctamente">
         <source>Configuración de alerta creada correctamente</source>
@@ -2065,10 +2065,6 @@
         <source>Descripción</source>
         <target>Description</target>
       </trans-unit>
-      <trans-unit id="pPoeLHH" resname="Prioridad">
-        <source>Prioridad</source>
-        <target>Priority</target>
-      </trans-unit>
       <trans-unit id="tIgOWaK" resname="Acción actualizada con éxito">
         <source>Acción actualizada con éxito</source>
         <target>Action successfully updated</target>
@@ -2136,10 +2132,6 @@
       <trans-unit id="ijP65K5" resname="Jerarquía de prioridades">
         <source>Jerarquía de prioridades</source>
         <target>Priority Hierarchy</target>
-      </trans-unit>
-      <trans-unit id="F1EyIWj" resname="El fichero no es válido.">
-        <source>El fichero no es válido.</source>
-        <target>The file is invalid.</target>
       </trans-unit>
       <trans-unit id="Q4SsLBF" resname="Punto crítico creado correctamente: {name}">
         <source>Punto crítico creado correctamente: {name}</source>
@@ -2332,10 +2324,6 @@
       <trans-unit id="OXsOU6E" resname="Nombre completo">
         <source>Nombre completo</source>
         <target>Full name</target>
-      </trans-unit>
-      <trans-unit id="yhue5qm" resname="Teléfono">
-        <source>Teléfono</source>
-        <target>Phone</target>
       </trans-unit>
       <trans-unit id="QjvIIVf" resname="Sin empresa asignada">
         <source>Sin empresa asignada</source>
@@ -2685,10 +2673,6 @@
         <source>Fecha de inicio</source>
         <target>Start date</target>
       </trans-unit>
-      <trans-unit id="AorlCe0" resname="Fecha de expiración">
-        <source>Fecha de expiración</source>
-        <target>Expiry date</target>
-      </trans-unit>
       <trans-unit id="yW71GEt" resname="Convenio (PDF)">
         <source>Convenio (PDF)</source>
         <target>Agreement (PDF)</target>
@@ -2720,10 +2704,6 @@
       <trans-unit id="2gUNh9r" resname="Acción">
         <source>Acción</source>
         <target>Action</target>
-      </trans-unit>
-      <trans-unit id="vSIaw4i" resname="Tipo">
-        <source>Tipo</source>
-        <target>Type</target>
       </trans-unit>
       <trans-unit id="5ft5fw1" resname="NIF">
         <source>NIF</source>
@@ -2788,10 +2768,6 @@
       <trans-unit id="MR_NqT7" resname="Descargar">
         <source>Descargar</source>
         <target>Download</target>
-      </trans-unit>
-      <trans-unit id="5wkxlYg" resname="Histórico">
-        <source>Histórico</source>
-        <target>History</target>
       </trans-unit>
       <trans-unit id="hztpjSV" resname="Se ha eliminado el punto crítico {criticalPoint} por el usuario {user}">
         <source>Se ha eliminado el punto crítico {criticalPoint} por el usuario {user}</source>
@@ -3380,10 +3356,6 @@
       <trans-unit id="RUgkzRS" resname="Generando acciones sugeridas...">
         <source>Generando acciones sugeridas...</source>
         <target>Generating suggested actions...</target>
-      </trans-unit>
-      <trans-unit id="S.3cQ_b" resname="Estado">
-        <source>Estado</source>
-        <target>Status</target>
       </trans-unit>
       <trans-unit id="J8shuoP" resname="Fecha de creación">
         <source>Fecha de creación</source>

@@ -12,6 +12,7 @@ use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -46,6 +47,21 @@ class DoctrinePreventionPlanRepository implements PreventionPlanRepository
                 $qb->expr()->eq('e.id', ':id'),
             )
             ->setParameter('id', (string) $preventionPlanId)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    public function findBySignatureRequestId(SignatureRequestId $signatureRequestId): ?PreventionPlan
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        return $qb
+            ->select('e')
+            ->from(PreventionPlan::class, 'e')
+            ->join('e.versions', 'pv', 'WITH', 'pv.versionNumber = e.currentVersion')
+            ->where($qb->expr()->eq('pv.signatureRequestId', ':signatureRequestId'))
+            ->setParameter('signatureRequestId', (string) $signatureRequestId)
             ->getQuery()
             ->getOneOrNullResult()
         ;

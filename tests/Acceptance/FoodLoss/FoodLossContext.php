@@ -365,6 +365,14 @@ final readonly class FoodLossContext implements Context
         $this->getPreventionPlanRepository()->add($preventionPlan);
     }
 
+    #[Given('prevention plan :name with id :id of account :accountId with pending signature exists')]
+    public function preventionPlanWithPendingSignatureExists(string $name, string $id, string $accountId): void
+    {
+        $preventionPlan = PreventionPlanMother::withPendingSignature($name, $id, $accountId);
+
+        $this->getPreventionPlanRepository()->add($preventionPlan);
+    }
+
     #[Given('packaging :name with id :id of account :accountId exists')]
     public function packagingWithIdOfAccountExists(string $name, string $id, string $accountId): void
     {

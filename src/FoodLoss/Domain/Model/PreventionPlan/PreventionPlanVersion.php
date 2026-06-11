@@ -6,6 +6,7 @@ namespace App\FoodLoss\Domain\Model\PreventionPlan;
 
 use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Property\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\Translatable;
@@ -26,6 +27,8 @@ final class PreventionPlanVersion implements Translatable
     private iterable $translations;
 
     private PreventionPlanVersionId $id;
+
+    private ?SignatureRequestId $signatureRequestId = null;
 
     public function __construct(
         private PreventionPlan $preventionPlan,
@@ -68,6 +71,16 @@ final class PreventionPlanVersion implements Translatable
     public function responsible(): ?EmployeeId
     {
         return $this->responsible;
+    }
+
+    public function signatureRequestId(): ?SignatureRequestId
+    {
+        return $this->signatureRequestId;
+    }
+
+    public function attachSignatureRequest(SignatureRequestId $signatureRequestId): void
+    {
+        $this->signatureRequestId = $signatureRequestId;
     }
 
     public function status(): PreventionPlanVersionStatus
