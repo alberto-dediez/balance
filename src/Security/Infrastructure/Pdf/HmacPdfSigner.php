@@ -11,6 +11,7 @@ use App\Security\Domain\Model\SignatureRequest\SignatureRequest;
 use App\Security\Domain\Model\SignatureRequest\VerificationResult;
 use setasign\Fpdi\Tcpdf\Fpdi;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class HmacPdfSigner implements PdfSigner
 {
@@ -21,6 +22,7 @@ class HmacPdfSigner implements PdfSigner
     public function __construct(
         #[\SensitiveParameter]
         private string $appSecret,
+        private TranslatorInterface $translator,
     ) {}
 
     public function sign(DocumentReference $source, string $destinationPath, SignatureRequest $request, \DateTimeImmutable $signedAt, ?string $acceptanceTextSha256 = null): string
@@ -103,20 +105,20 @@ class HmacPdfSigner implements PdfSigner
     ): void {
         $pdf->AddPage();
         $pdf->setFont('helvetica', 'B', 14);
-        $pdf->Cell(0, 8, 'Certificado de firma electronica', 0, 1, 'L');
+        $pdf->Cell(0, 8, $this->translator->trans('Certificado de firma electronica'), 0, 1, 'L');
         $pdf->Ln(2);
 
         $signer = $request->signer();
 
         $rows = [
-            'Identificador de firma' => (string) $request->id(),
-            'Driver criptografico' => self::DRIVER_NAME,
-            'Firmante' => $signer->name(),
-            'Email firmante' => $signer->email() ?? 'n/a',
-            'Fecha y hora (UTC)' => $signedAt->setTimezone(new \DateTimeZone('UTC'))->format(\DateTimeInterface::ATOM),
-            'Hash documento original (SHA-256)' => $source->sha256() ?? 'n/a',
-            'Documento original' => $source->filename() ?? 'document.pdf',
-            'Hash del texto de aceptacion (SHA-256)' => $acceptanceTextSha256 ?? 'n/a',
+            $this->translator->trans('Identificador de firma') => (string) $request->id(),
+            $this->translator->trans('Driver criptografico') => self::DRIVER_NAME,
+            $this->translator->trans('Firmante') => $signer->name(),
+            $this->translator->trans('Email firmante') => $signer->email() ?? 'n/a',
+            $this->translator->trans('Fecha y hora (UTC)') => $signedAt->setTimezone(new \DateTimeZone('UTC'))->format(\DateTimeInterface::ATOM),
+            $this->translator->trans('Hash documento original (SHA-256)') => $source->sha256() ?? 'n/a',
+            $this->translator->trans('Documento original') => $source->filename() ?? 'document.pdf',
+            $this->translator->trans('Hash del texto de aceptacion (SHA-256)') => $acceptanceTextSha256 ?? 'n/a',
         ];
 
         foreach ($rows as $label => $value) {

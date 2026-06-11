@@ -1185,6 +1185,38 @@
         <source>Firma HMAC verificada correctamente.</source>
         <target>Firma HMAC verificada correctamente.</target>
       </trans-unit>
+      <trans-unit id="xpvYnKu" resname="Identificador de firma">
+        <source>Identificador de firma</source>
+        <target>Identificador de firma</target>
+      </trans-unit>
+      <trans-unit id="8tCFk.V" resname="Driver criptografico">
+        <source>Driver criptografico</source>
+        <target>Driver criptografico</target>
+      </trans-unit>
+      <trans-unit id="ww9FOdu" resname="Email firmante">
+        <source>Email firmante</source>
+        <target>Email firmante</target>
+      </trans-unit>
+      <trans-unit id="P8fFhdw" resname="Fecha y hora (UTC)">
+        <source>Fecha y hora (UTC)</source>
+        <target>Fecha y hora (UTC)</target>
+      </trans-unit>
+      <trans-unit id="CsAPV.3" resname="Hash documento original (SHA-256)">
+        <source>Hash documento original (SHA-256)</source>
+        <target>Hash documento original (SHA-256)</target>
+      </trans-unit>
+      <trans-unit id="ENxECOT" resname="Documento original">
+        <source>Documento original</source>
+        <target>Documento original</target>
+      </trans-unit>
+      <trans-unit id="vK5gEZS" resname="Hash del texto de aceptacion (SHA-256)">
+        <source>Hash del texto de aceptacion (SHA-256)</source>
+        <target>Hash del texto de aceptacion (SHA-256)</target>
+      </trans-unit>
+      <trans-unit id="hkO1gNI" resname="Certificado de firma electronica">
+        <source>Certificado de firma electronica</source>
+        <target>Certificado de firma electronica</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
