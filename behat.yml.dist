@@ -11,7 +11,6 @@ default:
                 - App\Tests\Acceptance\Shared\ApiContext
                 - App\Tests\Acceptance\Shared\SystemContext
                 - App\Tests\Acceptance\Security\SecurityContext
-                - App\Tests\Acceptance\Waste\WasteContext
                 - App\Tests\Acceptance\Property\PropertyContext
                 - App\Tests\Acceptance\DataExchange\DataExchangeContext
                 - App\Tests\Acceptance\FoodLoss\FoodLossContext

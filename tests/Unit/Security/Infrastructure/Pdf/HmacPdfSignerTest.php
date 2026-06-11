@@ -9,6 +9,7 @@ use App\Security\Domain\Model\SignatureRequest\SignatureProof;
 use App\Security\Infrastructure\Pdf\HmacPdfSigner;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Security\Domain\Model\SignatureRequest\SignatureRequestMother;
+use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
 use PHPUnit\Framework\TestCase;
 
 class HmacPdfSignerTest extends TestCase
@@ -18,7 +19,7 @@ class HmacPdfSignerTest extends TestCase
     protected function setUp(): void
     {
         DomainEventPublisher::instance()->reset();
-        $this->signer = new HmacPdfSigner(appSecret: 'test-app-secret');
+        $this->signer = new HmacPdfSigner(appSecret: 'test-app-secret', translator: new FakeTranslator());
     }
 
     public function testSignAndVerifyRoundtrip(): void

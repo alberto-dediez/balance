@@ -1,9 +1,0 @@
-{% extends '@shared/layout/register.html.twig' %}
-
-{% set page_title = ('Gestores de residuos' | trans) 
-    ~ ' > '
-    ~ ('Registrar' | trans)  %}
-
-{% block top_actions %}
-    <twig:TopAction:Return path="{{ path('waste_managers') }}" />
-{% endblock %}

@@ -10,7 +10,6 @@ use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanSection;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersion;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
-use App\Waste\Infrastructure\Tcpdf\GenericGenerator;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 use Symfony\Contracts\Translation\TranslatorInterface;
 

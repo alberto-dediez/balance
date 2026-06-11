@@ -45,28 +45,6 @@ security-api:
         namespace: App\Security\Infrastructure\UI\Api
     type: attribute
     prefix: '/api'
-
-waste-web:
-    resource:
-        path: ../src/Waste/Infrastructure/UI/Web/
-        namespace: App\Waste\Infrastructure\UI\Web
-    type: attribute
-    prefix: /{_locale}
-    requirements:
-        _locale: '%app.locale_list%'
-    defaults:
-        _locale: '%app.locale_default%'
-
-waste-api:
-    resource:
-        path: ../src/Waste/Infrastructure/UI/Api/
-        namespace: App\Waste\Infrastructure\UI\Api
-    type: attribute
-    prefix: /api/{_locale}
-    requirements:
-        _locale: '%app.locale_list%'
-    defaults:
-        _locale: '%app.locale_default%'
     
 food-loss-web:
     resource:

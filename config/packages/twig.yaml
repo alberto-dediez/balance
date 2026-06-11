@@ -10,7 +10,6 @@ twig:
         'templates/components': 'components' 
         'templates/shared': 'shared'
         'templates/security': 'security'
-        'templates/waste': 'waste'
         'templates/property': 'property'
         'templates/data_exchange': 'data_exchange'
         'templates/food_loss': 'food_loss'

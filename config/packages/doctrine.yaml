@@ -23,15 +23,6 @@ doctrine:
             category_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CategoryIdType
             brand_id: App\Property\Infrastructure\Persistence\Doctrine\Type\BrandIdType
             company_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CompanyIdType
-            container_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\ContainerIdType
-            measurement_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\MeasurementIdType
-            waste_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\WasteIdType
-            waste_manager_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\WasteManagerIdType
-            daily_waste_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\DailyWasteIdType
-            alert_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\AlertIdType
-            alert_configuration_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\AlertConfigurationIdType
-            alert_configuration_item_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\AlertConfigurationItemIdType
-            alert_check_queue_id: App\Waste\Infrastructure\Persistence\Doctrine\Type\AlertCheckQueueIdType
             signature_request_id: App\Security\Infrastructure\Persistence\Doctrine\Type\SignatureRequestIdType
             critical_point_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointIdType
             reason_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ReasonIdType
@@ -59,7 +50,6 @@ doctrine:
             surplus_cause_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\SurplusCauseIdType
             surplus_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\SurplusIdType
             food_waste_manager_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\WasteManagerIdType
-            fl_waste_manager_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\WasteManagerIdType
             job_progress_id: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressIdType
             job_progress_key: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressKeyType
             employee_id: App\HumanResources\Infrastructure\Persistence\Doctrine\Type\EmployeeIdType
@@ -81,13 +71,6 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Security/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Security\Domain\Model'
                 alias: Security
-
-            Waste:
-                type: xml
-                is_bundle: false
-                dir: '%kernel.project_dir%/src/Waste/Infrastructure/Persistence/Doctrine/Mapping'
-                prefix: 'App\Waste\Domain\Model'
-                alias: Waste
 
             Property:
                 type: xml

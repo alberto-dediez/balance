@@ -18,10 +18,6 @@
                             {% set value = value | property_name %}
                         {% elseif field == 'properties' %}
                             {% set value = value | map(v => v | property_name) | join(', ') %}
-                        {% elseif field == 'wasteId' %}
-                            {% set value = value | waste_name %}
-                        {% elseif field == 'wasteManagerId' %}
-                            {% set value = value | waste_manager_name %}
                         {% elseif field == 'destinationId' %}
                             {% set value = value | destination_name %}
                         {% elseif field == 'countryId' %}
@@ -30,8 +26,6 @@
                             {% set value = value | brand_name %}
                         {% elseif field == 'categoryId' %}
                             {% set value = value | category_name %}
-                        {% elseif field == 'purpose' %}
-                            {% set value = value.value | trans({}, 'purpose') %}
                         {% elseif field == 'actionId' %}
                             {% set value = value | action_name %}
                         {% elseif field == 'criticalPointId' %}
