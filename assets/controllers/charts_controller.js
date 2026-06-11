@@ -11,6 +11,9 @@ export default class extends Controller {
         categories: Array,
         colors: Array,
         formatterUnit: String,
+        labelUnit: String,
+        decimals: Number,
+        labelDecimals: Number,
         legend: Boolean,
         dataLabels: Boolean,
     }
@@ -31,9 +34,16 @@ export default class extends Controller {
         }
 
         var formatterUnit = this.formatterUnitValue;
+        var labelUnit = this.labelUnitValue || formatterUnit;
+        var decimals = this.decimalsValue;
+        var labelDecimals = this.labelDecimalsValue;
 
         var labelFormatter = function (val) {
-            return val.toFixed(2) + formatterUnit;
+          return val.toFixed(labelDecimals) + labelUnit;
+        };
+
+        var axisFormatter = function (val) {
+          return val.toFixed(decimals) + formatterUnit;
         };
 
         var series = [
@@ -101,7 +111,7 @@ export default class extends Controller {
             yaxis: {
                 tickAmount: 3,
                 labels: {
-                    formatter: labelFormatter
+                    formatter: axisFormatter
                 }
             },
             tooltip: {
