@@ -1169,6 +1169,22 @@
         <source>Actualizada la configuración de la importación {importationId}</source>
         <target>Configuration of import {importationId} has been updated</target>
       </trans-unit>
+      <trans-unit id="oYPWpH8" resname="El documento firmado no se encontró o no es legible.">
+        <source>El documento firmado no se encontró o no es legible.</source>
+        <target>The signed document was not found or is illegible.</target>
+      </trans-unit>
+      <trans-unit id="N71ivwf" resname="El documento ha sido modificado desde que fue firmado.">
+        <source>El documento ha sido modificado desde que fue firmado.</source>
+        <target>The document has been modified since it was signed.</target>
+      </trans-unit>
+      <trans-unit id="po8lhDM" resname="La firma HMAC no es válida.">
+        <source>La firma HMAC no es válida.</source>
+        <target>The HMAC signature is invalid.</target>
+      </trans-unit>
+      <trans-unit id="pnsdDoQ" resname="Firma HMAC verificada correctamente.">
+        <source>Firma HMAC verificada correctamente.</source>
+        <target>HMAC signature verified successfully.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

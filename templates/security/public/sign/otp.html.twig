@@ -24,9 +24,9 @@
 
                         <p class="text-muted">
                             {% if notificationChannel == 'Sms' %}
-                                {{ 'Hemos enviado un código de 6 dígitos al número ' | trans }}<strong>{{ maskedDestination }}</strong>.
+                                {{ 'Hemos enviado un código de 6 dígitos al número' | trans }} <strong>{{ maskedDestination }}</strong>.
                             {% else %}
-                                {{ 'Hemos enviado un código de 6 dígitos al email ' | trans }}<strong>{{ maskedDestination }}</strong>.
+                                {{ 'Hemos enviado un código de 6 dígitos al email' | trans }} <strong>{{ maskedDestination }}</strong>.
                             {% endif %}
                         </p>
 

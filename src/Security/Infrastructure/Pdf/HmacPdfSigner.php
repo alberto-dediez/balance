@@ -10,6 +10,7 @@ use App\Security\Domain\Model\SignatureRequest\SignatureProof;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequest;
 use App\Security\Domain\Model\SignatureRequest\VerificationResult;
 use setasign\Fpdi\Tcpdf\Fpdi;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class HmacPdfSigner implements PdfSigner
 {
@@ -69,23 +70,23 @@ class HmacPdfSigner implements PdfSigner
     public function verify(string $signedPdfPath, SignatureProof $proof): VerificationResult
     {
         if (!is_readable($signedPdfPath)) {
-            return new VerificationResult(valid: false, details: 'El documento firmado no se encontró o no es legible.');
+            return new VerificationResult(valid: false, details: (string) new TranslatableMessage('El documento firmado no se encontró o no es legible.'));
         }
 
         $currentHash = hash_file('sha256', $signedPdfPath);
         assert(false !== $currentHash);
 
         if (!hash_equals($proof->signedDocumentSha256() ?? '', $currentHash)) {
-            return new VerificationResult(valid: false, details: 'El documento ha sido modificado desde que fue firmado.');
+            return new VerificationResult(valid: false, details: (string) new TranslatableMessage('El documento ha sido modificado desde que fue firmado.'));
         }
 
         $expectedHmac = $this->computeHmac($currentHash);
 
         if (!hash_equals($proof->proofPayload() ?? '', $expectedHmac)) {
-            return new VerificationResult(valid: false, details: 'La firma HMAC no es válida.');
+            return new VerificationResult(valid: false, details: (string) new TranslatableMessage('La firma HMAC no es válida.'));
         }
 
-        return new VerificationResult(valid: true, details: 'Firma HMAC verificada correctamente.');
+        return new VerificationResult(valid: true, details: (string) new TranslatableMessage('Firma HMAC verificada correctamente.'));
     }
 
     public function driverName(): string

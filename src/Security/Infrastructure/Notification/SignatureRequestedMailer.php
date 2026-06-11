@@ -14,6 +14,7 @@ use App\Shared\Domain\Model\Email\EmailSender;
 use App\Shared\Domain\Model\Sms\SmsSender;
 use App\Shared\Domain\Model\WhatsApp\WhatsAppSender;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Translation\LocaleSwitcher;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SignatureRequestedMailer implements DomainEventSubscriber
@@ -25,6 +26,7 @@ class SignatureRequestedMailer implements DomainEventSubscriber
         private SmsSender $smsSender,
         private WhatsAppSender $whatsAppSender,
         private TranslatorInterface $translator,
+        private LocaleSwitcher $localeSwitcher,
         private UrlGeneratorInterface $urlGenerator,
     ) {
         $this->register();
@@ -45,53 +47,52 @@ class SignatureRequestedMailer implements DomainEventSubscriber
     {
         $signer = $event->signer();
 
-        $signingUrl = $this->urlGenerator->generate(
-            'public_sign_view',
-            ['token' => $event->token()->plainValue()],
-            UrlGeneratorInterface::ABSOLUTE_URL,
-        );
+        $this->localeSwitcher->runWithLocale(
+            $signer->locale()->value,
+            function () use ($event, $signer): void {
+                $signingUrl = $this->urlGenerator->generate(
+                    'public_sign_view',
+                    ['token' => $event->token()->plainValue(), '_locale' => $signer->locale()->value],
+                    UrlGeneratorInterface::ABSOLUTE_URL,
+                );
 
-        if (NotificationChannel::Sms === $signer->notificationChannel()) {
-            if (null === $signer->phone()) {
-                return;
-            }
+                if (NotificationChannel::Sms === $signer->notificationChannel()) {
+                    if (null === $signer->phone()) {
+                        return;
+                    }
 
-            $body = $this->translator->trans(
-                'Firma el documento aquí: {url}',
-                ['{url}' => $signingUrl],
-            );
-            ($this->smsSender)($signer->phone(), $body);
+                    $body = $this->translator->trans('Firma el documento aquí: {url}', ['{url}' => $signingUrl]);
+                    ($this->smsSender)($signer->phone(), $body);
 
-            return;
-        }
+                    return;
+                }
 
-        if (NotificationChannel::Whatsapp === $signer->notificationChannel()) {
-            if (null === $signer->phone()) {
-                return;
-            }
+                if (NotificationChannel::Whatsapp === $signer->notificationChannel()) {
+                    if (null === $signer->phone()) {
+                        return;
+                    }
 
-            $body = $this->translator->trans(
-                'Firma el documento aquí: {url}',
-                ['{url}' => $signingUrl],
-            );
-            ($this->whatsAppSender)($signer->phone(), $body);
+                    $body = $this->translator->trans('Firma el documento aquí: {url}', ['{url}' => $signingUrl]);
+                    ($this->whatsAppSender)($signer->phone(), $body);
 
-            return;
-        }
+                    return;
+                }
 
-        if (null === $signer->email()) {
-            return;
-        }
+                if (null === $signer->email()) {
+                    return;
+                }
 
-        $this->emailSender->__invoke(
-            recipient: new EmailRecipient(name: $signer->name(), email: $signer->email()),
-            subject: $this->translator->trans('Solicitud de firma de documento'),
-            template: '@security/public/sign/request.email.html.twig',
-            params: [
-                'signerName' => $signer->name(),
-                'signingUrl' => $signingUrl,
-                'expiresAt' => $event->expiresAt(),
-            ],
+                $this->emailSender->__invoke(
+                    recipient: new EmailRecipient(name: $signer->name(), email: $signer->email()),
+                    subject: $this->translator->trans('Solicitud de firma de documento'),
+                    template: '@security/public/sign/request.email.html.twig',
+                    params: [
+                        'signerName' => $signer->name(),
+                        'signingUrl' => $signingUrl,
+                        'expiresAt' => $event->expiresAt(),
+                    ],
+                );
+            },
         );
     }
 

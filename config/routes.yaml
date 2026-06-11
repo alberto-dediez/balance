@@ -33,6 +33,11 @@ security-public-sign:
         path: ../src/Security/Infrastructure/UI/Web/Public/
         namespace: App\Security\Infrastructure\UI\Web\Public
     type: attribute
+    prefix: /{_locale}
+    requirements:
+        _locale: '%app.locale_list%'
+    defaults:
+        _locale: '%app.locale_default%'
 
 security-api:
     resource:
