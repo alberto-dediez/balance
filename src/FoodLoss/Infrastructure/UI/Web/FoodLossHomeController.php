@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\UI\Web;
 
+use App\FoodLoss\Application\Dashboard\GetAdminDashboardRequest;
+use App\FoodLoss\Application\Dashboard\GetAdminDashboardService;
 use App\FoodLoss\Application\Dashboard\GetOwnerDashboardRequest;
 use App\FoodLoss\Application\Dashboard\GetOwnerDashboardService;
 use App\FoodLoss\Application\Dashboard\GetUserDashboardRequest;
 use App\FoodLoss\Application\Dashboard\GetUserDashboardService;
+use App\FoodLoss\Infrastructure\Symfony\Form\DashboardAdminType;
 use App\FoodLoss\Infrastructure\Symfony\Form\DashboardFoodLossType;
 use App\FoodLoss\Infrastructure\Symfony\Form\DashboardUserType;
 use App\Security\Application\UnauthorizedActionException;
@@ -24,8 +27,20 @@ class FoodLossHomeController extends AbstractController
 {
     use FilterTrait;
 
-    public function __invoke(GetOwnerDashboardService $getFoodLossDashboard, GetUserDashboardService $getUserDashboard, LoggedUser $loggedUser, LoggedAccount $loggedAccount, Request $request): Response
+    public function __invoke(GetAdminDashboardService $getAdminDashboard, GetOwnerDashboardService $getFoodLossDashboard, GetUserDashboardService $getUserDashboard, LoggedUser $loggedUser, LoggedAccount $loggedAccount, Request $request): Response
     {
+        try {
+            [$filter, $form] = $this->filter($request, fn(): GetAdminDashboardRequest => new GetAdminDashboardRequest(), DashboardAdminType::class);
+
+            $response = $getAdminDashboard($filter, $loggedUser());
+
+            return $this->render('@food_loss/home/admin_dashboard.html.twig', [
+                'dashboard' => $response,
+                'form' => $form->createView(),
+            ]);
+        } catch (UnauthorizedActionException) {
+        }
+
         try {
             [$filter, $form] = $this->filter($request, function () use ($loggedAccount): GetOwnerDashboardRequest {
                 $ownerRequest = new GetOwnerDashboardRequest(limit: 0);
