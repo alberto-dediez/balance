@@ -29,7 +29,7 @@ class RegisterIncidenceService implements CommandHandler
     {
         $id = IncidenceId::generate();
 
-        $this->authorizer->denyUnlessCanDoThat(new Incidence(id: $id), SecurityAction::List, $user);
+        $this->authorizer->denyUnlessCanDoThat(new Incidence(id: $id, accountId: $request->accountId), SecurityAction::List, $user);
 
         $incidence = new Incidence($id);
         $incidence->register(

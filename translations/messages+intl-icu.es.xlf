@@ -3945,6 +3945,514 @@
         <source>Este documento ha sido firmado electronicamente. Cualquier modificacion posterior invalidara la firma.</source>
         <target>Este documento ha sido firmado electronicamente. Cualquier modificacion posterior invalidara la firma.</target>
       </trans-unit>
+      <trans-unit id="xHsbIh6" resname="Dashboard">
+        <source>Dashboard</source>
+        <target>Dashboard</target>
+      </trans-unit>
+      <trans-unit id="ASJW8Vw" resname="Ver en">
+        <source>Ver en</source>
+        <target>Ver en</target>
+      </trans-unit>
+      <trans-unit id="cQuh9W1" resname="Factor de conversión">
+        <source>Factor de conversión</source>
+        <target>Factor de conversión</target>
+      </trans-unit>
+      <trans-unit id="B_m2PrL" resname="Kg equivalentes a una ración. Por defecto, el valor recomendado por las guías del MITECO.">
+        <source>Kg equivalentes a una ración. Por defecto, el valor recomendado por las guías del MITECO.</source>
+        <target>Kg equivalentes a una ración. Por defecto, el valor recomendado por las guías del MITECO.</target>
+      </trans-unit>
+      <trans-unit id="fpPgtmb" resname="Excedentes declarados">
+        <source>Excedentes declarados</source>
+        <target>Excedentes declarados</target>
+      </trans-unit>
+      <trans-unit id="LX809d6" resname="kg">
+        <source>kg</source>
+        <target>kg</target>
+      </trans-unit>
+      <trans-unit id="mZTsCtq" resname="raciones">
+        <source>raciones</source>
+        <target>raciones</target>
+      </trans-unit>
+      <trans-unit id="Z5tqkSo" resname="Excedentes aprovechados">
+        <source>Excedentes aprovechados</source>
+        <target>Excedentes aprovechados</target>
+      </trans-unit>
+      <trans-unit id="jT7cvRf" resname="Excedentes no aprovechados">
+        <source>Excedentes no aprovechados</source>
+        <target>Excedentes no aprovechados</target>
+      </trans-unit>
+      <trans-unit id="svXvmHF" resname="Pendientes de valorar">
+        <source>Pendientes de valorar</source>
+        <target>Pendientes de valorar</target>
+      </trans-unit>
+      <trans-unit id="m8NmrTP" resname="No hay excedentes declarados para los filtros seleccionados">
+        <source>No hay excedentes declarados para los filtros seleccionados</source>
+        <target>No hay excedentes declarados para los filtros seleccionados</target>
+      </trans-unit>
+      <trans-unit id="EM.xaK2" resname="Cantidad de excedente">
+        <source>Cantidad de excedente</source>
+        <target>Cantidad de excedente</target>
+      </trans-unit>
+      <trans-unit id="O4EpCTv" resname="Dashboard de excedentes">
+        <source>Dashboard de excedentes</source>
+        <target>Dashboard de excedentes</target>
+      </trans-unit>
+      <trans-unit id="pcuxOwz" resname="Sin valorar">
+        <source>Sin valorar</source>
+        <target>Sin valorar</target>
+      </trans-unit>
+      <trans-unit id="3oaOYJR" resname="Clasificación por prioridad de destino">
+        <source>Clasificación por prioridad de destino</source>
+        <target>Clasificación por prioridad de destino</target>
+      </trans-unit>
+      <trans-unit id="hwnARSE" resname="Evolución mensual">
+        <source>Evolución mensual</source>
+        <target>Evolución mensual</target>
+      </trans-unit>
+      <trans-unit id="2.bm16J" resname="Excedentes por punto crítico">
+        <source>Excedentes por punto crítico</source>
+        <target>Excedentes por punto crítico</target>
+      </trans-unit>
+      <trans-unit id="DNccJvL" resname="Excedentes por propiedad">
+        <source>Excedentes por propiedad</source>
+        <target>Excedentes por propiedad</target>
+      </trans-unit>
+      <trans-unit id="8qP8EPc" resname="Motivos más frecuentes">
+        <source>Motivos más frecuentes</source>
+        <target>Motivos más frecuentes</target>
+      </trans-unit>
+      <trans-unit id="0AlOb6Q" resname="Excedentes por turno">
+        <source>Excedentes por turno</source>
+        <target>Excedentes por turno</target>
+      </trans-unit>
+      <trans-unit id="1A1qW5." resname="Excedentes por tipo de alimento">
+        <source>Excedentes por tipo de alimento</source>
+        <target>Excedentes por tipo de alimento</target>
+      </trans-unit>
+      <trans-unit id="cPY7yYX" resname="El rango de fechas se aplica a excedentes, entregas, accesos a protocolos, formación e incidencias. El resto de indicadores muestran el estado actual.">
+        <source>El rango de fechas se aplica a excedentes, entregas, accesos a protocolos, formación e incidencias. El resto de indicadores muestran el estado actual.</source>
+        <target>El rango de fechas se aplica a excedentes, entregas, accesos a protocolos, formación e incidencias. El resto de indicadores muestran el estado actual.</target>
+      </trans-unit>
+      <trans-unit id="ASUKHK." resname="Puntos críticos mapeados">
+        <source>Puntos críticos mapeados</source>
+        <target>Puntos críticos mapeados</target>
+      </trans-unit>
+      <trans-unit id="Xw2uXzr" resname="Ver puntos críticos">
+        <source>Ver puntos críticos</source>
+        <target>Ver puntos críticos</target>
+      </trans-unit>
+      <trans-unit id="mDdcnC2" resname="Planes de prevención">
+        <source>Planes de prevención</source>
+        <target>Planes de prevención</target>
+      </trans-unit>
+      <trans-unit id="DFRYxwC" resname="Plan válido publicado">
+        <source>Plan válido publicado</source>
+        <target>Plan válido publicado</target>
+      </trans-unit>
+      <trans-unit id="P814fse" resname="Sin plan publicado">
+        <source>Sin plan publicado</source>
+        <target>Sin plan publicado</target>
+      </trans-unit>
+      <trans-unit id="rXyBU_W" resname="Ver incidencias">
+        <source>Ver incidencias</source>
+        <target>Ver incidencias</target>
+      </trans-unit>
+      <trans-unit id="mZqrkvN" resname="Aún no hay puntos críticos mapeados">
+        <source>Aún no hay puntos críticos mapeados</source>
+        <target>Aún no hay puntos críticos mapeados</target>
+      </trans-unit>
+      <trans-unit id="bpsfEM2" resname="Aún no hay planes de prevención registrados">
+        <source>Aún no hay planes de prevención registrados</source>
+        <target>Aún no hay planes de prevención registrados</target>
+      </trans-unit>
+      <trans-unit id="FnRJe.4" resname="Planes">
+        <source>Planes</source>
+        <target>Planes</target>
+      </trans-unit>
+      <trans-unit id="4lK_4lu" resname="Aprovechados">
+        <source>Aprovechados</source>
+        <target>Aprovechados</target>
+      </trans-unit>
+      <trans-unit id="ATllg7U" resname="No aprovechados">
+        <source>No aprovechados</source>
+        <target>No aprovechados</target>
+      </trans-unit>
+      <trans-unit id="ktCBD0S" resname="Ver excedentes">
+        <source>Ver excedentes</source>
+        <target>Ver excedentes</target>
+      </trans-unit>
+      <trans-unit id="q1nlOmu" resname="No hay excedentes declarados para el periodo seleccionado">
+        <source>No hay excedentes declarados para el periodo seleccionado</source>
+        <target>No hay excedentes declarados para el periodo seleccionado</target>
+      </trans-unit>
+      <trans-unit id="17mcOo0" resname="Convenios en activo">
+        <source>Convenios en activo</source>
+        <target>Convenios en activo</target>
+      </trans-unit>
+      <trans-unit id="NvGerq6" resname="próximos a vencer">
+        <source>próximos a vencer</source>
+        <target>próximos a vencer</target>
+      </trans-unit>
+      <trans-unit id="jxGNYdP" resname="Convenios caducados">
+        <source>Convenios caducados</source>
+        <target>Convenios caducados</target>
+      </trans-unit>
+      <trans-unit id="yXPnwiu" resname="Ver convenios">
+        <source>Ver convenios</source>
+        <target>Ver convenios</target>
+      </trans-unit>
+      <trans-unit id="AkS8BKr" resname="Registros de entrega">
+        <source>Registros de entrega</source>
+        <target>Registros de entrega</target>
+      </trans-unit>
+      <trans-unit id="aswSiaY" resname="Ver registros">
+        <source>Ver registros</source>
+        <target>Ver registros</target>
+      </trans-unit>
+      <trans-unit id="hS4FP96" resname="Alimentos donados">
+        <source>Alimentos donados</source>
+        <target>Alimentos donados</target>
+      </trans-unit>
+      <trans-unit id="wE1Ir.z" resname="Stock de envases">
+        <source>Stock de envases</source>
+        <target>Stock de envases</target>
+      </trans-unit>
+      <trans-unit id="O17V4SH" resname="tipos de envase">
+        <source>tipos de envase</source>
+        <target>tipos de envase</target>
+      </trans-unit>
+      <trans-unit id="u24n7CA" resname="Ver envases">
+        <source>Ver envases</source>
+        <target>Ver envases</target>
+      </trans-unit>
+      <trans-unit id="NfVbEFC" resname="Carteles informativos">
+        <source>Carteles informativos</source>
+        <target>Carteles informativos</target>
+      </trans-unit>
+      <trans-unit id="Y2jCnn4" resname="Ver carteles">
+        <source>Ver carteles</source>
+        <target>Ver carteles</target>
+      </trans-unit>
+      <trans-unit id="e6pVC_s" resname="Aún no hay stock de envases registrado">
+        <source>Aún no hay stock de envases registrado</source>
+        <target>Aún no hay stock de envases registrado</target>
+      </trans-unit>
+      <trans-unit id="PsCeZsO" resname="Protocolos leídos">
+        <source>Protocolos leídos</source>
+        <target>Protocolos leídos</target>
+      </trans-unit>
+      <trans-unit id="TRtCa1Y" resname="sin leer">
+        <source>sin leer</source>
+        <target>sin leer</target>
+      </trans-unit>
+      <trans-unit id="P1nkJdl" resname="accesos en el periodo">
+        <source>accesos en el periodo</source>
+        <target>accesos en el periodo</target>
+      </trans-unit>
+      <trans-unit id="dCtCzb_" resname="Ver protocolos">
+        <source>Ver protocolos</source>
+        <target>Ver protocolos</target>
+      </trans-unit>
+      <trans-unit id="fi8ULNY" resname="Asistencias registradas">
+        <source>Asistencias registradas</source>
+        <target>Asistencias registradas</target>
+      </trans-unit>
+      <trans-unit id="k11YlOk" resname="Ver sesiones formativas">
+        <source>Ver sesiones formativas</source>
+        <target>Ver sesiones formativas</target>
+      </trans-unit>
+      <trans-unit id=".5x8lSq" resname="No hay incidencias en el periodo seleccionado">
+        <source>No hay incidencias en el periodo seleccionado</source>
+        <target>No hay incidencias en el periodo seleccionado</target>
+      </trans-unit>
+      <trans-unit id="Fcnf5Qu" resname="Diagnóstico y prevención">
+        <source>Diagnóstico y prevención</source>
+        <target>Diagnóstico y prevención</target>
+      </trans-unit>
+      <trans-unit id="wJZwf6I" resname="Puntos críticos por prioridad">
+        <source>Puntos críticos por prioridad</source>
+        <target>Puntos críticos por prioridad</target>
+      </trans-unit>
+      <trans-unit id="wMeaT1a" resname="Puntos críticos por etapa de la cadena">
+        <source>Puntos críticos por etapa de la cadena</source>
+        <target>Puntos críticos por etapa de la cadena</target>
+      </trans-unit>
+      <trans-unit id="m4RDq7g" resname="Planes de prevención por estado">
+        <source>Planes de prevención por estado</source>
+        <target>Planes de prevención por estado</target>
+      </trans-unit>
+      <trans-unit id="F71mIW8" resname="Valoración de excedentes">
+        <source>Valoración de excedentes</source>
+        <target>Valoración de excedentes</target>
+      </trans-unit>
+      <trans-unit id="HPgpd4_" resname="Excedentes por destino">
+        <source>Excedentes por destino</source>
+        <target>Excedentes por destino</target>
+      </trans-unit>
+      <trans-unit id="ID3nKeg" resname="Aprovechamiento en sala">
+        <source>Aprovechamiento en sala</source>
+        <target>Aprovechamiento en sala</target>
+      </trans-unit>
+      <trans-unit id="hFC9CAJ" resname="Stock de envases por tipo">
+        <source>Stock de envases por tipo</source>
+        <target>Stock de envases por tipo</target>
+      </trans-unit>
+      <trans-unit id="IvPYdoO" resname="Personas y seguimiento">
+        <source>Personas y seguimiento</source>
+        <target>Personas y seguimiento</target>
+      </trans-unit>
+      <trans-unit id="cWU4RDm" resname="Formación">
+        <source>Formación</source>
+        <target>Formación</target>
+      </trans-unit>
+      <trans-unit id="xnmVzeu" resname="Incidencias por tipo">
+        <source>Incidencias por tipo</source>
+        <target>Incidencias por tipo</target>
+      </trans-unit>
+      <trans-unit id="3MzdlJ5" resname="Completados">
+        <source>Completados</source>
+        <target>Completados</target>
+      </trans-unit>
+      <trans-unit id="g2.ZUXd" resname="Con responsable">
+        <source>Con responsable</source>
+        <target>Con responsable</target>
+      </trans-unit>
+      <trans-unit id="ac8FUsd" resname="No hay planes de prevención para los filtros seleccionados">
+        <source>No hay planes de prevención para los filtros seleccionados</source>
+        <target>No hay planes de prevención para los filtros seleccionados</target>
+      </trans-unit>
+      <trans-unit id="DH10zpD" resname="Dashboard de planes de prevención">
+        <source>Dashboard de planes de prevención</source>
+        <target>Dashboard de planes de prevención</target>
+      </trans-unit>
+      <trans-unit id="7x85oVI" resname="Altas por mes">
+        <source>Altas por mes</source>
+        <target>Altas por mes</target>
+      </trans-unit>
+      <trans-unit id="9QA5jIf" resname="Planes de prevención por empresa">
+        <source>Planes de prevención por empresa</source>
+        <target>Planes de prevención por empresa</target>
+      </trans-unit>
+      <trans-unit id="Y7rfsSe" resname="Propiedades por plan">
+        <source>Propiedades por plan</source>
+        <target>Propiedades por plan</target>
+      </trans-unit>
+      <trans-unit id="FByPGU7" resname="Asistencias">
+        <source>Asistencias</source>
+        <target>Asistencias</target>
+      </trans-unit>
+      <trans-unit id="2TX5VeS" resname="por sesión">
+        <source>por sesión</source>
+        <target>por sesión</target>
+      </trans-unit>
+      <trans-unit id="9R3QFCT" resname="Accesos a protocolos">
+        <source>Accesos a protocolos</source>
+        <target>Accesos a protocolos</target>
+      </trans-unit>
+      <trans-unit id="MVsNfIA" resname="No hay datos de formación para los filtros seleccionados">
+        <source>No hay datos de formación para los filtros seleccionados</source>
+        <target>No hay datos de formación para los filtros seleccionados</target>
+      </trans-unit>
+      <trans-unit id="_InX.OA" resname="Sesiones">
+        <source>Sesiones</source>
+        <target>Sesiones</target>
+      </trans-unit>
+      <trans-unit id="9QqaPZ." resname="Dashboard de formación">
+        <source>Dashboard de formación</source>
+        <target>Dashboard de formación</target>
+      </trans-unit>
+      <trans-unit id="PFMy6VE" resname="Asistencias por sesión">
+        <source>Asistencias por sesión</source>
+        <target>Asistencias por sesión</target>
+      </trans-unit>
+      <trans-unit id="EItHWtF" resname="Sesiones por mes">
+        <source>Sesiones por mes</source>
+        <target>Sesiones por mes</target>
+      </trans-unit>
+      <trans-unit id="E_RAlNu" resname="Accesos por protocolo">
+        <source>Accesos por protocolo</source>
+        <target>Accesos por protocolo</target>
+      </trans-unit>
+      <trans-unit id="6T6w7Rl" resname="Accesos por mes">
+        <source>Accesos por mes</source>
+        <target>Accesos por mes</target>
+      </trans-unit>
+      <trans-unit id="RMxI2l6" resname="Stock total">
+        <source>Stock total</source>
+        <target>Stock total</target>
+      </trans-unit>
+      <trans-unit id="IXrmX6r" resname="No hay datos de doggy bag para los filtros seleccionados">
+        <source>No hay datos de doggy bag para los filtros seleccionados</source>
+        <target>No hay datos de doggy bag para los filtros seleccionados</target>
+      </trans-unit>
+      <trans-unit id="X1vVCP1" resname="Dashboard de Doggy Bag">
+        <source>Dashboard de Doggy Bag</source>
+        <target>Dashboard de Doggy Bag</target>
+      </trans-unit>
+      <trans-unit id="fak9v2c" resname="Stock por tipo de envase">
+        <source>Stock por tipo de envase</source>
+        <target>Stock por tipo de envase</target>
+      </trans-unit>
+      <trans-unit id="uTwrRIG" resname="Excepciones por mes">
+        <source>Excepciones por mes</source>
+        <target>Excepciones por mes</target>
+      </trans-unit>
+      <trans-unit id="WhlTNK5" resname="Carteles por propiedad">
+        <source>Carteles por propiedad</source>
+        <target>Carteles por propiedad</target>
+      </trans-unit>
+      <trans-unit id="nO2huBz" resname="Excepciones por punto crítico">
+        <source>Excepciones por punto crítico</source>
+        <target>Excepciones por punto crítico</target>
+      </trans-unit>
+      <trans-unit id="WCg.0y." resname="Entregas registradas">
+        <source>Entregas registradas</source>
+        <target>Entregas registradas</target>
+      </trans-unit>
+      <trans-unit id="PJ32sdf" resname="Convenios activos">
+        <source>Convenios activos</source>
+        <target>Convenios activos</target>
+      </trans-unit>
+      <trans-unit id="A6H5DTH" resname="Convenios por caducar">
+        <source>Convenios por caducar</source>
+        <target>Convenios por caducar</target>
+      </trans-unit>
+      <trans-unit id="P2raEYp" resname="Entidades receptoras">
+        <source>Entidades receptoras</source>
+        <target>Entidades receptoras</target>
+      </trans-unit>
+      <trans-unit id="PyHTH0u" resname="No hay entregas registradas para los filtros seleccionados">
+        <source>No hay entregas registradas para los filtros seleccionados</source>
+        <target>No hay entregas registradas para los filtros seleccionados</target>
+      </trans-unit>
+      <trans-unit id="VAeuohz" resname="Cantidad entregada">
+        <source>Cantidad entregada</source>
+        <target>Cantidad entregada</target>
+      </trans-unit>
+      <trans-unit id="K8Yp9RR" resname="Entregas">
+        <source>Entregas</source>
+        <target>Entregas</target>
+      </trans-unit>
+      <trans-unit id="B0_DnrZ" resname="Convenios">
+        <source>Convenios</source>
+        <target>Convenios</target>
+      </trans-unit>
+      <trans-unit id="i84ydzz" resname="Entidades">
+        <source>Entidades</source>
+        <target>Entidades</target>
+      </trans-unit>
+      <trans-unit id="XUYFnp9" resname="Dashboard de donaciones">
+        <source>Dashboard de donaciones</source>
+        <target>Dashboard de donaciones</target>
+      </trans-unit>
+      <trans-unit id="7TdNr7F" resname="Cantidad entregada por mes">
+        <source>Cantidad entregada por mes</source>
+        <target>Cantidad entregada por mes</target>
+      </trans-unit>
+      <trans-unit id="_7t9jD2" resname="Entregas por tipo de producto">
+        <source>Entregas por tipo de producto</source>
+        <target>Entregas por tipo de producto</target>
+      </trans-unit>
+      <trans-unit id="ni7_TOW" resname="Cantidad entregada por entidad receptora">
+        <source>Cantidad entregada por entidad receptora</source>
+        <target>Cantidad entregada por entidad receptora</target>
+      </trans-unit>
+      <trans-unit id="1d8fC9G" resname="Entregas por propiedad">
+        <source>Entregas por propiedad</source>
+        <target>Entregas por propiedad</target>
+      </trans-unit>
+      <trans-unit id="eHoNfZv" resname="Activos">
+        <source>Activos</source>
+        <target>Activos</target>
+      </trans-unit>
+      <trans-unit id="CSJOAvK" resname="Por caducar">
+        <source>Por caducar</source>
+        <target>Por caducar</target>
+      </trans-unit>
+      <trans-unit id="7GssYgj" resname="Caducados">
+        <source>Caducados</source>
+        <target>Caducados</target>
+      </trans-unit>
+      <trans-unit id="IOzBzbW" resname="No iniciados">
+        <source>No iniciados</source>
+        <target>No iniciados</target>
+      </trans-unit>
+      <trans-unit id="NCGo5V." resname="Estado de convenios">
+        <source>Estado de convenios</source>
+        <target>Estado de convenios</target>
+      </trans-unit>
+      <trans-unit id="N8Z0sYM" resname="Entidades por tipo">
+        <source>Entidades por tipo</source>
+        <target>Entidades por tipo</target>
+      </trans-unit>
+      <trans-unit id="EsIuD6S" resname="Tipo más frecuente">
+        <source>Tipo más frecuente</source>
+        <target>Tipo más frecuente</target>
+      </trans-unit>
+      <trans-unit id="4MtGMq5" resname="Con evidencias">
+        <source>Con evidencias</source>
+        <target>Con evidencias</target>
+      </trans-unit>
+      <trans-unit id="szzFdS." resname="Propiedades afectadas">
+        <source>Propiedades afectadas</source>
+        <target>Propiedades afectadas</target>
+      </trans-unit>
+      <trans-unit id="uvzR6ZE" resname="No hay incidencias para los filtros seleccionados">
+        <source>No hay incidencias para los filtros seleccionados</source>
+        <target>No hay incidencias para los filtros seleccionados</target>
+      </trans-unit>
+      <trans-unit id="o9p7sLS" resname="Dashboard de incidencias">
+        <source>Dashboard de incidencias</source>
+        <target>Dashboard de incidencias</target>
+      </trans-unit>
+      <trans-unit id="frckw_v" resname="Incidencias por mes">
+        <source>Incidencias por mes</source>
+        <target>Incidencias por mes</target>
+      </trans-unit>
+      <trans-unit id="En_H2VB" resname="Incidencias por propiedad">
+        <source>Incidencias por propiedad</source>
+        <target>Incidencias por propiedad</target>
+      </trans-unit>
+      <trans-unit id="ioeyYkR" resname="Con prevención posible">
+        <source>Con prevención posible</source>
+        <target>Con prevención posible</target>
+      </trans-unit>
+      <trans-unit id="qXD6Oyx" resname="Solo eliminación">
+        <source>Solo eliminación</source>
+        <target>Solo eliminación</target>
+      </trans-unit>
+      <trans-unit id="fLGbrnv" resname="Propiedades cubiertas">
+        <source>Propiedades cubiertas</source>
+        <target>Propiedades cubiertas</target>
+      </trans-unit>
+      <trans-unit id="uRv4NGr" resname="No hay puntos críticos para los filtros seleccionados">
+        <source>No hay puntos críticos para los filtros seleccionados</source>
+        <target>No hay puntos críticos para los filtros seleccionados</target>
+      </trans-unit>
+      <trans-unit id="dmBXNF9" resname="Dashboard de puntos críticos">
+        <source>Dashboard de puntos críticos</source>
+        <target>Dashboard de puntos críticos</target>
+      </trans-unit>
+      <trans-unit id="UHdNchc" resname="Posibilidades por prioridad">
+        <source>Posibilidades por prioridad</source>
+        <target>Posibilidades por prioridad</target>
+      </trans-unit>
+      <trans-unit id="jBqjpiB" resname="Puntos críticos por propiedad">
+        <source>Puntos críticos por propiedad</source>
+        <target>Puntos críticos por propiedad</target>
+      </trans-unit>
+      <trans-unit id="I.Gazp4" resname="Puntos críticos por categoría de servicio">
+        <source>Puntos críticos por categoría de servicio</source>
+        <target>Puntos críticos por categoría de servicio</target>
+      </trans-unit>
+      <trans-unit id="PNpkhnc" resname="Autorizados para alimentación animal">
+        <source>Autorizados para alimentación animal</source>
+        <target>Autorizados para alimentación animal</target>
+      </trans-unit>
+      <trans-unit id="9_o3MwE" resname="Autorizados para compost">
+        <source>Autorizados para compost</source>
+        <target>Autorizados para compost</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

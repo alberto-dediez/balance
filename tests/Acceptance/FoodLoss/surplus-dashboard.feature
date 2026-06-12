@@ -6,11 +6,14 @@ Feature:
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "my-account" exists
         Given surplus with id "surplus-1" of account "my-account" exists
         Given surplus with id "surplus-2" of account "my-account" exists
+        Given a waste manager "Gestor Local" with id "waste-manager-1" of account "my-account" with compost authorized exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/surpluses/dashboard"
         Then the response status should be 200
         Then I see a text "Excedentes declarados"
         Then I see a text "Clasificación por prioridad de destino"
+        Then I see a text "Gestores de residuos"
+        Then I see a text "Autorizados para compost"
 
     Scenario: As an owner, I cannot see surpluses of other accounts in the dashboard
         Given account "MyAccount" with id "my-account" exists

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
 use App\FoodLoss\Application\Surplus\Dashboard\GetSurplusDashboardRequest;
+use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\DeliveryLogUnitType;
 use App\Shared\Infrastructure\Symfony\Form\Type\NumberUnitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -25,7 +26,7 @@ class DashboardSurplusesType extends ListSurplusesType
                 'required' => true,
                 'symbol' => 'kg/ración',
                 'scale' => 2,
-                'empty_data' => (string) GetSurplusDashboardRequest::MITECO_KG_PER_RATION,
+                'empty_data' => (string) DeliveryLogUnit::MITECO_KG_PER_RATION,
                 'help' => new TranslatableMessage('Kg equivalentes a una ración. Por defecto, el valor recomendado por las guías del MITECO.'),
             ])
         ;

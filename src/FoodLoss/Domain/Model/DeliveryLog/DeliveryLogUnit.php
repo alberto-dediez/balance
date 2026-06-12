@@ -8,4 +8,6 @@ enum DeliveryLogUnit: string
 {
     case Kg = 'kg';
     case Rations = 'rations';
+
+    public const MITECO_KG_PER_RATION = 0.4;
 }

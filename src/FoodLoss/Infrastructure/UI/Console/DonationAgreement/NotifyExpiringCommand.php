@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Infrastructure\UI\Console\DonationAgreement;
 
 use App\FoodLoss\Application\DonationAgreement\NotifyExpiring\NotifyExpiringDonationAgreementsService;
+use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreement;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -19,8 +20,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class NotifyExpiringCommand extends Command
 {
-    private const int DEFAULT_DAYS = 30;
-
     public function __construct(
         private readonly DonationAgreementRepository $donationAgreementRepository,
         private readonly NotifyExpiringDonationAgreementsService $service,
@@ -35,7 +34,7 @@ class NotifyExpiringCommand extends Command
             'd',
             InputOption::VALUE_OPTIONAL,
             'Días de antelación para avisar de la caducidad',
-            self::DEFAULT_DAYS,
+            DonationAgreement::EXPIRING_SOON_DAYS,
         );
     }
 

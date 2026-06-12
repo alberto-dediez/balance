@@ -20,7 +20,7 @@ class ListIncidencesService
 
     public function __invoke(ListIncidencesRequest $request, User $user): ListIncidencesResponse
     {
-        $this->authorizer->denyUnlessCanDoThat(new Incidence(id: IncidenceId::generate()), SecurityAction::List, $user);
+        $this->authorizer->denyUnlessCanDoThat(new Incidence(id: IncidenceId::generate(), accountId: $request->accountId), SecurityAction::List, $user);
 
         $incidences = $this->incidenceRepository->findByFilter($request);
         $totalResults = $this->incidenceRepository->totalResultsByFilter($request);

@@ -1,0 +1,124 @@
+{% extends '@shared/layout/app.html.twig' %}
+
+{% set page_title = 'Dashboard de formación' | trans %}
+
+{% block content %}
+    <twig:Card class="mb-3">
+        <twig:List:FilterBar :form="form"></twig:List:FilterBar>
+    </twig:Card>
+
+    <div class="row">
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-primary-subtle text-primary rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:bill-list-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.totalTrainingSessions }}</h4>
+                        <span class="text-muted">{% trans %}Sesiones formativas{% endtrans %}</span>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-success-subtle text-success rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:users-group-rounded-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.totalTrainingAttendances }}</h4>
+                        <span class="text-muted">{% trans %}Asistencias{% endtrans %}</span>
+                        <div class="text-muted fs-2">{{ dashboard.averageAttendancesPerSession }} {% trans %}por sesión{% endtrans %}</div>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-info-subtle text-info rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:file-text-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.readProtocols }} / {{ dashboard.totalProtocols }}</h4>
+                        <span class="text-muted">{% trans %}Protocolos leídos{% endtrans %}</span>
+                        <div class="text-info fs-2">{{ dashboard.readProtocolsPercentage }} %</div>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-warning-subtle text-warning rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:eye-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.totalProtocolAccesses }}</h4>
+                        <span class="text-muted">{% trans %}Accesos a protocolos{% endtrans %}</span>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+    </div>
+
+    {% if dashboard.totalTrainingSessions == 0 and dashboard.totalProtocols == 0 %}
+        <twig:Alert type="info">{% trans %}No hay datos de formación para los filtros seleccionados{% endtrans %}</twig:Alert>
+    {% else %}
+        <div class="row">
+            <div class="col-lg-6 d-flex">
+                <twig:Card title="{{ 'Asistencias por sesión' | trans }}" class="mb-3 flex-fill">
+                    <twig:Chart:Bar
+                        title="{{ 'Asistencias' | trans }}"
+                        :values="dashboard.attendancesBySession.values"
+                        :categories="dashboard.attendancesBySession.labels"
+                        :decimals="0"
+                    />
+                </twig:Card>
+            </div>
+            <div class="col-lg-6 d-flex">
+                <twig:Card title="{{ 'Sesiones por mes' | trans }}" class="mb-3 flex-fill">
+                    <twig:Chart:Line
+                        title="{{ 'Sesiones' | trans }}"
+                        :values="dashboard.sessionsByMonth.values"
+                        :categories="dashboard.sessionsByMonth.labels"
+                        :decimals="0"
+                        :dataLabels="true"
+                    />
+                </twig:Card>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 d-flex">
+                <twig:Card title="{{ 'Accesos por protocolo' | trans }}" class="mb-3 flex-fill">
+                    <twig:Chart:Bar
+                        title="{{ 'Accesos' | trans }}"
+                        :values="dashboard.accessesByProtocol.values"
+                        :categories="dashboard.accessesByProtocol.labels"
+                        :decimals="0"
+                    />
+                </twig:Card>
+            </div>
+            <div class="col-lg-6 d-flex">
+                <twig:Card title="{{ 'Accesos por mes' | trans }}" class="mb-3 flex-fill">
+                    <twig:Chart:Line
+                        title="{{ 'Accesos' | trans }}"
+                        :values="dashboard.accessesByMonth.values"
+                        :categories="dashboard.accessesByMonth.labels"
+                        :decimals="0"
+                        :dataLabels="true"
+                    />
+                </twig:Card>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block right_bar %}
+    <twig:Sidebar:Right>
+        <twig:List:Filter title="{{ 'Filtrar resultados' | trans }}"></twig:List:Filter>
+    </twig:Sidebar:Right>
+{% endblock %}

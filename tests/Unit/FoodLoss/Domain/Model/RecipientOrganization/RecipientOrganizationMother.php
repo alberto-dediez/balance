@@ -67,13 +67,14 @@ class RecipientOrganizationMother
         string $name,
         string $id,
         string $accountId = 'account-id-test',
+        RecipientOrganizationType $type = RecipientOrganizationType::FoodBank,
     ): RecipientOrganization {
         $recipientOrganization = new RecipientOrganization(
             id: new RecipientOrganizationId($id),
         );
         $recipientOrganization->register(
             name: $name,
-            type: RecipientOrganizationType::FoodBank,
+            type: $type,
             nif: '12345678A',
             socialReason: 'Test Social Reason',
             address: 'Test Address',

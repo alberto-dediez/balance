@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Application\Surplus\Dashboard;
 
+use App\FoodLoss\Application\Dashboard\DashboardChart;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
 
 class GetSurplusDashboardResponse
@@ -17,13 +18,16 @@ class GetSurplusDashboardResponse
         public int $recoveredSurpluses = 0,
         public int $eliminatedSurpluses = 0,
         public int $unassessedSurpluses = 0,
-        public SurplusDashboardChart $byDestination = new SurplusDashboardChart(),
-        public SurplusDashboardChart $byFoodType = new SurplusDashboardChart(),
-        public SurplusDashboardChart $byServiceCategory = new SurplusDashboardChart(),
-        public SurplusDashboardChart $bySurplusCause = new SurplusDashboardChart(),
-        public SurplusDashboardChart $byCriticalPoint = new SurplusDashboardChart(),
-        public SurplusDashboardChart $byProperty = new SurplusDashboardChart(),
-        public SurplusDashboardChart $quantityByMonth = new SurplusDashboardChart(),
+        public DashboardChart $byDestination = new DashboardChart(),
+        public DashboardChart $byFoodType = new DashboardChart(),
+        public DashboardChart $byServiceCategory = new DashboardChart(),
+        public DashboardChart $bySurplusCause = new DashboardChart(),
+        public DashboardChart $byCriticalPoint = new DashboardChart(),
+        public DashboardChart $byProperty = new DashboardChart(),
+        public DashboardChart $quantityByMonth = new DashboardChart(),
+        public int $totalWasteManagers = 0,
+        public int $animalFeedAuthorizedWasteManagers = 0,
+        public int $compostAuthorizedWasteManagers = 0,
     ) {}
 
     public function recoveredPercentage(): float

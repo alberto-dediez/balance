@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Application\Surplus\Dashboard;
 
+use App\FoodLoss\Application\Dashboard\DashboardChart;
 use App\FoodLoss\Application\Surplus\SurplusAuthorizer;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointRepository;
@@ -16,6 +17,8 @@ use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\FoodLoss\Domain\Model\Surplus\SurplusRepository;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCause;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseRepository;
+use App\FoodLoss\Domain\Model\WasteManager\WasteManagerFilter;
+use App\FoodLoss\Domain\Model\WasteManager\WasteManagerRepository;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
@@ -48,6 +51,7 @@ class GetSurplusDashboardService
         private readonly PropertyRepository $propertyRepository,
         private readonly SurplusCauseRepository $surplusCauseRepository,
         private readonly ServiceCategoryRepository $serviceCategoryRepository,
+        private readonly WasteManagerRepository $wasteManagerRepository,
     ) {}
 
     public function __invoke(GetSurplusDashboardRequest $request, User $user): GetSurplusDashboardResponse
@@ -62,7 +66,7 @@ class GetSurplusDashboardService
         $displayUnit = $request->displayUnit ?? DeliveryLogUnit::Kg;
         $kgPerRation = null !== $request->kgPerRation && $request->kgPerRation > 0
             ? $request->kgPerRation
-            : GetSurplusDashboardRequest::MITECO_KG_PER_RATION;
+            : DeliveryLogUnit::MITECO_KG_PER_RATION;
 
         $totalKg = 0.0;
         $totalRations = 0.0;
@@ -144,6 +148,21 @@ class GetSurplusDashboardService
 
         ksort($quantityByMonth);
 
+        $wasteManagers = $this->wasteManagerRepository->findByFilter(new WasteManagerFilter(accountId: $request->accountId, limit: 0));
+
+        $animalFeedAuthorizedWasteManagers = 0;
+        $compostAuthorizedWasteManagers = 0;
+
+        foreach ($wasteManagers as $wasteManager) {
+            if ($wasteManager->animalFeedAuthorized()) {
+                ++$animalFeedAuthorizedWasteManagers;
+            }
+
+            if ($wasteManager->compostAuthorized()) {
+                ++$compostAuthorizedWasteManagers;
+            }
+        }
+
         return new GetSurplusDashboardResponse(
             totalSurpluses: count($surpluses),
             totalKg: round($totalKg, 2),
@@ -153,13 +172,16 @@ class GetSurplusDashboardService
             recoveredSurpluses: $recoveredSurpluses,
             eliminatedSurpluses: $eliminatedSurpluses,
             unassessedSurpluses: $unassessedSurpluses,
-            byDestination: SurplusDashboardChart::fromCounts($countByDestination, $destinationColors),
-            byFoodType: SurplusDashboardChart::fromCounts($countByFoodType),
-            byServiceCategory: SurplusDashboardChart::fromCounts($countByServiceCategory),
-            bySurplusCause: SurplusDashboardChart::fromCounts($countBySurplusCause),
-            byCriticalPoint: SurplusDashboardChart::fromCounts($countByCriticalPoint),
-            byProperty: SurplusDashboardChart::fromCounts($countByProperty),
-            quantityByMonth: SurplusDashboardChart::fromCounts($this->fillMonthGaps($quantityByMonth)),
+            byDestination: DashboardChart::fromCounts($countByDestination, $destinationColors),
+            byFoodType: DashboardChart::fromCounts($countByFoodType),
+            byServiceCategory: DashboardChart::fromCounts($countByServiceCategory),
+            bySurplusCause: DashboardChart::fromCounts($countBySurplusCause),
+            byCriticalPoint: DashboardChart::fromCounts($countByCriticalPoint),
+            byProperty: DashboardChart::fromCounts($countByProperty),
+            quantityByMonth: DashboardChart::fromCounts($this->fillMonthGaps($quantityByMonth)),
+            totalWasteManagers: count($wasteManagers),
+            animalFeedAuthorizedWasteManagers: $animalFeedAuthorizedWasteManagers,
+            compostAuthorizedWasteManagers: $compostAuthorizedWasteManagers,
         );
     }
 

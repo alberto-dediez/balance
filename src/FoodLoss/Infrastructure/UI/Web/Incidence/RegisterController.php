@@ -38,7 +38,7 @@ class RegisterController extends AbstractController
         LoggedAccount $loggedAccount,
         Request $request,
     ): Response {
-        $this->denyAccessUnlessGranted(SecurityAction::Register->value, new Incidence(IncidenceId::generate()));
+        $this->denyAccessUnlessGranted(SecurityAction::Register->value, new Incidence(id: IncidenceId::generate(), accountId: $loggedAccount()?->id()));
 
         $account = $loggedAccount();
         assert($account instanceof \App\Security\Domain\Model\Account\Account);

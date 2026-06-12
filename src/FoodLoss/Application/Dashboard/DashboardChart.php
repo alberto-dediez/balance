@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\FoodLoss\Application\Surplus\Dashboard;
+namespace App\FoodLoss\Application\Dashboard;
 
-final class SurplusDashboardChart
+final class DashboardChart
 {
     /**
      * @param list<string>    $labels

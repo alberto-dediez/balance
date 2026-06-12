@@ -48,14 +48,16 @@ class IncidenceMother
         string $id,
         string $accountId = 'account-id-test',
         ?PropertyId $propertyId = null,
+        IncidenceType $incidenceType = IncidenceType::MachineryFailure,
+        ?\DateTimeImmutable $exceptionOccurredOn = null,
     ): Incidence {
         $incidence = new Incidence(
             id: new IncidenceId($id),
         );
         $incidence->register(
             name: $name,
-            exceptionOccurredOn: new \DateTimeImmutable('2026-04-08 10:00:00'),
-            incidenceType: IncidenceType::MachineryFailure,
+            exceptionOccurredOn: $exceptionOccurredOn ?? new \DateTimeImmutable('2026-04-08 10:00:00'),
+            incidenceType: $incidenceType,
             description: 'Description',
             effect: 'Effect',
             propertyId: $propertyId ?? PropertyId::generate(),

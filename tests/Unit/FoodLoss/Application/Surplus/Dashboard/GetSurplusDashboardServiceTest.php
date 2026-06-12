@@ -14,6 +14,8 @@ use App\FoodLoss\Domain\Model\Surplus\SurplusDestination;
 use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\FoodLoss\Domain\Model\Surplus\SurplusRepository;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseRepository;
+use App\FoodLoss\Domain\Model\WasteManager\WasteManagerId;
+use App\FoodLoss\Domain\Model\WasteManager\WasteManagerRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\UnauthorizedActionException;
@@ -27,6 +29,8 @@ use App\Tests\Unit\FoodLoss\Domain\Model\Surplus\SurplusMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\Surplus\SurplusRepositoryMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\SurplusCause\SurplusCauseMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\SurplusCause\SurplusCauseRepositoryMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\WasteManager\WasteManagerMother;
+use App\Tests\Unit\FoodLoss\Domain\Model\WasteManager\WasteManagerRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -94,6 +98,10 @@ class GetSurplusDashboardServiceTest extends TestCase
 
         $this->assertSame(['05/2026'], $response->quantityByMonth->labels);
         $this->assertSame([15.0], $response->quantityByMonth->values);
+
+        $this->assertSame(3, $response->totalWasteManagers);
+        $this->assertSame(1, $response->animalFeedAuthorizedWasteManagers);
+        $this->assertSame(2, $response->compostAuthorizedWasteManagers);
     }
 
     public function testConvertsRationsToKgWithTheConversionFactor(): void
@@ -152,7 +160,7 @@ class GetSurplusDashboardServiceTest extends TestCase
         $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $accountId);
         $response = $sut($request, $user);
 
-        $this->assertSame(10.0 * GetSurplusDashboardRequest::MITECO_KG_PER_RATION, $response->totalQuantity);
+        $this->assertSame(10.0 * DeliveryLogUnit::MITECO_KG_PER_RATION, $response->totalQuantity);
     }
 
     public function testFillsEmptyMonthsBetweenFirstAndLastSurplus(): void
@@ -196,7 +204,31 @@ class GetSurplusDashboardServiceTest extends TestCase
             propertyRepository: $this->createPropertyRepository(),
             surplusCauseRepository: $this->createSurplusCauseRepository(),
             serviceCategoryRepository: $this->createServiceCategoryRepository(),
+            wasteManagerRepository: $this->createWasteManagerRepository(),
         );
+    }
+
+    private function createWasteManagerRepository(): WasteManagerRepository
+    {
+        $repository = WasteManagerRepositoryMother::inMemory();
+        $repository->add(WasteManagerMother::from(
+            name: 'Gestor A',
+            id: (string) WasteManagerId::generate(),
+            animalFeedAuthorized: true,
+            compostAuthorized: true,
+        ));
+        $repository->add(WasteManagerMother::from(
+            name: 'Gestor B',
+            id: (string) WasteManagerId::generate(),
+            compostAuthorized: true,
+        ));
+        $repository->add(WasteManagerMother::from(
+            name: 'Gestor C',
+            id: (string) WasteManagerId::generate(),
+        ));
+        $repository->add(WasteManagerMother::fromAccount('another-account-id'));
+
+        return $repository;
     }
 
     private function createCriticalPointRepository(): CriticalPointRepository

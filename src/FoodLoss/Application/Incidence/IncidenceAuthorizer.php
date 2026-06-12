@@ -24,7 +24,11 @@ final class IncidenceAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::Owner) && $user->accountId() instanceof AccountId;
+        assert($subject instanceof Incidence);
+
+        $subjectAccountId = $subject->accountId();
+
+        return $user->hasRole(Role::Owner) && $user->accountId() instanceof AccountId && $subjectAccountId instanceof AccountId && $user->accountId()->equals($subjectAccountId);
     }
 
     protected function canEdit(mixed $subject, User $user): bool

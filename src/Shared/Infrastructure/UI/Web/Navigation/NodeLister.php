@@ -162,6 +162,11 @@ class NodeLister
             icon: 'solar:danger-triangle-line-duotone',
             items: [
                 new Node(
+                    label: new TranslatableMessage('Dashboard'),
+                    icon: 'solar:chart-square-line-duotone',
+                    target: $this->router->generate('critical_points_dashboard'),
+                ),
+                new Node(
                     label: new TranslatableMessage('Puntos críticos'),
                     icon: 'ph:cooking-pot-duotone',
                     target: $this->router->generate('critical_points'),
@@ -196,6 +201,11 @@ class NodeLister
             icon: 'solar:shield-check-line-duotone',
             items: [
                 new Node(
+                    label: new TranslatableMessage('Dashboard'),
+                    icon: 'solar:chart-square-line-duotone',
+                    target: $this->router->generate('prevention_plans_dashboard'),
+                ),
+                new Node(
                     label: new TranslatableMessage('Planes de Prevención'),
                     icon: 'solar:shield-check-line-duotone',
                     target: $this->router->generate('prevention_plans'),
@@ -207,6 +217,11 @@ class NodeLister
             label: new TranslatableMessage('Donaciones'),
             icon: 'solar:hand-heart-line-duotone',
             items: [
+                new Node(
+                    label: new TranslatableMessage('Dashboard'),
+                    icon: 'solar:chart-square-line-duotone',
+                    target: $this->router->generate('donations_dashboard'),
+                ),
                 new Node(
                     label: new TranslatableMessage('Entidades Receptoras'),
                     icon: 'solar:buildings-2-line-duotone',
@@ -230,6 +245,11 @@ class NodeLister
             icon: 'solar:bag-heart-line-duotone',
             items: [
                 new Node(
+                    label: new TranslatableMessage('Dashboard'),
+                    icon: 'solar:chart-square-line-duotone',
+                    target: $this->router->generate('doggy_bag_dashboard'),
+                ),
+                new Node(
                     label: new TranslatableMessage('Envases'),
                     icon: 'solar:box-line-duotone',
                     target: $this->router->generate('packagings'),
@@ -252,6 +272,11 @@ class NodeLister
             icon: 'solar:book-2-line-duotone',
             items: [
                 new Node(
+                    label: new TranslatableMessage('Dashboard'),
+                    icon: 'solar:chart-square-line-duotone',
+                    target: $this->router->generate('trainings_dashboard'),
+                ),
+                new Node(
                     label: new TranslatableMessage('Protocolos'),
                     icon: 'solar:file-text-line-duotone',
                     target: $this->router->generate('protocols'),
@@ -268,6 +293,11 @@ class NodeLister
             label: new TranslatableMessage('Incidencias'),
             icon: 'solar:shield-warning-line-duotone',
             items: [
+                new Node(
+                    label: new TranslatableMessage('Dashboard'),
+                    icon: 'solar:chart-square-line-duotone',
+                    target: $this->router->generate('incidences_dashboard'),
+                ),
                 new Node(
                     label: new TranslatableMessage('Incidencias'),
                     icon: 'solar:shield-warning-line-duotone',

@@ -1,0 +1,421 @@
+{% extends '@shared/layout/app.html.twig' %}
+
+{% set page_title = 'Inicio' | trans %}
+{% set unitLabel = dashboard.displayUnit.value | trans({}, 'deliveryLogUnit') %}
+
+{% block page_title %}
+    {{ parent() }}
+
+    <div class="ms-auto d-flex gap-2" role="group">
+        <twig:Link path="{{ path('critical_points_dashboard') }}" color="light">
+            {% trans %}Puntos críticos{% endtrans %}
+        </twig:Link>
+
+        <twig:Link path="{{ path('surpluses_dashboard') }}" color="light">
+            {% trans %}Excedentes{% endtrans %}
+        </twig:Link>
+
+        <twig:Link path="{{ path('prevention_plans_dashboard') }}" color="light">
+            {% trans %}Planes{% endtrans %}
+        </twig:Link>
+
+        <twig:Link path="{{ path('donations_dashboard') }}" color="light">
+            {% trans %}Donaciones{% endtrans %}
+        </twig:Link>
+
+        <twig:Link path="{{ path('doggy_bag_dashboard') }}" color="light">
+            {% trans %}Doggy Bag{% endtrans %}
+        </twig:Link>
+
+        <twig:Link path="{{ path('trainings_dashboard') }}" color="light">
+            {% trans %}Formación{% endtrans %}
+        </twig:Link>
+
+        <twig:Link path="{{ path('incidences_dashboard') }}" color="light">
+            {% trans %}Incidencias{% endtrans %}
+        </twig:Link>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <twig:Card class="mb-3">
+        <twig:List:FilterBar :form="form"></twig:List:FilterBar>
+    </twig:Card>
+
+    <h5 class="mb-3 fw-semibold">{% trans %}Diagnóstico y prevención{% endtrans %}</h5>
+
+    <div class="row">
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-primary-subtle text-primary rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="ph:cooking-pot-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.totalCriticalPoints }}</h4>
+                        <span class="text-muted">{% trans %}Puntos críticos mapeados{% endtrans %}</span>
+                        <div class="fs-2">
+                            <a href="{{ path('critical_points') }}">{% trans %}Ver puntos críticos{% endtrans %}</a>
+                        </div>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="{{ dashboard.hasCompletedPreventionPlan ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning' }} rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:shield-check-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.totalPreventionPlans }}</h4>
+                        <span class="text-muted">{% trans %}Planes de prevención{% endtrans %}</span>
+                        <div class="fs-2">
+                            <a href="{{ path('prevention_plans') }}">{% trans %}Ver planes de prevención{% endtrans %}</a>
+                        </div>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-info-subtle text-info rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:cart-plus-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.totalSurpluses }}</h4>
+                        <span class="text-muted">{% trans %}Excedentes declarados{% endtrans %} (&asymp; {{ dashboard.surplusTotalQuantity }} {{ unitLabel ?? 'kg' }})</span>
+                        <div class="fs-2">
+                            <a href="{{ path('surpluses') }}">{% trans %}Ver excedentes{% endtrans %}</a>
+                        </div>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-danger-subtle text-danger rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:shield-warning-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.totalIncidences }}</h4>
+                        <span class="text-muted">{% trans %}Incidencias{% endtrans %}</span>
+                        <div class="fs-2">
+                            <a href="{{ path('incidences') }}">{% trans %}Ver incidencias{% endtrans %}</a>
+                        </div>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4 d-flex">
+            <twig:Card title="{{ 'Posibilidades de aprovechamiento por punto crítico' | trans }}" class="mb-3 flex-fill">
+                {% if dashboard.totalCriticalPoints > 0 %}
+                    {% set priorityColors = {
+                        'Prevention': 'bg-primary',
+                        'Transformation': 'bg-info',
+                        'HumanDonation': 'bg-success',
+                        'AnimalFeed': 'bg-warning',
+                        'Composting': 'bg-secondary',
+                    } %}
+
+                    {% for label in dashboard.criticalPointsByPriority.labels %}
+                        {% set value = dashboard.criticalPointsByPriority.values[loop.index0] %}
+
+                        <div class="d-flex justify-content-between fs-2 mb-1">
+                            <span>{{ label | trans({}, 'priorityType') }}</span>
+                            <span class="text-muted">{{ value }} / {{ dashboard.totalCriticalPoints }}</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 8px;">
+                            <div class="progress-bar {{ priorityColors[label] | default('bg-primary') }}" style="width: {{ (value * 100 / dashboard.totalCriticalPoints) | round }}%"></div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <twig:Alert type="info">{% trans %}Aún no hay puntos críticos mapeados{% endtrans %}</twig:Alert>
+                {% endif %}
+            </twig:Card>
+        </div>
+        <div class="col-lg-4 d-flex">
+            <twig:Card title="{{ 'Puntos críticos por etapa de la cadena' | trans }}" class="mb-3 flex-fill">
+                {% if dashboard.totalCriticalPoints > 0 %}
+                    <twig:Chart:Donut
+                        title="{{ 'Puntos críticos' | trans }}"
+                        :values="dashboard.criticalPointsBySupplyChainStage.values"
+                        :categories="dashboard.criticalPointsBySupplyChainStage.labels | map(label => label | trans({}, 'supplyChainStage'))"
+                        :decimals="0"
+                        :legend="true"
+                    />
+                {% else %}
+                    <twig:Alert type="info">{% trans %}Aún no hay puntos críticos mapeados{% endtrans %}</twig:Alert>
+                {% endif %}
+            </twig:Card>
+        </div>
+        <div class="col-lg-4 d-flex">
+            <twig:Card title="{{ 'Planes de prevención por estado' | trans }}" class="mb-3 flex-fill">
+                {% if dashboard.totalPreventionPlans > 0 %}
+                    <twig:Chart:SemiDonut
+                        title="{{ 'Planes' | trans }}"
+                        :values="dashboard.preventionPlansByStatus.values"
+                        :categories="dashboard.preventionPlansByStatus.labels | map(label => label | trans({}, 'preventionPlanVersionStatus'))"
+                        :decimals="0"
+                        :legend="true"
+                    />
+                {% else %}
+                    <twig:Alert type="info">{% trans %}Aún no hay planes de prevención registrados{% endtrans %}</twig:Alert>
+                {% endif %}
+            </twig:Card>
+        </div>
+    </div>
+
+    <h5 class="mb-3 fw-semibold">{% trans %}Excedentes{% endtrans %}</h5>
+
+    <div class="row">
+        <div class="col-lg-4 d-flex">
+            <twig:Card title="{{ 'Valoración de excedentes' | trans }}" class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="bg-success-subtle text-success rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:hand-heart-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.recoveredPercentage }} %</h4>
+                        <span class="text-muted">{% trans %}Excedentes aprovechados{% endtrans %}</span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between fs-2 mb-1">
+                    <span class="text-success">{% trans %}Aprovechados{% endtrans %}</span>
+                    <span>{{ dashboard.recoveredSurpluses }}</span>
+                </div>
+                <div class="d-flex justify-content-between fs-2 mb-1">
+                    <span class="text-danger">{% trans %}No aprovechados{% endtrans %}</span>
+                    <span>{{ dashboard.eliminatedSurpluses }}</span>
+                </div>
+                <div class="d-flex justify-content-between fs-2 mb-3">
+                    <span class="text-warning">{% trans %}Pendientes de valorar{% endtrans %}</span>
+                    <span>{{ dashboard.unassessedSurpluses }}</span>
+                </div>
+
+                <a href="{{ path('surpluses') }}" class="fs-2">{% trans %}Ver excedentes{% endtrans %}</a>
+            </twig:Card>
+        </div>
+        <div class="col-lg-8 d-flex">
+            <twig:Card title="{{ 'Excedentes por destino' | trans }}" class="mb-3 flex-fill">
+                {% if dashboard.totalSurpluses > 0 %}
+                    {% set destinationLabels = dashboard.surplusesByDestination.labels | map(
+                        label => label == 'Unassessed' ? ('Sin valorar' | trans) : (label | trans({}, 'surplusDestination'))
+                    ) %}
+
+                    <twig:Chart:Bar
+                        title="{{ 'Excedentes' | trans }}"
+                        :values="dashboard.surplusesByDestination.values"
+                        :categories="destinationLabels"
+                        :colors="dashboard.surplusesByDestination.colors"
+                        :decimals="0"
+                        :legend="true"
+                    />
+                {% else %}
+                    <twig:Alert type="info">{% trans %}No hay excedentes declarados para el periodo seleccionado{% endtrans %}</twig:Alert>
+                {% endif %}
+            </twig:Card>
+        </div>
+    </div>
+
+    <h5 class="mb-3 fw-semibold">{% trans %}Donaciones{% endtrans %}</h5>
+
+    <div class="row">
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-success-subtle text-success rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:file-text-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.activeDonationAgreements }}</h4>
+                        <span class="text-muted">{% trans %}Convenios en activo{% endtrans %}</span>
+                        {% if dashboard.expiringSoonDonationAgreements > 0 %}
+                            <div class="fs-2">
+                                <span class="badge bg-warning">{{ dashboard.expiringSoonDonationAgreements }} {% trans %}próximos a vencer{% endtrans %}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-danger-subtle text-danger rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:file-text-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.expiredDonationAgreements }}</h4>
+                        <span class="text-muted">{% trans %}Convenios caducados{% endtrans %}</span>
+                        <div class="fs-2">
+                            <a href="{{ path('donation_agreements') }}">{% trans %}Ver convenios{% endtrans %}</a>
+                        </div>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-primary-subtle text-primary rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:record-minimalistic-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.totalDeliveryLogs }}</h4>
+                        <span class="text-muted">{% trans %}Registros de entrega{% endtrans %}</span>
+                        <div class="fs-2">
+                            <a href="{{ path('delivery_logs') }}">{% trans %}Ver registros{% endtrans %}</a>
+                        </div>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-success-subtle text-success rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:hand-heart-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">&asymp; {{ dashboard.deliveredTotalQuantity }} {{ unitLabel }}</h4>
+                        <span class="text-muted">{% trans %}Alimentos donados{% endtrans %}</span>
+                        {% if dashboard.deliveredKg > 0 and dashboard.deliveredRations > 0 %}
+                            <div class="text-muted fs-2">{{ dashboard.deliveredKg }} {% trans %}kg{% endtrans %} · {{ dashboard.deliveredRations }} {% trans %}raciones{% endtrans %}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+    </div>
+
+    <h5 class="mb-3 fw-semibold">{% trans %}Aprovechamiento en sala{% endtrans %}</h5>
+
+    <div class="row">
+        <div class="col-lg-4 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="bg-primary-subtle text-primary rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:box-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.totalPackagingStock }}</h4>
+                        <span class="text-muted">{% trans %}Stock de envases{% endtrans %}</span>
+                        <div class="text-muted fs-2">
+                            {{ dashboard.totalPackagings }} {% trans %}tipos de envase{% endtrans %} ·
+                            <a href="{{ path('packagings') }}">{% trans %}Ver envases{% endtrans %}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-info-subtle text-info rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:bill-list-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.totalDoggyBagSigns }}</h4>
+                        <span class="text-muted">{% trans %}Carteles informativos{% endtrans %}</span>
+                        <div class="fs-2">
+                            <a href="{{ path('doggy_bag_signs') }}">{% trans %}Ver carteles{% endtrans %}</a>
+                        </div>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-lg-8 d-flex">
+            <twig:Card title="{{ 'Stock de envases por tipo' | trans }}" class="mb-3 flex-fill">
+                {% if dashboard.totalPackagingStock > 0 %}
+                    <twig:Chart:Donut
+                        title="{{ 'Envases' | trans }}"
+                        :values="dashboard.packagingStockByType.values"
+                        :categories="dashboard.packagingStockByType.labels | map(label => label | trans({}, 'packagingType'))"
+                        :decimals="0"
+                        :legend="true"
+                    />
+                {% else %}
+                    <twig:Alert type="info">{% trans %}Aún no hay stock de envases registrado{% endtrans %}</twig:Alert>
+                {% endif %}
+            </twig:Card>
+        </div>
+    </div>
+
+    <h5 class="mb-3 fw-semibold">{% trans %}Personas y seguimiento{% endtrans %}</h5>
+
+    <div class="row">
+        <div class="col-lg-4 d-flex">
+            <twig:Card title="{{ 'Protocolos' | trans }}" class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="bg-primary-subtle text-primary rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:file-text-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.readProtocols }} / {{ dashboard.totalProtocols }}</h4>
+                        <span class="text-muted">{% trans %}Protocolos leídos{% endtrans %}</span>
+                    </div>
+                </div>
+
+                <div class="progress mb-2" style="height: 8px;">
+                    <div class="progress-bar bg-success" style="width: {{ dashboard.readProtocolsPercentage }}%"></div>
+                </div>
+                <div class="d-flex justify-content-between fs-2 mb-3">
+                    <span class="text-muted">{{ dashboard.unreadProtocols }} {% trans %}sin leer{% endtrans %}</span>
+                    <span class="text-muted">{{ dashboard.totalProtocolAccesses }} {% trans %}accesos en el periodo{% endtrans %}</span>
+                </div>
+
+                <a href="{{ path('protocols') }}" class="fs-2">{% trans %}Ver protocolos{% endtrans %}</a>
+            </twig:Card>
+        </div>
+        <div class="col-lg-4 d-flex">
+            <twig:Card title="{{ 'Formación' | trans }}" class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="bg-info-subtle text-info rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:book-2-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.totalTrainingSessions }}</h4>
+                        <span class="text-muted">{% trans %}Sesiones formativas{% endtrans %}</span>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="bg-success-subtle text-success rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:users-group-rounded-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.totalTrainingAttendances }}</h4>
+                        <span class="text-muted">{% trans %}Asistencias registradas{% endtrans %}</span>
+                    </div>
+                </div>
+
+                <a href="{{ path('training_sessions') }}" class="fs-2">{% trans %}Ver sesiones formativas{% endtrans %}</a>
+            </twig:Card>
+        </div>
+        <div class="col-lg-4 d-flex">
+            <twig:Card title="{{ 'Incidencias por tipo' | trans }}" class="mb-3 flex-fill">
+                {% if dashboard.totalIncidences > 0 %}
+                    <twig:Chart:Donut
+                        title="{{ 'Incidencias' | trans }}"
+                        :values="dashboard.incidencesByType.values"
+                        :categories="dashboard.incidencesByType.labels | map(label => label | trans({}, 'incidenceType'))"
+                        :decimals="0"
+                        :legend="true"
+                    />
+                {% else %}
+                    <twig:Alert type="info">{% trans %}No hay incidencias en el periodo seleccionado{% endtrans %}</twig:Alert>
+                {% endif %}
+            </twig:Card>
+        </div>
+    </div>
+{% endblock %}
+
+{% block right_bar %}
+    <twig:Sidebar:Right>
+        <twig:List:Filter title="{{ 'Filtrar resultados' | trans }}"></twig:List:Filter>
+    </twig:Sidebar:Right>
+{% endblock %}

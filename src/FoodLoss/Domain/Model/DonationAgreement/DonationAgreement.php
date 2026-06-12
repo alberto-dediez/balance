@@ -13,6 +13,7 @@ use App\Shared\Domain\Model\AggregateRoot;
 class DonationAgreement implements \Stringable
 {
     use AggregateRoot;
+    public const EXPIRING_SOON_DAYS = 30;
 
     /** @param array<DomainEvent> $events */
     public function __construct(

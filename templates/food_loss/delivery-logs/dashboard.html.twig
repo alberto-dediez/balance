@@ -1,0 +1,165 @@
+{% extends '@shared/layout/app.html.twig' %}
+
+{% set page_title = 'Dashboard de donaciones' | trans %}
+
+{% block content %}
+    {% set unitLabel = dashboard.displayUnit.value | trans({}, 'deliveryLogUnit') %}
+
+    <twig:Card class="mb-3">
+        <twig:List:FilterBar :form="form"></twig:List:FilterBar>
+    </twig:Card>
+
+    <div class="row">
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-primary-subtle text-primary rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:record-minimalistic-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.totalDeliveryLogs }}</h4>
+                        <span class="text-muted">{% trans %}Entregas registradas{% endtrans %}</span>
+                        <div class="text-muted fs-2">
+                            &asymp; {{ dashboard.totalQuantity }} {{ unitLabel }}
+                            {% if dashboard.totalRations > 0 and dashboard.totalKg > 0 %}
+                                ({{ dashboard.totalKg }} {% trans %}kg{% endtrans %} · {{ dashboard.totalRations }} {% trans %}raciones{% endtrans %})
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-success-subtle text-success rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:file-text-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.activeDonationAgreements }}</h4>
+                        <span class="text-muted">{% trans %}Convenios activos{% endtrans %}</span>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-warning-subtle text-warning rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:hourglass-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.expiringSoonDonationAgreements }}</h4>
+                        <span class="text-muted">{% trans %}Convenios por caducar{% endtrans %}</span>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <twig:Card class="mb-3 flex-fill">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="bg-info-subtle text-info rounded-2 p-2 d-inline-flex">
+                        <twig:Icon name="solar:buildings-2-line-duotone" size="xl" />
+                    </span>
+                    <div>
+                        <h4 class="mb-0 fw-semibold">{{ dashboard.totalRecipientOrganizations }}</h4>
+                        <span class="text-muted">{% trans %}Entidades receptoras{% endtrans %}</span>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+    </div>
+
+    {% if dashboard.totalDeliveryLogs == 0 %}
+        <twig:Alert type="info">{% trans %}No hay entregas registradas para los filtros seleccionados{% endtrans %}</twig:Alert>
+    {% else %}
+        <div class="row">
+            <div class="col-lg-6 d-flex">
+                <twig:Card title="{{ 'Cantidad entregada por mes' | trans }} ({{ unitLabel }})" class="mb-3 flex-fill">
+                    <twig:Chart:Line
+                        title="{{ 'Cantidad entregada' | trans }}"
+                        :values="dashboard.quantityByMonth.values"
+                        :categories="dashboard.quantityByMonth.labels"
+                        unit="{{ unitLabel }}"
+                        :decimals="0"
+                        :dataLabels="true"
+                    />
+                </twig:Card>
+            </div>
+            <div class="col-lg-6 d-flex">
+                <twig:Card title="{{ 'Entregas por tipo de producto' | trans }}" class="mb-3 flex-fill">
+                    <twig:Chart:Donut
+                        title="{{ 'Entregas' | trans }}"
+                        :values="dashboard.byProductType.values"
+                        :categories="dashboard.byProductType.labels | map(label => label | trans({}, 'foodType'))"
+                        :decimals="0"
+                        :legend="true"
+                    />
+                </twig:Card>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 d-flex">
+                <twig:Card title="{{ 'Cantidad entregada por entidad receptora' | trans }} ({{ unitLabel }})" class="mb-3 flex-fill">
+                    <twig:Chart:Bar
+                        title="{{ 'Cantidad entregada' | trans }}"
+                        :values="dashboard.byRecipientOrganization.values"
+                        :categories="dashboard.byRecipientOrganization.labels"
+                        unit="{{ unitLabel }}"
+                        :decimals="0"
+                    />
+                </twig:Card>
+            </div>
+            <div class="col-lg-6 d-flex">
+                <twig:Card title="{{ 'Entregas por propiedad' | trans }}" class="mb-3 flex-fill">
+                    <twig:Chart:Bar
+                        title="{{ 'Entregas' | trans }}"
+                        :values="dashboard.byProperty.values"
+                        :categories="dashboard.byProperty.labels"
+                        :decimals="0"
+                    />
+                </twig:Card>
+            </div>
+        </div>
+    {% endif %}
+
+    {% set agreementStatusLabels = {
+        'Active': 'Activos' | trans,
+        'ExpiringSoon': 'Por caducar' | trans,
+        'Expired': 'Caducados' | trans,
+        'NotStarted': 'No iniciados' | trans,
+    } %}
+
+    <div class="row">
+        <div class="col-lg-6 d-flex">
+            <twig:Card title="{{ 'Estado de convenios' | trans }}" class="mb-3 flex-fill">
+                <twig:Chart:Donut
+                    title="{{ 'Convenios' | trans }}"
+                    :values="dashboard.agreementsByStatus.values"
+                    :categories="dashboard.agreementsByStatus.labels | map(label => agreementStatusLabels[label] | default(label))"
+                    :colors="dashboard.agreementsByStatus.colors"
+                    :decimals="0"
+                    :legend="true"
+                />
+            </twig:Card>
+        </div>
+        <div class="col-lg-6 d-flex">
+            <twig:Card title="{{ 'Entidades por tipo' | trans }}" class="mb-3 flex-fill">
+                <twig:Chart:Donut
+                    title="{{ 'Entidades' | trans }}"
+                    :values="dashboard.organizationsByType.values"
+                    :categories="dashboard.organizationsByType.labels | map(label => label | trans({}, 'recipientOrganizationType'))"
+                    :decimals="0"
+                    :legend="true"
+                />
+            </twig:Card>
+        </div>
+    </div>
+{% endblock %}
+
+{% block right_bar %}
+    <twig:Sidebar:Right>
+        <twig:List:Filter title="{{ 'Filtrar resultados' | trans }}"></twig:List:Filter>
+    </twig:Sidebar:Right>
+{% endblock %}

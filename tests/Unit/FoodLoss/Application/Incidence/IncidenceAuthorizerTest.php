@@ -16,20 +16,44 @@ use PHPUnit\Framework\TestCase;
 
 class IncidenceAuthorizerTest extends TestCase
 {
-    public function testOwnerCanListIncidences(): void
+    public function testOwnerCanListIncidencesFromSameAccount(): void
     {
         $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
-        $subject = new Incidence(IncidenceId::generate());
+        $subject = IncidenceMother::from(name: 'Test', id: (string) IncidenceId::generate(), accountId: 'account-id-test');
 
         $this->assertTrue($this->createSUT()->canDoThat($subject, Action::List, $user));
     }
 
-    public function testOwnerCanRegisterIncidences(): void
+    public function testOwnerCannotListIncidencesFromOtherAccount(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+        $subject = IncidenceMother::from(name: 'Test', id: (string) IncidenceId::generate(), accountId: 'other-account-id');
+
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::List, $user));
+    }
+
+    public function testOwnerCannotListIncidencesWithoutAccount(): void
     {
         $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
         $subject = new Incidence(IncidenceId::generate());
 
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::List, $user));
+    }
+
+    public function testOwnerCanRegisterIncidencesFromSameAccount(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+        $subject = IncidenceMother::from(name: 'Test', id: (string) IncidenceId::generate(), accountId: 'account-id-test');
+
         $this->assertTrue($this->createSUT()->canDoThat($subject, Action::Register, $user));
+    }
+
+    public function testOwnerCannotRegisterIncidencesFromOtherAccount(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+        $subject = IncidenceMother::from(name: 'Test', id: (string) IncidenceId::generate(), accountId: 'other-account-id');
+
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Register, $user));
     }
 
     public function testOwnerCanEditIncidenceFromSameAccount(): void

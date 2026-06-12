@@ -108,6 +108,37 @@ class CriticalPointMother
         return $criticalPoint;
     }
 
+    /**
+     * @param ServiceCategoryId[] $serviceCategoryIds
+     */
+    public static function withAssessments(
+        AccountId $accountId,
+        SupplyChainStage $supplyChainStage = SupplyChainStage::Receiving,
+        bool $preventionPossible = false,
+        bool $humanDonationPossible = false,
+        bool $animalFeedPossible = false,
+        bool $transformationPossible = false,
+        bool $compostingPossible = false,
+        ?PropertyId $propertyId = null,
+        array $serviceCategoryIds = [],
+    ): CriticalPoint {
+        $criticalPoint = new CriticalPoint(id: CriticalPointId::generate());
+        $criticalPoint->register(
+            name: 'critical-point-' . random_int(100, 999),
+            propertyId: $propertyId ?? PropertyId::generate(),
+            accountId: $accountId,
+            supplyChainStage: $supplyChainStage,
+            prevention: new PriorityAssessment(Priority::Prevention, $preventionPossible),
+            humanDonation: new PriorityAssessment(Priority::HumanDonation, $humanDonationPossible),
+            animalFeed: new PriorityAssessment(Priority::AnimalFeed, $animalFeedPossible),
+            transformation: new PriorityAssessment(Priority::Transformation, $transformationPossible),
+            composting: new PriorityAssessment(Priority::Composting, $compostingPossible),
+            serviceCategoryIds: $serviceCategoryIds,
+        );
+
+        return $criticalPoint;
+    }
+
     public static function random(): CriticalPoint
     {
         return self::from(
