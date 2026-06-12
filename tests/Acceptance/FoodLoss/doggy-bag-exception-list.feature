@@ -12,12 +12,12 @@ Feature:
                 Then the response status should be 200
                 Then I see a table with 4 rows
 
-        Scenario: As a normal user, I cannot access the list of Doggy Bag exceptions
+        Scenario: As a normal user, I can access the list of Doggy Bag exceptions
                 Given account "mycompany" with id "mycompany" exists
                 Given user "user1@dediez.software" with role "ROLE_USER" of account "mycompany" exists
                 When I am logged as "user1@dediez.software"
                 When I go to "/es/doggy-bag-exceptions"
-                Then the response status should be 403
+                Then the response status should be 200
 
         Scenario: As an admin, I cannot access the list of Doggy Bag exceptions
                 Given user "admin@dediez.software" with role "ROLE_ADMIN" exists

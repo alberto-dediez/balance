@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Application\Dashboard;
 
-use App\FoodLoss\Application\Surplus\SurplusAuthorizer;
 use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPoint;
 use App\FoodLoss\Domain\Model\CriticalPoint\CriticalPointFilter;
@@ -15,6 +14,7 @@ use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
 use App\FoodLoss\Domain\Model\DoggyBagSign\DoggyBagSignFilter;
 use App\FoodLoss\Domain\Model\DoggyBagSign\DoggyBagSignRepository;
+use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreement;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementFilter;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepository;
 use App\FoodLoss\Domain\Model\Incidence\IncidenceFilter;
@@ -30,10 +30,8 @@ use App\FoodLoss\Domain\Model\Protocol\ProtocolFilter;
 use App\FoodLoss\Domain\Model\Protocol\ProtocolRepository;
 use App\FoodLoss\Domain\Model\ProtocolAccess\ProtocolAccessFilter;
 use App\FoodLoss\Domain\Model\ProtocolAccess\ProtocolAccessRepository;
-use App\FoodLoss\Domain\Model\Surplus\Surplus;
 use App\FoodLoss\Domain\Model\Surplus\SurplusDestination;
 use App\FoodLoss\Domain\Model\Surplus\SurplusFilter;
-use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\FoodLoss\Domain\Model\Surplus\SurplusRepository;
 use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceFilter;
 use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceRepository;
@@ -43,16 +41,14 @@ use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
 
-class GetFoodLossDashboardService
+class GetOwnerDashboardService
 {
     public const UNASSESSED = 'Unassessed';
 
     public const UNASSESSED_COLOR = 'var(--bs-secondary)';
 
-    public const EXPIRING_SOON_DAYS = 30;
-
     public function __construct(
-        private readonly SurplusAuthorizer $authorizer,
+        private readonly OwnerDashboardAuthorizer $authorizer,
         private readonly CriticalPointRepository $criticalPointRepository,
         private readonly PreventionPlanRepository $preventionPlanRepository,
         private readonly SurplusRepository $surplusRepository,
@@ -67,13 +63,13 @@ class GetFoodLossDashboardService
         private readonly IncidenceRepository $incidenceRepository,
     ) {}
 
-    public function __invoke(GetFoodLossDashboardRequest $request, User $user): GetFoodLossDashboardResponse
+    public function __invoke(GetOwnerDashboardRequest $request, User $user): GetOwnerDashboardResponse
     {
         $accountId = $request->accountId ?? new AccountId('00000000-0000-0000-0000-000000000000');
 
-        $this->authorizer->denyUnlessCanDoThat(new Surplus(id: SurplusId::generate(), accountId: $accountId), SecurityAction::List, $user);
+        $this->authorizer->denyUnlessCanDoThat($request, SecurityAction::List, $user);
 
-        $response = new GetFoodLossDashboardResponse();
+        $response = new GetOwnerDashboardResponse();
 
         $this->fillCriticalPoints($response, $accountId);
         $this->fillPreventionPlans($response, $accountId);
@@ -88,7 +84,7 @@ class GetFoodLossDashboardService
         return $response;
     }
 
-    private function fillCriticalPoints(GetFoodLossDashboardResponse $response, AccountId $accountId): void
+    private function fillCriticalPoints(GetOwnerDashboardResponse $response, AccountId $accountId): void
     {
         $criticalPoints = $this->criticalPointRepository->findByFilter(new CriticalPointFilter(accountId: $accountId, limit: 0));
 
@@ -133,7 +129,7 @@ class GetFoodLossDashboardService
         ];
     }
 
-    private function fillPreventionPlans(GetFoodLossDashboardResponse $response, AccountId $accountId): void
+    private function fillPreventionPlans(GetOwnerDashboardResponse $response, AccountId $accountId): void
     {
         $preventionPlans = $this->preventionPlanRepository->findByFilter(new PreventionPlanFilter(accountId: $accountId, limit: 0));
 
@@ -156,7 +152,7 @@ class GetFoodLossDashboardService
         $response->preventionPlansByStatus = DashboardChart::fromCounts($countByStatus);
     }
 
-    private function fillSurpluses(GetFoodLossDashboardResponse $response, AccountId $accountId, GetFoodLossDashboardRequest $request): void
+    private function fillSurpluses(GetOwnerDashboardResponse $response, AccountId $accountId, GetOwnerDashboardRequest $request): void
     {
         $surpluses = $this->surplusRepository->findByFilter(new SurplusFilter(
             accountId: $accountId,
@@ -217,12 +213,12 @@ class GetFoodLossDashboardService
         $response->surplusesByDestination = DashboardChart::fromCounts($countByDestination, $destinationColors);
     }
 
-    private function fillDonations(GetFoodLossDashboardResponse $response, AccountId $accountId, GetFoodLossDashboardRequest $request): void
+    private function fillDonations(GetOwnerDashboardResponse $response, AccountId $accountId, GetOwnerDashboardRequest $request): void
     {
         $donationAgreements = $this->donationAgreementRepository->findByFilter(new DonationAgreementFilter(accountId: $accountId, limit: 0));
 
         $now = new \DateTimeImmutable('NOW');
-        $expiringSoonLimit = $now->modify(sprintf('+%d days', self::EXPIRING_SOON_DAYS));
+        $expiringSoonLimit = $now->modify(sprintf('+%d days', DonationAgreement::EXPIRING_SOON_DAYS));
 
         foreach ($donationAgreements as $donationAgreement) {
             if ($donationAgreement->expirationDate() < $now) {
@@ -281,7 +277,7 @@ class GetFoodLossDashboardService
             : $quantity / $kgPerRation;
     }
 
-    private function fillPackagings(GetFoodLossDashboardResponse $response, AccountId $accountId): void
+    private function fillPackagings(GetOwnerDashboardResponse $response, AccountId $accountId): void
     {
         $packagings = $this->packagingRepository->findByFilter(new PackagingFilter(accountId: $accountId, limit: 0));
 
@@ -302,12 +298,12 @@ class GetFoodLossDashboardService
         $response->packagingStockByType = DashboardChart::fromCounts($stockByType);
     }
 
-    private function fillDoggyBagSigns(GetFoodLossDashboardResponse $response, AccountId $accountId): void
+    private function fillDoggyBagSigns(GetOwnerDashboardResponse $response, AccountId $accountId): void
     {
         $response->totalDoggyBagSigns = count($this->doggyBagSignRepository->findByFilter(new DoggyBagSignFilter(accountId: $accountId, limit: 0)));
     }
 
-    private function fillProtocols(GetFoodLossDashboardResponse $response, AccountId $accountId, GetFoodLossDashboardRequest $request): void
+    private function fillProtocols(GetOwnerDashboardResponse $response, AccountId $accountId, GetOwnerDashboardRequest $request): void
     {
         $protocols = $this->protocolRepository->findByFilter(new ProtocolFilter(accountId: $accountId, limit: 0));
         $protocolAccesses = $this->protocolAccessRepository->findByFilter(new ProtocolAccessFilter(accountId: $accountId, limit: 0));
@@ -331,7 +327,7 @@ class GetFoodLossDashboardService
         $response->totalProtocols = count($protocols);
     }
 
-    private function fillTrainings(GetFoodLossDashboardResponse $response, AccountId $accountId, GetFoodLossDashboardRequest $request): void
+    private function fillTrainings(GetOwnerDashboardResponse $response, AccountId $accountId, GetOwnerDashboardRequest $request): void
     {
         $trainingSessions = $this->trainingSessionRepository->findByFilter(new TrainingSessionFilter(accountId: $accountId, limit: 0));
 
@@ -350,7 +346,7 @@ class GetFoodLossDashboardService
         }
     }
 
-    private function fillIncidences(GetFoodLossDashboardResponse $response, AccountId $accountId, GetFoodLossDashboardRequest $request): void
+    private function fillIncidences(GetOwnerDashboardResponse $response, AccountId $accountId, GetOwnerDashboardRequest $request): void
     {
         $incidences = $this->incidenceRepository->findByFilter(new IncidenceFilter(accountId: $accountId, limit: 0));
 
@@ -372,7 +368,7 @@ class GetFoodLossDashboardService
         $response->incidencesByType = DashboardChart::fromCounts($countByType);
     }
 
-    private function isInRange(\DateTimeImmutable $date, GetFoodLossDashboardRequest $request): bool
+    private function isInRange(\DateTimeImmutable $date, GetOwnerDashboardRequest $request): bool
     {
         if ($request->dateFrom instanceof \DateTimeImmutable && $date < $request->dateFrom) {
             return false;

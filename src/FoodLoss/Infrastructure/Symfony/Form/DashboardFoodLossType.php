@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Symfony\Form;
 
-use App\FoodLoss\Application\Dashboard\GetFoodLossDashboardRequest;
+use App\FoodLoss\Application\Dashboard\GetOwnerDashboardRequest;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\DeliveryLogUnitType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
@@ -51,7 +51,7 @@ class DashboardFoodLossType extends BaseFilterType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => GetFoodLossDashboardRequest::class,
+            'data_class' => GetOwnerDashboardRequest::class,
         ]);
     }
 }

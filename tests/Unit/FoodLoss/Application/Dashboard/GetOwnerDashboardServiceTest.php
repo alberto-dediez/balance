@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Application\Dashboard;
 
-use App\FoodLoss\Application\Dashboard\GetFoodLossDashboardRequest;
-use App\FoodLoss\Application\Dashboard\GetFoodLossDashboardService;
-use App\FoodLoss\Application\Surplus\SurplusAuthorizer;
+use App\FoodLoss\Application\Dashboard\GetOwnerDashboardRequest;
+use App\FoodLoss\Application\Dashboard\GetOwnerDashboardService;
+use App\FoodLoss\Application\Dashboard\OwnerDashboardAuthorizer;
 use App\FoodLoss\Domain\Model\Action\Priority;
 use App\FoodLoss\Domain\Model\CriticalPoint\SupplyChainStage;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogId;
@@ -68,7 +68,7 @@ use App\Tests\Unit\FoodLoss\Domain\Model\TrainingSession\TrainingSessionReposito
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 
-class GetFoodLossDashboardServiceTest extends TestCase
+class GetOwnerDashboardServiceTest extends TestCase
 {
     private const ACCOUNT_ID = 'account-id-test';
 
@@ -87,7 +87,7 @@ class GetFoodLossDashboardServiceTest extends TestCase
 
         $sut = $this->createSUT(criticalPointRepository: $criticalPointRepository);
 
-        $response = $sut(new GetFoodLossDashboardRequest(accountId: $accountId), $this->owner());
+        $response = $sut(new GetOwnerDashboardRequest(accountId: $accountId), $this->owner());
 
         $this->assertSame(2, $response->totalCriticalPoints);
 
@@ -116,7 +116,7 @@ class GetFoodLossDashboardServiceTest extends TestCase
 
         $sut = $this->createSUT(preventionPlanRepository: $preventionPlanRepository);
 
-        $response = $sut(new GetFoodLossDashboardRequest(accountId: $accountId), $this->owner());
+        $response = $sut(new GetOwnerDashboardRequest(accountId: $accountId), $this->owner());
 
         $this->assertSame(2, $response->totalPreventionPlans);
         $this->assertTrue($response->hasCompletedPreventionPlan);
@@ -145,7 +145,7 @@ class GetFoodLossDashboardServiceTest extends TestCase
 
         $sut = $this->createSUT(surplusRepository: $surplusRepository);
 
-        $response = $sut(new GetFoodLossDashboardRequest(accountId: $accountId), $this->owner());
+        $response = $sut(new GetOwnerDashboardRequest(accountId: $accountId), $this->owner());
 
         $this->assertSame(3, $response->totalSurpluses);
         $this->assertSame(15.0, $response->surplusKg);
@@ -158,7 +158,7 @@ class GetFoodLossDashboardServiceTest extends TestCase
         $countByDestination = array_combine($response->surplusesByDestination->labels, $response->surplusesByDestination->values);
         $this->assertSame(1, $countByDestination[SurplusDestination::HumanDonation->value]);
         $this->assertSame(1, $countByDestination[SurplusDestination::Elimination->value]);
-        $this->assertSame(1, $countByDestination[GetFoodLossDashboardService::UNASSESSED]);
+        $this->assertSame(1, $countByDestination[GetOwnerDashboardService::UNASSESSED]);
     }
 
     public function testFiltersSurplusesByDateRange(): void
@@ -171,7 +171,7 @@ class GetFoodLossDashboardServiceTest extends TestCase
 
         $sut = $this->createSUT(surplusRepository: $surplusRepository);
 
-        $request = new GetFoodLossDashboardRequest(
+        $request = new GetOwnerDashboardRequest(
             accountId: $accountId,
             dateFrom: new \DateTimeImmutable('2026-02-01'),
             dateTo: new \DateTimeImmutable('2026-04-01'),
@@ -200,7 +200,7 @@ class GetFoodLossDashboardServiceTest extends TestCase
 
         $sut = $this->createSUT(donationAgreementRepository: $donationAgreementRepository, deliveryLogRepository: $deliveryLogRepository);
 
-        $response = $sut(new GetFoodLossDashboardRequest(accountId: $accountId), $this->owner());
+        $response = $sut(new GetOwnerDashboardRequest(accountId: $accountId), $this->owner());
 
         $this->assertSame(2, $response->activeDonationAgreements);
         $this->assertSame(1, $response->expiringSoonDonationAgreements);
@@ -231,7 +231,7 @@ class GetFoodLossDashboardServiceTest extends TestCase
 
         $sut = $this->createSUT(packagingRepository: $packagingRepository, doggyBagSignRepository: $doggyBagSignRepository);
 
-        $response = $sut(new GetFoodLossDashboardRequest(accountId: $accountId), $this->owner());
+        $response = $sut(new GetOwnerDashboardRequest(accountId: $accountId), $this->owner());
 
         $this->assertSame(2, $response->totalPackagings);
         $this->assertSame(40, $response->totalPackagingStock);
@@ -263,7 +263,7 @@ class GetFoodLossDashboardServiceTest extends TestCase
 
         $sut = $this->createSUT(protocolRepository: $protocolRepository, protocolAccessRepository: $protocolAccessRepository);
 
-        $response = $sut(new GetFoodLossDashboardRequest(accountId: $accountId), $this->owner());
+        $response = $sut(new GetOwnerDashboardRequest(accountId: $accountId), $this->owner());
 
         $this->assertSame(2, $response->totalProtocols);
         $this->assertSame(1, $response->readProtocols);
@@ -286,7 +286,7 @@ class GetFoodLossDashboardServiceTest extends TestCase
 
         $sut = $this->createSUT(trainingSessionRepository: $trainingSessionRepository, trainingAttendanceRepository: $trainingAttendanceRepository);
 
-        $response = $sut(new GetFoodLossDashboardRequest(accountId: $accountId), $this->owner());
+        $response = $sut(new GetOwnerDashboardRequest(accountId: $accountId), $this->owner());
 
         $this->assertSame(1, $response->totalTrainingSessions);
         $this->assertSame(2, $response->totalTrainingAttendances);
@@ -303,7 +303,7 @@ class GetFoodLossDashboardServiceTest extends TestCase
 
         $sut = $this->createSUT(incidenceRepository: $incidenceRepository);
 
-        $response = $sut(new GetFoodLossDashboardRequest(accountId: $accountId), $this->owner());
+        $response = $sut(new GetOwnerDashboardRequest(accountId: $accountId), $this->owner());
 
         $this->assertSame(2, $response->totalIncidences);
 
@@ -318,7 +318,7 @@ class GetFoodLossDashboardServiceTest extends TestCase
 
         $sut = $this->createSUT();
 
-        $request = new GetFoodLossDashboardRequest(accountId: $accountId);
+        $request = new GetOwnerDashboardRequest(accountId: $accountId);
         $user = UserMother::fromUsernameAndRoleAndAccount('other-owner', Role::Owner, new AccountId('another-account-id'));
 
         $this->expectException(UnauthorizedActionException::class);
@@ -357,9 +357,9 @@ class GetFoodLossDashboardServiceTest extends TestCase
         ?InMemoryTrainingSessionRepository $trainingSessionRepository = null,
         ?InMemoryTrainingAttendanceRepository $trainingAttendanceRepository = null,
         ?InMemoryIncidenceRepository $incidenceRepository = null,
-    ): GetFoodLossDashboardService {
-        return new GetFoodLossDashboardService(
-            authorizer: new SurplusAuthorizer(),
+    ): GetOwnerDashboardService {
+        return new GetOwnerDashboardService(
+            authorizer: new OwnerDashboardAuthorizer(),
             criticalPointRepository: $criticalPointRepository ?? CriticalPointRepositoryMother::inMemory(),
             preventionPlanRepository: $preventionPlanRepository ?? PreventionPlanRepositoryMother::inMemory(),
             surplusRepository: $surplusRepository ?? SurplusRepositoryMother::inMemory(),

@@ -6,15 +6,9 @@ namespace App\FoodLoss\Application\Dashboard;
 
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
 
-class GetFoodLossDashboardResponse
+class GetUserDashboardResponse
 {
     public function __construct(
-        public int $totalCriticalPoints = 0,
-        public DashboardChart $criticalPointsByPriority = new DashboardChart(),
-        public DashboardChart $criticalPointsBySupplyChainStage = new DashboardChart(),
-        public int $totalPreventionPlans = 0,
-        public bool $hasCompletedPreventionPlan = false,
-        public DashboardChart $preventionPlansByStatus = new DashboardChart(),
         public int $totalSurpluses = 0,
         public float $surplusKg = 0.0,
         public float $surplusRations = 0.0,
@@ -24,24 +18,18 @@ class GetFoodLossDashboardResponse
         public int $eliminatedSurpluses = 0,
         public int $unassessedSurpluses = 0,
         public DashboardChart $surplusesByDestination = new DashboardChart(),
-        public int $activeDonationAgreements = 0,
-        public int $expiringSoonDonationAgreements = 0,
-        public int $expiredDonationAgreements = 0,
         public int $totalDeliveryLogs = 0,
         public float $deliveredKg = 0.0,
         public float $deliveredRations = 0.0,
         public float $deliveredTotalQuantity = 0.0,
-        public int $totalPackagings = 0,
-        public int $totalPackagingStock = 0,
-        public DashboardChart $packagingStockByType = new DashboardChart(),
         public int $totalDoggyBagSigns = 0,
+        public int $totalDoggyBagExceptions = 0,
         public int $totalProtocols = 0,
         public int $readProtocols = 0,
         public int $totalProtocolAccesses = 0,
         public int $totalTrainingSessions = 0,
+        public int $upcomingTrainingSessions = 0,
         public int $totalTrainingAttendances = 0,
-        public int $totalIncidences = 0,
-        public DashboardChart $incidencesByType = new DashboardChart(),
     ) {}
 
     public function recoveredPercentage(): float

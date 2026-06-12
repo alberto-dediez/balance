@@ -14,19 +14,19 @@ final class DoggyBagExceptionAuthorizer extends AbstractAuthorizer
 {
     protected function canRegister(mixed $subject, User $user): bool
     {
-        return $this->canList($subject, $user);
+        return $this->canEdit($subject, $user);
     }
 
     protected function canView(mixed $subject, User $user): bool
     {
-        return $this->canEdit($subject, $user);
+        return $this->canList($subject, $user);
     }
 
     protected function canList(mixed $subject, User $user): bool
     {
         assert($subject instanceof DoggyBagException);
 
-        if (!$user->hasRole(Role::Owner) || !$user->accountId() instanceof AccountId) {
+        if (!$user->accountId() instanceof AccountId) {
             return false;
         }
 

@@ -8,7 +8,7 @@ use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogUnit;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\Filter;
 
-class GetFoodLossDashboardRequest
+class GetOwnerDashboardRequest
 {
     use Filter;
 
