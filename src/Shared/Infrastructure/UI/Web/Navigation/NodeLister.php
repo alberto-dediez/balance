@@ -48,12 +48,13 @@ class NodeLister
         }
 
         $currentPath = $request->getBaseUrl() . $request->getPathInfo();
+        $bestTarget = $this->bestMatchingTarget($currentPath, $nodes);
 
         foreach ($nodes as $node) {
-            $node->selected = $this->matchesCurrentPath($currentPath, $node->target);
+            $node->selected = null !== $bestTarget && $node->target === $bestTarget;
 
             foreach ($node->items as $item) {
-                $item->selected = $this->matchesCurrentPath($currentPath, $item->target);
+                $item->selected = null !== $bestTarget && $item->target === $bestTarget;
                 $node->selected = $node->selected || $item->selected;
             }
         }
@@ -61,12 +62,35 @@ class NodeLister
         return $nodes;
     }
 
-    private function matchesCurrentPath(string $currentPath, ?string $target): bool
+    /**
+     * When several targets match the current path (e.g. /delivery-logs and
+     * /delivery-logs/export), only the most specific one must be selected.
+     *
+     * @param list<Node> $nodes
+     */
+    private function bestMatchingTarget(string $currentPath, array $nodes): ?string
     {
-        if (null === $target) {
-            return false;
+        $best = null;
+
+        foreach ($nodes as $node) {
+            foreach ([$node, ...$node->items] as $candidate) {
+                $target = $candidate->target;
+
+                if (null === $target || !$this->matchesCurrentPath($currentPath, $target)) {
+                    continue;
+                }
+
+                if (null === $best || strlen($target) > strlen($best)) {
+                    $best = $target;
+                }
+            }
         }
 
+        return $best;
+    }
+
+    private function matchesCurrentPath(string $currentPath, string $target): bool
+    {
         return $currentPath === $target || str_starts_with($currentPath, $target . '/');
     }
 

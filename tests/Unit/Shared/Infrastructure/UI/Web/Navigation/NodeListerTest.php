@@ -50,11 +50,37 @@ class NodeListerTest extends TestCase
         $this->assertFalse($result[0]->items[0]->selected);
     }
 
-    private function createSUT(AuthorizationCheckerInterface $security, string $currentPath = '/es/admin/users'): NodeLister
+    public function testNodesMarksOnlyTheMostSpecificLinkWhenTargetsOverlap(): void
     {
+        $security = FakeSecurity::fromRole(Role::Admin);
+
+        $sut = $this->createSUT($security, '/es/admin/users/export', [
+            'admin_users' => '/es/admin/users',
+            'admin_events' => '/es/admin/users/export',
+        ]);
+
+        $result = $sut->nodes();
+
+        $items = $result[0]->items;
+
+        $this->assertTrue($result[0]->selected);
+        $this->assertFalse($items[1]->selected);
+        $this->assertTrue($items[3]->selected);
+    }
+
+    /**
+     * @param array<string, string> $routes
+     */
+    private function createSUT(
+        AuthorizationCheckerInterface $security,
+        string $currentPath = '/es/admin/users',
+        array $routes = [],
+    ): NodeLister {
         $router = $this->createMock(RouterInterface::class);
 
-        $router->method('generate')->willReturn('/es/admin/users');
+        $router->method('generate')->willReturnCallback(
+            static fn(string $name): string => $routes[$name] ?? '/es/admin/users',
+        );
 
         $requestStack = new RequestStack();
         $requestStack->push(Request::create($currentPath));
