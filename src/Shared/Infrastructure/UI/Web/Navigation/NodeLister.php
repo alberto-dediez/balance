@@ -306,6 +306,28 @@ class NodeLister
             ],
         );
 
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Informes'),
+            icon: 'solar:documents-minimalistic-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Puntos críticos'),
+                    icon: 'ph:cooking-pot-duotone',
+                    target: $this->router->generate('export', ['code' => 'critical-points']),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Donaciones'),
+                    icon: 'solar:hand-heart-line-duotone',
+                    target: $this->router->generate('export', ['code' => 'delivery-logs']),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Incidencias'),
+                    icon: 'solar:shield-warning-line-duotone',
+                    target: $this->router->generate('export', ['code' => 'incidences']),
+                ),
+            ],
+        );
+
         $nodes[] =  new Node(
             label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',

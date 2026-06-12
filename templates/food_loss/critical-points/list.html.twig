@@ -39,5 +39,7 @@
 {% endblock %}
 
 {% block list_actions %}
+    <twig:Link:Export path="{{ path('export', {'code': 'critical-points'}) }}" />
+
     <twig:Link:Register path="{{ path('critical_points_register') }}" />
 {% endblock list_actions %}

@@ -51,6 +51,11 @@ final class CriticalPointAuthorizer extends AbstractAuthorizer
         return $this->canEdit($subject, $user);
     }
 
+    protected function canExport(mixed $subject, User $user): bool
+    {
+        return $this->canList($subject, $user);
+    }
+
     public function supports(mixed $subject): bool
     {
         return $subject instanceof CriticalPoint;

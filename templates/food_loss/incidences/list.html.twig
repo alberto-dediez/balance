@@ -42,5 +42,7 @@
 {% endblock %}
 
 {% block list_actions %}
+    <twig:Link:Export path="{{ path('export', {'code': 'incidences'}) }}" />
+
     <twig:Link:Register path="{{ path('incidences_register') }}" />
 {% endblock list_actions %}

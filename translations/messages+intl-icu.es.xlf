@@ -4581,6 +4581,22 @@
         <source>Excedentes por incidencia</source>
         <target>Excedentes por incidencia</target>
       </trans-unit>
+      <trans-unit id="qwdF_2y" resname="Efecto">
+        <source>Efecto</source>
+        <target>Efecto</target>
+      </trans-unit>
+      <trans-unit id="4HdysEG" resname="Ver motivos">
+        <source>Ver motivos</source>
+        <target>Ver motivos</target>
+      </trans-unit>
+      <trans-unit id="A6LHGcR" resname="Datos exportados">
+        <source>Datos exportados</source>
+        <target>Datos exportados</target>
+      </trans-unit>
+      <trans-unit id="hZ5OFg0" resname="Informes">
+        <source>Informes</source>
+        <target>Informes</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

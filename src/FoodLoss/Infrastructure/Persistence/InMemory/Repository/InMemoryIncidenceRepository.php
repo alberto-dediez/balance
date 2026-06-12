@@ -58,6 +58,14 @@ class InMemoryIncidenceRepository implements IncidenceRepository
                 continue;
             }
 
+            if ($filter->dateFrom instanceof \DateTimeImmutable && $incidence->exceptionOccurredOn() < $filter->dateFrom) {
+                continue;
+            }
+
+            if ($filter->dateTo instanceof \DateTimeImmutable && $incidence->exceptionOccurredOn() > $filter->dateTo) {
+                continue;
+            }
+
             $results[] = $incidence;
         }
 

@@ -47,6 +47,15 @@ final class DeliveryLogAuthorizer extends AbstractAuthorizer
         return $this->canEdit($subject, $user);
     }
 
+    protected function canExport(mixed $subject, User $user): bool
+    {
+        return $user->hasRole(Role::Owner)
+            && $user->accountId() instanceof AccountId
+            && $subject instanceof DeliveryLog
+            && $subject->accountId() instanceof AccountId
+            && $subject->accountId()->equals($user->accountId());
+    }
+
     public function supports(mixed $subject): bool
     {
         return $subject instanceof DeliveryLog;

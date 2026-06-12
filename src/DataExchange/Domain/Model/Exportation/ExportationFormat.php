@@ -10,6 +10,8 @@ enum ExportationFormat: string
 
     case Csv = 'csv';
 
+    case Pdf = 'pdf';
+
     public function extension(): string
     {
         return $this->value;
@@ -20,6 +22,7 @@ enum ExportationFormat: string
         return match ($this) {
             self::Xlsx => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             self::Csv => 'text/csv',
+            self::Pdf => 'application/pdf',
         };
     }
 }

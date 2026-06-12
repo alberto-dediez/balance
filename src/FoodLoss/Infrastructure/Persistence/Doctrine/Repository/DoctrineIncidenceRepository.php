@@ -90,6 +90,24 @@ class DoctrineIncidenceRepository implements IncidenceRepository
             ;
         }
 
+        if ($filter->dateFrom instanceof \DateTimeImmutable) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->gte('e.exceptionOccurredOn', ':dateFrom'),
+                )
+                ->setParameter('dateFrom', $filter->dateFrom, Types::DATETIME_IMMUTABLE)
+            ;
+        }
+
+        if ($filter->dateTo instanceof \DateTimeImmutable) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->lte('e.exceptionOccurredOn', ':dateTo'),
+                )
+                ->setParameter('dateTo', $filter->dateTo, Types::DATETIME_IMMUTABLE)
+            ;
+        }
+
         $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {

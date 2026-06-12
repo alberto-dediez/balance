@@ -1,0 +1,53 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\FoodLoss\Infrastructure\Symfony\Form;
+
+use App\FoodLoss\Application\CriticalPoint\Export\CriticalPointsExportFilter;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\ActionIdType;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\PropertyIdType;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\ServiceCategoryIdType;
+use App\FoodLoss\Infrastructure\Symfony\Form\Type\SurplusCauseIdType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatableMessage;
+
+/** @extends AbstractType<CriticalPointsExportFilter> */
+class ListCriticalPointsExportType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('name', TextType::class, [
+                'label' => new TranslatableMessage('Nombre'),
+                'required' => false,
+            ])
+            ->add('propertyId', PropertyIdType::class, [
+                'label' => new TranslatableMessage('Propiedad'),
+                'required' => false,
+            ])
+            ->add('serviceCategoryId', ServiceCategoryIdType::class, [
+                'label' => new TranslatableMessage('Categoría de servicio'),
+                'required' => false,
+            ])
+            ->add('actionId', ActionIdType::class, [
+                'label' => new TranslatableMessage('Acción'),
+                'required' => false,
+            ])
+            ->add('surplusCauseId', SurplusCauseIdType::class, [
+                'label' => new TranslatableMessage('Causa de excedente'),
+                'required' => false,
+            ])
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => CriticalPointsExportFilter::class,
+        ]);
+    }
+}
