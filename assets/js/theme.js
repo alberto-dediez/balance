@@ -400,15 +400,19 @@ if ((at = "vertical")) {
             elements.classList.add("active");
         }
 
-        var closestNav = elements?.closest("nav[class^=sidebar-nav]");
-        var menuid = (closestNav && closestNav.id) || "menu-right-mini-0";
-        var menu = menuid[menuid.length - 1];
+        var closestNav =
+          elements?.closest("nav[class^=sidebar-nav]") ||
+          document.querySelector(".sidebarmenu nav");
 
-        if (document.getElementById("menu-right-mini-" + menu)) {
-          document
-              .getElementById("menu-right-mini-" + menu)
-              .classList.add("d-block");
-          document.getElementById("mini-" + menu).classList.add("selected");
+        if (closestNav) {
+          closestNav.classList.add("d-block");
+
+          var menu = closestNav.id.replace("menu-right-mini-", "");
+          var mini = document.getElementById("mini-" + menu);
+
+          if (mini) {
+            mini.classList.add("selected");
+          }
         }
     }
 
