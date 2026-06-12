@@ -1,0 +1,6 @@
+{% trans with {
+    '{trainingSession}': event.trainingSessionId,
+    '{account}': event.accountId | account_name,
+    '{date}': event.attendedAt | date('d/m/Y'),
+    '{user}': element.userId | user_name
+} %}Se ha registrado la asistencia a la sesión de formación {trainingSession} para la cuenta {account} el {date} por el usuario {user}{% endtrans %}

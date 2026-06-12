@@ -1,0 +1,5 @@
+{% trans with {
+    '{protocol}': event.protocolId,
+    '{account}': event.accountId | account_name,
+    '{user}': element.userId | user_name
+} %}Se ha registrado el acceso al protocolo {protocol} para la cuenta {account} por el usuario {user}{% endtrans %}

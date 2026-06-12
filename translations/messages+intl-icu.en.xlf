@@ -4453,6 +4453,134 @@
         <source>Autorizados para compost</source>
         <target>Authorized for compost</target>
       </trans-unit>
+      <trans-unit id="KKZ0ai0" resname="Se ha registrado la asistencia a la sesión de formación {trainingSession} para la cuenta {account} el {date} por el usuario {user}">
+        <source>Se ha registrado la asistencia a la sesión de formación {trainingSession} para la cuenta {account} el {date} por el usuario {user}</source>
+        <target>Attendance at the training session {trainingSession} for account {account} on {date} by user {user} has been recorded</target>
+      </trans-unit>
+      <trans-unit id="qcxcTlq" resname="Se ha eliminado la evidencia {evidence} de la incidencia {incidence} por el usuario {user}">
+        <source>Se ha eliminado la evidencia {evidence} de la incidencia {incidence} por el usuario {user}</source>
+        <target>Evidence {evidence} for incident {incidence} by user {user} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="Vg4PBXm" resname="Se ha registrado el acceso al protocolo {protocol} para la cuenta {account} por el usuario {user}">
+        <source>Se ha registrado el acceso al protocolo {protocol} para la cuenta {account} por el usuario {user}</source>
+        <target>Access to protocol {protocol} for account {account} by user {user} has been recorded</target>
+      </trans-unit>
+      <trans-unit id="RJfP30b" resname="Se ha añadido la evidencia &quot;{evidence}&quot; a la incidencia {incidence} por el usuario {user}">
+        <source>Se ha añadido la evidencia "{evidence}" a la incidencia {incidence} por el usuario {user}</source>
+        <target>The evidence “{evidence}” has been added to the incident {incidence} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="TMAEH6B" resname="Se ha eliminado la asistencia a formación {trainingAttendance} por el usuario {user}">
+        <source>Se ha eliminado la asistencia a formación {trainingAttendance} por el usuario {user}</source>
+        <target>Training attendance {trainingAttendance} has been deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="UeZgkPO" resname="Declaraciones de excedente por punto crítico">
+        <source>Declaraciones de excedente por punto crítico</source>
+        <target>Surplus declarations by critical point</target>
+      </trans-unit>
+      <trans-unit id="ImZa_RS" resname="Declaraciones de excedente por propiedad">
+        <source>Declaraciones de excedente por propiedad</source>
+        <target>Surplus declarations by property</target>
+      </trans-unit>
+      <trans-unit id="FB1N0m9" resname="Propiedades con plan de prevención">
+        <source>Propiedades con plan de prevención</source>
+        <target>Properties with a prevention plan</target>
+      </trans-unit>
+      <trans-unit id="5O_n7.z" resname="Empresas con plan de prevención">
+        <source>Empresas con plan de prevención</source>
+        <target>Companies with a prevention plan</target>
+      </trans-unit>
+      <trans-unit id="Pe0_sVU" resname="Ver acciones">
+        <source>Ver acciones</source>
+        <target>View actions</target>
+      </trans-unit>
+      <trans-unit id="576CotD" resname="Causas de pérdida">
+        <source>Causas de pérdida</source>
+        <target>Causes of loss</target>
+      </trans-unit>
+      <trans-unit id="VXb8ggQ" resname="Ver causas">
+        <source>Ver causas</source>
+        <target>View causes</target>
+      </trans-unit>
+      <trans-unit id="rl1qPl0" resname="Ver categorías">
+        <source>Ver categorías</source>
+        <target>View categories</target>
+      </trans-unit>
+      <trans-unit id="WktQ26q" resname="Ver propiedades">
+        <source>Ver propiedades</source>
+        <target>View properties</target>
+      </trans-unit>
+      <trans-unit id="K02EyHs" resname="Ver empresas">
+        <source>Ver empresas</source>
+        <target>View companies</target>
+      </trans-unit>
+      <trans-unit id="XR9cpNM" resname="activas">
+        <source>activas</source>
+        <target>active</target>
+      </trans-unit>
+      <trans-unit id="bKvydMQ" resname="Ver cuentas">
+        <source>Ver cuentas</source>
+        <target>View accounts</target>
+      </trans-unit>
+      <trans-unit id="9XgjDvE" resname="Ver usuarios">
+        <source>Ver usuarios</source>
+        <target>View users</target>
+      </trans-unit>
+      <trans-unit id="kDtqE9V" resname="Ver empleados">
+        <source>Ver empleados</source>
+        <target>View employees</target>
+      </trans-unit>
+      <trans-unit id="gn8wnum" resname="Acciones por prioridad">
+        <source>Acciones por prioridad</source>
+        <target>Actions by priority</target>
+      </trans-unit>
+      <trans-unit id=".FWdC0D" resname="aprovechados">
+        <source>aprovechados</source>
+        <target>utilized</target>
+      </trans-unit>
+      <trans-unit id="zCQRJrn" resname="no aprovechados">
+        <source>no aprovechados</source>
+        <target>not utilized</target>
+      </trans-unit>
+      <trans-unit id="uo2Z90b" resname="Sesiones en el periodo">
+        <source>Sesiones en el periodo</source>
+        <target>Sessions in the period</target>
+      </trans-unit>
+      <trans-unit id="fMkUFSL" resname="Ver sesiones">
+        <source>Ver sesiones</source>
+        <target>View sessions</target>
+      </trans-unit>
+      <trans-unit id="kvjYJ6g" resname="Sesiones próximas">
+        <source>Sesiones próximas</source>
+        <target>Upcoming sessions</target>
+      </trans-unit>
+      <trans-unit id="a.B_NBM" resname="Ver calendario">
+        <source>Ver calendario</source>
+        <target>View calendar</target>
+      </trans-unit>
+      <trans-unit id="1rk.ClQ" resname="Excepciones registradas">
+        <source>Excepciones registradas</source>
+        <target>Recorded exceptions</target>
+      </trans-unit>
+      <trans-unit id="f3oJ9zK" resname="Ver excepciones">
+        <source>Ver excepciones</source>
+        <target>View exceptions</target>
+      </trans-unit>
+      <trans-unit id="gKQAMaV" resname="Próximas sesiones">
+        <source>Próximas sesiones</source>
+        <target>Upcoming sessions</target>
+      </trans-unit>
+      <trans-unit id="rKXch.i" resname="Ver planes de prevención">
+        <source>Ver planes de prevención</source>
+        <target>View prevention plans</target>
+      </trans-unit>
+      <trans-unit id="AMC8FA9" resname="Posibilidades de aprovechamiento por punto crítico">
+        <source>Posibilidades de aprovechamiento por punto crítico</source>
+        <target>Utilization possibilities by critical point</target>
+      </trans-unit>
+      <trans-unit id="Eo1jso7" resname="Excedentes por incidencia">
+        <source>Excedentes por incidencia</source>
+        <target>Surpluses by incident</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
