@@ -128,6 +128,8 @@ class NodeLister
             ],
         );
 
+        $nodes[] = $this->notificationsNode(includeAdmin: true);
+
         return $nodes;
     }
 
@@ -150,6 +152,8 @@ class NodeLister
             ],
         );
 
+        $nodes[] = $this->notificationsNode();
+
         return $nodes;
     }
 
@@ -158,6 +162,38 @@ class NodeLister
      */
     private function toUsers(): array
     {
-        return [];
+        return [
+            $this->notificationsNode(),
+        ];
+    }
+
+    private function notificationsNode(bool $includeAdmin = false): Node
+    {
+        $items = [
+            new Node(
+                label: new TranslatableMessage('Mis notificaciones'),
+                icon: 'solar:bell-bing-line-duotone',
+                target: $this->router->generate('notifications'),
+            ),
+        ];
+
+        if ($includeAdmin) {
+            $items[] = new Node(
+                label: new TranslatableMessage('Enviar notificación'),
+                icon: 'solar:plain-line-duotone',
+                target: $this->router->generate('admin_notifications_send'),
+            );
+            $items[] = new Node(
+                label: new TranslatableMessage('Historial de envíos'),
+                icon: 'solar:history-line-duotone',
+                target: $this->router->generate('admin_notifications'),
+            );
+        }
+
+        return new Node(
+            label: new TranslatableMessage('Notificaciones'),
+            icon: 'solar:bell-line-duotone',
+            items: $items,
+        );
     }
 }

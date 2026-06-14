@@ -1,0 +1,6 @@
+{% extends '@shared/layout/email.html.twig' %}
+
+{% block content %}
+    <h3>{{ subject }}</h3>
+    <p>{{ body | nl2br }}</p>
+{% endblock %}

@@ -120,6 +120,16 @@ table.body-wrap {
 	max-width: 600px !important;
 	clear: both !important;
 	margin: 0 auto;
+
+    tbody {
+        display: block;
+        width: 100%;
+    }
+}
+
+.header-tr {
+    display: block;
+    width: 100%;
 }
 
 .top {
@@ -127,7 +137,6 @@ table.body-wrap {
 	text-align: center;
 	padding: 20px 10px;
     display: block;
-    width: 101.5%;
 }
 
 .container {

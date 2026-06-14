@@ -1,0 +1,25 @@
+{% extends '@shared/layout/app.html.twig' %}
+
+{% set page_title = ('Mis notificaciones' | trans)
+    ~ ' > '
+    ~ notification.subject %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="card-title mb-0">{{ notification.subject }}</h4>
+                <small class="text-body-secondary">{{ notification.createdAt | date('d/m/Y H:i') }}</small>
+            </div>
+
+            <p>{{ notification.body | nl2br }}</p>
+
+            <div class="mt-4">
+                <a href="{{ path('notifications') }}" class="btn btn-outline-primary">
+                    <twig:Icon name="solar:arrow-left-line-duotone" />
+                    {% trans -%}Volver{%- endtrans %}
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -11,7 +11,8 @@ twig:
         'templates/shared': 'shared'
         'templates/security': 'security'
         'templates/data_exchange': 'data_exchange'
-        '%kernel.project_dir%/assets': assets        
+        'templates/notifications': 'notifications'
+        '%kernel.project_dir%/assets': assets
 
 when@test:
     twig:

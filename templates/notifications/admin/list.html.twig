@@ -1,0 +1,34 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Notificaciones' | trans %}
+
+{% block list_actions %}
+    <a href="{{ path('admin_notifications_send') }}" class="btn btn-primary">
+        <twig:Icon name="solar:plain-line-duotone" />
+        {% trans -%}Enviar notificación{%- endtrans %}
+    </a>
+{% endblock %}
+
+{% block table %}
+    {% set columns = [
+        { 'label': 'Destinatario' | trans, 'sortable': false },
+        { 'label': 'Cuenta' | trans, 'sortable': false },
+        { 'label': 'Canal' | trans, 'sortable': false },
+        { 'label': 'Asunto' | trans, 'sortable': false },
+        { 'label': 'Estado' | trans, 'sortable': false },
+        { 'label': 'Fecha' | trans, 'sortable': true, 'sortableBy': 'default' },
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="notifications">
+        <td>{{ element.recipientId is not empty ? (element.recipientId | user_name) : '---' }}</td>
+        <td>{{ element.accountId is not empty ? (element.accountId | account_name) : '---' }}</td>
+        <td>{{ element.channel.value | trans({}, 'notificationChannel') }}</td>
+        <td>{{ element.subject }}</td>
+        <td>
+            <div class="badge {{ element.status.value == 'Sent' ? 'text-bg-success' : (element.status.value == 'Failed' ? 'text-bg-danger' : 'text-bg-warning') }}">
+                {{ element.status.value | trans({}, 'notificationStatus') }}
+            </div>
+        </td>
+        <td>{{ element.createdAt | date('d/m/Y H:i') }}</td>
+    </twig:List:Table>
+{% endblock %}

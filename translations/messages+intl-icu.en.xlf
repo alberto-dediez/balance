@@ -1221,6 +1221,142 @@
         <source>Este documento ha sido firmado electronicamente. Cualquier modificacion posterior invalidara la firma.</source>
         <target>This document has been electronically signed. Any subsequent modification will invalidate the signature.</target>
       </trans-unit>
+      <trans-unit id="D62Uo97" resname="Mis notificaciones">
+        <source>Mis notificaciones</source>
+        <target>My notifications</target>
+      </trans-unit>
+      <trans-unit id="j3BvK4j" resname="Enviar notificación">
+        <source>Enviar notificación</source>
+        <target>Send notification</target>
+      </trans-unit>
+      <trans-unit id="p_iuTFU" resname="Historial de envíos">
+        <source>Historial de envíos</source>
+        <target>Sent history</target>
+      </trans-unit>
+      <trans-unit id="CJ3llDA" resname="Notificaciones">
+        <source>Notificaciones</source>
+        <target>Notifications</target>
+      </trans-unit>
+      <trans-unit id="pec.jOb" resname="Notificación encolada para envío">
+        <source>Notificación encolada para envío</source>
+        <target>Notification queued for sending</target>
+      </trans-unit>
+      <trans-unit id="Pvifxl5" resname="Todas las notificaciones se han marcado como leídas">
+        <source>Todas las notificaciones se han marcado como leídas</source>
+        <target>All notifications have been marked as read</target>
+      </trans-unit>
+      <trans-unit id="YDQgokF" resname="Todos los canales">
+        <source>Todos los canales</source>
+        <target>All channels</target>
+      </trans-unit>
+      <trans-unit id=".apHQHC" resname="Destinatarios">
+        <source>Destinatarios</source>
+        <target>Recipients</target>
+      </trans-unit>
+      <trans-unit id="zfP2Sox" resname="Selecciona un usuario">
+        <source>Selecciona un usuario</source>
+        <target>Select a user</target>
+      </trans-unit>
+      <trans-unit id="8ydxLJ_" resname="Selecciona una cuenta">
+        <source>Selecciona una cuenta</source>
+        <target>Select an account</target>
+      </trans-unit>
+      <trans-unit id="fZMJUMc" resname="Rol">
+        <source>Rol</source>
+        <target>Role</target>
+      </trans-unit>
+      <trans-unit id="zLK59L_" resname="Selecciona un rol">
+        <source>Selecciona un rol</source>
+        <target>Select a role</target>
+      </trans-unit>
+      <trans-unit id="Iycx_9k" resname="Canales">
+        <source>Canales</source>
+        <target>Channels</target>
+      </trans-unit>
+      <trans-unit id="VBhjnwP" resname="Asunto">
+        <source>Asunto</source>
+        <target>Subject</target>
+      </trans-unit>
+      <trans-unit id="DgTsgJF" resname="Mensaje">
+        <source>Mensaje</source>
+        <target>Message</target>
+      </trans-unit>
+      <trans-unit id="9TKTLOf" resname="Enviar">
+        <source>Enviar</source>
+        <target>Send</target>
+      </trans-unit>
+      <trans-unit id="UPLWSVb" resname="notificaciones sin leer">
+        <source>notificaciones sin leer</source>
+        <target>unread notifications</target>
+      </trans-unit>
+      <trans-unit id="TRtCa1Y" resname="sin leer">
+        <source>sin leer</source>
+        <target>unread</target>
+      </trans-unit>
+      <trans-unit id="5xWRrx." resname="No tienes notificaciones sin leer">
+        <source>No tienes notificaciones sin leer</source>
+        <target>You have no unread notifications</target>
+      </trans-unit>
+      <trans-unit id=".w0SkfR" resname="Marcar todas como leídas">
+        <source>Marcar todas como leídas</source>
+        <target>Mark all as read</target>
+      </trans-unit>
+      <trans-unit id="z_UbFMt" resname="Ver todas">
+        <source>Ver todas</source>
+        <target>View all</target>
+      </trans-unit>
+      <trans-unit id="cYmwHrN" resname="Nueva">
+        <source>Nueva</source>
+        <target>New</target>
+      </trans-unit>
+      <trans-unit id="fnyBiXs" resname="No tienes notificaciones">
+        <source>No tienes notificaciones</source>
+        <target>You have no notifications</target>
+      </trans-unit>
+      <trans-unit id="lu7JE0." resname="Destinatario">
+        <source>Destinatario</source>
+        <target>Recipient</target>
+      </trans-unit>
+      <trans-unit id="4Oo8CJi" resname="Solo no leídas">
+        <source>Solo no leídas</source>
+        <target>Only unread</target>
+      </trans-unit>
+      <trans-unit id="_5.d20s" resname="Notificación marcada como leída">
+        <source>Notificación marcada como leída</source>
+        <target>Notification marked as read</target>
+      </trans-unit>
+      <trans-unit id="Hj41t60" resname="Notificación eliminada">
+        <source>Notificación eliminada</source>
+        <target>Notification removed</target>
+      </trans-unit>
+      <trans-unit id="yDI2Ib1" resname="Fallo al entregar la notificación: {reason}">
+        <source>Fallo al entregar la notificación: {reason}</source>
+        <target>Failed to deliver the notification: {reason}</target>
+      </trans-unit>
+      <trans-unit id="hsPOtnq" resname="Creada notificación &quot;{subject}&quot; para {recipient} por el canal {channel}">
+        <source>Creada notificación "{subject}" para {recipient} por el canal {channel}</source>
+        <target>Created notification "{subject}" for {recipient} through the {channel} channel</target>
+      </trans-unit>
+      <trans-unit id="a0w_0YS" resname="Notificación enviada">
+        <source>Notificación enviada</source>
+        <target>Notification sent</target>
+      </trans-unit>
+      <trans-unit id="s_8YX1W" resname="Un usuario concreto">
+        <source>Un usuario concreto</source>
+        <target>NEW_Un usuario concreto</target>
+      </trans-unit>
+      <trans-unit id="m2mEsh_" resname="Todos los usuarios de una cuenta">
+        <source>Todos los usuarios de una cuenta</source>
+        <target>NEW_Todos los usuarios de una cuenta</target>
+      </trans-unit>
+      <trans-unit id="C8AoWQR" resname="Usuarios de una cuenta con un rol">
+        <source>Usuarios de una cuenta con un rol</source>
+        <target>NEW_Usuarios de una cuenta con un rol</target>
+      </trans-unit>
+      <trans-unit id="r2bzpKR" resname="Todos los usuarios de la plataforma">
+        <source>Todos los usuarios de la plataforma</source>
+        <target>NEW_Todos los usuarios de la plataforma</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

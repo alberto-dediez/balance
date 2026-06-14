@@ -1,0 +1,39 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Mis notificaciones' | trans %}
+
+{% block list_actions %}
+    <form method="post" action="{{ path('notifications_mark_all_read') }}">
+        <button type="submit" class="btn btn-outline-primary">
+            <twig:Icon name="solar:check-read-line-duotone" />
+            {% trans -%}Marcar todas como leídas{%- endtrans %}
+        </button>
+    </form>
+{% endblock %}
+
+{% block table %}
+    <div class="list-group mb-3">
+        {% for notification in notifications %}
+            <a href="{{ path('notification_show', {'id': notification.id}) }}"
+               class="list-group-item list-group-item-action d-flex align-items-start gap-3 {{ notification.isRead ? '' : 'list-group-item-primary' }}">
+                <span class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded round flex-shrink-0">
+                    <twig:Icon name="solar:bell-bing-line-duotone" />
+                </span>
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="mb-1 fw-semibold">
+                            {{ notification.subject }}
+                            {% if not notification.isRead %}
+                                <span class="badge text-bg-primary ms-1">{% trans -%}Nueva{%- endtrans %}</span>
+                            {% endif %}
+                        </h6>
+                        <small class="text-body-secondary">{{ notification.createdAt | date('d/m/Y H:i') }}</small>
+                    </div>
+                    <p class="mb-0 text-body-secondary text-truncate">{{ notification.body }}</p>
+                </div>
+            </a>
+        {% else %}
+            <p class="text-center text-body-secondary my-5">{% trans -%}No tienes notificaciones{%- endtrans %}</p>
+        {% endfor %}
+    </div>
+{% endblock %}

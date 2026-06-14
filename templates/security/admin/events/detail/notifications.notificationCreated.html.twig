@@ -1,0 +1,5 @@
+{% trans with {
+    '{subject}': event.subject,
+    '{recipient}': event.recipientId | user_name,
+    '{channel}': event.channel.value | trans({}, 'notificationChannel')
+} %}Creada notificación "{subject}" para {recipient} por el canal {channel}{% endtrans %}

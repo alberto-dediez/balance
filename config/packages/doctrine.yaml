@@ -16,6 +16,7 @@ doctrine:
             account_id: App\Security\Infrastructure\Persistence\Doctrine\Type\AccountIdType
             recorded_event_id: App\Security\Infrastructure\Persistence\Doctrine\Type\RecordedEventIdType
             signature_request_id: App\Security\Infrastructure\Persistence\Doctrine\Type\SignatureRequestIdType
+            notification_id: App\Notifications\Infrastructure\Persistence\Doctrine\Type\NotificationIdType
 
     orm:
         auto_generate_proxy_classes: true
@@ -40,6 +41,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/DataExchange/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\DataExchange\Domain\Model'
                 alias: DataExchange
+            Notifications:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Notifications/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Notifications\Domain\Model'
+                alias: Notifications
         controller_resolver:
             auto_mapping: false
 

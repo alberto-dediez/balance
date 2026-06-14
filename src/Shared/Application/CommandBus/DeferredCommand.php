@@ -12,6 +12,7 @@ class DeferredCommand implements Command
     public function __construct(
         private readonly Command $command,
         private readonly Priority $priority = Priority::MEDIUM,
+        private readonly ?\DateTimeImmutable $executeAt = null,
     ) {}
 
     public function command(): Command
@@ -22,5 +23,10 @@ class DeferredCommand implements Command
     public function priority(): Priority
     {
         return $this->priority;
+    }
+
+    public function executeAt(): ?\DateTimeImmutable
+    {
+        return $this->executeAt;
     }
 }

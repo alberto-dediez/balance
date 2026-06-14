@@ -12,33 +12,35 @@
 
 	    <body itemscope itemtype="http://schema.org/EmailMessage">
 	        <table class="body-wrap">
-	            <tr>
-	                <td class="top">
-	                    <a href="{{ url('home') }}"> 
-	                        <img src="{{ absolute_url(asset('images/logo-dark.png')) }}" height="40" alt="logo"/>
-	                    </a>
-	                </td>
-	            </tr>
-	            <tr>
-	                <td class="container" valign="top">
-	                    <div class="content">
-	                        {% block content %}{% endblock %}
-	                    </div>
-	                </td>
-	            </tr>
-	            <tr>
-	                <td class="footer">
-	                    {% block footer %}
-	                        <p>
-	                            {% trans with {
-	                                '{year}': 'now' | date('Y')
-	                            } -%}
-	                                &copy; {year}
-	                            {%- endtrans %}
-	                        </p>
-	                    {% endblock %}
-	                </td>
-	            </tr>
+                <tbody style="display: block; width: 100%;">
+                    <tr class="header-tr">
+                        <td class="top">
+                            <a href="{{ url('home') }}">
+                                <img src="{{ absolute_url(asset('images/logo-dark.png')) }}" height="40" alt="logo"/>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="container" valign="top">
+                            <div class="content">
+                                {% block content %}{% endblock %}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="footer">
+                            {% block footer %}
+                                <p>
+                                    {% trans with {
+                                        '{year}': 'now' | date('Y')
+                                    } -%}
+                                        &copy; {year}
+                                    {%- endtrans %}
+                                </p>
+                            {% endblock %}
+                        </td>
+                    </tr>
+                </tbody>
 	        </table>
 	    </body>
 	</html>

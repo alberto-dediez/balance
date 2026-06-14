@@ -14,6 +14,8 @@ use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
+use Symfony\Component\Messenger\Stamp\StampInterface;
 
 class DeferredCommandMessengerTest extends TestCase
 {
@@ -62,6 +64,39 @@ class DeferredCommandMessengerTest extends TestCase
 
         $this->assertInstanceOf(EnqueueCommandResponse::class, $result);
     }
+
+    public function testHandleDispatchesWithoutDelayStampWhenNoExecuteAtGiven(): void
+    {
+        $command = new DeferredCommand(new FakeInnerCommand());
+
+        $this->sut->handle($command, UserMother::adminUser());
+
+        $this->assertNull($this->messageBus->lastStampOfType(DelayStamp::class));
+    }
+
+    public function testHandleAddsDelayStampWhenExecuteAtIsInTheFuture(): void
+    {
+        $executeAt = (new \DateTimeImmutable('NOW'))->modify('+10 minutes');
+        $command = new DeferredCommand(new FakeInnerCommand(), executeAt: $executeAt);
+
+        $this->sut->handle($command, UserMother::adminUser());
+
+        $stamp = $this->messageBus->lastStampOfType(DelayStamp::class);
+        $this->assertInstanceOf(DelayStamp::class, $stamp);
+        // ~10 minutes in milliseconds, tolerating the second elapsed during the test.
+        $this->assertGreaterThan(590_000, $stamp->getDelay());
+        $this->assertLessThanOrEqual(600_000, $stamp->getDelay());
+    }
+
+    public function testHandleDoesNotAddDelayStampWhenExecuteAtIsInThePast(): void
+    {
+        $executeAt = (new \DateTimeImmutable('NOW'))->modify('-10 minutes');
+        $command = new DeferredCommand(new FakeInnerCommand(), executeAt: $executeAt);
+
+        $this->sut->handle($command, UserMother::adminUser());
+
+        $this->assertNull($this->messageBus->lastStampOfType(DelayStamp::class));
+    }
 }
 
 class FakeInnerCommand implements Command {}
@@ -71,11 +106,15 @@ class FakeMessageBus implements MessageBusInterface
     /** @var object[] */
     private array $dispatched = [];
 
+    /** @var list<StampInterface[]> */
+    private array $stamps = [];
+
     public function dispatch(object $message, array $stamps = []): Envelope
     {
         $this->dispatched[] = $message;
+        $this->stamps[] = $stamps;
 
-        return new Envelope($message);
+        return new Envelope($message, $stamps);
     }
 
     public function lastDispatched(): ?object
@@ -85,5 +124,27 @@ class FakeMessageBus implements MessageBusInterface
         }
 
         return $this->dispatched[count($this->dispatched) - 1];
+    }
+
+    /**
+     * @template T of StampInterface
+     *
+     * @param class-string<T> $stampClass
+     *
+     * @return T|null
+     */
+    public function lastStampOfType(string $stampClass): ?StampInterface
+    {
+        if ([] === $this->stamps) {
+            return null;
+        }
+
+        foreach ($this->stamps[count($this->stamps) - 1] as $stamp) {
+            if ($stamp instanceof $stampClass) {
+                return $stamp;
+            }
+        }
+
+        return null;
     }
 }
