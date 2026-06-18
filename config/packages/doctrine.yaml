@@ -29,6 +29,12 @@ doctrine:
             Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
         auto_mapping: true
         mappings:
+            Shared:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Shared/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Shared\Application\CommandBus'
+                alias: Shared
             Security:
                 type: xml
                 is_bundle: false

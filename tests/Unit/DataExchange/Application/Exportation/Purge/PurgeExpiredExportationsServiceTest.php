@@ -10,6 +10,7 @@ use App\DataExchange\Infrastructure\Persistence\InMemory\Repository\InMemoryExpo
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\DataExchange\Application\Exportation\SpyExportStorage;
 use App\Tests\Unit\DataExchange\Domain\Model\Exportation\ExportationMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 
 class PurgeExpiredExportationsServiceTest extends TestCase
@@ -32,7 +33,7 @@ class PurgeExpiredExportationsServiceTest extends TestCase
 
         $sut = new PurgeExpiredExportationsService($repository, $storage);
 
-        $response = $sut(new PurgeExpiredExportationsRequest(new \DateTimeImmutable('NOW')));
+        $response = $sut(new PurgeExpiredExportationsRequest(new \DateTimeImmutable('NOW')), UserMother::systemUser());
 
         $this->assertSame(1, $response->purged);
         $this->assertNull($repository->find($expired->id()));
