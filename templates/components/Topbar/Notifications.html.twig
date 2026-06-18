@@ -1,3 +1,4 @@
+{% if this.enabled %}
 <a class="nav-link position-relative" href="javascript:void(0)" id="drop-notifications" aria-expanded="false" data-bs-toggle="dropdown">
     <twig:Icon name="solar:bell-line-duotone" />
     {% if this.count > 0 %}
@@ -41,3 +42,4 @@
         <a href="{{ path('notifications') }}" class="btn btn-primary">{% trans -%}Ver todas{%- endtrans %}</a>
     </div>
 </div>
+{% endif %}

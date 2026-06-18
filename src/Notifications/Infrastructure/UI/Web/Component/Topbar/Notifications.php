@@ -13,7 +13,13 @@ final readonly class Notifications
 {
     public function __construct(
         private UnreadNotificationsProvider $provider,
+        private bool $internalNotificationsEnabled = true,
     ) {}
+
+    public function enabled(): bool
+    {
+        return $this->internalNotificationsEnabled;
+    }
 
     public function count(): int
     {

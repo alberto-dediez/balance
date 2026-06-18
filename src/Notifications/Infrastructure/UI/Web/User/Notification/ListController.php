@@ -25,8 +25,14 @@ class ListController extends AbstractController
 
     private const LIMIT = 15;
 
+    public function __construct(private bool $internalNotificationsEnabled = true) {}
+
     public function __invoke(ListNotificationsService $listNotifications, LoggedUser $loggedUser, Request $request): Response
     {
+        if (!$this->internalNotificationsEnabled) {
+            throw $this->createNotFoundException();
+        }
+
         $user = $loggedUser();
 
         try {

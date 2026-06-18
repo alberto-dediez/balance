@@ -16,6 +16,7 @@ class NodeLister
         private readonly AuthorizationCheckerInterface $checker,
         private readonly RouterInterface $router,
         private readonly RequestStack $requestStack,
+        private readonly bool $internalNotificationsEnabled = true,
     ) {}
 
     /**
@@ -128,7 +129,9 @@ class NodeLister
             ],
         );
 
-        $nodes[] = $this->notificationsNode(includeAdmin: true);
+        if ($this->internalNotificationsEnabled) {
+            $nodes[] = $this->notificationsNode(includeAdmin: true);
+        }
 
         return $nodes;
     }
@@ -152,7 +155,9 @@ class NodeLister
             ],
         );
 
-        $nodes[] = $this->notificationsNode();
+        if ($this->internalNotificationsEnabled) {
+            $nodes[] = $this->notificationsNode();
+        }
 
         return $nodes;
     }
@@ -162,6 +167,10 @@ class NodeLister
      */
     private function toUsers(): array
     {
+        if (!$this->internalNotificationsEnabled) {
+            return [];
+        }
+
         return [
             $this->notificationsNode(),
         ];

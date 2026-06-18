@@ -1,3 +1,6 @@
+parameters:
+    app.internal_notifications_enabled: '%env(bool:INTERNAL_NOTIFICATIONS_ENABLED)%'
+
 services:
     _defaults:
         autowire: true
@@ -7,3 +10,23 @@ services:
         resource: '../../../'
         exclude:
             - '../../../Infrastructure/Symfony/DependencyInjection/'
+
+    App\Notifications\Infrastructure\UI\Web\Component\Topbar\Notifications:
+        arguments:
+            $internalNotificationsEnabled: '%app.internal_notifications_enabled%'
+
+    App\Notifications\Infrastructure\UI\Web\User\Notification\ListController:
+        arguments:
+            $internalNotificationsEnabled: '%app.internal_notifications_enabled%'
+
+    App\Notifications\Infrastructure\UI\Web\User\Notification\ShowController:
+        arguments:
+            $internalNotificationsEnabled: '%app.internal_notifications_enabled%'
+
+    App\Notifications\Infrastructure\UI\Web\User\Notification\MarkAllReadController:
+        arguments:
+            $internalNotificationsEnabled: '%app.internal_notifications_enabled%'
+
+    App\Shared\Infrastructure\UI\Web\Navigation\NodeLister:
+        arguments:
+            $internalNotificationsEnabled: '%app.internal_notifications_enabled%'

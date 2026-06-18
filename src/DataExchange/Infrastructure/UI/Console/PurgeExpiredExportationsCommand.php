@@ -28,7 +28,7 @@ class PurgeExpiredExportationsCommand extends Command
     {
         $response = $this->purgeExpiredExportations->__invoke(
             new PurgeExpiredExportationsRequest(new \DateTimeImmutable('NOW')),
-            UserMother::systemUser()
+            UserMother::systemUser(),
         );
 
         $io = new SymfonyStyle($input, $output);

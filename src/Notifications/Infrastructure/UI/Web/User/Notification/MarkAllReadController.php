@@ -16,8 +16,14 @@ use Symfony\Component\Translation\TranslatableMessage;
 #[IsGranted('ROLE_USER')]
 class MarkAllReadController extends AbstractController
 {
+    public function __construct(private bool $internalNotificationsEnabled = true) {}
+
     public function __invoke(MarkAllNotificationsAsReadService $markAllAsRead, LoggedUser $loggedUser): Response
     {
+        if (!$this->internalNotificationsEnabled) {
+            throw $this->createNotFoundException();
+        }
+
         $markAllAsRead($loggedUser());
 
         $this->addFlash('success', new TranslatableMessage('Todas las notificaciones se han marcado como leídas'));

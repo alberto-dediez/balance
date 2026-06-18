@@ -20,12 +20,18 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_USER')]
 class ShowController extends AbstractController
 {
+    public function __construct(private bool $internalNotificationsEnabled = true) {}
+
     public function __invoke(
         string $id,
         MarkNotificationAsReadService $markAsRead,
         NotificationRepository $notificationRepository,
         LoggedUser $loggedUser,
     ): Response {
+        if (!$this->internalNotificationsEnabled) {
+            throw $this->createNotFoundException();
+        }
+
         try {
             $markAsRead(new MarkNotificationAsReadRequest($id), $loggedUser());
         } catch (UnauthorizedActionException $e) {
