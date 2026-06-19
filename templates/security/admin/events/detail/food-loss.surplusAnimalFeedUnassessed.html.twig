@@ -1,0 +1,4 @@
+{% trans with {
+    '{surplus}': event.surplusId,
+    '{user}': element.userId | user_name
+} %}Se ha desmarcado la evaluación de alimentación animal del excedente {surplus} por el usuario {user}{% endtrans %}

@@ -9,5 +9,7 @@
         <field name="name" type="string" length="255" nullable="false"/>
         <field name="email" type="string" length="255" nullable="false"/>
         <field name="phone" type="string" length="50" nullable="false"/>
+        <field name="preferredLocale" type="locale" column="preferred_locale" nullable="true"/>
+        <field name="preferredNotificationChannel" type="string" enum-type="App\Security\Domain\Model\SignatureRequest\NotificationChannel" column="preferred_notification_channel" nullable="false"/>
     </embeddable>
 </doctrine-mapping>

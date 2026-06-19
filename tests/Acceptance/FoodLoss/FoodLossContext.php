@@ -657,6 +657,42 @@ final readonly class FoodLossContext implements Context
         $this->getWasteManagerRepository()->add($wasteManager);
     }
 
+    #[Given('delivery log :productType with id :id of account :accountId with signed signature request :signatureRequestId at :documentPath exists')]
+    public function deliveryLogWithSignedSignatureRequestExists(string $productType, string $id, string $accountId, string $signatureRequestId, string $documentPath): void
+    {
+        touch($documentPath);
+
+        $sigRequestId = new SignatureRequestId($signatureRequestId);
+
+        $deliveryLog = DeliveryLogMother::from(
+            productType: FoodType::from($productType),
+            id: $id,
+            accountId: $accountId,
+        );
+        $deliveryLog->startSignatureProcess($sigRequestId, new \DateTimeImmutable());
+        $this->getDeliveryLogRepository()->add($deliveryLog);
+
+        $signatureRequest = SignatureRequestMother::signedWithDocumentPath($signatureRequestId, $accountId, $documentPath);
+        $this->getSignatureRequestRepository()->add($signatureRequest);
+    }
+
+    #[Given('delivery log :productType with id :id of account :accountId with pending signature request :signatureRequestId exists')]
+    public function deliveryLogWithPendingSignatureRequestExists(string $productType, string $id, string $accountId, string $signatureRequestId): void
+    {
+        $sigRequestId = new SignatureRequestId($signatureRequestId);
+
+        $deliveryLog = DeliveryLogMother::from(
+            productType: FoodType::from($productType),
+            id: $id,
+            accountId: $accountId,
+        );
+        $deliveryLog->startSignatureProcess($sigRequestId, new \DateTimeImmutable());
+        $this->getDeliveryLogRepository()->add($deliveryLog);
+
+        $signatureRequest = SignatureRequestMother::fromIdAndAccountId($signatureRequestId, $accountId);
+        $this->getSignatureRequestRepository()->add($signatureRequest);
+    }
+
     #[Given('prevention plan :name with id :id of account :accountId with signed document at :documentPath and signature request :signatureRequestId exists')]
     public function preventionPlanWithSignedDocumentExists(string $name, string $id, string $accountId, string $documentPath, string $signatureRequestId): void
     {

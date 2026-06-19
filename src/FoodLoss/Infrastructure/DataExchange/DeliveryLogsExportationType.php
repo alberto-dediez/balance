@@ -53,12 +53,15 @@ class DeliveryLogsExportationType implements ExportationType
     public function columnDefinitions(): array
     {
         return [
-            new ExportColumnDefinition('date', new TranslatableMessage('Fecha')),
+            new ExportColumnDefinition('date', new TranslatableMessage('Fecha estimada de entrega')),
             new ExportColumnDefinition('quantity', new TranslatableMessage('Cantidad')),
             new ExportColumnDefinition('unit', new TranslatableMessage('Unidad')),
             new ExportColumnDefinition('productType', new TranslatableMessage('Tipo de producto')),
             new ExportColumnDefinition('recipientOrganizationId', new TranslatableMessage('Entidad receptora')),
             new ExportColumnDefinition('propertyId', new TranslatableMessage('Propiedad')),
+            new ExportColumnDefinition('delivered', new TranslatableMessage('Estado')),
+            new ExportColumnDefinition('deliveredAt', new TranslatableMessage('Fecha entrega')),
+            new ExportColumnDefinition('pickupType', new TranslatableMessage('Tipo de entrega')),
         ];
     }
 
@@ -118,6 +121,12 @@ class DeliveryLogsExportationType implements ExportationType
         $filter->limit = 0;
 
         foreach ($this->repository->findByFilter($filter) as $deliveryLog) {
+            $status = match (true) {
+                $deliveryLog->isDelivered() => $this->translator->trans('Entregado'),
+                $deliveryLog->isInSignatureProcess() => $this->translator->trans('En proceso de firma'),
+                default => $this->translator->trans('Pendiente'),
+            };
+
             yield [
                 'date' => $deliveryLog->date()->format('d/m/Y'),
                 'quantity' => $deliveryLog->quantity(),
@@ -128,6 +137,11 @@ class DeliveryLogsExportationType implements ExportationType
                     : '',
                 'propertyId' => null !== $deliveryLog->propertyId()
                     ? (string) $this->propertyExtension->propertyName($deliveryLog->propertyId())
+                    : '',
+                'delivered' => $status,
+                'deliveredAt' => null !== $deliveryLog->deliveredAt() ? $deliveryLog->deliveredAt()->format('d/m/Y') : '',
+                'pickupType' => null !== $deliveryLog->pickupType()
+                    ? $this->translator->trans($deliveryLog->pickupType()->value, [], 'pickupType')
                     : '',
             ];
         }

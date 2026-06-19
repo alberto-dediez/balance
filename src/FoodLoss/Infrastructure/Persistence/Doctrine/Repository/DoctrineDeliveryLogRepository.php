@@ -13,6 +13,7 @@ use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -63,6 +64,21 @@ class DoctrineDeliveryLogRepository implements DeliveryLogRepository
             ->setParameter('surplusId', (string) $surplusId)
             ->getQuery()
             ->getOneOrNullResult()
+        ;
+    }
+
+    /** @return array<DeliveryLog> */
+    public function findBySignatureRequestId(SignatureRequestId $signatureRequestId): array
+    {
+        $qb = $this->createQueryBuilderFromFilter(new DeliveryLogFilter());
+
+        return $qb
+            ->andWhere(
+                $qb->expr()->eq('e.signatureRequestId', ':signatureRequestId'),
+            )
+            ->setParameter('signatureRequestId', (string) $signatureRequestId)
+            ->getQuery()
+            ->getResult()
         ;
     }
 
@@ -144,6 +160,19 @@ class DoctrineDeliveryLogRepository implements DeliveryLogRepository
         };
 
         return $qb;
+    }
+
+    /** @return array<DeliveryLog> */
+    public function findByIds(array $ids): array
+    {
+        return $this->manager->createQueryBuilder()
+            ->select('e')
+            ->from(DeliveryLog::class, 'e')
+            ->where('e.id IN (:ids)')
+            ->setParameter('ids', array_map(fn(DeliveryLogId $id) => (string) $id, $ids))
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     /** @return array<DeliveryLog> */

@@ -12,6 +12,7 @@ use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 
 class DeliveryLogMother
 {
@@ -94,5 +95,17 @@ class DeliveryLogMother
             accountId: (string) AccountId::generate(),
             recipientOrganizationId: (string) $recipientOrganizationId,
         );
+    }
+
+    public static function withSignatureRequestId(SignatureRequestId $signatureRequestId): DeliveryLog
+    {
+        $deliveryLog = self::from(
+            productType: FoodType::Others,
+            id: (string) DeliveryLogId::generate(),
+            accountId: (string) AccountId::generate(),
+        );
+        $deliveryLog->startSignatureProcess($signatureRequestId, new \DateTimeImmutable());
+
+        return $deliveryLog;
     }
 }

@@ -1,0 +1,4 @@
+{% trans with {
+    '{criticalPoint}': event.criticalPointId,
+    '{user}': element.userId | user_name
+} %}Se ha activado la prevención del punto crítico {criticalPoint} por el usuario {user}{% endtrans %}

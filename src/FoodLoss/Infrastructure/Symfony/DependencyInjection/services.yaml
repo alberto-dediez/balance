@@ -53,3 +53,6 @@ services:
 
     App\FoodLoss\Application\TrainingAttendance\TrainingAttendanceFileRemover:
         alias: App\FoodLoss\Infrastructure\FileUploader\LocalFileTrainingAttendanceRemover
+
+    App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogsPdfGenerator:
+        alias: App\FoodLoss\Infrastructure\Tcpdf\TcpdfDeliveryLogsPdfGenerator

@@ -1,0 +1,5 @@
+{% trans with {
+    '{surplus}': event.surplusId,
+    '{canBeAnimalFed}': event.canBeAnimalFed ? 'Sí' : 'No',
+    '{user}': element.userId | user_name
+} %}Se ha evaluado la alimentación animal del excedente {surplus}: apto {canBeAnimalFed}, por el usuario {user}{% endtrans %}

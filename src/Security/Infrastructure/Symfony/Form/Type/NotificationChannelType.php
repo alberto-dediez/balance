@@ -12,6 +12,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /** @extends AbstractType<mixed> */
 class NotificationChannelType extends AbstractType
 {
+    public function __construct(
+        private readonly bool $smsEnabled,
+        private readonly bool $whatsappEnabled,
+    ) {}
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -21,16 +26,16 @@ class NotificationChannelType extends AbstractType
             'translation_domain' => 'notificationChannelType',
         ]);
 
-        $resolver->setAllowedTypes('sms_enabled', 'bool');
-        $resolver->setAllowedTypes('whatsapp_enabled', 'bool');
+        $smsEnabled = $this->smsEnabled;
+        $whatsappEnabled = $this->whatsappEnabled;
 
-        $resolver->setNormalizer('choices', static function (OptionsResolver $options, mixed $value): array {
+        $resolver->setNormalizer('choices', static function (OptionsResolver $options, mixed $value) use ($smsEnabled, $whatsappEnabled): array {
             $choices = [];
             foreach (NotificationChannel::cases() as $case) {
-                if (!$options['sms_enabled'] && NotificationChannel::Sms === $case) {
+                if (!$smsEnabled && NotificationChannel::Sms === $case) {
                     continue;
                 }
-                if (!$options['whatsapp_enabled'] && NotificationChannel::Whatsapp === $case) {
+                if (!$whatsappEnabled && NotificationChannel::Whatsapp === $case) {
                     continue;
                 }
                 $choices[$case->value] = $case;

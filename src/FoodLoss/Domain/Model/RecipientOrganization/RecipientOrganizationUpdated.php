@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\FoodLoss\Domain\Model\RecipientOrganization;
 
 use App\FoodLoss\Domain\DomainEvent;
+use App\Security\Domain\Model\SignatureRequest\NotificationChannel;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
+use App\Shared\Domain\Model\Locale\Locale;
 
 final class RecipientOrganizationUpdated extends DomainEvent
 {
@@ -23,6 +25,8 @@ final class RecipientOrganizationUpdated extends DomainEvent
         private readonly string $contactName,
         private readonly string $contactEmail,
         private readonly string $contactPhone,
+        private readonly ?Locale $contactLocale,
+        private readonly NotificationChannel $contactNotificationChannel,
         private readonly string $operatingHours,
         private readonly array $pickupTypes,
         ?DomainEventId $id = null,
@@ -76,6 +80,16 @@ final class RecipientOrganizationUpdated extends DomainEvent
         return $this->contactPhone;
     }
 
+    public function contactLocale(): ?Locale
+    {
+        return $this->contactLocale;
+    }
+
+    public function contactNotificationChannel(): NotificationChannel
+    {
+        return $this->contactNotificationChannel;
+    }
+
     public function operatingHours(): string
     {
         return $this->operatingHours;
@@ -104,6 +118,8 @@ final class RecipientOrganizationUpdated extends DomainEvent
             'contactName' => $this->contactName,
             'contactEmail' => $this->contactEmail,
             'contactPhone' => $this->contactPhone,
+            'contactLocale' => $this->contactLocale?->value,
+            'contactNotificationChannel' => $this->contactNotificationChannel->value,
             'operatingHours' => $this->operatingHours,
             'pickupTypes' => $this->pickupTypes,
         ];
@@ -126,6 +142,8 @@ final class RecipientOrganizationUpdated extends DomainEvent
             contactName: $payload['contactName'],
             contactEmail: $payload['contactEmail'],
             contactPhone: $payload['contactPhone'],
+            contactLocale: isset($payload['contactLocale']) ? Locale::from($payload['contactLocale']) : null,
+            contactNotificationChannel: NotificationChannel::from($payload['contactNotificationChannel'] ?? NotificationChannel::Email->value),
             operatingHours: $payload['operatingHours'],
             pickupTypes: $payload['pickupTypes'],
             id: $id,

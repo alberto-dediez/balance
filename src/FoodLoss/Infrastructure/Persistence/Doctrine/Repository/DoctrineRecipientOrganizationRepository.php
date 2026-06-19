@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\FoodLoss\Domain\Model\RecipientOrganization\PickupType;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganization;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationFilter;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
@@ -72,6 +73,20 @@ class DoctrineRecipientOrganizationRepository implements RecipientOrganizationRe
             ;
         }
 
+        if (!empty($filter->nif)) {
+            $qb
+                ->andWhere($qb->expr()->like('e.nif', ':nif'))
+                ->setParameter('nif', "%{$filter->nif}%")
+            ;
+        }
+
+        if (!empty($filter->socialReason)) {
+            $qb
+                ->andWhere($qb->expr()->like('e.socialReason', ':socialReason'))
+                ->setParameter('socialReason', "%{$filter->socialReason}%")
+            ;
+        }
+
         if (!empty($filter->contact)) {
             $qb
                 ->andWhere(
@@ -82,6 +97,13 @@ class DoctrineRecipientOrganizationRepository implements RecipientOrganizationRe
                     ),
                 )
                 ->setParameter('contact', "%{$filter->contact}%")
+            ;
+        }
+
+        if ($filter->pickupType instanceof PickupType) {
+            $qb
+                ->andWhere($qb->expr()->like('e.pickupTypes', ':pickupType'))
+                ->setParameter('pickupType', "%\"{$filter->pickupType->value}\"%")
             ;
         }
 

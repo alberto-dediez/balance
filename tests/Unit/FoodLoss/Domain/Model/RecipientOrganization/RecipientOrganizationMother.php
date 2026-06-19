@@ -8,6 +8,8 @@ use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganization;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationType;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\SignatureRequest\NotificationChannel;
+use App\Shared\Domain\Model\Locale\Locale;
 
 class RecipientOrganizationMother
 {
@@ -41,7 +43,7 @@ class RecipientOrganizationMother
         );
     }
 
-    public static function fromContact(string $name, string $email, string $phone): RecipientOrganization
+    public static function fromContact(string $name, string $email, string $phone, ?Locale $locale = null, NotificationChannel $notificationChannel = NotificationChannel::Email): RecipientOrganization
     {
         $recipientOrganization = new RecipientOrganization(
             id: RecipientOrganizationId::generate(),
@@ -55,6 +57,8 @@ class RecipientOrganizationMother
             contactName: $name,
             contactEmail: $email,
             contactPhone: $phone,
+            contactLocale: $locale,
+            contactNotificationChannel: $notificationChannel,
             operatingHours: '9:00 - 17:00',
             pickupTypes: [],
             accountId: new AccountId('account-id-test'),
@@ -81,6 +85,8 @@ class RecipientOrganizationMother
             contactName: 'Test Contact',
             contactEmail: 'contact@test.com',
             contactPhone: '+34 600 000 000',
+            contactLocale: null,
+            contactNotificationChannel: NotificationChannel::Email,
             operatingHours: '9:00 - 17:00',
             pickupTypes: [],
             accountId: new AccountId($accountId),

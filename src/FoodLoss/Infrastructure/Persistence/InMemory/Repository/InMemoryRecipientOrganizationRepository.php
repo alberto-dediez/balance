@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Infrastructure\Persistence\InMemory\Repository;
 
+use App\FoodLoss\Domain\Model\RecipientOrganization\PickupType;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganization;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationFilter;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
@@ -69,10 +70,31 @@ class InMemoryRecipientOrganizationRepository implements RecipientOrganizationRe
             }
 
             if (
+                !empty($filter->nif)
+                && !str_contains(strtolower($recipientOrganization->nif()), strtolower($filter->nif))
+            ) {
+                continue;
+            }
+
+            if (
+                !empty($filter->socialReason)
+                && !str_contains(strtolower($recipientOrganization->socialReason()), strtolower($filter->socialReason))
+            ) {
+                continue;
+            }
+
+            if (
                 !empty($filter->contact)
                 && !str_contains(strtolower($recipientOrganization->contact()->name()), strtolower($filter->contact))
                 && !str_contains(strtolower($recipientOrganization->contact()->email()), strtolower($filter->contact))
                 && !str_contains(strtolower($recipientOrganization->contact()->phone()), strtolower($filter->contact))
+            ) {
+                continue;
+            }
+
+            if (
+                $filter->pickupType instanceof PickupType
+                && !in_array($filter->pickupType, $recipientOrganization->pickupTypes(), true)
             ) {
                 continue;
             }

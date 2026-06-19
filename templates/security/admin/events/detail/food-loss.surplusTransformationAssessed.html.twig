@@ -1,0 +1,5 @@
+{% trans with {
+    '{surplus}': event.surplusId,
+    '{canBeTransformed}': event.canBeTransformed ? 'Sí' : 'No',
+    '{user}': element.userId | user_name
+} %}Se ha evaluado la transformación del excedente {surplus}: apto {canBeTransformed}, por el usuario {user}{% endtrans %}

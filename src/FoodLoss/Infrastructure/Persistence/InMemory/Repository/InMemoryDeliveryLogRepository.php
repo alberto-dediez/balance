@@ -13,6 +13,7 @@ use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]
@@ -62,6 +63,35 @@ class InMemoryDeliveryLogRepository implements DeliveryLogRepository
         }
 
         return null;
+    }
+
+    /** @return array<DeliveryLog> */
+    public function findBySignatureRequestId(SignatureRequestId $signatureRequestId): array
+    {
+        $results = [];
+
+        foreach ($this->deliveryLogs as $deliveryLog) {
+            if ($deliveryLog->isRemoved()) {
+                continue;
+            }
+
+            if (null !== $deliveryLog->signatureRequestId() && $deliveryLog->signatureRequestId()->equals($signatureRequestId)) {
+                $results[] = $deliveryLog;
+            }
+        }
+
+        return $results;
+    }
+
+    /** @return array<int, DeliveryLog> */
+    public function findByIds(array $ids): array
+    {
+        $stringIds = array_map(fn(DeliveryLogId $id) => (string) $id, $ids);
+
+        return array_values(array_filter(
+            $this->deliveryLogs,
+            fn(DeliveryLog $log) => in_array((string) $log->id(), $stringIds, true),
+        ));
     }
 
     /** @return array<int, DeliveryLog> */

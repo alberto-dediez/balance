@@ -25,5 +25,10 @@
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+
+        <field name="delivered" type="boolean" column="delivered" nullable="false"/>
+        <field name="deliveredAt" type="datetime_immutable" column="delivered_at" nullable="true"/>
+        <field name="signatureRequestId" type="signature_request_id" column="signature_request_id" nullable="true"/>
+        <field name="pickupType" type="string" enum-type="App\FoodLoss\Domain\Model\RecipientOrganization\PickupType" column="pickup_type" nullable="true"/>
     </entity>
 </doctrine-mapping>

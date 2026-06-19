@@ -48,6 +48,8 @@
                             {% set value = value | incidence_name %}
                         {% elseif field == 'signatureStatus' %}
                             {% set value = value.value | trans({}, 'signatureRequestStatus') %}
+                        {% elseif field == 'pickupType' %}
+                            {% set value = value.value | trans({}, 'pickupType') %}
                         {% endif %}
 
                         <twig:List:FilterShow

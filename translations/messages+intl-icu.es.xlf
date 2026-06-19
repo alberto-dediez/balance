@@ -4597,6 +4597,78 @@
         <source>Informes</source>
         <target>Informes</target>
       </trans-unit>
+      <trans-unit id="VuCSViz" resname="Fecha entrega">
+        <source>Fecha entrega</source>
+        <target>Fecha entrega</target>
+      </trans-unit>
+      <trans-unit id="UXv7eeE" resname="Tipo entrega">
+        <source>Tipo entrega</source>
+        <target>Tipo entrega</target>
+      </trans-unit>
+      <trans-unit id="GgSxQH2" resname="Solicitar confirmación de entrega">
+        <source>Solicitar confirmación de entrega</source>
+        <target>Solicitar confirmación de entrega</target>
+      </trans-unit>
+      <trans-unit id="NL84iLd" resname="Se ha solicitado la confirmación de entrega a la persona designada.">
+        <source>Se ha solicitado la confirmación de entrega a la persona designada.</source>
+        <target>Se ha solicitado la confirmación de entrega a la persona designada.</target>
+      </trans-unit>
+      <trans-unit id="viAd4Ca" resname="No se ha podido solicitar la confirmación de entrega, verifica que los datos insertados son correctos.">
+        <source>No se ha podido solicitar la confirmación de entrega, verifica que los datos insertados son correctos.</source>
+        <target>No se ha podido solicitar la confirmación de entrega, verifica que los datos insertados son correctos.</target>
+      </trans-unit>
+      <trans-unit id="oQEG02b" resname="Marcar como entregado">
+        <source>Marcar como entregado</source>
+        <target>Marcar como entregado</target>
+      </trans-unit>
+      <trans-unit id="QQdiXWx" resname="Las entregas seleccionadas han sido marcadas como entregadas">
+        <source>Las entregas seleccionadas han sido marcadas como entregadas</source>
+        <target>Las entregas seleccionadas han sido marcadas como entregadas</target>
+      </trans-unit>
+      <trans-unit id="zbwt2n_" resname="No se han podido marcar las entregas como entregadas">
+        <source>No se han podido marcar las entregas como entregadas</source>
+        <target>No se han podido marcar las entregas como entregadas</target>
+      </trans-unit>
+      <trans-unit id="EMddOdz" resname="Fecha de entrega">
+        <source>Fecha de entrega</source>
+        <target>Fecha de entrega</target>
+      </trans-unit>
+      <trans-unit id="AtmkrTJ" resname="Idioma del contacto">
+        <source>Idioma del contacto</source>
+        <target>Idioma del contacto</target>
+      </trans-unit>
+      <trans-unit id="3mglpOV" resname="Selecciona un idioma">
+        <source>Selecciona un idioma</source>
+        <target>Selecciona un idioma</target>
+      </trans-unit>
+      <trans-unit id="yN.YxZi" resname="Canal de notificación preferido">
+        <source>Canal de notificación preferido</source>
+        <target>Canal de notificación preferido</target>
+      </trans-unit>
+      <trans-unit id="zP9jFB3" resname="Fecha est. entrega">
+        <source>Fecha est. entrega</source>
+        <target>Fecha est. entrega</target>
+      </trans-unit>
+      <trans-unit id="LVD6FP0" resname="Tipo de entrega">
+        <source>Tipo de entrega</source>
+        <target>Tipo de entrega</target>
+      </trans-unit>
+      <trans-unit id="QBu1HSr" resname="Entregado">
+        <source>Entregado</source>
+        <target>Entregado</target>
+      </trans-unit>
+      <trans-unit id="tfxlMzn" resname="En proceso de firma">
+        <source>En proceso de firma</source>
+        <target>En proceso de firma</target>
+      </trans-unit>
+      <trans-unit id=".nw4GA8" resname="Pendiente">
+        <source>Pendiente</source>
+        <target>Pendiente</target>
+      </trans-unit>
+      <trans-unit id="v_Hs6LX" resname="Contacto para recogidas">
+        <source>Contacto para recogidas</source>
+        <target>Contacto para recogidas</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

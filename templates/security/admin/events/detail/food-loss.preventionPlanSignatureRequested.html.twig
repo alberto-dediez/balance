@@ -1,0 +1,6 @@
+{% trans with {
+    '{preventionPlan}': event.preventionPlanId,
+    '{version}': event.versionNumber,
+    '{signatureRequest}': event.signatureRequestId,
+    '{user}': element.userId | user_name
+} %}Se ha solicitado la firma de la versión {version} del plan de prevención {preventionPlan} con la solicitud {signatureRequest} por el usuario {user}{% endtrans %}

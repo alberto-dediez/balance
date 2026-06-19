@@ -7,6 +7,8 @@ namespace App\FoodLoss\Infrastructure\Symfony\Form;
 use App\FoodLoss\Application\RecipientOrganization\Update\UpdateRecipientOrganizationRequest;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\PickupTypeType;
 use App\FoodLoss\Infrastructure\Symfony\Form\Type\RecipientOrganizationTypeType;
+use App\Security\Infrastructure\Symfony\Form\Type\NotificationChannelType;
+use App\Shared\Infrastructure\Symfony\Form\Type\LocaleType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -73,6 +75,15 @@ class UpdateRecipientOrganizationType extends AbstractType
                 'required' => false,
                 'empty_data' => '',
                 'constraints' => [new Assert\Length(max: 50)],
+            ])
+            ->add('contactLocale', LocaleType::class, [
+                'label' => new TranslatableMessage('Idioma del contacto'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Selecciona un idioma'),
+            ])
+            ->add('contactNotificationChannel', NotificationChannelType::class, [
+                'label' => new TranslatableMessage('Canal de notificación preferido'),
+                'required' => true,
             ])
             ->add('operatingHours', TextType::class, [
                 'label' => new TranslatableMessage('Horario operativo'),

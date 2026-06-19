@@ -14,6 +14,9 @@ class RecipientOrganizationFilter
     public function __construct(
         public ?string $name = null,
         public ?string $contact = null,
+        public ?string $nif = null,
+        public ?string $socialReason = null,
+        public ?PickupType $pickupType = null,
         public ?AccountId $accountId = null,
         int $limit = 10,
     ) {

@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\FoodLoss\Domain\Model\RecipientOrganization;
 
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\SignatureRequest\NotificationChannel;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
+use App\Shared\Domain\Model\Locale\Locale;
 
 class RecipientOrganization implements \Stringable
 {
@@ -116,6 +118,8 @@ class RecipientOrganization implements \Stringable
         string $contactName,
         string $contactEmail,
         string $contactPhone,
+        ?Locale $contactLocale,
+        NotificationChannel $contactNotificationChannel,
         string $operatingHours,
         array $pickupTypes,
         AccountId $accountId,
@@ -131,6 +135,8 @@ class RecipientOrganization implements \Stringable
                 contactName: $contactName,
                 contactEmail: $contactEmail,
                 contactPhone: $contactPhone,
+                contactLocale: $contactLocale,
+                contactNotificationChannel: $contactNotificationChannel,
                 operatingHours: $operatingHours,
                 pickupTypes: array_map(fn(PickupType $p) => $p->value, $pickupTypes),
                 accountId: $accountId,
@@ -148,6 +154,8 @@ class RecipientOrganization implements \Stringable
         string $contactName,
         string $contactEmail,
         string $contactPhone,
+        ?Locale $contactLocale,
+        NotificationChannel $contactNotificationChannel,
         string $operatingHours,
         array $pickupTypes,
     ): void {
@@ -162,6 +170,8 @@ class RecipientOrganization implements \Stringable
                 contactName: $contactName,
                 contactEmail: $contactEmail,
                 contactPhone: $contactPhone,
+                contactLocale: $contactLocale,
+                contactNotificationChannel: $contactNotificationChannel,
                 operatingHours: $operatingHours,
                 pickupTypes: array_map(fn(PickupType $p) => $p->value, $pickupTypes),
             ),
@@ -188,6 +198,8 @@ class RecipientOrganization implements \Stringable
             name: $event->contactName(),
             email: $event->contactEmail(),
             phone: $event->contactPhone(),
+            preferredLocale: $event->contactLocale(),
+            preferredNotificationChannel: $event->contactNotificationChannel(),
         );
         $this->operatingHours = $event->operatingHours();
         $this->pickupTypes = $event->pickupTypes();
@@ -206,6 +218,8 @@ class RecipientOrganization implements \Stringable
             name: $event->contactName(),
             email: $event->contactEmail(),
             phone: $event->contactPhone(),
+            preferredLocale: $event->contactLocale(),
+            preferredNotificationChannel: $event->contactNotificationChannel(),
         );
         $this->operatingHours = $event->operatingHours();
         $this->pickupTypes = $event->pickupTypes();

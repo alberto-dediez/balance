@@ -5,7 +5,7 @@
 {% block table %}
     {% set columns = [
         {
-            'label': 'Fecha' | trans,
+            'label': 'Fecha estimada entrega' | trans,
             'sortable': true,
             'sortableBy': 'date'
         }, {
@@ -19,17 +19,45 @@
         }, {
             'label': 'Propiedad' | trans
         }, {
+            'label': 'Estado' | trans
+        }, {
+            'label': 'Fecha entrega' | trans
+        }, {
             'label': ''
         },
     ] %}
 
-    <twig:List:Table :columns="columns" :elements="deliveryLogs">
+    <twig:List:Table :columns="columns" :elements="deliveryLogs" :bulkForm="bulkForm">
         <td>{{ element.date | date('d/m/Y') }}</td>
         <td>{{ element.quantity }} {{ element.unit.value | trans({}, 'deliveryLogUnit') }}</td>
         <td>{{ element.productType.value | trans({}, 'foodType') }}</td>
         <td>{{ element.recipientOrganizationId | recipient_organization_name }}</td>
         <td>{{ element.propertyId | property_name }}</td>
         <td>
+            {% if element.isDelivered %}
+                <span class="badge bg-success">{{ 'Entregado' | trans }}</span>
+            {% elseif element.isInSignatureProcess %}
+                <span class="badge bg-warning text-dark">{{ 'En proceso de firma' | trans }}</span>
+            {% else %}
+                <span class="badge bg-secondary">{{ 'Pendiente' | trans }}</span>
+            {% endif %}
+        </td>
+        <td>
+            {% if element.deliveredAt %}
+                {{ element.deliveredAt | date('d/m/Y') }}
+
+                {% if element.isDelivered and element.signatureRequestId is not null %}
+                    <span class="text-success" title="{% trans %}Verificado{% endtrans %}">
+                        <twig:Icon name="solar:verified-check-bold-duotone" size="lg" />
+                    </span>
+                {% endif %}
+            {% endif %}
+        </td>
+        <td>
+            {% if element.isDelivered and element.signatureRequestId is not null and element | is_authorized('view') %}
+                <twig:List:Action:DownloadSignatureProof path="{{ path('delivery_logs_download_signed_document', {'deliveryLogId': element.id}) }}" />
+            {% endif %}
+
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('delivery_logs_edit', {'deliveryLogId': element.id}) }}" />
             {% endif %}

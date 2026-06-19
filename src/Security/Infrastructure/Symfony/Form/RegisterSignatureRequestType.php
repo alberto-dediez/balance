@@ -47,8 +47,6 @@ class RegisterSignatureRequestType extends AbstractType
             ->add('notificationChannel', NotificationChannelType::class, [
                 'label' => new TranslatableMessage('Canal de notificación'),
                 'required' => true,
-                'sms_enabled' => $this->smsEnabled,
-                'whatsapp_enabled' => $this->whatsappEnabled,
             ])
             ->add('signerEmail', EmailType::class, [
                 'label' => new TranslatableMessage('Email del firmante'),

@@ -55,6 +55,8 @@ class RegisterRecipientOrganizationService implements CommandHandler
             contactName: $request->contactName,
             contactEmail: $request->contactEmail,
             contactPhone: $request->contactPhone,
+            contactLocale: $request->contactLocale,
+            contactNotificationChannel: $request->contactNotificationChannel,
             operatingHours: $request->operatingHours,
             pickupTypes: $request->pickupTypes,
             accountId: $accountId,

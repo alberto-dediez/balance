@@ -19,7 +19,7 @@ final class DeliveryLogAuthorizer extends AbstractAuthorizer
 
     protected function canView(mixed $subject, User $user): bool
     {
-        return $this->canEdit($subject, $user);
+        return $this->canList($subject, $user);
     }
 
     protected function canList(mixed $subject, User $user): bool
@@ -39,6 +39,12 @@ final class DeliveryLogAuthorizer extends AbstractAuthorizer
 
     protected function canEdit(mixed $subject, User $user): bool
     {
+        assert($subject instanceof DeliveryLog);
+
+        if ($subject->isInSignatureProcess() || $subject->isDelivered()) {
+            return false;
+        }
+
         return $this->canList($subject, $user);
     }
 

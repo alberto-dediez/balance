@@ -8,7 +8,7 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/delivery-logs"
         Then the response status should be 200
-        Then I see a table with 2 rows
+        Then I see a table with 3 rows
 
     Scenario: As an admin, I can't access to delivery logs
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists

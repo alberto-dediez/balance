@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Domain\Model\DeliveryLog;
 
+use App\FoodLoss\Domain\Model\RecipientOrganization\PickupType;
 use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationId;
 use App\FoodLoss\Domain\Model\Surplus\SurplusId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
 
@@ -32,6 +34,10 @@ class DeliveryLog implements \Stringable
         private ?\DateTimeImmutable $updatedAt = null,
         private ?\DateTimeImmutable $removedAt = null,
         private ?SurplusId $surplusId = null,
+        private bool $delivered = false,
+        private ?\DateTimeImmutable $deliveredAt = null,
+        private ?SignatureRequestId $signatureRequestId = null,
+        private ?PickupType $pickupType = null,
     ) {
         $this->events = $events;
     }
@@ -106,6 +112,31 @@ class DeliveryLog implements \Stringable
         return $this->surplusId;
     }
 
+    public function isDelivered(): bool
+    {
+        return $this->delivered;
+    }
+
+    public function deliveredAt(): ?\DateTimeImmutable
+    {
+        return $this->deliveredAt;
+    }
+
+    public function signatureRequestId(): ?SignatureRequestId
+    {
+        return $this->signatureRequestId;
+    }
+
+    public function pickupType(): ?PickupType
+    {
+        return $this->pickupType;
+    }
+
+    public function isInSignatureProcess(): bool
+    {
+        return !$this->delivered && null !== $this->signatureRequestId;
+    }
+
     public function register(
         \DateTimeImmutable $date,
         float $quantity,
@@ -165,6 +196,75 @@ class DeliveryLog implements \Stringable
         );
     }
 
+    public function deliver(\DateTimeImmutable $deliveredAt, ?PickupType $pickupType = null): void
+    {
+        if ($this->isDelivered()) {
+            throw DeliveryLogAlreadyProcessedException::alreadyDelivered($this->id());
+        }
+
+        if ($this->isInSignatureProcess()) {
+            throw DeliveryLogAlreadyProcessedException::alreadyInSignatureProcess($this->id());
+        }
+
+        $this->recordApplyAndPublish(
+            new DeliveryLogDelivered(
+                deliveryLogId: $this->id(),
+                deliveredAt: $deliveredAt,
+                pickupType: $pickupType,
+            ),
+        );
+    }
+
+    public function startSignatureProcess(SignatureRequestId $signatureRequestId, \DateTimeImmutable $deliveredAt, ?PickupType $pickupType = null): void
+    {
+        if ($this->isDelivered()) {
+            throw DeliveryLogAlreadyProcessedException::alreadyDelivered($this->id());
+        }
+
+        if ($this->isInSignatureProcess()) {
+            throw DeliveryLogAlreadyProcessedException::alreadyInSignatureProcess($this->id());
+        }
+
+        $this->recordApplyAndPublish(
+            new DeliveryLogSignatureStarted(
+                deliveryLogId: $this->id(),
+                signatureRequestId: $signatureRequestId,
+                deliveredAt: $deliveredAt,
+                pickupType: $pickupType,
+            ),
+        );
+    }
+
+    public function cancelSignatureProcess(): void
+    {
+        if (!$this->isInSignatureProcess()) {
+            throw new \InvalidArgumentException('Cannot cancel signature process on not started one.');
+        }
+
+        $this->recordApplyAndPublish(
+            new DeliveryLogSignatureCancelled(
+                deliveryLogId: $this->id(),
+            ),
+        );
+    }
+
+    public function endSignatureProcess(): void
+    {
+        if ($this->isDelivered()) {
+            throw DeliveryLogAlreadyProcessedException::alreadyDelivered($this->id());
+        }
+
+        if (!$this->isInSignatureProcess()) {
+            throw new \InvalidArgumentException('Cannot end signature process on not started one.');
+        }
+
+        $this->recordApplyAndPublish(
+            new DeliveryLogSignatureEnded(
+                deliveryLogId: $this->id(),
+            ),
+        );
+    }
+
     public function applyDeliveryLogRegistered(DeliveryLogRegistered $event): void
     {
         $this->date = $event->date();
@@ -195,6 +295,36 @@ class DeliveryLog implements \Stringable
     {
         $this->removed = true;
         $this->removedAt = $event->occurredOn();
+    }
+
+    public function applyDeliveryLogDelivered(DeliveryLogDelivered $event): void
+    {
+        $this->delivered = true;
+        $this->deliveredAt = $event->deliveredAt();
+        $this->pickupType = $event->pickupType();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyDeliveryLogSignatureStarted(DeliveryLogSignatureStarted $event): void
+    {
+        $this->signatureRequestId = $event->signatureRequestId();
+        $this->deliveredAt = $event->deliveredAt();
+        $this->pickupType = $event->pickupType();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyDeliveryLogSignatureEnded(DeliveryLogSignatureEnded $event): void
+    {
+        $this->delivered = true;
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyDeliveryLogSignatureCancelled(DeliveryLogSignatureCancelled $event): void
+    {
+        $this->signatureRequestId = null;
+        $this->deliveredAt = null;
+        $this->pickupType = null;
+        $this->updatedAt = $event->occurredOn();
     }
 
     public function __toString(): string

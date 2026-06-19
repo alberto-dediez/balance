@@ -11,6 +11,9 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
+        bind:
+            $smsEnabled: '%app.signature_sms_enabled%'
+            $whatsappEnabled: '%app.signature_whatsapp_enabled%'
 
     App\Security\:
         resource: '../../../'
