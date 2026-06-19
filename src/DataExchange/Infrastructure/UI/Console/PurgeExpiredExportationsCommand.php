@@ -6,6 +6,7 @@ namespace App\DataExchange\Infrastructure\UI\Console;
 
 use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsRequest;
 use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsService;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,6 +28,7 @@ class PurgeExpiredExportationsCommand extends Command
     {
         $response = $this->purgeExpiredExportations->__invoke(
             new PurgeExpiredExportationsRequest(new \DateTimeImmutable('NOW')),
+            UserMother::systemUser(),
         );
 
         $io = new SymfonyStyle($input, $output);

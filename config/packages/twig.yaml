@@ -14,7 +14,8 @@ twig:
         'templates/data_exchange': 'data_exchange'
         'templates/food_loss': 'food_loss'
         'templates/human_resources': 'human_resources'
-        '%kernel.project_dir%/assets': assets        
+        'templates/notifications': 'notifications'
+        '%kernel.project_dir%/assets': assets
 
 when@test:
     twig:

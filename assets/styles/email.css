@@ -188,13 +188,21 @@ table.body-wrap {
   clear: both !important;
   margin: 0 auto;
 }
+table.body-wrap tbody {
+  display: block;
+  width: 100%;
+}
+
+.header-tr {
+  display: block;
+  width: 100%;
+}
 
 .top {
   background: #dfe5ef;
   text-align: center;
   padding: 20px 10px;
   display: block;
-  width: 101.5%;
 }
 
 .container {

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Notifications\Domain\Model\Notification\Notification" table="notification">
+        <id name="id" type="notification_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <indexes>
+            <index columns="recipient_id,status" name="idx_notification_recipient_status"/>
+            <index columns="recipient_id,read_at" name="idx_notification_recipient_read"/>
+        </indexes>
+
+        <field name="recipientId" type="user_id" column="recipient_id" nullable="true"/>
+        <field name="accountId" type="account_id" column="account_id" nullable="true"/>
+        <field name="channel" type="string" enum-type="App\Notifications\Domain\Model\Notification\NotificationChannel" nullable="false"/>
+        <field name="subject" type="string" length="255" nullable="false"/>
+        <field name="body" type="text" nullable="false"/>
+        <field name="status" type="string" enum-type="App\Notifications\Domain\Model\Notification\NotificationStatus" nullable="false"/>
+        <field name="readAt" type="datetime_immutable" column="read_at" nullable="true"/>
+        <field name="sentBy" type="user_id" column="sent_by" nullable="true"/>
+        <field name="removed" type="boolean" nullable="false"/>
+        <field name="createdAt" type="datetime_immutable" column="created_at" nullable="false"/>
+        <field name="sentAt" type="datetime_immutable" column="sent_at" nullable="true"/>
+        <field name="failureReason" type="text" column="failure_reason" nullable="true"/>
+    </entity>
+
+</doctrine-mapping>

@@ -24,6 +24,7 @@ doctrine:
             brand_id: App\Property\Infrastructure\Persistence\Doctrine\Type\BrandIdType
             company_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CompanyIdType
             signature_request_id: App\Security\Infrastructure\Persistence\Doctrine\Type\SignatureRequestIdType
+            notification_id: App\Notifications\Infrastructure\Persistence\Doctrine\Type\NotificationIdType
             critical_point_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointIdType
             reason_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ReasonIdType
             critical_point_reason_link_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointReasonLinkIdType
@@ -85,6 +86,13 @@ doctrine:
                 dir: '%kernel.project_dir%/src/DataExchange/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\DataExchange\Domain\Model'
                 alias: DataExchange
+                
+            Notifications:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Notifications/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Notifications\Domain\Model'
+                alias: Notifications
 
             FoodLoss:
                 type: xml

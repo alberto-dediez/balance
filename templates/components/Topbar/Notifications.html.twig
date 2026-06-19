@@ -1,0 +1,45 @@
+{% if this.enabled %}
+<a class="nav-link position-relative" href="javascript:void(0)" id="drop-notifications" aria-expanded="false" data-bs-toggle="dropdown">
+    <twig:Icon name="solar:bell-line-duotone" />
+    {% if this.count > 0 %}
+        <span class="badge rounded-pill bg-danger position-absolute top-0 end-0 fs-1 py-1 px-2" style="margin-top: 10px;">
+            {{ this.count > 99 ? '99+' : this.count }}
+            <span class="visually-hidden">{% trans -%}notificaciones sin leer{%- endtrans %}</span>
+        </span>
+    {% endif %}
+</a>
+<div class="dropdown-menu content-dd dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop-notifications">
+    <div class="d-flex align-items-center justify-content-between py-3 px-7">
+        <h5 class="mb-0 fs-5 fw-semibold">{% trans -%}Notificaciones{%- endtrans %}</h5>
+        {% if this.count > 0 %}
+            <span class="badge text-bg-primary rounded-pill">{{ this.count }} {% trans -%}sin leer{%- endtrans %}</span>
+        {% endif %}
+    </div>
+
+    <div class="message-body" data-simplebar>
+        {% for notification in this.latest %}
+            <a href="{{ path('notification_show', {'id': notification.id}) }}" class="py-3 px-7 d-flex align-items-center border-top">
+                <span class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded round">
+                    <twig:Icon name="solar:bell-bing-line-duotone" />
+                </span>
+                <div class="ps-3">
+                    <h6 class="mb-1 fw-semibold">{{ notification.subject }}</h6>
+                    <span class="fs-2 d-block text-body-secondary text-truncate" style="max-width: 220px;">{{ notification.body }}</span>
+                    <span class="fs-1 d-block text-body-secondary">{{ notification.createdAt | date('d/m/Y H:i') }}</span>
+                </div>
+            </a>
+        {% else %}
+            <p class="py-6 px-7 mb-0 text-center text-body-secondary">{% trans -%}No tienes notificaciones sin leer{%- endtrans %}</p>
+        {% endfor %}
+    </div>
+
+    <div class="d-grid py-3 px-7 border-top gap-2">
+        {% if this.count > 0 %}
+            <form method="post" action="{{ path('notifications_mark_all_read') }}">
+                <button type="submit" class="btn btn-outline-primary w-100">{% trans -%}Marcar todas como leídas{%- endtrans %}</button>
+            </form>
+        {% endif %}
+        <a href="{{ path('notifications') }}" class="btn btn-primary">{% trans -%}Ver todas{%- endtrans %}</a>
+    </div>
+</div>
+{% endif %}

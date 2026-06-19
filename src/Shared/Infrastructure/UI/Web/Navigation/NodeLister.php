@@ -16,6 +16,7 @@ class NodeLister
         private readonly AuthorizationCheckerInterface $checker,
         private readonly RouterInterface $router,
         private readonly RequestStack $requestStack,
+        private readonly bool $internalNotificationsEnabled = true,
     ) {}
 
     /**
@@ -196,6 +197,30 @@ class NodeLister
                 ),
             ],
         );
+
+        if ($this->internalNotificationsEnabled) {
+            $nodes[] = new Node(
+                label: new TranslatableMessage('Notificaciones'),
+                icon: 'solar:bell-line-duotone',
+                items: [
+                    new Node(
+                        label: new TranslatableMessage('Mis notificaciones'),
+                        icon: 'solar:bell-bing-line-duotone',
+                        target: $this->router->generate('notifications'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Enviar notificación'),
+                        icon: 'solar:plain-line-duotone',
+                        target: $this->router->generate('admin_notifications_send'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Historial de envíos'),
+                        icon: 'solar:history-line-duotone',
+                        target: $this->router->generate('admin_notifications'),
+                    ),
+                ],
+            );
+        }
 
         return $nodes;
     }
@@ -412,6 +437,20 @@ class NodeLister
             ],
         );
 
+        if ($this->internalNotificationsEnabled) {
+            $nodes[] = new Node(
+                label: new TranslatableMessage('Notificaciones'),
+                icon: 'solar:bell-line-duotone',
+                items: [
+                    new Node(
+                        label: new TranslatableMessage('Mis notificaciones'),
+                        icon: 'solar:bell-bing-line-duotone',
+                        target: $this->router->generate('notifications'),
+                    ),
+                ],
+            );
+        }
+
         return $nodes;
     }
 
@@ -479,6 +518,20 @@ class NodeLister
                 ),
             ],
         );
+
+        if ($this->internalNotificationsEnabled) {
+            $nodes[] = new Node(
+                label: new TranslatableMessage('Notificaciones'),
+                icon: 'solar:bell-line-duotone',
+                items: [
+                    new Node(
+                        label: new TranslatableMessage('Mis notificaciones'),
+                        icon: 'solar:bell-bing-line-duotone',
+                        target: $this->router->generate('notifications'),
+                    ),
+                ],
+            );
+        }
 
         return $nodes;
     }

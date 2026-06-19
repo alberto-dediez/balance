@@ -18,4 +18,7 @@ interface SignatureRequestRepository
     public function findByFilter(SignatureRequestFilter $filter): array;
 
     public function totalResultsByFilter(SignatureRequestFilter $filter): int;
+
+    /** @return array<SignatureRequest> */
+    public function findExpired(\DateTimeImmutable $now): array;
 }

@@ -12,6 +12,8 @@ use App\Shared\Application\CommandBus\DeferredCommandHandler;
 use App\Shared\Application\CommandBus\Priority;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
+use Symfony\Component\Messenger\Stamp\StampInterface;
 
 class DeferredCommandMessenger implements DeferredCommandHandler
 {
@@ -35,8 +37,28 @@ class DeferredCommandMessenger implements DeferredCommandHandler
             default        => new DeferredMediumMessage($command->command(), $user->id()),
         };
 
-        $this->messageBus->dispatch($message);
+        $this->messageBus->dispatch($message, $this->stamps($command));
 
         return new EnqueueCommandResponse();
+    }
+
+    /**
+     * @return StampInterface[]
+     */
+    private function stamps(DeferredCommand $command): array
+    {
+        $executeAt = $command->executeAt();
+
+        if (!$executeAt instanceof \DateTimeImmutable) {
+            return [];
+        }
+
+        $delayInMilliseconds = ($executeAt->getTimestamp() - time()) * 1000;
+
+        if ($delayInMilliseconds <= 0) {
+            return [];
+        }
+
+        return [new DelayStamp($delayInMilliseconds)];
     }
 }

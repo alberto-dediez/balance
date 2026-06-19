@@ -1,0 +1,29 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set page_title = ('Notificaciones' | trans)
+    ~ ' > '
+    ~ ('Enviar' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_notifications') }}" />
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    {% for field in form %}
+                        {% if field.vars.name != 'send' %}
+                            {{ form_row(field) }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="primary" :button="form.send" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form) }}
+{% endblock %}
