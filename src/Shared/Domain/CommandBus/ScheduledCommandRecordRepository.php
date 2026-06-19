@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Shared\Application\CommandBus;
+namespace App\Shared\Domain\CommandBus;
 
 interface ScheduledCommandRecordRepository
 {

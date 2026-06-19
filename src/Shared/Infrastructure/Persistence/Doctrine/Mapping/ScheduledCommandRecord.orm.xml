@@ -5,7 +5,7 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                                       http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="App\Shared\Application\CommandBus\ScheduledCommandRecord" table="scheduled_command_records">
+    <entity name="App\Shared\Domain\CommandBus\ScheduledCommandRecord" table="scheduled_command_records">
         <id name="commandId" type="string" length="128" column="command_id">
             <generator strategy="NONE" />
         </id>
