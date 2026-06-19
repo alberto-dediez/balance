@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Persistence\InMemory\Repository;
 
-use App\Shared\Domain\CommandBus\ScheduledCommandRecord;
-use App\Shared\Domain\CommandBus\ScheduledCommandRecordRepository;
+use App\Shared\Domain\Model\CommandBus\ScheduledCommandRecord;
+use App\Shared\Domain\Model\CommandBus\ScheduledCommandRecordRepository;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]

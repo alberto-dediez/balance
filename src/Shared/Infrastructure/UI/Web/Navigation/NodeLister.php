@@ -130,7 +130,27 @@ class NodeLister
         );
 
         if ($this->internalNotificationsEnabled) {
-            $nodes[] = $this->notificationsNode(includeAdmin: true);
+            $nodes[] = new Node(
+                label: new TranslatableMessage('Notificaciones'),
+                icon: 'solar:bell-line-duotone',
+                items: [
+                    new Node(
+                        label: new TranslatableMessage('Mis notificaciones'),
+                        icon: 'solar:bell-bing-line-duotone',
+                        target: $this->router->generate('notifications'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Enviar notificación'),
+                        icon: 'solar:plain-line-duotone',
+                        target: $this->router->generate('admin_notifications_send'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Historial de envíos'),
+                        icon: 'solar:history-line-duotone',
+                        target: $this->router->generate('admin_notifications'),
+                    ),
+                ],
+            );
         }
 
         return $nodes;
@@ -156,7 +176,17 @@ class NodeLister
         );
 
         if ($this->internalNotificationsEnabled) {
-            $nodes[] = $this->notificationsNode();
+            $nodes[] = new Node(
+                label: new TranslatableMessage('Notificaciones'),
+                icon: 'solar:bell-line-duotone',
+                items: [
+                    new Node(
+                        label: new TranslatableMessage('Mis notificaciones'),
+                        icon: 'solar:bell-bing-line-duotone',
+                        target: $this->router->generate('notifications'),
+                    ),
+                ],
+            );
         }
 
         return $nodes;
@@ -167,42 +197,22 @@ class NodeLister
      */
     private function toUsers(): array
     {
-        if (!$this->internalNotificationsEnabled) {
-            return [];
-        }
+        $nodes = [];
 
-        return [
-            $this->notificationsNode(),
-        ];
-    }
-
-    private function notificationsNode(bool $includeAdmin = false): Node
-    {
-        $items = [
-            new Node(
-                label: new TranslatableMessage('Mis notificaciones'),
-                icon: 'solar:bell-bing-line-duotone',
-                target: $this->router->generate('notifications'),
-            ),
-        ];
-
-        if ($includeAdmin) {
-            $items[] = new Node(
-                label: new TranslatableMessage('Enviar notificación'),
-                icon: 'solar:plain-line-duotone',
-                target: $this->router->generate('admin_notifications_send'),
-            );
-            $items[] = new Node(
-                label: new TranslatableMessage('Historial de envíos'),
-                icon: 'solar:history-line-duotone',
-                target: $this->router->generate('admin_notifications'),
+        if ($this->internalNotificationsEnabled) {
+            $nodes[] = new Node(
+                label: new TranslatableMessage('Notificaciones'),
+                icon: 'solar:bell-line-duotone',
+                items: [
+                    new Node(
+                        label: new TranslatableMessage('Mis notificaciones'),
+                        icon: 'solar:bell-bing-line-duotone',
+                        target: $this->router->generate('notifications'),
+                    ),
+                ],
             );
         }
 
-        return new Node(
-            label: new TranslatableMessage('Notificaciones'),
-            icon: 'solar:bell-line-duotone',
-            items: $items,
-        );
+        return $nodes;
     }
 }

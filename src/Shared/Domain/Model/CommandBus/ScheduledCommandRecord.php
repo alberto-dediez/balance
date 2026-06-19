@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Shared\Domain\CommandBus;
+namespace App\Shared\Domain\Model\CommandBus;
 
 use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
