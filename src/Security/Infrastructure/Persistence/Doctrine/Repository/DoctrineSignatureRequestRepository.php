@@ -8,6 +8,7 @@ use App\Security\Domain\Model\SignatureRequest\SignatureRequest;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestFilter;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestRepository;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestStatus;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -128,6 +129,33 @@ class DoctrineSignatureRequestRepository implements SignatureRequestRepository
         return (int) $qb->select('COUNT(DISTINCT sr)')
             ->getQuery()
             ->getSingleScalarResult()
+        ;
+    }
+
+    /** @return array<SignatureRequest> */
+    public function findExpired(\DateTimeImmutable $now): array
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        return (array) $qb->select('sr')
+            ->from(SignatureRequest::class, 'sr')
+            ->where(
+                $qb->expr()->in('sr.status', ':statuses'),
+            )
+            ->andWhere(
+                $qb->expr()->lt('sr.expiresAt', ':now'),
+            )
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->isNull('sr.removed'),
+                    $qb->expr()->eq('sr.removed', ':removed'),
+                ),
+            )
+            ->setParameter('statuses', [SignatureRequestStatus::Pending->value, SignatureRequestStatus::Viewed->value])
+            ->setParameter('now', $now)
+            ->setParameter('removed', false, Types::BOOLEAN)
+            ->getQuery()
+            ->getResult()
         ;
     }
 }

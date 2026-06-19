@@ -8,6 +8,7 @@ use App\Security\Domain\Model\SignatureRequest\SignatureRequest;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestFilter;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestRepository;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestStatus;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]
@@ -102,5 +103,18 @@ class InMemorySignatureRequestRepository implements SignatureRequestRepository
         $clonedFilter->page = 0;
 
         return count($this->findByFilter($filter));
+    }
+
+    /** @return array<SignatureRequest> */
+    public function findExpired(\DateTimeImmutable $now): array
+    {
+        $activeStatuses = [SignatureRequestStatus::Pending, SignatureRequestStatus::Viewed];
+
+        return array_values(array_filter(
+            $this->signatureRequests,
+            static fn(SignatureRequest $sr): bool => !$sr->isRemoved()
+                && in_array($sr->status(), $activeStatuses, true)
+                && $sr->expiresAt() < $now,
+        ));
     }
 }

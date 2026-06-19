@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Application\CommandBus;
 
 use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsRequest;
+use App\Security\Application\SignatureRequest\PurgeExpired\PurgeExpiredSignatureRequestsRequest;
 
 /**
  * Hardcoded registry of commands that must be dispatched periodically.
@@ -27,6 +28,11 @@ class CommandSchedule
                 id: 'data-exchange:purge-expired-exports',
                 command: new PurgeExpiredExportationsRequest(new \DateTimeImmutable('NOW')),
                 time: '01:00',
+            ),
+            ScheduledCommand::dailyAt(
+                id: 'security:purge-expired-signature-requests',
+                command: new PurgeExpiredSignatureRequestsRequest(new \DateTimeImmutable('NOW')),
+                time: '02:00',
             ),
         ];
     }
