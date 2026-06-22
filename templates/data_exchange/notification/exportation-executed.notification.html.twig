@@ -1,0 +1,13 @@
+<p>{% trans -%}El proceso de exportación ha finalizado. Puede descargar el fichero en el siguiente enlace:{%- endtrans %}</p>
+<p>
+    <a href="{{ path('export_download', {'code': exportation.type, 'id': exportation.id}) }}">
+        {% trans -%}Descargar fichero{%- endtrans -%}
+    </a>
+</p>
+<p>
+    {% trans with {
+        '{date}': exportation.validUntil | date('d/m/Y')
+    } -%}
+        El enlace estará disponible hasta el {date}.
+    {%- endtrans %}
+</p>

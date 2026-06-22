@@ -1,0 +1,6 @@
+<p>{% trans -%}El proceso de importación ha finalizado. Puede comprobar el resultado en el siguiente enlace:{%- endtrans %}</p>
+<p>
+    <a href="{{ path('import_view', {'code': importation.type, 'id': importation.id}) }}">
+        {% trans -%}Ver resultado{%- endtrans -%}
+    </a>
+</p>

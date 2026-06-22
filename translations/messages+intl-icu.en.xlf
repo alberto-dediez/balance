@@ -1343,19 +1343,27 @@
       </trans-unit>
       <trans-unit id="s_8YX1W" resname="Un usuario concreto">
         <source>Un usuario concreto</source>
-        <target>NEW_Un usuario concreto</target>
+        <target>A specific user</target>
       </trans-unit>
       <trans-unit id="m2mEsh_" resname="Todos los usuarios de una cuenta">
         <source>Todos los usuarios de una cuenta</source>
-        <target>NEW_Todos los usuarios de una cuenta</target>
+        <target>All users of an account</target>
       </trans-unit>
       <trans-unit id="C8AoWQR" resname="Usuarios de una cuenta con un rol">
         <source>Usuarios de una cuenta con un rol</source>
-        <target>NEW_Usuarios de una cuenta con un rol</target>
+        <target>Users of an account with a specific role</target>
       </trans-unit>
       <trans-unit id="r2bzpKR" resname="Todos los usuarios de la plataforma">
         <source>Todos los usuarios de la plataforma</source>
-        <target>NEW_Todos los usuarios de la plataforma</target>
+        <target>All users on the platform</target>
+      </trans-unit>
+      <trans-unit id="E9aLOh." resname="Se ha dado de alta tu usuario {user} en la cuenta {account}.">
+        <source>Se ha dado de alta tu usuario {user} en la cuenta {account}.</source>
+        <target>Your user {user} has been registered in the {account} account.</target>
+      </trans-unit>
+      <trans-unit id="ZaU8qUs" resname="Se ha dado de alta tu usuario {user} sin cuenta asignada.">
+        <source>Se ha dado de alta tu usuario {user} sin cuenta asignada.</source>
+        <target>Your user {user} has been registered without an assigned account.</target>
       </trans-unit>
     </body>
   </file>

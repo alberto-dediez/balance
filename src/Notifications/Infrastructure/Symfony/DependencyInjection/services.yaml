@@ -11,6 +11,12 @@ services:
         exclude:
             - '../../../Infrastructure/Symfony/DependencyInjection/'
 
+    App\Notifications\Application\Notification\Notify\SystemNotifier: '@App\Notifications\Infrastructure\Notification\DispatchingSystemNotifier'
+
+    App\Notifications\Infrastructure\Notification\DispatchingSystemNotifier:
+        arguments:
+            $internalNotificationsEnabled: '%app.internal_notifications_enabled%'
+
     App\Notifications\Infrastructure\UI\Web\Component\Topbar\Notifications:
         arguments:
             $internalNotificationsEnabled: '%app.internal_notifications_enabled%'

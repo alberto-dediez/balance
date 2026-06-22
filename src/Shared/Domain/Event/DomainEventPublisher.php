@@ -48,6 +48,12 @@ final class DomainEventPublisher
         $this->subscribers = [];
     }
 
+    public function clearPending(): void
+    {
+        $this->queue = [];
+        $this->isLock = false;
+    }
+
     public function publish(DomainEvent $event): void
     {
         if ($this->isLock) {

@@ -1,11 +1,7 @@
-{% extends '@shared/layout/email.html.twig' %}
-
-{% block content %}
-    <h3>{% trans with {
+<h3>{% trans with {
         '{file}': importation.name
     } -%}Importación de {file} finalizada{%- endtrans -%}</h3>
-    <p>{% trans -%}El proceso de importación ha finalizado. Puede comprobar el resultado en el siguiente enlace:{%- endtrans %}</p>
-    <a href="{{ url('import_view', {'code': importation.type, 'id': importation.id}) }}" class="btn btn-primary">
-        {% trans -%}Ver resultado{%- endtrans -%}
-    </a>
-{% endblock %}
+<p>{% trans -%}El proceso de importación ha finalizado. Puede comprobar el resultado en el siguiente enlace:{%- endtrans %}</p>
+<a href="{{ url('import_view', {'code': importation.type, 'id': importation.id}) }}" class="btn btn-primary">
+    {% trans -%}Ver resultado{%- endtrans -%}
+</a>

@@ -1,16 +1,12 @@
-{% extends '@shared/layout/email.html.twig' %}
-
-{% block content %}
-    <h3>{% trans -%}Exportación finalizada{%- endtrans -%}</h3>
-    <p>{% trans -%}El proceso de exportación ha finalizado. Puede descargar el fichero en el siguiente enlace:{%- endtrans %}</p>
-    <a href="{{ url('export_download', {'code': exportation.type, 'id': exportation.id}) }}" class="btn btn-primary">
-        {% trans -%}Descargar fichero{%- endtrans -%}
-    </a>
-    <p>
-        {% trans with {
-            '{date}': exportation.validUntil | date('d/m/Y')
-        } -%}
-            El enlace estará disponible hasta el {date}.
-        {%- endtrans %}
-    </p>
-{% endblock %}
+<h3>{% trans -%}Exportación finalizada{%- endtrans -%}</h3>
+<p>{% trans -%}El proceso de exportación ha finalizado. Puede descargar el fichero en el siguiente enlace:{%- endtrans %}</p>
+<a href="{{ url('export_download', {'code': exportation.type, 'id': exportation.id}) }}" class="btn btn-primary">
+    {% trans -%}Descargar fichero{%- endtrans -%}
+</a>
+<p>
+    {% trans with {
+        '{date}': exportation.validUntil | date('d/m/Y')
+    } -%}
+        El enlace estará disponible hasta el {date}.
+    {%- endtrans %}
+</p>

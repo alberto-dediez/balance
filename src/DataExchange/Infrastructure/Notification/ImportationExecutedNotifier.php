@@ -7,22 +7,23 @@ namespace App\DataExchange\Infrastructure\Notification;
 use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationExecuted;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
+use App\Notifications\Application\Notification\Notify\SystemNotification;
+use App\Notifications\Application\Notification\Notify\SystemNotifier;
+use App\Notifications\Domain\Model\Notification\NotificationChannel;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
-use App\Shared\Domain\Model\Email\EmailRecipient;
-use App\Shared\Domain\Model\Email\EmailSender;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ImportationExecutedMailer implements DomainEventSubscriber
+class ImportationExecutedNotifier implements DomainEventSubscriber
 {
     use RegisterTrait;
 
     public function __construct(
-        private EmailSender $emailSender,
+        private SystemNotifier $notifier,
         private ImportationRepository $importationRepository,
         private UserRepository $userRepository,
         private TranslatorInterface $translator,
@@ -59,15 +60,29 @@ class ImportationExecutedMailer implements DomainEventSubscriber
             return;
         }
 
-        $this->emailSender->__invoke(
-            recipient: new EmailRecipient(name: $user->username(), email: $user->username()),
-            subject: $this->translator->trans('Importación de {file} finalizada', ['{file}' => $importation->name()]),
+        $subject = $this->translator->trans('Importación de {file} finalizada', ['{file}' => $importation->name()]);
+        $params = [
+            'user' => $user,
+            'importation' => $importation,
+        ];
+
+        $this->notifier->notify(new SystemNotification(
+            recipientId: $userId,
+            channel: NotificationChannel::Internal,
+            subject: $subject,
+            template: '@data_exchange/notification/executed.notification.html.twig',
+            params: $params,
+            accountId: $user->accountId(),
+        ));
+
+        $this->notifier->notify(new SystemNotification(
+            recipientId: $userId,
+            channel: NotificationChannel::Email,
+            subject: $subject,
             template: '@data_exchange/notification/executed.email.html.twig',
-            params: [
-                'user' => $user,
-                'importation' => $importation,
-            ],
-        );
+            params: $params,
+            accountId: $user->accountId(),
+        ));
     }
 
     public function isSubscribedTo(DomainEvent $event): bool
