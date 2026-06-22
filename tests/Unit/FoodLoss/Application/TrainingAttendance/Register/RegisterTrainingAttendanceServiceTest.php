@@ -17,6 +17,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceRepositoryMother;
+use App\Tests\Unit\HumanResources\Domain\Model\Employee\EmployeeRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use PHPUnit\Framework\TestCase;
@@ -116,7 +117,9 @@ class RegisterTrainingAttendanceServiceTest extends TestCase
 
         return new RegisterTrainingAttendanceService(
             trainingAttendanceRepository: $repository,
-            authorizer: new TrainingAttendanceAuthorizer(),
+            authorizer: new TrainingAttendanceAuthorizer(
+                EmployeeRepositoryMother::inMemory()
+            ),
             uploader: $uploader,
         );
     }

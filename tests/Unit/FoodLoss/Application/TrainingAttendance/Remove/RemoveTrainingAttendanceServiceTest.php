@@ -16,6 +16,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceRepositoryMother;
+use App\Tests\Unit\HumanResources\Domain\Model\Employee\EmployeeRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use PHPUnit\Framework\TestCase;
@@ -124,7 +125,9 @@ class RemoveTrainingAttendanceServiceTest extends TestCase
     {
         return new RemoveTrainingAttendanceService(
             trainingAttendanceRepository: $repository,
-            authorizer: new TrainingAttendanceAuthorizer(),
+            authorizer: new TrainingAttendanceAuthorizer(
+                EmployeeRepositoryMother::inMemory()
+            ),
             fileRemover: $fileRemover,
         );
     }

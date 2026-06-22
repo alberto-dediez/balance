@@ -73,7 +73,7 @@
                                     <span class="text-muted small">{{ attendance.attendedAt | date('d/m/Y') }}</span>
 
                                     {% if attendance.filePath and attendance | is_authorized('view') %}
-                                        <twig:List:Action:Download path="{{ path('training_attendances_download', {'trainingSessionId': trainingSession.id, 'trainingAttendanceId': attendance.id}) }}" target="_blank" />
+                                        <twig:List:Action:Download path="{{ path('training_attendances_download', {'trainingSessionId': trainingSession.id, 'trainingAttendanceId': attendance.id}) }}" />
                                     {% endif %}
 
                                     {% if attendance | is_authorized('remove') %}

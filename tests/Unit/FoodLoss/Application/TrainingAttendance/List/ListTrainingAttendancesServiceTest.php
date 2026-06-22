@@ -113,7 +113,9 @@ class ListTrainingAttendancesServiceTest extends TestCase
         return new ListTrainingAttendancesService(
             trainingAttendanceRepository: $attendanceRepository,
             employeeRepository: $employeeRepository,
-            authorizer: new TrainingAttendanceAuthorizer(),
+            authorizer: new TrainingAttendanceAuthorizer(
+                EmployeeRepositoryMother::inMemory()
+            ),
         );
     }
 }

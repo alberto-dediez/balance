@@ -19,6 +19,9 @@
             'sortable': true,
             'sortableBy': 'registeredAt'
         }, {
+            'label': 'Asistencia' | trans,
+            'sortable': false
+        }, {
             'label': ''
         },
     ] %}
@@ -28,6 +31,22 @@
         <td>{{ element.title }}</td>
         <td>{{ element.topic }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            {% set myAttendance = myAttendances[element.id] ?? null %}
+            {% if myAttendance %}
+                <span class="text-success" title="{{ 'He asistido' | trans }}" data-bs-toggle="tooltip">
+                    <twig:Icon name="solar:check-circle-bold-duotone" size="lg"/>
+                </span>
+
+                {% if myAttendance.filePath %}
+                    <twig:List:Action:DownloadEvidence path="{{ path('training_attendances_download', {'trainingSessionId': element.id, 'trainingAttendanceId': myAttendance.id}) }}" />
+                {% endif %}
+            {% else %}
+                <span class="text-danger" title="{{ 'No he asistido' | trans }}" data-bs-toggle="tooltip">
+                    <twig:Icon name="solar:close-circle-bold-duotone" size="lg" />
+                </span>
+            {% endif %}
+        </td>
         <td>
             {% if dummyAttendance | is_authorized('view') %}
                 <twig:List:Action:View path="{{ path('training_attendances', {'trainingSessionId': element.id}) }}" />

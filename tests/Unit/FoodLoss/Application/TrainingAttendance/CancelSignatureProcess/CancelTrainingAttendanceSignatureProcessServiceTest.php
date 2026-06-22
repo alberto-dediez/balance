@@ -8,12 +8,14 @@ use App\FoodLoss\Application\TrainingAttendance\CancelSignatureProcess\CancelTra
 use App\FoodLoss\Application\TrainingAttendance\CancelSignatureProcess\CancelTrainingAttendanceSignatureProcessService;
 use App\FoodLoss\Application\TrainingAttendance\TrainingAttendanceAuthorizer;
 use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceRepository;
+use App\HumanResources\Infrastructure\Persistence\InMemory\Repository\InMemoryEmployeeRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceRepositoryMother;
+use App\Tests\Unit\HumanResources\Domain\Model\Employee\EmployeeRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 
@@ -94,7 +96,9 @@ class CancelTrainingAttendanceSignatureProcessServiceTest extends TestCase
     {
         return new CancelTrainingAttendanceSignatureProcessService(
             trainingAttendanceRepository: $repository,
-            authorizer: new TrainingAttendanceAuthorizer(),
+            authorizer: new TrainingAttendanceAuthorizer(
+                EmployeeRepositoryMother::inMemory()
+            ),
         );
     }
 }

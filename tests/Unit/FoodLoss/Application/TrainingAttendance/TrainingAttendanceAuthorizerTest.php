@@ -11,6 +11,7 @@ use App\Security\Application\Action;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceMother;
+use App\Tests\Unit\HumanResources\Domain\Model\Employee\EmployeeRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 
@@ -90,6 +91,8 @@ class TrainingAttendanceAuthorizerTest extends TestCase
 
     private function createSUT(): TrainingAttendanceAuthorizer
     {
-        return new TrainingAttendanceAuthorizer();
+        return new TrainingAttendanceAuthorizer(
+                EmployeeRepositoryMother::inMemory()
+        );
     }
 }
