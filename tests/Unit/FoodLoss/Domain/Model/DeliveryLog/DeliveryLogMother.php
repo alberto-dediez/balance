@@ -97,12 +97,12 @@ class DeliveryLogMother
         );
     }
 
-    public static function withSignatureRequestId(SignatureRequestId $signatureRequestId): DeliveryLog
+    public static function withSignatureRequestId(SignatureRequestId $signatureRequestId, ?AccountId $accountId = null): DeliveryLog
     {
         $deliveryLog = self::from(
             productType: FoodType::Others,
             id: (string) DeliveryLogId::generate(),
-            accountId: (string) AccountId::generate(),
+            accountId: (string) ($accountId ?? new AccountId('account-id-test')),
         );
         $deliveryLog->startSignatureProcess($signatureRequestId, new \DateTimeImmutable());
 

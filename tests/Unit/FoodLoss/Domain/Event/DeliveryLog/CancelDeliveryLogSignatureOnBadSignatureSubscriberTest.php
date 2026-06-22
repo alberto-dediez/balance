@@ -4,16 +4,22 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Domain\Event\DeliveryLog;
 
+use App\FoodLoss\Application\DeliveryLog\CancelSignatureProcess\CancelSignatureProcessService;
+use App\FoodLoss\Application\DeliveryLog\DeliveryLogAuthorizer;
 use App\FoodLoss\Domain\Event\DeliveryLog\CancelDeliveryLogSignatureOnBadSignatureSubscriber;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogId;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRemoved;
 use App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepository;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestExpired;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestRemoved;
+use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeLoggedUser;
 use PHPUnit\Framework\TestCase;
 
 class CancelDeliveryLogSignatureOnBadSignatureSubscriberTest extends TestCase
@@ -32,7 +38,7 @@ class CancelDeliveryLogSignatureOnBadSignatureSubscriberTest extends TestCase
         $this->expiredEvent = new SignatureRequestExpired($this->signatureRequestId);
         $this->removedEvent = new SignatureRequestRemoved($this->signatureRequestId);
         $this->repository = DeliveryLogRepositoryMother::inMemory();
-        $this->sut = new CancelDeliveryLogSignatureOnBadSignatureSubscriber($this->repository);
+        $this->sut = $this->createSUT($this->repository);
     }
 
     public function testIsSubscribedToSignatureRequestExpired(): void
@@ -94,5 +100,18 @@ class CancelDeliveryLogSignatureOnBadSignatureSubscriberTest extends TestCase
 
         $this->assertNotNull($this->repository->find($otherLog->id()));
         $this->assertTrue($otherLog->isInSignatureProcess());
+    }
+
+    private function createSUT(DeliveryLogRepository $repository): CancelDeliveryLogSignatureOnBadSignatureSubscriber
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+
+        return new CancelDeliveryLogSignatureOnBadSignatureSubscriber(
+            cancelSignatureProcessService: new CancelSignatureProcessService(
+                repository: $repository,
+                authorizer: new DeliveryLogAuthorizer(),
+            ),
+            loggedUser: new FakeLoggedUser($user),
+        );
     }
 }

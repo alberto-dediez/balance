@@ -1,0 +1,54 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set page_title = ('Donaciones' | trans)
+    ~ ' > '
+    ~ ('Registro de entregas' | trans)
+    ~ ' > '
+    ~ ('Cancelar solicitud de firma' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('delivery_logs') }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card>
+        <p class="text-muted mb-3">
+            {% trans %}Se va a cancelar el proceso de firma para los siguientes registros de entrega:{% endtrans %}
+        </p>
+
+        <table class="table table-bordered mb-4">
+            <thead>
+                <tr>
+                    <th>{% trans %}Fecha estimada entrega{% endtrans %}</th>
+                    <th>{% trans %}Cantidad{% endtrans %}</th>
+                    <th>{% trans %}Tipo de producto{% endtrans %}</th>
+                    <th>{% trans %}Entidad receptora{% endtrans %}</th>
+                    <th>{% trans %}Propiedad{% endtrans %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for deliveryLog in deliveryLogs %}
+                    <tr>
+                        <td>{{ deliveryLog.date | date('d/m/Y') }}</td>
+                        <td>{{ deliveryLog.quantity }} {{ deliveryLog.unit.value | trans({}, 'deliveryLogUnit') }}</td>
+                        <td>{{ deliveryLog.productType.value | trans({}, 'foodType') }}</td>
+                        <td>{{ deliveryLog.recipientOrganizationId | recipient_organization_name }}</td>
+                        <td>{{ deliveryLog.propertyId | property_name }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {{ form_start(form) }}
+            <twig:ActionBar>
+                <div class="col-sm-6 col-md-3 col-lg-2 ">
+                    <a href="{{ path('delivery_logs') }}" class="btn btn-light w-100">
+                        {% trans %}Cancelar{% endtrans %}
+                    </a>
+                </div>
+
+                <twig:ActionBar:Button type="primary" :button="form.confirm" />
+            </twig:ActionBar>
+        {{ form_end(form) }}
+    </twig:Card>
+{% endblock %}

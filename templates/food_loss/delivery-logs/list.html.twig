@@ -58,6 +58,15 @@
                 <twig:List:Action:DownloadSignatureProof path="{{ path('delivery_logs_download_signed_document', {'deliveryLogId': element.id}) }}" />
             {% endif %}
 
+            {% if element.isInSignatureProcess and element | is_authorized('view') %}
+                <twig:List:Action path="{{ path('delivery_logs_cancel_signature_process', {'signatureRequestId': element.signatureRequestId}) }}"
+                    title="{{ 'Cancelar solicitud de firma' | trans }}"
+                    class="text-warning"
+                >
+                    <twig:Icon name="solar:close-circle-line-duotone" size="lg" />
+                </twig:List:Action>
+            {% endif %}
+
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('delivery_logs_edit', {'deliveryLogId': element.id}) }}" />
             {% endif %}
