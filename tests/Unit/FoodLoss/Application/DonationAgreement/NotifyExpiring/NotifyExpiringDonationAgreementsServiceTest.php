@@ -4,133 +4,214 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\FoodLoss\Application\DonationAgreement\NotifyExpiring;
 
+use App\FoodLoss\Application\DonationAgreement\NotifyExpiring\NotifyExpiringDonationAgreementsRequest;
 use App\FoodLoss\Application\DonationAgreement\NotifyExpiring\NotifyExpiringDonationAgreementsService;
-use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreement;
-use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementExpirationWarningNotified;
 use App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementId;
+use App\FoodLoss\Infrastructure\Persistence\InMemory\Repository\InMemoryDonationAgreementRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
-use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementMother;
-use App\Tests\Unit\FoodLoss\Domain\Model\DonationAgreement\DonationAgreementRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
-use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Translation\LocaleSwitcher;
 
 class NotifyExpiringDonationAgreementsServiceTest extends TestCase
 {
-    private SpyDomainEventSubscriber $spySubscriber;
+    private SpyDonationAgreementExpirationNotifier $notifier;
+    private LocaleSwitcher $localeSwitcher;
 
     protected function setUp(): void
     {
-        DomainEventPublisher::instance()->reset();
-        $this->spySubscriber = new SpyDomainEventSubscriber();
+        $this->notifier = new SpyDonationAgreementExpirationNotifier();
+
+        $this->localeSwitcher = $this->createMock(LocaleSwitcher::class);
+        $this->localeSwitcher
+            ->method('runWithLocale')
+            ->willReturnCallback(static function (string $locale, \Closure $fn): mixed {
+                return $fn();
+            });
     }
 
-    public function testNotifiesOwnersAndMarksAgreementAsNotified(): void
+    public function testNotifiesExpiringAgreements(): void
     {
-        $accountId = new AccountId('account-test');
+        $accountId = new AccountId('account-id-test');
+
+        $accountRepository = new InMemoryAccountRepository();
+        $accountRepository->add(AccountMother::fromNameAndId('Test Account', 'account-id-test'));
+
+        $donationAgreementRepository = new InMemoryDonationAgreementRepository(accountRepository: $accountRepository);
+        $userRepository = new InMemoryUserRepository();
+
         $owner = UserMother::fromUsernameAndRoleAndAccount('owner@test.com', Role::Owner, $accountId);
+        $userRepository->add($owner);
 
         $agreement = DonationAgreementMother::from(
-            id: 'agreement-1',
+            id: (string) DonationAgreementId::generate(),
             recipientOrganizationId: 'org-1',
-            accountId: (string) $accountId,
-            startDate: new \DateTimeImmutable('-1 month'),
+            accountId: 'account-id-test',
+            startDate: new \DateTimeImmutable('2024-01-01'),
             expirationDate: new \DateTimeImmutable('+15 days'),
             uploadedBy: (string) $owner->id(),
-            path: 'path/file.pdf',
+            path: 'path/to/file.pdf',
         );
+        $donationAgreementRepository->add($agreement);
 
-        $repository = DonationAgreementRepositoryMother::inMemory();
-        $repository->add($agreement);
+        $sut = $this->createSUT($donationAgreementRepository, $userRepository);
 
-        $spyNotifier = new SpyDonationAgreementExpirationNotifier();
-        $sut = new NotifyExpiringDonationAgreementsService($repository, new InMemoryUserRepository([$owner]), $spyNotifier);
+        $result = $sut(new NotifyExpiringDonationAgreementsRequest(), UserMother::systemUser());
 
-        $sut($agreement);
-
-        $this->assertCount(1, $spyNotifier->calls);
-        $this->assertSame($agreement, $spyNotifier->calls[0]['agreement']);
-        $this->assertSame($owner, $spyNotifier->calls[0]['owner']);
-
-        $persisted = $repository->find($agreement->id());
-        $this->assertNotNull($persisted);
-        $this->assertNotNull($persisted->expirationWarningNotifiedAt());
-
-        $this->assertInstanceOf(DonationAgreementExpirationWarningNotified::class, $this->spySubscriber->lastEvent());
+        $this->assertEquals(1, $result->notified);
+        $this->assertCount(1, $this->notifier->calls);
+        $this->assertTrue($agreement->id()->equals($this->notifier->calls[0]['agreement']->id()));
+        $this->assertNotNull($agreement->expirationWarningNotifiedAt());
     }
 
-    public function testDoesNothingWhenAgreementHasNoAccount(): void
+    public function testNotifiesEachOwnerOfTheSameAccount(): void
     {
-        $agreement = new DonationAgreement(id: DonationAgreementId::generate());
+        $accountId = new AccountId('account-id-test');
 
-        $repository = DonationAgreementRepositoryMother::inMemory();
-        $repository->add($agreement);
+        $accountRepository = new InMemoryAccountRepository();
+        $accountRepository->add(AccountMother::fromNameAndId('Test Account', 'account-id-test'));
 
-        $spyNotifier = new SpyDonationAgreementExpirationNotifier();
-        $sut = new NotifyExpiringDonationAgreementsService($repository, new InMemoryUserRepository(), $spyNotifier);
+        $donationAgreementRepository = new InMemoryDonationAgreementRepository(accountRepository: $accountRepository);
+        $userRepository = new InMemoryUserRepository();
 
-        $sut($agreement);
-
-        $this->assertCount(0, $spyNotifier->calls);
-        $this->assertNull($agreement->expirationWarningNotifiedAt());
-    }
-
-    public function testDoesNothingWhenAccountHasNoOwners(): void
-    {
-        $accountId = new AccountId('account-no-owners');
-        $user = UserMother::fromUsernameAndRoleAndAccount('user@test.com', Role::User, $accountId);
-
-        $agreement = DonationAgreementMother::from(
-            id: 'agreement-no-owner',
-            recipientOrganizationId: 'org-1',
-            accountId: (string) $accountId,
-            startDate: new \DateTimeImmutable('-1 month'),
-            expirationDate: new \DateTimeImmutable('+10 days'),
-            uploadedBy: (string) $user->id(),
-            path: 'path/file.pdf',
-        );
-
-        $spyNotifier = new SpyDonationAgreementExpirationNotifier();
-        $sut = new NotifyExpiringDonationAgreementsService(
-            DonationAgreementRepositoryMother::inMemory(),
-            new InMemoryUserRepository([$user]),
-            $spyNotifier,
-        );
-
-        $sut($agreement);
-
-        $this->assertCount(0, $spyNotifier->calls);
-        $this->assertNull($agreement->expirationWarningNotifiedAt());
-    }
-
-    public function testNotifiesMultipleOwnersForSameAgreement(): void
-    {
-        $accountId = new AccountId('account-multi-owner');
         $owner1 = UserMother::fromUsernameAndRoleAndAccount('owner1@test.com', Role::Owner, $accountId);
         $owner2 = UserMother::fromUsernameAndRoleAndAccount('owner2@test.com', Role::Owner, $accountId);
+        $userRepository->add($owner1);
+        $userRepository->add($owner2);
 
         $agreement = DonationAgreementMother::from(
-            id: 'agreement-multi',
+            id: (string) DonationAgreementId::generate(),
             recipientOrganizationId: 'org-1',
-            accountId: (string) $accountId,
-            startDate: new \DateTimeImmutable('-1 month'),
-            expirationDate: new \DateTimeImmutable('+5 days'),
+            accountId: 'account-id-test',
+            startDate: new \DateTimeImmutable('2024-01-01'),
+            expirationDate: new \DateTimeImmutable('+10 days'),
             uploadedBy: (string) $owner1->id(),
-            path: 'path/file.pdf',
+            path: 'path/to/file.pdf',
         );
+        $donationAgreementRepository->add($agreement);
 
-        $repository = DonationAgreementRepositoryMother::inMemory();
-        $repository->add($agreement);
+        $sut = $this->createSUT($donationAgreementRepository, $userRepository);
 
-        $spyNotifier = new SpyDonationAgreementExpirationNotifier();
-        $sut = new NotifyExpiringDonationAgreementsService($repository, new InMemoryUserRepository([$owner1, $owner2]), $spyNotifier);
+        $result = $sut(new NotifyExpiringDonationAgreementsRequest(), UserMother::systemUser());
 
-        $sut($agreement);
+        $this->assertEquals(1, $result->notified);
+        $this->assertCount(2, $this->notifier->calls);
+    }
 
-        $this->assertCount(2, $spyNotifier->calls);
-        $this->assertNotNull($agreement->expirationWarningNotifiedAt());
+    public function testSkipsAlreadyNotifiedAgreements(): void
+    {
+        $accountId = new AccountId('account-id-test');
+
+        $accountRepository = new InMemoryAccountRepository();
+        $accountRepository->add(AccountMother::fromNameAndId('Test Account', 'account-id-test'));
+
+        $donationAgreementRepository = new InMemoryDonationAgreementRepository(accountRepository: $accountRepository);
+        $userRepository = new InMemoryUserRepository();
+
+        $owner = UserMother::fromUsernameAndRoleAndAccount('owner@test.com', Role::Owner, $accountId);
+        $userRepository->add($owner);
+
+        $agreement = DonationAgreementMother::from(
+            id: (string) DonationAgreementId::generate(),
+            recipientOrganizationId: 'org-1',
+            accountId: 'account-id-test',
+            startDate: new \DateTimeImmutable('2024-01-01'),
+            expirationDate: new \DateTimeImmutable('+15 days'),
+            uploadedBy: (string) $owner->id(),
+            path: 'path/to/file.pdf',
+        );
+        $agreement->markExpirationWarningNotified();
+        $donationAgreementRepository->add($agreement);
+
+        $sut = $this->createSUT($donationAgreementRepository, $userRepository);
+
+        $result = $sut(new NotifyExpiringDonationAgreementsRequest(), UserMother::systemUser());
+
+        $this->assertEquals(0, $result->notified);
+        $this->assertCount(0, $this->notifier->calls);
+    }
+
+    public function testSkipsAgreementsWithNoAccountId(): void
+    {
+        $accountRepository = new InMemoryAccountRepository();
+        $donationAgreementRepository = new InMemoryDonationAgreementRepository(accountRepository: $accountRepository);
+        $userRepository = new InMemoryUserRepository();
+
+        $agreement = new \App\FoodLoss\Domain\Model\DonationAgreement\DonationAgreement(
+            id: DonationAgreementId::generate(),
+            expirationDate: new \DateTimeImmutable('+15 days'),
+        );
+        $donationAgreementRepository->add($agreement);
+
+        $sut = $this->createSUT($donationAgreementRepository, $userRepository);
+
+        $result = $sut(new NotifyExpiringDonationAgreementsRequest(), UserMother::systemUser());
+
+        $this->assertEquals(0, $result->notified);
+        $this->assertCount(0, $this->notifier->calls);
+    }
+
+    public function testSkipsAgreementsWhenAccountHasNoOwners(): void
+    {
+        $accountRepository = new InMemoryAccountRepository();
+        $accountRepository->add(AccountMother::fromNameAndId('Test Account', 'account-id-test'));
+
+        $donationAgreementRepository = new InMemoryDonationAgreementRepository(accountRepository: $accountRepository);
+        $userRepository = new InMemoryUserRepository();
+
+        $agreement = DonationAgreementMother::from(
+            id: (string) DonationAgreementId::generate(),
+            recipientOrganizationId: 'org-1',
+            accountId: 'account-id-test',
+            startDate: new \DateTimeImmutable('2024-01-01'),
+            expirationDate: new \DateTimeImmutable('+15 days'),
+            uploadedBy: 'some-user-id',
+            path: 'path/to/file.pdf',
+        );
+        $donationAgreementRepository->add($agreement);
+
+        $sut = $this->createSUT($donationAgreementRepository, $userRepository);
+
+        $result = $sut(new NotifyExpiringDonationAgreementsRequest(), UserMother::systemUser());
+
+        $this->assertEquals(1, $result->notified);
+        $this->assertCount(0, $this->notifier->calls);
+    }
+
+    public function testReturnsZeroWhenNoExpiringAgreements(): void
+    {
+        $donationAgreementRepository = new InMemoryDonationAgreementRepository();
+        $userRepository = new InMemoryUserRepository();
+
+        $sut = $this->createSUT($donationAgreementRepository, $userRepository);
+
+        $result = $sut(new NotifyExpiringDonationAgreementsRequest(), UserMother::systemUser());
+
+        $this->assertEquals(0, $result->notified);
+        $this->assertCount(0, $this->notifier->calls);
+    }
+
+    public function testIsHandled(): void
+    {
+        $sut = $this->createSUT(new InMemoryDonationAgreementRepository(), new InMemoryUserRepository());
+
+        $this->assertTrue($sut->isHandled(new NotifyExpiringDonationAgreementsRequest()));
+    }
+
+    private function createSUT(
+        InMemoryDonationAgreementRepository $donationAgreementRepository,
+        InMemoryUserRepository $userRepository,
+    ): NotifyExpiringDonationAgreementsService {
+        return new NotifyExpiringDonationAgreementsService(
+            donationAgreementRepository: $donationAgreementRepository,
+            userRepository: $userRepository,
+            notifier: $this->notifier,
+            localeSwitcher: $this->localeSwitcher,
+        );
     }
 }
