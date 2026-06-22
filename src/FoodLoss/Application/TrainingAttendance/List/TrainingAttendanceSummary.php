@@ -17,6 +17,23 @@ class TrainingAttendanceSummary
 
     public function hasAttended(): bool
     {
-        return count($this->attendances) > 0;
+        foreach ($this->attendances as $attendance) {
+            if (!$attendance->isInSignatureProcess()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function isInSignatureProcess(): bool
+    {
+        foreach ($this->attendances as $attendance) {
+            if ($attendance->isInSignatureProcess()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

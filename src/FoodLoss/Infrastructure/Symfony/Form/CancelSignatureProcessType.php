@@ -15,7 +15,7 @@ class CancelSignatureProcessType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('confirm', SubmitType::class, [
+            ->add('register', SubmitType::class, [
                 'label' => new TranslatableMessage('Confirmar'),
                 'attr' => ['class' => 'btn btn-danger'],
             ])

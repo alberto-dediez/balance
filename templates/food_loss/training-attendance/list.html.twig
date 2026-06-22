@@ -2,6 +2,12 @@
 
 {% block top_actions %}
     {% if dummy | is_authorized('register') %}
+        <twig:TopAction path="{{ path('training_attendances_request_signature', {'trainingSessionId': trainingSession.id}) }}">
+            <twig:Icon name="solar:pen-new-square-line-duotone" size="lg" class="me-2" />
+
+            {{ 'Solicitar firma' | trans }}
+        </twig:TopAction>
+
         <twig:TopAction path="{{ path('training_attendances_register', {'trainingSessionId': trainingSession.id}) }}">
             <twig:Icon name="solar:add-square-line-duotone" size="lg" class="me-2" />
 
@@ -50,6 +56,8 @@
                     <td class="col-2">
                         {% if element.hasAttended %}
                             <span class="badge bg-success">{{ 'Asistió' | trans }}</span>
+                        {% elseif element.isInSignatureProcess %}
+                            <span class="badge bg-info text-white">{{ 'Firma pendiente' | trans }}</span>
                         {% else %}
                             <span class="badge bg-warning text-dark">{{ 'No asistió' | trans }}</span>
                         {% endif %}
@@ -57,14 +65,20 @@
                     <td class="col-3">
                         {% for attendance in element.attendances %}
                             <div class="d-flex align-items-center gap-2 mb-1">
-                                <span class="text-muted small">{{ attendance.attendedAt | date('d/m/Y') }}</span>
+                                {% if attendance.isInSignatureProcess %}
+                                    {% if attendance | is_authorized('edit') %}
+                                        <twig:List:Action:CancelSignature path="{{ path('training_attendances_cancel_signature', {'trainingSessionId': trainingSession.id, 'trainingAttendanceId': attendance.id}) }}" />
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted small">{{ attendance.attendedAt | date('d/m/Y') }}</span>
 
-                                {% if attendance | is_authorized('view') %}
-                                    <twig:List:Action:Download path="{{ path('training_attendances_download', {'trainingSessionId': trainingSession.id, 'trainingAttendanceId': attendance.id}) }}" target="_blank" />
-                                {% endif %}
+                                    {% if attendance.filePath and attendance | is_authorized('view') %}
+                                        <twig:List:Action:Download path="{{ path('training_attendances_download', {'trainingSessionId': trainingSession.id, 'trainingAttendanceId': attendance.id}) }}" target="_blank" />
+                                    {% endif %}
 
-                                {% if attendance | is_authorized('remove') %}
-                                    <twig:List:Action:Delete path="{{ path('training_attendances_remove', {'trainingSessionId': trainingSession.id, 'trainingAttendanceId': attendance.id}) }}" />
+                                    {% if attendance | is_authorized('remove') %}
+                                        <twig:List:Action:Delete path="{{ path('training_attendances_remove', {'trainingSessionId': trainingSession.id, 'trainingAttendanceId': attendance.id}) }}" />
+                                    {% endif %}
                                 {% endif %}
                             </div>
                         {% endfor %}

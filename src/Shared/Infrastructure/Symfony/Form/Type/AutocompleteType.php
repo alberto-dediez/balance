@@ -18,6 +18,10 @@ class AutocompleteType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
+        if ($options['expanded'] ?? false) {
+            return;
+        }
+
         $attr = $options['attr'] ?? [];
 
         if (!isset($attr['data-controller'])) {

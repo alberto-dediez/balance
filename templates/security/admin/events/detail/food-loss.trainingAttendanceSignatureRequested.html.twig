@@ -1,0 +1,6 @@
+{% trans with {
+    '{trainingAttendance}': event.trainingAttendanceId,
+    '{signatureRequest}': event.signatureRequestId,
+    '{date}': event.attendedAt | date('d/m/Y'),
+    '{user}': element.userId | user_name
+} %}Se ha solicitado la firma de la asistencia a formación {trainingAttendance} con la solicitud {signatureRequest} el {date} por el usuario {user}{% endtrans %}

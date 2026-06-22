@@ -19,5 +19,7 @@
         <field name="removed" type="boolean" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+        <field name="signatureRequestId" type="signature_request_id" column="signature_request_id" nullable="true"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
     </entity>
 </doctrine-mapping>

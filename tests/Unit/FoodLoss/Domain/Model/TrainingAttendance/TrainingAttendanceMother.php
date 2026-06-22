@@ -9,6 +9,7 @@ use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceId;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionId;
 use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 
 class TrainingAttendanceMother
 {
@@ -74,5 +75,23 @@ class TrainingAttendanceMother
             trainingSessionId: (string) TrainingSessionId::generate(),
             employeeId: (string) EmployeeId::generate(),
         );
+    }
+
+    public static function inSignatureProcess(
+        string $accountId = 'account-id',
+        ?SignatureRequestId $signatureRequestId = null,
+        ?TrainingSessionId $trainingSessionId = null,
+        ?EmployeeId $employeeId = null,
+    ): TrainingAttendance {
+        $attendance = new TrainingAttendance(id: TrainingAttendanceId::generate());
+        $attendance->startSignatureProcess(
+            trainingSessionId: $trainingSessionId ?? TrainingSessionId::generate(),
+            employeeId: $employeeId ?? EmployeeId::generate(),
+            accountId: new AccountId($accountId),
+            attendedAt: new \DateTimeImmutable('2024-03-15'),
+            signatureRequestId: $signatureRequestId ?? SignatureRequestId::generate(),
+        );
+
+        return $attendance;
     }
 }

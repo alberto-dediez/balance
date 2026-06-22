@@ -56,3 +56,6 @@ services:
 
     App\FoodLoss\Domain\Model\DeliveryLog\DeliveryLogsPdfGenerator:
         alias: App\FoodLoss\Infrastructure\Tcpdf\TcpdfDeliveryLogsPdfGenerator
+
+    App\FoodLoss\Domain\Model\TrainingAttendance\TrainingSessionPdfGenerator:
+        alias: App\FoodLoss\Infrastructure\Tcpdf\TcpdfTrainingSessionPdfGenerator

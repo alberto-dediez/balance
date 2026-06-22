@@ -7,6 +7,7 @@ namespace App\FoodLoss\Domain\Model\TrainingAttendance;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionId;
 use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
 
@@ -26,6 +27,8 @@ class TrainingAttendance implements \Stringable
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $removedAt = null,
+        private ?SignatureRequestId $signatureRequestId = null,
+        private ?\DateTimeImmutable $updatedAt = null,
     ) {
         $this->events = $events;
     }
@@ -75,6 +78,21 @@ class TrainingAttendance implements \Stringable
         return $this->removedAt;
     }
 
+    public function signatureRequestId(): ?SignatureRequestId
+    {
+        return $this->signatureRequestId;
+    }
+
+    public function updatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function isInSignatureProcess(): bool
+    {
+        return null !== $this->signatureRequestId && '' === $this->filePath;
+    }
+
     public function register(
         TrainingSessionId $trainingSessionId,
         EmployeeId $employeeId,
@@ -103,6 +121,52 @@ class TrainingAttendance implements \Stringable
         );
     }
 
+    public function startSignatureProcess(
+        TrainingSessionId $trainingSessionId,
+        EmployeeId $employeeId,
+        AccountId $accountId,
+        \DateTimeImmutable $attendedAt,
+        SignatureRequestId $signatureRequestId,
+    ): void {
+        $this->recordApplyAndPublish(
+            new TrainingAttendanceSignatureRequested(
+                trainingAttendanceId: $this->id(),
+                trainingSessionId: $trainingSessionId,
+                employeeId: $employeeId,
+                accountId: $accountId,
+                attendedAt: $attendedAt,
+                signatureRequestId: $signatureRequestId,
+            ),
+        );
+    }
+
+    public function cancelSignatureProcess(): void
+    {
+        if (!$this->isInSignatureProcess()) {
+            throw new \InvalidArgumentException('Cannot cancel signature process on not started one.');
+        }
+
+        $this->recordApplyAndPublish(
+            new TrainingAttendanceSignatureCancelled(
+                trainingAttendanceId: $this->id(),
+            ),
+        );
+    }
+
+    public function endSignatureProcess(string $signedFilePath): void
+    {
+        if (!$this->isInSignatureProcess()) {
+            throw new \InvalidArgumentException('Cannot end signature process on not started one.');
+        }
+
+        $this->recordApplyAndPublish(
+            new TrainingAttendanceSignatureCompleted(
+                trainingAttendanceId: $this->id(),
+                signedFilePath: $signedFilePath,
+            ),
+        );
+    }
+
     public function applyTrainingAttendanceRegistered(TrainingAttendanceRegistered $event): void
     {
         $this->trainingSessionId = $event->trainingSessionId();
@@ -117,6 +181,29 @@ class TrainingAttendance implements \Stringable
     {
         $this->removed = true;
         $this->removedAt = $event->occurredOn();
+    }
+
+    public function applyTrainingAttendanceSignatureRequested(TrainingAttendanceSignatureRequested $event): void
+    {
+        $this->trainingSessionId = $event->trainingSessionId();
+        $this->employeeId = $event->employeeId();
+        $this->accountId = $event->accountId();
+        $this->attendedAt = $event->attendedAt();
+        $this->signatureRequestId = $event->signatureRequestId();
+        $this->registeredAt = $event->occurredOn();
+    }
+
+    public function applyTrainingAttendanceSignatureCancelled(TrainingAttendanceSignatureCancelled $event): void
+    {
+        $this->signatureRequestId = null;
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyTrainingAttendanceSignatureCompleted(TrainingAttendanceSignatureCompleted $event): void
+    {
+        $this->filePath = $event->signedFilePath();
+        $this->signatureRequestId = null;
+        $this->updatedAt = $event->occurredOn();
     }
 
     public function __toString(): string

@@ -11,6 +11,7 @@ use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceRepository;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionId;
 use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -86,6 +87,27 @@ class DoctrineTrainingAttendanceRepository implements TrainingAttendanceReposito
             ->setParameter('filePath', $filePath)
             ->getQuery()
             ->getSingleScalarResult()
+        ;
+    }
+
+    /** @return array<TrainingAttendance> */
+    public function findBySignatureRequestId(SignatureRequestId $signatureRequestId): array
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        return (array) $qb->select('e')
+            ->from(TrainingAttendance::class, 'e')
+            ->where($qb->expr()->eq('e.signatureRequestId', ':signatureRequestId'))
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->isNull('e.removed'),
+                    $qb->expr()->eq('e.removed', ':removed'),
+                ),
+            )
+            ->setParameter('signatureRequestId', (string) $signatureRequestId)
+            ->setParameter('removed', false, Types::BOOLEAN)
+            ->getQuery()
+            ->getResult()
         ;
     }
 

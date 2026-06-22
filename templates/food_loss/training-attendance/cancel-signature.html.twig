@@ -1,0 +1,44 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set page_title = ('Sesiones formativas' | trans)
+    ~ ' > '
+    ~ ('Cancelar solicitud de firma' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('training_attendances', {'trainingSessionId': trainingSessionId}) }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card>
+        <p class="text-muted mb-3">
+            {% trans %}Se va a cancelar el proceso de firma para la siguiente asistencia:{% endtrans %}
+        </p>
+
+        <table class="table table-bordered mb-4">
+            <thead>
+                <tr>
+                    <th>{% trans %}Fecha de la sesión{% endtrans %}</th>
+                    <th>{% trans %}Empleado{% endtrans %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ attendance.attendedAt | date('d/m/Y') }}</td>
+                    <td>{{ attendance.employeeId | employee_name }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        {{ form_start(form) }}
+            <twig:ActionBar>
+                <div class="col-sm-6 col-md-3 col-lg-2">
+                    <a href="{{ path('training_attendances', {'trainingSessionId': trainingSessionId}) }}" class="btn btn-light w-100">
+                        {% trans %}Cancelar{% endtrans %}
+                    </a>
+                </div>
+
+                <twig:ActionBar:Button type="primary" :button="form.register" />
+            </twig:ActionBar>
+        {{ form_end(form) }}
+    </twig:Card>
+{% endblock %}

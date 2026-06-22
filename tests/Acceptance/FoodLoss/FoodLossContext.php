@@ -25,6 +25,7 @@ use App\FoodLoss\Domain\Model\RecipientOrganization\RecipientOrganizationReposit
 use App\FoodLoss\Domain\Model\ServiceCategory\ServiceCategoryRepository;
 use App\FoodLoss\Domain\Model\Surplus\SurplusRepository;
 use App\FoodLoss\Domain\Model\SurplusCause\SurplusCauseRepository;
+use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendance;
 use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceId;
 use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceRepository;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionId;
@@ -581,7 +582,7 @@ final readonly class FoodLossContext implements Context
     #[Given('training attendance :attendanceId for employee :employeeId of session :sessionId of account :accountId at :filePath exists')]
     public function trainingAttendanceWithIdExists(string $attendanceId, string $employeeId, string $sessionId, string $accountId, string $filePath): void
     {
-        $attendance = new \App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendance(
+        $attendance = new TrainingAttendance(
             id: new TrainingAttendanceId($attendanceId),
         );
         $attendance->register(
@@ -590,6 +591,21 @@ final readonly class FoodLossContext implements Context
             accountId: new AccountId($accountId),
             attendedAt: new \DateTimeImmutable('2024-03-15'),
             filePath: $filePath,
+        );
+
+        $this->getTrainingAttendanceRepository()->add($attendance);
+    }
+
+    #[Given('training attendance :attendanceId with pending signature request :signatureRequestId of session :sessionId of account :accountId exists')]
+    public function trainingAttendanceWithPendingSignatureRequestExists(string $attendanceId, string $signatureRequestId, string $sessionId, string $accountId): void
+    {
+        $attendance = new TrainingAttendance(id: new TrainingAttendanceId($attendanceId));
+        $attendance->startSignatureProcess(
+            trainingSessionId: new TrainingSessionId($sessionId),
+            employeeId: EmployeeId::generate(),
+            accountId: new AccountId($accountId),
+            attendedAt: new \DateTimeImmutable('2024-03-15'),
+            signatureRequestId: new SignatureRequestId($signatureRequestId),
         );
 
         $this->getTrainingAttendanceRepository()->add($attendance);

@@ -11,6 +11,7 @@ use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceRepository;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionId;
 use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]
@@ -116,5 +117,23 @@ class InMemoryTrainingAttendanceRepository implements TrainingAttendanceReposito
         }
 
         return $count;
+    }
+
+    /** @return array<TrainingAttendance> */
+    public function findBySignatureRequestId(SignatureRequestId $signatureRequestId): array
+    {
+        $results = [];
+
+        foreach ($this->attendances as $attendance) {
+            if ($attendance->isRemoved()) {
+                continue;
+            }
+
+            if ((string) $attendance->signatureRequestId() === (string) $signatureRequestId) {
+                $results[] = $attendance;
+            }
+        }
+
+        return $results;
     }
 }

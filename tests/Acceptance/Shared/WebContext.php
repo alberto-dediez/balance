@@ -76,6 +76,10 @@ final class WebContext implements Context
         $arguments = explode('|', $data);
 
         foreach ($arguments as $argument) {
+            if ('' === $argument) {
+                continue;
+            }
+
             [$name, $value] = explode(':', $argument);
 
             $key = '[' == $name[0] ? sprintf('%s%s', $form->attr('name'), $name) : sprintf('%s[%s]', $form->attr('name'), $name);
