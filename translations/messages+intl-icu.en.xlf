@@ -5037,6 +5037,10 @@
         <source>Ver incidencia</source>
         <target>View incidence</target>
       </trans-unit>
+      <trans-unit id="pnwDm75" resname="La notificación ha sido eliminada">
+        <source>La notificación ha sido eliminada</source>
+        <target>The notification has been deleted</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

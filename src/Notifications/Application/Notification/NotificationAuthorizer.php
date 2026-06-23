@@ -40,6 +40,13 @@ final class NotificationAuthorizer extends AbstractAuthorizer
 
     protected function canRemove(mixed $subject, User $user): bool
     {
+        if ($subject instanceof Notification
+            && null !== $subject->recipientId()
+            && $subject->recipientId()->equals($user->id())
+        ) {
+            return true;
+        }
+
         return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin);
     }
 

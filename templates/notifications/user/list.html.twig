@@ -14,24 +14,30 @@
 {% block table %}
     <div class="list-group mb-3">
         {% for notification in notifications %}
-            <a href="{{ path('notification_show', {'id': notification.id}) }}"
-               class="list-group-item list-group-item-action d-flex align-items-start gap-3 {{ notification.isRead ? '' : 'list-group-item-primary' }}">
-                <span class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded round flex-shrink-0">
-                    <twig:Icon name="solar:bell-bing-line-duotone" />
-                </span>
-                <div class="flex-grow-1">
-                    <div class="d-flex justify-content-between">
-                        <h6 class="mb-1 fw-semibold">
-                            {{ notification.subject }}
-                            {% if not notification.isRead %}
-                                <span class="badge text-bg-primary ms-1">{% trans -%}Nueva{%- endtrans %}</span>
-                            {% endif %}
-                        </h6>
-                        <small class="text-body-secondary">{{ notification.createdAt | date('d/m/Y H:i') }}</small>
+            <div class="list-group-item d-flex align-items-start gap-3 {{ notification.isRead ? '' : 'list-group-item-primary' }}">
+                <a href="{{ path('notification_show', {'id': notification.id}) }}"
+                   class="d-flex align-items-start gap-3 flex-grow-1 text-decoration-none text-reset">
+                    <span class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded round flex-shrink-0">
+                        <twig:Icon name="solar:bell-bing-line-duotone" />
+                    </span>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="mb-1 fw-semibold">
+                                {{ notification.subject }}
+                                {% if not notification.isRead %}
+                                    <span class="badge text-bg-primary ms-1">{% trans -%}Nueva{%- endtrans %}</span>
+                                {% endif %}
+                            </h6>
+                            <small class="text-body-secondary">{{ notification.createdAt | date('d/m/Y H:i') }}</small>
+                        </div>
+                        <p class="mb-0 text-body-secondary text-truncate">{{ notification.body | striptags }}</p>
                     </div>
-                    <p class="mb-0 text-body-secondary text-truncate">{{ notification.body | striptags }}</p>
-                </div>
-            </a>
+                </a>
+                <a href="{{ path('notification_remove', {'id': notification.id}) }}"
+                   class="text-danger flex-shrink-0" title="{{ 'Eliminar' | trans }}">
+                    <twig:Icon name="solar:close-square-line-duotone" />
+                </a>
+            </div>
         {% else %}
             <p class="text-center text-body-secondary my-5">{% trans -%}No tienes notificaciones{%- endtrans %}</p>
         {% endfor %}
