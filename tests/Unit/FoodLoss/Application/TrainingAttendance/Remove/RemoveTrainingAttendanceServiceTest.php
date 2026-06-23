@@ -126,7 +126,7 @@ class RemoveTrainingAttendanceServiceTest extends TestCase
         return new RemoveTrainingAttendanceService(
             trainingAttendanceRepository: $repository,
             authorizer: new TrainingAttendanceAuthorizer(
-                EmployeeRepositoryMother::inMemory()
+                EmployeeRepositoryMother::inMemory(),
             ),
             fileRemover: $fileRemover,
         );

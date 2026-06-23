@@ -285,7 +285,7 @@ class RequestTrainingAttendanceSignaturesServiceTest extends TestCase
             trainingSessionRepository: $trainingSessionRepository,
             employeeRepository: $employeeRepository,
             authorizer: new TrainingAttendanceAuthorizer(
-                EmployeeRepositoryMother::inMemory()
+                EmployeeRepositoryMother::inMemory(),
             ),
             pdfGenerator: $pdfGenerator,
             registerSignatureRequestService: $registerSignatureRequestService,

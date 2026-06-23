@@ -8,7 +8,6 @@ use App\FoodLoss\Application\TrainingAttendance\CancelSignatureProcess\CancelTra
 use App\FoodLoss\Application\TrainingAttendance\CancelSignatureProcess\CancelTrainingAttendanceSignatureProcessService;
 use App\FoodLoss\Application\TrainingAttendance\TrainingAttendanceAuthorizer;
 use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceRepository;
-use App\HumanResources\Infrastructure\Persistence\InMemory\Repository\InMemoryEmployeeRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\SignatureRequest\SignatureRequestId;
 use App\Security\Domain\Model\User\Role;
@@ -97,7 +96,7 @@ class CancelTrainingAttendanceSignatureProcessServiceTest extends TestCase
         return new CancelTrainingAttendanceSignatureProcessService(
             trainingAttendanceRepository: $repository,
             authorizer: new TrainingAttendanceAuthorizer(
-                EmployeeRepositoryMother::inMemory()
+                EmployeeRepositoryMother::inMemory(),
             ),
         );
     }

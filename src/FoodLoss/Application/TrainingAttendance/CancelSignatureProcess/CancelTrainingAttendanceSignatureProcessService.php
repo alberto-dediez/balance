@@ -33,6 +33,7 @@ class CancelTrainingAttendanceSignatureProcessService implements CommandHandler
 
         foreach ($attendances as $attendance) {
             $attendance->cancelSignatureProcess();
+            $attendance->remove();
             $this->trainingAttendanceRepository->add($attendance);
         }
 

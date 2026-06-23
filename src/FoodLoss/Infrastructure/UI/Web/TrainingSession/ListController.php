@@ -54,12 +54,13 @@ class ListController extends AbstractController
         }
 
         $myAttendances = [];
+        $myEmployee = null;
         $employees = $employeeRepository->findByFilter(new EmployeeFilter(userId: $user->id(), accountId: $accountId, limit: 1));
 
         if ([] !== $employees) {
-            $employee = reset($employees);
+            $myEmployee = reset($employees);
             $attendances = $trainingAttendanceRepository->findByFilter(
-                new TrainingAttendanceFilter(employeeId: $employee->id(), accountId: $accountId, limit: 0),
+                new TrainingAttendanceFilter(employeeId: $myEmployee->id(), accountId: $accountId, limit: 0),
             );
 
             foreach ($attendances as $attendance) {
@@ -74,6 +75,7 @@ class ListController extends AbstractController
             'dummy' => new TrainingSession(id: TrainingSessionId::generate(), accountId: $accountId),
             'dummyAttendance' => new TrainingAttendance(id: TrainingAttendanceId::generate(), accountId: $accountId),
             'myAttendances' => $myAttendances,
+            'myEmployee' => $myEmployee,
         ]);
     }
 }

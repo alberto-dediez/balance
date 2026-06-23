@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FoodLoss\Application\TrainingAttendance;
 
 use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendance;
+use App\HumanResources\Domain\Model\Employee\EmployeeFilter;
 use App\HumanResources\Domain\Model\Employee\EmployeeRepository;
 use App\Security\Application\AbstractAuthorizer;
 use App\Security\Domain\Model\Account\AccountId;
@@ -19,7 +20,7 @@ final class TrainingAttendanceAuthorizer extends AbstractAuthorizer
 
     protected function canRegister(mixed $subject, User $user): bool
     {
-        return $this->canEdit($subject, $user);
+        return $this->canView($subject, $user);
     }
 
     protected function canView(mixed $subject, User $user): bool

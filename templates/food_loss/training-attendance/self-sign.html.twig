@@ -1,0 +1,46 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set page_title = ('Sesiones formativas' | trans)
+    ~ ' > '
+    ~ ('Firmar asistencia' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('training_sessions') }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card>
+        <p class="text-muted mb-3">
+            {% trans %}Se va a enviar una solicitud de firma de asistencia para la siguiente sesión:{% endtrans %}
+        </p>
+
+        <table class="table table-bordered mb-4">
+            <thead>
+                <tr>
+                    <th>{% trans %}Sesión{% endtrans %}</th>
+                    <th>{% trans %}Fecha{% endtrans %}</th>
+                    <th>{% trans %}Empleado{% endtrans %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ trainingSession.title }}</td>
+                    <td>{{ trainingSession.sessionDate | date('d/m/Y') }}</td>
+                    <td>{{ employee.name }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        {{ form_start(form) }}
+            <twig:ActionBar>
+                <div class="col-sm-6 col-md-3 col-lg-2">
+                    <a href="{{ path('training_sessions') }}" class="btn btn-light w-100">
+                        {% trans %}Cancelar{% endtrans %}
+                    </a>
+                </div>
+
+                <twig:ActionBar:Button type="primary" :button="form.register" />
+            </twig:ActionBar>
+        {{ form_end(form) }}
+    </twig:Card>
+{% endblock %}

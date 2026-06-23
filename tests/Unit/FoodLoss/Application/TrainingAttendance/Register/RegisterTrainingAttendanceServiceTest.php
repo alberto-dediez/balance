@@ -118,7 +118,7 @@ class RegisterTrainingAttendanceServiceTest extends TestCase
         return new RegisterTrainingAttendanceService(
             trainingAttendanceRepository: $repository,
             authorizer: new TrainingAttendanceAuthorizer(
-                EmployeeRepositoryMother::inMemory()
+                EmployeeRepositoryMother::inMemory(),
             ),
             uploader: $uploader,
         );

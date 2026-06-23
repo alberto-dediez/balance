@@ -33,18 +33,28 @@
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
             {% set myAttendance = myAttendances[element.id] ?? null %}
-            {% if myAttendance %}
+            {% if myAttendance and myAttendance.filePath %}
                 <span class="text-success" title="{{ 'He asistido' | trans }}" data-bs-toggle="tooltip">
                     <twig:Icon name="solar:check-circle-bold-duotone" size="lg"/>
                 </span>
-
-                {% if myAttendance.filePath %}
-                    <twig:List:Action:DownloadEvidence path="{{ path('training_attendances_download', {'trainingSessionId': element.id, 'trainingAttendanceId': myAttendance.id}) }}" />
-                {% endif %}
+                <twig:List:Action:DownloadEvidence path="{{ path('training_attendances_download', {'trainingSessionId': element.id, 'trainingAttendanceId': myAttendance.id}) }}" />
+            {% elseif myAttendance and myAttendance.inSignatureProcess %}
+                <span class="text-warning" title="{{ 'Firma pendiente' | trans }}" data-bs-toggle="tooltip">
+                    <twig:Icon name="solar:clock-circle-line-duotone" size="lg"/>
+                </span>
             {% else %}
                 <span class="text-danger" title="{{ 'No he asistido' | trans }}" data-bs-toggle="tooltip">
                     <twig:Icon name="solar:close-circle-bold-duotone" size="lg" />
                 </span>
+
+                {% if myEmployee is defined and myEmployee %}
+                    <twig:List:Action path="{{ path('training_attendances_self_sign', {'trainingSessionId': element.id}) }}"
+                        title="{{ 'Firmar asistencia' | trans }}"
+                        class="text-primary"
+                    >
+                        <twig:Icon name="solar:pen-new-square-line-duotone" size="lg" />
+                    </twig:List:Action>
+                {% endif %}
             {% endif %}
         </td>
         <td>

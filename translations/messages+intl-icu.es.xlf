@@ -4779,19 +4779,207 @@
       </trans-unit>
       <trans-unit id="s_8YX1W" resname="Un usuario concreto">
         <source>Un usuario concreto</source>
-        <target>NEW_Un usuario concreto</target>
+        <target>Un usuario concreto</target>
       </trans-unit>
       <trans-unit id="m2mEsh_" resname="Todos los usuarios de una cuenta">
         <source>Todos los usuarios de una cuenta</source>
-        <target>NEW_Todos los usuarios de una cuenta</target>
+        <target>Todos los usuarios de una cuenta</target>
       </trans-unit>
       <trans-unit id="C8AoWQR" resname="Usuarios de una cuenta con un rol">
         <source>Usuarios de una cuenta con un rol</source>
-        <target>NEW_Usuarios de una cuenta con un rol</target>
+        <target>Usuarios de una cuenta con un rol</target>
       </trans-unit>
       <trans-unit id="r2bzpKR" resname="Todos los usuarios de la plataforma">
         <source>Todos los usuarios de la plataforma</source>
-        <target>NEW_Todos los usuarios de la plataforma</target>
+        <target>Todos los usuarios de la plataforma</target>
+      </trans-unit>
+      <trans-unit id="C_74rrC" resname="Confirmación de asistencia a formación">
+        <source>Confirmación de asistencia a formación</source>
+        <target>Confirmación de asistencia a formación</target>
+      </trans-unit>
+      <trans-unit id="IZkzp22" resname="Sesión">
+        <source>Sesión</source>
+        <target>Sesión</target>
+      </trans-unit>
+      <trans-unit id="Z9U9csA" resname="Esta asistencia no tiene un proceso de firma pendiente">
+        <source>Esta asistencia no tiene un proceso de firma pendiente</source>
+        <target>Esta asistencia no tiene un proceso de firma pendiente</target>
+      </trans-unit>
+      <trans-unit id="VvzTFbJ" resname="Se ha cancelado el proceso de firma correctamente">
+        <source>Se ha cancelado el proceso de firma correctamente</source>
+        <target>Se ha cancelado el proceso de firma correctamente</target>
+      </trans-unit>
+      <trans-unit id="Jc0C0vb" resname="No se ha podido cancelar el proceso de firma">
+        <source>No se ha podido cancelar el proceso de firma</source>
+        <target>No se ha podido cancelar el proceso de firma</target>
+      </trans-unit>
+      <trans-unit id="4e9wXNg" resname="Solicitudes de firma enviadas correctamente">
+        <source>Solicitudes de firma enviadas correctamente</source>
+        <target>Solicitudes de firma enviadas correctamente</target>
+      </trans-unit>
+      <trans-unit id="kYok3Xb" resname="Se ha enviado la solicitud de firma correctamente">
+        <source>Se ha enviado la solicitud de firma correctamente</source>
+        <target>Se ha enviado la solicitud de firma correctamente</target>
+      </trans-unit>
+      <trans-unit id="RJr_kLf" resname="Confirmar">
+        <source>Confirmar</source>
+        <target>Confirmar</target>
+      </trans-unit>
+      <trans-unit id="ndW_uUz" resname="Firmar asistencia">
+        <source>Firmar asistencia</source>
+        <target>Firmar asistencia</target>
+      </trans-unit>
+      <trans-unit id="gF6gzny" resname="Solicitar firma">
+        <source>Solicitar firma</source>
+        <target>Solicitar firma</target>
+      </trans-unit>
+      <trans-unit id="VCl6sCL" resname="Fecha estimada de entrega">
+        <source>Fecha estimada de entrega</source>
+        <target>Fecha estimada de entrega</target>
+      </trans-unit>
+      <trans-unit id="rvUXnKK" resname="Cancelar solicitud de firma">
+        <source>Cancelar solicitud de firma</source>
+        <target>Cancelar solicitud de firma</target>
+      </trans-unit>
+      <trans-unit id="sMG8bi7" resname="Descargar certificado de firma">
+        <source>Descargar certificado de firma</source>
+        <target>Descargar certificado de firma</target>
+      </trans-unit>
+      <trans-unit id="esd9Dyc" resname="Descargar evidencia">
+        <source>Descargar evidencia</source>
+        <target>Descargar evidencia</target>
+      </trans-unit>
+      <trans-unit id="2ssxVkY" resname="Se ha iniciado el proceso de firma del registro de entrega {deliveryLog} con la solicitud {signatureRequest} el {date} por el usuario {user}">
+        <source>Se ha iniciado el proceso de firma del registro de entrega {deliveryLog} con la solicitud {signatureRequest} el {date} por el usuario {user}</source>
+        <target>Se ha iniciado el proceso de firma del registro de entrega {deliveryLog} con la solicitud {signatureRequest} el {date} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="v4P.aj3" resname="Se ha desmarcado la evaluación de transformación del excedente {surplus} por el usuario {user}">
+        <source>Se ha desmarcado la evaluación de transformación del excedente {surplus} por el usuario {user}</source>
+        <target>Se ha desmarcado la evaluación de transformación del excedente {surplus} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="SiRDz_c" resname="Se ha evaluado la eliminación del excedente {surplus}: apto {canBeEliminated}, por el usuario {user}">
+        <source>Se ha evaluado la eliminación del excedente {surplus}: apto {canBeEliminated}, por el usuario {user}</source>
+        <target>Se ha evaluado la eliminación del excedente {surplus}: apto {canBeEliminated}, por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="2kOlrHS" resname="Se ha completado el proceso de firma de la asistencia a formación {trainingAttendance} por el usuario {user}">
+        <source>Se ha completado el proceso de firma de la asistencia a formación {trainingAttendance} por el usuario {user}</source>
+        <target>Se ha completado el proceso de firma de la asistencia a formación {trainingAttendance} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="OFgQKHT" resname="Se ha activado la prevención del punto crítico {criticalPoint} por el usuario {user}">
+        <source>Se ha activado la prevención del punto crítico {criticalPoint} por el usuario {user}</source>
+        <target>Se ha activado la prevención del punto crítico {criticalPoint} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="mssGJCQ" resname="Se ha evaluado la prevención del excedente {surplus}: prevenible {canBePrevented}, por el usuario {user}">
+        <source>Se ha evaluado la prevención del excedente {surplus}: prevenible {canBePrevented}, por el usuario {user}</source>
+        <target>Se ha evaluado la prevención del excedente {surplus}: prevenible {canBePrevented}, por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="xEDReDb" resname="Se ha solicitado la firma de la asistencia a formación {trainingAttendance} con la solicitud {signatureRequest} el {date} por el usuario {user}">
+        <source>Se ha solicitado la firma de la asistencia a formación {trainingAttendance} con la solicitud {signatureRequest} el {date} por el usuario {user}</source>
+        <target>Se ha solicitado la firma de la asistencia a formación {trainingAttendance} con la solicitud {signatureRequest} el {date} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="K5QR0eL" resname="Se ha accedido al protocolo {protocol} para la cuenta {account} por el usuario {user}">
+        <source>Se ha accedido al protocolo {protocol} para la cuenta {account} por el usuario {user}</source>
+        <target>Se ha accedido al protocolo {protocol} para la cuenta {account} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="fNtqet5" resname="Se ha completado el proceso de firma del registro de entrega {deliveryLog} por el usuario {user}">
+        <source>Se ha completado el proceso de firma del registro de entrega {deliveryLog} por el usuario {user}</source>
+        <target>Se ha completado el proceso de firma del registro de entrega {deliveryLog} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="L4oMf5y" resname="Se ha evaluado la donación humana del excedente {surplus}: apto {canBeHumanDonated}, por el usuario {user}">
+        <source>Se ha evaluado la donación humana del excedente {surplus}: apto {canBeHumanDonated}, por el usuario {user}</source>
+        <target>Se ha evaluado la donación humana del excedente {surplus}: apto {canBeHumanDonated}, por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="5v5Qub3" resname="Se ha desmarcado la evaluación de compostaje del excedente {surplus} por el usuario {user}">
+        <source>Se ha desmarcado la evaluación de compostaje del excedente {surplus} por el usuario {user}</source>
+        <target>Se ha desmarcado la evaluación de compostaje del excedente {surplus} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="0qHVolH" resname="Se ha evaluado la transformación del excedente {surplus}: apto {canBeTransformed}, por el usuario {user}">
+        <source>Se ha evaluado la transformación del excedente {surplus}: apto {canBeTransformed}, por el usuario {user}</source>
+        <target>Se ha evaluado la transformación del excedente {surplus}: apto {canBeTransformed}, por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="KT5e_Jk" resname="Se ha desmarcado la evaluación de eliminación del excedente {surplus} por el usuario {user}">
+        <source>Se ha desmarcado la evaluación de eliminación del excedente {surplus} por el usuario {user}</source>
+        <target>Se ha desmarcado la evaluación de eliminación del excedente {surplus} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="CLEqPYA" resname="Se ha cancelado el proceso de firma del registro de entrega {deliveryLog} por el usuario {user}">
+        <source>Se ha cancelado el proceso de firma del registro de entrega {deliveryLog} por el usuario {user}</source>
+        <target>Se ha cancelado el proceso de firma del registro de entrega {deliveryLog} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="G9I7xhr" resname="Se ha evaluado el compostaje del excedente {surplus}: apto {canBeComposted}, por el usuario {user}">
+        <source>Se ha evaluado el compostaje del excedente {surplus}: apto {canBeComposted}, por el usuario {user}</source>
+        <target>Se ha evaluado el compostaje del excedente {surplus}: apto {canBeComposted}, por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="CFz4Kj5" resname="Se ha enviado la notificación de próxima expiración del acuerdo de donación {donationAgreement} por el usuario {user}">
+        <source>Se ha enviado la notificación de próxima expiración del acuerdo de donación {donationAgreement} por el usuario {user}</source>
+        <target>Se ha enviado la notificación de próxima expiración del acuerdo de donación {donationAgreement} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="AkbpjKu" resname="Se ha desmarcado la evaluación de donación humana del excedente {surplus} por el usuario {user}">
+        <source>Se ha desmarcado la evaluación de donación humana del excedente {surplus} por el usuario {user}</source>
+        <target>Se ha desmarcado la evaluación de donación humana del excedente {surplus} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="RDnoYRV" resname="Se ha solicitado la firma de la versión {version} del plan de prevención {preventionPlan} con la solicitud {signatureRequest} por el usuario {user}">
+        <source>Se ha solicitado la firma de la versión {version} del plan de prevención {preventionPlan} con la solicitud {signatureRequest} por el usuario {user}</source>
+        <target>Se ha solicitado la firma de la versión {version} del plan de prevención {preventionPlan} con la solicitud {signatureRequest} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="5yUUcng" resname="Se ha cancelado el proceso de firma de la asistencia a formación {trainingAttendance} por el usuario {user}">
+        <source>Se ha cancelado el proceso de firma de la asistencia a formación {trainingAttendance} por el usuario {user}</source>
+        <target>Se ha cancelado el proceso de firma de la asistencia a formación {trainingAttendance} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="ooRxpUT" resname="Se ha desmarcado la evaluación de alimentación animal del excedente {surplus} por el usuario {user}">
+        <source>Se ha desmarcado la evaluación de alimentación animal del excedente {surplus} por el usuario {user}</source>
+        <target>Se ha desmarcado la evaluación de alimentación animal del excedente {surplus} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="Gbpzy0e" resname="Se ha evaluado la alimentación animal del excedente {surplus}: apto {canBeAnimalFed}, por el usuario {user}">
+        <source>Se ha evaluado la alimentación animal del excedente {surplus}: apto {canBeAnimalFed}, por el usuario {user}</source>
+        <target>Se ha evaluado la alimentación animal del excedente {surplus}: apto {canBeAnimalFed}, por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="IWlED_g" resname="Se ha marcado como entregado el registro de entrega {deliveryLog} el {date} por el usuario {user}">
+        <source>Se ha marcado como entregado el registro de entrega {deliveryLog} el {date} por el usuario {user}</source>
+        <target>Se ha marcado como entregado el registro de entrega {deliveryLog} el {date} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="3ra2578" resname="He asistido">
+        <source>He asistido</source>
+        <target>He asistido</target>
+      </trans-unit>
+      <trans-unit id="K72n869" resname="Firma pendiente">
+        <source>Firma pendiente</source>
+        <target>Firma pendiente</target>
+      </trans-unit>
+      <trans-unit id="Hz7vR4Q" resname="No he asistido">
+        <source>No he asistido</source>
+        <target>No he asistido</target>
+      </trans-unit>
+      <trans-unit id=".N1sNPw" resname="Asistencia">
+        <source>Asistencia</source>
+        <target>Asistencia</target>
+      </trans-unit>
+      <trans-unit id="6RzkG5X" resname="Cancelar">
+        <source>Cancelar</source>
+        <target>Cancelar</target>
+      </trans-unit>
+      <trans-unit id="GSJTewg" resname="Se va a cancelar el proceso de firma para la siguiente asistencia:">
+        <source>Se va a cancelar el proceso de firma para la siguiente asistencia:</source>
+        <target>Se va a cancelar el proceso de firma para la siguiente asistencia:</target>
+      </trans-unit>
+      <trans-unit id="R3RzTOn" resname="Se va a enviar una solicitud de firma de asistencia para la siguiente sesión:">
+        <source>Se va a enviar una solicitud de firma de asistencia para la siguiente sesión:</source>
+        <target>Se va a enviar una solicitud de firma de asistencia para la siguiente sesión:</target>
+      </trans-unit>
+      <trans-unit id="SdfLt7B" resname="Solicitar firma de asistencia">
+        <source>Solicitar firma de asistencia</source>
+        <target>Solicitar firma de asistencia</target>
+      </trans-unit>
+      <trans-unit id="cxkar7w" resname="Verificado">
+        <source>Verificado</source>
+        <target>Verificado</target>
+      </trans-unit>
+      <trans-unit id="XPVv.KD" resname="Fecha estimada entrega">
+        <source>Fecha estimada entrega</source>
+        <target>Fecha estimada entrega</target>
+      </trans-unit>
+      <trans-unit id="HOwD6s8" resname="Se va a cancelar el proceso de firma para los siguientes registros de entrega:">
+        <source>Se va a cancelar el proceso de firma para los siguientes registros de entrega:</source>
+        <target>Se va a cancelar el proceso de firma para los siguientes registros de entrega:</target>
       </trans-unit>
     </body>
   </file>

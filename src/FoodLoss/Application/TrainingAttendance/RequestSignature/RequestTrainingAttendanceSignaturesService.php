@@ -49,8 +49,10 @@ class RequestTrainingAttendanceSignaturesService implements CommandHandler
         assert(null !== $request->accountId);
         assert(null !== $request->trainingSessionId);
 
-        $dummy = new TrainingAttendance(id: TrainingAttendanceId::generate(), accountId: $request->accountId);
-        $this->authorizer->denyUnlessCanDoThat($dummy, SecurityAction::Register, $user);
+        foreach ($request->employeeIds as $employeeId) {
+            $dummy = new TrainingAttendance(id: TrainingAttendanceId::generate(), employeeId: $employeeId, accountId: $request->accountId);
+            $this->authorizer->denyUnlessCanDoThat($dummy, SecurityAction::Register, $user);
+        }
 
         $trainingSession = $this->trainingSessionRepository->find($request->trainingSessionId);
 

@@ -92,7 +92,7 @@ class TrainingAttendanceAuthorizerTest extends TestCase
     private function createSUT(): TrainingAttendanceAuthorizer
     {
         return new TrainingAttendanceAuthorizer(
-                EmployeeRepositoryMother::inMemory()
+            EmployeeRepositoryMother::inMemory(),
         );
     }
 }
