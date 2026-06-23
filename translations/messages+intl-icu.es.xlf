@@ -4981,6 +4981,14 @@
         <source>Se va a cancelar el proceso de firma para los siguientes registros de entrega:</source>
         <target>Se va a cancelar el proceso de firma para los siguientes registros de entrega:</target>
       </trans-unit>
+      <trans-unit id="E9aLOh." resname="Se ha dado de alta tu usuario {user} en la cuenta {account}.">
+        <source>Se ha dado de alta tu usuario {user} en la cuenta {account}.</source>
+        <target>Se ha dado de alta tu usuario {user} en la cuenta {account}.</target>
+      </trans-unit>
+      <trans-unit id="ZaU8qUs" resname="Se ha dado de alta tu usuario {user} sin cuenta asignada.">
+        <source>Se ha dado de alta tu usuario {user} sin cuenta asignada.</source>
+        <target>Se ha dado de alta tu usuario {user} sin cuenta asignada.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

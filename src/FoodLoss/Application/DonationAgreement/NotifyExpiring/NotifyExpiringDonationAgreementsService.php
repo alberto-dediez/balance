@@ -13,8 +13,6 @@ use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
-use App\Shared\Domain\Model\Locale\Locale;
-use Symfony\Component\Translation\LocaleSwitcher;
 
 class NotifyExpiringDonationAgreementsService implements CommandHandler
 {
@@ -25,7 +23,6 @@ class NotifyExpiringDonationAgreementsService implements CommandHandler
         private readonly DonationAgreementRepository $donationAgreementRepository,
         private readonly UserRepository $userRepository,
         private readonly DonationAgreementExpirationNotifier $notifier,
-        private LocaleSwitcher $localeSwitcher,
     ) {}
 
     public function __invoke(NotifyExpiringDonationAgreementsRequest $request, User $user): NotifyExpiringDonationAgreementsResponse
@@ -67,11 +64,7 @@ class NotifyExpiringDonationAgreementsService implements CommandHandler
         }
 
         foreach ($owners as $owner) {
-            $preferredLocale = $owner->preferredLocale() ?? Locale::English;
-
-            $this->localeSwitcher->runWithLocale($preferredLocale->value, function () use ($donationAgreement, $owner) {
-                $this->notifier->notify($donationAgreement, $owner);
-            });
+            $this->notifier->notify($donationAgreement, $owner);
         }
 
         $donationAgreement->markExpirationWarningNotified();

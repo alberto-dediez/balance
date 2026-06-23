@@ -1,0 +1,13 @@
+<p>
+    {% trans with {
+        '{name}': preventionPlan.name,
+        '{version}': version.versionNumber
+    } -%}
+        La versión {version} del plan de prevención {name} ha sido publicada.
+    {%- endtrans %}
+</p>
+<p>
+    <a href="{{ path('prevention_plans_version_detail', {'preventionPlanId': preventionPlan.id, 'versionNumber': version.versionNumber}) }}">
+        {% trans -%}Ver plan de prevención{%- endtrans -%}
+    </a>
+</p>

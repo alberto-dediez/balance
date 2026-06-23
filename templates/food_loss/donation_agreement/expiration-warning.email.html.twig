@@ -1,17 +1,13 @@
-{% extends '@shared/layout/email.html.twig' %}
-
-{% block content %}
-    <h3>{% trans -%}Acuerdo de donación próximo a caducar{%- endtrans %}</h3>
-    <p>
-        {% trans with {
-            '{date}': donationAgreement.expirationDate | date('d/m/Y'),
-            '{org}': donationAgreement.recipientOrganizationId | recipient_organization_name
-        } -%}
-            El acuerdo de donación con {org} caduca el {date}.
-        {%- endtrans %}
-    </p>
-    <p>{% trans -%}Por favor, renueve el acuerdo antes de su fecha de caducidad para evitar interrupciones.{%- endtrans %}</p>
-    <a href="{{ url('donation_agreements') }}" class="btn btn-primary">
-        {% trans -%}Ver acuerdos de donación{%- endtrans %}
-    </a>
-{% endblock %}
+<h3>{% trans -%}Acuerdo de donación próximo a caducar{%- endtrans %}</h3>
+<p>
+    {% trans with {
+        '{date}': donationAgreement.expirationDate | date('d/m/Y'),
+        '{org}': donationAgreement.recipientOrganizationId | recipient_organization_name
+    } -%}
+        El acuerdo de donación con {org} caduca el {date}.
+    {%- endtrans %}
+</p>
+<p>{% trans -%}Por favor, renueve el acuerdo antes de su fecha de caducidad para evitar interrupciones.{%- endtrans %}</p>
+<a href="{{ url('donation_agreements') }}" class="btn btn-primary">
+    {% trans -%}Ver acuerdos de donación{%- endtrans %}
+</a>

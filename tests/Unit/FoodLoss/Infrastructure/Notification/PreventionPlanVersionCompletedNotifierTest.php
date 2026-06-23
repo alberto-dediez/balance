@@ -8,27 +8,26 @@ use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanId;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersionCompleted;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersionValidated;
-use App\FoodLoss\Infrastructure\Notification\PreventionPlanVersionCompletedMailer;
+use App\FoodLoss\Infrastructure\Notification\PreventionPlanVersionCompletedNotifier;
+use App\Notifications\Application\Notification\Notify\SystemNotification;
+use App\Notifications\Application\Notification\Notify\SystemNotifier;
+use App\Notifications\Domain\Model\Notification\NotificationChannel;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Shared\Domain\Model\Email\EmailRecipient;
-use App\Shared\Domain\Model\Email\EmailSender;
 use App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserRepositoryMother;
-use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
 use PHPUnit\Framework\TestCase;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PreventionPlanVersionCompletedMailerTest extends TestCase
+class PreventionPlanVersionCompletedNotifierTest extends TestCase
 {
-    private PreventionPlanVersionCompletedMailer $sut;
+    private PreventionPlanVersionCompletedNotifier $sut;
     private PreventionPlanRepository $preventionPlanRepository;
     private UserRepository $userRepository;
-    private SpyEmailSender $spyEmailSender;
+    private SpySystemNotifier $spyNotifier;
     private PreventionPlanVersionCompleted $event;
     private User $creator;
 
@@ -38,7 +37,7 @@ class PreventionPlanVersionCompletedMailerTest extends TestCase
 
         $this->preventionPlanRepository = PreventionPlanRepositoryMother::inMemory();
         $this->userRepository = UserRepositoryMother::inMemory();
-        $this->spyEmailSender = new SpyEmailSender();
+        $this->spyNotifier = new SpySystemNotifier();
 
         $this->creator = UserMother::from(userId: new UserId('user-id'));
         $this->userRepository->add($this->creator);
@@ -67,12 +66,17 @@ class PreventionPlanVersionCompletedMailerTest extends TestCase
         )));
     }
 
-    public function testSendsEmailToVersionCreator(): void
+    public function testNotifiesVersionCreatorOnBothChannels(): void
     {
         $this->sut->handle($this->event);
 
-        $this->assertTrue($this->spyEmailSender->wasCalled());
-        $this->assertEquals($this->creator->username(), $this->spyEmailSender->lastRecipient()?->email);
+        $this->assertCount(2, $this->spyNotifier->notifications);
+        $this->assertTrue($this->creator->id()->equals($this->spyNotifier->notifications[0]->recipientId));
+        $this->assertSame(NotificationChannel::Internal, $this->spyNotifier->notifications[0]->channel);
+        $this->assertSame(NotificationChannel::Email, $this->spyNotifier->notifications[1]->channel);
+        $this->assertSame('Plan de prevención publicado', $this->spyNotifier->notifications[0]->subject);
+        $this->assertSame('@food_loss/prevention-plan/version-completed.notification.html.twig', $this->spyNotifier->notifications[0]->template);
+        $this->assertSame('@food_loss/prevention-plan/version-completed.email.html.twig', $this->spyNotifier->notifications[1]->template);
     }
 
     public function testDoesNothingWhenPreventionPlanNotFound(): void
@@ -84,7 +88,7 @@ class PreventionPlanVersionCompletedMailerTest extends TestCase
 
         $this->sut->handle($unknownEvent);
 
-        $this->assertFalse($this->spyEmailSender->wasCalled());
+        $this->assertCount(0, $this->spyNotifier->notifications);
     }
 
     public function testDoesNothingWhenVersionNotFound(): void
@@ -99,59 +103,41 @@ class PreventionPlanVersionCompletedMailerTest extends TestCase
 
         $this->sut->handle($eventForMissingVersion);
 
-        $this->assertFalse($this->spyEmailSender->wasCalled());
+        $this->assertCount(0, $this->spyNotifier->notifications);
     }
 
     public function testDoesNothingWhenCreatorUserNotFound(): void
     {
         $emptyUserRepository = UserRepositoryMother::inMemory();
 
-        $sut = new PreventionPlanVersionCompletedMailer(
-            emailSender: $this->spyEmailSender,
+        $sut = new PreventionPlanVersionCompletedNotifier(
+            notifier: $this->spyNotifier,
             preventionPlanRepository: $this->preventionPlanRepository,
             userRepository: $emptyUserRepository,
-            translator: $this->createTranslator(),
         );
 
         $sut->handle($this->event);
 
-        $this->assertFalse($this->spyEmailSender->wasCalled());
+        $this->assertCount(0, $this->spyNotifier->notifications);
     }
 
-    private function createSUT(): PreventionPlanVersionCompletedMailer
+    private function createSUT(): PreventionPlanVersionCompletedNotifier
     {
-        return new PreventionPlanVersionCompletedMailer(
-            emailSender: $this->spyEmailSender,
+        return new PreventionPlanVersionCompletedNotifier(
+            notifier: $this->spyNotifier,
             preventionPlanRepository: $this->preventionPlanRepository,
             userRepository: $this->userRepository,
-            translator: $this->createTranslator(),
         );
-    }
-
-    private function createTranslator(): TranslatorInterface
-    {
-        return new FakeTranslator();
     }
 }
 
-class SpyEmailSender implements EmailSender
+class SpySystemNotifier implements SystemNotifier
 {
-    private bool $called = false;
-    private ?EmailRecipient $lastRecipient = null;
+    /** @var array<int, SystemNotification> */
+    public array $notifications = [];
 
-    public function __invoke(EmailRecipient $recipient, string $subject, string $template, ?array $params = null): void
+    public function notify(SystemNotification $notification): void
     {
-        $this->called = true;
-        $this->lastRecipient = $recipient;
-    }
-
-    public function wasCalled(): bool
-    {
-        return $this->called;
-    }
-
-    public function lastRecipient(): ?EmailRecipient
-    {
-        return $this->lastRecipient;
+        $this->notifications[] = $notification;
     }
 }
