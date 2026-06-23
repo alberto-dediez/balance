@@ -12,6 +12,7 @@ use App\FoodLoss\Domain\Model\Protocol\ProtocolRepository;
 use App\FoodLoss\Domain\Model\ProtocolAccess\ProtocolAccessRepository;
 use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceRepository;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionRepository;
+use App\FoodLoss\Infrastructure\Persistence\InMemory\Repository\InMemoryTrainingAttendanceRepository;
 use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
@@ -102,7 +103,7 @@ class GetTrainingDashboardServiceTest extends TestCase
     {
         return new GetTrainingDashboardService(
             repository: $this->createTrainingSessionRepository(),
-            authorizer: new TrainingSessionAuthorizer(),
+            authorizer: new TrainingSessionAuthorizer(new InMemoryTrainingAttendanceRepository()),
             protocolAuthorizer: new ProtocolAuthorizer(),
             trainingAttendanceRepository: $this->createTrainingAttendanceRepository(),
             protocolRepository: $this->createProtocolRepository(),

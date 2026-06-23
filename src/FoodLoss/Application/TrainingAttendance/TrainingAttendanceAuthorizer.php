@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\FoodLoss\Application\TrainingAttendance;
 
 use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendance;
-use App\HumanResources\Domain\Model\Employee\EmployeeFilter;
 use App\HumanResources\Domain\Model\Employee\EmployeeRepository;
 use App\Security\Application\AbstractAuthorizer;
 use App\Security\Domain\Model\Account\AccountId;

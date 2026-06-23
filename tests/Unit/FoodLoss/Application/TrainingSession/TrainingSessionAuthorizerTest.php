@@ -7,9 +7,11 @@ namespace App\Tests\Unit\FoodLoss\Application\TrainingSession;
 use App\FoodLoss\Application\TrainingSession\TrainingSessionAuthorizer;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSession;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionId;
+use App\FoodLoss\Infrastructure\Persistence\InMemory\Repository\InMemoryTrainingAttendanceRepository;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
+use App\Tests\Unit\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceMother;
 use App\Tests\Unit\FoodLoss\Domain\Model\TrainingSession\TrainingSessionMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
@@ -72,6 +74,18 @@ class TrainingSessionAuthorizerTest extends TestCase
         $this->assertTrue($this->createSUT()->canDoThat($subject, Action::Edit, $user));
     }
 
+    public function testOwnerCannotEditTrainingSessionWithExistingAttendances(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+        $sessionId = (string) TrainingSessionId::generate();
+        $subject = TrainingSessionMother::from(title: 'Test', id: $sessionId, accountId: 'account-id-test');
+
+        $repository = new InMemoryTrainingAttendanceRepository();
+        $repository->add(TrainingAttendanceMother::forSession($sessionId, 'account-id-test'));
+
+        $this->assertFalse($this->createSUT($repository)->canDoThat($subject, Action::Edit, $user));
+    }
+
     public function testOwnerCannotEditTrainingSessionFromOtherAccount(): void
     {
         $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
@@ -104,8 +118,8 @@ class TrainingSessionAuthorizerTest extends TestCase
         $this->assertFalse($this->createSUT()->canDoThat($subject, Action::List, $user));
     }
 
-    private function createSUT(): TrainingSessionAuthorizer
+    private function createSUT(?InMemoryTrainingAttendanceRepository $repository = null): TrainingSessionAuthorizer
     {
-        return new TrainingSessionAuthorizer();
+        return new TrainingSessionAuthorizer($repository ?? new InMemoryTrainingAttendanceRepository());
     }
 }

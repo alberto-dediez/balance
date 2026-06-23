@@ -9,6 +9,7 @@ use App\FoodLoss\Application\TrainingSession\Register\RegisterTrainingSessionSer
 use App\FoodLoss\Application\TrainingSession\TrainingSessionAuthorizer;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionRegistered;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionRepository;
+use App\FoodLoss\Infrastructure\Persistence\InMemory\Repository\InMemoryTrainingAttendanceRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -73,7 +74,7 @@ class RegisterTrainingSessionServiceTest extends TestCase
     {
         return new RegisterTrainingSessionService(
             trainingSessionRepository: $repository,
-            authorizer: new TrainingSessionAuthorizer(),
+            authorizer: new TrainingSessionAuthorizer(new InMemoryTrainingAttendanceRepository()),
         );
     }
 }

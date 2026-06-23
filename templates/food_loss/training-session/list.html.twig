@@ -48,12 +48,7 @@
                 </span>
 
                 {% if myEmployee is defined and myEmployee %}
-                    <twig:List:Action path="{{ path('training_attendances_self_sign', {'trainingSessionId': element.id}) }}"
-                        title="{{ 'Firmar asistencia' | trans }}"
-                        class="text-primary"
-                    >
-                        <twig:Icon name="solar:pen-new-square-line-duotone" size="lg" />
-                    </twig:List:Action>
+                    <twig:List:Action:RequestSignature path="{{ path('training_attendances_self_sign', {'trainingSessionId': element.id}) }}" title="{{ 'Firmar asistencia' | trans }}" />
                 {% endif %}
             {% endif %}
         </td>
@@ -64,6 +59,10 @@
 
             {% if dummyAttendance | is_authorized('register') %}
                 <twig:List:Action:Upload path="{{ path('training_attendances_register', {'trainingSessionId': element.id}) }}" title="{{ 'Subir hoja de asistencia' | trans }}" />
+            {% endif %}
+
+            {% if dummyAttendance | is_authorized('register') %}
+                <twig:List:Action:RequestSignature path="{{ path('training_attendances_request_signature', {'trainingSessionId': element.id}) }}" />
             {% endif %}
 
             {% if element | is_authorized('edit') %}

@@ -9,6 +9,7 @@ use App\FoodLoss\Application\TrainingSession\Remove\RemoveTrainingSessionService
 use App\FoodLoss\Application\TrainingSession\TrainingSessionAuthorizer;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionRemoved;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSessionRepository;
+use App\FoodLoss\Infrastructure\Persistence\InMemory\Repository\InMemoryTrainingAttendanceRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -69,7 +70,7 @@ class RemoveTrainingSessionServiceTest extends TestCase
     {
         return new RemoveTrainingSessionService(
             repository: $repository,
-            authorizer: new TrainingSessionAuthorizer(),
+            authorizer: new TrainingSessionAuthorizer(new InMemoryTrainingAttendanceRepository()),
         );
     }
 }

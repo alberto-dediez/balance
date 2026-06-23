@@ -3,7 +3,7 @@
 {% block top_actions %}
     {% if dummy | is_authorized('register') %}
         <twig:TopAction path="{{ path('training_attendances_request_signature', {'trainingSessionId': trainingSession.id}) }}">
-            <twig:Icon name="solar:pen-new-square-line-duotone" size="lg" class="me-2" />
+            <twig:Icon name="solar:pen-2-line-duotone" size="lg" class="me-2" />
 
             {{ 'Solicitar firma' | trans }}
         </twig:TopAction>

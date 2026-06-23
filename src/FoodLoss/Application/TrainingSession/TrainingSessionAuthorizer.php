@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\FoodLoss\Application\TrainingSession;
 
+use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceFilter;
+use App\FoodLoss\Domain\Model\TrainingAttendance\TrainingAttendanceRepository;
 use App\FoodLoss\Domain\Model\TrainingSession\TrainingSession;
 use App\Security\Application\AbstractAuthorizer;
 use App\Security\Domain\Model\Account\AccountId;
@@ -12,6 +14,8 @@ use App\Security\Domain\Model\User\User;
 
 final class TrainingSessionAuthorizer extends AbstractAuthorizer
 {
+    public function __construct(private readonly TrainingAttendanceRepository $trainingAttendanceRepository) {}
+
     protected function canRegister(mixed $subject, User $user): bool
     {
         return $this->canEdit($subject, $user);
@@ -50,7 +54,15 @@ final class TrainingSessionAuthorizer extends AbstractAuthorizer
 
         $subjectAccountId = $subject->accountId();
 
-        return null !== $subjectAccountId && $user->accountId()->equals($subjectAccountId);
+        if (null === $subjectAccountId || !$user->accountId()->equals($subjectAccountId)) {
+            return false;
+        }
+
+        $attendanceCount = $this->trainingAttendanceRepository->totalResultsByFilter(
+            new TrainingAttendanceFilter(trainingSessionId: $subject->id()),
+        );
+
+        return 0 === $attendanceCount;
     }
 
     protected function canRemove(mixed $subject, User $user): bool
