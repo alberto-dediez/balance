@@ -5041,6 +5041,18 @@
         <source>La notificación ha sido eliminada</source>
         <target>The notification has been deleted</target>
       </trans-unit>
+      <trans-unit id="rsOE4T0" resname="Entrega confirmada por la organización destinataria">
+        <source>Entrega confirmada por la organización destinataria</source>
+        <target>Delivery confirmed by the recipient organization</target>
+      </trans-unit>
+      <trans-unit id="vICgK.p" resname="La organización destinataria ha confirmado una entrega realizada el {date}.">
+        <source>La organización destinataria ha confirmado una entrega realizada el {date}.</source>
+        <target>The recipient organization has confirmed a delivery made on {date}.</target>
+      </trans-unit>
+      <trans-unit id="yq9muSe" resname="Ver entregas">
+        <source>Ver entregas</source>
+        <target>View deliveries</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
