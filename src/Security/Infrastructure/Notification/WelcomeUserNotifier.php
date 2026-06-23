@@ -11,7 +11,6 @@ use App\Security\Domain\Model\User\UserRegistered;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WelcomeUserNotifier implements DomainEventSubscriber
 {
@@ -19,7 +18,6 @@ class WelcomeUserNotifier implements DomainEventSubscriber
 
     public function __construct(
         private SystemNotifier $notifier,
-        private TranslatorInterface $translator,
     ) {
         $this->register();
     }
@@ -37,7 +35,8 @@ class WelcomeUserNotifier implements DomainEventSubscriber
 
     private function handleUserRegistered(UserRegistered $event): void
     {
-        $subject = $this->translator->trans('Bienvenido {user}', ['{user}' => $event->username()]);
+        $subject = 'Bienvenido {user}';
+        $subjectParams = ['{user}' => $event->username()];
         $params = [
             'username' => $event->username(),
             'account' => $event->accountId(),
@@ -50,6 +49,7 @@ class WelcomeUserNotifier implements DomainEventSubscriber
             template: '@security/users/welcome.notification.html.twig',
             params: $params,
             accountId: $event->accountId(),
+            subjectParams: $subjectParams,
         ));
 
         $this->notifier->notify(new SystemNotification(
@@ -59,6 +59,7 @@ class WelcomeUserNotifier implements DomainEventSubscriber
             template: '@security/users/welcome.email.html.twig',
             params: $params,
             accountId: $event->accountId(),
+            subjectParams: $subjectParams,
         ));
     }
 

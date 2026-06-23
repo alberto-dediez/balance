@@ -16,7 +16,6 @@ use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ImportationExecutedNotifier implements DomainEventSubscriber
 {
@@ -26,7 +25,6 @@ class ImportationExecutedNotifier implements DomainEventSubscriber
         private SystemNotifier $notifier,
         private ImportationRepository $importationRepository,
         private UserRepository $userRepository,
-        private TranslatorInterface $translator,
     ) {
         $this->register();
     }
@@ -60,7 +58,8 @@ class ImportationExecutedNotifier implements DomainEventSubscriber
             return;
         }
 
-        $subject = $this->translator->trans('Importación de {file} finalizada', ['{file}' => $importation->name()]);
+        $subject = 'Importación de {file} finalizada';
+        $subjectParams = ['{file}' => $importation->name()];
         $params = [
             'user' => $user,
             'importation' => $importation,
@@ -73,6 +72,7 @@ class ImportationExecutedNotifier implements DomainEventSubscriber
             template: '@data_exchange/notification/executed.notification.html.twig',
             params: $params,
             accountId: $user->accountId(),
+            subjectParams: $subjectParams,
         ));
 
         $this->notifier->notify(new SystemNotification(
@@ -82,6 +82,7 @@ class ImportationExecutedNotifier implements DomainEventSubscriber
             template: '@data_exchange/notification/executed.email.html.twig',
             params: $params,
             accountId: $user->accountId(),
+            subjectParams: $subjectParams,
         ));
     }
 

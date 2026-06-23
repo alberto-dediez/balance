@@ -16,7 +16,6 @@ use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ExportationExecutedNotifier implements DomainEventSubscriber
 {
@@ -26,7 +25,6 @@ class ExportationExecutedNotifier implements DomainEventSubscriber
         private SystemNotifier $notifier,
         private ExportationRepository $exportationRepository,
         private UserRepository $userRepository,
-        private TranslatorInterface $translator,
     ) {
         $this->register();
     }
@@ -60,7 +58,7 @@ class ExportationExecutedNotifier implements DomainEventSubscriber
             return;
         }
 
-        $subject = $this->translator->trans('Exportación finalizada');
+        $subject = 'Exportación finalizada';
         $params = [
             'user' => $user,
             'exportation' => $exportation,

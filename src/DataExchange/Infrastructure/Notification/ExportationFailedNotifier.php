@@ -16,7 +16,6 @@ use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ExportationFailedNotifier implements DomainEventSubscriber
 {
@@ -26,7 +25,6 @@ class ExportationFailedNotifier implements DomainEventSubscriber
         private SystemNotifier $notifier,
         private ExportationRepository $exportationRepository,
         private UserRepository $userRepository,
-        private TranslatorInterface $translator,
     ) {
         $this->register();
     }
@@ -60,7 +58,7 @@ class ExportationFailedNotifier implements DomainEventSubscriber
             return;
         }
 
-        $subject = $this->translator->trans('La exportación no se ha podido generar');
+        $subject = 'La exportación no se ha podido generar';
         $params = [
             'user' => $user,
             'exportation' => $exportation,

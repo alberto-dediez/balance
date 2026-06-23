@@ -12,8 +12,13 @@ use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bridge\Twig\Extension\TranslationExtension;
+use Symfony\Component\Translation\Loader\ArrayLoader as TranslationArrayLoader;
+use Symfony\Component\Translation\LocaleSwitcher;
+use Symfony\Component\Translation\Translator;
 use Twig\Environment;
 use Twig\Loader\ArrayLoader;
 
@@ -96,10 +101,38 @@ class DispatchingSystemNotifierTest extends TestCase
         $this->assertCount(0, $this->spy->requests());
     }
 
+    public function testLocalizesSubjectAndBodyToRecipientPreferredLocale(): void
+    {
+        $recipient = UserMother::from(UserId::generate(), 'recipient@example.com');
+        $recipient->changePreferredLocale(Locale::English);
+
+        $translator = new Translator('es');
+        $translator->addLoader('array', new TranslationArrayLoader());
+        $translator->addResource('array', ['Asunto' => 'Subject'], 'en');
+
+        $sut = $this->notifier(
+            $recipient,
+            ['tpl.html.twig' => '{{ "Cuerpo"|trans }}'],
+            translator: $translator,
+        );
+
+        $sut->notify(new SystemNotification(
+            recipientId: $recipient->id(),
+            channel: NotificationChannel::Email,
+            subject: 'Asunto',
+            template: 'tpl.html.twig',
+        ));
+
+        $request = $this->dispatchedRequest();
+
+        $this->assertEquals('Subject', $request->subject);
+        $this->assertEquals('es', $translator->getLocale(), 'The ambient locale is restored after dispatching.');
+    }
+
     /**
      * @param array<string,string> $templates
      */
-    private function notifier(?User $recipient, array $templates, bool $internalNotificationsEnabled = true): DispatchingSystemNotifier
+    private function notifier(?User $recipient, array $templates, bool $internalNotificationsEnabled = true, ?Translator $translator = null): DispatchingSystemNotifier
     {
         $userRepository = new InMemoryUserRepository();
 
@@ -107,9 +140,15 @@ class DispatchingSystemNotifierTest extends TestCase
             $userRepository->add($recipient);
         }
 
+        $translator ??= new Translator('es');
+        $twig = new Environment(new ArrayLoader($templates));
+        $twig->addExtension(new TranslationExtension($translator));
+
         return new DispatchingSystemNotifier(
-            new Environment(new ArrayLoader($templates)),
+            $twig,
             $userRepository,
+            $translator,
+            new LocaleSwitcher('es', [$translator]),
             $internalNotificationsEnabled,
         );
     }
