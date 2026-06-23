@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Shared;
 
+use App\Shared\Application\CommandBus\CommandBusDispatcher;
+use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Infrastructure\Symfony\Event\EmailListener;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
@@ -27,6 +29,10 @@ final readonly class MailContext implements Context
     public function after(BeforeScenarioScope $scope): void
     {
         $this->getEmailListener()->reset();
+
+        DomainEventPublisher::instance()->clearPending();
+        DomainEventPublisher::instance()->reset();
+        CommandBusDispatcher::instance()->reset();
     }
 
     private function getEmailListener(): EmailListener

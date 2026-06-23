@@ -24,7 +24,7 @@
                 </span>
                 <div class="ps-3">
                     <h6 class="mb-1 fw-semibold">{{ notification.subject }}</h6>
-                    <span class="fs-2 d-block text-body-secondary text-truncate" style="max-width: 220px;">{{ notification.body }}</span>
+                    <span class="fs-2 d-block text-body-secondary text-truncate" style="max-width: 220px;">{{ notification.body | striptags }}</span>
                     <span class="fs-1 d-block text-body-secondary">{{ notification.createdAt | date('d/m/Y H:i') }}</span>
                 </div>
             </a>

@@ -1,0 +1,12 @@
+<p>
+    {% if account is not empty %}
+        {% trans with {
+            '{user}': username,
+            '{account}': account | account_name
+        } -%}Se ha dado de alta tu usuario {user} en la cuenta {account}.{%- endtrans %}
+    {% else %}
+        {% trans with {
+            '{user}': username,
+        } -%}Se ha dado de alta tu usuario {user} sin cuenta asignada.{%- endtrans %}
+    {% endif %}
+</p>

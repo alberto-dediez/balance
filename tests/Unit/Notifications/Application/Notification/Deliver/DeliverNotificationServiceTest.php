@@ -72,6 +72,32 @@ class DeliverNotificationServiceTest extends TestCase
         $this->assertEquals('recipient@example.com', $emailSender->sent()[0]['recipient']->email);
     }
 
+    public function testDeliverEmailWrapsBodyInBaseTemplate(): void
+    {
+        $repository = NotificationRepositoryMother::inMemory();
+        $emailSender = new SpyEmailSender();
+        $userRepository = new InMemoryUserRepository();
+
+        $recipient = UserMother::from(UserId::generate(), 'recipient@example.com');
+        $userRepository->add($recipient);
+
+        $sut = new DeliverNotificationService($repository, $userRepository, $emailSender);
+
+        $sut(new DeliverNotificationRequest(
+            recipientId: (string) $recipient->id(),
+            channel: NotificationChannel::Email,
+            subject: 'Asunto',
+            body: '<p>Cuerpo</p>',
+        ), UserMother::adminUser());
+
+        $this->assertCount(1, $emailSender->sent());
+
+        $sent = $emailSender->sent()[0];
+        $this->assertEquals('@notifications/email/notification.email.html.twig', $sent['template']);
+        $this->assertIsArray($sent['params']);
+        $this->assertEquals('<p>Cuerpo</p>', $sent['params']['body']);
+    }
+
     public function testDeliverEmailMarksFailedWhenRecipientNotFound(): void
     {
         $repository = NotificationRepositoryMother::inMemory();
