@@ -25,6 +25,7 @@ class TcpdfDeliveryLogsPdfGenerator implements DeliveryLogsPdfGenerator
         private readonly PropertyExtension $propertyExtension,
         private TranslatorInterface $translator,
         private LocaleSwitcher $localeSwitcher,
+        private string $uploadsDir,
     ) {}
 
     /** @param DeliveryLog[] $deliveryLogs */
@@ -79,7 +80,7 @@ class TcpdfDeliveryLogsPdfGenerator implements DeliveryLogsPdfGenerator
 
             $this->renderBrandedChromeOnEveryPage($pdf, mb_strtoupper($title));
 
-            $path = sprintf('/var/pdf/delivery-logs/%s.pdf', uniqid('dl-', true));
+            $path = sprintf('%s/delivery-logs/%s.pdf', $this->uploadsDir, uniqid('dl-', true));
 
             $dir = dirname($path);
 

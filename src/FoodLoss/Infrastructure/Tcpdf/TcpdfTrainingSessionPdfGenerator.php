@@ -16,6 +16,7 @@ class TcpdfTrainingSessionPdfGenerator implements TrainingSessionPdfGenerator
 
     public function __construct(
         private readonly TranslatorInterface $translator,
+        private string $uploadsDir,
     ) {}
 
     public function generate(TrainingSession $session, Employee $employee): string
@@ -45,7 +46,7 @@ class TcpdfTrainingSessionPdfGenerator implements TrainingSessionPdfGenerator
         $pdf->writeHTML($this->buildBrandedTableHtml($headers, $rows), true, false, true, false, '');
         $this->renderBrandedChromeOnEveryPage($pdf, mb_strtoupper($title));
 
-        $path = sprintf('/var/pdf/training-sessions/%s.pdf', uniqid('ts-', true));
+        $path = sprintf('%s/training-sessions/%s.pdf', $this->uploadsDir, uniqid('ts-', true));
 
         $dir = dirname($path);
 

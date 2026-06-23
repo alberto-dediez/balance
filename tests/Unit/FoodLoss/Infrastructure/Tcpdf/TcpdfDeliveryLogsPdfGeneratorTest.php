@@ -42,7 +42,7 @@ class TcpdfDeliveryLogsPdfGeneratorTest extends TestCase
 
         $this->generatedFiles[] = $path;
 
-        $this->assertStringStartsWith('/var/pdf/delivery-logs/', $path);
+        $this->assertStringStartsWith(sys_get_temp_dir() . '/delivery-logs/', $path);
         $this->assertStringEndsWith('.pdf', $path);
     }
 
@@ -95,6 +95,7 @@ class TcpdfDeliveryLogsPdfGeneratorTest extends TestCase
             propertyExtension: $propertyExtension,
             translator: new FakeTranslator(),
             localeSwitcher: $localeSwitcher,
+            uploadsDir: sys_get_temp_dir(),
         );
     }
 }
