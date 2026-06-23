@@ -4989,6 +4989,54 @@
         <source>Se ha dado de alta tu usuario {user} sin cuenta asignada.</source>
         <target>Your user {user} has been registered without an assigned account.</target>
       </trans-unit>
+      <trans-unit id="ui9fuB4" resname="Asistencia a formación firmada">
+        <source>Asistencia a formación firmada</source>
+        <target>Training attendance signed</target>
+      </trans-unit>
+      <trans-unit id="s7y82fT" resname="Excedente asignado a eliminación">
+        <source>Excedente asignado a eliminación</source>
+        <target>Surplus assigned to elimination</target>
+      </trans-unit>
+      <trans-unit id="3xcI0aU" resname="Nueva incidencia registrada">
+        <source>Nueva incidencia registrada</source>
+        <target>New incidence registered</target>
+      </trans-unit>
+      <trans-unit id="k1cffCR" resname="Se ha registrado tu asistencia a la formación">
+        <source>Se ha registrado tu asistencia a la formación</source>
+        <target>Your training attendance has been registered</target>
+      </trans-unit>
+      <trans-unit id="cz_UrAN" resname="El excedente del {date} ha sido asignado a eliminación.">
+        <source>El excedente del {date} ha sido asignado a eliminación.</source>
+        <target>The surplus from {date} has been assigned to elimination.</target>
+      </trans-unit>
+      <trans-unit id="T2leapQ" resname="Ver excedente">
+        <source>Ver excedente</source>
+        <target>View surplus</target>
+      </trans-unit>
+      <trans-unit id="FlHRsHt" resname="La asistencia de {name} a la formación &quot;{title}&quot; ha sido firmada.">
+        <source>La asistencia de {name} a la formación "{title}" ha sido firmada.</source>
+        <target>The attendance of {name} to the training "{title}" has been signed.</target>
+      </trans-unit>
+      <trans-unit id="DRKDJ9W" resname="Una asistencia a la formación &quot;{title}&quot; ha sido firmada.">
+        <source>Una asistencia a la formación "{title}" ha sido firmada.</source>
+        <target>An attendance to the training "{title}" has been signed.</target>
+      </trans-unit>
+      <trans-unit id="OmrRWfU" resname="Ver asistencias">
+        <source>Ver asistencias</source>
+        <target>View attendances</target>
+      </trans-unit>
+      <trans-unit id="Xb_RO4P" resname="Se ha registrado tu asistencia a la formación &quot;{title}&quot; del {date}.">
+        <source>Se ha registrado tu asistencia a la formación "{title}" del {date}.</source>
+        <target>Your attendance to the training "{title}" on {date} has been registered.</target>
+      </trans-unit>
+      <trans-unit id="iDlNlHo" resname="Se ha registrado la incidencia &quot;{name}&quot; ocurrida el {date}.">
+        <source>Se ha registrado la incidencia "{name}" ocurrida el {date}.</source>
+        <target>The incidence "{name}" occurred on {date} has been registered.</target>
+      </trans-unit>
+      <trans-unit id="w_cv3el" resname="Ver incidencia">
+        <source>Ver incidencia</source>
+        <target>View incidence</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

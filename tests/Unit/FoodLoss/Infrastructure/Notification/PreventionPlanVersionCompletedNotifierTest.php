@@ -9,8 +9,6 @@ use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanRepository;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersionCompleted;
 use App\FoodLoss\Domain\Model\PreventionPlan\PreventionPlanVersionValidated;
 use App\FoodLoss\Infrastructure\Notification\PreventionPlanVersionCompletedNotifier;
-use App\Notifications\Application\Notification\Notify\SystemNotification;
-use App\Notifications\Application\Notification\Notify\SystemNotifier;
 use App\Notifications\Domain\Model\Notification\NotificationChannel;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
@@ -128,16 +126,5 @@ class PreventionPlanVersionCompletedNotifierTest extends TestCase
             preventionPlanRepository: $this->preventionPlanRepository,
             userRepository: $this->userRepository,
         );
-    }
-}
-
-class SpySystemNotifier implements SystemNotifier
-{
-    /** @var array<int, SystemNotification> */
-    public array $notifications = [];
-
-    public function notify(SystemNotification $notification): void
-    {
-        $this->notifications[] = $notification;
     }
 }

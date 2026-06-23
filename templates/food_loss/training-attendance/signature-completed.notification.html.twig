@@ -1,0 +1,21 @@
+<p>
+    {% if employee %}
+        {% trans with {
+            '{name}': employee.name,
+            '{title}': trainingSession.title
+        } -%}
+            La asistencia de {name} a la formación "{title}" ha sido firmada.
+        {%- endtrans %}
+    {% else %}
+        {% trans with {
+            '{title}': trainingSession.title
+        } -%}
+            Una asistencia a la formación "{title}" ha sido firmada.
+        {%- endtrans %}
+    {% endif %}
+</p>
+<p>
+    <a href="{{ path('training_attendances', {'trainingSessionId': trainingSession.id}) }}">
+        {% trans -%}Ver asistencias{%- endtrans -%}
+    </a>
+</p>
