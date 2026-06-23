@@ -27,6 +27,14 @@ class NotificationMother
         return self::internalFor(UserId::generate());
     }
 
+    public static function fromIdAndRecipient(string $id, UserId $recipientId): Notification
+    {
+        return self::from(
+            recipientId: $recipientId,
+            id: new NotificationId($id),
+        );
+    }
+
     public static function from(
         UserId $recipientId,
         NotificationChannel $channel = NotificationChannel::Internal,
@@ -34,8 +42,9 @@ class NotificationMother
         string $body = 'Cuerpo',
         ?AccountId $accountId = null,
         ?UserId $sentBy = null,
+        ?NotificationId $id = null,
     ): Notification {
-        $notification = new Notification(NotificationId::generate());
+        $notification = new Notification($id ?? NotificationId::generate());
 
         $notification->create(
             recipientId: $recipientId,

@@ -17,7 +17,7 @@ class NotificationFilter
         public ?AccountId $accountId = null,
         public ?NotificationChannel $channel = null,
         public ?NotificationStatus $status = null,
-        public bool $onlyUnread = false,
+        public ?bool $onlyUnread = null,
         int $limit = 10,
     ) {
         $this->limit = $limit;

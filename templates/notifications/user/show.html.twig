@@ -14,10 +14,14 @@
 
             <div>{{ notification.body | raw }}</div>
 
-            <div class="mt-4">
+            <div class="mt-4 d-flex gap-2">
                 <a href="{{ path('notifications') }}" class="btn btn-outline-primary">
                     <twig:Icon name="solar:arrow-left-line-duotone" />
                     {% trans -%}Volver{%- endtrans %}
+                </a>
+                <a href="{{ path('notification_remove', {'id': notification.id}) }}" class="btn btn-outline-danger">
+                    <twig:Icon name="solar:close-square-line-duotone" />
+                    {% trans -%}Eliminar{%- endtrans %}
                 </a>
             </div>
         </div>
