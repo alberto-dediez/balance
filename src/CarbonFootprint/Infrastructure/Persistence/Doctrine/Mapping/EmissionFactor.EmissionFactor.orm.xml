@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <embeddable name="App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor">
+        <field name="co2eq" type="decimal" precision="20" scale="8" nullable="false"/>
+        <field name="co2"   type="decimal" precision="20" scale="8" nullable="false"/>
+        <field name="ch4"   type="decimal" precision="20" scale="8" nullable="false"/>
+        <field name="n2o"   type="decimal" precision="20" scale="8" nullable="false"/>
+        <field name="year"  type="integer" nullable="false"/>
+        <field name="unit" type="string" enum-type="App\CarbonFootprint\Domain\Model\Unit" nullable="false"/>
+        <field name="source" type="string" length="255" nullable="true"/>
+    </embeddable>
+
+</doctrine-mapping>

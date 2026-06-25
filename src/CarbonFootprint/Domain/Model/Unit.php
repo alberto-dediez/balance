@@ -7,5 +7,13 @@ namespace App\CarbonFootprint\Domain\Model;
 enum Unit: string
 {
     case Kilogram = 'kg';
-    case Piece = 'ud';
+    case Piece    = 'ud';
+
+    public function magnitude(): Magnitude
+    {
+        return match ($this) {
+            self::Kilogram => Magnitude::Mass,
+            self::Piece     => Magnitude::Pieces,
+        };
+    }
 }
