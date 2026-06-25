@@ -1,0 +1,5 @@
+{% trans with {
+    '{year}': event.emissionFactor.year,
+    '{material}': event.materialId,
+    '{user}': element.userId | user_name
+} %}Se ha añadido el factor de emisión del año {year} al material {material} por el usuario {user}{% endtrans %}

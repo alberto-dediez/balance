@@ -1867,47 +1867,103 @@
       </trans-unit>
       <trans-unit id="e0a.YtK" resname="Material creado correctamente: {name}">
         <source>Material creado correctamente: {name}</source>
-        <target>__Material creado correctamente: {name}</target>
+        <target>Material created successfully: {name}</target>
       </trans-unit>
       <trans-unit id="hqSyIMM" resname="Material actualizado con éxito">
         <source>Material actualizado con éxito</source>
-        <target>__Material actualizado con éxito</target>
+        <target>Material updated successfully</target>
       </trans-unit>
       <trans-unit id="8I.293W" resname="Se ha eliminado el material {material}">
         <source>Se ha eliminado el material {material}</source>
-        <target>__Se ha eliminado el material {material}</target>
+        <target>Material {material} has been deleted</target>
       </trans-unit>
       <trans-unit id="1Flt7cl" resname="No se ha podido eliminar el material {material}">
         <source>No se ha podido eliminar el material {material}</source>
-        <target>__No se ha podido eliminar el material {material}</target>
+        <target>Could not delete material {material}</target>
       </trans-unit>
       <trans-unit id="pGcRPxM" resname="Se ha eliminado el material {id}">
         <source>Se ha eliminado el material {id}</source>
-        <target>__Se ha eliminado el material {id}</target>
+        <target>Material {id} has been deleted</target>
       </trans-unit>
       <trans-unit id="NG3Yhr8" resname="No se ha podido eliminar el material {id}">
         <source>No se ha podido eliminar el material {id}</source>
-        <target>__No se ha podido eliminar el material {id}</target>
+        <target>Could not delete material {id}</target>
       </trans-unit>
       <trans-unit id="5FAEnOK" resname="Materiales">
         <source>Materiales</source>
-        <target>__Materiales</target>
+        <target>Materials</target>
       </trans-unit>
       <trans-unit id="_7O_HIN" resname="Se ha eliminado el material {material} por el usuario {user}">
         <source>Se ha eliminado el material {material} por el usuario {user}</source>
-        <target>__Se ha eliminado el material {material} por el usuario {user}</target>
+        <target>Material {material} has been deleted by user {user}</target>
       </trans-unit>
       <trans-unit id="VIQakk8" resname="Se ha traducido el material &quot;{material}&quot; por el usuario {user}">
         <source>Se ha traducido el material "{material}" por el usuario {user}</source>
-        <target>__Se ha traducido el material "{material}" por el usuario {user}</target>
+        <target>The material “{material}” has been translated by user {user}</target>
       </trans-unit>
       <trans-unit id="9p6id5K" resname="Se ha actualizado el material &quot;{material}&quot; por el usuario {user}">
         <source>Se ha actualizado el material "{material}" por el usuario {user}</source>
-        <target>__Se ha actualizado el material "{material}" por el usuario {user}</target>
+        <target>The material “{material}” has been updated by user {user}</target>
       </trans-unit>
       <trans-unit id="NqbKBvL" resname="Se ha registrado el material &quot;{material}&quot; por el usuario {user}">
         <source>Se ha registrado el material "{material}" por el usuario {user}</source>
-        <target>__Se ha registrado el material "{material}" por el usuario {user}</target>
+        <target>The material “{material}” has been registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="ALbZ8pU" resname="Factores de emisión">
+        <source>Factores de emisión</source>
+        <target>Emission Factors</target>
+      </trans-unit>
+      <trans-unit id="IY._g7L" resname="Año">
+        <source>Año</source>
+        <target>Year</target>
+      </trans-unit>
+      <trans-unit id="n1_gzeY" resname="Kg CO2eq">
+        <source>Kg CO2eq</source>
+        <target>kg CO2eq</target>
+      </trans-unit>
+      <trans-unit id="iVd_vtp" resname="Kg CO2">
+        <source>Kg CO2</source>
+        <target>kg CO2</target>
+      </trans-unit>
+      <trans-unit id="24xRVEq" resname="g CH4">
+        <source>g CH4</source>
+        <target>g CH4</target>
+      </trans-unit>
+      <trans-unit id="btSpWnF" resname="g N2O">
+        <source>g N2O</source>
+        <target>g N2O</target>
+      </trans-unit>
+      <trans-unit id="PJMQZSe" resname="Fuente">
+        <source>Fuente</source>
+        <target>Source</target>
+      </trans-unit>
+      <trans-unit id="iEjHBev" resname="Se ha actualizado el factor de emisión del año {year} del material {material} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión del año {year} del material {material} por el usuario {user}</source>
+        <target>The emission factor for the year {year} for the material {material} has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="XtGYdpj" resname="Se ha eliminado el factor de emisión del año {year} del material {material} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} del material {material} por el usuario {user}</source>
+        <target>The emission factor for the year {year} for the material {material} has been removed by user {user}</target>
+      </trans-unit>
+      <trans-unit id="VHoPy3O" resname="Se ha añadido el factor de emisión del año {year} al material {material} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} al material {material} por el usuario {user}</source>
+        <target>The emission factor for the year {year} has been added to the material {material} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="LlbjluZ" resname="CO2eq">
+        <source>CO2eq</source>
+        <target>CO2eq</target>
+      </trans-unit>
+      <trans-unit id="RiHOKhT" resname="CO2">
+        <source>CO2</source>
+        <target>CO2</target>
+      </trans-unit>
+      <trans-unit id="eJurnzv" resname="CH4">
+        <source>CH4</source>
+        <target>CH4</target>
+      </trans-unit>
+      <trans-unit id="yVoI9M0" resname="N2O">
+        <source>N2O</source>
+        <target>N2O</target>
       </trans-unit>
     </body>
   </file>

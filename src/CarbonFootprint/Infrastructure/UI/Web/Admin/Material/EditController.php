@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\Admin\Material;
 
+use App\CarbonFootprint\Application\Material\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\Material\Update\UpdateMaterialRequest;
 use App\CarbonFootprint\Application\Material\Update\UpdateMaterialService;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
@@ -35,11 +36,17 @@ class EditController extends AbstractController
 
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $material);
 
+        $emissionFactors = [];
+        foreach ($material->emissionFactors() as $materialEmissionFactor) {
+            $emissionFactors[] = EmissionFactorData::fromEmissionFactor($materialEmissionFactor->emissionFactor());
+        }
+
         $materialRequest = new UpdateMaterialRequest(
             materialId: $material->id(),
             name: $material->name(),
             category: $material->category(),
             unit: $material->unit(),
+            emissionFactors: $emissionFactors,
         );
 
         try {

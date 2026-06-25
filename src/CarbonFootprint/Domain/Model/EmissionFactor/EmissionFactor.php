@@ -53,6 +53,19 @@ final class EmissionFactor implements \Stringable
         return $this->source;
     }
 
+    public function withUnit(Unit $unit): self
+    {
+        return new self(
+            co2eq: $this->co2eq,
+            co2: $this->co2,
+            ch4: $this->ch4,
+            n2o: $this->n2o,
+            year: $this->year,
+            unit: $unit,
+            source: $this->source,
+        );
+    }
+
     public function equals(self $other): bool
     {
         return $this->co2eq === $other->co2eq()

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\Material\Update;
 
 use App\CarbonFootprint\Application\Material\MaterialAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
@@ -42,6 +43,15 @@ class UpdateMaterialService implements CommandHandler
             category: $request->category,
             unit: $request->unit,
             locale: $isDefaultLocale ? null : $locale,
+        );
+
+        $unit = $material->unit();
+
+        $material->syncEmissionFactors(
+            array_map(
+                static fn(EmissionFactorData $data): EmissionFactor => $data->toEmissionFactor($unit),
+                $request->emissionFactors,
+            ),
         );
 
         $this->materialRepository->add($material);

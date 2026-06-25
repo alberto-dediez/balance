@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\Material\Update;
 
 use App\CarbonFootprint\Application\Material\MaterialAuthorizer;
+use App\CarbonFootprint\Application\Material\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\Material\Update\UpdateMaterialRequest;
 use App\CarbonFootprint\Application\Material\Update\UpdateMaterialService;
 use App\CarbonFootprint\Domain\Model\Material\MaterialCategory;
@@ -97,6 +98,50 @@ class UpdateMaterialServiceTest extends TestCase
         $this->assertNotNull($lastEvent);
         $this->assertTrue($lastEvent instanceof MaterialTranslated);
         $this->assertTrue($materialPersisted->id()->equals($lastEvent->materialId()));
+    }
+
+    public function testUpdateSyncsEmissionFactors(): void
+    {
+        $repository = MaterialRepositoryMother::inMemory();
+
+        $material = MaterialMother::random();
+
+        $repository->add($material);
+
+        $user = UserMother::fromUsernameAndRole('admin', Role::Admin);
+
+        $sut = $this->createSUT($repository, Locale::Spanish);
+
+        $request = new UpdateMaterialRequest(
+            materialId: $material->id(),
+            name: 'changedName',
+            category: MaterialCategory::Glass,
+            unit: Unit::Piece,
+            emissionFactors: [
+                new EmissionFactorData(
+                    year: 2024,
+                    co2eq: '1.5',
+                    co2: '1.0',
+                    ch4: '0.2',
+                    n2o: '0.3',
+                    source: 'IPCC',
+                ),
+            ],
+        );
+
+        $result = $sut($request, $user);
+
+        $materialPersisted = $repository->find($result->materialId);
+
+        $this->assertNotNull($materialPersisted);
+        $this->assertCount(1, $materialPersisted->emissionFactors());
+
+        $persistedFactor = $materialPersisted->emissionFactorFor(2024);
+
+        $this->assertNotNull($persistedFactor);
+        $this->assertSame('1.5', $persistedFactor->co2eq());
+        // The emission factor unit is derived from the material's unit, not user input.
+        $this->assertSame(Unit::Piece, $persistedFactor->unit());
     }
 
     private function createSUT(MaterialRepository $repository, Locale $locale = Locale::Spanish): UpdateMaterialService

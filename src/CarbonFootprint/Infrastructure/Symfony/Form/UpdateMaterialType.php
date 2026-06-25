@@ -6,8 +6,10 @@ namespace App\CarbonFootprint\Infrastructure\Symfony\Form;
 
 use App\CarbonFootprint\Application\Material\Update\UpdateMaterialRequest;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MaterialCategoryType;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MaterialEmissionFactorType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\UnitType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -38,6 +40,16 @@ class UpdateMaterialType extends AbstractType
                 'label' => new TranslatableMessage('Unidad'),
                 'required' => true,
                 'constraints' => [new Assert\NotNull()],
+            ])
+            ->add('emissionFactors', CollectionType::class, [
+                'label' => new TranslatableMessage('Factores de emisión'),
+                'entry_type' => MaterialEmissionFactorType::class,
+                'entry_options' => ['label' => false],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'prototype' => true,
+                'required' => false,
             ])
             ->add('saveAndReturn', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar y salir'),

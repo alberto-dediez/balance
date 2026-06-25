@@ -27,6 +27,7 @@ doctrine:
             job_progress_key: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressKeyType
             employee_id: App\HumanResources\Infrastructure\Persistence\Doctrine\Type\EmployeeIdType
             material_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MaterialIdType
+            material_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MaterialEmissionFactorIdType
 
     orm:
         auto_generate_proxy_classes: true

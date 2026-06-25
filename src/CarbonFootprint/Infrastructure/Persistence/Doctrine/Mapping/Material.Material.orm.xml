@@ -27,5 +27,16 @@
                 <cascade-remove/>
             </cascade>
         </one-to-many>
+
+        <one-to-many field="emissionFactors"
+                     target-entity="App\CarbonFootprint\Domain\Model\Material\MaterialEmissionFactor"
+                     mapped-by="material"
+                     orphan-removal="true"
+                     fetch="EXTRA_LAZY">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
     </entity>
 </doctrine-mapping>

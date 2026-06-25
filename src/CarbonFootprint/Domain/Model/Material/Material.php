@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Domain\Model\Material;
 
+use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\Translatable;
 use App\Shared\Domain\Model\Locale\Translations;
+use Doctrine\Common\Collections\Collection;
 
 class Material implements Translatable, \Stringable
 {
@@ -16,6 +18,9 @@ class Material implements Translatable, \Stringable
 
     /** @var iterable<MaterialTranslation>|Translations */
     private iterable $translations;
+
+    /** @var iterable<MaterialEmissionFactor>|Collection<int, MaterialEmissionFactor> */
+    private iterable $emissionFactors = [];
 
     /** @param array<mixed> $events */
     public function __construct(
@@ -87,6 +92,16 @@ class Material implements Translatable, \Stringable
         return $this->removedAt;
     }
 
+    public function emissionFactors(): MaterialEmissionFactors
+    {
+        return new MaterialEmissionFactors($this->emissionFactors);
+    }
+
+    public function emissionFactorFor(int $year): ?EmissionFactor
+    {
+        return $this->emissionFactors()->forYear($year)?->emissionFactor();
+    }
+
     public function register(
         string $name,
         MaterialCategory $category,
@@ -113,6 +128,8 @@ class Material implements Translatable, \Stringable
         Unit $unit,
         ?Locale $locale = null,
     ): void {
+        $previousUnit = $this->unit;
+
         $this->recordApplyAndPublish(
             new MaterialUpdated(
                 materialId: $this->id(),
@@ -124,6 +141,10 @@ class Material implements Translatable, \Stringable
 
         if ($locale instanceof Locale) {
             $this->translate($name, $locale);
+        }
+
+        if ($previousUnit !== $unit) {
+            $this->restampEmissionFactorUnits($unit);
         }
     }
 
@@ -145,6 +166,91 @@ class Material implements Translatable, \Stringable
                 materialId: $this->id(),
             ),
         );
+    }
+
+    public function setEmissionFactor(EmissionFactor $emissionFactor): void
+    {
+        $current = $this->emissionFactors()->forYear($emissionFactor->year());
+
+        if (null === $current) {
+            $this->recordApplyAndPublish(
+                new MaterialEmissionFactorAdded(
+                    materialId: $this->id(),
+                    emissionFactorId: MaterialEmissionFactorId::generate(),
+                    emissionFactor: $emissionFactor,
+                ),
+            );
+
+            return;
+        }
+
+        if ($current->emissionFactor()->equals($emissionFactor)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new MaterialEmissionFactorUpdated(
+                materialId: $this->id(),
+                emissionFactor: $emissionFactor,
+            ),
+        );
+    }
+
+    public function removeEmissionFactor(int $year): void
+    {
+        if (!$this->emissionFactors()->hasForYear($year)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new MaterialEmissionFactorRemoved(
+                materialId: $this->id(),
+                year: $year,
+            ),
+        );
+    }
+
+    /**
+     * Reconciles the stored emission factors with the provided list: adds new ones,
+     * updates changed ones and removes the years no longer present.
+     *
+     * @param EmissionFactor[] $emissionFactors
+     */
+    public function syncEmissionFactors(array $emissionFactors): void
+    {
+        $newYears = [];
+
+        foreach ($emissionFactors as $emissionFactor) {
+            if (in_array($emissionFactor->year(), $newYears, true)) {
+                throw new \InvalidArgumentException(sprintf('Duplicate emission factor for year %d', $emissionFactor->year()));
+            }
+
+            $newYears[] = $emissionFactor->year();
+            $this->setEmissionFactor($emissionFactor);
+        }
+
+        foreach ($this->emissionFactors()->years() as $year) {
+            if (!in_array($year, $newYears, true)) {
+                $this->removeEmissionFactor($year);
+            }
+        }
+    }
+
+    /**
+     * Re-stamps the unit of every stored emission factor so it always mirrors
+     * the material's own unit when the latter changes.
+     */
+    private function restampEmissionFactorUnits(Unit $unit): void
+    {
+        foreach ($this->emissionFactors() as $materialEmissionFactor) {
+            $emissionFactor = $materialEmissionFactor->emissionFactor();
+
+            if ($emissionFactor->unit() === $unit) {
+                continue;
+            }
+
+            $this->setEmissionFactor($emissionFactor->withUnit($unit));
+        }
     }
 
     public function applyMaterialRegistered(MaterialRegistered $event): void
@@ -178,6 +284,30 @@ class Material implements Translatable, \Stringable
     {
         $this->removed = true;
         $this->removedAt = $event->occurredOn();
+    }
+
+    public function applyMaterialEmissionFactorAdded(MaterialEmissionFactorAdded $event): void
+    {
+        $this->emissionFactors()->add(
+            new MaterialEmissionFactor(
+                id: $event->emissionFactorId(),
+                material: $this,
+                emissionFactor: $event->emissionFactor(),
+                createdAt: $event->occurredOn(),
+            ),
+        );
+    }
+
+    public function applyMaterialEmissionFactorUpdated(MaterialEmissionFactorUpdated $event): void
+    {
+        $this->emissionFactors()
+            ->forYear($event->emissionFactor()->year())
+            ?->update($event->emissionFactor(), $event->occurredOn());
+    }
+
+    public function applyMaterialEmissionFactorRemoved(MaterialEmissionFactorRemoved $event): void
+    {
+        $this->emissionFactors()->removeForYear($event->year());
     }
 
     public function __toString(): string

@@ -11,10 +11,12 @@ use App\Shared\Application\CommandBus\Command;
 
 class UpdateMaterialRequest implements Command
 {
+    /** @param EmissionFactorData[] $emissionFactors */
     public function __construct(
         public MaterialId $materialId,
         public string $name,
         public MaterialCategory $category,
         public Unit $unit,
+        public array $emissionFactors = [],
     ) {}
 }
