@@ -112,6 +112,17 @@ notifications-web:
     defaults:
         _locale: '%app.locale_default%'
 
+carbon-footprint-web:
+    resource:
+        path: ../src/CarbonFootprint/Infrastructure/UI/Web/
+        namespace: App\CarbonFootprint\Infrastructure\UI\Web
+    type: attribute
+    prefix: /{_locale}
+    requirements:
+        _locale: '%app.locale_list%'
+    defaults:
+        _locale: '%app.locale_default%'
+
 home_fallback:
     path: /
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction

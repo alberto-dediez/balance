@@ -54,6 +54,7 @@ doctrine:
             job_progress_id: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressIdType
             job_progress_key: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressKeyType
             employee_id: App\HumanResources\Infrastructure\Persistence\Doctrine\Type\EmployeeIdType
+            material_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MaterialIdType
 
     orm:
         auto_generate_proxy_classes: true
@@ -107,6 +108,13 @@ doctrine:
                 dir: '%kernel.project_dir%/src/HumanResources/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\HumanResources\Domain\Model'
                 alias: HumanResources
+
+            CarbonFootprint:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/CarbonFootprint/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\CarbonFootprint\Domain\Model'
+                alias: CarbonFootprint
 
             Shared:
                 type: xml

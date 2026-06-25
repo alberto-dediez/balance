@@ -140,6 +140,18 @@ class NodeLister
         );
 
         $nodes[] = new Node(
+            label: new TranslatableMessage('Materiales'),
+            icon: 'solar:layers-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Materiales'),
+                    icon: 'solar:layers-line-duotone',
+                    target: $this->router->generate('admin_materials'),
+                ),
+            ]
+        );
+
+        $nodes[] = new Node(
             label: new TranslatableMessage('Jerarquía de prioridades'),
             icon: 'solar:danger-triangle-line-duotone',
             items: [

@@ -1,0 +1,4 @@
+{% trans with {
+    '{material}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha traducido el material "{material}" por el usuario {user}{% endtrans %}

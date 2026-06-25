@@ -1,0 +1,4 @@
+{% trans with {
+    '{material}': event.materialId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado el material {material} por el usuario {user}{% endtrans %}

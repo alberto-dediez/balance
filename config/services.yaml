@@ -6,3 +6,4 @@ imports:
     - { resource: '../src/FoodLoss/Infrastructure/Symfony/DependencyInjection/services.yaml' }
     - { resource: '../src/HumanResources/Infrastructure/Symfony/DependencyInjection/services.yaml' }
     - { resource: '../src/Notifications/Infrastructure/Symfony/DependencyInjection/services.yaml' }
+    - { resource: '../src/CarbonFootprint/Infrastructure/Symfony/DependencyInjection/services.yaml' }
