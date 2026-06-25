@@ -1,0 +1,4 @@
+{% trans with {
+    '{merchandisingItem}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado el artículo de merchandising "{merchandisingItem}" por el usuario {user}{% endtrans %}

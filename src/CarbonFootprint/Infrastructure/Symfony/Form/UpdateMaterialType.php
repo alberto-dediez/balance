@@ -41,6 +41,19 @@ class UpdateMaterialType extends AbstractType
                 'required' => true,
                 'constraints' => [new Assert\NotNull()],
             ])
+            ->add('unitWeight', TextType::class, [
+                'label' => new TranslatableMessage('Peso por unidad (kg)'),
+                'required' => false,
+                'attr' => [
+                    'step' => 'any',
+                    'min' => 0,
+                    'data-controller' => 'showable',
+                    'data-showable-selector-value' => '[name*="[unit]"]',
+                    'data-showable-condition-value' => 'ud',
+                    'data-showable-container-value' => 'div:not(.input-group)',
+                ],
+                'constraints' => [new Assert\Type(type: 'numeric')],
+            ])
             ->add('emissionFactors', CollectionType::class, [
                 'label' => new TranslatableMessage('Factores de emisión'),
                 'entry_type' => MaterialEmissionFactorType::class,

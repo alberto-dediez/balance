@@ -28,6 +28,7 @@ class Material implements Translatable, \Stringable
         private string $name = '',
         private MaterialCategory $category = MaterialCategory::Others,
         private Unit $unit = Unit::Kilogram,
+        private ?string $unitWeight = null,
         private bool $removed = false,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
@@ -59,6 +60,11 @@ class Material implements Translatable, \Stringable
     public function unit(): Unit
     {
         return $this->unit;
+    }
+
+    public function unitWeight(): ?string
+    {
+        return $this->unitWeight;
     }
 
     public function translations(): Translations
@@ -106,6 +112,7 @@ class Material implements Translatable, \Stringable
         string $name,
         MaterialCategory $category,
         Unit $unit,
+        ?string $unitWeight = null,
         ?Locale $locale = null,
     ): void {
         $this->recordApplyAndPublish(
@@ -114,6 +121,7 @@ class Material implements Translatable, \Stringable
                 name: $name,
                 category: $category,
                 unit: $unit,
+                unitWeight: $unitWeight,
             ),
         );
 
@@ -126,6 +134,7 @@ class Material implements Translatable, \Stringable
         string $name,
         MaterialCategory $category,
         Unit $unit,
+        ?string $unitWeight = null,
         ?Locale $locale = null,
     ): void {
         $previousUnit = $this->unit;
@@ -136,6 +145,7 @@ class Material implements Translatable, \Stringable
                 name: $locale instanceof Locale ? $this->name : $name,
                 category: $category,
                 unit: $unit,
+                unitWeight: $unitWeight,
             ),
         );
 
@@ -258,6 +268,7 @@ class Material implements Translatable, \Stringable
         $this->name = $event->name();
         $this->category = $event->category();
         $this->unit = $event->unit();
+        $this->unitWeight = $event->unitWeight();
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -266,6 +277,7 @@ class Material implements Translatable, \Stringable
         $this->name = $event->name();
         $this->category = $event->category();
         $this->unit = $event->unit();
+        $this->unitWeight = $event->unitWeight();
         $this->updatedAt = $event->occurredOn();
     }
 

@@ -1,0 +1,54 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Artículos de merchandising' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': 'Categoría' | trans,
+            'sortable': false
+        }, {
+            'label': 'Unidad' | trans,
+            'sortable': false
+        }, {
+            'label': 'Peso por unidad (kg)' | trans,
+            'sortable': false
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': 'Fecha de actualización' | trans,
+            'sortable': true,
+            'sortableBy': 'updatedAt'
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="merchandisingItems" :bulkForm="bulkForm">
+        <td>{{ element.name }}</td>
+        <td>{{ element.category.value | trans({}, 'merchandisingItemCategoryType') }}</td>
+        <td>{{ element.unit.value | trans({}, 'unitType') }}</td>
+        <td>{{ element.unit.value == 'ud' ? element.unitWeight : '' }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>{{ element.updatedAt ? element.updatedAt | date('d/m/Y') : '' }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('admin_merchandising_items_edit', {'merchandisingItemId': element.id}) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('admin_merchandising_items_remove', {'merchandisingItemId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('admin_merchandising_items_register') }}" />
+{% endblock list_actions %}

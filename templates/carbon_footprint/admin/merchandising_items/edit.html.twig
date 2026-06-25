@@ -1,0 +1,69 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_merchandising_items') }}" />
+{% endblock %}
+
+{% set page_title = ('Artículos de merchandising' | trans)
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ merchandisingItem.name %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.name) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.category) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.unit) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.unitWeight) }}
+                </div>
+            </div>
+        </twig:Card>
+
+        <twig:Card>
+            <h5 class="mb-3">
+                {% trans %}Factores de emisión{% endtrans %}
+            </h5>
+
+            {% embed 'components/Collection/Table.html.twig' with {
+                elements: form.emissionFactors,
+                proto: form.emissionFactors.vars.prototype,
+                columns: [
+                    { label: 'Año' | trans },
+                    { label: 'CO2eq' | trans },
+                    { label: 'CO2' | trans },
+                    { label: 'CH4' | trans },
+                    { label: 'N2O' | trans },
+                    { label: 'Fuente' | trans },
+                ],
+            } %}
+                {% block content %}
+                    <td>{{ form_widget(element.year) }}{{ form_errors(element.year) }}</td>
+                    <td>{{ form_widget(element.co2eq) }}{{ form_errors(element.co2eq) }}</td>
+                    <td>{{ form_widget(element.co2) }}{{ form_errors(element.co2) }}</td>
+                    <td>{{ form_widget(element.ch4) }}{{ form_errors(element.ch4) }}</td>
+                    <td>{{ form_widget(element.n2o) }}{{ form_errors(element.n2o) }}</td>
+                    <td>{{ form_widget(element.source) }}{{ form_errors(element.source) }}</td>
+                {% endblock %}
+            {% endembed %}
+
+            {{ form_errors(form.emissionFactors) }}
+
+            {% do form.emissionFactors.setRendered %}
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

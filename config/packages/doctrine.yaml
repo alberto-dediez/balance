@@ -28,6 +28,8 @@ doctrine:
             employee_id: App\HumanResources\Infrastructure\Persistence\Doctrine\Type\EmployeeIdType
             material_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MaterialIdType
             material_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MaterialEmissionFactorIdType
+            merchandising_item_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MerchandisingItemIdType
+            merchandising_item_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MerchandisingItemEmissionFactorIdType
 
     orm:
         auto_generate_proxy_classes: true

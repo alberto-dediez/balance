@@ -14,5 +14,6 @@ class RegisterMaterialRequest implements Command
         public string $name = '',
         public MaterialCategory $category = MaterialCategory::Others,
         public Unit $unit = Unit::Kilogram,
+        public ?string $unitWeight = null,
     ) {}
 }

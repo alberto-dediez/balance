@@ -17,6 +17,7 @@ class UpdateMaterialRequest implements Command
         public string $name,
         public MaterialCategory $category,
         public Unit $unit,
+        public ?string $unitWeight = null,
         public array $emissionFactors = [],
     ) {}
 }

@@ -1965,6 +1965,66 @@
         <source>N2O</source>
         <target>N2O</target>
       </trans-unit>
+      <trans-unit id="UXcNIZy" resname="Artículo de merchandising creado correctamente: {name}">
+        <source>Artículo de merchandising creado correctamente: {name}</source>
+        <target>Merchandising item successfully created: {name}</target>
+      </trans-unit>
+      <trans-unit id="CzVpg1P" resname="Artículo de merchandising actualizado con éxito">
+        <source>Artículo de merchandising actualizado con éxito</source>
+        <target>Merchandising item successfully updated</target>
+      </trans-unit>
+      <trans-unit id="6k0VsxP" resname="Se ha eliminado el artículo de merchandising {merchandisingItem}">
+        <source>Se ha eliminado el artículo de merchandising {merchandisingItem}</source>
+        <target>The merchandising item {merchandisingItem} has been deleted</target>
+      </trans-unit>
+      <trans-unit id=".6W3sdA" resname="No se ha podido eliminar el artículo de merchandising {merchandisingItem}">
+        <source>No se ha podido eliminar el artículo de merchandising {merchandisingItem}</source>
+        <target>The merchandising item {merchandisingItem} could not be deleted</target>
+      </trans-unit>
+      <trans-unit id="7D0y.tX" resname="Se ha eliminado el artículo de merchandising {id}">
+        <source>Se ha eliminado el artículo de merchandising {id}</source>
+        <target>The merchandising item {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="zKxYTKu" resname="No se ha podido eliminar el artículo de merchandising {id}">
+        <source>No se ha podido eliminar el artículo de merchandising {id}</source>
+        <target>The merchandising item {id}</target>
+      </trans-unit>
+      <trans-unit id="WtkfX2x" resname="Peso por unidad (kg)">
+        <source>Peso por unidad (kg)</source>
+        <target>Weight per unit (kg)</target>
+      </trans-unit>
+      <trans-unit id="lEVKQun" resname="Artículos de merchandising">
+        <source>Artículos de merchandising</source>
+        <target>Merchandising items</target>
+      </trans-unit>
+      <trans-unit id="j9ZlJeu" resname="Se ha eliminado el factor de emisión del año {year} del artículo de merchandising {merchandisingItem} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} del artículo de merchandising {merchandisingItem} por el usuario {user}</source>
+        <target>The emission factor for year {year} of the merchandising item {merchandisingItem} has been deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="3O.WUZF" resname="Se ha registrado el artículo de merchandising &quot;{merchandisingItem}&quot; por el usuario {user}">
+        <source>Se ha registrado el artículo de merchandising "{merchandisingItem}" por el usuario {user}</source>
+        <target>The merchandising item “{merchandisingItem}” has been registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="A6VFm.p" resname="Se ha eliminado el artículo de merchandising {merchandisingItem} por el usuario {user}">
+        <source>Se ha eliminado el artículo de merchandising {merchandisingItem} por el usuario {user}</source>
+        <target>The merchandising item {merchandisingItem} has been deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="veH4hf6" resname="Se ha traducido el artículo de merchandising &quot;{merchandisingItem}&quot; por el usuario {user}">
+        <source>Se ha traducido el artículo de merchandising "{merchandisingItem}" por el usuario {user}</source>
+        <target>The merchandising item “{merchandisingItem}” has been translated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="SjxFcqQ" resname="Se ha actualizado el artículo de merchandising &quot;{merchandisingItem}&quot; por el usuario {user}">
+        <source>Se ha actualizado el artículo de merchandising "{merchandisingItem}" por el usuario {user}</source>
+        <target>The merchandising item “{merchandisingItem}” has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="A8vZIKk" resname="Se ha actualizado el factor de emisión del año {year} del artículo de merchandising {merchandisingItem} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión del año {year} del artículo de merchandising {merchandisingItem} por el usuario {user}</source>
+        <target>The emission factor for year {year} of the merchandising item {merchandisingItem} has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="sw80zMo" resname="Se ha añadido el factor de emisión del año {year} al artículo de merchandising {merchandisingItem} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} al artículo de merchandising {merchandisingItem} por el usuario {user}</source>
+        <target>The emission factor for year {year} has been added to the merchandising item {merchandisingItem} by user {user}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

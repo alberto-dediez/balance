@@ -13,6 +13,7 @@
         <field name="name" type="string" length="255" nullable="false"/>
         <field name="category" type="string" enum-type="App\CarbonFootprint\Domain\Model\Material\MaterialCategory" nullable="false"/>
         <field name="unit" type="string" enum-type="App\CarbonFootprint\Domain\Model\Unit" nullable="false"/>
+        <field name="unitWeight" type="decimal" precision="20" scale="8" column="unit_weight" nullable="true"/>
         <field name="removed" type="boolean" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>

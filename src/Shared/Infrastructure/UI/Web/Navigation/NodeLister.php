@@ -148,6 +148,11 @@ class NodeLister
                     icon: 'solar:layers-line-duotone',
                     target: $this->router->generate('admin_materials'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Artículos de merchandising'),
+                    icon: 'solar:bag-smile-line-duotone',
+                    target: $this->router->generate('admin_merchandising_items'),
+                ),
             ],
         );
 

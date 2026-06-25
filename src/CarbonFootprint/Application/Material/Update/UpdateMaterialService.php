@@ -42,6 +42,7 @@ class UpdateMaterialService implements CommandHandler
             name: $request->name,
             category: $request->category,
             unit: $request->unit,
+            unitWeight: $request->unitWeight,
             locale: $isDefaultLocale ? null : $locale,
         );
 

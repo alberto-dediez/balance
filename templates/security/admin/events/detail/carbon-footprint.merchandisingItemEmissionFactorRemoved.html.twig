@@ -1,0 +1,5 @@
+{% trans with {
+    '{year}': event.year,
+    '{merchandisingItem}': event.merchandisingItemId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado el factor de emisión del año {year} del artículo de merchandising {merchandisingItem} por el usuario {user}{% endtrans %}
