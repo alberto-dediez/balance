@@ -15,8 +15,6 @@ doctrine:
             user_id: App\Security\Infrastructure\Persistence\Doctrine\Type\UserIdType
             account_id: App\Security\Infrastructure\Persistence\Doctrine\Type\AccountIdType
             recorded_event_id: App\Security\Infrastructure\Persistence\Doctrine\Type\RecordedEventIdType
-            action_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ActionIdType
-            service_category_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ServiceCategoryIdType
             country_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CountryIdType
             destination_id: App\Property\Infrastructure\Persistence\Doctrine\Type\DestinationIdType
             property_id: App\Property\Infrastructure\Persistence\Doctrine\Type\PropertyIdType
@@ -25,32 +23,6 @@ doctrine:
             company_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CompanyIdType
             signature_request_id: App\Security\Infrastructure\Persistence\Doctrine\Type\SignatureRequestIdType
             notification_id: App\Notifications\Infrastructure\Persistence\Doctrine\Type\NotificationIdType
-            critical_point_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointIdType
-            reason_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ReasonIdType
-            critical_point_reason_link_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointReasonLinkIdType
-            critical_point_service_category_link_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointServiceCategoryLinkIdType
-            critical_point_action_link_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointActionLinkIdType
-            critical_point_surplus_cause_link_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\CriticalPointSurplusCauseLinkIdType
-            packaging_property_stock_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\PackagingPropertyStockIdType
-            recipient_organization_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\RecipientOrganizationIdType
-            delivery_log_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DeliveryLogIdType
-            donation_agreement_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DonationAgreementIdType
-            prevention_plan_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\PreventionPlanIdType
-            prevention_plan_version_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\PreventionPlanVersionIdType
-            prevention_plan_section_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\PreventionPlanSectionIdType
-            proposed_action_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ProposedActionIdType
-            packaging_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\PackagingIdType
-            protocol_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ProtocolIdType
-            protocol_access_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\ProtocolAccessIdType
-            doggy_bag_sign_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DoggyBagSignIdType
-            doggy_bag_exception_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\DoggyBagExceptionIdType
-            incidence_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\IncidenceIdType
-            incidence_evidence_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\IncidenceEvidenceIdType
-            training_session_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\TrainingSessionIdType
-            training_attendance_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\TrainingAttendanceIdType
-            surplus_cause_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\SurplusCauseIdType
-            surplus_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\SurplusIdType
-            food_waste_manager_id: App\FoodLoss\Infrastructure\Persistence\Doctrine\Type\WasteManagerIdType
             job_progress_id: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressIdType
             job_progress_key: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressKeyType
             employee_id: App\HumanResources\Infrastructure\Persistence\Doctrine\Type\EmployeeIdType
@@ -94,13 +66,6 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Notifications/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Notifications\Domain\Model'
                 alias: Notifications
-
-            FoodLoss:
-                type: xml
-                is_bundle: false
-                dir: '%kernel.project_dir%/src/FoodLoss/Infrastructure/Persistence/Doctrine/Mapping'
-                prefix: 'App\FoodLoss\Domain\Model'
-                alias: FoodLoss
 
             HumanResources:
                 type: xml

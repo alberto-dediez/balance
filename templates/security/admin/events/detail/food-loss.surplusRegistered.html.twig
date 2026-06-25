@@ -1,7 +1,0 @@
-{% trans with {
-    '{date}': event.date | date('d/m/Y'),
-    '{foodType}': event.foodType,
-    '{quantity}': event.quantity,
-    '{unit}': event.unit,
-    '{user}': element.userId | user_name
-} %}Se ha registrado un excedente de {quantity} {unit} de {foodType} el {date} por el usuario {user}{% endtrans %}

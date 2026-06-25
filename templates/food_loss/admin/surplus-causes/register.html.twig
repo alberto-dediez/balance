@@ -1,9 +1,0 @@
-{% extends '@shared/layout/register.html.twig' %}
-
-{% set page_title = ('Causas de excedente' | trans)
-    ~ ' > '
-    ~ ('Registrar' | trans)  %}
-
-{% block top_actions %}
-    <twig:TopAction:Return path="{{ path('admin_surplus_causes') }}" />
-{% endblock %}

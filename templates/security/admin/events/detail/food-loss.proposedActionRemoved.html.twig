@@ -1,7 +1,0 @@
-{% trans with {
-    '{preventionPlan}': event.preventionPlanId,
-    '{version}': event.versionNumber,
-    '{action}': event.actionId | action_name,
-    '{property}': event.propertyId | property_name,
-    '{user}': element.userId | user_name
-} %}Se ha eliminado la acción {action} de la versión {version} del plan de prevención {preventionPlan} para {property} por el usuario {user}{% endtrans %}

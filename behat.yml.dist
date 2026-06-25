@@ -13,7 +13,6 @@ default:
                 - App\Tests\Acceptance\Security\SecurityContext
                 - App\Tests\Acceptance\Property\PropertyContext
                 - App\Tests\Acceptance\DataExchange\DataExchangeContext
-                - App\Tests\Acceptance\FoodLoss\FoodLossContext
                 - App\Tests\Acceptance\HumanResources\HumanResourcesContext
                 - App\Tests\Acceptance\Notifications\NotificationsContext
                 - App\Tests\Acceptance\CarbonFootprint\CarbonFootprintContext

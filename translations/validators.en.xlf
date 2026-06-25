@@ -689,50 +689,6 @@
         <source>Please enter a valid week.</source>
         <target>Please enter a valid week.</target>
       </trans-unit>
-      <trans-unit id="CT0IlBq" resname="alert_configuration.item_cannot_be_duplicated">
-        <source>alert_configuration.item_cannot_be_duplicated</source>
-        <target>There cannot be two configurations with the same property, waste and alert type.</target>
-      </trans-unit>
-      <trans-unit id="3BuAgt." resname="notification_channel.signer_email_required">
-        <source>notification_channel.signer_email_required</source>
-        <target>Signer email is required when notification channel is Email.</target>
-      </trans-unit>
-      <trans-unit id="a1meusE" resname="notification_channel.signer_phone_required">
-        <source>notification_channel.signer_phone_required</source>
-        <target>Signer phone is required when notification channel is SMS.</target>
-      </trans-unit>
-      <trans-unit id="g12F6jA" resname="Debes seleccionar una empresa">
-        <source>Debes seleccionar una empresa</source>
-        <target>You must select a company</target>
-      </trans-unit>
-      <trans-unit id="bibTEku" resname="transformation.product.not_null">
-        <source>transformation.product.not_null</source>
-        <target>Please indicate how the surplus will be transformed</target>
-      </trans-unit>
-      <trans-unit id="K08h16n" resname="transformation.channel.not_null">
-        <source>transformation.channel.not_null</source>
-        <target>Please indicate the distribution channel</target>
-      </trans-unit>
-      <trans-unit id="oIQmldK" resname="animal_feed.waste_manager_id.not_null">
-        <source>animal_feed.waste_manager_id.not_null</source>
-        <target>The waste manager is required</target>
-      </trans-unit>
-      <trans-unit id="jO81mjc" resname="composting.waste_manager_id.not_null">
-        <source>composting.waste_manager_id.not_null</source>
-        <target>The waste manager is required</target>
-      </trans-unit>
-      <trans-unit id="D_awn7f" resname="human_donation.donation_date.not_null">
-        <source>human_donation.donation_date.not_null</source>
-        <target>The donation date is required</target>
-      </trans-unit>
-      <trans-unit id="TeLCoSr" resname="human_donation.recipient_organization.not_null">
-        <source>human_donation.recipient_organization.not_null</source>
-        <target>The recipient organisation is required</target>
-      </trans-unit>
-      <trans-unit id="xc9Ah5K" resname="human_donation.create_delivery_log.not_null">
-        <source>human_donation.create_delivery_log.not_null</source>
-        <target>Please indicate whether you want to record the donation in the delivery log</target>
-      </trans-unit>
     </body>
   </file>
 </xliff>

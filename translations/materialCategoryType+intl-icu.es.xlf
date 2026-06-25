@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="es" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="DdbYCA0" resname="construction">
+        <source>construction</source>
+        <target>Construcción</target>
+      </trans-unit>
+      <trans-unit id="yY_iVnB" resname="paper_cardboard">
+        <source>paper_cardboard</source>
+        <target>Papel y cartón</target>
+      </trans-unit>
+      <trans-unit id="BrxPP16" resname="plastics">
+        <source>plastics</source>
+        <target>Plásticos</target>
+      </trans-unit>
+      <trans-unit id="yiswV01" resname="metal">
+        <source>metal</source>
+        <target>Metal</target>
+      </trans-unit>
+      <trans-unit id="vE_ryV3" resname="electricals">
+        <source>electricals</source>
+        <target>Eléctricos</target>
+      </trans-unit>
+      <trans-unit id="OCZbKzq" resname="furniture">
+        <source>furniture</source>
+        <target>Mobiliario</target>
+      </trans-unit>
+      <trans-unit id="q4jaMIC" resname="glass">
+        <source>glass</source>
+        <target>Vidrio</target>
+      </trans-unit>
+      <trans-unit id="BcyPUqi" resname="others">
+        <source>others</source>
+        <target>Otros</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

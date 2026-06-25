@@ -3,7 +3,6 @@ imports:
     - { resource: '../src/Security/Infrastructure/Symfony/DependencyInjection/services.yaml' }
     - { resource: '../src/DataExchange/Infrastructure/Symfony/DependencyInjection/services.yaml' }
     - { resource: '../src/Property/Infrastructure/Symfony/DependencyInjection/services.yaml' }
-    - { resource: '../src/FoodLoss/Infrastructure/Symfony/DependencyInjection/services.yaml' }
     - { resource: '../src/HumanResources/Infrastructure/Symfony/DependencyInjection/services.yaml' }
     - { resource: '../src/Notifications/Infrastructure/Symfony/DependencyInjection/services.yaml' }
     - { resource: '../src/CarbonFootprint/Infrastructure/Symfony/DependencyInjection/services.yaml' }

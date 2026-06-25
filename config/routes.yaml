@@ -46,17 +46,6 @@ security-api:
     type: attribute
     prefix: '/api'
     
-food-loss-web:
-    resource:
-        path: ../src/FoodLoss/Infrastructure/UI/Web/
-        namespace: App\FoodLoss\Infrastructure\UI\Web
-    type: attribute
-    prefix: /{_locale}
-    requirements:
-        _locale: '%app.locale_list%'
-    defaults:
-        _locale: '%app.locale_default%'
-
 property-api:
     resource:
         path: ../src/Property/Infrastructure/UI/Api/

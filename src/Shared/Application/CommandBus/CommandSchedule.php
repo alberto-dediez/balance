@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Shared\Application\CommandBus;
 
 use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsRequest;
-use App\FoodLoss\Application\DonationAgreement\NotifyExpiring\NotifyExpiringDonationAgreementsRequest;
 use App\Security\Application\SignatureRequest\PurgeExpired\PurgeExpiredSignatureRequestsRequest;
 
 /**
@@ -34,11 +33,6 @@ class CommandSchedule
                 id: 'security:purge-expired-signature-requests',
                 command: new PurgeExpiredSignatureRequestsRequest(new \DateTimeImmutable('NOW')),
                 time: '02:00',
-            ),
-            ScheduledCommand::dailyAt(
-                id: 'food-loss:notify-expiring-donation-agreements',
-                command: new NotifyExpiringDonationAgreementsRequest(new \DateTimeImmutable('NOW')),
-                time: '08:00',
             ),
         ];
     }

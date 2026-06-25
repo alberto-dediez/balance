@@ -12,7 +12,6 @@ twig:
         'templates/security': 'security'
         'templates/property': 'property'
         'templates/data_exchange': 'data_exchange'
-        'templates/food_loss': 'food_loss'
         'templates/human_resources': 'human_resources'
         'templates/notifications': 'notifications'
         'templates/carbon_footprint': 'carbon_footprint'

@@ -1,5 +1,0 @@
-{% trans with {
-    '{deliveryLog}': event.deliveryLogId,
-    '{date}': event.deliveredAt | date('d/m/Y'),
-    '{user}': element.userId | user_name
-} %}Se ha marcado como entregado el registro de entrega {deliveryLog} el {date} por el usuario {user}{% endtrans %}

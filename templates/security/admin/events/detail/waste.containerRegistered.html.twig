@@ -1,7 +1,0 @@
-{% trans with {
-    '{property}': event.propertyId | property_name,
-    '{waste}': event.wasteId | waste_name,
-    '{purpose}': event.purpose.value | trans({}, 'purpose'),
-    '{measurementMethod}': event.measurementMethod.value | trans({}, 'measurementMethod'),
-    '{user}': element.userId | user_name
-} %}Se ha registrado un nuevo contenedor para {property} para el registro de residuos de tipo {waste}, destino {purpose} y sistema de medición {measurementMethod} por el usuario {user}{% endtrans %}

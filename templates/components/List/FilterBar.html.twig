@@ -26,30 +26,10 @@
                             {% set value = value | brand_name %}
                         {% elseif field == 'categoryId' %}
                             {% set value = value | category_name %}
-                        {% elseif field == 'actionId' %}
-                            {% set value = value | action_name %}
-                        {% elseif field == 'criticalPointId' %}
-                            {% set value = value | critical_point_name %}
-                        {% elseif field == 'serviceCategoryId' %}
-                            {% set value = value | service_category_name %}
-                        {% elseif field == 'serviceCategoryIds' %}
-                            {% set value = value | map(v => v | service_category_name) | join(', ') %}
-                        {% elseif field == 'surplusCauseId' %}
-                            {% set value = value | surplus_cause_name %}
-                        {% elseif field == 'surplusCauseIds' %}
-                            {% set value = value | map(v => v | surplus_cause_name) | join(', ') %}
                         {% elseif field == 'companyId' %}
                             {% set value = value | company_name %}
-                        {% elseif field == 'foodType' %}
-                            {% set value = value.value | trans({}, 'foodType') %}
-                        {% elseif field == 'displayUnit' %}
-                            {% set value = value.value | trans({}, 'deliveryLogUnit') %}
-                        {% elseif field == 'incidenceId' %}
-                            {% set value = value | incidence_name %}
                         {% elseif field == 'signatureStatus' %}
                             {% set value = value.value | trans({}, 'signatureRequestStatus') %}
-                        {% elseif field == 'pickupType' %}
-                            {% set value = value.value | trans({}, 'pickupType') %}
                         {% endif %}
 
                         <twig:List:FilterShow
