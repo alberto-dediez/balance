@@ -1,0 +1,4 @@
+{% trans with {
+    '{mobility}': event.mobilityId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado la movilidad {mobility} por el usuario {user}{% endtrans %}

@@ -1,0 +1,5 @@
+{% trans with {
+    '{mobility}': event.name,
+    '{locale}': event.locale,
+    '{user}': element.userId | user_name
+} %}Se ha traducido la movilidad "{mobility}" al idioma {locale} por {user}{% endtrans %}

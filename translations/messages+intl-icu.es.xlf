@@ -2433,6 +2433,62 @@
         <source>Comercializadora</source>
         <target>Comercializadora</target>
       </trans-unit>
+      <trans-unit id="OJc1Q90" resname="Movilidad">
+        <source>Movilidad</source>
+        <target>Movilidad</target>
+      </trans-unit>
+      <trans-unit id="nyHa9sj" resname="Movilidad creada correctamente: {name}">
+        <source>Movilidad creada correctamente: {name}</source>
+        <target>Movilidad creada correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="7cgkdF." resname="Movilidad actualizada con éxito">
+        <source>Movilidad actualizada con éxito</source>
+        <target>Movilidad actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id="6EUoJeM" resname="Se ha eliminado la movilidad {mobility}">
+        <source>Se ha eliminado la movilidad {mobility}</source>
+        <target>Se ha eliminado la movilidad {mobility}</target>
+      </trans-unit>
+      <trans-unit id="N46Nl0r" resname="No se ha podido eliminar la movilidad {mobility}">
+        <source>No se ha podido eliminar la movilidad {mobility}</source>
+        <target>No se ha podido eliminar la movilidad {mobility}</target>
+      </trans-unit>
+      <trans-unit id="dvB7Fgp" resname="Se ha eliminado la movilidad {id}">
+        <source>Se ha eliminado la movilidad {id}</source>
+        <target>Se ha eliminado la movilidad {id}</target>
+      </trans-unit>
+      <trans-unit id="qaQb.p_" resname="No se ha podido eliminar la movilidad {id}">
+        <source>No se ha podido eliminar la movilidad {id}</source>
+        <target>No se ha podido eliminar la movilidad {id}</target>
+      </trans-unit>
+      <trans-unit id="DP4uUfI" resname="Se ha eliminado la movilidad {mobility} por el usuario {user}">
+        <source>Se ha eliminado la movilidad {mobility} por el usuario {user}</source>
+        <target>Se ha eliminado la movilidad {mobility} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="9UlRBJ1" resname="Se ha registrado la movilidad &quot;{mobility}&quot; por el usuario {user}">
+        <source>Se ha registrado la movilidad "{mobility}" por el usuario {user}</source>
+        <target>Se ha registrado la movilidad "{mobility}" por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="Xw1AQ08" resname="Se ha añadido el factor de emisión del año {year} a la movilidad {mobility} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} a la movilidad {mobility} por el usuario {user}</source>
+        <target>Se ha añadido el factor de emisión del año {year} a la movilidad {mobility} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="8b3.lPb" resname="Se ha actualizado el factor de emisión del año {year} de la movilidad {mobility} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión del año {year} de la movilidad {mobility} por el usuario {user}</source>
+        <target>Se ha actualizado el factor de emisión del año {year} de la movilidad {mobility} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="8XxT296" resname="Se ha traducido la movilidad &quot;{mobility}&quot; al idioma {locale} por {user}">
+        <source>Se ha traducido la movilidad "{mobility}" al idioma {locale} por {user}</source>
+        <target>Se ha traducido la movilidad "{mobility}" al idioma {locale} por {user}</target>
+      </trans-unit>
+      <trans-unit id="PUFFWwj" resname="Se ha eliminado el factor de emisión del año {year} de la movilidad {mobility} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} de la movilidad {mobility} por el usuario {user}</source>
+        <target>Se ha eliminado el factor de emisión del año {year} de la movilidad {mobility} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="vRcqdei" resname="Se ha actualizado la movilidad &quot;{mobility}&quot; por el usuario {user}">
+        <source>Se ha actualizado la movilidad "{mobility}" por el usuario {user}</source>
+        <target>Se ha actualizado la movilidad "{mobility}" por el usuario {user}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

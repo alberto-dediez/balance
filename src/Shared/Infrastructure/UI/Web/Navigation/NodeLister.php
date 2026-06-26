@@ -186,6 +186,11 @@ class NodeLister
                     icon: 'solar:settings-minimalistic-line-duotone',
                     target: $this->router->generate('admin_machinery_fuels'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Movilidad'),
+                    icon: 'solar:routing-2-line-duotone',
+                    target: $this->router->generate('admin_mobilities'),
+                ),
             ],
         );
 
