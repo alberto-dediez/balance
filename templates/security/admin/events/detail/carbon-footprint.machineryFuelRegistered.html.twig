@@ -1,0 +1,4 @@
+{% trans with {
+    '{machineryFuel}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha registrado el combustible de maquinaria "{machineryFuel}" por el usuario {user}{% endtrans %}

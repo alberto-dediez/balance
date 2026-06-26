@@ -1,0 +1,61 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\CarbonFootprint\Application\MachineryFuel\EmissionFactor;
+
+use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelId;
+use App\CarbonFootprint\Domain\Model\Unit;
+
+class EmissionFactorRow
+{
+    public function __construct(
+        public ?string $machineryFuelId = null,
+        public ?string $machineryFuelName = null,
+        public ?string $co2eq = null,
+        public ?string $co2 = null,
+        public ?string $ch4 = null,
+        public ?string $n2o = null,
+        public ?string $source = null,
+    ) {}
+
+    public static function fromMachineryFuel(MachineryFuelId $machineryFuelId, string $machineryFuelName, ?EmissionFactor $emissionFactor): self
+    {
+        return new self(
+            machineryFuelId: (string) $machineryFuelId,
+            machineryFuelName: $machineryFuelName,
+            co2eq: $emissionFactor?->co2eq(),
+            co2: $emissionFactor?->co2(),
+            ch4: $emissionFactor?->ch4(),
+            n2o: $emissionFactor?->n2o(),
+            source: $emissionFactor?->source(),
+        );
+    }
+
+    public function isEmpty(): bool
+    {
+        return '' === (string) $this->co2eq
+            && '' === (string) $this->co2
+            && '' === (string) $this->ch4
+            && '' === (string) $this->n2o;
+    }
+
+    public function machineryFuelId(): MachineryFuelId
+    {
+        return new MachineryFuelId((string) $this->machineryFuelId);
+    }
+
+    public function toEmissionFactor(int $year, Unit $unit): EmissionFactor
+    {
+        return new EmissionFactor(
+            co2eq: (string) $this->co2eq,
+            co2: (string) $this->co2,
+            ch4: (string) $this->ch4,
+            n2o: (string) $this->n2o,
+            year: $year,
+            unit: $unit,
+            source: $this->source,
+        );
+    }
+}

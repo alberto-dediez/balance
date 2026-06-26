@@ -1,0 +1,9 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = ('Combustible de maquinaria' | trans)
+    ~ ' > '
+    ~ ('Registrar' | trans)  %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_machinery_fuels') }}" />
+{% endblock %}

@@ -181,6 +181,11 @@ class NodeLister
                     icon: 'solar:bolt-line-duotone',
                     target: $this->router->generate('admin_electricity_marketers'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Combustible de maquinaria'),
+                    icon: 'solar:settings-minimalistic-line-duotone',
+                    target: $this->router->generate('admin_machinery_fuels'),
+                ),
             ],
         );
 

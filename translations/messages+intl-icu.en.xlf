@@ -2317,6 +2317,122 @@
         <source>Transporte</source>
         <target>Transport</target>
       </trans-unit>
+      <trans-unit id="ReBVE6k" resname="Combustible de maquinaria">
+        <source>Combustible de maquinaria</source>
+        <target>Machinery Fuel</target>
+      </trans-unit>
+      <trans-unit id="USp1OmZ" resname="Comercializadoras eléctricas">
+        <source>Comercializadoras eléctricas</source>
+        <target>Electricity Retailers</target>
+      </trans-unit>
+      <trans-unit id="E4Fc7CG" resname="Combustible de maquinaria creado correctamente: {name}">
+        <source>Combustible de maquinaria creado correctamente: {name}</source>
+        <target>Machinery fuel successfully created: {name}</target>
+      </trans-unit>
+      <trans-unit id="7NweJgo" resname="Combustible de maquinaria actualizado con éxito">
+        <source>Combustible de maquinaria actualizado con éxito</source>
+        <target>Machinery fuel successfully updated</target>
+      </trans-unit>
+      <trans-unit id="KwNhgjT" resname="Se ha eliminado el combustible de maquinaria {name}">
+        <source>Se ha eliminado el combustible de maquinaria {name}</source>
+        <target>Machinery fuel {name} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="sKpxskS" resname="No se ha podido eliminar el combustible de maquinaria {name}">
+        <source>No se ha podido eliminar el combustible de maquinaria {name}</source>
+        <target>Unable to delete machinery fuel {name}</target>
+      </trans-unit>
+      <trans-unit id="5vcbRKy" resname="Se ha eliminado el combustible de maquinaria {id}">
+        <source>Se ha eliminado el combustible de maquinaria {id}</source>
+        <target>Machinery fuel {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="YIzdu7P" resname="No se ha podido eliminar el combustible de maquinaria {id}">
+        <source>No se ha podido eliminar el combustible de maquinaria {id}</source>
+        <target>Unable to delete machinery fuel {id}</target>
+      </trans-unit>
+      <trans-unit id="Mbr27W5" resname="Comercializadora eléctrica creada correctamente: {name}">
+        <source>Comercializadora eléctrica creada correctamente: {name}</source>
+        <target>Electricity supplier successfully created: {name}</target>
+      </trans-unit>
+      <trans-unit id="SyXX6uR" resname="Comercializadora eléctrica actualizada con éxito">
+        <source>Comercializadora eléctrica actualizada con éxito</source>
+        <target>Electricity supplier successfully updated</target>
+      </trans-unit>
+      <trans-unit id="fF5G.aJ" resname="Se ha eliminado la comercializadora eléctrica {name}">
+        <source>Se ha eliminado la comercializadora eléctrica {name}</source>
+        <target>Electricity supplier {name} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="NVCRMOn" resname="No se ha podido eliminar la comercializadora eléctrica {name}">
+        <source>No se ha podido eliminar la comercializadora eléctrica {name}</source>
+        <target>Unable to delete electricity supplier {name}</target>
+      </trans-unit>
+      <trans-unit id="eljShes" resname="Se ha eliminado la comercializadora eléctrica {id}">
+        <source>Se ha eliminado la comercializadora eléctrica {id}</source>
+        <target>Electricity supplier {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="z_cU_xy" resname="No se ha podido eliminar la comercializadora eléctrica {id}">
+        <source>No se ha podido eliminar la comercializadora eléctrica {id}</source>
+        <target>Unable to delete electricity supplier {id}</target>
+      </trans-unit>
+      <trans-unit id="tlWgNXm" resname="Tipo de maquinaria">
+        <source>Tipo de maquinaria</source>
+        <target>Machinery type</target>
+      </trans-unit>
+      <trans-unit id="efUQkcG" resname="Se ha actualizado el factor de emisión de la comercializadora eléctrica {id} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión de la comercializadora eléctrica {id} por el usuario {user}</source>
+        <target>The emission factor for electricity supplier {id} has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="YogRI8R" resname="Se ha registrado la comercializadora eléctrica &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha registrado la comercializadora eléctrica "{name}" por el usuario {user}</source>
+        <target>Electricity supplier “{name}” has been registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="EAjqqL0" resname="Se ha actualizado el combustible de maquinaria &quot;{machineryFuel}&quot; por el usuario {user}">
+        <source>Se ha actualizado el combustible de maquinaria "{machineryFuel}" por el usuario {user}</source>
+        <target>The fuel for machinery “{machineryFuel}” has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="J2WgEaY" resname="Se ha eliminado el factor de emisión del año {year} del combustible de maquinaria {machineryFuel} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} del combustible de maquinaria {machineryFuel} por el usuario {user}</source>
+        <target>The emission factor for the year {year} for the machinery fuel {machineryFuel} has been deleted by user {user}.</target>
+      </trans-unit>
+      <trans-unit id="j_LKHMy" resname="Se ha actualizado la comercializadora eléctrica &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha actualizado la comercializadora eléctrica "{name}" por el usuario {user}</source>
+        <target>The electricity supplier “{name}” has been updated by user {user}.</target>
+      </trans-unit>
+      <trans-unit id="NPRIDYg" resname="Se ha añadido el factor de emisión del año {year} al combustible de maquinaria {machineryFuel} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} al combustible de maquinaria {machineryFuel} por el usuario {user}</source>
+        <target>The emission factor for the year {year} has been added to the machinery fuel {machineryFuel} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="9bu1KUo" resname="Se ha actualizado el factor de emisión del año {year} del combustible de maquinaria {machineryFuel} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión del año {year} del combustible de maquinaria {machineryFuel} por el usuario {user}</source>
+        <target>The emission factor for the year {year} for the machinery fuel {machineryFuel} has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="aI5J6Pe" resname="Se ha eliminado el factor de emisión del año {year} de la comercializadora eléctrica {id} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} de la comercializadora eléctrica {id} por el usuario {user}</source>
+        <target>The emission factor for year {year} for electricity supplier {id} has been deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id=".07Yzjl" resname="Se ha añadido el factor de emisión del año {year} a la comercializadora eléctrica {id} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} a la comercializadora eléctrica {id} por el usuario {user}</source>
+        <target>The emission factor for year {year} has been added to electricity supplier {id} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="TCRYDop" resname="Se ha eliminado la comercializadora eléctrica {id} por el usuario {user}">
+        <source>Se ha eliminado la comercializadora eléctrica {id} por el usuario {user}</source>
+        <target>Electricity supplier {id} has been deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="pGN21DZ" resname="Se ha eliminado el combustible de maquinaria {machineryFuel} por el usuario {user}">
+        <source>Se ha eliminado el combustible de maquinaria {machineryFuel} por el usuario {user}</source>
+        <target>The machinery fuel {machineryFuel} has been deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="gVlZ1cS" resname="Se ha traducido el combustible de maquinaria &quot;{machineryFuel}&quot; por el usuario {user}">
+        <source>Se ha traducido el combustible de maquinaria "{machineryFuel}" por el usuario {user}</source>
+        <target>The machinery fuel “{machineryFuel}” has been translated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="YVhzcEE" resname="Se ha registrado el combustible de maquinaria &quot;{machineryFuel}&quot; por el usuario {user}">
+        <source>Se ha registrado el combustible de maquinaria "{machineryFuel}" por el usuario {user}</source>
+        <target>The machinery fuel “{machineryFuel}” has been registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="iUJPsdt" resname="Comercializadora">
+        <source>Comercializadora</source>
+        <target>Electricity Supplier</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
