@@ -1,0 +1,4 @@
+{% trans with {
+    '{id}': event.electricityMarketerId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado la comercializadora eléctrica {id} por el usuario {user}{% endtrans %}

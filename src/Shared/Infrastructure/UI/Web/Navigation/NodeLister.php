@@ -176,6 +176,11 @@ class NodeLister
                     icon: 'solar:bus-line-duotone',
                     target: $this->router->generate('admin_road_transports'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Comercializadoras eléctricas'),
+                    icon: 'solar:bolt-line-duotone',
+                    target: $this->router->generate('admin_electricity_marketers'),
+                ),
             ],
         );
 

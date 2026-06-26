@@ -10,6 +10,7 @@ enum Unit: string
     case Piece     = 'ud';
     case Liter     = 'l';
     case KWhPCS    = 'kWhPCS';
+    case KWh       = 'kWh';
     case Kilometer = 'km';
 
     public function magnitude(): Magnitude
@@ -19,6 +20,7 @@ enum Unit: string
             self::Piece     => Magnitude::Pieces,
             self::Liter     => Magnitude::Volume,
             self::KWhPCS    => Magnitude::Energy,
+            self::KWh       => Magnitude::Energy,
             self::Kilometer => Magnitude::Distance,
         };
     }

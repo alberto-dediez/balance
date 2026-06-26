@@ -36,6 +36,8 @@ doctrine:
             combustible_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CombustibleEmissionFactorIdType
             road_transport_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\RoadTransportIdType
             road_transport_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\RoadTransportEmissionFactorIdType
+            electricity_marketer_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ElectricityMarketerIdType
+            electricity_marketer_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ElectricityMarketerEmissionFactorIdType
 
     orm:
         auto_generate_proxy_classes: true

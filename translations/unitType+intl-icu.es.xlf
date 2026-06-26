@@ -21,6 +21,10 @@
         <source>kWhPCS</source>
         <target>kWh PCS</target>
       </trans-unit>
+      <trans-unit id="aKw9Xyz" resname="kWh">
+        <source>kWh</source>
+        <target>kWh</target>
+      </trans-unit>
       <trans-unit id="xvr1Zm3" resname="km">
         <source>km</source>
         <target>Kilometro</target>
