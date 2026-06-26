@@ -65,6 +65,14 @@
         <source>source</source>
         <target>Source</target>
       </trans-unit>
+      <trans-unit id="LxBED5_" resname="cateringItem">
+        <source>cateringItem</source>
+        <target>Catering item</target>
+      </trans-unit>
+      <trans-unit id="jH.H0Uo" resname="merchandisingItem">
+        <source>merchandisingItem</source>
+        <target>Merchandising item</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

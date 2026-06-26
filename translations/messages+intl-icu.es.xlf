@@ -2273,6 +2273,50 @@
         <source>Reciclado</source>
         <target>Reciclado</target>
       </trans-unit>
+      <trans-unit id="8OxKCnI" resname="Transporte por carretera">
+        <source>Transporte por carretera</source>
+        <target>Transporte por carretera</target>
+      </trans-unit>
+      <trans-unit id="N0cQFPs" resname="Catering">
+        <source>Catering</source>
+        <target>Catering</target>
+      </trans-unit>
+      <trans-unit id="x0m1cwE" resname="Merchandising">
+        <source>Merchandising</source>
+        <target>Merchandising</target>
+      </trans-unit>
+      <trans-unit id="cJ_dq5i" resname="Transporte por carretera creado correctamente: {name}">
+        <source>Transporte por carretera creado correctamente: {name}</source>
+        <target>Transporte por carretera creado correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id=".4NeGY4" resname="Transporte por carretera actualizado con éxito">
+        <source>Transporte por carretera actualizado con éxito</source>
+        <target>Transporte por carretera actualizado con éxito</target>
+      </trans-unit>
+      <trans-unit id="YZ5zR71" resname="Se ha eliminado el transporte {name}">
+        <source>Se ha eliminado el transporte {name}</source>
+        <target>Se ha eliminado el transporte {name}</target>
+      </trans-unit>
+      <trans-unit id="1Kkwi92" resname="No se ha podido eliminar el transporte {name}">
+        <source>No se ha podido eliminar el transporte {name}</source>
+        <target>No se ha podido eliminar el transporte {name}</target>
+      </trans-unit>
+      <trans-unit id="EVhmM7M" resname="Se ha eliminado el transporte {id}">
+        <source>Se ha eliminado el transporte {id}</source>
+        <target>Se ha eliminado el transporte {id}</target>
+      </trans-unit>
+      <trans-unit id="BtjaV3a" resname="No se ha podido eliminar el transporte {id}">
+        <source>No se ha podido eliminar el transporte {id}</source>
+        <target>No se ha podido eliminar el transporte {id}</target>
+      </trans-unit>
+      <trans-unit id="W6.ScYU" resname="Tipo de vehículo">
+        <source>Tipo de vehículo</source>
+        <target>Tipo de vehículo</target>
+      </trans-unit>
+      <trans-unit id="sMjYt_t" resname="Transporte">
+        <source>Transporte</source>
+        <target>Transporte</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

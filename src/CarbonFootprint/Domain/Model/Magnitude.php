@@ -6,8 +6,9 @@ namespace App\CarbonFootprint\Domain\Model;
 
 enum Magnitude: string
 {
-    case Mass   = 'mass';
-    case Volume = 'volume';
-    case Pieces = 'pieces';
-    case Energy = 'energy';
+    case Mass     = 'mass';
+    case Volume   = 'volume';
+    case Pieces   = 'pieces';
+    case Energy   = 'energy';
+    case Distance = 'distance';
 }

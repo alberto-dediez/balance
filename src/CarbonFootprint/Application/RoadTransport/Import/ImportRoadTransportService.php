@@ -1,0 +1,133 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\CarbonFootprint\Application\RoadTransport\Import;
+
+use App\CarbonFootprint\Application\RoadTransport\RoadTransportAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransport;
+use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportId;
+use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
+use App\CarbonFootprint\Domain\Model\RoadTransport\Vehicle;
+use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Application\Action as SecurityAction;
+use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CommandBus\Command;
+use App\Shared\Application\CommandBus\CommandHandler;
+use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Shared\Domain\Model\Locale\LocaleGetter;
+
+class ImportRoadTransportService implements CommandHandler
+{
+    use RegisterHandlerTrait;
+    use CommandInvokeHandlerTrait;
+
+    public function __construct(
+        private RoadTransportRepository $roadTransportRepository,
+        private RoadTransportAuthorizer $authorizer,
+    ) {}
+
+    public function __invoke(ImportRoadTransportRequest $request, User $user): ImportRoadTransportResponse
+    {
+        $year = $this->resolveYear($request->year);
+
+        $roadTransport = $this->resolveRoadTransport($request, $user);
+
+        $roadTransport->setEmissionFactor($this->buildEmissionFactor($request, $roadTransport->unit(), $year));
+
+        $this->roadTransportRepository->add($roadTransport);
+
+        return new ImportRoadTransportResponse(
+            roadTransportId: $roadTransport->id(),
+        );
+    }
+
+    private function resolveRoadTransport(ImportRoadTransportRequest $request, User $user): RoadTransport
+    {
+        if (!empty($request->roadTransport)) {
+            $roadTransport = $this->roadTransportRepository->find(new RoadTransportId($request->roadTransport));
+
+            if (null === $roadTransport) {
+                throw new \InvalidArgumentException('Road transport not found');
+            }
+
+            $this->authorizer->denyUnlessCanDoThat($roadTransport, SecurityAction::Edit, $user);
+
+            return $roadTransport;
+        }
+
+        $name = trim((string) $request->name);
+
+        if (empty($name)) {
+            throw new \InvalidArgumentException('A road transport or a name is required');
+        }
+
+        $roadTransport = $this->roadTransportRepository->findOneByName($name);
+
+        if (null !== $roadTransport) {
+            $this->authorizer->denyUnlessCanDoThat($roadTransport, SecurityAction::Edit, $user);
+
+            return $roadTransport;
+        }
+
+        return $this->registerRoadTransport($name, $request, $user);
+    }
+
+    private function registerRoadTransport(string $name, ImportRoadTransportRequest $request, User $user): RoadTransport
+    {
+        $id = RoadTransportId::generate();
+
+        $this->authorizer->denyUnlessCanDoThat(new RoadTransport(id: $id), SecurityAction::List, $user);
+
+        $locale = LocaleGetter::locale();
+        $isDefaultLocale = LocaleGetter::default() === $locale;
+
+        $roadTransport = new RoadTransport($id);
+        $roadTransport->register(
+            $name,
+            Unit::tryFrom((string) $request->unit) ?? Unit::Kilogram,
+            Vehicle::tryFrom((string) $request->vehicle) ?? Vehicle::PassengerCars,
+            $isDefaultLocale ? null : $locale,
+        );
+
+        return $roadTransport;
+    }
+
+    private function buildEmissionFactor(ImportRoadTransportRequest $request, Unit $unit, int $year): EmissionFactor
+    {
+        return new EmissionFactor(
+            co2eq: $this->decimal($request->co2eq),
+            co2: $this->decimal($request->co2),
+            ch4: $this->decimal($request->ch4),
+            n2o: $this->decimal($request->n2o),
+            year: $year,
+            unit: $unit,
+            source: '' === trim((string) $request->source) ? null : $request->source,
+        );
+    }
+
+    private function resolveYear(?string $year): int
+    {
+        $parsed = (int) $year;
+
+        if ($parsed <= 0) {
+            throw new \InvalidArgumentException('A valid year is required');
+        }
+
+        return $parsed;
+    }
+
+    private function decimal(?string $value): string
+    {
+        $value = trim((string) $value);
+
+        return '' === $value ? '0' : str_replace(',', '.', $value);
+    }
+
+    public function isHandled(Command $command): bool
+    {
+        return $command instanceof ImportRoadTransportRequest;
+    }
+}

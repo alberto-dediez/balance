@@ -1,0 +1,53 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Transporte por carretera' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': 'Tipo de vehículo' | trans,
+            'sortable': false
+        }, {
+            'label': 'Unidad' | trans,
+            'sortable': false
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': 'Fecha de actualización' | trans,
+            'sortable': true,
+            'sortableBy': 'updatedAt'
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="roadTransports" :bulkForm="bulkForm">
+        <td>{{ element.name }}</td>
+        <td>{{ element.vehicle.value | trans({}, 'roadTransportVehicleType') }}</td>
+        <td>{{ element.unit.value | trans({}, 'unitType') }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>{{ element.updatedAt ? element.updatedAt | date('d/m/Y') : '' }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('admin_road_transports_edit', {'roadTransportId': element.id}) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('admin_road_transports_remove', {'roadTransportId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:EmissionFactors path="{{ path('admin_road_transports_emission_factors') }}" />
+    <twig:Link:Import path="{{ path('import', {'code': 'road_transports'}) }}" />
+    <twig:Link:Export path="{{ path('export', {'code': 'road_transports'}) }}" />
+    <twig:Link:Register path="{{ path('admin_road_transports_register') }}" />
+{% endblock list_actions %}

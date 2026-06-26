@@ -34,6 +34,8 @@ doctrine:
             catering_item_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CateringItemEmissionFactorIdType
             combustible_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CombustibleIdType
             combustible_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CombustibleEmissionFactorIdType
+            road_transport_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\RoadTransportIdType
+            road_transport_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\RoadTransportEmissionFactorIdType
 
     orm:
         auto_generate_proxy_classes: true

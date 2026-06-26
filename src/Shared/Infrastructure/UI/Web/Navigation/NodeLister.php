@@ -171,6 +171,11 @@ class NodeLister
                     icon: 'solar:fire-line-duotone',
                     target: $this->router->generate('admin_combustibles'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Transporte por carretera'),
+                    icon: 'solar:bus-line-duotone',
+                    target: $this->router->generate('admin_road_transports'),
+                ),
             ],
         );
 
