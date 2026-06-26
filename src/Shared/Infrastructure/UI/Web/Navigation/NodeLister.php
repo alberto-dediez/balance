@@ -161,6 +161,19 @@ class NodeLister
             ],
         );
 
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Combustibles'),
+            icon: 'solar:fire-line-duotone',
+            target: $this->router->generate('admin_combustibles'),
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Combustibles'),
+                    icon: 'solar:fire-line-duotone',
+                    target: $this->router->generate('admin_combustibles'),
+                ),
+            ]
+        );
+
         $nodes[] =  new Node(
             label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',

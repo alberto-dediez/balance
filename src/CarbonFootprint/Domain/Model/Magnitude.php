@@ -9,4 +9,5 @@ enum Magnitude: string
     case Mass   = 'mass';
     case Volume = 'volume';
     case Pieces = 'pieces';
+    case Energy = 'energy';
 }

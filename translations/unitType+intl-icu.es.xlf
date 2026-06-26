@@ -17,6 +17,10 @@
         <source>l</source>
         <target>Litro</target>
       </trans-unit>
+      <trans-unit id="mf6jibe" resname="kWhPCS">
+        <source>kWhPCS</source>
+        <target>kWh PCS</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

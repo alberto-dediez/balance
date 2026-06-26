@@ -61,9 +61,9 @@ class NodeListerTest extends TestCase
 
         $result = $sut->nodes();
 
-        $items = $result[2]->items;
+        $items = $result[count($result) - 2]->items;
 
-        $this->assertTrue($result[2]->selected);
+        $this->assertTrue($result[count($result) - 2]->selected);
         $this->assertFalse($items[2]->selected);
         $this->assertTrue($items[4]->selected);
     }

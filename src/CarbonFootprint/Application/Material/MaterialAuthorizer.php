@@ -38,7 +38,7 @@ final class MaterialAuthorizer extends AbstractAuthorizer
 
     protected function canImport(mixed $subject, User $user): bool
     {
-        return $this->canList($subject, $user);
+        return $this->canRegister($subject, $user);
     }
 
     protected function canExport(mixed $subject, User $user): bool

@@ -2141,6 +2141,66 @@
         <source>Elemento de catering</source>
         <target>Catering element</target>
       </trans-unit>
+      <trans-unit id="FrkSox0" resname="Combustibles">
+        <source>Combustibles</source>
+        <target>Combustibles</target>
+      </trans-unit>
+      <trans-unit id="4ITGYnt" resname="Combustible creado correctamente: {name}">
+        <source>Combustible creado correctamente: {name}</source>
+        <target>Combustible created successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="Tl6qeGa" resname="Combustible actualizado con éxito">
+        <source>Combustible actualizado con éxito</source>
+        <target>Combustible updated successfully</target>
+      </trans-unit>
+      <trans-unit id="vQxRwtL" resname="Se ha eliminado el combustible {combustible}">
+        <source>Se ha eliminado el combustible {combustible}</source>
+        <target>Combustible {combustible} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="nCmq3Nb" resname="No se ha podido eliminar el combustible {combustible}">
+        <source>No se ha podido eliminar el combustible {combustible}</source>
+        <target>Combustible {combustible} could not be deleted</target>
+      </trans-unit>
+      <trans-unit id="9AZemYF" resname="Se ha eliminado el combustible {id}">
+        <source>Se ha eliminado el combustible {id}</source>
+        <target>Combustible {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="jh0aYs6" resname="No se ha podido eliminar el combustible {id}">
+        <source>No se ha podido eliminar el combustible {id}</source>
+        <target>Combustible {id} could not be deleted</target>
+      </trans-unit>
+      <trans-unit id="0qrJcFl" resname="Se ha eliminado el factor de emisión del año {year} del combustible {combustible} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} del combustible {combustible} por el usuario {user}</source>
+        <target>The emission factor for year {year} for combustible {combustible} has been deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="5u0eoG1" resname="Se ha actualizado el combustible &quot;{combustible}&quot; por el usuario {user}">
+        <source>Se ha actualizado el combustible "{combustible}" por el usuario {user}</source>
+        <target>The combustible “{combustible}” has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="cv9eA5K" resname="Se ha actualizado el factor de emisión del año {year} del combustible {combustible} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión del año {year} del combustible {combustible} por el usuario {user}</source>
+        <target>The emission factor for year {year} of combustible {combustible} has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="BEZK9cB" resname="Se ha añadido el factor de emisión del año {year} al combustible {combustible} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} al combustible {combustible} por el usuario {user}</source>
+        <target>The emission factor for year {year} has been added to combustible {combustible} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="FltALEu" resname="Se ha traducido el combustible &quot;{combustible}&quot; por el usuario {user}">
+        <source>Se ha traducido el combustible "{combustible}" por el usuario {user}</source>
+        <target>The combustible “{combustible}” has been translated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="bOLSeOW" resname="Se ha eliminado el combustible {combustible} por el usuario {user}">
+        <source>Se ha eliminado el combustible {combustible} por el usuario {user}</source>
+        <target>The combustible {combustible} has been deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="eptwt1k" resname="Se ha registrado el combustible &quot;{combustible}&quot; por el usuario {user}">
+        <source>Se ha registrado el combustible "{combustible}" por el usuario {user}</source>
+        <target>The combustible “{combustible}” has been registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="XRuiJWe" resname="Combustible">
+        <source>Combustible</source>
+        <target>Combustible</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

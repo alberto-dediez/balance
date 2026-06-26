@@ -1,0 +1,5 @@
+{% trans with {
+    '{year}': event.emissionFactor.year,
+    '{combustible}': event.combustibleId,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado el factor de emisión del año {year} del combustible {combustible} por el usuario {user}{% endtrans %}
