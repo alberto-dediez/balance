@@ -10,7 +10,7 @@ use App\CarbonFootprint\Application\Material\EmissionFactor\List\ListEmissionFac
 use App\CarbonFootprint\Application\Material\EmissionFactor\List\ListEmissionFactorsService;
 use App\CarbonFootprint\Application\Material\EmissionFactor\Update\UpdateEmissionFactorsRequest;
 use App\CarbonFootprint\Application\Material\EmissionFactor\Update\UpdateEmissionFactorsService;
-use App\CarbonFootprint\Infrastructure\Symfony\Form\BulkEmissionFactorsType;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\BulkMaterialEmissionFactorsType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\CreateEmissionFactorsYearType;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
@@ -49,7 +49,7 @@ class FactorEmissionController extends AbstractController
 
             $updateRequest = new UpdateEmissionFactorsRequest(year: $year, rows: $rows);
 
-            $form = $this->createForm(BulkEmissionFactorsType::class, $updateRequest, [
+            $form = $this->createForm(BulkMaterialEmissionFactorsType::class, $updateRequest, [
                 'action' => $this->generateUrl('admin_materials_emission_factors', ['year' => $year]),
             ]);
 

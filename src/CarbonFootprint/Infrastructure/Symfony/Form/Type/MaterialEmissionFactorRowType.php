@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /** @extends AbstractType<EmissionFactorRow> */
-class EmissionFactorRowType extends AbstractType
+class MaterialEmissionFactorRowType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

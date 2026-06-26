@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Infrastructure\Symfony\Form;
 
 use App\CarbonFootprint\Application\Material\EmissionFactor\Update\UpdateEmissionFactorsRequest;
-use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorRowType;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MaterialEmissionFactorRowType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -14,14 +14,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
 /** @extends AbstractType<UpdateEmissionFactorsRequest> */
-class BulkEmissionFactorsType extends AbstractType
+class BulkMaterialEmissionFactorsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('rows', CollectionType::class, [
                 'label' => false,
-                'entry_type' => EmissionFactorRowType::class,
+                'entry_type' => MaterialEmissionFactorRowType::class,
                 'entry_options' => ['label' => false],
                 'allow_add' => false,
                 'allow_delete' => false,
