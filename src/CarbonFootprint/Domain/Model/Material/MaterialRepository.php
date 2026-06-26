@@ -12,6 +12,8 @@ interface MaterialRepository
 
     public function find(MaterialId $materialId): ?Material;
 
+    public function findOneByName(string $name): ?Material;
+
     /** @return array<Material> */
     public function findByFilter(MaterialFilter $filter): array;
 

@@ -44,6 +44,21 @@ class InMemoryMaterialRepository implements MaterialRepository
         ;
     }
 
+    public function findOneByName(string $name): ?Material
+    {
+        foreach ($this->materials as $material) {
+            if (true == $material->isRemoved()) {
+                continue;
+            }
+
+            if (strtolower(trim((string) $material->name())) === strtolower(trim($name))) {
+                return $material;
+            }
+        }
+
+        return null;
+    }
+
     /** @return array<int, Material> */
     public function findByFilter(MaterialFilter $filter): array
     {

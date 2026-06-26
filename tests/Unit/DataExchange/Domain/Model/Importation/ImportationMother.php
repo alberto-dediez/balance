@@ -35,14 +35,14 @@ class ImportationMother
         );
     }
 
-    public static function fromIdAndAccountAndFile(string $id, string $accountId, ImportationFile $file): Importation
+    public static function fromIdAndAccountAndFile(string $id, string $accountId, ImportationFile $file, string $type = 'measurements'): Importation
     {
         $parts = explode('/', $file->path());
 
         return self::from(
             importationId: new ImportationId($id),
             name: $parts[count($parts) - 1],
-            type: 'measurements',
+            type: $type,
             importationFile: $file,
             accountId: new AccountId($accountId),
         );

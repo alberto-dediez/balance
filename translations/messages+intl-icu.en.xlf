@@ -2129,6 +2129,18 @@
         <source>Año de origen</source>
         <target>Origin year</target>
       </trans-unit>
+      <trans-unit id="jiMqjWr" resname="Identificador">
+        <source>Identificador</source>
+        <target>Identificator</target>
+      </trans-unit>
+      <trans-unit id="2MXCQvX" resname="Artículo de merchandising">
+        <source>Artículo de merchandising</source>
+        <target>Merchandising item</target>
+      </trans-unit>
+      <trans-unit id="AJV22H7" resname="Elemento de catering">
+        <source>Elemento de catering</source>
+        <target>Catering element</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

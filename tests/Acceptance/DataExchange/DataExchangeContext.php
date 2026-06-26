@@ -61,6 +61,40 @@ final readonly class DataExchangeContext implements Context
         $repository->add($importation);
     }
 
+    #[Given('an importation with id :importationId of type :type from account :accountId exists')]
+    public function anImportationWithIdOfTypeFromAccountExists(string $importationId, string $type, string $accountId): void
+    {
+        $filename = __DIR__ . '/file-to-import.csv';
+
+        $importationFile = new ImportationFile(path: $filename);
+
+        $importation = ImportationMother::fromIdAndAccountAndFile(id: $importationId, accountId: $accountId, file: $importationFile, type: $type);
+
+        $repository = $this->getImportationRepository();
+        $repository->remove($importation);
+
+        $repository->add($importation);
+    }
+
+    #[Given('an executed importation with id :importationId of type :type from account :accountId exists')]
+    public function anExecutedImportationWithIdOfTypeFromAccountExists(string $importationId, string $type, string $accountId): void
+    {
+        $filename = __DIR__ . '/file-to-import.csv';
+
+        $importationFile = new ImportationFile(path: $filename);
+
+        $importation = ImportationMother::fromIdAndAccountAndFile(id: $importationId, accountId: $accountId, file: $importationFile, type: $type);
+
+        $repository = $this->getImportationRepository();
+        $repository->remove($importation);
+
+        $importation->finishExecution();
+
+        $repository->add($importation);
+
+        $repository->saveResult($importation->id(), 3, 'Powerless');
+    }
+
     #[Given('importation :importationId has paired fields :fields')]
     public function importationHasPairedFields(string $importationId, string $fields): void
     {
