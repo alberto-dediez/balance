@@ -52,6 +52,27 @@ class DoctrineMerchandisingItemRepository implements MerchandisingItemRepository
         ;
     }
 
+    public function findOneByName(string $name): ?MerchandisingItem
+    {
+        $qb = $this->createQueryBuilderFromFilter(new MerchandisingItemFilter());
+
+        return $qb
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->andX(
+                        $qb->expr()->eq('m.name', ':name'),
+                        $qb->expr()->isNull('trans.name'),
+                    ),
+                    $qb->expr()->eq('trans.name', ':name'),
+                ),
+            )
+            ->setParameter('name', $name)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     private function createQueryBuilderFromFilter(MerchandisingItemFilter $filter): QueryBuilder
     {
         $qb = $this->manager->createQueryBuilder();

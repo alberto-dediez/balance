@@ -52,6 +52,27 @@ class DoctrineCateringItemRepository implements CateringItemRepository
         ;
     }
 
+    public function findOneByName(string $name): ?CateringItem
+    {
+        $qb = $this->createQueryBuilderFromFilter(new CateringItemFilter());
+
+        return $qb
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->andX(
+                        $qb->expr()->eq('m.name', ':name'),
+                        $qb->expr()->isNull('trans.name'),
+                    ),
+                    $qb->expr()->eq('trans.name', ':name'),
+                ),
+            )
+            ->setParameter('name', $name)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     private function createQueryBuilderFromFilter(CateringItemFilter $filter): QueryBuilder
     {
         $qb = $this->manager->createQueryBuilder();

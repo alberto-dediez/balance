@@ -51,5 +51,7 @@
 
 {% block list_actions %}
     <twig:Link:EmissionFactors path="{{ path('admin_catering_items_emission_factors') }}" />
+    <twig:Link:Import path="{{ path('import', {'code': 'catering_items'}) }}" />
+    <twig:Link:Export path="{{ path('export', {'code': 'catering_items'}) }}" />
     <twig:Link:Register path="{{ path('admin_catering_items_register') }}" />
 {% endblock list_actions %}

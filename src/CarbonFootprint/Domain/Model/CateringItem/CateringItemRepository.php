@@ -12,6 +12,8 @@ interface CateringItemRepository
 
     public function find(CateringItemId $cateringItemId): ?CateringItem;
 
+    public function findOneByName(string $name): ?CateringItem;
+
     /** @return array<CateringItem> */
     public function findByFilter(CateringItemFilter $filter): array;
 
