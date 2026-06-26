@@ -1,17 +1,17 @@
 {% extends '@shared/layout/edit.html.twig' %}
 
 {% block top_actions %}
-    <twig:TopAction:Return path="{{ path('admin_materials') }}" />
+    <twig:TopAction:Return path="{{ path('admin_merchandising_items') }}" />
 {% endblock %}
 
-{% set page_title = ('Materiales' | trans)
+{% set page_title = ('Artículos de merchandising' | trans)
     ~ ' > '
     ~ ('Factores de emisión' | trans) %}
 
 {% block content %}
     <twig:Card>
         <div class="d-flex align-items-center justify-content-between">
-            <a class="btn btn-outline-primary" href="{{ path('admin_materials_emission_factors', {'year': year - 1}) }}">
+            <a class="btn btn-outline-primary" href="{{ path('admin_merchandising_items_emission_factors', {'year': year - 1}) }}">
                 <twig:Icon name="solar:alt-arrow-left-line-duotone" />
                 {% trans %}Año anterior{% endtrans %}
             </a>
@@ -19,7 +19,7 @@
             <h4 class="mb-0">{{ year }}</h4>
 
             {% if canGoNext %}
-                <a class="btn btn-outline-primary" href="{{ path('admin_materials_emission_factors', {'year': year + 1}) }}">
+                <a class="btn btn-outline-primary" href="{{ path('admin_merchandising_items_emission_factors', {'year': year + 1}) }}">
                     {% trans %}Año siguiente{% endtrans %}
                     <twig:Icon name="solar:alt-arrow-right-line-duotone" />
                 </a>
@@ -54,11 +54,11 @@
                 <table class="table align-middle">
                     <thead>
                         <tr>
-                            <th>{% trans %}Material{% endtrans %}</th>
-                            <th>{% trans %}CO2eq{% endtrans %}</th>
-                            <th>{% trans %}CO2{% endtrans %}</th>
-                            <th>{% trans %}CH4{% endtrans %}</th>
-                            <th>{% trans %}N2O{% endtrans %}</th>
+                            <th>{% trans %}Artículo de merchandising{% endtrans %}</th>
+                            <th>{% trans %}Kg CO2eq{% endtrans %}</th>
+                            <th>{% trans %}Kg CO2{% endtrans %}</th>
+                            <th>{% trans %}g CH4{% endtrans %}</th>
+                            <th>{% trans %}g N2O{% endtrans %}</th>
                             <th>{% trans %}Fuente{% endtrans %}</th>
                         </tr>
                     </thead>
@@ -66,8 +66,8 @@
                         {% for row in form.rows %}
                             <tr>
                                 <td>
-                                    {{ row.vars.data.materialName }}
-                                    {{ form_widget(row.materialId) }}
+                                    {{ row.vars.data.merchandisingItemName }}
+                                    {{ form_widget(row.merchandisingItemId) }}
                                 </td>
                                 <td>{{ form_widget(row.co2eq) }}{{ form_errors(row.co2eq) }}</td>
                                 <td>{{ form_widget(row.co2) }}{{ form_errors(row.co2) }}</td>

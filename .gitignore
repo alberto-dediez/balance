@@ -53,5 +53,6 @@ phpstan.neon
 
 .claude
 CLAUDE.md
+.claudeignore
 
 .ai/results

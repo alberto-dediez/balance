@@ -72,7 +72,7 @@ class FactorEmissionController extends AbstractController
             ['action' => $this->generateUrl('admin_materials_emission_factors_create_year', ['sourceYear' => $year])],
         );
 
-        return $this->render('@carbon_footprint/admin/emission_factors/index.html.twig', [
+        return $this->render('@carbon_footprint/admin/materials/emission_factors.html.twig', [
             'form' => $form->createView(),
             'createYearForm' => $createYearForm->createView(),
             'materials' => $response->materials,
