@@ -28,6 +28,7 @@
 >
     <table class="table">
         <thead>
+            {% block thead %}
             <tr>
                 {% for column in columns %}
                     <th>
@@ -35,6 +36,7 @@
                     </th>
                 {% endfor %}
             </tr>
+            {% endblock thead %}
         </thead>
         <tbody class="collection">
             {% for element in elements %}

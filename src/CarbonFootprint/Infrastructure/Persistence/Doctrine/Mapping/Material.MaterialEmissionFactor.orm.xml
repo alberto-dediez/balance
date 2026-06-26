@@ -17,7 +17,8 @@
         <field name="createdAt" type="datetime_immutable" column="created_at" nullable="false"/>
         <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
 
-        <embedded name="emissionFactor" class="App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor" use-column-prefix="false"/>
+        <embedded name="newFactor" class="App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor" use-column-prefix="false"/>
+        <embedded name="recycledFactor" class="App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor" column-prefix="recycled_"/>
 
         <many-to-one field="material" target-entity="App\CarbonFootprint\Domain\Model\Material\Material" inversed-by="emissionFactors">
             <join-column name="material_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>

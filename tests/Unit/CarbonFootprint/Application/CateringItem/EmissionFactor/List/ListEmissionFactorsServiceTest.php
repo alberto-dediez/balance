@@ -27,8 +27,10 @@ class ListEmissionFactorsServiceTest extends TestCase
         $repository = CateringItemRepositoryMother::inMemory();
 
         $cateringItem = CateringItemMother::random();
-        $cateringItem->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2022));
-        $cateringItem->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024));
+        $ef2022 = new EmissionFactor('1', '1', '1', '1', 2022);
+        $cateringItem->setEmissionFactor($ef2022, $ef2022);
+        $ef2024 = new EmissionFactor('1', '1', '1', '1', 2024);
+        $cateringItem->setEmissionFactor($ef2024, $ef2024);
         $repository->add($cateringItem);
 
         $sut = $this->createSUT($repository);

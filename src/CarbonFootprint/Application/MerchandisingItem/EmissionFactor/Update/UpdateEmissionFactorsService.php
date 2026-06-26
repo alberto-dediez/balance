@@ -37,7 +37,10 @@ class UpdateEmissionFactorsService implements CommandHandler
             if ($row->isEmpty()) {
                 $merchandisingItem->removeEmissionFactor($request->year);
             } else {
-                $merchandisingItem->setEmissionFactor($row->toEmissionFactor($request->year, $merchandisingItem->unit()));
+                $merchandisingItem->setEmissionFactor(
+                    $row->newEmissionFactor($request->year, $merchandisingItem->unit()),
+                    $row->recycledEmissionFactor($request->year, $merchandisingItem->unit()),
+                );
             }
 
             $this->merchandisingItemRepository->add($merchandisingItem);

@@ -6,7 +6,6 @@ namespace App\CarbonFootprint\Application\CateringItem\Update;
 
 use App\CarbonFootprint\Application\CateringItem\CateringItemAuthorizer;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
-use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -49,10 +48,13 @@ class UpdateCateringItemService implements CommandHandler
         $unit = $cateringItem->unit();
 
         $cateringItem->syncEmissionFactors(
-            array_map(
-                static fn(EmissionFactorData $data): EmissionFactor => $data->toEmissionFactor($unit),
+            array_values(array_map(
+                static fn(EmissionFactorData $data): array => [
+                    'new' => $data->newEmissionFactor($unit),
+                    'recycled' => $data->recycledEmissionFactor($unit),
+                ],
                 $request->emissionFactors,
-            ),
+            )),
         );
 
         $this->cateringItemRepository->add($cateringItem);

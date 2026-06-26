@@ -30,7 +30,7 @@ class MerchandisingItemEmissionFactorType extends AbstractType
                 ],
             ])
             ->add('co2eq', TextType::class, [
-                'label' => new TranslatableMessage('Kg CO2eq'),
+                'label' => new TranslatableMessage('Kg CO2eq (nueva fabricación)'),
                 'required' => true,
                 'attr' => $numberAttr,
                 'constraints' => [
@@ -39,7 +39,7 @@ class MerchandisingItemEmissionFactorType extends AbstractType
                 ],
             ])
             ->add('co2', TextType::class, [
-                'label' => new TranslatableMessage('Kg CO2'),
+                'label' => new TranslatableMessage('Kg CO2 (nueva fabricación)'),
                 'required' => true,
                 'attr' => $numberAttr,
                 'constraints' => [
@@ -48,7 +48,7 @@ class MerchandisingItemEmissionFactorType extends AbstractType
                 ],
             ])
             ->add('ch4', TextType::class, [
-                'label' => new TranslatableMessage('g CH4'),
+                'label' => new TranslatableMessage('g CH4 (nueva fabricación)'),
                 'required' => true,
                 'attr' => $numberAttr,
                 'constraints' => [
@@ -57,7 +57,43 @@ class MerchandisingItemEmissionFactorType extends AbstractType
                 ],
             ])
             ->add('n2o', TextType::class, [
-                'label' => new TranslatableMessage('g N2O'),
+                'label' => new TranslatableMessage('g N2O (nueva fabricación)'),
+                'required' => true,
+                'attr' => $numberAttr,
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Type(type: 'numeric'),
+                ],
+            ])
+            ->add('recycledCo2eq', TextType::class, [
+                'label' => new TranslatableMessage('Kg CO2eq (reciclado)'),
+                'required' => true,
+                'attr' => $numberAttr,
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Type(type: 'numeric'),
+                ],
+            ])
+            ->add('recycledCo2', TextType::class, [
+                'label' => new TranslatableMessage('Kg CO2 (reciclado)'),
+                'required' => true,
+                'attr' => $numberAttr,
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Type(type: 'numeric'),
+                ],
+            ])
+            ->add('recycledCh4', TextType::class, [
+                'label' => new TranslatableMessage('g CH4 (reciclado)'),
+                'required' => true,
+                'attr' => $numberAttr,
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Type(type: 'numeric'),
+                ],
+            ])
+            ->add('recycledN2o', TextType::class, [
+                'label' => new TranslatableMessage('g N2O (reciclado)'),
                 'required' => true,
                 'attr' => $numberAttr,
                 'constraints' => [

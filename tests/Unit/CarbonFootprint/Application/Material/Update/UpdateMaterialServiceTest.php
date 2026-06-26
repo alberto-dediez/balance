@@ -141,9 +141,9 @@ class UpdateMaterialServiceTest extends TestCase
         $persistedFactor = $materialPersisted->emissionFactorFor(2024);
 
         $this->assertNotNull($persistedFactor);
-        $this->assertSame('1.5', $persistedFactor->co2eq());
+        $this->assertSame('1.5', $persistedFactor->newFactor()->co2eq());
         // The emission factor unit is derived from the material's unit, not user input.
-        $this->assertSame(Unit::Piece, $persistedFactor->unit());
+        $this->assertSame(Unit::Piece, $persistedFactor->newFactor()->unit());
     }
 
     private function createSUT(MaterialRepository $repository, Locale $locale = Locale::Spanish): UpdateMaterialService

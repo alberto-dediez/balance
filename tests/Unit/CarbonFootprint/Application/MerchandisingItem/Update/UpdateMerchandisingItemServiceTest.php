@@ -141,8 +141,8 @@ class UpdateMerchandisingItemServiceTest extends TestCase
         $persistedFactor = $merchandisingItemPersisted->emissionFactorFor(2024);
 
         $this->assertNotNull($persistedFactor);
-        $this->assertSame('1.5', $persistedFactor->co2eq());
-        $this->assertSame(Unit::Piece, $persistedFactor->unit());
+        $this->assertSame('1.5', $persistedFactor->newFactor()->co2eq());
+        $this->assertSame(Unit::Piece, $persistedFactor->newFactor()->unit());
     }
 
     private function createSUT(MerchandisingItemRepository $repository, Locale $locale = Locale::Spanish): UpdateMerchandisingItemService

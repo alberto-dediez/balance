@@ -19,6 +19,10 @@ class ImportMaterialRequest implements Command
         public ?string $co2 = null,
         public ?string $ch4 = null,
         public ?string $n2o = null,
+        public ?string $recycledCo2eq = null,
+        public ?string $recycledCo2 = null,
+        public ?string $recycledCh4 = null,
+        public ?string $recycledN2o = null,
         public ?string $source = null,
     ) {}
 }

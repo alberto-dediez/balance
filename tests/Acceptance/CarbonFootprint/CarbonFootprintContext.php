@@ -61,14 +61,15 @@ final readonly class CarbonFootprintContext implements Context
     {
         $material = MaterialMother::fromNameAndId($name, $id);
 
-        $material->setEmissionFactor(new EmissionFactor(
+        $ef = new EmissionFactor(
             co2eq: '1.5',
             co2: '1.0',
             ch4: '0.2',
             n2o: '0.3',
             year: (int) $year,
             source: 'IPCC',
-        ));
+        );
+        $material->setEmissionFactor($ef, $ef);
 
         $this->getMaterialRepository()->add($material);
     }

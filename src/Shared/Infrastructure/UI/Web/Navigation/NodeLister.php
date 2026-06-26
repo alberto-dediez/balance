@@ -171,7 +171,7 @@ class NodeLister
                     icon: 'solar:fire-line-duotone',
                     target: $this->router->generate('admin_combustibles'),
                 ),
-            ]
+            ],
         );
 
         $nodes[] =  new Node(

@@ -48,17 +48,21 @@ class MaterialImportationType implements ImportationType
     public function fields(): array
     {
         return [
-            'material',
-            'name',
-            'category',
-            'unit',
-            'unitWeight',
-            'year',
-            'co2eq',
-            'co2',
-            'ch4',
-            'n2o',
-            'source',
+            (string) new TranslatableMessage('material', [], 'fields'),
+            (string) new TranslatableMessage('name', [], 'fields'),
+            (string) new TranslatableMessage('category', [], 'fields'),
+            (string) new TranslatableMessage('unit', [], 'fields'),
+            (string) new TranslatableMessage('unitWeight', [], 'fields'),
+            (string) new TranslatableMessage('year', [], 'fields'),
+            (string) new TranslatableMessage('co2eq', [], 'fields'),
+            (string) new TranslatableMessage('co2', [], 'fields'),
+            (string) new TranslatableMessage('ch4', [], 'fields'),
+            (string) new TranslatableMessage('n2o', [], 'fields'),
+            (string) new TranslatableMessage('recycledCo2eq', [], 'fields'),
+            (string) new TranslatableMessage('recycledCo2', [], 'fields'),
+            (string) new TranslatableMessage('recycledCh4', [], 'fields'),
+            (string) new TranslatableMessage('recycledN2o', [], 'fields'),
+            (string) new TranslatableMessage('source', [], 'fields'),
         ];
     }
 
@@ -84,6 +88,10 @@ class MaterialImportationType implements ImportationType
             'co2' => new FieldDefinition(fieldType: TextType::class),
             'ch4' => new FieldDefinition(fieldType: TextType::class),
             'n2o' => new FieldDefinition(fieldType: TextType::class),
+            'recycledCo2eq' => new FieldDefinition(fieldType: TextType::class),
+            'recycledCo2' => new FieldDefinition(fieldType: TextType::class),
+            'recycledCh4' => new FieldDefinition(fieldType: TextType::class),
+            'recycledN2o' => new FieldDefinition(fieldType: TextType::class),
             'source' => new FieldDefinition(fieldType: TextType::class),
         ];
     }
@@ -101,6 +109,10 @@ class MaterialImportationType implements ImportationType
             co2: $this->stringOrNull($data['co2'] ?? null),
             ch4: $this->stringOrNull($data['ch4'] ?? null),
             n2o: $this->stringOrNull($data['n2o'] ?? null),
+            recycledCo2eq: $this->stringOrNull($data['recycledCo2eq'] ?? null),
+            recycledCo2: $this->stringOrNull($data['recycledCo2'] ?? null),
+            recycledCh4: $this->stringOrNull($data['recycledCh4'] ?? null),
+            recycledN2o: $this->stringOrNull($data['recycledN2o'] ?? null),
             source: $this->stringOrNull($data['source'] ?? null),
         );
     }

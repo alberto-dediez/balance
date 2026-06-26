@@ -58,8 +58,8 @@ class ImportMaterialServiceTest extends TestCase
         $emissionFactor = $material->emissionFactorFor(2024);
 
         $this->assertNotNull($emissionFactor);
-        $this->assertEquals('1.5', $emissionFactor->co2eq());
-        $this->assertEquals(Unit::Kilogram, $emissionFactor->unit());
+        $this->assertEquals('1.5', $emissionFactor->newFactor()->co2eq());
+        $this->assertEquals(Unit::Kilogram, $emissionFactor->newFactor()->unit());
     }
 
     public function testUpsertsExistingMaterialByName(): void
@@ -84,7 +84,7 @@ class ImportMaterialServiceTest extends TestCase
 
         $this->assertNotNull($material);
         $this->assertCount(1, $repository->findByFilter(new MaterialFilter(limit: 0)));
-        $this->assertEquals('2.0', $material->emissionFactorFor(2024)?->co2eq());
+        $this->assertEquals('2.0', $material->emissionFactorFor(2024)?->newFactor()->co2eq());
     }
 
     public function testExplicitMaterialOnlyUpdatesEmissionFactor(): void
@@ -110,7 +110,7 @@ class ImportMaterialServiceTest extends TestCase
         $this->assertNotNull($material);
         $this->assertEquals('Acero', $material->name());
         $this->assertEquals(MaterialCategory::Metal, $material->category());
-        $this->assertEquals('3.0', $material->emissionFactorFor(2025)?->co2eq());
+        $this->assertEquals('3.0', $material->emissionFactorFor(2025)?->newFactor()->co2eq());
     }
 
     public function testThrowsWhenNeitherMaterialNorNameProvided(): void

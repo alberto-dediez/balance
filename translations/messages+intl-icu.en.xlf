@@ -2201,6 +2201,78 @@
         <source>Combustible</source>
         <target>Combustible</target>
       </trans-unit>
+      <trans-unit id="imFmXRj" resname="Kg CO2eq (nueva fabricación)">
+        <source>Kg CO2eq (nueva fabricación)</source>
+        <target>kg CO2eq (new production)</target>
+      </trans-unit>
+      <trans-unit id="KoqdHBz" resname="Kg CO2 (nueva fabricación)">
+        <source>Kg CO2 (nueva fabricación)</source>
+        <target>kg CO2 (new production)</target>
+      </trans-unit>
+      <trans-unit id="_GrJ7cx" resname="g CH4 (nueva fabricación)">
+        <source>g CH4 (nueva fabricación)</source>
+        <target>g CH4 (new production)</target>
+      </trans-unit>
+      <trans-unit id="c4BU7gN" resname="g N2O (nueva fabricación)">
+        <source>g N2O (nueva fabricación)</source>
+        <target>g N2O (new production)</target>
+      </trans-unit>
+      <trans-unit id="IHVCBMP" resname="Kg CO2eq (reciclado)">
+        <source>Kg CO2eq (reciclado)</source>
+        <target>kg CO2eq (recycled)</target>
+      </trans-unit>
+      <trans-unit id="gXH.akI" resname="Kg CO2 (reciclado)">
+        <source>Kg CO2 (reciclado)</source>
+        <target>kg CO2 (recycled)</target>
+      </trans-unit>
+      <trans-unit id="KsTI_mY" resname="g CH4 (reciclado)">
+        <source>g CH4 (reciclado)</source>
+        <target>g CH4 (recycled)</target>
+      </trans-unit>
+      <trans-unit id="pdyFwtG" resname="g N2O (reciclado)">
+        <source>g N2O (reciclado)</source>
+        <target>g N2O (recycled)</target>
+      </trans-unit>
+      <trans-unit id="_a.xRM1" resname="CO2eq nueva fabricación">
+        <source>CO2eq nueva fabricación</source>
+        <target>CO2eq from new production</target>
+      </trans-unit>
+      <trans-unit id="YEchG3F" resname="CO2 nueva fabricación">
+        <source>CO2 nueva fabricación</source>
+        <target>CO2 from new production</target>
+      </trans-unit>
+      <trans-unit id="1HV3BuQ" resname="CH4 nueva fabricación">
+        <source>CH4 nueva fabricación</source>
+        <target>CH4 from new production</target>
+      </trans-unit>
+      <trans-unit id="eq24CGl" resname="N2O nueva fabricación">
+        <source>N2O nueva fabricación</source>
+        <target>N2O from new production</target>
+      </trans-unit>
+      <trans-unit id="uEMpPkL" resname="CO2eq reciclado">
+        <source>CO2eq reciclado</source>
+        <target>CO2eq from recycling</target>
+      </trans-unit>
+      <trans-unit id="3Xl_y8F" resname="CO2 reciclado">
+        <source>CO2 reciclado</source>
+        <target>CO2 from recycling</target>
+      </trans-unit>
+      <trans-unit id="pzhdtPK" resname="CH4 reciclado">
+        <source>CH4 reciclado</source>
+        <target>CH4 from recycling</target>
+      </trans-unit>
+      <trans-unit id="RDgFF4z" resname="N2O reciclado">
+        <source>N2O reciclado</source>
+        <target>N2O from recycling</target>
+      </trans-unit>
+      <trans-unit id="10ydyFA" resname="Nueva fabricación">
+        <source>Nueva fabricación</source>
+        <target>New production</target>
+      </trans-unit>
+      <trans-unit id="o_h0Cy3" resname="Reciclado">
+        <source>Reciclado</source>
+        <target>Recycling</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

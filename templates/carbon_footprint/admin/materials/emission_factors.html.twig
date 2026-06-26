@@ -54,12 +54,20 @@
                 <table class="table align-middle">
                     <thead>
                         <tr>
-                            <th>{% trans %}Material{% endtrans %}</th>
+                            <th rowspan="2">{% trans %}Material{% endtrans %}</th>
+                            <th colspan="4" class="text-center">{% trans %}Nueva fabricación{% endtrans %}</th>
+                            <th colspan="4" class="text-center">{% trans %}Reciclado{% endtrans %}</th>
+                            <th rowspan="2">{% trans %}Fuente{% endtrans %}</th>
+                        </tr>
+                        <tr>
                             <th>{% trans %}Kg CO2eq{% endtrans %}</th>
                             <th>{% trans %}Kg CO2{% endtrans %}</th>
                             <th>{% trans %}g CH4{% endtrans %}</th>
                             <th>{% trans %}g N2O{% endtrans %}</th>
-                            <th>{% trans %}Fuente{% endtrans %}</th>
+                            <th>{% trans %}Kg CO2eq{% endtrans %}</th>
+                            <th>{% trans %}Kg CO2{% endtrans %}</th>
+                            <th>{% trans %}g CH4{% endtrans %}</th>
+                            <th>{% trans %}g N2O{% endtrans %}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -73,6 +81,10 @@
                                 <td>{{ form_widget(row.co2) }}{{ form_errors(row.co2) }}</td>
                                 <td>{{ form_widget(row.ch4) }}{{ form_errors(row.ch4) }}</td>
                                 <td>{{ form_widget(row.n2o) }}{{ form_errors(row.n2o) }}</td>
+                                <td>{{ form_widget(row.recycledCo2eq) }}{{ form_errors(row.recycledCo2eq) }}</td>
+                                <td>{{ form_widget(row.recycledCo2) }}{{ form_errors(row.recycledCo2) }}</td>
+                                <td>{{ form_widget(row.recycledCh4) }}{{ form_errors(row.recycledCh4) }}</td>
+                                <td>{{ form_widget(row.recycledN2o) }}{{ form_errors(row.recycledN2o) }}</td>
                                 <td>{{ form_widget(row.source) }}{{ form_errors(row.source) }}</td>
                             </tr>
                         {% endfor %}

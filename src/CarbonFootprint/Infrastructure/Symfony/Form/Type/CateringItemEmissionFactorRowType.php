@@ -24,25 +24,49 @@ class CateringItemEmissionFactorRowType extends AbstractType
         $builder
             ->add('cateringItemId', HiddenType::class)
             ->add('co2eq', TextType::class, [
-                'label' => new TranslatableMessage('Kg CO2eq'),
+                'label' => new TranslatableMessage('Kg CO2eq (nueva fabricación)'),
                 'required' => false,
                 'attr' => $numberAttr,
                 'constraints' => [new Assert\Type(type: 'numeric')],
             ])
             ->add('co2', TextType::class, [
-                'label' => new TranslatableMessage('Kg CO2'),
+                'label' => new TranslatableMessage('Kg CO2 (nueva fabricación)'),
                 'required' => false,
                 'attr' => $numberAttr,
                 'constraints' => [new Assert\Type(type: 'numeric')],
             ])
             ->add('ch4', TextType::class, [
-                'label' => new TranslatableMessage('g CH4'),
+                'label' => new TranslatableMessage('g CH4 (nueva fabricación)'),
                 'required' => false,
                 'attr' => $numberAttr,
                 'constraints' => [new Assert\Type(type: 'numeric')],
             ])
             ->add('n2o', TextType::class, [
-                'label' => new TranslatableMessage('g N2O'),
+                'label' => new TranslatableMessage('g N2O (nueva fabricación)'),
+                'required' => false,
+                'attr' => $numberAttr,
+                'constraints' => [new Assert\Type(type: 'numeric')],
+            ])
+            ->add('recycledCo2eq', TextType::class, [
+                'label' => new TranslatableMessage('Kg CO2eq (reciclado)'),
+                'required' => false,
+                'attr' => $numberAttr,
+                'constraints' => [new Assert\Type(type: 'numeric')],
+            ])
+            ->add('recycledCo2', TextType::class, [
+                'label' => new TranslatableMessage('Kg CO2 (reciclado)'),
+                'required' => false,
+                'attr' => $numberAttr,
+                'constraints' => [new Assert\Type(type: 'numeric')],
+            ])
+            ->add('recycledCh4', TextType::class, [
+                'label' => new TranslatableMessage('g CH4 (reciclado)'),
+                'required' => false,
+                'attr' => $numberAttr,
+                'constraints' => [new Assert\Type(type: 'numeric')],
+            ])
+            ->add('recycledN2o', TextType::class, [
+                'label' => new TranslatableMessage('g N2O (reciclado)'),
                 'required' => false,
                 'attr' => $numberAttr,
                 'constraints' => [new Assert\Type(type: 'numeric')],
@@ -69,7 +93,7 @@ class CateringItemEmissionFactorRowType extends AbstractType
             return;
         }
 
-        foreach (['co2eq', 'co2', 'ch4', 'n2o'] as $field) {
+        foreach (['co2eq', 'co2', 'ch4', 'n2o', 'recycledCo2eq', 'recycledCo2', 'recycledCh4', 'recycledN2o'] as $field) {
             if ('' === (string) $row->{$field}) {
                 $context->buildViolation('Este valor no debería estar vacío.')
                     ->atPath($field)

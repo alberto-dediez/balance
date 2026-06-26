@@ -27,8 +27,10 @@ class ListEmissionFactorsServiceTest extends TestCase
         $repository = MaterialRepositoryMother::inMemory();
 
         $material = MaterialMother::random();
-        $material->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2022));
-        $material->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024));
+        $ef2022 = new EmissionFactor('1', '1', '1', '1', 2022);
+        $material->setEmissionFactor($ef2022, $ef2022);
+        $ef2024 = new EmissionFactor('1', '1', '1', '1', 2024);
+        $material->setEmissionFactor($ef2024, $ef2024);
         $repository->add($material);
 
         $sut = $this->createSUT($repository);

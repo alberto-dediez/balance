@@ -16,7 +16,8 @@ final class MerchandisingItemEmissionFactorUpdated extends DomainEvent
 
     public function __construct(
         private MerchandisingItemId $merchandisingItemId,
-        private EmissionFactor $emissionFactor,
+        private EmissionFactor $newFactor,
+        private EmissionFactor $recycledFactor,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -28,9 +29,14 @@ final class MerchandisingItemEmissionFactorUpdated extends DomainEvent
         return $this->merchandisingItemId;
     }
 
-    public function emissionFactor(): EmissionFactor
+    public function newFactor(): EmissionFactor
     {
-        return $this->emissionFactor;
+        return $this->newFactor;
+    }
+
+    public function recycledFactor(): EmissionFactor
+    {
+        return $this->recycledFactor;
     }
 
     public function aggregateRootId(): AggregateRootId
@@ -42,13 +48,20 @@ final class MerchandisingItemEmissionFactorUpdated extends DomainEvent
     {
         return [
             'merchandisingItemId' => (string) $this->merchandisingItemId,
-            'co2eq' => $this->emissionFactor->co2eq(),
-            'co2' => $this->emissionFactor->co2(),
-            'ch4' => $this->emissionFactor->ch4(),
-            'n2o' => $this->emissionFactor->n2o(),
-            'year' => $this->emissionFactor->year(),
-            'unit' => $this->emissionFactor->unit()->value,
-            'source' => $this->emissionFactor->source(),
+            'co2eq' => $this->newFactor->co2eq(),
+            'co2' => $this->newFactor->co2(),
+            'ch4' => $this->newFactor->ch4(),
+            'n2o' => $this->newFactor->n2o(),
+            'year' => $this->newFactor->year(),
+            'unit' => $this->newFactor->unit()->value,
+            'source' => $this->newFactor->source(),
+            'recycledCo2eq' => $this->recycledFactor->co2eq(),
+            'recycledCo2' => $this->recycledFactor->co2(),
+            'recycledCh4' => $this->recycledFactor->ch4(),
+            'recycledN2o' => $this->recycledFactor->n2o(),
+            'recycledYear' => $this->recycledFactor->year(),
+            'recycledUnit' => $this->recycledFactor->unit()->value,
+            'recycledSource' => $this->recycledFactor->source(),
         ];
     }
 
@@ -59,17 +72,32 @@ final class MerchandisingItemEmissionFactorUpdated extends DomainEvent
     ): static {
         $unit = Unit::from($payload['unit']);
 
+        $newFactor = new EmissionFactor(
+            co2eq: $payload['co2eq'],
+            co2: $payload['co2'],
+            ch4: $payload['ch4'],
+            n2o: $payload['n2o'],
+            year: $payload['year'],
+            unit: $unit,
+            source: $payload['source'],
+        );
+
+        $recycledFactor = isset($payload['recycledCo2eq'])
+            ? new EmissionFactor(
+                co2eq: $payload['recycledCo2eq'],
+                co2: $payload['recycledCo2'],
+                ch4: $payload['recycledCh4'],
+                n2o: $payload['recycledN2o'],
+                year: $payload['recycledYear'] ?? $payload['year'],
+                unit: Unit::from($payload['recycledUnit'] ?? $payload['unit']),
+                source: $payload['recycledSource'] ?? $payload['source'],
+            )
+            : $newFactor;
+
         return new MerchandisingItemEmissionFactorUpdated(
             merchandisingItemId: new MerchandisingItemId($payload['merchandisingItemId']),
-            emissionFactor: new EmissionFactor(
-                co2eq: $payload['co2eq'],
-                co2: $payload['co2'],
-                ch4: $payload['ch4'],
-                n2o: $payload['n2o'],
-                year: $payload['year'],
-                unit: $unit,
-                source: $payload['source'],
-            ),
+            newFactor: $newFactor,
+            recycledFactor: $recycledFactor,
             id: $id,
             occurredOn: $occurredOn,
         );

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="es" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="GcgVL0w" resname="material">
+        <source>material</source>
+        <target>Material</target>
+      </trans-unit>
+      <trans-unit id="yWqRg5C" resname="name">
+        <source>name</source>
+        <target>Nombre</target>
+      </trans-unit>
+      <trans-unit id="gpwpUUb" resname="category">
+        <source>category</source>
+        <target>Categoría</target>
+      </trans-unit>
+      <trans-unit id="M3Q.P7x" resname="unit">
+        <source>unit</source>
+        <target>Unidad</target>
+      </trans-unit>
+      <trans-unit id="ZUA0dlB" resname="unitWeight">
+        <source>unitWeight</source>
+        <target>Peso unitario</target>
+      </trans-unit>
+      <trans-unit id="2yur8vv" resname="year">
+        <source>year</source>
+        <target>Año</target>
+      </trans-unit>
+      <trans-unit id="Ryo8_OL" resname="co2eq">
+        <source>co2eq</source>
+        <target>CO2eq (nueva fabricación)</target>
+      </trans-unit>
+      <trans-unit id="Xm8lsrf" resname="co2">
+        <source>co2</source>
+        <target>CO2 (nueva fabricación)</target>
+      </trans-unit>
+      <trans-unit id="f8U4oTn" resname="ch4">
+        <source>ch4</source>
+        <target>CH4 (nueva fabricación)</target>
+      </trans-unit>
+      <trans-unit id="xAfN1w1" resname="n2o">
+        <source>n2o</source>
+        <target>N2O (nueva fabricación)</target>
+      </trans-unit>
+      <trans-unit id="eaXhSi7" resname="recycledCo2eq">
+        <source>recycledCo2eq</source>
+        <target>CO2eq (reciclado)</target>
+      </trans-unit>
+      <trans-unit id="SrFXKNt" resname="recycledCo2">
+        <source>recycledCo2</source>
+        <target>CO2 (reciclado)</target>
+      </trans-unit>
+      <trans-unit id="900cMD3" resname="recycledCh4">
+        <source>recycledCh4</source>
+        <target>CH4 (reciclado)</target>
+      </trans-unit>
+      <trans-unit id=".Z4Vh.C" resname="recycledN2o">
+        <source>recycledN2o</source>
+        <target>N2O (reciclado)</target>
+      </trans-unit>
+      <trans-unit id="6DbIfYI" resname="source">
+        <source>source</source>
+        <target>Fuente</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

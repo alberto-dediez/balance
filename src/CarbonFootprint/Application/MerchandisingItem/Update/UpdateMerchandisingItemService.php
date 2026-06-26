@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\MerchandisingItem\Update;
 
 use App\CarbonFootprint\Application\MerchandisingItem\MerchandisingItemAuthorizer;
-use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
@@ -49,10 +48,13 @@ class UpdateMerchandisingItemService implements CommandHandler
         $unit = $merchandisingItem->unit();
 
         $merchandisingItem->syncEmissionFactors(
-            array_map(
-                static fn(EmissionFactorData $data): EmissionFactor => $data->toEmissionFactor($unit),
+            array_values(array_map(
+                static fn(EmissionFactorData $data): array => [
+                    'new' => $data->newEmissionFactor($unit),
+                    'recycled' => $data->recycledEmissionFactor($unit),
+                ],
                 $request->emissionFactors,
-            ),
+            )),
         );
 
         $this->merchandisingItemRepository->add($merchandisingItem);

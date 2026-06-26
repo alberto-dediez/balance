@@ -38,7 +38,7 @@ class EditController extends AbstractController
 
         $emissionFactors = [];
         foreach ($material->emissionFactors() as $materialEmissionFactor) {
-            $emissionFactors[] = EmissionFactorData::fromEmissionFactor($materialEmissionFactor->emissionFactor());
+            $emissionFactors[] = EmissionFactorData::fromMaterialEmissionFactor($materialEmissionFactor);
         }
 
         $materialRequest = new UpdateMaterialRequest(

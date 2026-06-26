@@ -55,7 +55,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $this->assertNotNull($persisted);
         $factor = $persisted->emissionFactorFor(2025);
         $this->assertNotNull($factor);
-        $this->assertSame('1.5', $factor->co2eq());
+        $this->assertSame('1.5', $factor->newFactor()->co2eq());
     }
 
     public function testRemovesEmissionFactorWhenRowIsEmpty(): void
@@ -63,7 +63,8 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $repository = MerchandisingItemRepositoryMother::inMemory();
 
         $merchandisingItem = MerchandisingItemMother::random();
-        $merchandisingItem->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2025));
+        $ef = new EmissionFactor('1', '1', '1', '1', 2025);
+        $merchandisingItem->setEmissionFactor($ef, $ef);
         $repository->add($merchandisingItem);
 
         $sut = $this->createSUT($repository);

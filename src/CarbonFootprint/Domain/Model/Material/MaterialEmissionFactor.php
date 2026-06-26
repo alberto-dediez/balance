@@ -11,7 +11,8 @@ class MaterialEmissionFactor
     public function __construct(
         private MaterialEmissionFactorId $id,
         private Material $material,
-        private EmissionFactor $emissionFactor,
+        private EmissionFactor $newFactor,
+        private EmissionFactor $recycledFactor,
         private \DateTimeImmutable $createdAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $updatedAt = null,
     ) {}
@@ -26,14 +27,19 @@ class MaterialEmissionFactor
         return $this->material;
     }
 
-    public function emissionFactor(): EmissionFactor
+    public function newFactor(): EmissionFactor
     {
-        return $this->emissionFactor;
+        return $this->newFactor;
+    }
+
+    public function recycledFactor(): EmissionFactor
+    {
+        return $this->recycledFactor;
     }
 
     public function year(): int
     {
-        return $this->emissionFactor->year();
+        return $this->newFactor->year();
     }
 
     public function createdAt(): \DateTimeImmutable
@@ -46,9 +52,10 @@ class MaterialEmissionFactor
         return $this->updatedAt;
     }
 
-    public function update(EmissionFactor $emissionFactor, \DateTimeImmutable $updatedAt): void
+    public function update(EmissionFactor $newFactor, EmissionFactor $recycledFactor, \DateTimeImmutable $updatedAt): void
     {
-        $this->emissionFactor = $emissionFactor;
+        $this->newFactor = $newFactor;
+        $this->recycledFactor = $recycledFactor;
         $this->updatedAt = $updatedAt;
     }
 }

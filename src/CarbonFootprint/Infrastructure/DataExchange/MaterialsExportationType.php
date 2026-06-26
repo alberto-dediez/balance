@@ -49,10 +49,14 @@ class MaterialsExportationType implements ExportationType
             new ExportColumnDefinition('unit', new TranslatableMessage('Unidad')),
             new ExportColumnDefinition('unitWeight', new TranslatableMessage('Peso por unidad (kg)')),
             new ExportColumnDefinition('year', new TranslatableMessage('Año')),
-            new ExportColumnDefinition('co2eq', new TranslatableMessage('CO2eq')),
-            new ExportColumnDefinition('co2', new TranslatableMessage('CO2')),
-            new ExportColumnDefinition('ch4', new TranslatableMessage('CH4')),
-            new ExportColumnDefinition('n2o', new TranslatableMessage('N2O')),
+            new ExportColumnDefinition('co2eq', new TranslatableMessage('CO2eq nueva fabricación')),
+            new ExportColumnDefinition('co2', new TranslatableMessage('CO2 nueva fabricación')),
+            new ExportColumnDefinition('ch4', new TranslatableMessage('CH4 nueva fabricación')),
+            new ExportColumnDefinition('n2o', new TranslatableMessage('N2O nueva fabricación')),
+            new ExportColumnDefinition('recycledCo2eq', new TranslatableMessage('CO2eq reciclado')),
+            new ExportColumnDefinition('recycledCo2', new TranslatableMessage('CO2 reciclado')),
+            new ExportColumnDefinition('recycledCh4', new TranslatableMessage('CH4 reciclado')),
+            new ExportColumnDefinition('recycledN2o', new TranslatableMessage('N2O reciclado')),
             new ExportColumnDefinition('source', new TranslatableMessage('Fuente')),
         ];
     }
@@ -143,15 +147,17 @@ class MaterialsExportationType implements ExportationType
     /** @return array<string, scalar|null> */
     private function factorRow(MaterialEmissionFactor $materialEmissionFactor): array
     {
-        $emissionFactor = $materialEmissionFactor->emissionFactor();
-
         return [
-            'year' => $emissionFactor->year(),
-            'co2eq' => $emissionFactor->co2eq(),
-            'co2' => $emissionFactor->co2(),
-            'ch4' => $emissionFactor->ch4(),
-            'n2o' => $emissionFactor->n2o(),
-            'source' => $emissionFactor->source() ?? '',
+            'year' => $materialEmissionFactor->newFactor()->year(),
+            'co2eq' => $materialEmissionFactor->newFactor()->co2eq(),
+            'co2' => $materialEmissionFactor->newFactor()->co2(),
+            'ch4' => $materialEmissionFactor->newFactor()->ch4(),
+            'n2o' => $materialEmissionFactor->newFactor()->n2o(),
+            'recycledCo2eq' => $materialEmissionFactor->recycledFactor()->co2eq(),
+            'recycledCo2' => $materialEmissionFactor->recycledFactor()->co2(),
+            'recycledCh4' => $materialEmissionFactor->recycledFactor()->ch4(),
+            'recycledN2o' => $materialEmissionFactor->recycledFactor()->n2o(),
+            'source' => $materialEmissionFactor->newFactor()->source() ?? '',
         ];
     }
 
@@ -164,6 +170,10 @@ class MaterialsExportationType implements ExportationType
             'co2' => '',
             'ch4' => '',
             'n2o' => '',
+            'recycledCo2eq' => '',
+            'recycledCo2' => '',
+            'recycledCh4' => '',
+            'recycledN2o' => '',
             'source' => '',
         ];
     }

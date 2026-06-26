@@ -56,7 +56,10 @@ class CreateEmissionFactorsYearService implements CommandHandler
                 continue;
             }
 
-            $material->setEmissionFactor($sourceFactor->withYear($targetYear));
+            $material->setEmissionFactor(
+                $sourceFactor->newFactor()->withYear($targetYear),
+                $sourceFactor->recycledFactor()->withYear($targetYear),
+            );
 
             $this->materialRepository->add($material);
         }

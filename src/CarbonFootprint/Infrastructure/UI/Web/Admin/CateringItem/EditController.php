@@ -38,7 +38,7 @@ class EditController extends AbstractController
 
         $emissionFactors = [];
         foreach ($cateringItem->emissionFactors() as $cateringItemEmissionFactor) {
-            $emissionFactors[] = EmissionFactorData::fromEmissionFactor($cateringItemEmissionFactor->emissionFactor());
+            $emissionFactors[] = EmissionFactorData::fromCateringItemEmissionFactor($cateringItemEmissionFactor);
         }
 
         $cateringItemRequest = new UpdateCateringItemRequest(

@@ -35,7 +35,10 @@ class ImportMaterialService implements CommandHandler
 
         $material = $this->resolveMaterial($request, $user);
 
-        $material->setEmissionFactor($this->buildEmissionFactor($request, $material->unit(), $year));
+        $material->setEmissionFactor(
+            $this->buildEmissionFactor($request, $material->unit(), $year),
+            $this->buildRecycledEmissionFactor($request, $material->unit(), $year),
+        );
 
         $this->materialRepository->add($material);
 
@@ -103,6 +106,19 @@ class ImportMaterialService implements CommandHandler
             co2: $this->decimal($request->co2),
             ch4: $this->decimal($request->ch4),
             n2o: $this->decimal($request->n2o),
+            year: $year,
+            unit: $unit,
+            source: '' === trim((string) $request->source) ? null : $request->source,
+        );
+    }
+
+    private function buildRecycledEmissionFactor(ImportMaterialRequest $request, Unit $unit, int $year): EmissionFactor
+    {
+        return new EmissionFactor(
+            co2eq: $this->decimal($request->recycledCo2eq),
+            co2: $this->decimal($request->recycledCo2),
+            ch4: $this->decimal($request->recycledCh4),
+            n2o: $this->decimal($request->recycledN2o),
             year: $year,
             unit: $unit,
             source: '' === trim((string) $request->source) ? null : $request->source,

@@ -29,7 +29,8 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $repository = MaterialRepositoryMother::inMemory();
 
         $material = MaterialMother::random();
-        $material->setEmissionFactor(new EmissionFactor('1.5', '1.0', '0.2', '0.3', 2024, source: 'IPCC'));
+        $ef = new EmissionFactor('1.5', '1.0', '0.2', '0.3', 2024, source: 'IPCC');
+        $material->setEmissionFactor($ef, $ef);
         $repository->add($material);
 
         $sut = $this->createSUT($repository);
@@ -45,8 +46,8 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
 
         $copied = $persisted->emissionFactorFor(2025);
         $this->assertNotNull($copied);
-        $this->assertSame('1.5', $copied->co2eq());
-        $this->assertSame('IPCC', $copied->source());
+        $this->assertSame('1.5', $copied->newFactor()->co2eq());
+        $this->assertSame('IPCC', $copied->newFactor()->source());
 
         // The source year is preserved untouched.
         $this->assertNotNull($persisted->emissionFactorFor(2024));
@@ -57,8 +58,10 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $repository = MaterialRepositoryMother::inMemory();
 
         $material = MaterialMother::random();
-        $material->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024));
-        $material->setEmissionFactor(new EmissionFactor('2', '2', '2', '2', 2025));
+        $ef2024 = new EmissionFactor('1', '1', '1', '1', 2024);
+        $material->setEmissionFactor($ef2024, $ef2024);
+        $ef2025 = new EmissionFactor('2', '2', '2', '2', 2025);
+        $material->setEmissionFactor($ef2025, $ef2025);
         $repository->add($material);
 
         $sut = $this->createSUT($repository);

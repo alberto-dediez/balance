@@ -103,9 +103,9 @@ class Material implements Translatable, \Stringable
         return new MaterialEmissionFactors($this->emissionFactors);
     }
 
-    public function emissionFactorFor(int $year): ?EmissionFactor
+    public function emissionFactorFor(int $year): ?MaterialEmissionFactor
     {
-        return $this->emissionFactors()->forYear($year)?->emissionFactor();
+        return $this->emissionFactors()->forYear($year);
     }
 
     public function register(
@@ -178,30 +178,36 @@ class Material implements Translatable, \Stringable
         );
     }
 
-    public function setEmissionFactor(EmissionFactor $emissionFactor): void
+    public function setEmissionFactor(EmissionFactor $newFactor, EmissionFactor $recycledFactor): void
     {
-        $current = $this->emissionFactors()->forYear($emissionFactor->year());
+        if ($newFactor->year() !== $recycledFactor->year()) {
+            throw new \InvalidArgumentException('New factor and recycled factor must share the same year');
+        }
+
+        $current = $this->emissionFactors()->forYear($newFactor->year());
 
         if (null === $current) {
             $this->recordApplyAndPublish(
                 new MaterialEmissionFactorAdded(
                     materialId: $this->id(),
                     emissionFactorId: MaterialEmissionFactorId::generate(),
-                    emissionFactor: $emissionFactor,
+                    newFactor: $newFactor,
+                    recycledFactor: $recycledFactor,
                 ),
             );
 
             return;
         }
 
-        if ($current->emissionFactor()->equals($emissionFactor)) {
+        if ($current->newFactor()->equals($newFactor) && $current->recycledFactor()->equals($recycledFactor)) {
             return;
         }
 
         $this->recordApplyAndPublish(
             new MaterialEmissionFactorUpdated(
                 materialId: $this->id(),
-                emissionFactor: $emissionFactor,
+                newFactor: $newFactor,
+                recycledFactor: $recycledFactor,
             ),
         );
     }
@@ -224,19 +230,21 @@ class Material implements Translatable, \Stringable
      * Reconciles the stored emission factors with the provided list: adds new ones,
      * updates changed ones and removes the years no longer present.
      *
-     * @param EmissionFactor[] $emissionFactors
+     * @param list<array{new: EmissionFactor, recycled: EmissionFactor}> $factors
      */
-    public function syncEmissionFactors(array $emissionFactors): void
+    public function syncEmissionFactors(array $factors): void
     {
         $newYears = [];
 
-        foreach ($emissionFactors as $emissionFactor) {
-            if (in_array($emissionFactor->year(), $newYears, true)) {
-                throw new \InvalidArgumentException(sprintf('Duplicate emission factor for year %d', $emissionFactor->year()));
+        foreach ($factors as $pair) {
+            $year = $pair['new']->year();
+
+            if (in_array($year, $newYears, true)) {
+                throw new \InvalidArgumentException(sprintf('Duplicate emission factor for year %d', $year));
             }
 
-            $newYears[] = $emissionFactor->year();
-            $this->setEmissionFactor($emissionFactor);
+            $newYears[] = $year;
+            $this->setEmissionFactor($pair['new'], $pair['recycled']);
         }
 
         foreach ($this->emissionFactors()->years() as $year) {
@@ -253,13 +261,14 @@ class Material implements Translatable, \Stringable
     private function restampEmissionFactorUnits(Unit $unit): void
     {
         foreach ($this->emissionFactors() as $materialEmissionFactor) {
-            $emissionFactor = $materialEmissionFactor->emissionFactor();
+            $newFactor = $materialEmissionFactor->newFactor();
+            $recycledFactor = $materialEmissionFactor->recycledFactor();
 
-            if ($emissionFactor->unit() === $unit) {
+            if ($newFactor->unit() === $unit && $recycledFactor->unit() === $unit) {
                 continue;
             }
 
-            $this->setEmissionFactor($emissionFactor->withUnit($unit));
+            $this->setEmissionFactor($newFactor->withUnit($unit), $recycledFactor->withUnit($unit));
         }
     }
 
@@ -304,7 +313,8 @@ class Material implements Translatable, \Stringable
             new MaterialEmissionFactor(
                 id: $event->emissionFactorId(),
                 material: $this,
-                emissionFactor: $event->emissionFactor(),
+                newFactor: $event->newFactor(),
+                recycledFactor: $event->recycledFactor(),
                 createdAt: $event->occurredOn(),
             ),
         );
@@ -313,8 +323,8 @@ class Material implements Translatable, \Stringable
     public function applyMaterialEmissionFactorUpdated(MaterialEmissionFactorUpdated $event): void
     {
         $this->emissionFactors()
-            ->forYear($event->emissionFactor()->year())
-            ?->update($event->emissionFactor(), $event->occurredOn());
+            ->forYear($event->newFactor()->year())
+            ?->update($event->newFactor(), $event->recycledFactor(), $event->occurredOn());
     }
 
     public function applyMaterialEmissionFactorRemoved(MaterialEmissionFactorRemoved $event): void
