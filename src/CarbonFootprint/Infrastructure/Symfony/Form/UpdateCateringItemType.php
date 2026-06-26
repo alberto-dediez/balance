@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\CateringItem\Update\UpdateCateringItemReques
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\CateringItemCategoryType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\CateringItemEmissionFactorType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\UnitType;
+use App\CarbonFootprint\Infrastructure\Symfony\Validator\UniqueEmissionFactorYears;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -63,6 +64,7 @@ class UpdateCateringItemType extends AbstractType
                 'by_reference' => false,
                 'prototype' => true,
                 'required' => false,
+                'constraints' => [new UniqueEmissionFactorYears()],
             ])
             ->add('saveAndReturn', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar y salir'),

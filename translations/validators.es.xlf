@@ -689,6 +689,10 @@
         <source>Please enter a valid week.</source>
         <target>Por favor, ingrese una semana válida.</target>
       </trans-unit>
+      <trans-unit id="KDstS.U" resname="Ya existe un factor de emisión para el año {{ year }}">
+        <source>Ya existe un factor de emisión para el año {{ year }}</source>
+        <target>Ya existe un factor de emisión para el año {{ year }}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
