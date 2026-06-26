@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Acceptance\CarbonFootprint;
 
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
@@ -44,6 +45,23 @@ final readonly class CarbonFootprintContext implements Context
     public function materialWithIdExists(string $name, string $id): void
     {
         $material = MaterialMother::fromNameAndId($name, $id);
+
+        $this->getMaterialRepository()->add($material);
+    }
+
+    #[Given('material :name with id :id and emission factor for year :year exists')]
+    public function materialWithEmissionFactorExists(string $name, string $id, string $year): void
+    {
+        $material = MaterialMother::fromNameAndId($name, $id);
+
+        $material->setEmissionFactor(new EmissionFactor(
+            co2eq: '1.5',
+            co2: '1.0',
+            ch4: '0.2',
+            n2o: '0.3',
+            year: (int) $year,
+            source: 'IPCC',
+        ));
 
         $this->getMaterialRepository()->add($material);
     }

@@ -70,8 +70,7 @@ final class WebContext implements Context
 
         $buttonCrawlerNode = $crawler->selectButton($text);
         $formData = $buttonCrawlerNode->form();
-
-        $form = $crawler->filter('form');
+        $formName = $formData->getNode()->getAttribute('name');
 
         $arguments = explode('|', $data);
 
@@ -82,7 +81,7 @@ final class WebContext implements Context
 
             [$name, $value] = explode(':', $argument);
 
-            $key = '[' == $name[0] ? sprintf('%s%s', $form->attr('name'), $name) : sprintf('%s[%s]', $form->attr('name'), $name);
+            $key = '[' == $name[0] ? sprintf('%s%s', $formName, $name) : sprintf('%s[%s]', $formName, $name);
 
             if ('[' == $value[0]) {
                 $value = explode(',', substr($value, 1, -1));
@@ -105,7 +104,7 @@ final class WebContext implements Context
         }
 
         foreach ($this->files as $field => $path) {
-            $key = '[' === $field[0] ? sprintf('%s%s', $form->attr('name'), $field) : sprintf('%s[%s]', $form->attr('name'), $field);
+            $key = '[' === $field[0] ? sprintf('%s%s', $formName, $field) : sprintf('%s[%s]', $formName, $field);
 
             $fileField = $formData[$key];
             assert($fileField instanceof FileFormField);

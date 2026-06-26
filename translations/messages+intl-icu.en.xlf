@@ -2081,6 +2081,54 @@
         <source>Se ha eliminado el factor de emisión del año {year} del elemento de catering {cateringItem} por el usuario {user}</source>
         <target>The emission factor for the year {year} has been removed from the catering item {cateringItem} by user {user}</target>
       </trans-unit>
+      <trans-unit id="urNrsFF" resname="No se ha podido crear el nuevo año.">
+        <source>No se ha podido crear el nuevo año.</source>
+        <target>The new year could not be created.</target>
+      </trans-unit>
+      <trans-unit id="gI.81HB" resname="Nuevo año creado con éxito">
+        <source>Nuevo año creado con éxito</source>
+        <target>New year created successfully</target>
+      </trans-unit>
+      <trans-unit id="PEOnV2i" resname="El año destino ya tiene factores de emisión.">
+        <source>El año destino ya tiene factores de emisión.</source>
+        <target>The target year already has emission factors.</target>
+      </trans-unit>
+      <trans-unit id="AJz4TNH" resname="El año destino no es válido.">
+        <source>El año destino no es válido.</source>
+        <target>The target year is not valid.</target>
+      </trans-unit>
+      <trans-unit id="lelrNsY" resname="Factores de emisión actualizados con éxito">
+        <source>Factores de emisión actualizados con éxito</source>
+        <target>Emission factors updated successfully</target>
+      </trans-unit>
+      <trans-unit id="LrZbI8S" resname="Año destino">
+        <source>Año destino</source>
+        <target>Target year</target>
+      </trans-unit>
+      <trans-unit id=".eaCK3u" resname="Crear nuevo año">
+        <source>Crear nuevo año</source>
+        <target>Create new year</target>
+      </trans-unit>
+      <trans-unit id="uWTpdlf" resname="Año anterior">
+        <source>Año anterior</source>
+        <target>Previous year</target>
+      </trans-unit>
+      <trans-unit id="bNJChX8" resname="Año siguiente">
+        <source>Año siguiente</source>
+        <target>Next year</target>
+      </trans-unit>
+      <trans-unit id="xXv5wJj" resname="Material">
+        <source>Material</source>
+        <target>Material</target>
+      </trans-unit>
+      <trans-unit id="k1JsGRp" resname="Copiar factores">
+        <source>Copiar factores</source>
+        <target>Copy factors</target>
+      </trans-unit>
+      <trans-unit id="VyG.wnq" resname="Año de origen">
+        <source>Año de origen</source>
+        <target>Origin year</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
