@@ -13,6 +13,10 @@
         <source>ud</source>
         <target>Unidad</target>
       </trans-unit>
+      <trans-unit id="yJ8W4BO" resname="l">
+        <source>l</source>
+        <target>Litro</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

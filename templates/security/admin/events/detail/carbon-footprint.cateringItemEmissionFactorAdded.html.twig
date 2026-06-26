@@ -1,0 +1,5 @@
+{% trans with {
+    '{year}': event.emissionFactor.year,
+    '{cateringItem}': event.cateringItemId,
+    '{user}': element.userId | user_name
+} %}Se ha añadido el factor de emisión del año {year} al elemento de catering {cateringItem} por el usuario {user}{% endtrans %}

@@ -2025,6 +2025,62 @@
         <source>Se ha añadido el factor de emisión del año {year} al artículo de merchandising {merchandisingItem} por el usuario {user}</source>
         <target>The emission factor for year {year} has been added to the merchandising item {merchandisingItem} by user {user}</target>
       </trans-unit>
+      <trans-unit id="cAHXg12" resname="Elemento de catering creado correctamente: {name}">
+        <source>Elemento de catering creado correctamente: {name}</source>
+        <target>Catering item successfully created: {name}</target>
+      </trans-unit>
+      <trans-unit id="LaXlje." resname="Elemento de catering actualizado con éxito">
+        <source>Elemento de catering actualizado con éxito</source>
+        <target>Catering item successfully updated</target>
+      </trans-unit>
+      <trans-unit id="HG4cR5a" resname="Se ha eliminado el elemento de catering {cateringItem}">
+        <source>Se ha eliminado el elemento de catering {cateringItem}</source>
+        <target>Catering item {cateringItem} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="fQ9Vqf_" resname="No se ha podido eliminar el elemento de catering {cateringItem}">
+        <source>No se ha podido eliminar el elemento de catering {cateringItem}</source>
+        <target>Could not delete catering item {cateringItem}</target>
+      </trans-unit>
+      <trans-unit id="KRto6lV" resname="Se ha eliminado el elemento de catering {id}">
+        <source>Se ha eliminado el elemento de catering {id}</source>
+        <target>The catering item {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="ZXeGBsV" resname="No se ha podido eliminar el elemento de catering {id}">
+        <source>No se ha podido eliminar el elemento de catering {id}</source>
+        <target>The catering item {id} could not be deleted</target>
+      </trans-unit>
+      <trans-unit id="BneRc7T" resname="Elementos de catering">
+        <source>Elementos de catering</source>
+        <target>Catering items</target>
+      </trans-unit>
+      <trans-unit id="MOvv5EK" resname="Se ha actualizado el factor de emisión del año {year} del elemento de catering {cateringItem} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión del año {year} del elemento de catering {cateringItem} por el usuario {user}</source>
+        <target>The emission factor for year {year} of the catering item {cateringItem} has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="4pMNuDz" resname="Se ha registrado el elemento de catering &quot;{cateringItem}&quot; por el usuario {user}">
+        <source>Se ha registrado el elemento de catering "{cateringItem}" por el usuario {user}</source>
+        <target>The catering item “{cateringItem}” has been recorded by user {user}</target>
+      </trans-unit>
+      <trans-unit id="0354Cge" resname="Se ha actualizado el elemento de catering &quot;{cateringItem}&quot; por el usuario {user}">
+        <source>Se ha actualizado el elemento de catering "{cateringItem}" por el usuario {user}</source>
+        <target>The catering item “{cateringItem}” has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="QeXPyoe" resname="Se ha traducido el elemento de catering &quot;{cateringItem}&quot; por el usuario {user}">
+        <source>Se ha traducido el elemento de catering "{cateringItem}" por el usuario {user}</source>
+        <target>The catering item “{cateringItem}” has been translated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="71HP0sh" resname="Se ha eliminado el elemento de catering {cateringItem} por el usuario {user}">
+        <source>Se ha eliminado el elemento de catering {cateringItem} por el usuario {user}</source>
+        <target>The catering item {cateringItem} has been deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="Hdkv.pE" resname="Se ha añadido el factor de emisión del año {year} al elemento de catering {cateringItem} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} al elemento de catering {cateringItem} por el usuario {user}</source>
+        <target>The emission factor for the year {year} has been added to the catering item {cateringItem} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="N9zFEtZ" resname="Se ha eliminado el factor de emisión del año {year} del elemento de catering {cateringItem} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} del elemento de catering {cateringItem} por el usuario {user}</source>
+        <target>The emission factor for the year {year} has been removed from the catering item {cateringItem} by user {user}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

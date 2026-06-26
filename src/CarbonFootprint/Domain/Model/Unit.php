@@ -8,12 +8,14 @@ enum Unit: string
 {
     case Kilogram = 'kg';
     case Piece    = 'ud';
+    case Liter    = 'l';
 
     public function magnitude(): Magnitude
     {
         return match ($this) {
             self::Kilogram => Magnitude::Mass,
             self::Piece     => Magnitude::Pieces,
+            self::Liter     => Magnitude::Volume,
         };
     }
 }

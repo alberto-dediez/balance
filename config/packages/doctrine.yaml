@@ -30,6 +30,8 @@ doctrine:
             material_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MaterialEmissionFactorIdType
             merchandising_item_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MerchandisingItemIdType
             merchandising_item_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MerchandisingItemEmissionFactorIdType
+            catering_item_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CateringItemIdType
+            catering_item_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CateringItemEmissionFactorIdType
 
     orm:
         auto_generate_proxy_classes: true

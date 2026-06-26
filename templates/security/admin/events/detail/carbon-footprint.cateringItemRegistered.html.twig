@@ -1,0 +1,4 @@
+{% trans with {
+    '{cateringItem}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha registrado el elemento de catering "{cateringItem}" por el usuario {user}{% endtrans %}

@@ -1,0 +1,9 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = ('Elementos de catering' | trans)
+    ~ ' > '
+    ~ ('Registrar' | trans)  %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_catering_items') }}" />
+{% endblock %}

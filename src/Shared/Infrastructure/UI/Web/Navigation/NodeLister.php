@@ -153,6 +153,11 @@ class NodeLister
                     icon: 'solar:bag-smile-line-duotone',
                     target: $this->router->generate('admin_merchandising_items'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Elementos de catering'),
+                    icon: 'solar:cup-hot-line-duotone',
+                    target: $this->router->generate('admin_catering_items'),
+                ),
             ],
         );
 
