@@ -2489,6 +2489,78 @@
         <source>Se ha actualizado la movilidad "{mobility}" por el usuario {user}</source>
         <target>The mobility “{mobility}” has been updated by the user {user}</target>
       </trans-unit>
+      <trans-unit id="0STCb1o" resname="Residuos">
+        <source>Residuos</source>
+        <target>Wastes</target>
+      </trans-unit>
+      <trans-unit id="IaH5sbh" resname="Registrar residuo">
+        <source>Registrar residuo</source>
+        <target>Register waste</target>
+      </trans-unit>
+      <trans-unit id="UQdSU_Y" resname="Residuo creado correctamente: {name}">
+        <source>Residuo creado correctamente: {name}</source>
+        <target>Waste created successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="dQLrbJ9" resname="Residuo actualizado con éxito">
+        <source>Residuo actualizado con éxito</source>
+        <target>Waste updated successfully</target>
+      </trans-unit>
+      <trans-unit id="lIu.3.r" resname="Se ha eliminado el residuo {waste}">
+        <source>Se ha eliminado el residuo {waste}</source>
+        <target>Waste {waste} has been removed</target>
+      </trans-unit>
+      <trans-unit id="ixdpT3M" resname="No se ha podido eliminar el residuo {waste}">
+        <source>No se ha podido eliminar el residuo {waste}</source>
+        <target>Waste {waste} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="l.Enkgk" resname="Se ha eliminado el residuo {id}">
+        <source>Se ha eliminado el residuo {id}</source>
+        <target>Waste {id} has been removed</target>
+      </trans-unit>
+      <trans-unit id="xA9mJCQ" resname="No se ha podido eliminar el residuo {id}">
+        <source>No se ha podido eliminar el residuo {id}</source>
+        <target>Waste {id} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="DHOrJji" resname="Densidad">
+        <source>Densidad</source>
+        <target>Density</target>
+      </trans-unit>
+      <trans-unit id="sOO1wwR" resname="Densidad (kg/m³)">
+        <source>Densidad (kg/m³)</source>
+        <target>Density (kg/m³)</target>
+      </trans-unit>
+      <trans-unit id="7QLzVh_" resname="Se ha registrado el residuo &quot;{waste}&quot; por el usuario {user}">
+        <source>Se ha registrado el residuo "{waste}" por el usuario {user}</source>
+        <target>The waste “{waste}” has been registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="mShOAXz" resname="Se ha actualizado el residuo &quot;{waste}&quot; por el usuario {user}">
+        <source>Se ha actualizado el residuo "{waste}" por el usuario {user}</source>
+        <target>The waste “{waste}” has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="kOio8ir" resname="Se ha traducido el residuo &quot;{waste}&quot; por el usuario {user}">
+        <source>Se ha traducido el residuo "{waste}" por el usuario {user}</source>
+        <target>The waste “{waste}” has been translated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="4aXJgOd" resname="Se ha eliminado el residuo {waste} por el usuario {user}">
+        <source>Se ha eliminado el residuo {waste} por el usuario {user}</source>
+        <target>Waste {waste} has been removed by user {user}</target>
+      </trans-unit>
+      <trans-unit id="Nexpklk" resname="Se ha añadido el factor de emisión del año {year} al residuo {waste} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} al residuo {waste} por el usuario {user}</source>
+        <target>The emission factor for year {year} has been added to waste {waste} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="z86zpOH" resname="Se ha actualizado el factor de emisión del año {year} del residuo {waste} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión del año {year} del residuo {waste} por el usuario {user}</source>
+        <target>The emission factor for year {year} of waste {waste} has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="hccid3j" resname="Se ha eliminado el factor de emisión del año {year} del residuo {waste} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} del residuo {waste} por el usuario {user}</source>
+        <target>The emission factor for year {year} of waste {waste} has been removed by user {user}</target>
+      </trans-unit>
+      <trans-unit id="iY3rTua" resname="Residuo">
+        <source>Residuo</source>
+        <target>Waste</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

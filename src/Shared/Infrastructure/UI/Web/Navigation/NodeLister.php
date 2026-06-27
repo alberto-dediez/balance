@@ -162,9 +162,9 @@ class NodeLister
         );
 
         $nodes[] = new Node(
-            label: new TranslatableMessage('Combustibles'),
-            icon: 'solar:fire-line-duotone',
-            target: $this->router->generate('admin_combustibles'),
+            label: new TranslatableMessage('Instalaciones'),
+            icon: 'solar:buildings-3-line-duotone',
+            target: '#instalaciones',
             items: [
                 new Node(
                     label: new TranslatableMessage('Combustibles'),
@@ -172,26 +172,39 @@ class NodeLister
                     target: $this->router->generate('admin_combustibles'),
                 ),
                 new Node(
-                    label: new TranslatableMessage('Transporte por carretera'),
-                    icon: 'solar:bus-line-duotone',
-                    target: $this->router->generate('admin_road_transports'),
-                ),
-                new Node(
                     label: new TranslatableMessage('Comercializadoras eléctricas'),
                     icon: 'solar:bolt-line-duotone',
                     target: $this->router->generate('admin_electricity_marketers'),
                 ),
                 new Node(
-                    label: new TranslatableMessage('Combustible de maquinaria'),
-                    icon: 'solar:settings-minimalistic-line-duotone',
-                    target: $this->router->generate('admin_machinery_fuels'),
+                    label: new TranslatableMessage('Residuos'),
+                    icon: 'solar:trash-bin-minimalistic-line-duotone',
+                    target: $this->router->generate('admin_wastes'),
+                ),
+            ]
+        );
+
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Transporte'),
+            icon: 'solar:bus-line-duotone',
+            target: '#transporte',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Transporte por carretera'),
+                    icon: 'solar:bus-line-duotone',
+                    target: $this->router->generate('admin_road_transports'),
                 ),
                 new Node(
                     label: new TranslatableMessage('Movilidad'),
                     icon: 'solar:routing-2-line-duotone',
                     target: $this->router->generate('admin_mobilities'),
                 ),
-            ],
+                new Node(
+                    label: new TranslatableMessage('Combustible de maquinaria'),
+                    icon: 'solar:settings-minimalistic-line-duotone',
+                    target: $this->router->generate('admin_machinery_fuels'),
+                ),
+            ]
         );
 
         $nodes[] =  new Node(

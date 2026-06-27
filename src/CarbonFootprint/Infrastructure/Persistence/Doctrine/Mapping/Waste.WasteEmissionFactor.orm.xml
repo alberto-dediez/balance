@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\Waste\WasteEmissionFactor" table="waste_emission_factor">
+        <unique-constraints>
+            <unique-constraint columns="waste_id,year" name="uq_waste_emission_factor_year"/>
+        </unique-constraints>
+
+        <id name="id" type="waste_emission_factor_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="createdAt" type="datetime_immutable" column="created_at" nullable="false"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
+
+        <embedded name="emissionFactor" class="App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor" use-column-prefix="false"/>
+
+        <many-to-one field="waste" target-entity="App\CarbonFootprint\Domain\Model\Waste\Waste" inversed-by="emissionFactors">
+            <join-column name="waste_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+    </entity>
+
+</doctrine-mapping>

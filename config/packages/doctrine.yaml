@@ -42,6 +42,8 @@ doctrine:
             machinery_fuel_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MachineryFuelEmissionFactorIdType
             mobility_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MobilityIdType
             mobility_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MobilityEmissionFactorIdType
+            waste_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\WasteIdType
+            waste_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\WasteEmissionFactorIdType
 
     orm:
         auto_generate_proxy_classes: true

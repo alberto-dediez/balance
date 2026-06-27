@@ -1,0 +1,4 @@
+{% trans with {
+    '{waste}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado el residuo "{waste}" por el usuario {user}{% endtrans %}
