@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\EventOperations;
 
+use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\EventOperations\Domain\Model\Provider\ProviderRepository;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
+use App\Tests\Unit\EventOperations\Domain\Model\Event\EventMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Provider\ProviderMother;
 use Behat\Behat\Context\Context;
 use Behat\Step\Given;
@@ -26,6 +28,11 @@ final readonly class EventOperationsContext implements Context
         return $this->client->getContainer()->get(ProviderRepository::class);
     }
 
+    private function getEventRepository(): EventRepository
+    {
+        return $this->client->getContainer()->get(EventRepository::class);
+    }
+
     #[Given('provider :name with id :id exists')]
     public function providerWithIdExists(string $name, string $id): void
     {
@@ -40,5 +47,29 @@ final readonly class EventOperationsContext implements Context
         $provider = ProviderMother::fromNameAndAccountAndId($name, $account, $id);
 
         $this->getProviderRepository()->add($provider);
+    }
+
+    #[Given('event :name with id :id exists')]
+    public function eventWithIdExists(string $name, string $id): void
+    {
+        $event = EventMother::fromNameAndId($name, $id);
+
+        $this->getEventRepository()->add($event);
+    }
+
+    #[Given('event :name with id :id of account :account exists')]
+    public function eventWithIdOfAccountExists(string $name, string $id, string $account): void
+    {
+        $event = EventMother::fromNameAndAccountAndId($name, $account, $id);
+
+        $this->getEventRepository()->add($event);
+    }
+
+    #[Given('event :name with id :id of account :account with location :location exists')]
+    public function eventWithIdOfAccountAndLocationExists(string $name, string $id, string $account, string $location): void
+    {
+        $event = EventMother::fromNameAndAccountAndIdAndLocation($name, $account, $id, $location);
+
+        $this->getEventRepository()->add($event);
     }
 }

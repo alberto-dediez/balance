@@ -2725,6 +2725,86 @@
         <source>Factor GdO</source>
         <target>Factor GdO</target>
       </trans-unit>
+      <trans-unit id="166VY.m" resname="Evento creado correctamente: {name}">
+        <source>Evento creado correctamente: {name}</source>
+        <target>Evento creado correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="vwfyBON" resname="Evento actualizado con éxito">
+        <source>Evento actualizado con éxito</source>
+        <target>Evento actualizado con éxito</target>
+      </trans-unit>
+      <trans-unit id="rPrxb3z" resname="Se ha eliminado el evento {event}">
+        <source>Se ha eliminado el evento {event}</source>
+        <target>Se ha eliminado el evento {event}</target>
+      </trans-unit>
+      <trans-unit id="Rl7m4xP" resname="No se ha podido eliminar el evento {event}">
+        <source>No se ha podido eliminar el evento {event}</source>
+        <target>No se ha podido eliminar el evento {event}</target>
+      </trans-unit>
+      <trans-unit id="7JCi6AI" resname="Se ha eliminado el evento {id}">
+        <source>Se ha eliminado el evento {id}</source>
+        <target>Se ha eliminado el evento {id}</target>
+      </trans-unit>
+      <trans-unit id="veNuNSp" resname="No se ha podido eliminar el evento {id}">
+        <source>No se ha podido eliminar el evento {id}</source>
+        <target>No se ha podido eliminar el evento {id}</target>
+      </trans-unit>
+      <trans-unit id="BFk.XQu" resname="Ubicación">
+        <source>Ubicación</source>
+        <target>Ubicación</target>
+      </trans-unit>
+      <trans-unit id="0_98qoV" resname="Tamaño del evento">
+        <source>Tamaño del evento</source>
+        <target>Tamaño del evento</target>
+      </trans-unit>
+      <trans-unit id="I1NLGkD" resname="Nº de asistentes (estimado)">
+        <source>Nº de asistentes (estimado)</source>
+        <target>Nº de asistentes (estimado)</target>
+      </trans-unit>
+      <trans-unit id="ImXDYjz" resname="Sector del evento">
+        <source>Sector del evento</source>
+        <target>Sector del evento</target>
+      </trans-unit>
+      <trans-unit id="3KMbVLL" resname="Tipología del evento">
+        <source>Tipología del evento</source>
+        <target>Tipología del evento</target>
+      </trans-unit>
+      <trans-unit id="rqkJarJ" resname="Inicio del montaje">
+        <source>Inicio del montaje</source>
+        <target>Inicio del montaje</target>
+      </trans-unit>
+      <trans-unit id="DXxyYTi" resname="Fin del montaje">
+        <source>Fin del montaje</source>
+        <target>Fin del montaje</target>
+      </trans-unit>
+      <trans-unit id="KdIECH5" resname="Inicio de la celebración">
+        <source>Inicio de la celebración</source>
+        <target>Inicio de la celebración</target>
+      </trans-unit>
+      <trans-unit id="vwuvci2" resname="Fin de la celebración">
+        <source>Fin de la celebración</source>
+        <target>Fin de la celebración</target>
+      </trans-unit>
+      <trans-unit id="lsCZG_F" resname="Inicio del desmontaje">
+        <source>Inicio del desmontaje</source>
+        <target>Inicio del desmontaje</target>
+      </trans-unit>
+      <trans-unit id="UjrORIP" resname="Fin del desmontaje">
+        <source>Fin del desmontaje</source>
+        <target>Fin del desmontaje</target>
+      </trans-unit>
+      <trans-unit id="OvlCg6E" resname="Se ha registrado el evento &quot;{event}&quot; por el usuario {user}">
+        <source>Se ha registrado el evento "{event}" por el usuario {user}</source>
+        <target>Se ha registrado el evento "{event}" por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="cvbooo4" resname="Se ha actualizado el evento &quot;{event}&quot; por el usuario {user}">
+        <source>Se ha actualizado el evento "{event}" por el usuario {user}</source>
+        <target>Se ha actualizado el evento "{event}" por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="rmSmoDC" resname="Se ha eliminado el evento &quot;{event}&quot; por el usuario {user}">
+        <source>Se ha eliminado el evento "{event}" por el usuario {user}</source>
+        <target>Se ha eliminado el evento "{event}" por el usuario {user}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

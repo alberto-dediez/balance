@@ -1,0 +1,24 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('events') }}" />
+{% endblock %}
+
+{% set page_title = ('Eventos' | trans)
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ event.name %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            {% include '@event_operations/events/_form.html.twig' %}
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form) }}
+{% endblock %}

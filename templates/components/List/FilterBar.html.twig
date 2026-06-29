@@ -18,7 +18,7 @@
                             {% set value = value | property_name %}
                         {% elseif field == 'properties' %}
                             {% set value = value | map(v => v | property_name) | join(', ') %}
-                        {% elseif field == 'destinationId' %}
+                        {% elseif field == 'destinationId' or field == 'location' %}
                             {% set value = value | destination_name %}
                         {% elseif field == 'countryId' %}
                             {% set value = value | country_name %}
@@ -30,6 +30,12 @@
                             {% set value = value | company_name %}
                         {% elseif field == 'signatureStatus' %}
                             {% set value = value.value | trans({}, 'signatureRequestStatus') %}
+                        {% elseif field == 'size' %}
+                            {% set value = value.value | trans({}, 'eventSizeType') %}
+                        {% elseif field == 'sector' %}
+                            {% set value = value.value | trans({}, 'eventSectorType') %}
+                        {% elseif field == 'typology' %}
+                            {% set value = value.value | trans({}, 'eventTypologyType') %}
                         {% endif %}
 
                         <twig:List:FilterShow

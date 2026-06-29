@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="OEwpn9k" resname="sports">
+        <source>sports</source>
+        <target>Sports</target>
+      </trans-unit>
+      <trans-unit id="ai00ohl" resname="music">
+        <source>music</source>
+        <target>Music</target>
+      </trans-unit>
+      <trans-unit id="jf3vUcM" resname="cultural">
+        <source>cultural</source>
+        <target>Cultural</target>
+      </trans-unit>
+      <trans-unit id="oNJiEv8" resname="tourism">
+        <source>tourism</source>
+        <target>Tourism</target>
+      </trans-unit>
+      <trans-unit id="Ff1SQ_8" resname="social">
+        <source>social</source>
+        <target>Social</target>
+      </trans-unit>
+      <trans-unit id="5Y8_iL4" resname="business">
+        <source>business</source>
+        <target>Business</target>
+      </trans-unit>
+      <trans-unit id="C9Djyv3" resname="academic">
+        <source>academic</source>
+        <target>Academic</target>
+      </trans-unit>
+      <trans-unit id="6wW96aJ" resname="religious">
+        <source>religious</source>
+        <target>Religious</target>
+      </trans-unit>
+      <trans-unit id="YIPYpD5" resname="technology">
+        <source>technology</source>
+        <target>Technology</target>
+      </trans-unit>
+      <trans-unit id="rvFmKmZ" resname="charity">
+        <source>charity</source>
+        <target>Charity</target>
+      </trans-unit>
+      <trans-unit id="8IfhDSf" resname="political">
+        <source>political</source>
+        <target>Political</target>
+      </trans-unit>
+      <trans-unit id="iITpKnn" resname="convention">
+        <source>convention</source>
+        <target>Convention</target>
+      </trans-unit>
+      <trans-unit id=".Fbf42v" resname="fair">
+        <source>fair</source>
+        <target>Fair</target>
+      </trans-unit>
+      <trans-unit id="YAq0UGa" resname="institutional">
+        <source>institutional</source>
+        <target>Institutional</target>
+      </trans-unit>
+      <trans-unit id="8aHe0YP" resname="other">
+        <source>other</source>
+        <target>Other</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

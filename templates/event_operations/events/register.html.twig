@@ -1,0 +1,25 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = ('Eventos' | trans)
+    ~ ' > '
+    ~ ('Registrar' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('events') }}" />
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+    <twig:Card>
+        <div class="row">
+            <div class="col-12">
+                {% include '@event_operations/events/_form.html.twig' %}
+            </div>
+        </div>
+
+        <twig:ActionBar>
+            <twig:ActionBar:Button type="primary" :button="form.register" />
+        </twig:ActionBar>
+    </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

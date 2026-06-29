@@ -22,6 +22,7 @@ doctrine:
             brand_id: App\Property\Infrastructure\Persistence\Doctrine\Type\BrandIdType
             company_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CompanyIdType
             provider_id: App\EventOperations\Infrastructure\Persistence\Doctrine\Type\ProviderIdType
+            event_id: App\EventOperations\Infrastructure\Persistence\Doctrine\Type\EventIdType
             signature_request_id: App\Security\Infrastructure\Persistence\Doctrine\Type\SignatureRequestIdType
             notification_id: App\Notifications\Infrastructure\Persistence\Doctrine\Type\NotificationIdType
             job_progress_id: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressIdType

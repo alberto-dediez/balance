@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="eIfboVi" resname="Micro">
+        <source>Micro</source>
+        <target>Micro (5 to 50 participants)</target>
+      </trans-unit>
+      <trans-unit id="84mzogg" resname="Small">
+        <source>Small</source>
+        <target>Small (51 to 250 participants)</target>
+      </trans-unit>
+      <trans-unit id="TVRmHBC" resname="Medium">
+        <source>Medium</source>
+        <target>Medium (251 to 500 participants)</target>
+      </trans-unit>
+      <trans-unit id="BE99yCL" resname="Large">
+        <source>Large</source>
+        <target>Large (501 to 2000 participants)</target>
+      </trans-unit>
+      <trans-unit id="6u5oBFr" resname="Macro">
+        <source>Macro</source>
+        <target>Macro (more than 2001 participants)</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
