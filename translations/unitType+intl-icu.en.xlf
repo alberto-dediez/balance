@@ -29,6 +29,10 @@
         <source>km</source>
         <target>Kilometer</target>
       </trans-unit>
+      <trans-unit id="OK_ZNT_" resname="pernoctacion">
+        <source>pernoctacion</source>
+        <target>Overnight stay</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

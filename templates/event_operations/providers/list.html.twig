@@ -1,0 +1,45 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Proveedores' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': 'CIF' | trans,
+            'sortable': false
+        }, {
+            'label': 'Ciudad' | trans,
+            'sortable': false
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="providers" :bulkForm="bulkForm">
+        <td>{{ element.name }}</td>
+        <td>{{ element.vatNumber }}</td>
+        <td>{{ element.address ? element.address.city : '' }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('providers_edit', {'providerId': element.id}) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('providers_remove', {'providerId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('providers_register') }}" />
+{% endblock list_actions %}

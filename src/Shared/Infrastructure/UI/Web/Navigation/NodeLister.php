@@ -300,6 +300,18 @@ class NodeLister
             ],
         );
 
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Eventos'),
+            icon: 'solar:calendar-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Proveedores'),
+                    icon: 'solar:hand-money-line-duotone',
+                    target: $this->router->generate('providers'),
+                ),
+            ],
+        );
+
         $nodes[] =  new Node(
             label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',

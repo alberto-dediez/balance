@@ -2561,6 +2561,170 @@
         <source>Residuo</source>
         <target>Waste</target>
       </trans-unit>
+      <trans-unit id="sIWr0fi" resname="Factores GdO">
+        <source>Factores GdO</source>
+        <target>GdO Factors</target>
+      </trans-unit>
+      <trans-unit id="ijiWcib" resname="Pernoctaciones">
+        <source>Pernoctaciones</source>
+        <target>Overnight Stays</target>
+      </trans-unit>
+      <trans-unit id="SHSkw7y" resname="Factor GdO creado correctamente: {name}">
+        <source>Factor GdO creado correctamente: {name}</source>
+        <target>GdO factor successfully created: {name}</target>
+      </trans-unit>
+      <trans-unit id="GXTT.Fo" resname="Factor GdO actualizado con éxito">
+        <source>Factor GdO actualizado con éxito</source>
+        <target>GdO factor successfully updated</target>
+      </trans-unit>
+      <trans-unit id="3kCwNQa" resname="Se ha eliminado el factor GdO {name}">
+        <source>Se ha eliminado el factor GdO {name}</source>
+        <target>GdO factor {name} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="__d5e3G" resname="No se ha podido eliminar el factor GdO {name}">
+        <source>No se ha podido eliminar el factor GdO {name}</source>
+        <target>Unable to delete GdO factor {name}</target>
+      </trans-unit>
+      <trans-unit id="1XMwmr5" resname="Se ha eliminado el factor GdO {id}">
+        <source>Se ha eliminado el factor GdO {id}</source>
+        <target>GdO factor {id}</target>
+      </trans-unit>
+      <trans-unit id="CpiJz9y" resname="No se ha podido eliminar el factor GdO {id}">
+        <source>No se ha podido eliminar el factor GdO {id}</source>
+        <target>Could not delete GdO factor {id}</target>
+      </trans-unit>
+      <trans-unit id="kuTFgKw" resname="Pernoctación creada correctamente: {name}">
+        <source>Pernoctación creada correctamente: {name}</source>
+        <target>Overnight stay successfully created: {name}</target>
+      </trans-unit>
+      <trans-unit id="ZxRWttD" resname="Pernoctación actualizada con éxito">
+        <source>Pernoctación actualizada con éxito</source>
+        <target>Overnight stay successfully updated</target>
+      </trans-unit>
+      <trans-unit id="7fHrMHW" resname="Se ha eliminado la pernoctación {name}">
+        <source>Se ha eliminado la pernoctación {name}</source>
+        <target>Overnight stay {name} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="2Afb1UL" resname="No se ha podido eliminar la pernoctación {name}">
+        <source>No se ha podido eliminar la pernoctación {name}</source>
+        <target>Could not delete overnight stay {name}</target>
+      </trans-unit>
+      <trans-unit id="8ZI61cQ" resname="Se ha eliminado la pernoctación {id}">
+        <source>Se ha eliminado la pernoctación {id}</source>
+        <target>Overnight stay {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="GA77ghf" resname="No se ha podido eliminar la pernoctación {id}">
+        <source>No se ha podido eliminar la pernoctación {id}</source>
+        <target>Could not delete overnight stay {id}</target>
+      </trans-unit>
+      <trans-unit id="gh8WXvc" resname="Instalaciones">
+        <source>Instalaciones</source>
+        <target>Facilities</target>
+      </trans-unit>
+      <trans-unit id="STv1XBO" resname="Proveedores">
+        <source>Proveedores</source>
+        <target>Suppliers</target>
+      </trans-unit>
+      <trans-unit id="p3Niko0" resname="Proveedor creado correctamente: {name}">
+        <source>Proveedor creado correctamente: {name}</source>
+        <target>Supplier successfully created: {name}</target>
+      </trans-unit>
+      <trans-unit id="AoC0AmN" resname="Proveedor actualizado con éxito">
+        <source>Proveedor actualizado con éxito</source>
+        <target>Supplier successfully updated</target>
+      </trans-unit>
+      <trans-unit id="OYiFq3y" resname="Se ha eliminado el proveedor {provider}">
+        <source>Se ha eliminado el proveedor {provider}</source>
+        <target>The provider {provider} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="ER1C8.3" resname="No se ha podido eliminar el proveedor {provider}">
+        <source>No se ha podido eliminar el proveedor {provider}</source>
+        <target>The provider {provider} could not be deleted</target>
+      </trans-unit>
+      <trans-unit id="hqf2zRw" resname="Se ha eliminado el proveedor {id}">
+        <source>Se ha eliminado el proveedor {id}</source>
+        <target>The provider {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="Cnvmd1E" resname="No se ha podido eliminar el proveedor {id}">
+        <source>No se ha podido eliminar el proveedor {id}</source>
+        <target>The provider {id} could not be deleted</target>
+      </trans-unit>
+      <trans-unit id="9oA1ex8" resname="Se ha añadido el factor de emisión del año {year} a la pernoctación {overnightStay} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} a la pernoctación {overnightStay} por el usuario {user}</source>
+        <target>The emission factor for the year {year} has been added to the overnight stay {overnightStay} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="wD94Ct4" resname="Se ha traducido la pernoctación &quot;{overnightStay}&quot; por el usuario {user}">
+        <source>Se ha traducido la pernoctación "{overnightStay}" por el usuario {user}</source>
+        <target>The overnight stay “{overnightStay}” has been translated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="V_cneVU" resname="Se ha registrado la pernoctación &quot;{overnightStay}&quot; por el usuario {user}">
+        <source>Se ha registrado la pernoctación "{overnightStay}" por el usuario {user}</source>
+        <target>The overnight stay “{overnightStay}” has been recorded by user {user}</target>
+      </trans-unit>
+      <trans-unit id="hPVRYjL" resname="Se ha actualizado la pernoctación &quot;{overnightStay}&quot; por el usuario {user}">
+        <source>Se ha actualizado la pernoctación "{overnightStay}" por el usuario {user}</source>
+        <target>The overnight stay “{overnightStay}” has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="2y_czYN" resname="Se ha traducido el factor GdO &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha traducido el factor GdO "{name}" por el usuario {user}</source>
+        <target>The GdO factor “{name}” has been translated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="EeTT2Zu" resname="Se ha actualizado el factor de emisión del factor GdO {id} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión del factor GdO {id} por el usuario {user}</source>
+        <target>The emission factor for GdO factor {id} has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="1FKkqKI" resname="Se ha registrado el factor GdO &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha registrado el factor GdO "{name}" por el usuario {user}</source>
+        <target>The GdO factor “{name}” has been recorded by user {user}</target>
+      </trans-unit>
+      <trans-unit id="PfRFMJg" resname="Se ha eliminado el factor de emisión del año {year} del factor GdO {id} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} del factor GdO {id} por el usuario {user}</source>
+        <target>The emission factor for year {year} of GdO factor {id} has been deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="a2p94tO" resname="Se ha actualizado el factor GdO &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha actualizado el factor GdO "{name}" por el usuario {user}</source>
+        <target>The GdO factor “{name}” has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="3X9.weR" resname="Se ha eliminado el proveedor &quot;{provider}&quot; por el usuario {user}">
+        <source>Se ha eliminado el proveedor "{provider}" por el usuario {user}</source>
+        <target>The provider “{provider}” has been deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="vLumFoi" resname="Se ha añadido el factor de emisión del año {year} al factor GdO {id} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} al factor GdO {id} por el usuario {user}</source>
+        <target>The emission factor for the year {year} has been added to the GdO factor {id} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="zSDLyvj" resname="Se ha actualizado el factor de emisión del año {year} de la pernoctación {overnightStay} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión del año {year} de la pernoctación {overnightStay} por el usuario {user}</source>
+        <target>The emission factor for the year {year} for the overnight stay {overnightStay} has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="bzsB1Bc" resname="Se ha eliminado el factor de emisión del año {year} de la pernoctación {overnightStay} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} de la pernoctación {overnightStay} por el usuario {user}</source>
+        <target>The emission factor for the year {year} for the overnight stay {overnightStay} has been deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="EwAWBou" resname="Se ha actualizado el proveedor &quot;{provider}&quot; por el usuario {user}">
+        <source>Se ha actualizado el proveedor "{provider}" por el usuario {user}</source>
+        <target>The provider “{provider}” has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="50_eKya" resname="Se ha eliminado la pernoctación {overnightStay} por el usuario {user}">
+        <source>Se ha eliminado la pernoctación {overnightStay} por el usuario {user}</source>
+        <target>The {overnightStay} has been deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id=".UZgOZh" resname="Se ha registrado el proveedor &quot;{provider}&quot; por el usuario {user}">
+        <source>Se ha registrado el proveedor "{provider}" por el usuario {user}</source>
+        <target>The provider “{provider}” has been registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="NXmK8_g" resname="Se ha eliminado el factor GdO {id} por el usuario {user}">
+        <source>Se ha eliminado el factor GdO {id} por el usuario {user}</source>
+        <target>The GdO factor {id} has been deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="sfdS3Vr" resname="Pernoctación">
+        <source>Pernoctación</source>
+        <target>Overnight Stay</target>
+      </trans-unit>
+      <trans-unit id="zKWUrln" resname="Factor GdO">
+        <source>Factor GdO</source>
+        <target>GdO Factor</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

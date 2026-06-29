@@ -112,6 +112,17 @@ carbon-footprint-web:
     defaults:
         _locale: '%app.locale_default%'
 
+event-operations-web:
+    resource:
+        path: ../src/EventOperations/Infrastructure/UI/Web/
+        namespace: App\EventOperations\Infrastructure\UI\Web
+    type: attribute
+    prefix: /{_locale}
+    requirements:
+        _locale: '%app.locale_list%'
+    defaults:
+        _locale: '%app.locale_default%'
+
 home_fallback:
     path: /
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction

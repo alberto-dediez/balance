@@ -21,6 +21,7 @@ doctrine:
             category_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CategoryIdType
             brand_id: App\Property\Infrastructure\Persistence\Doctrine\Type\BrandIdType
             company_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CompanyIdType
+            provider_id: App\EventOperations\Infrastructure\Persistence\Doctrine\Type\ProviderIdType
             signature_request_id: App\Security\Infrastructure\Persistence\Doctrine\Type\SignatureRequestIdType
             notification_id: App\Notifications\Infrastructure\Persistence\Doctrine\Type\NotificationIdType
             job_progress_id: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressIdType
@@ -101,6 +102,13 @@ doctrine:
                 dir: '%kernel.project_dir%/src/CarbonFootprint/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\CarbonFootprint\Domain\Model'
                 alias: CarbonFootprint
+
+            EventOperations:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/EventOperations/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\EventOperations\Domain\Model'
+                alias: EventOperations
 
             Shared:
                 type: xml

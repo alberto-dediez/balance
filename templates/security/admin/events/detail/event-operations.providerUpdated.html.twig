@@ -1,0 +1,4 @@
+{% trans with {
+    '{provider}': event.description,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado el proveedor "{provider}" por el usuario {user}{% endtrans %}

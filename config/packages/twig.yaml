@@ -15,6 +15,7 @@ twig:
         'templates/human_resources': 'human_resources'
         'templates/notifications': 'notifications'
         'templates/carbon_footprint': 'carbon_footprint'
+        'templates/event_operations': 'event_operations'
         '%kernel.project_dir%/assets': assets
 
 when@test:

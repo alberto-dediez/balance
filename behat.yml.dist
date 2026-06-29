@@ -16,6 +16,7 @@ default:
                 - App\Tests\Acceptance\HumanResources\HumanResourcesContext
                 - App\Tests\Acceptance\Notifications\NotificationsContext
                 - App\Tests\Acceptance\CarbonFootprint\CarbonFootprintContext
+                - App\Tests\Acceptance\EventOperations\EventOperationsContext
 
     extensions:
         FriendsOfBehat\SymfonyExtension:
