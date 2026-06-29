@@ -23,3 +23,10 @@ Feature:
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Combustible creado correctamente: Test Combustible"
+
+    Scenario: After register a new combustible, I am redirected to edit it
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/combustibles/register"
+        When I submit a form with "name:Test Combustible|unit:kg" and button "Registrar"
+        Then I am redirected to route "admin_combustibles_edit"

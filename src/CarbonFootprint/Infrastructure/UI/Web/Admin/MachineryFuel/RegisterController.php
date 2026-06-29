@@ -30,10 +30,14 @@ class RegisterController extends AbstractController
         $form = $this->createForm(RegisterMachineryFuelType::class);
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerMachineryFuel, $loggedUser) {
+            $machineryFuelId = null;
+
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerMachineryFuel, $loggedUser, &$machineryFuelId) {
                 $registerRequest = $form->getData();
 
                 $response = $registerMachineryFuel($registerRequest, $loggedUser());
+
+                $machineryFuelId = $response->machineryFuelId;
 
                 $this->addFlash('success', new TranslatableMessage('Combustible de maquinaria creado correctamente: {name}', ['{name}' => $response->name]));
 
@@ -41,6 +45,10 @@ class RegisterController extends AbstractController
             });
 
             if ($needsRedirect) {
+                if ($machineryFuelId instanceof MachineryFuelId) {
+                    return $this->redirectToRoute('admin_machinery_fuels_edit', ['machineryFuelId' => $machineryFuelId]);
+                }
+
                 return $this->redirectToRoute('admin_machinery_fuels');
             }
         } catch (UnauthorizedActionException $e) {

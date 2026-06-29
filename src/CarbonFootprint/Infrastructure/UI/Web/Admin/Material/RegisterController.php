@@ -30,10 +30,14 @@ class RegisterController extends AbstractController
         $form = $this->createForm(RegisterMaterialType::class);
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerMaterial, $loggedUser) {
+            $materialId = null;
+
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerMaterial, $loggedUser, &$materialId) {
                 $registerRequest = $form->getData();
 
                 $response = $registerMaterial($registerRequest, $loggedUser());
+
+                $materialId = $response->materialId;
 
                 $this->addFlash('success', new TranslatableMessage('Material creado correctamente: {name}', ['{name}' => $response->name]));
 
@@ -41,6 +45,10 @@ class RegisterController extends AbstractController
             });
 
             if ($needsRedirect) {
+                if ($materialId instanceof MaterialId) {
+                    return $this->redirectToRoute('admin_materials_edit', ['materialId' => $materialId]);
+                }
+
                 return $this->redirectToRoute('admin_materials');
             }
         } catch (UnauthorizedActionException $e) {

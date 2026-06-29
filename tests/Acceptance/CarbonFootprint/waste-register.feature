@@ -23,3 +23,10 @@ Feature:
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Residuo creado correctamente: Test Residuo"
+
+    Scenario: After register a new waste, I am redirected to edit it
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/wastes/register"
+        When I submit a form with "name:Test Residuo|unit:kg|density:1.5" and button "Registrar"
+        Then I am redirected to route "admin_wastes_edit"

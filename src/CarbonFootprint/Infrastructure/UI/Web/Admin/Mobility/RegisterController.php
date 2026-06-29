@@ -30,10 +30,14 @@ class RegisterController extends AbstractController
         $form = $this->createForm(RegisterMobilityType::class);
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerMobility, $loggedUser) {
+            $mobilityId = null;
+
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerMobility, $loggedUser, &$mobilityId) {
                 $registerRequest = $form->getData();
 
                 $response = $registerMobility($registerRequest, $loggedUser());
+
+                $mobilityId = $response->mobilityId;
 
                 $this->addFlash('success', new TranslatableMessage('Movilidad creada correctamente: {name}', ['{name}' => $response->name]));
 
@@ -41,6 +45,10 @@ class RegisterController extends AbstractController
             });
 
             if ($needsRedirect) {
+                if ($mobilityId instanceof MobilityId) {
+                    return $this->redirectToRoute('admin_mobilities_edit', ['mobilityId' => $mobilityId]);
+                }
+
                 return $this->redirectToRoute('admin_mobilities');
             }
         } catch (UnauthorizedActionException $e) {

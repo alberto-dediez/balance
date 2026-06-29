@@ -23,3 +23,10 @@ Feature:
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Material creado correctamente: Test Material"
+
+    Scenario: After register a new material, I am redirected to edit it
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/materials/register"
+        When I submit a form with "name:Test Material|category:metal|unit:kg" and button "Registrar"
+        Then I am redirected to route "admin_materials_edit"

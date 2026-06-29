@@ -30,10 +30,14 @@ class RegisterController extends AbstractController
         $form = $this->createForm(RegisterCombustibleType::class);
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerCombustible, $loggedUser) {
+            $combustibleId = null;
+
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerCombustible, $loggedUser, &$combustibleId) {
                 $registerRequest = $form->getData();
 
                 $response = $registerCombustible($registerRequest, $loggedUser());
+
+                $combustibleId = $response->combustibleId;
 
                 $this->addFlash('success', new TranslatableMessage('Combustible creado correctamente: {name}', ['{name}' => $response->name]));
 
@@ -41,6 +45,10 @@ class RegisterController extends AbstractController
             });
 
             if ($needsRedirect) {
+                if ($combustibleId instanceof CombustibleId) {
+                    return $this->redirectToRoute('admin_combustibles_edit', ['combustibleId' => $combustibleId]);
+                }
+
                 return $this->redirectToRoute('admin_combustibles');
             }
         } catch (UnauthorizedActionException $e) {

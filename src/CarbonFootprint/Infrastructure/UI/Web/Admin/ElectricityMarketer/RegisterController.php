@@ -30,10 +30,14 @@ class RegisterController extends AbstractController
         $form = $this->createForm(RegisterElectricityMarketerType::class);
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerElectricityMarketer, $loggedUser) {
+            $electricityMarketerId = null;
+
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerElectricityMarketer, $loggedUser, &$electricityMarketerId) {
                 $registerRequest = $form->getData();
 
                 $response = $registerElectricityMarketer($registerRequest, $loggedUser());
+
+                $electricityMarketerId = $response->electricityMarketerId;
 
                 $this->addFlash('success', new TranslatableMessage('Comercializadora eléctrica creada correctamente: {name}', ['{name}' => $response->name]));
 
@@ -41,6 +45,10 @@ class RegisterController extends AbstractController
             });
 
             if ($needsRedirect) {
+                if ($electricityMarketerId instanceof ElectricityMarketerId) {
+                    return $this->redirectToRoute('admin_electricity_marketers_edit', ['electricityMarketerId' => $electricityMarketerId]);
+                }
+
                 return $this->redirectToRoute('admin_electricity_marketers');
             }
         } catch (UnauthorizedActionException $e) {

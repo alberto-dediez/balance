@@ -30,10 +30,14 @@ class RegisterController extends AbstractController
         $form = $this->createForm(RegisterWasteType::class);
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerWaste, $loggedUser) {
+            $wasteId = null;
+
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerWaste, $loggedUser, &$wasteId) {
                 $registerRequest = $form->getData();
 
                 $response = $registerWaste($registerRequest, $loggedUser());
+
+                $wasteId = $response->wasteId;
 
                 $this->addFlash('success', new TranslatableMessage('Residuo creado correctamente: {name}', ['{name}' => $response->name]));
 
@@ -41,6 +45,10 @@ class RegisterController extends AbstractController
             });
 
             if ($needsRedirect) {
+                if ($wasteId instanceof WasteId) {
+                    return $this->redirectToRoute('admin_wastes_edit', ['wasteId' => $wasteId]);
+                }
+
                 return $this->redirectToRoute('admin_wastes');
             }
         } catch (UnauthorizedActionException $e) {

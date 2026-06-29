@@ -30,10 +30,14 @@ class RegisterController extends AbstractController
         $form = $this->createForm(RegisterCateringItemType::class);
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerCateringItem, $loggedUser) {
+            $cateringItemId = null;
+
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerCateringItem, $loggedUser, &$cateringItemId) {
                 $registerRequest = $form->getData();
 
                 $response = $registerCateringItem($registerRequest, $loggedUser());
+
+                $cateringItemId = $response->cateringItemId;
 
                 $this->addFlash('success', new TranslatableMessage('Elemento de catering creado correctamente: {name}', ['{name}' => $response->name]));
 
@@ -41,6 +45,10 @@ class RegisterController extends AbstractController
             });
 
             if ($needsRedirect) {
+                if ($cateringItemId instanceof CateringItemId) {
+                    return $this->redirectToRoute('admin_catering_items_edit', ['cateringItemId' => $cateringItemId]);
+                }
+
                 return $this->redirectToRoute('admin_catering_items');
             }
         } catch (UnauthorizedActionException $e) {

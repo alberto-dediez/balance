@@ -30,10 +30,14 @@ class RegisterController extends AbstractController
         $form = $this->createForm(RegisterMerchandisingItemType::class);
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerMerchandisingItem, $loggedUser) {
+            $merchandisingItemId = null;
+
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerMerchandisingItem, $loggedUser, &$merchandisingItemId) {
                 $registerRequest = $form->getData();
 
                 $response = $registerMerchandisingItem($registerRequest, $loggedUser());
+
+                $merchandisingItemId = $response->merchandisingItemId;
 
                 $this->addFlash('success', new TranslatableMessage('Artículo de merchandising creado correctamente: {name}', ['{name}' => $response->name]));
 
@@ -41,6 +45,10 @@ class RegisterController extends AbstractController
             });
 
             if ($needsRedirect) {
+                if ($merchandisingItemId instanceof MerchandisingItemId) {
+                    return $this->redirectToRoute('admin_merchandising_items_edit', ['merchandisingItemId' => $merchandisingItemId]);
+                }
+
                 return $this->redirectToRoute('admin_merchandising_items');
             }
         } catch (UnauthorizedActionException $e) {

@@ -23,3 +23,10 @@ Feature:
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Combustible de maquinaria creado correctamente: Test Maquinaria"
+
+    Scenario: After register a new machinery fuel, I am redirected to edit it
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/machinery-fuels/register"
+        When I submit a form with "name:Test Maquinaria|unit:l|machineryType:agricultural" and button "Registrar"
+        Then I am redirected to route "admin_machinery_fuels_edit"

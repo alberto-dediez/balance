@@ -30,10 +30,14 @@ class RegisterController extends AbstractController
         $form = $this->createForm(RegisterRoadTransportType::class);
 
         try {
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerRoadTransport, $loggedUser) {
+            $roadTransportId = null;
+
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerRoadTransport, $loggedUser, &$roadTransportId) {
                 $registerRequest = $form->getData();
 
                 $response = $registerRoadTransport($registerRequest, $loggedUser());
+
+                $roadTransportId = $response->roadTransportId;
 
                 $this->addFlash('success', new TranslatableMessage('Transporte por carretera creado correctamente: {name}', ['{name}' => $response->name]));
 
@@ -41,6 +45,10 @@ class RegisterController extends AbstractController
             });
 
             if ($needsRedirect) {
+                if ($roadTransportId instanceof RoadTransportId) {
+                    return $this->redirectToRoute('admin_road_transports_edit', ['roadTransportId' => $roadTransportId]);
+                }
+
                 return $this->redirectToRoute('admin_road_transports');
             }
         } catch (UnauthorizedActionException $e) {

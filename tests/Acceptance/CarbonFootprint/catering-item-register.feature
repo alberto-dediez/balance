@@ -23,3 +23,10 @@ Feature:
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Elemento de catering creado correctamente: Test Item"
+
+    Scenario: After register a new catering item, I am redirected to edit it
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/catering-items/register"
+        When I submit a form with "name:Test Item|category:breakfast|unit:kg" and button "Registrar"
+        Then I am redirected to route "admin_catering_items_edit"

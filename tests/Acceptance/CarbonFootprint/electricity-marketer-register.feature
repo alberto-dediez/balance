@@ -23,3 +23,10 @@ Feature:
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Comercializadora eléctrica creada correctamente: Test Electricity Marketer"
+
+    Scenario: After register a new electricity marketer, I am redirected to edit it
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/electricity-marketers/register"
+        When I submit a form with "name:Test Electricity Marketer" and button "Registrar"
+        Then I am redirected to route "admin_electricity_marketers_edit"

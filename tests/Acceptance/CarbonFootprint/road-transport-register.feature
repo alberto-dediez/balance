@@ -23,3 +23,10 @@ Feature:
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Transporte por carretera creado correctamente: Test Road Transport"
+
+    Scenario: After register a new road transport, I am redirected to edit it
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/road-transports/register"
+        When I submit a form with "name:Test Road Transport|unit:kg|vehicle:trucks" and button "Registrar"
+        Then I am redirected to route "admin_road_transports_edit"
