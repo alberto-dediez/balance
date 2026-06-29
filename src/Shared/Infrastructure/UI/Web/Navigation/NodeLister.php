@@ -177,11 +177,16 @@ class NodeLister
                     target: $this->router->generate('admin_electricity_marketers'),
                 ),
                 new Node(
+                    label: new TranslatableMessage('Factores GdO'),
+                    icon: 'solar:leaf-line-duotone',
+                    target: $this->router->generate('admin_gdo_factors'),
+                ),
+                new Node(
                     label: new TranslatableMessage('Residuos'),
                     icon: 'solar:trash-bin-minimalistic-line-duotone',
                     target: $this->router->generate('admin_wastes'),
                 ),
-            ]
+            ],
         );
 
         $nodes[] = new Node(
@@ -204,7 +209,7 @@ class NodeLister
                     icon: 'solar:settings-minimalistic-line-duotone',
                     target: $this->router->generate('admin_machinery_fuels'),
                 ),
-            ]
+            ],
         );
 
         $nodes[] =  new Node(

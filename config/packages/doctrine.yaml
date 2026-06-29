@@ -38,6 +38,8 @@ doctrine:
             road_transport_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\RoadTransportEmissionFactorIdType
             electricity_marketer_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ElectricityMarketerIdType
             electricity_marketer_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ElectricityMarketerEmissionFactorIdType
+            gdo_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\GdOFactorIdType
+            gdo_factor_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\GdOFactorEmissionFactorIdType
             machinery_fuel_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MachineryFuelIdType
             machinery_fuel_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MachineryFuelEmissionFactorIdType
             mobility_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MobilityIdType

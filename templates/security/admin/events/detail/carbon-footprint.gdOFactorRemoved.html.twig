@@ -1,0 +1,4 @@
+{% trans with {
+    '{id}': event.gdOFactorId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado el factor GdO {id} por el usuario {user}{% endtrans %}

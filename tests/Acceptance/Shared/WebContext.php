@@ -148,6 +148,14 @@ final class WebContext implements Context
         Assert::assertEquals($path, $this->client->getRequest()->getPathInfo());
     }
 
+    #[Then('I am redirected to route :name')]
+    public function iAmRedirectedToRoute(string $name): void
+    {
+        $this->client->followRedirect();
+
+        Assert::assertEquals($name, $this->client->getRequest()->attributes->get('_route'));
+    }
+
     #[Then('I see a form')]
     public function iSeeAForm(): void
     {

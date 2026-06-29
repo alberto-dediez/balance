@@ -8,6 +8,7 @@ use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
@@ -18,6 +19,7 @@ use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemMother;
@@ -66,6 +68,11 @@ final readonly class CarbonFootprintContext implements Context
     public function getElectricityMarketerRepository(): ElectricityMarketerRepository
     {
         return $this->client->getContainer()->get(ElectricityMarketerRepository::class);
+    }
+
+    public function getGdOFactorRepository(): GdOFactorRepository
+    {
+        return $this->client->getContainer()->get(GdOFactorRepository::class);
     }
 
     public function getMachineryFuelRepository(): MachineryFuelRepository
@@ -198,6 +205,31 @@ final readonly class CarbonFootprintContext implements Context
         ));
 
         $this->getElectricityMarketerRepository()->add($electricityMarketer);
+    }
+
+    #[Given('gdo factor :name with id :id exists')]
+    public function gdOFactorWithIdExists(string $name, string $id): void
+    {
+        $gdOFactor = GdOFactorMother::fromNameAndId($name, $id);
+
+        $this->getGdOFactorRepository()->add($gdOFactor);
+    }
+
+    #[Given('gdo factor :name with id :id and emission factor for year :year exists')]
+    public function gdOFactorWithEmissionFactorExists(string $name, string $id, string $year): void
+    {
+        $gdOFactor = GdOFactorMother::fromNameAndId($name, $id);
+
+        $gdOFactor->setEmissionFactor(new EmissionFactor(
+            co2eq: '1.5',
+            co2: '1.0',
+            ch4: '0.2',
+            n2o: '0.3',
+            year: (int) $year,
+            source: 'IPCC',
+        ));
+
+        $this->getGdOFactorRepository()->add($gdOFactor);
     }
 
     #[Given('machinery fuel :name with id :id exists')]
