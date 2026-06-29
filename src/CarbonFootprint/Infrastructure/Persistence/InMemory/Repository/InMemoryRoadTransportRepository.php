@@ -78,6 +78,10 @@ class InMemoryRoadTransportRepository implements RoadTransportRepository
                 continue;
             }
 
+            if (null !== $filter->unit && $roadTransport->unit() !== $filter->unit) {
+                continue;
+            }
+
             if (true == $roadTransport->isRemoved()) {
                 continue;
             }

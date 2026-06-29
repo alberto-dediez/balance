@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransport;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportFilter;
+use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportId;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportTranslation;
@@ -101,6 +102,13 @@ class DoctrineRoadTransportRepository implements RoadTransportRepository
                     ),
                 )
                 ->setParameter('name', "%{$filter->name}%")
+            ;
+        }
+
+        if ($filter->unit instanceof Unit) {
+            $qb
+                ->andWhere($qb->expr()->eq('r.unit', ':unit'))
+                ->setParameter('unit', $filter->unit->value)
             ;
         }
 
