@@ -1,0 +1,54 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\CarbonFootprint\Domain\Model\OvernightStay;
+
+use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+
+class OvernightStayEmissionFactor
+{
+    public function __construct(
+        private OvernightStayEmissionFactorId $id,
+        private OvernightStay $overnightStay,
+        private EmissionFactor $emissionFactor,
+        private \DateTimeImmutable $createdAt = new \DateTimeImmutable('NOW'),
+        private ?\DateTimeImmutable $updatedAt = null,
+    ) {}
+
+    public function id(): OvernightStayEmissionFactorId
+    {
+        return $this->id;
+    }
+
+    public function overnightStay(): OvernightStay
+    {
+        return $this->overnightStay;
+    }
+
+    public function emissionFactor(): EmissionFactor
+    {
+        return $this->emissionFactor;
+    }
+
+    public function year(): int
+    {
+        return $this->emissionFactor->year();
+    }
+
+    public function createdAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function updatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function update(EmissionFactor $emissionFactor, \DateTimeImmutable $updatedAt): void
+    {
+        $this->emissionFactor = $emissionFactor;
+        $this->updatedAt = $updatedAt;
+    }
+}

@@ -46,6 +46,8 @@ doctrine:
             mobility_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MobilityEmissionFactorIdType
             waste_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\WasteIdType
             waste_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\WasteEmissionFactorIdType
+            overnight_stay_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\OvernightStayIdType
+            overnight_stay_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\OvernightStayEmissionFactorIdType
 
     orm:
         auto_generate_proxy_classes: true

@@ -1,0 +1,4 @@
+{% trans with {
+    '{overnightStay}': event.overnightStayId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado la pernoctación {overnightStay} por el usuario {user}{% endtrans %}

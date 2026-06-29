@@ -11,4 +11,5 @@ enum Magnitude: string
     case Pieces   = 'pieces';
     case Energy   = 'energy';
     case Distance = 'distance';
+    case Stay     = 'stay';
 }

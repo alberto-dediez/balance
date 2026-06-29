@@ -1,0 +1,5 @@
+{% trans with {
+    '{year}': event.emissionFactor.year,
+    '{overnightStay}': event.overnightStayId,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado el factor de emisión del año {year} de la pernoctación {overnightStay} por el usuario {user}{% endtrans %}

@@ -200,14 +200,19 @@ class NodeLister
                     target: $this->router->generate('admin_road_transports'),
                 ),
                 new Node(
+                    label: new TranslatableMessage('Combustible de maquinaria'),
+                    icon: 'solar:settings-minimalistic-line-duotone',
+                    target: $this->router->generate('admin_machinery_fuels'),
+                ),
+                new Node(
                     label: new TranslatableMessage('Movilidad'),
                     icon: 'solar:routing-2-line-duotone',
                     target: $this->router->generate('admin_mobilities'),
                 ),
                 new Node(
-                    label: new TranslatableMessage('Combustible de maquinaria'),
-                    icon: 'solar:settings-minimalistic-line-duotone',
-                    target: $this->router->generate('admin_machinery_fuels'),
+                    label: new TranslatableMessage('Pernoctaciones'),
+                    icon: 'solar:sleeping-square-line-duotone',
+                    target: $this->router->generate('admin_overnight_stays'),
                 ),
             ],
         );

@@ -1,0 +1,32 @@
+Feature:
+    I want to make sure that the software allow to register an overnight stay
+
+    Scenario: As an admin, I can access to register new overnight stays
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/overnight-stays/register"
+        Then the response status should be 200
+        Then I see a form
+
+    Scenario: As normal user I can't register new overnight stays
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/admin/overnight-stays/register"
+        Then the response status should be 403
+
+    Scenario: As an admin, I can register new overnight stays
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/overnight-stays/register"
+        When I submit a form with "name:Test Pernoctación" and button "Registrar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "Pernoctación creada correctamente: Test Pernoctación"
+
+    Scenario: After register a new overnight stay, I am redirected to edit it
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/overnight-stays/register"
+        When I submit a form with "name:Test Pernoctación" and button "Registrar"
+        Then I am redirected to route "admin_overnight_stays_edit"

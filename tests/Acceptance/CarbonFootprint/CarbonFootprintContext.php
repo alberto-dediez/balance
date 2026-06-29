@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
+use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
 use App\CarbonFootprint\Domain\Model\Waste\WasteRepository;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
@@ -24,6 +25,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelMothe
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Waste\WasteMother;
 use Behat\Behat\Context\Context;
@@ -305,5 +307,35 @@ final readonly class CarbonFootprintContext implements Context
         ));
 
         $this->getWasteRepository()->add($waste);
+    }
+
+    public function getOvernightStayRepository(): OvernightStayRepository
+    {
+        return $this->client->getContainer()->get(OvernightStayRepository::class);
+    }
+
+    #[Given('overnight stay :name with id :id exists')]
+    public function overnightStayWithIdExists(string $name, string $id): void
+    {
+        $overnightStay = OvernightStayMother::fromNameAndId($name, $id);
+
+        $this->getOvernightStayRepository()->add($overnightStay);
+    }
+
+    #[Given('overnight stay :name with id :id and emission factor for year :year exists')]
+    public function overnightStayWithEmissionFactorExists(string $name, string $id, string $year): void
+    {
+        $overnightStay = OvernightStayMother::fromNameAndId($name, $id);
+
+        $overnightStay->setEmissionFactor(new EmissionFactor(
+            co2eq: '1.5',
+            co2: '1.0',
+            ch4: '0.2',
+            n2o: '0.3',
+            year: (int) $year,
+            source: 'IPCC',
+        ));
+
+        $this->getOvernightStayRepository()->add($overnightStay);
     }
 }
