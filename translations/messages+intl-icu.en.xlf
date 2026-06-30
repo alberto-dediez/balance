@@ -2861,6 +2861,62 @@
         <source>Cálculo de Huella de Carbono</source>
         <target>Carbon footprint calculation</target>
       </trans-unit>
+      <trans-unit id="KjRDijY" resname="Se ha completado el paso de Celebración de la Huella de Carbono por el usuario {user}">
+        <source>Se ha completado el paso de Celebración de la Huella de Carbono por el usuario {user}</source>
+        <target>The “Carbon Footprint Celebration” step has been completed by user {user}</target>
+      </trans-unit>
+      <trans-unit id="6Z8kEKF" resname="Se ha completado el paso de Montaje de la Huella de Carbono por el usuario {user}">
+        <source>Se ha completado el paso de Montaje de la Huella de Carbono por el usuario {user}</source>
+        <target>The “Carbon Footprint Assembly” step has been completed by user {user}</target>
+      </trans-unit>
+      <trans-unit id="o8wJzHA" resname="Se ha completado el paso de Materiales de la Huella de Carbono por el usuario {user}">
+        <source>Se ha completado el paso de Materiales de la Huella de Carbono por el usuario {user}</source>
+        <target>The “Carbon Footprint Materials” step has been completed by user {user}</target>
+      </trans-unit>
+      <trans-unit id="zDwm4V." resname="Se ha completado el paso de Desmontaje de la Huella de Carbono por el usuario {user}">
+        <source>Se ha completado el paso de Desmontaje de la Huella de Carbono por el usuario {user}</source>
+        <target>The “Carbon Footprint Disassembly” step has been completed by user {user}</target>
+      </trans-unit>
+      <trans-unit id="jqAR1m1" resname="Se ha completado el cálculo de Huella de Carbono por el usuario {user}">
+        <source>Se ha completado el cálculo de Huella de Carbono por el usuario {user}</source>
+        <target>The Carbon Footprint calculation has been completed by user {user}</target>
+      </trans-unit>
+      <trans-unit id="j06PaYI" resname="Anterior">
+        <source>Anterior</source>
+        <target>Previous</target>
+      </trans-unit>
+      <trans-unit id="Kpu6T5q" resname="Siguiente">
+        <source>Siguiente</source>
+        <target>Next</target>
+      </trans-unit>
+      <trans-unit id=".L_JMFB" resname="CO₂ equivalente total (kg)">
+        <source>CO₂ equivalente total (kg)</source>
+        <target>Total CO₂ equivalent (kg)</target>
+      </trans-unit>
+      <trans-unit id="0fvVV9d" resname="CO₂ equivalente por asistente (kg)">
+        <source>CO₂ equivalente por asistente (kg)</source>
+        <target>CO₂ equivalent per attendee (kg)</target>
+      </trans-unit>
+      <trans-unit id="uZJtrck" resname="Estamos procesando su Huella de Carbono, en breve tendrá los resultados disponibles.">
+        <source>Estamos procesando su Huella de Carbono, en breve tendrá los resultados disponibles.</source>
+        <target>We are processing your Carbon Footprint; the results will be available shortly.</target>
+      </trans-unit>
+      <trans-unit id="U9uy9k." resname="Huella de Carbono">
+        <source>Huella de Carbono</source>
+        <target>Carbon Footprint</target>
+      </trans-unit>
+      <trans-unit id="kuQzDmw" resname="Montaje">
+        <source>Montaje</source>
+        <target>Setup</target>
+      </trans-unit>
+      <trans-unit id="FwzcrJ6" resname="Celebracion">
+        <source>Celebracion</source>
+        <target>Celebration</target>
+      </trans-unit>
+      <trans-unit id="1o3JpJH" resname="Desmontaje">
+        <source>Desmontaje</source>
+        <target>Teardown</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

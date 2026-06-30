@@ -1,0 +1,24 @@
+{% extends '@shared/layout/wizard.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('events') }}" />
+{% endblock %}
+
+{% set page_title = ('Eventos' | trans)
+    ~ ' > '
+    ~ event.name
+    ~ ' > '
+    ~ ('Huella de Carbono' | trans) %}
+
+{% set wizard_active = eventCarbonFootprint.status.activeStepNumber %}
+
+{% block content %}
+    {% set wizard_steps = [
+        {label: 'Materiales' | trans, href: path('events_carbon_footprint_materials', {eventId: eventId})},
+        {label: 'Montaje'  | trans, href: path('events_carbon_footprint_assembly',  {eventId: eventId})},
+        {label: 'Celebracion' | trans, href: path('events_carbon_footprint_celebration', {eventId: eventId})},
+        {label: 'Desmontaje' | trans, href: path('events_carbon_footprint_breakdown', {eventId: eventId})},
+        {label: 'Resultados'   | trans, href: path('events_carbon_footprint_results',   {eventId: eventId})},
+    ] %}
+    {{ parent() }}
+{% endblock %}

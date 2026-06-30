@@ -1,0 +1,28 @@
+{% extends '@carbon_footprint/event_carbon_footprints/wizard-layout.html.twig' %}
+
+{% set wizard_selected = 5 %}
+
+{% block wizard_panels %}
+    {% if eventCarbonFootprint.status.isCompleted %}
+        <dl class="row mt-3">
+            <dt class="col-sm-4">{{ 'CO₂ equivalente total (kg)' | trans }}</dt>
+            <dd class="col-sm-8">{{ eventCarbonFootprint.totalEmissions.co2eq }}</dd>
+
+            <dt class="col-sm-4">{{ 'CO₂ (kg)' | trans }}</dt>
+            <dd class="col-sm-8">{{ eventCarbonFootprint.totalEmissions.co2 }}</dd>
+
+            <dt class="col-sm-4">{{ 'CH₄ (kg)' | trans }}</dt>
+            <dd class="col-sm-8">{{ eventCarbonFootprint.totalEmissions.ch4 }}</dd>
+
+            <dt class="col-sm-4">{{ 'N₂O (kg)' | trans }}</dt>
+            <dd class="col-sm-8">{{ eventCarbonFootprint.totalEmissions.n2o }}</dd>
+
+            <dt class="col-sm-4">{{ 'CO₂ equivalente por asistente (kg)' | trans }}</dt>
+            <dd class="col-sm-8">{{ eventCarbonFootprint.emissionsPerAttendee.co2eq }}</dd>
+        </dl>
+    {% else %}
+        <div class="alert alert-info mt-3" role="alert">
+            {{ 'Estamos procesando su Huella de Carbono, en breve tendrá los resultados disponibles.' | trans }}
+        </div>
+    {% endif %}
+{% endblock %}

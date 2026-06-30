@@ -302,16 +302,16 @@ class NodeLister
 
         $nodes[] = new Node(
             label: new TranslatableMessage('Eventos'),
-            icon: 'solar:calendar-line-duotone',
+            icon: 'ic:twotone-event-available',
             items: [
                 new Node(
                     label: new TranslatableMessage('Eventos'),
-                    icon: 'solar:microphone-2-line-duotone',
+                    icon: 'ic:twotone-event-available',
                     target: $this->router->generate('events'),
                 ),
                 new Node(
                     label: new TranslatableMessage('Proveedores'),
-                    icon: 'solar:hand-money-line-duotone',
+                    icon: 'streamline-plump:food-truck-event-fair',
                     target: $this->router->generate('providers'),
                 ),
             ],

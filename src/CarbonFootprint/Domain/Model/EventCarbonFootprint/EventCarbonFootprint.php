@@ -125,6 +125,51 @@ class EventCarbonFootprint implements \Stringable
         );
     }
 
+    public function answerMaterials(): void
+    {
+        $this->recordApplyAndPublish(
+            new EventCarbonFootprintMaterialsAnswered(
+                eventCarbonFootprintId: $this->id,
+            ),
+        );
+    }
+
+    public function answerAssembly(): void
+    {
+        $this->recordApplyAndPublish(
+            new EventCarbonFootprintAssemblyAnswered(
+                eventCarbonFootprintId: $this->id,
+            ),
+        );
+    }
+
+    public function answerCelebration(): void
+    {
+        $this->recordApplyAndPublish(
+            new EventCarbonFootprintCelebrationAnswered(
+                eventCarbonFootprintId: $this->id,
+            ),
+        );
+    }
+
+    public function answerBreakdown(): void
+    {
+        $this->recordApplyAndPublish(
+            new EventCarbonFootprintBreakdownAnswered(
+                eventCarbonFootprintId: $this->id,
+            ),
+        );
+    }
+
+    public function complete(): void
+    {
+        $this->recordApplyAndPublish(
+            new EventCarbonFootprintCompleted(
+                eventCarbonFootprintId: $this->id,
+            ),
+        );
+    }
+
     public function remove(): void
     {
         $this->recordApplyAndPublish(
@@ -151,6 +196,36 @@ class EventCarbonFootprint implements \Stringable
         $this->totalEmissions = $event->totalEmissions();
         $this->emissionsPerAttendee = $event->emissionsPerAttendee();
         $this->status = $event->status();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyEventCarbonFootprintMaterialsAnswered(EventCarbonFootprintMaterialsAnswered $event): void
+    {
+        $this->status = EventCarbonFootprintStatus::MaterialsAnswered;
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyEventCarbonFootprintAssemblyAnswered(EventCarbonFootprintAssemblyAnswered $event): void
+    {
+        $this->status = EventCarbonFootprintStatus::AssemblyAnswered;
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyEventCarbonFootprintCelebrationAnswered(EventCarbonFootprintCelebrationAnswered $event): void
+    {
+        $this->status = EventCarbonFootprintStatus::CelebrationAnswered;
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyEventCarbonFootprintBreakdownAnswered(EventCarbonFootprintBreakdownAnswered $event): void
+    {
+        $this->status = EventCarbonFootprintStatus::BreakdownAnswered;
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyEventCarbonFootprintCompleted(EventCarbonFootprintCompleted $event): void
+    {
+        $this->status = EventCarbonFootprintStatus::Completed;
         $this->updatedAt = $event->occurredOn();
     }
 

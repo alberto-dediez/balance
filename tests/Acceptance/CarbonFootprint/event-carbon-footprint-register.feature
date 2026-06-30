@@ -8,6 +8,7 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/events/333/carbon-footprint/register"
         When I follow redirect
+        When I follow redirect
         Then the response status should be 200
         Then I see a text "Cálculo de Huella de Carbono creado correctamente"
 

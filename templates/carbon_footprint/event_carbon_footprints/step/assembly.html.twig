@@ -1,0 +1,18 @@
+{% extends '@carbon_footprint/event_carbon_footprints/wizard-layout.html.twig' %}
+
+{% set wizard_selected = 2 %}
+
+{% block wizard_panels %}
+    <form method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('assembly_' ~ eventCarbonFootprint.id) }}">
+
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ path('events_carbon_footprint_materials', {eventId: eventId}) }}" class="btn btn-outline-secondary">
+                &larr; {{ 'Anterior' | trans }}
+            </a>
+            <button type="submit" class="btn btn-primary">
+                {{ 'Siguiente' | trans }} &rarr;
+            </button>
+        </div>
+    </form>
+{% endblock %}

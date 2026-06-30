@@ -17,6 +17,22 @@
         <source>completed</source>
         <target>Completada</target>
       </trans-unit>
+      <trans-unit id="eqoYvh2" resname="materials_answered">
+        <source>materials_answered</source>
+        <target>Materiales respondido</target>
+      </trans-unit>
+      <trans-unit id="nS677zi" resname="assembly_answered">
+        <source>assembly_answered</source>
+        <target>Montaje respondido</target>
+      </trans-unit>
+      <trans-unit id="xVipD1P" resname="celebration_answered">
+        <source>celebration_answered</source>
+        <target>Celebración respondido</target>
+      </trans-unit>
+      <trans-unit id="Rx4dYl6" resname="breakdown_answered">
+        <source>breakdown_answered</source>
+        <target>Desmontaje respondido</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -6,7 +6,71 @@ namespace App\CarbonFootprint\Domain\Model\EventCarbonFootprint;
 
 enum EventCarbonFootprintStatus: string
 {
-    case Started = 'started';
-    case InProgress = 'in_progress';
-    case Completed = 'completed';
+    case Started             = 'started';
+    case MaterialsAnswered   = 'materials_answered';
+    case AssemblyAnswered    = 'assembly_answered';
+    case CelebrationAnswered = 'celebration_answered';
+    case BreakdownAnswered   = 'breakdown_answered';
+    case Completed           = 'completed';
+
+    public function isMaterialsAnswered(): bool
+    {
+        return match ($this) {
+            self::MaterialsAnswered, self::AssemblyAnswered, self::CelebrationAnswered,
+            self::BreakdownAnswered, self::Completed => true,
+            default => false,
+        };
+    }
+
+    public function isAssemblyAnswered(): bool
+    {
+        return match ($this) {
+            self::AssemblyAnswered, self::CelebrationAnswered,
+            self::BreakdownAnswered, self::Completed => true,
+            default => false,
+        };
+    }
+
+    public function isCelebrationAnswered(): bool
+    {
+        return match ($this) {
+            self::CelebrationAnswered, self::BreakdownAnswered, self::Completed => true,
+            default => false,
+        };
+    }
+
+    public function isBreakdownAnswered(): bool
+    {
+        return match ($this) {
+            self::BreakdownAnswered, self::Completed => true,
+            default => false,
+        };
+    }
+
+    public function isCompleted(): bool
+    {
+        return self::Completed === $this;
+    }
+
+    public function activeStepNumber(): int
+    {
+        return match ($this) {
+            self::Started             => 1,
+            self::MaterialsAnswered   => 2,
+            self::AssemblyAnswered    => 3,
+            self::CelebrationAnswered => 4,
+            self::BreakdownAnswered, self::Completed => 5,
+        };
+    }
+
+    public function activeStepRouteName(): string
+    {
+        return match ($this) {
+            self::Started             => 'events_carbon_footprint_materials',
+            self::MaterialsAnswered   => 'events_carbon_footprint_assembly',
+            self::AssemblyAnswered    => 'events_carbon_footprint_celebration',
+            self::CelebrationAnswered => 'events_carbon_footprint_breakdown',
+            self::BreakdownAnswered, self::Completed => 'events_carbon_footprint_results',
+        };
+    }
 }
