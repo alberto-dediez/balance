@@ -8,15 +8,45 @@ use App\CarbonFootprint\Domain\Model\Unit;
 
 final class EmissionFactor implements \Stringable
 {
+    private readonly string $co2eq;
+    private readonly string $co2;
+    private readonly string $ch4;
+    private readonly string $n2o;
+    private readonly int $year;
+    private readonly Unit $unit;
+    private readonly ?string $source;
+
+    // GWP values (AR5/AR6) published by MITECO
+    private const float GWP_CO2 = 1.0;
+    private const float GWP_CH4 = 27.9;
+    private const float GWP_N2O = 273.0;
+
     public function __construct(
-        private readonly string $co2eq,
-        private readonly string $co2,
-        private readonly string $ch4,
-        private readonly string $n2o,
-        private readonly int $year,
-        private readonly Unit $unit = Unit::Kilogram,
-        private readonly ?string $source = null,
-    ) {}
+        string $co2eq,
+        string $co2,
+        string $ch4,
+        string $n2o,
+        int $year,
+        Unit $unit = Unit::Kilogram,
+        ?string $source = null,
+    ) {
+        $co2eqIsZero = 0.0 === (float) $co2eq;
+        $gasesAreZero = 0.0 === (float) $co2 && 0.0 === (float) $ch4 && 0.0 === (float) $n2o;
+
+        if ($co2eqIsZero) {
+            $co2eq = (string) ((float) $co2 * self::GWP_CO2 + (float) $ch4 * self::GWP_CH4 + (float) $n2o * self::GWP_N2O);
+        } elseif ($gasesAreZero) {
+            $co2 = $co2eq;
+        }
+
+        $this->co2eq = $co2eq;
+        $this->co2 = $co2;
+        $this->ch4 = $ch4;
+        $this->n2o = $n2o;
+        $this->year = $year;
+        $this->unit = $unit;
+        $this->source = $source;
+    }
 
     public function co2eq(): string
     {
