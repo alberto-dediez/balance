@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="es" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="bun3Izv" resname="materials">
+        <source>materials</source>
+        <target>Materias</target>
+      </trans-unit>
+      <trans-unit id="Ac42mjH" resname="fixed_facilities">
+        <source>fixed_facilities</source>
+        <target>Instalaciones fijas</target>
+      </trans-unit>
+      <trans-unit id="KPP41Ld" resname="freight_transport">
+        <source>freight_transport</source>
+        <target>Transporte de mercancías</target>
+      </trans-unit>
+      <trans-unit id="vyUvUcu" resname="machinery_operation">
+        <source>machinery_operation</source>
+        <target>Funcionamiento de maquinaria</target>
+      </trans-unit>
+      <trans-unit id="0NZDKTw" resname="building_electricity">
+        <source>building_electricity</source>
+        <target>Electricidad edificios</target>
+      </trans-unit>
+      <trans-unit id="wKlKRdv" resname="suppliers_and_staff_accommodation">
+        <source>suppliers_and_staff_accommodation</source>
+        <target>Pernoctaciones proveedores y equipo</target>
+      </trans-unit>
+      <trans-unit id="N3aBiDC" resname="attendees_accommodation">
+        <source>attendees_accommodation</source>
+        <target>Pernoctaciones asistentes</target>
+      </trans-unit>
+      <trans-unit id="lqIqPyB" resname="suppliers_and_staff_mobility">
+        <source>suppliers_and_staff_mobility</source>
+        <target>Movilidad proveedores y equipo</target>
+      </trans-unit>
+      <trans-unit id="qpKShLR" resname="attendees_mobility">
+        <source>attendees_mobility</source>
+        <target>Movilidad asistentes</target>
+      </trans-unit>
+      <trans-unit id="6qnoFVT" resname="waste_management">
+        <source>waste_management</source>
+        <target>Gestión de residuos</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

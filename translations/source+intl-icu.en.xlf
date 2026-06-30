@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="bun3Izv" resname="materials">
+        <source>materials</source>
+        <target>Materials</target>
+      </trans-unit>
+      <trans-unit id="Ac42mjH" resname="fixed_facilities">
+        <source>fixed_facilities</source>
+        <target>Fixed facilities</target>
+      </trans-unit>
+      <trans-unit id="KPP41Ld" resname="freight_transport">
+        <source>freight_transport</source>
+        <target>Freight transport</target>
+      </trans-unit>
+      <trans-unit id="vyUvUcu" resname="machinery_operation">
+        <source>machinery_operation</source>
+        <target>Machinery operation</target>
+      </trans-unit>
+      <trans-unit id="0NZDKTw" resname="building_electricity">
+        <source>building_electricity</source>
+        <target>Building electricity</target>
+      </trans-unit>
+      <trans-unit id="wKlKRdv" resname="suppliers_and_staff_accommodation">
+        <source>suppliers_and_staff_accommodation</source>
+        <target>Suppliers and staff accommodation</target>
+      </trans-unit>
+      <trans-unit id="N3aBiDC" resname="attendees_accommodation">
+        <source>attendees_accommodation</source>
+        <target>Attendees accommodation</target>
+      </trans-unit>
+      <trans-unit id="lqIqPyB" resname="suppliers_and_staff_mobility">
+        <source>suppliers_and_staff_mobility</source>
+        <target>Suppliers and staff mobility</target>
+      </trans-unit>
+      <trans-unit id="qpKShLR" resname="attendees_mobility">
+        <source>attendees_mobility</source>
+        <target>Attendees mobility</target>
+      </trans-unit>
+      <trans-unit id="6qnoFVT" resname="waste_management">
+        <source>waste_management</source>
+        <target>Waste management</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
