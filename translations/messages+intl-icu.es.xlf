@@ -2805,6 +2805,62 @@
         <source>Se ha eliminado el evento "{event}" por el usuario {user}</source>
         <target>Se ha eliminado el evento "{event}" por el usuario {user}</target>
       </trans-unit>
+      <trans-unit id="Wf_B9LN" resname="Cálculo de Huella de Carbono creado correctamente">
+        <source>Cálculo de Huella de Carbono creado correctamente</source>
+        <target>Cálculo de Huella de Carbono creado correctamente</target>
+      </trans-unit>
+      <trans-unit id="KzfSf6T" resname="Cálculo de Huella de Carbono actualizado con éxito">
+        <source>Cálculo de Huella de Carbono actualizado con éxito</source>
+        <target>Cálculo de Huella de Carbono actualizado con éxito</target>
+      </trans-unit>
+      <trans-unit id="pe_G6TH" resname="Inicio del periodo de cálculo">
+        <source>Inicio del periodo de cálculo</source>
+        <target>Inicio del periodo de cálculo</target>
+      </trans-unit>
+      <trans-unit id="nEsPoa8" resname="Fin del periodo de cálculo">
+        <source>Fin del periodo de cálculo</source>
+        <target>Fin del periodo de cálculo</target>
+      </trans-unit>
+      <trans-unit id="cJAhRsV" resname="Se ha actualizado el cálculo de Huella de Carbono por el usuario {user}">
+        <source>Se ha actualizado el cálculo de Huella de Carbono por el usuario {user}</source>
+        <target>Se ha actualizado el cálculo de Huella de Carbono por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="rvw_lWU" resname="Se ha eliminado el cálculo de Huella de Carbono por el usuario {user}">
+        <source>Se ha eliminado el cálculo de Huella de Carbono por el usuario {user}</source>
+        <target>Se ha eliminado el cálculo de Huella de Carbono por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="1GFqjmV" resname="Se ha registrado el cálculo de Huella de Carbono para el evento {eventId} por el usuario {user}">
+        <source>Se ha registrado el cálculo de Huella de Carbono para el evento {eventId} por el usuario {user}</source>
+        <target>Se ha registrado el cálculo de Huella de Carbono para el evento {eventId} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="B7VWrx2" resname="Emisiones totales">
+        <source>Emisiones totales</source>
+        <target>Emisiones totales</target>
+      </trans-unit>
+      <trans-unit id="vSPFJr4" resname="CO₂ equivalente (kg)">
+        <source>CO₂ equivalente (kg)</source>
+        <target>CO₂ equivalente (kg)</target>
+      </trans-unit>
+      <trans-unit id="GVCKFpv" resname="CO₂ (kg)">
+        <source>CO₂ (kg)</source>
+        <target>CO₂ (kg)</target>
+      </trans-unit>
+      <trans-unit id="YVvKBWr" resname="CH₄ (kg)">
+        <source>CH₄ (kg)</source>
+        <target>CH₄ (kg)</target>
+      </trans-unit>
+      <trans-unit id="HsqTFhx" resname="N₂O (kg)">
+        <source>N₂O (kg)</source>
+        <target>N₂O (kg)</target>
+      </trans-unit>
+      <trans-unit id="6gqBHs1" resname="Emisiones por asistente">
+        <source>Emisiones por asistente</source>
+        <target>Emisiones por asistente</target>
+      </trans-unit>
+      <trans-unit id="yM25ZuM" resname="Cálculo de Huella de Carbono">
+        <source>Cálculo de Huella de Carbono</source>
+        <target>Cálculo de Huella de Carbono</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -42,6 +42,14 @@
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>{{ element.updatedAt ? element.updatedAt | date('d/m/Y') : '' }}</td>
         <td>
+            {% set carbonFootprint = event_carbon_footprint(element.id) %}
+
+            {% if carbonFootprint is null and element | event_carbon_footprint | is_authorized('register') %}
+                <twig:List:Action:CarbonFootprint path="{{ path('events_carbon_footprint_register', {'eventId': element.id}) }}" />
+            {% elseif carbonFootprint | is_authorized('edit') %}
+                <twig:List:Action:CarbonFootprint path="{{ path('events_carbon_footprint_edit', {'eventId': element.id}) }}" />
+            {% endif %}
+
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('events_edit', {'eventId': element.id}) }}" />
             {% endif %}

@@ -8,6 +8,7 @@ use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
@@ -20,6 +21,7 @@ use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialMother;
@@ -90,6 +92,19 @@ final readonly class CarbonFootprintContext implements Context
     public function getWasteRepository(): WasteRepository
     {
         return $this->client->getContainer()->get(WasteRepository::class);
+    }
+
+    public function getEventCarbonFootprintRepository(): EventCarbonFootprintRepository
+    {
+        return $this->client->getContainer()->get(EventCarbonFootprintRepository::class);
+    }
+
+    #[Given('event carbon footprint for event :eventId of account :account exists')]
+    public function eventCarbonFootprintForEventOfAccountExists(string $eventId, string $account): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::fromEventIdAndAccount($eventId, $account);
+
+        $this->getEventCarbonFootprintRepository()->add($eventCarbonFootprint);
     }
 
     #[Given('material :name with id :id exists')]

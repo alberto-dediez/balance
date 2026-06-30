@@ -1,0 +1,4 @@
+{% trans with {
+    '{eventId}': event.eventId,
+    '{user}': element.userId | user_name
+} %}Se ha registrado el cálculo de Huella de Carbono para el evento {eventId} por el usuario {user}{% endtrans %}

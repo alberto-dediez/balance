@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <embeddable name="App\CarbonFootprint\Domain\Model\Emissions">
+        <field name="co2eq" type="string" nullable="false"/>
+        <field name="co2" type="string" nullable="false"/>
+        <field name="ch4" type="string" nullable="false"/>
+        <field name="n2o" type="string" nullable="false"/>
+    </embeddable>
+
+</doctrine-mapping>
