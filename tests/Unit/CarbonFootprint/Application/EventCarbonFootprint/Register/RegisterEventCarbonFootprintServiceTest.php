@@ -13,6 +13,7 @@ use App\EventOperations\Domain\Model\Event\EventId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
@@ -38,9 +39,12 @@ class RegisterEventCarbonFootprintServiceTest extends TestCase
         $eventId = EventId::generate();
         $accountId = new AccountId('account-id');
 
+        $emissionFactorGroupId = EmissionFactorGroupMother::default()->id();
+
         $request = new RegisterEventCarbonFootprintRequest(
             eventId: $eventId,
             accountId: $accountId,
+            emissionFactorGroupId: $emissionFactorGroupId,
             calculationPeriodStartDate: new \DateTimeImmutable('2026-01-01'),
             calculationPeriodEndDate: new \DateTimeImmutable('2026-01-31'),
         );
@@ -57,11 +61,14 @@ class RegisterEventCarbonFootprintServiceTest extends TestCase
 
         $persistedEventId = $eventCarbonFootprintPersisted->eventId();
         $persistedAccountId = $eventCarbonFootprintPersisted->accountId();
+        $persistedEmissionFactorGroupId = $eventCarbonFootprintPersisted->emissionFactorGroupId();
 
         self::assertNotNull($persistedEventId);
         self::assertNotNull($persistedAccountId);
+        self::assertNotNull($persistedEmissionFactorGroupId);
         $this->assertTrue($persistedEventId->equals($eventId));
         $this->assertTrue($persistedAccountId->equals($accountId));
+        $this->assertTrue($persistedEmissionFactorGroupId->equals($emissionFactorGroupId));
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -69,6 +76,7 @@ class RegisterEventCarbonFootprintServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof EventCarbonFootprintRegistered);
         $this->assertTrue($lastEvent->eventId()->equals($eventId));
         $this->assertTrue($eventCarbonFootprintPersisted->id()->equals($lastEvent->eventCarbonFootprintId()));
+        $this->assertTrue($lastEvent->emissionFactorGroupId()->equals($emissionFactorGroupId));
     }
 
     public function testIsHandle(): void
@@ -80,6 +88,7 @@ class RegisterEventCarbonFootprintServiceTest extends TestCase
         $result = $sut->isHandled(new RegisterEventCarbonFootprintRequest(
             eventId: EventId::generate(),
             accountId: new AccountId('account-id'),
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
         ));
 
         $this->assertTrue($result);

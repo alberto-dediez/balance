@@ -46,6 +46,7 @@ class RegisterEventCarbonFootprintService implements CommandHandler
         $eventCarbonFootprint->register(
             eventId: $request->eventId,
             accountId: $request->accountId,
+            emissionFactorGroupId: $request->emissionFactorGroupId,
             calculationPeriod: $calculationPeriod,
             totalEmissions: new Emissions(),
             emissionsPerAttendee: new Emissions(),

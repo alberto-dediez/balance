@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\EventCarbonFootprint;
 
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\EventOperations\Domain\Model\Event\DateRange;
 use App\EventOperations\Domain\Model\Event\EventId;
@@ -23,6 +24,7 @@ class EventCarbonFootprint implements \Stringable
         private EventCarbonFootprintId $id,
         private ?EventId $eventId = null,
         private ?AccountId $accountId = null,
+        private ?EmissionFactorGroupId $emissionFactorGroupId = null,
         private DateRange $calculationPeriod = new DateRange(),
         private Emissions $totalEmissions = new Emissions(),
         private Emissions $emissionsPerAttendee = new Emissions(),
@@ -49,6 +51,11 @@ class EventCarbonFootprint implements \Stringable
     public function accountId(): ?AccountId
     {
         return $this->accountId;
+    }
+
+    public function emissionFactorGroupId(): ?EmissionFactorGroupId
+    {
+        return $this->emissionFactorGroupId;
     }
 
     public function calculationPeriod(): DateRange
@@ -94,6 +101,7 @@ class EventCarbonFootprint implements \Stringable
     public function register(
         EventId $eventId,
         AccountId $accountId,
+        EmissionFactorGroupId $emissionFactorGroupId,
         DateRange $calculationPeriod,
         Emissions $totalEmissions,
         Emissions $emissionsPerAttendee,
@@ -104,6 +112,7 @@ class EventCarbonFootprint implements \Stringable
                 eventCarbonFootprintId: $this->id(),
                 eventId: $eventId,
                 accountId: $accountId,
+                emissionFactorGroupId: $emissionFactorGroupId,
                 calculationPeriod: $calculationPeriod,
                 totalEmissions: $totalEmissions,
                 emissionsPerAttendee: $emissionsPerAttendee,
@@ -187,6 +196,7 @@ class EventCarbonFootprint implements \Stringable
     {
         $this->eventId = $event->eventId();
         $this->accountId = $event->accountId();
+        $this->emissionFactorGroupId = $event->emissionFactorGroupId();
         $this->calculationPeriod = $event->calculationPeriod();
         $this->totalEmissions = $event->totalEmissions();
         $this->emissionsPerAttendee = $event->emissionsPerAttendee();

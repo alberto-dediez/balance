@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint;
 
+use App\CarbonFootprint\Application\EventCarbonFootprint\EmissionFactorGroupNotConfiguredException;
 use App\CarbonFootprint\Application\EventCarbonFootprint\Register\RegisterEventCarbonFootprintRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprint\Register\RegisterEventCarbonFootprintService;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
@@ -25,6 +27,7 @@ class RegisterController extends AbstractController
         string $eventId,
         EventRepository $eventRepository,
         EventCarbonFootprintRepository $eventCarbonFootprintRepository,
+        EmissionFactorGroupRepository $emissionFactorGroupRepository,
         RegisterEventCarbonFootprintService $registerEventCarbonFootprint,
         LoggedUser $loggedUser,
         LoggedAccount $loggedAccount,
@@ -54,10 +57,18 @@ class RegisterController extends AbstractController
             return $this->redirectToRoute('events_carbon_footprint_edit', ['eventId' => $eventId]);
         }
 
+        $emissionFactorGroupId = $account->emissionFactorGroupId()
+            ?? $emissionFactorGroupRepository->findOneByCode('default')?->id();
+
+        if (null === $emissionFactorGroupId) {
+            throw new EmissionFactorGroupNotConfiguredException($account->id());
+        }
+
         try {
             $registerEventCarbonFootprint(new RegisterEventCarbonFootprintRequest(
                 eventId: $event->id(),
                 accountId: $account->id(),
+                emissionFactorGroupId: $emissionFactorGroupId,
                 calculationPeriodStartDate: $event->setup()->startDate(),
                 calculationPeriodEndDate: $event->dismantling()->endDate(),
             ), $loggedUser());

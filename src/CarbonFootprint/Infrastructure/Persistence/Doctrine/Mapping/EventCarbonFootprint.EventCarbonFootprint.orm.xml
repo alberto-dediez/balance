@@ -12,6 +12,7 @@
 
         <field name="eventId" type="event_id" column="event_id" nullable="false" />
         <field name="accountId" type="account_id" column="account_id" nullable="false" />
+        <field name="emissionFactorGroupId" type="emission_factor_group_id" column="emission_factor_group_id" nullable="false" />
 
         <embedded name="calculationPeriod" class="App\EventOperations\Domain\Model\Event\DateRange" use-column-prefix="true" column-prefix="calculation_period_" />
         <embedded name="totalEmissions" class="App\CarbonFootprint\Domain\Model\Emissions" use-column-prefix="true" column-prefix="total_emissions_" />

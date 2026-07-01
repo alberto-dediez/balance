@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint;
 
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
@@ -11,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintSt
 use App\EventOperations\Domain\Model\Event\DateRange;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 
 class EventCarbonFootprintMother
 {
@@ -48,6 +50,7 @@ class EventCarbonFootprintMother
         string $eventId,
         string $id,
         ?string $accountId = null,
+        ?EmissionFactorGroupId $emissionFactorGroupId = null,
     ): EventCarbonFootprint {
         $eventCarbonFootprint = new EventCarbonFootprint(
             id: new EventCarbonFootprintId($id),
@@ -55,6 +58,7 @@ class EventCarbonFootprintMother
         $eventCarbonFootprint->register(
             eventId: new EventId($eventId),
             accountId: new AccountId($accountId ?? 'account-id'),
+            emissionFactorGroupId: $emissionFactorGroupId ?? EmissionFactorGroupMother::default()->id(),
             calculationPeriod: new DateRange(
                 startDate: new \DateTimeImmutable('2026-01-01'),
                 endDate: new \DateTimeImmutable('2026-01-31'),
