@@ -38,6 +38,12 @@ class UpdateAccountService implements CommandHandler
             $account->changeStatus($request->active);
         }
 
+        if (null !== $request->emissionFactorGroupId
+            && (null === $account->emissionFactorGroupId() || !$request->emissionFactorGroupId->equals($account->emissionFactorGroupId()))
+        ) {
+            $account->changeEmissionFactorGroup($request->emissionFactorGroupId);
+        }
+
         $this->repository->add($account);
 
         return new UpdateAccountResponse(

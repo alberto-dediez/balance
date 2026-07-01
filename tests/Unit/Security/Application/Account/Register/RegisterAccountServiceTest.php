@@ -10,6 +10,7 @@ use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountRegistered;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\Security\Application\Account\AccountAuthorizerMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
@@ -54,6 +55,37 @@ class RegisterAccountServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof AccountRegistered);
         $this->assertEquals('Company ABC', $lastEvent->name());
         $this->assertTrue($accountPersisted->id()->equals($lastEvent->accountId()));
+    }
+
+    public function testUseCaseWithEmissionFactorGroup(): void
+    {
+        $repository = new InMemoryAccountRepository();
+
+        $user = UserMother::adminUser();
+
+        $sut = $this->createSUT($repository);
+
+        $emissionFactorGroupId = EmissionFactorGroupMother::default()->id();
+
+        $request = new RegisterAccountRequest(
+            name: 'Company ABC',
+            active: true,
+            emissionFactorGroupId: $emissionFactorGroupId,
+        );
+
+        $result = $sut($request, $user);
+
+        $accountPersisted = $repository->find($result->accountId);
+
+        $this->assertNotNull($accountPersisted);
+        $this->assertNotNull($accountPersisted->emissionFactorGroupId());
+        $this->assertTrue($emissionFactorGroupId->equals($accountPersisted->emissionFactorGroupId()));
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertTrue($lastEvent instanceof AccountRegistered);
+        $this->assertNotNull($lastEvent->emissionFactorGroupId());
+        $this->assertTrue($emissionFactorGroupId->equals($lastEvent->emissionFactorGroupId()));
     }
 
     public function testUnauthorizedAccess(): void

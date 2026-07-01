@@ -7,10 +7,12 @@ namespace App\Tests\Unit\Security\Application\Account\Update;
 use App\Security\Application\Account\Update\UpdateAccountRequest;
 use App\Security\Application\Account\Update\UpdateAccountService;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\AccountEmissionFactorGroupChanged;
 use App\Security\Domain\Model\Account\AccountNameChanged;
 use App\Security\Domain\Model\Account\AccountStatusChanged;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\Security\Application\Account\AccountAuthorizerMother;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -124,6 +126,41 @@ class UpdateAccountServiceTest extends TestCase
         $this->assertNotNull($lastEvent);
         $this->assertFalse($lastEvent instanceof AccountNameChanged);
         $this->assertFalse($lastEvent instanceof AccountStatusChanged);
+    }
+
+    public function testUseCaseChangeEmissionFactorGroup(): void
+    {
+        $repository = new InMemoryAccountRepository();
+
+        $account = AccountMother::fromName('MyAccount');
+
+        $user = UserMother::adminUser();
+
+        $repository->add($account);
+
+        $sut = $this->createSUT($repository);
+
+        $newEmissionFactorGroupId = EmissionFactorGroupMother::random()->id();
+
+        $request = new UpdateAccountRequest(
+            accountId: $account->id(),
+            name: $account->name(),
+            active: $account->isActive(),
+            emissionFactorGroupId: $newEmissionFactorGroupId,
+        );
+
+        $result = $sut($request, $user);
+
+        $accountPersisted = $repository->find($result->accountId);
+
+        $this->assertNotNull($accountPersisted);
+        $this->assertNotNull($accountPersisted->emissionFactorGroupId());
+        $this->assertTrue($newEmissionFactorGroupId->equals($accountPersisted->emissionFactorGroupId()));
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertTrue($lastEvent instanceof AccountEmissionFactorGroupChanged);
+        $this->assertTrue($newEmissionFactorGroupId->equals($lastEvent->emissionFactorGroupId()));
     }
 
     public function testUnauthorizedAccess(): void

@@ -40,6 +40,7 @@ class EditController extends AbstractController
             accountId: $account->id(),
             name: $account->name(),
             active: $account->isActive(),
+            emissionFactorGroupId: $account->emissionFactorGroupId(),
         );
 
         $form = $this->createForm(UpdateAccountType::class, $updateRequest);

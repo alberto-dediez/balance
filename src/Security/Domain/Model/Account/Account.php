@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security\Domain\Model\Account;
 
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
 
@@ -22,6 +23,7 @@ class Account implements \Stringable
         array $events = [],
         protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         protected ?\DateTimeImmutable $removedAt = null,
+        protected ?EmissionFactorGroupId $emissionFactorGroupId = null,
     ) {
         $this->events = $events;
     }
@@ -56,13 +58,19 @@ class Account implements \Stringable
         return $this->removedAt;
     }
 
-    public function register(string $name, bool $active): void
+    public function emissionFactorGroupId(): ?EmissionFactorGroupId
+    {
+        return $this->emissionFactorGroupId;
+    }
+
+    public function register(string $name, bool $active, ?EmissionFactorGroupId $emissionFactorGroupId = null): void
     {
         $this->recordApplyAndPublish(
             new AccountRegistered(
                 accountId: $this->id(),
                 name: $name,
                 active: $active,
+                emissionFactorGroupId: $emissionFactorGroupId,
             ),
         );
     }
@@ -87,6 +95,16 @@ class Account implements \Stringable
         );
     }
 
+    public function changeEmissionFactorGroup(EmissionFactorGroupId $emissionFactorGroupId): void
+    {
+        $this->recordApplyAndPublish(
+            new AccountEmissionFactorGroupChanged(
+                accountId: $this->id(),
+                emissionFactorGroupId: $emissionFactorGroupId,
+            ),
+        );
+    }
+
     public function remove(): void
     {
         $this->recordApplyAndPublish(
@@ -100,6 +118,7 @@ class Account implements \Stringable
     {
         $this->name = $event->name();
         $this->active = $event->active();
+        $this->emissionFactorGroupId = $event->emissionFactorGroupId();
 
         $this->registeredAt = $event->occurredOn();
     }
@@ -112,6 +131,11 @@ class Account implements \Stringable
     public function applyAccountStatusChanged(AccountStatusChanged $event): void
     {
         $this->active = $event->active();
+    }
+
+    public function applyAccountEmissionFactorGroupChanged(AccountEmissionFactorGroupChanged $event): void
+    {
+        $this->emissionFactorGroupId = $event->emissionFactorGroupId();
     }
 
     public function applyAccountRemoved(AccountRemoved $event): void

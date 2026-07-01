@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security\Domain\Model\Account;
 
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\Security\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
@@ -16,6 +17,7 @@ final class AccountRegistered extends DomainEvent
         private readonly AccountId $accountId,
         private readonly string $name,
         private readonly bool $active,
+        private readonly ?EmissionFactorGroupId $emissionFactorGroupId = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -37,6 +39,11 @@ final class AccountRegistered extends DomainEvent
         return $this->active;
     }
 
+    public function emissionFactorGroupId(): ?EmissionFactorGroupId
+    {
+        return $this->emissionFactorGroupId;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->accountId;
@@ -48,6 +55,7 @@ final class AccountRegistered extends DomainEvent
             'accountId' => (string) $this->accountId,
             'name' => $this->name,
             'active' => $this->active,
+            'emissionFactorGroupId' => $this->emissionFactorGroupId instanceof EmissionFactorGroupId ? (string) $this->emissionFactorGroupId : null,
         ];
     }
 
@@ -60,6 +68,7 @@ final class AccountRegistered extends DomainEvent
             accountId: new AccountId($payload['accountId']),
             name: $payload['name'],
             active: $payload['active'],
+            emissionFactorGroupId: null !== ($payload['emissionFactorGroupId'] ?? null) ? new EmissionFactorGroupId($payload['emissionFactorGroupId']) : null,
             id: $id,
             occurredOn: $occurredOn,
         );

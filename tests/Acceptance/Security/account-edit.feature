@@ -33,4 +33,15 @@ Feature:
         When I am logged as "admin@dediez.software"
         When I go to "/es/admin/accounts/edit/333"
         When I submit a form with "name:OtherCompany|active:0" and button "Guardar y salir"
-        Then I am redirected to "/es/admin/accounts" 
+        Then I am redirected to "/es/admin/accounts"
+
+    Scenario: As an admin, I can assign an emission factor group to an account
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given account "MyCompany" with id "333" exists
+        Given emission factor group "AR6" with id "444" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/accounts/edit/333"
+        When I submit a form with "name:MyCompany|active:1|emissionFactorGroupId:444" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "Cuenta actualizada"
