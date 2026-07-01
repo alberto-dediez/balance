@@ -2917,6 +2917,66 @@
         <source>Desmontaje</source>
         <target>Desmontaje</target>
       </trans-unit>
+      <trans-unit id="O.xtJxZ" resname="Grupo de coeficientes creado correctamente: {name}">
+        <source>Grupo de coeficientes creado correctamente: {name}</source>
+        <target>Grupo de coeficientes creado correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="NVd1Pqn" resname="Grupo de coeficientes actualizado con éxito">
+        <source>Grupo de coeficientes actualizado con éxito</source>
+        <target>Grupo de coeficientes actualizado con éxito</target>
+      </trans-unit>
+      <trans-unit id="paxJOLf" resname="Se ha eliminado el grupo de coeficientes {emissionFactorGroup}">
+        <source>Se ha eliminado el grupo de coeficientes {emissionFactorGroup}</source>
+        <target>Se ha eliminado el grupo de coeficientes {emissionFactorGroup}</target>
+      </trans-unit>
+      <trans-unit id="PTxIK0m" resname="No se ha podido eliminar el grupo de coeficientes {emissionFactorGroup}">
+        <source>No se ha podido eliminar el grupo de coeficientes {emissionFactorGroup}</source>
+        <target>No se ha podido eliminar el grupo de coeficientes {emissionFactorGroup}</target>
+      </trans-unit>
+      <trans-unit id="3vbLjYD" resname="Se ha eliminado el grupo de coeficientes {id}">
+        <source>Se ha eliminado el grupo de coeficientes {id}</source>
+        <target>Se ha eliminado el grupo de coeficientes {id}</target>
+      </trans-unit>
+      <trans-unit id="VYXG5JS" resname="No se ha podido eliminar el grupo de coeficientes {id}">
+        <source>No se ha podido eliminar el grupo de coeficientes {id}</source>
+        <target>No se ha podido eliminar el grupo de coeficientes {id}</target>
+      </trans-unit>
+      <trans-unit id="RKxdq0D" resname="Código">
+        <source>Código</source>
+        <target>Código</target>
+      </trans-unit>
+      <trans-unit id=".sDiHJn" resname="GWP CO2">
+        <source>GWP CO2</source>
+        <target>GWP CO2</target>
+      </trans-unit>
+      <trans-unit id="aFoQiRM" resname="GWP CH4">
+        <source>GWP CH4</source>
+        <target>GWP CH4</target>
+      </trans-unit>
+      <trans-unit id="t.D7LeZ" resname="GWP N2O">
+        <source>GWP N2O</source>
+        <target>GWP N2O</target>
+      </trans-unit>
+      <trans-unit id="09PbKDU" resname="Grupos de coeficientes">
+        <source>Grupos de coeficientes</source>
+        <target>Grupos de coeficientes</target>
+      </trans-unit>
+      <trans-unit id="28yiRsF" resname="Se ha eliminado el grupo de coeficientes {emissionFactorGroup} por el usuario {user}">
+        <source>Se ha eliminado el grupo de coeficientes {emissionFactorGroup} por el usuario {user}</source>
+        <target>Se ha eliminado el grupo de coeficientes {emissionFactorGroup} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="qDnpP5K" resname="Se ha actualizado el grupo de coeficientes &quot;{emissionFactorGroup}&quot; por el usuario {user}">
+        <source>Se ha actualizado el grupo de coeficientes "{emissionFactorGroup}" por el usuario {user}</source>
+        <target>Se ha actualizado el grupo de coeficientes "{emissionFactorGroup}" por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="_7HxfNG" resname="Se ha traducido el grupo de coeficientes &quot;{emissionFactorGroup}&quot; por el usuario {user}">
+        <source>Se ha traducido el grupo de coeficientes "{emissionFactorGroup}" por el usuario {user}</source>
+        <target>Se ha traducido el grupo de coeficientes "{emissionFactorGroup}" por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="f5_DpxF" resname="Se ha registrado el grupo de coeficientes &quot;{emissionFactorGroup}&quot; por el usuario {user}">
+        <source>Se ha registrado el grupo de coeficientes "{emissionFactorGroup}" por el usuario {user}</source>
+        <target>Se ha registrado el grupo de coeficientes "{emissionFactorGroup}" por el usuario {user}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -246,6 +246,11 @@ class NodeLister
                     icon: 'solar:record-minimalistic-line-duotone',
                     target: $this->router->generate('admin_events'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Grupos de coeficientes'),
+                    icon: 'solar:test-tube-minimalistic-line-duotone',
+                    target: $this->router->generate('admin_emission_factor_groups'),
+                ),
             ],
         );
 

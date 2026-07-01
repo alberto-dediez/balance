@@ -8,6 +8,7 @@ use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
@@ -21,6 +22,7 @@ use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelMother;
@@ -67,6 +69,11 @@ final readonly class CarbonFootprintContext implements Context
     public function getRoadTransportRepository(): RoadTransportRepository
     {
         return $this->client->getContainer()->get(RoadTransportRepository::class);
+    }
+
+    public function getEmissionFactorGroupRepository(): EmissionFactorGroupRepository
+    {
+        return $this->client->getContainer()->get(EmissionFactorGroupRepository::class);
     }
 
     public function getElectricityMarketerRepository(): ElectricityMarketerRepository
@@ -172,6 +179,14 @@ final readonly class CarbonFootprintContext implements Context
         ));
 
         $this->getCombustibleRepository()->add($combustible);
+    }
+
+    #[Given('emission factor group :name with id :id exists')]
+    public function emissionFactorGroupWithIdExists(string $name, string $id): void
+    {
+        $emissionFactorGroup = EmissionFactorGroupMother::fromNameAndId($name, $id);
+
+        $this->getEmissionFactorGroupRepository()->add($emissionFactorGroup);
     }
 
     #[Given('road transport :name with id :id exists')]

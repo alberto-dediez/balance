@@ -1,0 +1,54 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Grupos de coeficientes' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Código' | trans,
+            'sortable': true,
+            'sortableBy': 'code'
+        }, {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': 'GWP CO2' | trans,
+            'sortable': false
+        }, {
+            'label': 'GWP CH4' | trans,
+            'sortable': false
+        }, {
+            'label': 'GWP N2O' | trans,
+            'sortable': false
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="emissionFactorGroups" :bulkForm="bulkForm">
+        <td>{{ element.code }}</td>
+        <td>{{ element.name }}</td>
+        <td>{{ element.gwp.gwpCo2 }}</td>
+        <td>{{ element.gwp.gwpCh4 }}</td>
+        <td>{{ element.gwp.gwpN2O }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('admin_emission_factor_groups_edit', {'emissionFactorGroupId': element.id}) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('admin_emission_factor_groups_remove', {'emissionFactorGroupId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('admin_emission_factor_groups_register') }}" />
+{% endblock list_actions %}

@@ -36,6 +36,7 @@ doctrine:
             catering_item_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CateringItemEmissionFactorIdType
             combustible_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CombustibleIdType
             combustible_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CombustibleEmissionFactorIdType
+            emission_factor_group_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EmissionFactorGroupIdType
             road_transport_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\RoadTransportIdType
             road_transport_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\RoadTransportEmissionFactorIdType
             electricity_marketer_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ElectricityMarketerIdType

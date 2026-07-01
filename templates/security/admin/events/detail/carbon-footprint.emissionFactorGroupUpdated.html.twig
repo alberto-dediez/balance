@@ -1,0 +1,4 @@
+{% trans with {
+    '{emissionFactorGroup}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado el grupo de coeficientes "{emissionFactorGroup}" por el usuario {user}{% endtrans %}

@@ -1,0 +1,4 @@
+{% trans with {
+    '{emissionFactorGroup}': event.emissionFactorGroupId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado el grupo de coeficientes {emissionFactorGroup} por el usuario {user}{% endtrans %}

@@ -1,0 +1,40 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_emission_factor_groups') }}" />
+{% endblock %}
+
+{% set page_title = ('Grupos de coeficientes' | trans)
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ emissionFactorGroup.name %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.code) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.name) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.gwpCo2) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.gwpCh4) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.gwpN2O) }}
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}
