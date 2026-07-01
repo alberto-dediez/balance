@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\MerchandisingItem\EmissionFactor\Update;
 
 use App\CarbonFootprint\Application\MerchandisingItem\MerchandisingItemAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
@@ -22,6 +24,7 @@ class UpdateEmissionFactorsService implements CommandHandler
     public function __construct(
         private MerchandisingItemRepository $merchandisingItemRepository,
         private MerchandisingItemAuthorizer $authorizer,
+        private EmissionFactorGroupRepository $emissionFactorGroupRepository,
     ) {}
 
     public function __invoke(UpdateEmissionFactorsRequest $request, User $user): UpdateEmissionFactorsResponse
@@ -36,11 +39,13 @@ class UpdateEmissionFactorsService implements CommandHandler
             $this->authorizer->denyUnlessCanDoThat($merchandisingItem, SecurityAction::Edit, $user);
 
             if ($row->isEmpty()) {
-                $merchandisingItem->removeEmissionFactor($request->year, EmissionFactorGroupId::default());
+                $merchandisingItem->removeEmissionFactor($request->year, $row->emissionFactorGroupId());
             } else {
+                $emissionFactorGroup = $this->resolveEmissionFactorGroup($row->emissionFactorGroupId);
+
                 $merchandisingItem->setEmissionFactor(
-                    $row->newEmissionFactor($request->year, $merchandisingItem->unit()),
-                    $row->recycledEmissionFactor($request->year, $merchandisingItem->unit()),
+                    $row->newEmissionFactor($request->year, $merchandisingItem->unit(), $emissionFactorGroup),
+                    $row->recycledEmissionFactor($request->year, $merchandisingItem->unit(), $emissionFactorGroup),
                 );
             }
 
@@ -48,6 +53,19 @@ class UpdateEmissionFactorsService implements CommandHandler
         }
 
         return new UpdateEmissionFactorsResponse(year: $request->year);
+    }
+
+    private function resolveEmissionFactorGroup(?string $emissionFactorGroupId): EmissionFactorGroup
+    {
+        $emissionFactorGroup = null !== $emissionFactorGroupId
+            ? $this->emissionFactorGroupRepository->find(new EmissionFactorGroupId($emissionFactorGroupId))
+            : null;
+
+        if (null === $emissionFactorGroup) {
+            throw new \InvalidArgumentException('Emission factor group not found');
+        }
+
+        return $emissionFactorGroup;
     }
 
     public function isHandled(Command $command): bool

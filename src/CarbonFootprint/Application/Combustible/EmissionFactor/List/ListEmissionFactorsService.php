@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\Combustible\Combustible;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleFilter;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 
@@ -27,23 +28,30 @@ class ListEmissionFactorsService
 
         $currentYear = (int) (new \DateTimeImmutable('NOW'))->format('Y');
 
-        $year = $request->year ?? $this->latestYear($combustibles) ?? $currentYear;
+        $year = $request->year ?? $this->latestYear($combustibles, $request->emissionFactorGroupId) ?? $currentYear;
 
         return new ListEmissionFactorsResponse(
             combustibles: $combustibles,
             year: $year,
             currentYear: $currentYear,
             canGoNext: $year < $currentYear,
+            emissionFactorGroupId: $request->emissionFactorGroupId,
         );
     }
 
     /** @param array<Combustible> $combustibles */
-    private function latestYear(array $combustibles): ?int
+    private function latestYear(array $combustibles, EmissionFactorGroupId $emissionFactorGroupId): ?int
     {
         $latest = null;
 
         foreach ($combustibles as $combustible) {
-            foreach ($combustible->emissionFactors()->years() as $year) {
+            foreach ($combustible->emissionFactors() as $emissionFactor) {
+                if (!$emissionFactor->emissionFactorGroupId()->equals($emissionFactorGroupId)) {
+                    continue;
+                }
+
+                $year = $emissionFactor->year();
+
                 if (null === $latest || $year > $latest) {
                     $latest = $year;
                 }

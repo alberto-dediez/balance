@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\GdOFactor\EmissionFactor\List;
 
 use App\CarbonFootprint\Application\GdOFactor\GdOFactorAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactor;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorFilter;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorId;
@@ -27,23 +28,30 @@ class ListEmissionFactorsService
 
         $currentYear = (int) (new \DateTimeImmutable('NOW'))->format('Y');
 
-        $year = $request->year ?? $this->latestYear($gdOFactors) ?? $currentYear;
+        $year = $request->year ?? $this->latestYear($gdOFactors, $request->emissionFactorGroupId) ?? $currentYear;
 
         return new ListEmissionFactorsResponse(
             gdOFactors: $gdOFactors,
             year: $year,
             currentYear: $currentYear,
             canGoNext: $year < $currentYear,
+            emissionFactorGroupId: $request->emissionFactorGroupId,
         );
     }
 
     /** @param array<GdOFactor> $gdOFactors */
-    private function latestYear(array $gdOFactors): ?int
+    private function latestYear(array $gdOFactors, EmissionFactorGroupId $emissionFactorGroupId): ?int
     {
         $latest = null;
 
         foreach ($gdOFactors as $gdOFactor) {
-            foreach ($gdOFactor->emissionFactors()->years() as $year) {
+            foreach ($gdOFactor->emissionFactors() as $emissionFactor) {
+                if (!$emissionFactor->emissionFactorGroupId()->equals($emissionFactorGroupId)) {
+                    continue;
+                }
+
+                $year = $emissionFactor->year();
+
                 if (null === $latest || $year > $latest) {
                     $latest = $year;
                 }

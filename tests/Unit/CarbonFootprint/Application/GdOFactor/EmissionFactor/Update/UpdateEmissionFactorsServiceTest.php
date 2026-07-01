@@ -9,10 +9,12 @@ use App\CarbonFootprint\Application\GdOFactor\EmissionFactor\Update\UpdateEmissi
 use App\CarbonFootprint\Application\GdOFactor\EmissionFactor\Update\UpdateEmissionFactorsService;
 use App\CarbonFootprint\Application\GdOFactor\GdOFactorAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -32,7 +34,11 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $gdOFactor = GdOFactorMother::random();
         $repository->add($gdOFactor);
 
-        $sut = $this->createSUT($repository);
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add($emissionFactorGroup);
+
+        $sut = $this->createSUT($repository, $emissionFactorGroupRepository);
 
         $request = new UpdateEmissionFactorsRequest(
             year: 2025,
@@ -45,6 +51,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
                     ch4: '0.2',
                     n2o: '0.3',
                     source: 'IPCC',
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
                 ),
             ],
         );
@@ -54,17 +61,19 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $persisted = $repository->find($gdOFactor->id());
 
         $this->assertNotNull($persisted);
-        $factor = $persisted->emissionFactorFor(2025, EmissionFactorGroupId::default());
+        $factor = $persisted->emissionFactorFor(2025, $emissionFactorGroup->id());
         $this->assertNotNull($factor);
-        $this->assertSame('1.5', $factor->co2eq());
+        $this->assertSame($emissionFactorGroup->co2eqFor('1.0', '0.2', '0.3'), $factor->co2eq());
     }
 
     public function testRemovesEmissionFactorWhenRowIsEmpty(): void
     {
         $repository = GdOFactorRepositoryMother::inMemory();
 
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+
         $gdOFactor = GdOFactorMother::random();
-        $gdOFactor->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupId::default()));
+        $gdOFactor->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: $emissionFactorGroup->id()));
         $repository->add($gdOFactor);
 
         $sut = $this->createSUT($repository);
@@ -75,6 +84,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
                 new EmissionFactorRow(
                     gdOFactorId: (string) $gdOFactor->id(),
                     gdOFactorName: $gdOFactor->name(),
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
                 ),
             ],
         );
@@ -84,7 +94,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $persisted = $repository->find($gdOFactor->id());
 
         $this->assertNotNull($persisted);
-        $this->assertNull($persisted->emissionFactorFor(2025, EmissionFactorGroupId::default()));
+        $this->assertNull($persisted->emissionFactorFor(2025, $emissionFactorGroup->id()));
     }
 
     public function testIsHandled(): void
@@ -95,8 +105,14 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $this->assertTrue($sut->isHandled(new UpdateEmissionFactorsRequest(year: 2025)));
     }
 
-    private function createSUT(GdOFactorRepository $repository): UpdateEmissionFactorsService
-    {
-        return new UpdateEmissionFactorsService($repository, new GdOFactorAuthorizer());
+    private function createSUT(
+        GdOFactorRepository $repository,
+        ?EmissionFactorGroupRepository $emissionFactorGroupRepository = null,
+    ): UpdateEmissionFactorsService {
+        return new UpdateEmissionFactorsService(
+            $repository,
+            new GdOFactorAuthorizer(),
+            $emissionFactorGroupRepository ?? EmissionFactorGroupRepositoryMother::inMemory(),
+        );
     }
 }

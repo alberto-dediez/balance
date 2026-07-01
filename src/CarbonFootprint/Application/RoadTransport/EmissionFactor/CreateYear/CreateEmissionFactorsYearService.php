@@ -33,6 +33,7 @@ class CreateEmissionFactorsYearService implements CommandHandler
 
         $targetYear = (int) $request->targetYear;
         $currentYear = (int) (new \DateTimeImmutable('NOW'))->format('Y');
+        $emissionFactorGroupId = new EmissionFactorGroupId((string) $request->emissionFactorGroupId);
 
         if ($targetYear > $currentYear) {
             throw new \InvalidArgumentException('Target year cannot be in the future');
@@ -45,13 +46,13 @@ class CreateEmissionFactorsYearService implements CommandHandler
         $roadTransports = $this->roadTransportRepository->findByFilter(new RoadTransportFilter(limit: 0));
 
         foreach ($roadTransports as $roadTransport) {
-            if ($roadTransport->emissionFactors()->hasForYearAndGroup($targetYear, EmissionFactorGroupId::default())) {
+            if ($roadTransport->emissionFactors()->hasForYearAndGroup($targetYear, $emissionFactorGroupId)) {
                 throw EmissionFactorYearAlreadyExistsException::forYear($targetYear);
             }
         }
 
         foreach ($roadTransports as $roadTransport) {
-            $sourceFactor = $roadTransport->emissionFactorFor($request->sourceYear, EmissionFactorGroupId::default());
+            $sourceFactor = $roadTransport->emissionFactorFor($request->sourceYear, $emissionFactorGroupId);
 
             if (null === $sourceFactor) {
                 continue;

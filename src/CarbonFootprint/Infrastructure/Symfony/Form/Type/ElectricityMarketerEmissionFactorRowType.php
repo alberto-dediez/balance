@@ -23,6 +23,7 @@ class ElectricityMarketerEmissionFactorRowType extends AbstractType
 
         $builder
             ->add('electricityMarketerId', HiddenType::class)
+            ->add('emissionFactorGroupId', HiddenType::class)
             ->add('co2eq', TextType::class, [
                 'label' => new TranslatableMessage('Kg CO2eq'),
                 'required' => false,

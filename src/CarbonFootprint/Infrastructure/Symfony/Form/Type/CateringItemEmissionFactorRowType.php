@@ -23,6 +23,7 @@ class CateringItemEmissionFactorRowType extends AbstractType
 
         $builder
             ->add('cateringItemId', HiddenType::class)
+            ->add('emissionFactorGroupId', HiddenType::class)
             ->add('co2eq', TextType::class, [
                 'label' => new TranslatableMessage('Kg CO2eq (nueva fabricación)'),
                 'required' => false,

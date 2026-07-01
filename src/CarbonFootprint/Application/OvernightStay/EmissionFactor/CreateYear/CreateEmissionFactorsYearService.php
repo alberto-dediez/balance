@@ -33,6 +33,7 @@ class CreateEmissionFactorsYearService implements CommandHandler
 
         $targetYear = (int) $request->targetYear;
         $currentYear = (int) (new \DateTimeImmutable('NOW'))->format('Y');
+        $emissionFactorGroupId = new EmissionFactorGroupId((string) $request->emissionFactorGroupId);
 
         if ($targetYear > $currentYear) {
             throw new \InvalidArgumentException('Target year cannot be in the future');
@@ -45,13 +46,13 @@ class CreateEmissionFactorsYearService implements CommandHandler
         $overnightStays = $this->overnightStayRepository->findByFilter(new OvernightStayFilter(limit: 0));
 
         foreach ($overnightStays as $overnightStay) {
-            if ($overnightStay->emissionFactors()->hasForYearAndGroup($targetYear, EmissionFactorGroupId::default())) {
+            if ($overnightStay->emissionFactors()->hasForYearAndGroup($targetYear, $emissionFactorGroupId)) {
                 throw EmissionFactorYearAlreadyExistsException::forYear($targetYear);
             }
         }
 
         foreach ($overnightStays as $overnightStay) {
-            $sourceFactor = $overnightStay->emissionFactorFor($request->sourceYear, EmissionFactorGroupId::default());
+            $sourceFactor = $overnightStay->emissionFactorFor($request->sourceYear, $emissionFactorGroupId);
 
             if (null === $sourceFactor) {
                 continue;

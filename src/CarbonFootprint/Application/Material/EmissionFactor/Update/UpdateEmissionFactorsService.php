@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\Material\EmissionFactor\Update;
 
 use App\CarbonFootprint\Application\Material\MaterialAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
@@ -22,6 +24,7 @@ class UpdateEmissionFactorsService implements CommandHandler
     public function __construct(
         private MaterialRepository $materialRepository,
         private MaterialAuthorizer $authorizer,
+        private EmissionFactorGroupRepository $emissionFactorGroupRepository,
     ) {}
 
     public function __invoke(UpdateEmissionFactorsRequest $request, User $user): UpdateEmissionFactorsResponse
@@ -36,11 +39,13 @@ class UpdateEmissionFactorsService implements CommandHandler
             $this->authorizer->denyUnlessCanDoThat($material, SecurityAction::Edit, $user);
 
             if ($row->isEmpty()) {
-                $material->removeEmissionFactor($request->year, EmissionFactorGroupId::default());
+                $material->removeEmissionFactor($request->year, $row->emissionFactorGroupId());
             } else {
+                $emissionFactorGroup = $this->resolveEmissionFactorGroup($row->emissionFactorGroupId);
+
                 $material->setEmissionFactor(
-                    $row->newEmissionFactor($request->year, $material->unit()),
-                    $row->recycledEmissionFactor($request->year, $material->unit()),
+                    $row->newEmissionFactor($request->year, $material->unit(), $emissionFactorGroup),
+                    $row->recycledEmissionFactor($request->year, $material->unit(), $emissionFactorGroup),
                 );
             }
 
@@ -48,6 +53,19 @@ class UpdateEmissionFactorsService implements CommandHandler
         }
 
         return new UpdateEmissionFactorsResponse(year: $request->year);
+    }
+
+    private function resolveEmissionFactorGroup(?string $emissionFactorGroupId): EmissionFactorGroup
+    {
+        $emissionFactorGroup = null !== $emissionFactorGroupId
+            ? $this->emissionFactorGroupRepository->find(new EmissionFactorGroupId($emissionFactorGroupId))
+            : null;
+
+        if (null === $emissionFactorGroup) {
+            throw new \InvalidArgumentException('Emission factor group not found');
+        }
+
+        return $emissionFactorGroup;
     }
 
     public function isHandled(Command $command): bool

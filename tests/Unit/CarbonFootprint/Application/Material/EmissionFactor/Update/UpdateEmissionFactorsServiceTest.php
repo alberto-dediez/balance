@@ -9,10 +9,12 @@ use App\CarbonFootprint\Application\Material\EmissionFactor\Update\UpdateEmissio
 use App\CarbonFootprint\Application\Material\EmissionFactor\Update\UpdateEmissionFactorsService;
 use App\CarbonFootprint\Application\Material\MaterialAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -32,7 +34,11 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $material = MaterialMother::random();
         $repository->add($material);
 
-        $sut = $this->createSUT($repository);
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add($emissionFactorGroup);
+
+        $sut = $this->createSUT($repository, $emissionFactorGroupRepository);
 
         $request = new UpdateEmissionFactorsRequest(
             year: 2025,
@@ -45,6 +51,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
                     ch4: '0.2',
                     n2o: '0.3',
                     source: 'IPCC',
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
                 ),
             ],
         );
@@ -54,17 +61,19 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $persisted = $repository->find($material->id());
 
         $this->assertNotNull($persisted);
-        $factor = $persisted->emissionFactorFor(2025, EmissionFactorGroupId::default());
+        $factor = $persisted->emissionFactorFor(2025, $emissionFactorGroup->id());
         $this->assertNotNull($factor);
-        $this->assertSame('1.5', $factor->newFactor()->co2eq());
+        $this->assertSame($emissionFactorGroup->co2eqFor('1.0', '0.2', '0.3'), $factor->newFactor()->co2eq());
     }
 
     public function testRemovesEmissionFactorWhenRowIsEmpty(): void
     {
         $repository = MaterialRepositoryMother::inMemory();
 
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+
         $material = MaterialMother::random();
-        $ef = new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupId::default());
+        $ef = new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: $emissionFactorGroup->id());
         $material->setEmissionFactor($ef, $ef);
         $repository->add($material);
 
@@ -76,6 +85,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
                 new EmissionFactorRow(
                     materialId: (string) $material->id(),
                     materialName: $material->name(),
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
                 ),
             ],
         );
@@ -85,11 +95,17 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $persisted = $repository->find($material->id());
 
         $this->assertNotNull($persisted);
-        $this->assertNull($persisted->emissionFactorFor(2025, EmissionFactorGroupId::default()));
+        $this->assertNull($persisted->emissionFactorFor(2025, $emissionFactorGroup->id()));
     }
 
-    private function createSUT(MaterialRepository $repository): UpdateEmissionFactorsService
-    {
-        return new UpdateEmissionFactorsService($repository, new MaterialAuthorizer());
+    private function createSUT(
+        MaterialRepository $repository,
+        ?EmissionFactorGroupRepository $emissionFactorGroupRepository = null,
+    ): UpdateEmissionFactorsService {
+        return new UpdateEmissionFactorsService(
+            $repository,
+            new MaterialAuthorizer(),
+            $emissionFactorGroupRepository ?? EmissionFactorGroupRepositoryMother::inMemory(),
+        );
     }
 }

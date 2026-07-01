@@ -9,10 +9,12 @@ use App\CarbonFootprint\Application\OvernightStay\EmissionFactor\Update\UpdateEm
 use App\CarbonFootprint\Application\OvernightStay\EmissionFactor\Update\UpdateEmissionFactorsService;
 use App\CarbonFootprint\Application\OvernightStay\OvernightStayAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -32,7 +34,11 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $overnightStay = OvernightStayMother::random();
         $repository->add($overnightStay);
 
-        $sut = $this->createSUT($repository);
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add($emissionFactorGroup);
+
+        $sut = $this->createSUT($repository, $emissionFactorGroupRepository);
 
         $request = new UpdateEmissionFactorsRequest(
             year: 2025,
@@ -45,6 +51,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
                     ch4: '0.2',
                     n2o: '0.3',
                     source: 'IPCC',
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
                 ),
             ],
         );
@@ -54,17 +61,19 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $persisted = $repository->find($overnightStay->id());
 
         $this->assertNotNull($persisted);
-        $factor = $persisted->emissionFactorFor(2025, EmissionFactorGroupId::default());
+        $factor = $persisted->emissionFactorFor(2025, $emissionFactorGroup->id());
         $this->assertNotNull($factor);
-        $this->assertSame('1.5', $factor->co2eq());
+        $this->assertSame($emissionFactorGroup->co2eqFor('1.0', '0.2', '0.3'), $factor->co2eq());
     }
 
     public function testRemovesEmissionFactorWhenRowIsEmpty(): void
     {
         $repository = OvernightStayRepositoryMother::inMemory();
 
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+
         $overnightStay = OvernightStayMother::random();
-        $overnightStay->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupId::default()));
+        $overnightStay->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: $emissionFactorGroup->id()));
         $repository->add($overnightStay);
 
         $sut = $this->createSUT($repository);
@@ -75,6 +84,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
                 new OvernightStayEmissionFactorRow(
                     overnightStayId: (string) $overnightStay->id(),
                     overnightStayName: $overnightStay->name(),
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
                 ),
             ],
         );
@@ -84,11 +94,17 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $persisted = $repository->find($overnightStay->id());
 
         $this->assertNotNull($persisted);
-        $this->assertNull($persisted->emissionFactorFor(2025, EmissionFactorGroupId::default()));
+        $this->assertNull($persisted->emissionFactorFor(2025, $emissionFactorGroup->id()));
     }
 
-    private function createSUT(OvernightStayRepository $repository): UpdateEmissionFactorsService
-    {
-        return new UpdateEmissionFactorsService($repository, new OvernightStayAuthorizer());
+    private function createSUT(
+        OvernightStayRepository $repository,
+        ?EmissionFactorGroupRepository $emissionFactorGroupRepository = null,
+    ): UpdateEmissionFactorsService {
+        return new UpdateEmissionFactorsService(
+            $repository,
+            new OvernightStayAuthorizer(),
+            $emissionFactorGroupRepository ?? EmissionFactorGroupRepositoryMother::inMemory(),
+        );
     }
 }

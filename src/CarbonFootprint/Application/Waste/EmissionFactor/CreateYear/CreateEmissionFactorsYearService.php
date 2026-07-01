@@ -33,6 +33,7 @@ class CreateEmissionFactorsYearService implements CommandHandler
 
         $targetYear = (int) $request->targetYear;
         $currentYear = (int) (new \DateTimeImmutable('NOW'))->format('Y');
+        $emissionFactorGroupId = new EmissionFactorGroupId((string) $request->emissionFactorGroupId);
 
         if ($targetYear > $currentYear) {
             throw new \InvalidArgumentException('Target year cannot be in the future');
@@ -45,13 +46,13 @@ class CreateEmissionFactorsYearService implements CommandHandler
         $wastes = $this->wasteRepository->findByFilter(new WasteFilter(limit: 0));
 
         foreach ($wastes as $waste) {
-            if ($waste->emissionFactors()->hasForYearAndGroup($targetYear, EmissionFactorGroupId::default())) {
+            if ($waste->emissionFactors()->hasForYearAndGroup($targetYear, $emissionFactorGroupId)) {
                 throw EmissionFactorYearAlreadyExistsException::forYear($targetYear);
             }
         }
 
         foreach ($wastes as $waste) {
-            $sourceFactor = $waste->emissionFactorFor($request->sourceYear, EmissionFactorGroupId::default());
+            $sourceFactor = $waste->emissionFactorFor($request->sourceYear, $emissionFactorGroupId);
 
             if (null === $sourceFactor) {
                 continue;

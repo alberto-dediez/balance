@@ -35,7 +35,7 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
 
         $sut = $this->createSUT($repository);
 
-        $request = new CreateEmissionFactorsYearRequest(sourceYear: 2024, targetYear: 2025);
+        $request = new CreateEmissionFactorsYearRequest(sourceYear: 2024, emissionFactorGroupId: (string) EmissionFactorGroupId::default(), targetYear: 2025);
 
         $response = $sut($request, UserMother::fromUsernameAndRole('admin', Role::Admin));
 
@@ -66,7 +66,7 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $this->expectException(EmissionFactorYearAlreadyExistsException::class);
 
         $sut(
-            new CreateEmissionFactorsYearRequest(sourceYear: 2024, targetYear: 2025),
+            new CreateEmissionFactorsYearRequest(sourceYear: 2024, emissionFactorGroupId: (string) EmissionFactorGroupId::default(), targetYear: 2025),
             UserMother::fromUsernameAndRole('admin', Role::Admin),
         );
     }

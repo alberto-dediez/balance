@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\OvernightStay\EmissionFactor\List;
 
 use App\CarbonFootprint\Application\OvernightStay\OvernightStayAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStay;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayFilter;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayId;
@@ -27,23 +28,30 @@ class ListEmissionFactorsService
 
         $currentYear = (int) (new \DateTimeImmutable('NOW'))->format('Y');
 
-        $year = $request->year ?? $this->latestYear($overnightStays) ?? $currentYear;
+        $year = $request->year ?? $this->latestYear($overnightStays, $request->emissionFactorGroupId) ?? $currentYear;
 
         return new ListEmissionFactorsResponse(
             overnightStays: $overnightStays,
             year: $year,
             currentYear: $currentYear,
             canGoNext: $year < $currentYear,
+            emissionFactorGroupId: $request->emissionFactorGroupId,
         );
     }
 
     /** @param array<OvernightStay> $overnightStays */
-    private function latestYear(array $overnightStays): ?int
+    private function latestYear(array $overnightStays, EmissionFactorGroupId $emissionFactorGroupId): ?int
     {
         $latest = null;
 
         foreach ($overnightStays as $overnightStay) {
-            foreach ($overnightStay->emissionFactors()->years() as $year) {
+            foreach ($overnightStay->emissionFactors() as $emissionFactor) {
+                if (!$emissionFactor->emissionFactorGroupId()->equals($emissionFactorGroupId)) {
+                    continue;
+                }
+
+                $year = $emissionFactor->year();
+
                 if (null === $latest || $year > $latest) {
                     $latest = $year;
                 }

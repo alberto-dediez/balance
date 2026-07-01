@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\Material\EmissionFactor\List;
 
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+
 class ListEmissionFactorsRequest
 {
-    public function __construct(public ?int $year = null) {}
+    public function __construct(
+        public EmissionFactorGroupId $emissionFactorGroupId,
+        public ?int $year = null,
+    ) {}
 }

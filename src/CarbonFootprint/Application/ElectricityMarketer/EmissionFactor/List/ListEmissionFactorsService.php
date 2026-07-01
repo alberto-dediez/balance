@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketer;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerFilter;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 
@@ -27,23 +28,30 @@ class ListEmissionFactorsService
 
         $currentYear = (int) (new \DateTimeImmutable('NOW'))->format('Y');
 
-        $year = $request->year ?? $this->latestYear($electricityMarketers) ?? $currentYear;
+        $year = $request->year ?? $this->latestYear($electricityMarketers, $request->emissionFactorGroupId) ?? $currentYear;
 
         return new ListEmissionFactorsResponse(
             electricityMarketers: $electricityMarketers,
             year: $year,
             currentYear: $currentYear,
             canGoNext: $year < $currentYear,
+            emissionFactorGroupId: $request->emissionFactorGroupId,
         );
     }
 
     /** @param array<ElectricityMarketer> $electricityMarketers */
-    private function latestYear(array $electricityMarketers): ?int
+    private function latestYear(array $electricityMarketers, EmissionFactorGroupId $emissionFactorGroupId): ?int
     {
         $latest = null;
 
         foreach ($electricityMarketers as $electricityMarketer) {
-            foreach ($electricityMarketer->emissionFactors()->years() as $year) {
+            foreach ($electricityMarketer->emissionFactors() as $emissionFactor) {
+                if (!$emissionFactor->emissionFactorGroupId()->equals($emissionFactorGroupId)) {
+                    continue;
+                }
+
+                $year = $emissionFactor->year();
+
                 if (null === $latest || $year > $latest) {
                     $latest = $year;
                 }

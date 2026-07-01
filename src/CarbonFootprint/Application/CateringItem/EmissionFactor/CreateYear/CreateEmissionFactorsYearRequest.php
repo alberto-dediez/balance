@@ -10,6 +10,7 @@ class CreateEmissionFactorsYearRequest implements Command
 {
     public function __construct(
         public int $sourceYear,
+        public ?string $emissionFactorGroupId = null,
         public ?int $targetYear = null,
     ) {}
 }

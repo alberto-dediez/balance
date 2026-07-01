@@ -34,7 +34,7 @@ class ListEmissionFactorsServiceTest extends TestCase
 
         $sut = $this->createSUT($repository);
 
-        $response = $sut(new ListEmissionFactorsRequest(), UserMother::adminUser());
+        $response = $sut(new ListEmissionFactorsRequest(emissionFactorGroupId: EmissionFactorGroupMother::default()->id()), UserMother::adminUser());
 
         $this->assertSame(2024, $response->year);
         $this->assertCount(1, $response->roadTransports);
@@ -49,7 +49,7 @@ class ListEmissionFactorsServiceTest extends TestCase
 
         $currentYear = (int) (new \DateTimeImmutable('NOW'))->format('Y');
 
-        $response = $sut(new ListEmissionFactorsRequest(), UserMother::adminUser());
+        $response = $sut(new ListEmissionFactorsRequest(emissionFactorGroupId: EmissionFactorGroupMother::default()->id()), UserMother::adminUser());
 
         $this->assertSame($currentYear, $response->year);
         $this->assertFalse($response->canGoNext);
@@ -62,7 +62,7 @@ class ListEmissionFactorsServiceTest extends TestCase
 
         $sut = $this->createSUT($repository);
 
-        $response = $sut(new ListEmissionFactorsRequest(year: 2010), UserMother::adminUser());
+        $response = $sut(new ListEmissionFactorsRequest(emissionFactorGroupId: EmissionFactorGroupMother::default()->id(), year: 2010), UserMother::adminUser());
 
         $this->assertSame(2010, $response->year);
         $this->assertTrue($response->canGoNext);

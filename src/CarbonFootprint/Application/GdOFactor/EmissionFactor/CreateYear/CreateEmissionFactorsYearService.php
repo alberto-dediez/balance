@@ -33,6 +33,7 @@ class CreateEmissionFactorsYearService implements CommandHandler
 
         $targetYear = (int) $request->targetYear;
         $currentYear = (int) (new \DateTimeImmutable('NOW'))->format('Y');
+        $emissionFactorGroupId = new EmissionFactorGroupId((string) $request->emissionFactorGroupId);
 
         if ($targetYear > $currentYear) {
             throw new \InvalidArgumentException('Target year cannot be in the future');
@@ -45,13 +46,13 @@ class CreateEmissionFactorsYearService implements CommandHandler
         $gdOFactors = $this->gdOFactorRepository->findByFilter(new GdOFactorFilter(limit: 0));
 
         foreach ($gdOFactors as $gdOFactor) {
-            if ($gdOFactor->emissionFactors()->hasForYearAndGroup($targetYear, EmissionFactorGroupId::default())) {
+            if ($gdOFactor->emissionFactors()->hasForYearAndGroup($targetYear, $emissionFactorGroupId)) {
                 throw EmissionFactorYearAlreadyExistsException::forYear($targetYear);
             }
         }
 
         foreach ($gdOFactors as $gdOFactor) {
-            $sourceFactor = $gdOFactor->emissionFactorFor($request->sourceYear, EmissionFactorGroupId::default());
+            $sourceFactor = $gdOFactor->emissionFactorFor($request->sourceYear, $emissionFactorGroupId);
 
             if (null === $sourceFactor) {
                 continue;

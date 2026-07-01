@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\RoadTransport\EmissionFactor\Update;
 
 use App\CarbonFootprint\Application\RoadTransport\RoadTransportAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
@@ -22,6 +24,7 @@ class UpdateEmissionFactorsService implements CommandHandler
     public function __construct(
         private RoadTransportRepository $roadTransportRepository,
         private RoadTransportAuthorizer $authorizer,
+        private EmissionFactorGroupRepository $emissionFactorGroupRepository,
     ) {}
 
     public function __invoke(UpdateEmissionFactorsRequest $request, User $user): UpdateEmissionFactorsResponse
@@ -36,15 +39,30 @@ class UpdateEmissionFactorsService implements CommandHandler
             $this->authorizer->denyUnlessCanDoThat($roadTransport, SecurityAction::Edit, $user);
 
             if ($row->isEmpty()) {
-                $roadTransport->removeEmissionFactor($request->year, EmissionFactorGroupId::default());
+                $roadTransport->removeEmissionFactor($request->year, $row->emissionFactorGroupId());
             } else {
-                $roadTransport->setEmissionFactor($row->toEmissionFactor($request->year, $roadTransport->unit()));
+                $emissionFactorGroup = $this->resolveEmissionFactorGroup($row->emissionFactorGroupId);
+
+                $roadTransport->setEmissionFactor($row->toEmissionFactor($request->year, $roadTransport->unit(), $emissionFactorGroup));
             }
 
             $this->roadTransportRepository->add($roadTransport);
         }
 
         return new UpdateEmissionFactorsResponse(year: $request->year);
+    }
+
+    private function resolveEmissionFactorGroup(?string $emissionFactorGroupId): EmissionFactorGroup
+    {
+        $emissionFactorGroup = null !== $emissionFactorGroupId
+            ? $this->emissionFactorGroupRepository->find(new EmissionFactorGroupId($emissionFactorGroupId))
+            : null;
+
+        if (null === $emissionFactorGroup) {
+            throw new \InvalidArgumentException('Emission factor group not found');
+        }
+
+        return $emissionFactorGroup;
     }
 
     public function isHandled(Command $command): bool

@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\CateringItem\CateringItem;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemFilter;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemId;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 
@@ -27,23 +28,30 @@ class ListEmissionFactorsService
 
         $currentYear = (int) (new \DateTimeImmutable('NOW'))->format('Y');
 
-        $year = $request->year ?? $this->latestYear($cateringItems) ?? $currentYear;
+        $year = $request->year ?? $this->latestYear($cateringItems, $request->emissionFactorGroupId) ?? $currentYear;
 
         return new ListEmissionFactorsResponse(
             cateringItems: $cateringItems,
             year: $year,
             currentYear: $currentYear,
             canGoNext: $year < $currentYear,
+            emissionFactorGroupId: $request->emissionFactorGroupId,
         );
     }
 
     /** @param array<CateringItem> $cateringItems */
-    private function latestYear(array $cateringItems): ?int
+    private function latestYear(array $cateringItems, EmissionFactorGroupId $emissionFactorGroupId): ?int
     {
         $latest = null;
 
         foreach ($cateringItems as $cateringItem) {
-            foreach ($cateringItem->emissionFactors()->years() as $year) {
+            foreach ($cateringItem->emissionFactors() as $cateringItemEmissionFactor) {
+                if (!$cateringItemEmissionFactor->emissionFactorGroupId()->equals($emissionFactorGroupId)) {
+                    continue;
+                }
+
+                $year = $cateringItemEmissionFactor->year();
+
                 if (null === $latest || $year > $latest) {
                     $latest = $year;
                 }

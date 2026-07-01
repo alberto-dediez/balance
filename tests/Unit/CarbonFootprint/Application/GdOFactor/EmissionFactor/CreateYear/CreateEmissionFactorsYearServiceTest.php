@@ -35,7 +35,7 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
 
         $sut = $this->createSUT($repository);
 
-        $request = new CreateEmissionFactorsYearRequest(sourceYear: 2024, targetYear: 2025);
+        $request = new CreateEmissionFactorsYearRequest(sourceYear: 2024, emissionFactorGroupId: (string) EmissionFactorGroupId::default(), targetYear: 2025);
 
         $response = $sut($request, UserMother::fromUsernameAndRole('admin', Role::Admin));
 
@@ -49,6 +49,7 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $this->assertSame('1.5', $copied->co2eq());
         $this->assertSame('IPCC', $copied->source());
 
+        // The source year is preserved untouched.
         $this->assertNotNull($persisted->emissionFactorFor(2024, EmissionFactorGroupId::default()));
     }
 
@@ -66,7 +67,7 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $this->expectException(EmissionFactorYearAlreadyExistsException::class);
 
         $sut(
-            new CreateEmissionFactorsYearRequest(sourceYear: 2024, targetYear: 2025),
+            new CreateEmissionFactorsYearRequest(sourceYear: 2024, emissionFactorGroupId: (string) EmissionFactorGroupId::default(), targetYear: 2025),
             UserMother::fromUsernameAndRole('admin', Role::Admin),
         );
     }
@@ -83,6 +84,7 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $sut(
             new CreateEmissionFactorsYearRequest(
                 sourceYear: 2024,
+                emissionFactorGroupId: (string) EmissionFactorGroupId::default(),
                 targetYear: 9999,
             ),
             UserMother::fromUsernameAndRole('admin', Role::Admin),

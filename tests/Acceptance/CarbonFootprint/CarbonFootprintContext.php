@@ -106,6 +106,17 @@ final readonly class CarbonFootprintContext implements Context
         return $this->client->getContainer()->get(EventCarbonFootprintRepository::class);
     }
 
+    private function ensureDefaultEmissionFactorGroupExists(): void
+    {
+        $repository = $this->getEmissionFactorGroupRepository();
+
+        if (null !== $repository->find(EmissionFactorGroupMother::default()->id())) {
+            return;
+        }
+
+        $repository->add(EmissionFactorGroupMother::default());
+    }
+
     #[Given('event carbon footprint for event :eventId of account :account exists')]
     public function eventCarbonFootprintForEventOfAccountExists(string $eventId, string $account): void
     {
@@ -117,6 +128,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('material :name with id :id exists')]
     public function materialWithIdExists(string $name, string $id): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $material = MaterialMother::fromNameAndId($name, $id);
 
         $this->getMaterialRepository()->add($material);
@@ -125,6 +138,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('material :name with id :id and emission factor for year :year exists')]
     public function materialWithEmissionFactorExists(string $name, string $id, string $year): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $material = MaterialMother::fromNameAndId($name, $id);
 
         $ef = new EmissionFactor(
@@ -160,6 +175,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('combustible :name with id :id exists')]
     public function combustibleWithIdExists(string $name, string $id): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $combustible = CombustibleMother::fromNameAndId($name, $id);
 
         $this->getCombustibleRepository()->add($combustible);
@@ -168,6 +185,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('combustible :name with id :id and emission factor for year :year exists')]
     public function combustibleWithEmissionFactorExists(string $name, string $id, string $year): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $combustible = CombustibleMother::fromNameAndId($name, $id);
 
         $combustible->setEmissionFactor(new EmissionFactor(
@@ -194,6 +213,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('road transport :name with id :id exists')]
     public function roadTransportWithIdExists(string $name, string $id): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $roadTransport = RoadTransportMother::fromNameAndId($name, $id);
 
         $this->getRoadTransportRepository()->add($roadTransport);
@@ -202,6 +223,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('road transport :name with id :id and emission factor for year :year exists')]
     public function roadTransportWithEmissionFactorExists(string $name, string $id, string $year): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $roadTransport = RoadTransportMother::fromNameAndId($name, $id);
 
         $roadTransport->setEmissionFactor(new EmissionFactor(
@@ -220,6 +243,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('electricity marketer :name with id :id exists')]
     public function electricityMarketerWithIdExists(string $name, string $id): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $electricityMarketer = ElectricityMarketerMother::fromNameAndId($name, $id);
 
         $this->getElectricityMarketerRepository()->add($electricityMarketer);
@@ -228,6 +253,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('electricity marketer :name with id :id and emission factor for year :year exists')]
     public function electricityMarketerWithEmissionFactorExists(string $name, string $id, string $year): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $electricityMarketer = ElectricityMarketerMother::fromNameAndId($name, $id);
 
         $electricityMarketer->setEmissionFactor(new EmissionFactor(
@@ -246,6 +273,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('gdo factor :name with id :id exists')]
     public function gdOFactorWithIdExists(string $name, string $id): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $gdOFactor = GdOFactorMother::fromNameAndId($name, $id);
 
         $this->getGdOFactorRepository()->add($gdOFactor);
@@ -254,6 +283,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('gdo factor :name with id :id and emission factor for year :year exists')]
     public function gdOFactorWithEmissionFactorExists(string $name, string $id, string $year): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $gdOFactor = GdOFactorMother::fromNameAndId($name, $id);
 
         $gdOFactor->setEmissionFactor(new EmissionFactor(
@@ -272,6 +303,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('machinery fuel :name with id :id exists')]
     public function machineryFuelWithIdExists(string $name, string $id): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $machineryFuel = MachineryFuelMother::fromNameAndId($name, $id);
 
         $this->getMachineryFuelRepository()->add($machineryFuel);
@@ -280,6 +313,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('machinery fuel :name with id :id and emission factor for year :year exists')]
     public function machineryFuelWithEmissionFactorExists(string $name, string $id, string $year): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $machineryFuel = MachineryFuelMother::fromNameAndId($name, $id);
 
         $machineryFuel->setEmissionFactor(new EmissionFactor(
@@ -298,6 +333,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('mobility :name with id :id exists')]
     public function mobilityWithIdExists(string $name, string $id): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $mobility = MobilityMother::fromNameAndId($name, $id);
 
         $this->getMobilityRepository()->add($mobility);
@@ -306,6 +343,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('mobility :name with id :id and emission factor for year :year exists')]
     public function mobilityWithEmissionFactorExists(string $name, string $id, string $year): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $mobility = MobilityMother::fromNameAndId($name, $id);
 
         $mobility->setEmissionFactor(new EmissionFactor(
@@ -324,6 +363,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('waste :name with id :id exists')]
     public function wasteWithIdExists(string $name, string $id): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $waste = WasteMother::fromNameAndId($name, $id);
 
         $this->getWasteRepository()->add($waste);
@@ -332,6 +373,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('waste :name with id :id and emission factor for year :year exists')]
     public function wasteWithEmissionFactorExists(string $name, string $id, string $year): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $waste = WasteMother::fromNameAndId($name, $id);
 
         $waste->setEmissionFactor(new EmissionFactor(
@@ -355,6 +398,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('overnight stay :name with id :id exists')]
     public function overnightStayWithIdExists(string $name, string $id): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $overnightStay = OvernightStayMother::fromNameAndId($name, $id);
 
         $this->getOvernightStayRepository()->add($overnightStay);
@@ -363,6 +408,8 @@ final readonly class CarbonFootprintContext implements Context
     #[Given('overnight stay :name with id :id and emission factor for year :year exists')]
     public function overnightStayWithEmissionFactorExists(string $name, string $id, string $year): void
     {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
         $overnightStay = OvernightStayMother::fromNameAndId($name, $id);
 
         $overnightStay->setEmissionFactor(new EmissionFactor(

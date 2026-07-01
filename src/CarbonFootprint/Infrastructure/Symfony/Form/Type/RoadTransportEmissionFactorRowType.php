@@ -23,6 +23,7 @@ class RoadTransportEmissionFactorRowType extends AbstractType
 
         $builder
             ->add('roadTransportId', HiddenType::class)
+            ->add('emissionFactorGroupId', HiddenType::class)
             ->add('co2eq', TextType::class, [
                 'label' => new TranslatableMessage('Kg CO2eq'),
                 'required' => false,

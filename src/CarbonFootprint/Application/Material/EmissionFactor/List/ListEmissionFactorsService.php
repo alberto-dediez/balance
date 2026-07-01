@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\Material\EmissionFactor\List;
 
 use App\CarbonFootprint\Application\Material\MaterialAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Material\Material;
 use App\CarbonFootprint\Domain\Model\Material\MaterialFilter;
 use App\CarbonFootprint\Domain\Model\Material\MaterialId;
@@ -27,23 +28,30 @@ class ListEmissionFactorsService
 
         $currentYear = (int) (new \DateTimeImmutable('NOW'))->format('Y');
 
-        $year = $request->year ?? $this->latestYear($materials) ?? $currentYear;
+        $year = $request->year ?? $this->latestYear($materials, $request->emissionFactorGroupId) ?? $currentYear;
 
         return new ListEmissionFactorsResponse(
             materials: $materials,
             year: $year,
             currentYear: $currentYear,
             canGoNext: $year < $currentYear,
+            emissionFactorGroupId: $request->emissionFactorGroupId,
         );
     }
 
     /** @param array<Material> $materials */
-    private function latestYear(array $materials): ?int
+    private function latestYear(array $materials, EmissionFactorGroupId $emissionFactorGroupId): ?int
     {
         $latest = null;
 
         foreach ($materials as $material) {
-            foreach ($material->emissionFactors()->years() as $year) {
+            foreach ($material->emissionFactors() as $materialEmissionFactor) {
+                if (!$materialEmissionFactor->emissionFactorGroupId()->equals($emissionFactorGroupId)) {
+                    continue;
+                }
+
+                $year = $materialEmissionFactor->year();
+
                 if (null === $latest || $year > $latest) {
                     $latest = $year;
                 }

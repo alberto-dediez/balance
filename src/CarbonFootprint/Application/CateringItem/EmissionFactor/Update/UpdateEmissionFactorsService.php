@@ -6,7 +6,9 @@ namespace App\CarbonFootprint\Application\CateringItem\EmissionFactor\Update;
 
 use App\CarbonFootprint\Application\CateringItem\CateringItemAuthorizer;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -22,6 +24,7 @@ class UpdateEmissionFactorsService implements CommandHandler
     public function __construct(
         private CateringItemRepository $cateringItemRepository,
         private CateringItemAuthorizer $authorizer,
+        private EmissionFactorGroupRepository $emissionFactorGroupRepository,
     ) {}
 
     public function __invoke(UpdateEmissionFactorsRequest $request, User $user): UpdateEmissionFactorsResponse
@@ -36,11 +39,13 @@ class UpdateEmissionFactorsService implements CommandHandler
             $this->authorizer->denyUnlessCanDoThat($cateringItem, SecurityAction::Edit, $user);
 
             if ($row->isEmpty()) {
-                $cateringItem->removeEmissionFactor($request->year, EmissionFactorGroupId::default());
+                $cateringItem->removeEmissionFactor($request->year, $row->emissionFactorGroupId());
             } else {
+                $emissionFactorGroup = $this->resolveEmissionFactorGroup($row->emissionFactorGroupId);
+
                 $cateringItem->setEmissionFactor(
-                    $row->newEmissionFactor($request->year, $cateringItem->unit()),
-                    $row->recycledEmissionFactor($request->year, $cateringItem->unit()),
+                    $row->newEmissionFactor($request->year, $cateringItem->unit(), $emissionFactorGroup),
+                    $row->recycledEmissionFactor($request->year, $cateringItem->unit(), $emissionFactorGroup),
                 );
             }
 
@@ -48,6 +53,19 @@ class UpdateEmissionFactorsService implements CommandHandler
         }
 
         return new UpdateEmissionFactorsResponse(year: $request->year);
+    }
+
+    private function resolveEmissionFactorGroup(?string $emissionFactorGroupId): EmissionFactorGroup
+    {
+        $emissionFactorGroup = null !== $emissionFactorGroupId
+            ? $this->emissionFactorGroupRepository->find(new EmissionFactorGroupId($emissionFactorGroupId))
+            : null;
+
+        if (null === $emissionFactorGroup) {
+            throw new \InvalidArgumentException('Emission factor group not found');
+        }
+
+        return $emissionFactorGroup;
     }
 
     public function isHandled(Command $command): bool

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\MerchandisingItem\EmissionFactor\List;
 
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItem;
 
 class ListEmissionFactorsResponse
@@ -14,5 +15,6 @@ class ListEmissionFactorsResponse
         public int $year,
         public int $currentYear,
         public bool $canGoNext,
+        public EmissionFactorGroupId $emissionFactorGroupId,
     ) {}
 }

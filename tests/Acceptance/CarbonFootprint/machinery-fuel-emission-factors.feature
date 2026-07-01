@@ -16,7 +16,7 @@ Feature:
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
         Given machinery fuel "Maquinaria 1" with id "333" exists
         When I am logged as "admin@dediez.software"
-        When I go to "/es/admin/machinery-fuels/emission-factors/2020"
+        When I go to "/es/admin/machinery-fuels/emission-factors/00000000-0000-0000-0000-000000000001/2020"
         Then the response status should be 200
         Then I see a text "2020"
         Then I see a text "Copiar factores"
@@ -25,7 +25,7 @@ Feature:
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
         Given machinery fuel "Maquinaria 1" with id "333" exists
         When I am logged as "admin@dediez.software"
-        When I go to "/es/admin/machinery-fuels/emission-factors/2024"
+        When I go to "/es/admin/machinery-fuels/emission-factors/00000000-0000-0000-0000-000000000001/2024"
         When I submit a form with "[rows][0][co2eq]:2.5|[rows][0][co2]:2.0|[rows][0][ch4]:0.4|[rows][0][n2o]:0.6" and button "Guardar y salir"
         When I follow redirect
         Then the response status should be 200

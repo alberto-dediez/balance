@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\Waste\EmissionFactor;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\Gwp;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
 
@@ -20,10 +20,15 @@ class EmissionFactorRow
         public ?string $ch4 = null,
         public ?string $n2o = null,
         public ?string $source = null,
+        public ?string $emissionFactorGroupId = null,
     ) {}
 
-    public static function fromWaste(WasteId $wasteId, string $wasteName, ?EmissionFactor $emissionFactor): self
-    {
+    public static function fromWaste(
+        WasteId $wasteId,
+        string $wasteName,
+        ?EmissionFactor $emissionFactor,
+        EmissionFactorGroupId $emissionFactorGroupId,
+    ): self {
         return new self(
             wasteId: (string) $wasteId,
             wasteName: $wasteName,
@@ -32,6 +37,7 @@ class EmissionFactorRow
             ch4: $emissionFactor?->ch4(),
             n2o: $emissionFactor?->n2o(),
             source: $emissionFactor?->source(),
+            emissionFactorGroupId: (string) ($emissionFactor?->emissionFactorGroupId() ?? $emissionFactorGroupId),
         );
     }
 
@@ -48,25 +54,18 @@ class EmissionFactorRow
         return new WasteId((string) $this->wasteId);
     }
 
-    public function toEmissionFactor(int $year, Unit $unit): EmissionFactor
+    public function emissionFactorGroupId(): EmissionFactorGroupId
     {
-        $co2 = (string) $this->co2;
-        $ch4 = (string) $this->ch4;
-        $n2o = (string) $this->n2o;
-        $co2eq = (string) $this->co2eq;
+        return new EmissionFactorGroupId((string) $this->emissionFactorGroupId);
+    }
 
-        if (0.0 === (float) $co2eq) {
-            // Temporary FASE 2 compatibility fallback: real EmissionFactorGroup resolution lands in FASE 3/7/8/9.
-            $co2eq = Gwp::ar6()->co2eqFor($co2, $ch4, $n2o);
-        }
-
-        return new EmissionFactor(
-            co2eq: $co2eq,
-            co2: $co2,
-            ch4: $ch4,
-            n2o: $n2o,
+    public function toEmissionFactor(int $year, Unit $unit, EmissionFactorGroup $emissionFactorGroup): EmissionFactor
+    {
+        return $emissionFactorGroup->buildEmissionFactor(
+            co2: (string) $this->co2,
+            ch4: (string) $this->ch4,
+            n2o: (string) $this->n2o,
             year: $year,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
             unit: $unit,
             source: $this->source,
         );

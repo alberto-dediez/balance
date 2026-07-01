@@ -10,9 +10,12 @@ use App\CarbonFootprint\Application\RoadTransport\EmissionFactor\List\ListEmissi
 use App\CarbonFootprint\Application\RoadTransport\EmissionFactor\List\ListEmissionFactorsService;
 use App\CarbonFootprint\Application\RoadTransport\EmissionFactor\Update\UpdateEmissionFactorsRequest;
 use App\CarbonFootprint\Application\RoadTransport\EmissionFactor\Update\UpdateEmissionFactorsService;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupFilter;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\BulkRoadTransportEmissionFactorsType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\CreateRoadTransportEmissionFactorsYearType;
+use App\CarbonFootprint\Infrastructure\UI\Web\Admin\EmissionFactorGroup\GetEmissionFactorGroupFromIdTrait;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
@@ -22,20 +25,38 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-#[Route('/admin/road-transports/emission-factors/{year}', name: 'admin_road_transports_emission_factors', requirements: ['year' => '\d+'], defaults: ['year' => null])]
+#[Route(
+    '/admin/road-transports/emission-factors/{emissionFactorGroup}/{year}',
+    name: 'admin_road_transports_emission_factors',
+    requirements: ['year' => '\d+'],
+    defaults: ['emissionFactorGroup' => null, 'year' => null],
+)]
 class FactorEmissionController extends AbstractController
 {
     use EditTrait;
+    use GetEmissionFactorGroupFromIdTrait;
 
     public function __invoke(
+        ?string $emissionFactorGroup,
         ?int $year,
+        EmissionFactorGroupRepository $emissionFactorGroupRepository,
         ListEmissionFactorsService $listEmissionFactors,
         UpdateEmissionFactorsService $updateEmissionFactors,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
+        // The group id is only resolved to a real EmissionFactorGroup entity *after* the authorization check
+        // performed by ListEmissionFactorsService, so an unauthorized user gets a 403 rather than a 404 when
+        // the requested (or default) group does not happen to exist.
+        $emissionFactorGroupId = new EmissionFactorGroupId($emissionFactorGroup ?? (string) EmissionFactorGroupId::default());
+
         try {
-            $response = $listEmissionFactors(new ListEmissionFactorsRequest(year: $year), $loggedUser());
+            $response = $listEmissionFactors(
+                new ListEmissionFactorsRequest(emissionFactorGroupId: $emissionFactorGroupId, year: $year),
+                $loggedUser(),
+            );
+
+            $group = $this->getEmissionFactorGroupFromId((string) $emissionFactorGroupId, $emissionFactorGroupRepository);
 
             $year = $response->year;
 
@@ -44,14 +65,18 @@ class FactorEmissionController extends AbstractController
                 $rows[] = EmissionFactorRow::fromRoadTransport(
                     $roadTransport->id(),
                     $roadTransport->name(),
-                    $roadTransport->emissionFactorFor($year, EmissionFactorGroupId::default()),
+                    $roadTransport->emissionFactorFor($year, $group->id()),
+                    $group->id(),
                 );
             }
 
             $updateRequest = new UpdateEmissionFactorsRequest(year: $year, rows: $rows);
 
             $form = $this->createForm(BulkRoadTransportEmissionFactorsType::class, $updateRequest, [
-                'action' => $this->generateUrl('admin_road_transports_emission_factors', ['year' => $year]),
+                'action' => $this->generateUrl('admin_road_transports_emission_factors', [
+                    'emissionFactorGroup' => (string) $group->id(),
+                    'year' => $year,
+                ]),
             ]);
 
             $needsRedirect = $this->edit($request, $form, function ($form) use ($updateEmissionFactors, $loggedUser) {
@@ -69,9 +94,14 @@ class FactorEmissionController extends AbstractController
 
         $createYearForm = $this->createForm(
             CreateRoadTransportEmissionFactorsYearType::class,
-            new CreateEmissionFactorsYearRequest(sourceYear: $year),
-            ['action' => $this->generateUrl('admin_road_transports_emission_factors_create_year', ['sourceYear' => $year])],
+            new CreateEmissionFactorsYearRequest(sourceYear: $year, emissionFactorGroupId: (string) $group->id()),
+            ['action' => $this->generateUrl('admin_road_transports_emission_factors_create_year', [
+                'sourceYear' => $year,
+                'emissionFactorGroup' => (string) $group->id(),
+            ])],
         );
+
+        $emissionFactorGroups = $emissionFactorGroupRepository->findByFilter(new EmissionFactorGroupFilter(limit: 0));
 
         return $this->render('@carbon_footprint/admin/road_transports/emission_factors.html.twig', [
             'form' => $form->createView(),
@@ -80,6 +110,8 @@ class FactorEmissionController extends AbstractController
             'year' => $year,
             'currentYear' => $response->currentYear,
             'canGoNext' => $response->canGoNext,
+            'emissionFactorGroup' => $group,
+            'emissionFactorGroups' => $emissionFactorGroups,
         ]);
     }
 }

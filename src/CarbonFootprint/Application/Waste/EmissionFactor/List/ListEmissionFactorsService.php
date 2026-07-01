@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\Waste\EmissionFactor\List;
 
 use App\CarbonFootprint\Application\Waste\WasteAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Waste\Waste;
 use App\CarbonFootprint\Domain\Model\Waste\WasteFilter;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
@@ -27,23 +28,30 @@ class ListEmissionFactorsService
 
         $currentYear = (int) (new \DateTimeImmutable('NOW'))->format('Y');
 
-        $year = $request->year ?? $this->latestYear($wastes) ?? $currentYear;
+        $year = $request->year ?? $this->latestYear($wastes, $request->emissionFactorGroupId) ?? $currentYear;
 
         return new ListEmissionFactorsResponse(
             wastes: $wastes,
             year: $year,
             currentYear: $currentYear,
             canGoNext: $year < $currentYear,
+            emissionFactorGroupId: $request->emissionFactorGroupId,
         );
     }
 
     /** @param array<Waste> $wastes */
-    private function latestYear(array $wastes): ?int
+    private function latestYear(array $wastes, EmissionFactorGroupId $emissionFactorGroupId): ?int
     {
         $latest = null;
 
         foreach ($wastes as $waste) {
-            foreach ($waste->emissionFactors()->years() as $year) {
+            foreach ($waste->emissionFactors() as $emissionFactor) {
+                if (!$emissionFactor->emissionFactorGroupId()->equals($emissionFactorGroupId)) {
+                    continue;
+                }
+
+                $year = $emissionFactor->year();
+
                 if (null === $latest || $year > $latest) {
                     $latest = $year;
                 }

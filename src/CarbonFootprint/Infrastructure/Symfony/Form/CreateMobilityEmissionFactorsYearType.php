@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Infrastructure\Symfony\Form;
 
 use App\CarbonFootprint\Application\Mobility\EmissionFactor\CreateYear\CreateEmissionFactorsYearRequest;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,6 +22,7 @@ class CreateMobilityEmissionFactorsYearType extends AbstractType
         $currentYear = (int) (new \DateTimeImmutable('NOW'))->format('Y');
 
         $builder
+            ->add('emissionFactorGroupId', HiddenType::class)
             ->add('targetYear', IntegerType::class, [
                 'label' => new TranslatableMessage('Año destino'),
                 'required' => true,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\MachineryFuel\EmissionFactor\List;
 
 use App\CarbonFootprint\Application\MachineryFuel\MachineryFuelAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuel;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelFilter;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelId;
@@ -27,23 +28,30 @@ class ListEmissionFactorsService
 
         $currentYear = (int) (new \DateTimeImmutable('NOW'))->format('Y');
 
-        $year = $request->year ?? $this->latestYear($machineryFuels) ?? $currentYear;
+        $year = $request->year ?? $this->latestYear($machineryFuels, $request->emissionFactorGroupId) ?? $currentYear;
 
         return new ListEmissionFactorsResponse(
             machineryFuels: $machineryFuels,
             year: $year,
             currentYear: $currentYear,
             canGoNext: $year < $currentYear,
+            emissionFactorGroupId: $request->emissionFactorGroupId,
         );
     }
 
     /** @param array<MachineryFuel> $machineryFuels */
-    private function latestYear(array $machineryFuels): ?int
+    private function latestYear(array $machineryFuels, EmissionFactorGroupId $emissionFactorGroupId): ?int
     {
         $latest = null;
 
         foreach ($machineryFuels as $machineryFuel) {
-            foreach ($machineryFuel->emissionFactors()->years() as $year) {
+            foreach ($machineryFuel->emissionFactors() as $emissionFactor) {
+                if (!$emissionFactor->emissionFactorGroupId()->equals($emissionFactorGroupId)) {
+                    continue;
+                }
+
+                $year = $emissionFactor->year();
+
                 if (null === $latest || $year > $latest) {
                     $latest = $year;
                 }
