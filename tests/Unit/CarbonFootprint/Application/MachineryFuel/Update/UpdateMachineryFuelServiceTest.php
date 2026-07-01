@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\MachineryFuel\MachineryFuelAuthorizer;
 use App\CarbonFootprint\Application\MachineryFuel\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\MachineryFuel\Update\UpdateMachineryFuelRequest;
 use App\CarbonFootprint\Application\MachineryFuel\Update\UpdateMachineryFuelService;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelTranslated;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelUpdated;
@@ -137,7 +138,7 @@ class UpdateMachineryFuelServiceTest extends TestCase
         $this->assertNotNull($persisted);
         $this->assertCount(1, $persisted->emissionFactors());
 
-        $persistedFactor = $persisted->emissionFactorFor(2024);
+        $persistedFactor = $persisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
 
         $this->assertNotNull($persistedFactor);
         $this->assertSame('1.5', $persistedFactor->co2eq());

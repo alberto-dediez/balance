@@ -9,10 +9,10 @@ use App\CarbonFootprint\Application\GdOFactor\EmissionFactor\Update\UpdateEmissi
 use App\CarbonFootprint\Application\GdOFactor\EmissionFactor\Update\UpdateEmissionFactorsService;
 use App\CarbonFootprint\Application\GdOFactor\GdOFactorAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -54,7 +54,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $persisted = $repository->find($gdOFactor->id());
 
         $this->assertNotNull($persisted);
-        $factor = $persisted->emissionFactorFor(2025);
+        $factor = $persisted->emissionFactorFor(2025, EmissionFactorGroupId::default());
         $this->assertNotNull($factor);
         $this->assertSame('1.5', $factor->co2eq());
     }
@@ -64,7 +64,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $repository = GdOFactorRepositoryMother::inMemory();
 
         $gdOFactor = GdOFactorMother::random();
-        $gdOFactor->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
+        $gdOFactor->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupId::default()));
         $repository->add($gdOFactor);
 
         $sut = $this->createSUT($repository);
@@ -84,7 +84,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $persisted = $repository->find($gdOFactor->id());
 
         $this->assertNotNull($persisted);
-        $this->assertNull($persisted->emissionFactorFor(2025));
+        $this->assertNull($persisted->emissionFactorFor(2025, EmissionFactorGroupId::default()));
     }
 
     public function testIsHandled(): void

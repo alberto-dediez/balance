@@ -9,10 +9,10 @@ use App\CarbonFootprint\Application\Material\EmissionFactor\CreateYear\CreateEmi
 use App\CarbonFootprint\Application\Material\EmissionFactor\CreateYear\EmissionFactorYearAlreadyExistsException;
 use App\CarbonFootprint\Application\Material\MaterialAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -30,7 +30,7 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $repository = MaterialRepositoryMother::inMemory();
 
         $material = MaterialMother::random();
-        $ef = new EmissionFactor('1.5', '1.0', '0.2', '0.3', 2024, emissionFactorGroupId: EmissionFactorGroupMother::default()->id(), source: 'IPCC');
+        $ef = new EmissionFactor('1.5', '1.0', '0.2', '0.3', 2024, emissionFactorGroupId: EmissionFactorGroupId::default(), source: 'IPCC');
         $material->setEmissionFactor($ef, $ef);
         $repository->add($material);
 
@@ -45,13 +45,13 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $persisted = $repository->find($material->id());
         $this->assertNotNull($persisted);
 
-        $copied = $persisted->emissionFactorFor(2025);
+        $copied = $persisted->emissionFactorFor(2025, EmissionFactorGroupId::default());
         $this->assertNotNull($copied);
         $this->assertSame('1.5', $copied->newFactor()->co2eq());
         $this->assertSame('IPCC', $copied->newFactor()->source());
 
         // The source year is preserved untouched.
-        $this->assertNotNull($persisted->emissionFactorFor(2024));
+        $this->assertNotNull($persisted->emissionFactorFor(2024, EmissionFactorGroupId::default()));
     }
 
     public function testThrowsWhenTargetYearAlreadyExists(): void
@@ -59,9 +59,9 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $repository = MaterialRepositoryMother::inMemory();
 
         $material = MaterialMother::random();
-        $ef2024 = new EmissionFactor('1', '1', '1', '1', 2024, emissionFactorGroupId: EmissionFactorGroupMother::default()->id());
+        $ef2024 = new EmissionFactor('1', '1', '1', '1', 2024, emissionFactorGroupId: EmissionFactorGroupId::default());
         $material->setEmissionFactor($ef2024, $ef2024);
-        $ef2025 = new EmissionFactor('2', '2', '2', '2', 2025, emissionFactorGroupId: EmissionFactorGroupMother::default()->id());
+        $ef2025 = new EmissionFactor('2', '2', '2', '2', 2025, emissionFactorGroupId: EmissionFactorGroupId::default());
         $material->setEmissionFactor($ef2025, $ef2025);
         $repository->add($material);
 

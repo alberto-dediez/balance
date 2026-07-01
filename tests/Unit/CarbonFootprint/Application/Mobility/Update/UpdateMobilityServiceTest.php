@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\Mobility\MobilityAuthorizer;
 use App\CarbonFootprint\Application\Mobility\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\Mobility\Update\UpdateMobilityRequest;
 use App\CarbonFootprint\Application\Mobility\Update\UpdateMobilityService;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityTranslated;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityUpdated;
@@ -133,7 +134,7 @@ class UpdateMobilityServiceTest extends TestCase
         $this->assertNotNull($mobilityPersisted);
         $this->assertCount(1, $mobilityPersisted->emissionFactors());
 
-        $persistedFactor = $mobilityPersisted->emissionFactorFor(2024);
+        $persistedFactor = $mobilityPersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
 
         $this->assertNotNull($persistedFactor);
         $this->assertSame('1.5', $persistedFactor->co2eq());

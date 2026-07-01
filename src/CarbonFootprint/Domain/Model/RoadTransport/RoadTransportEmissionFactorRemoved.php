@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\RoadTransport;
 
 use App\CarbonFootprint\Domain\DomainEvent;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
@@ -15,6 +16,7 @@ final class RoadTransportEmissionFactorRemoved extends DomainEvent
     public function __construct(
         private RoadTransportId $roadTransportId,
         private int $year,
+        private EmissionFactorGroupId $emissionFactorGroupId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -31,6 +33,11 @@ final class RoadTransportEmissionFactorRemoved extends DomainEvent
         return $this->year;
     }
 
+    public function emissionFactorGroupId(): EmissionFactorGroupId
+    {
+        return $this->emissionFactorGroupId;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->roadTransportId();
@@ -41,6 +48,7 @@ final class RoadTransportEmissionFactorRemoved extends DomainEvent
         return [
             'roadTransportId' => (string) $this->roadTransportId,
             'year' => $this->year,
+            'emissionFactorGroupId' => (string) $this->emissionFactorGroupId,
         ];
     }
 
@@ -52,6 +60,7 @@ final class RoadTransportEmissionFactorRemoved extends DomainEvent
         return new RoadTransportEmissionFactorRemoved(
             roadTransportId: new RoadTransportId($payload['roadTransportId']),
             year: $payload['year'],
+            emissionFactorGroupId: new EmissionFactorGroupId($payload['emissionFactorGroupId']),
             id: $id,
             occurredOn: $occurredOn,
         );

@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketer;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use PHPUnit\Framework\TestCase;
@@ -20,7 +21,7 @@ class ElectricityMarketerTest extends TestCase
         $electricityMarketer->setEmissionFactor($this->emissionFactor(2024, '1.5'));
 
         $this->assertCount(1, $electricityMarketer->emissionFactors());
-        $this->assertSame('1.5', $electricityMarketer->emissionFactorFor(2024)?->co2eq());
+        $this->assertSame('1.5', $electricityMarketer->emissionFactorFor(2024, $this->groupId())?->co2eq());
     }
 
     public function testSetEmissionFactorForSameYearReplacesIt(): void
@@ -31,14 +32,14 @@ class ElectricityMarketerTest extends TestCase
         $electricityMarketer->setEmissionFactor($this->emissionFactor(2024, '2.0'));
 
         $this->assertCount(1, $electricityMarketer->emissionFactors());
-        $this->assertSame('2.0', $electricityMarketer->emissionFactorFor(2024)?->co2eq());
+        $this->assertSame('2.0', $electricityMarketer->emissionFactorFor(2024, $this->groupId())?->co2eq());
     }
 
     public function testEmissionFactorForReturnsNullWhenMissing(): void
     {
         $electricityMarketer = $this->electricityMarketer();
 
-        $this->assertNull($electricityMarketer->emissionFactorFor(1999));
+        $this->assertNull($electricityMarketer->emissionFactorFor(1999, $this->groupId()));
     }
 
     public function testSetEmissionFactorUsesKWhUnit(): void
@@ -47,7 +48,7 @@ class ElectricityMarketerTest extends TestCase
 
         $electricityMarketer->setEmissionFactor($this->emissionFactor(2024, '1.5'));
 
-        $factor = $electricityMarketer->emissionFactorFor(2024);
+        $factor = $electricityMarketer->emissionFactorFor(2024, $this->groupId());
 
         $this->assertNotNull($factor);
         $this->assertSame(Unit::KWh, $factor->unit());
@@ -65,9 +66,9 @@ class ElectricityMarketerTest extends TestCase
         ]);
 
         $this->assertCount(2, $electricityMarketer->emissionFactors());
-        $this->assertNull($electricityMarketer->emissionFactorFor(2023));
-        $this->assertSame('2.5', $electricityMarketer->emissionFactorFor(2024)?->co2eq());
-        $this->assertSame('3.0', $electricityMarketer->emissionFactorFor(2025)?->co2eq());
+        $this->assertNull($electricityMarketer->emissionFactorFor(2023, $this->groupId()));
+        $this->assertSame('2.5', $electricityMarketer->emissionFactorFor(2024, $this->groupId())?->co2eq());
+        $this->assertSame('3.0', $electricityMarketer->emissionFactorFor(2025, $this->groupId())?->co2eq());
     }
 
     public function testSyncEmissionFactorsThrowsOnDuplicateYear(): void
@@ -87,7 +88,7 @@ class ElectricityMarketerTest extends TestCase
         $electricityMarketer = $this->electricityMarketer();
         $electricityMarketer->setEmissionFactor($this->emissionFactor(2024, '1.5'));
 
-        $electricityMarketer->removeEmissionFactor(2024);
+        $electricityMarketer->removeEmissionFactor(2024, $this->groupId());
 
         $this->assertCount(0, $electricityMarketer->emissionFactors());
     }
@@ -108,9 +109,16 @@ class ElectricityMarketerTest extends TestCase
             ch4: '0.2',
             n2o: '0.3',
             year: $year,
-            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            emissionFactorGroupId: $this->groupId(),
             unit: Unit::KWh,
             source: 'test-source',
         );
+    }
+
+    private ?EmissionFactorGroupId $groupId = null;
+
+    private function groupId(): EmissionFactorGroupId
+    {
+        return $this->groupId ??= EmissionFactorGroupMother::default()->id();
     }
 }

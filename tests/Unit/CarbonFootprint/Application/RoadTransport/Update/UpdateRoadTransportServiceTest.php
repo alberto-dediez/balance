@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\RoadTransport\RoadTransportAuthorizer;
 use App\CarbonFootprint\Application\RoadTransport\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\RoadTransport\Update\UpdateRoadTransportRequest;
 use App\CarbonFootprint\Application\RoadTransport\Update\UpdateRoadTransportService;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportTranslated;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportUpdated;
@@ -138,7 +139,7 @@ class UpdateRoadTransportServiceTest extends TestCase
         $this->assertNotNull($roadTransportPersisted);
         $this->assertCount(1, $roadTransportPersisted->emissionFactors());
 
-        $persistedFactor = $roadTransportPersisted->emissionFactorFor(2024);
+        $persistedFactor = $roadTransportPersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
 
         $this->assertNotNull($persistedFactor);
         $this->assertSame('1.5', $persistedFactor->co2eq());

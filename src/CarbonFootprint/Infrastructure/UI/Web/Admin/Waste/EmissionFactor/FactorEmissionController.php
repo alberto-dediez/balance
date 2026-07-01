@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\Waste\EmissionFactor\List\ListEmissionFactor
 use App\CarbonFootprint\Application\Waste\EmissionFactor\List\ListEmissionFactorsService;
 use App\CarbonFootprint\Application\Waste\EmissionFactor\Update\UpdateEmissionFactorsRequest;
 use App\CarbonFootprint\Application\Waste\EmissionFactor\Update\UpdateEmissionFactorsService;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\BulkWasteEmissionFactorsType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\CreateWasteEmissionFactorsYearType;
 use App\Security\Application\UnauthorizedActionException;
@@ -43,7 +44,7 @@ class FactorEmissionController extends AbstractController
                 $rows[] = EmissionFactorRow::fromWaste(
                     $waste->id(),
                     $waste->name(),
-                    $waste->emissionFactorFor($year),
+                    $waste->emissionFactorFor($year, EmissionFactorGroupId::default()),
                 );
             }
 

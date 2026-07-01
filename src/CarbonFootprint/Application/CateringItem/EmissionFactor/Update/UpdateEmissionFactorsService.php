@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\CateringItem\EmissionFactor\Update;
 
 use App\CarbonFootprint\Application\CateringItem\CateringItemAuthorizer;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -35,7 +36,7 @@ class UpdateEmissionFactorsService implements CommandHandler
             $this->authorizer->denyUnlessCanDoThat($cateringItem, SecurityAction::Edit, $user);
 
             if ($row->isEmpty()) {
-                $cateringItem->removeEmissionFactor($request->year);
+                $cateringItem->removeEmissionFactor($request->year, EmissionFactorGroupId::default());
             } else {
                 $cateringItem->setEmissionFactor(
                     $row->newEmissionFactor($request->year, $cateringItem->unit()),

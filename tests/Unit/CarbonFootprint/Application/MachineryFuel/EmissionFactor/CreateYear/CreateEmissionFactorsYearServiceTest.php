@@ -9,10 +9,10 @@ use App\CarbonFootprint\Application\MachineryFuel\EmissionFactor\CreateYear\Crea
 use App\CarbonFootprint\Application\MachineryFuel\EmissionFactor\CreateYear\EmissionFactorYearAlreadyExistsException;
 use App\CarbonFootprint\Application\MachineryFuel\MachineryFuelAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -30,7 +30,7 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $repository = MachineryFuelRepositoryMother::inMemory();
 
         $machineryFuel = MachineryFuelMother::random();
-        $machineryFuel->setEmissionFactor(new EmissionFactor('1.5', '1.0', '0.2', '0.3', 2024, emissionFactorGroupId: EmissionFactorGroupMother::default()->id(), source: 'IPCC'));
+        $machineryFuel->setEmissionFactor(new EmissionFactor('1.5', '1.0', '0.2', '0.3', 2024, emissionFactorGroupId: EmissionFactorGroupId::default(), source: 'IPCC'));
         $repository->add($machineryFuel);
 
         $sut = $this->createSUT($repository);
@@ -44,12 +44,12 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $persisted = $repository->find($machineryFuel->id());
         $this->assertNotNull($persisted);
 
-        $copied = $persisted->emissionFactorFor(2025);
+        $copied = $persisted->emissionFactorFor(2025, EmissionFactorGroupId::default());
         $this->assertNotNull($copied);
         $this->assertSame('1.5', $copied->co2eq());
         $this->assertSame('IPCC', $copied->source());
 
-        $this->assertNotNull($persisted->emissionFactorFor(2024));
+        $this->assertNotNull($persisted->emissionFactorFor(2024, EmissionFactorGroupId::default()));
     }
 
     public function testThrowsWhenTargetYearAlreadyExists(): void
@@ -57,8 +57,8 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $repository = MachineryFuelRepositoryMother::inMemory();
 
         $machineryFuel = MachineryFuelMother::random();
-        $machineryFuel->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
-        $machineryFuel->setEmissionFactor(new EmissionFactor('2', '2', '2', '2', 2025, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
+        $machineryFuel->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024, emissionFactorGroupId: EmissionFactorGroupId::default()));
+        $machineryFuel->setEmissionFactor(new EmissionFactor('2', '2', '2', '2', 2025, emissionFactorGroupId: EmissionFactorGroupId::default()));
         $repository->add($machineryFuel);
 
         $sut = $this->createSUT($repository);

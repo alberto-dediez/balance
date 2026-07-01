@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\Activity;
 
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Material\MaterialId;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 
@@ -19,7 +20,7 @@ final class MaterialEmissionFactorSelector
         if (null === $material) {
             throw new \InvalidArgumentException(sprintf('Material "%s" not found.', $id));
         }
-        $factor = $material->emissionFactorFor($year);
+        $factor = $material->emissionFactorFor($year, EmissionFactorGroupId::default());
         if (null === $factor) {
             throw new \InvalidArgumentException(sprintf('No emission factor for material "%s" in year %d.', $id, $year));
         }

@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\GdOFactor\EmissionFactor\List\ListEmissionFa
 use App\CarbonFootprint\Application\GdOFactor\EmissionFactor\List\ListEmissionFactorsService;
 use App\CarbonFootprint\Application\GdOFactor\EmissionFactor\Update\UpdateEmissionFactorsRequest;
 use App\CarbonFootprint\Application\GdOFactor\EmissionFactor\Update\UpdateEmissionFactorsService;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\BulkGdOFactorEmissionFactorsType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\CreateGdOFactorEmissionFactorsYearType;
 use App\Security\Application\UnauthorizedActionException;
@@ -43,7 +44,7 @@ class FactorEmissionController extends AbstractController
                 $rows[] = EmissionFactorRow::fromGdOFactor(
                     $gdOFactor->id(),
                     $gdOFactor->name(),
-                    $gdOFactor->emissionFactorFor($year),
+                    $gdOFactor->emissionFactorFor($year, EmissionFactorGroupId::default()),
                 );
             }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\Material\EmissionFactor\CreateYear;
 
 use App\CarbonFootprint\Application\Material\MaterialAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Material\Material;
 use App\CarbonFootprint\Domain\Model\Material\MaterialFilter;
 use App\CarbonFootprint\Domain\Model\Material\MaterialId;
@@ -44,13 +45,13 @@ class CreateEmissionFactorsYearService implements CommandHandler
         $materials = $this->materialRepository->findByFilter(new MaterialFilter(limit: 0));
 
         foreach ($materials as $material) {
-            if ($material->emissionFactors()->hasForYear($targetYear)) {
+            if ($material->emissionFactors()->hasForYearAndGroup($targetYear, EmissionFactorGroupId::default())) {
                 throw EmissionFactorYearAlreadyExistsException::forYear($targetYear);
             }
         }
 
         foreach ($materials as $material) {
-            $sourceFactor = $material->emissionFactorFor($request->sourceYear);
+            $sourceFactor = $material->emissionFactorFor($request->sourceYear, EmissionFactorGroupId::default());
 
             if (null === $sourceFactor) {
                 continue;

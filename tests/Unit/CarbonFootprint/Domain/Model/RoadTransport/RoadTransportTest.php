@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransport;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportId;
 use App\CarbonFootprint\Domain\Model\RoadTransport\Vehicle;
@@ -59,7 +60,7 @@ class RoadTransportTest extends TestCase
         $roadTransport->setEmissionFactor($this->emissionFactor(2024, '1.5'));
 
         $this->assertCount(1, $roadTransport->emissionFactors());
-        $this->assertSame('1.5', $roadTransport->emissionFactorFor(2024)?->co2eq());
+        $this->assertSame('1.5', $roadTransport->emissionFactorFor(2024, $this->groupId())?->co2eq());
     }
 
     public function testSetEmissionFactorForSameYearReplacesIt(): void
@@ -70,14 +71,14 @@ class RoadTransportTest extends TestCase
         $roadTransport->setEmissionFactor($this->emissionFactor(2024, '2.0'));
 
         $this->assertCount(1, $roadTransport->emissionFactors());
-        $this->assertSame('2.0', $roadTransport->emissionFactorFor(2024)?->co2eq());
+        $this->assertSame('2.0', $roadTransport->emissionFactorFor(2024, $this->groupId())?->co2eq());
     }
 
     public function testEmissionFactorForReturnsNullWhenMissing(): void
     {
         $roadTransport = $this->roadTransport();
 
-        $this->assertNull($roadTransport->emissionFactorFor(1999));
+        $this->assertNull($roadTransport->emissionFactorFor(1999, $this->groupId()));
     }
 
     public function testSyncEmissionFactorsAddsUpdatesAndRemoves(): void
@@ -92,9 +93,9 @@ class RoadTransportTest extends TestCase
         ]);
 
         $this->assertCount(2, $roadTransport->emissionFactors());
-        $this->assertNull($roadTransport->emissionFactorFor(2023));
-        $this->assertSame('2.5', $roadTransport->emissionFactorFor(2024)?->co2eq());
-        $this->assertSame('3.0', $roadTransport->emissionFactorFor(2025)?->co2eq());
+        $this->assertNull($roadTransport->emissionFactorFor(2023, $this->groupId()));
+        $this->assertSame('2.5', $roadTransport->emissionFactorFor(2024, $this->groupId())?->co2eq());
+        $this->assertSame('3.0', $roadTransport->emissionFactorFor(2025, $this->groupId())?->co2eq());
     }
 
     public function testSyncEmissionFactorsThrowsOnDuplicateYear(): void
@@ -115,12 +116,12 @@ class RoadTransportTest extends TestCase
         $roadTransport->setEmissionFactor($this->emissionFactor(2023, '1.0'));
         $roadTransport->setEmissionFactor($this->emissionFactor(2024, '2.0'));
 
-        $this->assertSame(Unit::Kilogram, $roadTransport->emissionFactorFor(2023)?->unit());
+        $this->assertSame(Unit::Kilogram, $roadTransport->emissionFactorFor(2023, $this->groupId())?->unit());
 
         $roadTransport->update('road-transport-name', Unit::Piece, Vehicle::PassengerCars);
 
-        $factor2023 = $roadTransport->emissionFactorFor(2023);
-        $factor2024 = $roadTransport->emissionFactorFor(2024);
+        $factor2023 = $roadTransport->emissionFactorFor(2023, $this->groupId());
+        $factor2024 = $roadTransport->emissionFactorFor(2024, $this->groupId());
 
         $this->assertNotNull($factor2023);
         $this->assertNotNull($factor2024);
@@ -148,7 +149,7 @@ class RoadTransportTest extends TestCase
 
         $roadTransport->update('road-transport-name', Unit::Kilogram, Vehicle::Trucks);
 
-        $factor = $roadTransport->emissionFactorFor(2024);
+        $factor = $roadTransport->emissionFactorFor(2024, $this->groupId());
 
         $this->assertNotNull($factor);
         $this->assertSame(Unit::Kilogram, $factor->unit());
@@ -159,7 +160,7 @@ class RoadTransportTest extends TestCase
         $roadTransport = $this->roadTransport();
         $roadTransport->setEmissionFactor($this->emissionFactor(2024, '1.5'));
 
-        $roadTransport->removeEmissionFactor(2024);
+        $roadTransport->removeEmissionFactor(2024, $this->groupId());
 
         $this->assertCount(0, $roadTransport->emissionFactors());
     }
@@ -182,9 +183,16 @@ class RoadTransportTest extends TestCase
             ch4: '0.2',
             n2o: '0.3',
             year: $year,
-            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            emissionFactorGroupId: $this->groupId(),
             unit: Unit::Kilogram,
             source: 'test-source',
         );
+    }
+
+    private ?EmissionFactorGroupId $groupId = null;
+
+    private function groupId(): EmissionFactorGroupId
+    {
+        return $this->groupId ??= EmissionFactorGroupMother::default()->id();
     }
 }

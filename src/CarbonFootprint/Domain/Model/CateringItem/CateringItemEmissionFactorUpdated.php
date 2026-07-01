@@ -63,6 +63,7 @@ final class CateringItemEmissionFactorUpdated extends DomainEvent
             'recycledYear' => $this->recycledFactor->year(),
             'recycledUnit' => $this->recycledFactor->unit()->value,
             'recycledSource' => $this->recycledFactor->source(),
+            'emissionFactorGroupId' => (string) $this->newFactor->emissionFactorGroupId(),
         ];
     }
 
@@ -74,7 +75,7 @@ final class CateringItemEmissionFactorUpdated extends DomainEvent
         $unit = Unit::from($payload['unit']);
 
         $newFactor = new EmissionFactor(
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: new EmissionFactorGroupId($payload['emissionFactorGroupId']),
             co2eq: $payload['co2eq'],
             co2: $payload['co2'],
             ch4: $payload['ch4'],
@@ -86,7 +87,7 @@ final class CateringItemEmissionFactorUpdated extends DomainEvent
 
         $recycledFactor = isset($payload['recycledCo2eq'])
             ? new EmissionFactor(
-                emissionFactorGroupId: EmissionFactorGroupId::default(),
+                emissionFactorGroupId: new EmissionFactorGroupId($payload['emissionFactorGroupId']),
                 co2eq: $payload['recycledCo2eq'],
                 co2: $payload['recycledCo2'],
                 ch4: $payload['recycledCh4'],

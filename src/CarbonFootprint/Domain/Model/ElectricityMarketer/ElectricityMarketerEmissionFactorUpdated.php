@@ -50,6 +50,7 @@ final class ElectricityMarketerEmissionFactorUpdated extends DomainEvent
             'year' => $this->emissionFactor->year(),
             'unit' => $this->emissionFactor->unit()->value,
             'source' => $this->emissionFactor->source(),
+            'emissionFactorGroupId' => (string) $this->emissionFactor->emissionFactorGroupId(),
         ];
     }
 
@@ -63,7 +64,7 @@ final class ElectricityMarketerEmissionFactorUpdated extends DomainEvent
         return new ElectricityMarketerEmissionFactorUpdated(
             electricityMarketerId: new ElectricityMarketerId($payload['electricityMarketerId']),
             emissionFactor: new EmissionFactor(
-                emissionFactorGroupId: EmissionFactorGroupId::default(),
+                emissionFactorGroupId: new EmissionFactorGroupId($payload['emissionFactorGroupId']),
                 co2eq: $payload['co2eq'],
                 co2: $payload['co2'],
                 ch4: $payload['ch4'],

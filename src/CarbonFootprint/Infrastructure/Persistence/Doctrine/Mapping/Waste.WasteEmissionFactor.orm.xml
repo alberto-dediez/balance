@@ -7,7 +7,7 @@
 
     <entity name="App\CarbonFootprint\Domain\Model\Waste\WasteEmissionFactor" table="waste_emission_factor">
         <unique-constraints>
-            <unique-constraint columns="waste_id,year" name="uq_waste_emission_factor_year"/>
+            <unique-constraint columns="waste_id,year,emission_factor_group_id" name="uq_waste_emission_factor_year"/>
         </unique-constraints>
 
         <id name="id" type="waste_emission_factor_id" column="id">

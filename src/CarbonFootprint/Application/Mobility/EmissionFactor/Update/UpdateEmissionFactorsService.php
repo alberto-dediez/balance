@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\Mobility\EmissionFactor\Update;
 
 use App\CarbonFootprint\Application\Mobility\MobilityAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
@@ -35,7 +36,7 @@ class UpdateEmissionFactorsService implements CommandHandler
             $this->authorizer->denyUnlessCanDoThat($mobility, SecurityAction::Edit, $user);
 
             if ($row->isEmpty()) {
-                $mobility->removeEmissionFactor($request->year);
+                $mobility->removeEmissionFactor($request->year, EmissionFactorGroupId::default());
             } else {
                 $mobility->setEmissionFactor($row->toEmissionFactor($request->year, $mobility->unit()));
             }

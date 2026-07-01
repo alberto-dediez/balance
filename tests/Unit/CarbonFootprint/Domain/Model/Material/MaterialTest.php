@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\Material;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Material\Material;
 use App\CarbonFootprint\Domain\Model\Material\MaterialCategory;
 use App\CarbonFootprint\Domain\Model\Material\MaterialId;
@@ -93,7 +94,7 @@ class MaterialTest extends TestCase
         $material->setEmissionFactor($this->emissionFactor(2024, '1.5'), $this->emissionFactor(2024, '1.5'));
 
         $this->assertCount(1, $material->emissionFactors());
-        $this->assertSame('1.5', $material->emissionFactorFor(2024)?->newFactor()->co2eq());
+        $this->assertSame('1.5', $material->emissionFactorFor(2024, $this->groupId())?->newFactor()->co2eq());
     }
 
     public function testSetEmissionFactorForSameYearReplacesIt(): void
@@ -104,14 +105,14 @@ class MaterialTest extends TestCase
         $material->setEmissionFactor($this->emissionFactor(2024, '2.0'), $this->emissionFactor(2024, '2.0'));
 
         $this->assertCount(1, $material->emissionFactors());
-        $this->assertSame('2.0', $material->emissionFactorFor(2024)?->newFactor()->co2eq());
+        $this->assertSame('2.0', $material->emissionFactorFor(2024, $this->groupId())?->newFactor()->co2eq());
     }
 
     public function testEmissionFactorForReturnsNullWhenMissing(): void
     {
         $material = $this->material();
 
-        $this->assertNull($material->emissionFactorFor(1999));
+        $this->assertNull($material->emissionFactorFor(1999, $this->groupId()));
     }
 
     public function testSyncEmissionFactorsAddsUpdatesAndRemoves(): void
@@ -126,9 +127,9 @@ class MaterialTest extends TestCase
         ]);
 
         $this->assertCount(2, $material->emissionFactors());
-        $this->assertNull($material->emissionFactorFor(2023));
-        $this->assertSame('2.5', $material->emissionFactorFor(2024)?->newFactor()->co2eq());
-        $this->assertSame('3.0', $material->emissionFactorFor(2025)?->newFactor()->co2eq());
+        $this->assertNull($material->emissionFactorFor(2023, $this->groupId()));
+        $this->assertSame('2.5', $material->emissionFactorFor(2024, $this->groupId())?->newFactor()->co2eq());
+        $this->assertSame('3.0', $material->emissionFactorFor(2025, $this->groupId())?->newFactor()->co2eq());
     }
 
     public function testSyncEmissionFactorsThrowsOnDuplicateYear(): void
@@ -149,12 +150,12 @@ class MaterialTest extends TestCase
         $material->setEmissionFactor($this->emissionFactor(2023, '1.0'), $this->emissionFactor(2023, '1.0'));
         $material->setEmissionFactor($this->emissionFactor(2024, '2.0'), $this->emissionFactor(2024, '2.0'));
 
-        $this->assertSame(Unit::Kilogram, $material->emissionFactorFor(2023)?->newFactor()->unit());
+        $this->assertSame(Unit::Kilogram, $material->emissionFactorFor(2023, $this->groupId())?->newFactor()->unit());
 
         $material->update('material-name', MaterialCategory::Metal, Unit::Piece);
 
-        $factor2023 = $material->emissionFactorFor(2023);
-        $factor2024 = $material->emissionFactorFor(2024);
+        $factor2023 = $material->emissionFactorFor(2023, $this->groupId());
+        $factor2024 = $material->emissionFactorFor(2024, $this->groupId());
 
         $this->assertNotNull($factor2023);
         $this->assertNotNull($factor2024);
@@ -169,7 +170,7 @@ class MaterialTest extends TestCase
         $material = $this->material();
         $material->setEmissionFactor($this->emissionFactor(2024, '1.5'), $this->emissionFactor(2024, '1.5'));
 
-        $material->removeEmissionFactor(2024);
+        $material->removeEmissionFactor(2024, $this->groupId());
 
         $this->assertCount(0, $material->emissionFactors());
     }
@@ -192,9 +193,16 @@ class MaterialTest extends TestCase
             ch4: '0.2',
             n2o: '0.3',
             year: $year,
-            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            emissionFactorGroupId: $this->groupId(),
             unit: Unit::Kilogram,
             source: 'test-source',
         );
+    }
+
+    private ?EmissionFactorGroupId $groupId = null;
+
+    private function groupId(): EmissionFactorGroupId
+    {
+        return $this->groupId ??= EmissionFactorGroupMother::default()->id();
     }
 }

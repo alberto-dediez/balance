@@ -10,11 +10,11 @@ use App\CarbonFootprint\Application\CateringItem\EmissionFactor\Update\UpdateEmi
 use App\CarbonFootprint\Application\CateringItem\EmissionFactor\Update\UpdateEmissionFactorsService;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepositoryMother;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 
@@ -54,7 +54,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $persisted = $repository->find($cateringItem->id());
 
         $this->assertNotNull($persisted);
-        $factor = $persisted->emissionFactorFor(2025);
+        $factor = $persisted->emissionFactorFor(2025, EmissionFactorGroupId::default());
         $this->assertNotNull($factor);
         $this->assertSame('1.5', $factor->newFactor()->co2eq());
     }
@@ -64,7 +64,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $repository = CateringItemRepositoryMother::inMemory();
 
         $cateringItem = CateringItemMother::random();
-        $ef = new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupMother::default()->id());
+        $ef = new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupId::default());
         $cateringItem->setEmissionFactor($ef, $ef);
         $repository->add($cateringItem);
 
@@ -85,7 +85,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $persisted = $repository->find($cateringItem->id());
 
         $this->assertNotNull($persisted);
-        $this->assertNull($persisted->emissionFactorFor(2025));
+        $this->assertNull($persisted->emissionFactorFor(2025, EmissionFactorGroupId::default()));
     }
 
     private function createSUT(CateringItemRepository $repository): UpdateEmissionFactorsService

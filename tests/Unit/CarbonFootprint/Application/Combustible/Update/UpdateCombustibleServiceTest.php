@@ -11,6 +11,7 @@ use App\CarbonFootprint\Application\Combustible\Update\UpdateCombustibleService;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleTranslated;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleUpdated;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -133,7 +134,7 @@ class UpdateCombustibleServiceTest extends TestCase
         $this->assertNotNull($combustiblePersisted);
         $this->assertCount(1, $combustiblePersisted->emissionFactors());
 
-        $persistedFactor = $combustiblePersisted->emissionFactorFor(2024);
+        $persistedFactor = $combustiblePersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
 
         $this->assertNotNull($persistedFactor);
         $this->assertSame('1.5', $persistedFactor->co2eq());

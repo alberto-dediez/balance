@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\Waste;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\Waste;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
@@ -73,7 +74,7 @@ class WasteTest extends TestCase
         $waste->setEmissionFactor($this->emissionFactor(2024, '1.5'));
 
         $this->assertCount(1, $waste->emissionFactors());
-        $this->assertSame('1.5', $waste->emissionFactorFor(2024)?->co2eq());
+        $this->assertSame('1.5', $waste->emissionFactorFor(2024, $this->groupId())?->co2eq());
     }
 
     public function testSetEmissionFactorForSameYearReplacesIt(): void
@@ -84,14 +85,14 @@ class WasteTest extends TestCase
         $waste->setEmissionFactor($this->emissionFactor(2024, '2.0'));
 
         $this->assertCount(1, $waste->emissionFactors());
-        $this->assertSame('2.0', $waste->emissionFactorFor(2024)?->co2eq());
+        $this->assertSame('2.0', $waste->emissionFactorFor(2024, $this->groupId())?->co2eq());
     }
 
     public function testEmissionFactorForReturnsNullWhenMissing(): void
     {
         $waste = $this->waste();
 
-        $this->assertNull($waste->emissionFactorFor(1999));
+        $this->assertNull($waste->emissionFactorFor(1999, $this->groupId()));
     }
 
     public function testSyncEmissionFactorsAddsUpdatesAndRemoves(): void
@@ -106,9 +107,9 @@ class WasteTest extends TestCase
         ]);
 
         $this->assertCount(2, $waste->emissionFactors());
-        $this->assertNull($waste->emissionFactorFor(2023));
-        $this->assertSame('2.5', $waste->emissionFactorFor(2024)?->co2eq());
-        $this->assertSame('3.0', $waste->emissionFactorFor(2025)?->co2eq());
+        $this->assertNull($waste->emissionFactorFor(2023, $this->groupId()));
+        $this->assertSame('2.5', $waste->emissionFactorFor(2024, $this->groupId())?->co2eq());
+        $this->assertSame('3.0', $waste->emissionFactorFor(2025, $this->groupId())?->co2eq());
     }
 
     public function testSyncEmissionFactorsThrowsOnDuplicateYear(): void
@@ -129,12 +130,12 @@ class WasteTest extends TestCase
         $waste->setEmissionFactor($this->emissionFactor(2023, '1.0'));
         $waste->setEmissionFactor($this->emissionFactor(2024, '2.0'));
 
-        $this->assertSame(Unit::Kilogram, $waste->emissionFactorFor(2023)?->unit());
+        $this->assertSame(Unit::Kilogram, $waste->emissionFactorFor(2023, $this->groupId())?->unit());
 
         $waste->update('waste-name', Unit::Piece, 1.0);
 
-        $factor2023 = $waste->emissionFactorFor(2023);
-        $factor2024 = $waste->emissionFactorFor(2024);
+        $factor2023 = $waste->emissionFactorFor(2023, $this->groupId());
+        $factor2024 = $waste->emissionFactorFor(2024, $this->groupId());
 
         $this->assertNotNull($factor2023);
         $this->assertNotNull($factor2024);
@@ -148,7 +149,7 @@ class WasteTest extends TestCase
         $waste = $this->waste();
         $waste->setEmissionFactor($this->emissionFactor(2024, '1.5'));
 
-        $waste->removeEmissionFactor(2024);
+        $waste->removeEmissionFactor(2024, $this->groupId());
 
         $this->assertCount(0, $waste->emissionFactors());
     }
@@ -200,9 +201,16 @@ class WasteTest extends TestCase
             ch4: '0.2',
             n2o: '0.3',
             year: $year,
-            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            emissionFactorGroupId: $this->groupId(),
             unit: Unit::Kilogram,
             source: 'test-source',
         );
+    }
+
+    private ?EmissionFactorGroupId $groupId = null;
+
+    private function groupId(): EmissionFactorGroupId
+    {
+        return $this->groupId ??= EmissionFactorGroupMother::default()->id();
     }
 }

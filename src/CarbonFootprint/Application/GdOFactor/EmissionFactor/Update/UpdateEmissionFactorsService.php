@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\GdOFactor\EmissionFactor\Update;
 
 use App\CarbonFootprint\Application\GdOFactor\GdOFactorAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Application\Action as SecurityAction;
@@ -36,7 +37,7 @@ class UpdateEmissionFactorsService implements CommandHandler
             $this->authorizer->denyUnlessCanDoThat($gdOFactor, SecurityAction::Edit, $user);
 
             if ($row->isEmpty()) {
-                $gdOFactor->removeEmissionFactor($request->year);
+                $gdOFactor->removeEmissionFactor($request->year, EmissionFactorGroupId::default());
             } else {
                 $gdOFactor->setEmissionFactor($row->toEmissionFactor($request->year, Unit::KWh));
             }

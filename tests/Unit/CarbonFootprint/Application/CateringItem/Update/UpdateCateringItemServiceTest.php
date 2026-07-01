@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemCategory;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemTranslated;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemUpdated;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -138,7 +139,7 @@ class UpdateCateringItemServiceTest extends TestCase
         $this->assertNotNull($cateringItemPersisted);
         $this->assertCount(1, $cateringItemPersisted->emissionFactors());
 
-        $persistedFactor = $cateringItemPersisted->emissionFactorFor(2024);
+        $persistedFactor = $cateringItemPersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
 
         $this->assertNotNull($persistedFactor);
         $this->assertSame('1.5', $persistedFactor->newFactor()->co2eq());

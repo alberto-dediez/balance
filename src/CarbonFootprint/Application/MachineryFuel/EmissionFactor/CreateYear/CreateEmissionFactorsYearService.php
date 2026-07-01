@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\MachineryFuel\EmissionFactor\CreateYear;
 
 use App\CarbonFootprint\Application\MachineryFuel\MachineryFuelAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuel;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelFilter;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelId;
@@ -44,13 +45,13 @@ class CreateEmissionFactorsYearService implements CommandHandler
         $machineryFuels = $this->machineryFuelRepository->findByFilter(new MachineryFuelFilter(limit: 0));
 
         foreach ($machineryFuels as $machineryFuel) {
-            if ($machineryFuel->emissionFactors()->hasForYear($targetYear)) {
+            if ($machineryFuel->emissionFactors()->hasForYearAndGroup($targetYear, EmissionFactorGroupId::default())) {
                 throw EmissionFactorYearAlreadyExistsException::forYear($targetYear);
             }
         }
 
         foreach ($machineryFuels as $machineryFuel) {
-            $sourceFactor = $machineryFuel->emissionFactorFor($request->sourceYear);
+            $sourceFactor = $machineryFuel->emissionFactorFor($request->sourceYear, EmissionFactorGroupId::default());
 
             if (null === $sourceFactor) {
                 continue;

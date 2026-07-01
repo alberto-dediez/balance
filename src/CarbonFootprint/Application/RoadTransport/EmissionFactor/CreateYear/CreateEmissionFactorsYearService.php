@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\RoadTransport\EmissionFactor\CreateYear;
 
 use App\CarbonFootprint\Application\RoadTransport\RoadTransportAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransport;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportFilter;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportId;
@@ -44,13 +45,13 @@ class CreateEmissionFactorsYearService implements CommandHandler
         $roadTransports = $this->roadTransportRepository->findByFilter(new RoadTransportFilter(limit: 0));
 
         foreach ($roadTransports as $roadTransport) {
-            if ($roadTransport->emissionFactors()->hasForYear($targetYear)) {
+            if ($roadTransport->emissionFactors()->hasForYearAndGroup($targetYear, EmissionFactorGroupId::default())) {
                 throw EmissionFactorYearAlreadyExistsException::forYear($targetYear);
             }
         }
 
         foreach ($roadTransports as $roadTransport) {
-            $sourceFactor = $roadTransport->emissionFactorFor($request->sourceYear);
+            $sourceFactor = $roadTransport->emissionFactorFor($request->sourceYear, EmissionFactorGroupId::default());
 
             if (null === $sourceFactor) {
                 continue;

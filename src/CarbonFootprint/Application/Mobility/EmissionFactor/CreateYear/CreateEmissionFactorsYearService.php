@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\Mobility\EmissionFactor\CreateYear;
 
 use App\CarbonFootprint\Application\Mobility\MobilityAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityFilter;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
@@ -44,13 +45,13 @@ class CreateEmissionFactorsYearService implements CommandHandler
         $mobilities = $this->mobilityRepository->findByFilter(new MobilityFilter(limit: 0));
 
         foreach ($mobilities as $mobility) {
-            if ($mobility->emissionFactors()->hasForYear($targetYear)) {
+            if ($mobility->emissionFactors()->hasForYearAndGroup($targetYear, EmissionFactorGroupId::default())) {
                 throw EmissionFactorYearAlreadyExistsException::forYear($targetYear);
             }
         }
 
         foreach ($mobilities as $mobility) {
-            $sourceFactor = $mobility->emissionFactorFor($request->sourceYear);
+            $sourceFactor = $mobility->emissionFactorFor($request->sourceYear, EmissionFactorGroupId::default());
 
             if (null === $sourceFactor) {
                 continue;

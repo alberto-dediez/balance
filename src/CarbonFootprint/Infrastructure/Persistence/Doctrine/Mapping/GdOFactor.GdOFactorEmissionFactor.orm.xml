@@ -7,7 +7,7 @@
 
     <entity name="App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorEmissionFactor" table="gdo_factor_emission_factor">
         <unique-constraints>
-            <unique-constraint columns="gdo_factor_id,year" name="uq_gdo_factor_emission_factor_year"/>
+            <unique-constraint columns="gdo_factor_id,year,emission_factor_group_id" name="uq_gdo_factor_emission_factor_year"/>
         </unique-constraints>
 
         <id name="id" type="gdo_factor_emission_factor_id" column="id">

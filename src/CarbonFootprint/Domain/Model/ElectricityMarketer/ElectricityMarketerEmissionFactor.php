@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\ElectricityMarketer;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 
 class ElectricityMarketerEmissionFactor
 {
@@ -29,6 +30,11 @@ class ElectricityMarketerEmissionFactor
     public function emissionFactor(): EmissionFactor
     {
         return $this->emissionFactor;
+    }
+
+    public function emissionFactorGroupId(): EmissionFactorGroupId
+    {
+        return $this->emissionFactor->emissionFactorGroupId();
     }
 
     public function year(): int

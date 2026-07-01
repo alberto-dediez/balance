@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketer;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerFilter;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -44,13 +45,13 @@ class CreateEmissionFactorsYearService implements CommandHandler
         $electricityMarketers = $this->electricityMarketerRepository->findByFilter(new ElectricityMarketerFilter(limit: 0));
 
         foreach ($electricityMarketers as $electricityMarketer) {
-            if ($electricityMarketer->emissionFactors()->hasForYear($targetYear)) {
+            if ($electricityMarketer->emissionFactors()->hasForYearAndGroup($targetYear, EmissionFactorGroupId::default())) {
                 throw EmissionFactorYearAlreadyExistsException::forYear($targetYear);
             }
         }
 
         foreach ($electricityMarketers as $electricityMarketer) {
-            $sourceFactor = $electricityMarketer->emissionFactorFor($request->sourceYear);
+            $sourceFactor = $electricityMarketer->emissionFactorFor($request->sourceYear, EmissionFactorGroupId::default());
 
             if (null === $sourceFactor) {
                 continue;

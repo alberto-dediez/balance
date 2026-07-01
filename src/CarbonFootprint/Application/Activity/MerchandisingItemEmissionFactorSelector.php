@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\Activity;
 
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemId;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
 
@@ -19,7 +20,7 @@ final class MerchandisingItemEmissionFactorSelector
         if (null === $merchandisingItem) {
             throw new \InvalidArgumentException(sprintf('MerchandisingItem "%s" not found.', $id));
         }
-        $factor = $merchandisingItem->emissionFactorFor($year);
+        $factor = $merchandisingItem->emissionFactorFor($year, EmissionFactorGroupId::default());
         if (null === $factor) {
             throw new \InvalidArgumentException(sprintf('No emission factor for merchandising item "%s" in year %d.', $id, $year));
         }

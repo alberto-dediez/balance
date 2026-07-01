@@ -9,10 +9,10 @@ use App\CarbonFootprint\Application\Mobility\EmissionFactor\Update\UpdateEmissio
 use App\CarbonFootprint\Application\Mobility\EmissionFactor\Update\UpdateEmissionFactorsService;
 use App\CarbonFootprint\Application\Mobility\MobilityAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -54,7 +54,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $persisted = $repository->find($mobility->id());
 
         $this->assertNotNull($persisted);
-        $factor = $persisted->emissionFactorFor(2025);
+        $factor = $persisted->emissionFactorFor(2025, EmissionFactorGroupId::default());
         $this->assertNotNull($factor);
         $this->assertSame('1.5', $factor->co2eq());
     }
@@ -64,7 +64,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $repository = MobilityRepositoryMother::inMemory();
 
         $mobility = MobilityMother::random();
-        $mobility->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
+        $mobility->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupId::default()));
         $repository->add($mobility);
 
         $sut = $this->createSUT($repository);
@@ -84,7 +84,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $persisted = $repository->find($mobility->id());
 
         $this->assertNotNull($persisted);
-        $this->assertNull($persisted->emissionFactorFor(2025));
+        $this->assertNull($persisted->emissionFactorFor(2025, EmissionFactorGroupId::default()));
     }
 
     private function createSUT(MobilityRepository $repository): UpdateEmissionFactorsService

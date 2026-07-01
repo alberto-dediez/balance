@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\OvernightStay;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -90,9 +91,9 @@ class OvernightStay implements Translatable, \Stringable
         return new OvernightStayEmissionFactors($this->emissionFactors);
     }
 
-    public function emissionFactorFor(int $year): ?EmissionFactor
+    public function emissionFactorFor(int $year, EmissionFactorGroupId $groupId): ?EmissionFactor
     {
-        return $this->emissionFactors()->forYear($year)?->emissionFactor();
+        return $this->emissionFactors()->forYearAndGroup($year, $groupId)?->emissionFactor();
     }
 
     public function register(
@@ -149,7 +150,7 @@ class OvernightStay implements Translatable, \Stringable
 
     public function setEmissionFactor(EmissionFactor $emissionFactor): void
     {
-        $current = $this->emissionFactors()->forYear($emissionFactor->year());
+        $current = $this->emissionFactors()->forYearAndGroup($emissionFactor->year(), $emissionFactor->emissionFactorGroupId());
 
         if (null === $current) {
             $this->recordApplyAndPublish(
@@ -175,9 +176,9 @@ class OvernightStay implements Translatable, \Stringable
         );
     }
 
-    public function removeEmissionFactor(int $year): void
+    public function removeEmissionFactor(int $year, EmissionFactorGroupId $groupId): void
     {
-        if (!$this->emissionFactors()->hasForYear($year)) {
+        if (!$this->emissionFactors()->hasForYearAndGroup($year, $groupId)) {
             return;
         }
 
@@ -185,6 +186,7 @@ class OvernightStay implements Translatable, \Stringable
             new OvernightStayEmissionFactorRemoved(
                 overnightStayId: $this->id(),
                 year: $year,
+                emissionFactorGroupId: $groupId,
             ),
         );
     }
@@ -194,20 +196,24 @@ class OvernightStay implements Translatable, \Stringable
      */
     public function syncEmissionFactors(array $emissionFactors): void
     {
-        $newYears = [];
+        $newKeys = [];
 
         foreach ($emissionFactors as $emissionFactor) {
-            if (in_array($emissionFactor->year(), $newYears, true)) {
+            $key = $emissionFactor->year() . '|' . $emissionFactor->emissionFactorGroupId();
+
+            if (in_array($key, $newKeys, true)) {
                 throw new \InvalidArgumentException(sprintf('Duplicate emission factor for year %d', $emissionFactor->year()));
             }
 
-            $newYears[] = $emissionFactor->year();
+            $newKeys[] = $key;
             $this->setEmissionFactor($emissionFactor);
         }
 
-        foreach ($this->emissionFactors()->years() as $year) {
-            if (!in_array($year, $newYears, true)) {
-                $this->removeEmissionFactor($year);
+        foreach ($this->emissionFactors() as $existingFactor) {
+            $key = $existingFactor->year() . '|' . $existingFactor->emissionFactorGroupId();
+
+            if (!in_array($key, $newKeys, true)) {
+                $this->removeEmissionFactor($existingFactor->year(), $existingFactor->emissionFactorGroupId());
             }
         }
     }
@@ -256,13 +262,13 @@ class OvernightStay implements Translatable, \Stringable
     public function applyOvernightStayEmissionFactorUpdated(OvernightStayEmissionFactorUpdated $event): void
     {
         $this->emissionFactors()
-            ->forYear($event->emissionFactor()->year())
+            ->forYearAndGroup($event->emissionFactor()->year(), $event->emissionFactor()->emissionFactorGroupId())
             ?->update($event->emissionFactor(), $event->occurredOn());
     }
 
     public function applyOvernightStayEmissionFactorRemoved(OvernightStayEmissionFactorRemoved $event): void
     {
-        $this->emissionFactors()->removeForYear($event->year());
+        $this->emissionFactors()->removeForYearAndGroup($event->year(), $event->emissionFactorGroupId());
     }
 
     public function __toString(): string

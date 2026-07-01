@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Application\Activity;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
 
@@ -29,7 +30,7 @@ final class ElectricityEmissionFactorSelector
             throw new \InvalidArgumentException(sprintf('GdOFactor "%s" not found.', $gdOFactorId));
         }
 
-        $factor = $marketer->emissionFactorFor($year);
+        $factor = $marketer->emissionFactorFor($year, EmissionFactorGroupId::default());
         if (null === $factor) {
             throw new \InvalidArgumentException(sprintf('No emission factor for electricity marketer "%s" in year %d.', $marketerId, $year));
         }

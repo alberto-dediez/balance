@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\ElectricityMarketer\EmissionFactor\List\List
 use App\CarbonFootprint\Application\ElectricityMarketer\EmissionFactor\List\ListEmissionFactorsService;
 use App\CarbonFootprint\Application\ElectricityMarketer\EmissionFactor\Update\UpdateEmissionFactorsRequest;
 use App\CarbonFootprint\Application\ElectricityMarketer\EmissionFactor\Update\UpdateEmissionFactorsService;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\BulkElectricityMarketerEmissionFactorsType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\CreateElectricityMarketerEmissionFactorsYearType;
 use App\Security\Application\UnauthorizedActionException;
@@ -43,7 +44,7 @@ class FactorEmissionController extends AbstractController
                 $rows[] = EmissionFactorRow::fromElectricityMarketer(
                     $electricityMarketer->id(),
                     $electricityMarketer->name(),
-                    $electricityMarketer->emissionFactorFor($year),
+                    $electricityMarketer->emissionFactorFor($year, EmissionFactorGroupId::default()),
                 );
             }
 

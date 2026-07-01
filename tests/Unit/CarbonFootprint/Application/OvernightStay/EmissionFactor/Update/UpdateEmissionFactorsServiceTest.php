@@ -9,10 +9,10 @@ use App\CarbonFootprint\Application\OvernightStay\EmissionFactor\Update\UpdateEm
 use App\CarbonFootprint\Application\OvernightStay\EmissionFactor\Update\UpdateEmissionFactorsService;
 use App\CarbonFootprint\Application\OvernightStay\OvernightStayAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -54,7 +54,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $persisted = $repository->find($overnightStay->id());
 
         $this->assertNotNull($persisted);
-        $factor = $persisted->emissionFactorFor(2025);
+        $factor = $persisted->emissionFactorFor(2025, EmissionFactorGroupId::default());
         $this->assertNotNull($factor);
         $this->assertSame('1.5', $factor->co2eq());
     }
@@ -64,7 +64,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $repository = OvernightStayRepositoryMother::inMemory();
 
         $overnightStay = OvernightStayMother::random();
-        $overnightStay->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
+        $overnightStay->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupId::default()));
         $repository->add($overnightStay);
 
         $sut = $this->createSUT($repository);
@@ -84,7 +84,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $persisted = $repository->find($overnightStay->id());
 
         $this->assertNotNull($persisted);
-        $this->assertNull($persisted->emissionFactorFor(2025));
+        $this->assertNull($persisted->emissionFactorFor(2025, EmissionFactorGroupId::default()));
     }
 
     private function createSUT(OvernightStayRepository $repository): UpdateEmissionFactorsService

@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\Waste\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\Waste\Update\UpdateWasteRequest;
 use App\CarbonFootprint\Application\Waste\Update\UpdateWasteService;
 use App\CarbonFootprint\Application\Waste\WasteAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\WasteRepository;
 use App\CarbonFootprint\Domain\Model\Waste\WasteTranslated;
@@ -137,7 +138,7 @@ class UpdateWasteServiceTest extends TestCase
         $this->assertNotNull($wastePersisted);
         $this->assertCount(1, $wastePersisted->emissionFactors());
 
-        $persistedFactor = $wastePersisted->emissionFactorFor(2024);
+        $persistedFactor = $wastePersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
 
         $this->assertNotNull($persistedFactor);
         $this->assertSame('1.5', $persistedFactor->co2eq());

@@ -57,6 +57,7 @@ final class MachineryFuelEmissionFactorAdded extends DomainEvent
             'year' => $this->emissionFactor->year(),
             'unit' => $this->emissionFactor->unit()->value,
             'source' => $this->emissionFactor->source(),
+            'emissionFactorGroupId' => (string) $this->emissionFactor->emissionFactorGroupId(),
         ];
     }
 
@@ -71,7 +72,7 @@ final class MachineryFuelEmissionFactorAdded extends DomainEvent
                 ? new MachineryFuelEmissionFactorId($payload['emissionFactorId'])
                 : MachineryFuelEmissionFactorId::generate(),
             emissionFactor: new EmissionFactor(
-                emissionFactorGroupId: EmissionFactorGroupId::default(),
+                emissionFactorGroupId: new EmissionFactorGroupId($payload['emissionFactorGroupId']),
                 co2eq: $payload['co2eq'],
                 co2: $payload['co2'],
                 ch4: $payload['ch4'],

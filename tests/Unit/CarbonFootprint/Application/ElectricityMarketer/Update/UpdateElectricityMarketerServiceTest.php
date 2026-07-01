@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\ElectricityMarketer\Update\UpdateElectricity
 use App\CarbonFootprint\Application\ElectricityMarketer\Update\UpdateElectricityMarketerService;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerUpdated;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -95,7 +96,7 @@ class UpdateElectricityMarketerServiceTest extends TestCase
         $this->assertNotNull($electricityMarketerPersisted);
         $this->assertCount(1, $electricityMarketerPersisted->emissionFactors());
 
-        $persistedFactor = $electricityMarketerPersisted->emissionFactorFor(2024);
+        $persistedFactor = $electricityMarketerPersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
 
         $this->assertNotNull($persistedFactor);
         $this->assertSame('1.5', $persistedFactor->co2eq());

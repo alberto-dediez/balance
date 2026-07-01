@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\MerchandisingItem;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItem;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemCategory;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemId;
@@ -84,7 +85,7 @@ class MerchandisingItemTest extends TestCase
         $merchandisingItem->setEmissionFactor($this->emissionFactor(2024, '1.5'), $this->emissionFactor(2024, '1.5'));
 
         $this->assertCount(1, $merchandisingItem->emissionFactors());
-        $this->assertSame('1.5', $merchandisingItem->emissionFactorFor(2024)?->newFactor()->co2eq());
+        $this->assertSame('1.5', $merchandisingItem->emissionFactorFor(2024, $this->groupId())?->newFactor()->co2eq());
     }
 
     public function testSetEmissionFactorForSameYearReplacesIt(): void
@@ -95,14 +96,14 @@ class MerchandisingItemTest extends TestCase
         $merchandisingItem->setEmissionFactor($this->emissionFactor(2024, '2.0'), $this->emissionFactor(2024, '2.0'));
 
         $this->assertCount(1, $merchandisingItem->emissionFactors());
-        $this->assertSame('2.0', $merchandisingItem->emissionFactorFor(2024)?->newFactor()->co2eq());
+        $this->assertSame('2.0', $merchandisingItem->emissionFactorFor(2024, $this->groupId())?->newFactor()->co2eq());
     }
 
     public function testEmissionFactorForReturnsNullWhenMissing(): void
     {
         $merchandisingItem = $this->merchandisingItem();
 
-        $this->assertNull($merchandisingItem->emissionFactorFor(1999));
+        $this->assertNull($merchandisingItem->emissionFactorFor(1999, $this->groupId()));
     }
 
     public function testSyncEmissionFactorsAddsUpdatesAndRemoves(): void
@@ -117,9 +118,9 @@ class MerchandisingItemTest extends TestCase
         ]);
 
         $this->assertCount(2, $merchandisingItem->emissionFactors());
-        $this->assertNull($merchandisingItem->emissionFactorFor(2023));
-        $this->assertSame('2.5', $merchandisingItem->emissionFactorFor(2024)?->newFactor()->co2eq());
-        $this->assertSame('3.0', $merchandisingItem->emissionFactorFor(2025)?->newFactor()->co2eq());
+        $this->assertNull($merchandisingItem->emissionFactorFor(2023, $this->groupId()));
+        $this->assertSame('2.5', $merchandisingItem->emissionFactorFor(2024, $this->groupId())?->newFactor()->co2eq());
+        $this->assertSame('3.0', $merchandisingItem->emissionFactorFor(2025, $this->groupId())?->newFactor()->co2eq());
     }
 
     public function testSyncEmissionFactorsThrowsOnDuplicateYear(): void
@@ -140,12 +141,12 @@ class MerchandisingItemTest extends TestCase
         $merchandisingItem->setEmissionFactor($this->emissionFactor(2023, '1.0'), $this->emissionFactor(2023, '1.0'));
         $merchandisingItem->setEmissionFactor($this->emissionFactor(2024, '2.0'), $this->emissionFactor(2024, '2.0'));
 
-        $this->assertSame(Unit::Kilogram, $merchandisingItem->emissionFactorFor(2023)?->newFactor()->unit());
+        $this->assertSame(Unit::Kilogram, $merchandisingItem->emissionFactorFor(2023, $this->groupId())?->newFactor()->unit());
 
         $merchandisingItem->update('merchandising-item-name', MerchandisingItemCategory::Merchandising, Unit::Piece);
 
-        $factor2023 = $merchandisingItem->emissionFactorFor(2023);
-        $factor2024 = $merchandisingItem->emissionFactorFor(2024);
+        $factor2023 = $merchandisingItem->emissionFactorFor(2023, $this->groupId());
+        $factor2024 = $merchandisingItem->emissionFactorFor(2024, $this->groupId());
 
         $this->assertNotNull($factor2023);
         $this->assertNotNull($factor2024);
@@ -159,7 +160,7 @@ class MerchandisingItemTest extends TestCase
         $merchandisingItem = $this->merchandisingItem();
         $merchandisingItem->setEmissionFactor($this->emissionFactor(2024, '1.5'), $this->emissionFactor(2024, '1.5'));
 
-        $merchandisingItem->removeEmissionFactor(2024);
+        $merchandisingItem->removeEmissionFactor(2024, $this->groupId());
 
         $this->assertCount(0, $merchandisingItem->emissionFactors());
     }
@@ -182,9 +183,16 @@ class MerchandisingItemTest extends TestCase
             ch4: '0.2',
             n2o: '0.3',
             year: $year,
-            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            emissionFactorGroupId: $this->groupId(),
             unit: Unit::Kilogram,
             source: 'test-source',
         );
+    }
+
+    private ?EmissionFactorGroupId $groupId = null;
+
+    private function groupId(): EmissionFactorGroupId
+    {
+        return $this->groupId ??= EmissionFactorGroupMother::default()->id();
     }
 }

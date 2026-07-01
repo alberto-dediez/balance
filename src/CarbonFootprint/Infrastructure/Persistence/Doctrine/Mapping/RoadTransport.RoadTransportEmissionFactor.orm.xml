@@ -7,7 +7,7 @@
 
     <entity name="App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportEmissionFactor" table="road_transport_emission_factor">
         <unique-constraints>
-            <unique-constraint columns="road_transport_id,year" name="uq_road_transport_emission_factor_year"/>
+            <unique-constraint columns="road_transport_id,year,emission_factor_group_id" name="uq_road_transport_emission_factor_year"/>
         </unique-constraints>
 
         <id name="id" type="road_transport_emission_factor_id" column="id">

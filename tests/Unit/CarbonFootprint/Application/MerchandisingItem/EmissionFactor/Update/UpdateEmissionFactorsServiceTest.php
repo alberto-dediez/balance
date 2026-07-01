@@ -9,10 +9,10 @@ use App\CarbonFootprint\Application\MerchandisingItem\EmissionFactor\Update\Upda
 use App\CarbonFootprint\Application\MerchandisingItem\EmissionFactor\Update\UpdateEmissionFactorsService;
 use App\CarbonFootprint\Application\MerchandisingItem\MerchandisingItemAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -54,7 +54,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $persisted = $repository->find($merchandisingItem->id());
 
         $this->assertNotNull($persisted);
-        $factor = $persisted->emissionFactorFor(2025);
+        $factor = $persisted->emissionFactorFor(2025, EmissionFactorGroupId::default());
         $this->assertNotNull($factor);
         $this->assertSame('1.5', $factor->newFactor()->co2eq());
     }
@@ -64,7 +64,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $repository = MerchandisingItemRepositoryMother::inMemory();
 
         $merchandisingItem = MerchandisingItemMother::random();
-        $ef = new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupMother::default()->id());
+        $ef = new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupId::default());
         $merchandisingItem->setEmissionFactor($ef, $ef);
         $repository->add($merchandisingItem);
 
@@ -85,7 +85,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $persisted = $repository->find($merchandisingItem->id());
 
         $this->assertNotNull($persisted);
-        $this->assertNull($persisted->emissionFactorFor(2025));
+        $this->assertNull($persisted->emissionFactorFor(2025, EmissionFactorGroupId::default()));
     }
 
     private function createSUT(MerchandisingItemRepository $repository): UpdateEmissionFactorsService

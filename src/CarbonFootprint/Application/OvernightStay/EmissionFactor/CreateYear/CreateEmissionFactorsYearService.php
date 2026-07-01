@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\OvernightStay\EmissionFactor\CreateYear;
 
 use App\CarbonFootprint\Application\OvernightStay\OvernightStayAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStay;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayFilter;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayId;
@@ -44,13 +45,13 @@ class CreateEmissionFactorsYearService implements CommandHandler
         $overnightStays = $this->overnightStayRepository->findByFilter(new OvernightStayFilter(limit: 0));
 
         foreach ($overnightStays as $overnightStay) {
-            if ($overnightStay->emissionFactors()->hasForYear($targetYear)) {
+            if ($overnightStay->emissionFactors()->hasForYearAndGroup($targetYear, EmissionFactorGroupId::default())) {
                 throw EmissionFactorYearAlreadyExistsException::forYear($targetYear);
             }
         }
 
         foreach ($overnightStays as $overnightStay) {
-            $sourceFactor = $overnightStay->emissionFactorFor($request->sourceYear);
+            $sourceFactor = $overnightStay->emissionFactorFor($request->sourceYear, EmissionFactorGroupId::default());
 
             if (null === $sourceFactor) {
                 continue;

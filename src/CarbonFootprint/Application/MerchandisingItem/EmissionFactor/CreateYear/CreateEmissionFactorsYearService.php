@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\MerchandisingItem\EmissionFactor\CreateYear;
 
 use App\CarbonFootprint\Application\MerchandisingItem\MerchandisingItemAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItem;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemFilter;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemId;
@@ -44,13 +45,13 @@ class CreateEmissionFactorsYearService implements CommandHandler
         $merchandisingItems = $this->merchandisingItemRepository->findByFilter(new MerchandisingItemFilter(limit: 0));
 
         foreach ($merchandisingItems as $merchandisingItem) {
-            if ($merchandisingItem->emissionFactors()->hasForYear($targetYear)) {
+            if ($merchandisingItem->emissionFactors()->hasForYearAndGroup($targetYear, EmissionFactorGroupId::default())) {
                 throw EmissionFactorYearAlreadyExistsException::forYear($targetYear);
             }
         }
 
         foreach ($merchandisingItems as $merchandisingItem) {
-            $sourceFactor = $merchandisingItem->emissionFactorFor($request->sourceYear);
+            $sourceFactor = $merchandisingItem->emissionFactorFor($request->sourceYear, EmissionFactorGroupId::default());
 
             if (null === $sourceFactor) {
                 continue;

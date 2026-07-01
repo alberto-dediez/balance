@@ -7,7 +7,7 @@
 
     <entity name="App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerEmissionFactor" table="electricity_marketer_emission_factor">
         <unique-constraints>
-            <unique-constraint columns="electricity_marketer_id,year" name="uq_electricity_marketer_emission_factor_year"/>
+            <unique-constraint columns="electricity_marketer_id,year,emission_factor_group_id" name="uq_electricity_marketer_emission_factor_year"/>
         </unique-constraints>
 
         <id name="id" type="electricity_marketer_emission_factor_id" column="id">

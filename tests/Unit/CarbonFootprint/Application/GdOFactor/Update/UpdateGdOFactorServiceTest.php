@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\GdOFactor\GdOFactorAuthorizer;
 use App\CarbonFootprint\Application\GdOFactor\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\GdOFactor\Update\UpdateGdOFactorRequest;
 use App\CarbonFootprint\Application\GdOFactor\Update\UpdateGdOFactorService;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorUpdated;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -95,7 +96,7 @@ class UpdateGdOFactorServiceTest extends TestCase
         $this->assertNotNull($gdOFactorPersisted);
         $this->assertCount(1, $gdOFactorPersisted->emissionFactors());
 
-        $persistedFactor = $gdOFactorPersisted->emissionFactorFor(2024);
+        $persistedFactor = $gdOFactorPersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
 
         $this->assertNotNull($persistedFactor);
         $this->assertSame('1.5', $persistedFactor->co2eq());

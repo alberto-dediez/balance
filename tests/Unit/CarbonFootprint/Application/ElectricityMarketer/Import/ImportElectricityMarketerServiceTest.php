@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\ElectricityMarketer\Import\ImportElectricity
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerFilter;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
@@ -47,7 +48,7 @@ class ImportElectricityMarketerServiceTest extends TestCase
         $this->assertNotNull($electricityMarketer);
         $this->assertEquals('Comercializadora Solar', $electricityMarketer->name());
 
-        $emissionFactor = $electricityMarketer->emissionFactorFor(2024);
+        $emissionFactor = $electricityMarketer->emissionFactorFor(2024, EmissionFactorGroupId::default());
 
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->co2eq());
@@ -76,7 +77,7 @@ class ImportElectricityMarketerServiceTest extends TestCase
 
         $this->assertNotNull($electricityMarketer);
         $this->assertCount(1, $repository->findByFilter(new ElectricityMarketerFilter(limit: 0)));
-        $this->assertEquals('2.0', $electricityMarketer->emissionFactorFor(2024)?->co2eq());
+        $this->assertEquals('2.0', $electricityMarketer->emissionFactorFor(2024, EmissionFactorGroupId::default())?->co2eq());
     }
 
     public function testExplicitElectricityMarketerOnlyUpdatesEmissionFactor(): void
@@ -100,7 +101,7 @@ class ImportElectricityMarketerServiceTest extends TestCase
 
         $this->assertNotNull($electricityMarketer);
         $this->assertEquals('Comercializadora Solar', $electricityMarketer->name());
-        $this->assertEquals('3.0', $electricityMarketer->emissionFactorFor(2025)?->co2eq());
+        $this->assertEquals('3.0', $electricityMarketer->emissionFactorFor(2025, EmissionFactorGroupId::default())?->co2eq());
     }
 
     public function testThrowsWhenNeitherElectricityMarketerNorNameProvided(): void

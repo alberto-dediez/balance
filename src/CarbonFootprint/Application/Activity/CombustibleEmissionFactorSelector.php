@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Application\Activity;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 
 final class CombustibleEmissionFactorSelector
 {
@@ -18,7 +19,7 @@ final class CombustibleEmissionFactorSelector
         if (null === $combustible) {
             throw new \InvalidArgumentException(sprintf('Combustible "%s" not found.', $id));
         }
-        $factor = $combustible->emissionFactorFor($year);
+        $factor = $combustible->emissionFactorFor($year, EmissionFactorGroupId::default());
         if (null === $factor) {
             throw new \InvalidArgumentException(sprintf('No emission factor for combustible "%s" in year %d.', $id, $year));
         }

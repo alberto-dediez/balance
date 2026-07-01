@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\GdOFactor;
 
 use App\CarbonFootprint\Domain\DomainEvent;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
@@ -15,6 +16,7 @@ final class GdOFactorEmissionFactorRemoved extends DomainEvent
     public function __construct(
         private GdOFactorId $gdOFactorId,
         private int $year,
+        private EmissionFactorGroupId $emissionFactorGroupId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -31,6 +33,11 @@ final class GdOFactorEmissionFactorRemoved extends DomainEvent
         return $this->year;
     }
 
+    public function emissionFactorGroupId(): EmissionFactorGroupId
+    {
+        return $this->emissionFactorGroupId;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->gdOFactorId();
@@ -41,6 +48,7 @@ final class GdOFactorEmissionFactorRemoved extends DomainEvent
         return [
             'gdOFactorId' => (string) $this->gdOFactorId,
             'year' => $this->year,
+            'emissionFactorGroupId' => (string) $this->emissionFactorGroupId,
         ];
     }
 
@@ -52,6 +60,7 @@ final class GdOFactorEmissionFactorRemoved extends DomainEvent
         return new GdOFactorEmissionFactorRemoved(
             gdOFactorId: new GdOFactorId($payload['gdOFactorId']),
             year: $payload['year'],
+            emissionFactorGroupId: new EmissionFactorGroupId($payload['emissionFactorGroupId']),
             id: $id,
             occurredOn: $occurredOn,
         );

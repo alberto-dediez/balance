@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Application\RoadTransport\Import;
 use App\CarbonFootprint\Application\RoadTransport\Import\ImportRoadTransportRequest;
 use App\CarbonFootprint\Application\RoadTransport\Import\ImportRoadTransportService;
 use App\CarbonFootprint\Application\RoadTransport\RoadTransportAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportFilter;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportId;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
@@ -55,7 +56,7 @@ class ImportRoadTransportServiceTest extends TestCase
         $this->assertEquals('Camión diésel', $roadTransport->name());
         $this->assertSame(Vehicle::Trucks, $roadTransport->vehicle());
 
-        $emissionFactor = $roadTransport->emissionFactorFor(2024);
+        $emissionFactor = $roadTransport->emissionFactorFor(2024, EmissionFactorGroupId::default());
 
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->co2eq());
@@ -84,7 +85,7 @@ class ImportRoadTransportServiceTest extends TestCase
 
         $this->assertNotNull($roadTransport);
         $this->assertCount(1, $repository->findByFilter(new RoadTransportFilter(limit: 0)));
-        $this->assertEquals('2.0', $roadTransport->emissionFactorFor(2024)?->co2eq());
+        $this->assertEquals('2.0', $roadTransport->emissionFactorFor(2024, EmissionFactorGroupId::default())?->co2eq());
     }
 
     public function testExplicitRoadTransportOnlyUpdatesEmissionFactor(): void
@@ -112,7 +113,7 @@ class ImportRoadTransportServiceTest extends TestCase
         $this->assertEquals('Camión diésel', $roadTransport->name());
         $this->assertEquals(Unit::Kilogram, $roadTransport->unit());
         $this->assertSame(Vehicle::Trucks, $roadTransport->vehicle());
-        $this->assertEquals('3.0', $roadTransport->emissionFactorFor(2025)?->co2eq());
+        $this->assertEquals('3.0', $roadTransport->emissionFactorFor(2025, EmissionFactorGroupId::default())?->co2eq());
     }
 
     public function testThrowsWhenNeitherRoadTransportNorNameProvided(): void

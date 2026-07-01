@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\OvernightStay;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 
 class OvernightStayEmissionFactor
 {
@@ -29,6 +30,11 @@ class OvernightStayEmissionFactor
     public function emissionFactor(): EmissionFactor
     {
         return $this->emissionFactor;
+    }
+
+    public function emissionFactorGroupId(): EmissionFactorGroupId
+    {
+        return $this->emissionFactor->emissionFactorGroupId();
     }
 
     public function year(): int

@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\Mobility\EmissionFactor\List\ListEmissionFac
 use App\CarbonFootprint\Application\Mobility\EmissionFactor\List\ListEmissionFactorsService;
 use App\CarbonFootprint\Application\Mobility\EmissionFactor\Update\UpdateEmissionFactorsRequest;
 use App\CarbonFootprint\Application\Mobility\EmissionFactor\Update\UpdateEmissionFactorsService;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\BulkMobilityEmissionFactorsType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\CreateMobilityEmissionFactorsYearType;
 use App\Security\Application\UnauthorizedActionException;
@@ -43,7 +44,7 @@ class FactorEmissionController extends AbstractController
                 $rows[] = EmissionFactorRow::fromMobility(
                     $mobility->id(),
                     $mobility->name(),
-                    $mobility->emissionFactorFor($year),
+                    $mobility->emissionFactorFor($year, EmissionFactorGroupId::default()),
                 );
             }
 

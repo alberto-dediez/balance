@@ -8,6 +8,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemId;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 
 final class CateringItemEmissionFactorSelector
 {
@@ -19,7 +20,7 @@ final class CateringItemEmissionFactorSelector
         if (null === $cateringItem) {
             throw new \InvalidArgumentException(sprintf('CateringItem "%s" not found.', $id));
         }
-        $factor = $cateringItem->emissionFactorFor($year);
+        $factor = $cateringItem->emissionFactorFor($year, EmissionFactorGroupId::default());
         if (null === $factor) {
             throw new \InvalidArgumentException(sprintf('No emission factor for catering item "%s" in year %d.', $id, $year));
         }

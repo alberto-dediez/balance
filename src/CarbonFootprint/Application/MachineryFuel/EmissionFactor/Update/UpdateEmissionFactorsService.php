@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\MachineryFuel\EmissionFactor\Update;
 
 use App\CarbonFootprint\Application\MachineryFuel\MachineryFuelAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
@@ -35,7 +36,7 @@ class UpdateEmissionFactorsService implements CommandHandler
             $this->authorizer->denyUnlessCanDoThat($machineryFuel, SecurityAction::Edit, $user);
 
             if ($row->isEmpty()) {
-                $machineryFuel->removeEmissionFactor($request->year);
+                $machineryFuel->removeEmissionFactor($request->year, EmissionFactorGroupId::default());
             } else {
                 $machineryFuel->setEmissionFactor($row->toEmissionFactor($request->year, $machineryFuel->unit()));
             }

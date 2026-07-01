@@ -8,6 +8,7 @@ use App\CarbonFootprint\Domain\Model\CateringItem\CateringItem;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemCategory;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemId;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
@@ -84,7 +85,7 @@ class CateringItemTest extends TestCase
         $cateringItem->setEmissionFactor($this->emissionFactor(2024, '1.5'), $this->emissionFactor(2024, '1.5'));
 
         $this->assertCount(1, $cateringItem->emissionFactors());
-        $this->assertSame('1.5', $cateringItem->emissionFactorFor(2024)?->newFactor()->co2eq());
+        $this->assertSame('1.5', $cateringItem->emissionFactorFor(2024, $this->groupId())?->newFactor()->co2eq());
     }
 
     public function testSetEmissionFactorForSameYearReplacesIt(): void
@@ -95,14 +96,14 @@ class CateringItemTest extends TestCase
         $cateringItem->setEmissionFactor($this->emissionFactor(2024, '2.0'), $this->emissionFactor(2024, '2.0'));
 
         $this->assertCount(1, $cateringItem->emissionFactors());
-        $this->assertSame('2.0', $cateringItem->emissionFactorFor(2024)?->newFactor()->co2eq());
+        $this->assertSame('2.0', $cateringItem->emissionFactorFor(2024, $this->groupId())?->newFactor()->co2eq());
     }
 
     public function testEmissionFactorForReturnsNullWhenMissing(): void
     {
         $cateringItem = $this->cateringItem();
 
-        $this->assertNull($cateringItem->emissionFactorFor(1999));
+        $this->assertNull($cateringItem->emissionFactorFor(1999, $this->groupId()));
     }
 
     public function testSyncEmissionFactorsAddsUpdatesAndRemoves(): void
@@ -117,9 +118,9 @@ class CateringItemTest extends TestCase
         ]);
 
         $this->assertCount(2, $cateringItem->emissionFactors());
-        $this->assertNull($cateringItem->emissionFactorFor(2023));
-        $this->assertSame('2.5', $cateringItem->emissionFactorFor(2024)?->newFactor()->co2eq());
-        $this->assertSame('3.0', $cateringItem->emissionFactorFor(2025)?->newFactor()->co2eq());
+        $this->assertNull($cateringItem->emissionFactorFor(2023, $this->groupId()));
+        $this->assertSame('2.5', $cateringItem->emissionFactorFor(2024, $this->groupId())?->newFactor()->co2eq());
+        $this->assertSame('3.0', $cateringItem->emissionFactorFor(2025, $this->groupId())?->newFactor()->co2eq());
     }
 
     public function testSyncEmissionFactorsThrowsOnDuplicateYear(): void
@@ -140,12 +141,12 @@ class CateringItemTest extends TestCase
         $cateringItem->setEmissionFactor($this->emissionFactor(2023, '1.0'), $this->emissionFactor(2023, '1.0'));
         $cateringItem->setEmissionFactor($this->emissionFactor(2024, '2.0'), $this->emissionFactor(2024, '2.0'));
 
-        $this->assertSame(Unit::Kilogram, $cateringItem->emissionFactorFor(2023)?->newFactor()->unit());
+        $this->assertSame(Unit::Kilogram, $cateringItem->emissionFactorFor(2023, $this->groupId())?->newFactor()->unit());
 
         $cateringItem->update('catering-item-name', CateringItemCategory::Breakfast, Unit::Piece);
 
-        $factor2023 = $cateringItem->emissionFactorFor(2023);
-        $factor2024 = $cateringItem->emissionFactorFor(2024);
+        $factor2023 = $cateringItem->emissionFactorFor(2023, $this->groupId());
+        $factor2024 = $cateringItem->emissionFactorFor(2024, $this->groupId());
 
         $this->assertNotNull($factor2023);
         $this->assertNotNull($factor2024);
@@ -159,7 +160,7 @@ class CateringItemTest extends TestCase
         $cateringItem = $this->cateringItem();
         $cateringItem->setEmissionFactor($this->emissionFactor(2024, '1.5'), $this->emissionFactor(2024, '1.5'));
 
-        $cateringItem->removeEmissionFactor(2024);
+        $cateringItem->removeEmissionFactor(2024, $this->groupId());
 
         $this->assertCount(0, $cateringItem->emissionFactors());
     }
@@ -182,9 +183,16 @@ class CateringItemTest extends TestCase
             ch4: '0.2',
             n2o: '0.3',
             year: $year,
-            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            emissionFactorGroupId: $this->groupId(),
             unit: Unit::Kilogram,
             source: 'test-source',
         );
+    }
+
+    private ?EmissionFactorGroupId $groupId = null;
+
+    private function groupId(): EmissionFactorGroupId
+    {
+        return $this->groupId ??= EmissionFactorGroupMother::default()->id();
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Domain\Model\RoadTransport;
 
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -27,17 +28,17 @@ class RoadTransportEmissionFactors implements \IteratorAggregate, \Countable
 
     public function add(RoadTransportEmissionFactor $emissionFactor): void
     {
-        if ($this->hasForYear($emissionFactor->year())) {
+        if ($this->hasForYearAndGroup($emissionFactor->year(), $emissionFactor->emissionFactorGroupId())) {
             return;
         }
 
         $this->items->add($emissionFactor);
     }
 
-    public function forYear(int $year): ?RoadTransportEmissionFactor
+    public function forYearAndGroup(int $year, EmissionFactorGroupId $groupId): ?RoadTransportEmissionFactor
     {
         foreach ($this->items->toArray() as $emissionFactor) {
-            if ($emissionFactor->year() === $year) {
+            if ($emissionFactor->year() === $year && $emissionFactor->emissionFactorGroupId()->equals($groupId)) {
                 return $emissionFactor;
             }
         }
@@ -45,15 +46,15 @@ class RoadTransportEmissionFactors implements \IteratorAggregate, \Countable
         return null;
     }
 
-    public function hasForYear(int $year): bool
+    public function hasForYearAndGroup(int $year, EmissionFactorGroupId $groupId): bool
     {
-        return null !== $this->forYear($year);
+        return null !== $this->forYearAndGroup($year, $groupId);
     }
 
-    public function removeForYear(int $year): void
+    public function removeForYearAndGroup(int $year, EmissionFactorGroupId $groupId): void
     {
         foreach ($this->items->toArray() as $emissionFactor) {
-            if ($emissionFactor->year() === $year) {
+            if ($emissionFactor->year() === $year && $emissionFactor->emissionFactorGroupId()->equals($groupId)) {
                 $this->items->removeElement($emissionFactor);
             }
         }
@@ -66,6 +67,30 @@ class RoadTransportEmissionFactors implements \IteratorAggregate, \Countable
             static fn(RoadTransportEmissionFactor $emissionFactor): int => $emissionFactor->year(),
             $this->items->toArray(),
         );
+    }
+
+    /** @return EmissionFactorGroupId[] */
+    public function groups(): array
+    {
+        $groups = [];
+
+        foreach ($this->items->toArray() as $emissionFactor) {
+            $groupId = $emissionFactor->emissionFactorGroupId();
+            $alreadyIncluded = false;
+
+            foreach ($groups as $existingGroupId) {
+                if ($existingGroupId->equals($groupId)) {
+                    $alreadyIncluded = true;
+                    break;
+                }
+            }
+
+            if (!$alreadyIncluded) {
+                $groups[] = $groupId;
+            }
+        }
+
+        return $groups;
     }
 
     public function count(): int

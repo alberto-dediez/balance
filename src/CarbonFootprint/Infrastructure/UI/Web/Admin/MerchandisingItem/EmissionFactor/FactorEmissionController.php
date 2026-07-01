@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\MerchandisingItem\EmissionFactor\List\ListEm
 use App\CarbonFootprint\Application\MerchandisingItem\EmissionFactor\List\ListEmissionFactorsService;
 use App\CarbonFootprint\Application\MerchandisingItem\EmissionFactor\Update\UpdateEmissionFactorsRequest;
 use App\CarbonFootprint\Application\MerchandisingItem\EmissionFactor\Update\UpdateEmissionFactorsService;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\BulkMerchandisingItemEmissionFactorsType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\CreateMerchandisingItemEmissionFactorsYearType;
 use App\Security\Application\UnauthorizedActionException;
@@ -43,7 +44,7 @@ class FactorEmissionController extends AbstractController
                 $rows[] = EmissionFactorRow::fromMerchandisingItem(
                     $merchandisingItem->id(),
                     $merchandisingItem->name(),
-                    $merchandisingItem->emissionFactorFor($year),
+                    $merchandisingItem->emissionFactorFor($year, EmissionFactorGroupId::default()),
                 );
             }
 

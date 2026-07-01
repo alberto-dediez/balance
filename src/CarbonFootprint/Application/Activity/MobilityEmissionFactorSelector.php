@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\Activity;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 
@@ -18,7 +19,7 @@ final class MobilityEmissionFactorSelector
         if (null === $mobility) {
             throw new \InvalidArgumentException(sprintf('Mobility "%s" not found.', $id));
         }
-        $factor = $mobility->emissionFactorFor($year);
+        $factor = $mobility->emissionFactorFor($year, EmissionFactorGroupId::default());
         if (null === $factor) {
             throw new \InvalidArgumentException(sprintf('No emission factor for mobility "%s" in year %d.', $id, $year));
         }

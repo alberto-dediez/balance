@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\CateringItem\CateringItem;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemFilter;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemId;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -44,13 +45,13 @@ class CreateEmissionFactorsYearService implements CommandHandler
         $cateringItems = $this->cateringItemRepository->findByFilter(new CateringItemFilter(limit: 0));
 
         foreach ($cateringItems as $cateringItem) {
-            if ($cateringItem->emissionFactors()->hasForYear($targetYear)) {
+            if ($cateringItem->emissionFactors()->hasForYearAndGroup($targetYear, EmissionFactorGroupId::default())) {
                 throw EmissionFactorYearAlreadyExistsException::forYear($targetYear);
             }
         }
 
         foreach ($cateringItems as $cateringItem) {
-            $sourceFactor = $cateringItem->emissionFactorFor($request->sourceYear);
+            $sourceFactor = $cateringItem->emissionFactorFor($request->sourceYear, EmissionFactorGroupId::default());
 
             if (null === $sourceFactor) {
                 continue;

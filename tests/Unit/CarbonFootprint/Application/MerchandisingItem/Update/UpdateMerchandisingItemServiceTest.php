@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\MerchandisingItem\MerchandisingItemAuthorize
 use App\CarbonFootprint\Application\MerchandisingItem\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\MerchandisingItem\Update\UpdateMerchandisingItemRequest;
 use App\CarbonFootprint\Application\MerchandisingItem\Update\UpdateMerchandisingItemService;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemCategory;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemTranslated;
@@ -138,7 +139,7 @@ class UpdateMerchandisingItemServiceTest extends TestCase
         $this->assertNotNull($merchandisingItemPersisted);
         $this->assertCount(1, $merchandisingItemPersisted->emissionFactors());
 
-        $persistedFactor = $merchandisingItemPersisted->emissionFactorFor(2024);
+        $persistedFactor = $merchandisingItemPersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
 
         $this->assertNotNull($persistedFactor);
         $this->assertSame('1.5', $persistedFactor->newFactor()->co2eq());

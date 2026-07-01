@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\MachineryFuel\EmissionFactor\List\ListEmissi
 use App\CarbonFootprint\Application\MachineryFuel\EmissionFactor\List\ListEmissionFactorsService;
 use App\CarbonFootprint\Application\MachineryFuel\EmissionFactor\Update\UpdateEmissionFactorsRequest;
 use App\CarbonFootprint\Application\MachineryFuel\EmissionFactor\Update\UpdateEmissionFactorsService;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\BulkMachineryFuelEmissionFactorsType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\CreateMachineryFuelEmissionFactorsYearType;
 use App\Security\Application\UnauthorizedActionException;
@@ -43,7 +44,7 @@ class FactorEmissionController extends AbstractController
                 $rows[] = EmissionFactorRow::fromMachineryFuel(
                     $machineryFuel->id(),
                     $machineryFuel->name(),
-                    $machineryFuel->emissionFactorFor($year),
+                    $machineryFuel->emissionFactorFor($year, EmissionFactorGroupId::default()),
                 );
             }
 

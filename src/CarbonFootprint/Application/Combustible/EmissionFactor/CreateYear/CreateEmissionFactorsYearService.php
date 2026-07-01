@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\Combustible\Combustible;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleFilter;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -44,13 +45,13 @@ class CreateEmissionFactorsYearService implements CommandHandler
         $combustibles = $this->combustibleRepository->findByFilter(new CombustibleFilter(limit: 0));
 
         foreach ($combustibles as $combustible) {
-            if ($combustible->emissionFactors()->hasForYear($targetYear)) {
+            if ($combustible->emissionFactors()->hasForYearAndGroup($targetYear, EmissionFactorGroupId::default())) {
                 throw EmissionFactorYearAlreadyExistsException::forYear($targetYear);
             }
         }
 
         foreach ($combustibles as $combustible) {
-            $sourceFactor = $combustible->emissionFactorFor($request->sourceYear);
+            $sourceFactor = $combustible->emissionFactorFor($request->sourceYear, EmissionFactorGroupId::default());
 
             if (null === $sourceFactor) {
                 continue;

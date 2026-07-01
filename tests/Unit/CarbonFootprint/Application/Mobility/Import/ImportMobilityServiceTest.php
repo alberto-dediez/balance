@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Mobility\Import;
 use App\CarbonFootprint\Application\Mobility\Import\ImportMobilityRequest;
 use App\CarbonFootprint\Application\Mobility\Import\ImportMobilityService;
 use App\CarbonFootprint\Application\Mobility\MobilityAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityFilter;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
@@ -52,7 +53,7 @@ class ImportMobilityServiceTest extends TestCase
         $this->assertNotNull($mobility);
         $this->assertEquals('Vuelo', $mobility->name());
 
-        $emissionFactor = $mobility->emissionFactorFor(2024);
+        $emissionFactor = $mobility->emissionFactorFor(2024, EmissionFactorGroupId::default());
 
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->co2eq());
@@ -81,7 +82,7 @@ class ImportMobilityServiceTest extends TestCase
 
         $this->assertNotNull($mobility);
         $this->assertCount(1, $repository->findByFilter(new MobilityFilter(limit: 0)));
-        $this->assertEquals('2.0', $mobility->emissionFactorFor(2024)?->co2eq());
+        $this->assertEquals('2.0', $mobility->emissionFactorFor(2024, EmissionFactorGroupId::default())?->co2eq());
     }
 
     public function testExplicitMobilityOnlyUpdatesEmissionFactor(): void
@@ -107,7 +108,7 @@ class ImportMobilityServiceTest extends TestCase
         $this->assertNotNull($mobility);
         $this->assertEquals('Vuelo', $mobility->name());
         $this->assertEquals(Unit::Kilometer, $mobility->unit());
-        $this->assertEquals('3.0', $mobility->emissionFactorFor(2025)?->co2eq());
+        $this->assertEquals('3.0', $mobility->emissionFactorFor(2025, EmissionFactorGroupId::default())?->co2eq());
     }
 
     public function testThrowsWhenNeitherMobilityNorNameProvided(): void

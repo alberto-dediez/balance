@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\ElectricityMarketer\EmissionFactor\Upd
 
 use App\CarbonFootprint\Application\ElectricityMarketer\ElectricityMarketerAuthorizer;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
@@ -36,7 +37,7 @@ class UpdateEmissionFactorsService implements CommandHandler
             $this->authorizer->denyUnlessCanDoThat($electricityMarketer, SecurityAction::Edit, $user);
 
             if ($row->isEmpty()) {
-                $electricityMarketer->removeEmissionFactor($request->year);
+                $electricityMarketer->removeEmissionFactor($request->year, EmissionFactorGroupId::default());
             } else {
                 $electricityMarketer->setEmissionFactor($row->toEmissionFactor($request->year, Unit::KWh));
             }

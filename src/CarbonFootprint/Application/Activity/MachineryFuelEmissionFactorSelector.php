@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\Activity;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelId;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
 
@@ -18,7 +19,7 @@ final class MachineryFuelEmissionFactorSelector
         if (null === $machineryFuel) {
             throw new \InvalidArgumentException(sprintf('MachineryFuel "%s" not found.', $id));
         }
-        $factor = $machineryFuel->emissionFactorFor($year);
+        $factor = $machineryFuel->emissionFactorFor($year, EmissionFactorGroupId::default());
         if (null === $factor) {
             throw new \InvalidArgumentException(sprintf('No emission factor for machinery fuel "%s" in year %d.', $id, $year));
         }

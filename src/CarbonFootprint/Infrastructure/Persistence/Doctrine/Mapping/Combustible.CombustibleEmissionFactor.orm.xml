@@ -7,7 +7,7 @@
 
     <entity name="App\CarbonFootprint\Domain\Model\Combustible\CombustibleEmissionFactor" table="combustible_emission_factor">
         <unique-constraints>
-            <unique-constraint columns="combustible_id,year" name="uq_combustible_emission_factor_year"/>
+            <unique-constraint columns="combustible_id,year,emission_factor_group_id" name="uq_combustible_emission_factor_year"/>
         </unique-constraints>
 
         <id name="id" type="combustible_emission_factor_id" column="id">

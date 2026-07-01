@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\CateringItem\EmissionFactor\List\ListEmissio
 use App\CarbonFootprint\Application\CateringItem\EmissionFactor\List\ListEmissionFactorsService;
 use App\CarbonFootprint\Application\CateringItem\EmissionFactor\Update\UpdateEmissionFactorsRequest;
 use App\CarbonFootprint\Application\CateringItem\EmissionFactor\Update\UpdateEmissionFactorsService;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\BulkCateringItemEmissionFactorsType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\CreateCateringItemEmissionFactorsYearType;
 use App\Security\Application\UnauthorizedActionException;
@@ -43,7 +44,7 @@ class FactorEmissionController extends AbstractController
                 $rows[] = EmissionFactorRow::fromCateringItem(
                     $cateringItem->id(),
                     $cateringItem->name(),
-                    $cateringItem->emissionFactorFor($year),
+                    $cateringItem->emissionFactorFor($year, EmissionFactorGroupId::default()),
                 );
             }
 

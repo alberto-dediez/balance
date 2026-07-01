@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\Material\MaterialAuthorizer;
 use App\CarbonFootprint\Application\Material\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\Material\Update\UpdateMaterialRequest;
 use App\CarbonFootprint\Application\Material\Update\UpdateMaterialService;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Material\MaterialCategory;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\CarbonFootprint\Domain\Model\Material\MaterialTranslated;
@@ -138,7 +139,7 @@ class UpdateMaterialServiceTest extends TestCase
         $this->assertNotNull($materialPersisted);
         $this->assertCount(1, $materialPersisted->emissionFactors());
 
-        $persistedFactor = $materialPersisted->emissionFactorFor(2024);
+        $persistedFactor = $materialPersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
 
         $this->assertNotNull($persistedFactor);
         $this->assertSame('1.5', $persistedFactor->newFactor()->co2eq());

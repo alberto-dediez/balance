@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Application\OvernightStay\Import;
 use App\CarbonFootprint\Application\OvernightStay\Import\ImportOvernightStayRequest;
 use App\CarbonFootprint\Application\OvernightStay\Import\ImportOvernightStayService;
 use App\CarbonFootprint\Application\OvernightStay\OvernightStayAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayFilter;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayId;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
@@ -51,7 +52,7 @@ class ImportOvernightStayServiceTest extends TestCase
         $this->assertNotNull($overnightStay);
         $this->assertEquals('Pernoctación 1', $overnightStay->name());
 
-        $emissionFactor = $overnightStay->emissionFactorFor(2024);
+        $emissionFactor = $overnightStay->emissionFactorFor(2024, EmissionFactorGroupId::default());
 
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->co2eq());
@@ -80,7 +81,7 @@ class ImportOvernightStayServiceTest extends TestCase
 
         $this->assertNotNull($overnightStay);
         $this->assertCount(1, $repository->findByFilter(new OvernightStayFilter(limit: 0)));
-        $this->assertEquals('2.0', $overnightStay->emissionFactorFor(2024)?->co2eq());
+        $this->assertEquals('2.0', $overnightStay->emissionFactorFor(2024, EmissionFactorGroupId::default())?->co2eq());
     }
 
     public function testExplicitOvernightStayOnlyUpdatesEmissionFactor(): void
@@ -104,7 +105,7 @@ class ImportOvernightStayServiceTest extends TestCase
 
         $this->assertNotNull($overnightStay);
         $this->assertEquals('Pernoctación 1', $overnightStay->name());
-        $this->assertEquals('3.0', $overnightStay->emissionFactorFor(2025)?->co2eq());
+        $this->assertEquals('3.0', $overnightStay->emissionFactorFor(2025, EmissionFactorGroupId::default())?->co2eq());
     }
 
     public function testThrowsWhenNeitherOvernightStayNorNameProvided(): void

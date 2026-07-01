@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\GdOFactor\EmissionFactor\CreateYear;
 
 use App\CarbonFootprint\Application\GdOFactor\GdOFactorAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactor;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorFilter;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorId;
@@ -44,13 +45,13 @@ class CreateEmissionFactorsYearService implements CommandHandler
         $gdOFactors = $this->gdOFactorRepository->findByFilter(new GdOFactorFilter(limit: 0));
 
         foreach ($gdOFactors as $gdOFactor) {
-            if ($gdOFactor->emissionFactors()->hasForYear($targetYear)) {
+            if ($gdOFactor->emissionFactors()->hasForYearAndGroup($targetYear, EmissionFactorGroupId::default())) {
                 throw EmissionFactorYearAlreadyExistsException::forYear($targetYear);
             }
         }
 
         foreach ($gdOFactors as $gdOFactor) {
-            $sourceFactor = $gdOFactor->emissionFactorFor($request->sourceYear);
+            $sourceFactor = $gdOFactor->emissionFactorFor($request->sourceYear, EmissionFactorGroupId::default());
 
             if (null === $sourceFactor) {
                 continue;

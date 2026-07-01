@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\OvernightStay\OvernightStayAuthorizer;
 use App\CarbonFootprint\Application\OvernightStay\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\OvernightStay\Update\UpdateOvernightStayRequest;
 use App\CarbonFootprint\Application\OvernightStay\Update\UpdateOvernightStayService;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayTranslated;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayUpdated;
@@ -129,7 +130,7 @@ class UpdateOvernightStayServiceTest extends TestCase
         $this->assertNotNull($overnightStayPersisted);
         $this->assertCount(1, $overnightStayPersisted->emissionFactors());
 
-        $persistedFactor = $overnightStayPersisted->emissionFactorFor(2024);
+        $persistedFactor = $overnightStayPersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
 
         $this->assertNotNull($persistedFactor);
         $this->assertSame('1.5', $persistedFactor->co2eq());

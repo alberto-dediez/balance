@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible;
 use App\CarbonFootprint\Domain\Model\Combustible\Combustible;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
@@ -70,7 +71,7 @@ class CombustibleTest extends TestCase
         $combustible->setEmissionFactor($this->emissionFactor(2024, '1.5'));
 
         $this->assertCount(1, $combustible->emissionFactors());
-        $this->assertSame('1.5', $combustible->emissionFactorFor(2024)?->co2eq());
+        $this->assertSame('1.5', $combustible->emissionFactorFor(2024, $this->groupId())?->co2eq());
     }
 
     public function testSetEmissionFactorForSameYearReplacesIt(): void
@@ -81,14 +82,14 @@ class CombustibleTest extends TestCase
         $combustible->setEmissionFactor($this->emissionFactor(2024, '2.0'));
 
         $this->assertCount(1, $combustible->emissionFactors());
-        $this->assertSame('2.0', $combustible->emissionFactorFor(2024)?->co2eq());
+        $this->assertSame('2.0', $combustible->emissionFactorFor(2024, $this->groupId())?->co2eq());
     }
 
     public function testEmissionFactorForReturnsNullWhenMissing(): void
     {
         $combustible = $this->combustible();
 
-        $this->assertNull($combustible->emissionFactorFor(1999));
+        $this->assertNull($combustible->emissionFactorFor(1999, $this->groupId()));
     }
 
     public function testSyncEmissionFactorsAddsUpdatesAndRemoves(): void
@@ -103,9 +104,9 @@ class CombustibleTest extends TestCase
         ]);
 
         $this->assertCount(2, $combustible->emissionFactors());
-        $this->assertNull($combustible->emissionFactorFor(2023));
-        $this->assertSame('2.5', $combustible->emissionFactorFor(2024)?->co2eq());
-        $this->assertSame('3.0', $combustible->emissionFactorFor(2025)?->co2eq());
+        $this->assertNull($combustible->emissionFactorFor(2023, $this->groupId()));
+        $this->assertSame('2.5', $combustible->emissionFactorFor(2024, $this->groupId())?->co2eq());
+        $this->assertSame('3.0', $combustible->emissionFactorFor(2025, $this->groupId())?->co2eq());
     }
 
     public function testSyncEmissionFactorsThrowsOnDuplicateYear(): void
@@ -126,12 +127,12 @@ class CombustibleTest extends TestCase
         $combustible->setEmissionFactor($this->emissionFactor(2023, '1.0'));
         $combustible->setEmissionFactor($this->emissionFactor(2024, '2.0'));
 
-        $this->assertSame(Unit::Kilogram, $combustible->emissionFactorFor(2023)?->unit());
+        $this->assertSame(Unit::Kilogram, $combustible->emissionFactorFor(2023, $this->groupId())?->unit());
 
         $combustible->update('combustible-name', Unit::Piece);
 
-        $factor2023 = $combustible->emissionFactorFor(2023);
-        $factor2024 = $combustible->emissionFactorFor(2024);
+        $factor2023 = $combustible->emissionFactorFor(2023, $this->groupId());
+        $factor2024 = $combustible->emissionFactorFor(2024, $this->groupId());
 
         $this->assertNotNull($factor2023);
         $this->assertNotNull($factor2024);
@@ -146,7 +147,7 @@ class CombustibleTest extends TestCase
         $combustible = $this->combustible();
         $combustible->setEmissionFactor($this->emissionFactor(2024, '1.5'));
 
-        $combustible->removeEmissionFactor(2024);
+        $combustible->removeEmissionFactor(2024, $this->groupId());
 
         $this->assertCount(0, $combustible->emissionFactors());
     }
@@ -168,9 +169,16 @@ class CombustibleTest extends TestCase
             ch4: '0.2',
             n2o: '0.3',
             year: $year,
-            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            emissionFactorGroupId: $this->groupId(),
             unit: Unit::Kilogram,
             source: 'test-source',
         );
+    }
+
+    private ?EmissionFactorGroupId $groupId = null;
+
+    private function groupId(): EmissionFactorGroupId
+    {
+        return $this->groupId ??= EmissionFactorGroupMother::default()->id();
     }
 }

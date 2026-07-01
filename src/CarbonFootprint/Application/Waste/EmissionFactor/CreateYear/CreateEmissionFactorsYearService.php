@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\Waste\EmissionFactor\CreateYear;
 
 use App\CarbonFootprint\Application\Waste\WasteAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Waste\Waste;
 use App\CarbonFootprint\Domain\Model\Waste\WasteFilter;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
@@ -44,13 +45,13 @@ class CreateEmissionFactorsYearService implements CommandHandler
         $wastes = $this->wasteRepository->findByFilter(new WasteFilter(limit: 0));
 
         foreach ($wastes as $waste) {
-            if ($waste->emissionFactors()->hasForYear($targetYear)) {
+            if ($waste->emissionFactors()->hasForYearAndGroup($targetYear, EmissionFactorGroupId::default())) {
                 throw EmissionFactorYearAlreadyExistsException::forYear($targetYear);
             }
         }
 
         foreach ($wastes as $waste) {
-            $sourceFactor = $waste->emissionFactorFor($request->sourceYear);
+            $sourceFactor = $waste->emissionFactorFor($request->sourceYear, EmissionFactorGroupId::default());
 
             if (null === $sourceFactor) {
                 continue;

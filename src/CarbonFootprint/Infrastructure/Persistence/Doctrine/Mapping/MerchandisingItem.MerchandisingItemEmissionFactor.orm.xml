@@ -7,7 +7,7 @@
 
     <entity name="App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemEmissionFactor" table="merchandising_item_emission_factor">
         <unique-constraints>
-            <unique-constraint columns="merchandising_item_id,year" name="uq_merchandising_item_emission_factor_year"/>
+            <unique-constraint columns="merchandising_item_id,year,emission_factor_group_id" name="uq_merchandising_item_emission_factor_year"/>
         </unique-constraints>
 
         <id name="id" type="merchandising_item_emission_factor_id" column="id">

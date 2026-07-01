@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactor;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorId;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -58,7 +59,7 @@ class GdOFactorTest extends TestCase
         $gdOFactor->setEmissionFactor($this->emissionFactor(2024, '1.5'));
 
         $this->assertCount(1, $gdOFactor->emissionFactors());
-        $this->assertSame('1.5', $gdOFactor->emissionFactorFor(2024)?->co2eq());
+        $this->assertSame('1.5', $gdOFactor->emissionFactorFor(2024, $this->groupId())?->co2eq());
     }
 
     public function testSetEmissionFactorForSameYearReplacesIt(): void
@@ -69,14 +70,14 @@ class GdOFactorTest extends TestCase
         $gdOFactor->setEmissionFactor($this->emissionFactor(2024, '2.0'));
 
         $this->assertCount(1, $gdOFactor->emissionFactors());
-        $this->assertSame('2.0', $gdOFactor->emissionFactorFor(2024)?->co2eq());
+        $this->assertSame('2.0', $gdOFactor->emissionFactorFor(2024, $this->groupId())?->co2eq());
     }
 
     public function testEmissionFactorForReturnsNullWhenMissing(): void
     {
         $gdOFactor = $this->gdOFactor();
 
-        $this->assertNull($gdOFactor->emissionFactorFor(1999));
+        $this->assertNull($gdOFactor->emissionFactorFor(1999, $this->groupId()));
     }
 
     public function testSetEmissionFactorUsesKWhUnit(): void
@@ -85,7 +86,7 @@ class GdOFactorTest extends TestCase
 
         $gdOFactor->setEmissionFactor($this->emissionFactor(2024, '1.5'));
 
-        $factor = $gdOFactor->emissionFactorFor(2024);
+        $factor = $gdOFactor->emissionFactorFor(2024, $this->groupId());
 
         $this->assertNotNull($factor);
         $this->assertSame(Unit::KWh, $factor->unit());
@@ -103,9 +104,9 @@ class GdOFactorTest extends TestCase
         ]);
 
         $this->assertCount(2, $gdOFactor->emissionFactors());
-        $this->assertNull($gdOFactor->emissionFactorFor(2023));
-        $this->assertSame('2.5', $gdOFactor->emissionFactorFor(2024)?->co2eq());
-        $this->assertSame('3.0', $gdOFactor->emissionFactorFor(2025)?->co2eq());
+        $this->assertNull($gdOFactor->emissionFactorFor(2023, $this->groupId()));
+        $this->assertSame('2.5', $gdOFactor->emissionFactorFor(2024, $this->groupId())?->co2eq());
+        $this->assertSame('3.0', $gdOFactor->emissionFactorFor(2025, $this->groupId())?->co2eq());
     }
 
     public function testSyncEmissionFactorsThrowsOnDuplicateYear(): void
@@ -125,7 +126,7 @@ class GdOFactorTest extends TestCase
         $gdOFactor = $this->gdOFactor();
         $gdOFactor->setEmissionFactor($this->emissionFactor(2024, '1.5'));
 
-        $gdOFactor->removeEmissionFactor(2024);
+        $gdOFactor->removeEmissionFactor(2024, $this->groupId());
 
         $this->assertCount(0, $gdOFactor->emissionFactors());
     }
@@ -146,9 +147,16 @@ class GdOFactorTest extends TestCase
             ch4: '0.2',
             n2o: '0.3',
             year: $year,
-            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            emissionFactorGroupId: $this->groupId(),
             unit: Unit::KWh,
             source: 'test-source',
         );
+    }
+
+    private ?EmissionFactorGroupId $groupId = null;
+
+    private function groupId(): EmissionFactorGroupId
+    {
+        return $this->groupId ??= EmissionFactorGroupMother::default()->id();
     }
 }

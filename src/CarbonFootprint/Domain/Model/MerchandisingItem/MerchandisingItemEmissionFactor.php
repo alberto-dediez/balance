@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\MerchandisingItem;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 
 class MerchandisingItemEmissionFactor
 {
@@ -15,7 +16,9 @@ class MerchandisingItemEmissionFactor
         private EmissionFactor $recycledFactor,
         private \DateTimeImmutable $createdAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $updatedAt = null,
-    ) {}
+    ) {
+        self::assertSameGroup($newFactor, $recycledFactor);
+    }
 
     public function id(): MerchandisingItemEmissionFactorId
     {
@@ -37,6 +40,11 @@ class MerchandisingItemEmissionFactor
         return $this->recycledFactor;
     }
 
+    public function emissionFactorGroupId(): EmissionFactorGroupId
+    {
+        return $this->newFactor->emissionFactorGroupId();
+    }
+
     public function year(): int
     {
         return $this->newFactor->year();
@@ -54,8 +62,17 @@ class MerchandisingItemEmissionFactor
 
     public function update(EmissionFactor $newFactor, EmissionFactor $recycledFactor, \DateTimeImmutable $updatedAt): void
     {
+        self::assertSameGroup($newFactor, $recycledFactor);
+
         $this->newFactor = $newFactor;
         $this->recycledFactor = $recycledFactor;
         $this->updatedAt = $updatedAt;
+    }
+
+    private static function assertSameGroup(EmissionFactor $newFactor, EmissionFactor $recycledFactor): void
+    {
+        if (!$newFactor->emissionFactorGroupId()->equals($recycledFactor->emissionFactorGroupId())) {
+            throw new \InvalidArgumentException('New factor and recycled factor must share the same emission factor group');
+        }
     }
 }

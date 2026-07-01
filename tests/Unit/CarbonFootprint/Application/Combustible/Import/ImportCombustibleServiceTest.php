@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\Combustible\Import\ImportCombustibleService;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleFilter;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -52,7 +53,7 @@ class ImportCombustibleServiceTest extends TestCase
         $this->assertNotNull($combustible);
         $this->assertEquals('Diésel', $combustible->name());
 
-        $emissionFactor = $combustible->emissionFactorFor(2024);
+        $emissionFactor = $combustible->emissionFactorFor(2024, EmissionFactorGroupId::default());
 
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->co2eq());
@@ -81,7 +82,7 @@ class ImportCombustibleServiceTest extends TestCase
 
         $this->assertNotNull($combustible);
         $this->assertCount(1, $repository->findByFilter(new CombustibleFilter(limit: 0)));
-        $this->assertEquals('2.0', $combustible->emissionFactorFor(2024)?->co2eq());
+        $this->assertEquals('2.0', $combustible->emissionFactorFor(2024, EmissionFactorGroupId::default())?->co2eq());
     }
 
     public function testExplicitCombustibleOnlyUpdatesEmissionFactor(): void
@@ -107,7 +108,7 @@ class ImportCombustibleServiceTest extends TestCase
         $this->assertNotNull($combustible);
         $this->assertEquals('Diésel', $combustible->name());
         $this->assertEquals(Unit::Kilogram, $combustible->unit());
-        $this->assertEquals('3.0', $combustible->emissionFactorFor(2025)?->co2eq());
+        $this->assertEquals('3.0', $combustible->emissionFactorFor(2025, EmissionFactorGroupId::default())?->co2eq());
     }
 
     public function testThrowsWhenNeitherCombustibleNorNameProvided(): void

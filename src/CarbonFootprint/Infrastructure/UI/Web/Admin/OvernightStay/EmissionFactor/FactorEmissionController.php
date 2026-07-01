@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\OvernightStay\EmissionFactor\List\ListEmissi
 use App\CarbonFootprint\Application\OvernightStay\EmissionFactor\OvernightStayEmissionFactorRow;
 use App\CarbonFootprint\Application\OvernightStay\EmissionFactor\Update\UpdateEmissionFactorsRequest;
 use App\CarbonFootprint\Application\OvernightStay\EmissionFactor\Update\UpdateEmissionFactorsService;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\BulkOvernightStayEmissionFactorsType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\CreateOvernightStayEmissionFactorsYearType;
 use App\Security\Application\UnauthorizedActionException;
@@ -43,7 +44,7 @@ class FactorEmissionController extends AbstractController
                 $rows[] = OvernightStayEmissionFactorRow::fromOvernightStay(
                     $overnightStay->id(),
                     $overnightStay->name(),
-                    $overnightStay->emissionFactorFor($year),
+                    $overnightStay->emissionFactorFor($year, EmissionFactorGroupId::default()),
                 );
             }
 
