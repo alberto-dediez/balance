@@ -13,6 +13,8 @@ use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -39,6 +41,7 @@ class ImportGdOFactorServiceTest extends TestCase
             ch4: '0.3',
             n2o: '0.2',
             source: 'IPCC',
+            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -67,6 +70,7 @@ class ImportGdOFactorServiceTest extends TestCase
             name: 'Factor GdO Solar',
             year: '2024',
             co2eq: '2.0',
+            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -93,6 +97,7 @@ class ImportGdOFactorServiceTest extends TestCase
             name: 'Otro nombre',
             year: '2025',
             co2eq: '3.0',
+            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -150,9 +155,13 @@ class ImportGdOFactorServiceTest extends TestCase
 
     private function createSUT(GdOFactorRepository $repository): ImportGdOFactorService
     {
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add(EmissionFactorGroupMother::default());
+
         return new ImportGdOFactorService(
             gdOFactorRepository: $repository,
             authorizer: new GdOFactorAuthorizer(),
+            emissionFactorGroupRepository: $emissionFactorGroupRepository,
         );
     }
 }

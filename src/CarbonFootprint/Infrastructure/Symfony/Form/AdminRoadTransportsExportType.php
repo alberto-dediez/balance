@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Infrastructure\Symfony\Form;
 
 use App\CarbonFootprint\Application\RoadTransport\Export\RoadTransportsExportFilter;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorGroupChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,6 +21,11 @@ class AdminRoadTransportsExportType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('Nombre'),
                 'required' => false,
+            ])
+            ->add('emissionFactorGroup', EmissionFactorGroupChoiceType::class, [
+                'label' => new TranslatableMessage('Grupo'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Todos'),
             ])
         ;
     }

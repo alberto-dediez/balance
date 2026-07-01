@@ -15,6 +15,8 @@ use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -46,6 +48,7 @@ class ImportMaterialServiceTest extends TestCase
             ch4: '0.3',
             n2o: '0.2',
             source: 'IPCC',
+            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -75,6 +78,7 @@ class ImportMaterialServiceTest extends TestCase
             name: 'Acero',
             year: '2024',
             co2eq: '2.0',
+            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -102,6 +106,7 @@ class ImportMaterialServiceTest extends TestCase
             category: MaterialCategory::Glass->value,
             year: '2025',
             co2eq: '3.0',
+            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -160,9 +165,13 @@ class ImportMaterialServiceTest extends TestCase
 
     private function createSUT(MaterialRepository $repository): ImportMaterialService
     {
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add(EmissionFactorGroupMother::default());
+
         return new ImportMaterialService(
             materialRepository: $repository,
             authorizer: new MaterialAuthorizer(),
+            emissionFactorGroupRepository: $emissionFactorGroupRepository,
         );
     }
 }

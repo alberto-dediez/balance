@@ -6,6 +6,8 @@ namespace App\CarbonFootprint\Infrastructure\DataExchange;
 
 use App\CarbonFootprint\Application\MachineryFuel\Export\MachineryFuelsExportFilter;
 use App\CarbonFootprint\Application\MachineryFuel\MachineryFuelAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuel;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelEmissionFactor;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelId;
@@ -22,6 +24,7 @@ class MachineryFuelsExportationType implements ExportationType
     public function __construct(
         private readonly MachineryFuelRepository $repository,
         private readonly MachineryFuelAuthorizer $authorizer,
+        private readonly EmissionFactorGroupRepository $emissionFactorGroupRepository,
     ) {}
 
     public function code(): string
@@ -52,6 +55,7 @@ class MachineryFuelsExportationType implements ExportationType
             new ExportColumnDefinition('ch4', new TranslatableMessage('CH4')),
             new ExportColumnDefinition('n2o', new TranslatableMessage('N2O')),
             new ExportColumnDefinition('source', new TranslatableMessage('Fuente')),
+            new ExportColumnDefinition('emissionFactorGroup', new TranslatableMessage('Grupo')),
         ];
     }
 
@@ -73,6 +77,7 @@ class MachineryFuelsExportationType implements ExportationType
 
         return [
             'name' => $filter->name,
+            'emissionFactorGroup' => $filter->emissionFactorGroup,
             'machineryType' => $filter->machineryType?->value,
             'orderBy' => $filter->orderBy,
             'orderWay' => $filter->orderWay,
@@ -84,6 +89,7 @@ class MachineryFuelsExportationType implements ExportationType
         $filter = new MachineryFuelsExportFilter();
 
         $filter->name = isset($criteria['name']) ? (string) $criteria['name'] : null;
+        $filter->emissionFactorGroup = isset($criteria['emissionFactorGroup']) ? (string) $criteria['emissionFactorGroup'] : null;
         $filter->machineryType = isset($criteria['machineryType'])
             ? \App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryType::tryFrom((string) $criteria['machineryType'])
             : null;
@@ -101,6 +107,7 @@ class MachineryFuelsExportationType implements ExportationType
         }
 
         $filter->limit = 0;
+        $this->groupNameCache = [];
 
         foreach ($this->repository->findByFilter($filter) as $machineryFuel) {
             $emissionFactors = $machineryFuel->emissionFactors();
@@ -112,6 +119,12 @@ class MachineryFuelsExportationType implements ExportationType
             }
 
             foreach ($emissionFactors as $machineryFuelEmissionFactor) {
+                if (null !== $filter->emissionFactorGroup
+                    && (string) $machineryFuelEmissionFactor->emissionFactorGroupId() !== $filter->emissionFactorGroup
+                ) {
+                    continue;
+                }
+
                 yield $this->baseRow($machineryFuel) + $this->factorRow($machineryFuelEmissionFactor);
             }
         }
@@ -143,6 +156,7 @@ class MachineryFuelsExportationType implements ExportationType
         $emissionFactor = $machineryFuelEmissionFactor->emissionFactor();
 
         return [
+            'emissionFactorGroup' => $this->groupName($emissionFactor->emissionFactorGroupId()),
             'year' => $emissionFactor->year(),
             'co2eq' => $emissionFactor->co2eq(),
             'co2' => $emissionFactor->co2(),
@@ -156,6 +170,7 @@ class MachineryFuelsExportationType implements ExportationType
     private function emptyFactorRow(): array
     {
         return [
+            'emissionFactorGroup' => '',
             'year' => '',
             'co2eq' => '',
             'co2' => '',
@@ -163,5 +178,20 @@ class MachineryFuelsExportationType implements ExportationType
             'n2o' => '',
             'source' => '',
         ];
+    }
+
+    /** @var array<string, string> */
+    private array $groupNameCache = [];
+
+    private function groupName(EmissionFactorGroupId $emissionFactorGroupId): string
+    {
+        $key = (string) $emissionFactorGroupId;
+
+        if (!isset($this->groupNameCache[$key])) {
+            $group = $this->emissionFactorGroupRepository->find($emissionFactorGroupId);
+            $this->groupNameCache[$key] = null !== $group ? $group->name() : '';
+        }
+
+        return $this->groupNameCache[$key];
     }
 }

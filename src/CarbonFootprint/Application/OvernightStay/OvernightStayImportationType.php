@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Application\OvernightStay;
 use App\CarbonFootprint\Application\OvernightStay\Import\ImportOvernightStayRequest;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStay;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayId;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorGroupChoiceType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\OvernightStayChoiceType;
 use App\DataExchange\Application\Importation\Execute\Extractor\AssignValueExtractor;
 use App\DataExchange\Application\Importation\Execute\Extractor\DirectExtractor;
@@ -54,6 +55,7 @@ class OvernightStayImportationType implements ImportationType
             'ch4',
             'n2o',
             'source',
+            'emissionFactorGroup',
         ];
     }
 
@@ -61,6 +63,7 @@ class OvernightStayImportationType implements ImportationType
     {
         return [
             'overnight_stay' => new FieldDefinition(fieldType: OvernightStayChoiceType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -75,6 +78,7 @@ class OvernightStayImportationType implements ImportationType
             'ch4' => new FieldDefinition(fieldType: TextType::class),
             'n2o' => new FieldDefinition(fieldType: TextType::class),
             'source' => new FieldDefinition(fieldType: TextType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -89,6 +93,7 @@ class OvernightStayImportationType implements ImportationType
             ch4: $this->stringOrNull($data['ch4'] ?? null),
             n2o: $this->stringOrNull($data['n2o'] ?? null),
             source: $this->stringOrNull($data['source'] ?? null),
+            emissionFactorGroup: $this->stringOrNull($data['emissionFactorGroup'] ?? null),
         );
     }
 
@@ -104,6 +109,7 @@ class OvernightStayImportationType implements ImportationType
             if ($configuration instanceof ImportationColumnConfiguration) {
                 switch ($field) {
                     case 'overnight_stay':
+                    case 'emissionFactorGroup':
                         $rowExtractor->addFieldExtractor(
                             new MapExtractor($configuration),
                             $field,

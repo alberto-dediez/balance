@@ -11,6 +11,8 @@ use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemCategory;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemEmissionFactor;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemId;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\AdminCateringItemsExportType;
 use App\DataExchange\Domain\Model\Exportation\ExportationType;
 use App\DataExchange\Domain\Model\Exportation\ExportColumnDefinition;
@@ -23,6 +25,7 @@ class CateringItemsExportationType implements ExportationType
     public function __construct(
         private readonly CateringItemRepository $repository,
         private readonly CateringItemAuthorizer $authorizer,
+        private readonly EmissionFactorGroupRepository $emissionFactorGroupRepository,
     ) {}
 
     public function code(): string
@@ -58,6 +61,7 @@ class CateringItemsExportationType implements ExportationType
             new ExportColumnDefinition('recycledCh4', new TranslatableMessage('CH4 reciclado')),
             new ExportColumnDefinition('recycledN2o', new TranslatableMessage('N2O reciclado')),
             new ExportColumnDefinition('source', new TranslatableMessage('Fuente')),
+            new ExportColumnDefinition('emissionFactorGroup', new TranslatableMessage('Grupo')),
         ];
     }
 
@@ -79,6 +83,7 @@ class CateringItemsExportationType implements ExportationType
 
         return [
             'name' => $filter->name,
+            'emissionFactorGroup' => $filter->emissionFactorGroup,
             'category' => $filter->category?->value,
             'orderBy' => $filter->orderBy,
             'orderWay' => $filter->orderWay,
@@ -90,6 +95,7 @@ class CateringItemsExportationType implements ExportationType
         $filter = new CateringItemsExportFilter();
 
         $filter->name = isset($criteria['name']) ? (string) $criteria['name'] : null;
+        $filter->emissionFactorGroup = isset($criteria['emissionFactorGroup']) ? (string) $criteria['emissionFactorGroup'] : null;
         $filter->category = isset($criteria['category'])
             ? CateringItemCategory::from((string) $criteria['category'])
             : null;
@@ -107,6 +113,7 @@ class CateringItemsExportationType implements ExportationType
         }
 
         $filter->limit = 0;
+        $this->groupNameCache = [];
 
         foreach ($this->repository->findByFilter($filter) as $cateringItem) {
             $emissionFactors = $cateringItem->emissionFactors();
@@ -118,6 +125,12 @@ class CateringItemsExportationType implements ExportationType
             }
 
             foreach ($emissionFactors as $cateringItemEmissionFactor) {
+                if (null !== $filter->emissionFactorGroup
+                    && (string) $cateringItemEmissionFactor->emissionFactorGroupId() !== $filter->emissionFactorGroup
+                ) {
+                    continue;
+                }
+
                 yield $this->baseRow($cateringItem) + $this->factorRow($cateringItemEmissionFactor);
             }
         }
@@ -148,6 +161,7 @@ class CateringItemsExportationType implements ExportationType
     private function factorRow(CateringItemEmissionFactor $cateringItemEmissionFactor): array
     {
         return [
+            'emissionFactorGroup' => $this->groupName($cateringItemEmissionFactor->emissionFactorGroupId()),
             'year' => $cateringItemEmissionFactor->newFactor()->year(),
             'co2eq' => $cateringItemEmissionFactor->newFactor()->co2eq(),
             'co2' => $cateringItemEmissionFactor->newFactor()->co2(),
@@ -165,6 +179,7 @@ class CateringItemsExportationType implements ExportationType
     private function emptyFactorRow(): array
     {
         return [
+            'emissionFactorGroup' => '',
             'year' => '',
             'co2eq' => '',
             'co2' => '',
@@ -176,5 +191,20 @@ class CateringItemsExportationType implements ExportationType
             'recycledN2o' => '',
             'source' => '',
         ];
+    }
+
+    /** @var array<string, string> */
+    private array $groupNameCache = [];
+
+    private function groupName(EmissionFactorGroupId $emissionFactorGroupId): string
+    {
+        $key = (string) $emissionFactorGroupId;
+
+        if (!isset($this->groupNameCache[$key])) {
+            $group = $this->emissionFactorGroupRepository->find($emissionFactorGroupId);
+            $this->groupNameCache[$key] = null !== $group ? $group->name() : '';
+        }
+
+        return $this->groupNameCache[$key];
     }
 }

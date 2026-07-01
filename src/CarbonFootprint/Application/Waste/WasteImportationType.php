@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Application\Waste;
 use App\CarbonFootprint\Application\Waste\Import\ImportWasteRequest;
 use App\CarbonFootprint\Domain\Model\Waste\Waste;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorGroupChoiceType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\UnitCodeType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\WasteChoiceType;
 use App\DataExchange\Application\Importation\Execute\Extractor\AssignValueExtractor;
@@ -56,6 +57,7 @@ class WasteImportationType implements ImportationType
             'ch4',
             'n2o',
             'source',
+            'emissionFactorGroup',
         ];
     }
 
@@ -64,6 +66,7 @@ class WasteImportationType implements ImportationType
         return [
             'waste' => new FieldDefinition(fieldType: WasteChoiceType::class),
             'unit' => new FieldDefinition(fieldType: UnitCodeType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -79,6 +82,7 @@ class WasteImportationType implements ImportationType
             'ch4' => new FieldDefinition(fieldType: TextType::class),
             'n2o' => new FieldDefinition(fieldType: TextType::class),
             'source' => new FieldDefinition(fieldType: TextType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -94,6 +98,7 @@ class WasteImportationType implements ImportationType
             ch4: $this->stringOrNull($data['ch4'] ?? null),
             n2o: $this->stringOrNull($data['n2o'] ?? null),
             source: $this->stringOrNull($data['source'] ?? null),
+            emissionFactorGroup: $this->stringOrNull($data['emissionFactorGroup'] ?? null),
         );
     }
 
@@ -110,6 +115,7 @@ class WasteImportationType implements ImportationType
                 switch ($field) {
                     case 'waste':
                     case 'unit':
+                    case 'emissionFactorGroup':
                         $rowExtractor->addFieldExtractor(
                             new MapExtractor($configuration),
                             $field,

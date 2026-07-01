@@ -6,4 +6,7 @@ namespace App\CarbonFootprint\Application\MerchandisingItem\Export;
 
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemFilter;
 
-class MerchandisingItemsExportFilter extends MerchandisingItemFilter {}
+class MerchandisingItemsExportFilter extends MerchandisingItemFilter
+{
+    public ?string $emissionFactorGroup = null;
+}

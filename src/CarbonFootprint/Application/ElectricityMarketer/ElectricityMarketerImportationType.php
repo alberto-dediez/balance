@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\ElectricityMarketer\Import\ImportElectricity
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketer;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\ElectricityMarketerChoiceType;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorGroupChoiceType;
 use App\DataExchange\Application\Importation\Execute\Extractor\AssignValueExtractor;
 use App\DataExchange\Application\Importation\Execute\Extractor\DirectExtractor;
 use App\DataExchange\Application\Importation\Execute\Extractor\MapExtractor;
@@ -54,6 +55,7 @@ class ElectricityMarketerImportationType implements ImportationType
             'ch4',
             'n2o',
             'source',
+            'emissionFactorGroup',
         ];
     }
 
@@ -61,6 +63,7 @@ class ElectricityMarketerImportationType implements ImportationType
     {
         return [
             'electricityMarketer' => new FieldDefinition(fieldType: ElectricityMarketerChoiceType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -75,6 +78,7 @@ class ElectricityMarketerImportationType implements ImportationType
             'ch4' => new FieldDefinition(fieldType: TextType::class),
             'n2o' => new FieldDefinition(fieldType: TextType::class),
             'source' => new FieldDefinition(fieldType: TextType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -89,6 +93,7 @@ class ElectricityMarketerImportationType implements ImportationType
             ch4: $this->stringOrNull($data['ch4'] ?? null),
             n2o: $this->stringOrNull($data['n2o'] ?? null),
             source: $this->stringOrNull($data['source'] ?? null),
+            emissionFactorGroup: $this->stringOrNull($data['emissionFactorGroup'] ?? null),
         );
     }
 
@@ -104,6 +109,7 @@ class ElectricityMarketerImportationType implements ImportationType
             if ($configuration instanceof ImportationColumnConfiguration) {
                 switch ($field) {
                     case 'electricityMarketer':
+                    case 'emissionFactorGroup':
                         $rowExtractor->addFieldExtractor(
                             new MapExtractor($configuration),
                             $field,

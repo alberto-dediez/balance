@@ -6,4 +6,7 @@ namespace App\CarbonFootprint\Application\ElectricityMarketer\Export;
 
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerFilter;
 
-class ElectricityMarketersExportFilter extends ElectricityMarketerFilter {}
+class ElectricityMarketersExportFilter extends ElectricityMarketerFilter
+{
+    public ?string $emissionFactorGroup = null;
+}

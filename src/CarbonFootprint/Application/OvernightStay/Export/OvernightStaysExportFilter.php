@@ -6,4 +6,7 @@ namespace App\CarbonFootprint\Application\OvernightStay\Export;
 
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayFilter;
 
-class OvernightStaysExportFilter extends OvernightStayFilter {}
+class OvernightStaysExportFilter extends OvernightStayFilter
+{
+    public ?string $emissionFactorGroup = null;
+}

@@ -6,4 +6,7 @@ namespace App\CarbonFootprint\Application\RoadTransport\Export;
 
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportFilter;
 
-class RoadTransportsExportFilter extends RoadTransportFilter {}
+class RoadTransportsExportFilter extends RoadTransportFilter
+{
+    public ?string $emissionFactorGroup = null;
+}

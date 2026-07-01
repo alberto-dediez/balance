@@ -10,6 +10,8 @@ use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketer;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerEmissionFactor;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\AdminElectricityMarketersExportType;
 use App\DataExchange\Domain\Model\Exportation\ExportationType;
 use App\DataExchange\Domain\Model\Exportation\ExportColumnDefinition;
@@ -22,6 +24,7 @@ class ElectricityMarketersExportationType implements ExportationType
     public function __construct(
         private readonly ElectricityMarketerRepository $repository,
         private readonly ElectricityMarketerAuthorizer $authorizer,
+        private readonly EmissionFactorGroupRepository $emissionFactorGroupRepository,
     ) {}
 
     public function code(): string
@@ -50,6 +53,7 @@ class ElectricityMarketersExportationType implements ExportationType
             new ExportColumnDefinition('ch4', new TranslatableMessage('CH4')),
             new ExportColumnDefinition('n2o', new TranslatableMessage('N2O')),
             new ExportColumnDefinition('source', new TranslatableMessage('Fuente')),
+            new ExportColumnDefinition('emissionFactorGroup', new TranslatableMessage('Grupo')),
         ];
     }
 
@@ -71,6 +75,7 @@ class ElectricityMarketersExportationType implements ExportationType
 
         return [
             'name' => $filter->name,
+            'emissionFactorGroup' => $filter->emissionFactorGroup,
             'orderBy' => $filter->orderBy,
             'orderWay' => $filter->orderWay,
         ];
@@ -81,6 +86,7 @@ class ElectricityMarketersExportationType implements ExportationType
         $filter = new ElectricityMarketersExportFilter();
 
         $filter->name = isset($criteria['name']) ? (string) $criteria['name'] : null;
+        $filter->emissionFactorGroup = isset($criteria['emissionFactorGroup']) ? (string) $criteria['emissionFactorGroup'] : null;
         $filter->orderBy = isset($criteria['orderBy']) ? (string) $criteria['orderBy'] : 'default';
         $filter->orderWay = isset($criteria['orderWay']) ? (string) $criteria['orderWay'] : 'ASC';
         $filter->limit = 0;
@@ -95,6 +101,7 @@ class ElectricityMarketersExportationType implements ExportationType
         }
 
         $filter->limit = 0;
+        $this->groupNameCache = [];
 
         foreach ($this->repository->findByFilter($filter) as $electricityMarketer) {
             $emissionFactors = $electricityMarketer->emissionFactors();
@@ -106,6 +113,12 @@ class ElectricityMarketersExportationType implements ExportationType
             }
 
             foreach ($emissionFactors as $electricityMarketerEmissionFactor) {
+                if (null !== $filter->emissionFactorGroup
+                    && (string) $electricityMarketerEmissionFactor->emissionFactorGroupId() !== $filter->emissionFactorGroup
+                ) {
+                    continue;
+                }
+
                 yield $this->baseRow($electricityMarketer) + $this->factorRow($electricityMarketerEmissionFactor);
             }
         }
@@ -135,6 +148,7 @@ class ElectricityMarketersExportationType implements ExportationType
         $emissionFactor = $electricityMarketerEmissionFactor->emissionFactor();
 
         return [
+            'emissionFactorGroup' => $this->groupName($emissionFactor->emissionFactorGroupId()),
             'year' => $emissionFactor->year(),
             'co2eq' => $emissionFactor->co2eq(),
             'co2' => $emissionFactor->co2(),
@@ -148,6 +162,7 @@ class ElectricityMarketersExportationType implements ExportationType
     private function emptyFactorRow(): array
     {
         return [
+            'emissionFactorGroup' => '',
             'year' => '',
             'co2eq' => '',
             'co2' => '',
@@ -155,5 +170,20 @@ class ElectricityMarketersExportationType implements ExportationType
             'n2o' => '',
             'source' => '',
         ];
+    }
+
+    /** @var array<string, string> */
+    private array $groupNameCache = [];
+
+    private function groupName(EmissionFactorGroupId $emissionFactorGroupId): string
+    {
+        $key = (string) $emissionFactorGroupId;
+
+        if (!isset($this->groupNameCache[$key])) {
+            $group = $this->emissionFactorGroupRepository->find($emissionFactorGroupId);
+            $this->groupNameCache[$key] = null !== $group ? $group->name() : '';
+        }
+
+        return $this->groupNameCache[$key];
     }
 }

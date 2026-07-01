@@ -15,6 +15,8 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 
@@ -39,6 +41,7 @@ class ImportElectricityMarketerServiceTest extends TestCase
             ch4: '0.3',
             n2o: '0.2',
             source: 'IPCC',
+            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -67,6 +70,7 @@ class ImportElectricityMarketerServiceTest extends TestCase
             name: 'Comercializadora Solar',
             year: '2024',
             co2eq: '2.0',
+            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -93,6 +97,7 @@ class ImportElectricityMarketerServiceTest extends TestCase
             name: 'Otro nombre',
             year: '2025',
             co2eq: '3.0',
+            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -150,9 +155,13 @@ class ImportElectricityMarketerServiceTest extends TestCase
 
     private function createSUT(ElectricityMarketerRepository $repository): ImportElectricityMarketerService
     {
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add(EmissionFactorGroupMother::default());
+
         return new ImportElectricityMarketerService(
             electricityMarketerRepository: $repository,
             authorizer: new ElectricityMarketerAuthorizer(),
+            emissionFactorGroupRepository: $emissionFactorGroupRepository,
         );
     }
 }

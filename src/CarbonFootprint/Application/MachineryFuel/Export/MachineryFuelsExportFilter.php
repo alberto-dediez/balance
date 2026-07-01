@@ -16,4 +16,6 @@ class MachineryFuelsExportFilter extends MachineryFuelFilter
     ) {
         parent::__construct($name, $machineryType, $limit);
     }
+
+    public ?string $emissionFactorGroup = null;
 }

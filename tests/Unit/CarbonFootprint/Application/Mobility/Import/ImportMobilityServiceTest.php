@@ -14,6 +14,8 @@ use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -44,6 +46,7 @@ class ImportMobilityServiceTest extends TestCase
             ch4: '0.3',
             n2o: '0.2',
             source: 'IPCC',
+            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -72,6 +75,7 @@ class ImportMobilityServiceTest extends TestCase
             name: 'Vuelo',
             year: '2024',
             co2eq: '2.0',
+            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -99,6 +103,7 @@ class ImportMobilityServiceTest extends TestCase
             unit: Unit::Piece->value,
             year: '2025',
             co2eq: '3.0',
+            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -157,9 +162,13 @@ class ImportMobilityServiceTest extends TestCase
 
     private function createSUT(MobilityRepository $repository): ImportMobilityService
     {
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add(EmissionFactorGroupMother::default());
+
         return new ImportMobilityService(
             mobilityRepository: $repository,
             authorizer: new MobilityAuthorizer(),
+            emissionFactorGroupRepository: $emissionFactorGroupRepository,
         );
     }
 }

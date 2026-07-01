@@ -10,6 +10,8 @@ use App\CarbonFootprint\Domain\Model\Combustible\Combustible;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleEmissionFactor;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\AdminCombustiblesExportType;
 use App\DataExchange\Domain\Model\Exportation\ExportationType;
 use App\DataExchange\Domain\Model\Exportation\ExportColumnDefinition;
@@ -22,6 +24,7 @@ class CombustiblesExportationType implements ExportationType
     public function __construct(
         private readonly CombustibleRepository $repository,
         private readonly CombustibleAuthorizer $authorizer,
+        private readonly EmissionFactorGroupRepository $emissionFactorGroupRepository,
     ) {}
 
     public function code(): string
@@ -51,6 +54,7 @@ class CombustiblesExportationType implements ExportationType
             new ExportColumnDefinition('ch4', new TranslatableMessage('CH4')),
             new ExportColumnDefinition('n2o', new TranslatableMessage('N2O')),
             new ExportColumnDefinition('source', new TranslatableMessage('Fuente')),
+            new ExportColumnDefinition('emissionFactorGroup', new TranslatableMessage('Grupo')),
         ];
     }
 
@@ -72,6 +76,7 @@ class CombustiblesExportationType implements ExportationType
 
         return [
             'name' => $filter->name,
+            'emissionFactorGroup' => $filter->emissionFactorGroup,
             'orderBy' => $filter->orderBy,
             'orderWay' => $filter->orderWay,
         ];
@@ -82,6 +87,7 @@ class CombustiblesExportationType implements ExportationType
         $filter = new CombustiblesExportFilter();
 
         $filter->name = isset($criteria['name']) ? (string) $criteria['name'] : null;
+        $filter->emissionFactorGroup = isset($criteria['emissionFactorGroup']) ? (string) $criteria['emissionFactorGroup'] : null;
         $filter->orderBy = isset($criteria['orderBy']) ? (string) $criteria['orderBy'] : 'default';
         $filter->orderWay = isset($criteria['orderWay']) ? (string) $criteria['orderWay'] : 'ASC';
         $filter->limit = 0;
@@ -96,6 +102,7 @@ class CombustiblesExportationType implements ExportationType
         }
 
         $filter->limit = 0;
+        $this->groupNameCache = [];
 
         foreach ($this->repository->findByFilter($filter) as $combustible) {
             $emissionFactors = $combustible->emissionFactors();
@@ -107,6 +114,12 @@ class CombustiblesExportationType implements ExportationType
             }
 
             foreach ($emissionFactors as $combustibleEmissionFactor) {
+                if (null !== $filter->emissionFactorGroup
+                    && (string) $combustibleEmissionFactor->emissionFactorGroupId() !== $filter->emissionFactorGroup
+                ) {
+                    continue;
+                }
+
                 yield $this->baseRow($combustible) + $this->factorRow($combustibleEmissionFactor);
             }
         }
@@ -137,6 +150,7 @@ class CombustiblesExportationType implements ExportationType
         $emissionFactor = $combustibleEmissionFactor->emissionFactor();
 
         return [
+            'emissionFactorGroup' => $this->groupName($emissionFactor->emissionFactorGroupId()),
             'year' => $emissionFactor->year(),
             'co2eq' => $emissionFactor->co2eq(),
             'co2' => $emissionFactor->co2(),
@@ -150,6 +164,7 @@ class CombustiblesExportationType implements ExportationType
     private function emptyFactorRow(): array
     {
         return [
+            'emissionFactorGroup' => '',
             'year' => '',
             'co2eq' => '',
             'co2' => '',
@@ -157,5 +172,20 @@ class CombustiblesExportationType implements ExportationType
             'n2o' => '',
             'source' => '',
         ];
+    }
+
+    /** @var array<string, string> */
+    private array $groupNameCache = [];
+
+    private function groupName(EmissionFactorGroupId $emissionFactorGroupId): string
+    {
+        $key = (string) $emissionFactorGroupId;
+
+        if (!isset($this->groupNameCache[$key])) {
+            $group = $this->emissionFactorGroupRepository->find($emissionFactorGroupId);
+            $this->groupNameCache[$key] = null !== $group ? $group->name() : '';
+        }
+
+        return $this->groupNameCache[$key];
     }
 }

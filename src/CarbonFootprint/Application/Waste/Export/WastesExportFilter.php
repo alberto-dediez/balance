@@ -6,4 +6,7 @@ namespace App\CarbonFootprint\Application\Waste\Export;
 
 use App\CarbonFootprint\Domain\Model\Waste\WasteFilter;
 
-class WastesExportFilter extends WasteFilter {}
+class WastesExportFilter extends WasteFilter
+{
+    public ?string $emissionFactorGroup = null;
+}

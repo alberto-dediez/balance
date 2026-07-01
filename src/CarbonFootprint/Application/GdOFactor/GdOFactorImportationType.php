@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Application\GdOFactor;
 use App\CarbonFootprint\Application\GdOFactor\Import\ImportGdOFactorRequest;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactor;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorId;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorGroupChoiceType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\GdOFactorChoiceType;
 use App\DataExchange\Application\Importation\Execute\Extractor\AssignValueExtractor;
 use App\DataExchange\Application\Importation\Execute\Extractor\DirectExtractor;
@@ -54,6 +55,7 @@ class GdOFactorImportationType implements ImportationType
             'ch4',
             'n2o',
             'source',
+            'emissionFactorGroup',
         ];
     }
 
@@ -61,6 +63,7 @@ class GdOFactorImportationType implements ImportationType
     {
         return [
             'gdOFactor' => new FieldDefinition(fieldType: GdOFactorChoiceType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -75,6 +78,7 @@ class GdOFactorImportationType implements ImportationType
             'ch4' => new FieldDefinition(fieldType: TextType::class),
             'n2o' => new FieldDefinition(fieldType: TextType::class),
             'source' => new FieldDefinition(fieldType: TextType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -89,6 +93,7 @@ class GdOFactorImportationType implements ImportationType
             ch4: $this->stringOrNull($data['ch4'] ?? null),
             n2o: $this->stringOrNull($data['n2o'] ?? null),
             source: $this->stringOrNull($data['source'] ?? null),
+            emissionFactorGroup: $this->stringOrNull($data['emissionFactorGroup'] ?? null),
         );
     }
 
@@ -104,6 +109,7 @@ class GdOFactorImportationType implements ImportationType
             if ($configuration instanceof ImportationColumnConfiguration) {
                 switch ($field) {
                     case 'gdOFactor':
+                    case 'emissionFactorGroup':
                         $rowExtractor->addFieldExtractor(
                             new MapExtractor($configuration),
                             $field,

@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Application\Mobility;
 use App\CarbonFootprint\Application\Mobility\Import\ImportMobilityRequest;
 use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorGroupChoiceType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MobilityChoiceType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\UnitCodeType;
 use App\DataExchange\Application\Importation\Execute\Extractor\AssignValueExtractor;
@@ -56,6 +57,7 @@ class MobilityImportationType implements ImportationType
             'ch4',
             'n2o',
             'source',
+            'emissionFactorGroup',
         ];
     }
 
@@ -64,6 +66,7 @@ class MobilityImportationType implements ImportationType
         return [
             'mobility' => new FieldDefinition(fieldType: MobilityChoiceType::class),
             'unit' => new FieldDefinition(fieldType: UnitCodeType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -79,6 +82,7 @@ class MobilityImportationType implements ImportationType
             'ch4' => new FieldDefinition(fieldType: TextType::class),
             'n2o' => new FieldDefinition(fieldType: TextType::class),
             'source' => new FieldDefinition(fieldType: TextType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -94,6 +98,7 @@ class MobilityImportationType implements ImportationType
             ch4: $this->stringOrNull($data['ch4'] ?? null),
             n2o: $this->stringOrNull($data['n2o'] ?? null),
             source: $this->stringOrNull($data['source'] ?? null),
+            emissionFactorGroup: $this->stringOrNull($data['emissionFactorGroup'] ?? null),
         );
     }
 
@@ -110,6 +115,7 @@ class MobilityImportationType implements ImportationType
                 switch ($field) {
                     case 'mobility':
                     case 'unit':
+                    case 'emissionFactorGroup':
                         $rowExtractor->addFieldExtractor(
                             new MapExtractor($configuration),
                             $field,

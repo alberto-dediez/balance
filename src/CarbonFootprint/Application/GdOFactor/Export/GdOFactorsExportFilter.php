@@ -6,4 +6,7 @@ namespace App\CarbonFootprint\Application\GdOFactor\Export;
 
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorFilter;
 
-class GdOFactorsExportFilter extends GdOFactorFilter {}
+class GdOFactorsExportFilter extends GdOFactorFilter
+{
+    public ?string $emissionFactorGroup = null;
+}

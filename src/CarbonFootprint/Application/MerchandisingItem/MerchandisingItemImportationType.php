@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Application\MerchandisingItem;
 use App\CarbonFootprint\Application\MerchandisingItem\Import\ImportMerchandisingItemRequest;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItem;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemId;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorGroupChoiceType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MerchandisingItemCategoryCodeType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MerchandisingItemChoiceType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\UnitCodeType;
@@ -63,6 +64,7 @@ class MerchandisingItemImportationType implements ImportationType
             (string) new TranslatableMessage('recycledCh4', [], 'fields'),
             (string) new TranslatableMessage('recycledN2o', [], 'fields'),
             (string) new TranslatableMessage('source', [], 'fields'),
+            (string) new TranslatableMessage('emissionFactorGroup', [], 'fields'),
         ];
     }
 
@@ -72,6 +74,7 @@ class MerchandisingItemImportationType implements ImportationType
             'merchandisingItem' => new FieldDefinition(fieldType: MerchandisingItemChoiceType::class),
             'category' => new FieldDefinition(fieldType: MerchandisingItemCategoryCodeType::class),
             'unit' => new FieldDefinition(fieldType: UnitCodeType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -93,6 +96,7 @@ class MerchandisingItemImportationType implements ImportationType
             'recycledCh4' => new FieldDefinition(fieldType: TextType::class),
             'recycledN2o' => new FieldDefinition(fieldType: TextType::class),
             'source' => new FieldDefinition(fieldType: TextType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -114,6 +118,7 @@ class MerchandisingItemImportationType implements ImportationType
             recycledCh4: $this->stringOrNull($data['recycledCh4'] ?? null),
             recycledN2o: $this->stringOrNull($data['recycledN2o'] ?? null),
             source: $this->stringOrNull($data['source'] ?? null),
+            emissionFactorGroup: $this->stringOrNull($data['emissionFactorGroup'] ?? null),
         );
     }
 
@@ -131,6 +136,7 @@ class MerchandisingItemImportationType implements ImportationType
                     case 'merchandisingItem':
                     case 'category':
                     case 'unit':
+                    case 'emissionFactorGroup':
                         $rowExtractor->addFieldExtractor(
                             new MapExtractor($configuration),
                             $field,

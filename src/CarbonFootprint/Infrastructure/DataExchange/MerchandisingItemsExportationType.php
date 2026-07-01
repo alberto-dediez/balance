@@ -6,6 +6,8 @@ namespace App\CarbonFootprint\Infrastructure\DataExchange;
 
 use App\CarbonFootprint\Application\MerchandisingItem\Export\MerchandisingItemsExportFilter;
 use App\CarbonFootprint\Application\MerchandisingItem\MerchandisingItemAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItem;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemCategory;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemEmissionFactor;
@@ -23,6 +25,7 @@ class MerchandisingItemsExportationType implements ExportationType
     public function __construct(
         private readonly MerchandisingItemRepository $repository,
         private readonly MerchandisingItemAuthorizer $authorizer,
+        private readonly EmissionFactorGroupRepository $emissionFactorGroupRepository,
     ) {}
 
     public function code(): string
@@ -58,6 +61,7 @@ class MerchandisingItemsExportationType implements ExportationType
             new ExportColumnDefinition('recycledCh4', new TranslatableMessage('CH4 reciclado')),
             new ExportColumnDefinition('recycledN2o', new TranslatableMessage('N2O reciclado')),
             new ExportColumnDefinition('source', new TranslatableMessage('Fuente')),
+            new ExportColumnDefinition('emissionFactorGroup', new TranslatableMessage('Grupo')),
         ];
     }
 
@@ -79,6 +83,7 @@ class MerchandisingItemsExportationType implements ExportationType
 
         return [
             'name' => $filter->name,
+            'emissionFactorGroup' => $filter->emissionFactorGroup,
             'category' => $filter->category?->value,
             'orderBy' => $filter->orderBy,
             'orderWay' => $filter->orderWay,
@@ -90,6 +95,7 @@ class MerchandisingItemsExportationType implements ExportationType
         $filter = new MerchandisingItemsExportFilter();
 
         $filter->name = isset($criteria['name']) ? (string) $criteria['name'] : null;
+        $filter->emissionFactorGroup = isset($criteria['emissionFactorGroup']) ? (string) $criteria['emissionFactorGroup'] : null;
         $filter->category = isset($criteria['category'])
             ? MerchandisingItemCategory::from((string) $criteria['category'])
             : null;
@@ -107,6 +113,7 @@ class MerchandisingItemsExportationType implements ExportationType
         }
 
         $filter->limit = 0;
+        $this->groupNameCache = [];
 
         foreach ($this->repository->findByFilter($filter) as $merchandisingItem) {
             $emissionFactors = $merchandisingItem->emissionFactors();
@@ -118,6 +125,12 @@ class MerchandisingItemsExportationType implements ExportationType
             }
 
             foreach ($emissionFactors as $merchandisingItemEmissionFactor) {
+                if (null !== $filter->emissionFactorGroup
+                    && (string) $merchandisingItemEmissionFactor->emissionFactorGroupId() !== $filter->emissionFactorGroup
+                ) {
+                    continue;
+                }
+
                 yield $this->baseRow($merchandisingItem) + $this->factorRow($merchandisingItemEmissionFactor);
             }
         }
@@ -148,6 +161,7 @@ class MerchandisingItemsExportationType implements ExportationType
     private function factorRow(MerchandisingItemEmissionFactor $merchandisingItemEmissionFactor): array
     {
         return [
+            'emissionFactorGroup' => $this->groupName($merchandisingItemEmissionFactor->emissionFactorGroupId()),
             'year' => $merchandisingItemEmissionFactor->newFactor()->year(),
             'co2eq' => $merchandisingItemEmissionFactor->newFactor()->co2eq(),
             'co2' => $merchandisingItemEmissionFactor->newFactor()->co2(),
@@ -165,6 +179,7 @@ class MerchandisingItemsExportationType implements ExportationType
     private function emptyFactorRow(): array
     {
         return [
+            'emissionFactorGroup' => '',
             'year' => '',
             'co2eq' => '',
             'co2' => '',
@@ -176,5 +191,20 @@ class MerchandisingItemsExportationType implements ExportationType
             'recycledN2o' => '',
             'source' => '',
         ];
+    }
+
+    /** @var array<string, string> */
+    private array $groupNameCache = [];
+
+    private function groupName(EmissionFactorGroupId $emissionFactorGroupId): string
+    {
+        $key = (string) $emissionFactorGroupId;
+
+        if (!isset($this->groupNameCache[$key])) {
+            $group = $this->emissionFactorGroupRepository->find($emissionFactorGroupId);
+            $this->groupNameCache[$key] = null !== $group ? $group->name() : '';
+        }
+
+        return $this->groupNameCache[$key];
     }
 }

@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Application\Material;
 use App\CarbonFootprint\Application\Material\Import\ImportMaterialRequest;
 use App\CarbonFootprint\Domain\Model\Material\Material;
 use App\CarbonFootprint\Domain\Model\Material\MaterialId;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorGroupChoiceType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MaterialCategoryCodeType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MaterialChoiceType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\UnitCodeType;
@@ -63,6 +64,7 @@ class MaterialImportationType implements ImportationType
             (string) new TranslatableMessage('recycledCh4', [], 'fields'),
             (string) new TranslatableMessage('recycledN2o', [], 'fields'),
             (string) new TranslatableMessage('source', [], 'fields'),
+            (string) new TranslatableMessage('emissionFactorGroup', [], 'fields'),
         ];
     }
 
@@ -72,6 +74,7 @@ class MaterialImportationType implements ImportationType
             'material' => new FieldDefinition(fieldType: MaterialChoiceType::class),
             'category' => new FieldDefinition(fieldType: MaterialCategoryCodeType::class),
             'unit' => new FieldDefinition(fieldType: UnitCodeType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -93,6 +96,7 @@ class MaterialImportationType implements ImportationType
             'recycledCh4' => new FieldDefinition(fieldType: TextType::class),
             'recycledN2o' => new FieldDefinition(fieldType: TextType::class),
             'source' => new FieldDefinition(fieldType: TextType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -114,6 +118,7 @@ class MaterialImportationType implements ImportationType
             recycledCh4: $this->stringOrNull($data['recycledCh4'] ?? null),
             recycledN2o: $this->stringOrNull($data['recycledN2o'] ?? null),
             source: $this->stringOrNull($data['source'] ?? null),
+            emissionFactorGroup: $this->stringOrNull($data['emissionFactorGroup'] ?? null),
         );
     }
 
@@ -131,6 +136,7 @@ class MaterialImportationType implements ImportationType
                     case 'material':
                     case 'category':
                     case 'unit':
+                    case 'emissionFactorGroup':
                         $rowExtractor->addFieldExtractor(
                             new MapExtractor($configuration),
                             $field,

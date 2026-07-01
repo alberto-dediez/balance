@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Infrastructure\Symfony\Form;
 
 use App\CarbonFootprint\Application\MerchandisingItem\Export\MerchandisingItemsExportFilter;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorGroupChoiceType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MerchandisingItemCategoryType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -26,6 +27,11 @@ class AdminMerchandisingItemsExportType extends AbstractType
                 'label' => new TranslatableMessage('Categoría'),
                 'required' => false,
                 'placeholder' => new TranslatableMessage('Todas'),
+            ])
+            ->add('emissionFactorGroup', EmissionFactorGroupChoiceType::class, [
+                'label' => new TranslatableMessage('Grupo'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Todos'),
             ])
         ;
     }

@@ -6,8 +6,9 @@ namespace App\CarbonFootprint\Application\GdOFactor\Import;
 
 use App\CarbonFootprint\Application\GdOFactor\GdOFactorAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\Gwp;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactor;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
@@ -27,6 +28,7 @@ class ImportGdOFactorService implements CommandHandler
     public function __construct(
         private GdOFactorRepository $gdOFactorRepository,
         private GdOFactorAuthorizer $authorizer,
+        private EmissionFactorGroupRepository $emissionFactorGroupRepository,
     ) {}
 
     public function __invoke(ImportGdOFactorRequest $request, User $user): ImportGdOFactorResponse
@@ -35,7 +37,9 @@ class ImportGdOFactorService implements CommandHandler
 
         $gdOFactor = $this->resolveGdOFactor($request, $user);
 
-        $gdOFactor->setEmissionFactor($this->buildEmissionFactor($request, $year));
+        $group = $this->resolveEmissionFactorGroup($request->emissionFactorGroup);
+
+        $gdOFactor->setEmissionFactor($this->buildEmissionFactor($request, $year, $group));
 
         $this->gdOFactorRepository->add($gdOFactor);
 
@@ -87,28 +91,47 @@ class ImportGdOFactorService implements CommandHandler
         return $gdOFactor;
     }
 
-    private function buildEmissionFactor(ImportGdOFactorRequest $request, int $year): EmissionFactor
+    private function buildEmissionFactor(ImportGdOFactorRequest $request, int $year, EmissionFactorGroup $group): EmissionFactor
     {
         $co2 = $this->decimal($request->co2);
         $ch4 = $this->decimal($request->ch4);
         $n2o = $this->decimal($request->n2o);
         $co2eq = $this->decimal($request->co2eq);
+        $source = '' === trim((string) $request->source) ? null : $request->source;
 
-        if (0.0 === (float) $co2eq) {
-            // Temporary FASE 2 compatibility fallback: real EmissionFactorGroup resolution lands in FASE 3/7/8/9.
-            $co2eq = Gwp::ar6()->co2eqFor($co2, $ch4, $n2o);
+        if (0.0 !== (float) $co2eq) {
+            return new EmissionFactor(
+                co2eq: $co2eq,
+                co2: $co2,
+                ch4: $ch4,
+                n2o: $n2o,
+                year: $year,
+                emissionFactorGroupId: $group->id(),
+                unit: Unit::KWh,
+                source: $source,
+            );
         }
 
-        return new EmissionFactor(
-            co2eq: $co2eq,
-            co2: $co2,
-            ch4: $ch4,
-            n2o: $n2o,
-            year: $year,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
-            unit: Unit::KWh,
-            source: '' === trim((string) $request->source) ? null : $request->source,
-        );
+        return $group->buildEmissionFactor($co2, $ch4, $n2o, $year, Unit::KWh, $source);
+    }
+
+    private function resolveEmissionFactorGroup(?string $value): EmissionFactorGroup
+    {
+        if (empty($value)) {
+            throw new \InvalidArgumentException('An emission factor group is required');
+        }
+
+        $group = $this->emissionFactorGroupRepository->find(new EmissionFactorGroupId($value));
+
+        if (null === $group) {
+            $group = $this->emissionFactorGroupRepository->findOneByCode($value);
+        }
+
+        if (null === $group) {
+            throw new \InvalidArgumentException('Emission factor group not found');
+        }
+
+        return $group;
     }
 
     private function resolveYear(?string $year): int

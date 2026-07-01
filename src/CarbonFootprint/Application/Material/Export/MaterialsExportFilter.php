@@ -6,4 +6,7 @@ namespace App\CarbonFootprint\Application\Material\Export;
 
 use App\CarbonFootprint\Domain\Model\Material\MaterialFilter;
 
-class MaterialsExportFilter extends MaterialFilter {}
+class MaterialsExportFilter extends MaterialFilter
+{
+    public ?string $emissionFactorGroup = null;
+}

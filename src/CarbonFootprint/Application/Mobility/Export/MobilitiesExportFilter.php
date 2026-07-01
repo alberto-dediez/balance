@@ -6,4 +6,7 @@ namespace App\CarbonFootprint\Application\Mobility\Export;
 
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityFilter;
 
-class MobilitiesExportFilter extends MobilityFilter {}
+class MobilitiesExportFilter extends MobilityFilter
+{
+    public ?string $emissionFactorGroup = null;
+}

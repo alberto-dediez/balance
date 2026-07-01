@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Application\MachineryFuel;
 use App\CarbonFootprint\Application\MachineryFuel\Import\ImportMachineryFuelRequest;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuel;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelId;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorGroupChoiceType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MachineryFuelChoiceType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MachineryFuelMachineryTypeType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\UnitCodeType;
@@ -58,6 +59,7 @@ class MachineryFuelImportationType implements ImportationType
             'ch4',
             'n2o',
             'source',
+            'emissionFactorGroup',
         ];
     }
 
@@ -67,6 +69,7 @@ class MachineryFuelImportationType implements ImportationType
             'machinery_fuel' => new FieldDefinition(fieldType: MachineryFuelChoiceType::class),
             'unit' => new FieldDefinition(fieldType: UnitCodeType::class),
             'machinery_type' => new FieldDefinition(fieldType: MachineryFuelMachineryTypeType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -83,6 +86,7 @@ class MachineryFuelImportationType implements ImportationType
             'ch4' => new FieldDefinition(fieldType: TextType::class),
             'n2o' => new FieldDefinition(fieldType: TextType::class),
             'source' => new FieldDefinition(fieldType: TextType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -99,6 +103,7 @@ class MachineryFuelImportationType implements ImportationType
             ch4: $this->stringOrNull($data['ch4'] ?? null),
             n2o: $this->stringOrNull($data['n2o'] ?? null),
             source: $this->stringOrNull($data['source'] ?? null),
+            emissionFactorGroup: $this->stringOrNull($data['emissionFactorGroup'] ?? null),
         );
     }
 
@@ -116,6 +121,7 @@ class MachineryFuelImportationType implements ImportationType
                     case 'machinery_fuel':
                     case 'unit':
                     case 'machinery_type':
+                    case 'emissionFactorGroup':
                         $rowExtractor->addFieldExtractor(
                             new MapExtractor($configuration),
                             $field,

@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Infrastructure\Symfony\Form;
 
 use App\CarbonFootprint\Application\CateringItem\Export\CateringItemsExportFilter;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\CateringItemCategoryType;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorGroupChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,6 +27,11 @@ class AdminCateringItemsExportType extends AbstractType
                 'label' => new TranslatableMessage('Categoría'),
                 'required' => false,
                 'placeholder' => new TranslatableMessage('Todas'),
+            ])
+            ->add('emissionFactorGroup', EmissionFactorGroupChoiceType::class, [
+                'label' => new TranslatableMessage('Grupo'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Todos'),
             ])
         ;
     }

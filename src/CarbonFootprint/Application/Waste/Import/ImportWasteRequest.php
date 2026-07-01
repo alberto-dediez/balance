@@ -18,5 +18,6 @@ class ImportWasteRequest implements Command
         public ?string $ch4 = null,
         public ?string $n2o = null,
         public ?string $source = null,
+        public ?string $emissionFactorGroup = null,
     ) {}
 }

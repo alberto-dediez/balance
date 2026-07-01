@@ -24,5 +24,6 @@ class ImportMerchandisingItemRequest implements Command
         public ?string $recycledCh4 = null,
         public ?string $recycledN2o = null,
         public ?string $source = null,
+        public ?string $emissionFactorGroup = null,
     ) {}
 }

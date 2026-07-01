@@ -6,4 +6,7 @@ namespace App\CarbonFootprint\Application\CateringItem\Export;
 
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemFilter;
 
-class CateringItemsExportFilter extends CateringItemFilter {}
+class CateringItemsExportFilter extends CateringItemFilter
+{
+    public ?string $emissionFactorGroup = null;
+}

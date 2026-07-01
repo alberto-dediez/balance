@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\CateringItem\CateringItem;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemId;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\CateringItemCategoryCodeType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\CateringItemChoiceType;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorGroupChoiceType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\UnitCodeType;
 use App\DataExchange\Application\Importation\Execute\Extractor\AssignValueExtractor;
 use App\DataExchange\Application\Importation\Execute\Extractor\DirectExtractor;
@@ -63,6 +64,7 @@ class CateringItemImportationType implements ImportationType
             (string) new TranslatableMessage('recycledCh4', [], 'fields'),
             (string) new TranslatableMessage('recycledN2o', [], 'fields'),
             (string) new TranslatableMessage('source', [], 'fields'),
+            (string) new TranslatableMessage('emissionFactorGroup', [], 'fields'),
         ];
     }
 
@@ -72,6 +74,7 @@ class CateringItemImportationType implements ImportationType
             'cateringItem' => new FieldDefinition(fieldType: CateringItemChoiceType::class),
             'category' => new FieldDefinition(fieldType: CateringItemCategoryCodeType::class),
             'unit' => new FieldDefinition(fieldType: UnitCodeType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -93,6 +96,7 @@ class CateringItemImportationType implements ImportationType
             'recycledCh4' => new FieldDefinition(fieldType: TextType::class),
             'recycledN2o' => new FieldDefinition(fieldType: TextType::class),
             'source' => new FieldDefinition(fieldType: TextType::class),
+            'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
 
@@ -114,6 +118,7 @@ class CateringItemImportationType implements ImportationType
             recycledCh4: $this->stringOrNull($data['recycledCh4'] ?? null),
             recycledN2o: $this->stringOrNull($data['recycledN2o'] ?? null),
             source: $this->stringOrNull($data['source'] ?? null),
+            emissionFactorGroup: $this->stringOrNull($data['emissionFactorGroup'] ?? null),
         );
     }
 
@@ -131,6 +136,7 @@ class CateringItemImportationType implements ImportationType
                     case 'cateringItem':
                     case 'category':
                     case 'unit':
+                    case 'emissionFactorGroup':
                         $rowExtractor->addFieldExtractor(
                             new MapExtractor($configuration),
                             $field,

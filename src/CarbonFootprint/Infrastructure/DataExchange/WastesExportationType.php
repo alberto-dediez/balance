@@ -6,6 +6,8 @@ namespace App\CarbonFootprint\Infrastructure\DataExchange;
 
 use App\CarbonFootprint\Application\Waste\Export\WastesExportFilter;
 use App\CarbonFootprint\Application\Waste\WasteAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Waste\Waste;
 use App\CarbonFootprint\Domain\Model\Waste\WasteEmissionFactor;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
@@ -22,6 +24,7 @@ class WastesExportationType implements ExportationType
     public function __construct(
         private readonly WasteRepository $repository,
         private readonly WasteAuthorizer $authorizer,
+        private readonly EmissionFactorGroupRepository $emissionFactorGroupRepository,
     ) {}
 
     public function code(): string
@@ -52,6 +55,7 @@ class WastesExportationType implements ExportationType
             new ExportColumnDefinition('ch4', new TranslatableMessage('CH4')),
             new ExportColumnDefinition('n2o', new TranslatableMessage('N2O')),
             new ExportColumnDefinition('source', new TranslatableMessage('Fuente')),
+            new ExportColumnDefinition('emissionFactorGroup', new TranslatableMessage('Grupo')),
         ];
     }
 
@@ -73,6 +77,7 @@ class WastesExportationType implements ExportationType
 
         return [
             'name' => $filter->name,
+            'emissionFactorGroup' => $filter->emissionFactorGroup,
             'orderBy' => $filter->orderBy,
             'orderWay' => $filter->orderWay,
         ];
@@ -83,6 +88,7 @@ class WastesExportationType implements ExportationType
         $filter = new WastesExportFilter();
 
         $filter->name = isset($criteria['name']) ? (string) $criteria['name'] : null;
+        $filter->emissionFactorGroup = isset($criteria['emissionFactorGroup']) ? (string) $criteria['emissionFactorGroup'] : null;
         $filter->orderBy = isset($criteria['orderBy']) ? (string) $criteria['orderBy'] : 'default';
         $filter->orderWay = isset($criteria['orderWay']) ? (string) $criteria['orderWay'] : 'ASC';
         $filter->limit = 0;
@@ -97,6 +103,7 @@ class WastesExportationType implements ExportationType
         }
 
         $filter->limit = 0;
+        $this->groupNameCache = [];
 
         foreach ($this->repository->findByFilter($filter) as $waste) {
             $emissionFactors = $waste->emissionFactors();
@@ -108,6 +115,12 @@ class WastesExportationType implements ExportationType
             }
 
             foreach ($emissionFactors as $wasteEmissionFactor) {
+                if (null !== $filter->emissionFactorGroup
+                    && (string) $wasteEmissionFactor->emissionFactorGroupId() !== $filter->emissionFactorGroup
+                ) {
+                    continue;
+                }
+
                 yield $this->baseRow($waste) + $this->factorRow($wasteEmissionFactor);
             }
         }
@@ -139,6 +152,7 @@ class WastesExportationType implements ExportationType
         $emissionFactor = $wasteEmissionFactor->emissionFactor();
 
         return [
+            'emissionFactorGroup' => $this->groupName($emissionFactor->emissionFactorGroupId()),
             'year' => $emissionFactor->year(),
             'co2eq' => $emissionFactor->co2eq(),
             'co2' => $emissionFactor->co2(),
@@ -152,6 +166,7 @@ class WastesExportationType implements ExportationType
     private function emptyFactorRow(): array
     {
         return [
+            'emissionFactorGroup' => '',
             'year' => '',
             'co2eq' => '',
             'co2' => '',
@@ -159,5 +174,20 @@ class WastesExportationType implements ExportationType
             'n2o' => '',
             'source' => '',
         ];
+    }
+
+    /** @var array<string, string> */
+    private array $groupNameCache = [];
+
+    private function groupName(EmissionFactorGroupId $emissionFactorGroupId): string
+    {
+        $key = (string) $emissionFactorGroupId;
+
+        if (!isset($this->groupNameCache[$key])) {
+            $group = $this->emissionFactorGroupRepository->find($emissionFactorGroupId);
+            $this->groupNameCache[$key] = null !== $group ? $group->name() : '';
+        }
+
+        return $this->groupNameCache[$key];
     }
 }
