@@ -35,7 +35,7 @@ class RegisterMobilityActivityService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat(null, SecurityAction::Register, $user);
 
-        $emissionFactor = $this->factorSelector->select($request->mobilityId, $request->year);
+        $emissionFactor = $this->factorSelector->select($request->mobilityId, $request->year, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity = MobilityActivity::register(

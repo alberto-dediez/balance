@@ -11,6 +11,7 @@ use App\CarbonFootprint\Application\Activity\Update\UpdateElectricityActivityReq
 use App\CarbonFootprint\Application\Activity\Update\UpdateElectricityActivityService;
 use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivityUpdated;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
@@ -63,6 +64,7 @@ class UpdateElectricityActivityServiceTest extends TestCase
             gdOFactorId: $gdoFactor->id(),
             quantity: ActivityMother::quantity(Unit::KWh, 2000.0),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::adminUser());
 
         $this->assertInstanceOf(ElectricityActivityUpdated::class, $this->spySubscriber->lastEvent());
@@ -87,6 +89,7 @@ class UpdateElectricityActivityServiceTest extends TestCase
             gdOFactorId: GdOFactorId::generate(),
             quantity: ActivityMother::quantity(Unit::KWh),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
@@ -103,6 +106,7 @@ class UpdateElectricityActivityServiceTest extends TestCase
             gdOFactorId: GdOFactorId::generate(),
             quantity: ActivityMother::quantity(Unit::KWh),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         )));
     }
 }

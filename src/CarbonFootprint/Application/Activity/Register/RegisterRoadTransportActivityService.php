@@ -35,7 +35,7 @@ class RegisterRoadTransportActivityService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat(null, SecurityAction::Register, $user);
 
-        $emissionFactor = $this->factorSelector->select($request->roadTransportId, $request->year);
+        $emissionFactor = $this->factorSelector->select($request->roadTransportId, $request->year, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity = RoadTransportActivity::register(

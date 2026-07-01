@@ -12,6 +12,7 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterElectricityActivit
 use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
 use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivityRegistered;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
@@ -58,6 +59,7 @@ class RegisterElectricityActivityServiceTest extends TestCase
             gdOFactorId: $gdoFactor->id(),
             quantity: ActivityMother::quantity(Unit::KWh, 1000.0),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::adminUser());
 
         $this->assertInstanceOf(ElectricityActivity::class, $activityRepo->findById($result->activityId));
@@ -77,6 +79,7 @@ class RegisterElectricityActivityServiceTest extends TestCase
             gdOFactorId: GdOFactorId::generate(),
             quantity: ActivityMother::quantity(Unit::KWh),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
@@ -92,6 +95,7 @@ class RegisterElectricityActivityServiceTest extends TestCase
             gdOFactorId: GdOFactorId::generate(),
             quantity: ActivityMother::quantity(Unit::KWh),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         )));
     }
 }

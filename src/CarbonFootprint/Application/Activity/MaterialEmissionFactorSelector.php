@@ -14,13 +14,13 @@ final class MaterialEmissionFactorSelector
 {
     public function __construct(private MaterialRepository $repository) {}
 
-    public function select(MaterialId $id, int $year, ItemCondition $condition): EmissionFactor
+    public function select(MaterialId $id, int $year, ItemCondition $condition, EmissionFactorGroupId $groupId): EmissionFactor
     {
         $material = $this->repository->find($id);
         if (null === $material) {
             throw new \InvalidArgumentException(sprintf('Material "%s" not found.', $id));
         }
-        $factor = $material->emissionFactorFor($year, EmissionFactorGroupId::default());
+        $factor = $material->emissionFactorFor($year, $groupId);
         if (null === $factor) {
             throw new \InvalidArgumentException(sprintf('No emission factor for material "%s" in year %d.', $id, $year));
         }

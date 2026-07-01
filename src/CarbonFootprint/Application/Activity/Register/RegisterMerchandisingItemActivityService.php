@@ -35,7 +35,7 @@ class RegisterMerchandisingItemActivityService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat(null, SecurityAction::Register, $user);
 
-        $emissionFactor = $this->factorSelector->select($request->merchandisingItemId, $request->year, $request->condition);
+        $emissionFactor = $this->factorSelector->select($request->merchandisingItemId, $request->year, $request->condition, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity = MerchandisingItemActivity::register(

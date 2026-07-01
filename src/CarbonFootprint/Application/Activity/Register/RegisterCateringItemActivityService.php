@@ -35,7 +35,7 @@ class RegisterCateringItemActivityService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat(null, SecurityAction::Register, $user);
 
-        $emissionFactor = $this->factorSelector->select($request->cateringItemId, $request->year, $request->condition);
+        $emissionFactor = $this->factorSelector->select($request->cateringItemId, $request->year, $request->condition, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity = CateringItemActivity::register(

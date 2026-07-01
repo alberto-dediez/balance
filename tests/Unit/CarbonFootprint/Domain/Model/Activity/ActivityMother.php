@@ -12,12 +12,12 @@ use App\CarbonFootprint\Domain\Model\Unit;
 
 class ActivityMother
 {
-    public static function emissionFactor(): EmissionFactor
+    public static function emissionFactor(?EmissionFactorGroupId $groupId = null): EmissionFactor
     {
-        // Uses the temporary well-known default group sentinel so it matches the
-        // fallback still used by the Activity selectors (FASE 6 will propagate the
-        // real EmissionFactorGroupId from the EventCarbonFootprint/request instead).
-        return new EmissionFactor('1.5', '1.5', '0', '0', 2024, EmissionFactorGroupId::default(), Unit::Kilogram);
+        // Defaults to the well-known "default" group sentinel. Tests that need to assert
+        // the group actually propagated through the request/selector should pass an explicit
+        // $groupId here and reuse the same value when building the Register/Update request.
+        return new EmissionFactor('1.5', '1.5', '0', '0', 2024, $groupId ?? EmissionFactorGroupId::default(), Unit::Kilogram);
     }
 
     public static function emissions(): Emissions

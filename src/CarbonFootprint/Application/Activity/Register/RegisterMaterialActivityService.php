@@ -35,7 +35,7 @@ class RegisterMaterialActivityService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat(null, SecurityAction::Register, $user);
 
-        $emissionFactor = $this->factorSelector->select($request->materialId, $request->year, $request->condition);
+        $emissionFactor = $this->factorSelector->select($request->materialId, $request->year, $request->condition, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity = MaterialActivity::register(

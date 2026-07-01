@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\Activity\Update;
 
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemId;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\Shared\Application\CommandBus\Command;
@@ -18,5 +19,6 @@ class UpdateMerchandisingItemActivityRequest implements Command
         public ItemCondition $condition,
         public Quantity $quantity,
         public int $year,
+        public EmissionFactorGroupId $emissionFactorGroupId,
     ) {}
 }

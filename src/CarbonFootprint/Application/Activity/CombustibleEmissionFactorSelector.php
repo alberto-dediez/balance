@@ -13,13 +13,13 @@ final class CombustibleEmissionFactorSelector
 {
     public function __construct(private CombustibleRepository $repository) {}
 
-    public function select(CombustibleId $id, int $year): EmissionFactor
+    public function select(CombustibleId $id, int $year, EmissionFactorGroupId $groupId): EmissionFactor
     {
         $combustible = $this->repository->find($id);
         if (null === $combustible) {
             throw new \InvalidArgumentException(sprintf('Combustible "%s" not found.', $id));
         }
-        $factor = $combustible->emissionFactorFor($year, EmissionFactorGroupId::default());
+        $factor = $combustible->emissionFactorFor($year, $groupId);
         if (null === $factor) {
             throw new \InvalidArgumentException(sprintf('No emission factor for combustible "%s" in year %d.', $id, $year));
         }

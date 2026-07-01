@@ -13,13 +13,13 @@ final class RoadTransportEmissionFactorSelector
 {
     public function __construct(private RoadTransportRepository $repository) {}
 
-    public function select(RoadTransportId $id, int $year): EmissionFactor
+    public function select(RoadTransportId $id, int $year, EmissionFactorGroupId $groupId): EmissionFactor
     {
         $roadTransport = $this->repository->find($id);
         if (null === $roadTransport) {
             throw new \InvalidArgumentException(sprintf('RoadTransport "%s" not found.', $id));
         }
-        $factor = $roadTransport->emissionFactorFor($year, EmissionFactorGroupId::default());
+        $factor = $roadTransport->emissionFactorFor($year, $groupId);
         if (null === $factor) {
             throw new \InvalidArgumentException(sprintf('No emission factor for road transport "%s" in year %d.', $id, $year));
         }

@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\Activity\Update\UpdateWasteActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateWasteActivityService;
 use App\CarbonFootprint\Application\Activity\WasteEmissionFactorSelector;
 use App\CarbonFootprint\Domain\Model\Activity\WasteActivityUpdated;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
 use App\Security\Domain\Model\User\Role;
@@ -54,6 +55,7 @@ class UpdateWasteActivityServiceTest extends TestCase
             wasteId: $entity->id(),
             quantity: ActivityMother::quantity(Unit::Kilogram, 90.0),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::adminUser());
 
         $this->assertInstanceOf(WasteActivityUpdated::class, $this->spySubscriber->lastEvent());
@@ -74,6 +76,7 @@ class UpdateWasteActivityServiceTest extends TestCase
             wasteId: WasteId::generate(),
             quantity: ActivityMother::quantity(Unit::Kilogram),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
@@ -86,6 +89,7 @@ class UpdateWasteActivityServiceTest extends TestCase
             wasteId: WasteId::generate(),
             quantity: ActivityMother::quantity(Unit::Kilogram),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         )));
     }
 }

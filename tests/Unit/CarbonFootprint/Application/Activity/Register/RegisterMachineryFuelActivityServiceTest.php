@@ -11,6 +11,7 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterMachineryFuelActiv
 use App\CarbonFootprint\Application\Activity\Register\RegisterMachineryFuelActivityService;
 use App\CarbonFootprint\Domain\Model\Activity\MachineryFuelActivity;
 use App\CarbonFootprint\Domain\Model\Activity\MachineryFuelActivityRegistered;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
@@ -49,6 +50,7 @@ class RegisterMachineryFuelActivityServiceTest extends TestCase
             machineryFuelId: $entity->id(),
             quantity: ActivityMother::quantity(Unit::Liter, 50.0),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::adminUser());
 
         $this->assertInstanceOf(MachineryFuelActivity::class, $activityRepo->findById($result->activityId));
@@ -64,6 +66,7 @@ class RegisterMachineryFuelActivityServiceTest extends TestCase
             machineryFuelId: MachineryFuelId::generate(),
             quantity: ActivityMother::quantity(Unit::Liter),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
@@ -75,6 +78,7 @@ class RegisterMachineryFuelActivityServiceTest extends TestCase
             machineryFuelId: MachineryFuelId::generate(),
             quantity: ActivityMother::quantity(Unit::Liter),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         )));
     }
 }

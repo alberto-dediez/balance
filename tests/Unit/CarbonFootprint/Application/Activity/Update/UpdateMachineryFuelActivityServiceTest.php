@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\Activity\MachineryFuelEmissionFactorSelector
 use App\CarbonFootprint\Application\Activity\Update\UpdateMachineryFuelActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMachineryFuelActivityService;
 use App\CarbonFootprint\Domain\Model\Activity\MachineryFuelActivityUpdated;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
@@ -54,6 +55,7 @@ class UpdateMachineryFuelActivityServiceTest extends TestCase
             machineryFuelId: $entity->id(),
             quantity: ActivityMother::quantity(Unit::Liter, 80.0),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::adminUser());
 
         $this->assertInstanceOf(MachineryFuelActivityUpdated::class, $this->spySubscriber->lastEvent());
@@ -74,6 +76,7 @@ class UpdateMachineryFuelActivityServiceTest extends TestCase
             machineryFuelId: MachineryFuelId::generate(),
             quantity: ActivityMother::quantity(Unit::Liter),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
@@ -86,6 +89,7 @@ class UpdateMachineryFuelActivityServiceTest extends TestCase
             machineryFuelId: MachineryFuelId::generate(),
             quantity: ActivityMother::quantity(Unit::Liter),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         )));
     }
 }

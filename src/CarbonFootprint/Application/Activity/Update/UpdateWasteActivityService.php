@@ -39,7 +39,7 @@ class UpdateWasteActivityService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($activity, SecurityAction::Edit, $user);
 
-        $emissionFactor = $this->factorSelector->select($request->wasteId, $request->year);
+        $emissionFactor = $this->factorSelector->select($request->wasteId, $request->year, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity->update(

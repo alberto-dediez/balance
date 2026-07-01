@@ -14,13 +14,13 @@ final class CateringItemEmissionFactorSelector
 {
     public function __construct(private CateringItemRepository $repository) {}
 
-    public function select(CateringItemId $id, int $year, ItemCondition $condition): EmissionFactor
+    public function select(CateringItemId $id, int $year, ItemCondition $condition, EmissionFactorGroupId $groupId): EmissionFactor
     {
         $cateringItem = $this->repository->find($id);
         if (null === $cateringItem) {
             throw new \InvalidArgumentException(sprintf('CateringItem "%s" not found.', $id));
         }
-        $factor = $cateringItem->emissionFactorFor($year, EmissionFactorGroupId::default());
+        $factor = $cateringItem->emissionFactorFor($year, $groupId);
         if (null === $factor) {
             throw new \InvalidArgumentException(sprintf('No emission factor for catering item "%s" in year %d.', $id, $year));
         }

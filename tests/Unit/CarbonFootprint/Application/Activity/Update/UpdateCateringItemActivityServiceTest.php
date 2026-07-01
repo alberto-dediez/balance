@@ -12,6 +12,7 @@ use App\CarbonFootprint\Application\Activity\Update\UpdateCateringItemActivitySe
 use App\CarbonFootprint\Domain\Model\Activity\CateringItemActivityUpdated;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -56,6 +57,7 @@ class UpdateCateringItemActivityServiceTest extends TestCase
             condition: ItemCondition::Recycled,
             quantity: ActivityMother::quantity(Unit::Kilogram, 8.0),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::adminUser());
 
         $this->assertInstanceOf(CateringItemActivityUpdated::class, $this->spySubscriber->lastEvent());
@@ -77,6 +79,7 @@ class UpdateCateringItemActivityServiceTest extends TestCase
             condition: ItemCondition::Recycled,
             quantity: ActivityMother::quantity(Unit::Kilogram),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
@@ -90,6 +93,7 @@ class UpdateCateringItemActivityServiceTest extends TestCase
             condition: ItemCondition::Recycled,
             quantity: ActivityMother::quantity(Unit::Kilogram),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         )));
     }
 }

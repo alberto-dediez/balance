@@ -11,6 +11,7 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterOvernightStayActiv
 use App\CarbonFootprint\Application\Activity\Register\RegisterOvernightStayActivityService;
 use App\CarbonFootprint\Domain\Model\Activity\OvernightStayActivity;
 use App\CarbonFootprint\Domain\Model\Activity\OvernightStayActivityRegistered;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
@@ -49,6 +50,7 @@ class RegisterOvernightStayActivityServiceTest extends TestCase
             overnightStayId: $entity->id(),
             quantity: ActivityMother::quantity(Unit::Pernoctacion, 2.0),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::adminUser());
 
         $this->assertInstanceOf(OvernightStayActivity::class, $activityRepo->findById($result->activityId));
@@ -64,6 +66,7 @@ class RegisterOvernightStayActivityServiceTest extends TestCase
             overnightStayId: OvernightStayId::generate(),
             quantity: ActivityMother::quantity(Unit::Pernoctacion),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
@@ -75,6 +78,7 @@ class RegisterOvernightStayActivityServiceTest extends TestCase
             overnightStayId: OvernightStayId::generate(),
             quantity: ActivityMother::quantity(Unit::Pernoctacion),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         )));
     }
 }

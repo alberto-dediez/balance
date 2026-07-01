@@ -39,7 +39,7 @@ class UpdateMobilityActivityService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($activity, SecurityAction::Edit, $user);
 
-        $emissionFactor = $this->factorSelector->select($request->mobilityId, $request->year);
+        $emissionFactor = $this->factorSelector->select($request->mobilityId, $request->year, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity->update(

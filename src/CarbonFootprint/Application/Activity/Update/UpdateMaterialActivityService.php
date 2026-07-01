@@ -39,7 +39,7 @@ class UpdateMaterialActivityService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($activity, SecurityAction::Edit, $user);
 
-        $emissionFactor = $this->factorSelector->select($request->materialId, $request->year, $request->condition);
+        $emissionFactor = $this->factorSelector->select($request->materialId, $request->year, $request->condition, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity->update(

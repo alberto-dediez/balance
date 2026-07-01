@@ -11,6 +11,7 @@ use App\CarbonFootprint\Application\Activity\Update\UpdateMaterialActivityReques
 use App\CarbonFootprint\Application\Activity\Update\UpdateMaterialActivityService;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\Activity\MaterialActivityUpdated;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Material\MaterialId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
@@ -56,6 +57,7 @@ class UpdateMaterialActivityServiceTest extends TestCase
             condition: ItemCondition::Recycled,
             quantity: ActivityMother::quantity(Unit::Kilogram, 20.0),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::adminUser());
 
         $this->assertInstanceOf(MaterialActivityUpdated::class, $this->spySubscriber->lastEvent());
@@ -77,6 +79,7 @@ class UpdateMaterialActivityServiceTest extends TestCase
             condition: ItemCondition::Recycled,
             quantity: ActivityMother::quantity(Unit::Kilogram),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
@@ -90,6 +93,7 @@ class UpdateMaterialActivityServiceTest extends TestCase
             condition: ItemCondition::Recycled,
             quantity: ActivityMother::quantity(Unit::Kilogram),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         )));
     }
 }

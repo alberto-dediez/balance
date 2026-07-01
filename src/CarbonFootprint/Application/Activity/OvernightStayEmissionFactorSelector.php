@@ -13,13 +13,13 @@ final class OvernightStayEmissionFactorSelector
 {
     public function __construct(private OvernightStayRepository $repository) {}
 
-    public function select(OvernightStayId $id, int $year): EmissionFactor
+    public function select(OvernightStayId $id, int $year, EmissionFactorGroupId $groupId): EmissionFactor
     {
         $overnightStay = $this->repository->find($id);
         if (null === $overnightStay) {
             throw new \InvalidArgumentException(sprintf('OvernightStay "%s" not found.', $id));
         }
-        $factor = $overnightStay->emissionFactorFor($year, EmissionFactorGroupId::default());
+        $factor = $overnightStay->emissionFactorFor($year, $groupId);
         if (null === $factor) {
             throw new \InvalidArgumentException(sprintf('No emission factor for overnight stay "%s" in year %d.', $id, $year));
         }

@@ -11,6 +11,7 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterRoadTransportActiv
 use App\CarbonFootprint\Application\Activity\RoadTransportEmissionFactorSelector;
 use App\CarbonFootprint\Domain\Model\Activity\RoadTransportActivity;
 use App\CarbonFootprint\Domain\Model\Activity\RoadTransportActivityRegistered;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
@@ -49,6 +50,7 @@ class RegisterRoadTransportActivityServiceTest extends TestCase
             roadTransportId: $entity->id(),
             quantity: ActivityMother::quantity(Unit::Kilometer, 500.0),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::adminUser());
 
         $this->assertInstanceOf(RoadTransportActivity::class, $activityRepo->findById($result->activityId));
@@ -64,6 +66,7 @@ class RegisterRoadTransportActivityServiceTest extends TestCase
             roadTransportId: RoadTransportId::generate(),
             quantity: ActivityMother::quantity(Unit::Kilometer),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
@@ -75,6 +78,7 @@ class RegisterRoadTransportActivityServiceTest extends TestCase
             roadTransportId: RoadTransportId::generate(),
             quantity: ActivityMother::quantity(Unit::Kilometer),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         )));
     }
 }

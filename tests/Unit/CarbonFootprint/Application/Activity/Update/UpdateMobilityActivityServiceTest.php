@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMobilityActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMobilityActivityService;
 use App\CarbonFootprint\Domain\Model\Activity\MobilityActivityUpdated;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
@@ -54,6 +55,7 @@ class UpdateMobilityActivityServiceTest extends TestCase
             mobilityId: $entity->id(),
             quantity: ActivityMother::quantity(Unit::Kilometer, 400.0),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::adminUser());
 
         $this->assertInstanceOf(MobilityActivityUpdated::class, $this->spySubscriber->lastEvent());
@@ -74,6 +76,7 @@ class UpdateMobilityActivityServiceTest extends TestCase
             mobilityId: MobilityId::generate(),
             quantity: ActivityMother::quantity(Unit::Kilometer),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
@@ -86,6 +89,7 @@ class UpdateMobilityActivityServiceTest extends TestCase
             mobilityId: MobilityId::generate(),
             quantity: ActivityMother::quantity(Unit::Kilometer),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         )));
     }
 }

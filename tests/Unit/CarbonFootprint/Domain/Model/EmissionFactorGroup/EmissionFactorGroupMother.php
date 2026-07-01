@@ -16,14 +16,15 @@ class EmissionFactorGroupMother
     }
 
     /**
-     * The current AR6/MITECO GWP values used across the project.
+     * The current AR6/MITECO GWP values used across the project, with the same stable id as the
+     * production sentinel EmissionFactorGroupId::default() (the migration-seeded "default" group).
      */
     public static function default(): EmissionFactorGroup
     {
         return self::from(
             code: 'default',
             name: 'Estándar',
-            id: (string) EmissionFactorGroupId::generate(),
+            id: (string) EmissionFactorGroupId::default(),
             gwp: new Gwp(gwpCo2: 1.0, gwpCh4: 27.9, gwpN2O: 273.0),
         );
     }

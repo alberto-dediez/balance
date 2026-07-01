@@ -12,6 +12,7 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterMerchandisingItemA
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\Activity\MerchandisingItemActivity;
 use App\CarbonFootprint\Domain\Model\Activity\MerchandisingItemActivityRegistered;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
@@ -51,6 +52,7 @@ class RegisterMerchandisingItemActivityServiceTest extends TestCase
             condition: ItemCondition::Recycled,
             quantity: ActivityMother::quantity(Unit::Piece, 100.0),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::adminUser());
 
         $this->assertInstanceOf(MerchandisingItemActivity::class, $activityRepo->findById($result->activityId));
@@ -67,6 +69,7 @@ class RegisterMerchandisingItemActivityServiceTest extends TestCase
             condition: ItemCondition::Recycled,
             quantity: ActivityMother::quantity(Unit::Piece),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         ), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
@@ -79,6 +82,7 @@ class RegisterMerchandisingItemActivityServiceTest extends TestCase
             condition: ItemCondition::Recycled,
             quantity: ActivityMother::quantity(Unit::Piece),
             year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
         )));
     }
 }
