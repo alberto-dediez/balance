@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity" table="electricity_activities">
+        <field name="electricityMarketerId" type="electricity_marketer_id" column="electricity_marketer_id" nullable="false" />
+        <field name="gdOFactorId" type="gdo_factor_id" column="gdo_factor_id" nullable="false" />
+    </entity>
+
+</doctrine-mapping>

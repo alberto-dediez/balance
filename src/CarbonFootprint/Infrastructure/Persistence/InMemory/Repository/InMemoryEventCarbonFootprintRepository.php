@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository;
 
+use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintFilter;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
@@ -44,6 +45,21 @@ class InMemoryEventCarbonFootprintRepository implements EventCarbonFootprintRepo
             ? $this->eventCarbonFootprints[(string) $eventCarbonFootprintId]
             : null
         ;
+    }
+
+    public function findByActivityId(ActivityId $activityId): ?EventCarbonFootprint
+    {
+        foreach ($this->eventCarbonFootprints as $eventCarbonFootprint) {
+            if (true == $eventCarbonFootprint->isRemoved()) {
+                continue;
+            }
+
+            if (null !== $eventCarbonFootprint->activities()->forActivityId($activityId)) {
+                return $eventCarbonFootprint;
+            }
+        }
+
+        return null;
     }
 
     public function findByEventId(EventId $eventId): ?EventCarbonFootprint

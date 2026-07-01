@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintActivity;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintFilter;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
@@ -58,6 +60,28 @@ class DoctrineEventCarbonFootprintRepository implements EventCarbonFootprintRepo
                 $qb->expr()->eq('e.eventId', ':eventId'),
             )
             ->setParameter('eventId', (string) $eventId)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    public function findByActivityId(ActivityId $activityId): ?EventCarbonFootprint
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        return $qb
+            ->select('e')
+            ->from(EventCarbonFootprint::class, 'e')
+            ->join(EventCarbonFootprintActivity::class, 'a', 'WITH', 'a.eventCarbonFootprint = e')
+            ->where(
+                $qb->expr()->orX(
+                    $qb->expr()->isNull('e.removed'),
+                    $qb->expr()->eq('e.removed', ':removed'),
+                ),
+            )
+            ->andWhere($qb->expr()->eq('a.activityId', ':activityId'))
+            ->setParameter('removed', false, Types::BOOLEAN)
+            ->setParameter('activityId', (string) $activityId)
             ->getQuery()
             ->getOneOrNullResult()
         ;

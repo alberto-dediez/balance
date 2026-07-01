@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\Activity\Activity" table="activities" inheritance-type="JOINED">
+        <discriminator-column name="type" type="string" />
+        <discriminator-map>
+            <discriminator-mapping value="material" class="App\CarbonFootprint\Domain\Model\Activity\MaterialActivity" />
+            <discriminator-mapping value="catering_item" class="App\CarbonFootprint\Domain\Model\Activity\CateringItemActivity" />
+            <discriminator-mapping value="merchandising_item" class="App\CarbonFootprint\Domain\Model\Activity\MerchandisingItemActivity" />
+            <discriminator-mapping value="combustible" class="App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity" />
+            <discriminator-mapping value="electricity" class="App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity" />
+            <discriminator-mapping value="machinery_fuel" class="App\CarbonFootprint\Domain\Model\Activity\MachineryFuelActivity" />
+            <discriminator-mapping value="mobility" class="App\CarbonFootprint\Domain\Model\Activity\MobilityActivity" />
+            <discriminator-mapping value="overnight_stay" class="App\CarbonFootprint\Domain\Model\Activity\OvernightStayActivity" />
+            <discriminator-mapping value="road_transport" class="App\CarbonFootprint\Domain\Model\Activity\RoadTransportActivity" />
+            <discriminator-mapping value="waste" class="App\CarbonFootprint\Domain\Model\Activity\WasteActivity" />
+        </discriminator-map>
+
+        <id name="id" type="activity_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <embedded name="emissionFactor" class="App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor" use-column-prefix="true" column-prefix="emission_factor_" />
+        <embedded name="emissions" class="App\CarbonFootprint\Domain\Model\Emissions" use-column-prefix="true" column-prefix="emissions_" />
+
+        <embedded name="quantity" class="App\CarbonFootprint\Domain\Model\Quantity" use-column-prefix="false" />
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true" />
+    </entity>
+
+</doctrine-mapping>

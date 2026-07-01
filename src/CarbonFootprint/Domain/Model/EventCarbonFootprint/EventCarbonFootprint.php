@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Domain\Model\EventCarbonFootprint;
 
+use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\EventOperations\Domain\Model\Event\DateRange;
 use App\EventOperations\Domain\Model\Event\EventId;
@@ -13,6 +14,9 @@ use App\Shared\Domain\Model\AggregateRoot;
 class EventCarbonFootprint implements \Stringable
 {
     use AggregateRoot;
+
+    /** @var iterable<EventCarbonFootprintActivity> */
+    private iterable $activities = [];
 
     /** @param array<\App\Shared\Domain\Event\DomainEvent> $events */
     public function __construct(
@@ -233,6 +237,73 @@ class EventCarbonFootprint implements \Stringable
     {
         $this->removed = true;
         $this->removedAt = $event->occurredOn();
+    }
+
+    public function addActivity(ActivityId $activityId, Phase $phase, Source $source): void
+    {
+        foreach ($this->activities as $activity) {
+            if ($activity->activityId()->equals($activityId)) {
+                return;
+            }
+        }
+
+        $this->recordApplyAndPublish(
+            new EventCarbonFootprintActivityAdded(
+                eventCarbonFootprintId: $this->id,
+                activityId: $activityId,
+                phase: $phase,
+                source: $source,
+            ),
+        );
+    }
+
+    public function removeActivity(ActivityId $activityId): void
+    {
+        $this->recordApplyAndPublish(
+            new EventCarbonFootprintActivityRemoved(
+                eventCarbonFootprintId: $this->id,
+                activityId: $activityId,
+            ),
+        );
+    }
+
+    public function activities(): EventCarbonFootprintActivities
+    {
+        return new EventCarbonFootprintActivities($this->activities);
+    }
+
+    public function applyEventCarbonFootprintActivityAdded(EventCarbonFootprintActivityAdded $event): void
+    {
+        $activity = new EventCarbonFootprintActivity(
+            id: EventCarbonFootprintActivityId::generate(),
+            eventCarbonFootprint: $this,
+            activityId: $event->activityId(),
+            phase: $event->phase(),
+            source: $event->source(),
+            addedAt: $event->occurredOn(),
+        );
+
+        if (is_array($this->activities)) {
+            $this->activities[] = $activity;
+        } elseif ($this->activities instanceof \Doctrine\Common\Collections\Collection) {
+            $this->activities->add($activity);
+        }
+    }
+
+    public function applyEventCarbonFootprintActivityRemoved(EventCarbonFootprintActivityRemoved $event): void
+    {
+        foreach ($this->activities as $key => $activity) {
+            if (!$activity->activityId()->equals($event->activityId())) {
+                continue;
+            }
+            if (is_array($this->activities)) {
+                unset($this->activities[$key]);
+            } elseif ($this->activities instanceof \Doctrine\Common\Collections\Collection) {
+                $this->activities->removeElement($activity);
+            }
+
+            return;
+        }
     }
 
     public function __toString(): string

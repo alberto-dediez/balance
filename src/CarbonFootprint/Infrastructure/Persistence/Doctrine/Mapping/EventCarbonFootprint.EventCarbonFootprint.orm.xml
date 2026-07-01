@@ -23,6 +23,12 @@
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
         <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true" />
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true" />
+
+        <one-to-many field="activities" target-entity="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintActivity" mapped-by="eventCarbonFootprint" orphan-removal="true">
+            <cascade>
+                <cascade-persist />
+            </cascade>
+        </one-to-many>
     </entity>
 
 </doctrine-mapping>

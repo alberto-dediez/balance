@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\Activity\MaterialActivity" table="material_activities">
+        <field name="materialId" type="material_id" column="material_id" nullable="false" />
+        <field name="condition" type="string" enum-type="App\CarbonFootprint\Domain\Model\Activity\ItemCondition" nullable="false" />
+    </entity>
+
+</doctrine-mapping>

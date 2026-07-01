@@ -51,6 +51,8 @@ doctrine:
             overnight_stay_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\OvernightStayIdType
             overnight_stay_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\OvernightStayEmissionFactorIdType
             event_carbon_footprint_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EventCarbonFootprintIdType
+            activity_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ActivityIdType
+            event_carbon_footprint_activity_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EventCarbonFootprintActivityIdType
 
     orm:
         auto_generate_proxy_classes: true

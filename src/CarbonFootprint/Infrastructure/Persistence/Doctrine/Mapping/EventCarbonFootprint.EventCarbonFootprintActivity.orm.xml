@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintActivity" table="event_carbon_footprint_activities">
+        <id name="id" type="event_carbon_footprint_activity_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <many-to-one field="eventCarbonFootprint" target-entity="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint">
+            <join-column name="event_carbon_footprint_id" referenced-column-name="id" nullable="false" />
+        </many-to-one>
+
+        <field name="activityId" type="activity_id" column="activity_id" nullable="false" />
+        <field name="phase" type="string" enum-type="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase" nullable="false" />
+        <field name="source" type="string" enum-type="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source" nullable="false" />
+        <field name="addedAt" type="datetime_immutable" column="added_at" nullable="false" />
+    </entity>
+
+</doctrine-mapping>
