@@ -6,6 +6,9 @@ namespace App\CarbonFootprint\Application\CateringItem\Update;
 
 use App\CarbonFootprint\Application\CateringItem\CateringItemAuthorizer;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -22,6 +25,7 @@ class UpdateCateringItemService implements CommandHandler
     public function __construct(
         private CateringItemRepository $cateringItemRepository,
         private CateringItemAuthorizer $authorizer,
+        private EmissionFactorGroupRepository $emissionFactorGroupRepository,
     ) {}
 
     public function __invoke(UpdateCateringItemRequest $request, User $user): UpdateCateringItemResponse
@@ -49,10 +53,14 @@ class UpdateCateringItemService implements CommandHandler
 
         $cateringItem->syncEmissionFactors(
             array_values(array_map(
-                static fn(EmissionFactorData $data): array => [
-                    'new' => $data->newEmissionFactor($unit),
-                    'recycled' => $data->recycledEmissionFactor($unit),
-                ],
+                function (EmissionFactorData $data) use ($unit): array {
+                    $emissionFactorGroup = $this->resolveEmissionFactorGroup($data->emissionFactorGroupId);
+
+                    return [
+                        'new' => $data->newEmissionFactor($unit, $emissionFactorGroup),
+                        'recycled' => $data->recycledEmissionFactor($unit, $emissionFactorGroup),
+                    ];
+                },
                 $request->emissionFactors,
             )),
         );
@@ -63,6 +71,19 @@ class UpdateCateringItemService implements CommandHandler
             cateringItemId: $cateringItem->id(),
             name: $cateringItem->name(),
         );
+    }
+
+    private function resolveEmissionFactorGroup(?string $emissionFactorGroupId): EmissionFactorGroup
+    {
+        $emissionFactorGroup = null !== $emissionFactorGroupId
+            ? $this->emissionFactorGroupRepository->find(new EmissionFactorGroupId($emissionFactorGroupId))
+            : null;
+
+        if (null === $emissionFactorGroup) {
+            throw new \InvalidArgumentException('Emission factor group not found');
+        }
+
+        return $emissionFactorGroup;
     }
 
     public function isHandled(Command $command): bool

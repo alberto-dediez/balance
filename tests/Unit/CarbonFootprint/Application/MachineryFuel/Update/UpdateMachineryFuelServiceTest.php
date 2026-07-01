@@ -8,7 +8,7 @@ use App\CarbonFootprint\Application\MachineryFuel\MachineryFuelAuthorizer;
 use App\CarbonFootprint\Application\MachineryFuel\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\MachineryFuel\Update\UpdateMachineryFuelRequest;
 use App\CarbonFootprint\Application\MachineryFuel\Update\UpdateMachineryFuelService;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelTranslated;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelUpdated;
@@ -17,6 +17,8 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -112,7 +114,11 @@ class UpdateMachineryFuelServiceTest extends TestCase
 
         $user = UserMother::fromUsernameAndRole('admin', Role::Admin);
 
-        $sut = $this->createSUT($repository, Locale::Spanish);
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add($emissionFactorGroup);
+
+        $sut = $this->createSUT($repository, Locale::Spanish, $emissionFactorGroupRepository);
 
         $request = new UpdateMachineryFuelRequest(
             machineryFuelId: $machineryFuel->id(),
@@ -127,6 +133,7 @@ class UpdateMachineryFuelServiceTest extends TestCase
                     ch4: '0.2',
                     n2o: '0.3',
                     source: 'IPCC',
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
                 ),
             ],
         );
@@ -138,20 +145,27 @@ class UpdateMachineryFuelServiceTest extends TestCase
         $this->assertNotNull($persisted);
         $this->assertCount(1, $persisted->emissionFactors());
 
-        $persistedFactor = $persisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
+        $persistedFactor = $persisted->emissionFactorFor(2024, $emissionFactorGroup->id());
 
         $this->assertNotNull($persistedFactor);
-        $this->assertSame('1.5', $persistedFactor->co2eq());
+        // co2eq is computed from co2/ch4/n2o using the resolved group's GWP, not taken from user input.
+        $this->assertSame($emissionFactorGroup->co2eqFor('1.0', '0.2', '0.3'), $persistedFactor->co2eq());
         $this->assertSame(Unit::Liter, $persistedFactor->unit());
     }
 
-    private function createSUT(MachineryFuelRepository $repository, Locale $locale = Locale::Spanish): UpdateMachineryFuelService
-    {
+    private function createSUT(
+        MachineryFuelRepository $repository,
+        Locale $locale = Locale::Spanish,
+        ?EmissionFactorGroupRepository $emissionFactorGroupRepository = null,
+    ): UpdateMachineryFuelService {
+        $emissionFactorGroupRepository ??= EmissionFactorGroupRepositoryMother::inMemory();
+
         FakeLocaleSetter::set($locale);
 
         return new UpdateMachineryFuelService(
             machineryFuelRepository: $repository,
             authorizer: new MachineryFuelAuthorizer(),
+            emissionFactorGroupRepository: $emissionFactorGroupRepository,
         );
     }
 }

@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\MerchandisingItem\Update;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\Gwp;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemEmissionFactor;
 use App\CarbonFootprint\Domain\Model\Unit;
 
@@ -16,8 +15,8 @@ use App\CarbonFootprint\Domain\Model\Unit;
  * EmissionFactor value object (decimal 20,8).
  *
  * The unit is intentionally NOT user-editable: it is derived from the owning
- * MerchandisingItem's unit when the value object is built. Year and source are shared
- * between the new-fabrication and recycled factors.
+ * MerchandisingItem's unit when the value object is built. Year, source and the emission
+ * factor group are shared between the new-fabrication and recycled factors.
  */
 class EmissionFactorData
 {
@@ -32,6 +31,7 @@ class EmissionFactorData
         public ?string $recycledCh4 = null,
         public ?string $recycledN2o = null,
         public ?string $source = null,
+        public ?string $emissionFactorGroupId = null,
     ) {}
 
     public static function fromMerchandisingItemEmissionFactor(MerchandisingItemEmissionFactor $factor): self
@@ -47,52 +47,29 @@ class EmissionFactorData
             recycledCh4: $factor->recycledFactor()->ch4(),
             recycledN2o: $factor->recycledFactor()->n2o(),
             source: $factor->newFactor()->source(),
+            emissionFactorGroupId: (string) $factor->newFactor()->emissionFactorGroupId(),
         );
     }
 
-    public function newEmissionFactor(Unit $unit): EmissionFactor
+    public function newEmissionFactor(Unit $unit, EmissionFactorGroup $emissionFactorGroup): EmissionFactor
     {
-        $co2 = (string) $this->co2;
-        $ch4 = (string) $this->ch4;
-        $n2o = (string) $this->n2o;
-        $co2eq = (string) $this->co2eq;
-
-        if (0.0 === (float) $co2eq) {
-            // Temporary FASE 2 compatibility fallback: real EmissionFactorGroup resolution lands in FASE 3/7/8/9.
-            $co2eq = Gwp::ar6()->co2eqFor($co2, $ch4, $n2o);
-        }
-
-        return new EmissionFactor(
-            co2eq: $co2eq,
-            co2: $co2,
-            ch4: $ch4,
-            n2o: $n2o,
+        return $emissionFactorGroup->buildEmissionFactor(
+            co2: (string) $this->co2,
+            ch4: (string) $this->ch4,
+            n2o: (string) $this->n2o,
             year: (int) $this->year,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
             unit: $unit,
             source: $this->source,
         );
     }
 
-    public function recycledEmissionFactor(Unit $unit): EmissionFactor
+    public function recycledEmissionFactor(Unit $unit, EmissionFactorGroup $emissionFactorGroup): EmissionFactor
     {
-        $co2 = (string) $this->recycledCo2;
-        $ch4 = (string) $this->recycledCh4;
-        $n2o = (string) $this->recycledN2o;
-        $co2eq = (string) $this->recycledCo2eq;
-
-        if (0.0 === (float) $co2eq) {
-            // Temporary FASE 2 compatibility fallback: real EmissionFactorGroup resolution lands in FASE 3/7/8/9.
-            $co2eq = Gwp::ar6()->co2eqFor($co2, $ch4, $n2o);
-        }
-
-        return new EmissionFactor(
-            co2eq: $co2eq,
-            co2: $co2,
-            ch4: $ch4,
-            n2o: $n2o,
+        return $emissionFactorGroup->buildEmissionFactor(
+            co2: (string) $this->recycledCo2,
+            ch4: (string) $this->recycledCh4,
+            n2o: (string) $this->recycledN2o,
             year: (int) $this->year,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
             unit: $unit,
             source: $this->source,
         );

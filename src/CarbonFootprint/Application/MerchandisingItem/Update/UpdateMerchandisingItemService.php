@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\MerchandisingItem\Update;
 
 use App\CarbonFootprint\Application\MerchandisingItem\MerchandisingItemAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
@@ -22,6 +25,7 @@ class UpdateMerchandisingItemService implements CommandHandler
     public function __construct(
         private MerchandisingItemRepository $merchandisingItemRepository,
         private MerchandisingItemAuthorizer $authorizer,
+        private EmissionFactorGroupRepository $emissionFactorGroupRepository,
     ) {}
 
     public function __invoke(UpdateMerchandisingItemRequest $request, User $user): UpdateMerchandisingItemResponse
@@ -49,10 +53,14 @@ class UpdateMerchandisingItemService implements CommandHandler
 
         $merchandisingItem->syncEmissionFactors(
             array_values(array_map(
-                static fn(EmissionFactorData $data): array => [
-                    'new' => $data->newEmissionFactor($unit),
-                    'recycled' => $data->recycledEmissionFactor($unit),
-                ],
+                function (EmissionFactorData $data) use ($unit): array {
+                    $emissionFactorGroup = $this->resolveEmissionFactorGroup($data->emissionFactorGroupId);
+
+                    return [
+                        'new' => $data->newEmissionFactor($unit, $emissionFactorGroup),
+                        'recycled' => $data->recycledEmissionFactor($unit, $emissionFactorGroup),
+                    ];
+                },
                 $request->emissionFactors,
             )),
         );
@@ -63,6 +71,19 @@ class UpdateMerchandisingItemService implements CommandHandler
             merchandisingItemId: $merchandisingItem->id(),
             name: $merchandisingItem->name(),
         );
+    }
+
+    private function resolveEmissionFactorGroup(?string $emissionFactorGroupId): EmissionFactorGroup
+    {
+        $emissionFactorGroup = null !== $emissionFactorGroupId
+            ? $this->emissionFactorGroupRepository->find(new EmissionFactorGroupId($emissionFactorGroupId))
+            : null;
+
+        if (null === $emissionFactorGroup) {
+            throw new \InvalidArgumentException('Emission factor group not found');
+        }
+
+        return $emissionFactorGroup;
     }
 
     public function isHandled(Command $command): bool

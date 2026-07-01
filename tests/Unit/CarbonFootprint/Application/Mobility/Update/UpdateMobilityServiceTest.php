@@ -8,7 +8,7 @@ use App\CarbonFootprint\Application\Mobility\MobilityAuthorizer;
 use App\CarbonFootprint\Application\Mobility\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\Mobility\Update\UpdateMobilityRequest;
 use App\CarbonFootprint\Application\Mobility\Update\UpdateMobilityService;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityTranslated;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityUpdated;
@@ -16,6 +16,8 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -109,7 +111,11 @@ class UpdateMobilityServiceTest extends TestCase
 
         $user = UserMother::fromUsernameAndRole('admin', Role::Admin);
 
-        $sut = $this->createSUT($repository, Locale::Spanish);
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add($emissionFactorGroup);
+
+        $sut = $this->createSUT($repository, Locale::Spanish, $emissionFactorGroupRepository);
 
         $request = new UpdateMobilityRequest(
             mobilityId: $mobility->id(),
@@ -123,6 +129,7 @@ class UpdateMobilityServiceTest extends TestCase
                     ch4: '0.2',
                     n2o: '0.3',
                     source: 'IPCC',
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
                 ),
             ],
         );
@@ -134,21 +141,28 @@ class UpdateMobilityServiceTest extends TestCase
         $this->assertNotNull($mobilityPersisted);
         $this->assertCount(1, $mobilityPersisted->emissionFactors());
 
-        $persistedFactor = $mobilityPersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
+        $persistedFactor = $mobilityPersisted->emissionFactorFor(2024, $emissionFactorGroup->id());
 
         $this->assertNotNull($persistedFactor);
-        $this->assertSame('1.5', $persistedFactor->co2eq());
+        // co2eq is computed from co2/ch4/n2o using the resolved group's GWP, not taken from user input.
+        $this->assertSame($emissionFactorGroup->co2eqFor('1.0', '0.2', '0.3'), $persistedFactor->co2eq());
         // The emission factor unit is derived from the mobility's unit, not user input.
         $this->assertSame(Unit::Piece, $persistedFactor->unit());
     }
 
-    private function createSUT(MobilityRepository $repository, Locale $locale = Locale::Spanish): UpdateMobilityService
-    {
+    private function createSUT(
+        MobilityRepository $repository,
+        Locale $locale = Locale::Spanish,
+        ?EmissionFactorGroupRepository $emissionFactorGroupRepository = null,
+    ): UpdateMobilityService {
+        $emissionFactorGroupRepository ??= EmissionFactorGroupRepositoryMother::inMemory();
+
         FakeLocaleSetter::set($locale);
 
         return new UpdateMobilityService(
             mobilityRepository: $repository,
             authorizer: new MobilityAuthorizer(),
+            emissionFactorGroupRepository: $emissionFactorGroupRepository,
         );
     }
 }

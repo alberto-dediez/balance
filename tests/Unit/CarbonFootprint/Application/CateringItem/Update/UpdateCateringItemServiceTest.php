@@ -12,13 +12,15 @@ use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemCategory;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemTranslated;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemUpdated;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
@@ -113,7 +115,11 @@ class UpdateCateringItemServiceTest extends TestCase
 
         $user = UserMother::fromUsernameAndRole('admin', Role::Admin);
 
-        $sut = $this->createSUT($repository, Locale::Spanish);
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add($emissionFactorGroup);
+
+        $sut = $this->createSUT($repository, Locale::Spanish, $emissionFactorGroupRepository);
 
         $request = new UpdateCateringItemRequest(
             cateringItemId: $cateringItem->id(),
@@ -128,6 +134,7 @@ class UpdateCateringItemServiceTest extends TestCase
                     ch4: '0.2',
                     n2o: '0.3',
                     source: 'IPCC',
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
                 ),
             ],
         );
@@ -139,20 +146,27 @@ class UpdateCateringItemServiceTest extends TestCase
         $this->assertNotNull($cateringItemPersisted);
         $this->assertCount(1, $cateringItemPersisted->emissionFactors());
 
-        $persistedFactor = $cateringItemPersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
+        $persistedFactor = $cateringItemPersisted->emissionFactorFor(2024, $emissionFactorGroup->id());
 
         $this->assertNotNull($persistedFactor);
-        $this->assertSame('1.5', $persistedFactor->newFactor()->co2eq());
+        // co2eq is computed from co2/ch4/n2o using the resolved group's GWP, not taken from user input.
+        $this->assertSame($emissionFactorGroup->co2eqFor('1.0', '0.2', '0.3'), $persistedFactor->newFactor()->co2eq());
         $this->assertSame(Unit::Piece, $persistedFactor->newFactor()->unit());
     }
 
-    private function createSUT(CateringItemRepository $repository, Locale $locale = Locale::Spanish): UpdateCateringItemService
-    {
+    private function createSUT(
+        CateringItemRepository $repository,
+        Locale $locale = Locale::Spanish,
+        ?EmissionFactorGroupRepository $emissionFactorGroupRepository = null,
+    ): UpdateCateringItemService {
+        $emissionFactorGroupRepository ??= EmissionFactorGroupRepositoryMother::inMemory();
+
         FakeLocaleSetter::set($locale);
 
         return new UpdateCateringItemService(
             cateringItemRepository: $repository,
             authorizer: new CateringItemAuthorizer(),
+            emissionFactorGroupRepository: $emissionFactorGroupRepository,
         );
     }
 }

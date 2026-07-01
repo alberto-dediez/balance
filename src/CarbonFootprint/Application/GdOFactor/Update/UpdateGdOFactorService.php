@@ -6,6 +6,9 @@ namespace App\CarbonFootprint\Application\GdOFactor\Update;
 
 use App\CarbonFootprint\Application\GdOFactor\GdOFactorAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Application\Action as SecurityAction;
@@ -24,6 +27,7 @@ class UpdateGdOFactorService implements CommandHandler
     public function __construct(
         private GdOFactorRepository $gdOFactorRepository,
         private GdOFactorAuthorizer $authorizer,
+        private EmissionFactorGroupRepository $emissionFactorGroupRepository,
     ) {}
 
     public function __invoke(UpdateGdOFactorRequest $request, User $user): UpdateGdOFactorResponse
@@ -46,7 +50,10 @@ class UpdateGdOFactorService implements CommandHandler
 
         $gdOFactor->syncEmissionFactors(
             array_map(
-                static fn(EmissionFactorData $data): EmissionFactor => $data->toEmissionFactor(Unit::KWh),
+                fn(EmissionFactorData $data): EmissionFactor => $data->toEmissionFactor(
+                    Unit::KWh,
+                    $this->resolveEmissionFactorGroup($data->emissionFactorGroupId),
+                ),
                 $request->emissionFactors,
             ),
         );
@@ -57,6 +64,19 @@ class UpdateGdOFactorService implements CommandHandler
             gdOFactorId: $gdOFactor->id(),
             name: $gdOFactor->name(),
         );
+    }
+
+    private function resolveEmissionFactorGroup(?string $emissionFactorGroupId): EmissionFactorGroup
+    {
+        $emissionFactorGroup = null !== $emissionFactorGroupId
+            ? $this->emissionFactorGroupRepository->find(new EmissionFactorGroupId($emissionFactorGroupId))
+            : null;
+
+        if (null === $emissionFactorGroup) {
+            throw new \InvalidArgumentException('Emission factor group not found');
+        }
+
+        return $emissionFactorGroup;
     }
 
     public function isHandled(Command $command): bool

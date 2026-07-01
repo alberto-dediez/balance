@@ -10,12 +10,14 @@ use App\CarbonFootprint\Application\ElectricityMarketer\Update\UpdateElectricity
 use App\CarbonFootprint\Application\ElectricityMarketer\Update\UpdateElectricityMarketerService;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerUpdated;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use PHPUnit\Framework\TestCase;
@@ -72,7 +74,11 @@ class UpdateElectricityMarketerServiceTest extends TestCase
 
         $user = UserMother::fromUsernameAndRole('admin', Role::Admin);
 
-        $sut = $this->createSUT($repository);
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add($emissionFactorGroup);
+
+        $sut = $this->createSUT($repository, $emissionFactorGroupRepository);
 
         $request = new UpdateElectricityMarketerRequest(
             electricityMarketerId: $electricityMarketer->id(),
@@ -85,6 +91,7 @@ class UpdateElectricityMarketerServiceTest extends TestCase
                     ch4: '0.2',
                     n2o: '0.3',
                     source: 'IPCC',
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
                 ),
             ],
         );
@@ -96,18 +103,22 @@ class UpdateElectricityMarketerServiceTest extends TestCase
         $this->assertNotNull($electricityMarketerPersisted);
         $this->assertCount(1, $electricityMarketerPersisted->emissionFactors());
 
-        $persistedFactor = $electricityMarketerPersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
+        $persistedFactor = $electricityMarketerPersisted->emissionFactorFor(2024, $emissionFactorGroup->id());
 
         $this->assertNotNull($persistedFactor);
-        $this->assertSame('1.5', $persistedFactor->co2eq());
+        // co2eq is computed from co2/ch4/n2o using the resolved group's GWP, not taken from user input.
+        $this->assertSame($emissionFactorGroup->co2eqFor('1.0', '0.2', '0.3'), $persistedFactor->co2eq());
         $this->assertSame(Unit::KWh, $persistedFactor->unit());
     }
 
-    private function createSUT(ElectricityMarketerRepository $repository): UpdateElectricityMarketerService
-    {
+    private function createSUT(
+        ElectricityMarketerRepository $repository,
+        ?EmissionFactorGroupRepository $emissionFactorGroupRepository = null,
+    ): UpdateElectricityMarketerService {
         return new UpdateElectricityMarketerService(
             electricityMarketerRepository: $repository,
             authorizer: new ElectricityMarketerAuthorizer(),
+            emissionFactorGroupRepository: $emissionFactorGroupRepository ?? EmissionFactorGroupRepositoryMother::inMemory(),
         );
     }
 }

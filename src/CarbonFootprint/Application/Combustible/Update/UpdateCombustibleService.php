@@ -7,6 +7,9 @@ namespace App\CarbonFootprint\Application\Combustible\Update;
 use App\CarbonFootprint\Application\Combustible\CombustibleAuthorizer;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -23,6 +26,7 @@ class UpdateCombustibleService implements CommandHandler
     public function __construct(
         private CombustibleRepository $combustibleRepository,
         private CombustibleAuthorizer $authorizer,
+        private EmissionFactorGroupRepository $emissionFactorGroupRepository,
     ) {}
 
     public function __invoke(UpdateCombustibleRequest $request, User $user): UpdateCombustibleResponse
@@ -48,7 +52,10 @@ class UpdateCombustibleService implements CommandHandler
 
         $combustible->syncEmissionFactors(
             array_map(
-                static fn(EmissionFactorData $data): EmissionFactor => $data->toEmissionFactor($unit),
+                fn(EmissionFactorData $data): EmissionFactor => $data->toEmissionFactor(
+                    $unit,
+                    $this->resolveEmissionFactorGroup($data->emissionFactorGroupId),
+                ),
                 $request->emissionFactors,
             ),
         );
@@ -59,6 +66,19 @@ class UpdateCombustibleService implements CommandHandler
             combustibleId: $combustible->id(),
             name: $combustible->name(),
         );
+    }
+
+    private function resolveEmissionFactorGroup(?string $emissionFactorGroupId): EmissionFactorGroup
+    {
+        $emissionFactorGroup = null !== $emissionFactorGroupId
+            ? $this->emissionFactorGroupRepository->find(new EmissionFactorGroupId($emissionFactorGroupId))
+            : null;
+
+        if (null === $emissionFactorGroup) {
+            throw new \InvalidArgumentException('Emission factor group not found');
+        }
+
+        return $emissionFactorGroup;
     }
 
     public function isHandled(Command $command): bool

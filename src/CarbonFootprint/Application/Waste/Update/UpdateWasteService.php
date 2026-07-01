@@ -6,6 +6,9 @@ namespace App\CarbonFootprint\Application\Waste\Update;
 
 use App\CarbonFootprint\Application\Waste\WasteAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Waste\WasteRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
@@ -23,6 +26,7 @@ class UpdateWasteService implements CommandHandler
     public function __construct(
         private WasteRepository $wasteRepository,
         private WasteAuthorizer $authorizer,
+        private EmissionFactorGroupRepository $emissionFactorGroupRepository,
     ) {}
 
     public function __invoke(UpdateWasteRequest $request, User $user): UpdateWasteResponse
@@ -49,7 +53,10 @@ class UpdateWasteService implements CommandHandler
 
         $waste->syncEmissionFactors(
             array_map(
-                static fn(EmissionFactorData $data): EmissionFactor => $data->toEmissionFactor($unit),
+                fn(EmissionFactorData $data): EmissionFactor => $data->toEmissionFactor(
+                    $unit,
+                    $this->resolveEmissionFactorGroup($data->emissionFactorGroupId),
+                ),
                 $request->emissionFactors,
             ),
         );
@@ -60,6 +67,19 @@ class UpdateWasteService implements CommandHandler
             wasteId: $waste->id(),
             name: $waste->name(),
         );
+    }
+
+    private function resolveEmissionFactorGroup(?string $emissionFactorGroupId): EmissionFactorGroup
+    {
+        $emissionFactorGroup = null !== $emissionFactorGroupId
+            ? $this->emissionFactorGroupRepository->find(new EmissionFactorGroupId($emissionFactorGroupId))
+            : null;
+
+        if (null === $emissionFactorGroup) {
+            throw new \InvalidArgumentException('Emission factor group not found');
+        }
+
+        return $emissionFactorGroup;
     }
 
     public function isHandled(Command $command): bool

@@ -8,12 +8,14 @@ use App\CarbonFootprint\Application\GdOFactor\GdOFactorAuthorizer;
 use App\CarbonFootprint\Application\GdOFactor\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\GdOFactor\Update\UpdateGdOFactorRequest;
 use App\CarbonFootprint\Application\GdOFactor\Update\UpdateGdOFactorService;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorUpdated;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -72,7 +74,11 @@ class UpdateGdOFactorServiceTest extends TestCase
 
         $user = UserMother::fromUsernameAndRole('admin', Role::Admin);
 
-        $sut = $this->createSUT($repository);
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add($emissionFactorGroup);
+
+        $sut = $this->createSUT($repository, $emissionFactorGroupRepository);
 
         $request = new UpdateGdOFactorRequest(
             gdOFactorId: $gdOFactor->id(),
@@ -85,6 +91,7 @@ class UpdateGdOFactorServiceTest extends TestCase
                     ch4: '0.2',
                     n2o: '0.3',
                     source: 'IPCC',
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
                 ),
             ],
         );
@@ -96,18 +103,22 @@ class UpdateGdOFactorServiceTest extends TestCase
         $this->assertNotNull($gdOFactorPersisted);
         $this->assertCount(1, $gdOFactorPersisted->emissionFactors());
 
-        $persistedFactor = $gdOFactorPersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
+        $persistedFactor = $gdOFactorPersisted->emissionFactorFor(2024, $emissionFactorGroup->id());
 
         $this->assertNotNull($persistedFactor);
-        $this->assertSame('1.5', $persistedFactor->co2eq());
+        // co2eq is computed from co2/ch4/n2o using the resolved group's GWP, not taken from user input.
+        $this->assertSame($emissionFactorGroup->co2eqFor('1.0', '0.2', '0.3'), $persistedFactor->co2eq());
         $this->assertSame(Unit::KWh, $persistedFactor->unit());
     }
 
-    private function createSUT(GdOFactorRepository $repository): UpdateGdOFactorService
-    {
+    private function createSUT(
+        GdOFactorRepository $repository,
+        ?EmissionFactorGroupRepository $emissionFactorGroupRepository = null,
+    ): UpdateGdOFactorService {
         return new UpdateGdOFactorService(
             gdOFactorRepository: $repository,
             authorizer: new GdOFactorAuthorizer(),
+            emissionFactorGroupRepository: $emissionFactorGroupRepository ?? EmissionFactorGroupRepositoryMother::inMemory(),
         );
     }
 }

@@ -16,6 +16,7 @@
         { label: 'g CH4' | trans },
         { label: 'g N2O' | trans },
         { label: 'Fuente' | trans },
+        { label: 'Grupo' | trans },
     ],
 } %}
     {% block thead %}
@@ -23,6 +24,7 @@
             <th>&nbsp;</th>
             <th colspan="4" class="text-center">{% trans %}Nueva fabricación{% endtrans %}</th>
             <th colspan="4" class="text-center">{% trans %}Reciclado{% endtrans %}</th>
+            <th>&nbsp;</th>
             <th>&nbsp;</th>
             <th>&nbsp;</th>
         </tr>
@@ -41,6 +43,7 @@
         <td>{{ form_widget(element.recycledCh4) }}{{ form_errors(element.recycledCh4) }}</td>
         <td>{{ form_widget(element.recycledN2o) }}{{ form_errors(element.recycledN2o) }}</td>
         <td>{{ form_widget(element.source) }}{{ form_errors(element.source) }}</td>
+        <td>{{ form_widget(element.emissionFactorGroupId) }}{{ form_errors(element.emissionFactorGroupId) }}</td>
     {% endblock %}
 {% endembed %}
 

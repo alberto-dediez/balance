@@ -8,7 +8,7 @@ use App\CarbonFootprint\Application\RoadTransport\RoadTransportAuthorizer;
 use App\CarbonFootprint\Application\RoadTransport\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\RoadTransport\Update\UpdateRoadTransportRequest;
 use App\CarbonFootprint\Application\RoadTransport\Update\UpdateRoadTransportService;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportTranslated;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportUpdated;
@@ -17,6 +17,8 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -113,7 +115,11 @@ class UpdateRoadTransportServiceTest extends TestCase
 
         $user = UserMother::fromUsernameAndRole('admin', Role::Admin);
 
-        $sut = $this->createSUT($repository, Locale::Spanish);
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add($emissionFactorGroup);
+
+        $sut = $this->createSUT($repository, Locale::Spanish, $emissionFactorGroupRepository);
 
         $request = new UpdateRoadTransportRequest(
             roadTransportId: $roadTransport->id(),
@@ -128,6 +134,7 @@ class UpdateRoadTransportServiceTest extends TestCase
                     ch4: '0.2',
                     n2o: '0.3',
                     source: 'IPCC',
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
                 ),
             ],
         );
@@ -139,21 +146,28 @@ class UpdateRoadTransportServiceTest extends TestCase
         $this->assertNotNull($roadTransportPersisted);
         $this->assertCount(1, $roadTransportPersisted->emissionFactors());
 
-        $persistedFactor = $roadTransportPersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
+        $persistedFactor = $roadTransportPersisted->emissionFactorFor(2024, $emissionFactorGroup->id());
 
         $this->assertNotNull($persistedFactor);
-        $this->assertSame('1.5', $persistedFactor->co2eq());
+        // co2eq is computed from co2/ch4/n2o using the resolved group's GWP, not taken from user input.
+        $this->assertSame($emissionFactorGroup->co2eqFor('1.0', '0.2', '0.3'), $persistedFactor->co2eq());
         // The emission factor unit is derived from the road transport's unit, not user input.
         $this->assertSame(Unit::Piece, $persistedFactor->unit());
     }
 
-    private function createSUT(RoadTransportRepository $repository, Locale $locale = Locale::Spanish): UpdateRoadTransportService
-    {
+    private function createSUT(
+        RoadTransportRepository $repository,
+        Locale $locale = Locale::Spanish,
+        ?EmissionFactorGroupRepository $emissionFactorGroupRepository = null,
+    ): UpdateRoadTransportService {
+        $emissionFactorGroupRepository ??= EmissionFactorGroupRepositoryMother::inMemory();
+
         FakeLocaleSetter::set($locale);
 
         return new UpdateRoadTransportService(
             roadTransportRepository: $repository,
             authorizer: new RoadTransportAuthorizer(),
+            emissionFactorGroupRepository: $emissionFactorGroupRepository,
         );
     }
 }

@@ -11,13 +11,15 @@ use App\CarbonFootprint\Application\Combustible\Update\UpdateCombustibleService;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleTranslated;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleUpdated;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
@@ -109,7 +111,11 @@ class UpdateCombustibleServiceTest extends TestCase
 
         $user = UserMother::fromUsernameAndRole('admin', Role::Admin);
 
-        $sut = $this->createSUT($repository, Locale::Spanish);
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add($emissionFactorGroup);
+
+        $sut = $this->createSUT($repository, Locale::Spanish, $emissionFactorGroupRepository);
 
         $request = new UpdateCombustibleRequest(
             combustibleId: $combustible->id(),
@@ -123,6 +129,7 @@ class UpdateCombustibleServiceTest extends TestCase
                     ch4: '0.2',
                     n2o: '0.3',
                     source: 'IPCC',
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
                 ),
             ],
         );
@@ -134,21 +141,28 @@ class UpdateCombustibleServiceTest extends TestCase
         $this->assertNotNull($combustiblePersisted);
         $this->assertCount(1, $combustiblePersisted->emissionFactors());
 
-        $persistedFactor = $combustiblePersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
+        $persistedFactor = $combustiblePersisted->emissionFactorFor(2024, $emissionFactorGroup->id());
 
         $this->assertNotNull($persistedFactor);
-        $this->assertSame('1.5', $persistedFactor->co2eq());
+        // co2eq is computed from co2/ch4/n2o using the resolved group's GWP, not taken from user input.
+        $this->assertSame($emissionFactorGroup->co2eqFor('1.0', '0.2', '0.3'), $persistedFactor->co2eq());
         // The emission factor unit is derived from the combustible's unit, not user input.
         $this->assertSame(Unit::Piece, $persistedFactor->unit());
     }
 
-    private function createSUT(CombustibleRepository $repository, Locale $locale = Locale::Spanish): UpdateCombustibleService
-    {
+    private function createSUT(
+        CombustibleRepository $repository,
+        Locale $locale = Locale::Spanish,
+        ?EmissionFactorGroupRepository $emissionFactorGroupRepository = null,
+    ): UpdateCombustibleService {
+        $emissionFactorGroupRepository ??= EmissionFactorGroupRepositoryMother::inMemory();
+
         FakeLocaleSetter::set($locale);
 
         return new UpdateCombustibleService(
             combustibleRepository: $repository,
             authorizer: new CombustibleAuthorizer(),
+            emissionFactorGroupRepository: $emissionFactorGroupRepository,
         );
     }
 }

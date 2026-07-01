@@ -8,7 +8,7 @@ use App\CarbonFootprint\Application\Waste\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\Waste\Update\UpdateWasteRequest;
 use App\CarbonFootprint\Application\Waste\Update\UpdateWasteService;
 use App\CarbonFootprint\Application\Waste\WasteAuthorizer;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\WasteRepository;
 use App\CarbonFootprint\Domain\Model\Waste\WasteTranslated;
@@ -16,6 +16,8 @@ use App\CarbonFootprint\Domain\Model\Waste\WasteUpdated;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Waste\WasteMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Waste\WasteRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -112,7 +114,11 @@ class UpdateWasteServiceTest extends TestCase
 
         $user = UserMother::fromUsernameAndRole('admin', Role::Admin);
 
-        $sut = $this->createSUT($repository, Locale::Spanish);
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add($emissionFactorGroup);
+
+        $sut = $this->createSUT($repository, Locale::Spanish, $emissionFactorGroupRepository);
 
         $request = new UpdateWasteRequest(
             wasteId: $waste->id(),
@@ -127,6 +133,7 @@ class UpdateWasteServiceTest extends TestCase
                     ch4: '0.2',
                     n2o: '0.3',
                     source: 'IPCC',
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
                 ),
             ],
         );
@@ -138,20 +145,27 @@ class UpdateWasteServiceTest extends TestCase
         $this->assertNotNull($wastePersisted);
         $this->assertCount(1, $wastePersisted->emissionFactors());
 
-        $persistedFactor = $wastePersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
+        $persistedFactor = $wastePersisted->emissionFactorFor(2024, $emissionFactorGroup->id());
 
         $this->assertNotNull($persistedFactor);
-        $this->assertSame('1.5', $persistedFactor->co2eq());
+        // co2eq is computed from co2/ch4/n2o using the resolved group's GWP, not taken from user input.
+        $this->assertSame($emissionFactorGroup->co2eqFor('1.0', '0.2', '0.3'), $persistedFactor->co2eq());
         $this->assertSame(Unit::Piece, $persistedFactor->unit());
     }
 
-    private function createSUT(WasteRepository $repository, Locale $locale = Locale::Spanish): UpdateWasteService
-    {
+    private function createSUT(
+        WasteRepository $repository,
+        Locale $locale = Locale::Spanish,
+        ?EmissionFactorGroupRepository $emissionFactorGroupRepository = null,
+    ): UpdateWasteService {
+        $emissionFactorGroupRepository ??= EmissionFactorGroupRepositoryMother::inMemory();
+
         FakeLocaleSetter::set($locale);
 
         return new UpdateWasteService(
             wasteRepository: $repository,
             authorizer: new WasteAuthorizer(),
+            emissionFactorGroupRepository: $emissionFactorGroupRepository,
         );
     }
 }

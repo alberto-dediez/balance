@@ -8,7 +8,7 @@ use App\CarbonFootprint\Application\Material\MaterialAuthorizer;
 use App\CarbonFootprint\Application\Material\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\Material\Update\UpdateMaterialRequest;
 use App\CarbonFootprint\Application\Material\Update\UpdateMaterialService;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Material\MaterialCategory;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\CarbonFootprint\Domain\Model\Material\MaterialTranslated;
@@ -17,6 +17,8 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -113,7 +115,11 @@ class UpdateMaterialServiceTest extends TestCase
 
         $user = UserMother::fromUsernameAndRole('admin', Role::Admin);
 
-        $sut = $this->createSUT($repository, Locale::Spanish);
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add($emissionFactorGroup);
+
+        $sut = $this->createSUT($repository, Locale::Spanish, $emissionFactorGroupRepository);
 
         $request = new UpdateMaterialRequest(
             materialId: $material->id(),
@@ -128,6 +134,7 @@ class UpdateMaterialServiceTest extends TestCase
                     ch4: '0.2',
                     n2o: '0.3',
                     source: 'IPCC',
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
                 ),
             ],
         );
@@ -139,21 +146,28 @@ class UpdateMaterialServiceTest extends TestCase
         $this->assertNotNull($materialPersisted);
         $this->assertCount(1, $materialPersisted->emissionFactors());
 
-        $persistedFactor = $materialPersisted->emissionFactorFor(2024, EmissionFactorGroupId::default());
+        $persistedFactor = $materialPersisted->emissionFactorFor(2024, $emissionFactorGroup->id());
 
         $this->assertNotNull($persistedFactor);
-        $this->assertSame('1.5', $persistedFactor->newFactor()->co2eq());
+        // co2eq is computed from co2/ch4/n2o using the resolved group's GWP, not taken from user input.
+        $this->assertSame($emissionFactorGroup->co2eqFor('1.0', '0.2', '0.3'), $persistedFactor->newFactor()->co2eq());
         // The emission factor unit is derived from the material's unit, not user input.
         $this->assertSame(Unit::Piece, $persistedFactor->newFactor()->unit());
     }
 
-    private function createSUT(MaterialRepository $repository, Locale $locale = Locale::Spanish): UpdateMaterialService
-    {
+    private function createSUT(
+        MaterialRepository $repository,
+        Locale $locale = Locale::Spanish,
+        ?EmissionFactorGroupRepository $emissionFactorGroupRepository = null,
+    ): UpdateMaterialService {
+        $emissionFactorGroupRepository ??= EmissionFactorGroupRepositoryMother::inMemory();
+
         FakeLocaleSetter::set($locale);
 
         return new UpdateMaterialService(
             materialRepository: $repository,
             authorizer: new MaterialAuthorizer(),
+            emissionFactorGroupRepository: $emissionFactorGroupRepository,
         );
     }
 }

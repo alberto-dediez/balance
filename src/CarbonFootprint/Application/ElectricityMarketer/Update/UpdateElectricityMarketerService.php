@@ -7,6 +7,9 @@ namespace App\CarbonFootprint\Application\ElectricityMarketer\Update;
 use App\CarbonFootprint\Application\ElectricityMarketer\ElectricityMarketerAuthorizer;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
@@ -23,6 +26,7 @@ class UpdateElectricityMarketerService implements CommandHandler
     public function __construct(
         private ElectricityMarketerRepository $electricityMarketerRepository,
         private ElectricityMarketerAuthorizer $authorizer,
+        private EmissionFactorGroupRepository $emissionFactorGroupRepository,
     ) {}
 
     public function __invoke(UpdateElectricityMarketerRequest $request, User $user): UpdateElectricityMarketerResponse
@@ -39,7 +43,10 @@ class UpdateElectricityMarketerService implements CommandHandler
 
         $electricityMarketer->syncEmissionFactors(
             array_map(
-                static fn(EmissionFactorData $data): EmissionFactor => $data->toEmissionFactor(Unit::KWh),
+                fn(EmissionFactorData $data): EmissionFactor => $data->toEmissionFactor(
+                    Unit::KWh,
+                    $this->resolveEmissionFactorGroup($data->emissionFactorGroupId),
+                ),
                 $request->emissionFactors,
             ),
         );
@@ -50,6 +57,19 @@ class UpdateElectricityMarketerService implements CommandHandler
             electricityMarketerId: $electricityMarketer->id(),
             name: $electricityMarketer->name(),
         );
+    }
+
+    private function resolveEmissionFactorGroup(?string $emissionFactorGroupId): EmissionFactorGroup
+    {
+        $emissionFactorGroup = null !== $emissionFactorGroupId
+            ? $this->emissionFactorGroupRepository->find(new EmissionFactorGroupId($emissionFactorGroupId))
+            : null;
+
+        if (null === $emissionFactorGroup) {
+            throw new \InvalidArgumentException('Emission factor group not found');
+        }
+
+        return $emissionFactorGroup;
     }
 
     public function isHandled(Command $command): bool
