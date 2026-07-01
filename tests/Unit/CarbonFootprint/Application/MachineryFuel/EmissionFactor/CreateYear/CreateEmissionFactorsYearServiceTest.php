@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -29,7 +30,7 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $repository = MachineryFuelRepositoryMother::inMemory();
 
         $machineryFuel = MachineryFuelMother::random();
-        $machineryFuel->setEmissionFactor(new EmissionFactor('1.5', '1.0', '0.2', '0.3', 2024, source: 'IPCC'));
+        $machineryFuel->setEmissionFactor(new EmissionFactor('1.5', '1.0', '0.2', '0.3', 2024, emissionFactorGroupId: EmissionFactorGroupMother::default()->id(), source: 'IPCC'));
         $repository->add($machineryFuel);
 
         $sut = $this->createSUT($repository);
@@ -56,8 +57,8 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $repository = MachineryFuelRepositoryMother::inMemory();
 
         $machineryFuel = MachineryFuelMother::random();
-        $machineryFuel->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024));
-        $machineryFuel->setEmissionFactor(new EmissionFactor('2', '2', '2', '2', 2025));
+        $machineryFuel->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
+        $machineryFuel->setEmissionFactor(new EmissionFactor('2', '2', '2', '2', 2025, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
         $repository->add($machineryFuel);
 
         $sut = $this->createSUT($repository);

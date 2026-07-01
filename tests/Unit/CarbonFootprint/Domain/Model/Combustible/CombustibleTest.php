@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
 use PHPUnit\Framework\TestCase;
 
@@ -167,6 +168,7 @@ class CombustibleTest extends TestCase
             ch4: '0.2',
             n2o: '0.3',
             year: $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
             unit: Unit::Kilogram,
             source: 'test-source',
         );

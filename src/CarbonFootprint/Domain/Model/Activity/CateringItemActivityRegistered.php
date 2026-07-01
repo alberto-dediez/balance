@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Domain\Model\Activity;
 use App\CarbonFootprint\Domain\DomainEvent;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemId;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -78,6 +79,7 @@ final class CateringItemActivityRegistered extends DomainEvent
             'emissionFactorYear' => $this->emissionFactor->year(),
             'emissionFactorUnit' => $this->emissionFactor->unit()->value,
             'emissionFactorSource' => $this->emissionFactor->source(),
+            'emissionFactorGroupId' => (string) $this->emissionFactor->emissionFactorGroupId(),
             'emissionsCo2eq' => $this->emissions->co2eq(),
             'emissionsCo2' => $this->emissions->co2(),
             'emissionsCh4' => $this->emissions->ch4(),
@@ -106,6 +108,7 @@ final class CateringItemActivityRegistered extends DomainEvent
             cateringItemId: new CateringItemId($payload['cateringItemId']),
             condition: $condition,
             emissionFactor: new EmissionFactor(
+                emissionFactorGroupId: new EmissionFactorGroupId($payload['emissionFactorGroupId']),
                 co2eq: $payload['emissionFactorCo2eq'],
                 co2: $payload['emissionFactorCo2'],
                 ch4: $payload['emissionFactorCh4'],

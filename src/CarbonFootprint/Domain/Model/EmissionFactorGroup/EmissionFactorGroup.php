@@ -150,16 +150,14 @@ class EmissionFactorGroup implements Translatable, \Stringable
 
     public function co2eqFor(string $co2, string $ch4, string $n2o): string
     {
-        return (string) ((float) $co2 * $this->gwp->gwpCo2()
-            + (float) $ch4 * $this->gwp->gwpCh4()
-            + (float) $n2o * $this->gwp->gwpN2O());
+        return $this->gwp->co2eqFor($co2, $ch4, $n2o);
     }
 
     public function buildEmissionFactor(string $co2, string $ch4, string $n2o, int $year, Unit $unit, ?string $source): EmissionFactor
     {
         $co2eq = $this->co2eqFor($co2, $ch4, $n2o);
 
-        return new EmissionFactor($co2eq, $co2, $ch4, $n2o, $year, $unit, $source);
+        return new EmissionFactor($co2eq, $co2, $ch4, $n2o, $year, $this->id, $unit, $source);
     }
 
     public function applyEmissionFactorGroupRegistered(EmissionFactorGroupRegistered $event): void

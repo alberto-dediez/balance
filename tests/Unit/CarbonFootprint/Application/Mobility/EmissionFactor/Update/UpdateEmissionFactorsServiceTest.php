@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -63,7 +64,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $repository = MobilityRepositoryMother::inMemory();
 
         $mobility = MobilityMother::random();
-        $mobility->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2025));
+        $mobility->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
         $repository->add($mobility);
 
         $sut = $this->createSUT($repository);

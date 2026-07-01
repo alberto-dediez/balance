@@ -14,6 +14,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 
@@ -29,7 +30,7 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $repository = CombustibleRepositoryMother::inMemory();
 
         $combustible = CombustibleMother::random();
-        $combustible->setEmissionFactor(new EmissionFactor('1.5', '1.0', '0.2', '0.3', 2024, source: 'IPCC'));
+        $combustible->setEmissionFactor(new EmissionFactor('1.5', '1.0', '0.2', '0.3', 2024, emissionFactorGroupId: EmissionFactorGroupMother::default()->id(), source: 'IPCC'));
         $repository->add($combustible);
 
         $sut = $this->createSUT($repository);
@@ -57,8 +58,8 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $repository = CombustibleRepositoryMother::inMemory();
 
         $combustible = CombustibleMother::random();
-        $combustible->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024));
-        $combustible->setEmissionFactor(new EmissionFactor('2', '2', '2', '2', 2025));
+        $combustible->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
+        $combustible->setEmissionFactor(new EmissionFactor('2', '2', '2', '2', 2025, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
         $repository->add($combustible);
 
         $sut = $this->createSUT($repository);

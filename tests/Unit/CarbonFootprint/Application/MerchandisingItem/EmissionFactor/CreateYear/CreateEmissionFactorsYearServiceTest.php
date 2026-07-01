@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -29,7 +30,7 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $repository = MerchandisingItemRepositoryMother::inMemory();
 
         $merchandisingItem = MerchandisingItemMother::random();
-        $ef = new EmissionFactor('1.5', '1.0', '0.2', '0.3', 2024, source: 'IPCC');
+        $ef = new EmissionFactor('1.5', '1.0', '0.2', '0.3', 2024, emissionFactorGroupId: EmissionFactorGroupMother::default()->id(), source: 'IPCC');
         $merchandisingItem->setEmissionFactor($ef, $ef);
         $repository->add($merchandisingItem);
 
@@ -58,9 +59,9 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $repository = MerchandisingItemRepositoryMother::inMemory();
 
         $merchandisingItem = MerchandisingItemMother::random();
-        $ef2024 = new EmissionFactor('1', '1', '1', '1', 2024);
+        $ef2024 = new EmissionFactor('1', '1', '1', '1', 2024, emissionFactorGroupId: EmissionFactorGroupMother::default()->id());
         $merchandisingItem->setEmissionFactor($ef2024, $ef2024);
-        $ef2025 = new EmissionFactor('2', '2', '2', '2', 2025);
+        $ef2025 = new EmissionFactor('2', '2', '2', '2', 2025, emissionFactorGroupId: EmissionFactorGroupMother::default()->id());
         $merchandisingItem->setEmissionFactor($ef2025, $ef2025);
         $repository->add($merchandisingItem);
 

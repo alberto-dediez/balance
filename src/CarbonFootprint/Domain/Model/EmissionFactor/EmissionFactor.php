@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Domain\Model\EmissionFactor;
 
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 
 final class EmissionFactor implements \Stringable
@@ -13,13 +14,9 @@ final class EmissionFactor implements \Stringable
     private readonly string $ch4;
     private readonly string $n2o;
     private readonly int $year;
+    private readonly EmissionFactorGroupId $emissionFactorGroupId;
     private readonly Unit $unit;
     private readonly ?string $source;
-
-    // GWP values (AR5/AR6) published by MITECO
-    private const float GWP_CO2 = 1.0;
-    private const float GWP_CH4 = 27.9;
-    private const float GWP_N2O = 273.0;
 
     public function __construct(
         string $co2eq,
@@ -27,15 +24,13 @@ final class EmissionFactor implements \Stringable
         string $ch4,
         string $n2o,
         int $year,
+        EmissionFactorGroupId $emissionFactorGroupId,
         Unit $unit = Unit::Kilogram,
         ?string $source = null,
     ) {
-        $co2eqIsZero = 0.0 === (float) $co2eq;
         $gasesAreZero = 0.0 === (float) $co2 && 0.0 === (float) $ch4 && 0.0 === (float) $n2o;
 
-        if ($co2eqIsZero) {
-            $co2eq = (string) ((float) $co2 * self::GWP_CO2 + (float) $ch4 * self::GWP_CH4 + (float) $n2o * self::GWP_N2O);
-        } elseif ($gasesAreZero) {
+        if ($gasesAreZero) {
             $co2 = $co2eq;
         }
 
@@ -44,6 +39,7 @@ final class EmissionFactor implements \Stringable
         $this->ch4 = $ch4;
         $this->n2o = $n2o;
         $this->year = $year;
+        $this->emissionFactorGroupId = $emissionFactorGroupId;
         $this->unit = $unit;
         $this->source = $source;
     }
@@ -83,6 +79,11 @@ final class EmissionFactor implements \Stringable
         return $this->source;
     }
 
+    public function emissionFactorGroupId(): EmissionFactorGroupId
+    {
+        return $this->emissionFactorGroupId;
+    }
+
     public function withUnit(Unit $unit): self
     {
         return new self(
@@ -91,6 +92,7 @@ final class EmissionFactor implements \Stringable
             ch4: $this->ch4,
             n2o: $this->n2o,
             year: $this->year,
+            emissionFactorGroupId: $this->emissionFactorGroupId,
             unit: $unit,
             source: $this->source,
         );
@@ -104,6 +106,21 @@ final class EmissionFactor implements \Stringable
             ch4: $this->ch4,
             n2o: $this->n2o,
             year: $year,
+            emissionFactorGroupId: $this->emissionFactorGroupId,
+            unit: $this->unit,
+            source: $this->source,
+        );
+    }
+
+    public function withEmissionFactorGroup(EmissionFactorGroupId $emissionFactorGroupId): self
+    {
+        return new self(
+            co2eq: $this->co2eq,
+            co2: $this->co2,
+            ch4: $this->ch4,
+            n2o: $this->n2o,
+            year: $this->year,
+            emissionFactorGroupId: $emissionFactorGroupId,
             unit: $this->unit,
             source: $this->source,
         );
@@ -116,6 +133,7 @@ final class EmissionFactor implements \Stringable
             && $this->ch4 === $other->ch4()
             && $this->n2o === $other->n2o()
             && $this->year === $other->year()
+            && $this->emissionFactorGroupId->equals($other->emissionFactorGroupId())
             && $this->unit === $other->unit()
             && $this->source === $other->source();
     }
@@ -123,9 +141,10 @@ final class EmissionFactor implements \Stringable
     public function __toString(): string
     {
         return sprintf(
-            '%s kg CO2eq (%d)%s',
+            '%s kg CO2eq (%d) [%s]%s',
             $this->co2eq,
             $this->year,
+            $this->emissionFactorGroupId,
             null !== $this->source ? ' — ' . $this->source : '',
         );
     }

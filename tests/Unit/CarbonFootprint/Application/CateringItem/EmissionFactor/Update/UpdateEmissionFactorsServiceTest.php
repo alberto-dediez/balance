@@ -14,6 +14,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 
@@ -63,7 +64,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $repository = CateringItemRepositoryMother::inMemory();
 
         $cateringItem = CateringItemMother::random();
-        $ef = new EmissionFactor('1', '1', '1', '1', 2025);
+        $ef = new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupMother::default()->id());
         $cateringItem->setEmissionFactor($ef, $ef);
         $repository->add($cateringItem);
 

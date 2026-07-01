@@ -14,6 +14,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 
@@ -63,7 +64,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $repository = ElectricityMarketerRepositoryMother::inMemory();
 
         $electricityMarketer = ElectricityMarketerMother::random();
-        $electricityMarketer->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2025));
+        $electricityMarketer->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
         $repository->add($electricityMarketer);
 
         $sut = $this->createSUT($repository);

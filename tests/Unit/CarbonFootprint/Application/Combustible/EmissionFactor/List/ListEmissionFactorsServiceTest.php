@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 
@@ -27,8 +28,8 @@ class ListEmissionFactorsServiceTest extends TestCase
         $repository = CombustibleRepositoryMother::inMemory();
 
         $combustible = CombustibleMother::random();
-        $combustible->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2022));
-        $combustible->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024));
+        $combustible->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2022, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
+        $combustible->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
         $repository->add($combustible);
 
         $sut = $this->createSUT($repository);

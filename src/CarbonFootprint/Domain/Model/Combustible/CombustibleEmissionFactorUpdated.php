@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Domain\Model\Combustible;
 
 use App\CarbonFootprint\Domain\DomainEvent;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
@@ -62,6 +63,7 @@ final class CombustibleEmissionFactorUpdated extends DomainEvent
         return new CombustibleEmissionFactorUpdated(
             combustibleId: new CombustibleId($payload['combustibleId']),
             emissionFactor: new EmissionFactor(
+                emissionFactorGroupId: EmissionFactorGroupId::default(),
                 co2eq: $payload['co2eq'],
                 co2: $payload['co2'],
                 ch4: $payload['ch4'],

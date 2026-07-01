@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\OvernightStay\OvernightStayAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -27,8 +28,8 @@ class ListEmissionFactorsServiceTest extends TestCase
         $repository = OvernightStayRepositoryMother::inMemory();
 
         $overnightStay = OvernightStayMother::random();
-        $overnightStay->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2022));
-        $overnightStay->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024));
+        $overnightStay->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2022, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
+        $overnightStay->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
         $repository->add($overnightStay);
 
         $sut = $this->createSUT($repository);

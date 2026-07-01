@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Domain\Model\OvernightStay;
 
 use App\CarbonFootprint\Domain\DomainEvent;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
@@ -62,6 +63,7 @@ final class OvernightStayEmissionFactorUpdated extends DomainEvent
         return new OvernightStayEmissionFactorUpdated(
             overnightStayId: new OvernightStayId($payload['overnightStayId']),
             emissionFactor: new EmissionFactor(
+                emissionFactorGroupId: EmissionFactorGroupId::default(),
                 co2eq: $payload['co2eq'],
                 co2: $payload['co2'],
                 ch4: $payload['ch4'],

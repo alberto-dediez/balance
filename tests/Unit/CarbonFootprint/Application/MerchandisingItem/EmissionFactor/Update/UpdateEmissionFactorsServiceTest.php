@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -63,7 +64,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $repository = MerchandisingItemRepositoryMother::inMemory();
 
         $merchandisingItem = MerchandisingItemMother::random();
-        $ef = new EmissionFactor('1', '1', '1', '1', 2025);
+        $ef = new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupMother::default()->id());
         $merchandisingItem->setEmissionFactor($ef, $ef);
         $repository->add($merchandisingItem);
 

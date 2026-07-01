@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\Material\MaterialAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -27,9 +28,9 @@ class ListEmissionFactorsServiceTest extends TestCase
         $repository = MaterialRepositoryMother::inMemory();
 
         $material = MaterialMother::random();
-        $ef2022 = new EmissionFactor('1', '1', '1', '1', 2022);
+        $ef2022 = new EmissionFactor('1', '1', '1', '1', 2022, emissionFactorGroupId: EmissionFactorGroupMother::default()->id());
         $material->setEmissionFactor($ef2022, $ef2022);
-        $ef2024 = new EmissionFactor('1', '1', '1', '1', 2024);
+        $ef2024 = new EmissionFactor('1', '1', '1', '1', 2024, emissionFactorGroupId: EmissionFactorGroupMother::default()->id());
         $material->setEmissionFactor($ef2024, $ef2024);
         $repository->add($material);
 

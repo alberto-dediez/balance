@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\RoadTransport\RoadTransportAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -27,8 +28,8 @@ class ListEmissionFactorsServiceTest extends TestCase
         $repository = RoadTransportRepositoryMother::inMemory();
 
         $roadTransport = RoadTransportMother::random();
-        $roadTransport->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2022));
-        $roadTransport->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024));
+        $roadTransport->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2022, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
+        $roadTransport->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
         $repository->add($roadTransport);
 
         $sut = $this->createSUT($repository);

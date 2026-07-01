@@ -8,6 +8,7 @@ use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketer;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use PHPUnit\Framework\TestCase;
 
 class ElectricityMarketerTest extends TestCase
@@ -107,6 +108,7 @@ class ElectricityMarketerTest extends TestCase
             ch4: '0.2',
             n2o: '0.3',
             year: $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
             unit: Unit::KWh,
             source: 'test-source',
         );

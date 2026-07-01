@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 
@@ -27,8 +28,8 @@ class ListEmissionFactorsServiceTest extends TestCase
         $repository = ElectricityMarketerRepositoryMother::inMemory();
 
         $electricityMarketer = ElectricityMarketerMother::random();
-        $electricityMarketer->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2022));
-        $electricityMarketer->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024));
+        $electricityMarketer->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2022, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
+        $electricityMarketer->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
         $repository->add($electricityMarketer);
 
         $sut = $this->createSUT($repository);

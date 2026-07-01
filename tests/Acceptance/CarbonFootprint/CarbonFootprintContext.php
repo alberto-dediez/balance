@@ -133,6 +133,7 @@ final readonly class CarbonFootprintContext implements Context
             ch4: '0.2',
             n2o: '0.3',
             year: (int) $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
             source: 'IPCC',
         );
         $material->setEmissionFactor($ef, $ef);
@@ -175,6 +176,7 @@ final readonly class CarbonFootprintContext implements Context
             ch4: '0.2',
             n2o: '0.3',
             year: (int) $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
             source: 'IPCC',
         ));
 
@@ -208,6 +210,7 @@ final readonly class CarbonFootprintContext implements Context
             ch4: '0.2',
             n2o: '0.3',
             year: (int) $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
             source: 'IPCC',
         ));
 
@@ -233,6 +236,7 @@ final readonly class CarbonFootprintContext implements Context
             ch4: '0.2',
             n2o: '0.3',
             year: (int) $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
             source: 'IPCC',
         ));
 
@@ -258,6 +262,7 @@ final readonly class CarbonFootprintContext implements Context
             ch4: '0.2',
             n2o: '0.3',
             year: (int) $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
             source: 'IPCC',
         ));
 
@@ -283,6 +288,7 @@ final readonly class CarbonFootprintContext implements Context
             ch4: '0.2',
             n2o: '0.3',
             year: (int) $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
             source: 'IPCC',
         ));
 
@@ -308,6 +314,7 @@ final readonly class CarbonFootprintContext implements Context
             ch4: '0.2',
             n2o: '0.3',
             year: (int) $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
             source: 'IPCC',
         ));
 
@@ -333,6 +340,7 @@ final readonly class CarbonFootprintContext implements Context
             ch4: '0.2',
             n2o: '0.3',
             year: (int) $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
             source: 'IPCC',
         ));
 
@@ -363,6 +371,7 @@ final readonly class CarbonFootprintContext implements Context
             ch4: '0.2',
             n2o: '0.3',
             year: (int) $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
             source: 'IPCC',
         ));
 

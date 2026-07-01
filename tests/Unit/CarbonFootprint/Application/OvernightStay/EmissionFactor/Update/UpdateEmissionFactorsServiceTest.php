@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -63,7 +64,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $repository = OvernightStayRepositoryMother::inMemory();
 
         $overnightStay = OvernightStayMother::random();
-        $overnightStay->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2025));
+        $overnightStay->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2025, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
         $repository->add($overnightStay);
 
         $sut = $this->createSUT($repository);

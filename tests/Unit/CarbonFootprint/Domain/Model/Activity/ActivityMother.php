@@ -8,12 +8,13 @@ use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 
 class ActivityMother
 {
     public static function emissionFactor(): EmissionFactor
     {
-        return new EmissionFactor('1.5', '1.5', '0', '0', 2024, Unit::Kilogram);
+        return new EmissionFactor('1.5', '1.5', '0', '0', 2024, EmissionFactorGroupMother::default()->id(), Unit::Kilogram);
     }
 
     public static function emissions(): Emissions

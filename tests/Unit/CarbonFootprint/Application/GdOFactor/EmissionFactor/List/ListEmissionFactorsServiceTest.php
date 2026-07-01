@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\GdOFactor\GdOFactorAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -27,8 +28,8 @@ class ListEmissionFactorsServiceTest extends TestCase
         $repository = GdOFactorRepositoryMother::inMemory();
 
         $gdOFactor = GdOFactorMother::random();
-        $gdOFactor->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2022));
-        $gdOFactor->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024));
+        $gdOFactor->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2022, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
+        $gdOFactor->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024, emissionFactorGroupId: EmissionFactorGroupMother::default()->id()));
         $repository->add($gdOFactor);
 
         $sut = $this->createSUT($repository);

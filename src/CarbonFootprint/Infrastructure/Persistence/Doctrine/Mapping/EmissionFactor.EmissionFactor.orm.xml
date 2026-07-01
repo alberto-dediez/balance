@@ -11,6 +11,7 @@
         <field name="ch4"   type="decimal" precision="20" scale="8" nullable="false"/>
         <field name="n2o"   type="decimal" precision="20" scale="8" nullable="false"/>
         <field name="year"  type="integer" nullable="false"/>
+        <field name="emissionFactorGroupId" type="emission_factor_group_id" column="emission_factor_group_id" nullable="false"/>
         <field name="unit" type="string" enum-type="App\CarbonFootprint\Domain\Model\Unit" nullable="false"/>
         <field name="source" type="string" length="255" nullable="true"/>
     </embeddable>

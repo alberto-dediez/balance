@@ -9,6 +9,8 @@ use App\CarbonFootprint\Domain\Model\Combustible\Combustible;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\Gwp;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
@@ -95,12 +97,23 @@ class ImportCombustibleService implements CommandHandler
 
     private function buildEmissionFactor(ImportCombustibleRequest $request, Unit $unit, int $year): EmissionFactor
     {
+        $co2 = $this->decimal($request->co2);
+        $ch4 = $this->decimal($request->ch4);
+        $n2o = $this->decimal($request->n2o);
+        $co2eq = $this->decimal($request->co2eq);
+
+        if (0.0 === (float) $co2eq) {
+            // Temporary FASE 2 compatibility fallback: real EmissionFactorGroup resolution lands in FASE 3/7/8/9.
+            $co2eq = Gwp::ar6()->co2eqFor($co2, $ch4, $n2o);
+        }
+
         return new EmissionFactor(
-            co2eq: $this->decimal($request->co2eq),
-            co2: $this->decimal($request->co2),
-            ch4: $this->decimal($request->ch4),
-            n2o: $this->decimal($request->n2o),
+            co2eq: $co2eq,
+            co2: $co2,
+            ch4: $ch4,
+            n2o: $n2o,
             year: $year,
+            emissionFactorGroupId: EmissionFactorGroupId::default(),
             unit: $unit,
             source: '' === trim((string) $request->source) ? null : $request->source,
         );
