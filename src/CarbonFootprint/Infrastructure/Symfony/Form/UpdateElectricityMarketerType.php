@@ -6,9 +6,8 @@ namespace App\CarbonFootprint\Infrastructure\Symfony\Form;
 
 use App\CarbonFootprint\Application\ElectricityMarketer\Update\UpdateElectricityMarketerRequest;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\ElectricityMarketerEmissionFactorType;
-use App\CarbonFootprint\Infrastructure\Symfony\Validator\UniqueEmissionFactorYears;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\GroupedEmissionFactorsType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,16 +29,9 @@ class UpdateElectricityMarketerType extends AbstractType
                     new Assert\Length(max: 255),
                 ],
             ])
-            ->add('emissionFactors', CollectionType::class, [
+            ->add('emissionFactors', GroupedEmissionFactorsType::class, [
                 'label' => new TranslatableMessage('Factores de emisión'),
                 'entry_type' => ElectricityMarketerEmissionFactorType::class,
-                'entry_options' => ['label' => false],
-                'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false,
-                'prototype' => true,
-                'required' => false,
-                'constraints' => [new UniqueEmissionFactorYears()],
             ])
             ->add('saveAndReturn', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar y salir'),

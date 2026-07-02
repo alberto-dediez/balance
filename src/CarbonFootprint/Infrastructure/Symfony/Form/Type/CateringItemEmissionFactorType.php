@@ -106,10 +106,6 @@ class CateringItemEmissionFactorType extends AbstractType
                 'required' => false,
                 'constraints' => [new Assert\Length(max: 255)],
             ])
-            ->add('emissionFactorGroupId', EmissionFactorGroupChoiceType::class, [
-                'label' => new TranslatableMessage('Grupo'),
-                'required' => true,
-            ])
         ;
     }
 

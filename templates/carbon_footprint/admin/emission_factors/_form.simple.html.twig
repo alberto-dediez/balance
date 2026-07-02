@@ -1,0 +1,63 @@
+{% set groups = form.emissionFactors.vars.groups %}
+
+<div class="row">
+    <div class="col-9">
+        <h5 class="mb-3">
+            {% trans %}Factores de emisión{% endtrans %}
+        </h5>
+    </div>
+    <div class="col-3">
+        <select id="emission-factor-group-selector" class="form-select">
+            {% for group in groups %}
+                <option value="{{ group.id }}" {{ group.isDefault ? 'selected' : '' }}>{{ group }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+{% for groupForm in form.emissionFactors %}
+    {% set group = groups[loop.index0] %}
+
+    <div
+        data-controller="showable"
+        data-showable-selector-value="#emission-factor-group-selector"
+        data-showable-condition-value="{{ group.id }}"
+        class="{{ group.isDefault ? '' : 'd-none' }}"
+    >
+        <h6 class="mb-2">{{ group }}</h6>
+
+        {% embed 'components/Collection/Table.html.twig' with {
+            elements: groupForm,
+            proto: groupForm.vars.prototype,
+            columns: [
+                { label: 'Año' | trans },
+                { label: 'Kg CO2eq' | trans },
+                { label: 'Kg CO2' | trans },
+                { label: 'g CH4' | trans },
+                { label: 'g N2O' | trans },
+                { label: 'Fuente' | trans },
+            ],
+        } %}
+            {% block content %}
+                <td>{{ form_widget(element.year) }}{{ form_errors(element.year) }}</td>
+                <td>{{ form_widget(element.co2eq) }}{{ form_errors(element.co2eq) }}</td>
+                <td>{{ form_widget(element.co2) }}{{ form_errors(element.co2) }}</td>
+                <td>{{ form_widget(element.ch4) }}{{ form_errors(element.ch4) }}</td>
+                <td>{{ form_widget(element.n2o) }}{{ form_errors(element.n2o) }}</td>
+                <td>{{ form_widget(element.source) }}{{ form_errors(element.source) }}</td>
+            {% endblock %}
+        {% endembed %}
+
+        {{ form_errors(groupForm) }}
+    </div>
+{% endfor %}
+
+{% if not form.emissionFactors.vars.valid %}
+    <div class="alert alert-danger">
+        {% trans %}Hay errores en algunos factores de emisión{% endtrans %}
+    </div>
+{% endif %}
+
+{{ form_errors(form.emissionFactors) }}
+
+{% do form.emissionFactors.setRendered %}

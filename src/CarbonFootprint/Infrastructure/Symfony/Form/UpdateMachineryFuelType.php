@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Infrastructure\Symfony\Form;
 
 use App\CarbonFootprint\Application\MachineryFuel\Update\UpdateMachineryFuelRequest;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\GroupedEmissionFactorsType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MachineryFuelEmissionFactorType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MachineryFuelMachineryTypeType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\UnitType;
-use App\CarbonFootprint\Infrastructure\Symfony\Validator\UniqueEmissionFactorYears;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -42,16 +41,9 @@ class UpdateMachineryFuelType extends AbstractType
                 'required' => true,
                 'constraints' => [new Assert\NotNull()],
             ])
-            ->add('emissionFactors', CollectionType::class, [
+            ->add('emissionFactors', GroupedEmissionFactorsType::class, [
                 'label' => new TranslatableMessage('Factores de emisión'),
                 'entry_type' => MachineryFuelEmissionFactorType::class,
-                'entry_options' => ['label' => false],
-                'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false,
-                'prototype' => true,
-                'required' => false,
-                'constraints' => [new UniqueEmissionFactorYears()],
             ])
             ->add('saveAndReturn', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar y salir'),

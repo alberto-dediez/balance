@@ -2977,6 +2977,42 @@
         <source>Se ha registrado el grupo de coeficientes "{emissionFactorGroup}" por el usuario {user}</source>
         <target>Se ha registrado el grupo de coeficientes "{emissionFactorGroup}" por el usuario {user}</target>
       </trans-unit>
+      <trans-unit id="iRNETo5" resname="Grupo de coeficientes por defecto">
+        <source>Grupo de coeficientes por defecto</source>
+        <target>Grupo de coeficientes por defecto</target>
+      </trans-unit>
+      <trans-unit id="mXVcBAm" resname="Se ha marcado {emissionFactorGroup} como grupo de coeficientes por defecto">
+        <source>Se ha marcado {emissionFactorGroup} como grupo de coeficientes por defecto</source>
+        <target>Se ha marcado {emissionFactorGroup} como grupo de coeficientes por defecto</target>
+      </trans-unit>
+      <trans-unit id="yIDtghq" resname="No se ha podido marcar {emissionFactorGroup} como grupo de coeficientes por defecto">
+        <source>No se ha podido marcar {emissionFactorGroup} como grupo de coeficientes por defecto</source>
+        <target>No se ha podido marcar {emissionFactorGroup} como grupo de coeficientes por defecto</target>
+      </trans-unit>
+      <trans-unit id="ka4YiLM" resname="Grupo">
+        <source>Grupo</source>
+        <target>Grupo</target>
+      </trans-unit>
+      <trans-unit id="daS5l.A" resname="Todos">
+        <source>Todos</source>
+        <target>Todos</target>
+      </trans-unit>
+      <trans-unit id="nyE4Dgd" resname="Marcar como por defecto">
+        <source>Marcar como por defecto</source>
+        <target>Marcar como por defecto</target>
+      </trans-unit>
+      <trans-unit id="tDHMt_h" resname="Por defecto">
+        <source>Por defecto</source>
+        <target>Por defecto</target>
+      </trans-unit>
+      <trans-unit id="8Wc4XuP" resname="Hay errores en algunos factores de emisión">
+        <source>Hay errores en algunos factores de emisión</source>
+        <target>Hay errores en algunos factores de emisión</target>
+      </trans-unit>
+      <trans-unit id="9WVmDmO" resname="Grupo de coeficientes">
+        <source>Grupo de coeficientes</source>
+        <target>Grupo de coeficientes</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

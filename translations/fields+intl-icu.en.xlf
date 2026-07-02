@@ -73,6 +73,10 @@
         <source>merchandisingItem</source>
         <target>Merchandising item</target>
       </trans-unit>
+      <trans-unit id="pj3Nv_A" resname="emissionFactorGroup">
+        <source>emissionFactorGroup</source>
+        <target>Emission Factor Group</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
