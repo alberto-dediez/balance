@@ -45,6 +45,7 @@ class EmissionFactorData
     public function newEmissionFactor(Unit $unit, EmissionFactorGroup $emissionFactorGroup): EmissionFactor
     {
         return $emissionFactorGroup->buildEmissionFactor(
+            co2eq: (string) $this->co2eq,
             co2: (string) $this->co2,
             ch4: (string) $this->ch4,
             n2o: (string) $this->n2o,
@@ -57,6 +58,7 @@ class EmissionFactorData
     public function recycledEmissionFactor(Unit $unit, EmissionFactorGroup $emissionFactorGroup): EmissionFactor
     {
         return $emissionFactorGroup->buildEmissionFactor(
+            co2eq: (string) $this->recycledCo2eq,
             co2: (string) $this->recycledCo2,
             ch4: (string) $this->recycledCh4,
             n2o: (string) $this->recycledN2o,

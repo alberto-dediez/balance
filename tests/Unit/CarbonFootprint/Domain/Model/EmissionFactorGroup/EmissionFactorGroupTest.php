@@ -81,6 +81,7 @@ class EmissionFactorGroupTest extends TestCase
         );
 
         $emissionFactor = $emissionFactorGroup->buildEmissionFactor(
+            co2eq: '0',
             co2: '2',
             ch4: '1',
             n2o: '0.5',
@@ -96,5 +97,26 @@ class EmissionFactorGroupTest extends TestCase
         $this->assertSame(2024, $emissionFactor->year());
         $this->assertSame(Unit::Kilogram, $emissionFactor->unit());
         $this->assertSame('test-source', $emissionFactor->source());
+    }
+
+    public function testBuildEmissionFactorRespectsUserProvidedCo2eq(): void
+    {
+        $emissionFactorGroup = new EmissionFactorGroup(
+            id: EmissionFactorGroupId::generate(),
+            name: 'group-name',
+            gwp: new Gwp(gwpCo2: 1.0, gwpCh4: 27.9, gwpN2O: 273.0),
+        );
+
+        $emissionFactor = $emissionFactorGroup->buildEmissionFactor(
+            co2eq: '99',
+            co2: '2',
+            ch4: '1',
+            n2o: '0.5',
+            year: 2024,
+            unit: Unit::Kilogram,
+            source: 'test-source',
+        );
+
+        $this->assertSame('99', $emissionFactor->co2eq());
     }
 }

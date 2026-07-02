@@ -106,20 +106,7 @@ class ImportOvernightStayService implements CommandHandler
         $co2eq = $this->decimal($request->co2eq);
         $source = '' === trim((string) $request->source) ? null : $request->source;
 
-        if (0.0 !== (float) $co2eq) {
-            return new EmissionFactor(
-                co2eq: $co2eq,
-                co2: $co2,
-                ch4: $ch4,
-                n2o: $n2o,
-                year: $year,
-                emissionFactorGroupId: $group->id(),
-                unit: Unit::Pernoctacion,
-                source: $source,
-            );
-        }
-
-        return $group->buildEmissionFactor($co2, $ch4, $n2o, $year, Unit::Pernoctacion, $source);
+        return $group->buildEmissionFactor($co2eq, $co2, $ch4, $n2o, $year, Unit::Pernoctacion, $source);
     }
 
     private function resolveEmissionFactorGroup(?string $value): EmissionFactorGroup

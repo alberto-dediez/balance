@@ -167,9 +167,11 @@ class EmissionFactorGroup implements Translatable, \Stringable
         return $this->gwp->co2eqFor($co2, $ch4, $n2o);
     }
 
-    public function buildEmissionFactor(string $co2, string $ch4, string $n2o, int $year, Unit $unit, ?string $source): EmissionFactor
+    public function buildEmissionFactor(string $co2eq, string $co2, string $ch4, string $n2o, int $year, Unit $unit, ?string $source): EmissionFactor
     {
-        $co2eq = $this->co2eqFor($co2, $ch4, $n2o);
+        if (0.0 === (float) $co2eq) {
+            $co2eq = $this->co2eqFor($co2, $ch4, $n2o);
+        }
 
         return new EmissionFactor($co2eq, $co2, $ch4, $n2o, $year, $this->id, $unit, $source);
     }

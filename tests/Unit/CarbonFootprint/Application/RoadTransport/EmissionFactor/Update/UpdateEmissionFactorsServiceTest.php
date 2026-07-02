@@ -63,7 +63,7 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $this->assertNotNull($persisted);
         $factor = $persisted->emissionFactorFor(2025, $emissionFactorGroup->id());
         $this->assertNotNull($factor);
-        $this->assertSame($emissionFactorGroup->co2eqFor('1.0', '0.2', '0.3'), $factor->co2eq());
+        $this->assertSame('1.5', $factor->co2eq());
     }
 
     public function testRemovesEmissionFactorWhenRowIsEmpty(): void

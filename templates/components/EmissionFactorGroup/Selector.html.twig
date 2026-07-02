@@ -1,0 +1,16 @@
+{% props route, emissionFactorGroup, emissionFactorGroups, year %}
+
+<select
+    class="form-select me-3 w-auto"
+    aria-label="{{ 'Grupo de factores de emisión' | trans }}"
+    onchange="window.location.href = this.value"
+>
+    {% for group in emissionFactorGroups %}
+        <option
+            value="{{ path(route, {'emissionFactorGroup': group.id ~ '', 'year': year}) }}"
+            {{ (group.id ~ '') == (emissionFactorGroup.id ~ '') ? 'selected' : '' }}
+        >
+            {{ group }}
+        </option>
+    {% endfor %}
+</select>

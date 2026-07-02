@@ -148,8 +148,8 @@ class UpdateMachineryFuelServiceTest extends TestCase
         $persistedFactor = $persisted->emissionFactorFor(2024, $emissionFactorGroup->id());
 
         $this->assertNotNull($persistedFactor);
-        // co2eq is computed from co2/ch4/n2o using the resolved group's GWP, not taken from user input.
-        $this->assertSame($emissionFactorGroup->co2eqFor('1.0', '0.2', '0.3'), $persistedFactor->co2eq());
+        // co2eq is respected as provided by the user (non-zero), not recomputed from co2/ch4/n2o.
+        $this->assertSame('1.5', $persistedFactor->co2eq());
         $this->assertSame(Unit::Liter, $persistedFactor->unit());
     }
 
