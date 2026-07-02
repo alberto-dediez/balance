@@ -69,7 +69,7 @@ class EmissionFactorGroupTest extends TestCase
 
         $co2eq = $emissionFactorGroup->co2eqFor(co2: '2', ch4: '1', n2o: '0.5');
 
-        $this->assertSame((string) (2.0 * 1.0 + 1.0 * 27.9 + 0.5 * 273.0), $co2eq);
+        $this->assertSame((string) (2.0 * 1.0 + 1.0 / 1000 * 27.9 + 0.5 / 1000 * 273.0), $co2eq);
     }
 
     public function testBuildEmissionFactorUsesComputedCo2eq(): void
