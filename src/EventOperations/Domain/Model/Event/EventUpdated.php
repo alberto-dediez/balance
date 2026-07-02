@@ -21,9 +21,9 @@ final class EventUpdated extends DomainEvent
         private ?int $estimatedAttendees,
         private ?EventSector $sector,
         private ?EventTypology $typology,
-        private DateRange $setup,
+        private DateRange $assembly,
         private DateRange $celebration,
-        private DateRange $dismantling,
+        private DateRange $breakdown,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -65,9 +65,9 @@ final class EventUpdated extends DomainEvent
         return $this->typology;
     }
 
-    public function setup(): DateRange
+    public function assembly(): DateRange
     {
-        return $this->setup;
+        return $this->assembly;
     }
 
     public function celebration(): DateRange
@@ -75,9 +75,9 @@ final class EventUpdated extends DomainEvent
         return $this->celebration;
     }
 
-    public function dismantling(): DateRange
+    public function breakdown(): DateRange
     {
-        return $this->dismantling;
+        return $this->breakdown;
     }
 
     public function aggregateRootId(): AggregateRootId
@@ -95,12 +95,12 @@ final class EventUpdated extends DomainEvent
             'estimatedAttendees' => $this->estimatedAttendees,
             'sector' => $this->sector?->value,
             'typology' => $this->typology?->value,
-            'setupStartDate' => $this->setup->startDate()?->format(\DateTimeInterface::ATOM),
-            'setupEndDate' => $this->setup->endDate()?->format(\DateTimeInterface::ATOM),
+            'assemblyStartDate' => $this->assembly->startDate()?->format(\DateTimeInterface::ATOM),
+            'assemblyEndDate' => $this->assembly->endDate()?->format(\DateTimeInterface::ATOM),
             'celebrationStartDate' => $this->celebration->startDate()?->format(\DateTimeInterface::ATOM),
             'celebrationEndDate' => $this->celebration->endDate()?->format(\DateTimeInterface::ATOM),
-            'dismantlingStartDate' => $this->dismantling->startDate()?->format(\DateTimeInterface::ATOM),
-            'dismantlingEndDate' => $this->dismantling->endDate()?->format(\DateTimeInterface::ATOM),
+            'breakdownStartDate' => $this->breakdown->startDate()?->format(\DateTimeInterface::ATOM),
+            'breakdownEndDate' => $this->breakdown->endDate()?->format(\DateTimeInterface::ATOM),
         ];
     }
 
@@ -117,17 +117,17 @@ final class EventUpdated extends DomainEvent
             estimatedAttendees: $payload['estimatedAttendees'] ?? null,
             sector: isset($payload['sector']) ? EventSector::tryFrom($payload['sector']) : null,
             typology: isset($payload['typology']) ? EventTypology::tryFrom($payload['typology']) : null,
-            setup: new DateRange(
-                startDate: isset($payload['setupStartDate']) ? new \DateTimeImmutable($payload['setupStartDate']) : null,
-                endDate: isset($payload['setupEndDate']) ? new \DateTimeImmutable($payload['setupEndDate']) : null,
+            assembly: new DateRange(
+                startDate: isset($payload['assemblyStartDate']) ? new \DateTimeImmutable($payload['assemblyStartDate']) : null,
+                endDate: isset($payload['assemblyEndDate']) ? new \DateTimeImmutable($payload['assemblyEndDate']) : null,
             ),
             celebration: new DateRange(
                 startDate: isset($payload['celebrationStartDate']) ? new \DateTimeImmutable($payload['celebrationStartDate']) : null,
                 endDate: isset($payload['celebrationEndDate']) ? new \DateTimeImmutable($payload['celebrationEndDate']) : null,
             ),
-            dismantling: new DateRange(
-                startDate: isset($payload['dismantlingStartDate']) ? new \DateTimeImmutable($payload['dismantlingStartDate']) : null,
-                endDate: isset($payload['dismantlingEndDate']) ? new \DateTimeImmutable($payload['dismantlingEndDate']) : null,
+            breakdown: new DateRange(
+                startDate: isset($payload['breakdownStartDate']) ? new \DateTimeImmutable($payload['breakdownStartDate']) : null,
+                endDate: isset($payload['breakdownEndDate']) ? new \DateTimeImmutable($payload['breakdownEndDate']) : null,
             ),
             id: $id,
             occurredOn: $occurredOn,

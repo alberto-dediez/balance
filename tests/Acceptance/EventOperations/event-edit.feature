@@ -8,7 +8,7 @@ Feature:
         Given event "Evento A" with id "333" of account "666" with location "abc123" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/events/edit/333"
-        When I submit a form with "name:Nombre Actualizado|location:abc123|size:Small|sector:business|typology:local|setupStartDate:2026-01-01|setupEndDate:2026-01-02|celebrationStartDate:2026-01-03|celebrationEndDate:2026-01-04|dismantlingStartDate:2026-01-05|dismantlingEndDate:2026-01-06" and button "Guardar"
+        When I submit a form with "name:Nombre Actualizado|location:abc123|size:Small|sector:business|typology:local|assemblyStartDate:2026-01-01|assemblyEndDate:2026-01-02|celebrationStartDate:2026-01-03|celebrationEndDate:2026-01-04|breakdownStartDate:2026-01-05|breakdownEndDate:2026-01-06" and button "Guardar"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Evento actualizado con éxito"

@@ -17,8 +17,8 @@
         <source>celebration</source>
         <target>Celebración</target>
       </trans-unit>
-      <trans-unit id="vQ2AaXW" resname="teardown">
-        <source>teardown</source>
+      <trans-unit id="vQ2AaXW" resname="breakdown">
+        <source>breakdown</source>
         <target>Desmontaje</target>
       </trans-unit>
     </body>

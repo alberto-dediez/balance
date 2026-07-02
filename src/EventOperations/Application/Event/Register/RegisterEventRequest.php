@@ -20,12 +20,12 @@ class RegisterEventRequest implements Command
         public ?int $estimatedAttendees = null,
         public ?EventSector $sector = null,
         public ?EventTypology $typology = null,
-        public ?\DateTimeImmutable $setupStartDate = null,
-        public ?\DateTimeImmutable $setupEndDate = null,
+        public ?\DateTimeImmutable $assemblyStartDate = null,
+        public ?\DateTimeImmutable $assemblyEndDate = null,
         public ?\DateTimeImmutable $celebrationStartDate = null,
         public ?\DateTimeImmutable $celebrationEndDate = null,
-        public ?\DateTimeImmutable $dismantlingStartDate = null,
-        public ?\DateTimeImmutable $dismantlingEndDate = null,
+        public ?\DateTimeImmutable $breakdownStartDate = null,
+        public ?\DateTimeImmutable $breakdownEndDate = null,
         public ?AccountId $accountId = null,
     ) {}
 }

@@ -69,8 +69,8 @@ class RegisterController extends AbstractController
                 eventId: $event->id(),
                 accountId: $account->id(),
                 emissionFactorGroupId: $emissionFactorGroupId,
-                calculationPeriodStartDate: $event->setup()->startDate(),
-                calculationPeriodEndDate: $event->dismantling()->endDate(),
+                calculationPeriodStartDate: $event->assembly()->startDate(),
+                calculationPeriodEndDate: $event->breakdown()->endDate(),
             ), $loggedUser());
 
             $this->addFlash('success', new TranslatableMessage('Cálculo de Huella de Carbono creado correctamente'));

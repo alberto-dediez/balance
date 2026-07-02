@@ -53,12 +53,12 @@ class EditController extends AbstractController
             estimatedAttendees: $event->estimatedAttendees(),
             sector: $event->sector(),
             typology: $event->typology(),
-            setupStartDate: $event->setup()->startDate(),
-            setupEndDate: $event->setup()->endDate(),
+            assemblyStartDate: $event->assembly()->startDate(),
+            assemblyEndDate: $event->assembly()->endDate(),
             celebrationStartDate: $event->celebration()->startDate(),
             celebrationEndDate: $event->celebration()->endDate(),
-            dismantlingStartDate: $event->dismantling()->startDate(),
-            dismantlingEndDate: $event->dismantling()->endDate(),
+            breakdownStartDate: $event->breakdown()->startDate(),
+            breakdownEndDate: $event->breakdown()->endDate(),
         );
 
         try {

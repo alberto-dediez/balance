@@ -22,9 +22,9 @@ class Event implements \Stringable
         private ?int $estimatedAttendees = null,
         private ?EventSector $sector = null,
         private ?EventTypology $typology = null,
-        private DateRange $setup = new DateRange(),
+        private DateRange $assembly = new DateRange(),
         private DateRange $celebration = new DateRange(),
-        private DateRange $dismantling = new DateRange(),
+        private DateRange $breakdown = new DateRange(),
         private ?AccountId $accountId = null,
         private ?bool $removed = false,
         array $events = [],
@@ -70,9 +70,9 @@ class Event implements \Stringable
         return $this->typology;
     }
 
-    public function setup(): DateRange
+    public function assembly(): DateRange
     {
-        return $this->setup;
+        return $this->assembly;
     }
 
     public function celebration(): DateRange
@@ -80,9 +80,9 @@ class Event implements \Stringable
         return $this->celebration;
     }
 
-    public function dismantling(): DateRange
+    public function breakdown(): DateRange
     {
-        return $this->dismantling;
+        return $this->breakdown;
     }
 
     public function accountId(): ?AccountId
@@ -117,9 +117,9 @@ class Event implements \Stringable
         ?int $estimatedAttendees,
         ?EventSector $sector,
         ?EventTypology $typology,
-        DateRange $setup,
+        DateRange $assembly,
         DateRange $celebration,
-        DateRange $dismantling,
+        DateRange $breakdown,
         ?AccountId $accountId,
     ): void {
         $this->recordApplyAndPublish(
@@ -131,9 +131,9 @@ class Event implements \Stringable
                 estimatedAttendees: $estimatedAttendees,
                 sector: $sector,
                 typology: $typology,
-                setup: $setup,
+                assembly: $assembly,
                 celebration: $celebration,
-                dismantling: $dismantling,
+                breakdown: $breakdown,
                 accountId: $accountId,
             ),
         );
@@ -146,9 +146,9 @@ class Event implements \Stringable
         ?int $estimatedAttendees,
         ?EventSector $sector,
         ?EventTypology $typology,
-        DateRange $setup,
+        DateRange $assembly,
         DateRange $celebration,
-        DateRange $dismantling,
+        DateRange $breakdown,
     ): void {
         $this->recordApplyAndPublish(
             new EventUpdated(
@@ -159,9 +159,9 @@ class Event implements \Stringable
                 estimatedAttendees: $estimatedAttendees,
                 sector: $sector,
                 typology: $typology,
-                setup: $setup,
+                assembly: $assembly,
                 celebration: $celebration,
-                dismantling: $dismantling,
+                breakdown: $breakdown,
             ),
         );
     }
@@ -183,9 +183,9 @@ class Event implements \Stringable
         $this->estimatedAttendees = $event->estimatedAttendees();
         $this->sector = $event->sector();
         $this->typology = $event->typology();
-        $this->setup = $event->setup();
+        $this->assembly = $event->assembly();
         $this->celebration = $event->celebration();
-        $this->dismantling = $event->dismantling();
+        $this->breakdown = $event->breakdown();
         $this->accountId = $event->accountId();
         $this->registeredAt = $event->occurredOn();
     }
@@ -198,9 +198,9 @@ class Event implements \Stringable
         $this->estimatedAttendees = $event->estimatedAttendees();
         $this->sector = $event->sector();
         $this->typology = $event->typology();
-        $this->setup = $event->setup();
+        $this->assembly = $event->assembly();
         $this->celebration = $event->celebration();
-        $this->dismantling = $event->dismantling();
+        $this->breakdown = $event->breakdown();
         $this->updatedAt = $event->occurredOn();
     }
 

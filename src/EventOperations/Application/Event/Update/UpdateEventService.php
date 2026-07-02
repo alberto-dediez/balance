@@ -34,17 +34,17 @@ class UpdateEventService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($event, SecurityAction::Edit, $user);
 
-        $setup = new DateRange(
-            startDate: $request->setupStartDate,
-            endDate: $request->setupEndDate,
+        $assembly = new DateRange(
+            startDate: $request->assemblyStartDate,
+            endDate: $request->assemblyEndDate,
         );
         $celebration = new DateRange(
             startDate: $request->celebrationStartDate,
             endDate: $request->celebrationEndDate,
         );
-        $dismantling = new DateRange(
-            startDate: $request->dismantlingStartDate,
-            endDate: $request->dismantlingEndDate,
+        $breakdown = new DateRange(
+            startDate: $request->breakdownStartDate,
+            endDate: $request->breakdownEndDate,
         );
 
         $event->update(
@@ -54,9 +54,9 @@ class UpdateEventService implements CommandHandler
             estimatedAttendees: $request->estimatedAttendees,
             sector: $request->sector,
             typology: $request->typology,
-            setup: $setup,
+            assembly: $assembly,
             celebration: $celebration,
-            dismantling: $dismantling,
+            breakdown: $breakdown,
         );
 
         $this->eventRepository->add($event);

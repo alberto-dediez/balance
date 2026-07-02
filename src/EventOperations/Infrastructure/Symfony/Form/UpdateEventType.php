@@ -68,7 +68,7 @@ class UpdateEventType extends AbstractType
                     new Assert\NotNull(),
                 ],
             ])
-            ->add('setupStartDate', DateType::class, [
+            ->add('assemblyStartDate', DateType::class, [
                 'label' => new TranslatableMessage('Inicio del montaje'),
                 'required' => true,
                 'widget' => 'single_text',
@@ -77,7 +77,7 @@ class UpdateEventType extends AbstractType
                     new Assert\NotNull(),
                 ],
             ])
-            ->add('setupEndDate', DateType::class, [
+            ->add('assemblyEndDate', DateType::class, [
                 'label' => new TranslatableMessage('Fin del montaje'),
                 'required' => true,
                 'widget' => 'single_text',
@@ -104,7 +104,7 @@ class UpdateEventType extends AbstractType
                     new Assert\NotNull(),
                 ],
             ])
-            ->add('dismantlingStartDate', DateType::class, [
+            ->add('breakdownStartDate', DateType::class, [
                 'label' => new TranslatableMessage('Inicio del desmontaje'),
                 'required' => true,
                 'widget' => 'single_text',
@@ -113,7 +113,7 @@ class UpdateEventType extends AbstractType
                     new Assert\NotNull(),
                 ],
             ])
-            ->add('dismantlingEndDate', DateType::class, [
+            ->add('breakdownEndDate', DateType::class, [
                 'label' => new TranslatableMessage('Fin del desmontaje'),
                 'required' => true,
                 'widget' => 'single_text',
@@ -142,12 +142,12 @@ class UpdateEventType extends AbstractType
     public static function validateDateRangesForUpdate(UpdateEventRequest $request, ExecutionContextInterface $context): void
     {
         self::validateDateRanges(
-            $request->setupStartDate,
-            $request->setupEndDate,
+            $request->assemblyStartDate,
+            $request->assemblyEndDate,
             $request->celebrationStartDate,
             $request->celebrationEndDate,
-            $request->dismantlingStartDate,
-            $request->dismantlingEndDate,
+            $request->breakdownStartDate,
+            $request->breakdownEndDate,
             $context,
         );
     }

@@ -17,9 +17,9 @@
         <field name="sector" type="string" enum-type="App\EventOperations\Domain\Model\Event\EventSector" nullable="true" />
         <field name="typology" type="string" enum-type="App\EventOperations\Domain\Model\Event\EventTypology" nullable="true" />
 
-        <embedded name="setup" class="App\EventOperations\Domain\Model\Event\DateRange" use-column-prefix="true" column-prefix="setup_" />
+        <embedded name="assembly" class="App\EventOperations\Domain\Model\Event\DateRange" use-column-prefix="true" column-prefix="assembly_" />
         <embedded name="celebration" class="App\EventOperations\Domain\Model\Event\DateRange" use-column-prefix="true" column-prefix="celebration_" />
-        <embedded name="dismantling" class="App\EventOperations\Domain\Model\Event\DateRange" use-column-prefix="true" column-prefix="dismantling_" />
+        <embedded name="breakdown" class="App\EventOperations\Domain\Model\Event\DateRange" use-column-prefix="true" column-prefix="breakdown_" />
 
         <field name="accountId" type="account_id" column="account_id" nullable="true" />
 

@@ -88,7 +88,7 @@ class EventMother
             estimatedAttendees: null,
             sector: $sector,
             typology: $typology,
-            setup: new DateRange(
+            assembly: new DateRange(
                 startDate: new \DateTimeImmutable('2026-01-01'),
                 endDate: new \DateTimeImmutable('2026-01-02'),
             ),
@@ -96,7 +96,7 @@ class EventMother
                 startDate: new \DateTimeImmutable('2026-01-03'),
                 endDate: new \DateTimeImmutable('2026-01-04'),
             ),
-            dismantling: new DateRange(
+            breakdown: new DateRange(
                 startDate: new \DateTimeImmutable('2026-01-05'),
                 endDate: new \DateTimeImmutable('2026-01-06'),
             ),

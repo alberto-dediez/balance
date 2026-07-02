@@ -35,17 +35,17 @@ class RegisterEventService implements CommandHandler
             accountId: $request->accountId,
         ), SecurityAction::Register, $user);
 
-        $setup = new DateRange(
-            startDate: $request->setupStartDate,
-            endDate: $request->setupEndDate,
+        $assembly = new DateRange(
+            startDate: $request->assemblyStartDate,
+            endDate: $request->assemblyEndDate,
         );
         $celebration = new DateRange(
             startDate: $request->celebrationStartDate,
             endDate: $request->celebrationEndDate,
         );
-        $dismantling = new DateRange(
-            startDate: $request->dismantlingStartDate,
-            endDate: $request->dismantlingEndDate,
+        $breakdown = new DateRange(
+            startDate: $request->breakdownStartDate,
+            endDate: $request->breakdownEndDate,
         );
 
         $event = new Event($id);
@@ -56,9 +56,9 @@ class RegisterEventService implements CommandHandler
             estimatedAttendees: $request->estimatedAttendees,
             sector: $request->sector,
             typology: $request->typology,
-            setup: $setup,
+            assembly: $assembly,
             celebration: $celebration,
-            dismantling: $dismantling,
+            breakdown: $breakdown,
             accountId: $request->accountId,
         );
 
