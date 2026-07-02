@@ -14,7 +14,6 @@ final class EmissionFactorGroupRegistered extends DomainEvent
 
     public function __construct(
         private EmissionFactorGroupId $emissionFactorGroupId,
-        private string $code,
         private string $name,
         private Gwp $gwp,
         ?DomainEventId $id = null,
@@ -26,11 +25,6 @@ final class EmissionFactorGroupRegistered extends DomainEvent
     public function emissionFactorGroupId(): EmissionFactorGroupId
     {
         return $this->emissionFactorGroupId;
-    }
-
-    public function code(): string
-    {
-        return $this->code;
     }
 
     public function name(): string
@@ -52,7 +46,6 @@ final class EmissionFactorGroupRegistered extends DomainEvent
     {
         return [
             'emissionFactorGroupId' => (string) $this->emissionFactorGroupId,
-            'code' => $this->code,
             'name' => $this->name,
             'gwpCo2' => $this->gwp->gwpCo2(),
             'gwpCh4' => $this->gwp->gwpCh4(),
@@ -67,7 +60,6 @@ final class EmissionFactorGroupRegistered extends DomainEvent
     ): static {
         return new EmissionFactorGroupRegistered(
             emissionFactorGroupId: new EmissionFactorGroupId($payload['emissionFactorGroupId']),
-            code: $payload['code'],
             name: $payload['name'],
             gwp: new Gwp(
                 gwpCo2: (float) $payload['gwpCo2'],

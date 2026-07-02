@@ -12,7 +12,7 @@ interface EmissionFactorGroupRepository
 
     public function find(EmissionFactorGroupId $emissionFactorGroupId): ?EmissionFactorGroup;
 
-    public function findOneByCode(string $code): ?EmissionFactorGroup;
+    public function findDefault(): ?EmissionFactorGroup;
 
     /** @return array<EmissionFactorGroup> */
     public function findByFilter(EmissionFactorGroupFilter $filter): array;

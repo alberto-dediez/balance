@@ -23,7 +23,6 @@ class EmissionFactorGroupTest extends TestCase
     {
         $emissionFactorGroup = new EmissionFactorGroup(
             id: EmissionFactorGroupId::generate(),
-            code: 'default',
             name: 'group-name',
         );
 
@@ -36,7 +35,6 @@ class EmissionFactorGroupTest extends TestCase
     {
         $emissionFactorGroup = new EmissionFactorGroup(
             id: EmissionFactorGroupId::generate(),
-            code: 'default',
             name: 'group-name',
         );
         $emissionFactorGroup->translate('translated-name-en', Locale::English);
@@ -50,7 +48,6 @@ class EmissionFactorGroupTest extends TestCase
     {
         $emissionFactorGroup = new EmissionFactorGroup(
             id: EmissionFactorGroupId::generate(),
-            code: 'default',
             name: 'group-name',
         );
         $emissionFactorGroup->translate('translated-name-en', Locale::English);
@@ -66,7 +63,6 @@ class EmissionFactorGroupTest extends TestCase
     {
         $emissionFactorGroup = new EmissionFactorGroup(
             id: EmissionFactorGroupId::generate(),
-            code: 'default',
             name: 'group-name',
             gwp: new Gwp(gwpCo2: 1.0, gwpCh4: 27.9, gwpN2O: 273.0),
         );
@@ -80,7 +76,6 @@ class EmissionFactorGroupTest extends TestCase
     {
         $emissionFactorGroup = new EmissionFactorGroup(
             id: EmissionFactorGroupId::generate(),
-            code: 'default',
             name: 'group-name',
             gwp: new Gwp(gwpCo2: 1.0, gwpCh4: 27.9, gwpN2O: 273.0),
         );

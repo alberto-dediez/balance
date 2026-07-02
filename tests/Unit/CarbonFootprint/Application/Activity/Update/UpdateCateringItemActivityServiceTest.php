@@ -12,7 +12,6 @@ use App\CarbonFootprint\Application\Activity\Update\UpdateCateringItemActivitySe
 use App\CarbonFootprint\Domain\Model\Activity\CateringItemActivityUpdated;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemId;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -21,6 +20,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMothe
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\CateringItemActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use PHPUnit\Framework\TestCase;
@@ -57,7 +57,7 @@ class UpdateCateringItemActivityServiceTest extends TestCase
             condition: ItemCondition::Recycled,
             quantity: ActivityMother::quantity(Unit::Kilogram, 8.0),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         ), UserMother::adminUser());
 
         $this->assertInstanceOf(CateringItemActivityUpdated::class, $this->spySubscriber->lastEvent());
@@ -79,7 +79,7 @@ class UpdateCateringItemActivityServiceTest extends TestCase
             condition: ItemCondition::Recycled,
             quantity: ActivityMother::quantity(Unit::Kilogram),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         ), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
@@ -93,7 +93,7 @@ class UpdateCateringItemActivityServiceTest extends TestCase
             condition: ItemCondition::Recycled,
             quantity: ActivityMother::quantity(Unit::Kilogram),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         )));
     }
 }

@@ -7,7 +7,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Waste\Import;
 use App\CarbonFootprint\Application\Waste\Import\ImportWasteRequest;
 use App\CarbonFootprint\Application\Waste\Import\ImportWasteService;
 use App\CarbonFootprint\Application\Waste\WasteAuthorizer;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\WasteFilter;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
@@ -46,7 +45,7 @@ class ImportWasteServiceTest extends TestCase
             ch4: '0.3',
             n2o: '0.2',
             source: 'IPCC',
-            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -56,7 +55,7 @@ class ImportWasteServiceTest extends TestCase
         $this->assertNotNull($waste);
         $this->assertEquals('Cartón', $waste->name());
 
-        $emissionFactor = $waste->emissionFactorFor(2024, EmissionFactorGroupId::default());
+        $emissionFactor = $waste->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId());
 
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->co2eq());
@@ -75,7 +74,7 @@ class ImportWasteServiceTest extends TestCase
             name: 'Cartón',
             year: '2024',
             co2eq: '2.0',
-            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -86,7 +85,7 @@ class ImportWasteServiceTest extends TestCase
 
         $this->assertNotNull($waste);
         $this->assertCount(1, $repository->findByFilter(new WasteFilter(limit: 0)));
-        $this->assertEquals('2.0', $waste->emissionFactorFor(2024, EmissionFactorGroupId::default())?->co2eq());
+        $this->assertEquals('2.0', $waste->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId())?->co2eq());
     }
 
     public function testExplicitWasteOnlyUpdatesEmissionFactor(): void
@@ -103,7 +102,7 @@ class ImportWasteServiceTest extends TestCase
             unit: Unit::Piece->value,
             year: '2025',
             co2eq: '3.0',
-            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -113,7 +112,7 @@ class ImportWasteServiceTest extends TestCase
         $this->assertNotNull($waste);
         $this->assertEquals('Cartón', $waste->name());
         $this->assertEquals(Unit::Kilogram, $waste->unit());
-        $this->assertEquals('3.0', $waste->emissionFactorFor(2025, EmissionFactorGroupId::default())?->co2eq());
+        $this->assertEquals('3.0', $waste->emissionFactorFor(2025, EmissionFactorGroupMother::defaultId())?->co2eq());
     }
 
     public function testThrowsWhenNeitherWasteNorNameProvided(): void

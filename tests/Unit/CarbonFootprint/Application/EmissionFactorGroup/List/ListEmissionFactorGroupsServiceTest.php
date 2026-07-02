@@ -42,10 +42,10 @@ class ListEmissionFactorGroupsServiceTest extends TestCase
 
         $sut = $this->createSUT($repository);
 
-        $repository->add(EmissionFactorGroupMother::fromCodeAndName('code-1', 'name-1'));
-        $repository->add(EmissionFactorGroupMother::fromCodeAndName('code-2', 'name-2'));
-        $repository->add(EmissionFactorGroupMother::fromCodeAndName('code-3', 'name-2'));
-        $repository->add(EmissionFactorGroupMother::fromCodeAndName('code-4', 'name-2'));
+        $repository->add(EmissionFactorGroupMother::fromName('name-1'));
+        $repository->add(EmissionFactorGroupMother::fromName('name-2'));
+        $repository->add(EmissionFactorGroupMother::fromName('name-2'));
+        $repository->add(EmissionFactorGroupMother::fromName('name-2'));
 
         $request = new ListEmissionFactorGroupsRequest(name: 'name-1');
 

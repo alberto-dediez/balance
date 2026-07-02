@@ -5,10 +5,6 @@
 {% block table %}
     {% set columns = [
         {
-            'label': 'Código' | trans,
-            'sortable': true,
-            'sortableBy': 'code'
-        }, {
             'label': 'Nombre' | trans,
             'sortable': true,
             'sortableBy': 'name'
@@ -26,17 +22,31 @@
             'sortable': true,
             'sortableBy': 'registeredAt'
         }, {
+            'label': 'Por defecto' | trans,
+            'sortable': false
+        }, {
             'label': ''
         },
     ] %}
 
     <twig:List:Table :columns="columns" :elements="emissionFactorGroups" :bulkForm="bulkForm">
-        <td>{{ element.code }}</td>
         <td>{{ element.name }}</td>
         <td>{{ element.gwp.gwpCo2 }}</td>
         <td>{{ element.gwp.gwpCh4 }}</td>
         <td>{{ element.gwp.gwpN2O }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            {% if element.isDefault %}
+                <twig:Icon name="solar:star-bold" size="lg" />
+            {% elseif element | is_authorized('edit') %}
+                <a href="{{ path('admin_emission_factor_groups_set_default', {'emissionFactorGroupId': element.id}) }}"
+                    title="{{ 'Marcar como por defecto' | trans }}"
+                    data-bs-toggle="tooltip"
+                >
+                    <twig:Icon name="solar:star-line-duotone" size="lg" />
+                </a>
+            {% endif %}
+        </td>
         <td>
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('admin_emission_factor_groups_edit', {'emissionFactorGroupId': element.id}) }}" />

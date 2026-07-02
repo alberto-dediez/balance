@@ -21,10 +21,10 @@ class EmissionFactorGroup implements Translatable, \Stringable
     /** @param array<mixed> $events */
     public function __construct(
         private EmissionFactorGroupId $id,
-        private string $code = '',
         private string $name = '',
         private Gwp $gwp = new Gwp(),
         private bool $removed = false,
+        private bool $default = false,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $updatedAt = null,
@@ -37,11 +37,6 @@ class EmissionFactorGroup implements Translatable, \Stringable
     public function id(): EmissionFactorGroupId
     {
         return $this->id;
-    }
-
-    public function code(): string
-    {
-        return $this->code;
     }
 
     public function name(): string
@@ -73,6 +68,11 @@ class EmissionFactorGroup implements Translatable, \Stringable
         return $this->removed;
     }
 
+    public function isDefault(): bool
+    {
+        return $this->default;
+    }
+
     public function registeredAt(): \DateTimeImmutable
     {
         return $this->registeredAt;
@@ -89,7 +89,6 @@ class EmissionFactorGroup implements Translatable, \Stringable
     }
 
     public function register(
-        string $code,
         string $name,
         Gwp $gwp,
         ?Locale $locale = null,
@@ -97,7 +96,6 @@ class EmissionFactorGroup implements Translatable, \Stringable
         $this->recordApplyAndPublish(
             new EmissionFactorGroupRegistered(
                 emissionFactorGroupId: $this->id(),
-                code: $code,
                 name: $name,
                 gwp: $gwp,
             ),
@@ -109,7 +107,6 @@ class EmissionFactorGroup implements Translatable, \Stringable
     }
 
     public function update(
-        string $code,
         string $name,
         Gwp $gwp,
         ?Locale $locale = null,
@@ -117,7 +114,6 @@ class EmissionFactorGroup implements Translatable, \Stringable
         $this->recordApplyAndPublish(
             new EmissionFactorGroupUpdated(
                 emissionFactorGroupId: $this->id(),
-                code: $code,
                 name: $locale instanceof Locale ? $this->name : $name,
                 gwp: $gwp,
             ),
@@ -148,6 +144,24 @@ class EmissionFactorGroup implements Translatable, \Stringable
         );
     }
 
+    public function setAsDefault(): void
+    {
+        $this->recordApplyAndPublish(
+            new EmissionFactorGroupSetAsDefault(
+                emissionFactorGroupId: $this->id(),
+            ),
+        );
+    }
+
+    public function unsetAsDefault(): void
+    {
+        $this->recordApplyAndPublish(
+            new EmissionFactorGroupUnsetAsDefault(
+                emissionFactorGroupId: $this->id(),
+            ),
+        );
+    }
+
     public function co2eqFor(string $co2, string $ch4, string $n2o): string
     {
         return $this->gwp->co2eqFor($co2, $ch4, $n2o);
@@ -162,7 +176,6 @@ class EmissionFactorGroup implements Translatable, \Stringable
 
     public function applyEmissionFactorGroupRegistered(EmissionFactorGroupRegistered $event): void
     {
-        $this->code = $event->code();
         $this->name = $event->name();
         $this->gwp = $event->gwp();
         $this->registeredAt = $event->occurredOn();
@@ -170,7 +183,6 @@ class EmissionFactorGroup implements Translatable, \Stringable
 
     public function applyEmissionFactorGroupUpdated(EmissionFactorGroupUpdated $event): void
     {
-        $this->code = $event->code();
         $this->name = $event->name();
         $this->gwp = $event->gwp();
         $this->updatedAt = $event->occurredOn();
@@ -191,6 +203,16 @@ class EmissionFactorGroup implements Translatable, \Stringable
     {
         $this->removed = true;
         $this->removedAt = $event->occurredOn();
+    }
+
+    public function applyEmissionFactorGroupSetAsDefault(EmissionFactorGroupSetAsDefault $event): void
+    {
+        $this->default = true;
+    }
+
+    public function applyEmissionFactorGroupUnsetAsDefault(EmissionFactorGroupUnsetAsDefault $event): void
+    {
+        $this->default = false;
     }
 
     public function __toString(): string

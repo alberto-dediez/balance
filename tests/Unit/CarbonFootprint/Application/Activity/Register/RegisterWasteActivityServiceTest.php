@@ -11,13 +11,13 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterWasteActivityServi
 use App\CarbonFootprint\Application\Activity\WasteEmissionFactorSelector;
 use App\CarbonFootprint\Domain\Model\Activity\WasteActivity;
 use App\CarbonFootprint\Domain\Model\Activity\WasteActivityRegistered;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Waste\WasteMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Waste\WasteRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -50,7 +50,7 @@ class RegisterWasteActivityServiceTest extends TestCase
             wasteId: $entity->id(),
             quantity: ActivityMother::quantity(Unit::Kilogram, 75.0),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         ), UserMother::adminUser());
 
         $this->assertInstanceOf(WasteActivity::class, $activityRepo->findById($result->activityId));
@@ -66,7 +66,7 @@ class RegisterWasteActivityServiceTest extends TestCase
             wasteId: WasteId::generate(),
             quantity: ActivityMother::quantity(Unit::Kilogram),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         ), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
@@ -78,7 +78,7 @@ class RegisterWasteActivityServiceTest extends TestCase
             wasteId: WasteId::generate(),
             quantity: ActivityMother::quantity(Unit::Kilogram),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         )));
     }
 }

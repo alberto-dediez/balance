@@ -124,10 +124,6 @@ class ImportElectricityMarketerService implements CommandHandler
         $group = $this->emissionFactorGroupRepository->find(new EmissionFactorGroupId($value));
 
         if (null === $group) {
-            $group = $this->emissionFactorGroupRepository->findOneByCode($value);
-        }
-
-        if (null === $group) {
             throw new \InvalidArgumentException('Emission factor group not found');
         }
 

@@ -10,7 +10,6 @@ use App\CarbonFootprint\Application\Activity\OvernightStayEmissionFactorSelector
 use App\CarbonFootprint\Application\Activity\Update\UpdateOvernightStayActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateOvernightStayActivityService;
 use App\CarbonFootprint\Domain\Model\Activity\OvernightStayActivityUpdated;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
@@ -18,6 +17,7 @@ use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\OvernightStayActivityMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -55,7 +55,7 @@ class UpdateOvernightStayActivityServiceTest extends TestCase
             overnightStayId: $entity->id(),
             quantity: ActivityMother::quantity(Unit::Pernoctacion, 4.0),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         ), UserMother::adminUser());
 
         $this->assertInstanceOf(OvernightStayActivityUpdated::class, $this->spySubscriber->lastEvent());
@@ -76,7 +76,7 @@ class UpdateOvernightStayActivityServiceTest extends TestCase
             overnightStayId: OvernightStayId::generate(),
             quantity: ActivityMother::quantity(Unit::Pernoctacion),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         ), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
@@ -89,7 +89,7 @@ class UpdateOvernightStayActivityServiceTest extends TestCase
             overnightStayId: OvernightStayId::generate(),
             quantity: ActivityMother::quantity(Unit::Pernoctacion),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         )));
     }
 }

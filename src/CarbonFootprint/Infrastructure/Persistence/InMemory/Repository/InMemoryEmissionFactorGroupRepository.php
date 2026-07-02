@@ -44,14 +44,14 @@ class InMemoryEmissionFactorGroupRepository implements EmissionFactorGroupReposi
         ;
     }
 
-    public function findOneByCode(string $code): ?EmissionFactorGroup
+    public function findDefault(): ?EmissionFactorGroup
     {
         foreach ($this->emissionFactorGroups as $emissionFactorGroup) {
             if (true == $emissionFactorGroup->isRemoved()) {
                 continue;
             }
 
-            if (strtolower(trim($emissionFactorGroup->code())) === strtolower(trim($code))) {
+            if (true == $emissionFactorGroup->isDefault()) {
                 return $emissionFactorGroup;
             }
         }
@@ -74,13 +74,6 @@ class InMemoryEmissionFactorGroupRepository implements EmissionFactorGroupReposi
             if (
                 !empty($filter->name)
                 && !str_contains(strtolower((string) $emissionFactorGroup->name()), strtolower($filter->name))
-            ) {
-                continue;
-            }
-
-            if (
-                !empty($filter->code)
-                && strtolower($emissionFactorGroup->code()) !== strtolower($filter->code)
             ) {
                 continue;
             }

@@ -7,7 +7,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\GdOFactor\Import;
 use App\CarbonFootprint\Application\GdOFactor\GdOFactorAuthorizer;
 use App\CarbonFootprint\Application\GdOFactor\Import\ImportGdOFactorRequest;
 use App\CarbonFootprint\Application\GdOFactor\Import\ImportGdOFactorService;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorFilter;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
@@ -41,7 +40,7 @@ class ImportGdOFactorServiceTest extends TestCase
             ch4: '0.3',
             n2o: '0.2',
             source: 'IPCC',
-            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -51,7 +50,7 @@ class ImportGdOFactorServiceTest extends TestCase
         $this->assertNotNull($gdOFactor);
         $this->assertEquals('Factor GdO Solar', $gdOFactor->name());
 
-        $emissionFactor = $gdOFactor->emissionFactorFor(2024, EmissionFactorGroupId::default());
+        $emissionFactor = $gdOFactor->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId());
 
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->co2eq());
@@ -70,7 +69,7 @@ class ImportGdOFactorServiceTest extends TestCase
             name: 'Factor GdO Solar',
             year: '2024',
             co2eq: '2.0',
-            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -81,7 +80,7 @@ class ImportGdOFactorServiceTest extends TestCase
 
         $this->assertNotNull($gdOFactor);
         $this->assertCount(1, $repository->findByFilter(new GdOFactorFilter(limit: 0)));
-        $this->assertEquals('2.0', $gdOFactor->emissionFactorFor(2024, EmissionFactorGroupId::default())?->co2eq());
+        $this->assertEquals('2.0', $gdOFactor->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId())?->co2eq());
     }
 
     public function testExplicitGdOFactorOnlyUpdatesEmissionFactor(): void
@@ -97,7 +96,7 @@ class ImportGdOFactorServiceTest extends TestCase
             name: 'Otro nombre',
             year: '2025',
             co2eq: '3.0',
-            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -106,7 +105,7 @@ class ImportGdOFactorServiceTest extends TestCase
 
         $this->assertNotNull($gdOFactor);
         $this->assertEquals('Factor GdO Solar', $gdOFactor->name());
-        $this->assertEquals('3.0', $gdOFactor->emissionFactorFor(2025, EmissionFactorGroupId::default())?->co2eq());
+        $this->assertEquals('3.0', $gdOFactor->emissionFactorFor(2025, EmissionFactorGroupMother::defaultId())?->co2eq());
     }
 
     public function testThrowsWhenNeitherGdOFactorNorNameProvided(): void

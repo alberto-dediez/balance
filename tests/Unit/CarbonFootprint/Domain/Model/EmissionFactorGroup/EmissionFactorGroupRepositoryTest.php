@@ -61,7 +61,7 @@ abstract class EmissionFactorGroupRepositoryTest extends KernelTestCase
         $repository->add(EmissionFactorGroupMother::random());
         $repository->add(EmissionFactorGroupMother::random());
         $repository->add(EmissionFactorGroupMother::random());
-        $repository->add(EmissionFactorGroupMother::fromCodeAndName('specific-code', 'Nombre específico'));
+        $repository->add(EmissionFactorGroupMother::fromName('Nombre específico'));
 
         $filter = new EmissionFactorGroupFilter();
 
@@ -87,7 +87,7 @@ abstract class EmissionFactorGroupRepositoryTest extends KernelTestCase
         $repository->add(EmissionFactorGroupMother::random());
         $repository->add(EmissionFactorGroupMother::random());
         $repository->add(EmissionFactorGroupMother::random());
-        $repository->add(EmissionFactorGroupMother::fromCodeAndName('specific-code', 'Nombre específico'));
+        $repository->add(EmissionFactorGroupMother::fromName('Nombre específico'));
 
         $filter = new EmissionFactorGroupFilter(limit: 0);
 
@@ -149,21 +149,6 @@ abstract class EmissionFactorGroupRepositoryTest extends KernelTestCase
         $this->assertCount(1, $recoveredEmissionFactorGroups);
         $this->assertEquals($emissionFactorGroup->id(), $recoveredEmissionFactorGroups[0]->id());
         $this->assertEquals('translated-name', $recoveredEmissionFactorGroups[0]->name());
-    }
-
-    public function testFindOneByCode(): void
-    {
-        $repository = $this->createSUT();
-
-        $repository->add(EmissionFactorGroupMother::random());
-        $repository->add(EmissionFactorGroupMother::fromCodeAndName('specific-code', 'Nombre específico'));
-
-        $found = $repository->findOneByCode('specific-code');
-
-        $this->assertNotNull($found);
-        $this->assertEquals('specific-code', $found->code());
-
-        $this->assertNull($repository->findOneByCode('does-not-exist'));
     }
 
     abstract protected function createSUT(Locale $locale = Locale::Spanish): EmissionFactorGroupRepository;

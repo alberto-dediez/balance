@@ -10,7 +10,6 @@ use App\CarbonFootprint\Application\ElectricityMarketer\Import\ImportElectricity
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerFilter;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
@@ -41,7 +40,7 @@ class ImportElectricityMarketerServiceTest extends TestCase
             ch4: '0.3',
             n2o: '0.2',
             source: 'IPCC',
-            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -51,7 +50,7 @@ class ImportElectricityMarketerServiceTest extends TestCase
         $this->assertNotNull($electricityMarketer);
         $this->assertEquals('Comercializadora Solar', $electricityMarketer->name());
 
-        $emissionFactor = $electricityMarketer->emissionFactorFor(2024, EmissionFactorGroupId::default());
+        $emissionFactor = $electricityMarketer->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId());
 
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->co2eq());
@@ -70,7 +69,7 @@ class ImportElectricityMarketerServiceTest extends TestCase
             name: 'Comercializadora Solar',
             year: '2024',
             co2eq: '2.0',
-            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -81,7 +80,7 @@ class ImportElectricityMarketerServiceTest extends TestCase
 
         $this->assertNotNull($electricityMarketer);
         $this->assertCount(1, $repository->findByFilter(new ElectricityMarketerFilter(limit: 0)));
-        $this->assertEquals('2.0', $electricityMarketer->emissionFactorFor(2024, EmissionFactorGroupId::default())?->co2eq());
+        $this->assertEquals('2.0', $electricityMarketer->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId())?->co2eq());
     }
 
     public function testExplicitElectricityMarketerOnlyUpdatesEmissionFactor(): void
@@ -97,7 +96,7 @@ class ImportElectricityMarketerServiceTest extends TestCase
             name: 'Otro nombre',
             year: '2025',
             co2eq: '3.0',
-            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -106,7 +105,7 @@ class ImportElectricityMarketerServiceTest extends TestCase
 
         $this->assertNotNull($electricityMarketer);
         $this->assertEquals('Comercializadora Solar', $electricityMarketer->name());
-        $this->assertEquals('3.0', $electricityMarketer->emissionFactorFor(2025, EmissionFactorGroupId::default())?->co2eq());
+        $this->assertEquals('3.0', $electricityMarketer->emissionFactorFor(2025, EmissionFactorGroupMother::defaultId())?->co2eq());
     }
 
     public function testThrowsWhenNeitherElectricityMarketerNorNameProvided(): void

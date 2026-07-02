@@ -12,13 +12,13 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterMaterialActivitySe
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\Activity\MaterialActivity;
 use App\CarbonFootprint\Domain\Model\Activity\MaterialActivityRegistered;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Material\MaterialId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -52,7 +52,7 @@ class RegisterMaterialActivityServiceTest extends TestCase
             condition: ItemCondition::New,
             quantity: ActivityMother::quantity(Unit::Kilogram, 10.0),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         ), UserMother::adminUser());
 
         $this->assertInstanceOf(MaterialActivity::class, $activityRepo->findById($result->activityId));
@@ -69,7 +69,7 @@ class RegisterMaterialActivityServiceTest extends TestCase
             condition: ItemCondition::New,
             quantity: ActivityMother::quantity(Unit::Kilogram),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         ), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
@@ -82,7 +82,7 @@ class RegisterMaterialActivityServiceTest extends TestCase
             condition: ItemCondition::New,
             quantity: ActivityMother::quantity(Unit::Kilogram),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         )));
     }
 }

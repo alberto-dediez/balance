@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Security\Infrastructure\UI\Web\Admin\Account;
 
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\Security\Application\Account\AccountAuthorizer;
+use App\Security\Application\Account\Register\RegisterAccountRequest;
 use App\Security\Application\Account\Register\RegisterAccountService;
 use App\Security\Application\Action;
 use App\Security\Application\UnauthorizedActionException;
@@ -26,11 +28,21 @@ class RegisterController extends AbstractController
 {
     use RegisterTrait;
 
-    public function __invoke(RegisterAccountService $registerAccount, AccountAuthorizer $authorizer, LoggedUser $loggedUser, Request $request): Response
-    {
+    public function __invoke(
+        RegisterAccountService $registerAccount,
+        AccountAuthorizer $authorizer,
+        LoggedUser $loggedUser,
+        EmissionFactorGroupRepository $emissionFactorGroupRepository,
+        Request $request,
+    ): Response {
         $user = $loggedUser();
 
-        $form = $this->createForm(RegisterAccountType::class);
+        $registerRequest = new RegisterAccountRequest(
+            active: true,
+            emissionFactorGroupId: $emissionFactorGroupRepository->findDefault()?->id(),
+        );
+
+        $form = $this->createForm(RegisterAccountType::class, $registerRequest);
 
         try {
             $account = new Account(AccountId::generate());

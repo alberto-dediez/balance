@@ -58,7 +58,7 @@ class RegisterController extends AbstractController
         }
 
         $emissionFactorGroupId = $account->emissionFactorGroupId()
-            ?? $emissionFactorGroupRepository->findOneByCode('default')?->id();
+            ?? $emissionFactorGroupRepository->findDefault()?->id();
 
         if (null === $emissionFactorGroupId) {
             throw new EmissionFactorGroupNotConfiguredException($account->id());

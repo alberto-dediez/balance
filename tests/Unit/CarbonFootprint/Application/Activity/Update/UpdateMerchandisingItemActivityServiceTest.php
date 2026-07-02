@@ -11,7 +11,6 @@ use App\CarbonFootprint\Application\Activity\Update\UpdateMerchandisingItemActiv
 use App\CarbonFootprint\Application\Activity\Update\UpdateMerchandisingItemActivityService;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\Activity\MerchandisingItemActivityUpdated;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
@@ -19,6 +18,7 @@ use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\MerchandisingItemActivityMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -57,7 +57,7 @@ class UpdateMerchandisingItemActivityServiceTest extends TestCase
             condition: ItemCondition::New,
             quantity: ActivityMother::quantity(Unit::Piece, 50.0),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         ), UserMother::adminUser());
 
         $this->assertInstanceOf(MerchandisingItemActivityUpdated::class, $this->spySubscriber->lastEvent());
@@ -79,7 +79,7 @@ class UpdateMerchandisingItemActivityServiceTest extends TestCase
             condition: ItemCondition::New,
             quantity: ActivityMother::quantity(Unit::Piece),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         ), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
@@ -93,7 +93,7 @@ class UpdateMerchandisingItemActivityServiceTest extends TestCase
             condition: ItemCondition::New,
             quantity: ActivityMother::quantity(Unit::Piece),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         )));
     }
 }

@@ -11,7 +11,6 @@ class UpdateEmissionFactorGroupRequest implements Command
 {
     public function __construct(
         public EmissionFactorGroupId $emissionFactorGroupId,
-        public string $code,
         public string $name,
         public float $gwpCo2 = 1.0,
         public float $gwpCh4 = 0.0,

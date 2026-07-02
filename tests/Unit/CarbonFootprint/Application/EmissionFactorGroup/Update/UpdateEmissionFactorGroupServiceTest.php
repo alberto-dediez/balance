@@ -46,7 +46,6 @@ class UpdateEmissionFactorGroupServiceTest extends TestCase
 
         $request = new UpdateEmissionFactorGroupRequest(
             emissionFactorGroupId: $emissionFactorGroup->id(),
-            code: 'changedCode',
             name: 'changedName',
             gwpCo2: 1.0,
             gwpCh4: 30.0,
@@ -58,7 +57,6 @@ class UpdateEmissionFactorGroupServiceTest extends TestCase
         $emissionFactorGroupPersisted = $repository->find($result->emissionFactorGroupId);
 
         $this->assertNotNull($emissionFactorGroupPersisted);
-        $this->assertSame('changedCode', $emissionFactorGroupPersisted->code());
         $this->assertSame(30.0, $emissionFactorGroupPersisted->gwp()->gwpCh4());
 
         $lastEvent = $this->spySubscriber->lastEvent();
@@ -82,7 +80,6 @@ class UpdateEmissionFactorGroupServiceTest extends TestCase
 
         $request = new UpdateEmissionFactorGroupRequest(
             emissionFactorGroupId: $emissionFactorGroup->id(),
-            code: 'changedCode',
             name: 'changedName',
         );
 

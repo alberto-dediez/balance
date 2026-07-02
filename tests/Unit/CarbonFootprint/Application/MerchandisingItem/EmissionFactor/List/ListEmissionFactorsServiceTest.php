@@ -8,7 +8,6 @@ use App\CarbonFootprint\Application\MerchandisingItem\EmissionFactor\List\ListEm
 use App\CarbonFootprint\Application\MerchandisingItem\EmissionFactor\List\ListEmissionFactorsService;
 use App\CarbonFootprint\Application\MerchandisingItem\MerchandisingItemAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
@@ -37,7 +36,7 @@ class ListEmissionFactorsServiceTest extends TestCase
 
         $sut = $this->createSUT($repository);
 
-        $response = $sut(new ListEmissionFactorsRequest(emissionFactorGroupId: EmissionFactorGroupId::default()), UserMother::adminUser());
+        $response = $sut(new ListEmissionFactorsRequest(emissionFactorGroupId: EmissionFactorGroupMother::defaultId()), UserMother::adminUser());
 
         $this->assertSame(2024, $response->year);
         $this->assertCount(1, $response->merchandisingItems);
@@ -52,7 +51,7 @@ class ListEmissionFactorsServiceTest extends TestCase
 
         $currentYear = (int) (new \DateTimeImmutable('NOW'))->format('Y');
 
-        $response = $sut(new ListEmissionFactorsRequest(emissionFactorGroupId: EmissionFactorGroupId::default()), UserMother::adminUser());
+        $response = $sut(new ListEmissionFactorsRequest(emissionFactorGroupId: EmissionFactorGroupMother::defaultId()), UserMother::adminUser());
 
         $this->assertSame($currentYear, $response->year);
         $this->assertFalse($response->canGoNext);
@@ -65,7 +64,7 @@ class ListEmissionFactorsServiceTest extends TestCase
 
         $sut = $this->createSUT($repository);
 
-        $response = $sut(new ListEmissionFactorsRequest(emissionFactorGroupId: EmissionFactorGroupId::default(), year: 2010), UserMother::adminUser());
+        $response = $sut(new ListEmissionFactorsRequest(emissionFactorGroupId: EmissionFactorGroupMother::defaultId(), year: 2010), UserMother::adminUser());
 
         $this->assertSame(2010, $response->year);
         $this->assertTrue($response->canGoNext);

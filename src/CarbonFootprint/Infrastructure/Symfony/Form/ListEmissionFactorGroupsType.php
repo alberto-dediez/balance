@@ -20,10 +20,6 @@ class ListEmissionFactorGroupsType extends BaseFilterType
                 'label' => new TranslatableMessage('Nombre'),
                 'required' => false,
             ])
-            ->add('code', TextType::class, [
-                'label' => new TranslatableMessage('Código'),
-                'required' => false,
-            ])
         ;
 
         parent::buildForm($builder, $options);

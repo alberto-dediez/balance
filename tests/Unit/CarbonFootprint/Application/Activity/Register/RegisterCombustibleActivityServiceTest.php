@@ -12,7 +12,6 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterCombustibleActivit
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivityRegistered;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -20,6 +19,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use PHPUnit\Framework\TestCase;
@@ -50,7 +50,7 @@ class RegisterCombustibleActivityServiceTest extends TestCase
             combustibleId: $entity->id(),
             quantity: ActivityMother::quantity(Unit::Liter, 200.0),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         ), UserMother::adminUser());
 
         $this->assertInstanceOf(CombustibleActivity::class, $activityRepo->findById($result->activityId));
@@ -66,7 +66,7 @@ class RegisterCombustibleActivityServiceTest extends TestCase
             combustibleId: CombustibleId::generate(),
             quantity: ActivityMother::quantity(Unit::Liter),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         ), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
@@ -78,7 +78,7 @@ class RegisterCombustibleActivityServiceTest extends TestCase
             combustibleId: CombustibleId::generate(),
             quantity: ActivityMother::quantity(Unit::Liter),
             year: 2024,
-            emissionFactorGroupId: EmissionFactorGroupId::default(),
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         )));
     }
 }

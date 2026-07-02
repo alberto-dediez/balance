@@ -37,7 +37,6 @@ class EditController extends AbstractController
 
         $emissionFactorGroupRequest = new UpdateEmissionFactorGroupRequest(
             emissionFactorGroupId: $emissionFactorGroup->id(),
-            code: $emissionFactorGroup->code(),
             name: $emissionFactorGroup->name(),
             gwpCo2: $emissionFactorGroup->gwp()->gwpCo2(),
             gwpCh4: $emissionFactorGroup->gwp()->gwpCh4(),

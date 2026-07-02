@@ -11,7 +11,6 @@ class RegisterEmissionFactorGroupResponse implements CommandResponse
 {
     public function __construct(
         public EmissionFactorGroupId $emissionFactorGroupId,
-        public string $code,
         public string $name,
     ) {}
 }

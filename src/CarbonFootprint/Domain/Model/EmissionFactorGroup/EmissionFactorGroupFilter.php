@@ -12,7 +12,6 @@ class EmissionFactorGroupFilter
 
     public function __construct(
         public ?string $name = null,
-        public ?string $code = null,
         int $limit = 10,
     ) {
         $this->limit = $limit;

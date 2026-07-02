@@ -7,7 +7,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Material\Import;
 use App\CarbonFootprint\Application\Material\Import\ImportMaterialRequest;
 use App\CarbonFootprint\Application\Material\Import\ImportMaterialService;
 use App\CarbonFootprint\Application\Material\MaterialAuthorizer;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Material\MaterialCategory;
 use App\CarbonFootprint\Domain\Model\Material\MaterialFilter;
 use App\CarbonFootprint\Domain\Model\Material\MaterialId;
@@ -48,7 +47,7 @@ class ImportMaterialServiceTest extends TestCase
             ch4: '0.3',
             n2o: '0.2',
             source: 'IPCC',
-            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -59,7 +58,7 @@ class ImportMaterialServiceTest extends TestCase
         $this->assertEquals('Acero', $material->name());
         $this->assertEquals(MaterialCategory::Metal, $material->category());
 
-        $emissionFactor = $material->emissionFactorFor(2024, EmissionFactorGroupId::default());
+        $emissionFactor = $material->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId());
 
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->newFactor()->co2eq());
@@ -78,7 +77,7 @@ class ImportMaterialServiceTest extends TestCase
             name: 'Acero',
             year: '2024',
             co2eq: '2.0',
-            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -89,7 +88,7 @@ class ImportMaterialServiceTest extends TestCase
 
         $this->assertNotNull($material);
         $this->assertCount(1, $repository->findByFilter(new MaterialFilter(limit: 0)));
-        $this->assertEquals('2.0', $material->emissionFactorFor(2024, EmissionFactorGroupId::default())?->newFactor()->co2eq());
+        $this->assertEquals('2.0', $material->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId())?->newFactor()->co2eq());
     }
 
     public function testExplicitMaterialOnlyUpdatesEmissionFactor(): void
@@ -106,7 +105,7 @@ class ImportMaterialServiceTest extends TestCase
             category: MaterialCategory::Glass->value,
             year: '2025',
             co2eq: '3.0',
-            emissionFactorGroup: (string) EmissionFactorGroupId::default(),
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -116,7 +115,7 @@ class ImportMaterialServiceTest extends TestCase
         $this->assertNotNull($material);
         $this->assertEquals('Acero', $material->name());
         $this->assertEquals(MaterialCategory::Metal, $material->category());
-        $this->assertEquals('3.0', $material->emissionFactorFor(2025, EmissionFactorGroupId::default())?->newFactor()->co2eq());
+        $this->assertEquals('3.0', $material->emissionFactorFor(2025, EmissionFactorGroupMother::defaultId())?->newFactor()->co2eq());
     }
 
     public function testThrowsWhenNeitherMaterialNorNameProvided(): void

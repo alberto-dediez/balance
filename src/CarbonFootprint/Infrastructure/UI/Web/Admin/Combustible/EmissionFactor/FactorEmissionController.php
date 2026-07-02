@@ -13,6 +13,7 @@ use App\CarbonFootprint\Application\Combustible\EmissionFactor\Update\UpdateEmis
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupFilter;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\NoDefaultEmissionFactorGroupException;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\BulkCombustibleEmissionFactorsType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\CreateCombustibleEmissionFactorsYearType;
 use App\CarbonFootprint\Infrastructure\UI\Web\Admin\EmissionFactorGroup\GetEmissionFactorGroupFromIdTrait;
@@ -45,16 +46,20 @@ class FactorEmissionController extends AbstractController
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
-        // The group id is only resolved to a real EmissionFactorGroup entity *after* the authorization check
-        // performed by ListEmissionFactorsService, so an unauthorized user gets a 403 rather than a 404 when
-        // the requested (or default) group does not happen to exist.
-        $emissionFactorGroupId = new EmissionFactorGroupId($emissionFactorGroup ?? (string) EmissionFactorGroupId::default());
+
+        $emissionFactorGroupId = null !== $emissionFactorGroup
+            ? new EmissionFactorGroupId($emissionFactorGroup)
+            : $emissionFactorGroupRepository->findDefault()?->id();
 
         try {
             $response = $listEmissionFactors(
-                new ListEmissionFactorsRequest(emissionFactorGroupId: $emissionFactorGroupId, year: $year),
+                new ListEmissionFactorsRequest(emissionFactorGroupId: $emissionFactorGroupId ?? EmissionFactorGroupId::generate(), year: $year),
                 $loggedUser(),
             );
+
+            if (null === $emissionFactorGroupId) {
+                throw new NoDefaultEmissionFactorGroupException();
+            }
 
             $group = $this->getEmissionFactorGroupFromId((string) $emissionFactorGroupId, $emissionFactorGroupRepository);
 

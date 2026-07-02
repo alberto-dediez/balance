@@ -38,7 +38,6 @@ class RegisterEmissionFactorGroupService implements CommandHandler
 
         $emissionFactorGroup = new EmissionFactorGroup($id);
         $emissionFactorGroup->register(
-            $request->code,
             $request->name,
             new Gwp(
                 gwpCo2: $request->gwpCo2,
@@ -52,7 +51,6 @@ class RegisterEmissionFactorGroupService implements CommandHandler
 
         return new RegisterEmissionFactorGroupResponse(
             emissionFactorGroupId: $emissionFactorGroup->id(),
-            code: $emissionFactorGroup->code(),
             name: $emissionFactorGroup->name(),
         );
     }

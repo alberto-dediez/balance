@@ -37,7 +37,6 @@ class RegisterEmissionFactorGroupServiceTest extends TestCase
         $sut = $this->createSUT($repository, Locale::Spanish);
 
         $request = new RegisterEmissionFactorGroupRequest(
-            code: 'ar5',
             name: 'AR5',
             gwpCo2: 1.0,
             gwpCh4: 28.0,
@@ -48,7 +47,6 @@ class RegisterEmissionFactorGroupServiceTest extends TestCase
 
         $this->assertNotEmpty((string) $result->emissionFactorGroupId);
         $this->assertEquals(36, strlen((string) $result->emissionFactorGroupId));
-        $this->assertEquals('ar5', $result->code);
         $this->assertEquals('AR5', $result->name);
 
         $emissionFactorGroupPersisted = $repository->find($result->emissionFactorGroupId);
@@ -71,7 +69,6 @@ class RegisterEmissionFactorGroupServiceTest extends TestCase
         $sut = $this->createSUT($repository, Locale::English);
 
         $request = new RegisterEmissionFactorGroupRequest(
-            code: 'ar5',
             name: 'changedName',
         );
 
@@ -98,7 +95,6 @@ class RegisterEmissionFactorGroupServiceTest extends TestCase
         $sut = $this->createSUT($repository, Locale::Spanish);
 
         $result = $sut->isHandled(new RegisterEmissionFactorGroupRequest(
-            code: 'default',
             name: 'test',
         ));
 

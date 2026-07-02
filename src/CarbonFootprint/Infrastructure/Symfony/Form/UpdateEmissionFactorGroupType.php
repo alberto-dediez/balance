@@ -20,14 +20,6 @@ class UpdateEmissionFactorGroupType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('code', TextType::class, [
-                'label' => new TranslatableMessage('Código'),
-                'required' => true,
-                'constraints' => [
-                    new Assert\NotBlank(),
-                    new Assert\Length(max: 50),
-                ],
-            ])
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('Nombre'),
                 'required' => true,

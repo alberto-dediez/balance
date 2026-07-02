@@ -52,15 +52,15 @@ class DoctrineEmissionFactorGroupRepository implements EmissionFactorGroupReposi
         ;
     }
 
-    public function findOneByCode(string $code): ?EmissionFactorGroup
+    public function findDefault(): ?EmissionFactorGroup
     {
         $qb = $this->createQueryBuilderFromFilter(new EmissionFactorGroupFilter());
 
         return $qb
             ->andWhere(
-                $qb->expr()->eq('e.code', ':code'),
+                $qb->expr()->eq('e.default', ':default'),
             )
-            ->setParameter('code', $code)
+            ->setParameter('default', true)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
@@ -83,15 +83,6 @@ class DoctrineEmissionFactorGroupRepository implements EmissionFactorGroupReposi
             ->setParameter('locale', LocaleGetter::locale())
         ;
 
-        if (!empty($filter->code)) {
-            $qb
-                ->andWhere(
-                    $qb->expr()->eq('e.code', ':filterCode'),
-                )
-                ->setParameter('filterCode', $filter->code)
-            ;
-        }
-
         if (!empty($filter->name)) {
             $qb
                 ->andWhere(
@@ -112,7 +103,6 @@ class DoctrineEmissionFactorGroupRepository implements EmissionFactorGroupReposi
         match ($filter->orderBy) {
             'registeredAt' => $qb->orderBy('e.registeredAt', $way),
             'updatedAt' => $qb->orderBy('e.updatedAt', $way),
-            'code' => $qb->orderBy('e.code', $way),
             default => $qb->orderBy('e.name', $way),
         };
 

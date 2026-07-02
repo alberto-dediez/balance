@@ -6,7 +6,7 @@ Feature:
         Given emission factor group "Group 1" with id "333" exists
         When I am logged as "admin@dediez.software"
         When I go to "/es/admin/emission-factor-groups/edit/333"
-        When I submit a form with "code:changed-code|name:A new name|gwpCo2:1|gwpCh4:27.9|gwpN2O:273" and button "Guardar"
+        When I submit a form with "name:A new name|gwpCo2:1|gwpCh4:27.9|gwpN2O:273" and button "Guardar"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Grupo de coeficientes actualizado con éxito"

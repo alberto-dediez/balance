@@ -39,7 +39,6 @@ class UpdateEmissionFactorGroupService implements CommandHandler
         $isDefaultLocale = $locale === LocaleGetter::default();
 
         $emissionFactorGroup->update(
-            code: $request->code,
             name: $request->name,
             gwp: new Gwp(
                 gwpCo2: $request->gwpCo2,
@@ -53,7 +52,6 @@ class UpdateEmissionFactorGroupService implements CommandHandler
 
         return new UpdateEmissionFactorGroupResponse(
             emissionFactorGroupId: $emissionFactorGroup->id(),
-            code: $emissionFactorGroup->code(),
             name: $emissionFactorGroup->name(),
         );
     }
