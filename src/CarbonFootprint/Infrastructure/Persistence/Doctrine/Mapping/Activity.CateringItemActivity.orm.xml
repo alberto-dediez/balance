@@ -7,7 +7,7 @@
 
     <entity name="App\CarbonFootprint\Domain\Model\Activity\CateringItemActivity" table="catering_item_activities">
         <field name="cateringItemId" type="catering_item_id" column="catering_item_id" nullable="false" />
-        <field name="condition" type="string" enum-type="App\CarbonFootprint\Domain\Model\Activity\ItemCondition" nullable="false" />
+        <field name="condition" type="string" column="item_condition" enum-type="App\CarbonFootprint\Domain\Model\Activity\ItemCondition" nullable="false" />
     </entity>
 
 </doctrine-mapping>

@@ -27,7 +27,7 @@ class CateringItemEmissionFactorSelectorTest extends TestCase
 
         $sut = new CateringItemEmissionFactorSelector($repository);
 
-        $factor = $sut->select($entity->id(), 2024, ItemCondition::New, $groupId);
+        $factor = $sut->select((string) $entity->id(), 2024, ItemCondition::New, $groupId);
 
         $this->assertTrue($groupId->equals($factor->emissionFactorGroupId()));
     }
@@ -44,7 +44,7 @@ class CateringItemEmissionFactorSelectorTest extends TestCase
 
         $sut = new CateringItemEmissionFactorSelector($repository);
 
-        $factor = $sut->select($entity->id(), 2024, ItemCondition::Recycled, $groupId);
+        $factor = $sut->select((string) $entity->id(), 2024, ItemCondition::Recycled, $groupId);
 
         $this->assertTrue($groupId->equals($factor->emissionFactorGroupId()));
     }
@@ -54,7 +54,7 @@ class CateringItemEmissionFactorSelectorTest extends TestCase
         $sut = new CateringItemEmissionFactorSelector(CateringItemRepositoryMother::inMemory());
 
         $this->expectException(\InvalidArgumentException::class);
-        $sut->select(CateringItemId::generate(), 2024, ItemCondition::New, EmissionFactorGroupMother::default()->id());
+        $sut->select((string) CateringItemId::generate(), 2024, ItemCondition::New, EmissionFactorGroupMother::default()->id());
     }
 
     public function testSelectThrowsWhenNoFactorForRequestedGroup(): void
@@ -70,6 +70,6 @@ class CateringItemEmissionFactorSelectorTest extends TestCase
         $sut = new CateringItemEmissionFactorSelector($repository);
 
         $this->expectException(\InvalidArgumentException::class);
-        $sut->select($entity->id(), 2024, ItemCondition::New, EmissionFactorGroupMother::random()->id());
+        $sut->select((string) $entity->id(), 2024, ItemCondition::New, EmissionFactorGroupMother::random()->id());
     }
 }

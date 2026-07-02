@@ -10,7 +10,7 @@
             <generator strategy="NONE" />
         </id>
 
-        <many-to-one field="eventCarbonFootprint" target-entity="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint">
+        <many-to-one field="eventCarbonFootprint" target-entity="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint" inversed-by="activities">
             <join-column name="event_carbon_footprint_id" referenced-column-name="id" nullable="false" />
         </many-to-one>
 

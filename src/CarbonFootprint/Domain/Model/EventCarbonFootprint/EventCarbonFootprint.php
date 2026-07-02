@@ -63,6 +63,15 @@ class EventCarbonFootprint implements \Stringable
         return $this->calculationPeriod;
     }
 
+    public function calculationYear(): int
+    {
+        $referenceDate = $this->calculationPeriod->startDate()
+            ?? $this->calculationPeriod->endDate()
+            ?? $this->registeredAt;
+
+        return (int) $referenceDate->format('Y');
+    }
+
     public function totalEmissions(): Emissions
     {
         return $this->totalEmissions;

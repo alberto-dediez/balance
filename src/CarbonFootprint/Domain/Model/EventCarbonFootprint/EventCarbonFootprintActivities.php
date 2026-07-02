@@ -60,6 +60,19 @@ class EventCarbonFootprintActivities
         return new self($filtered);
     }
 
+    public function filterBySource(Source $source): self
+    {
+        $filtered = [];
+
+        foreach ($this->activities as $activity) {
+            if ($activity->source() === $source) {
+                $filtered[] = $activity;
+            }
+        }
+
+        return new self($filtered);
+    }
+
     /** @return ActivityId[] */
     public function activityIds(): array
     {

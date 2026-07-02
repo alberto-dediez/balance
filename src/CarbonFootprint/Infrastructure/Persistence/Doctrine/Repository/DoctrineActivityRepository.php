@@ -26,7 +26,7 @@ class DoctrineActivityRepository implements ActivityRepository
 
     public function findById(ActivityId $id): ?Activity
     {
-        return $this->manager->find(Activity::class, (string) $id);
+        return $this->manager->find(Activity::class, $id);
     }
 
     public function remove(Activity $activity): void

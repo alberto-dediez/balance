@@ -21,6 +21,11 @@ final class Quantity implements \Stringable
         return $this->unit;
     }
 
+    public function withUnit(Unit $unit): self
+    {
+        return new self($this->value, $unit);
+    }
+
     public function magnitude(): Magnitude
     {
         return $this->unit->magnitude();

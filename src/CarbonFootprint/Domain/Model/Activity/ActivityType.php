@@ -1,0 +1,36 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\CarbonFootprint\Domain\Model\Activity;
+
+enum ActivityType: string
+{
+    case Material          = 'material';
+    case CateringItem      = 'catering_item';
+    case MerchandisingItem = 'merchandising_item';
+    case Combustible       = 'combustible';
+    case Electricity       = 'electricity';
+    case MachineryFuel     = 'machinery_fuel';
+    case Mobility          = 'mobility';
+    case OvernightStay     = 'overnight_stay';
+    case RoadTransport     = 'road_transport';
+    case Waste             = 'waste';
+
+    public static function fromActivity(Activity $activity): self
+    {
+        return match (true) {
+            $activity instanceof MaterialActivity          => self::Material,
+            $activity instanceof CateringItemActivity      => self::CateringItem,
+            $activity instanceof MerchandisingItemActivity => self::MerchandisingItem,
+            $activity instanceof CombustibleActivity       => self::Combustible,
+            $activity instanceof ElectricityActivity       => self::Electricity,
+            $activity instanceof MachineryFuelActivity     => self::MachineryFuel,
+            $activity instanceof MobilityActivity          => self::Mobility,
+            $activity instanceof OvernightStayActivity     => self::OvernightStay,
+            $activity instanceof RoadTransportActivity     => self::RoadTransport,
+            $activity instanceof WasteActivity             => self::Waste,
+            default => throw new \InvalidArgumentException(sprintf('Unknown activity class "%s".', $activity::class)),
+        };
+    }
+}

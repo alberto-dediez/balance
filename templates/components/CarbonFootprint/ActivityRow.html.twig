@@ -1,0 +1,46 @@
+{% props prefix, index, items, units, row = null %}
+
+<tr class="collection-element">
+    <td>
+        <input type="hidden" name="{{ prefix }}[{{ index }}][activityId]" value="{{ row ? row.activityId : '' }}">
+        <select name="{{ prefix }}[{{ index }}][itemId]" class="form-select" data-field="itemId" data-action="activity-emissions#itemChanged">
+            <option value="">{{ 'Selecciona una opción' | trans }}</option>
+            {% for item in items %}
+                <option value="{{ item.id }}" data-unit="{{ item.unit.value }}"{{ row and row.itemId == item.id ~ '' ? ' selected' }}>{{ item.name }}</option>
+            {% endfor %}
+        </select>
+    </td>
+    <td>
+        <select name="{{ prefix }}[{{ index }}][condition]" class="form-select" data-field="condition" data-action="activity-emissions#recalculate">
+            <option value="new"{{ row and row.condition == 'new' ? ' selected' }}>{{ 'Nuevo' | trans }}</option>
+            <option value="recycled"{{ row and row.condition == 'recycled' ? ' selected' }}>{{ 'Reciclado' | trans }}</option>
+        </select>
+    </td>
+    <td>
+        <select name="{{ prefix }}[{{ index }}][unit]" class="form-select" data-field="unit" data-action="activity-emissions#recalculate">
+            {% for unit in units %}
+                <option value="{{ unit.value }}"{{ row and row.unit == unit.value ? ' selected' }}>{{ unit.value | trans({}, 'unitType') }}</option>
+            {% endfor %}
+        </select>
+    </td>
+    <td>
+        <input
+            type="number"
+            name="{{ prefix }}[{{ index }}][quantity]"
+            class="form-control"
+            step="any"
+            min="0"
+            value="{{ row ? row.quantity : '' }}"
+            data-field="quantity"
+            data-action="activity-emissions#recalculate"
+        >
+    </td>
+    <td class="text-end text-nowrap">
+        <span data-field="emissions">{{ row ? row.co2eq | number_format(2, ',', '.') : '—' }}</span>
+    </td>
+    <td class="text-end">
+        <button type="button" class="btn btn-sm btn-outline-danger" data-action="collection#remove">
+            <twig:Icon name="solar:trash-bin-minimalistic-outline" />
+        </button>
+    </td>
+</tr>

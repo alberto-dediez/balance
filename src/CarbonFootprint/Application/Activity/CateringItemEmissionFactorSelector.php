@@ -4,18 +4,25 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\Activity;
 
+use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemId;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 
-final class CateringItemEmissionFactorSelector
+final class CateringItemEmissionFactorSelector implements EmissionFactorSelector
 {
     public function __construct(private CateringItemRepository $repository) {}
 
-    public function select(CateringItemId $id, int $year, ItemCondition $condition, EmissionFactorGroupId $groupId): EmissionFactor
+    public function activityType(): ActivityType
     {
+        return ActivityType::CateringItem;
+    }
+
+    public function select(string $itemId, int $year, ?ItemCondition $condition, EmissionFactorGroupId $groupId): EmissionFactor
+    {
+        $id = new CateringItemId($itemId);
         $cateringItem = $this->repository->find($id);
         if (null === $cateringItem) {
             throw new \InvalidArgumentException(sprintf('CateringItem "%s" not found.', $id));

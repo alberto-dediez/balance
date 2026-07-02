@@ -4,18 +4,25 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\Activity;
 
+use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemId;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
 
-final class MerchandisingItemEmissionFactorSelector
+final class MerchandisingItemEmissionFactorSelector implements EmissionFactorSelector
 {
     public function __construct(private MerchandisingItemRepository $repository) {}
 
-    public function select(MerchandisingItemId $id, int $year, ItemCondition $condition, EmissionFactorGroupId $groupId): EmissionFactor
+    public function activityType(): ActivityType
     {
+        return ActivityType::MerchandisingItem;
+    }
+
+    public function select(string $itemId, int $year, ?ItemCondition $condition, EmissionFactorGroupId $groupId): EmissionFactor
+    {
+        $id = new MerchandisingItemId($itemId);
         $merchandisingItem = $this->repository->find($id);
         if (null === $merchandisingItem) {
             throw new \InvalidArgumentException(sprintf('MerchandisingItem "%s" not found.', $id));
