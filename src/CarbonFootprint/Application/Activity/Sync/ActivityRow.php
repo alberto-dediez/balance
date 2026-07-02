@@ -17,5 +17,6 @@ final class ActivityRow
         public ItemCondition $condition,
         public Quantity $quantity,
         public ?ActivityId $activityId = null,
+        public ?string $secondaryItemId = null,
     ) {}
 }

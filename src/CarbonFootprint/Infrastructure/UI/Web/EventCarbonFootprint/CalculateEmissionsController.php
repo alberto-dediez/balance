@@ -42,9 +42,10 @@ class CalculateEmissionsController extends AbstractController
         $condition = ItemCondition::tryFrom($payload->getString('condition'));
         $unit = Unit::tryFrom($payload->getString('unit'));
         $itemId = $payload->getString('itemId');
+        $secondaryItemId = $payload->getString('itemId2');
         $quantity = (float) str_replace(',', '.', $payload->getString('quantity'));
 
-        if (null === $activityType || null === $condition || null === $unit || '' === $itemId) {
+        if (null === $activityType || null === $unit || '' === $itemId) {
             return $this->json(['error' => 'Invalid parameters'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -55,6 +56,7 @@ class CalculateEmissionsController extends AbstractController
                 itemId: $itemId,
                 condition: $condition,
                 quantity: new Quantity($quantity, $unit),
+                secondaryItemId: '' !== $secondaryItemId ? $secondaryItemId : null,
             ), $loggedUser());
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());

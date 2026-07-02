@@ -35,7 +35,7 @@ class RegisterCombustibleActivityService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat(null, SecurityAction::Register, $user);
 
-        $emissionFactor = $this->factorSelector->select($request->combustibleId, $request->year, $request->emissionFactorGroupId);
+        $emissionFactor = $this->factorSelector->select((string) $request->combustibleId, $request->year, null, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity = CombustibleActivity::register(

@@ -1,9 +1,8 @@
-{% props title, prefix, type, rows, items, units, eventId %}
+{% props title, prefix, type, rows, items, units, eventId, showCondition = true, mainLabel = 'Elemento' %}
 
-{% set proto %}{{ component('CarbonFootprint:ActivityRow', { prefix: prefix, index: '__name__', items: items, units: units }) }}{% endset %}
+{% set proto %}{{ component('CarbonFootprint:ActivityRow', { prefix: prefix, index: '__name__', items: items, units: units, showCondition: showCondition }) }}{% endset %}
 
-<twig:Card>
-    <h5 class="mb-3">{{ title }}</h5>
+<twig:Card :title="title">
 
     <div
         data-controller="collection activity-emissions"
@@ -15,8 +14,10 @@
             <table class="table align-middle">
                 <thead>
                     <tr>
-                        <th class="col-4">{{ 'Elemento' | trans }}</th>
-                        <th class="col-2">{{ 'Condición' | trans }}</th>
+                        <th class="col-4">{{ mainLabel | trans }}</th>
+                        {% if showCondition %}
+                            <th class="col-2">{{ 'Condición' | trans }}</th>
+                        {% endif %}
                         <th class="col-2">{{ 'Unidad' | trans }}</th>
                         <th class="col-2">{{ 'Cantidad' | trans }}</th>
                         <th class="col-2 text-end">{{ 'Emisiones (kg CO₂eq)' | trans }}</th>
@@ -31,6 +32,7 @@
                             :row="row"
                             :items="items"
                             :units="units"
+                            :showCondition="showCondition"
                         />
                     {% endfor %}
                 </tbody>

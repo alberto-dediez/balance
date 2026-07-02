@@ -39,7 +39,7 @@ class UpdateRoadTransportActivityService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($activity, SecurityAction::Edit, $user);
 
-        $emissionFactor = $this->factorSelector->select($request->roadTransportId, $request->year, $request->emissionFactorGroupId);
+        $emissionFactor = $this->factorSelector->select((string) $request->roadTransportId, $request->year, null, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity->update(

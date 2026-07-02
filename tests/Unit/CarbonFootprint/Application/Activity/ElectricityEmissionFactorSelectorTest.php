@@ -32,7 +32,7 @@ class ElectricityEmissionFactorSelectorTest extends TestCase
 
         $sut = new ElectricityEmissionFactorSelector($marketerRepository, $gdOFactorRepository);
 
-        $factor = $sut->select($marketer->id(), $gdOFactor->id(), 2024, $groupId);
+        $factor = $sut->select((string) $marketer->id(), 2024, null, $groupId, (string) $gdOFactor->id());
 
         $this->assertTrue($groupId->equals($factor->emissionFactorGroupId()));
     }
@@ -46,7 +46,7 @@ class ElectricityEmissionFactorSelectorTest extends TestCase
         $sut = new ElectricityEmissionFactorSelector(ElectricityMarketerRepositoryMother::inMemory(), $gdOFactorRepository);
 
         $this->expectException(\InvalidArgumentException::class);
-        $sut->select(ElectricityMarketerId::generate(), $gdOFactor->id(), 2024, EmissionFactorGroupMother::default()->id());
+        $sut->select((string) ElectricityMarketerId::generate(), 2024, null, EmissionFactorGroupMother::default()->id(), (string) $gdOFactor->id());
     }
 
     public function testSelectThrowsWhenGdOFactorNotFound(): void
@@ -58,7 +58,7 @@ class ElectricityEmissionFactorSelectorTest extends TestCase
         $sut = new ElectricityEmissionFactorSelector($marketerRepository, GdOFactorRepositoryMother::inMemory());
 
         $this->expectException(\InvalidArgumentException::class);
-        $sut->select($marketer->id(), GdOFactorId::generate(), 2024, EmissionFactorGroupMother::default()->id());
+        $sut->select((string) $marketer->id(), 2024, null, EmissionFactorGroupMother::default()->id(), (string) GdOFactorId::generate());
     }
 
     public function testSelectThrowsWhenNoFactorForRequestedGroup(): void
@@ -75,6 +75,6 @@ class ElectricityEmissionFactorSelectorTest extends TestCase
         $sut = new ElectricityEmissionFactorSelector($marketerRepository, $gdOFactorRepository);
 
         $this->expectException(\InvalidArgumentException::class);
-        $sut->select($marketer->id(), $gdOFactor->id(), 2024, EmissionFactorGroupMother::random()->id());
+        $sut->select((string) $marketer->id(), 2024, null, EmissionFactorGroupMother::random()->id(), (string) $gdOFactor->id());
     }
 }

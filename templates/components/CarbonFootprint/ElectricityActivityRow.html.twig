@@ -1,0 +1,42 @@
+{% props prefix, index, marketers, gdOFactors, row = null %}
+
+<tr class="collection-element">
+    <td>
+        <input type="hidden" name="{{ prefix }}[{{ index }}][activityId]" value="{{ row ? row.activityId : '' }}">
+        <select name="{{ prefix }}[{{ index }}][itemId]" class="form-select" data-field="itemId" data-action="activity-emissions#recalculate">
+            <option value="">{{ 'Selecciona una opción' | trans }}</option>
+            {% for marketer in marketers %}
+                <option value="{{ marketer.id }}"{{ row and row.itemId == marketer.id ~ '' ? ' selected' }}>{{ marketer.name }}</option>
+            {% endfor %}
+        </select>
+    </td>
+    <td>
+        <select name="{{ prefix }}[{{ index }}][itemId2]" class="form-select" data-field="itemId2" data-action="activity-emissions#recalculate">
+            <option value="">{{ 'Selecciona una opción' | trans }}</option>
+            {% for gdOFactor in gdOFactors %}
+                <option value="{{ gdOFactor.id }}"{{ row and row.itemId2 == gdOFactor.id ~ '' ? ' selected' }}>{{ gdOFactor.name }}</option>
+            {% endfor %}
+        </select>
+    </td>
+    <td>
+        <input type="hidden" name="{{ prefix }}[{{ index }}][unit]" value="kWh" data-field="unit">
+        <input
+            type="number"
+            name="{{ prefix }}[{{ index }}][quantity]"
+            class="form-control"
+            step="any"
+            min="0"
+            value="{{ row ? row.quantity : '' }}"
+            data-field="quantity"
+            data-action="activity-emissions#recalculate"
+        >
+    </td>
+    <td class="text-end text-nowrap">
+        <span data-field="emissions">{{ row ? row.co2eq | number_format(2, ',', '.') : '—' }}</span>
+    </td>
+    <td class="text-end">
+        <button type="button" class="btn btn-sm btn-outline-danger" data-action="collection#remove">
+            <twig:Icon name="solar:trash-bin-minimalistic-outline" />
+        </button>
+    </td>
+</tr>

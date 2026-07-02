@@ -16,7 +16,8 @@ class CalculateActivityEmissionsRequest implements Command
         public EventCarbonFootprintId $eventCarbonFootprintId,
         public ActivityType $activityType,
         public string $itemId,
-        public ItemCondition $condition,
+        public ?ItemCondition $condition,
         public Quantity $quantity,
+        public ?string $secondaryItemId = null,
     ) {}
 }

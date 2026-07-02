@@ -39,7 +39,7 @@ class UpdateMachineryFuelActivityService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($activity, SecurityAction::Edit, $user);
 
-        $emissionFactor = $this->factorSelector->select($request->machineryFuelId, $request->year, $request->emissionFactorGroupId);
+        $emissionFactor = $this->factorSelector->select((string) $request->machineryFuelId, $request->year, null, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity->update(

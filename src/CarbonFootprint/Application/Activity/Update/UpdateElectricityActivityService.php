@@ -39,7 +39,7 @@ class UpdateElectricityActivityService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($activity, SecurityAction::Edit, $user);
 
-        $emissionFactor = $this->factorSelector->select($request->electricityMarketerId, $request->gdOFactorId, $request->year, $request->emissionFactorGroupId);
+        $emissionFactor = $this->factorSelector->select((string) $request->electricityMarketerId, $request->year, null, $request->emissionFactorGroupId, (string) $request->gdOFactorId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity->update(

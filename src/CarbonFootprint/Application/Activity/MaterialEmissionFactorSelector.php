@@ -20,7 +20,7 @@ final class MaterialEmissionFactorSelector implements EmissionFactorSelector
         return ActivityType::Material;
     }
 
-    public function select(string $itemId, int $year, ?ItemCondition $condition, EmissionFactorGroupId $groupId): EmissionFactor
+    public function select(string $itemId, int $year, ?ItemCondition $condition, EmissionFactorGroupId $groupId, ?string $secondaryItemId = null): EmissionFactor
     {
         $id = new MaterialId($itemId);
         $material = $this->repository->find($id);

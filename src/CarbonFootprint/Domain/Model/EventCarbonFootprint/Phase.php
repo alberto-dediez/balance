@@ -7,7 +7,7 @@ namespace App\CarbonFootprint\Domain\Model\EventCarbonFootprint;
 enum Phase: string
 {
     case Materials   = 'materials';
-    case Setup       = 'setup';
+    case Assembly       = 'assembly';
     case Celebration = 'celebration';
     case Teardown    = 'teardown';
 }

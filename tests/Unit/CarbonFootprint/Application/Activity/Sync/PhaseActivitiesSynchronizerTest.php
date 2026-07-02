@@ -95,7 +95,7 @@ class PhaseActivitiesSynchronizerTest extends TestCase
     {
         $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
         $otherPhaseActivityId = ActivityId::generate();
-        $eventCarbonFootprint->addActivity($otherPhaseActivityId, Phase::Setup, Source::MachineryOperation);
+        $eventCarbonFootprint->addActivity($otherPhaseActivityId, Phase::Assembly, Source::MachineryOperation);
 
         $sut = $this->createSUT();
 

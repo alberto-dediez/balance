@@ -26,7 +26,7 @@ class MobilityEmissionFactorSelectorTest extends TestCase
 
         $sut = new MobilityEmissionFactorSelector($repository);
 
-        $factor = $sut->select($entity->id(), 2024, $groupId);
+        $factor = $sut->select((string) $entity->id(), 2024, null, $groupId);
 
         $this->assertTrue($groupId->equals($factor->emissionFactorGroupId()));
     }
@@ -36,7 +36,7 @@ class MobilityEmissionFactorSelectorTest extends TestCase
         $sut = new MobilityEmissionFactorSelector(MobilityRepositoryMother::inMemory());
 
         $this->expectException(\InvalidArgumentException::class);
-        $sut->select(MobilityId::generate(), 2024, EmissionFactorGroupMother::default()->id());
+        $sut->select((string) MobilityId::generate(), 2024, null, EmissionFactorGroupMother::default()->id());
     }
 
     public function testSelectThrowsWhenNoFactorForRequestedGroup(): void
@@ -50,6 +50,6 @@ class MobilityEmissionFactorSelectorTest extends TestCase
         $sut = new MobilityEmissionFactorSelector($repository);
 
         $this->expectException(\InvalidArgumentException::class);
-        $sut->select($entity->id(), 2024, EmissionFactorGroupMother::random()->id());
+        $sut->select((string) $entity->id(), 2024, null, EmissionFactorGroupMother::random()->id());
     }
 }

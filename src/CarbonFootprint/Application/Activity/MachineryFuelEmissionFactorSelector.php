@@ -4,17 +4,25 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\Activity;
 
+use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
+use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelId;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
 
-final class MachineryFuelEmissionFactorSelector
+final class MachineryFuelEmissionFactorSelector implements EmissionFactorSelector
 {
     public function __construct(private MachineryFuelRepository $repository) {}
 
-    public function select(MachineryFuelId $id, int $year, EmissionFactorGroupId $groupId): EmissionFactor
+    public function activityType(): ActivityType
     {
+        return ActivityType::MachineryFuel;
+    }
+
+    public function select(string $itemId, int $year, ?ItemCondition $condition, EmissionFactorGroupId $groupId, ?string $secondaryItemId = null): EmissionFactor
+    {
+        $id = new MachineryFuelId($itemId);
         $machineryFuel = $this->repository->find($id);
         if (null === $machineryFuel) {
             throw new \InvalidArgumentException(sprintf('MachineryFuel "%s" not found.', $id));

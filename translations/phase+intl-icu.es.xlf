@@ -9,8 +9,8 @@
         <source>materials</source>
         <target>Materiales</target>
       </trans-unit>
-      <trans-unit id="kPC_Z8v" resname="setup">
-        <source>setup</source>
+      <trans-unit id="kPC_Z8v" resname="assemply">
+        <source>assemply</source>
         <target>Montaje</target>
       </trans-unit>
       <trans-unit id="y4pEcu5" resname="celebration">

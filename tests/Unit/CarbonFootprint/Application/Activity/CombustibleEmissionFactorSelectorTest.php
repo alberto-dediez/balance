@@ -26,7 +26,7 @@ class CombustibleEmissionFactorSelectorTest extends TestCase
 
         $sut = new CombustibleEmissionFactorSelector($repository);
 
-        $factor = $sut->select($entity->id(), 2024, $groupId);
+        $factor = $sut->select((string) $entity->id(), 2024, null, $groupId);
 
         $this->assertTrue($groupId->equals($factor->emissionFactorGroupId()));
     }
@@ -36,7 +36,7 @@ class CombustibleEmissionFactorSelectorTest extends TestCase
         $sut = new CombustibleEmissionFactorSelector(CombustibleRepositoryMother::inMemory());
 
         $this->expectException(\InvalidArgumentException::class);
-        $sut->select(CombustibleId::generate(), 2024, EmissionFactorGroupMother::default()->id());
+        $sut->select((string) CombustibleId::generate(), 2024, null, EmissionFactorGroupMother::default()->id());
     }
 
     public function testSelectThrowsWhenNoFactorForRequestedGroup(): void
@@ -50,6 +50,6 @@ class CombustibleEmissionFactorSelectorTest extends TestCase
         $sut = new CombustibleEmissionFactorSelector($repository);
 
         $this->expectException(\InvalidArgumentException::class);
-        $sut->select($entity->id(), 2024, EmissionFactorGroupMother::random()->id());
+        $sut->select((string) $entity->id(), 2024, null, EmissionFactorGroupMother::random()->id());
     }
 }

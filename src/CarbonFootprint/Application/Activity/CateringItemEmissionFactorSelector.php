@@ -20,7 +20,7 @@ final class CateringItemEmissionFactorSelector implements EmissionFactorSelector
         return ActivityType::CateringItem;
     }
 
-    public function select(string $itemId, int $year, ?ItemCondition $condition, EmissionFactorGroupId $groupId): EmissionFactor
+    public function select(string $itemId, int $year, ?ItemCondition $condition, EmissionFactorGroupId $groupId, ?string $secondaryItemId = null): EmissionFactor
     {
         $id = new CateringItemId($itemId);
         $cateringItem = $this->repository->find($id);

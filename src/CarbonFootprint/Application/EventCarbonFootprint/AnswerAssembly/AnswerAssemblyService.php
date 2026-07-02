@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\EventCarbonFootprint\AnswerAssembly;
 
+use App\CarbonFootprint\Application\Activity\Sync\PhaseActivitiesSynchronizer;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -20,6 +23,7 @@ class AnswerAssemblyService implements CommandHandler
     public function __construct(
         private EventCarbonFootprintRepository $eventCarbonFootprintRepository,
         private EventCarbonFootprintAuthorizer $authorizer,
+        private PhaseActivitiesSynchronizer $activitiesSynchronizer,
     ) {}
 
     public function __invoke(AnswerAssemblyRequest $request, User $user): void
@@ -31,6 +35,14 @@ class AnswerAssemblyService implements CommandHandler
         }
 
         $this->authorizer->denyUnlessCanDoThat($eventCarbonFootprint, SecurityAction::Edit, $user);
+
+        $this->activitiesSynchronizer->sync($eventCarbonFootprint, Phase::Assembly, Source::FixedFacilities, $request->fixedFacilitiesRows, $user);
+        $this->activitiesSynchronizer->sync($eventCarbonFootprint, Phase::Assembly, Source::FreightTransport, $request->freightTransportRows, $user);
+        $this->activitiesSynchronizer->sync($eventCarbonFootprint, Phase::Assembly, Source::MachineryOperation, $request->machineryOperationRows, $user);
+        $this->activitiesSynchronizer->sync($eventCarbonFootprint, Phase::Assembly, Source::BuildingElectricity, $request->buildingElectricityRows, $user);
+        $this->activitiesSynchronizer->sync($eventCarbonFootprint, Phase::Assembly, Source::SuppliersAndStaffAccommodation, $request->accommodationRows, $user);
+        $this->activitiesSynchronizer->sync($eventCarbonFootprint, Phase::Assembly, Source::SuppliersAndStaffMobility, $request->mobilityRows, $user);
+        $this->activitiesSynchronizer->sync($eventCarbonFootprint, Phase::Assembly, Source::WasteManagement, $request->wasteManagementRows, $user);
 
         $eventCarbonFootprint->answerAssembly();
 

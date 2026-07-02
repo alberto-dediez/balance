@@ -45,6 +45,7 @@ export default class extends Controller {
         if (!output) return;
 
         const itemId = row.querySelector('[data-field="itemId"]')?.value;
+        const itemId2 = row.querySelector('[data-field="itemId2"]')?.value;
         const condition = row.querySelector('[data-field="condition"]')?.value;
         const unit = row.querySelector('[data-field="unit"]')?.value;
         const quantity = row.querySelector('[data-field="quantity"]')?.value;
@@ -61,7 +62,7 @@ export default class extends Controller {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
                 },
-                body: JSON.stringify({ type: this.typeValue, itemId, condition, unit, quantity }),
+                body: JSON.stringify({ type: this.typeValue, itemId, itemId2, condition, unit, quantity }),
             });
 
             if (!response.ok) {

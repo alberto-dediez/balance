@@ -39,7 +39,7 @@ class UpdateOvernightStayActivityService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($activity, SecurityAction::Edit, $user);
 
-        $emissionFactor = $this->factorSelector->select($request->overnightStayId, $request->year, $request->emissionFactorGroupId);
+        $emissionFactor = $this->factorSelector->select((string) $request->overnightStayId, $request->year, null, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity->update(

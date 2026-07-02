@@ -20,7 +20,7 @@ final class MerchandisingItemEmissionFactorSelector implements EmissionFactorSel
         return ActivityType::MerchandisingItem;
     }
 
-    public function select(string $itemId, int $year, ?ItemCondition $condition, EmissionFactorGroupId $groupId): EmissionFactor
+    public function select(string $itemId, int $year, ?ItemCondition $condition, EmissionFactorGroupId $groupId, ?string $secondaryItemId = null): EmissionFactor
     {
         $id = new MerchandisingItemId($itemId);
         $merchandisingItem = $this->repository->find($id);

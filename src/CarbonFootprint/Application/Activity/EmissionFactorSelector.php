@@ -15,5 +15,5 @@ interface EmissionFactorSelector
 {
     public function activityType(): ActivityType;
 
-    public function select(string $itemId, int $year, ?ItemCondition $condition, EmissionFactorGroupId $groupId): EmissionFactor;
+    public function select(string $itemId, int $year, ?ItemCondition $condition, EmissionFactorGroupId $groupId, ?string $secondaryItemId = null): EmissionFactor;
 }
