@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Application\OvernightStay\Register;
 use App\CarbonFootprint\Application\OvernightStay\OvernightStayAuthorizer;
 use App\CarbonFootprint\Application\OvernightStay\Register\RegisterOvernightStayRequest;
 use App\CarbonFootprint\Application\OvernightStay\Register\RegisterOvernightStayService;
+use App\CarbonFootprint\Domain\Model\OvernightStay\CategoryOvernight;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRegistered;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayTranslated;
@@ -38,6 +39,7 @@ class RegisterOvernightStayServiceTest extends TestCase
 
         $request = new RegisterOvernightStayRequest(
             name: 'Pernoctación 1',
+            category: CategoryOvernight::Suppliers,
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -66,6 +68,7 @@ class RegisterOvernightStayServiceTest extends TestCase
 
         $request = new RegisterOvernightStayRequest(
             name: 'changedName',
+            category: CategoryOvernight::Attendees,
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -92,6 +95,7 @@ class RegisterOvernightStayServiceTest extends TestCase
 
         $result = $sut->isHandled(new RegisterOvernightStayRequest(
             name: 'test',
+            category: CategoryOvernight::Attendees,
         ));
 
         $this->assertTrue($result);

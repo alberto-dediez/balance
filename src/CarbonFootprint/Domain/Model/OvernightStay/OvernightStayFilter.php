@@ -12,6 +12,7 @@ class OvernightStayFilter
 
     public function __construct(
         public ?string $name = null,
+        public ?CategoryOvernight $category = null,
         int $limit = 10,
     ) {
         $this->limit = $limit;

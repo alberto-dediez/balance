@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Infrastructure\Symfony\Form;
 
 use App\CarbonFootprint\Application\OvernightStay\Register\RegisterOvernightStayRequest;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\CategoryOvernightType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -26,6 +27,11 @@ class RegisterOvernightStayType extends AbstractType
                     new Assert\NotBlank(),
                     new Assert\Length(max: 255),
                 ],
+            ])
+            ->add('category', CategoryOvernightType::class, [
+                'label' => new TranslatableMessage('Categoría'),
+                'required' => true,
+                'constraints' => [new Assert\NotNull()],
             ])
             ->add('register', SubmitType::class, [
                 'label' => new TranslatableMessage('Registrar'),

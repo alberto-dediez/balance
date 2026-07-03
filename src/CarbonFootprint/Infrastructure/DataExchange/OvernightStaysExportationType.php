@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\OvernightStay\Export\OvernightStaysExportFil
 use App\CarbonFootprint\Application\OvernightStay\OvernightStayAuthorizer;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
+use App\CarbonFootprint\Domain\Model\OvernightStay\CategoryOvernight;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStay;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayEmissionFactor;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayId;
@@ -47,6 +48,7 @@ class OvernightStaysExportationType implements ExportationType
         return [
             new ExportColumnDefinition('overnight_stay', new TranslatableMessage('Identificador'), selectedByDefault: false),
             new ExportColumnDefinition('name', new TranslatableMessage('Nombre')),
+            new ExportColumnDefinition('category', new TranslatableMessage('Categoría')),
             new ExportColumnDefinition('year', new TranslatableMessage('Año')),
             new ExportColumnDefinition('co2eq', new TranslatableMessage('CO2eq')),
             new ExportColumnDefinition('co2', new TranslatableMessage('CO2')),
@@ -76,6 +78,7 @@ class OvernightStaysExportationType implements ExportationType
         return [
             'name' => $filter->name,
             'emissionFactorGroup' => $filter->emissionFactorGroup,
+            'category' => $filter->category?->value,
             'orderBy' => $filter->orderBy,
             'orderWay' => $filter->orderWay,
         ];
@@ -87,6 +90,9 @@ class OvernightStaysExportationType implements ExportationType
 
         $filter->name = isset($criteria['name']) ? (string) $criteria['name'] : null;
         $filter->emissionFactorGroup = isset($criteria['emissionFactorGroup']) ? (string) $criteria['emissionFactorGroup'] : null;
+        $filter->category = isset($criteria['category'])
+            ? CategoryOvernight::from((string) $criteria['category'])
+            : null;
         $filter->orderBy = isset($criteria['orderBy']) ? (string) $criteria['orderBy'] : 'default';
         $filter->orderWay = isset($criteria['orderWay']) ? (string) $criteria['orderWay'] : 'ASC';
         $filter->limit = 0;
@@ -139,6 +145,7 @@ class OvernightStaysExportationType implements ExportationType
         return [
             'overnight_stay' => (string) $overnightStay->id(),
             'name' => $overnightStay->name(),
+            'category' => $overnightStay->category()->value,
         ];
     }
 

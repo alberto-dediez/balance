@@ -49,17 +49,17 @@ class MachineryFuelImportationType implements ImportationType
     public function fields(): array
     {
         return [
-            'machinery_fuel',
-            'name',
-            'unit',
-            'machinery_type',
-            'year',
-            'co2eq',
-            'co2',
-            'ch4',
-            'n2o',
-            'source',
-            'emissionFactorGroup',
+            (string) new TranslatableMessage('machinery_fuel', [], 'fields'),
+            (string) new TranslatableMessage('name', [], 'fields'),
+            (string) new TranslatableMessage('unit', [], 'fields'),
+            (string) new TranslatableMessage('machinery_type', [], 'fields'),
+            (string) new TranslatableMessage('year', [], 'fields'),
+            (string) new TranslatableMessage('co2eq', [], 'fields'),
+            (string) new TranslatableMessage('co2', [], 'fields'),
+            (string) new TranslatableMessage('ch4', [], 'fields'),
+            (string) new TranslatableMessage('n2o', [], 'fields'),
+            (string) new TranslatableMessage('source', [], 'fields'),
+            (string) new TranslatableMessage('emissionFactorGroup', [], 'fields'),
         ];
     }
 

@@ -9,6 +9,9 @@
             'sortable': true,
             'sortableBy': 'name'
         }, {
+            'label': 'Categoría' | trans,
+            'sortable': false
+        }, {
             'label': 'Fecha de registro' | trans,
             'sortable': true,
             'sortableBy': 'registeredAt'
@@ -23,6 +26,7 @@
 
     <twig:List:Table :columns="columns" :elements="overnightStays" :bulkForm="bulkForm">
         <td>{{ element.name }}</td>
+        <td>{{ element.category.value | trans({}, 'categoryOvernightType') }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>{{ element.updatedAt ? element.updatedAt | date('d/m/Y') : '' }}</td>
         <td>

@@ -91,6 +91,8 @@ class DoctrineCombustibleRepository implements CombustibleRepository
             default => $qb->orderBy('c.name', $way),
         };
 
+        $qb->addOrderBy('c.id', 'ASC');
+
         return $qb;
     }
 

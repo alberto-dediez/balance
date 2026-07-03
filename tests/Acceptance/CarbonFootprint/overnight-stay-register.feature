@@ -19,7 +19,7 @@ Feature:
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
         When I am logged as "admin@dediez.software"
         When I go to "/es/admin/overnight-stays/register"
-        When I submit a form with "name:Test Pernoctación" and button "Registrar"
+        When I submit a form with "name:Test Pernoctación|category:attendees" and button "Registrar"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Pernoctación creada correctamente: Test Pernoctación"
@@ -28,5 +28,5 @@ Feature:
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
         When I am logged as "admin@dediez.software"
         When I go to "/es/admin/overnight-stays/register"
-        When I submit a form with "name:Test Pernoctación" and button "Registrar"
+        When I submit a form with "name:Test Pernoctación|category:attendees" and button "Registrar"
         Then I am redirected to route "admin_overnight_stays_edit"

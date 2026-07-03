@@ -98,6 +98,8 @@ class DoctrineMerchandisingItemRepository implements MerchandisingItemRepository
             default => $qb->orderBy('m.name', $way),
         };
 
+        $qb->addOrderBy('m.id', 'ASC');
+
         return $qb;
     }
 

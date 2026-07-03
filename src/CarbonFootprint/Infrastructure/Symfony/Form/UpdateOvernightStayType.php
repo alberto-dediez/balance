@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Infrastructure\Symfony\Form;
 
 use App\CarbonFootprint\Application\OvernightStay\Update\UpdateOvernightStayRequest;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\CategoryOvernightType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\GroupedEmissionFactorsType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\OvernightStayEmissionFactorType;
 use Symfony\Component\Form\AbstractType;
@@ -28,6 +29,11 @@ class UpdateOvernightStayType extends AbstractType
                     new Assert\NotBlank(),
                     new Assert\Length(max: 255),
                 ],
+            ])
+            ->add('category', CategoryOvernightType::class, [
+                'label' => new TranslatableMessage('Categoría'),
+                'required' => true,
+                'constraints' => [new Assert\NotNull()],
             ])
             ->add('emissionFactors', GroupedEmissionFactorsType::class, [
                 'label' => new TranslatableMessage('Factores de emisión'),

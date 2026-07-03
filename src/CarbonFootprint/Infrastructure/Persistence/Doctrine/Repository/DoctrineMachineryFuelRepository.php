@@ -98,6 +98,8 @@ class DoctrineMachineryFuelRepository implements MachineryFuelRepository
             default => $qb->orderBy('mf.name', $way),
         };
 
+        $qb->addOrderBy('mf.id', 'ASC');
+
         return $qb;
     }
 

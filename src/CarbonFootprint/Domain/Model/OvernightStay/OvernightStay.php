@@ -27,6 +27,7 @@ class OvernightStay implements Translatable, \Stringable
     public function __construct(
         private OvernightStayId $id,
         private string $name = '',
+        private CategoryOvernight $category = CategoryOvernight::Attendees,
         private bool $removed = false,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
@@ -53,6 +54,11 @@ class OvernightStay implements Translatable, \Stringable
     public function unit(): Unit
     {
         return Unit::Pernoctacion;
+    }
+
+    public function category(): CategoryOvernight
+    {
+        return $this->category;
     }
 
     public function translations(): Translations
@@ -98,12 +104,14 @@ class OvernightStay implements Translatable, \Stringable
 
     public function register(
         string $name,
+        CategoryOvernight $category,
         ?Locale $locale = null,
     ): void {
         $this->recordApplyAndPublish(
             new OvernightStayRegistered(
                 overnightStayId: $this->id(),
                 name: $name,
+                category: $category,
             ),
         );
 
@@ -114,12 +122,14 @@ class OvernightStay implements Translatable, \Stringable
 
     public function update(
         string $name,
+        CategoryOvernight $category,
         ?Locale $locale = null,
     ): void {
         $this->recordApplyAndPublish(
             new OvernightStayUpdated(
                 overnightStayId: $this->id(),
                 name: $locale instanceof Locale ? $this->name : $name,
+                category: $category,
             ),
         );
 
@@ -221,12 +231,14 @@ class OvernightStay implements Translatable, \Stringable
     public function applyOvernightStayRegistered(OvernightStayRegistered $event): void
     {
         $this->name = $event->name();
+        $this->category = $event->category();
         $this->registeredAt = $event->occurredOn();
     }
 
     public function applyOvernightStayUpdated(OvernightStayUpdated $event): void
     {
         $this->name = $event->name();
+        $this->category = $event->category();
         $this->updatedAt = $event->occurredOn();
     }
 

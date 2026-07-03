@@ -44,6 +44,7 @@ class EditController extends AbstractController
         $overnightStayRequest = new UpdateOvernightStayRequest(
             overnightStayId: $overnightStay->id(),
             name: $overnightStay->name(),
+            category: $overnightStay->category(),
             emissionFactors: $emissionFactors,
         );
 

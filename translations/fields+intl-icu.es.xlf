@@ -31,19 +31,19 @@
       </trans-unit>
       <trans-unit id="Ryo8_OL" resname="co2eq">
         <source>co2eq</source>
-        <target>CO2eq (nueva fabricación)</target>
+        <target>CO2eq</target>
       </trans-unit>
       <trans-unit id="Xm8lsrf" resname="co2">
         <source>co2</source>
-        <target>CO2 (nueva fabricación)</target>
+        <target>CO2</target>
       </trans-unit>
       <trans-unit id="f8U4oTn" resname="ch4">
         <source>ch4</source>
-        <target>CH4 (nueva fabricación)</target>
+        <target>CH4</target>
       </trans-unit>
       <trans-unit id="xAfN1w1" resname="n2o">
         <source>n2o</source>
-        <target>N2O (nueva fabricación)</target>
+        <target>N2O</target>
       </trans-unit>
       <trans-unit id="eaXhSi7" resname="recycledCo2eq">
         <source>recycledCo2eq</source>

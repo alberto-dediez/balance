@@ -15,6 +15,7 @@ final class OvernightStayUpdated extends DomainEvent
     public function __construct(
         private OvernightStayId $overnightStayId,
         private string $name,
+        private CategoryOvernight $category,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -31,6 +32,11 @@ final class OvernightStayUpdated extends DomainEvent
         return $this->name;
     }
 
+    public function category(): CategoryOvernight
+    {
+        return $this->category;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->overnightStayId();
@@ -41,6 +47,7 @@ final class OvernightStayUpdated extends DomainEvent
         return [
             'overnightStayId' => (string) $this->overnightStayId,
             'name' => $this->name,
+            'category' => $this->category->value,
         ];
     }
 
@@ -52,6 +59,7 @@ final class OvernightStayUpdated extends DomainEvent
         return new OvernightStayUpdated(
             overnightStayId: new OvernightStayId($payload['overnightStayId']),
             name: $payload['name'],
+            category: CategoryOvernight::tryFrom((string) ($payload['category'] ?? '')) ?? CategoryOvernight::Attendees,
             id: $id,
             occurredOn: $occurredOn,
         );

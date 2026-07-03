@@ -11,6 +11,7 @@
         </id>
 
         <field name="name" type="string" length="255" nullable="false"/>
+        <field name="category" type="string" enum-type="App\CarbonFootprint\Domain\Model\OvernightStay\CategoryOvernight" nullable="false"/>
         <field name="removed" type="boolean" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>

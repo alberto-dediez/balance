@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
+use App\CarbonFootprint\Domain\Model\OvernightStay\CategoryOvernight;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStay;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayId;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
@@ -69,10 +70,10 @@ class ImportOvernightStayService implements CommandHandler
             throw new \InvalidArgumentException('An overnight stay or a name is required');
         }
 
-        return $this->registerOvernightStay($name, $user);
+        return $this->registerOvernightStay($name, $request, $user);
     }
 
-    private function registerOvernightStay(string $name, User $user): OvernightStay
+    private function registerOvernightStay(string $name, ImportOvernightStayRequest $request, User $user): OvernightStay
     {
         $id = OvernightStayId::generate();
 
@@ -84,6 +85,7 @@ class ImportOvernightStayService implements CommandHandler
         $overnightStay = new OvernightStay($id);
         $overnightStay->register(
             $name,
+            CategoryOvernight::tryFrom((string) $request->category) ?? CategoryOvernight::Attendees,
             $isDefaultLocale ? null : $locale,
         );
 

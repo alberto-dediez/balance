@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Infrastructure\Symfony\Form;
 
 use App\CarbonFootprint\Application\OvernightStay\Export\OvernightStaysExportFilter;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\CategoryOvernightType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorGroupChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -21,6 +22,11 @@ class AdminOvernightStaysExportType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('Nombre'),
                 'required' => false,
+            ])
+            ->add('category', CategoryOvernightType::class, [
+                'label' => new TranslatableMessage('Categoría'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Todas'),
             ])
             ->add('emissionFactorGroup', EmissionFactorGroupChoiceType::class, [
                 'label' => new TranslatableMessage('Grupo'),

@@ -11,6 +11,7 @@ class ImportWasteRequest implements Command
     public function __construct(
         public ?string $waste = null,
         public ?string $name = null,
+        public ?string $density = null,
         public ?string $unit = null,
         public ?string $year = null,
         public ?string $co2eq = null,

@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Application\OvernightStay;
 use App\CarbonFootprint\Application\OvernightStay\Import\ImportOvernightStayRequest;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStay;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayId;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\CategoryOvernightCodeType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorGroupChoiceType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\OvernightStayChoiceType;
 use App\DataExchange\Application\Importation\Execute\Extractor\AssignValueExtractor;
@@ -47,15 +48,16 @@ class OvernightStayImportationType implements ImportationType
     public function fields(): array
     {
         return [
-            'overnight_stay',
-            'name',
-            'year',
-            'co2eq',
-            'co2',
-            'ch4',
-            'n2o',
-            'source',
-            'emissionFactorGroup',
+            (string) new TranslatableMessage('overnight_stay', [], 'fields'),
+            (string) new TranslatableMessage('name', [], 'fields'),
+            (string) new TranslatableMessage('category', [], 'fields'),
+            (string) new TranslatableMessage('year', [], 'fields'),
+            (string) new TranslatableMessage('co2eq', [], 'fields'),
+            (string) new TranslatableMessage('co2', [], 'fields'),
+            (string) new TranslatableMessage('ch4', [], 'fields'),
+            (string) new TranslatableMessage('n2o', [], 'fields'),
+            (string) new TranslatableMessage('source', [], 'fields'),
+            (string) new TranslatableMessage('emissionFactorGroup', [], 'fields'),
         ];
     }
 
@@ -63,6 +65,7 @@ class OvernightStayImportationType implements ImportationType
     {
         return [
             'overnight_stay' => new FieldDefinition(fieldType: OvernightStayChoiceType::class),
+            'category' => new FieldDefinition(fieldType: CategoryOvernightCodeType::class),
             'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
@@ -72,6 +75,7 @@ class OvernightStayImportationType implements ImportationType
         return [
             'overnight_stay' => new FieldDefinition(fieldType: OvernightStayChoiceType::class),
             'name' => new FieldDefinition(fieldType: TextType::class),
+            'category' => new FieldDefinition(fieldType: CategoryOvernightCodeType::class),
             'year' => new FieldDefinition(fieldType: TextType::class),
             'co2eq' => new FieldDefinition(fieldType: TextType::class),
             'co2' => new FieldDefinition(fieldType: TextType::class),
@@ -87,6 +91,7 @@ class OvernightStayImportationType implements ImportationType
         return new ImportOvernightStayRequest(
             overnightStay: $this->stringOrNull($data['overnight_stay'] ?? null),
             name: $this->stringOrNull($data['name'] ?? null),
+            category: $this->stringOrNull($data['category'] ?? null),
             year: $this->stringOrNull($data['year'] ?? null),
             co2eq: $this->stringOrNull($data['co2eq'] ?? null),
             co2: $this->stringOrNull($data['co2'] ?? null),
@@ -109,6 +114,7 @@ class OvernightStayImportationType implements ImportationType
             if ($configuration instanceof ImportationColumnConfiguration) {
                 switch ($field) {
                     case 'overnight_stay':
+                    case 'category':
                     case 'emissionFactorGroup':
                         $rowExtractor->addFieldExtractor(
                             new MapExtractor($configuration),

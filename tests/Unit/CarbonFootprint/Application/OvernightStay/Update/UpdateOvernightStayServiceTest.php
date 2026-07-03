@@ -9,6 +9,7 @@ use App\CarbonFootprint\Application\OvernightStay\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\OvernightStay\Update\UpdateOvernightStayRequest;
 use App\CarbonFootprint\Application\OvernightStay\Update\UpdateOvernightStayService;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
+use App\CarbonFootprint\Domain\Model\OvernightStay\CategoryOvernight;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayTranslated;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayUpdated;
@@ -52,6 +53,7 @@ class UpdateOvernightStayServiceTest extends TestCase
         $request = new UpdateOvernightStayRequest(
             overnightStayId: $overnightStay->id(),
             name: 'changedName',
+            category: CategoryOvernight::Suppliers,
         );
 
         $result = $sut($request, $user);
@@ -59,6 +61,7 @@ class UpdateOvernightStayServiceTest extends TestCase
         $overnightStayPersisted = $repository->find($result->overnightStayId);
 
         $this->assertNotNull($overnightStayPersisted);
+        $this->assertEquals(CategoryOvernight::Suppliers, $overnightStayPersisted->category());
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
@@ -82,6 +85,7 @@ class UpdateOvernightStayServiceTest extends TestCase
         $request = new UpdateOvernightStayRequest(
             overnightStayId: $overnightStay->id(),
             name: 'changedName',
+            category: CategoryOvernight::Attendees,
         );
 
         $result = $sut($request, $user);
@@ -117,6 +121,7 @@ class UpdateOvernightStayServiceTest extends TestCase
         $request = new UpdateOvernightStayRequest(
             overnightStayId: $overnightStay->id(),
             name: 'changedName',
+            category: CategoryOvernight::Attendees,
             emissionFactors: [
                 new EmissionFactorData(
                     year: 2024,

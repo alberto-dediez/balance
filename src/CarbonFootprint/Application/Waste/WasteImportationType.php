@@ -48,16 +48,17 @@ class WasteImportationType implements ImportationType
     public function fields(): array
     {
         return [
-            'waste',
-            'name',
-            'unit',
-            'year',
-            'co2eq',
-            'co2',
-            'ch4',
-            'n2o',
-            'source',
-            'emissionFactorGroup',
+            (string) new TranslatableMessage('waste', [], 'fields'),
+            (string) new TranslatableMessage('name', [], 'fields'),
+            (string) new TranslatableMessage('density', [], 'fields'),
+            (string) new TranslatableMessage('unit', [], 'fields'),
+            (string) new TranslatableMessage('year', [], 'fields'),
+            (string) new TranslatableMessage('co2eq', [], 'fields'),
+            (string) new TranslatableMessage('co2', [], 'fields'),
+            (string) new TranslatableMessage('ch4', [], 'fields'),
+            (string) new TranslatableMessage('n2o', [], 'fields'),
+            (string) new TranslatableMessage('source', [], 'fields'),
+            (string) new TranslatableMessage('emissionFactorGroup', [], 'fields'),
         ];
     }
 
@@ -75,6 +76,7 @@ class WasteImportationType implements ImportationType
         return [
             'waste' => new FieldDefinition(fieldType: WasteChoiceType::class),
             'name' => new FieldDefinition(fieldType: TextType::class),
+            'density' => new FieldDefinition(fieldType: TextType::class),
             'unit' => new FieldDefinition(fieldType: UnitCodeType::class),
             'year' => new FieldDefinition(fieldType: TextType::class),
             'co2eq' => new FieldDefinition(fieldType: TextType::class),
@@ -91,6 +93,7 @@ class WasteImportationType implements ImportationType
         return new ImportWasteRequest(
             waste: $this->stringOrNull($data['waste'] ?? null),
             name: $this->stringOrNull($data['name'] ?? null),
+            density: $this->stringOrNull($data['density'] ?? null),
             unit: $this->stringOrNull($data['unit'] ?? null),
             year: $this->stringOrNull($data['year'] ?? null),
             co2eq: $this->stringOrNull($data['co2eq'] ?? null),

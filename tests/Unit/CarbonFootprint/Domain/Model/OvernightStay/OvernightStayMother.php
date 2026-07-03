@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay;
 
+use App\CarbonFootprint\Domain\Model\OvernightStay\CategoryOvernight;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStay;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayId;
 
@@ -33,11 +34,12 @@ class OvernightStayMother
     public static function from(
         string $name,
         string $id,
+        CategoryOvernight $category = CategoryOvernight::Attendees,
     ): OvernightStay {
         $overnightStay = new OvernightStay(
             id: new OvernightStayId($id),
         );
-        $overnightStay->register($name);
+        $overnightStay->register($name, $category);
 
         return $overnightStay;
     }

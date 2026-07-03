@@ -10,6 +10,7 @@ use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemReposito
 use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @extends AbstractType<mixed>
@@ -18,6 +19,7 @@ class MerchandisingItemChoiceType extends AbstractType
 {
     public function __construct(
         private readonly MerchandisingItemRepository $merchandisingItemRepository,
+        private readonly TranslatorInterface $translator,
     ) {}
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -36,7 +38,12 @@ class MerchandisingItemChoiceType extends AbstractType
     /** @param array<string, string> $choices */
     private function label(MerchandisingItem $merchandisingItem, array $choices): string
     {
-        $label = (string) $merchandisingItem;
+        $label = sprintf(
+            '%s - %s',
+            $merchandisingItem->name(),
+            $this->translator->trans($merchandisingItem->category()->value, [], 'merchandisingItemCategoryType'),
+        );
+
         $candidate = $label;
         $i = 0;
 

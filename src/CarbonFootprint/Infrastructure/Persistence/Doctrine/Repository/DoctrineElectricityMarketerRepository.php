@@ -77,6 +77,8 @@ class DoctrineElectricityMarketerRepository implements ElectricityMarketerReposi
             default => $qb->orderBy('e.name', $way),
         };
 
+        $qb->addOrderBy('e.id', 'ASC');
+
         return $qb;
     }
 

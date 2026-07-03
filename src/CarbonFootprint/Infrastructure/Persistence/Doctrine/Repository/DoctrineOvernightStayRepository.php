@@ -83,6 +83,13 @@ class DoctrineOvernightStayRepository implements OvernightStayRepository
             ;
         }
 
+        if (null !== $filter->category) {
+            $qb
+                ->andWhere($qb->expr()->eq('o.category', ':category'))
+                ->setParameter('category', $filter->category->value)
+            ;
+        }
+
         $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
@@ -90,6 +97,8 @@ class DoctrineOvernightStayRepository implements OvernightStayRepository
             'updatedAt' => $qb->orderBy('o.updatedAt', $way),
             default => $qb->orderBy('o.name', $way),
         };
+
+        $qb->addOrderBy('o.id', 'ASC');
 
         return $qb;
     }

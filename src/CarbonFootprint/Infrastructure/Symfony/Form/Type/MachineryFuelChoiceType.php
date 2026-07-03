@@ -10,12 +10,14 @@ use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
 use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** @extends AbstractType<mixed> */
 class MachineryFuelChoiceType extends AbstractType
 {
     public function __construct(
         private readonly MachineryFuelRepository $machineryFuelRepository,
+        private readonly TranslatorInterface $translator,
     ) {}
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -34,7 +36,12 @@ class MachineryFuelChoiceType extends AbstractType
     /** @param array<string, string> $choices */
     private function label(MachineryFuel $machineryFuel, array $choices): string
     {
-        $label = (string) $machineryFuel;
+        $label = sprintf(
+            '%s - %s',
+            $machineryFuel->name(),
+            $this->translator->trans($machineryFuel->machineryType()->value, [], 'machineryFuelMachineryType'),
+        );
+
         $candidate = $label;
         $i = 0;
 

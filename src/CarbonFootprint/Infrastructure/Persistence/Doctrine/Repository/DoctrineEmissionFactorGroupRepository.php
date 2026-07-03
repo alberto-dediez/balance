@@ -106,6 +106,8 @@ class DoctrineEmissionFactorGroupRepository implements EmissionFactorGroupReposi
             default => $qb->orderBy('e.name', $way),
         };
 
+        $qb->addOrderBy('e.id', 'ASC');
+
         return $qb;
     }
 

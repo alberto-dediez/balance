@@ -38,6 +38,7 @@ class RegisterOvernightStayService implements CommandHandler
         $overnightStay = new OvernightStay($id);
         $overnightStay->register(
             $request->name,
+            $request->category,
             $isDefaultLocale ? null : $locale,
         );
 

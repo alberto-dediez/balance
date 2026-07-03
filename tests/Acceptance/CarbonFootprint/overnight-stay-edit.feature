@@ -6,7 +6,7 @@ Feature:
         Given overnight stay "Pernoctación 1" with id "333" exists
         When I am logged as "admin@dediez.software"
         When I go to "/es/admin/overnight-stays/edit/333"
-        When I submit a form with "name:A new name" and button "Guardar"
+        When I submit a form with "name:A new name|category:suppliers" and button "Guardar"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Pernoctación actualizada con éxito"

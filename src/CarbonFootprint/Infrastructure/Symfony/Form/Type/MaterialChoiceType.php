@@ -10,6 +10,7 @@ use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @extends AbstractType<mixed>
@@ -18,6 +19,7 @@ class MaterialChoiceType extends AbstractType
 {
     public function __construct(
         private readonly MaterialRepository $materialRepository,
+        private readonly TranslatorInterface $translator,
     ) {}
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -36,7 +38,12 @@ class MaterialChoiceType extends AbstractType
     /** @param array<string, string> $choices */
     private function label(Material $material, array $choices): string
     {
-        $label = (string) $material;
+        $label = sprintf(
+            '%s - %s',
+            $material->name(),
+            $this->translator->trans($material->category()->value, [], 'materialCategoryType'),
+        );
+
         $candidate = $label;
         $i = 0;
 

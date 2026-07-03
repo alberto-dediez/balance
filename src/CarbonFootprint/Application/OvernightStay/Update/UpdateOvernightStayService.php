@@ -44,6 +44,7 @@ class UpdateOvernightStayService implements CommandHandler
 
         $overnightStay->update(
             name: $request->name,
+            category: $request->category,
             locale: $isDefaultLocale ? null : $locale,
         );
 

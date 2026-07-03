@@ -99,6 +99,8 @@ class DoctrineRoadTransportRepository implements RoadTransportRepository
             default => $qb->orderBy('r.name', $way),
         };
 
+        $qb->addOrderBy('r.id', 'ASC');
+
         return $qb;
     }
 

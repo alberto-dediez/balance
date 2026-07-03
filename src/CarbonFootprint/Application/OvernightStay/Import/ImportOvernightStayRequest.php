@@ -11,6 +11,7 @@ class ImportOvernightStayRequest implements Command
     public function __construct(
         public ?string $overnightStay = null,
         public ?string $name = null,
+        public ?string $category = null,
         public ?string $year = null,
         public ?string $co2eq = null,
         public ?string $co2 = null,

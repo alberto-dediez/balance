@@ -91,6 +91,8 @@ class DoctrineWasteRepository implements WasteRepository
             default => $qb->orderBy('w.name', $way),
         };
 
+        $qb->addOrderBy('w.id', 'ASC');
+
         return $qb;
     }
 

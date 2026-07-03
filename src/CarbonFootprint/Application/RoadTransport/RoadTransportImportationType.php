@@ -49,17 +49,17 @@ class RoadTransportImportationType implements ImportationType
     public function fields(): array
     {
         return [
-            'road_transport',
-            'name',
-            'unit',
-            'vehicle',
-            'year',
-            'co2eq',
-            'co2',
-            'ch4',
-            'n2o',
-            'source',
-            'emissionFactorGroup',
+            (string) new TranslatableMessage('road_transport', [], 'fields'),
+            (string) new TranslatableMessage('name', [], 'fields'),
+            (string) new TranslatableMessage('unit', [], 'fields'),
+            (string) new TranslatableMessage('vehicle', [], 'fields'),
+            (string) new TranslatableMessage('year', [], 'fields'),
+            (string) new TranslatableMessage('co2eq', [], 'fields'),
+            (string) new TranslatableMessage('co2', [], 'fields'),
+            (string) new TranslatableMessage('ch4', [], 'fields'),
+            (string) new TranslatableMessage('n2o', [], 'fields'),
+            (string) new TranslatableMessage('source', [], 'fields'),
+            (string) new TranslatableMessage('emissionFactorGroup', [], 'fields'),
         ];
     }
 

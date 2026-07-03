@@ -85,7 +85,7 @@ class ImportWasteService implements CommandHandler
         $waste->register(
             $name,
             Unit::tryFrom((string) $request->unit) ?? Unit::Kilogram,
-            1.0,
+            (float) $request->density,
             $isDefaultLocale ? null : $locale,
         );
 

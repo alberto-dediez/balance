@@ -25,6 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(
     '/admin/materials/emission-factors/{emissionFactorGroup}/{year}',
@@ -43,6 +44,7 @@ class FactorEmissionController extends AbstractController
         EmissionFactorGroupRepository $emissionFactorGroupRepository,
         ListEmissionFactorsService $listEmissionFactors,
         UpdateEmissionFactorsService $updateEmissionFactors,
+        TranslatorInterface $translator,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -69,7 +71,7 @@ class FactorEmissionController extends AbstractController
             foreach ($response->materials as $material) {
                 $rows[] = EmissionFactorRow::fromMaterial(
                     $material->id(),
-                    $material->name(),
+                    sprintf('%s - %s', $material->name(), $translator->trans($material->category()->value, [], 'materialCategoryType')),
                     $material->emissionFactorFor($year, $group->id()),
                     $group->id(),
                 );

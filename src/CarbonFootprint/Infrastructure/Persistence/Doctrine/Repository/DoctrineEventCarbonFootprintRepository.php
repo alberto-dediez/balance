@@ -127,6 +127,8 @@ class DoctrineEventCarbonFootprintRepository implements EventCarbonFootprintRepo
             default => $qb->orderBy('e.registeredAt', $way),
         };
 
+        $qb->addOrderBy('e.id', 'ASC');
+
         return $qb;
     }
 

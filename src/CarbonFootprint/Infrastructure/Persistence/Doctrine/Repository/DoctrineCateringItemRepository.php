@@ -98,6 +98,8 @@ class DoctrineCateringItemRepository implements CateringItemRepository
             default => $qb->orderBy('m.name', $way),
         };
 
+        $qb->addOrderBy('m.id', 'ASC');
+
         return $qb;
     }
 
