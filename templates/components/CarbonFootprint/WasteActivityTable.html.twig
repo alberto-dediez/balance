@@ -1,23 +1,19 @@
-{% props title, prefix, type, rows, items, units, eventId, showCondition = true, mainLabel = 'Elemento' %}
+{% props title, prefix, rows, items, units, eventId %}
 
-{% set proto %}{{ component('CarbonFootprint:ActivityRow', { prefix: prefix, index: '__name__', items: items, units: units, showCondition: showCondition }) }}{% endset %}
+{% set proto %}{{ component('CarbonFootprint:WasteActivityRow', { prefix: prefix, index: '__name__', items: items, units: units }) }}{% endset %}
 
 <twig:Card :title="title">
-
     <div
         data-controller="collection activity-emissions"
         data-collection-prototype-value="{{ proto | e('html_attr') }}"
         data-activity-emissions-url-value="{{ path('events_carbon_footprint_emissions_calculate', {eventId: eventId}) }}"
-        data-activity-emissions-type-value="{{ type }}"
+        data-activity-emissions-type-value="waste"
     >
         <div class="table-responsive">
             <table class="table align-middle">
                 <thead>
                     <tr>
-                        <th class="col-4">{{ mainLabel | trans }}</th>
-                        {% if showCondition %}
-                            <th class="col-2">{{ 'Condición' | trans }}</th>
-                        {% endif %}
+                        <th class="col-4">{{ 'Residuo' | trans }}</th>
                         <th class="col-2">{{ 'Unidad' | trans }}</th>
                         <th class="col-2">{{ 'Cantidad' | trans }}</th>
                         <th class="col-2 text-end">{{ 'Emisiones (kg CO₂eq)' | trans }}</th>
@@ -26,13 +22,12 @@
                 </thead>
                 <tbody class="collection">
                     {% for row in rows %}
-                        <twig:CarbonFootprint:ActivityRow
+                        <twig:CarbonFootprint:WasteActivityRow
                             prefix="{{ prefix }}"
                             :index="loop.index0"
                             :row="row"
                             :items="items"
                             :units="units"
-                            :showCondition="showCondition"
                         />
                     {% endfor %}
                 </tbody>

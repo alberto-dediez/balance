@@ -6,28 +6,25 @@
     <form method="post">
         <input type="hidden" name="_token" value="{{ csrf_token('materials_' ~ eventCarbonFootprint.id) }}">
 
-        <twig:CarbonFootprint:ActivityTable
+        <twig:CarbonFootprint:MaterialActivityTable
             title="{{ 'Materiales' | trans }}"
             prefix="materials"
-            type="material"
             :rows="activityRows['material']"
             :items="materials"
             :units="units"
             :eventId="eventId"
         />
-        <twig:CarbonFootprint:ActivityTable
+        <twig:CarbonFootprint:CateringItemActivityTable
             title="{{ 'Catering' | trans }}"
             prefix="cateringItems"
-            type="catering_item"
             :rows="activityRows['catering_item']"
             :items="cateringItems"
             :units="units"
             :eventId="eventId"
         />
-        <twig:CarbonFootprint:ActivityTable
+        <twig:CarbonFootprint:MerchandisingItemActivityTable
             title="{{ 'Merchandising' | trans }}"
             prefix="merchandisingItems"
-            type="merchandising_item"
             :rows="activityRows['merchandising_item']"
             :items="merchandisingItems"
             :units="units"

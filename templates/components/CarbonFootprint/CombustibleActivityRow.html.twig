@@ -1,4 +1,4 @@
-{% props prefix, index, items, units, row = null, showCondition = true %}
+{% props prefix, index, items, units, row = null %}
 
 <tr class="collection-element">
     <td>
@@ -10,14 +10,6 @@
             {% endfor %}
         </select>
     </td>
-    {% if showCondition %}
-        <td>
-            <select name="{{ prefix }}[{{ index }}][condition]" class="form-select" data-field="condition" data-action="activity-emissions#recalculate">
-                <option value="new"{{ row and row.condition == 'new' ? ' selected' }}>{{ 'Nuevo' | trans }}</option>
-                <option value="recycled"{{ row and row.condition == 'recycled' ? ' selected' }}>{{ 'Reciclado' | trans }}</option>
-            </select>
-        </td>
-    {% endif %}
     <td>
         <select name="{{ prefix }}[{{ index }}][unit]" class="form-select" data-field="unit" data-action="activity-emissions#recalculate">
             {% for unit in units %}
