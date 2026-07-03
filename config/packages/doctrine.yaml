@@ -11,6 +11,7 @@ doctrine:
         types:
             locale: App\Shared\Infrastructure\Persistence\Doctrine\Type\LocaleType  
             importation_id: App\DataExchange\Infrastructure\Persistence\Doctrine\Type\ImportationIdType
+            importation_profile_id: App\DataExchange\Infrastructure\Persistence\Doctrine\Type\ImportationProfileIdType
             exportation_id: App\DataExchange\Infrastructure\Persistence\Doctrine\Type\ExportationIdType
             user_id: App\Security\Infrastructure\Persistence\Doctrine\Type\UserIdType
             account_id: App\Security\Infrastructure\Persistence\Doctrine\Type\AccountIdType

@@ -7,6 +7,8 @@ namespace App\DataExchange\Infrastructure\UI\Web\Import;
 use App\DataExchange\Application\Importation\PairFields\PairFieldsImportationRequest;
 use App\DataExchange\Application\Importation\PairFields\PairFieldsImportationResponse;
 use App\DataExchange\Application\Importation\PairFields\PairFieldsImportationService;
+use App\DataExchange\Application\ImportationProfile\Recall\RecallImportationChoicesRequest;
+use App\DataExchange\Application\ImportationProfile\Recall\RecallImportationChoicesService;
 use App\DataExchange\Infrastructure\UI\Web\Form\PairFieldsType;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,6 +27,7 @@ class PairFieldsController extends AbstractController
         string $id,
         LoggedUser $loggedUser,
         PairFieldsImportationService $pairFields,
+        RecallImportationChoicesService $recallChoices,
         Request $request,
     ): Response {
         $importationType = $this->getImportationTypeOrNotFound($code);
@@ -34,6 +37,11 @@ class PairFieldsController extends AbstractController
         $this->denyAccessUnlessUserIsGranted($loggedUser(), $importation, $importationType);
 
         $pairFieldsRequest = new PairFieldsImportationRequest($importation->id(), $importation->configurations());
+
+        if (0 === count($pairFieldsRequest->pairedConfigurations())) {
+            $recalled = $recallChoices(new RecallImportationChoicesRequest($importation->id()), $loggedUser());
+            $pairFieldsRequest = new PairFieldsImportationRequest($importation->id(), $recalled->configurations);
+        }
 
         $form = $this->createForm(PairFieldsType::class, $pairFieldsRequest, [
             'fields' => array_combine($importationType->fields(), $importationType->fields()),
