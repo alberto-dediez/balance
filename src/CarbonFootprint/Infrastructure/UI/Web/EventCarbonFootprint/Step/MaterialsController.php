@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step;
 
-use App\CarbonFootprint\Application\Activity\Table\ActivityRowParser;
-use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerMaterials\AnswerMaterialsRequest;
-use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerMaterials\AnswerMaterialsService;
-use App\CarbonFootprint\Application\EventCarbonFootprint\Step\MaterialsStepViewBuilder;
-use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
+use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerPhase\AnswerPhaseRequest;
+use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerPhase\AnswerPhaseService;
+use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseRequest;
+use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseService;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\GetEventCarbonFootprintFromEventIdTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\Answer\PhaseAnswerHttpMapper;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\MaterialsStepView;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\Security\Application\Action as SecurityAction;
@@ -31,9 +33,10 @@ class MaterialsController extends AbstractController
         string $eventId,
         EventRepository $eventRepository,
         EventCarbonFootprintRepository $eventCarbonFootprintRepository,
-        ActivityRowParser $parser,
-        AnswerMaterialsService $answerMaterials,
-        MaterialsStepViewBuilder $viewBuilder,
+        PhaseAnswerHttpMapper $answerMapper,
+        AnswerPhaseService $answerPhase,
+        GetPhaseService $getPhase,
+        MaterialsStepView $stepView,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -49,15 +52,9 @@ class MaterialsController extends AbstractController
                 throw $this->createAccessDeniedException('Token CSRF no válido');
             }
 
-            $rows = array_merge(
-                $parser->parse($request->request->all('materials'), ActivityType::Material, withCondition: true),
-                $parser->parse($request->request->all('cateringItems'), ActivityType::CateringItem, withCondition: true),
-                $parser->parse($request->request->all('merchandisingItems'), ActivityType::MerchandisingItem, withCondition: true),
-            );
-
             try {
-                $answerMaterials(
-                    new AnswerMaterialsRequest($eventCarbonFootprint->id(), $rows),
+                $answerPhase(
+                    new AnswerPhaseRequest($eventCarbonFootprint->id(), Phase::Materials, $answerMapper->map($request, Phase::Materials)),
                     $loggedUser(),
                 );
             } catch (UnauthorizedActionException $e) {
@@ -71,9 +68,11 @@ class MaterialsController extends AbstractController
             return $this->redirectToRoute('events_carbon_footprint_assembly', ['eventId' => $eventId]);
         }
 
+        $response = $getPhase(new GetPhaseRequest($eventCarbonFootprint->id(), Phase::Materials), $loggedUser());
+
         return $this->render(
             '@carbon_footprint/event_carbon_footprints/step/materials.html.twig',
-            $viewBuilder->build($eventCarbonFootprint) + ['event' => $event, 'eventId' => $eventId],
+            $stepView->build($eventCarbonFootprint, $response) + ['event' => $event, 'eventId' => $eventId],
         );
     }
 }

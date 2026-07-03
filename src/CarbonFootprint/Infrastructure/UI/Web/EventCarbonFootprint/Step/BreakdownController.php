@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step;
 
-use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerBreakdown\AnswerBreakdownRequest;
-use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerBreakdown\AnswerBreakdownService;
+use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerPhase\AnswerPhaseRequest;
+use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerPhase\AnswerPhaseService;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\GetEventCarbonFootprintFromEventIdTrait;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
@@ -27,7 +28,7 @@ class BreakdownController extends AbstractController
         string $eventId,
         EventRepository $eventRepository,
         EventCarbonFootprintRepository $eventCarbonFootprintRepository,
-        AnswerBreakdownService $answerBreakdown,
+        AnswerPhaseService $answerPhase,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -44,8 +45,8 @@ class BreakdownController extends AbstractController
 
         if ($request->isMethod('POST')) {
             try {
-                $answerBreakdown(
-                    new AnswerBreakdownRequest($eventCarbonFootprint->id()),
+                $answerPhase(
+                    new AnswerPhaseRequest($eventCarbonFootprint->id(), Phase::Breakdown),
                     $loggedUser(),
                 );
             } catch (UnauthorizedActionException $e) {

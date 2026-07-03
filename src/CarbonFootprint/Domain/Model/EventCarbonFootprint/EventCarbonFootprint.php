@@ -147,6 +147,37 @@ class EventCarbonFootprint implements \Stringable
         );
     }
 
+    public function answerPhase(Phase $phase): void
+    {
+        match ($phase) {
+            Phase::Materials => $this->answerMaterials(),
+            Phase::Assembly => $this->answerAssembly(),
+            Phase::Celebration => $this->answerCelebration(),
+            Phase::Breakdown => $this->answerBreakdown(),
+        };
+    }
+
+    /** @param ActivityId[] $keptIds */
+    public function retainActivities(Phase $phase, Source $source, array $keptIds): void
+    {
+        $existingIds = $this->activities()->filterByPhase($phase)->filterBySource($source)->activityIds();
+
+        foreach ($existingIds as $existingId) {
+            $kept = false;
+            foreach ($keptIds as $keptId) {
+                if ($keptId->equals($existingId)) {
+                    $kept = true;
+
+                    break;
+                }
+            }
+
+            if (!$kept) {
+                $this->removeActivity($existingId);
+            }
+        }
+    }
+
     public function answerMaterials(): void
     {
         $this->recordApplyAndPublish(

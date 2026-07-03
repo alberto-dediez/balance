@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step;
 
-use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerCelebration\AnswerCelebrationRequest;
-use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerCelebration\AnswerCelebrationService;
+use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerPhase\AnswerPhaseRequest;
+use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerPhase\AnswerPhaseService;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\GetEventCarbonFootprintFromEventIdTrait;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
@@ -27,7 +28,7 @@ class CelebrationController extends AbstractController
         string $eventId,
         EventRepository $eventRepository,
         EventCarbonFootprintRepository $eventCarbonFootprintRepository,
-        AnswerCelebrationService $answerCelebration,
+        AnswerPhaseService $answerPhase,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -44,8 +45,8 @@ class CelebrationController extends AbstractController
 
         if ($request->isMethod('POST')) {
             try {
-                $answerCelebration(
-                    new AnswerCelebrationRequest($eventCarbonFootprint->id()),
+                $answerPhase(
+                    new AnswerPhaseRequest($eventCarbonFootprint->id(), Phase::Celebration),
                     $loggedUser(),
                 );
             } catch (UnauthorizedActionException $e) {
