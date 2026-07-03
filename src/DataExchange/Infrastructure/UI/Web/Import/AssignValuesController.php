@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\DataExchange\Infrastructure\UI\Web\Import;
 
 use App\DataExchange\Application\Importation\AssignValues\AssignValuesImportationRequest;
+use App\DataExchange\Application\ImportationProfile\Recall\RecallImportationChoicesRequest;
+use App\DataExchange\Application\ImportationProfile\Recall\RecallImportationChoicesService;
 use App\DataExchange\Domain\Model\Importation\ImportationColumnConfiguration;
 use App\DataExchange\Infrastructure\UI\Web\Form\AssignValuesType;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
@@ -25,6 +27,7 @@ class AssignValuesController extends AbstractController
         string $code,
         string $id,
         LoggedUser $loggedUser,
+        RecallImportationChoicesService $recallChoices,
         Request $request,
     ): Response {
         $importationType = $this->getImportationTypeOrNotFound($code);
@@ -42,6 +45,11 @@ class AssignValuesController extends AbstractController
         }
 
         $defaultValues = $importation->defaultValues();
+
+        if (0 === count($defaultValues)) {
+            $recalled = $recallChoices(new RecallImportationChoicesRequest($importation->id()), $loggedUser());
+            $defaultValues = $recalled->defaultValues;
+        }
 
         $form = $this->createForm(AssignValuesType::class, $defaultValues, [
             'fields' => $notConfiguredFields,

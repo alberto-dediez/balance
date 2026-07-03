@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\DataExchange\Domain\Model\ImportationProfile\ImportationProfile" table="importation_profile">
+        <id name="id" type="importation_profile_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="accountId" type="account_id" nullable="true" />
+        <field name="type" type="string" length="255" nullable="false" />
+        <field name="fieldsByColumn" type="array" column="fields_by_column" nullable="false" />
+        <field name="translationsByColumn" type="array" column="translations_by_column" nullable="false" />
+        <field name="defaultValues" type="array" column="default_values" nullable="false" />
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="false" />
+
+        <unique-constraints>
+            <unique-constraint columns="account_id,type" name="uniq_importation_profile_account_type" />
+        </unique-constraints>
+    </entity>
+
+</doctrine-mapping>
