@@ -44,21 +44,6 @@ class InMemoryWasteRepository implements WasteRepository
         ;
     }
 
-    public function findOneByName(string $name): ?Waste
-    {
-        foreach ($this->wastes as $waste) {
-            if (true == $waste->isRemoved()) {
-                continue;
-            }
-
-            if (strtolower(trim((string) $waste->name())) === strtolower(trim($name))) {
-                return $waste;
-            }
-        }
-
-        return null;
-    }
-
     /** @return array<int, Waste> */
     public function findByFilter(WasteFilter $filter): array
     {

@@ -44,21 +44,6 @@ class InMemoryMachineryFuelRepository implements MachineryFuelRepository
         ;
     }
 
-    public function findOneByName(string $name): ?MachineryFuel
-    {
-        foreach ($this->machineryFuels as $machineryFuel) {
-            if (true == $machineryFuel->isRemoved()) {
-                continue;
-            }
-
-            if (strtolower(trim((string) $machineryFuel->name())) === strtolower(trim($name))) {
-                return $machineryFuel;
-            }
-        }
-
-        return null;
-    }
-
     /** @return array<int, MachineryFuel> */
     public function findByFilter(MachineryFuelFilter $filter): array
     {

@@ -129,20 +129,5 @@ abstract class OvernightStayRepositoryTest extends KernelTestCase
         $this->assertEquals('translated-name', $recoveredOvernightStay->name());
     }
 
-    public function testFindOneByName(): void
-    {
-        $repository = $this->createSUT();
-
-        $repository->add(OvernightStayMother::random());
-        $repository->add(OvernightStayMother::fromName('Nombre específico'));
-
-        $found = $repository->findOneByName('Nombre específico');
-
-        $this->assertNotNull($found);
-        $this->assertEquals('Nombre específico', $found->name());
-
-        $this->assertNull($repository->findOneByName('No existe'));
-    }
-
     abstract protected function createSUT(Locale $locale = Locale::Spanish): OvernightStayRepository;
 }

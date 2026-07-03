@@ -44,21 +44,6 @@ class InMemoryCateringItemRepository implements CateringItemRepository
         ;
     }
 
-    public function findOneByName(string $name): ?CateringItem
-    {
-        foreach ($this->cateringItems as $cateringItem) {
-            if (true == $cateringItem->isRemoved()) {
-                continue;
-            }
-
-            if (strtolower(trim((string) $cateringItem->name())) === strtolower(trim($name))) {
-                return $cateringItem;
-            }
-        }
-
-        return null;
-    }
-
     /** @return array<int, CateringItem> */
     public function findByFilter(CateringItemFilter $filter): array
     {

@@ -73,14 +73,6 @@ class ImportMaterialService implements CommandHandler
             throw new \InvalidArgumentException('A material or a name is required');
         }
 
-        $material = $this->materialRepository->findOneByName($name);
-
-        if (null !== $material) {
-            $this->authorizer->denyUnlessCanDoThat($material, SecurityAction::Edit, $user);
-
-            return $material;
-        }
-
         return $this->registerMaterial($name, $request, $user);
     }
 

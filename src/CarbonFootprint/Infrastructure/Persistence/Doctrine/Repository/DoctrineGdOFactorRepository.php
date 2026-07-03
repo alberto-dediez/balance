@@ -52,27 +52,6 @@ class DoctrineGdOFactorRepository implements GdOFactorRepository
         ;
     }
 
-    public function findOneByName(string $name): ?GdOFactor
-    {
-        $qb = $this->createQueryBuilderFromFilter(new GdOFactorFilter());
-
-        return $qb
-            ->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->andX(
-                        $qb->expr()->eq('e.name', ':name'),
-                        $qb->expr()->isNull('trans.name'),
-                    ),
-                    $qb->expr()->eq('trans.name', ':name'),
-                ),
-            )
-            ->setParameter('name', $name)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-
     private function createQueryBuilderFromFilter(GdOFactorFilter $filter): QueryBuilder
     {
         $qb = $this->manager->createQueryBuilder();

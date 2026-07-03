@@ -7,7 +7,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\OvernightStay\Import;
 use App\CarbonFootprint\Application\OvernightStay\Import\ImportOvernightStayRequest;
 use App\CarbonFootprint\Application\OvernightStay\Import\ImportOvernightStayService;
 use App\CarbonFootprint\Application\OvernightStay\OvernightStayAuthorizer;
-use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayFilter;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayId;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -59,32 +58,6 @@ class ImportOvernightStayServiceTest extends TestCase
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->co2eq());
         $this->assertEquals(Unit::Pernoctacion, $emissionFactor->unit());
-    }
-
-    public function testUpsertsExistingOvernightStayByName(): void
-    {
-        $repository = OvernightStayRepositoryMother::inMemory(Locale::Spanish);
-        $existing = OvernightStayMother::fromName('Pernoctación 1');
-        $repository->add($existing);
-
-        $sut = $this->createSUT($repository);
-
-        $request = new ImportOvernightStayRequest(
-            name: 'Pernoctación 1',
-            year: '2024',
-            co2eq: '2.0',
-            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
-        );
-
-        $result = $sut($request, UserMother::adminUser());
-
-        $this->assertTrue($existing->id()->equals($result->overnightStayId));
-
-        $overnightStay = $repository->find($result->overnightStayId);
-
-        $this->assertNotNull($overnightStay);
-        $this->assertCount(1, $repository->findByFilter(new OvernightStayFilter(limit: 0)));
-        $this->assertEquals('2.0', $overnightStay->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId())?->co2eq());
     }
 
     public function testExplicitOvernightStayOnlyUpdatesEmissionFactor(): void

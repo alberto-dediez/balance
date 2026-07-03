@@ -73,14 +73,6 @@ class ImportCateringItemService implements CommandHandler
             throw new \InvalidArgumentException('A catering item or a name is required');
         }
 
-        $cateringItem = $this->cateringItemRepository->findOneByName($name);
-
-        if (null !== $cateringItem) {
-            $this->authorizer->denyUnlessCanDoThat($cateringItem, SecurityAction::Edit, $user);
-
-            return $cateringItem;
-        }
-
         return $this->registerCateringItem($name, $request, $user);
     }
 

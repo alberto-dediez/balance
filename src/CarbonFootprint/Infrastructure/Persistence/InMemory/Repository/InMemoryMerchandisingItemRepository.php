@@ -44,21 +44,6 @@ class InMemoryMerchandisingItemRepository implements MerchandisingItemRepository
         ;
     }
 
-    public function findOneByName(string $name): ?MerchandisingItem
-    {
-        foreach ($this->merchandisingItems as $merchandisingItem) {
-            if (true == $merchandisingItem->isRemoved()) {
-                continue;
-            }
-
-            if (strtolower(trim((string) $merchandisingItem->name())) === strtolower(trim($name))) {
-                return $merchandisingItem;
-            }
-        }
-
-        return null;
-    }
-
     /** @return array<int, MerchandisingItem> */
     public function findByFilter(MerchandisingItemFilter $filter): array
     {

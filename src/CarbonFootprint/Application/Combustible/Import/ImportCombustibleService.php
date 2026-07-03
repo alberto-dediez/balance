@@ -69,14 +69,6 @@ class ImportCombustibleService implements CommandHandler
             throw new \InvalidArgumentException('A combustible or a name is required');
         }
 
-        $combustible = $this->combustibleRepository->findOneByName($name);
-
-        if (null !== $combustible) {
-            $this->authorizer->denyUnlessCanDoThat($combustible, SecurityAction::Edit, $user);
-
-            return $combustible;
-        }
-
         return $this->registerCombustible($name, $request, $user);
     }
 

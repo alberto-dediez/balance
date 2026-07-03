@@ -8,7 +8,6 @@ use App\CarbonFootprint\Application\Waste\Import\ImportWasteRequest;
 use App\CarbonFootprint\Application\Waste\Import\ImportWasteService;
 use App\CarbonFootprint\Application\Waste\WasteAuthorizer;
 use App\CarbonFootprint\Domain\Model\Unit;
-use App\CarbonFootprint\Domain\Model\Waste\WasteFilter;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
 use App\CarbonFootprint\Domain\Model\Waste\WasteRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -60,32 +59,6 @@ class ImportWasteServiceTest extends TestCase
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->co2eq());
         $this->assertEquals(Unit::Kilogram, $emissionFactor->unit());
-    }
-
-    public function testUpsertsExistingWasteByName(): void
-    {
-        $repository = WasteRepositoryMother::inMemory(Locale::Spanish);
-        $existing = WasteMother::fromName('Cartón');
-        $repository->add($existing);
-
-        $sut = $this->createSUT($repository);
-
-        $request = new ImportWasteRequest(
-            name: 'Cartón',
-            year: '2024',
-            co2eq: '2.0',
-            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
-        );
-
-        $result = $sut($request, UserMother::adminUser());
-
-        $this->assertTrue($existing->id()->equals($result->wasteId));
-
-        $waste = $repository->find($result->wasteId);
-
-        $this->assertNotNull($waste);
-        $this->assertCount(1, $repository->findByFilter(new WasteFilter(limit: 0)));
-        $this->assertEquals('2.0', $waste->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId())?->co2eq());
     }
 
     public function testExplicitWasteOnlyUpdatesEmissionFactor(): void

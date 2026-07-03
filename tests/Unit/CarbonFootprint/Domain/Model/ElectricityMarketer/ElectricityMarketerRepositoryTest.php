@@ -107,20 +107,5 @@ abstract class ElectricityMarketerRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($electricityMarketer->id()));
     }
 
-    public function testFindOneByName(): void
-    {
-        $repository = $this->createSUT();
-
-        $repository->add(ElectricityMarketerMother::random());
-        $repository->add(ElectricityMarketerMother::fromName('Nombre específico'));
-
-        $found = $repository->findOneByName('Nombre específico');
-
-        $this->assertNotNull($found);
-        $this->assertEquals('Nombre específico', $found->name());
-
-        $this->assertNull($repository->findOneByName('No existe'));
-    }
-
     abstract protected function createSUT(): ElectricityMarketerRepository;
 }

@@ -44,21 +44,6 @@ class InMemoryRoadTransportRepository implements RoadTransportRepository
         ;
     }
 
-    public function findOneByName(string $name): ?RoadTransport
-    {
-        foreach ($this->roadTransports as $roadTransport) {
-            if (true == $roadTransport->isRemoved()) {
-                continue;
-            }
-
-            if (strtolower(trim((string) $roadTransport->name())) === strtolower(trim($name))) {
-                return $roadTransport;
-            }
-        }
-
-        return null;
-    }
-
     /** @return array<int, RoadTransport> */
     public function findByFilter(RoadTransportFilter $filter): array
     {

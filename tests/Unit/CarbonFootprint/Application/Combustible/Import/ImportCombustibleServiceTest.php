@@ -7,7 +7,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Combustible\Import;
 use App\CarbonFootprint\Application\Combustible\CombustibleAuthorizer;
 use App\CarbonFootprint\Application\Combustible\Import\ImportCombustibleRequest;
 use App\CarbonFootprint\Application\Combustible\Import\ImportCombustibleService;
-use App\CarbonFootprint\Domain\Model\Combustible\CombustibleFilter;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -60,32 +59,6 @@ class ImportCombustibleServiceTest extends TestCase
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->co2eq());
         $this->assertEquals(Unit::Kilogram, $emissionFactor->unit());
-    }
-
-    public function testUpsertsExistingCombustibleByName(): void
-    {
-        $repository = CombustibleRepositoryMother::inMemory(Locale::Spanish);
-        $existing = CombustibleMother::fromName('Diésel');
-        $repository->add($existing);
-
-        $sut = $this->createSUT($repository);
-
-        $request = new ImportCombustibleRequest(
-            name: 'Diésel',
-            year: '2024',
-            co2eq: '2.0',
-            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
-        );
-
-        $result = $sut($request, UserMother::adminUser());
-
-        $this->assertTrue($existing->id()->equals($result->combustibleId));
-
-        $combustible = $repository->find($result->combustibleId);
-
-        $this->assertNotNull($combustible);
-        $this->assertCount(1, $repository->findByFilter(new CombustibleFilter(limit: 0)));
-        $this->assertEquals('2.0', $combustible->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId())?->co2eq());
     }
 
     public function testExplicitCombustibleOnlyUpdatesEmissionFactor(): void

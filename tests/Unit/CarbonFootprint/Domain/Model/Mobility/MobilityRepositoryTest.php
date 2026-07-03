@@ -151,20 +151,5 @@ abstract class MobilityRepositoryTest extends KernelTestCase
         $this->assertEquals('translated-name', $recoveredMobilities[0]->name());
     }
 
-    public function testFindOneByName(): void
-    {
-        $repository = $this->createSUT();
-
-        $repository->add(MobilityMother::random());
-        $repository->add(MobilityMother::fromName('Nombre específico'));
-
-        $found = $repository->findOneByName('Nombre específico');
-
-        $this->assertNotNull($found);
-        $this->assertEquals('Nombre específico', $found->name());
-
-        $this->assertNull($repository->findOneByName('No existe'));
-    }
-
     abstract protected function createSUT(Locale $locale = Locale::Spanish): MobilityRepository;
 }

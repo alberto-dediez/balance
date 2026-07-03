@@ -44,21 +44,6 @@ class InMemoryMobilityRepository implements MobilityRepository
         ;
     }
 
-    public function findOneByName(string $name): ?Mobility
-    {
-        foreach ($this->mobilities as $mobility) {
-            if (true == $mobility->isRemoved()) {
-                continue;
-            }
-
-            if (strtolower(trim((string) $mobility->name())) === strtolower(trim($name))) {
-                return $mobility;
-            }
-        }
-
-        return null;
-    }
-
     /** @return array<int, Mobility> */
     public function findByFilter(MobilityFilter $filter): array
     {

@@ -12,8 +12,6 @@ interface GdOFactorRepository
 
     public function find(GdOFactorId $gdOFactorId): ?GdOFactor;
 
-    public function findOneByName(string $name): ?GdOFactor;
-
     /** @return array<GdOFactor> */
     public function findByFilter(GdOFactorFilter $filter): array;
 

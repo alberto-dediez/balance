@@ -44,21 +44,6 @@ class InMemoryOvernightStayRepository implements OvernightStayRepository
         ;
     }
 
-    public function findOneByName(string $name): ?OvernightStay
-    {
-        foreach ($this->overnightStays as $overnightStay) {
-            if (true == $overnightStay->isRemoved()) {
-                continue;
-            }
-
-            if (strtolower(trim((string) $overnightStay->name())) === strtolower(trim($name))) {
-                return $overnightStay;
-            }
-        }
-
-        return null;
-    }
-
     /** @return array<int, OvernightStay> */
     public function findByFilter(OvernightStayFilter $filter): array
     {

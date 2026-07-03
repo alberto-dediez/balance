@@ -44,21 +44,6 @@ class InMemoryElectricityMarketerRepository implements ElectricityMarketerReposi
         ;
     }
 
-    public function findOneByName(string $name): ?ElectricityMarketer
-    {
-        foreach ($this->electricityMarketers as $electricityMarketer) {
-            if (true == $electricityMarketer->isRemoved()) {
-                continue;
-            }
-
-            if (strtolower(trim((string) $electricityMarketer->name())) === strtolower(trim($name))) {
-                return $electricityMarketer;
-            }
-        }
-
-        return null;
-    }
-
     /** @return array<int, ElectricityMarketer> */
     public function findByFilter(ElectricityMarketerFilter $filter): array
     {

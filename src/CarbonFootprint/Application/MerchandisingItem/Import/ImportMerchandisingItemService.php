@@ -73,14 +73,6 @@ class ImportMerchandisingItemService implements CommandHandler
             throw new \InvalidArgumentException('A merchandising item or a name is required');
         }
 
-        $merchandisingItem = $this->merchandisingItemRepository->findOneByName($name);
-
-        if (null !== $merchandisingItem) {
-            $this->authorizer->denyUnlessCanDoThat($merchandisingItem, SecurityAction::Edit, $user);
-
-            return $merchandisingItem;
-        }
-
         return $this->registerMerchandisingItem($name, $request, $user);
     }
 

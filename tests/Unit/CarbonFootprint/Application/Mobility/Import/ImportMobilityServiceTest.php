@@ -7,7 +7,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Mobility\Import;
 use App\CarbonFootprint\Application\Mobility\Import\ImportMobilityRequest;
 use App\CarbonFootprint\Application\Mobility\Import\ImportMobilityService;
 use App\CarbonFootprint\Application\Mobility\MobilityAuthorizer;
-use App\CarbonFootprint\Domain\Model\Mobility\MobilityFilter;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -60,32 +59,6 @@ class ImportMobilityServiceTest extends TestCase
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->co2eq());
         $this->assertEquals(Unit::Kilometer, $emissionFactor->unit());
-    }
-
-    public function testUpsertsExistingMobilityByName(): void
-    {
-        $repository = MobilityRepositoryMother::inMemory(Locale::Spanish);
-        $existing = MobilityMother::fromName('Vuelo');
-        $repository->add($existing);
-
-        $sut = $this->createSUT($repository);
-
-        $request = new ImportMobilityRequest(
-            name: 'Vuelo',
-            year: '2024',
-            co2eq: '2.0',
-            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
-        );
-
-        $result = $sut($request, UserMother::adminUser());
-
-        $this->assertTrue($existing->id()->equals($result->mobilityId));
-
-        $mobility = $repository->find($result->mobilityId);
-
-        $this->assertNotNull($mobility);
-        $this->assertCount(1, $repository->findByFilter(new MobilityFilter(limit: 0)));
-        $this->assertEquals('2.0', $mobility->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId())?->co2eq());
     }
 
     public function testExplicitMobilityOnlyUpdatesEmissionFactor(): void

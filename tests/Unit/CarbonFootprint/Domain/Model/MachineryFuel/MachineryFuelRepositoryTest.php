@@ -181,20 +181,5 @@ abstract class MachineryFuelRepositoryTest extends KernelTestCase
         $this->assertEquals('translated-name', $recovered[0]->name());
     }
 
-    public function testFindOneByName(): void
-    {
-        $repository = $this->createSUT();
-
-        $repository->add(MachineryFuelMother::random());
-        $repository->add(MachineryFuelMother::fromName('Nombre específico'));
-
-        $found = $repository->findOneByName('Nombre específico');
-
-        $this->assertNotNull($found);
-        $this->assertEquals('Nombre específico', $found->name());
-
-        $this->assertNull($repository->findOneByName('No existe'));
-    }
-
     abstract protected function createSUT(Locale $locale = Locale::Spanish): MachineryFuelRepository;
 }

@@ -12,8 +12,6 @@ interface RoadTransportRepository
 
     public function find(RoadTransportId $roadTransportId): ?RoadTransport;
 
-    public function findOneByName(string $name): ?RoadTransport;
-
     /** @return array<RoadTransport> */
     public function findByFilter(RoadTransportFilter $filter): array;
 

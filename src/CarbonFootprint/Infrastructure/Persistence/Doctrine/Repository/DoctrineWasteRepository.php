@@ -52,27 +52,6 @@ class DoctrineWasteRepository implements WasteRepository
         ;
     }
 
-    public function findOneByName(string $name): ?Waste
-    {
-        $qb = $this->createQueryBuilderFromFilter(new WasteFilter());
-
-        return $qb
-            ->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->andX(
-                        $qb->expr()->eq('w.name', ':name'),
-                        $qb->expr()->isNull('trans.name'),
-                    ),
-                    $qb->expr()->eq('trans.name', ':name'),
-                ),
-            )
-            ->setParameter('name', $name)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-
     private function createQueryBuilderFromFilter(WasteFilter $filter): QueryBuilder
     {
         $qb = $this->manager->createQueryBuilder();

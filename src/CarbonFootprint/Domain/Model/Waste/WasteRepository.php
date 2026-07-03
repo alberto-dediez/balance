@@ -12,8 +12,6 @@ interface WasteRepository
 
     public function find(WasteId $wasteId): ?Waste;
 
-    public function findOneByName(string $name): ?Waste;
-
     /** @return array<Waste> */
     public function findByFilter(WasteFilter $filter): array;
 

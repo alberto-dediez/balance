@@ -12,8 +12,6 @@ interface ElectricityMarketerRepository
 
     public function find(ElectricityMarketerId $electricityMarketerId): ?ElectricityMarketer;
 
-    public function findOneByName(string $name): ?ElectricityMarketer;
-
     /** @return array<ElectricityMarketer> */
     public function findByFilter(ElectricityMarketerFilter $filter): array;
 

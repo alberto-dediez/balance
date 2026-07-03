@@ -46,21 +46,6 @@ class DoctrineElectricityMarketerRepository implements ElectricityMarketerReposi
         ;
     }
 
-    public function findOneByName(string $name): ?ElectricityMarketer
-    {
-        $qb = $this->createQueryBuilderFromFilter(new ElectricityMarketerFilter());
-
-        return $qb
-            ->andWhere(
-                $qb->expr()->eq('e.name', ':name'),
-            )
-            ->setParameter('name', $name)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-
     private function createQueryBuilderFromFilter(ElectricityMarketerFilter $filter): QueryBuilder
     {
         $qb = $this->manager->createQueryBuilder();

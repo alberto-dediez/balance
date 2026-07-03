@@ -44,21 +44,6 @@ class InMemoryCombustibleRepository implements CombustibleRepository
         ;
     }
 
-    public function findOneByName(string $name): ?Combustible
-    {
-        foreach ($this->combustibles as $combustible) {
-            if (true == $combustible->isRemoved()) {
-                continue;
-            }
-
-            if (strtolower(trim((string) $combustible->name())) === strtolower(trim($name))) {
-                return $combustible;
-            }
-        }
-
-        return null;
-    }
-
     /** @return array<int, Combustible> */
     public function findByFilter(CombustibleFilter $filter): array
     {

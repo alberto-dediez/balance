@@ -68,14 +68,6 @@ class ImportElectricityMarketerService implements CommandHandler
             throw new \InvalidArgumentException('An electricity marketer or a name is required');
         }
 
-        $electricityMarketer = $this->electricityMarketerRepository->findOneByName($name);
-
-        if (null !== $electricityMarketer) {
-            $this->authorizer->denyUnlessCanDoThat($electricityMarketer, SecurityAction::Edit, $user);
-
-            return $electricityMarketer;
-        }
-
         return $this->registerElectricityMarketer($name, $user);
     }
 

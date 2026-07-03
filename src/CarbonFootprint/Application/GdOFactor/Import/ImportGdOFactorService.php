@@ -68,14 +68,6 @@ class ImportGdOFactorService implements CommandHandler
             throw new \InvalidArgumentException('A GdO factor or a name is required');
         }
 
-        $gdOFactor = $this->gdOFactorRepository->findOneByName($name);
-
-        if (null !== $gdOFactor) {
-            $this->authorizer->denyUnlessCanDoThat($gdOFactor, SecurityAction::Edit, $user);
-
-            return $gdOFactor;
-        }
-
         return $this->registerGdOFactor($name, $user);
     }
 

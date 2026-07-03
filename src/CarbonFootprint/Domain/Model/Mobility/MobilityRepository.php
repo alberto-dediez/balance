@@ -12,8 +12,6 @@ interface MobilityRepository
 
     public function find(MobilityId $mobilityId): ?Mobility;
 
-    public function findOneByName(string $name): ?Mobility;
-
     /** @return array<Mobility> */
     public function findByFilter(MobilityFilter $filter): array;
 

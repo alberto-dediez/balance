@@ -52,27 +52,6 @@ class DoctrineOvernightStayRepository implements OvernightStayRepository
         ;
     }
 
-    public function findOneByName(string $name): ?OvernightStay
-    {
-        $qb = $this->createQueryBuilderFromFilter(new OvernightStayFilter());
-
-        return $qb
-            ->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->andX(
-                        $qb->expr()->eq('o.name', ':name'),
-                        $qb->expr()->isNull('trans.name'),
-                    ),
-                    $qb->expr()->eq('trans.name', ':name'),
-                ),
-            )
-            ->setParameter('name', $name)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-
     private function createQueryBuilderFromFilter(OvernightStayFilter $filter): QueryBuilder
     {
         $qb = $this->manager->createQueryBuilder();

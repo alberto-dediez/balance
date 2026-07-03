@@ -52,27 +52,6 @@ class DoctrineMachineryFuelRepository implements MachineryFuelRepository
         ;
     }
 
-    public function findOneByName(string $name): ?MachineryFuel
-    {
-        $qb = $this->createQueryBuilderFromFilter(new MachineryFuelFilter());
-
-        return $qb
-            ->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->andX(
-                        $qb->expr()->eq('mf.name', ':name'),
-                        $qb->expr()->isNull('trans.name'),
-                    ),
-                    $qb->expr()->eq('trans.name', ':name'),
-                ),
-            )
-            ->setParameter('name', $name)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-
     private function createQueryBuilderFromFilter(MachineryFuelFilter $filter): QueryBuilder
     {
         $qb = $this->manager->createQueryBuilder();

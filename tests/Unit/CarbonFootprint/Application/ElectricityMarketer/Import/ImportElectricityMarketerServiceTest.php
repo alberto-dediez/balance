@@ -7,7 +7,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\ElectricityMarketer\Import;
 use App\CarbonFootprint\Application\ElectricityMarketer\ElectricityMarketerAuthorizer;
 use App\CarbonFootprint\Application\ElectricityMarketer\Import\ImportElectricityMarketerRequest;
 use App\CarbonFootprint\Application\ElectricityMarketer\Import\ImportElectricityMarketerService;
-use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerFilter;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -55,32 +54,6 @@ class ImportElectricityMarketerServiceTest extends TestCase
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->co2eq());
         $this->assertEquals(Unit::KWh, $emissionFactor->unit());
-    }
-
-    public function testUpsertsExistingElectricityMarketerByName(): void
-    {
-        $repository = ElectricityMarketerRepositoryMother::inMemory();
-        $existing = ElectricityMarketerMother::fromName('Comercializadora Solar');
-        $repository->add($existing);
-
-        $sut = $this->createSUT($repository);
-
-        $request = new ImportElectricityMarketerRequest(
-            name: 'Comercializadora Solar',
-            year: '2024',
-            co2eq: '2.0',
-            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
-        );
-
-        $result = $sut($request, UserMother::adminUser());
-
-        $this->assertTrue($existing->id()->equals($result->electricityMarketerId));
-
-        $electricityMarketer = $repository->find($result->electricityMarketerId);
-
-        $this->assertNotNull($electricityMarketer);
-        $this->assertCount(1, $repository->findByFilter(new ElectricityMarketerFilter(limit: 0)));
-        $this->assertEquals('2.0', $electricityMarketer->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId())?->co2eq());
     }
 
     public function testExplicitElectricityMarketerOnlyUpdatesEmissionFactor(): void

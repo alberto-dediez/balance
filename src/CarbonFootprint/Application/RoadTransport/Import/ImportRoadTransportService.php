@@ -70,14 +70,6 @@ class ImportRoadTransportService implements CommandHandler
             throw new \InvalidArgumentException('A road transport or a name is required');
         }
 
-        $roadTransport = $this->roadTransportRepository->findOneByName($name);
-
-        if (null !== $roadTransport) {
-            $this->authorizer->denyUnlessCanDoThat($roadTransport, SecurityAction::Edit, $user);
-
-            return $roadTransport;
-        }
-
         return $this->registerRoadTransport($name, $request, $user);
     }
 

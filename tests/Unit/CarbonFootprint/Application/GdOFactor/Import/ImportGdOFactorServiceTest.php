@@ -7,7 +7,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\GdOFactor\Import;
 use App\CarbonFootprint\Application\GdOFactor\GdOFactorAuthorizer;
 use App\CarbonFootprint\Application\GdOFactor\Import\ImportGdOFactorRequest;
 use App\CarbonFootprint\Application\GdOFactor\Import\ImportGdOFactorService;
-use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorFilter;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -55,32 +54,6 @@ class ImportGdOFactorServiceTest extends TestCase
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->co2eq());
         $this->assertEquals(Unit::KWh, $emissionFactor->unit());
-    }
-
-    public function testUpsertsExistingGdOFactorByName(): void
-    {
-        $repository = GdOFactorRepositoryMother::inMemory();
-        $existing = GdOFactorMother::fromName('Factor GdO Solar');
-        $repository->add($existing);
-
-        $sut = $this->createSUT($repository);
-
-        $request = new ImportGdOFactorRequest(
-            name: 'Factor GdO Solar',
-            year: '2024',
-            co2eq: '2.0',
-            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
-        );
-
-        $result = $sut($request, UserMother::adminUser());
-
-        $this->assertTrue($existing->id()->equals($result->gdOFactorId));
-
-        $gdOFactor = $repository->find($result->gdOFactorId);
-
-        $this->assertNotNull($gdOFactor);
-        $this->assertCount(1, $repository->findByFilter(new GdOFactorFilter(limit: 0)));
-        $this->assertEquals('2.0', $gdOFactor->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId())?->co2eq());
     }
 
     public function testExplicitGdOFactorOnlyUpdatesEmissionFactor(): void

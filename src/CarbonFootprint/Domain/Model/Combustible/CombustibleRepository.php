@@ -12,8 +12,6 @@ interface CombustibleRepository
 
     public function find(CombustibleId $combustibleId): ?Combustible;
 
-    public function findOneByName(string $name): ?Combustible;
-
     /** @return array<Combustible> */
     public function findByFilter(CombustibleFilter $filter): array;
 

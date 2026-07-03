@@ -12,8 +12,6 @@ interface MachineryFuelRepository
 
     public function find(MachineryFuelId $machineryFuelId): ?MachineryFuel;
 
-    public function findOneByName(string $name): ?MachineryFuel;
-
     /** @return array<MachineryFuel> */
     public function findByFilter(MachineryFuelFilter $filter): array;
 

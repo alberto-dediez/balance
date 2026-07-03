@@ -12,8 +12,6 @@ interface MerchandisingItemRepository
 
     public function find(MerchandisingItemId $merchandisingItemId): ?MerchandisingItem;
 
-    public function findOneByName(string $name): ?MerchandisingItem;
-
     /** @return array<MerchandisingItem> */
     public function findByFilter(MerchandisingItemFilter $filter): array;
 

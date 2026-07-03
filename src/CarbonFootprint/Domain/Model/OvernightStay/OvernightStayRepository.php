@@ -12,8 +12,6 @@ interface OvernightStayRepository
 
     public function find(OvernightStayId $overnightStayId): ?OvernightStay;
 
-    public function findOneByName(string $name): ?OvernightStay;
-
     /** @return array<OvernightStay> */
     public function findByFilter(OvernightStayFilter $filter): array;
 

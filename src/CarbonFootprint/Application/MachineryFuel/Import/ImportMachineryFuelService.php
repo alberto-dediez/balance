@@ -70,14 +70,6 @@ class ImportMachineryFuelService implements CommandHandler
             throw new \InvalidArgumentException('A machinery fuel or a name is required');
         }
 
-        $machineryFuel = $this->machineryFuelRepository->findOneByName($name);
-
-        if (null !== $machineryFuel) {
-            $this->authorizer->denyUnlessCanDoThat($machineryFuel, SecurityAction::Edit, $user);
-
-            return $machineryFuel;
-        }
-
         return $this->registerMachineryFuel($name, $request, $user);
     }
 

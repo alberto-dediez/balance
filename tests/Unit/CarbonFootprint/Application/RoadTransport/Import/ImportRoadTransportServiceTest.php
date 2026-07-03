@@ -7,7 +7,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\RoadTransport\Import;
 use App\CarbonFootprint\Application\RoadTransport\Import\ImportRoadTransportRequest;
 use App\CarbonFootprint\Application\RoadTransport\Import\ImportRoadTransportService;
 use App\CarbonFootprint\Application\RoadTransport\RoadTransportAuthorizer;
-use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportFilter;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportId;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
 use App\CarbonFootprint\Domain\Model\RoadTransport\Vehicle;
@@ -63,32 +62,6 @@ class ImportRoadTransportServiceTest extends TestCase
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->co2eq());
         $this->assertEquals(Unit::Kilogram, $emissionFactor->unit());
-    }
-
-    public function testUpsertsExistingRoadTransportByName(): void
-    {
-        $repository = RoadTransportRepositoryMother::inMemory(Locale::Spanish);
-        $existing = RoadTransportMother::fromName('Camión diésel');
-        $repository->add($existing);
-
-        $sut = $this->createSUT($repository);
-
-        $request = new ImportRoadTransportRequest(
-            name: 'Camión diésel',
-            year: '2024',
-            co2eq: '2.0',
-            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
-        );
-
-        $result = $sut($request, UserMother::adminUser());
-
-        $this->assertTrue($existing->id()->equals($result->roadTransportId));
-
-        $roadTransport = $repository->find($result->roadTransportId);
-
-        $this->assertNotNull($roadTransport);
-        $this->assertCount(1, $repository->findByFilter(new RoadTransportFilter(limit: 0)));
-        $this->assertEquals('2.0', $roadTransport->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId())?->co2eq());
     }
 
     public function testExplicitRoadTransportOnlyUpdatesEmissionFactor(): void

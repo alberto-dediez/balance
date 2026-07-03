@@ -69,14 +69,6 @@ class ImportMobilityService implements CommandHandler
             throw new \InvalidArgumentException('A mobility or a name is required');
         }
 
-        $mobility = $this->mobilityRepository->findOneByName($name);
-
-        if (null !== $mobility) {
-            $this->authorizer->denyUnlessCanDoThat($mobility, SecurityAction::Edit, $user);
-
-            return $mobility;
-        }
-
         return $this->registerMobility($name, $request, $user);
     }
 

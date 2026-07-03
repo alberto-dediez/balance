@@ -69,14 +69,6 @@ class ImportOvernightStayService implements CommandHandler
             throw new \InvalidArgumentException('An overnight stay or a name is required');
         }
 
-        $overnightStay = $this->overnightStayRepository->findOneByName($name);
-
-        if (null !== $overnightStay) {
-            $this->authorizer->denyUnlessCanDoThat($overnightStay, SecurityAction::Edit, $user);
-
-            return $overnightStay;
-        }
-
         return $this->registerOvernightStay($name, $user);
     }
 

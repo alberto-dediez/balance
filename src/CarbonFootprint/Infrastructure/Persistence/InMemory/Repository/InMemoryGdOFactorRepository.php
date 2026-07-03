@@ -44,21 +44,6 @@ class InMemoryGdOFactorRepository implements GdOFactorRepository
         ;
     }
 
-    public function findOneByName(string $name): ?GdOFactor
-    {
-        foreach ($this->gdOFactors as $gdOFactor) {
-            if (true == $gdOFactor->isRemoved()) {
-                continue;
-            }
-
-            if (strtolower(trim((string) $gdOFactor->name())) === strtolower(trim($name))) {
-                return $gdOFactor;
-            }
-        }
-
-        return null;
-    }
-
     /** @return array<int, GdOFactor> */
     public function findByFilter(GdOFactorFilter $filter): array
     {

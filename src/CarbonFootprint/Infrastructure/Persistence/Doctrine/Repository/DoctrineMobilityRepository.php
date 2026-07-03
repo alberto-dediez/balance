@@ -52,27 +52,6 @@ class DoctrineMobilityRepository implements MobilityRepository
         ;
     }
 
-    public function findOneByName(string $name): ?Mobility
-    {
-        $qb = $this->createQueryBuilderFromFilter(new MobilityFilter());
-
-        return $qb
-            ->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->andX(
-                        $qb->expr()->eq('m.name', ':name'),
-                        $qb->expr()->isNull('trans.name'),
-                    ),
-                    $qb->expr()->eq('trans.name', ':name'),
-                ),
-            )
-            ->setParameter('name', $name)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-
     private function createQueryBuilderFromFilter(MobilityFilter $filter): QueryBuilder
     {
         $qb = $this->manager->createQueryBuilder();

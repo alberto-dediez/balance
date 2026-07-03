@@ -8,7 +8,6 @@ use App\CarbonFootprint\Application\Material\Import\ImportMaterialRequest;
 use App\CarbonFootprint\Application\Material\Import\ImportMaterialService;
 use App\CarbonFootprint\Application\Material\MaterialAuthorizer;
 use App\CarbonFootprint\Domain\Model\Material\MaterialCategory;
-use App\CarbonFootprint\Domain\Model\Material\MaterialFilter;
 use App\CarbonFootprint\Domain\Model\Material\MaterialId;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -63,32 +62,6 @@ class ImportMaterialServiceTest extends TestCase
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->newFactor()->co2eq());
         $this->assertEquals(Unit::Kilogram, $emissionFactor->newFactor()->unit());
-    }
-
-    public function testUpsertsExistingMaterialByName(): void
-    {
-        $repository = MaterialRepositoryMother::inMemory(Locale::Spanish);
-        $existing = MaterialMother::fromName('Acero');
-        $repository->add($existing);
-
-        $sut = $this->createSUT($repository);
-
-        $request = new ImportMaterialRequest(
-            name: 'Acero',
-            year: '2024',
-            co2eq: '2.0',
-            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
-        );
-
-        $result = $sut($request, UserMother::adminUser());
-
-        $this->assertTrue($existing->id()->equals($result->materialId));
-
-        $material = $repository->find($result->materialId);
-
-        $this->assertNotNull($material);
-        $this->assertCount(1, $repository->findByFilter(new MaterialFilter(limit: 0)));
-        $this->assertEquals('2.0', $material->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId())?->newFactor()->co2eq());
     }
 
     public function testExplicitMaterialOnlyUpdatesEmissionFactor(): void

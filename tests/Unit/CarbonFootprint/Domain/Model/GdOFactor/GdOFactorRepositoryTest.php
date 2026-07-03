@@ -115,21 +115,6 @@ abstract class GdOFactorRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($gdOFactor->id()));
     }
 
-    public function testFindOneByName(): void
-    {
-        $repository = $this->createSUT();
-
-        $repository->add(GdOFactorMother::random());
-        $repository->add(GdOFactorMother::fromName('Nombre específico'));
-
-        $found = $repository->findOneByName('Nombre específico');
-
-        $this->assertNotNull($found);
-        $this->assertEquals('Nombre específico', $found->name());
-
-        $this->assertNull($repository->findOneByName('No existe'));
-    }
-
     public function testFindRecoverWithTranslation(): void
     {
         $repository = $this->createSUT(Locale::English);

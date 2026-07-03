@@ -69,14 +69,6 @@ class ImportWasteService implements CommandHandler
             throw new \InvalidArgumentException('A waste or a name is required');
         }
 
-        $waste = $this->wasteRepository->findOneByName($name);
-
-        if (null !== $waste) {
-            $this->authorizer->denyUnlessCanDoThat($waste, SecurityAction::Edit, $user);
-
-            return $waste;
-        }
-
         return $this->registerWaste($name, $request, $user);
     }
 

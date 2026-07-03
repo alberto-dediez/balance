@@ -151,20 +151,5 @@ abstract class CombustibleRepositoryTest extends KernelTestCase
         $this->assertEquals('translated-name', $recoveredCombustibles[0]->name());
     }
 
-    public function testFindOneByName(): void
-    {
-        $repository = $this->createSUT();
-
-        $repository->add(CombustibleMother::random());
-        $repository->add(CombustibleMother::fromName('Nombre específico'));
-
-        $found = $repository->findOneByName('Nombre específico');
-
-        $this->assertNotNull($found);
-        $this->assertEquals('Nombre específico', $found->name());
-
-        $this->assertNull($repository->findOneByName('No existe'));
-    }
-
     abstract protected function createSUT(Locale $locale = Locale::Spanish): CombustibleRepository;
 }

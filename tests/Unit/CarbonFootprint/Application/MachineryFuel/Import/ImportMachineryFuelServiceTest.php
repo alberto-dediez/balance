@@ -7,7 +7,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\MachineryFuel\Import;
 use App\CarbonFootprint\Application\MachineryFuel\Import\ImportMachineryFuelRequest;
 use App\CarbonFootprint\Application\MachineryFuel\Import\ImportMachineryFuelService;
 use App\CarbonFootprint\Application\MachineryFuel\MachineryFuelAuthorizer;
-use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelFilter;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelId;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -61,32 +60,6 @@ class ImportMachineryFuelServiceTest extends TestCase
         $this->assertNotNull($emissionFactor);
         $this->assertEquals('1.5', $emissionFactor->co2eq());
         $this->assertEquals(Unit::Liter, $emissionFactor->unit());
-    }
-
-    public function testUpsertsExistingMachineryFuelByName(): void
-    {
-        $repository = MachineryFuelRepositoryMother::inMemory(Locale::Spanish);
-        $existing = MachineryFuelMother::fromName('Tractor diesel');
-        $repository->add($existing);
-
-        $sut = $this->createSUT($repository);
-
-        $request = new ImportMachineryFuelRequest(
-            name: 'Tractor diesel',
-            year: '2024',
-            co2eq: '2.0',
-            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
-        );
-
-        $result = $sut($request, UserMother::adminUser());
-
-        $this->assertTrue($existing->id()->equals($result->machineryFuelId));
-
-        $machineryFuel = $repository->find($result->machineryFuelId);
-
-        $this->assertNotNull($machineryFuel);
-        $this->assertCount(1, $repository->findByFilter(new MachineryFuelFilter(limit: 0)));
-        $this->assertEquals('2.0', $machineryFuel->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId())?->co2eq());
     }
 
     public function testExplicitMachineryFuelOnlyUpdatesEmissionFactor(): void

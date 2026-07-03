@@ -53,27 +53,6 @@ class DoctrineRoadTransportRepository implements RoadTransportRepository
         ;
     }
 
-    public function findOneByName(string $name): ?RoadTransport
-    {
-        $qb = $this->createQueryBuilderFromFilter(new RoadTransportFilter());
-
-        return $qb
-            ->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->andX(
-                        $qb->expr()->eq('r.name', ':name'),
-                        $qb->expr()->isNull('trans.name'),
-                    ),
-                    $qb->expr()->eq('trans.name', ':name'),
-                ),
-            )
-            ->setParameter('name', $name)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-
     private function createQueryBuilderFromFilter(RoadTransportFilter $filter): QueryBuilder
     {
         $qb = $this->manager->createQueryBuilder();

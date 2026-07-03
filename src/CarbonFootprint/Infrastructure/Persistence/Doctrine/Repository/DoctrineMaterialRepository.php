@@ -52,27 +52,6 @@ class DoctrineMaterialRepository implements MaterialRepository
         ;
     }
 
-    public function findOneByName(string $name): ?Material
-    {
-        $qb = $this->createQueryBuilderFromFilter(new MaterialFilter());
-
-        return $qb
-            ->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->andX(
-                        $qb->expr()->eq('m.name', ':name'),
-                        $qb->expr()->isNull('trans.name'),
-                    ),
-                    $qb->expr()->eq('trans.name', ':name'),
-                ),
-            )
-            ->setParameter('name', $name)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-
     private function createQueryBuilderFromFilter(MaterialFilter $filter): QueryBuilder
     {
         $qb = $this->manager->createQueryBuilder();

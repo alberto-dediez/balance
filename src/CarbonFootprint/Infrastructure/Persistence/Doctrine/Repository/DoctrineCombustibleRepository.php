@@ -52,27 +52,6 @@ class DoctrineCombustibleRepository implements CombustibleRepository
         ;
     }
 
-    public function findOneByName(string $name): ?Combustible
-    {
-        $qb = $this->createQueryBuilderFromFilter(new CombustibleFilter());
-
-        return $qb
-            ->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->andX(
-                        $qb->expr()->eq('c.name', ':name'),
-                        $qb->expr()->isNull('trans.name'),
-                    ),
-                    $qb->expr()->eq('trans.name', ':name'),
-                ),
-            )
-            ->setParameter('name', $name)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-
     private function createQueryBuilderFromFilter(CombustibleFilter $filter): QueryBuilder
     {
         $qb = $this->manager->createQueryBuilder();
