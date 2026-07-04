@@ -9,15 +9,15 @@
         <source>materials</source>
         <target>Materials</target>
       </trans-unit>
-      <trans-unit id="kPC_Z8v" resname="assemply">
-        <source>assemply</source>
+      <trans-unit id="dRQi_gY" resname="assembly">
+        <source>assembly</source>
         <target>Setup</target>
       </trans-unit>
       <trans-unit id="y4pEcu5" resname="celebration">
         <source>celebration</source>
         <target>Celebration</target>
       </trans-unit>
-      <trans-unit id="vQ2AaXW" resname="breakdown">
+      <trans-unit id="g6LXvPX" resname="breakdown">
         <source>breakdown</source>
         <target>Teardown</target>
       </trans-unit>

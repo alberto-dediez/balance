@@ -29,6 +29,29 @@ class DoctrineActivityRepository implements ActivityRepository
         return $this->manager->find(Activity::class, $id);
     }
 
+    /**
+     * @param ActivityId[] $ids
+     *
+     * @return Activity[]
+     */
+    public function findByIds(array $ids): array
+    {
+        if ([] === $ids) {
+            return [];
+        }
+
+        $qb = $this->manager->createQueryBuilder();
+
+        return $qb
+            ->select('a')
+            ->from(Activity::class, 'a')
+            ->where($qb->expr()->in('a.id', ':ids'))
+            ->setParameter('ids', array_map(static fn(ActivityId $id): string => (string) $id, $ids))
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function remove(Activity $activity): void
     {
         $this->manager->remove($activity);

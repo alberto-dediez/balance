@@ -10,5 +10,12 @@ interface ActivityRepository
 
     public function findById(ActivityId $id): ?Activity;
 
+    /**
+     * @param ActivityId[] $ids
+     *
+     * @return Activity[]
+     */
+    public function findByIds(array $ids): array;
+
     public function remove(Activity $activity): void;
 }

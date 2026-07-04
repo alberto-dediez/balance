@@ -25,6 +25,24 @@ class InMemoryActivityRepository implements ActivityRepository
         return $this->activities[(string) $id] ?? null;
     }
 
+    /**
+     * @param ActivityId[] $ids
+     *
+     * @return Activity[]
+     */
+    public function findByIds(array $ids): array
+    {
+        $activities = [];
+
+        foreach ($ids as $id) {
+            if (isset($this->activities[(string) $id])) {
+                $activities[] = $this->activities[(string) $id];
+            }
+        }
+
+        return $activities;
+    }
+
     public function remove(Activity $activity): void
     {
         unset($this->activities[(string) $activity->id()]);

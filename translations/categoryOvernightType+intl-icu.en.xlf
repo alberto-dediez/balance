@@ -5,15 +5,15 @@
       <tool tool-id="symfony" tool-name="Symfony"/>
     </header>
     <body>
-      <trans-unit id="cat0Attend" resname="attendees">
+      <trans-unit id="pwP7iCO" resname="attendees">
         <source>attendees</source>
         <target>Attendees</target>
       </trans-unit>
-      <trans-unit id="cat0Suppl" resname="suppliers">
+      <trans-unit id="V3rUqSt" resname="suppliers">
         <source>suppliers</source>
         <target>Suppliers</target>
       </trans-unit>
-      <trans-unit id="cat0Org" resname="organizing_team">
+      <trans-unit id="t5Yllb8" resname="organizing_team">
         <source>organizing_team</source>
         <target>Organizing team</target>
       </trans-unit>
