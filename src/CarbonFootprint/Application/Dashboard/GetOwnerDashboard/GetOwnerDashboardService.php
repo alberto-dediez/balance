@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard;
 
+use App\CarbonFootprint\Application\Dashboard\EmissionsBreakdownCalculator;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
-use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
-use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintFilter;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\EventOperations\Domain\Model\Event\Event;
 use App\EventOperations\Domain\Model\Event\EventFilter;
 use App\EventOperations\Domain\Model\Event\EventRepository;
+use App\Property\Domain\Model\Company\CompanyRepository;
+use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 
@@ -24,7 +23,9 @@ class GetOwnerDashboardService
     public function __construct(
         private EventRepository $eventRepository,
         private EventCarbonFootprintRepository $eventCarbonFootprintRepository,
-        private ActivityRepository $activityRepository,
+        private PropertyRepository $propertyRepository,
+        private CompanyRepository $companyRepository,
+        private EmissionsBreakdownCalculator $emissionsBreakdownCalculator,
         private EventCarbonFootprintAuthorizer $authorizer,
     ) {}
 
@@ -65,6 +66,10 @@ class GetOwnerDashboardService
         $emissionsPerAttendeeSum = 0.0;
         $emissionsByYear = [];
         $topEventsByEmissions = [];
+        $emissionsByProperty = [];
+        $emissionsByCompany = [];
+        $propertyNames = [];
+        $companyNames = [];
 
         foreach ($footprints as $footprint) {
             if (!$footprint->status()->isCompleted()) {
@@ -83,15 +88,35 @@ class GetOwnerDashboardService
             $event = $eventsById[(string) $footprint->eventId()] ?? null;
             if ($event instanceof Event && $co2eq > 0.0) {
                 $topEventsByEmissions[] = new EventEmissions($event, $co2eq);
+
+                $propertyId = $event->propertyId();
+                if (null !== $propertyId) {
+                    $propertyKey = (string) $propertyId;
+                    if (!isset($propertyNames[$propertyKey])) {
+                        $propertyNames[$propertyKey] = $this->propertyRepository->find($propertyId)?->name() ?? $propertyKey;
+                    }
+                    $emissionsByProperty[$propertyNames[$propertyKey]] = ($emissionsByProperty[$propertyNames[$propertyKey]] ?? 0.0) + $co2eq;
+                }
+
+                $companyId = $event->companyId();
+                if (null !== $companyId) {
+                    $companyKey = (string) $companyId;
+                    if (!isset($companyNames[$companyKey])) {
+                        $companyNames[$companyKey] = $this->companyRepository->find($companyId)?->name() ?? $companyKey;
+                    }
+                    $emissionsByCompany[$companyNames[$companyKey]] = ($emissionsByCompany[$companyNames[$companyKey]] ?? 0.0) + $co2eq;
+                }
             }
         }
 
         ksort($emissionsByYear);
+        arsort($emissionsByProperty);
+        arsort($emissionsByCompany);
 
         usort($topEventsByEmissions, static fn(EventEmissions $a, EventEmissions $b): int => $b->co2eq <=> $a->co2eq);
         $topEventsByEmissions = array_slice($topEventsByEmissions, 0, 5);
 
-        [$emissionsByPhase, $emissionsBySource] = $this->emissionsBreakdowns($footprints);
+        $emissionsBreakdown = ($this->emissionsBreakdownCalculator)($footprints);
 
         usort($footprints, static fn(EventCarbonFootprint $a, EventCarbonFootprint $b): int => $b->registeredAt() <=> $a->registeredAt());
         $latestFootprints = array_map(
@@ -113,59 +138,13 @@ class GetOwnerDashboardService
             averageEmissionsPerEventCo2eq: $completedFootprints > 0 ? $totalEmissionsCo2eq / $completedFootprints : 0.0,
             averageEmissionsPerAttendeeCo2eq: $completedFootprints > 0 ? $emissionsPerAttendeeSum / $completedFootprints : 0.0,
             emissionsByYear: $emissionsByYear,
-            emissionsByPhase: $emissionsByPhase,
-            emissionsBySource: $emissionsBySource,
+            emissionsByPhase: $emissionsBreakdown->byPhase,
+            emissionsBySource: $emissionsBreakdown->bySource,
             topEventsByEmissions: $topEventsByEmissions,
             eventsByTypology: $eventsByTypology,
             latestFootprints: $latestFootprints,
+            emissionsByProperty: $emissionsByProperty,
+            emissionsByCompany: $emissionsByCompany,
         );
-    }
-
-    /**
-     * @param EventCarbonFootprint[] $footprints
-     *
-     * @return array{0: array<string, float>, 1: array<string, float>}
-     */
-    private function emissionsBreakdowns(array $footprints): array
-    {
-        /** @var ActivityId[] $activityIds */
-        $activityIds = [];
-
-        /** @var array<string, array{Phase, Source}> $references */
-        $references = [];
-
-        foreach ($footprints as $footprint) {
-            foreach ($footprint->activities()->toArray() as $footprintActivity) {
-                $activityIds[] = $footprintActivity->activityId();
-                $references[(string) $footprintActivity->activityId()] = [$footprintActivity->phase(), $footprintActivity->source()];
-            }
-        }
-
-        $emissionsByPhase = [];
-        $emissionsBySource = [];
-
-        foreach ($this->activityRepository->findByIds($activityIds) as $activity) {
-            $co2eq = (float) $activity->emissions()->co2eq();
-
-            if ($co2eq <= 0.0 || !isset($references[(string) $activity->id()])) {
-                continue;
-            }
-
-            [$phase, $source] = $references[(string) $activity->id()];
-
-            $emissionsByPhase[$phase->value] = ($emissionsByPhase[$phase->value] ?? 0.0) + $co2eq;
-            $emissionsBySource[$source->value] = ($emissionsBySource[$source->value] ?? 0.0) + $co2eq;
-        }
-
-        $orderedByPhase = [];
-        foreach (Phase::cases() as $phase) {
-            if (isset($emissionsByPhase[$phase->value])) {
-                $orderedByPhase[$phase->value] = $emissionsByPhase[$phase->value];
-            }
-        }
-
-        arsort($emissionsBySource);
-
-        return [$orderedByPhase, $emissionsBySource];
     }
 }

@@ -8,7 +8,10 @@ use App\EventOperations\Application\Event\Update\UpdateEventRequest;
 use App\EventOperations\Infrastructure\Symfony\Form\Type\EventSectorType;
 use App\EventOperations\Infrastructure\Symfony\Form\Type\EventSizeType;
 use App\EventOperations\Infrastructure\Symfony\Form\Type\EventTypologyType;
+use App\Property\Infrastructure\Symfony\Form\Type\CompanyIdType;
 use App\Property\Infrastructure\Symfony\Form\Type\DestinationIdType;
+use App\Property\Infrastructure\Symfony\Form\Type\PropertyIdType;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -25,8 +28,12 @@ class UpdateEventType extends AbstractType
 {
     use EventDateRangeValidationTrait;
 
+    public function __construct(private readonly LoggedAccount $loggedAccount) {}
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $account = ($this->loggedAccount)();
+
         $builder
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('Nombre'),
@@ -42,6 +49,17 @@ class UpdateEventType extends AbstractType
                 'constraints' => [
                     new Assert\NotNull(),
                 ],
+            ])
+            ->add('propertyId', PropertyIdType::class, [
+                'label' => new TranslatableMessage('Instalación'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Sin instalación'),
+            ])
+            ->add('companyId', CompanyIdType::class, [
+                'label' => new TranslatableMessage('Empresa'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Sin empresa'),
+                'account_id' => $account?->id(),
             ])
             ->add('size', EventSizeType::class, [
                 'label' => new TranslatableMessage('Tamaño del evento'),

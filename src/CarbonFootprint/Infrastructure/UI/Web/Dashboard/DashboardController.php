@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\Dashboard;
 
+use App\CarbonFootprint\Application\Dashboard\GetAdminDashboard\AccountEmissions;
+use App\CarbonFootprint\Application\Dashboard\GetAdminDashboard\GetAdminDashboardRequest;
+use App\CarbonFootprint\Application\Dashboard\GetAdminDashboard\GetAdminDashboardService;
 use App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard\EventEmissions;
 use App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard\GetOwnerDashboardRequest;
 use App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard\GetOwnerDashboardService;
@@ -21,10 +24,15 @@ class DashboardController extends AbstractController
 {
     public function __invoke(
         GetOwnerDashboardService $getOwnerDashboard,
+        GetAdminDashboardService $getAdminDashboard,
         LoggedUser $loggedUser,
         LoggedAccount $loggedAccount,
         TranslatorInterface $translator,
     ): Response {
+        if ($this->isGranted(Role::Admin->value)) {
+            return $this->adminDashboard($getAdminDashboard, $loggedUser, $translator);
+        }
+
         if (!$this->isGranted(Role::Owner->value)) {
             return $this->render('@shared/home.html.twig');
         }
@@ -51,6 +59,36 @@ class DashboardController extends AbstractController
             'sourceValues' => $this->roundValues($dashboard->emissionsBySource),
             'topEventCategories' => array_map(static fn(EventEmissions $eventEmissions): string => $eventEmissions->event->name(), $dashboard->topEventsByEmissions),
             'topEventValues' => array_map(static fn(EventEmissions $eventEmissions): float => round($eventEmissions->co2eq, 2), $dashboard->topEventsByEmissions),
+            'typologyCategories' => $this->translateKeys($dashboard->eventsByTypology, 'eventTypologyType', $translator),
+            'typologyValues' => array_values($dashboard->eventsByTypology),
+            'propertyCategories' => array_keys($dashboard->emissionsByProperty),
+            'propertyValues' => $this->roundValues($dashboard->emissionsByProperty),
+            'companyCategories' => array_keys($dashboard->emissionsByCompany),
+            'companyValues' => $this->roundValues($dashboard->emissionsByCompany),
+        ]);
+    }
+
+    private function adminDashboard(
+        GetAdminDashboardService $getAdminDashboard,
+        LoggedUser $loggedUser,
+        TranslatorInterface $translator,
+    ): Response {
+        try {
+            $dashboard = $getAdminDashboard(new GetAdminDashboardRequest(), $loggedUser());
+        } catch (UnauthorizedActionException $e) {
+            throw $this->createAccessDeniedException($e->getMessage());
+        }
+
+        return $this->render('@carbon_footprint/dashboard/admin_dashboard.html.twig', [
+            'dashboard' => $dashboard,
+            'emissionsYearCategories' => array_keys($dashboard->emissionsByYear),
+            'emissionsYearValues' => $this->roundValues($dashboard->emissionsByYear),
+            'phaseCategories' => $this->translateKeys($dashboard->emissionsByPhase, 'phase', $translator),
+            'phaseValues' => $this->roundValues($dashboard->emissionsByPhase),
+            'sourceCategories' => $this->translateKeys($dashboard->emissionsBySource, 'source', $translator),
+            'sourceValues' => $this->roundValues($dashboard->emissionsBySource),
+            'topAccountCategories' => array_map(static fn(AccountEmissions $accountEmissions): string => $accountEmissions->account->name(), $dashboard->topAccountsByEmissions),
+            'topAccountValues' => array_map(static fn(AccountEmissions $accountEmissions): float => round($accountEmissions->co2eq, 2), $dashboard->topAccountsByEmissions),
             'typologyCategories' => $this->translateKeys($dashboard->eventsByTypology, 'eventTypologyType', $translator),
             'typologyValues' => array_values($dashboard->eventsByTypology),
         ]);

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\EventOperations\Domain\Model\Event;
 
 use App\EventOperations\Domain\DomainEvent;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Destination\DestinationId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
@@ -18,6 +20,8 @@ final class EventRegistered extends DomainEvent
         private EventId $eventId,
         private string $name,
         private ?DestinationId $location,
+        private ?PropertyId $propertyId,
+        private ?CompanyId $companyId,
         private ?EventSize $size,
         private ?int $estimatedAttendees,
         private ?EventSector $sector,
@@ -45,6 +49,16 @@ final class EventRegistered extends DomainEvent
     public function location(): ?DestinationId
     {
         return $this->location;
+    }
+
+    public function propertyId(): ?PropertyId
+    {
+        return $this->propertyId;
+    }
+
+    public function companyId(): ?CompanyId
+    {
+        return $this->companyId;
     }
 
     public function size(): ?EventSize
@@ -98,6 +112,8 @@ final class EventRegistered extends DomainEvent
             'eventId' => (string) $this->eventId,
             'name' => $this->name,
             'location' => $this->location ? (string) $this->location : null,
+            'propertyId' => $this->propertyId ? (string) $this->propertyId : null,
+            'companyId' => $this->companyId ? (string) $this->companyId : null,
             'size' => $this->size?->value,
             'estimatedAttendees' => $this->estimatedAttendees,
             'sector' => $this->sector?->value,
@@ -121,6 +137,8 @@ final class EventRegistered extends DomainEvent
             eventId: new EventId($payload['eventId']),
             name: $payload['name'],
             location: isset($payload['location']) ? new DestinationId($payload['location']) : null,
+            propertyId: isset($payload['propertyId']) ? new PropertyId($payload['propertyId']) : null,
+            companyId: isset($payload['companyId']) ? new CompanyId($payload['companyId']) : null,
             size: isset($payload['size']) ? EventSize::tryFrom($payload['size']) : null,
             estimatedAttendees: $payload['estimatedAttendees'] ?? null,
             sector: isset($payload['sector']) ? EventSector::tryFrom($payload['sector']) : null,

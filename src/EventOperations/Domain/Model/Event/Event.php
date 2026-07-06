@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\EventOperations\Domain\Model\Event;
 
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Destination\DestinationId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
@@ -18,6 +20,8 @@ class Event implements \Stringable
         private EventId $id,
         private string $name = '',
         private ?DestinationId $location = null,
+        private ?PropertyId $propertyId = null,
+        private ?CompanyId $companyId = null,
         private ?EventSize $size = null,
         private ?int $estimatedAttendees = null,
         private ?EventSector $sector = null,
@@ -48,6 +52,16 @@ class Event implements \Stringable
     public function location(): ?DestinationId
     {
         return $this->location;
+    }
+
+    public function propertyId(): ?PropertyId
+    {
+        return $this->propertyId;
+    }
+
+    public function companyId(): ?CompanyId
+    {
+        return $this->companyId;
     }
 
     public function size(): ?EventSize
@@ -113,6 +127,8 @@ class Event implements \Stringable
     public function register(
         string $name,
         ?DestinationId $location,
+        ?PropertyId $propertyId,
+        ?CompanyId $companyId,
         ?EventSize $size,
         ?int $estimatedAttendees,
         ?EventSector $sector,
@@ -127,6 +143,8 @@ class Event implements \Stringable
                 eventId: $this->id(),
                 name: $name,
                 location: $location,
+                propertyId: $propertyId,
+                companyId: $companyId,
                 size: $size,
                 estimatedAttendees: $estimatedAttendees,
                 sector: $sector,
@@ -142,6 +160,8 @@ class Event implements \Stringable
     public function update(
         string $name,
         ?DestinationId $location,
+        ?PropertyId $propertyId,
+        ?CompanyId $companyId,
         ?EventSize $size,
         ?int $estimatedAttendees,
         ?EventSector $sector,
@@ -155,6 +175,8 @@ class Event implements \Stringable
                 eventId: $this->id(),
                 name: $name,
                 location: $location,
+                propertyId: $propertyId,
+                companyId: $companyId,
                 size: $size,
                 estimatedAttendees: $estimatedAttendees,
                 sector: $sector,
@@ -179,6 +201,8 @@ class Event implements \Stringable
     {
         $this->name = $event->name();
         $this->location = $event->location();
+        $this->propertyId = $event->propertyId();
+        $this->companyId = $event->companyId();
         $this->size = $event->size();
         $this->estimatedAttendees = $event->estimatedAttendees();
         $this->sector = $event->sector();
@@ -194,6 +218,8 @@ class Event implements \Stringable
     {
         $this->name = $event->name();
         $this->location = $event->location();
+        $this->propertyId = $event->propertyId();
+        $this->companyId = $event->companyId();
         $this->size = $event->size();
         $this->estimatedAttendees = $event->estimatedAttendees();
         $this->sector = $event->sector();

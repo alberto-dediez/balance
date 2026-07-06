@@ -12,6 +12,12 @@
             'label': 'Ubicación' | trans,
             'sortable': false
         }, {
+            'label': 'Instalación' | trans,
+            'sortable': false
+        }, {
+            'label': 'Empresa' | trans,
+            'sortable': false
+        }, {
             'label': 'Tamaño del evento' | trans,
             'sortable': false
         }, {
@@ -36,6 +42,8 @@
     <twig:List:Table :columns="columns" :elements="events" :bulkForm="bulkForm">
         <td>{{ element.name }}</td>
         <td>{{ element.location ? (element.location | destination_name) : '' }}</td>
+        <td>{{ element.propertyId ? (element.propertyId | property_name) : '' }}</td>
+        <td>{{ element.companyId ? (element.companyId | company_name) : '' }}</td>
         <td>{{ element.size ? (element.size.value | trans({}, 'eventSizeType')) : '' }}</td>
         <td>{{ element.sector ? (element.sector.value | trans({}, 'eventSectorType')) : '' }}</td>
         <td>{{ element.typology ? (element.typology.value | trans({}, 'eventTypologyType')) : '' }}</td>

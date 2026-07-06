@@ -49,6 +49,8 @@ class EditController extends AbstractController
             eventId: $event->id(),
             name: $event->name(),
             location: $event->location(),
+            propertyId: $event->propertyId(),
+            companyId: $event->companyId(),
             size: $event->size(),
             estimatedAttendees: $event->estimatedAttendees(),
             sector: $event->sector(),

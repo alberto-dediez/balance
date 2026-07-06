@@ -10,7 +10,9 @@ use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventSector;
 use App\EventOperations\Domain\Model\Event\EventSize;
 use App\EventOperations\Domain\Model\Event\EventTypology;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Destination\DestinationId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 
 class EventMother
@@ -60,12 +62,16 @@ class EventMother
         string $id,
         ?string $accountId = null,
         ?string $locationId = null,
+        ?string $propertyId = null,
+        ?string $companyId = null,
     ): Event {
         return self::fromFull(
             name: $name,
             id: $id,
             accountId: $accountId,
             locationId: $locationId,
+            propertyId: $propertyId,
+            companyId: $companyId,
         );
     }
 
@@ -74,6 +80,8 @@ class EventMother
         string $id,
         ?string $accountId = null,
         ?string $locationId = null,
+        ?string $propertyId = null,
+        ?string $companyId = null,
         ?EventSize $size = EventSize::Small,
         ?EventSector $sector = EventSector::Business,
         ?EventTypology $typology = EventTypology::Local,
@@ -84,6 +92,8 @@ class EventMother
         $event->register(
             name: $name,
             location: null !== $locationId ? new DestinationId($locationId) : null,
+            propertyId: null !== $propertyId ? new PropertyId($propertyId) : null,
+            companyId: null !== $companyId ? new CompanyId($companyId) : null,
             size: $size,
             estimatedAttendees: null,
             sector: $sector,

@@ -182,6 +182,48 @@
         </div>
 
         <div class="row">
+            <div class="col-lg-6 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-header fw-semibold">{{ 'Emisiones por instalación' | trans }} <span class="text-muted fw-normal">(kg CO₂eq)</span></div>
+                    <div class="card-body">
+                        {% if propertyValues is not empty %}
+                            <twig:Chart:Bar
+                                title="{{ 'Emisiones' | trans }}"
+                                :values="propertyValues"
+                                :categories="propertyCategories"
+                                :colors="['var(--bs-success)']"
+                                unit="kg"
+                                :decimals="0"
+                            />
+                        {% else %}
+                            <p class="text-muted mb-0">{{ 'Asocia tus eventos a una instalación para ver este desglose.' | trans }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-header fw-semibold">{{ 'Emisiones por empresa' | trans }} <span class="text-muted fw-normal">(kg CO₂eq)</span></div>
+                    <div class="card-body">
+                        {% if companyValues is not empty %}
+                            <twig:Chart:Bar
+                                title="{{ 'Emisiones' | trans }}"
+                                :values="companyValues"
+                                :categories="companyCategories"
+                                :colors="['var(--bs-warning)']"
+                                unit="kg"
+                                :decimals="0"
+                            />
+                        {% else %}
+                            <p class="text-muted mb-0">{{ 'Asocia tus eventos a una empresa para ver este desglose.' | trans }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col-lg-8 d-flex">
                 <div class="card flex-fill">
                     <div class="card-header fw-semibold">{{ 'Últimas huellas de carbono' | trans }}</div>

@@ -13,6 +13,8 @@ class GetOwnerDashboardResponse
      * @param EventEmissions[]     $topEventsByEmissions
      * @param array<string, int>   $eventsByTypology     event count indexed by EventTypology value
      * @param FootprintOverview[]  $latestFootprints
+     * @param array<string, float> $emissionsByProperty  co2eq (kg) indexed by Property name
+     * @param array<string, float> $emissionsByCompany   co2eq (kg) indexed by Company name
      */
     public function __construct(
         public readonly int $totalEvents,
@@ -30,5 +32,7 @@ class GetOwnerDashboardResponse
         public readonly array $topEventsByEmissions,
         public readonly array $eventsByTypology,
         public readonly array $latestFootprints,
+        public readonly array $emissionsByProperty,
+        public readonly array $emissionsByCompany,
     ) {}
 }

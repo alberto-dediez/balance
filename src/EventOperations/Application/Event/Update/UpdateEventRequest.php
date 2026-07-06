@@ -8,7 +8,9 @@ use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventSector;
 use App\EventOperations\Domain\Model\Event\EventSize;
 use App\EventOperations\Domain\Model\Event\EventTypology;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Destination\DestinationId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Shared\Application\CommandBus\Command;
 
 class UpdateEventRequest implements Command
@@ -17,6 +19,8 @@ class UpdateEventRequest implements Command
         public EventId $eventId,
         public string $name,
         public ?DestinationId $location = null,
+        public ?PropertyId $propertyId = null,
+        public ?CompanyId $companyId = null,
         public ?EventSize $size = null,
         public ?int $estimatedAttendees = null,
         public ?EventSector $sector = null,

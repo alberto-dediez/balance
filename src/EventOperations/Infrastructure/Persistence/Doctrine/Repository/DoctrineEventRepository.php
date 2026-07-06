@@ -11,7 +11,9 @@ use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\EventOperations\Domain\Model\Event\EventSector;
 use App\EventOperations\Domain\Model\Event\EventSize;
 use App\EventOperations\Domain\Model\Event\EventTypology;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Destination\DestinationId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
@@ -91,6 +93,24 @@ class DoctrineEventRepository implements EventRepository
                     $qb->expr()->eq('e.location', ':location'),
                 )
                 ->setParameter('location', $filter->location)
+            ;
+        }
+
+        if ($filter->propertyId instanceof PropertyId) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('e.propertyId', ':propertyId'),
+                )
+                ->setParameter('propertyId', $filter->propertyId)
+            ;
+        }
+
+        if ($filter->companyId instanceof CompanyId) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('e.companyId', ':companyId'),
+                )
+                ->setParameter('companyId', $filter->companyId)
             ;
         }
 

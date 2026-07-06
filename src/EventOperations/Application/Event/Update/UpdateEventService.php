@@ -50,6 +50,8 @@ class UpdateEventService implements CommandHandler
         $event->update(
             name: $request->name,
             location: $request->location,
+            propertyId: $request->propertyId,
+            companyId: $request->companyId,
             size: $request->size,
             estimatedAttendees: $request->estimatedAttendees,
             sector: $request->sector,

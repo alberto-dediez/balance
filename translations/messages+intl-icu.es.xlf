@@ -3015,7 +3015,7 @@
       </trans-unit>
       <trans-unit id="cX.QLVg" resname="No se han podido guardar las actividades: {error}">
         <source>No se han podido guardar las actividades: {error}</source>
-        <target>NEW_No se han podido guardar las actividades: {error}</target>
+        <target>No se han podido guardar las actividades: {error}</target>
       </trans-unit>
       <trans-unit id="8pJNR_L" resname="Panel de control">
         <source>Panel de control</source>
@@ -3023,23 +3023,23 @@
       </trans-unit>
       <trans-unit id="G8Ud7GH" resname="Selecciona una opción">
         <source>Selecciona una opción</source>
-        <target>NEW_Selecciona una opción</target>
+        <target>Selecciona una opción</target>
       </trans-unit>
       <trans-unit id="CSX..ne" resname="Nuevo">
         <source>Nuevo</source>
-        <target>NEW_Nuevo</target>
+        <target>Nuevo</target>
       </trans-unit>
       <trans-unit id="T5kwGSf" resname="Producto">
         <source>Producto</source>
-        <target>NEW_Producto</target>
+        <target>Producto</target>
       </trans-unit>
       <trans-unit id="l9WN2vi" resname="Condición">
         <source>Condición</source>
-        <target>NEW_Condición</target>
+        <target>Condición</target>
       </trans-unit>
       <trans-unit id="81ybIPy" resname="Cantidad">
         <source>Cantidad</source>
-        <target>NEW_Cantidad</target>
+        <target>Cantidad</target>
       </trans-unit>
       <trans-unit id="wrXPNRC" resname="Emisiones (kg CO₂eq)">
         <source>Emisiones (kg CO₂eq)</source>
@@ -3047,43 +3047,43 @@
       </trans-unit>
       <trans-unit id="FVzHEcX" resname="Garantía de origen">
         <source>Garantía de origen</source>
-        <target>NEW_Garantía de origen</target>
+        <target>Garantía de origen</target>
       </trans-unit>
       <trans-unit id="aqQRgl7" resname="Cantidad (kWh)">
         <source>Cantidad (kWh)</source>
-        <target>NEW_Cantidad (kWh)</target>
+        <target>Cantidad (kWh)</target>
       </trans-unit>
       <trans-unit id="vzB3NVW" resname="Medio de transporte">
         <source>Medio de transporte</source>
-        <target>NEW_Medio de transporte</target>
+        <target>Medio de transporte</target>
       </trans-unit>
       <trans-unit id="vARFJla" resname="Alojamiento">
         <source>Alojamiento</source>
-        <target>NEW_Alojamiento</target>
+        <target>Alojamiento</target>
       </trans-unit>
       <trans-unit id=".hIzKEw" resname="Combustibles fijos en instalaciones">
         <source>Combustibles fijos en instalaciones</source>
-        <target>NEW_Combustibles fijos en instalaciones</target>
+        <target>Combustibles fijos en instalaciones</target>
       </trans-unit>
       <trans-unit id="5UoycT2" resname="Transporte de mercancías">
         <source>Transporte de mercancías</source>
-        <target>NEW_Transporte de mercancías</target>
+        <target>Transporte de mercancías</target>
       </trans-unit>
       <trans-unit id="pJJ8kDh" resname="Electricidad de maquinaria">
         <source>Electricidad de maquinaria</source>
-        <target>NEW_Electricidad de maquinaria</target>
+        <target>Electricidad de maquinaria</target>
       </trans-unit>
       <trans-unit id="atcOL8R" resname="Electricidad de instalaciones">
         <source>Electricidad de instalaciones</source>
-        <target>NEW_Electricidad de instalaciones</target>
+        <target>Electricidad de instalaciones</target>
       </trans-unit>
       <trans-unit id="KQPvrHg" resname="Movilidad de proveedores y equipo">
         <source>Movilidad de proveedores y equipo</source>
-        <target>NEW_Movilidad de proveedores y equipo</target>
+        <target>Movilidad de proveedores y equipo</target>
       </trans-unit>
       <trans-unit id="cpyGGf7" resname="Gestión de residuos">
         <source>Gestión de residuos</source>
-        <target>NEW_Gestión de residuos</target>
+        <target>Gestión de residuos</target>
       </trans-unit>
       <trans-unit id="hWE.Smj" resname="Aún no hay datos que mostrar">
         <source>Aún no hay datos que mostrar</source>
@@ -3180,6 +3180,62 @@
       <trans-unit id="Rb8bfvu" resname="Indica la tipología de tus eventos para ver su distribución.">
         <source>Indica la tipología de tus eventos para ver su distribución.</source>
         <target>Indica la tipología de tus eventos para ver su distribución.</target>
+      </trans-unit>
+      <trans-unit id="h3XGsNu" resname="Cuando las cuentas registren eventos y calculen sus huellas de carbono, aquí verás las estadísticas globales de la plataforma.">
+        <source>Cuando las cuentas registren eventos y calculen sus huellas de carbono, aquí verás las estadísticas globales de la plataforma.</source>
+        <target>Cuando las cuentas registren eventos y calculen sus huellas de carbono, aquí verás las estadísticas globales de la plataforma.</target>
+      </trans-unit>
+      <trans-unit id="6Q44JbN" resname="Gestionar cuentas">
+        <source>Gestionar cuentas</source>
+        <target>Gestionar cuentas</target>
+      </trans-unit>
+      <trans-unit id="XR9cpNM" resname="activas">
+        <source>activas</source>
+        <target>activas</target>
+      </trans-unit>
+      <trans-unit id="yhbaIT3" resname="usuarios registrados">
+        <source>usuarios registrados</source>
+        <target>usuarios registrados</target>
+      </trans-unit>
+      <trans-unit id="R.bosYX" resname="Todavía no hay huellas de carbono completadas.">
+        <source>Todavía no hay huellas de carbono completadas.</source>
+        <target>Todavía no hay huellas de carbono completadas.</target>
+      </trans-unit>
+      <trans-unit id="rC0AsAG" resname="Cuentas con más emisiones">
+        <source>Cuentas con más emisiones</source>
+        <target>Cuentas con más emisiones</target>
+      </trans-unit>
+      <trans-unit id="y3qm3KG" resname="Todavía no se ha calculado ninguna huella de carbono en la plataforma.">
+        <source>Todavía no se ha calculado ninguna huella de carbono en la plataforma.</source>
+        <target>Todavía no se ha calculado ninguna huella de carbono en la plataforma.</target>
+      </trans-unit>
+      <trans-unit id="6BAthlA" resname="Todavía no hay eventos con tipología indicada.">
+        <source>Todavía no hay eventos con tipología indicada.</source>
+        <target>Todavía no hay eventos con tipología indicada.</target>
+      </trans-unit>
+      <trans-unit id="CucPsde" resname="Instalación">
+        <source>Instalación</source>
+        <target>Instalación</target>
+      </trans-unit>
+      <trans-unit id="nnA8URM" resname="Sin instalación">
+        <source>Sin instalación</source>
+        <target>Sin instalación</target>
+      </trans-unit>
+      <trans-unit id="GsCcHL8" resname="Emisiones por instalación">
+        <source>Emisiones por instalación</source>
+        <target>Emisiones por instalación</target>
+      </trans-unit>
+      <trans-unit id="wKmqduB" resname="Asocia tus eventos a una instalación para ver este desglose.">
+        <source>Asocia tus eventos a una instalación para ver este desglose.</source>
+        <target>Asocia tus eventos a una instalación para ver este desglose.</target>
+      </trans-unit>
+      <trans-unit id="aRQbwNs" resname="Emisiones por empresa">
+        <source>Emisiones por empresa</source>
+        <target>Emisiones por empresa</target>
+      </trans-unit>
+      <trans-unit id="5xutQQ9" resname="Asocia tus eventos a una empresa para ver este desglose.">
+        <source>Asocia tus eventos a una empresa para ver este desglose.</source>
+        <target>Asocia tus eventos a una empresa para ver este desglose.</target>
       </trans-unit>
     </body>
   </file>

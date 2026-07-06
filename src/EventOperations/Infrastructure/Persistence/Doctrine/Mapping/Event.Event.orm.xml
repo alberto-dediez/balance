@@ -12,6 +12,8 @@
 
         <field name="name" type="string" length="255" nullable="false" />
         <field name="location" type="destination_id" column="location_id" nullable="true" />
+        <field name="propertyId" type="property_id" column="property_id" nullable="true" />
+        <field name="companyId" type="company_id" column="company_id" nullable="true" />
         <field name="size" type="string" enum-type="App\EventOperations\Domain\Model\Event\EventSize" nullable="true" />
         <field name="estimatedAttendees" type="integer" column="estimated_attendees" nullable="true" />
         <field name="sector" type="string" enum-type="App\EventOperations\Domain\Model\Event\EventSector" nullable="true" />

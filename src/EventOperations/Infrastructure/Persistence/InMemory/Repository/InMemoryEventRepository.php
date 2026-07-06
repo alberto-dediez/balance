@@ -11,7 +11,9 @@ use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\EventOperations\Domain\Model\Event\EventSector;
 use App\EventOperations\Domain\Model\Event\EventSize;
 use App\EventOperations\Domain\Model\Event\EventTypology;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Destination\DestinationId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -73,6 +75,14 @@ class InMemoryEventRepository implements EventRepository
             }
 
             if ($filter->location instanceof DestinationId && (null === $event->location() || !$filter->location->equals($event->location()))) {
+                continue;
+            }
+
+            if ($filter->propertyId instanceof PropertyId && (null === $event->propertyId() || !$filter->propertyId->equals($event->propertyId()))) {
+                continue;
+            }
+
+            if ($filter->companyId instanceof CompanyId && (null === $event->companyId() || !$filter->companyId->equals($event->companyId()))) {
                 continue;
             }
 
