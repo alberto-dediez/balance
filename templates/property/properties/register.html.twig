@@ -11,20 +11,7 @@
 {% block content %}
     {{ form_start(form) }}
         <twig:Card>
-            <div class="row">
-                <div class="col-12">
-                    {{ form_row(form.name) }}
-                </div>
-                <div class="col-12">
-                    {{ form_row(form.info) }}
-                </div>
-                <div class="col-12">
-                    {{ form_row(form.numberOfEmployees) }}
-                </div>
-                <div class="col-12">
-                    {{ form_row(form.dailyClients) }}
-                </div>
-            </div>
+            {% include '@property/properties/_form.html.twig' %}
 
             <twig:ActionBar>
                 <twig:ActionBar:Button type="primary" :button="form.register" />

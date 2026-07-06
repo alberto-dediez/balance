@@ -12,9 +12,6 @@
             'label': 'Ubicación' | trans,
             'sortable': false
         }, {
-            'label': 'Instalación' | trans,
-            'sortable': false
-        }, {
             'label': 'Empresa' | trans,
             'sortable': false
         }, {
@@ -31,24 +28,26 @@
             'sortable': true,
             'sortableBy': 'registeredAt'
         }, {
-            'label': 'Fecha de actualización' | trans,
-            'sortable': true,
-            'sortableBy': 'updatedAt'
-        }, {
             'label': ''
         },
     ] %}
 
     <twig:List:Table :columns="columns" :elements="events" :bulkForm="bulkForm">
         <td>{{ element.name }}</td>
-        <td>{{ element.location ? (element.location | destination_name) : '' }}</td>
-        <td>{{ element.propertyId ? (element.propertyId | property_name) : '' }}</td>
+        <td>
+            {% set property_name = element.propertyId ? (element.propertyId | property_name) : '' %}
+
+            {% if property_name is not empty %}
+                <b>{{ property_name }}</b><br>
+            {% endif %}
+            
+            {{ element.location ? (element.location | destination_name) : '' }}
+        </td>
         <td>{{ element.companyId ? (element.companyId | company_name) : '' }}</td>
         <td>{{ element.size ? (element.size.value | trans({}, 'eventSizeType')) : '' }}</td>
         <td>{{ element.sector ? (element.sector.value | trans({}, 'eventSectorType')) : '' }}</td>
         <td>{{ element.typology ? (element.typology.value | trans({}, 'eventTypologyType')) : '' }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
-        <td>{{ element.updatedAt ? element.updatedAt | date('d/m/Y') : '' }}</td>
         <td>
             {% set carbonFootprint = event_carbon_footprint(element.id) %}
 
