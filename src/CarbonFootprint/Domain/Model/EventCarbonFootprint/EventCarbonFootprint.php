@@ -8,6 +8,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\EventOperations\Domain\Model\Event\DateRange;
+use App\EventOperations\Domain\Model\Event\Event;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\AggregateRoot;
@@ -61,6 +62,14 @@ class EventCarbonFootprint implements \Stringable
     public function calculationPeriod(): DateRange
     {
         return $this->calculationPeriod;
+    }
+
+    public static function calculatePeriod(Event $event): DateRange
+    {
+        return new DateRange(
+            startDate: $event->assembly()->startDate(),
+            endDate: $event->breakdown()->endDate(),
+        );
     }
 
     public function calculationYear(): int

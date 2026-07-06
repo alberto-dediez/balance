@@ -40,7 +40,7 @@
             {% if property_name is not empty %}
                 <b>{{ property_name }}</b><br>
             {% endif %}
-            
+
             {{ element.location ? (element.location | destination_name) : '' }}
         </td>
         <td>{{ element.companyId ? (element.companyId | company_name) : '' }}</td>

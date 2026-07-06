@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\EventCarbonFootprint\EmissionFactorGroupNotC
 use App\CarbonFootprint\Application\EventCarbonFootprint\Register\RegisterEventCarbonFootprintRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprint\Register\RegisterEventCarbonFootprintService;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
@@ -64,13 +65,15 @@ class RegisterController extends AbstractController
             throw new EmissionFactorGroupNotConfiguredException($account->id());
         }
 
+        $calculationPeriod = EventCarbonFootprint::calculatePeriod($event);
+
         try {
             $registerEventCarbonFootprint(new RegisterEventCarbonFootprintRequest(
                 eventId: $event->id(),
                 accountId: $account->id(),
                 emissionFactorGroupId: $emissionFactorGroupId,
-                calculationPeriodStartDate: $event->assembly()->startDate(),
-                calculationPeriodEndDate: $event->breakdown()->endDate(),
+                calculationPeriodStartDate: $calculationPeriod->startDate(),
+                calculationPeriodEndDate: $calculationPeriod->endDate(),
             ), $loggedUser());
 
             $this->addFlash('success', new TranslatableMessage('Cálculo de Huella de Carbono creado correctamente'));
