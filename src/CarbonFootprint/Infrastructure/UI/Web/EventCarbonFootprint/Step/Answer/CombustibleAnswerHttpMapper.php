@@ -29,6 +29,7 @@ final class CombustibleAnswerHttpMapper extends AbstractSectionAnswerHttpMapper
             combustibleId: new CombustibleId($itemId),
             quantity: $quantity,
             existingActivityId: $this->parseActivityId($row),
+            source: $this->parseSource($row),
         );
     }
 }

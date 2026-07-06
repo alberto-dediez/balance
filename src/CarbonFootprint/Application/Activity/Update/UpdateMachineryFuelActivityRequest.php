@@ -18,5 +18,6 @@ class UpdateMachineryFuelActivityRequest implements Command
         public Quantity $quantity,
         public int $year,
         public EmissionFactorGroupId $emissionFactorGroupId,
+        public ?string $source = null,
     ) {}
 }

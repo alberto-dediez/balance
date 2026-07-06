@@ -2,6 +2,9 @@
 
 <tr class="collection-element">
     <td>
+        <input type="text" name="{{ prefix }}[{{ index }}][source]" class="form-control" value="{{ row and row.source ? row.source : '' }}" data-field="source">
+    </td>
+    <td>
         <input type="hidden" name="{{ prefix }}[{{ index }}][activityId]" value="{{ row ? row.activityId : '' }}">
         <select name="{{ prefix }}[{{ index }}][itemId]" class="form-select" data-field="itemId" data-controller="autocomplete" data-action="activity-emissions#recalculate" required="required">
             <option value="">{{ 'Selecciona una opción' | trans }}</option>

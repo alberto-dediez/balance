@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\Quantity;
 final class MachineryFuelActivity extends Activity
 {
     private MachineryFuelId $machineryFuelId;
+    private ?string $source = null;
 
     private function __construct(ActivityId $id)
     {
@@ -24,6 +25,7 @@ final class MachineryFuelActivity extends Activity
         EmissionFactor $emissionFactor,
         Emissions $emissions,
         Quantity $quantity,
+        ?string $source = null,
     ): static {
         $activity = new static($id);
         $activity->recordApplyAndPublish(new MachineryFuelActivityRegistered(
@@ -32,6 +34,7 @@ final class MachineryFuelActivity extends Activity
             emissionFactor: $emissionFactor,
             emissions: $emissions,
             quantity: $quantity,
+            source: $source,
         ));
 
         return $activity;
@@ -42,6 +45,7 @@ final class MachineryFuelActivity extends Activity
         EmissionFactor $emissionFactor,
         Emissions $emissions,
         Quantity $quantity,
+        ?string $source = null,
     ): void {
         $this->recordApplyAndPublish(new MachineryFuelActivityUpdated(
             activityId: $this->id,
@@ -49,6 +53,7 @@ final class MachineryFuelActivity extends Activity
             emissionFactor: $emissionFactor,
             emissions: $emissions,
             quantity: $quantity,
+            source: $source,
         ));
     }
 
@@ -64,12 +69,18 @@ final class MachineryFuelActivity extends Activity
         return $this->machineryFuelId;
     }
 
+    public function source(): ?string
+    {
+        return $this->source;
+    }
+
     public function applyMachineryFuelActivityRegistered(MachineryFuelActivityRegistered $event): void
     {
         $this->machineryFuelId = $event->machineryFuelId();
         $this->emissionFactor = $event->emissionFactor();
         $this->emissions = $event->emissions();
         $this->quantity = $event->quantity();
+        $this->source = $event->source();
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -79,6 +90,7 @@ final class MachineryFuelActivity extends Activity
         $this->emissionFactor = $event->emissionFactor();
         $this->emissions = $event->emissions();
         $this->quantity = $event->quantity();
+        $this->source = $event->source();
         $this->updatedAt = $event->occurredOn();
     }
 }

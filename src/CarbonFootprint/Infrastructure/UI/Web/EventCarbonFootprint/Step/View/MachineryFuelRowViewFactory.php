@@ -25,6 +25,7 @@ final class MachineryFuelRowViewFactory implements ActivityRowViewFactory
             unit: $activity->quantity()->unit()->value,
             quantity: $activity->quantity()->value(),
             co2eq: $activity->emissions()->co2eq(),
+            source: $activity->source(),
         );
     }
 }

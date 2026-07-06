@@ -14,5 +14,6 @@ final class ActivityRowView
         public readonly string $co2eq,
         public readonly ?string $condition = null,
         public readonly ?string $itemId2 = null,
+        public readonly ?string $source = null,
     ) {}
 }

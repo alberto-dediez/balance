@@ -24,6 +24,7 @@ final class WasteActivityRegistered extends DomainEvent
         private EmissionFactor $emissionFactor,
         private Emissions $emissions,
         private Quantity $quantity,
+        private ?string $source = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -55,6 +56,11 @@ final class WasteActivityRegistered extends DomainEvent
         return $this->quantity;
     }
 
+    public function source(): ?string
+    {
+        return $this->source;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->activityId;
@@ -79,6 +85,7 @@ final class WasteActivityRegistered extends DomainEvent
             'emissionsN2o' => $this->emissions->n2o(),
             'quantityValue' => $this->quantity->value(),
             'quantityUnit' => $this->quantity->unit()->value,
+            'source' => $this->source,
         ];
     }
 
@@ -113,6 +120,7 @@ final class WasteActivityRegistered extends DomainEvent
                 n2o: $payload['emissionsN2o'] ?? '0',
             ),
             quantity: new Quantity((float) $payload['quantityValue'], $quantityUnit),
+            source: $payload['source'] ?? null,
             id: $id,
             occurredOn: $occurredOn,
         );

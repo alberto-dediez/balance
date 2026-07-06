@@ -29,6 +29,7 @@ final class WasteAnswerHttpMapper extends AbstractSectionAnswerHttpMapper
             wasteId: new WasteId($itemId),
             quantity: $quantity,
             existingActivityId: $this->parseActivityId($row),
+            source: $this->parseSource($row),
         );
     }
 }

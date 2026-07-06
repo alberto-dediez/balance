@@ -29,6 +29,7 @@ final class RoadTransportAnswerHttpMapper extends AbstractSectionAnswerHttpMappe
             roadTransportId: new RoadTransportId($itemId),
             quantity: $quantity,
             existingActivityId: $this->parseActivityId($row),
+            source: $this->parseSource($row),
         );
     }
 }

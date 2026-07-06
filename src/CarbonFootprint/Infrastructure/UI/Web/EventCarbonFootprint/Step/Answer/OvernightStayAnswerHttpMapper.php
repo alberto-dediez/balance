@@ -29,6 +29,7 @@ final class OvernightStayAnswerHttpMapper extends AbstractSectionAnswerHttpMappe
             overnightStayId: new OvernightStayId($itemId),
             quantity: $quantity,
             existingActivityId: $this->parseActivityId($row),
+            source: $this->parseSource($row),
         );
     }
 }

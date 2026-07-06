@@ -26,6 +26,7 @@ final class ElectricityRowViewFactory implements ActivityRowViewFactory
             quantity: $activity->quantity()->value(),
             co2eq: $activity->emissions()->co2eq(),
             itemId2: (string) $activity->gdOFactorId(),
+            source: $activity->source(),
         );
     }
 }

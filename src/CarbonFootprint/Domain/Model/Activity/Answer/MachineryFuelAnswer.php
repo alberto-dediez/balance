@@ -15,8 +15,9 @@ final class MachineryFuelAnswer extends ActivityAnswer
         public readonly MachineryFuelId $machineryFuelId,
         Quantity $quantity,
         ?ActivityId $existingActivityId = null,
+        ?string $source = null,
     ) {
-        parent::__construct($quantity, $existingActivityId);
+        parent::__construct($quantity, $existingActivityId, $source);
     }
 
     public function type(): ActivityType

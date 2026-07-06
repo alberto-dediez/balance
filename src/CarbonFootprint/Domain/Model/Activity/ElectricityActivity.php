@@ -14,6 +14,7 @@ final class ElectricityActivity extends Activity
 {
     private ElectricityMarketerId $electricityMarketerId;
     private GdOFactorId $gdOFactorId;
+    private ?string $source = null;
 
     private function __construct(ActivityId $id)
     {
@@ -27,6 +28,7 @@ final class ElectricityActivity extends Activity
         EmissionFactor $emissionFactor,
         Emissions $emissions,
         Quantity $quantity,
+        ?string $source = null,
     ): static {
         $activity = new static($id);
         $activity->recordApplyAndPublish(new ElectricityActivityRegistered(
@@ -36,6 +38,7 @@ final class ElectricityActivity extends Activity
             emissionFactor: $emissionFactor,
             emissions: $emissions,
             quantity: $quantity,
+            source: $source,
         ));
 
         return $activity;
@@ -47,6 +50,7 @@ final class ElectricityActivity extends Activity
         EmissionFactor $emissionFactor,
         Emissions $emissions,
         Quantity $quantity,
+        ?string $source = null,
     ): void {
         $this->recordApplyAndPublish(new ElectricityActivityUpdated(
             activityId: $this->id,
@@ -55,6 +59,7 @@ final class ElectricityActivity extends Activity
             emissionFactor: $emissionFactor,
             emissions: $emissions,
             quantity: $quantity,
+            source: $source,
         ));
     }
 
@@ -75,6 +80,11 @@ final class ElectricityActivity extends Activity
         return $this->gdOFactorId;
     }
 
+    public function source(): ?string
+    {
+        return $this->source;
+    }
+
     public function applyElectricityActivityRegistered(ElectricityActivityRegistered $event): void
     {
         $this->electricityMarketerId = $event->electricityMarketerId();
@@ -82,6 +92,7 @@ final class ElectricityActivity extends Activity
         $this->emissionFactor = $event->emissionFactor();
         $this->emissions = $event->emissions();
         $this->quantity = $event->quantity();
+        $this->source = $event->source();
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -92,6 +103,7 @@ final class ElectricityActivity extends Activity
         $this->emissionFactor = $event->emissionFactor();
         $this->emissions = $event->emissions();
         $this->quantity = $event->quantity();
+        $this->source = $event->source();
         $this->updatedAt = $event->occurredOn();
     }
 }

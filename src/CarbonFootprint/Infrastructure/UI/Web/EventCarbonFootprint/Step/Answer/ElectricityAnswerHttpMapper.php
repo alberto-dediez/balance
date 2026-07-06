@@ -32,6 +32,7 @@ final class ElectricityAnswerHttpMapper extends AbstractSectionAnswerHttpMapper
             gdOFactorId: new GdOFactorId($secondaryItemId),
             quantity: $quantity,
             existingActivityId: $this->parseActivityId($row),
+            source: $this->parseSource($row),
         );
     }
 }

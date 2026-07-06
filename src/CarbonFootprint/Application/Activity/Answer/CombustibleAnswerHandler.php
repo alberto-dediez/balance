@@ -36,6 +36,7 @@ final class CombustibleAnswerHandler implements ActivityAnswerHandler
             quantity: $answer->quantity,
             year: $year,
             emissionFactorGroupId: $emissionFactorGroupId,
+            source: $answer->source,
         ), $user);
 
         return $response->activityId;
@@ -52,6 +53,7 @@ final class CombustibleAnswerHandler implements ActivityAnswerHandler
             quantity: $answer->quantity,
             year: $year,
             emissionFactorGroupId: $emissionFactorGroupId,
+            source: $answer->source,
         ), $user);
     }
 }

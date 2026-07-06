@@ -7,6 +7,7 @@
 
     <entity name="App\CarbonFootprint\Domain\Model\Activity\OvernightStayActivity" table="overnight_stay_activities">
         <field name="overnightStayId" type="overnight_stay_id" column="overnight_stay_id" nullable="false" />
+        <field name="source" type="string" length="255" nullable="true" />
     </entity>
 
 </doctrine-mapping>

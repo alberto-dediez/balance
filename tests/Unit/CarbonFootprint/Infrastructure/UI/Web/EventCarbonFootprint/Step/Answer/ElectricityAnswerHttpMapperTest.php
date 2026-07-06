@@ -77,4 +77,20 @@ class ElectricityAnswerHttpMapperTest extends TestCase
         $this->assertNotNull($answer->existingActivityId);
         $this->assertSame('activity-1', (string) $answer->existingActivityId);
     }
+
+    public function testMapsAProvidedSource(): void
+    {
+        $answer = $this->sut->map(['itemId' => 'marketer-1', 'itemId2' => 'gdo-1', 'unit' => 'kWh', 'quantity' => '100', 'source' => 'Factura #123']);
+
+        $this->assertInstanceOf(ElectricityAnswer::class, $answer);
+        $this->assertSame('Factura #123', $answer->source);
+    }
+
+    public function testSourceIsNullWhenMissing(): void
+    {
+        $answer = $this->sut->map(['itemId' => 'marketer-1', 'itemId2' => 'gdo-1', 'unit' => 'kWh', 'quantity' => '100']);
+
+        $this->assertInstanceOf(ElectricityAnswer::class, $answer);
+        $this->assertNull($answer->source);
+    }
 }

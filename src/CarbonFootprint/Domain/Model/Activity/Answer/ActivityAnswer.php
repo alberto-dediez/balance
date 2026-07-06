@@ -13,6 +13,7 @@ abstract class ActivityAnswer
     public function __construct(
         public readonly Quantity $quantity,
         public readonly ?ActivityId $existingActivityId = null,
+        public readonly ?string $source = null,
     ) {}
 
     abstract public function type(): ActivityType;

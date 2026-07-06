@@ -17,8 +17,9 @@ final class ElectricityAnswer extends ActivityAnswer
         public readonly GdOFactorId $gdOFactorId,
         Quantity $quantity,
         ?ActivityId $existingActivityId = null,
+        ?string $source = null,
     ) {
-        parent::__construct($quantity, $existingActivityId);
+        parent::__construct($quantity, $existingActivityId, $source);
     }
 
     public function type(): ActivityType

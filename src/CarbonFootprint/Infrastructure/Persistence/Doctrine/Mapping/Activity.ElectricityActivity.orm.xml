@@ -8,6 +8,7 @@
     <entity name="App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity" table="electricity_activities">
         <field name="electricityMarketerId" type="electricity_marketer_id" column="electricity_marketer_id" nullable="false" />
         <field name="gdOFactorId" type="gdo_factor_id" column="gdo_factor_id" nullable="false" />
+        <field name="source" type="string" length="255" nullable="true" />
     </entity>
 
 </doctrine-mapping>

@@ -53,4 +53,12 @@ abstract class AbstractSectionAnswerHttpMapper implements SectionAnswerHttpMappe
     {
         return ItemCondition::tryFrom((string) ($row['condition'] ?? '')) ?? ItemCondition::New;
     }
+
+    /** @param array<array-key, mixed> $row */
+    protected function parseSource(array $row): ?string
+    {
+        $source = trim((string) ($row['source'] ?? ''));
+
+        return '' !== $source ? $source : null;
+    }
 }

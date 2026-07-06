@@ -7,6 +7,7 @@
 
     <entity name="App\CarbonFootprint\Domain\Model\Activity\WasteActivity" table="waste_activities">
         <field name="wasteId" type="waste_id" column="waste_id" nullable="false" />
+        <field name="source" type="string" length="255" nullable="true" />
     </entity>
 
 </doctrine-mapping>

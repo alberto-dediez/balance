@@ -37,6 +37,7 @@ final class ElectricityAnswerHandler implements ActivityAnswerHandler
             quantity: $answer->quantity,
             year: $year,
             emissionFactorGroupId: $emissionFactorGroupId,
+            source: $answer->source,
         ), $user);
 
         return $response->activityId;
@@ -54,6 +55,7 @@ final class ElectricityAnswerHandler implements ActivityAnswerHandler
             quantity: $answer->quantity,
             year: $year,
             emissionFactorGroupId: $emissionFactorGroupId,
+            source: $answer->source,
         ), $user);
     }
 }

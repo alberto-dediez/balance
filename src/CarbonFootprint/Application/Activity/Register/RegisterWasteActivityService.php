@@ -44,6 +44,7 @@ class RegisterWasteActivityService implements CommandHandler
             emissionFactor: $emissionFactor,
             emissions: $emissions,
             quantity: $request->quantity,
+            source: $request->source,
         );
 
         $this->activityRepository->save($activity);

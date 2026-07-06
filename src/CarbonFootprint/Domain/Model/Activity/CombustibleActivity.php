@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\Quantity;
 final class CombustibleActivity extends Activity
 {
     private CombustibleId $combustibleId;
+    private ?string $source = null;
 
     private function __construct(ActivityId $id)
     {
@@ -24,6 +25,7 @@ final class CombustibleActivity extends Activity
         EmissionFactor $emissionFactor,
         Emissions $emissions,
         Quantity $quantity,
+        ?string $source = null,
     ): static {
         $activity = new static($id);
         $activity->recordApplyAndPublish(new CombustibleActivityRegistered(
@@ -32,6 +34,7 @@ final class CombustibleActivity extends Activity
             emissionFactor: $emissionFactor,
             emissions: $emissions,
             quantity: $quantity,
+            source: $source,
         ));
 
         return $activity;
@@ -42,6 +45,7 @@ final class CombustibleActivity extends Activity
         EmissionFactor $emissionFactor,
         Emissions $emissions,
         Quantity $quantity,
+        ?string $source = null,
     ): void {
         $this->recordApplyAndPublish(new CombustibleActivityUpdated(
             activityId: $this->id,
@@ -49,6 +53,7 @@ final class CombustibleActivity extends Activity
             emissionFactor: $emissionFactor,
             emissions: $emissions,
             quantity: $quantity,
+            source: $source,
         ));
     }
 
@@ -64,12 +69,18 @@ final class CombustibleActivity extends Activity
         return $this->combustibleId;
     }
 
+    public function source(): ?string
+    {
+        return $this->source;
+    }
+
     public function applyCombustibleActivityRegistered(CombustibleActivityRegistered $event): void
     {
         $this->combustibleId = $event->combustibleId();
         $this->emissionFactor = $event->emissionFactor();
         $this->emissions = $event->emissions();
         $this->quantity = $event->quantity();
+        $this->source = $event->source();
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -79,6 +90,7 @@ final class CombustibleActivity extends Activity
         $this->emissionFactor = $event->emissionFactor();
         $this->emissions = $event->emissions();
         $this->quantity = $event->quantity();
+        $this->source = $event->source();
         $this->updatedAt = $event->occurredOn();
     }
 }

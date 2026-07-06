@@ -29,6 +29,7 @@ final class MachineryFuelAnswerHttpMapper extends AbstractSectionAnswerHttpMappe
             machineryFuelId: new MachineryFuelId($itemId),
             quantity: $quantity,
             existingActivityId: $this->parseActivityId($row),
+            source: $this->parseSource($row),
         );
     }
 }

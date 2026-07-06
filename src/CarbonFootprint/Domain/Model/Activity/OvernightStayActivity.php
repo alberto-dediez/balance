@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\Quantity;
 final class OvernightStayActivity extends Activity
 {
     private OvernightStayId $overnightStayId;
+    private ?string $source = null;
 
     private function __construct(ActivityId $id)
     {
@@ -24,6 +25,7 @@ final class OvernightStayActivity extends Activity
         EmissionFactor $emissionFactor,
         Emissions $emissions,
         Quantity $quantity,
+        ?string $source = null,
     ): static {
         $activity = new static($id);
         $activity->recordApplyAndPublish(new OvernightStayActivityRegistered(
@@ -32,6 +34,7 @@ final class OvernightStayActivity extends Activity
             emissionFactor: $emissionFactor,
             emissions: $emissions,
             quantity: $quantity,
+            source: $source,
         ));
 
         return $activity;
@@ -42,6 +45,7 @@ final class OvernightStayActivity extends Activity
         EmissionFactor $emissionFactor,
         Emissions $emissions,
         Quantity $quantity,
+        ?string $source = null,
     ): void {
         $this->recordApplyAndPublish(new OvernightStayActivityUpdated(
             activityId: $this->id,
@@ -49,6 +53,7 @@ final class OvernightStayActivity extends Activity
             emissionFactor: $emissionFactor,
             emissions: $emissions,
             quantity: $quantity,
+            source: $source,
         ));
     }
 
@@ -64,12 +69,18 @@ final class OvernightStayActivity extends Activity
         return $this->overnightStayId;
     }
 
+    public function source(): ?string
+    {
+        return $this->source;
+    }
+
     public function applyOvernightStayActivityRegistered(OvernightStayActivityRegistered $event): void
     {
         $this->overnightStayId = $event->overnightStayId();
         $this->emissionFactor = $event->emissionFactor();
         $this->emissions = $event->emissions();
         $this->quantity = $event->quantity();
+        $this->source = $event->source();
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -79,6 +90,7 @@ final class OvernightStayActivity extends Activity
         $this->emissionFactor = $event->emissionFactor();
         $this->emissions = $event->emissions();
         $this->quantity = $event->quantity();
+        $this->source = $event->source();
         $this->updatedAt = $event->occurredOn();
     }
 }
