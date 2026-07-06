@@ -39,6 +39,7 @@
             :rows="machineryElectricityRows"
             :marketers="electricityMarketers"
             :gdOFactors="gdOFactors"
+            :units="units"
             :eventId="eventId"
         />
 
@@ -48,6 +49,7 @@
             :rows="buildingElectricityRows"
             :marketers="electricityMarketers"
             :gdOFactors="gdOFactors"
+            :units="units"
             :eventId="eventId"
         />
 
@@ -70,7 +72,7 @@
         />
 
         <twig:CarbonFootprint:WasteActivityTable
-            title="{{ 'Gestión de residuos geberadis' | trans }}"
+            title="{{ 'Gestión de residuos generados' | trans }}"
             prefix="wastes"
             :rows="wasteRows"
             :items="wastes"

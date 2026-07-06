@@ -44,11 +44,9 @@ class CalculateActivityEmissionsService implements CommandHandler
             ->forActivityType($request->activityType)
             ->select($request->itemId, $eventCarbonFootprint->calculationYear(), $request->condition, $emissionFactorGroupId, $request->secondaryItemId);
 
-        $quantity = $request->quantity->withUnit($emissionFactor->unit());
-
         return new CalculateActivityEmissionsResponse(
             emissionFactor: $emissionFactor,
-            emissions: $this->calculator->calculate($emissionFactor, $quantity),
+            emissions: $this->calculator->calculate($emissionFactor, $request->quantity),
         );
     }
 

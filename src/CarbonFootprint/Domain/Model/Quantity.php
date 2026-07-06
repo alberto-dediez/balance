@@ -26,6 +26,19 @@ final class Quantity implements \Stringable
         return new self($this->value, $unit);
     }
 
+    public function convertTo(Unit $unit): self
+    {
+        if ($this->unit === $unit) {
+            return $this;
+        }
+
+        if ($this->magnitude() !== $unit->magnitude()) {
+            throw new IncompatibleUnitsException($this->unit, $unit);
+        }
+
+        return new self($this->value * $this->unit->factorToBase() / $unit->factorToBase(), $unit);
+    }
+
     public function magnitude(): Magnitude
     {
         return $this->unit->magnitude();

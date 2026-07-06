@@ -22,12 +22,18 @@ export default class extends Controller {
 
         const option = itemSelect.selectedOptions[0];
         const unit = option ? option.dataset.unit : null;
+        const magnitude = option ? option.dataset.magnitude : null;
 
         for (const unitOption of unitSelect.options) {
-            unitOption.disabled = Boolean(unit) && unitOption.value !== unit;
+            const incompatible = Boolean(magnitude) && unitOption.dataset.magnitude !== magnitude;
+            unitOption.disabled = incompatible;
+            unitOption.hidden = incompatible;
         }
 
-        if (unit) {
+        const selected = unitSelect.selectedOptions[0];
+        const selectedIsCompatible = selected && !selected.disabled;
+
+        if (unit && !selectedIsCompatible) {
             unitSelect.value = unit;
         }
     }

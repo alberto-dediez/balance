@@ -44,7 +44,7 @@ class UpdateRoadTransportActivityServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
 
         $entity = RoadTransportMother::registeredRoadTransport();
-        $entity->setEmissionFactor(ActivityMother::emissionFactor());
+        $entity->setEmissionFactor(ActivityMother::emissionFactor()->withUnit(Unit::Kilometer));
         $entityRepo = RoadTransportRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new RoadTransportEmissionFactorSelector($entityRepo);

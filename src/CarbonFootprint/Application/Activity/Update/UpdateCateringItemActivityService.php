@@ -40,15 +40,14 @@ class UpdateCateringItemActivityService implements CommandHandler
         $this->authorizer->denyUnlessCanDoThat($activity, SecurityAction::Edit, $user);
 
         $emissionFactor = $this->factorSelector->select((string) $request->cateringItemId, $request->year, $request->condition, $request->emissionFactorGroupId);
-        $quantity = $request->quantity->withUnit($emissionFactor->unit());
-        $emissions = $this->calculator->calculate($emissionFactor, $quantity);
+        $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity->update(
             cateringItemId: $request->cateringItemId,
             condition: $request->condition,
             emissionFactor: $emissionFactor,
             emissions: $emissions,
-            quantity: $quantity,
+            quantity: $request->quantity,
         );
 
         $this->activityRepository->save($activity);

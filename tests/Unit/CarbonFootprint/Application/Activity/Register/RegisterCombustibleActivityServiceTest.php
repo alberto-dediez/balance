@@ -39,7 +39,7 @@ class RegisterCombustibleActivityServiceTest extends TestCase
         $activityRepo = ActivityRepositoryMother::inMemory();
 
         $entity = CombustibleMother::registeredCombustible();
-        $entity->setEmissionFactor(ActivityMother::emissionFactor());
+        $entity->setEmissionFactor(ActivityMother::emissionFactor()->withUnit(Unit::Liter));
         $entityRepo = CombustibleRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new CombustibleEmissionFactorSelector($entityRepo);

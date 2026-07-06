@@ -39,7 +39,7 @@ class RegisterOvernightStayActivityServiceTest extends TestCase
         $activityRepo = ActivityRepositoryMother::inMemory();
 
         $entity = OvernightStayMother::registeredOvernightStay();
-        $entity->setEmissionFactor(ActivityMother::emissionFactor());
+        $entity->setEmissionFactor(ActivityMother::emissionFactor()->withUnit(Unit::Pernoctacion));
         $entityRepo = OvernightStayRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new OvernightStayEmissionFactorSelector($entityRepo);

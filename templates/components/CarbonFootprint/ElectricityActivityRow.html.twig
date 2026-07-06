@@ -1,4 +1,4 @@
-{% props prefix, index, marketers, gdOFactors, row = null %}
+{% props prefix, index, marketers, gdOFactors, units, row = null %}
 
 <tr class="collection-element">
     <td>
@@ -19,7 +19,15 @@
         </select>
     </td>
     <td>
-        <input type="hidden" name="{{ prefix }}[{{ index }}][unit]" value="kWh" data-field="unit">
+        <select name="{{ prefix }}[{{ index }}][unit]" class="form-select" data-field="unit" data-action="activity-emissions#recalculate">
+            {% for unit in units %}
+                {% if unit.magnitude.value == 'energy' %}
+                    <option value="{{ unit.value }}" data-magnitude="{{ unit.magnitude.value }}"{{ (row and row.unit == unit.value) or (not row and unit.value == 'kWh') ? ' selected' }}>{{ unit.value | trans({}, 'unitType') }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </td>
+    <td>
         <input
             type="number"
             name="{{ prefix }}[{{ index }}][quantity]"

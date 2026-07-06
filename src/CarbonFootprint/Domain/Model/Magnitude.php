@@ -12,4 +12,16 @@ enum Magnitude: string
     case Energy   = 'energy';
     case Distance = 'distance';
     case Stay     = 'stay';
+
+    public function baseUnit(): Unit
+    {
+        return match ($this) {
+            self::Mass     => Unit::Kilogram,
+            self::Volume   => Unit::Liter,
+            self::Pieces   => Unit::Piece,
+            self::Energy   => Unit::KWh,
+            self::Distance => Unit::Kilometer,
+            self::Stay     => Unit::Pernoctacion,
+        };
+    }
 }

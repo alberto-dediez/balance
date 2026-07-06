@@ -44,7 +44,7 @@ class UpdateOvernightStayActivityServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
 
         $entity = OvernightStayMother::registeredOvernightStay();
-        $entity->setEmissionFactor(ActivityMother::emissionFactor());
+        $entity->setEmissionFactor(ActivityMother::emissionFactor()->withUnit(Unit::Pernoctacion));
         $entityRepo = OvernightStayRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new OvernightStayEmissionFactorSelector($entityRepo);

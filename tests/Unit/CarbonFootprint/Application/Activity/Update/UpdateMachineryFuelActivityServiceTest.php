@@ -44,7 +44,7 @@ class UpdateMachineryFuelActivityServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
 
         $entity = MachineryFuelMother::registeredMachineryFuel();
-        $entity->setEmissionFactor(ActivityMother::emissionFactor());
+        $entity->setEmissionFactor(ActivityMother::emissionFactor()->withUnit(Unit::Liter));
         $entityRepo = MachineryFuelRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new MachineryFuelEmissionFactorSelector($entityRepo);

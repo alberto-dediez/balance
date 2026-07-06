@@ -39,7 +39,7 @@ class RegisterMachineryFuelActivityServiceTest extends TestCase
         $activityRepo = ActivityRepositoryMother::inMemory();
 
         $entity = MachineryFuelMother::registeredMachineryFuel();
-        $entity->setEmissionFactor(ActivityMother::emissionFactor());
+        $entity->setEmissionFactor(ActivityMother::emissionFactor()->withUnit(Unit::Liter));
         $entityRepo = MachineryFuelRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new MachineryFuelEmissionFactorSelector($entityRepo);

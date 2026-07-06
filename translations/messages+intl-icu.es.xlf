@@ -3237,6 +3237,38 @@
         <source>Asocia tus eventos a una empresa para ver este desglose.</source>
         <target>Asocia tus eventos a una empresa para ver este desglose.</target>
       </trans-unit>
+      <trans-unit id="YwtjYxp" resname="Instalaciones fijas (calderas, motores estacionarios, etc)">
+        <source>Instalaciones fijas (calderas, motores estacionarios, etc)</source>
+        <target>Instalaciones fijas (calderas, motores estacionarios, etc)</target>
+      </trans-unit>
+      <trans-unit id="0NbROqy" resname="Maquinaria">
+        <source>Maquinaria</source>
+        <target>Maquinaria</target>
+      </trans-unit>
+      <trans-unit id="R9Tk5Mi" resname="Consumo de electricidad en vehículos y maquinaria">
+        <source>Consumo de electricidad en vehículos y maquinaria</source>
+        <target>Consumo de electricidad en vehículos y maquinaria</target>
+      </trans-unit>
+      <trans-unit id="Kh1RcDy" resname="Consumo de electricidad en las instalaciones">
+        <source>Consumo de electricidad en las instalaciones</source>
+        <target>Consumo de electricidad en las instalaciones</target>
+      </trans-unit>
+      <trans-unit id=".lY2_CT" resname="Gestión de residuos generados">
+        <source>Gestión de residuos generados</source>
+        <target>Gestión de residuos generados</target>
+      </trans-unit>
+      <trans-unit id="J05l2l_" resname="Materiales fabricados y utilizados para el evento">
+        <source>Materiales fabricados y utilizados para el evento</source>
+        <target>Materiales fabricados y utilizados para el evento</target>
+      </trans-unit>
+      <trans-unit id="SGnelCS" resname="Merchandising fabricado y utilizado para el evento">
+        <source>Merchandising fabricado y utilizado para el evento</source>
+        <target>Merchandising fabricado y utilizado para el evento</target>
+      </trans-unit>
+      <trans-unit id="W2c8rUC" resname="Catering adquirido para el evento">
+        <source>Catering adquirido para el evento</source>
+        <target>Catering adquirido para el evento</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

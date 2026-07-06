@@ -1,6 +1,6 @@
-{% props title, prefix, rows, marketers, gdOFactors, eventId %}
+{% props title, prefix, rows, marketers, gdOFactors, units, eventId %}
 
-{% set proto %}{{ component('CarbonFootprint:ElectricityActivityRow', { prefix: prefix, index: '__name__', marketers: marketers, gdOFactors: gdOFactors }) }}{% endset %}
+{% set proto %}{{ component('CarbonFootprint:ElectricityActivityRow', { prefix: prefix, index: '__name__', marketers: marketers, gdOFactors: gdOFactors, units: units }) }}{% endset %}
 
 <twig:Card :title="title">
     <div
@@ -15,7 +15,8 @@
                     <tr>
                         <th class="col-3">{{ 'Comercializadora' | trans }}</th>
                         <th class="col-3">{{ 'Garantía de origen' | trans }}</th>
-                        <th class="col-2">{{ 'Cantidad (kWh)' | trans }}</th>
+                        <th class="col-1">{{ 'Unidad' | trans }}</th>
+                        <th class="col-2">{{ 'Cantidad' | trans }}</th>
                         <th class="col-2 text-end">{{ 'Emisiones (kg CO₂eq)' | trans }}</th>
                         <th></th>
                     </tr>
@@ -28,6 +29,7 @@
                             :row="row"
                             :marketers="marketers"
                             :gdOFactors="gdOFactors"
+                            :units="units"
                         />
                     {% endfor %}
                 </tbody>

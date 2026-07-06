@@ -9,6 +9,14 @@
         <source>kg</source>
         <target>Kilogramo</target>
       </trans-unit>
+      <trans-unit id="NEW_g" resname="g">
+        <source>g</source>
+        <target>Gramo</target>
+      </trans-unit>
+      <trans-unit id="NEW_t" resname="t">
+        <source>t</source>
+        <target>Tonelada</target>
+      </trans-unit>
       <trans-unit id="LNOIqzZ" resname="ud">
         <source>ud</source>
         <target>Unidad</target>
@@ -16,6 +24,10 @@
       <trans-unit id="yJ8W4BO" resname="l">
         <source>l</source>
         <target>Litro</target>
+      </trans-unit>
+      <trans-unit id="NEW_m3" resname="m3">
+        <source>m3</source>
+        <target>Metro cúbico</target>
       </trans-unit>
       <trans-unit id="mf6jibe" resname="kWhPCS">
         <source>kWhPCS</source>

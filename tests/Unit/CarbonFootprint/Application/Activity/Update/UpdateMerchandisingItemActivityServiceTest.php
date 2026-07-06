@@ -45,7 +45,7 @@ class UpdateMerchandisingItemActivityServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
 
         $entity = MerchandisingItemMother::registeredMerchandisingItem();
-        $entity->setEmissionFactor(ActivityMother::emissionFactor(), ActivityMother::emissionFactor());
+        $entity->setEmissionFactor(ActivityMother::emissionFactor()->withUnit(Unit::Piece), ActivityMother::emissionFactor()->withUnit(Unit::Piece));
         $entityRepo = MerchandisingItemRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new MerchandisingItemEmissionFactorSelector($entityRepo);

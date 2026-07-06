@@ -44,7 +44,7 @@ class UpdateCombustibleActivityServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
 
         $entity = CombustibleMother::registeredCombustible();
-        $entity->setEmissionFactor(ActivityMother::emissionFactor());
+        $entity->setEmissionFactor(ActivityMother::emissionFactor()->withUnit(Unit::Liter));
         $entityRepo = CombustibleRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new CombustibleEmissionFactorSelector($entityRepo);

@@ -6,7 +6,7 @@
         <select name="{{ prefix }}[{{ index }}][itemId]" class="form-select" data-field="itemId" data-controller="autocomplete" data-action="activity-emissions#itemChanged" required="required">
             <option value="">{{ 'Selecciona una opción' | trans }}</option>
             {% for item in items %}
-                <option value="{{ item.id }}" data-unit="{{ item.unit.value }}"{{ row and row.itemId == item.id ~ '' ? ' selected' }}>{{ item.category.value | trans({}, 'merchandisingItemCategoryType') }} - {{ item.name }}</option>
+                <option value="{{ item.id }}" data-unit="{{ item.unit.value }}" data-magnitude="{{ item.unit.magnitude.value }}"{{ row and row.itemId == item.id ~ '' ? ' selected' }}>{{ item.category.value | trans({}, 'merchandisingItemCategoryType') }} - {{ item.name }}</option>
             {% endfor %}
         </select>
     </td>
@@ -19,7 +19,7 @@
     <td>
         <select name="{{ prefix }}[{{ index }}][unit]" class="form-select" data-field="unit" data-action="activity-emissions#recalculate">
             {% for unit in units %}
-                <option value="{{ unit.value }}"{{ row and row.unit == unit.value ? ' selected' }}>{{ unit.value | trans({}, 'unitType') }}</option>
+                <option value="{{ unit.value }}" data-magnitude="{{ unit.magnitude.value }}"{{ row and row.unit == unit.value ? ' selected' }}>{{ unit.value | trans({}, 'unitType') }}</option>
             {% endfor %}
         </select>
     </td>

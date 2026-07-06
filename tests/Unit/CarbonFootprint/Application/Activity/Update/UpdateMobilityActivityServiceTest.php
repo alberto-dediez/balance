@@ -44,7 +44,7 @@ class UpdateMobilityActivityServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
 
         $entity = MobilityMother::registeredMobility();
-        $entity->setEmissionFactor(ActivityMother::emissionFactor());
+        $entity->setEmissionFactor(ActivityMother::emissionFactor()->withUnit(Unit::Kilometer));
         $entityRepo = MobilityRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new MobilityEmissionFactorSelector($entityRepo);
