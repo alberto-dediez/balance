@@ -17,23 +17,23 @@
         </select>
     </td>
     <td>
-        <select name="{{ prefix }}[{{ index }}][unit]" class="form-select" data-field="unit" data-action="activity-emissions#recalculate">
-            {% for unit in units %}
-                <option value="{{ unit.value }}" data-magnitude="{{ unit.magnitude.value }}"{{ row and row.unit == unit.value ? ' selected' }}>{{ unit.value | trans({}, 'unitType') }}</option>
-            {% endfor %}
-        </select>
-    </td>
-    <td>
-        <input
-            type="number"
-            name="{{ prefix }}[{{ index }}][quantity]"
-            class="form-control"
-            step="any"
-            min="0"
-            value="{{ row ? row.quantity : '0' }}"
-            data-field="quantity"
-            data-action="activity-emissions#recalculate"
-        >
+        <div class="input-group">
+            <input
+                type="number"
+                name="{{ prefix }}[{{ index }}][quantity]"
+                class="form-control"
+                step="any"
+                min="0"
+                value="{{ row ? row.quantity : '0' }}"
+                data-field="quantity"
+                data-action="activity-emissions#recalculate"
+            >
+            <select name="{{ prefix }}[{{ index }}][unit]" class="form-select" data-field="unit" data-action="activity-emissions#recalculate">
+                {% for unit in units %}
+                    <option value="{{ unit.value }}" data-magnitude="{{ unit.magnitude.value }}"{{ row and row.unit == unit.value ? ' selected' }}>{{ unit.value | trans({}, 'unitType') }}</option>
+                {% endfor %}
+            </select>
+        </div>
     </td>
     <td class="text-end text-nowrap">
         <span data-field="emissions">{{ row ? row.co2eq | number_format(2, ',', '.') : '—' }}</span>
