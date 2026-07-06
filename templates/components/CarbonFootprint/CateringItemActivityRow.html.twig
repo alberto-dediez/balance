@@ -3,10 +3,10 @@
 <tr class="collection-element">
     <td>
         <input type="hidden" name="{{ prefix }}[{{ index }}][activityId]" value="{{ row ? row.activityId : '' }}">
-        <select name="{{ prefix }}[{{ index }}][itemId]" class="form-select" data-field="itemId" data-action="activity-emissions#itemChanged">
+        <select name="{{ prefix }}[{{ index }}][itemId]" class="form-select" data-field="itemId" data-controller="autocomplete" data-action="activity-emissions#itemChanged" required="required">
             <option value="">{{ 'Selecciona una opción' | trans }}</option>
             {% for item in items %}
-                <option value="{{ item.id }}" data-unit="{{ item.unit.value }}"{{ row and row.itemId == item.id ~ '' ? ' selected' }}>{{ item.name }}</option>
+                <option value="{{ item.id }}" data-unit="{{ item.unit.value }}"{{ row and row.itemId == item.id ~ '' ? ' selected' }}>{{ item.category.value | trans({}, 'cateringItemCategoryType') }} - {{ item.name }}</option>
             {% endfor %}
         </select>
     </td>
@@ -30,7 +30,7 @@
             class="form-control"
             step="any"
             min="0"
-            value="{{ row ? row.quantity : '' }}"
+            value="{{ row ? row.quantity : '0' }}"
             data-field="quantity"
             data-action="activity-emissions#recalculate"
         >

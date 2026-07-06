@@ -7,13 +7,14 @@
         <input type="hidden" name="_token" value="{{ csrf_token('assembly_' ~ eventCarbonFootprint.id) }}">
 
         <twig:CarbonFootprint:CombustibleActivityTable
-            title="{{ 'Combustibles fijos en instalaciones' | trans }}"
+            title="{{ 'Instalaciones fijas (calderas, motores estacionarios, etc)' | trans }}"
             prefix="combustibles"
             :rows="combustibleRows"
             :items="combustibles"
             :units="units"
             :eventId="eventId"
         />
+
         <twig:CarbonFootprint:RoadTransportActivityTable
             title="{{ 'Transporte de mercancías' | trans }}"
             prefix="roadTransports"
@@ -22,38 +23,34 @@
             :units="units"
             :eventId="eventId"
         />
+
         <twig:CarbonFootprint:MachineryFuelActivityTable
-            title="{{ 'Combustible de maquinaria' | trans }}"
+            title="{{ 'Maquinaria' | trans }}"
             prefix="machineryFuels"
             :rows="machineryFuelRows"
             :items="machineryFuels"
             :units="units"
             :eventId="eventId"
         />
+
         <twig:CarbonFootprint:ElectricityActivityTable
-            title="{{ 'Electricidad de maquinaria' | trans }}"
+            title="{{ 'Consumo de electricidad en vehículos y maquinaria' | trans }}"
             prefix="machineryElectricity"
             :rows="machineryElectricityRows"
             :marketers="electricityMarketers"
             :gdOFactors="gdOFactors"
             :eventId="eventId"
         />
+
         <twig:CarbonFootprint:ElectricityActivityTable
-            title="{{ 'Electricidad de instalaciones' | trans }}"
+            title="{{ 'Consumo de electricidad en las instalaciones' | trans }}"
             prefix="buildingElectricity"
             :rows="buildingElectricityRows"
             :marketers="electricityMarketers"
             :gdOFactors="gdOFactors"
             :eventId="eventId"
         />
-        <twig:CarbonFootprint:OvernightStayActivityTable
-            title="{{ 'Pernoctaciones' | trans }}"
-            prefix="overnightStays"
-            :rows="overnightStayRows"
-            :items="overnightStays"
-            :units="units"
-            :eventId="eventId"
-        />
+
         <twig:CarbonFootprint:MobilityActivityTable
             title="{{ 'Movilidad de proveedores y equipo' | trans }}"
             prefix="mobilities"
@@ -62,8 +59,18 @@
             :units="units"
             :eventId="eventId"
         />
+
+        <twig:CarbonFootprint:OvernightStayActivityTable
+            title="{{ 'Pernoctaciones' | trans }}"
+            prefix="overnightStays"
+            :rows="overnightStayRows"
+            :items="overnightStays"
+            :units="units"
+            :eventId="eventId"
+        />
+
         <twig:CarbonFootprint:WasteActivityTable
-            title="{{ 'Gestión de residuos' | trans }}"
+            title="{{ 'Gestión de residuos geberadis' | trans }}"
             prefix="wastes"
             :rows="wasteRows"
             :items="wastes"

@@ -3,7 +3,7 @@
 <tr class="collection-element">
     <td>
         <input type="hidden" name="{{ prefix }}[{{ index }}][activityId]" value="{{ row ? row.activityId : '' }}">
-        <select name="{{ prefix }}[{{ index }}][itemId]" class="form-select" data-field="itemId" data-action="activity-emissions#recalculate">
+        <select name="{{ prefix }}[{{ index }}][itemId]" class="form-select" data-field="itemId" data-controller="autocomplete" data-action="activity-emissions#recalculate" required="required">
             <option value="">{{ 'Selecciona una opción' | trans }}</option>
             {% for marketer in marketers %}
                 <option value="{{ marketer.id }}"{{ row and row.itemId == marketer.id ~ '' ? ' selected' }}>{{ marketer.name }}</option>
@@ -26,7 +26,7 @@
             class="form-control"
             step="any"
             min="0"
-            value="{{ row ? row.quantity : '' }}"
+            value="{{ row ? row.quantity : '0' }}"
             data-field="quantity"
             data-action="activity-emissions#recalculate"
         >
