@@ -33,6 +33,10 @@ final class EmissionFactorGroupAuthorizer extends AbstractAuthorizer
 
     protected function canRemove(mixed $subject, User $user): bool
     {
+        if ($subject instanceof EmissionFactorGroup && $subject->isDefault()) {
+            return false;
+        }
+
         return $this->canEdit($subject, $user);
     }
 
