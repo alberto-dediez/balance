@@ -9,6 +9,9 @@ use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepo
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
+use App\Shared\Application\CommandBus\CommandHandler;
+use App\Shared\Application\CommandBus\CommandResponse;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use App\Shared\Infrastructure\Messenger\DeferredMessage;
 use App\Shared\Infrastructure\Messenger\DeferredMessageHandler;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -54,9 +57,42 @@ class DeferredMessageHandlerTest extends TestCase
 
         $this->createSUT()($message);
 
-        $forced = $this->loggedUser->getForcedUser();
-        $this->assertNotNull($forced);
-        $this->assertTrue($user->id()->equals($forced->id()));
+        $forcedCalls = $this->loggedUser->forcedUserCalls();
+        $this->assertNotEmpty($forcedCalls);
+        $this->assertNotNull($forcedCalls[0]);
+        $this->assertTrue($user->id()->equals($forcedCalls[0]->id()));
+    }
+
+    public function testClearsForcedUserAfterDispatch(): void
+    {
+        $user = UserMother::adminUser();
+        $this->userRepository->add($user);
+
+        $message = new DeferredMessage(new FakeCommandForMessageHandler(), $user->id());
+
+        $this->createSUT()($message);
+
+        $this->assertNull($this->loggedUser->getForcedUser());
+    }
+
+    public function testClearsForcedUserEvenWhenDispatchThrows(): void
+    {
+        $user = UserMother::adminUser();
+        $this->userRepository->add($user);
+
+        CommandBusDispatcher::instance()->reset();
+        new ThrowingCommandHandlerForMessageHandler();
+
+        $message = new DeferredMessage(new FakeCommandForMessageHandler(), $user->id());
+
+        try {
+            $this->createSUT()($message);
+            $this->fail('Expected exception was not thrown');
+        } catch (\RuntimeException) {
+            // expected
+        }
+
+        $this->assertNull($this->loggedUser->getForcedUser());
     }
 
     public function testThrowsInvalidArgumentExceptionWhenUserNotFound(): void
@@ -80,19 +116,49 @@ class DeferredMessageHandlerTest extends TestCase
 
 class FakeCommandForMessageHandler implements Command {}
 
+class ThrowingCommandHandlerForMessageHandler implements CommandHandler
+{
+    use RegisterHandlerTrait;
+
+    public function __construct()
+    {
+        $this->register();
+    }
+
+    public function handle(Command $command, User $user): ?CommandResponse
+    {
+        throw new \RuntimeException('Something went wrong while handling the command');
+    }
+
+    public function isHandled(Command $command): bool
+    {
+        return true;
+    }
+}
+
 class SpyLoggedUser extends LoggedUser
 {
     private ?User $forcedUserSpy = null;
+
+    /** @var array<int, ?User> */
+    private array $forcedUserCalls = [];
 
     public function __construct() {}
 
     public function forceUser(?User $user): void
     {
         $this->forcedUserSpy = $user;
+        $this->forcedUserCalls[] = $user;
     }
 
     public function getForcedUser(): ?User
     {
         return $this->forcedUserSpy;
+    }
+
+    /** @return array<int, ?User> */
+    public function forcedUserCalls(): array
+    {
+        return $this->forcedUserCalls;
     }
 }

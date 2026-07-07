@@ -28,9 +28,13 @@ class DeferredMessageHandler
 
         $this->loggedUser->forceUser($user);
 
-        CommandBusDispatcher::instance()->dispatch(
-            $message->command(),
-            $user,
-        );
+        try {
+            CommandBusDispatcher::instance()->dispatch(
+                $message->command(),
+                $user,
+            );
+        } finally {
+            $this->loggedUser->forceUser(null);
+        }
     }
 }
