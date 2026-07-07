@@ -8,8 +8,9 @@ use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
-class LoggedUser
+class LoggedUser implements ResetInterface
 {
     private ?User $user = null;
 
@@ -46,6 +47,12 @@ class LoggedUser
     public function forceUser(?User $user): void
     {
         $this->forcedUser = $user;
+    }
+
+    public function reset(): void
+    {
+        $this->user = null;
+        $this->forcedUser = null;
     }
 
     private function loadUser(): void
