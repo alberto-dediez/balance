@@ -27,21 +27,33 @@ final class ElectricityEmissionFactorSelector implements EmissionFactorSelector
 
     public function select(string $itemId, int $year, ?ItemCondition $condition, EmissionFactorGroupId $groupId, ?string $secondaryItemId = null): EmissionFactor
     {
-        if (null === $secondaryItemId || '' === $secondaryItemId) {
-            throw new \InvalidArgumentException('Electricity activity requires a GdO factor id.');
+        $marketerId = '' !== $itemId ? new ElectricityMarketerId($itemId) : null;
+        $gdOFactorId = null !== $secondaryItemId && '' !== $secondaryItemId ? new GdOFactorId($secondaryItemId) : null;
+
+        if (null === $marketerId && null === $gdOFactorId) {
+            throw new \InvalidArgumentException('Electricity activity requires an electricity marketer or a GdO factor.');
         }
 
-        $marketerId = new ElectricityMarketerId($itemId);
-        $gdOFactorId = new GdOFactorId($secondaryItemId);
-
-        $marketer = $this->electricityMarketerRepository->find($marketerId);
-        if (null === $marketer) {
-            throw new \InvalidArgumentException(sprintf('ElectricityMarketer "%s" not found.', $marketerId));
+        $marketer = null;
+        if (null !== $marketerId) {
+            $marketer = $this->electricityMarketerRepository->find($marketerId);
+            if (null === $marketer) {
+                throw new \InvalidArgumentException(sprintf('ElectricityMarketer "%s" not found.', $marketerId));
+            }
         }
 
-        $gdOFactor = $this->gdOFactorRepository->find($gdOFactorId);
-        if (null === $gdOFactor) {
-            throw new \InvalidArgumentException(sprintf('GdOFactor "%s" not found.', $gdOFactorId));
+        if (null !== $gdOFactorId) {
+            $gdOFactor = $this->gdOFactorRepository->find($gdOFactorId);
+            if (null === $gdOFactor) {
+                throw new \InvalidArgumentException(sprintf('GdOFactor "%s" not found.', $gdOFactorId));
+            }
+
+            $factor = $gdOFactor->emissionFactorFor($year, $groupId);
+            if (null === $factor) {
+                throw new \InvalidArgumentException(sprintf('No emission factor for GdO factor "%s" in year %d.', $gdOFactorId, $year));
+            }
+
+            return $factor;
         }
 
         $factor = $marketer->emissionFactorFor($year, $groupId);

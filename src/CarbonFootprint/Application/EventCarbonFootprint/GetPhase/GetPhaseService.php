@@ -59,7 +59,7 @@ final class GetPhaseService
                 definition: $definition,
                 activities: $activities,
                 catalog: $provider->catalog($year, $emissionFactorGroupId),
-                secondaryCatalog: $provider->secondaryCatalog(),
+                secondaryCatalog: $provider->secondaryCatalog($year, $emissionFactorGroupId),
             );
         }
 

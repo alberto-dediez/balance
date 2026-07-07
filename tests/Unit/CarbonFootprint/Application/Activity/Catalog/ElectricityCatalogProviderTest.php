@@ -62,17 +62,27 @@ class ElectricityCatalogProviderTest extends TestCase
         $this->assertSame([], $this->sut->catalog(2026, null));
     }
 
-    public function testSecondaryCatalogReturnsAllGdOFactorsUnfiltered(): void
+    public function testSecondaryCatalogReturnsOnlyGdOFactorsHavingEmissionFactorForTheYearAndGroup(): void
     {
-        $first = GdOFactorMother::registeredGdOFactor();
-        $second = GdOFactorMother::registeredGdOFactor();
-        $this->gdOFactorRepository->add($first);
-        $this->gdOFactorRepository->add($second);
+        $groupId = EmissionFactorGroupMother::defaultId();
 
-        $secondaryCatalog = $this->sut->secondaryCatalog();
+        $withFactor = GdOFactorMother::registeredGdOFactor();
+        $withFactor->setEmissionFactor(ActivityMother::emissionFactor($groupId)->withYear(2026));
 
-        $this->assertCount(2, $secondaryCatalog);
-        $this->assertContains($first, $secondaryCatalog);
-        $this->assertContains($second, $secondaryCatalog);
+        $withoutFactor = GdOFactorMother::registeredGdOFactor();
+
+        $this->gdOFactorRepository->add($withFactor);
+        $this->gdOFactorRepository->add($withoutFactor);
+
+        $this->assertSame([$withFactor], $this->sut->secondaryCatalog(2026, $groupId));
+    }
+
+    public function testSecondaryCatalogIsEmptyWhenNoEmissionFactorGroupIsGiven(): void
+    {
+        $withFactor = GdOFactorMother::registeredGdOFactor();
+        $withFactor->setEmissionFactor(ActivityMother::emissionFactor()->withYear(2026));
+        $this->gdOFactorRepository->add($withFactor);
+
+        $this->assertSame([], $this->sut->secondaryCatalog(2026, null));
     }
 }

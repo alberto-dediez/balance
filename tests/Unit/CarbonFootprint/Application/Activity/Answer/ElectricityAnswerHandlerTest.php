@@ -49,6 +49,7 @@ class ElectricityAnswerHandlerTest extends TestCase
         $electricityMarketerRepository->add($this->electricityMarketer);
 
         $this->gdOFactor = GdOFactorMother::registeredGdOFactor();
+        $this->gdOFactor->setEmissionFactor(ActivityMother::emissionFactor()->withYear(2026));
         $gdOFactorRepository = new InMemoryGdOFactorRepository();
         $gdOFactorRepository->add($this->gdOFactor);
 
@@ -74,6 +75,7 @@ class ElectricityAnswerHandlerTest extends TestCase
 
         $activity = $this->activityRepository->findById($activityId);
         $this->assertInstanceOf(ElectricityActivity::class, $activity);
+        $this->assertNotNull($activity->gdOFactorId());
         $this->assertTrue($this->gdOFactor->id()->equals($activity->gdOFactorId()));
     }
 

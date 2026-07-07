@@ -23,13 +23,13 @@ final class ElectricityAnswerHttpMapper extends AbstractSectionAnswerHttpMapper
         $secondaryItemId = $this->parseSecondaryItemId($row);
         $quantity = $this->parseQuantity($row);
 
-        if (null === $itemId || null === $secondaryItemId || null === $quantity) {
+        if ((null === $itemId && null === $secondaryItemId) || null === $quantity) {
             return null;
         }
 
         return new ElectricityAnswer(
-            electricityMarketerId: new ElectricityMarketerId($itemId),
-            gdOFactorId: new GdOFactorId($secondaryItemId),
+            electricityMarketerId: null !== $itemId ? new ElectricityMarketerId($itemId) : null,
+            gdOFactorId: null !== $secondaryItemId ? new GdOFactorId($secondaryItemId) : null,
             quantity: $quantity,
             existingActivityId: $this->parseActivityId($row),
             source: $this->parseSource($row),

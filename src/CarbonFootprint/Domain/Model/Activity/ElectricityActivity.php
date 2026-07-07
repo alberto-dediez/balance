@@ -12,8 +12,8 @@ use App\CarbonFootprint\Domain\Model\Quantity;
 
 final class ElectricityActivity extends Activity
 {
-    private ElectricityMarketerId $electricityMarketerId;
-    private GdOFactorId $gdOFactorId;
+    private ?ElectricityMarketerId $electricityMarketerId = null;
+    private ?GdOFactorId $gdOFactorId = null;
     private ?string $source = null;
 
     private function __construct(ActivityId $id)
@@ -23,13 +23,15 @@ final class ElectricityActivity extends Activity
 
     public static function register(
         ActivityId $id,
-        ElectricityMarketerId $electricityMarketerId,
-        GdOFactorId $gdOFactorId,
+        ?ElectricityMarketerId $electricityMarketerId,
+        ?GdOFactorId $gdOFactorId,
         EmissionFactor $emissionFactor,
         Emissions $emissions,
         Quantity $quantity,
         ?string $source = null,
     ): static {
+        self::assertHasMarketerOrGdOFactor($electricityMarketerId, $gdOFactorId);
+
         $activity = new static($id);
         $activity->recordApplyAndPublish(new ElectricityActivityRegistered(
             activityId: $id,
@@ -45,13 +47,15 @@ final class ElectricityActivity extends Activity
     }
 
     public function update(
-        ElectricityMarketerId $electricityMarketerId,
-        GdOFactorId $gdOFactorId,
+        ?ElectricityMarketerId $electricityMarketerId,
+        ?GdOFactorId $gdOFactorId,
         EmissionFactor $emissionFactor,
         Emissions $emissions,
         Quantity $quantity,
         ?string $source = null,
     ): void {
+        self::assertHasMarketerOrGdOFactor($electricityMarketerId, $gdOFactorId);
+
         $this->recordApplyAndPublish(new ElectricityActivityUpdated(
             activityId: $this->id,
             electricityMarketerId: $electricityMarketerId,
@@ -63,6 +67,13 @@ final class ElectricityActivity extends Activity
         ));
     }
 
+    private static function assertHasMarketerOrGdOFactor(?ElectricityMarketerId $electricityMarketerId, ?GdOFactorId $gdOFactorId): void
+    {
+        if (null === $electricityMarketerId && null === $gdOFactorId) {
+            throw new \InvalidArgumentException('Electricity activity requires an electricity marketer or a GdO factor.');
+        }
+    }
+
     public function remove(): void
     {
         $event = new ElectricityActivityRemoved(activityId: $this->id);
@@ -70,12 +81,12 @@ final class ElectricityActivity extends Activity
         $this->publish($event);
     }
 
-    public function electricityMarketerId(): ElectricityMarketerId
+    public function electricityMarketerId(): ?ElectricityMarketerId
     {
         return $this->electricityMarketerId;
     }
 
-    public function gdOFactorId(): GdOFactorId
+    public function gdOFactorId(): ?GdOFactorId
     {
         return $this->gdOFactorId;
     }

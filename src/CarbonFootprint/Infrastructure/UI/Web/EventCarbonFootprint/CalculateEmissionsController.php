@@ -50,7 +50,11 @@ class CalculateEmissionsController extends AbstractController
         $mode = $payload->getString('mode');
         $isContainerMode = ActivityType::Waste === $activityType && 'container' === $mode;
 
-        if (null === $activityType || '' === $itemId || (null === $unit && !$isContainerMode)) {
+        $hasRequiredItem = ActivityType::Electricity === $activityType
+            ? ('' !== $itemId || '' !== $secondaryItemId)
+            : '' !== $itemId;
+
+        if (null === $activityType || !$hasRequiredItem || (null === $unit && !$isContainerMode)) {
             return $this->json(['error' => 'Invalid parameters'], Response::HTTP_BAD_REQUEST);
         }
 

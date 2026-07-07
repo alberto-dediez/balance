@@ -33,7 +33,7 @@ abstract class AbstractSectionAnswerHttpMapper implements SectionAnswerHttpMappe
         $unit = Unit::tryFrom((string) ($row['unit'] ?? ''));
         $quantity = (float) str_replace(',', '.', (string) ($row['quantity'] ?? ''));
 
-        if (null === $unit || $quantity <= 0) {
+        if (null === $unit || $quantity < 0) {
             return null;
         }
 

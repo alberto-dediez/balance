@@ -30,7 +30,7 @@ final class MachineryFuelCatalogProvider implements ActivityCatalogProvider
         ));
     }
 
-    public function secondaryCatalog(): array
+    public function secondaryCatalog(int $year, ?EmissionFactorGroupId $emissionFactorGroupId): array
     {
         return [];
     }

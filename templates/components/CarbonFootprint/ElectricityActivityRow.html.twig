@@ -6,8 +6,8 @@
     </td>
     <td>
         <input type="hidden" name="{{ prefix }}[{{ index }}][activityId]" value="{{ row ? row.activityId : '' }}">
-        <select name="{{ prefix }}[{{ index }}][itemId]" class="form-select" data-field="itemId" data-controller="autocomplete" data-action="activity-emissions#recalculate" required="required">
-            <option value="">{{ 'Selecciona una opción' | trans }}</option>
+        <select name="{{ prefix }}[{{ index }}][itemId]" class="form-select" data-field="itemId" data-controller="autocomplete" data-action="activity-emissions#recalculate">
+            <option value="">{{ 'Sin especificar' | trans }}</option>
             {% for marketer in marketers %}
                 <option value="{{ marketer.id }}"{{ row and row.itemId == marketer.id ~ '' ? ' selected' }}>{{ marketer.name }}</option>
             {% endfor %}
@@ -15,7 +15,7 @@
     </td>
     <td>
         <select name="{{ prefix }}[{{ index }}][itemId2]" class="form-select" data-field="itemId2" data-action="activity-emissions#recalculate">
-            <option value="">{{ 'Selecciona una opción' | trans }}</option>
+            <option value="">{{ 'No' | trans }}</option>
             {% for gdOFactor in gdOFactors %}
                 <option value="{{ gdOFactor.id }}"{{ row and row.itemId2 == gdOFactor.id ~ '' ? ' selected' }}>{{ gdOFactor.name }}</option>
             {% endfor %}

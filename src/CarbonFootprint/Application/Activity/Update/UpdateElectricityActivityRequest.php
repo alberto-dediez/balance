@@ -15,8 +15,8 @@ class UpdateElectricityActivityRequest implements Command
 {
     public function __construct(
         public ActivityId $activityId,
-        public ElectricityMarketerId $electricityMarketerId,
-        public GdOFactorId $gdOFactorId,
+        public ?ElectricityMarketerId $electricityMarketerId,
+        public ?GdOFactorId $gdOFactorId,
         public Quantity $quantity,
         public int $year,
         public EmissionFactorGroupId $emissionFactorGroupId,

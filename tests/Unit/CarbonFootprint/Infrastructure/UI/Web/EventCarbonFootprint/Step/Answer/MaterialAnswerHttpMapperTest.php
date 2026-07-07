@@ -52,10 +52,17 @@ class MaterialAnswerHttpMapperTest extends TestCase
         $this->assertNull($this->sut->map(['itemId' => 'material-1', 'unit' => 'invalid', 'quantity' => '10']));
     }
 
-    public function testReturnsNullWhenQuantityIsNotPositive(): void
+    public function testReturnsNullWhenQuantityIsNegative(): void
     {
-        $this->assertNull($this->sut->map(['itemId' => 'material-1', 'unit' => 'kg', 'quantity' => '0']));
         $this->assertNull($this->sut->map(['itemId' => 'material-2', 'unit' => 'kg', 'quantity' => '-5']));
+    }
+
+    public function testMapsAValidRowWithZeroQuantity(): void
+    {
+        $answer = $this->sut->map(['itemId' => 'material-1', 'unit' => 'kg', 'quantity' => '0']);
+
+        $this->assertInstanceOf(MaterialAnswer::class, $answer);
+        $this->assertSame(0.0, $answer->quantity->value());
     }
 
     public function testAcceptsCommaAsDecimalSeparator(): void

@@ -21,8 +21,8 @@ final class ElectricityActivityUpdated extends DomainEvent
 
     public function __construct(
         private ActivityId $activityId,
-        private ElectricityMarketerId $electricityMarketerId,
-        private GdOFactorId $gdOFactorId,
+        private ?ElectricityMarketerId $electricityMarketerId,
+        private ?GdOFactorId $gdOFactorId,
         private EmissionFactor $emissionFactor,
         private Emissions $emissions,
         private Quantity $quantity,
@@ -38,12 +38,12 @@ final class ElectricityActivityUpdated extends DomainEvent
         return $this->activityId;
     }
 
-    public function electricityMarketerId(): ElectricityMarketerId
+    public function electricityMarketerId(): ?ElectricityMarketerId
     {
         return $this->electricityMarketerId;
     }
 
-    public function gdOFactorId(): GdOFactorId
+    public function gdOFactorId(): ?GdOFactorId
     {
         return $this->gdOFactorId;
     }
@@ -77,8 +77,8 @@ final class ElectricityActivityUpdated extends DomainEvent
     {
         return [
             'activityId' => (string) $this->activityId,
-            'electricityMarketerId' => (string) $this->electricityMarketerId,
-            'gdOFactorId' => (string) $this->gdOFactorId,
+            'electricityMarketerId' => null !== $this->electricityMarketerId ? (string) $this->electricityMarketerId : null,
+            'gdOFactorId' => null !== $this->gdOFactorId ? (string) $this->gdOFactorId : null,
             'emissionFactorCo2eq' => $this->emissionFactor->co2eq(),
             'emissionFactorCo2' => $this->emissionFactor->co2(),
             'emissionFactorCh4' => $this->emissionFactor->ch4(),
@@ -110,8 +110,8 @@ final class ElectricityActivityUpdated extends DomainEvent
 
         return new self(
             activityId: new ActivityId($payload['activityId']),
-            electricityMarketerId: new ElectricityMarketerId($payload['electricityMarketerId']),
-            gdOFactorId: new GdOFactorId($payload['gdOFactorId']),
+            electricityMarketerId: null !== ($payload['electricityMarketerId'] ?? null) ? new ElectricityMarketerId($payload['electricityMarketerId']) : null,
+            gdOFactorId: null !== ($payload['gdOFactorId'] ?? null) ? new GdOFactorId($payload['gdOFactorId']) : null,
             emissionFactor: new EmissionFactor(
                 emissionFactorGroupId: new EmissionFactorGroupId($payload['emissionFactorGroupId']),
                 co2eq: $payload['emissionFactorCo2eq'],

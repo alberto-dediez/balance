@@ -26,13 +26,9 @@ class ElectricityEmissionFactorSelectorTest extends TestCase
         $marketerRepository = ElectricityMarketerRepositoryMother::inMemory();
         $marketerRepository->add($marketer);
 
-        $gdOFactor = GdOFactorMother::registeredGdOFactor();
-        $gdOFactorRepository = GdOFactorRepositoryMother::inMemory();
-        $gdOFactorRepository->add($gdOFactor);
+        $sut = new ElectricityEmissionFactorSelector($marketerRepository, GdOFactorRepositoryMother::inMemory());
 
-        $sut = new ElectricityEmissionFactorSelector($marketerRepository, $gdOFactorRepository);
-
-        $factor = $sut->select((string) $marketer->id(), 2024, null, $groupId, (string) $gdOFactor->id());
+        $factor = $sut->select((string) $marketer->id(), 2024, null, $groupId, null);
 
         $this->assertTrue($groupId->equals($factor->emissionFactorGroupId()));
     }
@@ -76,5 +72,72 @@ class ElectricityEmissionFactorSelectorTest extends TestCase
 
         $this->expectException(\InvalidArgumentException::class);
         $sut->select((string) $marketer->id(), 2024, null, EmissionFactorGroupMother::random()->id(), (string) $gdOFactor->id());
+    }
+
+    public function testSelectReturnsGdOFactorEmissionFactorWhenAGdOFactorIsChosen(): void
+    {
+        $groupId = EmissionFactorGroupMother::default()->id();
+
+        $marketer = ElectricityMarketerMother::registeredElectricityMarketer();
+        $marketer->setEmissionFactor(ActivityMother::emissionFactor($groupId));
+        $marketerRepository = ElectricityMarketerRepositoryMother::inMemory();
+        $marketerRepository->add($marketer);
+
+        $gdOFactor = GdOFactorMother::registeredGdOFactor();
+        $gdOFactor->setEmissionFactor(ActivityMother::emissionFactor($groupId));
+        $gdOFactorRepository = GdOFactorRepositoryMother::inMemory();
+        $gdOFactorRepository->add($gdOFactor);
+
+        $sut = new ElectricityEmissionFactorSelector($marketerRepository, $gdOFactorRepository);
+
+        $factor = $sut->select((string) $marketer->id(), 2024, null, $groupId, (string) $gdOFactor->id());
+
+        $expectedFactor = $gdOFactor->emissionFactorFor(2024, $groupId);
+        $this->assertNotNull($expectedFactor);
+        $this->assertTrue($factor->equals($expectedFactor));
+    }
+
+    public function testSelectReturnsMarketerFactorWhenNoGdOFactorIsChosen(): void
+    {
+        $groupId = EmissionFactorGroupMother::default()->id();
+
+        $marketer = ElectricityMarketerMother::registeredElectricityMarketer();
+        $marketer->setEmissionFactor(ActivityMother::emissionFactor($groupId));
+        $marketerRepository = ElectricityMarketerRepositoryMother::inMemory();
+        $marketerRepository->add($marketer);
+
+        $sut = new ElectricityEmissionFactorSelector($marketerRepository, GdOFactorRepositoryMother::inMemory());
+
+        $factor = $sut->select((string) $marketer->id(), 2024, null, $groupId, null);
+
+        $expectedFactor = $marketer->emissionFactorFor(2024, $groupId);
+        $this->assertNotNull($expectedFactor);
+        $this->assertTrue($factor->equals($expectedFactor));
+    }
+
+    public function testSelectReturnsGdOFactorEmissionFactorWithoutAnElectricityMarketer(): void
+    {
+        $groupId = EmissionFactorGroupMother::default()->id();
+
+        $gdOFactor = GdOFactorMother::registeredGdOFactor();
+        $gdOFactor->setEmissionFactor(ActivityMother::emissionFactor($groupId));
+        $gdOFactorRepository = GdOFactorRepositoryMother::inMemory();
+        $gdOFactorRepository->add($gdOFactor);
+
+        $sut = new ElectricityEmissionFactorSelector(ElectricityMarketerRepositoryMother::inMemory(), $gdOFactorRepository);
+
+        $factor = $sut->select('', 2024, null, $groupId, (string) $gdOFactor->id());
+
+        $expectedFactor = $gdOFactor->emissionFactorFor(2024, $groupId);
+        $this->assertNotNull($expectedFactor);
+        $this->assertTrue($factor->equals($expectedFactor));
+    }
+
+    public function testSelectThrowsWhenNeitherMarketerNorGdOFactorAreProvided(): void
+    {
+        $sut = new ElectricityEmissionFactorSelector(ElectricityMarketerRepositoryMother::inMemory(), GdOFactorRepositoryMother::inMemory());
+
+        $this->expectException(\InvalidArgumentException::class);
+        $sut->select('', 2024, null, EmissionFactorGroupMother::default()->id(), null);
     }
 }

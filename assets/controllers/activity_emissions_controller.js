@@ -8,6 +8,16 @@ export default class extends Controller {
             this.restrictUnit(row);
             this.applyMode(row);
         });
+
+        if (this.typeValue === 'electricity') {
+            this.form = this.element.closest('form');
+            this.validateSubmit = this.validateSubmit.bind(this);
+            this.form?.addEventListener('submit', this.validateSubmit);
+        }
+    }
+
+    disconnect() {
+        this.form?.removeEventListener('submit', this.validateSubmit);
     }
 
     itemChanged(event) {
@@ -15,6 +25,54 @@ export default class extends Controller {
 
         this.restrictUnit(row);
         this.calculate(row);
+    }
+
+    validateSubmit(event) {
+        let firstInvalidRow = null;
+
+        this.element.querySelectorAll('tbody tr').forEach((row) => {
+            const isInvalid = this.hasMissingElectricitySource(row);
+
+            this.toggleElectricitySourceError(row, isInvalid);
+
+            if (isInvalid && !firstInvalidRow) {
+                firstInvalidRow = row;
+            }
+        });
+
+        if (firstInvalidRow) {
+            event.preventDefault();
+            firstInvalidRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    hasMissingElectricitySource(row) {
+        const marketerField = row.querySelector('[data-field="itemId"]');
+        const gdOField = row.querySelector('[data-field="itemId2"]');
+
+        if (!marketerField || !gdOField) return false;
+
+        return !marketerField.value && !gdOField.value;
+    }
+
+    toggleElectricitySourceError(row, isInvalid) {
+        const marketerField = row.querySelector('[data-field="itemId"]');
+        const cell = marketerField.closest('td');
+        const wrapper = marketerField.closest('.ts-wrapper') || marketerField;
+
+        wrapper.classList.toggle('is-invalid', isInvalid);
+
+        let feedback = cell.querySelector('[data-electricity-source-feedback]');
+
+        if (isInvalid && !feedback) {
+            feedback = document.createElement('div');
+            feedback.className = 'invalid-feedback d-block';
+            feedback.dataset.electricitySourceFeedback = '';
+            feedback.textContent = 'Selecciona una comercializadora o una garantía de origen.';
+            cell.appendChild(feedback);
+        } else if (!isInvalid && feedback) {
+            feedback.remove();
+        }
     }
 
     modeChanged(event) {
@@ -94,7 +152,7 @@ export default class extends Controller {
             const unit = row.querySelector('[data-field="unit"]')?.value;
             const quantity = row.querySelector('[data-field="quantity"]')?.value;
 
-            if (!itemId || !quantity) {
+            if ((!itemId && !itemId2) || !quantity) {
                 output.textContent = '—';
                 return;
             }

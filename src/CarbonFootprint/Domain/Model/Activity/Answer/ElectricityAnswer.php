@@ -13,8 +13,8 @@ use App\CarbonFootprint\Domain\Model\Quantity;
 final class ElectricityAnswer extends ActivityAnswer
 {
     public function __construct(
-        public readonly ElectricityMarketerId $electricityMarketerId,
-        public readonly GdOFactorId $gdOFactorId,
+        public readonly ?ElectricityMarketerId $electricityMarketerId,
+        public readonly ?GdOFactorId $gdOFactorId,
         Quantity $quantity,
         ?ActivityId $existingActivityId = null,
         ?string $source = null,

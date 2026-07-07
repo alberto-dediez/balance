@@ -35,8 +35,15 @@ final class ElectricityCatalogProvider implements ActivityCatalogProvider
         ));
     }
 
-    public function secondaryCatalog(): array
+    public function secondaryCatalog(int $year, ?EmissionFactorGroupId $emissionFactorGroupId): array
     {
-        return array_values($this->gdOFactorRepository->findByFilter(new GdOFactorFilter(limit: 0)));
+        if (null === $emissionFactorGroupId) {
+            return [];
+        }
+
+        return array_values(array_filter(
+            $this->gdOFactorRepository->findByFilter(new GdOFactorFilter(limit: 0)),
+            static fn($item) => null !== $item->emissionFactorFor($year, $emissionFactorGroupId),
+        ));
     }
 }

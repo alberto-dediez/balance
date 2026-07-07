@@ -36,19 +36,27 @@ class ElectricityAnswerHttpMapperTest extends TestCase
         $this->assertNull($answer->existingActivityId);
     }
 
-    public function testReturnsNullWhenItemId2IsMissing(): void
+    public function testMapsAValidRowWithoutAGdOFactor(): void
     {
-        $this->assertNull($this->sut->map(['itemId' => 'marketer-1', 'unit' => 'kWh', 'quantity' => '100']));
+        $answer = $this->sut->map(['itemId' => 'marketer-1', 'unit' => 'kWh', 'quantity' => '100']);
+
+        $this->assertInstanceOf(ElectricityAnswer::class, $answer);
+        $this->assertSame('marketer-1', (string) $answer->electricityMarketerId);
+        $this->assertNull($answer->gdOFactorId);
     }
 
-    public function testReturnsNullWhenItemId2IsEmpty(): void
+    public function testMapsAValidRowWithoutAnElectricityMarketer(): void
     {
-        $this->assertNull($this->sut->map(['itemId' => 'marketer-1', 'itemId2' => '', 'unit' => 'kWh', 'quantity' => '100']));
+        $answer = $this->sut->map(['itemId' => '', 'itemId2' => 'gdo-1', 'unit' => 'kWh', 'quantity' => '100']);
+
+        $this->assertInstanceOf(ElectricityAnswer::class, $answer);
+        $this->assertNull($answer->electricityMarketerId);
+        $this->assertSame('gdo-1', (string) $answer->gdOFactorId);
     }
 
-    public function testReturnsNullWhenItemIdIsEmpty(): void
+    public function testReturnsNullWhenNeitherItemIdNorItemId2AreProvided(): void
     {
-        $this->assertNull($this->sut->map(['itemId' => '', 'itemId2' => 'gdo-1', 'unit' => 'kWh', 'quantity' => '100']));
+        $this->assertNull($this->sut->map(['itemId' => '', 'itemId2' => '', 'unit' => 'kWh', 'quantity' => '100']));
     }
 
     public function testReturnsNullWhenUnitIsInvalid(): void
@@ -56,9 +64,17 @@ class ElectricityAnswerHttpMapperTest extends TestCase
         $this->assertNull($this->sut->map(['itemId' => 'marketer-1', 'itemId2' => 'gdo-1', 'unit' => 'invalid', 'quantity' => '100']));
     }
 
-    public function testReturnsNullWhenQuantityIsNotPositive(): void
+    public function testReturnsNullWhenQuantityIsNegative(): void
     {
-        $this->assertNull($this->sut->map(['itemId' => 'marketer-1', 'itemId2' => 'gdo-1', 'unit' => 'kWh', 'quantity' => '0']));
+        $this->assertNull($this->sut->map(['itemId' => 'marketer-1', 'itemId2' => 'gdo-1', 'unit' => 'kWh', 'quantity' => '-5']));
+    }
+
+    public function testMapsAValidRowWithZeroQuantity(): void
+    {
+        $answer = $this->sut->map(['itemId' => 'marketer-1', 'itemId2' => 'gdo-1', 'unit' => 'kWh', 'quantity' => '0']);
+
+        $this->assertInstanceOf(ElectricityAnswer::class, $answer);
+        $this->assertSame(0.0, $answer->quantity->value());
     }
 
     public function testAcceptsCommaAsDecimalSeparator(): void

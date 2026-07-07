@@ -13,8 +13,8 @@ use App\Shared\Application\CommandBus\Command;
 class RegisterElectricityActivityRequest implements Command
 {
     public function __construct(
-        public ElectricityMarketerId $electricityMarketerId,
-        public GdOFactorId $gdOFactorId,
+        public ?ElectricityMarketerId $electricityMarketerId,
+        public ?GdOFactorId $gdOFactorId,
         public Quantity $quantity,
         public int $year,
         public EmissionFactorGroupId $emissionFactorGroupId,

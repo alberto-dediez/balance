@@ -52,6 +52,7 @@ class UpdateElectricityActivityServiceTest extends TestCase
         $marketerRepo->add($marketer);
 
         $gdoFactor = GdOFactorMother::registeredGdOFactor();
+        $gdoFactor->setEmissionFactor(ActivityMother::emissionFactor());
         $gdoFactorRepo = GdOFactorRepositoryMother::inMemory();
         $gdoFactorRepo->add($gdoFactor);
 

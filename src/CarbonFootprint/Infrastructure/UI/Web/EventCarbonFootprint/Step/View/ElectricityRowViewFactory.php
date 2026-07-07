@@ -21,11 +21,11 @@ final class ElectricityRowViewFactory implements ActivityRowViewFactory
 
         return new ActivityRowView(
             activityId: (string) $activity->id(),
-            itemId: (string) $activity->electricityMarketerId(),
+            itemId: null !== $activity->electricityMarketerId() ? (string) $activity->electricityMarketerId() : '',
             unit: $activity->quantity()->unit()->value,
             quantity: $activity->quantity()->value(),
             co2eq: $activity->emissions()->co2eq(),
-            itemId2: (string) $activity->gdOFactorId(),
+            itemId2: null !== $activity->gdOFactorId() ? (string) $activity->gdOFactorId() : null,
             source: $activity->source(),
         );
     }
