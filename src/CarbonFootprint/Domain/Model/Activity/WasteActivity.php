@@ -7,12 +7,16 @@ namespace App\CarbonFootprint\Domain\Model\Activity;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Quantity;
+use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
 
 final class WasteActivity extends Activity
 {
     private WasteId $wasteId;
     private ?string $source = null;
+    private ?float $containerCapacityValue = null;
+    private ?Unit $containerCapacityUnit = null;
+    private ?float $fillPercentage = null;
 
     private function __construct(ActivityId $id)
     {
@@ -26,6 +30,8 @@ final class WasteActivity extends Activity
         Emissions $emissions,
         Quantity $quantity,
         ?string $source = null,
+        ?Quantity $containerCapacity = null,
+        ?float $fillPercentage = null,
     ): static {
         $activity = new static($id);
         $activity->recordApplyAndPublish(new WasteActivityRegistered(
@@ -35,6 +41,8 @@ final class WasteActivity extends Activity
             emissions: $emissions,
             quantity: $quantity,
             source: $source,
+            containerCapacity: $containerCapacity,
+            fillPercentage: $fillPercentage,
         ));
 
         return $activity;
@@ -46,6 +54,8 @@ final class WasteActivity extends Activity
         Emissions $emissions,
         Quantity $quantity,
         ?string $source = null,
+        ?Quantity $containerCapacity = null,
+        ?float $fillPercentage = null,
     ): void {
         $this->recordApplyAndPublish(new WasteActivityUpdated(
             activityId: $this->id,
@@ -54,6 +64,8 @@ final class WasteActivity extends Activity
             emissions: $emissions,
             quantity: $quantity,
             source: $source,
+            containerCapacity: $containerCapacity,
+            fillPercentage: $fillPercentage,
         ));
     }
 
@@ -74,6 +86,20 @@ final class WasteActivity extends Activity
         return $this->source;
     }
 
+    public function containerCapacity(): ?Quantity
+    {
+        if (null === $this->containerCapacityValue || null === $this->containerCapacityUnit) {
+            return null;
+        }
+
+        return new Quantity($this->containerCapacityValue, $this->containerCapacityUnit);
+    }
+
+    public function fillPercentage(): ?float
+    {
+        return $this->fillPercentage;
+    }
+
     public function applyWasteActivityRegistered(WasteActivityRegistered $event): void
     {
         $this->wasteId = $event->wasteId();
@@ -81,6 +107,9 @@ final class WasteActivity extends Activity
         $this->emissions = $event->emissions();
         $this->quantity = $event->quantity();
         $this->source = $event->source();
+        $this->containerCapacityValue = $event->containerCapacity()?->value();
+        $this->containerCapacityUnit = $event->containerCapacity()?->unit();
+        $this->fillPercentage = $event->fillPercentage();
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -91,6 +120,9 @@ final class WasteActivity extends Activity
         $this->emissions = $event->emissions();
         $this->quantity = $event->quantity();
         $this->source = $event->source();
+        $this->containerCapacityValue = $event->containerCapacity()?->value();
+        $this->containerCapacityUnit = $event->containerCapacity()?->unit();
+        $this->fillPercentage = $event->fillPercentage();
         $this->updatedAt = $event->occurredOn();
     }
 }

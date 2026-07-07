@@ -3253,7 +3253,7 @@
         <source>Consumo de electricidad en las instalaciones</source>
         <target>Consumo de electricidad en las instalaciones</target>
       </trans-unit>
-      <trans-unit id=".lY2_CT" resname="Gestión de residuos generados">
+      <trans-unit id="v3UqUVy" resname="Gestión de residuos generados">
         <source>Gestión de residuos generados</source>
         <target>Gestión de residuos generados</target>
       </trans-unit>
@@ -3268,6 +3268,18 @@
       <trans-unit id="W2c8rUC" resname="Catering adquirido para el evento">
         <source>Catering adquirido para el evento</source>
         <target>Catering adquirido para el evento</target>
+      </trans-unit>
+      <trans-unit id="ijm40zs" resname="Cantidad directa">
+        <source>Cantidad directa</source>
+        <target>Cantidad directa</target>
+      </trans-unit>
+      <trans-unit id="IXvTBDk" resname="Por contenedor">
+        <source>Por contenedor</source>
+        <target>Por contenedor</target>
+      </trans-unit>
+      <trans-unit id="yG15Vjm" resname="Capacidad">
+        <source>Capacidad</source>
+        <target>Capacidad</target>
       </trans-unit>
     </body>
   </file>

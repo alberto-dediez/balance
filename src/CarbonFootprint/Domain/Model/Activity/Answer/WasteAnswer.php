@@ -16,6 +16,8 @@ final class WasteAnswer extends ActivityAnswer
         Quantity $quantity,
         ?ActivityId $existingActivityId = null,
         ?string $source = null,
+        public readonly ?Quantity $containerCapacity = null,
+        public readonly ?float $fillPercentage = null,
     ) {
         parent::__construct($quantity, $existingActivityId, $source);
     }

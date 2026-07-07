@@ -37,6 +37,8 @@ final class WasteAnswerHandler implements ActivityAnswerHandler
             year: $year,
             emissionFactorGroupId: $emissionFactorGroupId,
             source: $answer->source,
+            containerCapacity: $answer->containerCapacity,
+            fillPercentage: $answer->fillPercentage,
         ), $user);
 
         return $response->activityId;
@@ -54,6 +56,8 @@ final class WasteAnswerHandler implements ActivityAnswerHandler
             year: $year,
             emissionFactorGroupId: $emissionFactorGroupId,
             source: $answer->source,
+            containerCapacity: $answer->containerCapacity,
+            fillPercentage: $answer->fillPercentage,
         ), $user);
     }
 }

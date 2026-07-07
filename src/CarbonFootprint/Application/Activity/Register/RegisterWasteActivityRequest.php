@@ -17,5 +17,7 @@ class RegisterWasteActivityRequest implements Command
         public int $year,
         public EmissionFactorGroupId $emissionFactorGroupId,
         public ?string $source = null,
+        public ?Quantity $containerCapacity = null,
+        public ?float $fillPercentage = null,
     ) {}
 }

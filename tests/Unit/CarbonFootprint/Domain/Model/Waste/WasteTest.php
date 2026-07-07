@@ -6,6 +6,8 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\Waste;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\IncompatibleUnitsException;
+use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\Waste;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
@@ -191,6 +193,93 @@ class WasteTest extends TestCase
             unit: Unit::Kilogram,
             density: 1.0,
         );
+    }
+
+    public function testQuantityFromContainerWithMassUnitAppliesDensity(): void
+    {
+        $waste = new Waste(
+            id: WasteId::generate(),
+            name: 'waste-name',
+            unit: Unit::Kilogram,
+            density: 250.0,
+        );
+
+        $quantity = $waste->quantityFromContainer(new Quantity(2, Unit::CubicMeter), 50.0);
+
+        $this->assertSame(250.0, $quantity->value());
+        $this->assertSame(Unit::Kilogram, $quantity->unit());
+    }
+
+    public function testQuantityFromContainerConvertsCapacityUnit(): void
+    {
+        $waste = new Waste(
+            id: WasteId::generate(),
+            name: 'waste-name',
+            unit: Unit::Kilogram,
+            density: 250.0,
+        );
+
+        $quantity = $waste->quantityFromContainer(new Quantity(1000, Unit::Liter), 50.0);
+
+        $this->assertSame(125.0, $quantity->value());
+        $this->assertSame(Unit::Kilogram, $quantity->unit());
+    }
+
+    public function testQuantityFromContainerWithVolumeUnitIgnoresDensity(): void
+    {
+        $waste = new Waste(
+            id: WasteId::generate(),
+            name: 'waste-name',
+            unit: Unit::Liter,
+            density: 250.0,
+        );
+
+        $quantity = $waste->quantityFromContainer(new Quantity(2, Unit::CubicMeter), 50.0);
+
+        $this->assertSame(1000.0, $quantity->value());
+        $this->assertSame(Unit::Liter, $quantity->unit());
+    }
+
+    public function testQuantityFromContainerThrowsForMassCapacityUnit(): void
+    {
+        $waste = new Waste(
+            id: WasteId::generate(),
+            name: 'waste-name',
+            unit: Unit::Kilogram,
+            density: 250.0,
+        );
+
+        $this->expectException(IncompatibleUnitsException::class);
+
+        $waste->quantityFromContainer(new Quantity(2, Unit::Kilogram), 50.0);
+    }
+
+    public function testQuantityFromContainerThrowsForFillPercentageOutOfRange(): void
+    {
+        $waste = new Waste(
+            id: WasteId::generate(),
+            name: 'waste-name',
+            unit: Unit::Kilogram,
+            density: 250.0,
+        );
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $waste->quantityFromContainer(new Quantity(2, Unit::CubicMeter), 150.0);
+    }
+
+    public function testQuantityFromContainerThrowsForPiecesWasteUnit(): void
+    {
+        $waste = new Waste(
+            id: WasteId::generate(),
+            name: 'waste-name',
+            unit: Unit::Piece,
+            density: 250.0,
+        );
+
+        $this->expectException(IncompatibleUnitsException::class);
+
+        $waste->quantityFromContainer(new Quantity(2, Unit::CubicMeter), 50.0);
     }
 
     private function emissionFactor(int $year, string $co2eq): EmissionFactor

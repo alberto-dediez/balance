@@ -26,6 +26,9 @@ final class WasteRowViewFactory implements ActivityRowViewFactory
             quantity: $activity->quantity()->value(),
             co2eq: $activity->emissions()->co2eq(),
             source: $activity->source(),
+            containerCapacity: $activity->containerCapacity()?->value(),
+            containerUnit: $activity->containerCapacity()?->unit()->value,
+            fillPercentage: $activity->fillPercentage(),
         );
     }
 }

@@ -9,11 +9,11 @@
         <source>kg</source>
         <target>Kilogram</target>
       </trans-unit>
-      <trans-unit id="NEW_g" resname="g">
+      <trans-unit id="bFWgxz5" resname="g">
         <source>g</source>
         <target>Gram</target>
       </trans-unit>
-      <trans-unit id="NEW_t" resname="t">
+      <trans-unit id="GQ6PzdZ" resname="t">
         <source>t</source>
         <target>Tonne</target>
       </trans-unit>
@@ -25,7 +25,7 @@
         <source>l</source>
         <target>Liter</target>
       </trans-unit>
-      <trans-unit id="NEW_m3" resname="m3">
+      <trans-unit id="8oki9qX" resname="m3">
         <source>m3</source>
         <target>Cubic meter</target>
       </trans-unit>

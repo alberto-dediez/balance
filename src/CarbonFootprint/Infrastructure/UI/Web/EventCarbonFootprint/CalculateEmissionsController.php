@@ -6,11 +6,14 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint;
 
 use App\CarbonFootprint\Application\Activity\Calculate\CalculateActivityEmissionsRequest;
 use App\CarbonFootprint\Application\Activity\Calculate\CalculateActivityEmissionsService;
+use App\CarbonFootprint\Application\Activity\WasteContainerQuantityResolver;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
+use App\CarbonFootprint\Domain\Model\Magnitude;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\CarbonFootprint\Domain\Model\Waste\WasteId;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
@@ -29,6 +32,7 @@ class CalculateEmissionsController extends AbstractController
         string $eventId,
         EventCarbonFootprintRepository $eventCarbonFootprintRepository,
         CalculateActivityEmissionsService $calculateActivityEmissions,
+        WasteContainerQuantityResolver $wasteContainerQuantityResolver,
         LoggedUser $loggedUser,
         Request $request,
     ): JsonResponse {
@@ -43,19 +47,38 @@ class CalculateEmissionsController extends AbstractController
         $unit = Unit::tryFrom($payload->getString('unit'));
         $itemId = $payload->getString('itemId');
         $secondaryItemId = $payload->getString('itemId2');
-        $quantity = (float) str_replace(',', '.', $payload->getString('quantity'));
+        $mode = $payload->getString('mode');
+        $isContainerMode = ActivityType::Waste === $activityType && 'container' === $mode;
 
-        if (null === $activityType || null === $unit || '' === $itemId) {
+        if (null === $activityType || '' === $itemId || (null === $unit && !$isContainerMode)) {
             return $this->json(['error' => 'Invalid parameters'], Response::HTTP_BAD_REQUEST);
         }
 
         try {
+            if ($isContainerMode) {
+                $containerUnit = Unit::tryFrom($payload->getString('containerUnit'));
+                $containerCapacity = (float) str_replace(',', '.', $payload->getString('containerCapacity'));
+                $fillPercentage = (float) str_replace(',', '.', $payload->getString('fillPercentage'));
+
+                if (null === $containerUnit || Magnitude::Volume !== $containerUnit->magnitude()) {
+                    return $this->json(['error' => 'Invalid parameters'], Response::HTTP_BAD_REQUEST);
+                }
+
+                $quantity = $wasteContainerQuantityResolver->resolve(
+                    new WasteId($itemId),
+                    new Quantity($containerCapacity, $containerUnit),
+                    $fillPercentage,
+                );
+            } else {
+                $quantity = new Quantity((float) str_replace(',', '.', $payload->getString('quantity')), $unit);
+            }
+
             $response = $calculateActivityEmissions(new CalculateActivityEmissionsRequest(
                 eventCarbonFootprintId: $eventCarbonFootprint->id(),
                 activityType: $activityType,
                 itemId: $itemId,
                 condition: $condition,
-                quantity: new Quantity($quantity, $unit),
+                quantity: $quantity,
                 secondaryItemId: '' !== $secondaryItemId ? $secondaryItemId : null,
             ), $loggedUser());
         } catch (UnauthorizedActionException $e) {

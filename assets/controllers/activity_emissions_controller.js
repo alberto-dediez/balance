@@ -4,7 +4,10 @@ export default class extends Controller {
     static values = { url: String, type: String };
 
     connect() {
-        this.element.querySelectorAll('tbody tr').forEach((row) => this.restrictUnit(row));
+        this.element.querySelectorAll('tbody tr').forEach((row) => {
+            this.restrictUnit(row);
+            this.applyMode(row);
+        });
     }
 
     itemChanged(event) {
@@ -12,6 +15,25 @@ export default class extends Controller {
 
         this.restrictUnit(row);
         this.calculate(row);
+    }
+
+    modeChanged(event) {
+        const row = event.target.closest('tr');
+
+        this.applyMode(row);
+        this.calculate(row);
+    }
+
+    applyMode(row) {
+        const modeField = row.querySelector('[data-field="mode"]');
+
+        if (!modeField) return;
+
+        const mode = modeField.value;
+
+        row.querySelectorAll('[data-mode-panel]').forEach((panel) => {
+            panel.classList.toggle('d-none', panel.dataset.modePanel !== mode);
+        });
     }
 
     restrictUnit(row) {
@@ -53,12 +75,31 @@ export default class extends Controller {
         const itemId = row.querySelector('[data-field="itemId"]')?.value;
         const itemId2 = row.querySelector('[data-field="itemId2"]')?.value;
         const condition = row.querySelector('[data-field="condition"]')?.value;
-        const unit = row.querySelector('[data-field="unit"]')?.value;
-        const quantity = row.querySelector('[data-field="quantity"]')?.value;
+        const mode = row.querySelector('[data-field="mode"]')?.value;
 
-        if (!itemId || !quantity) {
-            output.textContent = '—';
-            return;
+        let body;
+
+        if (mode === 'container') {
+            const containerCapacity = row.querySelector('[data-field="containerCapacity"]')?.value;
+            const containerUnit = row.querySelector('[data-field="containerUnit"]')?.value;
+            const fillPercentage = row.querySelector('[data-field="fillPercentage"]')?.value;
+
+            if (!itemId || !containerCapacity || !fillPercentage) {
+                output.textContent = '—';
+                return;
+            }
+
+            body = { type: this.typeValue, itemId, mode, containerCapacity, containerUnit, fillPercentage };
+        } else {
+            const unit = row.querySelector('[data-field="unit"]')?.value;
+            const quantity = row.querySelector('[data-field="quantity"]')?.value;
+
+            if (!itemId || !quantity) {
+                output.textContent = '—';
+                return;
+            }
+
+            body = { type: this.typeValue, itemId, itemId2, condition, unit, quantity };
         }
 
         try {
@@ -68,7 +109,7 @@ export default class extends Controller {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
                 },
-                body: JSON.stringify({ type: this.typeValue, itemId, itemId2, condition, unit, quantity }),
+                body: JSON.stringify(body),
             });
 
             if (!response.ok) {

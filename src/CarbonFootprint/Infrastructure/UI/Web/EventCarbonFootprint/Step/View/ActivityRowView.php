@@ -15,5 +15,8 @@ final class ActivityRowView
         public readonly ?string $condition = null,
         public readonly ?string $itemId2 = null,
         public readonly ?string $source = null,
+        public readonly ?float $containerCapacity = null,
+        public readonly ?string $containerUnit = null,
+        public readonly ?float $fillPercentage = null,
     ) {}
 }

@@ -11,6 +11,7 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterWasteActivityServi
 use App\CarbonFootprint\Application\Activity\WasteEmissionFactorSelector;
 use App\CarbonFootprint\Domain\Model\Activity\WasteActivity;
 use App\CarbonFootprint\Domain\Model\Activity\WasteActivityRegistered;
+use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
 use App\Security\Domain\Model\User\Role;
@@ -55,6 +56,36 @@ class RegisterWasteActivityServiceTest extends TestCase
 
         $this->assertInstanceOf(WasteActivity::class, $activityRepo->findById($result->activityId));
         $this->assertInstanceOf(WasteActivityRegistered::class, $this->spySubscriber->lastEvent());
+    }
+
+    public function testUseCaseWithContainer(): void
+    {
+        $activityRepo = ActivityRepositoryMother::inMemory();
+
+        $entity = WasteMother::from(name: 'waste-name', id: (string) WasteId::generate(), unit: Unit::Kilogram, density: 250.0);
+        $entity->setEmissionFactor(ActivityMother::emissionFactor());
+        $entityRepo = WasteRepositoryMother::inMemory();
+        $entityRepo->add($entity);
+        $selector = new WasteEmissionFactorSelector($entityRepo);
+        $calculator = new EmissionsCalculator();
+        $sut = new RegisterWasteActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
+
+        $result = $sut(new RegisterWasteActivityRequest(
+            wasteId: $entity->id(),
+            quantity: new Quantity(250.0, Unit::Kilogram),
+            year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
+            containerCapacity: new Quantity(2, Unit::CubicMeter),
+            fillPercentage: 50.0,
+        ), UserMother::adminUser());
+
+        $activity = $activityRepo->findById($result->activityId);
+        assert($activity instanceof WasteActivity);
+
+        $this->assertNotNull($activity->containerCapacity());
+        $this->assertSame(2.0, $activity->containerCapacity()->value());
+        $this->assertSame(Unit::CubicMeter, $activity->containerCapacity()->unit());
+        $this->assertSame(50.0, $activity->fillPercentage());
     }
 
     public function testUnauthorizedAccess(): void

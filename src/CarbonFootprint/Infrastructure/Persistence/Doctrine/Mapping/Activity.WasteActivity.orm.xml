@@ -8,6 +8,9 @@
     <entity name="App\CarbonFootprint\Domain\Model\Activity\WasteActivity" table="waste_activities">
         <field name="wasteId" type="waste_id" column="waste_id" nullable="false" />
         <field name="source" type="string" length="255" nullable="true" />
+        <field name="containerCapacityValue" type="float" column="container_capacity_value" nullable="true" />
+        <field name="containerCapacityUnit" type="string" enum-type="App\CarbonFootprint\Domain\Model\Unit" column="container_capacity_unit" nullable="true" />
+        <field name="fillPercentage" type="float" column="fill_percentage" nullable="true" />
     </entity>
 
 </doctrine-mapping>

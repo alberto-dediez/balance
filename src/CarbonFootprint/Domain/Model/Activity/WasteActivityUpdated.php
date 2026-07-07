@@ -25,6 +25,8 @@ final class WasteActivityUpdated extends DomainEvent
         private Emissions $emissions,
         private Quantity $quantity,
         private ?string $source = null,
+        private ?Quantity $containerCapacity = null,
+        private ?float $fillPercentage = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -61,6 +63,16 @@ final class WasteActivityUpdated extends DomainEvent
         return $this->source;
     }
 
+    public function containerCapacity(): ?Quantity
+    {
+        return $this->containerCapacity;
+    }
+
+    public function fillPercentage(): ?float
+    {
+        return $this->fillPercentage;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->activityId;
@@ -86,6 +98,9 @@ final class WasteActivityUpdated extends DomainEvent
             'quantityValue' => $this->quantity->value(),
             'quantityUnit' => $this->quantity->unit()->value,
             'source' => $this->source,
+            'containerCapacityValue' => $this->containerCapacity?->value(),
+            'containerCapacityUnit' => $this->containerCapacity?->unit()->value,
+            'fillPercentage' => $this->fillPercentage,
         ];
     }
 
@@ -99,6 +114,8 @@ final class WasteActivityUpdated extends DomainEvent
 
         $emissionFactorUnit = Unit::tryFrom($payload['emissionFactorUnit']);
         assert(null !== $emissionFactorUnit);
+
+        $containerCapacityUnit = isset($payload['containerCapacityUnit']) ? Unit::tryFrom($payload['containerCapacityUnit']) : null;
 
         return new self(
             activityId: new ActivityId($payload['activityId']),
@@ -121,6 +138,8 @@ final class WasteActivityUpdated extends DomainEvent
             ),
             quantity: new Quantity((float) $payload['quantityValue'], $quantityUnit),
             source: $payload['source'] ?? null,
+            containerCapacity: null !== $containerCapacityUnit ? new Quantity((float) $payload['containerCapacityValue'], $containerCapacityUnit) : null,
+            fillPercentage: isset($payload['fillPercentage']) ? (float) $payload['fillPercentage'] : null,
             id: $id,
             occurredOn: $occurredOn,
         );

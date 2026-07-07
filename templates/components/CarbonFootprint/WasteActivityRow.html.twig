@@ -14,7 +14,12 @@
         </select>
     </td>
     <td>
-        <div class="input-group">
+        {% set mode = row and row.containerCapacity is not null ? 'container' : 'direct' %}
+        <select name="{{ prefix }}[{{ index }}][mode]" class="form-select form-select-sm mb-1" data-field="mode" data-action="activity-emissions#modeChanged">
+            <option value="direct"{{ mode == 'direct' ? ' selected' }}>{{ 'Cantidad directa' | trans }}</option>
+            <option value="container"{{ mode == 'container' ? ' selected' }}>{{ 'Por contenedor' | trans }}</option>
+        </select>
+        <div class="input-group{{ mode != 'direct' ? ' d-none' }}" data-mode-panel="direct">
             <input
                 type="number"
                 name="{{ prefix }}[{{ index }}][quantity]"
@@ -30,6 +35,39 @@
                     <option value="{{ unit.value }}" data-magnitude="{{ unit.magnitude.value }}"{{ row and row.unit == unit.value ? ' selected' }}>{{ unit.value | trans({}, 'unitType') }}</option>
                 {% endfor %}
             </select>
+        </div>
+        <div class="input-group{{ mode != 'container' ? ' d-none' }}" data-mode-panel="container">
+            <input
+                type="number"
+                name="{{ prefix }}[{{ index }}][containerCapacity]"
+                class="form-control"
+                step="any"
+                min="0"
+                placeholder="{{ 'Capacidad' | trans }}"
+                value="{{ row and row.containerCapacity is not null ? row.containerCapacity : '' }}"
+                data-field="containerCapacity"
+                data-action="activity-emissions#recalculate"
+            >
+            <select name="{{ prefix }}[{{ index }}][containerUnit]" class="form-select" data-field="containerUnit" data-action="activity-emissions#recalculate">
+                {% for unit in units %}
+                    {% if unit.magnitude.value == 'volume' %}
+                        <option value="{{ unit.value }}"{{ row and row.containerUnit == unit.value ? ' selected' }}>{{ unit.value | trans({}, 'unitType') }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            <input
+                type="number"
+                name="{{ prefix }}[{{ index }}][fillPercentage]"
+                class="form-control"
+                step="any"
+                min="0"
+                max="100"
+                placeholder="%"
+                value="{{ row and row.fillPercentage is not null ? row.fillPercentage : '100' }}"
+                data-field="fillPercentage"
+                data-action="activity-emissions#recalculate"
+            >
+            <span class="input-group-text">%</span>
         </div>
     </td>
     <td class="text-end text-nowrap">

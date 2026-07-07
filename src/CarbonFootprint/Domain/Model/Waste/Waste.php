@@ -6,6 +6,9 @@ namespace App\CarbonFootprint\Domain\Model\Waste;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\IncompatibleUnitsException;
+use App\CarbonFootprint\Domain\Model\Magnitude;
+use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -101,6 +104,24 @@ class Waste implements Translatable, \Stringable
     public function emissionFactorFor(int $year, EmissionFactorGroupId $groupId): ?EmissionFactor
     {
         return $this->emissionFactors()->forYearAndGroup($year, $groupId)?->emissionFactor();
+    }
+
+    public function quantityFromContainer(Quantity $containerCapacity, float $fillPercentage): Quantity
+    {
+        if (Magnitude::Volume !== $containerCapacity->magnitude()) {
+            throw new IncompatibleUnitsException($containerCapacity->unit(), Unit::CubicMeter);
+        }
+        if ($fillPercentage < 0.0 || $fillPercentage > 100.0) {
+            throw new \InvalidArgumentException(sprintf('Fill percentage must be between 0 and 100, got %s.', $fillPercentage));
+        }
+
+        $filledCubicMeters = $containerCapacity->convertTo(Unit::CubicMeter)->value() * $fillPercentage / 100;
+
+        return match ($this->unit->magnitude()) {
+            Magnitude::Mass   => (new Quantity($filledCubicMeters * $this->density, Unit::Kilogram))->convertTo($this->unit),
+            Magnitude::Volume => (new Quantity($filledCubicMeters, Unit::CubicMeter))->convertTo($this->unit),
+            default           => throw new IncompatibleUnitsException(Unit::CubicMeter, $this->unit),
+        };
     }
 
     public function register(
