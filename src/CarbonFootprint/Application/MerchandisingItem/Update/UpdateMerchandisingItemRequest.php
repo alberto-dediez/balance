@@ -17,7 +17,6 @@ class UpdateMerchandisingItemRequest implements Command
         public string $name,
         public MerchandisingItemCategory $category,
         public Unit $unit,
-        public ?string $unitWeight = null,
         public array $emissionFactors = [],
     ) {}
 }

@@ -68,25 +68,6 @@ class MaterialTest extends TestCase
         $this->assertEquals('translated-name-it', $material->name());
     }
 
-    public function testRegisterStoresUnitWeight(): void
-    {
-        $material = new Material(id: MaterialId::generate());
-
-        $material->register('lanyard', MaterialCategory::Metal, Unit::Piece, '0.05');
-
-        $this->assertSame('0.05', $material->unitWeight());
-        $this->assertSame(Unit::Piece, $material->unit());
-    }
-
-    public function testUpdateChangesUnitWeight(): void
-    {
-        $material = $this->material();
-
-        $material->update('material-name', MaterialCategory::Metal, Unit::Piece, '0.12');
-
-        $this->assertSame('0.12', $material->unitWeight());
-    }
-
     public function testSetEmissionFactorAddsIt(): void
     {
         $material = $this->material();

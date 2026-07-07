@@ -14,6 +14,5 @@ class RegisterMerchandisingItemRequest implements Command
         public string $name = '',
         public MerchandisingItemCategory $category = MerchandisingItemCategory::Others,
         public Unit $unit = Unit::Kilogram,
-        public ?string $unitWeight = null,
     ) {}
 }

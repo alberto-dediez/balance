@@ -68,16 +68,6 @@ class MerchandisingItemTest extends TestCase
         $this->assertEquals('translated-name-it', $merchandisingItem->name());
     }
 
-    public function testRegisterStoresUnitWeight(): void
-    {
-        $merchandisingItem = new MerchandisingItem(id: MerchandisingItemId::generate());
-
-        $merchandisingItem->register('t-shirt', MerchandisingItemCategory::Clothing, Unit::Piece, '0.25');
-
-        $this->assertSame('0.25', $merchandisingItem->unitWeight());
-        $this->assertSame(Unit::Piece, $merchandisingItem->unit());
-    }
-
     public function testSetEmissionFactorAddsIt(): void
     {
         $merchandisingItem = $this->merchandisingItem();

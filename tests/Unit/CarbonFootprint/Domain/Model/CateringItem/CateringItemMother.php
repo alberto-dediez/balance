@@ -37,12 +37,11 @@ class CateringItemMother
         string $id,
         CateringItemCategory $category = CateringItemCategory::Breakfast,
         Unit $unit = Unit::Kilogram,
-        ?string $unitWeight = null,
     ): CateringItem {
         $cateringItem = new CateringItem(
             id: new CateringItemId($id),
         );
-        $cateringItem->register($name, $category, $unit, $unitWeight);
+        $cateringItem->register($name, $category, $unit);
 
         return $cateringItem;
     }

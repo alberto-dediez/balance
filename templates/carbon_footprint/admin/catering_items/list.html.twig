@@ -15,9 +15,6 @@
             'label': 'Unidad' | trans,
             'sortable': false
         }, {
-            'label': 'Peso por unidad (kg)' | trans,
-            'sortable': false
-        }, {
             'label': 'Fecha de registro' | trans,
             'sortable': true,
             'sortableBy': 'registeredAt'
@@ -34,7 +31,6 @@
         <td>{{ element.name }}</td>
         <td>{{ element.category.value | trans({}, 'cateringItemCategoryType') }}</td>
         <td>{{ element.unit.value | trans({}, 'unitType') }}</td>
-        <td>{{ element.unit.value == 'ud' ? element.unitWeight : '' }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>{{ element.updatedAt ? element.updatedAt | date('d/m/Y') : '' }}</td>
         <td>

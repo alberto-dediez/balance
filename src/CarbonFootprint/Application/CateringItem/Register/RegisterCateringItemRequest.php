@@ -14,6 +14,5 @@ class RegisterCateringItemRequest implements Command
         public string $name = '',
         public CateringItemCategory $category = CateringItemCategory::Others,
         public Unit $unit = Unit::Kilogram,
-        public ?string $unitWeight = null,
     ) {}
 }

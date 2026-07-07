@@ -68,16 +68,6 @@ class CateringItemTest extends TestCase
         $this->assertEquals('translated-name-it', $cateringItem->name());
     }
 
-    public function testRegisterStoresUnitWeight(): void
-    {
-        $cateringItem = new CateringItem(id: CateringItemId::generate());
-
-        $cateringItem->register('t-shirt', CateringItemCategory::Drink, Unit::Piece, '0.25');
-
-        $this->assertSame('0.25', $cateringItem->unitWeight());
-        $this->assertSame(Unit::Piece, $cateringItem->unit());
-    }
-
     public function testSetEmissionFactorAddsIt(): void
     {
         $cateringItem = $this->cateringItem();

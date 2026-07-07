@@ -62,28 +62,6 @@ class RegisterCateringItemServiceTest extends TestCase
         $this->assertTrue($cateringItemPersisted->id()->equals($lastEvent->cateringItemId()));
     }
 
-    public function testRegisterWithUnitWeight(): void
-    {
-        $repository = CateringItemRepositoryMother::inMemory(Locale::Spanish);
-
-        $sut = $this->createSUT($repository, Locale::Spanish);
-
-        $request = new RegisterCateringItemRequest(
-            name: 'T-Shirt',
-            category: CateringItemCategory::Drink,
-            unit: Unit::Piece,
-            unitWeight: '0.25',
-        );
-
-        $result = $sut($request, UserMother::adminUser());
-
-        $cateringItemPersisted = $repository->find($result->cateringItemId);
-
-        $this->assertNotNull($cateringItemPersisted);
-        $this->assertSame('0.25', $cateringItemPersisted->unitWeight());
-        $this->assertSame(Unit::Piece, $cateringItemPersisted->unit());
-    }
-
     public function testRegisterWithLocaleTranslate(): void
     {
         $repository = CateringItemRepositoryMother::inMemory(Locale::Spanish);

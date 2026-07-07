@@ -18,7 +18,6 @@ final class CateringItemRegistered extends DomainEvent
         private string $name,
         private CateringItemCategory $category,
         private Unit $unit,
-        private ?string $unitWeight = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -45,11 +44,6 @@ final class CateringItemRegistered extends DomainEvent
         return $this->unit;
     }
 
-    public function unitWeight(): ?string
-    {
-        return $this->unitWeight;
-    }
-
     public function aggregateRootId(): AggregateRootId
     {
         return $this->cateringItemId();
@@ -62,7 +56,6 @@ final class CateringItemRegistered extends DomainEvent
             'name' => $this->name,
             'category' => $this->category->value,
             'unit' => $this->unit->value,
-            'unitWeight' => $this->unitWeight,
         ];
     }
 
@@ -79,7 +72,6 @@ final class CateringItemRegistered extends DomainEvent
             name: $payload['name'],
             category: $category,
             unit: $unit,
-            unitWeight: $payload['unitWeight'] ?? null,
             id: $id,
             occurredOn: $occurredOn,
         );

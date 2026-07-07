@@ -37,12 +37,11 @@ class MerchandisingItemMother
         string $id,
         MerchandisingItemCategory $category = MerchandisingItemCategory::Merchandising,
         Unit $unit = Unit::Kilogram,
-        ?string $unitWeight = null,
     ): MerchandisingItem {
         $merchandisingItem = new MerchandisingItem(
             id: new MerchandisingItemId($id),
         );
-        $merchandisingItem->register($name, $category, $unit, $unitWeight);
+        $merchandisingItem->register($name, $category, $unit);
 
         return $merchandisingItem;
     }

@@ -62,28 +62,6 @@ class RegisterMerchandisingItemServiceTest extends TestCase
         $this->assertTrue($merchandisingItemPersisted->id()->equals($lastEvent->merchandisingItemId()));
     }
 
-    public function testRegisterWithUnitWeight(): void
-    {
-        $repository = MerchandisingItemRepositoryMother::inMemory(Locale::Spanish);
-
-        $sut = $this->createSUT($repository, Locale::Spanish);
-
-        $request = new RegisterMerchandisingItemRequest(
-            name: 'T-Shirt',
-            category: MerchandisingItemCategory::Clothing,
-            unit: Unit::Piece,
-            unitWeight: '0.25',
-        );
-
-        $result = $sut($request, UserMother::adminUser());
-
-        $merchandisingItemPersisted = $repository->find($result->merchandisingItemId);
-
-        $this->assertNotNull($merchandisingItemPersisted);
-        $this->assertSame('0.25', $merchandisingItemPersisted->unitWeight());
-        $this->assertSame(Unit::Piece, $merchandisingItemPersisted->unit());
-    }
-
     public function testRegisterWithLocaleTranslate(): void
     {
         $repository = MerchandisingItemRepositoryMother::inMemory(Locale::Spanish);

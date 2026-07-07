@@ -46,7 +46,6 @@ class EditController extends AbstractController
             name: $cateringItem->name(),
             category: $cateringItem->category(),
             unit: $cateringItem->unit(),
-            unitWeight: $cateringItem->unitWeight(),
             emissionFactors: $emissionFactors,
         );
 

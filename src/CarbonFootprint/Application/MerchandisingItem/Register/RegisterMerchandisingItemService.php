@@ -40,7 +40,6 @@ class RegisterMerchandisingItemService implements CommandHandler
             $request->name,
             $request->category,
             $request->unit,
-            $request->unitWeight,
             $isDefaultLocale ? null : $locale,
         );
 

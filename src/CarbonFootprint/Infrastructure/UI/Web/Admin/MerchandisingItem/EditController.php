@@ -46,7 +46,6 @@ class EditController extends AbstractController
             name: $merchandisingItem->name(),
             category: $merchandisingItem->category(),
             unit: $merchandisingItem->unit(),
-            unitWeight: $merchandisingItem->unitWeight(),
             emissionFactors: $emissionFactors,
         );
 

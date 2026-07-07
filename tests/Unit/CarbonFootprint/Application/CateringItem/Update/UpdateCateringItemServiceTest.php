@@ -55,7 +55,6 @@ class UpdateCateringItemServiceTest extends TestCase
             name: 'changedName',
             category: CateringItemCategory::Snack,
             unit: Unit::Piece,
-            unitWeight: '0.5',
         );
 
         $result = $sut($request, $user);
@@ -63,7 +62,6 @@ class UpdateCateringItemServiceTest extends TestCase
         $cateringItemPersisted = $repository->find($result->cateringItemId);
 
         $this->assertNotNull($cateringItemPersisted);
-        $this->assertSame('0.5', $cateringItemPersisted->unitWeight());
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

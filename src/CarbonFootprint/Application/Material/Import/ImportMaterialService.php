@@ -90,7 +90,6 @@ class ImportMaterialService implements CommandHandler
             $name,
             MaterialCategory::tryFrom((string) $request->category) ?? MaterialCategory::Others,
             Unit::tryFrom((string) $request->unit) ?? Unit::Kilogram,
-            '' === trim((string) $request->unitWeight) ? null : $request->unitWeight,
             $isDefaultLocale ? null : $locale,
         );
 

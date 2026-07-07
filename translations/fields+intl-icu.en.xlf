@@ -21,10 +21,6 @@
         <source>unit</source>
         <target>Unit</target>
       </trans-unit>
-      <trans-unit id="ZUA0dlB" resname="unitWeight">
-        <source>unitWeight</source>
-        <target>Unit weight</target>
-      </trans-unit>
       <trans-unit id="2yur8vv" resname="year">
         <source>year</source>
         <target>Year</target>

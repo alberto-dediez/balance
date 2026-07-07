@@ -90,7 +90,6 @@ class ImportMerchandisingItemService implements CommandHandler
             $name,
             MerchandisingItemCategory::tryFrom((string) $request->category) ?? MerchandisingItemCategory::Others,
             Unit::tryFrom((string) $request->unit) ?? Unit::Kilogram,
-            '' === trim((string) $request->unitWeight) ? null : $request->unitWeight,
             $isDefaultLocale ? null : $locale,
         );
 

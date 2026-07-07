@@ -46,7 +46,6 @@ class EditController extends AbstractController
             name: $material->name(),
             category: $material->category(),
             unit: $material->unit(),
-            unitWeight: $material->unitWeight(),
             emissionFactors: $emissionFactors,
         );
 

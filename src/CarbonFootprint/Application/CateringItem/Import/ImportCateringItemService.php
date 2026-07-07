@@ -90,7 +90,6 @@ class ImportCateringItemService implements CommandHandler
             $name,
             CateringItemCategory::tryFrom((string) $request->category) ?? CateringItemCategory::Others,
             Unit::tryFrom((string) $request->unit) ?? Unit::Kilogram,
-            '' === trim((string) $request->unitWeight) ? null : $request->unitWeight,
             $isDefaultLocale ? null : $locale,
         );
 

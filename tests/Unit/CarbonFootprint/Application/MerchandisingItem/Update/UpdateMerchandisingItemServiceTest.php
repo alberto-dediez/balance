@@ -55,7 +55,6 @@ class UpdateMerchandisingItemServiceTest extends TestCase
             name: 'changedName',
             category: MerchandisingItemCategory::Sport,
             unit: Unit::Piece,
-            unitWeight: '0.5',
         );
 
         $result = $sut($request, $user);
@@ -63,7 +62,6 @@ class UpdateMerchandisingItemServiceTest extends TestCase
         $merchandisingItemPersisted = $repository->find($result->merchandisingItemId);
 
         $this->assertNotNull($merchandisingItemPersisted);
-        $this->assertSame('0.5', $merchandisingItemPersisted->unitWeight());
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

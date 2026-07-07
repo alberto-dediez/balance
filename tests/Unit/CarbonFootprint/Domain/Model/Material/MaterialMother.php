@@ -37,12 +37,11 @@ class MaterialMother
         string $id,
         MaterialCategory $category = MaterialCategory::Metal,
         Unit $unit = Unit::Kilogram,
-        ?string $unitWeight = null,
     ): Material {
         $material = new Material(
             id: new MaterialId($id),
         );
-        $material->register($name, $category, $unit, $unitWeight);
+        $material->register($name, $category, $unit);
 
         return $material;
     }

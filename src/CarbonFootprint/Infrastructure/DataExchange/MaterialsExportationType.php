@@ -50,7 +50,6 @@ class MaterialsExportationType implements ExportationType
             new ExportColumnDefinition('name', new TranslatableMessage('Nombre')),
             new ExportColumnDefinition('category', new TranslatableMessage('Categoría')),
             new ExportColumnDefinition('unit', new TranslatableMessage('Unidad')),
-            new ExportColumnDefinition('unitWeight', new TranslatableMessage('Peso por unidad (kg)')),
             new ExportColumnDefinition('year', new TranslatableMessage('Año')),
             new ExportColumnDefinition('co2eq', new TranslatableMessage('CO2eq nueva fabricación')),
             new ExportColumnDefinition('co2', new TranslatableMessage('CO2 nueva fabricación')),
@@ -153,7 +152,6 @@ class MaterialsExportationType implements ExportationType
             'name' => $material->name(),
             'category' => $material->category()->value,
             'unit' => $material->unit()->value,
-            'unitWeight' => $material->unitWeight() ?? '',
         ];
     }
 

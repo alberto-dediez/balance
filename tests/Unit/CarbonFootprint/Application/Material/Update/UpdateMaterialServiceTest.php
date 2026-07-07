@@ -55,7 +55,6 @@ class UpdateMaterialServiceTest extends TestCase
             name: 'changedName',
             category: MaterialCategory::Glass,
             unit: Unit::Piece,
-            unitWeight: '0.5',
         );
 
         $result = $sut($request, $user);
@@ -63,7 +62,6 @@ class UpdateMaterialServiceTest extends TestCase
         $materialPersisted = $repository->find($result->materialId);
 
         $this->assertNotNull($materialPersisted);
-        $this->assertSame('0.5', $materialPersisted->unitWeight());
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
