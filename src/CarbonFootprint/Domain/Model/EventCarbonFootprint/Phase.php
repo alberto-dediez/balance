@@ -42,7 +42,16 @@ enum Phase: string
                 new SectionDefinition('mobilities', Source::SuppliersAndStaffMobility, ActivityType::Mobility),
                 new SectionDefinition('wastes', Source::WasteManagement, ActivityType::Waste),
             ],
-            self::Breakdown => [],
+            self::Breakdown => [
+                new SectionDefinition('combustibles', Source::FixedFacilities, ActivityType::Combustible),
+                new SectionDefinition('roadTransports', Source::FreightTransport, ActivityType::RoadTransport),
+                new SectionDefinition('machineryFuels', Source::MachineryOperation, ActivityType::MachineryFuel),
+                new SectionDefinition('machineryElectricity', Source::MachineryOperation, ActivityType::Electricity),
+                new SectionDefinition('buildingElectricity', Source::BuildingElectricity, ActivityType::Electricity),
+                new SectionDefinition('overnightStays', Source::SuppliersAndStaffAccommodation, ActivityType::OvernightStay),
+                new SectionDefinition('mobilities', Source::SuppliersAndStaffMobility, ActivityType::Mobility),
+                new SectionDefinition('wastes', Source::WasteManagement, ActivityType::Waste),
+            ],
         };
     }
 }

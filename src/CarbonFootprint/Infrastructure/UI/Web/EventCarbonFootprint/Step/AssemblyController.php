@@ -12,7 +12,7 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRe
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\GetEventCarbonFootprintFromEventIdTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\Answer\PhaseAnswerHttpMapper;
-use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\AssemblyStepView;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\AssemblyBreakdownStepView;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\Security\Application\Action as SecurityAction;
@@ -36,7 +36,7 @@ class AssemblyController extends AbstractController
         PhaseAnswerHttpMapper $answerMapper,
         AnswerPhaseService $answerPhase,
         GetPhaseService $getPhase,
-        AssemblyStepView $stepView,
+        AssemblyBreakdownStepView $stepView,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {

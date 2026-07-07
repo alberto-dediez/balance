@@ -60,14 +60,20 @@ class PhaseTest extends TestCase
         );
     }
 
-    public function testBreakdownHasNoSections(): void
+    public function testBreakdownSections(): void
     {
-        $this->assertSame([], Phase::Breakdown->sections());
+        $sections = Phase::Breakdown->sections();
+
+        $this->assertCount(8, $sections);
+        $this->assertSame(
+            ['combustibles', 'roadTransports', 'machineryFuels', 'machineryElectricity', 'buildingElectricity', 'overnightStays', 'mobilities', 'wastes'],
+            array_map(static fn($s) => $s->key, $sections),
+        );
     }
 
     public function testKeysAreUniquePerPhase(): void
     {
-        foreach ([Phase::Materials, Phase::Assembly, Phase::Celebration] as $phase) {
+        foreach ([Phase::Materials, Phase::Assembly, Phase::Celebration, Phase::Breakdown] as $phase) {
             $keys = array_map(static fn($s) => $s->key, $phase->sections());
             $this->assertSame($keys, array_unique($keys));
         }

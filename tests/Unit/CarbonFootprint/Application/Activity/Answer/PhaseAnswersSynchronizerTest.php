@@ -148,17 +148,6 @@ class PhaseAnswersSynchronizerTest extends TestCase
         $sut->sync($eventCarbonFootprint, Phase::Materials, [$this->materialsSection([$this->materialAnswer()])], UserMother::ownerUser());
     }
 
-    public function testAPhaseWithoutSectionsDoesNotRequireAnEmissionFactorGroup(): void
-    {
-        $eventCarbonFootprint = new EventCarbonFootprint(id: EventCarbonFootprintId::generate());
-
-        $sut = $this->createSUT();
-
-        $sut->sync($eventCarbonFootprint, Phase::Breakdown, [], UserMother::ownerUser());
-
-        $this->assertCount(0, $eventCarbonFootprint->activities()->activityIds());
-    }
-
     /** @param list<MaterialAnswer> $answers */
     private function materialsSection(array $answers): SectionAnswer
     {

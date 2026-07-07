@@ -13,7 +13,7 @@ use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\ActivityRowView;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\ActivityRowViewFactoryRegistry;
-use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\AssemblyStepView;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\AssemblyBreakdownStepView;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\CombustibleRowViewFactory;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\ElectricityRowViewFactory;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\MachineryFuelRowViewFactory;
@@ -30,15 +30,15 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
 use PHPUnit\Framework\TestCase;
 
-class AssemblyStepViewTest extends TestCase
+class AssemblyBreakdownStepViewTest extends TestCase
 {
-    private AssemblyStepView $sut;
+    private AssemblyBreakdownStepView $sut;
 
     protected function setUp(): void
     {
         DomainEventPublisher::instance()->reset();
 
-        $this->sut = new AssemblyStepView(new ActivityRowViewFactoryRegistry([
+        $this->sut = new AssemblyBreakdownStepView(new ActivityRowViewFactoryRegistry([
             new CombustibleRowViewFactory(),
             new RoadTransportRowViewFactory(),
             new MachineryFuelRowViewFactory(),

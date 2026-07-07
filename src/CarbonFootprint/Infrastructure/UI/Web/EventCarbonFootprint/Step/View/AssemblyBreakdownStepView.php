@@ -11,7 +11,7 @@ use App\CarbonFootprint\Domain\Model\OvernightStay\CategoryOvernight;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStay;
 use App\CarbonFootprint\Domain\Model\Unit;
 
-final class AssemblyStepView
+final class AssemblyBreakdownStepView
 {
     /** @var list<CategoryOvernight> */
     private const ALLOWED_OVERNIGHT_STAY_CATEGORIES = [CategoryOvernight::OrganizingTeam, CategoryOvernight::Suppliers];

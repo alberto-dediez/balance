@@ -6,9 +6,13 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step;
 
 use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerPhase\AnswerPhaseRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerPhase\AnswerPhaseService;
+use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseRequest;
+use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseService;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\GetEventCarbonFootprintFromEventIdTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\Answer\PhaseAnswerHttpMapper;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\AssemblyBreakdownStepView;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\Security\Application\Action as SecurityAction;
@@ -18,6 +22,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/events/{eventId}/carbon-footprint/step/breakdown', name: 'events_carbon_footprint_breakdown')]
 class BreakdownController extends AbstractController
@@ -28,7 +33,10 @@ class BreakdownController extends AbstractController
         string $eventId,
         EventRepository $eventRepository,
         EventCarbonFootprintRepository $eventCarbonFootprintRepository,
+        PhaseAnswerHttpMapper $answerMapper,
         AnswerPhaseService $answerPhase,
+        GetPhaseService $getPhase,
+        AssemblyBreakdownStepView $stepView,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -44,22 +52,31 @@ class BreakdownController extends AbstractController
         }
 
         if ($request->isMethod('POST')) {
+            if (!$this->isCsrfTokenValid('breakdown_' . $eventCarbonFootprint->id(), $request->request->getString('_token'))) {
+                throw $this->createAccessDeniedException('Token CSRF no válido');
+            }
+
             try {
                 $answerPhase(
-                    new AnswerPhaseRequest($eventCarbonFootprint->id(), Phase::Breakdown),
+                    new AnswerPhaseRequest($eventCarbonFootprint->id(), Phase::Breakdown, $answerMapper->map($request, Phase::Breakdown)),
                     $loggedUser(),
                 );
             } catch (UnauthorizedActionException $e) {
                 throw $this->createAccessDeniedException($e->getMessage());
+            } catch (\InvalidArgumentException $e) {
+                $this->addFlash('danger', new TranslatableMessage('No se han podido guardar las actividades: {error}', ['{error}' => $e->getMessage()]));
+
+                return $this->redirectToRoute('events_carbon_footprint_breakdown', ['eventId' => $eventId]);
             }
 
             return $this->redirectToRoute('events_carbon_footprint_results', ['eventId' => $eventId]);
         }
 
-        return $this->render('@carbon_footprint/event_carbon_footprints/step/breakdown.html.twig', [
-            'event' => $event,
-            'eventCarbonFootprint' => $eventCarbonFootprint,
-            'eventId' => $eventId,
-        ]);
+        $response = $getPhase(new GetPhaseRequest($eventCarbonFootprint->id(), Phase::Breakdown), $loggedUser());
+
+        return $this->render(
+            '@carbon_footprint/event_carbon_footprints/step/breakdown.html.twig',
+            $stepView->build($eventCarbonFootprint, $response) + ['event' => $event, 'eventId' => $eventId],
+        );
     }
 }
