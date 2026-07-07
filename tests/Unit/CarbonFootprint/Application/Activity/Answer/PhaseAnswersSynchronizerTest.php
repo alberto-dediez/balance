@@ -154,7 +154,7 @@ class PhaseAnswersSynchronizerTest extends TestCase
 
         $sut = $this->createSUT();
 
-        $sut->sync($eventCarbonFootprint, Phase::Celebration, [], UserMother::ownerUser());
+        $sut->sync($eventCarbonFootprint, Phase::Breakdown, [], UserMother::ownerUser());
 
         $this->assertCount(0, $eventCarbonFootprint->activities()->activityIds());
     }
