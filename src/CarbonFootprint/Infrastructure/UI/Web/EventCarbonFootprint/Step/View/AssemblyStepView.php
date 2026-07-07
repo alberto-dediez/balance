@@ -7,10 +7,15 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\Vi
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseResponse;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\PhaseSection;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
+use App\CarbonFootprint\Domain\Model\OvernightStay\CategoryOvernight;
+use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStay;
 use App\CarbonFootprint\Domain\Model\Unit;
 
 final class AssemblyStepView
 {
+    /** @var list<CategoryOvernight> */
+    private const ALLOWED_OVERNIGHT_STAY_CATEGORIES = [CategoryOvernight::OrganizingTeam, CategoryOvernight::Suppliers];
+
     public function __construct(private ActivityRowViewFactoryRegistry $rowViewFactories) {}
 
     /** @return array<string, mixed> */
@@ -33,7 +38,7 @@ final class AssemblyStepView
             'electricityMarketers' => $machineryElectricity->catalog,
             'gdOFactors' => $machineryElectricity->secondaryCatalog,
             'mobilities' => $mobilities->catalog,
-            'overnightStays' => $overnightStays->catalog,
+            'overnightStays' => $this->allowedOvernightStays($overnightStays->catalog),
             'wastes' => $wastes->catalog,
             'units' => Unit::cases(),
             'combustibleRows' => $this->rows($combustibles),
@@ -45,6 +50,20 @@ final class AssemblyStepView
             'mobilityRows' => $this->rows($mobilities),
             'wasteRows' => $this->rows($wastes),
         ];
+    }
+
+    /**
+     * @param list<object> $catalog
+     *
+     * @return list<OvernightStay>
+     */
+    private function allowedOvernightStays(array $catalog): array
+    {
+        return array_values(array_filter(
+            $catalog,
+            static fn(object $overnightStay): bool => $overnightStay instanceof OvernightStay
+                && in_array($overnightStay->category(), self::ALLOWED_OVERNIGHT_STAY_CATEGORIES, true),
+        ));
     }
 
     /** @return list<ActivityRowView> */

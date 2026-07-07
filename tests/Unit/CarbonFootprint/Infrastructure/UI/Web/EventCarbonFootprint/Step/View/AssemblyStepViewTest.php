@@ -8,6 +8,8 @@ use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseRespon
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\PhaseSection;
 use App\CarbonFootprint\Domain\Model\Activity\Activity;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
+use App\CarbonFootprint\Domain\Model\OvernightStay\CategoryOvernight;
+use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\ActivityRowView;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\ActivityRowViewFactoryRegistry;
@@ -25,6 +27,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\MachineryFuelActivityMo
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
 use PHPUnit\Framework\TestCase;
 
 class AssemblyStepViewTest extends TestCase
@@ -141,17 +144,33 @@ class AssemblyStepViewTest extends TestCase
         $this->assertSame([], $view['machineryElectricityRows']);
     }
 
+    public function testOvernightStaysOnlyIncludeOrganizingTeamAndSuppliersCategories(): void
+    {
+        $organizingTeam = OvernightStayMother::from(name: 'organizing-team', id: (string) OvernightStayId::generate(), category: CategoryOvernight::OrganizingTeam);
+        $suppliers = OvernightStayMother::from(name: 'suppliers', id: (string) OvernightStayId::generate(), category: CategoryOvernight::Suppliers);
+        $attendees = OvernightStayMother::from(name: 'attendees', id: (string) OvernightStayId::generate(), category: CategoryOvernight::Attendees);
+
+        $view = $this->sut->build(
+            EventCarbonFootprintMother::registeredEventCarbonFootprint(),
+            $this->response(overnightStayCatalog: [$organizingTeam, $suppliers, $attendees]),
+        );
+
+        $this->assertSame([$organizingTeam, $suppliers], $view['overnightStays']);
+    }
+
     /**
      * @param list<Activity> $machineryFuelActivities
      * @param list<Activity> $machineryElectricityActivities
      * @param list<object>   $electricityCatalog
      * @param list<object>   $gdOFactorsCatalog
+     * @param list<object>   $overnightStayCatalog
      */
     private function response(
         array $machineryFuelActivities = [],
         array $machineryElectricityActivities = [],
         array $electricityCatalog = [],
         array $gdOFactorsCatalog = [],
+        array $overnightStayCatalog = [],
     ): GetPhaseResponse {
         $sections = Phase::Assembly->sections();
 
@@ -161,7 +180,7 @@ class AssemblyStepViewTest extends TestCase
             new PhaseSection($sections[2], $machineryFuelActivities, []),
             new PhaseSection($sections[3], $machineryElectricityActivities, $electricityCatalog, $gdOFactorsCatalog),
             new PhaseSection($sections[4], [], $electricityCatalog, $gdOFactorsCatalog),
-            new PhaseSection($sections[5], [], []),
+            new PhaseSection($sections[5], [], $overnightStayCatalog),
             new PhaseSection($sections[6], [], []),
             new PhaseSection($sections[7], [], []),
         ]);
