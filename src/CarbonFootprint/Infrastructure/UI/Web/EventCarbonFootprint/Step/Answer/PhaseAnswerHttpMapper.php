@@ -6,18 +6,23 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\An
 
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionAnswer;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionDefinition;
 use Symfony\Component\HttpFoundation\Request;
 
 final class PhaseAnswerHttpMapper
 {
     public function __construct(private SectionAnswerHttpMapperRegistry $mappers) {}
 
-    /** @return list<SectionAnswer> */
-    public function map(Request $request, Phase $phase): array
+    /**
+     * @param ?list<SectionDefinition> $sections
+     *
+     * @return list<SectionAnswer>
+     */
+    public function map(Request $request, Phase $phase, ?array $sections = null): array
     {
         $sectionAnswers = [];
 
-        foreach ($phase->sections() as $section) {
+        foreach ($sections ?? $phase->sections() as $section) {
             $mapper = $this->mappers->forActivityType($section->activityType);
 
             $answers = [];

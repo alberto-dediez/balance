@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\EventOperations\Application\Provider\Update;
 
 use App\EventOperations\Application\Provider\ProviderAuthorizer;
+use App\EventOperations\Domain\Model\Provider\Contact;
 use App\EventOperations\Domain\Model\Provider\ProviderRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
@@ -41,10 +42,17 @@ class UpdateProviderService implements CommandHandler
             country: $request->country ?: null,
         );
 
+        $contact = Contact::fromEmail(
+            email: $request->email,
+            preferredLocale: $request->preferredLocale,
+            name: $request->contactName,
+        );
+
         $provider->update(
             name: $request->name,
             vatNumber: $request->vatNumber,
             address: $address,
+            contact: $contact,
         );
 
         $this->providerRepository->add($provider);

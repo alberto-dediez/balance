@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\EventOperations\Application\Provider\Register;
 
 use App\EventOperations\Application\Provider\ProviderAuthorizer;
+use App\EventOperations\Domain\Model\Provider\Contact;
 use App\EventOperations\Domain\Model\Provider\Provider;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\EventOperations\Domain\Model\Provider\ProviderRepository;
@@ -42,11 +43,18 @@ class RegisterProviderService implements CommandHandler
             country: $request->country ?: null,
         );
 
+        $contact = Contact::fromEmail(
+            email: $request->email,
+            preferredLocale: $request->preferredLocale,
+            name: $request->contactName,
+        );
+
         $provider = new Provider($id);
         $provider->register(
             name: $request->name,
             vatNumber: $request->vatNumber,
             address: $address,
+            contact: $contact,
             accountId: $request->accountId,
         );
 

@@ -69,7 +69,7 @@ class BreakdownController extends AbstractController
                 return $this->redirectToRoute('events_carbon_footprint_breakdown', ['eventId' => $eventId]);
             }
 
-            return $this->redirectToRoute('events_carbon_footprint_results', ['eventId' => $eventId]);
+            return $this->redirectToRoute('events_carbon_footprint_providers', ['eventId' => $eventId]);
         }
 
         $response = $getPhase(new GetPhaseRequest($eventCarbonFootprint->id(), Phase::Breakdown), $loggedUser());

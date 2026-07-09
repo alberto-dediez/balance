@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\EventOperations\Infrastructure\Symfony\Form;
 
 use App\EventOperations\Application\Provider\Register\RegisterProviderRequest;
+use App\Shared\Infrastructure\Symfony\Form\Type\LocaleType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -66,6 +68,27 @@ class RegisterProviderType extends AbstractType
                 'constraints' => [
                     new Assert\Length(max: 255),
                 ],
+            ])
+            ->add('email', EmailType::class, [
+                'label' => new TranslatableMessage('Email de contacto'),
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Email(),
+                    new Assert\Length(max: 255),
+                ],
+            ])
+            ->add('contactName', TextType::class, [
+                'label' => new TranslatableMessage('Nombre de contacto'),
+                'required' => false,
+                'empty_data' => '',
+                'constraints' => [
+                    new Assert\Length(max: 255),
+                ],
+            ])
+            ->add('preferredLocale', LocaleType::class, [
+                'label' => new TranslatableMessage('Idioma preferido'),
+                'required' => false,
             ])
             ->add('register', SubmitType::class, [
                 'label' => new TranslatableMessage('Registrar'),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Calculate;
 
+use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\Calculate\CalculateActivityEmissionsRequest;
 use App\CarbonFootprint\Application\Activity\Calculate\CalculateActivityEmissionsService;
 use App\CarbonFootprint\Application\Activity\EmissionFactorSelectorRegistry;
@@ -50,8 +51,10 @@ class CalculateActivityEmissionsServiceTest extends TestCase
         $this->sut = new CalculateActivityEmissionsService(
             $this->eventCarbonFootprintRepository,
             new EventCarbonFootprintAuthorizer(),
-            new EmissionFactorSelectorRegistry([new MaterialEmissionFactorSelector($materialRepository)]),
-            new EmissionsCalculator(),
+            new ActivityEmissionsResolver(
+                new EmissionFactorSelectorRegistry([new MaterialEmissionFactorSelector($materialRepository)]),
+                new EmissionsCalculator(),
+            ),
         );
     }
 

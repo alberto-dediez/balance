@@ -75,7 +75,10 @@ final class UserAuthorizer extends AbstractAuthorizer
         && $user->accountId() instanceof AccountId
         && $subject->accountId() instanceof AccountId
         && $user->accountId()->equals($subject->accountId())
-        && in_array($role, Role::casesForOwners());
+        && (
+            in_array($role, Role::casesForOwners())
+            || Role::Provider === $role
+        );
     }
 
     public function supports(mixed $subject): bool

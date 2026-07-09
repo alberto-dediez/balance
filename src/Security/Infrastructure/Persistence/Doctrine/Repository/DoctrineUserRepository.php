@@ -63,7 +63,7 @@ class DoctrineUserRepository implements UserRepository
 
     public function find(UserId $userId): ?User
     {
-        $qb = $this->createQueryBuilderFromFilter(new UserFilter());
+        $qb = $this->createQueryBuilderFromFilter(new UserFilter(excludeRole: null));
 
         return $qb
             ->andWhere(
@@ -151,6 +151,15 @@ class DoctrineUserRepository implements UserRepository
                     $qb->expr()->like('u.roles', ':role'),
                 )
                 ->setParameter('role', '%' . $filter->role->value . '%')
+            ;
+        }
+
+        if ($filter->excludeRole instanceof Role) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->notLike('u.roles', ':role'),
+                )
+                ->setParameter('role', '%' . $filter->excludeRole->value . '%')
             ;
         }
 

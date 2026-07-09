@@ -14,6 +14,8 @@ enum Role: string
 
     case SuperAdmin = 'ROLE_SUPER_ADMIN';
 
+    case Provider = 'ROLE_PROVIDER';
+
     /**
      * @return Role[]
      */
@@ -44,6 +46,9 @@ enum Role: string
                 continue;
             }
             if (self::SuperAdmin == $role) {
+                continue;
+            }
+            if (self::Provider == $role) {
                 continue;
             }
             $result[$role->value] = $role;

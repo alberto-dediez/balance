@@ -1,0 +1,13 @@
+{% extends '@shared/layout/public-wizard.html.twig' %}
+
+{% set wizard_active = providerContribution.stepStatus.activeStepNumber %}
+
+{% block content %}
+    {% set wizard_steps = [
+        {label: 'General' | trans, href: path('public_carbon_footprint_contribution_general', {token: token})},
+        {label: 'Montaje' | trans, href: path('public_carbon_footprint_contribution_assembly', {token: token})},
+        {label: 'Celebración' | trans, href: path('public_carbon_footprint_contribution_celebration', {token: token})},
+        {label: 'Desmontaje' | trans, href: path('public_carbon_footprint_contribution_breakdown', {token: token})},
+    ] %}
+    {{ parent() }}
+{% endblock %}

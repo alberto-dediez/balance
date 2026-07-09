@@ -78,4 +78,43 @@ class PhaseTest extends TestCase
             $this->assertSame($keys, array_unique($keys));
         }
     }
+
+    public function testMaterialsHasNoProviderSections(): void
+    {
+        $this->assertSame([], Phase::Materials->providerSections());
+    }
+
+    public function testAssemblyProviderSectionsIsASubsetOfSections(): void
+    {
+        $sections = Phase::Assembly->providerSections();
+
+        $this->assertSame(
+            ['combustibles', 'machineryFuels', 'overnightStays', 'mobilities'],
+            array_map(static fn($s) => $s->key, $sections),
+        );
+    }
+
+    public function testCelebrationAndBreakdownProviderSectionsMatchAssembly(): void
+    {
+        $this->assertEquals(Phase::Assembly->providerSections(), Phase::Celebration->providerSections());
+        $this->assertEquals(Phase::Assembly->providerSections(), Phase::Breakdown->providerSections());
+    }
+
+    public function testProviderSectionsIsAStrictSubsetOfSections(): void
+    {
+        foreach ([Phase::Assembly, Phase::Celebration, Phase::Breakdown] as $phase) {
+            $sectionKeys = array_map(static fn($s) => $s->key, $phase->sections());
+            $providerSectionKeys = array_map(static fn($s) => $s->key, $phase->providerSections());
+
+            foreach ($providerSectionKeys as $key) {
+                $this->assertContains($key, $sectionKeys);
+            }
+
+            $this->assertNotSame($sectionKeys, $providerSectionKeys);
+            $this->assertNotContains('roadTransports', $providerSectionKeys);
+            $this->assertNotContains('machineryElectricity', $providerSectionKeys);
+            $this->assertNotContains('buildingElectricity', $providerSectionKeys);
+            $this->assertNotContains('wastes', $providerSectionKeys);
+        }
+    }
 }

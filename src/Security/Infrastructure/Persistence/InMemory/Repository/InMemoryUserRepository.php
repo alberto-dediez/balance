@@ -127,6 +127,10 @@ class InMemoryUserRepository implements UserRepository
                 continue;
             }
 
+            if ($filter->excludeRole instanceof Role && in_array($filter->role, $user->roles())) {
+                continue;
+            }
+
             if ($filter->account instanceof Account && (null == $user->accountId() || false == $user->accountId()->equals($filter->account->id()))) {
                 continue;
             }

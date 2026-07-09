@@ -50,6 +50,7 @@ class UpdateProviderServiceTest extends TestCase
             postalCode: '28001',
             city: 'Madrid',
             country: 'España',
+            email: 'updated-provider@example.com',
         );
 
         $result = $sut($request, UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $accountId));

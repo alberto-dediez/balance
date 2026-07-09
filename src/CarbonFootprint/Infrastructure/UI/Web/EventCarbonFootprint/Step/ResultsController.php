@@ -30,8 +30,8 @@ class ResultsController extends AbstractController
 
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $eventCarbonFootprint);
 
-        if (!$eventCarbonFootprint->status()->isBreakdownAnswered()) {
-            return $this->redirectToRoute('events_carbon_footprint_breakdown', ['eventId' => $eventId]);
+        if (!$eventCarbonFootprint->status()->isProvidersAnswered()) {
+            return $this->redirectToRoute('events_carbon_footprint_providers', ['eventId' => $eventId]);
         }
 
         return $this->render('@carbon_footprint/event_carbon_footprints/step/results.html.twig', [

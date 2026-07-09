@@ -8,6 +8,7 @@ use App\EventOperations\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\Address;
 use App\Shared\Domain\Model\AggregateRootId;
+use App\Shared\Domain\Model\Locale\Locale;
 
 final class ProviderUpdated extends DomainEvent
 {
@@ -18,6 +19,7 @@ final class ProviderUpdated extends DomainEvent
         private string $name,
         private string $vatNumber,
         private Address $address,
+        private Contact $contact,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -44,6 +46,11 @@ final class ProviderUpdated extends DomainEvent
         return $this->address;
     }
 
+    public function contact(): Contact
+    {
+        return $this->contact;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->providerId();
@@ -59,6 +66,9 @@ final class ProviderUpdated extends DomainEvent
             'postalCode' => $this->address->postalCode(),
             'city' => $this->address->city(),
             'country' => $this->address->country(),
+            'email' => $this->contact->email(),
+            'preferredLocale' => $this->contact->preferredLocale()?->value,
+            'contactName' => $this->contact->name(),
         ];
     }
 
@@ -74,11 +84,18 @@ final class ProviderUpdated extends DomainEvent
             country: $payload['country'] ?? null,
         );
 
+        $contact = new Contact(
+            email: $payload['email'] ?? '',
+            preferredLocale: isset($payload['preferredLocale']) ? Locale::tryFrom($payload['preferredLocale']) : null,
+            name: $payload['contactName'] ?? null,
+        );
+
         return new ProviderUpdated(
             providerId: new ProviderId($payload['providerId']),
             name: $payload['name'],
             vatNumber: $payload['vatNumber'],
             address: $address,
+            contact: $contact,
             id: $id,
             occurredOn: $occurredOn,
         );

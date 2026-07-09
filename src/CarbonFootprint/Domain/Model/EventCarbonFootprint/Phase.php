@@ -54,4 +54,18 @@ enum Phase: string
             ],
         };
     }
+
+    /** @return list<SectionDefinition> */
+    public function providerSections(): array
+    {
+        return match ($this) {
+            self::Materials => [],
+            self::Assembly, self::Celebration, self::Breakdown => [
+                new SectionDefinition('combustibles', Source::FixedFacilities, ActivityType::Combustible),
+                new SectionDefinition('machineryFuels', Source::MachineryOperation, ActivityType::MachineryFuel),
+                new SectionDefinition('overnightStays', Source::SuppliersAndStaffAccommodation, ActivityType::OvernightStay),
+                new SectionDefinition('mobilities', Source::SuppliersAndStaffMobility, ActivityType::Mobility),
+            ],
+        };
+    }
 }

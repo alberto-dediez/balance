@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\EventCarbonFootprint;
 
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
+use App\EventOperations\Domain\Model\Provider\ProviderId;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -66,6 +67,21 @@ class EventCarbonFootprintActivities
 
         foreach ($this->activities as $activity) {
             if ($activity->source() === $source) {
+                $filtered[] = $activity;
+            }
+        }
+
+        return new self($filtered);
+    }
+
+    public function filterByProviderId(?ProviderId $providerId): self
+    {
+        $filtered = [];
+
+        foreach ($this->activities as $activity) {
+            $activityProviderId = $activity->providerId();
+
+            if (null === $providerId ? null === $activityProviderId : ($activityProviderId instanceof ProviderId && $activityProviderId->equals($providerId))) {
                 $filtered[] = $activity;
             }
         }

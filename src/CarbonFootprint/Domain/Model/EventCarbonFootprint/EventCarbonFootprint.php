@@ -10,6 +10,7 @@ use App\CarbonFootprint\Domain\Model\Emissions;
 use App\EventOperations\Domain\Model\Event\DateRange;
 use App\EventOperations\Domain\Model\Event\Event;
 use App\EventOperations\Domain\Model\Event\EventId;
+use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\AggregateRoot;
 
@@ -167,9 +168,9 @@ class EventCarbonFootprint implements \Stringable
     }
 
     /** @param ActivityId[] $keptIds */
-    public function retainActivities(Phase $phase, Source $source, array $keptIds): void
+    public function retainActivities(Phase $phase, Source $source, array $keptIds, ?ProviderId $providerId = null): void
     {
-        $existingIds = $this->activities()->filterByPhase($phase)->filterBySource($source)->activityIds();
+        $existingIds = $this->activities()->filterByPhase($phase)->filterBySource($source)->filterByProviderId($providerId)->activityIds();
 
         foreach ($existingIds as $existingId) {
             $kept = false;
@@ -218,6 +219,15 @@ class EventCarbonFootprint implements \Stringable
     {
         $this->recordApplyAndPublish(
             new EventCarbonFootprintBreakdownAnswered(
+                eventCarbonFootprintId: $this->id,
+            ),
+        );
+    }
+
+    public function answerProviders(): void
+    {
+        $this->recordApplyAndPublish(
+            new EventCarbonFootprintProvidersAnswered(
                 eventCarbonFootprintId: $this->id,
             ),
         );
@@ -286,6 +296,12 @@ class EventCarbonFootprint implements \Stringable
         $this->updatedAt = $event->occurredOn();
     }
 
+    public function applyEventCarbonFootprintProvidersAnswered(EventCarbonFootprintProvidersAnswered $event): void
+    {
+        $this->status = EventCarbonFootprintStatus::ProvidersAnswered;
+        $this->updatedAt = $event->occurredOn();
+    }
+
     public function applyEventCarbonFootprintCompleted(EventCarbonFootprintCompleted $event): void
     {
         $this->status = EventCarbonFootprintStatus::Completed;
@@ -298,7 +314,7 @@ class EventCarbonFootprint implements \Stringable
         $this->removedAt = $event->occurredOn();
     }
 
-    public function addActivity(ActivityId $activityId, Phase $phase, Source $source): void
+    public function addActivity(ActivityId $activityId, Phase $phase, Source $source, ?ProviderId $providerId = null): void
     {
         foreach ($this->activities as $activity) {
             if ($activity->activityId()->equals($activityId)) {
@@ -312,6 +328,7 @@ class EventCarbonFootprint implements \Stringable
                 activityId: $activityId,
                 phase: $phase,
                 source: $source,
+                providerId: $providerId,
             ),
         );
     }
@@ -339,6 +356,7 @@ class EventCarbonFootprint implements \Stringable
             activityId: $event->activityId(),
             phase: $event->phase(),
             source: $event->source(),
+            providerId: $event->providerId(),
             addedAt: $event->occurredOn(),
         );
 

@@ -12,28 +12,9 @@
 
 {% block content %}
     {{ form_start(form) }}
-        <twig:Card>
-            <div class="row">
-                <div class="col-12">
-                    {{ form_row(form.name) }}
-                </div>
-                <div class="col-12">
-                    {{ form_row(form.vatNumber) }}
-                </div>
-                <div class="col-12">
-                    {{ form_row(form.street) }}
-                </div>
-                <div class="col-12">
-                    {{ form_row(form.postalCode) }}
-                </div>
-                <div class="col-12">
-                    {{ form_row(form.city) }}
-                </div>
-                <div class="col-12">
-                    {{ form_row(form.country) }}
-                </div>
-            </div>
+        {% include '@event_operations/providers/_form.html.twig' %}
 
+        <twig:Card>
             <twig:ActionBar>
                 <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
                 <twig:ActionBar:Button type="primary" :button="form.save" />

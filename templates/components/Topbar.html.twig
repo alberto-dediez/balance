@@ -1,14 +1,18 @@
+{% props public = false %}
+
 <!--  Header Start -->
 <header class="topbar d-print-none">
     <div class="with-vertical">
         <nav class="navbar navbar-expand-lg p-0">
-            <ul class="navbar-nav">
-                <li class="nav-item nav-icon-hover ms-n3">
-                    <a class="nav-link sidebartoggler" id="headerCollapse" href="javascript:void(0)">
-                        <twig:Icon name="solar:hamburger-menu-line-duotone" size="lg" />
-                    </a>
-                </li>
-            </ul>
+            {% if not public %}
+                <ul class="navbar-nav">
+                    <li class="nav-item nav-icon-hover ms-n3">
+                        <a class="nav-link sidebartoggler" id="headerCollapse" href="javascript:void(0)">
+                            <twig:Icon name="solar:hamburger-menu-line-duotone" size="lg" />
+                        </a>
+                    </li>
+                </ul>
+            {% endif %}
             <div class="topbar-logo | d-flex">
                 <img src="{{ asset('images/logo-light.png') }}" class="dark-logo" height="36" alt="{{ company_name }}" />
                 <img src="{{ asset('images/logo-dark.png') }}" class="light-logo" height="36" alt="{{ company_name }}" />
@@ -32,12 +36,14 @@
                         <li class="nav-item nav-icon-hover dropdown">
                             <twig:Topbar:LanguageSwitch></twig:Topbar:LanguageSwitch>
                         </li>
-                        <li class="nav-item nav-icon-hover dropdown">
-                            <twig:Topbar:Notifications></twig:Topbar:Notifications>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <twig:Topbar:Profile></twig:Topbar:Profile>
-                        </li>
+                        {% if not public %}
+                            <li class="nav-item nav-icon-hover dropdown">
+                                <twig:Topbar:Notifications></twig:Topbar:Notifications>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <twig:Topbar:Profile></twig:Topbar:Profile>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>

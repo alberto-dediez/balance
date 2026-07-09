@@ -53,6 +53,9 @@ class EditController extends AbstractController
             postalCode: $provider->address()->postalCode() ?? '',
             city: $provider->address()->city() ?? '',
             country: $provider->address()->country() ?? '',
+            email: $provider->contact()->email(),
+            preferredLocale: $provider->contact()->preferredLocale(),
+            contactName: $provider->contact()->name(),
         );
 
         try {

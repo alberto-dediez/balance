@@ -39,6 +39,7 @@ class RegisterProviderServiceTest extends TestCase
         $request = new RegisterProviderRequest(
             name: 'Provider Test',
             vatNumber: 'B12345678',
+            email: 'provider-test@example.com',
             accountId: $accountId,
         );
 

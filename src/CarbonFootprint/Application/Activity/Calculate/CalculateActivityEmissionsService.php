@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\Activity\Calculate;
 
-use App\CarbonFootprint\Application\Activity\EmissionFactorSelectorRegistry;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
+use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\Security\Application\Action as SecurityAction;
@@ -23,8 +22,7 @@ class CalculateActivityEmissionsService implements CommandHandler
     public function __construct(
         private EventCarbonFootprintRepository $eventCarbonFootprintRepository,
         private EventCarbonFootprintAuthorizer $authorizer,
-        private EmissionFactorSelectorRegistry $selectorRegistry,
-        private EmissionsCalculator $calculator,
+        private ActivityEmissionsResolver $emissionsResolver,
     ) {}
 
     public function __invoke(CalculateActivityEmissionsRequest $request, User $user): CalculateActivityEmissionsResponse
@@ -37,16 +35,13 @@ class CalculateActivityEmissionsService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($eventCarbonFootprint, SecurityAction::View, $user);
 
-        $emissionFactorGroupId = $eventCarbonFootprint->emissionFactorGroupId()
-            ?? throw new \InvalidArgumentException(sprintf('EventCarbonFootprint "%s" has no emission factor group configured.', $eventCarbonFootprint->id()));
-
-        $emissionFactor = $this->selectorRegistry
-            ->forActivityType($request->activityType)
-            ->select($request->itemId, $eventCarbonFootprint->calculationYear(), $request->condition, $emissionFactorGroupId, $request->secondaryItemId);
-
-        return new CalculateActivityEmissionsResponse(
-            emissionFactor: $emissionFactor,
-            emissions: $this->calculator->calculate($emissionFactor, $request->quantity),
+        return $this->emissionsResolver->resolve(
+            $eventCarbonFootprint,
+            $request->activityType,
+            $request->itemId,
+            $request->condition,
+            $request->quantity,
+            $request->secondaryItemId,
         );
     }
 

@@ -11,10 +11,12 @@
         </id>
 
         <embedded name="address" class="App\Shared\Domain\Model\Address" use-column-prefix="false" />
+        <embedded name="contact" class="App\EventOperations\Domain\Model\Provider\Contact" use-column-prefix="false" />
 
         <field name="name" type="string" length="255" nullable="false" />
         <field name="vatNumber" type="string" length="100" column="vat_number" nullable="false" />
         <field name="accountId" type="account_id" column="account_id" nullable="true" />
+        <field name="userId" type="user_id" column="user_id" nullable="true" />
 
         <field name="removed" type="boolean" nullable="true" />
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />

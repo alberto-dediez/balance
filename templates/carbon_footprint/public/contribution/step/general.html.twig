@@ -1,0 +1,73 @@
+{% extends '@carbon_footprint/public/contribution/layout.html.twig' %}
+
+{% set page_title = 'Contribución de proveedor' | trans %}
+{% set wizard_selected = 1 %}
+
+{% block wizard_panels %}
+    <div class="card mb-3">
+        <div class="card-header"><h5 class="mb-0">{{ 'Datos del evento' | trans }}</h5></div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">{{ 'Evento' | trans }}</dt>
+                <dd class="col-sm-9">{{ event.name }}</dd>
+
+                {% if event.location %}
+                    <dt class="col-sm-3">{{ 'Ubicación' | trans }}</dt>
+                    <dd class="col-sm-9">{{ event.location | destination_name }}</dd>
+                {% endif %}
+
+                <dt class="col-sm-3">{{ 'Montaje' | trans }}</dt>
+                <dd class="col-sm-9">{{ event.assembly }}</dd>
+
+                <dt class="col-sm-3">{{ 'Celebración' | trans }}</dt>
+                <dd class="col-sm-9">{{ event.celebration }}</dd>
+
+                <dt class="col-sm-3">{{ 'Desmontaje' | trans }}</dt>
+                <dd class="col-sm-9">{{ event.breakdown }}</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h5 class="mb-0">{{ 'Datos de la empresa' | trans }}</h5></div>
+        <div class="card-body">
+            <form method="post" name="general">
+                <input type="hidden" name="_token" value="{{ csrf_token('contribution_general_' ~ token) }}">
+
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Nombre de la empresa' | trans }}</label>
+                    <input type="text" class="form-control" name="general[companyName]" value="{{ providerContribution.companyName }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Tipo de empresa' | trans }}</label>
+                    <input type="text" class="form-control" name="general[companyType]" value="{{ providerContribution.companyType }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Servicio prestado' | trans }}</label>
+                    <input type="text" class="form-control" name="general[service]" value="{{ providerContribution.service }}">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">{{ 'Nº trabajadores en Montaje' | trans }}</label>
+                        <input type="number" min="0" class="form-control" name="general[workersAssembly]" value="{{ providerContribution.workersAssembly }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">{{ 'Nº trabajadores en Celebración' | trans }}</label>
+                        <input type="number" min="0" class="form-control" name="general[workersCelebration]" value="{{ providerContribution.workersCelebration }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">{{ 'Nº trabajadores en Desmontaje' | trans }}</label>
+                        <input type="number" min="0" class="form-control" name="general[workersBreakdown]" value="{{ providerContribution.workersBreakdown }}">
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">{{ 'Guardar y continuar' | trans }} &rarr;</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

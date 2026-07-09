@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\EventCarbonFootprint;
 
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
+use App\EventOperations\Domain\Model\Provider\ProviderId;
 
 class EventCarbonFootprintActivity
 {
@@ -14,6 +15,7 @@ class EventCarbonFootprintActivity
         private ActivityId $activityId,
         private Phase $phase,
         private Source $source,
+        private ?ProviderId $providerId = null,
         private \DateTimeImmutable $addedAt = new \DateTimeImmutable('NOW'),
     ) {}
 
@@ -40,6 +42,11 @@ class EventCarbonFootprintActivity
     public function source(): Source
     {
         return $this->source;
+    }
+
+    public function providerId(): ?ProviderId
+    {
+        return $this->providerId;
     }
 
     public function addedAt(): \DateTimeImmutable

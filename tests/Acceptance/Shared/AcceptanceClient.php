@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\DomCrawler\Link;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profile;
@@ -60,6 +61,17 @@ final class AcceptanceClient
     {
         try {
             $this->crawler = $this->client->submit($formData);
+
+            $this->exception = null;
+        } catch (\Exception $e) {
+            $this->exception = $e;
+        }
+    }
+
+    public function click(Link $link): void
+    {
+        try {
+            $this->crawler = $this->client->click($link);
 
             $this->exception = null;
         } catch (\Exception $e) {

@@ -11,13 +11,14 @@ enum EventCarbonFootprintStatus: string
     case AssemblyAnswered    = 'assembly_answered';
     case CelebrationAnswered = 'celebration_answered';
     case BreakdownAnswered   = 'breakdown_answered';
+    case ProvidersAnswered   = 'providers_answered';
     case Completed           = 'completed';
 
     public function isMaterialsAnswered(): bool
     {
         return match ($this) {
             self::MaterialsAnswered, self::AssemblyAnswered, self::CelebrationAnswered,
-            self::BreakdownAnswered, self::Completed => true,
+            self::BreakdownAnswered, self::ProvidersAnswered, self::Completed => true,
             default => false,
         };
     }
@@ -26,7 +27,7 @@ enum EventCarbonFootprintStatus: string
     {
         return match ($this) {
             self::AssemblyAnswered, self::CelebrationAnswered,
-            self::BreakdownAnswered, self::Completed => true,
+            self::BreakdownAnswered, self::ProvidersAnswered, self::Completed => true,
             default => false,
         };
     }
@@ -34,7 +35,7 @@ enum EventCarbonFootprintStatus: string
     public function isCelebrationAnswered(): bool
     {
         return match ($this) {
-            self::CelebrationAnswered, self::BreakdownAnswered, self::Completed => true,
+            self::CelebrationAnswered, self::BreakdownAnswered, self::ProvidersAnswered, self::Completed => true,
             default => false,
         };
     }
@@ -42,7 +43,15 @@ enum EventCarbonFootprintStatus: string
     public function isBreakdownAnswered(): bool
     {
         return match ($this) {
-            self::BreakdownAnswered, self::Completed => true,
+            self::BreakdownAnswered, self::ProvidersAnswered, self::Completed => true,
+            default => false,
+        };
+    }
+
+    public function isProvidersAnswered(): bool
+    {
+        return match ($this) {
+            self::ProvidersAnswered, self::Completed => true,
             default => false,
         };
     }
@@ -59,7 +68,9 @@ enum EventCarbonFootprintStatus: string
             self::MaterialsAnswered   => 2,
             self::AssemblyAnswered    => 3,
             self::CelebrationAnswered => 4,
-            self::BreakdownAnswered, self::Completed => 5,
+            self::BreakdownAnswered => 5,
+            self::ProvidersAnswered => 6,
+            self::Completed => 7,
         };
     }
 
@@ -70,7 +81,9 @@ enum EventCarbonFootprintStatus: string
             self::MaterialsAnswered   => 'events_carbon_footprint_assembly',
             self::AssemblyAnswered    => 'events_carbon_footprint_celebration',
             self::CelebrationAnswered => 'events_carbon_footprint_breakdown',
-            self::BreakdownAnswered, self::Completed => 'events_carbon_footprint_results',
+            self::BreakdownAnswered => 'events_carbon_footprint_providers',
+            self::ProvidersAnswered => 'events_carbon_footprint_results',
+            self::Completed => 'events_carbon_footprint_results',
         };
     }
 }

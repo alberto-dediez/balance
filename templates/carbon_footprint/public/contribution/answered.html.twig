@@ -1,0 +1,18 @@
+{% extends '@shared/layout/public.html.twig' %}
+
+{% set page_title = 'Gracias' | trans %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card">
+                <div class="card-body py-5">
+                    <h3 class="text-success">{{ '¡Gracias por su contribución!' | trans }}</h3>
+                    <p class="text-muted mt-3">
+                        {{ 'Se han guardado correctamente los datos aportados. Puede volver a este enlace en cualquier momento para revisarlos o modificarlos mientras la huella de carbono del evento siga abierta.' | trans }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -6,6 +6,7 @@ namespace App\EventOperations\Application\Provider\Update;
 
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Shared\Application\CommandBus\Command;
+use App\Shared\Domain\Model\Locale\Locale;
 
 class UpdateProviderRequest implements Command
 {
@@ -17,5 +18,8 @@ class UpdateProviderRequest implements Command
         public string $postalCode,
         public string $city,
         public string $country,
+        public string $email = '',
+        public ?Locale $preferredLocale = null,
+        public ?string $contactName = null,
     ) {}
 }

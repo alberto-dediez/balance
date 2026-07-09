@@ -23,12 +23,12 @@ final class ActivityAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin) || $user->hasRole(Role::Owner);
+        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin) || $user->hasRole(Role::Owner) || $user->hasRole(Role::Provider);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin) || $user->hasRole(Role::Owner);
+        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin) || $user->hasRole(Role::Owner) || $user->hasRole(Role::Provider);
     }
 
     protected function canRemove(mixed $subject, User $user): bool

@@ -4,11 +4,19 @@ framework:
             policy: sliding_window
             limit: 10
             interval: '1 minute'
+        provider_contribution_token:
+            policy: sliding_window
+            limit: 30
+            interval: '1 minute'
 
 when@test:
     framework:
         rate_limiter:
             signature_token:
+                policy: sliding_window
+                limit: 500
+                interval: '1 minute'
+            provider_contribution_token:
                 policy: sliding_window
                 limit: 500
                 interval: '1 minute'

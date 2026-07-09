@@ -15,6 +15,7 @@ class UserFilter
         public ?string $username = null,
         public ?Role $role = null,
         public ?Account $account = null,
+        public ?Role $excludeRole = Role::Provider,
         int $limit = 10,
     ) {
         $this->limit = $limit;

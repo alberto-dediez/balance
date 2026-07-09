@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContribution" table="provider_contributions">
+        <id name="id" type="provider_contribution_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="eventCarbonFootprintId" type="event_carbon_footprint_id" column="event_carbon_footprint_id" nullable="false" />
+        <field name="accountId" type="account_id" column="account_id" nullable="false" />
+        <field name="providerId" type="provider_id" column="provider_id" nullable="false" />
+        <field name="token" type="string" length="64" nullable="false" unique="true" />
+        <field name="status" type="string" length="20" enum-type="App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionStatus" nullable="false" />
+        <field name="stepStatus" type="string" length="30" column="step_status" enum-type="App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionStepStatus" nullable="false" />
+        <field name="answeredAt" type="datetime_immutable" column="answered_at" nullable="true" />
+        <field name="ignoredAt" type="datetime_immutable" column="ignored_at" nullable="true" />
+
+        <field name="companyName" type="string" length="255" column="company_name" nullable="true" />
+        <field name="companyType" type="string" length="255" column="company_type" nullable="true" />
+        <field name="service" type="string" length="255" nullable="true" />
+        <field name="workersAssembly" type="integer" column="workers_assembly" nullable="true" />
+        <field name="workersCelebration" type="integer" column="workers_celebration" nullable="true" />
+        <field name="workersBreakdown" type="integer" column="workers_breakdown" nullable="true" />
+
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true" />
+    </entity>
+
+</doctrine-mapping>

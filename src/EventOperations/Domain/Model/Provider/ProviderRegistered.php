@@ -9,6 +9,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\Address;
 use App\Shared\Domain\Model\AggregateRootId;
+use App\Shared\Domain\Model\Locale\Locale;
 
 final class ProviderRegistered extends DomainEvent
 {
@@ -19,6 +20,7 @@ final class ProviderRegistered extends DomainEvent
         private string $name,
         private string $vatNumber,
         private Address $address,
+        private Contact $contact,
         private ?AccountId $accountId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
@@ -46,6 +48,11 @@ final class ProviderRegistered extends DomainEvent
         return $this->address;
     }
 
+    public function contact(): Contact
+    {
+        return $this->contact;
+    }
+
     public function accountId(): ?AccountId
     {
         return $this->accountId;
@@ -66,6 +73,9 @@ final class ProviderRegistered extends DomainEvent
             'postalCode' => $this->address->postalCode(),
             'city' => $this->address->city(),
             'country' => $this->address->country(),
+            'email' => $this->contact->email(),
+            'preferredLocale' => $this->contact->preferredLocale()?->value,
+            'contactName' => $this->contact->name(),
             'accountId' => $this->accountId ? (string) $this->accountId : null,
         ];
     }
@@ -82,11 +92,18 @@ final class ProviderRegistered extends DomainEvent
             country: $payload['country'] ?? null,
         );
 
+        $contact = new Contact(
+            email: $payload['email'] ?? '',
+            preferredLocale: isset($payload['preferredLocale']) ? Locale::tryFrom($payload['preferredLocale']) : null,
+            name: $payload['contactName'] ?? null,
+        );
+
         return new ProviderRegistered(
             providerId: new ProviderId($payload['providerId']),
             name: $payload['name'],
             vatNumber: $payload['vatNumber'],
             address: $address,
+            contact: $contact,
             accountId: isset($payload['accountId']) ? new AccountId($payload['accountId']) : null,
             id: $id,
             occurredOn: $occurredOn,

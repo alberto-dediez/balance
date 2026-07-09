@@ -3281,6 +3281,206 @@
         <source>Capacidad</source>
         <target>Capacidad</target>
       </trans-unit>
+      <trans-unit id="mpbRArq" resname="No se han podido asignar los proveedores: {error}">
+        <source>No se han podido asignar los proveedores: {error}</source>
+        <target>No se han podido asignar los proveedores: {error}</target>
+      </trans-unit>
+      <trans-unit id="9gnagpS" resname="No se ha podido reenviar la notificación: {error}">
+        <source>No se ha podido reenviar la notificación: {error}</source>
+        <target>No se ha podido reenviar la notificación: {error}</target>
+      </trans-unit>
+      <trans-unit id="npCvG.F" resname="Aporta tus datos de emisiones para el evento">
+        <source>Aporta tus datos de emisiones para el evento</source>
+        <target>Aporta tus datos de emisiones para el evento</target>
+      </trans-unit>
+      <trans-unit id="k0UsoYT" resname="Email de contacto">
+        <source>Email de contacto</source>
+        <target>Email de contacto</target>
+      </trans-unit>
+      <trans-unit id="yIxsHIe" resname="Nombre de contacto">
+        <source>Nombre de contacto</source>
+        <target>Nombre de contacto</target>
+      </trans-unit>
+      <trans-unit id="D0h7WBF" resname="Sin especificar">
+        <source>Sin especificar</source>
+        <target>Sin especificar</target>
+      </trans-unit>
+      <trans-unit id="jxIOZta" resname="¿Dispone de garantía de origen?">
+        <source>¿Dispone de garantía de origen?</source>
+        <target>¿Dispone de garantía de origen?</target>
+      </trans-unit>
+      <trans-unit id="dlb3prp" resname="Indicar la totalidad de noches que pernocta cada grupo, es decir, el sumatorio de total. Por ejemplo, si tengo 5 proveedores y cada uno duerme dos noches, indicar 10 noches">
+        <source>Indicar la totalidad de noches que pernocta cada grupo, es decir, el sumatorio de total. Por ejemplo, si tengo 5 proveedores y cada uno duerme dos noches, indicar 10 noches</source>
+        <target>Indicar la totalidad de noches que pernocta cada grupo, es decir, el sumatorio de total. Por ejemplo, si tengo 5 proveedores y cada uno duerme dos noches, indicar 10 noches</target>
+      </trans-unit>
+      <trans-unit id="K.gUI1Z" resname="Tipo de empresa">
+        <source>Tipo de empresa</source>
+        <target>Tipo de empresa</target>
+      </trans-unit>
+      <trans-unit id="RnKw1vh" resname="Servicio prestado">
+        <source>Servicio prestado</source>
+        <target>Servicio prestado</target>
+      </trans-unit>
+      <trans-unit id="31q86lj" resname="Trabajadores (Montaje / Celebración / Desmontaje)">
+        <source>Trabajadores (Montaje / Celebración / Desmontaje)</source>
+        <target>Trabajadores (Montaje / Celebración / Desmontaje)</target>
+      </trans-unit>
+      <trans-unit id="uFfjqQ9" resname="Sin actividades">
+        <source>Sin actividades</source>
+        <target>Sin actividades</target>
+      </trans-unit>
+      <trans-unit id="trW2Ag." resname="Contribución de proveedor">
+        <source>Contribución de proveedor</source>
+        <target>Contribución de proveedor</target>
+      </trans-unit>
+      <trans-unit id="gqUe.p0" resname="Datos de la empresa">
+        <source>Datos de la empresa</source>
+        <target>Datos de la empresa</target>
+      </trans-unit>
+      <trans-unit id="lE2xmWc" resname="Selecciona los proveedores que deben aportar sus propios datos de emisiones (combustible, maquinaria, pernoctación y movilidad). El enlace se enviará al email de contacto del proveedor.">
+        <source>Selecciona los proveedores que deben aportar sus propios datos de emisiones (combustible, maquinaria, pernoctación y movilidad). El enlace se enviará al email de contacto del proveedor.</source>
+        <target>Selecciona los proveedores que deben aportar sus propios datos de emisiones (combustible, maquinaria, pernoctación y movilidad). El enlace se enviará al email de contacto del proveedor.</target>
+      </trans-unit>
+      <trans-unit id="UrMdEi5" resname="Proveedor">
+        <source>Proveedor</source>
+        <target>Proveedor</target>
+      </trans-unit>
+      <trans-unit id="6.72oni" resname="No hay proveedores registrados para esta cuenta.">
+        <source>No hay proveedores registrados para esta cuenta.</source>
+        <target>No hay proveedores registrados para esta cuenta.</target>
+      </trans-unit>
+      <trans-unit id="37gbY1." resname="Contestado">
+        <source>Contestado</source>
+        <target>Contestado</target>
+      </trans-unit>
+      <trans-unit id="KXXm0wW" resname="Descartado">
+        <source>Descartado</source>
+        <target>Descartado</target>
+      </trans-unit>
+      <trans-unit id=".nw4GA8" resname="Pendiente">
+        <source>Pendiente</source>
+        <target>Pendiente</target>
+      </trans-unit>
+      <trans-unit id=".TABNFM" resname="Reenviar">
+        <source>Reenviar</source>
+        <target>Reenviar</target>
+      </trans-unit>
+      <trans-unit id="xzEBZr9" resname="Descartar">
+        <source>Descartar</source>
+        <target>Descartar</target>
+      </trans-unit>
+      <trans-unit id="znfxHbg" resname="Reactivar">
+        <source>Reactivar</source>
+        <target>Reactivar</target>
+      </trans-unit>
+      <trans-unit id="5QHEKhu" resname="No hay contribuciones registradas.">
+        <source>No hay contribuciones registradas.</source>
+        <target>No hay contribuciones registradas.</target>
+      </trans-unit>
+      <trans-unit id="98BfGWS" resname="Contribuciones">
+        <source>Contribuciones</source>
+        <target>Contribuciones</target>
+      </trans-unit>
+      <trans-unit id="XAP_.iO" resname="Guardar y continuar">
+        <source>Guardar y continuar</source>
+        <target>Guardar y continuar</target>
+      </trans-unit>
+      <trans-unit id="nRQ.1dW" resname="Contribución de proveedor - Montaje">
+        <source>Contribución de proveedor - Montaje</source>
+        <target>Contribución de proveedor - Montaje</target>
+      </trans-unit>
+      <trans-unit id="ePaBbmo" resname="Combustible (instalaciones fijas, calderas, motores estacionarios, etc)">
+        <source>Combustible (instalaciones fijas, calderas, motores estacionarios, etc)</source>
+        <target>Combustible (instalaciones fijas, calderas, motores estacionarios, etc)</target>
+      </trans-unit>
+      <trans-unit id="pndo98j" resname="Movilidad (proveedores y equipo): origen → evento y dentro de la ciudad del evento">
+        <source>Movilidad (proveedores y equipo): origen → evento y dentro de la ciudad del evento</source>
+        <target>Movilidad (proveedores y equipo): origen → evento y dentro de la ciudad del evento</target>
+      </trans-unit>
+      <trans-unit id="6CUGX9h" resname="Contribución de proveedor - Celebración">
+        <source>Contribución de proveedor - Celebración</source>
+        <target>Contribución de proveedor - Celebración</target>
+      </trans-unit>
+      <trans-unit id="ryziFFQ" resname="Contribución de proveedor - Desmontaje">
+        <source>Contribución de proveedor - Desmontaje</source>
+        <target>Contribución de proveedor - Desmontaje</target>
+      </trans-unit>
+      <trans-unit id="Db1PEiR" resname="Movilidad (proveedores y equipo)">
+        <source>Movilidad (proveedores y equipo)</source>
+        <target>Movilidad (proveedores y equipo)</target>
+      </trans-unit>
+      <trans-unit id="G61YiK." resname="Datos del evento">
+        <source>Datos del evento</source>
+        <target>Datos del evento</target>
+      </trans-unit>
+      <trans-unit id="XEKf1yN" resname="Celebración">
+        <source>Celebración</source>
+        <target>Celebración</target>
+      </trans-unit>
+      <trans-unit id="bbn3d13" resname="Nombre de la empresa">
+        <source>Nombre de la empresa</source>
+        <target>Nombre de la empresa</target>
+      </trans-unit>
+      <trans-unit id="AmcGMMy" resname="Nº trabajadores en Montaje">
+        <source>Nº trabajadores en Montaje</source>
+        <target>Nº trabajadores en Montaje</target>
+      </trans-unit>
+      <trans-unit id="TOeVhAq" resname="Nº trabajadores en Celebración">
+        <source>Nº trabajadores en Celebración</source>
+        <target>Nº trabajadores en Celebración</target>
+      </trans-unit>
+      <trans-unit id="NYhii9H" resname="Nº trabajadores en Desmontaje">
+        <source>Nº trabajadores en Desmontaje</source>
+        <target>Nº trabajadores en Desmontaje</target>
+      </trans-unit>
+      <trans-unit id="gEcArhl" resname="General">
+        <source>General</source>
+        <target>General</target>
+      </trans-unit>
+      <trans-unit id="nSFNBPA" resname="¡Gracias por su contribución!">
+        <source>¡Gracias por su contribución!</source>
+        <target>¡Gracias por su contribución!</target>
+      </trans-unit>
+      <trans-unit id="gF7Ok8I" resname="Se han guardado correctamente los datos aportados. Puede volver a este enlace en cualquier momento para revisarlos o modificarlos mientras la huella de carbono del evento siga abierta.">
+        <source>Se han guardado correctamente los datos aportados. Puede volver a este enlace en cualquier momento para revisarlos o modificarlos mientras la huella de carbono del evento siga abierta.</source>
+        <target>Se han guardado correctamente los datos aportados. Puede volver a este enlace en cualquier momento para revisarlos o modificarlos mientras la huella de carbono del evento siga abierta.</target>
+      </trans-unit>
+      <trans-unit id="xKM4Oj1" resname="Huella cerrada">
+        <source>Huella cerrada</source>
+        <target>Huella cerrada</target>
+      </trans-unit>
+      <trans-unit id="9014U7e" resname="Esta huella de carbono ya se ha cerrado">
+        <source>Esta huella de carbono ya se ha cerrado</source>
+        <target>Esta huella de carbono ya se ha cerrado</target>
+      </trans-unit>
+      <trans-unit id="U9TAdDc" resname="El evento ya ha calculado y cerrado su huella de carbono, por lo que no admite más cambios.">
+        <source>El evento ya ha calculado y cerrado su huella de carbono, por lo que no admite más cambios.</source>
+        <target>El evento ya ha calculado y cerrado su huella de carbono, por lo que no admite más cambios.</target>
+      </trans-unit>
+      <trans-unit id="WyCZyid" resname="Este enlace no es válido">
+        <source>Este enlace no es válido</source>
+        <target>Este enlace no es válido</target>
+      </trans-unit>
+      <trans-unit id=".Ue648B" resname="El enlace de contribución que ha utilizado no es válido o ya no está disponible.">
+        <source>El enlace de contribución que ha utilizado no es válido o ya no está disponible.</source>
+        <target>El enlace de contribución que ha utilizado no es válido o ya no está disponible.</target>
+      </trans-unit>
+      <trans-unit id="jI5Ky9V" resname="Hola {name}, se te ha solicitado aportar los datos de emisiones de tu empresa para este evento (combustible, combustible de maquinaria, pernoctación y movilidad).">
+        <source>Hola {name}, se te ha solicitado aportar los datos de emisiones de tu empresa para este evento (combustible, combustible de maquinaria, pernoctación y movilidad).</source>
+        <target>Hola {name}, se te ha solicitado aportar los datos de emisiones de tu empresa para este evento (combustible, combustible de maquinaria, pernoctación y movilidad).</target>
+      </trans-unit>
+      <trans-unit id="jMHItlZ" resname="Por favor, accede al siguiente enlace para completar los datos:">
+        <source>Por favor, accede al siguiente enlace para completar los datos:</source>
+        <target>Por favor, accede al siguiente enlace para completar los datos:</target>
+      </trans-unit>
+      <trans-unit id="VIo89gE" resname="Aportar datos">
+        <source>Aportar datos</source>
+        <target>Aportar datos</target>
+      </trans-unit>
+      <trans-unit id="v_Hs6LX" resname="Contacto para recogidas">
+        <source>Contacto para recogidas</source>
+        <target>Contacto para recogidas</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

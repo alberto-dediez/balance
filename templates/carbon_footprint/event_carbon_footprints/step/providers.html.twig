@@ -1,0 +1,108 @@
+{% extends '@carbon_footprint/event_carbon_footprints/wizard-layout.html.twig' %}
+
+{% set wizard_selected = 5 %}
+
+{% block wizard_panels %}
+
+    <form method="post" name="providers">
+
+        <twig:Card title="{{ 'Proveedores' | trans }}">
+            <p class="text-muted">
+                {{ 'Selecciona los proveedores que deben aportar sus propios datos de emisiones (combustible, maquinaria, pernoctación y movilidad). El enlace se enviará al email de contacto del proveedor.' | trans }}
+            </p>
+
+            <input type="hidden" name="_token" value="{{ csrf_token('providers_' ~ eventCarbonFootprint.id) }}">
+
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>{{ 'Proveedor' | trans }}</th>
+                            <th>{{ 'Email de contacto' | trans }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for provider in providers %}
+                            {% set isAssigned = assignedProviderIds[provider.id ~ ''] is defined %}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="form-check-input" name="providers[providerIds][]" value="{{ provider.id }}" {{ isAssigned ? 'checked' : '' }}>
+                                </td>
+                                <td>{{ provider.name }}</td>
+                                <td>{{ provider.contact.email }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="3" class="text-muted">{{ 'No hay proveedores registrados para esta cuenta.' | trans }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </twig:Card>
+
+        <twig:Card title="{{ 'Contribuciones' | trans }}">
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                    <tr>
+                        <th>{{ 'Empresa' | trans }}</th>
+                        <th>{{ 'Email' | trans }}</th>
+                        <th>{{ 'Estado' | trans }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for contribution in contributions %}
+                        <tr>
+                            <td>{{ contribution.companyName ?? '-' }}</td>
+                            <td>{{ providersById[contribution.providerId ~ ''] is defined ? providersById[contribution.providerId ~ ''].contact.email : '-' }}</td>
+                            <td>
+                                {% if contribution.status.isAnswered %}
+                                    <span class="badge bg-success">{{ 'Contestado' | trans }}</span>
+                                {% elseif contribution.status.isIgnored %}
+                                    <span class="badge bg-secondary">{{ 'Descartado' | trans }}</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">{{ 'Pendiente' | trans }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <a href="{{ path('events_carbon_footprint_provider_contribution_show', {eventId: eventId, providerContributionId: contribution.id}) }}" class="btn btn-sm btn-outline-secondary">
+                                    {{ 'Ver' | trans }}
+                                </a>
+
+                                {% if not contribution.status.isIgnored %}
+                                    <a href="{{ path('events_carbon_footprint_provider_contribution_resend', {eventId: eventId, providerContributionId: contribution.id, _token: csrf_token('provider_contribution_resend_' ~ contribution.id)}) }}" class="btn btn-sm btn-outline-secondary">
+                                        {{ 'Reenviar' | trans }}
+                                    </a>
+                                    <a href="{{ path('events_carbon_footprint_provider_contribution_ignore', {eventId: eventId, providerContributionId: contribution.id, _token: csrf_token('provider_contribution_ignore_' ~ contribution.id)}) }}" class="btn btn-sm btn-outline-danger">
+                                        {{ 'Descartar' | trans }}
+                                    </a>
+                                {% else %}
+                                    <a href="{{ path('events_carbon_footprint_provider_contribution_unignore', {eventId: eventId, providerContributionId: contribution.id, _token: csrf_token('provider_contribution_unignore_' ~ contribution.id)}) }}" class="btn btn-sm btn-outline-secondary">
+                                        {{ 'Reactivar' | trans }}
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-muted">{{ 'No hay contribuciones registradas.' | trans }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </twig:Card>
+
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ path('events_carbon_footprint_breakdown', {eventId: eventId}) }}" class="btn btn-outline-secondary">
+                &larr; {{ 'Anterior' | trans }}
+            </a>
+            <button type="submit" class="btn btn-primary">
+                {{ 'Guardar y continuar' | trans }} &rarr;
+            </button>
+        </div>
+    </form>
+{% endblock %}

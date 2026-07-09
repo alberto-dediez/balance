@@ -17,6 +17,7 @@
         <field name="activityId" type="activity_id" column="activity_id" nullable="false" />
         <field name="phase" type="string" enum-type="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase" nullable="false" />
         <field name="source" type="string" enum-type="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source" nullable="false" />
+        <field name="providerId" type="provider_id" column="provider_id" nullable="true" />
         <field name="addedAt" type="datetime_immutable" column="added_at" nullable="false" />
     </entity>
 

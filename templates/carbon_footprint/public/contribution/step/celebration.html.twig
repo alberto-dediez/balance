@@ -1,0 +1,54 @@
+{% extends '@carbon_footprint/public/contribution/layout.html.twig' %}
+
+{% set page_title = 'Contribución de proveedor - Celebración' | trans %}
+{% set wizard_selected = 3 %}
+
+{% block wizard_panels %}
+    <form method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('contribution_celebration_' ~ token) }}">
+
+        <twig:CarbonFootprint:CombustibleActivityTable
+            title="{{ 'Combustible (instalaciones fijas, calderas, motores estacionarios, etc)' | trans }}"
+            prefix="combustibles"
+            :rows="combustibleRows"
+            :items="combustibles"
+            :units="units"
+            calculateUrl="{{ path('public_carbon_footprint_contribution_emissions_calculate', {token: token}) }}"
+        />
+
+        <twig:CarbonFootprint:MachineryFuelActivityTable
+            title="{{ 'Combustible de maquinaria' | trans }}"
+            prefix="machineryFuels"
+            :rows="machineryFuelRows"
+            :items="machineryFuels"
+            :units="units"
+            calculateUrl="{{ path('public_carbon_footprint_contribution_emissions_calculate', {token: token}) }}"
+        />
+
+        <twig:CarbonFootprint:OvernightStayActivityTable
+            title="{{ 'Pernoctación' | trans }}"
+            prefix="overnightStays"
+            :rows="overnightStayRows"
+            :items="overnightStays"
+            :units="units"
+            calculateUrl="{{ path('public_carbon_footprint_contribution_emissions_calculate', {token: token}) }}"
+        />
+
+        {# Nota: origen→evento y dentro de la ciudad del evento son la misma sección "mobilities" — una única tabla/colección (el contador de índices del controlador JS "collection" es por instancia, así que dos tablas con el mismo prefix chocarían de índice). Las filas se distinguen libremente por el propio contenido del origen que introduzca el proveedor. #}
+        <twig:CarbonFootprint:MobilityActivityTable
+            title="{{ 'Movilidad (proveedores y equipo): origen → evento y dentro de la ciudad del evento' | trans }}"
+            prefix="mobilities"
+            :rows="mobilityRows"
+            :items="mobilities"
+            :units="units"
+            calculateUrl="{{ path('public_carbon_footprint_contribution_emissions_calculate', {token: token}) }}"
+        />
+
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ path('public_carbon_footprint_contribution_assembly', {token: token}) }}" class="btn btn-outline-secondary">
+                &larr; {{ 'Anterior' | trans }}
+            </a>
+            <button type="submit" class="btn btn-primary">{{ 'Guardar y continuar' | trans }} &rarr;</button>
+        </div>
+    </form>
+{% endblock %}

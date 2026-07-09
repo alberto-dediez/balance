@@ -20,7 +20,7 @@ Feature:
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/providers/register"
-        When I submit a form with "name:Mi Proveedor|vatNumber:B12345678" and button "Registrar"
+        When I submit a form with "name:Mi Proveedor|vatNumber:B12345678|email:proveedor@example.com" and button "Registrar"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Proveedor creado correctamente: Mi Proveedor"

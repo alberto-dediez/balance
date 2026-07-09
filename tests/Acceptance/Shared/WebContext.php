@@ -57,6 +57,22 @@ final class WebContext implements Context
         $this->client->request('GET', $path);
     }
 
+    #[When('I make a POST request to :path')]
+    public function iMakeAPostRequestTo(string $path): void
+    {
+        $this->client->request('POST', $path);
+    }
+
+    #[When('I click on link :text')]
+    public function iClickOnLink(string $text): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $link = $crawler->selectLink($text)->link();
+
+        $this->client->click($link);
+    }
+
     #[When('I follow redirect')]
     public function iFollowredirect(): void
     {

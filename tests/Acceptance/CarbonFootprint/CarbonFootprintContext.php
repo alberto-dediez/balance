@@ -9,15 +9,25 @@ use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
+use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContribution;
+use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionId;
+use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionRepository;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
 use App\CarbonFootprint\Domain\Model\Waste\WasteRepository;
+use App\EventOperations\Domain\Model\Provider\ProviderId;
+use App\EventOperations\Domain\Model\Provider\ProviderRepository;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\UserRepository;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
@@ -32,8 +42,11 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Waste\WasteMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Behat\Behat\Context\Context;
 use Behat\Step\Given;
+use Behat\Step\Then;
+use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 final readonly class CarbonFootprintContext implements Context
@@ -104,6 +117,11 @@ final readonly class CarbonFootprintContext implements Context
     public function getEventCarbonFootprintRepository(): EventCarbonFootprintRepository
     {
         return $this->client->getContainer()->get(EventCarbonFootprintRepository::class);
+    }
+
+    public function getProviderContributionRepository(): ProviderContributionRepository
+    {
+        return $this->client->getContainer()->get(ProviderContributionRepository::class);
     }
 
     private function ensureDefaultEmissionFactorGroupExists(): void
@@ -423,5 +441,94 @@ final readonly class CarbonFootprintContext implements Context
         ));
 
         $this->getOvernightStayRepository()->add($overnightStay);
+    }
+
+    #[Given('event carbon footprint with id :id for event :eventId of account :account with breakdown answered exists')]
+    public function eventCarbonFootprintWithIdForEventOfAccountWithBreakdownAnsweredExists(string $id, string $eventId, string $account): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $eventCarbonFootprint = EventCarbonFootprintMother::from(eventId: $eventId, id: $id, accountId: $account);
+        $eventCarbonFootprint->answerPhase(Phase::Materials);
+        $eventCarbonFootprint->answerPhase(Phase::Assembly);
+        $eventCarbonFootprint->answerPhase(Phase::Celebration);
+        $eventCarbonFootprint->answerPhase(Phase::Breakdown);
+
+        $this->getEventCarbonFootprintRepository()->add($eventCarbonFootprint);
+    }
+
+    #[Given('event carbon footprint with id :id for event :eventId of account :account completed exists')]
+    public function eventCarbonFootprintWithIdForEventOfAccountCompletedExists(string $id, string $eventId, string $account): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $eventCarbonFootprint = EventCarbonFootprintMother::from(eventId: $eventId, id: $id, accountId: $account);
+        $eventCarbonFootprint->answerPhase(Phase::Materials);
+        $eventCarbonFootprint->answerPhase(Phase::Assembly);
+        $eventCarbonFootprint->answerPhase(Phase::Celebration);
+        $eventCarbonFootprint->answerPhase(Phase::Breakdown);
+        $eventCarbonFootprint->complete();
+
+        $this->getEventCarbonFootprintRepository()->add($eventCarbonFootprint);
+    }
+
+    #[Given('provider contribution with id :id for event carbon footprint :eventCarbonFootprintId and provider :providerId of account :account with token :token exists')]
+    public function providerContributionWithIdExists(string $id, string $eventCarbonFootprintId, string $providerId, string $account, string $token): void
+    {
+        $providerContribution = new ProviderContribution(new ProviderContributionId($id));
+        $providerContribution->register(
+            eventCarbonFootprintId: new EventCarbonFootprintId($eventCarbonFootprintId),
+            accountId: new AccountId($account),
+            providerId: new ProviderId($providerId),
+            token: $token,
+            companyName: 'Provider Company',
+        );
+
+        $this->getProviderContributionRepository()->add($providerContribution);
+    }
+
+    #[Given('provider :providerId has a linked user')]
+    public function providerHasALinkedUser(string $providerId): void
+    {
+        $providerRepository = $this->client->getContainer()->get(ProviderRepository::class);
+        $provider = $providerRepository->find(new ProviderId($providerId));
+
+        Assert::assertNotNull($provider);
+
+        $user = UserMother::fromUsernameAndRole('provider-' . $providerId . '@contribution.internal', Role::Provider);
+        $this->client->getContainer()->get(UserRepository::class)->add($user);
+
+        $provider->linkUser($user->id());
+        $providerRepository->add($provider);
+    }
+
+    #[Given('provider contribution :id is ignored')]
+    public function providerContributionIsIgnored(string $id): void
+    {
+        $providerContribution = $this->getProviderContributionRepository()->find(new ProviderContributionId($id));
+
+        Assert::assertNotNull($providerContribution);
+
+        $providerContribution->ignore();
+
+        $this->getProviderContributionRepository()->add($providerContribution);
+    }
+
+    #[Then('provider contribution :id should have status :status')]
+    public function providerContributionShouldHaveStatus(string $id, string $status): void
+    {
+        $providerContribution = $this->getProviderContributionRepository()->find(new ProviderContributionId($id));
+
+        Assert::assertNotNull($providerContribution);
+        Assert::assertSame($status, $providerContribution->status()->value);
+    }
+
+    #[Then('provider :providerId should have a linked user')]
+    public function providerShouldHaveALinkedUser(string $providerId): void
+    {
+        $provider = $this->client->getContainer()->get(ProviderRepository::class)->find(new ProviderId($providerId));
+
+        Assert::assertNotNull($provider);
+        Assert::assertNotNull($provider->userId());
     }
 }

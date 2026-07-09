@@ -33,6 +33,10 @@
         <source>breakdown_answered</source>
         <target>Breakdown answered</target>
       </trans-unit>
+      <trans-unit id="BTMXzaB" resname="providers_answered">
+        <source>providers_answered</source>
+        <target>Providers answered</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

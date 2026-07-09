@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\EventOperations\Domain\Model\Provider;
 
+use App\EventOperations\Domain\Model\Provider\Contact;
 use App\EventOperations\Domain\Model\Provider\Provider;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -54,6 +55,7 @@ class ProviderMother
             name: $name,
             vatNumber: $vatNumber,
             address: new Address(),
+            contact: Contact::fromEmail(email: 'provider-' . $id . '@example.com'),
             accountId: null !== $accountId ? new AccountId($accountId) : null,
         );
 

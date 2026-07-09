@@ -103,6 +103,23 @@ html {
   }
 }
 
+//
+// Public pages (no sidebar): full-width topbar and content
+//
+@include media-breakpoint-up(xl) {
+  html[data-layout="vertical"] {
+    body.public-page {
+      .topbar {
+        width: 100%;
+      }
+
+      .page-wrapper {
+        margin-left: 0;
+      }
+    }
+  }
+}
+
 .with-horizontal {
   display: none;
 }
