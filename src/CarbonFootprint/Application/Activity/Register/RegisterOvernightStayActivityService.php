@@ -33,13 +33,14 @@ class RegisterOvernightStayActivityService implements CommandHandler
     {
         $id = ActivityId::generate();
 
-        $this->authorizer->denyUnlessCanDoThat(null, SecurityAction::Register, $user);
+        $this->authorizer->denyUnlessCanDoThat(new OvernightStayActivity(id: $id, accountId: $request->accountId), SecurityAction::Register, $user);
 
         $emissionFactor = $this->factorSelector->select((string) $request->overnightStayId, $request->year, null, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity = OvernightStayActivity::register(
             id: $id,
+            accountId: $request->accountId,
             overnightStayId: $request->overnightStayId,
             emissionFactor: $emissionFactor,
             emissions: $emissions,

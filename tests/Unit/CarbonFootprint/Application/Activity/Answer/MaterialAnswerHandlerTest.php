@@ -62,7 +62,7 @@ class MaterialAnswerHandlerTest extends TestCase
             quantity: new Quantity(10.0, Unit::Kilogram),
         );
 
-        $activityId = $this->sut->register($answer, 2026, EmissionFactorGroupMother::defaultId(), $this->ownerUser());
+        $activityId = $this->sut->register($answer, 2026, EmissionFactorGroupMother::defaultId(), new AccountId('account-id'), $this->ownerUser());
 
         $activity = $this->activityRepository->findById($activityId);
         $this->assertInstanceOf(MaterialActivity::class, $activity);
@@ -76,7 +76,7 @@ class MaterialAnswerHandlerTest extends TestCase
             condition: ItemCondition::New,
             quantity: new Quantity(10.0, Unit::Kilogram),
         );
-        $activityId = $this->sut->register($registerAnswer, 2026, EmissionFactorGroupMother::defaultId(), $this->ownerUser());
+        $activityId = $this->sut->register($registerAnswer, 2026, EmissionFactorGroupMother::defaultId(), new AccountId('account-id'), $this->ownerUser());
 
         $updateAnswer = new MaterialAnswer(
             materialId: $this->material->id(),

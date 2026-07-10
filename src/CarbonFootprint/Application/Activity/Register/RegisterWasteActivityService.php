@@ -33,13 +33,14 @@ class RegisterWasteActivityService implements CommandHandler
     {
         $id = ActivityId::generate();
 
-        $this->authorizer->denyUnlessCanDoThat(null, SecurityAction::Register, $user);
+        $this->authorizer->denyUnlessCanDoThat(new WasteActivity(id: $id, accountId: $request->accountId), SecurityAction::Register, $user);
 
         $emissionFactor = $this->factorSelector->select((string) $request->wasteId, $request->year, null, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity = WasteActivity::register(
             id: $id,
+            accountId: $request->accountId,
             wasteId: $request->wasteId,
             emissionFactor: $emissionFactor,
             emissions: $emissions,

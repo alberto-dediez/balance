@@ -8,26 +8,30 @@ use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Quantity;
+use App\Security\Domain\Model\Account\AccountId;
 
 final class MobilityActivity extends Activity
 {
     private MobilityId $mobilityId;
 
-    private function __construct(ActivityId $id)
+    public function __construct(ActivityId $id, ?AccountId $accountId = null)
     {
         $this->id = $id;
+        $this->accountId = $accountId;
     }
 
     public static function register(
         ActivityId $id,
+        AccountId $accountId,
         MobilityId $mobilityId,
         EmissionFactor $emissionFactor,
         Emissions $emissions,
         Quantity $quantity,
     ): static {
-        $activity = new static($id);
+        $activity = new static($id, $accountId);
         $activity->recordApplyAndPublish(new MobilityActivityRegistered(
             activityId: $id,
+            accountId: $accountId,
             mobilityId: $mobilityId,
             emissionFactor: $emissionFactor,
             emissions: $emissions,
@@ -66,6 +70,7 @@ final class MobilityActivity extends Activity
 
     public function applyMobilityActivityRegistered(MobilityActivityRegistered $event): void
     {
+        $this->accountId = $event->accountId();
         $this->mobilityId = $event->mobilityId();
         $this->emissionFactor = $event->emissionFactor();
         $this->emissions = $event->emissions();

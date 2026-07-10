@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\Activity\OvernightStayActivity;
 use App\CarbonFootprint\Domain\Model\Activity\OvernightStayActivityRegistered;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
@@ -47,6 +48,7 @@ class RegisterOvernightStayActivityServiceTest extends TestCase
         $sut = new RegisterOvernightStayActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterOvernightStayActivityRequest(
+            accountId: new AccountId('account-id'),
             overnightStayId: $entity->id(),
             quantity: ActivityMother::quantity(Unit::Pernoctacion, 2.0),
             year: 2024,
@@ -63,6 +65,7 @@ class RegisterOvernightStayActivityServiceTest extends TestCase
         $sut = new RegisterOvernightStayActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->expectException(\Throwable::class);
         $sut(new RegisterOvernightStayActivityRequest(
+            accountId: new AccountId('account-id'),
             overnightStayId: OvernightStayId::generate(),
             quantity: ActivityMother::quantity(Unit::Pernoctacion),
             year: 2024,
@@ -75,6 +78,7 @@ class RegisterOvernightStayActivityServiceTest extends TestCase
         $selector = new OvernightStayEmissionFactorSelector(OvernightStayRepositoryMother::inMemory());
         $sut = new RegisterOvernightStayActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->assertTrue($sut->isHandled(new RegisterOvernightStayActivityRequest(
+            accountId: new AccountId('account-id'),
             overnightStayId: OvernightStayId::generate(),
             quantity: ActivityMother::quantity(Unit::Pernoctacion),
             year: 2024,

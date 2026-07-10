@@ -14,6 +14,7 @@ use App\CarbonFootprint\Domain\Model\Activity\WasteActivityRegistered;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
@@ -48,6 +49,7 @@ class RegisterWasteActivityServiceTest extends TestCase
         $sut = new RegisterWasteActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterWasteActivityRequest(
+            accountId: new AccountId('account-id'),
             wasteId: $entity->id(),
             quantity: ActivityMother::quantity(Unit::Kilogram, 75.0),
             year: 2024,
@@ -71,6 +73,7 @@ class RegisterWasteActivityServiceTest extends TestCase
         $sut = new RegisterWasteActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterWasteActivityRequest(
+            accountId: new AccountId('account-id'),
             wasteId: $entity->id(),
             quantity: new Quantity(250.0, Unit::Kilogram),
             year: 2024,
@@ -94,6 +97,7 @@ class RegisterWasteActivityServiceTest extends TestCase
         $sut = new RegisterWasteActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->expectException(\Throwable::class);
         $sut(new RegisterWasteActivityRequest(
+            accountId: new AccountId('account-id'),
             wasteId: WasteId::generate(),
             quantity: ActivityMother::quantity(Unit::Kilogram),
             year: 2024,
@@ -106,6 +110,7 @@ class RegisterWasteActivityServiceTest extends TestCase
         $selector = new WasteEmissionFactorSelector(WasteRepositoryMother::inMemory());
         $sut = new RegisterWasteActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->assertTrue($sut->isHandled(new RegisterWasteActivityRequest(
+            accountId: new AccountId('account-id'),
             wasteId: WasteId::generate(),
             quantity: ActivityMother::quantity(Unit::Kilogram),
             year: 2024,

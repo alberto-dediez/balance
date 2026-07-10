@@ -9,6 +9,7 @@ use App\CarbonFootprint\Application\Activity\Remove\RemoveActivityRequest;
 use App\CarbonFootprint\Application\Activity\Remove\RemoveActivityService;
 use App\CarbonFootprint\Domain\Model\Activity\MaterialActivityRemoved;
 use App\CarbonFootprint\Domain\Model\Activity\WasteActivityRemoved;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
@@ -39,7 +40,7 @@ class RemoveActivityServiceTest extends TestCase
 
         $sut = new RemoveActivityService($repository, new ActivityAuthorizer());
 
-        $sut(new RemoveActivityRequest(activityId: $activity->id()), UserMother::adminUser());
+        $sut(new RemoveActivityRequest(activityId: $activity->id()), $this->ownerUser());
 
         $this->assertNull($repository->findById($activity->id()));
         $this->assertInstanceOf(MaterialActivityRemoved::class, $this->spySubscriber->lastEvent());
@@ -56,7 +57,7 @@ class RemoveActivityServiceTest extends TestCase
 
         $sut = new RemoveActivityService($repository, new ActivityAuthorizer());
 
-        $sut(new RemoveActivityRequest(activityId: $activity->id()), UserMother::adminUser());
+        $sut(new RemoveActivityRequest(activityId: $activity->id()), $this->ownerUser());
 
         $this->assertNull($repository->findById($activity->id()));
         $this->assertInstanceOf(WasteActivityRemoved::class, $this->spySubscriber->lastEvent());
@@ -80,5 +81,10 @@ class RemoveActivityServiceTest extends TestCase
         $this->assertTrue($sut->isHandled(new RemoveActivityRequest(
             activityId: \App\CarbonFootprint\Domain\Model\Activity\ActivityId::generate(),
         )));
+    }
+
+    private function ownerUser(): \App\Security\Domain\Model\User\User
+    {
+        return UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id'));
     }
 }

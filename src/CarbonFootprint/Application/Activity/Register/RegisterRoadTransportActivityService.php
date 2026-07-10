@@ -33,13 +33,14 @@ class RegisterRoadTransportActivityService implements CommandHandler
     {
         $id = ActivityId::generate();
 
-        $this->authorizer->denyUnlessCanDoThat(null, SecurityAction::Register, $user);
+        $this->authorizer->denyUnlessCanDoThat(new RoadTransportActivity(id: $id, accountId: $request->accountId), SecurityAction::Register, $user);
 
         $emissionFactor = $this->factorSelector->select((string) $request->roadTransportId, $request->year, null, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity = RoadTransportActivity::register(
             id: $id,
+            accountId: $request->accountId,
             roadTransportId: $request->roadTransportId,
             emissionFactor: $emissionFactor,
             emissions: $emissions,

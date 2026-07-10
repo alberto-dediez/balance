@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\Activity;
 
 use App\CarbonFootprint\Domain\Model\Activity\Activity;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 
@@ -28,7 +29,17 @@ final class ActivityAuthorizer extends AbstractAuthorizer
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin) || $user->hasRole(Role::Owner) || $user->hasRole(Role::Provider);
+        if (!$subject instanceof Activity) {
+            return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin)
+                || $user->hasRole(Role::Owner) || $user->hasRole(Role::Provider);
+        }
+
+        $subjectAccountId = $subject->accountId();
+
+        return ($user->hasRole(Role::Owner) || $user->hasRole(Role::Provider))
+            && $user->accountId() instanceof AccountId
+            && null !== $subjectAccountId
+            && $user->accountId()->equals($subjectAccountId);
     }
 
     protected function canRemove(mixed $subject, User $user): bool
@@ -38,6 +49,6 @@ final class ActivityAuthorizer extends AbstractAuthorizer
 
     public function supports(mixed $subject): bool
     {
-        return null === $subject || $subject instanceof Activity;
+        return $subject instanceof Activity;
     }
 }

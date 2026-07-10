@@ -14,6 +14,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivityRegistered;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
@@ -56,6 +57,7 @@ class RegisterElectricityActivityServiceTest extends TestCase
         $sut = new RegisterElectricityActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterElectricityActivityRequest(
+            accountId: new AccountId('account-id'),
             electricityMarketerId: $marketer->id(),
             gdOFactorId: $gdoFactor->id(),
             quantity: ActivityMother::quantity(Unit::KWh, 1000.0),
@@ -76,6 +78,7 @@ class RegisterElectricityActivityServiceTest extends TestCase
         $sut = new RegisterElectricityActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->expectException(\Throwable::class);
         $sut(new RegisterElectricityActivityRequest(
+            accountId: new AccountId('account-id'),
             electricityMarketerId: ElectricityMarketerId::generate(),
             gdOFactorId: GdOFactorId::generate(),
             quantity: ActivityMother::quantity(Unit::KWh),
@@ -92,6 +95,7 @@ class RegisterElectricityActivityServiceTest extends TestCase
         );
         $sut = new RegisterElectricityActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->assertTrue($sut->isHandled(new RegisterElectricityActivityRequest(
+            accountId: new AccountId('account-id'),
             electricityMarketerId: ElectricityMarketerId::generate(),
             gdOFactorId: GdOFactorId::generate(),
             quantity: ActivityMother::quantity(Unit::KWh),

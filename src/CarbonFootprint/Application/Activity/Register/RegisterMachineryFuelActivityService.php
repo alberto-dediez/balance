@@ -33,13 +33,14 @@ class RegisterMachineryFuelActivityService implements CommandHandler
     {
         $id = ActivityId::generate();
 
-        $this->authorizer->denyUnlessCanDoThat(null, SecurityAction::Register, $user);
+        $this->authorizer->denyUnlessCanDoThat(new MachineryFuelActivity(id: $id, accountId: $request->accountId), SecurityAction::Register, $user);
 
         $emissionFactor = $this->factorSelector->select((string) $request->machineryFuelId, $request->year, null, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity = MachineryFuelActivity::register(
             id: $id,
+            accountId: $request->accountId,
             machineryFuelId: $request->machineryFuelId,
             emissionFactor: $emissionFactor,
             emissions: $emissions,

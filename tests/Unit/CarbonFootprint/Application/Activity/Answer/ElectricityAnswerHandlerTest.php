@@ -71,7 +71,7 @@ class ElectricityAnswerHandlerTest extends TestCase
             quantity: new Quantity(10.0, Unit::KWh),
         );
 
-        $activityId = $this->sut->register($answer, 2026, EmissionFactorGroupMother::defaultId(), $this->ownerUser());
+        $activityId = $this->sut->register($answer, 2026, EmissionFactorGroupMother::defaultId(), new AccountId('account-id'), $this->ownerUser());
 
         $activity = $this->activityRepository->findById($activityId);
         $this->assertInstanceOf(ElectricityActivity::class, $activity);
@@ -86,7 +86,7 @@ class ElectricityAnswerHandlerTest extends TestCase
             gdOFactorId: $this->gdOFactor->id(),
             quantity: new Quantity(10.0, Unit::KWh),
         );
-        $activityId = $this->sut->register($registerAnswer, 2026, EmissionFactorGroupMother::defaultId(), $this->ownerUser());
+        $activityId = $this->sut->register($registerAnswer, 2026, EmissionFactorGroupMother::defaultId(), new AccountId('account-id'), $this->ownerUser());
 
         $updateAnswer = new ElectricityAnswer(
             electricityMarketerId: $this->electricityMarketer->id(),

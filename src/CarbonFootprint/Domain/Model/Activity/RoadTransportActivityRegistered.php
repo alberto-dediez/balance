@@ -11,6 +11,7 @@ use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
@@ -20,6 +21,7 @@ final class RoadTransportActivityRegistered extends DomainEvent
 
     public function __construct(
         private ActivityId $activityId,
+        private AccountId $accountId,
         private RoadTransportId $roadTransportId,
         private EmissionFactor $emissionFactor,
         private Emissions $emissions,
@@ -34,6 +36,11 @@ final class RoadTransportActivityRegistered extends DomainEvent
     public function activityId(): ActivityId
     {
         return $this->activityId;
+    }
+
+    public function accountId(): AccountId
+    {
+        return $this->accountId;
     }
 
     public function roadTransportId(): RoadTransportId
@@ -70,6 +77,7 @@ final class RoadTransportActivityRegistered extends DomainEvent
     {
         return [
             'activityId' => (string) $this->activityId,
+            'accountId' => (string) $this->accountId,
             'roadTransportId' => (string) $this->roadTransportId,
             'emissionFactorCo2eq' => $this->emissionFactor->co2eq(),
             'emissionFactorCo2' => $this->emissionFactor->co2(),
@@ -102,6 +110,7 @@ final class RoadTransportActivityRegistered extends DomainEvent
 
         return new self(
             activityId: new ActivityId($payload['activityId']),
+            accountId: new AccountId($payload['accountId']),
             roadTransportId: new RoadTransportId($payload['roadTransportId']),
             emissionFactor: new EmissionFactor(
                 emissionFactorGroupId: new EmissionFactorGroupId($payload['emissionFactorGroupId']),

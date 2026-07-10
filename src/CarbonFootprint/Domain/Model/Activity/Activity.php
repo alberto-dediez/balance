@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Domain\Model\Activity;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Quantity;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\AggregateRoot;
 
 abstract class Activity
@@ -19,10 +20,16 @@ abstract class Activity
     protected Quantity $quantity;
     protected \DateTimeImmutable $registeredAt;
     protected ?\DateTimeImmutable $updatedAt = null;
+    protected ?AccountId $accountId = null;
 
     public function id(): ActivityId
     {
         return $this->id;
+    }
+
+    public function accountId(): ?AccountId
+    {
+        return $this->accountId;
     }
 
     public function emissionFactor(): EmissionFactor

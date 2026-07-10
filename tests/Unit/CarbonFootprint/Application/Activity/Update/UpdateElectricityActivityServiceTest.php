@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivityUpdated;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
@@ -66,7 +67,7 @@ class UpdateElectricityActivityServiceTest extends TestCase
             quantity: ActivityMother::quantity(Unit::KWh, 2000.0),
             year: 2024,
             emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
-        ), UserMother::adminUser());
+        ), UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id')));
 
         $this->assertInstanceOf(ElectricityActivityUpdated::class, $this->spySubscriber->lastEvent());
     }

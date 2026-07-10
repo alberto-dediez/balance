@@ -10,6 +10,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\MaterialActivityRegistered;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintActivityRemoved;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -40,6 +41,7 @@ class RemoveActivityOnEventCarbonFootprintActivityRemovedSubscriberTest extends 
 
         $this->assertFalse($sut->isSubscribedTo(new MaterialActivityRegistered(
             activityId: ActivityId::generate(),
+            accountId: new AccountId('account-id'),
             materialId: \App\CarbonFootprint\Domain\Model\Material\MaterialId::generate(),
             condition: \App\CarbonFootprint\Domain\Model\Activity\ItemCondition::New,
             emissionFactor: ActivityMother::emissionFactor(),

@@ -47,6 +47,7 @@ class PhaseAnswersSynchronizerTest extends TestCase
                 $this->isInstanceOf(MaterialAnswer::class),
                 $eventCarbonFootprint->calculationYear(),
                 $eventCarbonFootprint->emissionFactorGroupId(),
+                $eventCarbonFootprint->accountId(),
                 $this->isInstanceOf(User::class),
             )
             ->willReturn($registeredActivityId);

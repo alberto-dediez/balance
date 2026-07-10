@@ -11,6 +11,7 @@ use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
@@ -20,6 +21,7 @@ final class WasteActivityRegistered extends DomainEvent
 
     public function __construct(
         private ActivityId $activityId,
+        private AccountId $accountId,
         private WasteId $wasteId,
         private EmissionFactor $emissionFactor,
         private Emissions $emissions,
@@ -36,6 +38,11 @@ final class WasteActivityRegistered extends DomainEvent
     public function activityId(): ActivityId
     {
         return $this->activityId;
+    }
+
+    public function accountId(): AccountId
+    {
+        return $this->accountId;
     }
 
     public function wasteId(): WasteId
@@ -82,6 +89,7 @@ final class WasteActivityRegistered extends DomainEvent
     {
         return [
             'activityId' => (string) $this->activityId,
+            'accountId' => (string) $this->accountId,
             'wasteId' => (string) $this->wasteId,
             'emissionFactorCo2eq' => $this->emissionFactor->co2eq(),
             'emissionFactorCo2' => $this->emissionFactor->co2(),
@@ -119,6 +127,7 @@ final class WasteActivityRegistered extends DomainEvent
 
         return new self(
             activityId: new ActivityId($payload['activityId']),
+            accountId: new AccountId($payload['accountId']),
             wasteId: new WasteId($payload['wasteId']),
             emissionFactor: new EmissionFactor(
                 emissionFactorGroupId: new EmissionFactorGroupId($payload['emissionFactorGroupId']),

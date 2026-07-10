@@ -11,6 +11,7 @@ use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
@@ -20,6 +21,7 @@ final class CateringItemActivityRegistered extends DomainEvent
 
     public function __construct(
         private ActivityId $activityId,
+        private AccountId $accountId,
         private CateringItemId $cateringItemId,
         private ItemCondition $condition,
         private EmissionFactor $emissionFactor,
@@ -34,6 +36,11 @@ final class CateringItemActivityRegistered extends DomainEvent
     public function activityId(): ActivityId
     {
         return $this->activityId;
+    }
+
+    public function accountId(): AccountId
+    {
+        return $this->accountId;
     }
 
     public function cateringItemId(): CateringItemId
@@ -70,6 +77,7 @@ final class CateringItemActivityRegistered extends DomainEvent
     {
         return [
             'activityId' => (string) $this->activityId,
+            'accountId' => (string) $this->accountId,
             'cateringItemId' => (string) $this->cateringItemId,
             'condition' => $this->condition->value,
             'emissionFactorCo2eq' => $this->emissionFactor->co2eq(),
@@ -105,6 +113,7 @@ final class CateringItemActivityRegistered extends DomainEvent
 
         return new self(
             activityId: new ActivityId($payload['activityId']),
+            accountId: new AccountId($payload['accountId']),
             cateringItemId: new CateringItemId($payload['cateringItemId']),
             condition: $condition,
             emissionFactor: new EmissionFactor(

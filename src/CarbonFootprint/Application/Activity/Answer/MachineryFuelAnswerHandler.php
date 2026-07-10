@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ActivityAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\MachineryFuelAnswer;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
 
 final class MachineryFuelAnswerHandler implements ActivityAnswerHandler
@@ -27,11 +28,12 @@ final class MachineryFuelAnswerHandler implements ActivityAnswerHandler
         return ActivityType::MachineryFuel;
     }
 
-    public function register(ActivityAnswer $answer, int $year, EmissionFactorGroupId $emissionFactorGroupId, User $user): ActivityId
+    public function register(ActivityAnswer $answer, int $year, EmissionFactorGroupId $emissionFactorGroupId, AccountId $accountId, User $user): ActivityId
     {
         assert($answer instanceof MachineryFuelAnswer);
 
         $response = ($this->registerMachineryFuelActivity)(new RegisterMachineryFuelActivityRequest(
+            accountId: $accountId,
             machineryFuelId: $answer->machineryFuelId,
             quantity: $answer->quantity,
             year: $year,

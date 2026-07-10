@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\Activity\WasteActivityRegistered;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use PHPUnit\Framework\TestCase;
 
@@ -18,6 +19,7 @@ class WasteActivityRegisteredTest extends TestCase
     {
         $event = new WasteActivityRegistered(
             activityId: ActivityId::generate(),
+            accountId: new AccountId('account-id'),
             wasteId: WasteId::generate(),
             emissionFactor: ActivityMother::emissionFactor(),
             emissions: ActivityMother::emissions(),
@@ -35,6 +37,7 @@ class WasteActivityRegisteredTest extends TestCase
     {
         $event = new WasteActivityRegistered(
             activityId: ActivityId::generate(),
+            accountId: new AccountId('account-id'),
             wasteId: WasteId::generate(),
             emissionFactor: ActivityMother::emissionFactor(),
             emissions: ActivityMother::emissions(),

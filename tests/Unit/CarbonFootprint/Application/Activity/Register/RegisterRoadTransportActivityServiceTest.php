@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\Activity\RoadTransportActivity;
 use App\CarbonFootprint\Domain\Model\Activity\RoadTransportActivityRegistered;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
@@ -47,6 +48,7 @@ class RegisterRoadTransportActivityServiceTest extends TestCase
         $sut = new RegisterRoadTransportActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterRoadTransportActivityRequest(
+            accountId: new AccountId('account-id'),
             roadTransportId: $entity->id(),
             quantity: ActivityMother::quantity(Unit::Kilometer, 500.0),
             year: 2024,
@@ -63,6 +65,7 @@ class RegisterRoadTransportActivityServiceTest extends TestCase
         $sut = new RegisterRoadTransportActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->expectException(\Throwable::class);
         $sut(new RegisterRoadTransportActivityRequest(
+            accountId: new AccountId('account-id'),
             roadTransportId: RoadTransportId::generate(),
             quantity: ActivityMother::quantity(Unit::Kilometer),
             year: 2024,
@@ -75,6 +78,7 @@ class RegisterRoadTransportActivityServiceTest extends TestCase
         $selector = new RoadTransportEmissionFactorSelector(RoadTransportRepositoryMother::inMemory());
         $sut = new RegisterRoadTransportActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->assertTrue($sut->isHandled(new RegisterRoadTransportActivityRequest(
+            accountId: new AccountId('account-id'),
             roadTransportId: RoadTransportId::generate(),
             quantity: ActivityMother::quantity(Unit::Kilometer),
             year: 2024,

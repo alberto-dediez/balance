@@ -8,28 +8,32 @@ use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Material\MaterialId;
 use App\CarbonFootprint\Domain\Model\Quantity;
+use App\Security\Domain\Model\Account\AccountId;
 
 final class MaterialActivity extends Activity
 {
     private MaterialId $materialId;
     private ItemCondition $condition;
 
-    private function __construct(ActivityId $id)
+    public function __construct(ActivityId $id, ?AccountId $accountId = null)
     {
         $this->id = $id;
+        $this->accountId = $accountId;
     }
 
     public static function register(
         ActivityId $id,
+        AccountId $accountId,
         MaterialId $materialId,
         ItemCondition $condition,
         EmissionFactor $emissionFactor,
         Emissions $emissions,
         Quantity $quantity,
     ): static {
-        $activity = new static($id);
+        $activity = new static($id, $accountId);
         $activity->recordApplyAndPublish(new MaterialActivityRegistered(
             activityId: $id,
+            accountId: $accountId,
             materialId: $materialId,
             condition: $condition,
             emissionFactor: $emissionFactor,
@@ -76,6 +80,7 @@ final class MaterialActivity extends Activity
 
     public function applyMaterialActivityRegistered(MaterialActivityRegistered $event): void
     {
+        $this->accountId = $event->accountId();
         $this->materialId = $event->materialId();
         $this->condition = $event->condition();
         $this->emissionFactor = $event->emissionFactor();

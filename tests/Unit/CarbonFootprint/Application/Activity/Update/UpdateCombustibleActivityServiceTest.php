@@ -12,6 +12,7 @@ use App\CarbonFootprint\Application\Activity\Update\UpdateCombustibleActivitySer
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivityUpdated;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
@@ -56,7 +57,7 @@ class UpdateCombustibleActivityServiceTest extends TestCase
             quantity: ActivityMother::quantity(Unit::Liter, 300.0),
             year: 2024,
             emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
-        ), UserMother::adminUser());
+        ), UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id')));
 
         $this->assertInstanceOf(CombustibleActivityUpdated::class, $this->spySubscriber->lastEvent());
     }

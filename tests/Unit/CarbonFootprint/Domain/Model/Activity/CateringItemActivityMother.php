@@ -9,13 +9,15 @@ use App\CarbonFootprint\Domain\Model\Activity\CateringItemActivity;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Domain\Model\Account\AccountId;
 
 class CateringItemActivityMother
 {
-    public static function registered(): CateringItemActivity
+    public static function registered(?AccountId $accountId = null): CateringItemActivity
     {
         return CateringItemActivity::register(
             id: ActivityId::generate(),
+            accountId: $accountId ?? new AccountId('account-id'),
             cateringItemId: CateringItemId::generate(),
             condition: ItemCondition::New,
             emissionFactor: ActivityMother::emissionFactor(),

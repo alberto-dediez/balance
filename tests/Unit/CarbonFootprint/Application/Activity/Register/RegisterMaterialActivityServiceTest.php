@@ -14,6 +14,7 @@ use App\CarbonFootprint\Domain\Model\Activity\MaterialActivity;
 use App\CarbonFootprint\Domain\Model\Activity\MaterialActivityRegistered;
 use App\CarbonFootprint\Domain\Model\Material\MaterialId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
@@ -48,6 +49,7 @@ class RegisterMaterialActivityServiceTest extends TestCase
         $sut = new RegisterMaterialActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterMaterialActivityRequest(
+            accountId: new AccountId('account-id'),
             materialId: $entity->id(),
             condition: ItemCondition::New,
             quantity: ActivityMother::quantity(Unit::Kilogram, 10.0),
@@ -65,6 +67,7 @@ class RegisterMaterialActivityServiceTest extends TestCase
         $sut = new RegisterMaterialActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->expectException(\Throwable::class);
         $sut(new RegisterMaterialActivityRequest(
+            accountId: new AccountId('account-id'),
             materialId: MaterialId::generate(),
             condition: ItemCondition::New,
             quantity: ActivityMother::quantity(Unit::Kilogram),
@@ -78,6 +81,7 @@ class RegisterMaterialActivityServiceTest extends TestCase
         $selector = new MaterialEmissionFactorSelector(MaterialRepositoryMother::inMemory());
         $sut = new RegisterMaterialActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->assertTrue($sut->isHandled(new RegisterMaterialActivityRequest(
+            accountId: new AccountId('account-id'),
             materialId: MaterialId::generate(),
             condition: ItemCondition::New,
             quantity: ActivityMother::quantity(Unit::Kilogram),

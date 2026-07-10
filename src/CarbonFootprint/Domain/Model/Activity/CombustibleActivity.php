@@ -8,28 +8,32 @@ use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Quantity;
+use App\Security\Domain\Model\Account\AccountId;
 
 final class CombustibleActivity extends Activity
 {
     private CombustibleId $combustibleId;
     private ?string $source = null;
 
-    private function __construct(ActivityId $id)
+    public function __construct(ActivityId $id, ?AccountId $accountId = null)
     {
         $this->id = $id;
+        $this->accountId = $accountId;
     }
 
     public static function register(
         ActivityId $id,
+        AccountId $accountId,
         CombustibleId $combustibleId,
         EmissionFactor $emissionFactor,
         Emissions $emissions,
         Quantity $quantity,
         ?string $source = null,
     ): static {
-        $activity = new static($id);
+        $activity = new static($id, $accountId);
         $activity->recordApplyAndPublish(new CombustibleActivityRegistered(
             activityId: $id,
+            accountId: $accountId,
             combustibleId: $combustibleId,
             emissionFactor: $emissionFactor,
             emissions: $emissions,
@@ -76,6 +80,7 @@ final class CombustibleActivity extends Activity
 
     public function applyCombustibleActivityRegistered(CombustibleActivityRegistered $event): void
     {
+        $this->accountId = $event->accountId();
         $this->combustibleId = $event->combustibleId();
         $this->emissionFactor = $event->emissionFactor();
         $this->emissions = $event->emissions();

@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\Activity\MobilityActivity;
 use App\CarbonFootprint\Domain\Model\Activity\MobilityActivityRegistered;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
@@ -47,6 +48,7 @@ class RegisterMobilityActivityServiceTest extends TestCase
         $sut = new RegisterMobilityActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterMobilityActivityRequest(
+            accountId: new AccountId('account-id'),
             mobilityId: $entity->id(),
             quantity: ActivityMother::quantity(Unit::Kilometer, 300.0),
             year: 2024,
@@ -63,6 +65,7 @@ class RegisterMobilityActivityServiceTest extends TestCase
         $sut = new RegisterMobilityActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->expectException(\Throwable::class);
         $sut(new RegisterMobilityActivityRequest(
+            accountId: new AccountId('account-id'),
             mobilityId: MobilityId::generate(),
             quantity: ActivityMother::quantity(Unit::Kilometer),
             year: 2024,
@@ -75,6 +78,7 @@ class RegisterMobilityActivityServiceTest extends TestCase
         $selector = new MobilityEmissionFactorSelector(MobilityRepositoryMother::inMemory());
         $sut = new RegisterMobilityActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->assertTrue($sut->isHandled(new RegisterMobilityActivityRequest(
+            accountId: new AccountId('account-id'),
             mobilityId: MobilityId::generate(),
             quantity: ActivityMother::quantity(Unit::Kilometer),
             year: 2024,

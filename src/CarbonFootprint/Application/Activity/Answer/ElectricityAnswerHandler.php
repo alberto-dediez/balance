@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ActivityAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ElectricityAnswer;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
 
 final class ElectricityAnswerHandler implements ActivityAnswerHandler
@@ -27,11 +28,12 @@ final class ElectricityAnswerHandler implements ActivityAnswerHandler
         return ActivityType::Electricity;
     }
 
-    public function register(ActivityAnswer $answer, int $year, EmissionFactorGroupId $emissionFactorGroupId, User $user): ActivityId
+    public function register(ActivityAnswer $answer, int $year, EmissionFactorGroupId $emissionFactorGroupId, AccountId $accountId, User $user): ActivityId
     {
         assert($answer instanceof ElectricityAnswer);
 
         $response = ($this->registerElectricityActivity)(new RegisterElectricityActivityRequest(
+            accountId: $accountId,
             electricityMarketerId: $answer->electricityMarketerId,
             gdOFactorId: $answer->gdOFactorId,
             quantity: $answer->quantity,

@@ -33,7 +33,7 @@ class RegisterElectricityActivityService implements CommandHandler
     {
         $id = ActivityId::generate();
 
-        $this->authorizer->denyUnlessCanDoThat(null, SecurityAction::Register, $user);
+        $this->authorizer->denyUnlessCanDoThat(new ElectricityActivity(id: $id, accountId: $request->accountId), SecurityAction::Register, $user);
 
         $emissionFactor = $this->factorSelector->select(
             null !== $request->electricityMarketerId ? (string) $request->electricityMarketerId : '',
@@ -46,6 +46,7 @@ class RegisterElectricityActivityService implements CommandHandler
 
         $activity = ElectricityActivity::register(
             id: $id,
+            accountId: $request->accountId,
             electricityMarketerId: $request->electricityMarketerId,
             gdOFactorId: $request->gdOFactorId,
             emissionFactor: $emissionFactor,

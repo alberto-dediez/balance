@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivityRegistered;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
@@ -47,6 +48,7 @@ class RegisterCombustibleActivityServiceTest extends TestCase
         $sut = new RegisterCombustibleActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterCombustibleActivityRequest(
+            accountId: new AccountId('account-id'),
             combustibleId: $entity->id(),
             quantity: ActivityMother::quantity(Unit::Liter, 200.0),
             year: 2024,
@@ -63,6 +65,7 @@ class RegisterCombustibleActivityServiceTest extends TestCase
         $sut = new RegisterCombustibleActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->expectException(\Throwable::class);
         $sut(new RegisterCombustibleActivityRequest(
+            accountId: new AccountId('account-id'),
             combustibleId: CombustibleId::generate(),
             quantity: ActivityMother::quantity(Unit::Liter),
             year: 2024,
@@ -75,6 +78,7 @@ class RegisterCombustibleActivityServiceTest extends TestCase
         $selector = new CombustibleEmissionFactorSelector(CombustibleRepositoryMother::inMemory());
         $sut = new RegisterCombustibleActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->assertTrue($sut->isHandled(new RegisterCombustibleActivityRequest(
+            accountId: new AccountId('account-id'),
             combustibleId: CombustibleId::generate(),
             quantity: ActivityMother::quantity(Unit::Liter),
             year: 2024,

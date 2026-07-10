@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorId;
 use App\CarbonFootprint\Domain\Model\Quantity;
+use App\Security\Domain\Model\Account\AccountId;
 
 final class ElectricityActivity extends Activity
 {
@@ -16,13 +17,15 @@ final class ElectricityActivity extends Activity
     private ?GdOFactorId $gdOFactorId = null;
     private ?string $source = null;
 
-    private function __construct(ActivityId $id)
+    public function __construct(ActivityId $id, ?AccountId $accountId = null)
     {
         $this->id = $id;
+        $this->accountId = $accountId;
     }
 
     public static function register(
         ActivityId $id,
+        AccountId $accountId,
         ?ElectricityMarketerId $electricityMarketerId,
         ?GdOFactorId $gdOFactorId,
         EmissionFactor $emissionFactor,
@@ -32,9 +35,10 @@ final class ElectricityActivity extends Activity
     ): static {
         self::assertHasMarketerOrGdOFactor($electricityMarketerId, $gdOFactorId);
 
-        $activity = new static($id);
+        $activity = new static($id, $accountId);
         $activity->recordApplyAndPublish(new ElectricityActivityRegistered(
             activityId: $id,
+            accountId: $accountId,
             electricityMarketerId: $electricityMarketerId,
             gdOFactorId: $gdOFactorId,
             emissionFactor: $emissionFactor,
@@ -98,6 +102,7 @@ final class ElectricityActivity extends Activity
 
     public function applyElectricityActivityRegistered(ElectricityActivityRegistered $event): void
     {
+        $this->accountId = $event->accountId();
         $this->electricityMarketerId = $event->electricityMarketerId();
         $this->gdOFactorId = $event->gdOFactorId();
         $this->emissionFactor = $event->emissionFactor();

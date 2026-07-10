@@ -14,6 +14,7 @@ use App\CarbonFootprint\Domain\Model\Activity\MerchandisingItemActivity;
 use App\CarbonFootprint\Domain\Model\Activity\MerchandisingItemActivityRegistered;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
@@ -48,6 +49,7 @@ class RegisterMerchandisingItemActivityServiceTest extends TestCase
         $sut = new RegisterMerchandisingItemActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterMerchandisingItemActivityRequest(
+            accountId: new AccountId('account-id'),
             merchandisingItemId: $entity->id(),
             condition: ItemCondition::Recycled,
             quantity: ActivityMother::quantity(Unit::Piece, 100.0),
@@ -65,6 +67,7 @@ class RegisterMerchandisingItemActivityServiceTest extends TestCase
         $sut = new RegisterMerchandisingItemActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->expectException(\Throwable::class);
         $sut(new RegisterMerchandisingItemActivityRequest(
+            accountId: new AccountId('account-id'),
             merchandisingItemId: MerchandisingItemId::generate(),
             condition: ItemCondition::Recycled,
             quantity: ActivityMother::quantity(Unit::Piece),
@@ -78,6 +81,7 @@ class RegisterMerchandisingItemActivityServiceTest extends TestCase
         $selector = new MerchandisingItemEmissionFactorSelector(MerchandisingItemRepositoryMother::inMemory());
         $sut = new RegisterMerchandisingItemActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->assertTrue($sut->isHandled(new RegisterMerchandisingItemActivityRequest(
+            accountId: new AccountId('account-id'),
             merchandisingItemId: MerchandisingItemId::generate(),
             condition: ItemCondition::Recycled,
             quantity: ActivityMother::quantity(Unit::Piece),

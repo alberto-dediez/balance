@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ActivityAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\OvernightStayAnswer;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
 
 final class OvernightStayAnswerHandler implements ActivityAnswerHandler
@@ -27,11 +28,12 @@ final class OvernightStayAnswerHandler implements ActivityAnswerHandler
         return ActivityType::OvernightStay;
     }
 
-    public function register(ActivityAnswer $answer, int $year, EmissionFactorGroupId $emissionFactorGroupId, User $user): ActivityId
+    public function register(ActivityAnswer $answer, int $year, EmissionFactorGroupId $emissionFactorGroupId, AccountId $accountId, User $user): ActivityId
     {
         assert($answer instanceof OvernightStayAnswer);
 
         $response = ($this->registerOvernightStayActivity)(new RegisterOvernightStayActivityRequest(
+            accountId: $accountId,
             overnightStayId: $answer->overnightStayId,
             quantity: $answer->quantity,
             year: $year,

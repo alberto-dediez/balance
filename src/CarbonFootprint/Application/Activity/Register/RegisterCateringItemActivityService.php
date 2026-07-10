@@ -33,13 +33,14 @@ class RegisterCateringItemActivityService implements CommandHandler
     {
         $id = ActivityId::generate();
 
-        $this->authorizer->denyUnlessCanDoThat(null, SecurityAction::Register, $user);
+        $this->authorizer->denyUnlessCanDoThat(new CateringItemActivity(id: $id, accountId: $request->accountId), SecurityAction::Register, $user);
 
         $emissionFactor = $this->factorSelector->select((string) $request->cateringItemId, $request->year, $request->condition, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
         $activity = CateringItemActivity::register(
             id: $id,
+            accountId: $request->accountId,
             cateringItemId: $request->cateringItemId,
             condition: $request->condition,
             emissionFactor: $emissionFactor,

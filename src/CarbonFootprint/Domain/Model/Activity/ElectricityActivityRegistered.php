@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorId;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
@@ -21,6 +22,7 @@ final class ElectricityActivityRegistered extends DomainEvent
 
     public function __construct(
         private ActivityId $activityId,
+        private AccountId $accountId,
         private ?ElectricityMarketerId $electricityMarketerId,
         private ?GdOFactorId $gdOFactorId,
         private EmissionFactor $emissionFactor,
@@ -36,6 +38,11 @@ final class ElectricityActivityRegistered extends DomainEvent
     public function activityId(): ActivityId
     {
         return $this->activityId;
+    }
+
+    public function accountId(): AccountId
+    {
+        return $this->accountId;
     }
 
     public function electricityMarketerId(): ?ElectricityMarketerId
@@ -77,6 +84,7 @@ final class ElectricityActivityRegistered extends DomainEvent
     {
         return [
             'activityId' => (string) $this->activityId,
+            'accountId' => (string) $this->accountId,
             'electricityMarketerId' => null !== $this->electricityMarketerId ? (string) $this->electricityMarketerId : null,
             'gdOFactorId' => null !== $this->gdOFactorId ? (string) $this->gdOFactorId : null,
             'emissionFactorCo2eq' => $this->emissionFactor->co2eq(),
@@ -110,6 +118,7 @@ final class ElectricityActivityRegistered extends DomainEvent
 
         return new self(
             activityId: new ActivityId($payload['activityId']),
+            accountId: new AccountId($payload['accountId']),
             electricityMarketerId: null !== ($payload['electricityMarketerId'] ?? null) ? new ElectricityMarketerId($payload['electricityMarketerId']) : null,
             gdOFactorId: null !== ($payload['gdOFactorId'] ?? null) ? new GdOFactorId($payload['gdOFactorId']) : null,
             emissionFactor: new EmissionFactor(

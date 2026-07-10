@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\Activity\MerchandisingItemActivityUpdated;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
@@ -58,7 +59,7 @@ class UpdateMerchandisingItemActivityServiceTest extends TestCase
             quantity: ActivityMother::quantity(Unit::Piece, 50.0),
             year: 2024,
             emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
-        ), UserMother::adminUser());
+        ), UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id')));
 
         $this->assertInstanceOf(MerchandisingItemActivityUpdated::class, $this->spySubscriber->lastEvent());
     }

@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ActivityAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\WasteAnswer;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
 
 final class WasteAnswerHandler implements ActivityAnswerHandler
@@ -27,11 +28,12 @@ final class WasteAnswerHandler implements ActivityAnswerHandler
         return ActivityType::Waste;
     }
 
-    public function register(ActivityAnswer $answer, int $year, EmissionFactorGroupId $emissionFactorGroupId, User $user): ActivityId
+    public function register(ActivityAnswer $answer, int $year, EmissionFactorGroupId $emissionFactorGroupId, AccountId $accountId, User $user): ActivityId
     {
         assert($answer instanceof WasteAnswer);
 
         $response = ($this->registerWasteActivity)(new RegisterWasteActivityRequest(
+            accountId: $accountId,
             wasteId: $answer->wasteId,
             quantity: $answer->quantity,
             year: $year,

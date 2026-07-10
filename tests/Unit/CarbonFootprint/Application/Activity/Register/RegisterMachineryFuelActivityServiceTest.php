@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\Activity\MachineryFuelActivity;
 use App\CarbonFootprint\Domain\Model\Activity\MachineryFuelActivityRegistered;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
@@ -47,6 +48,7 @@ class RegisterMachineryFuelActivityServiceTest extends TestCase
         $sut = new RegisterMachineryFuelActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterMachineryFuelActivityRequest(
+            accountId: new AccountId('account-id'),
             machineryFuelId: $entity->id(),
             quantity: ActivityMother::quantity(Unit::Liter, 50.0),
             year: 2024,
@@ -63,6 +65,7 @@ class RegisterMachineryFuelActivityServiceTest extends TestCase
         $sut = new RegisterMachineryFuelActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->expectException(\Throwable::class);
         $sut(new RegisterMachineryFuelActivityRequest(
+            accountId: new AccountId('account-id'),
             machineryFuelId: MachineryFuelId::generate(),
             quantity: ActivityMother::quantity(Unit::Liter),
             year: 2024,
@@ -75,6 +78,7 @@ class RegisterMachineryFuelActivityServiceTest extends TestCase
         $selector = new MachineryFuelEmissionFactorSelector(MachineryFuelRepositoryMother::inMemory());
         $sut = new RegisterMachineryFuelActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->assertTrue($sut->isHandled(new RegisterMachineryFuelActivityRequest(
+            accountId: new AccountId('account-id'),
             machineryFuelId: MachineryFuelId::generate(),
             quantity: ActivityMother::quantity(Unit::Liter),
             year: 2024,

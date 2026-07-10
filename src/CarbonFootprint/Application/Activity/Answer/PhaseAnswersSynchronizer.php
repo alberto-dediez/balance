@@ -32,6 +32,9 @@ final class PhaseAnswersSynchronizer
         $emissionFactorGroupId = $eventCarbonFootprint->emissionFactorGroupId()
             ?? throw new \InvalidArgumentException(sprintf('EventCarbonFootprint "%s" has no emission factor group configured.', $eventCarbonFootprint->id()));
 
+        $accountId = $eventCarbonFootprint->accountId()
+            ?? throw new \InvalidArgumentException(sprintf('EventCarbonFootprint "%s" has no account configured.', $eventCarbonFootprint->id()));
+
         $year = $eventCarbonFootprint->calculationYear();
 
         $answersBySource = [];
@@ -66,7 +69,7 @@ final class PhaseAnswersSynchronizer
                         continue;
                     }
 
-                    $activityId = $handler->register($answer, $year, $emissionFactorGroupId, $user);
+                    $activityId = $handler->register($answer, $year, $emissionFactorGroupId, $accountId, $user);
                     $eventCarbonFootprint->addActivity($activityId, $phase, $source, $providerId);
                     $keptIds[] = $activityId;
                 }

@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ActivityAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\MaterialAnswer;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
 
 final class MaterialAnswerHandler implements ActivityAnswerHandler
@@ -27,11 +28,12 @@ final class MaterialAnswerHandler implements ActivityAnswerHandler
         return ActivityType::Material;
     }
 
-    public function register(ActivityAnswer $answer, int $year, EmissionFactorGroupId $emissionFactorGroupId, User $user): ActivityId
+    public function register(ActivityAnswer $answer, int $year, EmissionFactorGroupId $emissionFactorGroupId, AccountId $accountId, User $user): ActivityId
     {
         assert($answer instanceof MaterialAnswer);
 
         $response = ($this->registerMaterialActivity)(new RegisterMaterialActivityRequest(
+            accountId: $accountId,
             materialId: $answer->materialId,
             condition: $answer->condition,
             quantity: $answer->quantity,

@@ -14,6 +14,7 @@ use App\CarbonFootprint\Domain\Model\Activity\WasteActivityUpdated;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
@@ -58,7 +59,7 @@ class UpdateWasteActivityServiceTest extends TestCase
             quantity: ActivityMother::quantity(Unit::Kilogram, 90.0),
             year: 2024,
             emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
-        ), UserMother::adminUser());
+        ), UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id')));
 
         $this->assertInstanceOf(WasteActivityUpdated::class, $this->spySubscriber->lastEvent());
     }
@@ -87,7 +88,7 @@ class UpdateWasteActivityServiceTest extends TestCase
             emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
             containerCapacity: new Quantity(2, Unit::CubicMeter),
             fillPercentage: 50.0,
-        ), UserMother::adminUser());
+        ), UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id')));
 
         $updated = $repository->findById($activity->id());
         assert($updated instanceof WasteActivity);

@@ -8,28 +8,32 @@ use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemId;
 use App\CarbonFootprint\Domain\Model\Quantity;
+use App\Security\Domain\Model\Account\AccountId;
 
 final class MerchandisingItemActivity extends Activity
 {
     private MerchandisingItemId $merchandisingItemId;
     private ItemCondition $condition;
 
-    private function __construct(ActivityId $id)
+    public function __construct(ActivityId $id, ?AccountId $accountId = null)
     {
         $this->id = $id;
+        $this->accountId = $accountId;
     }
 
     public static function register(
         ActivityId $id,
+        AccountId $accountId,
         MerchandisingItemId $merchandisingItemId,
         ItemCondition $condition,
         EmissionFactor $emissionFactor,
         Emissions $emissions,
         Quantity $quantity,
     ): static {
-        $activity = new static($id);
+        $activity = new static($id, $accountId);
         $activity->recordApplyAndPublish(new MerchandisingItemActivityRegistered(
             activityId: $id,
+            accountId: $accountId,
             merchandisingItemId: $merchandisingItemId,
             condition: $condition,
             emissionFactor: $emissionFactor,
@@ -76,6 +80,7 @@ final class MerchandisingItemActivity extends Activity
 
     public function applyMerchandisingItemActivityRegistered(MerchandisingItemActivityRegistered $event): void
     {
+        $this->accountId = $event->accountId();
         $this->merchandisingItemId = $event->merchandisingItemId();
         $this->condition = $event->condition();
         $this->emissionFactor = $event->emissionFactor();

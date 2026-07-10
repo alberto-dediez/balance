@@ -14,6 +14,7 @@ use App\CarbonFootprint\Domain\Model\Activity\CateringItemActivityRegistered;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
@@ -48,6 +49,7 @@ class RegisterCateringItemActivityServiceTest extends TestCase
         $sut = new RegisterCateringItemActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterCateringItemActivityRequest(
+            accountId: new AccountId('account-id'),
             cateringItemId: $entity->id(),
             condition: ItemCondition::New,
             quantity: ActivityMother::quantity(Unit::Kilogram, 5.0),
@@ -65,6 +67,7 @@ class RegisterCateringItemActivityServiceTest extends TestCase
         $sut = new RegisterCateringItemActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->expectException(\Throwable::class);
         $sut(new RegisterCateringItemActivityRequest(
+            accountId: new AccountId('account-id'),
             cateringItemId: CateringItemId::generate(),
             condition: ItemCondition::New,
             quantity: ActivityMother::quantity(Unit::Kilogram),
@@ -78,6 +81,7 @@ class RegisterCateringItemActivityServiceTest extends TestCase
         $selector = new CateringItemEmissionFactorSelector(CateringItemRepositoryMother::inMemory());
         $sut = new RegisterCateringItemActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
         $this->assertTrue($sut->isHandled(new RegisterCateringItemActivityRequest(
+            accountId: new AccountId('account-id'),
             cateringItemId: CateringItemId::generate(),
             condition: ItemCondition::New,
             quantity: ActivityMother::quantity(Unit::Kilogram),

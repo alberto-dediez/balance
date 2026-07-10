@@ -30,6 +30,7 @@
         <embedded name="quantity" class="App\CarbonFootprint\Domain\Model\Quantity" use-column-prefix="false" />
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
         <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true" />
+        <field name="accountId" type="account_id" column="account_id" nullable="true" />
     </entity>
 
 </doctrine-mapping>

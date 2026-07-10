@@ -8,13 +8,15 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Security\Domain\Model\Account\AccountId;
 
 class CombustibleActivityMother
 {
-    public static function registered(): CombustibleActivity
+    public static function registered(?AccountId $accountId = null): CombustibleActivity
     {
         return CombustibleActivity::register(
             id: ActivityId::generate(),
+            accountId: $accountId ?? new AccountId('account-id'),
             combustibleId: CombustibleId::generate(),
             emissionFactor: ActivityMother::emissionFactor(),
             emissions: ActivityMother::emissions(),

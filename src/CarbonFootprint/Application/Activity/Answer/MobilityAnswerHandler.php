@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ActivityAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\MobilityAnswer;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
 
 final class MobilityAnswerHandler implements ActivityAnswerHandler
@@ -27,11 +28,12 @@ final class MobilityAnswerHandler implements ActivityAnswerHandler
         return ActivityType::Mobility;
     }
 
-    public function register(ActivityAnswer $answer, int $year, EmissionFactorGroupId $emissionFactorGroupId, User $user): ActivityId
+    public function register(ActivityAnswer $answer, int $year, EmissionFactorGroupId $emissionFactorGroupId, AccountId $accountId, User $user): ActivityId
     {
         assert($answer instanceof MobilityAnswer);
 
         $response = ($this->registerMobilityActivity)(new RegisterMobilityActivityRequest(
+            accountId: $accountId,
             mobilityId: $answer->mobilityId,
             quantity: $answer->quantity,
             year: $year,

@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
+use App\Security\Domain\Model\Account\AccountId;
 
 final class WasteActivity extends Activity
 {
@@ -18,13 +19,15 @@ final class WasteActivity extends Activity
     private ?Unit $containerCapacityUnit = null;
     private ?float $fillPercentage = null;
 
-    private function __construct(ActivityId $id)
+    public function __construct(ActivityId $id, ?AccountId $accountId = null)
     {
         $this->id = $id;
+        $this->accountId = $accountId;
     }
 
     public static function register(
         ActivityId $id,
+        AccountId $accountId,
         WasteId $wasteId,
         EmissionFactor $emissionFactor,
         Emissions $emissions,
@@ -33,9 +36,10 @@ final class WasteActivity extends Activity
         ?Quantity $containerCapacity = null,
         ?float $fillPercentage = null,
     ): static {
-        $activity = new static($id);
+        $activity = new static($id, $accountId);
         $activity->recordApplyAndPublish(new WasteActivityRegistered(
             activityId: $id,
+            accountId: $accountId,
             wasteId: $wasteId,
             emissionFactor: $emissionFactor,
             emissions: $emissions,
@@ -102,6 +106,7 @@ final class WasteActivity extends Activity
 
     public function applyWasteActivityRegistered(WasteActivityRegistered $event): void
     {
+        $this->accountId = $event->accountId();
         $this->wasteId = $event->wasteId();
         $this->emissionFactor = $event->emissionFactor();
         $this->emissions = $event->emissions();
