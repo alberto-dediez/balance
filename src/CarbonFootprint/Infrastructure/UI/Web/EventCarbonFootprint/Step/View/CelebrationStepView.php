@@ -29,6 +29,8 @@ final class CelebrationStepView
         $overnightStays = $this->section($response, 'overnightStays');
         $mobilities = $this->section($response, 'mobilities');
         $wastes = $this->section($response, 'wastes');
+        $attendeesMobilities = $this->section($response, 'attendeesMobilities');
+        $attendeesOvernightStays = $this->section($response, 'attendeesOvernightStays');
 
         return [
             'eventCarbonFootprint' => $eventCarbonFootprint,
@@ -49,6 +51,8 @@ final class CelebrationStepView
             'overnightStayRows' => $this->rows($overnightStays),
             'mobilityRows' => $this->rows($mobilities),
             'wasteRows' => $this->rows($wastes),
+            'attendeesMobilityRows' => $this->rows($attendeesMobilities),
+            'attendeesOvernightStayRows' => $this->rows($attendeesOvernightStays),
         ];
     }
 

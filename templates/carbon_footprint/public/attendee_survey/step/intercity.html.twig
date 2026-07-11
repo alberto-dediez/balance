@@ -1,0 +1,111 @@
+{% extends '@carbon_footprint/public/attendee_survey/layout.html.twig' %}
+
+{% set page_title = 'Encuesta de movilidad' | trans %}
+{% set wizard_selected = 1 %}
+{% set wizard_active = 1 %}
+
+{% block wizard_panels %}
+    <div class="card mb-3">
+        <div class="card-header"><h5 class="mb-0">{{ event.name }}</h5></div>
+        <div class="card-body">
+            <p class="text-muted mb-0">
+                {{ 'Ayúdanos a calcular la huella de carbono de este evento respondiendo unas breves preguntas sobre tu movilidad.' | trans }}
+            </p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h5 class="mb-0">{{ 'Movilidad interurbana' | trans }}</h5></div>
+        <div class="card-body">
+            <form method="post" name="intercity">
+                <input type="hidden" name="_token" value="{{ csrf_token('attendee_survey_intercity_' ~ token) }}">
+
+                <div class="mb-3">
+                    <label class="form-label d-block">{{ '¿Asistes desde otra ciudad?' | trans }}</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="intercity[cameFromAnotherCity]" id="camefromanothercity_yes" value="yes" {{ stored.cameFromAnotherCity is defined and stored.cameFromAnotherCity ? 'checked' : '' }}>
+                        <label class="form-check-label" for="camefromanothercity_yes">{{ 'Sí' | trans }}</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="intercity[cameFromAnotherCity]" id="camefromanothercity_no" value="no" {{ stored.cameFromAnotherCity is defined and not stored.cameFromAnotherCity ? 'checked' : '' }}>
+                        <label class="form-check-label" for="camefromanothercity_no">{{ 'No' | trans }}</label>
+                    </div>
+                </div>
+
+                <div id="intercity-block">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">{{ 'Nº de días' | trans }}</label>
+                            <input type="number" min="1" step="1" inputmode="numeric" class="form-control" name="intercity[days]" value="{{ stored.intercityDays|default('') }}">
+                        </div>
+                        <div class="col-md-9 mb-3">
+                            <label class="form-label">{{ 'Medio de transporte' | trans }}</label>
+                            <select class="form-select" name="intercity[mobilityId]">
+                                <option value="">{{ 'Selecciona un medio de transporte' | trans }}</option>
+                                {% for mobility in mobilities %}
+                                    <option value="{{ mobility.id }}" {{ stored.intercityMobilityId is defined and stored.intercityMobilityId == mobility.id ? 'selected' : '' }}>{{ mobility.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ 'Ocupantes del vehículo' | trans }}</label>
+                            <input type="number" min="1" step="1" inputmode="numeric" class="form-control" name="intercity[vehicleOccupants]" value="{{ stored.intercityVehicleOccupants|default('') }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ 'Distancia (km)' | trans }}</label>
+                            <input type="number" min="0" step="0.1" inputmode="decimal" class="form-control" name="intercity[distanceKm]" value="{{ stored.intercityDistanceKm|default('') }}">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label d-block">{{ '¿Te alojaste en hotel?' | trans }}</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="intercity[usedHotel]" id="usedhotel_yes" value="yes" {{ stored.usedHotel is defined and stored.usedHotel ? 'checked' : '' }}>
+                            <label class="form-check-label" for="usedhotel_yes">{{ 'Sí' | trans }}</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="intercity[usedHotel]" id="usedhotel_no" value="no" {{ stored.usedHotel is defined and not stored.usedHotel ? 'checked' : '' }}>
+                            <label class="form-check-label" for="usedhotel_no">{{ 'No' | trans }}</label>
+                        </div>
+                    </div>
+
+                    <div id="hotel-block" class="mb-3">
+                        <label class="form-label">{{ 'Nº de noches' | trans }}</label>
+                        <input type="number" min="1" step="1" inputmode="numeric" class="form-control" name="intercity[hotelNights]" value="{{ stored.hotelNights|default('') }}">
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">{{ 'Continuar' | trans }} &rarr;</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var intercityRadios = document.querySelectorAll('input[name="intercity[cameFromAnotherCity]"]');
+            var intercityBlock = document.getElementById('intercity-block');
+            var hotelRadios = document.querySelectorAll('input[name="intercity[usedHotel]"]');
+            var hotelBlock = document.getElementById('hotel-block');
+
+            function toggle(radios, block) {
+                var checked = document.querySelector('input[name="' + radios[0].name + '"]:checked');
+                block.style.display = checked && checked.value === 'yes' ? '' : 'none';
+            }
+
+            intercityRadios.forEach(function (radio) {
+                radio.addEventListener('change', function () { toggle(intercityRadios, intercityBlock); });
+            });
+            hotelRadios.forEach(function (radio) {
+                radio.addEventListener('change', function () { toggle(hotelRadios, hotelBlock); });
+            });
+
+            toggle(intercityRadios, intercityBlock);
+            toggle(hotelRadios, hotelBlock);
+        })();
+    </script>
+{% endblock %}

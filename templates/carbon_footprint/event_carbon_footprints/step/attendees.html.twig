@@ -1,0 +1,91 @@
+{% extends '@carbon_footprint/event_carbon_footprints/wizard-layout.html.twig' %}
+
+{% set wizard_selected = 6 %}
+
+{% block wizard_panels %}
+
+    <twig:Card title="{{ 'Encuesta de asistentes' | trans }}">
+        <p class="text-muted">
+            {{ 'Comparte el enlace de la encuesta pública con los asistentes para recoger su movilidad y pernoctaciones. Cuando dispongas de suficientes respuestas, cierra la encuesta indicando el número real de asistentes.' | trans }}
+        </p>
+
+        <twig:CarbonFootprint:AttendeeSurveyQr eventId="{{ eventId }}" />
+
+        <dl class="row mt-3">
+            <dt class="col-sm-4">{{ 'Respuestas recibidas' | trans }}</dt>
+            <dd class="col-sm-8">{{ responsesCount }}</dd>
+
+            <dt class="col-sm-4">{{ 'Asistentes estimados' | trans }}</dt>
+            <dd class="col-sm-8">{{ estimatedAttendees ?? '-' }}</dd>
+
+            <dt class="col-sm-4">{{ '% encuestados' | trans }}</dt>
+            <dd class="col-sm-8">{{ surveyedPercentage is not null ? (surveyedPercentage | number_format(1)) ~ ' %' : '-' }}</dd>
+
+            <dt class="col-sm-4">{{ 'Estado de la encuesta' | trans }}</dt>
+            <dd class="col-sm-8">
+                {% if attendeeSurvey.status.isClosed %}
+                    <span class="badge bg-success">{{ 'Cerrada' | trans }}</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark">{{ 'Abierta' | trans }}</span>
+                {% endif %}
+            </dd>
+        </dl>
+    </twig:Card>
+
+    {% if attendeeSurvey.status.isClosed %}
+        <twig:Card title="{{ 'Resumen del cierre' | trans }}">
+            <dl class="row">
+                <dt class="col-sm-4">{{ 'Asistentes reales' | trans }}</dt>
+                <dd class="col-sm-8">{{ attendeeSurvey.realAttendees }}</dd>
+
+                <dt class="col-sm-4">{{ 'Nivel de confianza' | trans }}</dt>
+                <dd class="col-sm-8">{{ attendeeSurvey.confidenceLevel.value }}%</dd>
+
+                <dt class="col-sm-4">{{ 'Margen de error' | trans }}</dt>
+                <dd class="col-sm-8">{{ (attendeeSurvey.marginOfError * 100) | number_format(2) }}%</dd>
+
+                <dt class="col-sm-4">{{ 'Fecha de cierre' | trans }}</dt>
+                <dd class="col-sm-8">{{ attendeeSurvey.closedAt ? attendeeSurvey.closedAt | date('d/m/Y H:i') : '-' }}</dd>
+            </dl>
+        </twig:Card>
+    {% endif %}
+
+    <twig:Card title="{{ attendeeSurvey.status.isClosed ? ('Volver a cerrar la encuesta' | trans) : ('Cerrar la encuesta' | trans) }}">
+        <form method="post">
+            <input type="hidden" name="_token" value="{{ csrf_token('attendees_' ~ eventCarbonFootprint.id) }}">
+
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <label class="form-label">{{ 'Asistentes reales' | trans }}</label>
+                    <input type="number" min="1" step="1" class="form-control" name="realAttendees" value="{{ attendeeSurvey.realAttendees ?? estimatedAttendees }}" required>
+                </div>
+
+                <div class="col-sm-6">
+                    <label class="form-label">{{ 'Nivel de confianza' | trans }}</label>
+                    <select class="form-select" name="confidenceLevel">
+                        {% for level in confidenceLevels %}
+                            <option value="{{ level.value }}" {{ attendeeSurvey.confidenceLevel and attendeeSurvey.confidenceLevel.value == level.value ? 'selected' : (level.value == 95 and not attendeeSurvey.confidenceLevel ? 'selected' : '') }}>
+                                {{ level.value }}%
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            {% if 0 == responsesCount %}
+                <div class="alert alert-warning mt-3">
+                    {{ 'La encuesta no tiene respuestas todavía. Si cierras ahora, se conservarán las actividades manuales de asistentes.' | trans }}
+                </div>
+            {% endif %}
+
+            <div class="d-flex justify-content-between mt-3">
+                <a href="{{ path('events_carbon_footprint_providers', {eventId: eventId}) }}" class="btn btn-outline-secondary">
+                    &larr; {{ 'Anterior' | trans }}
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    {{ attendeeSurvey.status.isClosed ? ('Volver a cerrar y continuar' | trans) : ('Cerrar encuesta y continuar' | trans) }} &rarr;
+                </button>
+            </div>
+        </form>
+    </twig:Card>
+{% endblock %}

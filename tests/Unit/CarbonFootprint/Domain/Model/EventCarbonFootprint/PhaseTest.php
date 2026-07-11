@@ -53,9 +53,9 @@ class PhaseTest extends TestCase
     {
         $sections = Phase::Celebration->sections();
 
-        $this->assertCount(8, $sections);
+        $this->assertCount(10, $sections);
         $this->assertSame(
-            ['combustibles', 'roadTransports', 'machineryFuels', 'machineryElectricity', 'buildingElectricity', 'overnightStays', 'mobilities', 'wastes'],
+            ['combustibles', 'roadTransports', 'machineryFuels', 'machineryElectricity', 'buildingElectricity', 'overnightStays', 'mobilities', 'attendeesMobilities', 'attendeesOvernightStays', 'wastes'],
             array_map(static fn($s) => $s->key, $sections),
         );
     }

@@ -4,6 +4,16 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\CarbonFootprint;
 
+use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityRequest;
+use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityService;
+use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurvey;
+use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
+use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepository;
+use App\CarbonFootprint\Domain\Model\AttendeeSurvey\ConfidenceLevel;
+use App\CarbonFootprint\Domain\Model\AttendeeSurvey\MarginOfError;
+use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
+use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseId;
+use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
@@ -12,17 +22,23 @@ use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepo
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
+use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContribution;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionId;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionRepository;
+use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
+use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\WasteRepository;
+use App\EventOperations\Domain\Model\Event\EventId;
+use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\EventOperations\Domain\Model\Provider\ProviderRepository;
 use App\Security\Domain\Model\Account\AccountId;
@@ -46,6 +62,7 @@ use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Behat\Behat\Context\Context;
 use Behat\Step\Given;
 use Behat\Step\Then;
+use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
@@ -122,6 +139,16 @@ final readonly class CarbonFootprintContext implements Context
     public function getProviderContributionRepository(): ProviderContributionRepository
     {
         return $this->client->getContainer()->get(ProviderContributionRepository::class);
+    }
+
+    public function getAttendeeSurveyRepository(): AttendeeSurveyRepository
+    {
+        return $this->client->getContainer()->get(AttendeeSurveyRepository::class);
+    }
+
+    public function getAttendeeSurveyResponseRepository(): AttendeeSurveyResponseRepository
+    {
+        return $this->client->getContainer()->get(AttendeeSurveyResponseRepository::class);
     }
 
     private function ensureDefaultEmissionFactorGroupExists(): void
@@ -372,6 +399,7 @@ final readonly class CarbonFootprintContext implements Context
             n2o: '0.3',
             year: (int) $year,
             emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            unit: Unit::Kilometer,
             source: 'IPCC',
         ));
 
@@ -437,6 +465,7 @@ final readonly class CarbonFootprintContext implements Context
             n2o: '0.3',
             year: (int) $year,
             emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            unit: Unit::Pernoctacion,
             source: 'IPCC',
         ));
 
@@ -453,6 +482,21 @@ final readonly class CarbonFootprintContext implements Context
         $eventCarbonFootprint->answerPhase(Phase::Assembly);
         $eventCarbonFootprint->answerPhase(Phase::Celebration);
         $eventCarbonFootprint->answerPhase(Phase::Breakdown);
+
+        $this->getEventCarbonFootprintRepository()->add($eventCarbonFootprint);
+    }
+
+    #[Given('event carbon footprint with id :id for event :eventId of account :account with providers answered exists')]
+    public function eventCarbonFootprintWithIdForEventOfAccountWithProvidersAnsweredExists(string $id, string $eventId, string $account): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $eventCarbonFootprint = EventCarbonFootprintMother::from(eventId: $eventId, id: $id, accountId: $account);
+        $eventCarbonFootprint->answerPhase(Phase::Materials);
+        $eventCarbonFootprint->answerPhase(Phase::Assembly);
+        $eventCarbonFootprint->answerPhase(Phase::Celebration);
+        $eventCarbonFootprint->answerPhase(Phase::Breakdown);
+        $eventCarbonFootprint->answerProviders();
 
         $this->getEventCarbonFootprintRepository()->add($eventCarbonFootprint);
     }
@@ -530,5 +574,169 @@ final readonly class CarbonFootprintContext implements Context
 
         Assert::assertNotNull($provider);
         Assert::assertNotNull($provider->userId());
+    }
+
+    #[Given('event :id has :estimatedAttendees estimated attendees')]
+    public function eventHasEstimatedAttendees(string $id, int $estimatedAttendees): void
+    {
+        $eventRepository = $this->client->getContainer()->get(EventRepository::class);
+        $event = $eventRepository->find(new EventId($id));
+
+        Assert::assertNotNull($event);
+
+        $event->update(
+            name: $event->name(),
+            location: $event->location(),
+            propertyId: $event->propertyId(),
+            companyId: $event->companyId(),
+            size: $event->size(),
+            estimatedAttendees: $estimatedAttendees,
+            sector: $event->sector(),
+            typology: $event->typology(),
+            assembly: $event->assembly(),
+            celebration: $event->celebration(),
+            breakdown: $event->breakdown(),
+        );
+
+        $eventRepository->add($event);
+    }
+
+    #[Given('attendee survey with id :id and token :token for event :eventId of account :account exists')]
+    public function attendeeSurveyWithIdAndTokenForEventOfAccountExists(string $id, string $token, string $eventId, string $account): void
+    {
+        $attendeeSurvey = new AttendeeSurvey(new AttendeeSurveyId($id));
+        $attendeeSurvey->register(
+            eventId: new EventId($eventId),
+            accountId: new AccountId($account),
+            token: $token,
+        );
+
+        $this->getAttendeeSurveyRepository()->add($attendeeSurvey);
+    }
+
+    #[Given('attendee survey :id is closed with :realAttendees real attendees and confidence level :level')]
+    public function attendeeSurveyIsClosedWithRealAttendeesAndConfidenceLevel(string $id, int $realAttendees, int $level): void
+    {
+        $attendeeSurvey = $this->getAttendeeSurveyRepository()->find(new AttendeeSurveyId($id));
+
+        Assert::assertNotNull($attendeeSurvey);
+
+        $confidenceLevel = ConfidenceLevel::from($level);
+        $responsesCount = $this->getAttendeeSurveyResponseRepository()->countByAttendeeSurveyId($attendeeSurvey->id());
+        $marginOfError = MarginOfError::calculate($responsesCount, $realAttendees, $confidenceLevel);
+
+        $attendeeSurvey->close($realAttendees, $confidenceLevel, $marginOfError);
+
+        $this->getAttendeeSurveyRepository()->add($attendeeSurvey);
+    }
+
+    #[Given('attendee survey response with id :id for attendee survey :attendeeSurveyId using mobility :mobilityId exists')]
+    public function attendeeSurveyResponseWithIdForAttendeeSurveyUsingMobilityExists(string $id, string $attendeeSurveyId, string $mobilityId): void
+    {
+        $response = new AttendeeSurveyResponse(new AttendeeSurveyResponseId($id));
+        $response->register(
+            attendeeSurveyId: new AttendeeSurveyId($attendeeSurveyId),
+            cameFromAnotherCity: true,
+            intercityDays: 2,
+            intercityMobilityId: new MobilityId($mobilityId),
+            intercityVehicleOccupants: 1,
+            intercityDistanceKm: 100.0,
+            usedHotel: true,
+            hotelNights: 2,
+            cityDays: 2,
+            cityMobilityId: new MobilityId($mobilityId),
+            cityVehicleOccupants: 1,
+            cityDistanceKm: 10.0,
+        );
+
+        $this->getAttendeeSurveyResponseRepository()->add($response);
+    }
+
+    #[Given('event carbon footprint :id has a manual attendees mobility activity using mobility :mobilityId')]
+    public function eventCarbonFootprintHasAManualAttendeesMobilityActivityUsingMobility(string $id, string $mobilityId): void
+    {
+        $eventCarbonFootprint = $this->getEventCarbonFootprintRepository()->find(new EventCarbonFootprintId($id));
+
+        Assert::assertNotNull($eventCarbonFootprint);
+
+        $accountId = $eventCarbonFootprint->accountId();
+        $emissionFactorGroupId = $eventCarbonFootprint->emissionFactorGroupId();
+
+        Assert::assertNotNull($accountId);
+        Assert::assertNotNull($emissionFactorGroupId);
+
+        $registerMobilityActivity = $this->client->getContainer()->get(RegisterMobilityActivityService::class);
+
+        $response = $registerMobilityActivity(
+            new RegisterMobilityActivityRequest(
+                accountId: $accountId,
+                mobilityId: new MobilityId($mobilityId),
+                quantity: new Quantity(50.0, Unit::Kilometer),
+                year: $eventCarbonFootprint->calculationYear(),
+                emissionFactorGroupId: $emissionFactorGroupId,
+            ),
+            UserMother::adminUser(),
+        );
+
+        $eventCarbonFootprint->addActivity($response->activityId, Phase::Celebration, Source::AttendeesMobility);
+
+        $this->getEventCarbonFootprintRepository()->add($eventCarbonFootprint);
+    }
+
+    #[When('I submit the attendees close form with :realAttendees real attendees and confidence level :level')]
+    public function iSubmitTheAttendeesCloseFormWith(string $realAttendees, string $level): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $form = $crawler->filter('form')->form();
+        $form['realAttendees'] = $realAttendees;
+        $form['confidenceLevel'] = $level;
+
+        $this->client->submit($form);
+    }
+
+    #[Then('attendee survey :id should have :count responses')]
+    public function attendeeSurveyShouldHaveResponses(string $id, int $count): void
+    {
+        Assert::assertSame($count, $this->getAttendeeSurveyResponseRepository()->countByAttendeeSurveyId(new AttendeeSurveyId($id)));
+    }
+
+    #[Then('attendee survey for event :eventId should be closed')]
+    public function attendeeSurveyForEventShouldBeClosed(string $eventId): void
+    {
+        $attendeeSurvey = $this->getAttendeeSurveyRepository()->findByEventId(new EventId($eventId));
+
+        Assert::assertNotNull($attendeeSurvey);
+        Assert::assertTrue($attendeeSurvey->status()->isClosed());
+    }
+
+    #[Then('event carbon footprint :id should have :count attendees mobility activities in celebration')]
+    public function eventCarbonFootprintShouldHaveAttendeesMobilityActivitiesInCelebration(string $id, int $count): void
+    {
+        $eventCarbonFootprint = $this->getEventCarbonFootprintRepository()->find(new EventCarbonFootprintId($id));
+
+        Assert::assertNotNull($eventCarbonFootprint);
+
+        $activities = $eventCarbonFootprint->activities()
+            ->filterByPhase(Phase::Celebration)
+            ->filterBySource(Source::AttendeesMobility)
+            ->toArray();
+
+        Assert::assertCount($count, $activities);
+    }
+
+    #[Then('event carbon footprint :id should have :count attendees overnight stay activities in celebration')]
+    public function eventCarbonFootprintShouldHaveAttendeesOvernightStayActivitiesInCelebration(string $id, int $count): void
+    {
+        $eventCarbonFootprint = $this->getEventCarbonFootprintRepository()->find(new EventCarbonFootprintId($id));
+
+        Assert::assertNotNull($eventCarbonFootprint);
+
+        $activities = $eventCarbonFootprint->activities()
+            ->filterByPhase(Phase::Celebration)
+            ->filterBySource(Source::AttendeesAccommodation)
+            ->toArray();
+
+        Assert::assertCount($count, $activities);
     }
 }

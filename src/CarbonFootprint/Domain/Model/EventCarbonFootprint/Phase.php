@@ -40,6 +40,8 @@ enum Phase: string
                 new SectionDefinition('buildingElectricity', Source::BuildingElectricity, ActivityType::Electricity),
                 new SectionDefinition('overnightStays', Source::SuppliersAndStaffAccommodation, ActivityType::OvernightStay),
                 new SectionDefinition('mobilities', Source::SuppliersAndStaffMobility, ActivityType::Mobility),
+                new SectionDefinition('attendeesMobilities', Source::AttendeesMobility, ActivityType::Mobility),
+                new SectionDefinition('attendeesOvernightStays', Source::AttendeesAccommodation, ActivityType::OvernightStay),
                 new SectionDefinition('wastes', Source::WasteManagement, ActivityType::Waste),
             ],
             self::Breakdown => [

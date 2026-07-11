@@ -1,0 +1,18 @@
+{% extends '@shared/layout/public.html.twig' %}
+
+{% set page_title = 'Enlace inválido' | trans %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card">
+                <div class="card-body py-5">
+                    <h3 class="text-danger">{{ 'Este enlace no es válido' | trans }}</h3>
+                    <p class="text-muted mt-3">
+                        {{ 'El enlace de la encuesta que has utilizado no es válido o ya no está disponible.' | trans }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

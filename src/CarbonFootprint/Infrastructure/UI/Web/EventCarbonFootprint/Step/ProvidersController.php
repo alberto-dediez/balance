@@ -80,7 +80,7 @@ class ProvidersController extends AbstractController
                 return $this->redirectToRoute('events_carbon_footprint_providers', ['eventId' => $eventId]);
             }
 
-            return $this->redirectToRoute('events_carbon_footprint_results', ['eventId' => $eventId]);
+            return $this->redirectToRoute('events_carbon_footprint_attendees', ['eventId' => $eventId]);
         }
 
         $accountId = $eventCarbonFootprint->accountId();

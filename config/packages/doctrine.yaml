@@ -56,6 +56,8 @@ doctrine:
             activity_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ActivityIdType
             event_carbon_footprint_activity_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EventCarbonFootprintActivityIdType
             provider_contribution_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ProviderContributionIdType
+            attendee_survey_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\AttendeeSurveyIdType
+            attendee_survey_response_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\AttendeeSurveyResponseIdType
 
     orm:
         auto_generate_proxy_classes: true

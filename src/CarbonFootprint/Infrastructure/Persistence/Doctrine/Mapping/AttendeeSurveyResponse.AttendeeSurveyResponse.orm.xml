@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse" table="attendee_survey_responses">
+        <id name="id" type="attendee_survey_response_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="attendeeSurveyId" type="attendee_survey_id" column="attendee_survey_id" nullable="false" />
+
+        <field name="cameFromAnotherCity" type="boolean" column="came_from_another_city" nullable="false" />
+        <field name="intercityDays" type="integer" column="intercity_days" nullable="true" />
+        <field name="intercityMobilityId" type="mobility_id" column="intercity_mobility_id" nullable="true" />
+        <field name="intercityVehicleOccupants" type="integer" column="intercity_vehicle_occupants" nullable="true" />
+        <field name="intercityDistanceKm" type="float" column="intercity_distance_km" nullable="true" />
+
+        <field name="usedHotel" type="boolean" column="used_hotel" nullable="false" />
+        <field name="hotelNights" type="integer" column="hotel_nights" nullable="true" />
+
+        <field name="cityDays" type="integer" column="city_days" nullable="true" />
+        <field name="cityMobilityId" type="mobility_id" column="city_mobility_id" nullable="true" />
+        <field name="cityVehicleOccupants" type="integer" column="city_vehicle_occupants" nullable="true" />
+        <field name="cityDistanceKm" type="float" column="city_distance_km" nullable="true" />
+
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
+
+        <indexes>
+            <index name="idx_attendee_survey_responses_attendee_survey_id" columns="attendee_survey_id" />
+        </indexes>
+    </entity>
+
+</doctrine-mapping>

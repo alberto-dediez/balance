@@ -3481,6 +3481,186 @@
         <source>Contacto para recogidas</source>
         <target>Contacto para recogidas</target>
       </trans-unit>
+      <trans-unit id="6DK4rSB" resname="No se ha podido guardar la respuesta: {error}">
+        <source>No se ha podido guardar la respuesta: {error}</source>
+        <target>No se ha podido guardar la respuesta: {error}</target>
+      </trans-unit>
+      <trans-unit id="xCq1x6K" resname="Introduce un número de asistentes reales válido y un nivel de confianza.">
+        <source>Introduce un número de asistentes reales válido y un nivel de confianza.</source>
+        <target>Introduce un número de asistentes reales válido y un nivel de confianza.</target>
+      </trans-unit>
+      <trans-unit id="lp886af" resname="La encuesta no tiene respuestas: se han conservado las actividades manuales de asistentes.">
+        <source>La encuesta no tiene respuestas: se han conservado las actividades manuales de asistentes.</source>
+        <target>La encuesta no tiene respuestas: se han conservado las actividades manuales de asistentes.</target>
+      </trans-unit>
+      <trans-unit id="VaVeEOT" resname="No hay ningún alojamiento del catálogo marcado para asistentes: no se han generado pernoctaciones.">
+        <source>No hay ningún alojamiento del catálogo marcado para asistentes: no se han generado pernoctaciones.</source>
+        <target>No hay ningún alojamiento del catálogo marcado para asistentes: no se han generado pernoctaciones.</target>
+      </trans-unit>
+      <trans-unit id="01ILujv" resname="No se ha podido cerrar la encuesta: {error}">
+        <source>No se ha podido cerrar la encuesta: {error}</source>
+        <target>No se ha podido cerrar la encuesta: {error}</target>
+      </trans-unit>
+      <trans-unit id="nMQjMdV" resname="Movilidad de asistentes (generada por la encuesta)">
+        <source>Movilidad de asistentes (generada por la encuesta)</source>
+        <target>Movilidad de asistentes (generada por la encuesta)</target>
+      </trans-unit>
+      <trans-unit id="_pGe3aB" resname="Pernoctaciones de asistentes (generadas por la encuesta)">
+        <source>Pernoctaciones de asistentes (generadas por la encuesta)</source>
+        <target>Pernoctaciones de asistentes (generadas por la encuesta)</target>
+      </trans-unit>
+      <trans-unit id="WqV6HUw" resname="Comparte el enlace de la encuesta pública con los asistentes para recoger su movilidad y pernoctaciones. Cuando dispongas de suficientes respuestas, cierra la encuesta indicando el número real de asistentes.">
+        <source>Comparte el enlace de la encuesta pública con los asistentes para recoger su movilidad y pernoctaciones. Cuando dispongas de suficientes respuestas, cierra la encuesta indicando el número real de asistentes.</source>
+        <target>Comparte el enlace de la encuesta pública con los asistentes para recoger su movilidad y pernoctaciones. Cuando dispongas de suficientes respuestas, cierra la encuesta indicando el número real de asistentes.</target>
+      </trans-unit>
+      <trans-unit id="s9zwJUR" resname="Respuestas recibidas">
+        <source>Respuestas recibidas</source>
+        <target>Respuestas recibidas</target>
+      </trans-unit>
+      <trans-unit id="z.EJmaq" resname="Asistentes estimados">
+        <source>Asistentes estimados</source>
+        <target>Asistentes estimados</target>
+      </trans-unit>
+      <trans-unit id="J3SDIrZ" resname="% encuestados">
+        <source>% encuestados</source>
+        <target>% encuestados</target>
+      </trans-unit>
+      <trans-unit id="MMkTX9l" resname="Estado de la encuesta">
+        <source>Estado de la encuesta</source>
+        <target>Estado de la encuesta</target>
+      </trans-unit>
+      <trans-unit id="UV_3fhJ" resname="Cerrada">
+        <source>Cerrada</source>
+        <target>Cerrada</target>
+      </trans-unit>
+      <trans-unit id="bbcJE.k" resname="Abierta">
+        <source>Abierta</source>
+        <target>Abierta</target>
+      </trans-unit>
+      <trans-unit id="vxA0JZ0" resname="Asistentes reales">
+        <source>Asistentes reales</source>
+        <target>Asistentes reales</target>
+      </trans-unit>
+      <trans-unit id="vnikLmo" resname="Nivel de confianza">
+        <source>Nivel de confianza</source>
+        <target>Nivel de confianza</target>
+      </trans-unit>
+      <trans-unit id="Rz4beXz" resname="Margen de error">
+        <source>Margen de error</source>
+        <target>Margen de error</target>
+      </trans-unit>
+      <trans-unit id="5b1Bxl3" resname="Fecha de cierre">
+        <source>Fecha de cierre</source>
+        <target>Fecha de cierre</target>
+      </trans-unit>
+      <trans-unit id="XLQREZG" resname="La encuesta no tiene respuestas todavía. Si cierras ahora, se conservarán las actividades manuales de asistentes.">
+        <source>La encuesta no tiene respuestas todavía. Si cierras ahora, se conservarán las actividades manuales de asistentes.</source>
+        <target>La encuesta no tiene respuestas todavía. Si cierras ahora, se conservarán las actividades manuales de asistentes.</target>
+      </trans-unit>
+      <trans-unit id="gnj6rQe" resname="Volver a cerrar y continuar">
+        <source>Volver a cerrar y continuar</source>
+        <target>Volver a cerrar y continuar</target>
+      </trans-unit>
+      <trans-unit id="9p8x6O5" resname="Cerrar encuesta y continuar">
+        <source>Cerrar encuesta y continuar</source>
+        <target>Cerrar encuesta y continuar</target>
+      </trans-unit>
+      <trans-unit id="7uVk_ns" resname="Encuesta de asistentes">
+        <source>Encuesta de asistentes</source>
+        <target>Encuesta de asistentes</target>
+      </trans-unit>
+      <trans-unit id="7fKWoiv" resname="Resumen del cierre">
+        <source>Resumen del cierre</source>
+        <target>Resumen del cierre</target>
+      </trans-unit>
+      <trans-unit id="LmPlqiU" resname="Volver a cerrar la encuesta">
+        <source>Volver a cerrar la encuesta</source>
+        <target>Volver a cerrar la encuesta</target>
+      </trans-unit>
+      <trans-unit id="XUq1exR" resname="Cerrar la encuesta">
+        <source>Cerrar la encuesta</source>
+        <target>Cerrar la encuesta</target>
+      </trans-unit>
+      <trans-unit id="PBUuvSO" resname="Asistentes">
+        <source>Asistentes</source>
+        <target>Asistentes</target>
+      </trans-unit>
+      <trans-unit id=".s6aZxN" resname="Encuesta de movilidad">
+        <source>Encuesta de movilidad</source>
+        <target>Encuesta de movilidad</target>
+      </trans-unit>
+      <trans-unit id="FL1xNiK" resname="Ayúdanos a calcular la huella de carbono de este evento respondiendo unas breves preguntas sobre tu movilidad.">
+        <source>Ayúdanos a calcular la huella de carbono de este evento respondiendo unas breves preguntas sobre tu movilidad.</source>
+        <target>Ayúdanos a calcular la huella de carbono de este evento respondiendo unas breves preguntas sobre tu movilidad.</target>
+      </trans-unit>
+      <trans-unit id="dkFNqr1" resname="Movilidad interurbana">
+        <source>Movilidad interurbana</source>
+        <target>Movilidad interurbana</target>
+      </trans-unit>
+      <trans-unit id="uxaOYXW" resname="¿Asistes desde otra ciudad?">
+        <source>¿Asistes desde otra ciudad?</source>
+        <target>¿Asistes desde otra ciudad?</target>
+      </trans-unit>
+      <trans-unit id="fSrRpt0" resname="Nº de días">
+        <source>Nº de días</source>
+        <target>Nº de días</target>
+      </trans-unit>
+      <trans-unit id="zaZGOxE" resname="Selecciona un medio de transporte">
+        <source>Selecciona un medio de transporte</source>
+        <target>Selecciona un medio de transporte</target>
+      </trans-unit>
+      <trans-unit id="UiBKy79" resname="Ocupantes del vehículo">
+        <source>Ocupantes del vehículo</source>
+        <target>Ocupantes del vehículo</target>
+      </trans-unit>
+      <trans-unit id="u.C15ZS" resname="Distancia (km)">
+        <source>Distancia (km)</source>
+        <target>Distancia (km)</target>
+      </trans-unit>
+      <trans-unit id="cTVktT." resname="¿Te alojaste en hotel?">
+        <source>¿Te alojaste en hotel?</source>
+        <target>¿Te alojaste en hotel?</target>
+      </trans-unit>
+      <trans-unit id="6zsY0s." resname="Nº de noches">
+        <source>Nº de noches</source>
+        <target>Nº de noches</target>
+      </trans-unit>
+      <trans-unit id="ZEbmj_t" resname="Cuéntanos cómo te has movido dentro de la ciudad del evento.">
+        <source>Cuéntanos cómo te has movido dentro de la ciudad del evento.</source>
+        <target>Cuéntanos cómo te has movido dentro de la ciudad del evento.</target>
+      </trans-unit>
+      <trans-unit id="mky4OCY" resname="Movilidad en la ciudad">
+        <source>Movilidad en la ciudad</source>
+        <target>Movilidad en la ciudad</target>
+      </trans-unit>
+      <trans-unit id=".8dDLyb" resname="Enviar respuesta">
+        <source>Enviar respuesta</source>
+        <target>Enviar respuesta</target>
+      </trans-unit>
+      <trans-unit id="ynWocs6" resname="¡Gracias por responder a la encuesta!">
+        <source>¡Gracias por responder a la encuesta!</source>
+        <target>¡Gracias por responder a la encuesta!</target>
+      </trans-unit>
+      <trans-unit id="0Z3HVSJ" resname="Tu respuesta se ha registrado correctamente y nos ayudará a calcular la huella de carbono del evento.">
+        <source>Tu respuesta se ha registrado correctamente y nos ayudará a calcular la huella de carbono del evento.</source>
+        <target>Tu respuesta se ha registrado correctamente y nos ayudará a calcular la huella de carbono del evento.</target>
+      </trans-unit>
+      <trans-unit id="jGORRaO" resname="Encuesta cerrada">
+        <source>Encuesta cerrada</source>
+        <target>Encuesta cerrada</target>
+      </trans-unit>
+      <trans-unit id="Pyhrwqv" resname="Esta encuesta ya se ha cerrado">
+        <source>Esta encuesta ya se ha cerrado</source>
+        <target>Esta encuesta ya se ha cerrado</target>
+      </trans-unit>
+      <trans-unit id="RSoTdNv" resname="Gracias por tu interés. La encuesta de movilidad de este evento ya no admite más respuestas.">
+        <source>Gracias por tu interés. La encuesta de movilidad de este evento ya no admite más respuestas.</source>
+        <target>Gracias por tu interés. La encuesta de movilidad de este evento ya no admite más respuestas.</target>
+      </trans-unit>
+      <trans-unit id="QbGHhLK" resname="El enlace de la encuesta que has utilizado no es válido o ya no está disponible.">
+        <source>El enlace de la encuesta que has utilizado no es válido o ya no está disponible.</source>
+        <target>El enlace de la encuesta que has utilizado no es válido o ya no está disponible.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

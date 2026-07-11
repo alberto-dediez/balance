@@ -75,6 +75,8 @@ class CelebrationStepViewTest extends TestCase
                 'overnightStayRows',
                 'mobilityRows',
                 'wasteRows',
+                'attendeesMobilityRows',
+                'attendeesOvernightStayRows',
             ],
             array_keys($view),
         );
@@ -183,6 +185,8 @@ class CelebrationStepViewTest extends TestCase
             new PhaseSection($sections[5], [], $overnightStayCatalog),
             new PhaseSection($sections[6], [], []),
             new PhaseSection($sections[7], [], []),
+            new PhaseSection($sections[8], [], []),
+            new PhaseSection($sections[9], [], $overnightStayCatalog),
         ]);
     }
 }

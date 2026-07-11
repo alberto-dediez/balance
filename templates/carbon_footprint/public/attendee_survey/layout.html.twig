@@ -1,0 +1,9 @@
+{% extends '@shared/layout/public-wizard.html.twig' %}
+
+{% block content %}
+    {% set wizard_steps = [
+        {label: 'Movilidad interurbana' | trans, href: path('public_carbon_footprint_attendee_survey_intercity', {token: token})},
+        {label: 'Movilidad en la ciudad' | trans, href: path('public_carbon_footprint_attendee_survey_city', {token: token})},
+    ] %}
+    {{ parent() }}
+{% endblock %}

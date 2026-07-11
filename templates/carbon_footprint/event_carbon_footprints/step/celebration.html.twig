@@ -71,6 +71,24 @@
             :eventId="eventId"
         />
 
+        <twig:CarbonFootprint:MobilityActivityTable
+            title="{{ 'Movilidad de asistentes (generada por la encuesta)' | trans }}"
+            prefix="attendeesMobilities"
+            :rows="attendeesMobilityRows"
+            :items="mobilities"
+            :units="units"
+            :eventId="eventId"
+        />
+
+        <twig:CarbonFootprint:OvernightStayActivityTable
+            title="{{ 'Pernoctaciones de asistentes (generadas por la encuesta)' | trans }}"
+            prefix="attendeesOvernightStays"
+            :rows="attendeesOvernightStayRows"
+            :items="overnightStays"
+            :units="units"
+            :eventId="eventId"
+        />
+
         <twig:CarbonFootprint:WasteActivityTable
             title="{{ 'Gestión de residuos generados' | trans }}"
             prefix="wastes"

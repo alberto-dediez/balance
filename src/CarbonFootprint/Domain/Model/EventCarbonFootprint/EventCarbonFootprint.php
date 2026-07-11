@@ -233,6 +233,15 @@ class EventCarbonFootprint implements \Stringable
         );
     }
 
+    public function answerAttendees(): void
+    {
+        $this->recordApplyAndPublish(
+            new EventCarbonFootprintAttendeesAnswered(
+                eventCarbonFootprintId: $this->id,
+            ),
+        );
+    }
+
     public function complete(): void
     {
         $this->recordApplyAndPublish(
@@ -299,6 +308,15 @@ class EventCarbonFootprint implements \Stringable
     public function applyEventCarbonFootprintProvidersAnswered(EventCarbonFootprintProvidersAnswered $event): void
     {
         $this->status = EventCarbonFootprintStatus::ProvidersAnswered;
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyEventCarbonFootprintAttendeesAnswered(EventCarbonFootprintAttendeesAnswered $event): void
+    {
+        if (EventCarbonFootprintStatus::Completed !== $this->status) {
+            $this->status = EventCarbonFootprintStatus::AttendeesAnswered;
+        }
+
         $this->updatedAt = $event->occurredOn();
     }
 

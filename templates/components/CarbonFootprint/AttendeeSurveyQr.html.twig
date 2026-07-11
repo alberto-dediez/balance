@@ -1,0 +1,20 @@
+{% set attendeeSurveyUrl = this.url %}
+
+<div class="d-flex flex-column flex-sm-row align-items-center gap-3">
+    <twig:Container:Qr :qrCode="this.qrCode" />
+
+    <div class="flex-grow-1 w-100">
+        <label class="form-label">{{ 'Enlace de la encuesta de asistentes' | trans }}</label>
+        <div class="input-group">
+            <input type="text" class="form-control" value="{{ attendeeSurveyUrl }}" readonly data-attendee-survey-url>
+            <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-attendee-survey-copy
+                onclick="navigator.clipboard.writeText(this.parentElement.querySelector('[data-attendee-survey-url]').value)"
+            >
+                {{ 'Copiar' | trans }}
+            </button>
+        </div>
+    </div>
+</div>

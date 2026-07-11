@@ -1,0 +1,56 @@
+{% extends '@carbon_footprint/public/attendee_survey/layout.html.twig' %}
+
+{% set page_title = 'Encuesta de movilidad' | trans %}
+{% set wizard_selected = 2 %}
+{% set wizard_active = 2 %}
+
+{% block wizard_panels %}
+    <div class="card mb-3">
+        <div class="card-header"><h5 class="mb-0">{{ event.name }}</h5></div>
+        <div class="card-body">
+            <p class="text-muted mb-0">
+                {{ 'Cuéntanos cómo te has movido dentro de la ciudad del evento.' | trans }}
+            </p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h5 class="mb-0">{{ 'Movilidad en la ciudad' | trans }}</h5></div>
+        <div class="card-body">
+            <form method="post" name="city">
+                <input type="hidden" name="_token" value="{{ csrf_token('attendee_survey_city_' ~ token) }}">
+
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">{{ 'Nº de días' | trans }}</label>
+                        <input type="number" min="1" step="1" inputmode="numeric" class="form-control" name="city[days]">
+                    </div>
+                    <div class="col-md-9 mb-3">
+                        <label class="form-label">{{ 'Medio de transporte' | trans }}</label>
+                        <select class="form-select" name="city[mobilityId]">
+                            <option value="">{{ 'Selecciona un medio de transporte' | trans }}</option>
+                            {% for mobility in mobilities %}
+                                <option value="{{ mobility.id }}">{{ mobility.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">{{ 'Ocupantes del vehículo' | trans }}</label>
+                        <input type="number" min="1" step="1" inputmode="numeric" class="form-control" name="city[vehicleOccupants]">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">{{ 'Distancia (km)' | trans }}</label>
+                        <input type="number" min="0" step="0.1" inputmode="decimal" class="form-control" name="city[distanceKm]">
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">{{ 'Enviar respuesta' | trans }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

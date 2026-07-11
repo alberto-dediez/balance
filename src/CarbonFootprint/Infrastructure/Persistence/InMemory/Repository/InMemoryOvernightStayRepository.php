@@ -63,6 +63,10 @@ class InMemoryOvernightStayRepository implements OvernightStayRepository
                 continue;
             }
 
+            if (null !== $filter->category && $filter->category !== $overnightStay->category()) {
+                continue;
+            }
+
             if (true == $overnightStay->isRemoved()) {
                 continue;
             }

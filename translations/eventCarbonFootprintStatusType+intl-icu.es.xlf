@@ -37,6 +37,10 @@
         <source>providers_answered</source>
         <target>Proveedores respondido</target>
       </trans-unit>
+      <trans-unit id="JTmMwBV" resname="attendees_answered">
+        <source>attendees_answered</source>
+        <target>Asistentes respondido</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
