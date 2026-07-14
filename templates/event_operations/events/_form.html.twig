@@ -1,44 +1,50 @@
-<div class="row">
-    <div class="col-12 col-md-8">
-        {{ form_row(form.name) }}
+<twig:Card title="{{ 'General' | trans }}">
+    <div class="row">
+        <div class="col-12 col-md-8">
+            {{ form_row(form.name) }}
+        </div>
+        <div class="col-12 col-md-4">
+            {{ form_row(form.location) }}
+        </div>
+        <div class="col-12 col-md-4">
+            {{ form_row(form.propertyId) }}
+        </div>
+        <div class="col-12 col-md-4">
+            {{ form_row(form.companyId) }}
+        </div>
+        <div class="col-12 col-md-4">
+            {{ form_row(form.sector) }}
+        </div>
+        <div class="col-12 col-md-4">
+            {{ form_row(form.typology) }}
+        </div>
+        <div class="col-12 col-md-4">
+            {{ form_row(form.size) }}
+        </div>
+        <div class="col-12 col-md-4">
+            {{ form_row(form.estimatedAttendees) }}
+        </div>
     </div>
-    <div class="col-12 col-md-4">
-        {{ form_row(form.location) }}
+</twig:Card>
+<twig:Card title="{{ 'Planificación' | trans }}">
+    <div class="row">
+        <div class="col-12 col-md-6">
+            {{ form_row(form.assemblyStartDate) }}
+        </div>
+        <div class="col-12 col-md-6">
+            {{ form_row(form.assemblyEndDate) }}
+        </div>
+        <div class="col-12 col-md-6">
+            {{ form_row(form.celebrationStartDate) }}
+        </div>
+        <div class="col-12 col-md-6">
+            {{ form_row(form.celebrationEndDate) }}
+        </div>
+        <div class="col-12 col-md-6">
+            {{ form_row(form.breakdownStartDate) }}
+        </div>
+        <div class="col-12 col-md-6">
+            {{ form_row(form.breakdownEndDate) }}
+        </div>
     </div>
-    <div class="col-12 col-md-4">
-        {{ form_row(form.propertyId) }}
-    </div>
-    <div class="col-12 col-md-4">
-        {{ form_row(form.companyId) }}
-    </div>
-    <div class="col-12 col-md-4">
-        {{ form_row(form.sector) }}
-    </div>
-    <div class="col-12 col-md-4">
-        {{ form_row(form.typology) }}
-    </div>
-    <div class="col-12 col-md-4">
-        {{ form_row(form.size) }}
-    </div>
-    <div class="col-12 col-md-4">
-        {{ form_row(form.estimatedAttendees) }}
-    </div>
-    <div class="col-12 col-md-6">
-        {{ form_row(form.assemblyStartDate) }}
-    </div>
-    <div class="col-12 col-md-6">
-        {{ form_row(form.assemblyEndDate) }}
-    </div>
-    <div class="col-12 col-md-6">
-        {{ form_row(form.celebrationStartDate) }}
-    </div>
-    <div class="col-12 col-md-6">
-        {{ form_row(form.celebrationEndDate) }}
-    </div>
-    <div class="col-12 col-md-6">
-        {{ form_row(form.breakdownStartDate) }}
-    </div>
-    <div class="col-12 col-md-6">
-        {{ form_row(form.breakdownEndDate) }}
-    </div>
-</div>
+</twig:Card>

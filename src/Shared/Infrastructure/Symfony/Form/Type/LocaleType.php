@@ -17,14 +17,7 @@ class LocaleType extends AbstractType
 
     public function __construct(string $localeList)
     {
-        $codes = explode('|', $localeList);
-
-        $this->allowedLocales = array_values(
-            array_filter(
-                array_map(fn(string $code) => Locale::tryFrom(trim($code)), $codes),
-                fn(?Locale $locale) => $locale instanceof Locale,
-            ),
-        );
+        $this->allowedLocales = Locale::listFrom($localeList);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

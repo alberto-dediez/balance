@@ -45,4 +45,6 @@ class Chart
     public bool $legend = false;
 
     public bool $dataLabels = false;
+
+    public bool $stacked = false;
 }

@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Application\ProviderContribution\Answer
 use App\CarbonFootprint\Application\ProviderContribution\Answer\AnswerProviderContributionRequest;
 use App\CarbonFootprint\Application\ProviderContribution\Answer\AnswerProviderContributionService;
 use App\CarbonFootprint\Application\ProviderContribution\ProviderContributionAuthenticator;
+use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContribution;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionClosedException;
@@ -93,7 +94,7 @@ class AnswerProviderContributionServiceTest extends TestCase
         $eventCarbonFootprint->answerPhase(Phase::Assembly);
         $eventCarbonFootprint->answerPhase(Phase::Celebration);
         $eventCarbonFootprint->answerPhase(Phase::Breakdown);
-        $eventCarbonFootprint->complete();
+        $eventCarbonFootprint->complete(totalEmissions: new Emissions(), emissionsPerAttendee: new Emissions());
         $this->eventCarbonFootprintRepository->add($eventCarbonFootprint);
 
         $contribution = $this->registeredContributionWithLinkedProviderUser((string) $eventCarbonFootprint->id());

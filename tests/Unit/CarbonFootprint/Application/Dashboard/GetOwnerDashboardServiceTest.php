@@ -11,7 +11,6 @@ use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAut
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\EventOperations\Domain\Model\Event\DateRange;
@@ -71,9 +70,10 @@ class GetOwnerDashboardServiceTest extends TestCase
                 startDate: new \DateTimeImmutable('2026-05-01'),
                 endDate: new \DateTimeImmutable('2026-05-03'),
             ),
+        );
+        $completedFootprint->complete(
             totalEmissions: new Emissions(co2eq: '1000'),
             emissionsPerAttendee: new Emissions(co2eq: '10'),
-            status: EventCarbonFootprintStatus::Completed,
         );
 
         $activity = MaterialActivityMother::registered();

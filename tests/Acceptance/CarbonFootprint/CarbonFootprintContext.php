@@ -19,6 +19,7 @@ use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
+use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
@@ -511,7 +512,7 @@ final readonly class CarbonFootprintContext implements Context
         $eventCarbonFootprint->answerPhase(Phase::Assembly);
         $eventCarbonFootprint->answerPhase(Phase::Celebration);
         $eventCarbonFootprint->answerPhase(Phase::Breakdown);
-        $eventCarbonFootprint->complete();
+        $eventCarbonFootprint->complete(totalEmissions: new Emissions(), emissionsPerAttendee: new Emissions());
 
         $this->getEventCarbonFootprintRepository()->add($eventCarbonFootprint);
     }

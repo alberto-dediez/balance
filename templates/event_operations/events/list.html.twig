@@ -57,6 +57,12 @@
                 <twig:List:Action:CarbonFootprint path="{{ path('events_carbon_footprint_edit', {'eventId': element.id}) }}" />
             {% endif %}
 
+            {% set carbonFootprintReport = carbonFootprint is not null ? event_carbon_footprint_report(element.id) : null %}
+
+            {% if carbonFootprintReport is not null and carbonFootprintReport.status.isGenerated and carbonFootprintReport | is_authorized('view') %}
+                <twig:List:Action:Download path="{{ path('events_carbon_footprint_report_download', {'eventId': element.id}) }}" />
+            {% endif %}
+
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('events_edit', {'eventId': element.id}) }}" />
             {% endif %}

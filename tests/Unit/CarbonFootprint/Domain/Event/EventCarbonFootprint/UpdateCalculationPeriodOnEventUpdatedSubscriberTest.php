@@ -90,9 +90,6 @@ class UpdateCalculationPeriodOnEventUpdatedSubscriberTest extends TestCase
                 startDate: $event->assembly()->startDate(),
                 endDate: $event->breakdown()->endDate(),
             ),
-            totalEmissions: $eventCarbonFootprint->totalEmissions(),
-            emissionsPerAttendee: $eventCarbonFootprint->emissionsPerAttendee(),
-            status: $eventCarbonFootprint->status(),
         );
 
         $eventCarbonFootprintRepository = EventCarbonFootprintRepositoryMother::inMemory();

@@ -18,6 +18,7 @@ use App\CarbonFootprint\Application\ProviderContribution\ProviderContributionAut
 use App\CarbonFootprint\Domain\Model\Activity\Answer\CombustibleAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
 use App\CarbonFootprint\Domain\Model\Combustible\Combustible;
+use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionAnswer;
@@ -186,7 +187,10 @@ class AnswerProviderContributionPhaseServiceTest extends TestCase
         $eventCarbonFootprint->answerPhase(Phase::Assembly);
         $eventCarbonFootprint->answerPhase(Phase::Celebration);
         $eventCarbonFootprint->answerPhase(Phase::Breakdown);
-        $eventCarbonFootprint->complete();
+        $eventCarbonFootprint->complete(
+            totalEmissions: new Emissions(),
+            emissionsPerAttendee: new Emissions(),
+        );
 
         $this->expectException(ProviderContributionClosedException::class);
         ($this->sut)(new AnswerProviderContributionPhaseRequest($contribution->token(), Phase::Assembly, []));

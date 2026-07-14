@@ -3,23 +3,189 @@
 {% set wizard_selected = 7 %}
 
 {% block wizard_panels %}
-    {% if eventCarbonFootprint.status.isCompleted %}
-        <dl class="row mt-3">
-            <dt class="col-sm-4">{{ 'CO₂ equivalente total (kg)' | trans }}</dt>
-            <dd class="col-sm-8">{{ eventCarbonFootprint.totalEmissions.co2eq }}</dd>
+    {% if eventCarbonFootprint.status.isCompleted and results is not null %}
+        {% if report is null or report.status.isPending %}
+            <div class="alert alert-info mt-3" role="alert">
+                {{ 'Se está generando un informe sobre esta huella de carbono, te notificaremos cuando esté disponible.' | trans }}
+            </div>
+        {% elseif report.status.isFailed %}
+            <div class="alert alert-danger mt-3" role="alert">
+                {{ 'No se ha podido generar el informe de esta huella de carbono: {error}' | trans({'{error}': report.errorMessage}) }}
+            </div>
+        {% endif %}
 
-            <dt class="col-sm-4">{{ 'CO₂ (kg)' | trans }}</dt>
-            <dd class="col-sm-8">{{ eventCarbonFootprint.totalEmissions.co2 }}</dd>
 
-            <dt class="col-sm-4">{{ 'CH₄ (kg)' | trans }}</dt>
-            <dd class="col-sm-8">{{ eventCarbonFootprint.totalEmissions.ch4 }}</dd>
 
-            <dt class="col-sm-4">{{ 'N₂O (kg)' | trans }}</dt>
-            <dd class="col-sm-8">{{ eventCarbonFootprint.totalEmissions.n2o }}</dd>
+        <div class="row">
+            <div class="col-9">
+                <twig:Card title="{{ 'Totales' | trans }}">
+                    <dl class="row mt-3">
+                        <dt class="col-sm-4">{{ 'CO₂ equivalente total (kg)' | trans }}</dt>
+                        <dd class="col-sm-8">{{ results.totalEmissions.co2eq | number_format(2, ',', '.') }}</dd>
 
-            <dt class="col-sm-4">{{ 'CO₂ equivalente por asistente (kg)' | trans }}</dt>
-            <dd class="col-sm-8">{{ eventCarbonFootprint.emissionsPerAttendee.co2eq }}</dd>
-        </dl>
+                        <dt class="col-sm-4">{{ 'CO₂ (kg)' | trans }}</dt>
+                        <dd class="col-sm-8">{{ results.totalEmissions.co2 | number_format(2, ',', '.') }}</dd>
+
+                        <dt class="col-sm-4">{{ 'CH₄ (kg)' | trans }}</dt>
+                        <dd class="col-sm-8">{{ results.totalEmissions.ch4 | number_format(2, ',', '.') }}</dd>
+
+                        <dt class="col-sm-4">{{ 'N₂O (kg)' | trans }}</dt>
+                        <dd class="col-sm-8">{{ results.totalEmissions.n2o | number_format(2, ',', '.') }}</dd>
+                    </dl>
+
+                    {% if attendeesUsed is not empty and attendeesUsed > 0 %}
+                        <dl class="row">
+                            <dt class="col-sm-4">{{ 'CO₂ equivalente por asistente (kg)' | trans }}</dt>
+                            <dd class="col-sm-8">{{ results.emissionsPerAttendee.co2eq | number_format(3, ',', '.') }}</dd>
+
+                            <dt class="col-sm-4">{{ 'Asistentes considerados' | trans }}</dt>
+                            <dd class="col-sm-8">{{ attendeesUsed }}</dd>
+                        </dl>
+                    {% else %}
+                        <div class="alert alert-warning mt-3" role="alert">
+                            {{ 'No hay asistentes reales ni estimados disponibles, por lo que no se ha podido calcular la huella por asistente.' | trans }}
+                        </div>
+                    {% endif %}
+                </twig:Card>
+
+                <div class="row">
+                    <div class="col-lg-6 d-flex">
+                        <div class="card flex-fill">
+                            <div class="card-header fw-semibold">{{ 'Emisiones por fuente' | trans }} <span class="text-muted fw-normal">(kg CO₂eq)</span></div>
+                            <div class="card-body">
+                                {% if sourceChart.values is not empty %}
+                                    <twig:Chart:Donut
+                                        title="{{ 'Emisiones por fuente' | trans }}"
+                                        :values="sourceChart.values"
+                                        :categories="sourceChart.labels"
+                                        unit="kg"
+                                        :decimals="0"
+                                        :legend="true"
+                                    />
+                                {% else %}
+                                    <p class="text-muted mb-0">{{ 'No hay emisiones registradas por fuente.' | trans }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 d-flex">
+                        <div class="card flex-fill">
+                            <div class="card-header fw-semibold">{{ 'Emisiones por fase' | trans }} <span class="text-muted fw-normal">(kg CO₂eq)</span></div>
+                            <div class="card-body">
+                                <twig:Chart:Bar
+                                    title="{{ 'Emisiones' | trans }}"
+                                    :values="phaseChart.values"
+                                    :categories="phaseChart.labels"
+                                    :colors="['var(--bs-info)', 'var(--bs-warning)', 'var(--bs-primary)', 'var(--bs-success)']"
+                                    unit="kg"
+                                    :decimals="0"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                {% if report is not null and report.status.isGenerated %}
+                    <twig:Card title="{{ 'Informe de huella de carbono' | trans }}">
+                        <a href="{{ path('events_carbon_footprint_report_download', {eventId: eventId}) }}" class="btn btn-outline-primary">{{ 'Descargar informe' | trans }}</a>
+                    </twig:Card>
+                {% endif %}
+
+                <twig:Card title="{{ 'Desglose por fase' | trans }}">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>{{ 'Fase' | trans }}</th>
+                                <th class="text-end">{{ 'CO₂eq (kg)' | trans }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for phase, emissions in results.emissionsByPhase %}
+                                <tr>
+                                    <td>{{ phase | trans({}, 'phase') }}</td>
+                                    <td class="text-end">{{ emissions.co2eq | number_format(2, ',', '.') }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </twig:Card>
+
+                {% if surveyStats is not null %}
+                    <twig:Card title="{{ 'Encuesta de asistentes' | trans }}">
+                        <dl class="row">
+                            <dt class="col-sm-8">{{ 'Respuestas recibidas' | trans }}</dt>
+                            <dd class="col-sm-4">{{ surveyStats.responsesCount }}</dd>
+
+                            <dt class="col-sm-8">{{ 'Asistentes reales' | trans }}</dt>
+                            <dd class="col-sm-4">{{ surveyStats.attendeeSurvey.realAttendees ?? '-' }}</dd>
+
+                            <dt class="col-sm-8">{{ '% encuestados' | trans }}</dt>
+                            <dd class="col-sm-4">{{ surveyStats.surveyedPercentage is not null ? (surveyStats.surveyedPercentage | number_format(1)) ~ ' %' : '-' }}</dd>
+
+                            {% if surveyStats.attendeeSurvey.confidenceLevel is not null %}
+                                <dt class="col-sm-8">{{ 'Nivel de confianza' | trans }}</dt>
+                                <dd class="col-sm-4">{{ surveyStats.attendeeSurvey.confidenceLevel.value }}%</dd>
+                            {% endif %}
+
+                            {% if surveyStats.attendeeSurvey.marginOfError is not null %}
+                                <dt class="col-sm-8">{{ 'Margen de error' | trans }}</dt>
+                                <dd class="col-sm-4">{{ (surveyStats.attendeeSurvey.marginOfError * 100) | number_format(2) }}%</dd>
+                            {% endif %}
+                        </dl>
+                    </twig:Card>
+                {% endif %}
+            </div>
+        </div>
+
+        <twig:Card title="{{ 'Desglose por fuente' | trans }}">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>{{ 'Fuente' | trans }}</th>
+                        <th class="text-end">{{ 'CO₂eq (kg)' | trans }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for source, emissions in results.emissionsBySource %}
+                        <tr>
+                            <td>{{ source | trans({}, 'source') }}</td>
+                            <td class="text-end">{{ emissions.co2eq | number_format(2, ',', '.') }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </twig:Card>
+
+        <twig:Card title="{{ 'Matriz fase × fuente' | trans }}">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>{{ 'Fase' | trans }}</th>
+                            <th>{{ 'Fuente' | trans }}</th>
+                            <th class="text-end">{{ 'CO₂eq (kg)' | trans }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for phase, sources in results.emissionsByPhaseAndSource %}
+                            {% for source, emissions in sources %}
+                                <tr>
+                                    <td>{{ phase | trans({}, 'phase') }}</td>
+                                    <td>{{ source | trans({}, 'source') }}</td>
+                                    <td class="text-end">{{ emissions.co2eq | number_format(2, ',', '.') }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </twig:Card>
     {% else %}
         <div class="alert alert-info mt-3" role="alert">
             {{ 'Estamos procesando su Huella de Carbono, en breve tendrá los resultados disponibles.' | trans }}

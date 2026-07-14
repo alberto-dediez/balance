@@ -3661,6 +3661,206 @@
         <source>El enlace de la encuesta que has utilizado no es válido o ya no está disponible.</source>
         <target>The survey link you used is not valid or is no longer available.</target>
       </trans-unit>
+      <trans-unit id="nhtvts_" resname="Enlace de la encuesta de asistentes">
+        <source>Enlace de la encuesta de asistentes</source>
+        <target>Attendee survey link</target>
+      </trans-unit>
+      <trans-unit id="8YgvUlK" resname="Copiar">
+        <source>Copiar</source>
+        <target>Copy</target>
+      </trans-unit>
+      <trans-unit id="nH8NWvc" resname="Asistentes considerados">
+        <source>Asistentes considerados</source>
+        <target>Attendees used</target>
+      </trans-unit>
+      <trans-unit id="w5bcH6O" resname="No hay asistentes reales ni estimados disponibles, por lo que no se ha podido calcular la huella por asistente.">
+        <source>No hay asistentes reales ni estimados disponibles, por lo que no se ha podido calcular la huella por asistente.</source>
+        <target>No real or estimated attendees are available, so the footprint per attendee could not be calculated.</target>
+      </trans-unit>
+      <trans-unit id="3WiBPHg" resname="CO₂eq (kg)">
+        <source>CO₂eq (kg)</source>
+        <target>CO₂eq (kg)</target>
+      </trans-unit>
+      <trans-unit id="bIhA8LY" resname="Fase">
+        <source>Fase</source>
+        <target>Phase</target>
+      </trans-unit>
+      <trans-unit id="nVeZq78" resname="Totales">
+        <source>Totales</source>
+        <target>Totals</target>
+      </trans-unit>
+      <trans-unit id="FWe0mUr" resname="No hay emisiones registradas por fuente.">
+        <source>No hay emisiones registradas por fuente.</source>
+        <target>There are no emissions recorded by source.</target>
+      </trans-unit>
+      <trans-unit id="KtNlqdN" resname="Emisiones por fase y fuente">
+        <source>Emisiones por fase y fuente</source>
+        <target>Emissions by phase and source</target>
+      </trans-unit>
+      <trans-unit id="Osp1xaP" resname="No hay emisiones registradas.">
+        <source>No hay emisiones registradas.</source>
+        <target>There are no emissions recorded.</target>
+      </trans-unit>
+      <trans-unit id="pqCnuiz" resname="Desglose por fuente">
+        <source>Desglose por fuente</source>
+        <target>Breakdown by source</target>
+      </trans-unit>
+      <trans-unit id="TuZeodF" resname="Desglose por fase">
+        <source>Desglose por fase</source>
+        <target>Breakdown by phase</target>
+      </trans-unit>
+      <trans-unit id="3tkccCT" resname="Matriz fase × fuente">
+        <source>Matriz fase × fuente</source>
+        <target>Phase × source matrix</target>
+      </trans-unit>
+      <trans-unit id="lw7qnwY" resname="Informe de Huella de Carbono">
+        <source>Informe de Huella de Carbono</source>
+        <target>Carbon Footprint Report</target>
+      </trans-unit>
+      <trans-unit id="SoqKDgg" resname="Informe de Huella de Carbono del Evento">
+        <source>Informe de Huella de Carbono del Evento</source>
+        <target>Event Carbon Footprint Report</target>
+      </trans-unit>
+      <trans-unit id="nyb.Yle" resname="Resumen ejecutivo">
+        <source>Resumen ejecutivo</source>
+        <target>Executive summary</target>
+      </trans-unit>
+      <trans-unit id="UaxJgxD" resname="Metodología de cálculo">
+        <source>Metodología de cálculo</source>
+        <target>Calculation methodology</target>
+      </trans-unit>
+      <trans-unit id="SauLRuL" resname="Fuentes de los factores de emisión">
+        <source>Fuentes de los factores de emisión</source>
+        <target>Emission factor sources</target>
+      </trans-unit>
+      <trans-unit id="az3zAAL" resname="Análisis y recomendaciones">
+        <source>Análisis y recomendaciones</source>
+        <target>Analysis and recommendations</target>
+      </trans-unit>
+      <trans-unit id="hpZfxt8" resname="Nombre del evento">
+        <source>Nombre del evento</source>
+        <target>Event name</target>
+      </trans-unit>
+      <trans-unit id="TThRB1V" resname="Sector">
+        <source>Sector</source>
+        <target>Sector</target>
+      </trans-unit>
+      <trans-unit id="EwptmCw" resname="Tipología">
+        <source>Tipología</source>
+        <target>Typology</target>
+      </trans-unit>
+      <trans-unit id="7j0NNbT" resname="Tamaño">
+        <source>Tamaño</source>
+        <target>Size</target>
+      </trans-unit>
+      <trans-unit id=".dKgqHy" resname="Grupo de factores de emisión">
+        <source>Grupo de factores de emisión</source>
+        <target>Emission factor group</target>
+      </trans-unit>
+      <trans-unit id="l_FPutY" resname="Año de cálculo">
+        <source>Año de cálculo</source>
+        <target>Calculation year</target>
+      </trans-unit>
+      <trans-unit id="wW1y01C" resname="Dato">
+        <source>Dato</source>
+        <target>Data</target>
+      </trans-unit>
+      <trans-unit id=".ApDO_p" resname="Valor">
+        <source>Valor</source>
+        <target>Value</target>
+      </trans-unit>
+      <trans-unit id="Wa72TTX" resname="CO₂eq por asistente (kg)">
+        <source>CO₂eq por asistente (kg)</source>
+        <target>CO₂eq per attendee (kg)</target>
+      </trans-unit>
+      <trans-unit id="BfUeRvy" resname="Magnitud">
+        <source>Magnitud</source>
+        <target>Magnitude</target>
+      </trans-unit>
+      <trans-unit id="XSSzLkK" resname="Anexo: factores de emisión aplicados">
+        <source>Anexo: factores de emisión aplicados</source>
+        <target>Annex: applied emission factors</target>
+      </trans-unit>
+      <trans-unit id="ssPBGUl" resname="Actividad">
+        <source>Actividad</source>
+        <target>Activity</target>
+      </trans-unit>
+      <trans-unit id="vRSUd02" resname="Factor kgCO2eq/unidad">
+        <source>Factor kgCO2eq/unidad</source>
+        <target>Factor kgCO2eq/unit</target>
+      </trans-unit>
+      <trans-unit id="lWRUsue" resname="Fuente del factor">
+        <source>Fuente del factor</source>
+        <target>Factor source</target>
+      </trans-unit>
+      <trans-unit id="cgPEuda" resname="Emisiones kgCO2eq">
+        <source>Emisiones kgCO2eq</source>
+        <target>Emissions kgCO2eq</target>
+      </trans-unit>
+      <trans-unit id="esSZ0XU" resname="No se ha podido eliminar el informe: {error}">
+        <source>No se ha podido eliminar el informe: {error}</source>
+        <target>Could not remove the report: {error}</target>
+      </trans-unit>
+      <trans-unit id="5QuqRxc" resname="No se ha podido generar el informe: {error}">
+        <source>No se ha podido generar el informe: {error}</source>
+        <target>Could not generate the report: {error}</target>
+      </trans-unit>
+      <trans-unit id="B97Cqk0" resname="Generando el informe, esto puede tardar varios minutos…">
+        <source>Generando el informe, esto puede tardar varios minutos…</source>
+        <target>Generating the report, this may take several minutes…</target>
+      </trans-unit>
+      <trans-unit id="X6xX7OT" resname="Genera un informe PDF completo con los resultados, gráficos y análisis de esta huella de carbono, en español e inglés.">
+        <source>Genera un informe PDF completo con los resultados, gráficos y análisis de esta huella de carbono, en español e inglés.</source>
+        <target>Generate a full PDF report with the results, charts and analysis of this carbon footprint, in Spanish and English.</target>
+      </trans-unit>
+      <trans-unit id="YlRfgxt" resname="Generar informe">
+        <source>Generar informe</source>
+        <target>Generate report</target>
+      </trans-unit>
+      <trans-unit id="nONVAQw" resname="Descargar informe (ES)">
+        <source>Descargar informe (ES)</source>
+        <target>Download report (ES)</target>
+      </trans-unit>
+      <trans-unit id="NWbmiOV" resname="Descargar informe (EN)">
+        <source>Descargar informe (EN)</source>
+        <target>Download report (EN)</target>
+      </trans-unit>
+      <trans-unit id="s5r5Ahz" resname="Para regenerar el informe, elimínalo primero.">
+        <source>Para regenerar el informe, elimínalo primero.</source>
+        <target>To regenerate the report, remove it first.</target>
+      </trans-unit>
+      <trans-unit id="sDHpkyu" resname="¿Seguro que quieres eliminar el informe? Esta acción no se puede deshacer.">
+        <source>¿Seguro que quieres eliminar el informe? Esta acción no se puede deshacer.</source>
+        <target>Are you sure you want to remove the report? This action cannot be undone.</target>
+      </trans-unit>
+      <trans-unit id="29liG6u" resname="Eliminar informe">
+        <source>Eliminar informe</source>
+        <target>Remove report</target>
+      </trans-unit>
+      <trans-unit id="pEeMvZZ" resname="Informe de huella de carbono">
+        <source>Informe de huella de carbono</source>
+        <target>Carbon footprint report</target>
+      </trans-unit>
+      <trans-unit id="e.VRADw" resname="El informe de huella de carbono ya está disponible. Puedes descargarlo en los siguientes enlaces:">
+        <source>El informe de huella de carbono ya está disponible. Puedes descargarlo en los siguientes enlaces:</source>
+        <target>The carbon footprint report is now available. You can download it from the following links:</target>
+      </trans-unit>
+      <trans-unit id="..7gQOw" resname="Informe de huella de carbono disponible">
+        <source>Informe de huella de carbono disponible</source>
+        <target>Carbon footprint report available</target>
+      </trans-unit>
+      <trans-unit id="gotAa4P" resname="Descargar informe">
+        <source>Descargar informe</source>
+        <target>Download report</target>
+      </trans-unit>
+      <trans-unit id="na77uCO" resname="El informe de huella de carbono ya está disponible.">
+        <source>El informe de huella de carbono ya está disponible.</source>
+        <target>The carbon footprint report is now available.</target>
+      </trans-unit>
+      <trans-unit id="3Md_4S8" resname="Planificación">
+        <source>Planificación</source>
+        <target>Planning</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -7,3 +7,13 @@ services:
         resource: '../../../'
         exclude:
             - '../../../Infrastructure/Symfony/DependencyInjection/'
+
+    App\CarbonFootprint\Application\EventCarbonFootprintReport\Generate\GenerateEventCarbonFootprintReportService:
+        arguments:
+            $localeList: '%app.locale_list%'
+
+    App\CarbonFootprint\Infrastructure\Storage\LocalEventCarbonFootprintReportStorage:
+        arguments:
+            $basePath: '%app.uploads_dir%/carbon-footprint-reports'
+
+    App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportStorage: '@App\CarbonFootprint\Infrastructure\Storage\LocalEventCarbonFootprintReportStorage'

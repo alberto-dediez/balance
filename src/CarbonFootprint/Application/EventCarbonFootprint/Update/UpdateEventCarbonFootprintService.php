@@ -41,9 +41,6 @@ class UpdateEventCarbonFootprintService implements CommandHandler
 
         $eventCarbonFootprint->update(
             calculationPeriod: $calculationPeriod,
-            totalEmissions: $request->totalEmissions,
-            emissionsPerAttendee: $request->emissionsPerAttendee,
-            status: $request->status,
         );
 
         $this->eventCarbonFootprintRepository->add($eventCarbonFootprint);

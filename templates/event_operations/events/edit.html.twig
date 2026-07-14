@@ -12,17 +12,17 @@
 
 {% block content %}
     {{ form_start(form) }}
-        <twig:Card>
-            {% include '@event_operations/events/_form.html.twig' %}
+        {% include '@event_operations/events/_form.html.twig' %}
 
+        <twig:Card title="{{ 'Encuesta de asistentes' | trans }}">
+            <twig:CarbonFootprint:AttendeeSurveyQr eventId="{{ event.id }}" />
+        </twig:Card>
+
+        <twig:Card>
             <twig:ActionBar>
                 <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
                 <twig:ActionBar:Button type="primary" :button="form.save" />
             </twig:ActionBar>
         </twig:Card>
     {{ form_end(form) }}
-
-    <twig:Card title="{{ 'Encuesta de asistentes' | trans }}">
-        <twig:CarbonFootprint:AttendeeSurveyQr eventId="{{ event.id }}" />
-    </twig:Card>
 {% endblock %}

@@ -1,0 +1,6 @@
+<p>{% trans -%}El informe de huella de carbono ya está disponible.{%- endtrans %}</p>
+<p>
+    <a href="{{ path('events_carbon_footprint_report_download', {eventId: eventId}) }}">
+        {% trans -%}Descargar informe{%- endtrans -%}
+    </a>
+</p>

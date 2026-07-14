@@ -16,6 +16,7 @@ export default class extends Controller {
         labelDecimals: Number,
         legend: Boolean,
         dataLabels: Boolean,
+        stacked: Boolean,
     }
 
     connect() {
@@ -73,13 +74,14 @@ export default class extends Controller {
                 type: chartType,
                 fontFamily: "inherit",
                 foreColor: "#adb0bb",
+                stacked: this.stackedValue,
             },
             colors: colors,
             plotOptions: {
                 bar: {
                     borderRadius: 4,
                     columnWidth: "59%",
-                    distributed: true,
+                    distributed: series.length <= 1,
                     endingShape: "rounded",
                 },
             },

@@ -32,6 +32,15 @@ export default class extends Controller {
 
             if (data) {
                 this.updateBar(data.percentage, data.currentStep);
+
+                if (data.status === 'Completed' || data.status === 'Failed') {
+                    if (data.status === 'Completed') {
+                        this.updateBar(100, data.currentStep);
+                    }
+
+                    window.location.reload();
+                    return;
+                }
             }
         } catch {
             this.schedule(this.errorIntervalValue);

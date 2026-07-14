@@ -9,6 +9,7 @@ parameters:
     app.gemini_model_high: '%env(GEMINI_MODEL_HIGH)%'
     app.gemini_log_enabled: '%env(bool:GEMINI_LOG_ENABLED)%'
     app.uploads_dir: '%kernel.project_dir%/var/uploads'
+    app.chart_endpoint: '%env(CHART_ENDPOINT)%'
 
 services:
     _defaults:
@@ -60,3 +61,10 @@ services:
 
     App\Shared\Infrastructure\AI\Gemini\GeminiClient:
         alias: App\Shared\Infrastructure\AI\Gemini\GeminiHttpClient
+
+    App\Shared\Infrastructure\Chart\ApexChartHttpClient:
+        arguments:
+            $endpoint: '%app.chart_endpoint%'
+
+    App\Shared\Infrastructure\Chart\ApexChartClient:
+        alias: App\Shared\Infrastructure\Chart\ApexChartHttpClient

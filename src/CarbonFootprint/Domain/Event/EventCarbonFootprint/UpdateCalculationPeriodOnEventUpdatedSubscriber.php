@@ -59,9 +59,6 @@ class UpdateCalculationPeriodOnEventUpdatedSubscriber implements DomainEventSubs
             eventCarbonFootprintId: $eventCarbonFootprint->id(),
             calculationPeriodStartDate: $calculationPeriod->startDate(),
             calculationPeriodEndDate: $calculationPeriod->endDate(),
-            totalEmissions: $eventCarbonFootprint->totalEmissions(),
-            emissionsPerAttendee: $eventCarbonFootprint->emissionsPerAttendee(),
-            status: $eventCarbonFootprint->status(),
         );
 
         ($this->updateEventCarbonFootprint)($request, $this->loggedUser->__invoke());

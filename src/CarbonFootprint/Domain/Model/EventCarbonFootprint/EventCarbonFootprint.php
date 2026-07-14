@@ -142,17 +142,11 @@ class EventCarbonFootprint implements \Stringable
 
     public function update(
         DateRange $calculationPeriod,
-        Emissions $totalEmissions,
-        Emissions $emissionsPerAttendee,
-        EventCarbonFootprintStatus $status,
     ): void {
         $this->recordApplyAndPublish(
             new EventCarbonFootprintUpdated(
                 eventCarbonFootprintId: $this->id(),
                 calculationPeriod: $calculationPeriod,
-                totalEmissions: $totalEmissions,
-                emissionsPerAttendee: $emissionsPerAttendee,
-                status: $status,
             ),
         );
     }
@@ -242,11 +236,15 @@ class EventCarbonFootprint implements \Stringable
         );
     }
 
-    public function complete(): void
-    {
+    public function complete(
+        Emissions $totalEmissions,
+        Emissions $emissionsPerAttendee,
+    ): void {
         $this->recordApplyAndPublish(
             new EventCarbonFootprintCompleted(
                 eventCarbonFootprintId: $this->id,
+                totalEmissions: $totalEmissions,
+                emissionsPerAttendee: $emissionsPerAttendee,
             ),
         );
     }
@@ -275,9 +273,6 @@ class EventCarbonFootprint implements \Stringable
     public function applyEventCarbonFootprintUpdated(EventCarbonFootprintUpdated $event): void
     {
         $this->calculationPeriod = $event->calculationPeriod();
-        $this->totalEmissions = $event->totalEmissions();
-        $this->emissionsPerAttendee = $event->emissionsPerAttendee();
-        $this->status = $event->status();
         $this->updatedAt = $event->occurredOn();
     }
 
@@ -323,6 +318,8 @@ class EventCarbonFootprint implements \Stringable
     public function applyEventCarbonFootprintCompleted(EventCarbonFootprintCompleted $event): void
     {
         $this->status = EventCarbonFootprintStatus::Completed;
+        $this->totalEmissions = $event->totalEmissions();
+        $this->emissionsPerAttendee = $event->emissionsPerAttendee();
         $this->updatedAt = $event->occurredOn();
     }
 

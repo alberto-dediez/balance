@@ -1,6 +1,16 @@
 {% extends '@shared/layout/wizard.html.twig' %}
 
 {% block top_actions %}
+    {% set carbonFootprintReport = event_carbon_footprint_report(eventId) %}
+
+    {% if carbonFootprintReport is not null and carbonFootprintReport.status.isGenerated and carbonFootprintReport | is_authorized('view') %}
+        <twig:TopAction path="{{ path('events_carbon_footprint_report_download', {eventId: eventId}) }}" target="_blank">
+            <twig:Icon name="solar:file-download-line-duotone" size="lg" class="me-2" />
+
+            {{ 'Descargar informe' | trans }}
+        </twig:TopAction>
+    {% endif %}
+
     <twig:TopAction:Return path="{{ path('events') }}" />
 {% endblock %}
 
