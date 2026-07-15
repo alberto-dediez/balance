@@ -54,7 +54,7 @@
     {% endif %}
 
     {% if not readOnly %}
-    <twig:Card title="{{ attendeeSurvey.status.isClosed ? ('Volver a cerrar la encuesta' | trans) : ('Cerrar la encuesta' | trans) }}">
+    <twig:Card title="{{ 'Cerrar la encuesta' | trans }}">
         <form method="post">
             <input type="hidden" name="_token" value="{{ csrf_token('attendees_' ~ eventCarbonFootprint.id) }}">
 
@@ -87,7 +87,7 @@
                     &larr; {{ 'Anterior' | trans }}
                 </a>
                 <button type="submit" class="btn btn-primary">
-                    {{ attendeeSurvey.status.isClosed ? ('Volver a cerrar y continuar' | trans) : ('Cerrar encuesta y continuar' | trans) }} &rarr;
+                    {{ 'Cerrar encuesta y continuar' | trans }} &rarr;
                 </button>
             </div>
         </form>

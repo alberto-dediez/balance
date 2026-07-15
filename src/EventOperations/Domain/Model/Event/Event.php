@@ -31,6 +31,7 @@ class Event implements \Stringable
         private DateRange $breakdown = new DateRange(),
         private ?AccountId $accountId = null,
         private ?bool $removed = false,
+        private bool $locked = false,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $updatedAt = null,
@@ -109,6 +110,11 @@ class Event implements \Stringable
         return $this->removed ?? false;
     }
 
+    public function isLocked(): bool
+    {
+        return $this->locked;
+    }
+
     public function registeredAt(): \DateTimeImmutable
     {
         return $this->registeredAt;
@@ -170,6 +176,8 @@ class Event implements \Stringable
         DateRange $celebration,
         DateRange $breakdown,
     ): void {
+        $this->ensureIsEditable();
+
         $this->recordApplyAndPublish(
             new EventUpdated(
                 eventId: $this->id(),
@@ -192,6 +200,32 @@ class Event implements \Stringable
     {
         $this->recordApplyAndPublish(
             new EventRemoved(
+                eventId: $this->id(),
+            ),
+        );
+    }
+
+    public function lock(): void
+    {
+        if ($this->locked) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new EventLocked(
+                eventId: $this->id(),
+            ),
+        );
+    }
+
+    public function unlock(): void
+    {
+        if (!$this->locked) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new EventUnlocked(
                 eventId: $this->id(),
             ),
         );
@@ -236,8 +270,27 @@ class Event implements \Stringable
         $this->removedAt = $event->occurredOn();
     }
 
+    public function applyEventLocked(EventLocked $event): void
+    {
+        $this->locked = true;
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyEventUnlocked(EventUnlocked $event): void
+    {
+        $this->locked = false;
+        $this->updatedAt = $event->occurredOn();
+    }
+
     public function __toString(): string
     {
         return $this->name();
+    }
+
+    private function ensureIsEditable(): void
+    {
+        if ($this->locked) {
+            throw new EventLockedException('Event is locked and can no longer be edited');
+        }
     }
 }

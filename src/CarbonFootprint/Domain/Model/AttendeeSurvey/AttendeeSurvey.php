@@ -120,6 +120,19 @@ class AttendeeSurvey implements \Stringable
         );
     }
 
+    public function reopen(): void
+    {
+        if (!$this->status->isClosed()) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new AttendeeSurveyReopened(
+                attendeeSurveyId: $this->id(),
+            ),
+        );
+    }
+
     public function applyAttendeeSurveyRegistered(AttendeeSurveyRegistered $event): void
     {
         $this->eventId = $event->eventId();
@@ -136,6 +149,16 @@ class AttendeeSurvey implements \Stringable
         $this->confidenceLevel = $event->confidenceLevel();
         $this->marginOfError = $event->marginOfError();
         $this->closedAt = $event->occurredOn();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyAttendeeSurveyReopened(AttendeeSurveyReopened $event): void
+    {
+        $this->status = AttendeeSurveyStatus::Open;
+        $this->realAttendees = null;
+        $this->confidenceLevel = null;
+        $this->marginOfError = null;
+        $this->closedAt = null;
         $this->updatedAt = $event->occurredOn();
     }
 

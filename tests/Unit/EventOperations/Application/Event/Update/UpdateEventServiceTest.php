@@ -8,6 +8,7 @@ use App\EventOperations\Application\Event\EventAuthorizer;
 use App\EventOperations\Application\Event\Update\UpdateEventRequest;
 use App\EventOperations\Application\Event\Update\UpdateEventService;
 use App\EventOperations\Domain\Model\Event\EventId;
+use App\EventOperations\Domain\Model\Event\EventLockedException;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\EventOperations\Domain\Model\Event\EventUpdated;
 use App\Security\Domain\Model\Account\AccountId;
@@ -56,6 +57,29 @@ class UpdateEventServiceTest extends TestCase
         $this->assertNotNull($lastEvent);
         $this->assertTrue($lastEvent instanceof EventUpdated);
         $this->assertEquals('Updated Name', $lastEvent->name());
+    }
+
+    public function testCannotUpdateWhenEventIsLocked(): void
+    {
+        $repository = EventRepositoryMother::inMemory();
+
+        $accountId = new AccountId('account-id-test');
+
+        $event = EventMother::fromNameAndAccountAndId('Event', 'account-id-test', (string) EventId::generate());
+        $event->lock();
+
+        $repository->add($event);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateEventRequest(
+            eventId: $event->id(),
+            name: 'Updated Name',
+        );
+
+        $this->expectException(EventLockedException::class);
+
+        $sut($request, UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $accountId));
     }
 
     private function createSUT(EventRepository $repository): UpdateEventService

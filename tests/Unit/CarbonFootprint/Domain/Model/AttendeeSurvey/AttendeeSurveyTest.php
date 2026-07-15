@@ -8,6 +8,7 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurvey;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyClosed;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRegistered;
+use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyReopened;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyStatus;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\ConfidenceLevel;
 use App\EventOperations\Domain\Model\Event\EventId;
@@ -74,6 +75,33 @@ class AttendeeSurveyTest extends TestCase
         $this->assertSame(150, $attendeeSurvey->realAttendees());
         $this->assertSame(ConfidenceLevel::NinetyFive, $attendeeSurvey->confidenceLevel());
         $this->assertSame(0.03, $attendeeSurvey->marginOfError());
+    }
+
+    public function testReopenTransitionsToOpenAndClearsClosureData(): void
+    {
+        $attendeeSurvey = $this->registeredAttendeeSurvey();
+        $attendeeSurvey->close(realAttendees: 120, confidenceLevel: ConfidenceLevel::Ninety, marginOfError: 0.05);
+
+        $attendeeSurvey->reopen();
+
+        $this->assertSame(AttendeeSurveyStatus::Open, $attendeeSurvey->status());
+        $this->assertFalse($attendeeSurvey->status()->isClosed());
+        $this->assertNull($attendeeSurvey->realAttendees());
+        $this->assertNull($attendeeSurvey->confidenceLevel());
+        $this->assertNull($attendeeSurvey->marginOfError());
+        $this->assertNull($attendeeSurvey->closedAt());
+        $this->assertEventPublished($attendeeSurvey, AttendeeSurveyReopened::class);
+    }
+
+    public function testReopeningANotClosedSurveyDoesNothing(): void
+    {
+        $attendeeSurvey = $this->registeredAttendeeSurvey();
+
+        $attendeeSurvey->reopen();
+
+        $this->assertSame(AttendeeSurveyStatus::Open, $attendeeSurvey->status());
+        $events = array_filter($attendeeSurvey->recordedEvents(), static fn($e) => $e instanceof AttendeeSurveyReopened);
+        $this->assertEmpty($events);
     }
 
     private function assertEventPublished(mixed $aggregate, string $eventClass): void

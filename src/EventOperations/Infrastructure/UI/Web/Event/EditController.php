@@ -64,18 +64,22 @@ class EditController extends AbstractController
         );
 
         try {
-            $form = $this->createForm(UpdateEventType::class, $eventRequest);
+            $form = $this->createForm(UpdateEventType::class, $eventRequest, [
+                'disabled' => $event->isLocked(),
+            ]);
 
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateEvent, $loggedUser): void {
-                $updateRequest = $form->getData();
+            if (!$event->isLocked()) {
+                $needsRedirect = $this->edit($request, $form, function ($form) use ($updateEvent, $loggedUser): void {
+                    $updateRequest = $form->getData();
 
-                $updateEvent($updateRequest, $loggedUser());
+                    $updateEvent($updateRequest, $loggedUser());
 
-                $this->addFlash('success', new TranslatableMessage('Evento actualizado con éxito'));
-            });
+                    $this->addFlash('success', new TranslatableMessage('Evento actualizado con éxito'));
+                });
 
-            if ($needsRedirect) {
-                return $this->redirectToRoute('events');
+                if ($needsRedirect) {
+                    return $this->redirectToRoute('events');
+                }
             }
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());

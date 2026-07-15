@@ -26,6 +26,7 @@
         <field name="accountId" type="account_id" column="account_id" nullable="true" />
 
         <field name="removed" type="boolean" nullable="true" />
+        <field name="locked" type="boolean" nullable="false" />
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
         <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true" />
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true" />

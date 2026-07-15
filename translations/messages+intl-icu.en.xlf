@@ -3893,6 +3893,10 @@
         <source>No se ha podido generar el informe de esta huella de carbono: {error}</source>
         <target>The report for this carbon footprint could not be generated: {error}</target>
       </trans-unit>
+      <trans-unit id="yVbKXKT" resname="La huella de carbono de este evento está completada: los datos solo se pueden consultar.">
+        <source>La huella de carbono de este evento está completada: los datos solo se pueden consultar.</source>
+        <target>This event's carbon footprint is completed: the data can only be viewed.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -11,6 +11,10 @@
     ~ event.name %}
 
 {% block content %}
+    {% if event.locked %}
+        <twig:Alert type="info">{{ 'La huella de carbono de este evento está completada: los datos solo se pueden consultar.' | trans }}</twig:Alert>
+    {% endif %}
+
     {{ form_start(form) }}
         {% include '@event_operations/events/_form.html.twig' %}
 
@@ -18,11 +22,16 @@
             <twig:CarbonFootprint:AttendeeSurveyQr eventId="{{ event.id }}" />
         </twig:Card>
 
-        <twig:Card>
-            <twig:ActionBar>
-                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
-                <twig:ActionBar:Button type="primary" :button="form.save" />
-            </twig:ActionBar>
-        </twig:Card>
+        {% if not event.locked %}
+            <twig:Card>
+                <twig:ActionBar>
+                    <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                    <twig:ActionBar:Button type="primary" :button="form.save" />
+                </twig:ActionBar>
+            </twig:Card>
+        {% else %}
+            {% do form.save.setRendered %}
+            {% do form.saveAndReturn.setRendered %}
+        {% endif %}
     {{ form_end(form) }}
 {% endblock %}
