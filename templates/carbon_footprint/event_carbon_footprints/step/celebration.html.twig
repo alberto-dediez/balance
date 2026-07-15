@@ -1,10 +1,13 @@
 {% extends '@carbon_footprint/event_carbon_footprints/wizard-layout.html.twig' %}
 
 {% set wizard_selected = 3 %}
+{% set readOnly = readOnly | default(false) %}
 
 {% block wizard_panels %}
+    {% if not readOnly %}
     <form method="post">
         <input type="hidden" name="_token" value="{{ csrf_token('celebration_' ~ eventCarbonFootprint.id) }}">
+    {% endif %}
 
         <twig:CarbonFootprint:CombustibleActivityTable
             title="{{ 'Instalaciones fijas (calderas, motores estacionarios, etc)' | trans }}"
@@ -13,6 +16,7 @@
             :items="combustibles"
             :units="units"
             :eventId="eventId"
+            :readOnly="readOnly"
         />
 
         <twig:CarbonFootprint:RoadTransportActivityTable
@@ -22,6 +26,7 @@
             :items="roadTransports"
             :units="units"
             :eventId="eventId"
+            :readOnly="readOnly"
         />
 
         <twig:CarbonFootprint:MachineryFuelActivityTable
@@ -31,6 +36,7 @@
             :items="machineryFuels"
             :units="units"
             :eventId="eventId"
+            :readOnly="readOnly"
         />
 
         <twig:CarbonFootprint:ElectricityActivityTable
@@ -41,6 +47,7 @@
             :gdOFactors="gdOFactors"
             :units="units"
             :eventId="eventId"
+            :readOnly="readOnly"
         />
 
         <twig:CarbonFootprint:ElectricityActivityTable
@@ -51,6 +58,7 @@
             :gdOFactors="gdOFactors"
             :units="units"
             :eventId="eventId"
+            :readOnly="readOnly"
         />
 
         <twig:CarbonFootprint:MobilityActivityTable
@@ -60,6 +68,7 @@
             :items="mobilities"
             :units="units"
             :eventId="eventId"
+            :readOnly="readOnly"
         />
 
         <twig:CarbonFootprint:OvernightStayActivityTable
@@ -69,6 +78,7 @@
             :items="overnightStays"
             :units="units"
             :eventId="eventId"
+            :readOnly="readOnly"
         />
 
         <twig:CarbonFootprint:MobilityActivityTable
@@ -78,6 +88,7 @@
             :items="mobilities"
             :units="units"
             :eventId="eventId"
+            :readOnly="readOnly"
         />
 
         <twig:CarbonFootprint:OvernightStayActivityTable
@@ -87,6 +98,7 @@
             :items="overnightStays"
             :units="units"
             :eventId="eventId"
+            :readOnly="readOnly"
         />
 
         <twig:CarbonFootprint:WasteActivityTable
@@ -96,8 +108,10 @@
             :items="wastes"
             :units="units"
             :eventId="eventId"
+            :readOnly="readOnly"
         />
 
+    {% if not readOnly %}
         <div class="d-flex justify-content-between mt-3">
             <a href="{{ path('events_carbon_footprint_assembly', {eventId: eventId}) }}" class="btn btn-outline-secondary">
                 &larr; {{ 'Anterior' | trans }}
@@ -107,4 +121,5 @@
             </button>
         </div>
     </form>
+    {% endif %}
 {% endblock %}

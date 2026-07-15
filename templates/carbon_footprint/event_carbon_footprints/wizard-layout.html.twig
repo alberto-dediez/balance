@@ -23,13 +23,14 @@
 {% set wizard_active = eventCarbonFootprint.status.activeStepNumber %}
 
 {% block content %}
+    {% set isCompleted = eventCarbonFootprint.status.isCompleted %}
     {% set wizard_steps = [
-        {label: 'Materiales' | trans, href: path('events_carbon_footprint_materials', {eventId: eventId})},
-        {label: 'Montaje'  | trans, href: path('events_carbon_footprint_assembly',  {eventId: eventId})},
-        {label: 'Celebracion' | trans, href: path('events_carbon_footprint_celebration', {eventId: eventId})},
-        {label: 'Desmontaje' | trans, href: path('events_carbon_footprint_breakdown', {eventId: eventId})},
-        {label: 'Proveedores' | trans, href: path('events_carbon_footprint_providers', {eventId: eventId})},
-        {label: 'Asistentes' | trans, href: path('events_carbon_footprint_attendees', {eventId: eventId})},
+        {label: 'Materiales' | trans, href: isCompleted ? path('events_carbon_footprint_results', {eventId: eventId, step: 'materials'}) : path('events_carbon_footprint_materials', {eventId: eventId})},
+        {label: 'Montaje'  | trans, href: isCompleted ? path('events_carbon_footprint_results', {eventId: eventId, step: 'assembly'}) : path('events_carbon_footprint_assembly',  {eventId: eventId})},
+        {label: 'Celebracion' | trans, href: isCompleted ? path('events_carbon_footprint_results', {eventId: eventId, step: 'celebration'}) : path('events_carbon_footprint_celebration', {eventId: eventId})},
+        {label: 'Desmontaje' | trans, href: isCompleted ? path('events_carbon_footprint_results', {eventId: eventId, step: 'breakdown'}) : path('events_carbon_footprint_breakdown', {eventId: eventId})},
+        {label: 'Proveedores' | trans, href: isCompleted ? path('events_carbon_footprint_results', {eventId: eventId, step: 'providers'}) : path('events_carbon_footprint_providers', {eventId: eventId})},
+        {label: 'Asistentes' | trans, href: isCompleted ? path('events_carbon_footprint_results', {eventId: eventId, step: 'attendees'}) : path('events_carbon_footprint_attendees', {eventId: eventId})},
         {label: 'Resultados'   | trans, href: path('events_carbon_footprint_results',   {eventId: eventId})},
     ] %}
     {{ parent() }}

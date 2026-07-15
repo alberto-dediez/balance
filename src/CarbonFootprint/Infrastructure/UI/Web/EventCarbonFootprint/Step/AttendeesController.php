@@ -46,6 +46,10 @@ class AttendeesController extends AbstractController
 
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $eventCarbonFootprint);
 
+        if ($eventCarbonFootprint->status()->isCompleted()) {
+            return $this->redirectToRoute('events_carbon_footprint_results', ['eventId' => $eventId, 'step' => 'attendees']);
+        }
+
         if (!$eventCarbonFootprint->status()->isProvidersAnswered()) {
             return $this->redirectToRoute('events_carbon_footprint_providers', ['eventId' => $eventId]);
         }

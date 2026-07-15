@@ -1,13 +1,15 @@
-{% props title, prefix, rows, marketers, gdOFactors, units, eventId %}
+{% props title, prefix, rows, marketers, gdOFactors, units, eventId, readOnly = false %}
 
 {% set proto %}{{ component('CarbonFootprint:ElectricityActivityRow', { prefix: prefix, index: '__name__', marketers: marketers, gdOFactors: gdOFactors, units: units }) }}{% endset %}
 
 <twig:Card :title="title">
     <div
+        {% if not readOnly %}
         data-controller="collection activity-emissions"
         data-collection-prototype-value="{{ proto | e('html_attr') }}"
         data-activity-emissions-url-value="{{ path('events_carbon_footprint_emissions_calculate', {eventId: eventId}) }}"
         data-activity-emissions-type-value="electricity"
+        {% endif %}
     >
         <div class="table-responsive overflow-visible">
             <table class="table align-middle">
@@ -30,17 +32,24 @@
                             :marketers="marketers"
                             :gdOFactors="gdOFactors"
                             :units="units"
+                            :readOnly="readOnly"
                         />
+                    {% else %}
+                        {% if readOnly %}
+                            <tr><td colspan="6" class="text-muted">{{ 'No hay actividades registradas.' | trans }}</td></tr>
+                        {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
         </div>
 
-        <div class="mt-2">
-            <button type="button" class="btn btn-outline-info" data-action="collection#add">
-                <twig:Icon name="solar:add-circle-outline" />
-                {{ 'Añadir' | trans }}
-            </button>
-        </div>
+        {% if not readOnly %}
+            <div class="mt-2">
+                <button type="button" class="btn btn-outline-info" data-action="collection#add">
+                    <twig:Icon name="solar:add-circle-outline" />
+                    {{ 'Añadir' | trans }}
+                </button>
+            </div>
+        {% endif %}
     </div>
 </twig:Card>

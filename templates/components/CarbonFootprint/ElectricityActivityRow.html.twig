@@ -1,5 +1,23 @@
-{% props prefix, index, marketers, gdOFactors, units, row = null %}
+{% props prefix, index, marketers, gdOFactors, units, row = null, readOnly = false %}
 
+{% if readOnly %}
+    {% set selectedMarketer = null %}
+    {% for marketer in marketers %}
+        {% if row and row.itemId == marketer.id ~ '' %}{% set selectedMarketer = marketer %}{% endif %}
+    {% endfor %}
+    {% set selectedGdOFactor = null %}
+    {% for gdOFactor in gdOFactors %}
+        {% if row and row.itemId2 == gdOFactor.id ~ '' %}{% set selectedGdOFactor = gdOFactor %}{% endif %}
+    {% endfor %}
+    <tr>
+        <td>{{ row and row.source ? row.source : '' }}</td>
+        <td>{{ selectedMarketer ? selectedMarketer.name : ('Sin especificar' | trans) }}</td>
+        <td>{{ selectedGdOFactor ? selectedGdOFactor.name : ('No' | trans) }}</td>
+        <td>{{ row ? row.quantity : '—' }} {{ row ? (row.unit | trans({}, 'unitType')) }}</td>
+        <td class="text-end text-nowrap">{{ row ? row.co2eq | number_format(2, ',', '.') : '—' }}</td>
+        <td></td>
+    </tr>
+{% else %}
 <tr class="collection-element">
     <td>
         <input type="text" name="{{ prefix }}[{{ index }}][source]" class="form-control" value="{{ row and row.source ? row.source : '' }}" data-field="source">
@@ -51,3 +69,4 @@
         </button>
     </td>
 </tr>
+{% endif %}

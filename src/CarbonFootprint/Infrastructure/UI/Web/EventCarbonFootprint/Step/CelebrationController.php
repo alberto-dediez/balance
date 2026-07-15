@@ -47,6 +47,10 @@ class CelebrationController extends AbstractController
 
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $eventCarbonFootprint);
 
+        if ($eventCarbonFootprint->status()->isCompleted()) {
+            return $this->redirectToRoute('events_carbon_footprint_results', ['eventId' => $eventId, 'step' => 'celebration']);
+        }
+
         if (!$eventCarbonFootprint->status()->isAssemblyAnswered()) {
             return $this->redirectToRoute('events_carbon_footprint_assembly', ['eventId' => $eventId]);
         }

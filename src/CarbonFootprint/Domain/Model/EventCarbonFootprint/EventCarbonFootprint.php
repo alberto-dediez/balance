@@ -143,6 +143,8 @@ class EventCarbonFootprint implements \Stringable
     public function update(
         DateRange $calculationPeriod,
     ): void {
+        $this->ensureIsEditable();
+
         $this->recordApplyAndPublish(
             new EventCarbonFootprintUpdated(
                 eventCarbonFootprintId: $this->id(),
@@ -184,6 +186,8 @@ class EventCarbonFootprint implements \Stringable
 
     public function answerMaterials(): void
     {
+        $this->ensureIsEditable();
+
         $this->recordApplyAndPublish(
             new EventCarbonFootprintMaterialsAnswered(
                 eventCarbonFootprintId: $this->id,
@@ -193,6 +197,8 @@ class EventCarbonFootprint implements \Stringable
 
     public function answerAssembly(): void
     {
+        $this->ensureIsEditable();
+
         $this->recordApplyAndPublish(
             new EventCarbonFootprintAssemblyAnswered(
                 eventCarbonFootprintId: $this->id,
@@ -202,6 +208,8 @@ class EventCarbonFootprint implements \Stringable
 
     public function answerCelebration(): void
     {
+        $this->ensureIsEditable();
+
         $this->recordApplyAndPublish(
             new EventCarbonFootprintCelebrationAnswered(
                 eventCarbonFootprintId: $this->id,
@@ -211,6 +219,8 @@ class EventCarbonFootprint implements \Stringable
 
     public function answerBreakdown(): void
     {
+        $this->ensureIsEditable();
+
         $this->recordApplyAndPublish(
             new EventCarbonFootprintBreakdownAnswered(
                 eventCarbonFootprintId: $this->id,
@@ -220,6 +230,8 @@ class EventCarbonFootprint implements \Stringable
 
     public function answerProviders(): void
     {
+        $this->ensureIsEditable();
+
         $this->recordApplyAndPublish(
             new EventCarbonFootprintProvidersAnswered(
                 eventCarbonFootprintId: $this->id,
@@ -229,8 +241,19 @@ class EventCarbonFootprint implements \Stringable
 
     public function answerAttendees(): void
     {
+        $this->ensureIsEditable();
+
         $this->recordApplyAndPublish(
             new EventCarbonFootprintAttendeesAnswered(
+                eventCarbonFootprintId: $this->id,
+            ),
+        );
+    }
+
+    public function reopen(): void
+    {
+        $this->recordApplyAndPublish(
+            new EventCarbonFootprintReopened(
                 eventCarbonFootprintId: $this->id,
             ),
         );
@@ -315,6 +338,14 @@ class EventCarbonFootprint implements \Stringable
         $this->updatedAt = $event->occurredOn();
     }
 
+    public function applyEventCarbonFootprintReopened(EventCarbonFootprintReopened $event): void
+    {
+        $this->status = EventCarbonFootprintStatus::Started;
+        $this->totalEmissions = new Emissions();
+        $this->emissionsPerAttendee = new Emissions();
+        $this->updatedAt = $event->occurredOn();
+    }
+
     public function applyEventCarbonFootprintCompleted(EventCarbonFootprintCompleted $event): void
     {
         $this->status = EventCarbonFootprintStatus::Completed;
@@ -331,6 +362,8 @@ class EventCarbonFootprint implements \Stringable
 
     public function addActivity(ActivityId $activityId, Phase $phase, Source $source, ?ProviderId $providerId = null): void
     {
+        $this->ensureIsEditable();
+
         foreach ($this->activities as $activity) {
             if ($activity->activityId()->equals($activityId)) {
                 return;
@@ -350,6 +383,8 @@ class EventCarbonFootprint implements \Stringable
 
     public function removeActivity(ActivityId $activityId): void
     {
+        $this->ensureIsEditable();
+
         $this->recordApplyAndPublish(
             new EventCarbonFootprintActivityRemoved(
                 eventCarbonFootprintId: $this->id,
@@ -401,5 +436,12 @@ class EventCarbonFootprint implements \Stringable
     public function __toString(): string
     {
         return (string) $this->id;
+    }
+
+    private function ensureIsEditable(): void
+    {
+        if (EventCarbonFootprintStatus::Completed === $this->status) {
+            throw new EventCarbonFootprintAlreadyCompletedException('EventCarbonFootprint is completed and can no longer be edited');
+        }
     }
 }

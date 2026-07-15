@@ -47,6 +47,10 @@ class BreakdownController extends AbstractController
 
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $eventCarbonFootprint);
 
+        if ($eventCarbonFootprint->status()->isCompleted()) {
+            return $this->redirectToRoute('events_carbon_footprint_results', ['eventId' => $eventId, 'step' => 'breakdown']);
+        }
+
         if (!$eventCarbonFootprint->status()->isCelebrationAnswered()) {
             return $this->redirectToRoute('events_carbon_footprint_celebration', ['eventId' => $eventId]);
         }

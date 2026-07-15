@@ -3861,6 +3861,38 @@
         <source>Planificación</source>
         <target>Planning</target>
       </trans-unit>
+      <trans-unit id="w9myJdp" resname="No se ha podido reabrir el cálculo: {error}">
+        <source>No se ha podido reabrir el cálculo: {error}</source>
+        <target>The calculation could not be reopened: {error}</target>
+      </trans-unit>
+      <trans-unit id="4h.kz7t" resname="El cálculo de la huella de carbono se ha reabierto y el informe generado se ha eliminado.">
+        <source>El cálculo de la huella de carbono se ha reabierto y el informe generado se ha eliminado.</source>
+        <target>The carbon footprint calculation has been reopened and the generated report has been deleted.</target>
+      </trans-unit>
+      <trans-unit id="D6pMbzm" resname="No hay actividades registradas.">
+        <source>No hay actividades registradas.</source>
+        <target>There are no registered activities.</target>
+      </trans-unit>
+      <trans-unit id="ACwZetq" resname="Al reabrir el cálculo podrás volver a editar todas las fases. Se conservarán los datos introducidos, pero se eliminará el informe generado.">
+        <source>Al reabrir el cálculo podrás volver a editar todas las fases. Se conservarán los datos introducidos, pero se eliminará el informe generado.</source>
+        <target>Reopening the calculation will let you edit every phase again. The data you entered will be kept, but the generated report will be deleted.</target>
+      </trans-unit>
+      <trans-unit id="G4krzos" resname="¿Seguro que quieres reabrir el cálculo? Se eliminará el informe generado.">
+        <source>¿Seguro que quieres reabrir el cálculo? Se eliminará el informe generado.</source>
+        <target>Are you sure you want to reopen the calculation? The generated report will be deleted.</target>
+      </trans-unit>
+      <trans-unit id="ZaU_R7R" resname="Reabrir cálculo">
+        <source>Reabrir cálculo</source>
+        <target>Reopen calculation</target>
+      </trans-unit>
+      <trans-unit id="o0Q3BwP" resname="Se está generando un informe sobre esta huella de carbono, te notificaremos cuando esté disponible.">
+        <source>Se está generando un informe sobre esta huella de carbono, te notificaremos cuando esté disponible.</source>
+        <target>A report on this carbon footprint is being generated; we will notify you when it is available.</target>
+      </trans-unit>
+      <trans-unit id="VjYohef" resname="No se ha podido generar el informe de esta huella de carbono: {error}">
+        <source>No se ha podido generar el informe de esta huella de carbono: {error}</source>
+        <target>The report for this carbon footprint could not be generated: {error}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

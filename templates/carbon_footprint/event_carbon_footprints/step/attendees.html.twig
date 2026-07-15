@@ -1,15 +1,18 @@
 {% extends '@carbon_footprint/event_carbon_footprints/wizard-layout.html.twig' %}
 
 {% set wizard_selected = 6 %}
+{% set readOnly = readOnly | default(false) %}
 
 {% block wizard_panels %}
 
     <twig:Card title="{{ 'Encuesta de asistentes' | trans }}">
-        <p class="text-muted">
-            {{ 'Comparte el enlace de la encuesta pública con los asistentes para recoger su movilidad y pernoctaciones. Cuando dispongas de suficientes respuestas, cierra la encuesta indicando el número real de asistentes.' | trans }}
-        </p>
+        {% if not readOnly %}
+            <p class="text-muted">
+                {{ 'Comparte el enlace de la encuesta pública con los asistentes para recoger su movilidad y pernoctaciones. Cuando dispongas de suficientes respuestas, cierra la encuesta indicando el número real de asistentes.' | trans }}
+            </p>
 
-        <twig:CarbonFootprint:AttendeeSurveyQr eventId="{{ eventId }}" />
+            <twig:CarbonFootprint:AttendeeSurveyQr eventId="{{ eventId }}" />
+        {% endif %}
 
         <dl class="row mt-3">
             <dt class="col-sm-4">{{ 'Respuestas recibidas' | trans }}</dt>
@@ -50,6 +53,7 @@
         </twig:Card>
     {% endif %}
 
+    {% if not readOnly %}
     <twig:Card title="{{ attendeeSurvey.status.isClosed ? ('Volver a cerrar la encuesta' | trans) : ('Cerrar la encuesta' | trans) }}">
         <form method="post">
             <input type="hidden" name="_token" value="{{ csrf_token('attendees_' ~ eventCarbonFootprint.id) }}">
@@ -88,4 +92,5 @@
             </div>
         </form>
     </twig:Card>
+    {% endif %}
 {% endblock %}

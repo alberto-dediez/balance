@@ -71,14 +71,14 @@ class GetOwnerDashboardServiceTest extends TestCase
                 endDate: new \DateTimeImmutable('2026-05-03'),
             ),
         );
+        $activity = MaterialActivityMother::registered();
+        $activityRepository->save($activity);
+        $completedFootprint->addActivity($activity->id(), Phase::Materials, Source::Materials);
+
         $completedFootprint->complete(
             totalEmissions: new Emissions(co2eq: '1000'),
             emissionsPerAttendee: new Emissions(co2eq: '10'),
         );
-
-        $activity = MaterialActivityMother::registered();
-        $activityRepository->save($activity);
-        $completedFootprint->addActivity($activity->id(), Phase::Materials, Source::Materials);
 
         $footprintRepository->add($completedFootprint);
 

@@ -1,17 +1,22 @@
 {% extends '@carbon_footprint/event_carbon_footprints/wizard-layout.html.twig' %}
 
 {% set wizard_selected = 5 %}
+{% set readOnly = readOnly | default(false) %}
 
 {% block wizard_panels %}
 
+    {% if not readOnly %}
     <form method="post" name="providers">
+    {% endif %}
 
         <twig:Card title="{{ 'Proveedores' | trans }}">
-            <p class="text-muted">
-                {{ 'Selecciona los proveedores que deben aportar sus propios datos de emisiones (combustible, maquinaria, pernoctación y movilidad). El enlace se enviará al email de contacto del proveedor.' | trans }}
-            </p>
+            {% if not readOnly %}
+                <p class="text-muted">
+                    {{ 'Selecciona los proveedores que deben aportar sus propios datos de emisiones (combustible, maquinaria, pernoctación y movilidad). El enlace se enviará al email de contacto del proveedor.' | trans }}
+                </p>
 
-            <input type="hidden" name="_token" value="{{ csrf_token('providers_' ~ eventCarbonFootprint.id) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('providers_' ~ eventCarbonFootprint.id) }}">
+            {% endif %}
 
             <div class="table-responsive">
                 <table class="table align-middle">
@@ -27,7 +32,13 @@
                             {% set isAssigned = assignedProviderIds[provider.id ~ ''] is defined %}
                             <tr>
                                 <td>
-                                    <input type="checkbox" class="form-check-input" name="providers[providerIds][]" value="{{ provider.id }}" {{ isAssigned ? 'checked' : '' }}>
+                                    {% if readOnly %}
+                                        {% if isAssigned %}
+                                            <twig:Icon name="solar:check-circle-bold" class="text-success" />
+                                        {% endif %}
+                                    {% else %}
+                                        <input type="checkbox" class="form-check-input" name="providers[providerIds][]" value="{{ provider.id }}" {{ isAssigned ? 'checked' : '' }}>
+                                    {% endif %}
                                 </td>
                                 <td>{{ provider.name }}</td>
                                 <td>{{ provider.contact.email }}</td>
@@ -72,17 +83,19 @@
                                     {{ 'Ver' | trans }}
                                 </a>
 
-                                {% if not contribution.status.isIgnored %}
-                                    <a href="{{ path('events_carbon_footprint_provider_contribution_resend', {eventId: eventId, providerContributionId: contribution.id, _token: csrf_token('provider_contribution_resend_' ~ contribution.id)}) }}" class="btn btn-sm btn-outline-secondary">
-                                        {{ 'Reenviar' | trans }}
-                                    </a>
-                                    <a href="{{ path('events_carbon_footprint_provider_contribution_ignore', {eventId: eventId, providerContributionId: contribution.id, _token: csrf_token('provider_contribution_ignore_' ~ contribution.id)}) }}" class="btn btn-sm btn-outline-danger">
-                                        {{ 'Descartar' | trans }}
-                                    </a>
-                                {% else %}
-                                    <a href="{{ path('events_carbon_footprint_provider_contribution_unignore', {eventId: eventId, providerContributionId: contribution.id, _token: csrf_token('provider_contribution_unignore_' ~ contribution.id)}) }}" class="btn btn-sm btn-outline-secondary">
-                                        {{ 'Reactivar' | trans }}
-                                    </a>
+                                {% if not readOnly %}
+                                    {% if not contribution.status.isIgnored %}
+                                        <a href="{{ path('events_carbon_footprint_provider_contribution_resend', {eventId: eventId, providerContributionId: contribution.id, _token: csrf_token('provider_contribution_resend_' ~ contribution.id)}) }}" class="btn btn-sm btn-outline-secondary">
+                                            {{ 'Reenviar' | trans }}
+                                        </a>
+                                        <a href="{{ path('events_carbon_footprint_provider_contribution_ignore', {eventId: eventId, providerContributionId: contribution.id, _token: csrf_token('provider_contribution_ignore_' ~ contribution.id)}) }}" class="btn btn-sm btn-outline-danger">
+                                            {{ 'Descartar' | trans }}
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ path('events_carbon_footprint_provider_contribution_unignore', {eventId: eventId, providerContributionId: contribution.id, _token: csrf_token('provider_contribution_unignore_' ~ contribution.id)}) }}" class="btn btn-sm btn-outline-secondary">
+                                            {{ 'Reactivar' | trans }}
+                                        </a>
+                                    {% endif %}
                                 {% endif %}
                             </td>
                         </tr>
@@ -96,6 +109,7 @@
             </div>
         </twig:Card>
 
+    {% if not readOnly %}
         <div class="d-flex justify-content-between mt-3">
             <a href="{{ path('events_carbon_footprint_breakdown', {eventId: eventId}) }}" class="btn btn-outline-secondary">
                 &larr; {{ 'Anterior' | trans }}
@@ -105,4 +119,5 @@
             </button>
         </div>
     </form>
+    {% endif %}
 {% endblock %}

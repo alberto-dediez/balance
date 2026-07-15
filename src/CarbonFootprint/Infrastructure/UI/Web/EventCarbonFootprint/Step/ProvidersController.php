@@ -7,12 +7,9 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step;
 use App\CarbonFootprint\Application\ProviderContribution\AssignProviders\AssignedProvider;
 use App\CarbonFootprint\Application\ProviderContribution\AssignProviders\AssignProvidersRequest;
 use App\CarbonFootprint\Application\ProviderContribution\AssignProviders\AssignProvidersService;
-use App\CarbonFootprint\Application\ProviderContribution\List\ListProviderContributionsRequest;
-use App\CarbonFootprint\Application\ProviderContribution\List\ListProviderContributionsService;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\GetEventCarbonFootprintFromEventIdTrait;
-use App\EventOperations\Application\Provider\List\ListProvidersRequest;
-use App\EventOperations\Application\Provider\List\ListProvidersService;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\ProvidersStepView;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
@@ -34,9 +31,8 @@ class ProvidersController extends AbstractController
         string $eventId,
         EventRepository $eventRepository,
         EventCarbonFootprintRepository $eventCarbonFootprintRepository,
-        ListProvidersService $listProviders,
-        ListProviderContributionsService $listProviderContributions,
         AssignProvidersService $assignProviders,
+        ProvidersStepView $stepView,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -46,6 +42,10 @@ class ProvidersController extends AbstractController
         $eventCarbonFootprint = $this->getEventCarbonFootprintFromEventId($eventId, $eventCarbonFootprintRepository);
 
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $eventCarbonFootprint);
+
+        if ($eventCarbonFootprint->status()->isCompleted()) {
+            return $this->redirectToRoute('events_carbon_footprint_results', ['eventId' => $eventId, 'step' => 'providers']);
+        }
 
         if (!$eventCarbonFootprint->status()->isBreakdownAnswered()) {
             return $this->redirectToRoute('events_carbon_footprint_breakdown', ['eventId' => $eventId]);
@@ -83,37 +83,9 @@ class ProvidersController extends AbstractController
             return $this->redirectToRoute('events_carbon_footprint_attendees', ['eventId' => $eventId]);
         }
 
-        $accountId = $eventCarbonFootprint->accountId();
-
-        $providersResponse = $listProviders(new ListProvidersRequest(accountId: $accountId, limit: 0), $loggedUser());
-        $contributionsResponse = $listProviderContributions(new ListProviderContributionsRequest($eventCarbonFootprint->id()), $loggedUser());
-
-        $assignedProviderIds = [];
-        foreach ($contributionsResponse->providerContributions as $contribution) {
-            if ($contribution->status()->isIgnored()) {
-                continue;
-            }
-
-            $providerId = $contribution->providerId();
-
-            if (null !== $providerId) {
-                $assignedProviderIds[(string) $providerId] = true;
-            }
-        }
-
-        $providersById = [];
-        foreach ($providersResponse->providers as $provider) {
-            $providersById[(string) $provider->id()] = $provider;
-        }
-
-        return $this->render('@carbon_footprint/event_carbon_footprints/step/providers.html.twig', [
-            'event' => $event,
-            'eventId' => $eventId,
-            'eventCarbonFootprint' => $eventCarbonFootprint,
-            'providers' => $providersResponse->providers,
-            'assignedProviderIds' => $assignedProviderIds,
-            'contributions' => $contributionsResponse->providerContributions,
-            'providersById' => $providersById,
-        ]);
+        return $this->render(
+            '@carbon_footprint/event_carbon_footprints/step/providers.html.twig',
+            $stepView->build($eventCarbonFootprint, $loggedUser()) + ['event' => $event, 'eventId' => $eventId],
+        );
     }
 }

@@ -1,5 +1,24 @@
-{% props prefix, index, items, units, row = null %}
+{% props prefix, index, items, units, row = null, readOnly = false %}
 
+{% if readOnly %}
+    {% set selectedItem = null %}
+    {% for item in items %}
+        {% if row and row.itemId == item.id ~ '' %}{% set selectedItem = item %}{% endif %}
+    {% endfor %}
+    <tr>
+        <td>{{ row and row.source ? row.source : '' }}</td>
+        <td>{{ selectedItem ? selectedItem.name : '—' }}</td>
+        <td>
+            {% if row and row.containerCapacity is not null %}
+                {{ row.containerCapacity }} {{ row.containerUnit | trans({}, 'unitType') }} × {{ row.fillPercentage is not null ? row.fillPercentage : 100 }}%
+            {% else %}
+                {{ row ? row.quantity : '—' }} {{ row ? (row.unit | trans({}, 'unitType')) }}
+            {% endif %}
+        </td>
+        <td class="text-end text-nowrap">{{ row ? row.co2eq | number_format(2, ',', '.') : '—' }}</td>
+        <td></td>
+    </tr>
+{% else %}
 <tr class="collection-element">
     <td>
         <input type="text" name="{{ prefix }}[{{ index }}][source]" class="form-control" value="{{ row and row.source ? row.source : '' }}" data-field="source">
@@ -79,3 +98,4 @@
         </button>
     </td>
 </tr>
+{% endif %}

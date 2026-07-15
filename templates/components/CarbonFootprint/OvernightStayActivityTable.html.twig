@@ -1,13 +1,15 @@
-{% props title, prefix, rows, items, units, eventId = null, calculateUrl = null %}
+{% props title, prefix, rows, items, units, eventId = null, calculateUrl = null, readOnly = false %}
 
 {% set proto %}{{ component('CarbonFootprint:OvernightStayActivityRow', { prefix: prefix, index: '__name__', items: items, units: units }) }}{% endset %}
 
 <twig:Card :title="title">
     <div
+        {% if not readOnly %}
         data-controller="collection activity-emissions"
         data-collection-prototype-value="{{ proto | e('html_attr') }}"
         data-activity-emissions-url-value="{{ calculateUrl ?? path('events_carbon_footprint_emissions_calculate', {eventId: eventId}) }}"
         data-activity-emissions-type-value="overnight_stay"
+        {% endif %}
     >
         <div class="table-responsive overflow-visible">
             <table class="table align-middle">
@@ -28,18 +30,25 @@
                             :row="row"
                             :items="items"
                             :units="units"
+                            :readOnly="readOnly"
                         />
+                    {% else %}
+                        {% if readOnly %}
+                            <tr><td colspan="5" class="text-muted">{{ 'No hay actividades registradas.' | trans }}</td></tr>
+                        {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
         </div>
 
-        <div class="mt-2">
-            <button type="button" class="btn btn-outline-info" data-action="collection#add">
-                <twig:Icon name="solar:add-circle-outline" />
-                {{ 'Añadir' | trans }}
-            </button>
-        </div>
+        {% if not readOnly %}
+            <div class="mt-2">
+                <button type="button" class="btn btn-outline-info" data-action="collection#add">
+                    <twig:Icon name="solar:add-circle-outline" />
+                    {{ 'Añadir' | trans }}
+                </button>
+            </div>
+        {% endif %}
     </div>
     <div class="mt-3">
         <small class="text-muted">{% trans %}Indicar la totalidad de noches que pernocta cada grupo, es decir, el sumatorio de total. Por ejemplo, si tengo 5 proveedores y cada uno duerme dos noches, indicar 10 noches{% endtrans %}</small>

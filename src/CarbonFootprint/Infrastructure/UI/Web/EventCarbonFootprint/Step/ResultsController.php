@@ -6,17 +6,28 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step;
 
 use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveyStatsRequest;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveyStatsService;
+use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseRequest;
+use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetResults\GetResultsRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetResults\GetResultsService;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportRepository;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\GetEventCarbonFootprintFromEventIdTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\AssemblyBreakdownStepView;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\CelebrationStepView;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\MaterialsStepView;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\ProvidersStepView;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\ResultsView;
+use App\EventOperations\Domain\Model\Event\Event;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\Security\Application\Action as SecurityAction;
+use App\Security\Domain\Model\User\User;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -30,10 +41,16 @@ class ResultsController extends AbstractController
         EventRepository $eventRepository,
         EventCarbonFootprintRepository $eventCarbonFootprintRepository,
         GetResultsService $getResultsService,
+        GetPhaseService $getPhase,
         GetAttendeeSurveyStatsService $getAttendeeSurveyStatsService,
         EventCarbonFootprintReportRepository $reportRepository,
+        MaterialsStepView $materialsStepView,
+        AssemblyBreakdownStepView $assemblyBreakdownStepView,
+        CelebrationStepView $celebrationStepView,
+        ProvidersStepView $providersStepView,
         ResultsView $resultsView,
         LoggedUser $loggedUser,
+        Request $request,
     ): Response {
         $event = $eventRepository->find(new EventId($eventId))
             ?? throw $this->createNotFoundException('Evento no encontrado');
@@ -57,6 +74,45 @@ class ResultsController extends AbstractController
 
         $user = $loggedUser->__invoke();
 
+        $step = $request->query->getString('step');
+
+        $phaseByStep = [
+            'materials' => Phase::Materials,
+            'assembly' => Phase::Assembly,
+            'celebration' => Phase::Celebration,
+            'breakdown' => Phase::Breakdown,
+        ];
+
+        if (isset($phaseByStep[$step])) {
+            $phaseResponse = $getPhase(new GetPhaseRequest($eventCarbonFootprint->id(), $phaseByStep[$step]), $user);
+
+            $stepView = match ($step) {
+                'materials' => $materialsStepView,
+                'celebration' => $celebrationStepView,
+                default => $assemblyBreakdownStepView,
+            };
+
+            return $this->render(
+                sprintf('@carbon_footprint/event_carbon_footprints/step/%s.html.twig', $step),
+                $stepView->build($eventCarbonFootprint, $phaseResponse) + ['event' => $event, 'eventId' => $eventId, 'readOnly' => true],
+            );
+        }
+
+        if ('providers' === $step) {
+            return $this->render(
+                '@carbon_footprint/event_carbon_footprints/step/providers.html.twig',
+                $providersStepView->build($eventCarbonFootprint, $user) + ['event' => $event, 'eventId' => $eventId, 'readOnly' => true],
+            );
+        }
+
+        if ('attendees' === $step) {
+            $attendeesPanel = $this->renderAttendeesPanel($event, $eventCarbonFootprint, $getAttendeeSurveyStatsService, $user, $eventId);
+
+            if (null !== $attendeesPanel) {
+                return $attendeesPanel;
+            }
+        }
+
         $results = $getResultsService(new GetResultsRequest($eventCarbonFootprint->id()), $user);
 
         $surveyStats = null;
@@ -74,5 +130,30 @@ class ResultsController extends AbstractController
                 'report' => $report,
             ],
         ));
+    }
+
+    private function renderAttendeesPanel(
+        Event $event,
+        EventCarbonFootprint $eventCarbonFootprint,
+        GetAttendeeSurveyStatsService $getAttendeeSurveyStatsService,
+        User $user,
+        string $eventId,
+    ): ?Response {
+        try {
+            $stats = $getAttendeeSurveyStatsService(new GetAttendeeSurveyStatsRequest($eventCarbonFootprint->id()), $user);
+        } catch (\InvalidArgumentException) {
+            return null;
+        }
+
+        return $this->render('@carbon_footprint/event_carbon_footprints/step/attendees.html.twig', [
+            'event' => $event,
+            'eventId' => $eventId,
+            'eventCarbonFootprint' => $eventCarbonFootprint,
+            'attendeeSurvey' => $stats->attendeeSurvey,
+            'responsesCount' => $stats->responsesCount,
+            'estimatedAttendees' => $stats->estimatedAttendees,
+            'surveyedPercentage' => $stats->surveyedPercentage,
+            'readOnly' => true,
+        ]);
     }
 }

@@ -93,6 +93,22 @@
                     </twig:Card>
                 {% endif %}
 
+                {% if eventCarbonFootprint | is_authorized('edit') %}
+                    <twig:Card title="{{ 'Reabrir cálculo' | trans }}">
+                        <p class="text-muted">
+                            {{ 'Al reabrir el cálculo podrás volver a editar todas las fases. Se conservarán los datos introducidos, pero se eliminará el informe generado.' | trans }}
+                        </p>
+
+                        <form method="post" action="{{ path('events_carbon_footprint_reopen', {eventId: eventId}) }}" onsubmit="return confirm('{{ '¿Seguro que quieres reabrir el cálculo? Se eliminará el informe generado.' | trans | e('js') }}');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('reopen_' ~ eventCarbonFootprint.id) }}">
+                            <button type="submit" class="btn btn-outline-danger">
+                                <twig:Icon name="solar:restart-line-duotone" />
+                                {{ 'Reabrir cálculo' | trans }}
+                            </button>
+                        </form>
+                    </twig:Card>
+                {% endif %}
+
                 <twig:Card title="{{ 'Desglose por fase' | trans }}">
                     <div class="table-responsive">
                         <table class="table table-striped">

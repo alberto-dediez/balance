@@ -47,6 +47,10 @@ class MaterialsController extends AbstractController
 
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $eventCarbonFootprint);
 
+        if ($eventCarbonFootprint->status()->isCompleted()) {
+            return $this->redirectToRoute('events_carbon_footprint_results', ['eventId' => $eventId, 'step' => 'materials']);
+        }
+
         if ($request->isMethod('POST')) {
             if (!$this->isCsrfTokenValid('materials_' . $eventCarbonFootprint->id(), $request->request->getString('_token'))) {
                 throw $this->createAccessDeniedException('Token CSRF no válido');

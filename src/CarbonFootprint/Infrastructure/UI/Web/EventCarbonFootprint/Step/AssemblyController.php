@@ -47,6 +47,10 @@ class AssemblyController extends AbstractController
 
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $eventCarbonFootprint);
 
+        if ($eventCarbonFootprint->status()->isCompleted()) {
+            return $this->redirectToRoute('events_carbon_footprint_results', ['eventId' => $eventId, 'step' => 'assembly']);
+        }
+
         if (!$eventCarbonFootprint->status()->isMaterialsAnswered()) {
             return $this->redirectToRoute('events_carbon_footprint_materials', ['eventId' => $eventId]);
         }

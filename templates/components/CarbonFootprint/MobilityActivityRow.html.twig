@@ -1,5 +1,17 @@
-{% props prefix, index, items, units, row = null %}
+{% props prefix, index, items, units, row = null, readOnly = false %}
 
+{% if readOnly %}
+    {% set selectedItem = null %}
+    {% for item in items %}
+        {% if row and row.itemId == item.id ~ '' %}{% set selectedItem = item %}{% endif %}
+    {% endfor %}
+    <tr>
+        <td>{{ selectedItem ? selectedItem.name : '—' }}</td>
+        <td>{{ row ? row.quantity : '—' }} {{ row ? (row.unit | trans({}, 'unitType')) }}</td>
+        <td class="text-end text-nowrap">{{ row ? row.co2eq | number_format(2, ',', '.') : '—' }}</td>
+        <td></td>
+    </tr>
+{% else %}
 <tr class="collection-element">
     <td>
         <input type="hidden" name="{{ prefix }}[{{ index }}][activityId]" value="{{ row ? row.activityId : '' }}">
@@ -38,3 +50,4 @@
         </button>
     </td>
 </tr>
+{% endif %}

@@ -1,10 +1,13 @@
 {% extends '@carbon_footprint/event_carbon_footprints/wizard-layout.html.twig' %}
 
 {% set wizard_selected = 1 %}
+{% set readOnly = readOnly | default(false) %}
 
 {% block wizard_panels %}
+    {% if not readOnly %}
     <form method="post">
         <input type="hidden" name="_token" value="{{ csrf_token('materials_' ~ eventCarbonFootprint.id) }}">
+    {% endif %}
 
         <twig:CarbonFootprint:MaterialActivityTable
             title="{{ 'Materiales fabricados y utilizados para el evento' | trans }}"
@@ -13,6 +16,7 @@
             :items="materials"
             :units="units"
             :eventId="eventId"
+            :readOnly="readOnly"
         />
 
         <twig:CarbonFootprint:MerchandisingItemActivityTable
@@ -22,6 +26,7 @@
             :items="merchandisingItems"
             :units="units"
             :eventId="eventId"
+            :readOnly="readOnly"
         />
 
         <twig:CarbonFootprint:CateringItemActivityTable
@@ -31,12 +36,15 @@
             :items="cateringItems"
             :units="units"
             :eventId="eventId"
+            :readOnly="readOnly"
         />
 
+    {% if not readOnly %}
         <div class="d-flex justify-content-end mt-3">
             <button type="submit" class="btn btn-primary">
                 {{ 'Siguiente' | trans }} &rarr;
             </button>
         </div>
     </form>
+    {% endif %}
 {% endblock %}
