@@ -9,7 +9,7 @@ use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuel;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelId;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorGroupChoiceType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MachineryFuelChoiceType;
-use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MachineryFuelMachineryTypeType;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MachineryTypeCodeType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\UnitCodeType;
 use App\DataExchange\Application\Importation\Execute\Extractor\AssignValueExtractor;
 use App\DataExchange\Application\Importation\Execute\Extractor\DirectExtractor;
@@ -68,7 +68,7 @@ class MachineryFuelImportationType implements ImportationType
         return [
             'machinery_fuel' => new FieldDefinition(fieldType: MachineryFuelChoiceType::class),
             'unit' => new FieldDefinition(fieldType: UnitCodeType::class),
-            'machinery_type' => new FieldDefinition(fieldType: MachineryFuelMachineryTypeType::class),
+            'machinery_type' => new FieldDefinition(fieldType: MachineryTypeCodeType::class),
             'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
@@ -79,7 +79,7 @@ class MachineryFuelImportationType implements ImportationType
             'machinery_fuel' => new FieldDefinition(fieldType: MachineryFuelChoiceType::class),
             'name' => new FieldDefinition(fieldType: TextType::class),
             'unit' => new FieldDefinition(fieldType: UnitCodeType::class),
-            'machinery_type' => new FieldDefinition(fieldType: MachineryFuelMachineryTypeType::class),
+            'machinery_type' => new FieldDefinition(fieldType: MachineryTypeCodeType::class),
             'year' => new FieldDefinition(fieldType: TextType::class),
             'co2eq' => new FieldDefinition(fieldType: TextType::class),
             'co2' => new FieldDefinition(fieldType: TextType::class),
