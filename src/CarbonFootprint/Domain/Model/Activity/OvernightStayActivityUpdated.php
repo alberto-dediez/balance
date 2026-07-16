@@ -25,6 +25,8 @@ final class OvernightStayActivityUpdated extends DomainEvent
         private Emissions $emissions,
         private Quantity $quantity,
         private ?string $source = null,
+        private ?int $nights = null,
+        private ?int $people = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -61,6 +63,16 @@ final class OvernightStayActivityUpdated extends DomainEvent
         return $this->source;
     }
 
+    public function nights(): ?int
+    {
+        return $this->nights;
+    }
+
+    public function people(): ?int
+    {
+        return $this->people;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->activityId;
@@ -86,6 +98,8 @@ final class OvernightStayActivityUpdated extends DomainEvent
             'quantityValue' => $this->quantity->value(),
             'quantityUnit' => $this->quantity->unit()->value,
             'source' => $this->source,
+            'nights' => $this->nights,
+            'people' => $this->people,
         ];
     }
 
@@ -121,6 +135,8 @@ final class OvernightStayActivityUpdated extends DomainEvent
             ),
             quantity: new Quantity((float) $payload['quantityValue'], $quantityUnit),
             source: $payload['source'] ?? null,
+            nights: null !== ($payload['nights'] ?? null) ? (int) $payload['nights'] : null,
+            people: null !== ($payload['people'] ?? null) ? (int) $payload['people'] : null,
             id: $id,
             occurredOn: $occurredOn,
         );

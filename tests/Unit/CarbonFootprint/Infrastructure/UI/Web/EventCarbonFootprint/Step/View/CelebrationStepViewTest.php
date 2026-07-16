@@ -24,6 +24,7 @@ use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\Was
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ElectricityActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\MachineryFuelActivityMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\OvernightStayActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorMother;
@@ -162,12 +163,44 @@ class CelebrationStepViewTest extends TestCase
         $this->assertSame([$organizingTeam, $suppliers, $attendees], $view['overnightStays']);
     }
 
+    public function testOvernightStayRowsPrefillNightsAndPeopleWhenTheActivityHasNoBreakdown(): void
+    {
+        $activity = OvernightStayActivityMother::registered();
+
+        $view = $this->sut->build(
+            EventCarbonFootprintMother::registeredEventCarbonFootprint(),
+            $this->response(overnightStayActivities: [$activity]),
+        );
+
+        $row = $view['overnightStayRows'][0];
+        $this->assertInstanceOf(ActivityRowView::class, $row);
+        $this->assertSame((int) round($activity->quantity()->value()), $row->nights);
+        $this->assertSame(1, $row->people);
+    }
+
+    public function testOvernightStayRowsCarryNightsAndPeopleWhenTheActivityHasBreakdown(): void
+    {
+        $activity = OvernightStayActivityMother::registered(nights: 3, people: 4);
+
+        $view = $this->sut->build(
+            EventCarbonFootprintMother::registeredEventCarbonFootprint(),
+            $this->response(overnightStayActivities: [$activity]),
+        );
+
+        $row = $view['overnightStayRows'][0];
+        $this->assertInstanceOf(ActivityRowView::class, $row);
+        $this->assertSame(3, $row->nights);
+        $this->assertSame(4, $row->people);
+        $this->assertSame(12.0, $row->quantity);
+    }
+
     /**
      * @param list<Activity> $machineryFuelActivities
      * @param list<Activity> $machineryElectricityActivities
      * @param list<object>   $electricityCatalog
      * @param list<object>   $gdOFactorsCatalog
      * @param list<object>   $overnightStayCatalog
+     * @param list<Activity> $overnightStayActivities
      */
     private function response(
         array $machineryFuelActivities = [],
@@ -175,6 +208,7 @@ class CelebrationStepViewTest extends TestCase
         array $electricityCatalog = [],
         array $gdOFactorsCatalog = [],
         array $overnightStayCatalog = [],
+        array $overnightStayActivities = [],
     ): GetPhaseResponse {
         $sections = Phase::Celebration->sections();
 
@@ -184,7 +218,7 @@ class CelebrationStepViewTest extends TestCase
             new PhaseSection($sections[2], $machineryFuelActivities, []),
             new PhaseSection($sections[3], $machineryElectricityActivities, $electricityCatalog, $gdOFactorsCatalog),
             new PhaseSection($sections[4], [], $electricityCatalog, $gdOFactorsCatalog),
-            new PhaseSection($sections[5], [], $overnightStayCatalog),
+            new PhaseSection($sections[5], $overnightStayActivities, $overnightStayCatalog),
             new PhaseSection($sections[6], [], []),
             new PhaseSection($sections[7], [], []),
             new PhaseSection($sections[8], [], []),

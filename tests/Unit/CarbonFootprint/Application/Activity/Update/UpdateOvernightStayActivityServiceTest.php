@@ -60,6 +60,43 @@ class UpdateOvernightStayActivityServiceTest extends TestCase
         ), UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id')));
 
         $this->assertInstanceOf(OvernightStayActivityUpdated::class, $this->spySubscriber->lastEvent());
+        $this->assertNull($activity->nights());
+        $this->assertNull($activity->people());
+    }
+
+    public function testUseCaseWithNightsAndPeople(): void
+    {
+        $activity = OvernightStayActivityMother::registered();
+        $repository = ActivityRepositoryMother::inMemory();
+        $repository->save($activity);
+
+        DomainEventPublisher::instance()->reset();
+        $this->spySubscriber = new SpyDomainEventSubscriber();
+
+        $entity = OvernightStayMother::registeredOvernightStay();
+        $entity->setEmissionFactor(ActivityMother::emissionFactor()->withUnit(Unit::Pernoctacion));
+        $entityRepo = OvernightStayRepositoryMother::inMemory();
+        $entityRepo->add($entity);
+        $selector = new OvernightStayEmissionFactorSelector($entityRepo);
+        $sut = new UpdateOvernightStayActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+
+        $sut(new UpdateOvernightStayActivityRequest(
+            activityId: $activity->id(),
+            overnightStayId: $entity->id(),
+            quantity: ActivityMother::quantity(Unit::Pernoctacion, 8.0),
+            year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
+            nights: 4,
+            people: 2,
+        ), UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id')));
+
+        $this->assertSame(4, $activity->nights());
+        $this->assertSame(2, $activity->people());
+
+        $event = $this->spySubscriber->lastEvent();
+        $this->assertInstanceOf(OvernightStayActivityUpdated::class, $event);
+        $this->assertSame(4, $event->nights());
+        $this->assertSame(2, $event->people());
     }
 
     public function testUnauthorizedAccess(): void

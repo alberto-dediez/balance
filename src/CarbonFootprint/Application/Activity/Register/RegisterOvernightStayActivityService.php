@@ -46,6 +46,8 @@ class RegisterOvernightStayActivityService implements CommandHandler
             emissions: $emissions,
             quantity: $request->quantity,
             source: $request->source,
+            nights: $request->nights,
+            people: $request->people,
         );
 
         $this->activityRepository->save($activity);

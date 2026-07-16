@@ -12,15 +12,19 @@ use App\Security\Domain\Model\Account\AccountId;
 
 class OvernightStayActivityMother
 {
-    public static function registered(?AccountId $accountId = null): OvernightStayActivity
+    public static function registered(?AccountId $accountId = null, ?int $nights = null, ?int $people = null): OvernightStayActivity
     {
+        $quantity = null !== $nights && null !== $people ? (float) ($nights * $people) : 2.0;
+
         return OvernightStayActivity::register(
             id: ActivityId::generate(),
             accountId: $accountId ?? new AccountId('account-id'),
             overnightStayId: OvernightStayId::generate(),
             emissionFactor: ActivityMother::emissionFactor(),
             emissions: ActivityMother::emissions(),
-            quantity: ActivityMother::quantity(Unit::Pernoctacion, 2.0),
+            quantity: ActivityMother::quantity(Unit::Pernoctacion, $quantity),
+            nights: $nights,
+            people: $people,
         );
     }
 }

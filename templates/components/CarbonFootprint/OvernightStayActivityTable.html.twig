@@ -1,6 +1,6 @@
-{% props title, prefix, rows, items, units, eventId = null, calculateUrl = null, readOnly = false %}
+{% props title, prefix, rows, items, units, eventId = null, calculateUrl = null, readOnly = false, breakdown = true %}
 
-{% set proto %}{{ component('CarbonFootprint:OvernightStayActivityRow', { prefix: prefix, index: '__name__', items: items, units: units }) }}{% endset %}
+{% set proto %}{{ component('CarbonFootprint:OvernightStayActivityRow', { prefix: prefix, index: '__name__', items: items, units: units, breakdown: breakdown }) }}{% endset %}
 
 <twig:Card :title="title">
     <div
@@ -17,7 +17,13 @@
                     <tr>
                         <th class="col-2">{{ 'Fuente' | trans }}</th>
                         <th class="col-3">{{ 'Alojamiento' | trans }}</th>
-                        <th class="col-3">{{ 'Cantidad' | trans }}</th>
+                        {% if breakdown and not readOnly %}
+                            <th class="col-1">{{ 'Noches' | trans }}</th>
+                            <th class="col-1">{{ 'Personas' | trans }}</th>
+                            <th class="col-2">{{ 'Cantidad' | trans }}</th>
+                        {% else %}
+                            <th class="col-3">{{ 'Cantidad' | trans }}</th>
+                        {% endif %}
                         <th class="col-2 text-end">{{ 'Emisiones (kg CO₂eq)' | trans }}</th>
                         <th></th>
                     </tr>
@@ -31,6 +37,7 @@
                             :items="items"
                             :units="units"
                             :readOnly="readOnly"
+                            :breakdown="breakdown"
                         />
                     {% else %}
                         {% if readOnly %}
@@ -49,8 +56,5 @@
                 </button>
             </div>
         {% endif %}
-    </div>
-    <div class="mt-3">
-        <small class="text-muted">{% trans %}Indicar la totalidad de noches que pernocta cada grupo, es decir, el sumatorio de total. Por ejemplo, si tengo 5 proveedores y cada uno duerme dos noches, indicar 10 noches{% endtrans %}</small>
     </div>
 </twig:Card>

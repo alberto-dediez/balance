@@ -26,6 +26,8 @@ final class OvernightStayRowViewFactory implements ActivityRowViewFactory
             quantity: $activity->quantity()->value(),
             co2eq: $activity->emissions()->co2eq(),
             source: $activity->source(),
+            nights: $activity->nights() ?? (int) round($activity->quantity()->value()),
+            people: $activity->people() ?? 1,
         );
     }
 }

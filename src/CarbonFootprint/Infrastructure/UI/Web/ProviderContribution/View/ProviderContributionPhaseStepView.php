@@ -14,7 +14,7 @@ use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\Act
 final class ProviderContributionPhaseStepView
 {
     /** @var list<CategoryOvernight> */
-    private const ALLOWED_OVERNIGHT_STAY_CATEGORIES = [CategoryOvernight::OrganizingTeam, CategoryOvernight::Suppliers];
+    private const ALLOWED_OVERNIGHT_STAY_CATEGORIES = [CategoryOvernight::Suppliers];
 
     public function __construct(private ActivityRowViewFactoryRegistry $rowViewFactories) {}
 

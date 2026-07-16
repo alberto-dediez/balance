@@ -39,6 +39,8 @@ final class OvernightStayAnswerHandler implements ActivityAnswerHandler
             year: $year,
             emissionFactorGroupId: $emissionFactorGroupId,
             source: $answer->source,
+            nights: $answer->nights,
+            people: $answer->people,
         ), $user);
 
         return $response->activityId;
@@ -56,6 +58,8 @@ final class OvernightStayAnswerHandler implements ActivityAnswerHandler
             year: $year,
             emissionFactorGroupId: $emissionFactorGroupId,
             source: $answer->source,
+            nights: $answer->nights,
+            people: $answer->people,
         ), $user);
     }
 }

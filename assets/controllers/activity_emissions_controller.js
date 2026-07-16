@@ -118,6 +118,26 @@ export default class extends Controller {
         }
     }
 
+    resolveQuantity(row) {
+        const nightsField = row.querySelector('[data-field="nights"]');
+        const peopleField = row.querySelector('[data-field="people"]');
+
+        if (!nightsField || !peopleField) {
+            return row.querySelector('[data-field="quantity"]')?.value;
+        }
+
+        const nights = parseInt(nightsField.value, 10);
+        const people = parseInt(peopleField.value, 10);
+        const total = nights > 0 && people > 0 ? nights * people : null;
+        const totalOutput = row.querySelector('[data-field="quantityTotal"]');
+
+        if (totalOutput) {
+            totalOutput.textContent = total !== null ? String(total) : '—';
+        }
+
+        return total !== null ? String(total) : null;
+    }
+
     recalculate(event) {
         const row = event.target.closest('tr');
 
@@ -150,7 +170,7 @@ export default class extends Controller {
             body = { type: this.typeValue, itemId, mode, containerCapacity, containerUnit, fillPercentage };
         } else {
             const unit = row.querySelector('[data-field="unit"]')?.value;
-            const quantity = row.querySelector('[data-field="quantity"]')?.value;
+            const quantity = this.resolveQuantity(row);
 
             if ((!itemId && !itemId2) || !quantity) {
                 output.textContent = '—';

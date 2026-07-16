@@ -1,4 +1,4 @@
-{% props prefix, index, items, units, row = null, readOnly = false %}
+{% props prefix, index, items, units, row = null, readOnly = false, breakdown = true %}
 
 {% if readOnly %}
     {% set selectedItem = null %}
@@ -8,7 +8,12 @@
     <tr>
         <td>{{ row and row.source ? row.source : '' }}</td>
         <td>{{ selectedItem ? selectedItem.name : '—' }}</td>
-        <td>{{ row ? row.quantity : '—' }} {{ row ? (row.unit | trans({}, 'unitType')) }}</td>
+        <td>
+            {{ row ? row.quantity : '—' }} {{ row ? (row.unit | trans({}, 'unitType')) }}
+            {% if breakdown and row and row.nights is not null and row.people is not null %}
+                <small class="text-muted">({{ row.nights }} {{ 'noches' | trans }} × {{ row.people }} {{ 'personas' | trans }})</small>
+            {% endif %}
+        </td>
         <td class="text-end text-nowrap">{{ row ? row.co2eq | number_format(2, ',', '.') : '—' }}</td>
         <td></td>
     </tr>
@@ -26,25 +31,62 @@
             {% endfor %}
         </select>
     </td>
-    <td>
-        <div class="input-group">
+    {% if breakdown %}
+        <td>
             <input
                 type="number"
-                name="{{ prefix }}[{{ index }}][quantity]"
+                name="{{ prefix }}[{{ index }}][nights]"
                 class="form-control"
-                step="any"
+                step="1"
                 min="0"
-                value="{{ row ? row.quantity : '0' }}"
-                data-field="quantity"
+                value="{{ row ? row.nights : '0' }}"
+                data-field="nights"
                 data-action="activity-emissions#recalculate"
             >
-            <select name="{{ prefix }}[{{ index }}][unit]" class="form-select" data-field="unit" data-action="activity-emissions#recalculate">
-                {% for unit in units %}
-                    <option value="{{ unit.value }}" data-magnitude="{{ unit.magnitude.value }}"{{ row and row.unit == unit.value ? ' selected' }}>{{ unit.value | trans({}, 'unitType') }}</option>
-                {% endfor %}
-            </select>
-        </div>
-    </td>
+        </td>
+        <td>
+            <input
+                type="number"
+                name="{{ prefix }}[{{ index }}][people]"
+                class="form-control"
+                step="1"
+                min="1"
+                value="{{ row ? row.people : '1' }}"
+                data-field="people"
+                data-action="activity-emissions#recalculate"
+            >
+        </td>
+        <td>
+            <div class="input-group">
+                <span class="input-group-text" data-field="quantityTotal">{{ row ? row.quantity : '0' }}</span>
+                <select name="{{ prefix }}[{{ index }}][unit]" class="form-select" data-field="unit" data-action="activity-emissions#recalculate">
+                    {% for unit in units %}
+                        <option value="{{ unit.value }}" data-magnitude="{{ unit.magnitude.value }}"{{ row and row.unit == unit.value ? ' selected' }}>{{ unit.value | trans({}, 'unitType') }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </td>
+    {% else %}
+        <td>
+            <div class="input-group">
+                <input
+                    type="number"
+                    name="{{ prefix }}[{{ index }}][quantity]"
+                    class="form-control"
+                    step="any"
+                    min="0"
+                    value="{{ row ? row.quantity : '0' }}"
+                    data-field="quantity"
+                    data-action="activity-emissions#recalculate"
+                >
+                <select name="{{ prefix }}[{{ index }}][unit]" class="form-select" data-field="unit" data-action="activity-emissions#recalculate">
+                    {% for unit in units %}
+                        <option value="{{ unit.value }}" data-magnitude="{{ unit.magnitude.value }}"{{ row and row.unit == unit.value ? ' selected' }}>{{ unit.value | trans({}, 'unitType') }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </td>
+    {% endif %}
     <td class="text-end text-nowrap">
         <span data-field="emissions">{{ row ? row.co2eq | number_format(2, ',', '.') : '—' }}</span>
     </td>

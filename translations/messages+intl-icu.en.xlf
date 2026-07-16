@@ -3309,10 +3309,6 @@
         <source>¿Dispone de garantía de origen?</source>
         <target>Do you have a guarantee of origin?</target>
       </trans-unit>
-      <trans-unit id="dlb3prp" resname="Indicar la totalidad de noches que pernocta cada grupo, es decir, el sumatorio de total. Por ejemplo, si tengo 5 proveedores y cada uno duerme dos noches, indicar 10 noches">
-        <source>Indicar la totalidad de noches que pernocta cada grupo, es decir, el sumatorio de total. Por ejemplo, si tengo 5 proveedores y cada uno duerme dos noches, indicar 10 noches</source>
-        <target>Indicate the total number of nights each group stays, that is, the sum of all nights. For example, if you have 5 suppliers and each stays for two nights, enter 10 nights</target>
-      </trans-unit>
       <trans-unit id="K.gUI1Z" resname="Tipo de empresa">
         <source>Tipo de empresa</source>
         <target>Type of company</target>
@@ -3928,6 +3924,22 @@
       <trans-unit id="jchYUNy" resname="Fuentes de emisión excluidas">
         <source>Fuentes de emisión excluidas</source>
         <target>Excluded emission sources</target>
+      </trans-unit>
+      <trans-unit id="XKk4ThL" resname="noches">
+        <source>noches</source>
+        <target>nights</target>
+      </trans-unit>
+      <trans-unit id="7EiUvfj" resname="personas">
+        <source>personas</source>
+        <target>people</target>
+      </trans-unit>
+      <trans-unit id="dXJln7n" resname="Noches">
+        <source>Noches</source>
+        <target>Nights</target>
+      </trans-unit>
+      <trans-unit id="Zwo__Kf" resname="Personas">
+        <source>Personas</source>
+        <target>People</target>
       </trans-unit>
     </body>
   </file>

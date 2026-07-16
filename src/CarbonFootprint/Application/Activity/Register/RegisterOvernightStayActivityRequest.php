@@ -19,5 +19,7 @@ class RegisterOvernightStayActivityRequest implements Command
         public int $year,
         public EmissionFactorGroupId $emissionFactorGroupId,
         public ?string $source = null,
+        public ?int $nights = null,
+        public ?int $people = null,
     ) {}
 }

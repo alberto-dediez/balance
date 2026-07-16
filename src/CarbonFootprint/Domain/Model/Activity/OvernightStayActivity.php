@@ -14,6 +14,8 @@ final class OvernightStayActivity extends Activity
 {
     private OvernightStayId $overnightStayId;
     private ?string $source = null;
+    private ?int $nights = null;
+    private ?int $people = null;
 
     public function __construct(ActivityId $id, ?AccountId $accountId = null)
     {
@@ -29,6 +31,8 @@ final class OvernightStayActivity extends Activity
         Emissions $emissions,
         Quantity $quantity,
         ?string $source = null,
+        ?int $nights = null,
+        ?int $people = null,
     ): static {
         $activity = new static($id, $accountId);
         $activity->recordApplyAndPublish(new OvernightStayActivityRegistered(
@@ -39,6 +43,8 @@ final class OvernightStayActivity extends Activity
             emissions: $emissions,
             quantity: $quantity,
             source: $source,
+            nights: $nights,
+            people: $people,
         ));
 
         return $activity;
@@ -50,6 +56,8 @@ final class OvernightStayActivity extends Activity
         Emissions $emissions,
         Quantity $quantity,
         ?string $source = null,
+        ?int $nights = null,
+        ?int $people = null,
     ): void {
         $this->recordApplyAndPublish(new OvernightStayActivityUpdated(
             activityId: $this->id,
@@ -58,6 +66,8 @@ final class OvernightStayActivity extends Activity
             emissions: $emissions,
             quantity: $quantity,
             source: $source,
+            nights: $nights,
+            people: $people,
         ));
     }
 
@@ -78,6 +88,16 @@ final class OvernightStayActivity extends Activity
         return $this->source;
     }
 
+    public function nights(): ?int
+    {
+        return $this->nights;
+    }
+
+    public function people(): ?int
+    {
+        return $this->people;
+    }
+
     public function applyOvernightStayActivityRegistered(OvernightStayActivityRegistered $event): void
     {
         $this->accountId = $event->accountId();
@@ -86,6 +106,8 @@ final class OvernightStayActivity extends Activity
         $this->emissions = $event->emissions();
         $this->quantity = $event->quantity();
         $this->source = $event->source();
+        $this->nights = $event->nights();
+        $this->people = $event->people();
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -96,6 +118,8 @@ final class OvernightStayActivity extends Activity
         $this->emissions = $event->emissions();
         $this->quantity = $event->quantity();
         $this->source = $event->source();
+        $this->nights = $event->nights();
+        $this->people = $event->people();
         $this->updatedAt = $event->occurredOn();
     }
 }

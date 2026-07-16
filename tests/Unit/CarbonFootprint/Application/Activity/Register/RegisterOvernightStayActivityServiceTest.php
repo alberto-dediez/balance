@@ -55,8 +55,44 @@ class RegisterOvernightStayActivityServiceTest extends TestCase
             emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         ), UserMother::adminUser());
 
-        $this->assertInstanceOf(OvernightStayActivity::class, $activityRepo->findById($result->activityId));
+        $activity = $activityRepo->findById($result->activityId);
+        $this->assertInstanceOf(OvernightStayActivity::class, $activity);
+        $this->assertNull($activity->nights());
+        $this->assertNull($activity->people());
         $this->assertInstanceOf(OvernightStayActivityRegistered::class, $this->spySubscriber->lastEvent());
+    }
+
+    public function testUseCaseWithNightsAndPeople(): void
+    {
+        $activityRepo = ActivityRepositoryMother::inMemory();
+
+        $entity = OvernightStayMother::registeredOvernightStay();
+        $entity->setEmissionFactor(ActivityMother::emissionFactor()->withUnit(Unit::Pernoctacion));
+        $entityRepo = OvernightStayRepositoryMother::inMemory();
+        $entityRepo->add($entity);
+        $selector = new OvernightStayEmissionFactorSelector($entityRepo);
+        $calculator = new EmissionsCalculator();
+        $sut = new RegisterOvernightStayActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
+
+        $result = $sut(new RegisterOvernightStayActivityRequest(
+            accountId: new AccountId('account-id'),
+            overnightStayId: $entity->id(),
+            quantity: ActivityMother::quantity(Unit::Pernoctacion, 6.0),
+            year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
+            nights: 3,
+            people: 2,
+        ), UserMother::adminUser());
+
+        $activity = $activityRepo->findById($result->activityId);
+        $this->assertInstanceOf(OvernightStayActivity::class, $activity);
+        $this->assertSame(3, $activity->nights());
+        $this->assertSame(2, $activity->people());
+
+        $event = $this->spySubscriber->lastEvent();
+        $this->assertInstanceOf(OvernightStayActivityRegistered::class, $event);
+        $this->assertSame(3, $event->nights());
+        $this->assertSame(2, $event->people());
     }
 
     public function testUnauthorizedAccess(): void
