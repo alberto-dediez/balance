@@ -55,7 +55,11 @@
 
     {% if not readOnly %}
     <twig:Card title="{{ 'Cerrar la encuesta' | trans }}">
-        <form method="post">
+        <form method="post"
+            data-controller="confirm"
+            data-confirm-text-param="{{ '¿Estás seguro de que deseas cerrar la encuesta y el calculo de huella? Esta acción no se puede deshacer' | trans }}"
+            data-action="confirm#submit"
+        >
             <input type="hidden" name="_token" value="{{ csrf_token('attendees_' ~ eventCarbonFootprint.id) }}">
 
             <div class="row g-3">

@@ -15,4 +15,12 @@ export default class extends Controller {
             document.location.assign(target);
         }
     }
+
+    submit(event) {
+        const message = event.params.text;
+
+        if (!confirm(message)) {
+            event.preventDefault();
+        }
+    }
 }

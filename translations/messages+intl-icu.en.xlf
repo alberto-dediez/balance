@@ -3941,6 +3941,10 @@
         <source>Personas</source>
         <target>People</target>
       </trans-unit>
+      <trans-unit id="OOmxIMf" resname="¿Estás seguro de que deseas cerrar la encuesta y el calculo de huella? Esta acción no se puede deshacer">
+        <source>¿Estás seguro de que deseas cerrar la encuesta y el calculo de huella? Esta acción no se puede deshacer</source>
+        <target>Are you sure you want to close the survey and stop the footprint calculation? This action cannot be undone.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
