@@ -141,6 +141,20 @@ final readonly class ApiContext implements Context
         Assert::assertEquals($expectedCode, $code, $exception instanceof \Exception ? $exception->getMessage() : 'Sin excepcion');
     }
 
+    #[Then('the response JSON attribute :attr should be null')]
+    public function theResponseJsonAttributeShouldBeNull(string $attr): void
+    {
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        $actual = json_decode($response, true);
+
+        Assert::assertIsArray($actual);
+        Assert::assertArrayHasKey($attr, $actual);
+        Assert::assertNull($actual[$attr]);
+    }
+
     #[Then('the response header :header should be :value')]
     public function theResponseHeaderShouldBe(string $header, string $value): void
     {
