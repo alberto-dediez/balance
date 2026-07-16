@@ -9,157 +9,136 @@
         <input type="hidden" name="_token" value="{{ csrf_token('breakdown_' ~ eventCarbonFootprint.id) }}">
     {% endif %}
 
-        <div data-controller="source-exclusion">
-            <twig:CarbonFootprint:SourceExclusion
-                source="fixed_facilities"
-                :exclusion="exclusions['fixed_facilities'] ?? null"
-                :reasons="exclusionReasons"
+        <twig:CarbonFootprint:SourceSection
+            source="fixed_facilities"
+            :exclusion="exclusions['fixed_facilities'] ?? null"
+            :reasons="exclusionReasons"
+            :readOnly="readOnly"
+        >
+            <twig:CarbonFootprint:CombustibleActivityTable
+                title="{{ 'Instalaciones fijas (calderas, motores estacionarios, etc)' | trans }}"
+                prefix="combustibles"
+                :rows="combustibleRows"
+                :items="combustibles"
+                :units="units"
+                :eventId="eventId"
                 :readOnly="readOnly"
             />
-            <fieldset data-source-exclusion-target="sections">
-                <twig:CarbonFootprint:CombustibleActivityTable
-                    title="{{ 'Instalaciones fijas (calderas, motores estacionarios, etc)' | trans }}"
-                    prefix="combustibles"
-                    :rows="combustibleRows"
-                    :items="combustibles"
-                    :units="units"
-                    :eventId="eventId"
-                    :readOnly="readOnly"
-                />
-            </fieldset>
-        </div>
+        </twig:CarbonFootprint:SourceSection>
 
-        <div data-controller="source-exclusion">
-            <twig:CarbonFootprint:SourceExclusion
-                source="freight_transport"
-                :exclusion="exclusions['freight_transport'] ?? null"
-                :reasons="exclusionReasons"
+        <twig:CarbonFootprint:SourceSection
+            source="freight_transport"
+            :exclusion="exclusions['freight_transport'] ?? null"
+            :reasons="exclusionReasons"
+            :readOnly="readOnly"
+        >
+            <twig:CarbonFootprint:RoadTransportActivityTable
+                title="{{ 'Transporte de mercancías' | trans }}"
+                prefix="roadTransports"
+                :rows="roadTransportRows"
+                :items="roadTransports"
+                :units="units"
+                :eventId="eventId"
                 :readOnly="readOnly"
             />
-            <fieldset data-source-exclusion-target="sections">
-                <twig:CarbonFootprint:RoadTransportActivityTable
-                    title="{{ 'Transporte de mercancías' | trans }}"
-                    prefix="roadTransports"
-                    :rows="roadTransportRows"
-                    :items="roadTransports"
-                    :units="units"
-                    :eventId="eventId"
-                    :readOnly="readOnly"
-                />
-            </fieldset>
-        </div>
+        </twig:CarbonFootprint:SourceSection>
 
-        <div data-controller="source-exclusion">
-            <twig:CarbonFootprint:SourceExclusion
-                source="machinery_operation"
-                :exclusion="exclusions['machinery_operation'] ?? null"
-                :reasons="exclusionReasons"
+        <twig:CarbonFootprint:SourceSection
+            source="machinery_operation"
+            :exclusion="exclusions['machinery_operation'] ?? null"
+            :reasons="exclusionReasons"
+            :readOnly="readOnly"
+        >
+            <twig:CarbonFootprint:MachineryFuelActivityTable
+                title="{{ 'Maquinaria' | trans }}"
+                prefix="machineryFuels"
+                :rows="machineryFuelRows"
+                :items="machineryFuels"
+                :units="units"
+                :eventId="eventId"
                 :readOnly="readOnly"
             />
-            <fieldset data-source-exclusion-target="sections">
-                <twig:CarbonFootprint:MachineryFuelActivityTable
-                    title="{{ 'Maquinaria' | trans }}"
-                    prefix="machineryFuels"
-                    :rows="machineryFuelRows"
-                    :items="machineryFuels"
-                    :units="units"
-                    :eventId="eventId"
-                    :readOnly="readOnly"
-                />
 
-                <twig:CarbonFootprint:ElectricityActivityTable
-                    title="{{ 'Consumo de electricidad en vehículos y maquinaria' | trans }}"
-                    prefix="machineryElectricity"
-                    :rows="machineryElectricityRows"
-                    :marketers="electricityMarketers"
-                    :gdOFactors="gdOFactors"
-                    :units="units"
-                    :eventId="eventId"
-                    :readOnly="readOnly"
-                />
-            </fieldset>
-        </div>
-
-        <div data-controller="source-exclusion">
-            <twig:CarbonFootprint:SourceExclusion
-                source="building_electricity"
-                :exclusion="exclusions['building_electricity'] ?? null"
-                :reasons="exclusionReasons"
+            <twig:CarbonFootprint:ElectricityActivityTable
+                title="{{ 'Consumo de electricidad en vehículos y maquinaria' | trans }}"
+                prefix="machineryElectricity"
+                :rows="machineryElectricityRows"
+                :marketers="electricityMarketers"
+                :gdOFactors="gdOFactors"
+                :units="units"
+                :eventId="eventId"
                 :readOnly="readOnly"
             />
-            <fieldset data-source-exclusion-target="sections">
-                <twig:CarbonFootprint:ElectricityActivityTable
-                    title="{{ 'Consumo de electricidad en las instalaciones' | trans }}"
-                    prefix="buildingElectricity"
-                    :rows="buildingElectricityRows"
-                    :marketers="electricityMarketers"
-                    :gdOFactors="gdOFactors"
-                    :units="units"
-                    :eventId="eventId"
-                    :readOnly="readOnly"
-                />
-            </fieldset>
-        </div>
+        </twig:CarbonFootprint:SourceSection>
 
-        <div data-controller="source-exclusion">
-            <twig:CarbonFootprint:SourceExclusion
-                source="suppliers_and_staff_mobility"
-                :exclusion="exclusions['suppliers_and_staff_mobility'] ?? null"
-                :reasons="exclusionReasons"
+        <twig:CarbonFootprint:SourceSection
+            source="building_electricity"
+            :exclusion="exclusions['building_electricity'] ?? null"
+            :reasons="exclusionReasons"
+            :readOnly="readOnly"
+        >
+            <twig:CarbonFootprint:ElectricityActivityTable
+                title="{{ 'Consumo de electricidad en las instalaciones' | trans }}"
+                prefix="buildingElectricity"
+                :rows="buildingElectricityRows"
+                :marketers="electricityMarketers"
+                :gdOFactors="gdOFactors"
+                :units="units"
+                :eventId="eventId"
                 :readOnly="readOnly"
             />
-            <fieldset data-source-exclusion-target="sections">
-                <twig:CarbonFootprint:MobilityActivityTable
-                    title="{{ 'Movilidad de proveedores y equipo' | trans }}"
-                    prefix="mobilities"
-                    :rows="mobilityRows"
-                    :items="mobilities"
-                    :units="units"
-                    :eventId="eventId"
-                    :readOnly="readOnly"
-                />
-            </fieldset>
-        </div>
+        </twig:CarbonFootprint:SourceSection>
 
-        <div data-controller="source-exclusion">
-            <twig:CarbonFootprint:SourceExclusion
-                source="suppliers_and_staff_accommodation"
-                :exclusion="exclusions['suppliers_and_staff_accommodation'] ?? null"
-                :reasons="exclusionReasons"
+        <twig:CarbonFootprint:SourceSection
+            source="suppliers_and_staff_mobility"
+            :exclusion="exclusions['suppliers_and_staff_mobility'] ?? null"
+            :reasons="exclusionReasons"
+            :readOnly="readOnly"
+        >
+            <twig:CarbonFootprint:MobilityActivityTable
+                title="{{ 'Movilidad de proveedores y equipo' | trans }}"
+                prefix="mobilities"
+                :rows="mobilityRows"
+                :items="mobilities"
+                :units="units"
+                :eventId="eventId"
                 :readOnly="readOnly"
             />
-            <fieldset data-source-exclusion-target="sections">
-                <twig:CarbonFootprint:OvernightStayActivityTable
-                    title="{{ 'Pernoctaciones' | trans }}"
-                    prefix="overnightStays"
-                    :rows="overnightStayRows"
-                    :items="overnightStays"
-                    :units="units"
-                    :eventId="eventId"
-                    :readOnly="readOnly"
-                />
-            </fieldset>
-        </div>
+        </twig:CarbonFootprint:SourceSection>
 
-        <div data-controller="source-exclusion">
-            <twig:CarbonFootprint:SourceExclusion
-                source="waste_management"
-                :exclusion="exclusions['waste_management'] ?? null"
-                :reasons="exclusionReasons"
+        <twig:CarbonFootprint:SourceSection
+            source="suppliers_and_staff_accommodation"
+            :exclusion="exclusions['suppliers_and_staff_accommodation'] ?? null"
+            :reasons="exclusionReasons"
+            :readOnly="readOnly"
+        >
+            <twig:CarbonFootprint:OvernightStayActivityTable
+                title="{{ 'Pernoctaciones' | trans }}"
+                prefix="overnightStays"
+                :rows="overnightStayRows"
+                :items="overnightStays"
+                :units="units"
+                :eventId="eventId"
                 :readOnly="readOnly"
             />
-            <fieldset data-source-exclusion-target="sections">
-                <twig:CarbonFootprint:WasteActivityTable
-                    title="{{ 'Gestión de residuos generados' | trans }}"
-                    prefix="wastes"
-                    :rows="wasteRows"
-                    :items="wastes"
-                    :units="units"
-                    :eventId="eventId"
-                    :readOnly="readOnly"
-                />
-            </fieldset>
-        </div>
+        </twig:CarbonFootprint:SourceSection>
+
+        <twig:CarbonFootprint:SourceSection
+            source="waste_management"
+            :exclusion="exclusions['waste_management'] ?? null"
+            :reasons="exclusionReasons"
+            :readOnly="readOnly"
+        >
+            <twig:CarbonFootprint:WasteActivityTable
+                title="{{ 'Gestión de residuos generados' | trans }}"
+                prefix="wastes"
+                :rows="wasteRows"
+                :items="wastes"
+                :units="units"
+                :eventId="eventId"
+                :readOnly="readOnly"
+            />
+        </twig:CarbonFootprint:SourceSection>
 
     {% if not readOnly %}
         <div class="d-flex justify-content-between mt-3">
