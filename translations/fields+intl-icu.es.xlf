@@ -75,47 +75,47 @@
       </trans-unit>
       <trans-unit id="dtnBSsv" resname="combustible">
         <source>combustible</source>
-        <target>NEW_combustible</target>
+        <target>Combustible</target>
       </trans-unit>
       <trans-unit id="PNcBVeE" resname="mobility">
         <source>mobility</source>
-        <target>NEW_mobility</target>
+        <target>Mobilidad</target>
       </trans-unit>
       <trans-unit id="Ien2BhG" resname="waste">
         <source>waste</source>
-        <target>NEW_waste</target>
+        <target>Residuo</target>
       </trans-unit>
       <trans-unit id="40HUZZa" resname="density">
         <source>density</source>
-        <target>NEW_density</target>
+        <target>Densidad</target>
       </trans-unit>
       <trans-unit id="nUnzxCh" resname="machinery_fuel">
         <source>machinery_fuel</source>
-        <target>NEW_machinery_fuel</target>
+        <target>Combustible maquinaria</target>
       </trans-unit>
       <trans-unit id="MnoO9NF" resname="machinery_type">
         <source>machinery_type</source>
-        <target>NEW_machinery_type</target>
+        <target>Tipo maquinaria</target>
       </trans-unit>
       <trans-unit id="H.x9jS4" resname="road_transport">
         <source>road_transport</source>
-        <target>NEW_road_transport</target>
+        <target>Transporte por carretera</target>
       </trans-unit>
       <trans-unit id="SQK8P2M" resname="vehicle">
         <source>vehicle</source>
-        <target>NEW_vehicle</target>
+        <target>Vehiculo</target>
       </trans-unit>
       <trans-unit id="Uz0Vy.F" resname="gdOFactor">
         <source>gdOFactor</source>
-        <target>NEW_gdOFactor</target>
+        <target>Factor GdO</target>
       </trans-unit>
       <trans-unit id="Dahp53j" resname="overnight_stay">
         <source>overnight_stay</source>
-        <target>NEW_overnight_stay</target>
+        <target>Pernoctación</target>
       </trans-unit>
       <trans-unit id="FXT9ONL" resname="electricityMarketer">
         <source>electricityMarketer</source>
-        <target>NEW_electricityMarketer</target>
+        <target>Comercializadora eléctrica</target>
       </trans-unit>
     </body>
   </file>
