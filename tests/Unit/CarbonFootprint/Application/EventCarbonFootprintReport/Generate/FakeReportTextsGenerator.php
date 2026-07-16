@@ -19,6 +19,8 @@ class FakeReportTextsGenerator implements EventCarbonFootprintReportTextsGenerat
     /** @var list<Locale> */
     private array $translateCalls = [];
 
+    private ?EventCarbonFootprintReportData $lastData = null;
+
     public function failOnGenerate(): void
     {
         $this->shouldFail = true;
@@ -27,6 +29,7 @@ class FakeReportTextsGenerator implements EventCarbonFootprintReportTextsGenerat
     public function generate(EventCarbonFootprintReportData $data, Locale $locale): EventCarbonFootprintReportTexts
     {
         $this->generateCalls[] = $locale;
+        $this->lastData = $data;
 
         if ($this->shouldFail) {
             throw new \RuntimeException('Gemini failure');
@@ -52,6 +55,11 @@ class FakeReportTextsGenerator implements EventCarbonFootprintReportTextsGenerat
     public function translateCalls(): array
     {
         return $this->translateCalls;
+    }
+
+    public function lastData(): ?EventCarbonFootprintReportData
+    {
+        return $this->lastData;
     }
 
     private function texts(Locale $locale): EventCarbonFootprintReportTexts

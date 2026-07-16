@@ -6,6 +6,8 @@ namespace App\Tests\Acceptance\CarbonFootprint;
 
 use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityRequest;
 use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityService;
+use App\CarbonFootprint\Application\Activity\Register\RegisterWasteActivityRequest;
+use App\CarbonFootprint\Application\Activity\Register\RegisterWasteActivityService;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurvey;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepository;
@@ -22,6 +24,7 @@ use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepo
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
@@ -37,6 +40,7 @@ use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionRe
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\CarbonFootprint\Domain\Model\Waste\WasteId;
 use App\CarbonFootprint\Domain\Model\Waste\WasteRepository;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
@@ -66,6 +70,7 @@ use Behat\Step\Then;
 use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 
 final readonly class CarbonFootprintContext implements Context
 {
@@ -473,6 +478,17 @@ final readonly class CarbonFootprintContext implements Context
         $this->getOvernightStayRepository()->add($overnightStay);
     }
 
+    #[Given('event carbon footprint with id :id for event :eventId of account :account with materials answered exists')]
+    public function eventCarbonFootprintWithIdForEventOfAccountWithMaterialsAnsweredExists(string $id, string $eventId, string $account): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $eventCarbonFootprint = EventCarbonFootprintMother::from(eventId: $eventId, id: $id, accountId: $account);
+        $eventCarbonFootprint->answerPhase(Phase::Materials);
+
+        $this->getEventCarbonFootprintRepository()->add($eventCarbonFootprint);
+    }
+
     #[Given('event carbon footprint with id :id for event :eventId of account :account with breakdown answered exists')]
     public function eventCarbonFootprintWithIdForEventOfAccountWithBreakdownAnsweredExists(string $id, string $eventId, string $account): void
     {
@@ -694,6 +710,120 @@ final readonly class CarbonFootprintContext implements Context
         $form['confidenceLevel'] = $level;
 
         $this->client->submit($form);
+    }
+
+    #[Given('event carbon footprint :id has a waste activity using waste :wasteId in assembly')]
+    public function eventCarbonFootprintHasAWasteActivityUsingWasteInAssembly(string $id, string $wasteId): void
+    {
+        $eventCarbonFootprint = $this->getEventCarbonFootprintRepository()->find(new EventCarbonFootprintId($id));
+
+        Assert::assertNotNull($eventCarbonFootprint);
+
+        $accountId = $eventCarbonFootprint->accountId();
+        $emissionFactorGroupId = $eventCarbonFootprint->emissionFactorGroupId();
+
+        Assert::assertNotNull($accountId);
+        Assert::assertNotNull($emissionFactorGroupId);
+
+        $registerWasteActivity = $this->client->getContainer()->get(RegisterWasteActivityService::class);
+
+        $response = $registerWasteActivity(
+            new RegisterWasteActivityRequest(
+                accountId: $accountId,
+                wasteId: new WasteId($wasteId),
+                quantity: new Quantity(10.0, Unit::Kilogram),
+                year: $eventCarbonFootprint->calculationYear(),
+                emissionFactorGroupId: $emissionFactorGroupId,
+            ),
+            UserMother::adminUser(),
+        );
+
+        $eventCarbonFootprint->addActivity($response->activityId, Phase::Assembly, Source::WasteManagement);
+
+        $this->getEventCarbonFootprintRepository()->add($eventCarbonFootprint);
+    }
+
+    #[Given('event carbon footprint :id has source :source excluded in phase :phase with reason :reason')]
+    public function eventCarbonFootprintHasSourceExcludedInPhaseWithReason(string $id, string $source, string $phase, string $reason): void
+    {
+        $eventCarbonFootprint = $this->getEventCarbonFootprintRepository()->find(new EventCarbonFootprintId($id));
+
+        Assert::assertNotNull($eventCarbonFootprint);
+
+        $eventCarbonFootprint->excludeSource(Phase::from($phase), Source::from($source), ExclusionReason::from($reason));
+
+        $this->getEventCarbonFootprintRepository()->add($eventCarbonFootprint);
+    }
+
+    #[Given('event carbon footprint :id is completed')]
+    public function eventCarbonFootprintIsCompleted(string $id): void
+    {
+        $eventCarbonFootprint = $this->getEventCarbonFootprintRepository()->find(new EventCarbonFootprintId($id));
+
+        Assert::assertNotNull($eventCarbonFootprint);
+
+        $eventCarbonFootprint->complete(totalEmissions: new Emissions(), emissionsPerAttendee: new Emissions());
+
+        $this->getEventCarbonFootprintRepository()->add($eventCarbonFootprint);
+    }
+
+    #[When('I submit the :phase step form excluding source :source with reason :reason and comment :comment')]
+    public function iSubmitTheStepFormExcludingSource(string $phase, string $source, string $reason, string $comment): void
+    {
+        $phaseEnum = Phase::from($phase);
+        $sourceEnum = Source::from($source);
+
+        $crawler = $this->client->getCrawler();
+        $form = $crawler->filter('form')->form();
+
+        foreach ($phaseEnum->sections() as $section) {
+            if ($section->source !== $sourceEnum) {
+                continue;
+            }
+
+            foreach (array_keys($form->all()) as $name) {
+                if (str_starts_with($name, $section->key . '[')) {
+                    unset($form[$name]);
+                }
+            }
+        }
+
+        $excludedField = $form['exclusions[' . $source . '][excluded]'];
+        Assert::assertInstanceOf(ChoiceFormField::class, $excludedField);
+        $excludedField->tick();
+
+        $form['exclusions[' . $source . '][reason]'] = $reason;
+        $form['exclusions[' . $source . '][comment]'] = $comment;
+
+        $this->client->submit($form);
+    }
+
+    #[Then('event carbon footprint :id should have source :source excluded in phase :phase with reason :reason')]
+    public function eventCarbonFootprintShouldHaveSourceExcludedInPhaseWithReason(string $id, string $source, string $phase, string $reason): void
+    {
+        $eventCarbonFootprint = $this->getEventCarbonFootprintRepository()->find(new EventCarbonFootprintId($id));
+
+        Assert::assertNotNull($eventCarbonFootprint);
+
+        $exclusion = $eventCarbonFootprint->exclusions()->forPhaseAndSource(Phase::from($phase), Source::from($source));
+
+        Assert::assertNotNull($exclusion);
+        Assert::assertSame($reason, $exclusion->reason()->value);
+    }
+
+    #[Then('event carbon footprint :id should have :count activities of source :source in phase :phase')]
+    public function eventCarbonFootprintShouldHaveActivitiesOfSourceInPhase(string $id, int $count, string $source, string $phase): void
+    {
+        $eventCarbonFootprint = $this->getEventCarbonFootprintRepository()->find(new EventCarbonFootprintId($id));
+
+        Assert::assertNotNull($eventCarbonFootprint);
+
+        $activities = $eventCarbonFootprint->activities()
+            ->filterByPhase(Phase::from($phase))
+            ->filterBySource(Source::from($source))
+            ->toArray();
+
+        Assert::assertCount($count, $activities);
     }
 
     #[Then('attendee survey :id should have :count responses')]

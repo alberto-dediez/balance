@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintExclusion" table="event_carbon_footprint_exclusions">
+        <unique-constraints>
+            <unique-constraint name="UNIQ_ecf_exclusions_phase_source" columns="event_carbon_footprint_id,phase,source" />
+        </unique-constraints>
+
+        <id name="id" type="event_carbon_footprint_exclusion_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <many-to-one field="eventCarbonFootprint" target-entity="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint" inversed-by="exclusions">
+            <join-column name="event_carbon_footprint_id" referenced-column-name="id" nullable="false" />
+        </many-to-one>
+
+        <field name="phase" type="string" enum-type="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase" nullable="false" />
+        <field name="source" type="string" enum-type="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source" nullable="false" />
+        <field name="reason" type="string" enum-type="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason" nullable="false" />
+        <field name="comment" type="text" nullable="true" />
+        <field name="excludedAt" type="datetime_immutable" column="excluded_at" nullable="false" />
+    </entity>
+
+</doctrine-mapping>

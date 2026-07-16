@@ -49,6 +49,7 @@ final class TcpdfEventCarbonFootprintReportPdfGenerator implements EventCarbonFo
             $this->renderTextSection($pdf, $this->trans('Resumen ejecutivo', $locale), $texts->executiveSummary);
             $this->renderTextSection($pdf, $this->trans('Metodología de cálculo', $locale), $texts->methodology);
             $this->renderResultsSection($pdf, $data, $charts, $locale);
+            $this->renderExclusionsSection($pdf, $data, $locale);
             $this->renderTextSection($pdf, $this->trans('Fuentes de los factores de emisión', $locale), $texts->emissionFactorSources);
             $this->renderTextSection($pdf, $this->trans('Análisis y recomendaciones', $locale), $texts->analysisAndRecommendations);
             $this->renderAnnexSection($pdf, $data, $locale);
@@ -143,6 +144,36 @@ final class TcpdfEventCarbonFootprintReportPdfGenerator implements EventCarbonFo
         $pdf->AddPage();
         $pdf->writeHTML($this->buildTableHtml([$this->trans('Fase', $locale), $this->trans('Fuente', $locale), 'CO₂eq (kg)'], $matrixRows), true, false, true, false, '');
         $this->embedChart($pdf, $charts->byPhaseAndSource);
+    }
+
+    private function renderExclusionsSection(\TCPDF $pdf, EventCarbonFootprintReportData $data, Locale $locale): void
+    {
+        if ([] === $data->exclusionLines) {
+            return;
+        }
+
+        $pdf->AddPage();
+        $this->renderSectionTitle($pdf, $this->trans('Exclusiones de fuentes de emisión', $locale));
+        $this->setFont($pdf, 10, self::FONT_STYLE_REGULAR, self::COLOR_BODY_TEXT);
+
+        $header = [
+            $this->trans('Fase', $locale),
+            $this->trans('Fuente', $locale),
+            $this->trans('Motivo', $locale),
+            $this->trans('Comentario', $locale),
+        ];
+
+        $rows = [];
+        foreach ($data->exclusionLines as $exclusionLine) {
+            $rows[] = [
+                $this->translator->trans($exclusionLine->phase->value, [], 'phase', $locale->value),
+                $this->translator->trans($exclusionLine->source->value, [], 'source', $locale->value),
+                $this->translator->trans($exclusionLine->reason->value, [], 'exclusionReason', $locale->value),
+                $exclusionLine->comment ?? '-',
+            ];
+        }
+
+        $pdf->writeHTML($this->buildTableHtml($header, $rows, ['15%', '25%', '20%', '40%']), true, false, true, false, '');
     }
 
     private function embedChart(\TCPDF $pdf, string $png): void

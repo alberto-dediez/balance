@@ -22,6 +22,7 @@ use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseServic
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\PhaseSection;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Material\Material;
@@ -154,6 +155,20 @@ class GetPhaseServiceTest extends TestCase
         foreach ($response->sections as $section) {
             $this->assertSame([], $section->catalog);
         }
+    }
+
+    public function testExposesTheExclusionsOfThePhaseIndexedBySource(): void
+    {
+        $eventCarbonFootprint = $this->registeredEventCarbonFootprint();
+        $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::NoDataAvailable, 'a comment');
+        $eventCarbonFootprint->excludeSource(Phase::Celebration, Source::FixedFacilities, ExclusionReason::NotApplicable);
+
+        $response = ($this->sut)(new GetPhaseRequest($eventCarbonFootprint->id(), Phase::Assembly), $this->ownerUser());
+
+        $this->assertCount(1, $response->exclusions);
+        $this->assertArrayHasKey(Source::WasteManagement->value, $response->exclusions);
+        $this->assertSame(ExclusionReason::NoDataAvailable, $response->exclusions[Source::WasteManagement->value]->reason());
+        $this->assertSame('a comment', $response->exclusions[Source::WasteManagement->value]->comment());
     }
 
     public function testEventCarbonFootprintNotFound(): void

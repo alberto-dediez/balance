@@ -30,6 +30,12 @@
                 <cascade-persist />
             </cascade>
         </one-to-many>
+
+        <one-to-many field="exclusions" target-entity="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintExclusion" mapped-by="eventCarbonFootprint" orphan-removal="true">
+            <cascade>
+                <cascade-persist />
+            </cascade>
+        </one-to-many>
     </entity>
 
 </doctrine-mapping>

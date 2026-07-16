@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRe
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportActivityLine;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportChartsGenerator;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportData;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportExclusionLine;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportPdfGenerator;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportStorage;
@@ -104,6 +105,16 @@ class GenerateEventCarbonFootprintReportService implements CommandHandler
             );
         }
 
+        $exclusionLines = [];
+        foreach ($eventCarbonFootprint->exclusions()->toArray() as $exclusion) {
+            $exclusionLines[] = new EventCarbonFootprintReportExclusionLine(
+                phase: $exclusion->phase(),
+                source: $exclusion->source(),
+                reason: $exclusion->reason(),
+                comment: $exclusion->comment(),
+            );
+        }
+
         $data = new EventCarbonFootprintReportData(
             eventName: $event->name(),
             sector: $event->sector(),
@@ -121,6 +132,7 @@ class GenerateEventCarbonFootprintReportService implements CommandHandler
             emissionsByPhase: $results->emissionsByPhase,
             emissionsByPhaseAndSource: $results->emissionsByPhaseAndSource,
             activityLines: $activityLines,
+            exclusionLines: $exclusionLines,
         );
 
         $locales = Locale::listFrom($this->localeList);

@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAut
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetResults\GetResultsRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetResults\GetResultsService;
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
@@ -69,6 +70,20 @@ class GetResultsServiceTest extends TestCase
         $this->assertSame('12', $response->emissionsByPhase[Phase::Materials->value]->co2eq());
         $this->assertSame('12', $response->emissionsByPhaseAndSource[Phase::Materials->value][Source::Materials->value]->co2eq());
         $this->assertSame('0', $response->emissionsBySource[Source::WasteManagement->value]->co2eq());
+    }
+
+    public function testExposesTheExclusions(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
+        $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::NoDataAvailable, 'a comment');
+        $this->eventCarbonFootprintRepository->add($eventCarbonFootprint);
+
+        $response = ($this->sut)(new GetResultsRequest($eventCarbonFootprint->id()), $this->ownerUser());
+
+        $this->assertCount(1, $response->exclusions);
+        $this->assertSame(Phase::Assembly, $response->exclusions[0]->phase());
+        $this->assertSame(Source::WasteManagement, $response->exclusions[0]->source());
+        $this->assertSame(ExclusionReason::NoDataAvailable, $response->exclusions[0]->reason());
     }
 
     public function testEventCarbonFootprintNotFoundThrows(): void

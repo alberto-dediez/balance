@@ -55,12 +55,27 @@ final class GenerateReportTextsPrompt implements GeminiPrompt
             $lines[] = sprintf('- %s', $factorLine);
         }
 
+        if ([] !== $this->data->exclusionLines) {
+            $lines[] = '';
+            $lines[] = 'Excluded emission sources (phase | source | reason | comment):';
+            foreach ($this->data->exclusionLines as $exclusionLine) {
+                $lines[] = sprintf('- %s | %s | %s | %s', $exclusionLine->phase->value, $exclusionLine->source->value, $exclusionLine->reason->value, $exclusionLine->comment ?? 'n/a');
+            }
+        }
+
         $lines[] = '';
         $lines[] = 'Write four sections:';
         $lines[] = '1. executiveSummary: a concise executive summary of the event carbon footprint results.';
         $lines[] = '2. methodology: an explanation of the calculation methodology used (emission factors, phases, sources).';
         $lines[] = '3. emissionFactorSources: a description of the origin/references of the emission factors applied.';
         $lines[] = '4. analysisAndRecommendations: an analysis of the results and concrete recommendations to reduce emissions.';
+
+        if ([] !== $this->data->exclusionLines) {
+            $lines[] = '';
+            $lines[] = 'The excluded emission sources listed above were deliberately left out of the calculation for the given phases.';
+            $lines[] = 'In the methodology section, mention these exclusions as limits of the scope of the calculation.';
+            $lines[] = 'In the analysis, do not interpret a zero value for an excluded phase/source as an actual absence of emissions, and do not base reduction recommendations on excluded sources.';
+        }
         $lines[] = '';
         $lines[] = 'Do not include any placeholders. Write generic but complete content, avoiding fabricated numbers not present above.';
         $lines[] = sprintf('Write all output in %s.', $this->locale->name);

@@ -77,6 +77,7 @@ final class GetResultsService
             emissionsBySource: $emissionsBySource,
             emissionsByPhase: $emissionsByPhase,
             emissionsByPhaseAndSource: $emissionsByPhaseAndSource,
+            exclusions: $eventCarbonFootprint->exclusions()->toArray(),
         );
     }
 }

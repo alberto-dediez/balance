@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRe
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\GetEventCarbonFootprintFromEventIdTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\Answer\PhaseAnswerHttpMapper;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\Answer\PhaseExclusionHttpMapper;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\MaterialsStepView;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
@@ -34,6 +35,7 @@ class MaterialsController extends AbstractController
         EventRepository $eventRepository,
         EventCarbonFootprintRepository $eventCarbonFootprintRepository,
         PhaseAnswerHttpMapper $answerMapper,
+        PhaseExclusionHttpMapper $exclusionMapper,
         AnswerPhaseService $answerPhase,
         GetPhaseService $getPhase,
         MaterialsStepView $stepView,
@@ -58,7 +60,7 @@ class MaterialsController extends AbstractController
 
             try {
                 $answerPhase(
-                    new AnswerPhaseRequest($eventCarbonFootprint->id(), Phase::Materials, $answerMapper->map($request, Phase::Materials)),
+                    new AnswerPhaseRequest($eventCarbonFootprint->id(), Phase::Materials, $answerMapper->map($request, Phase::Materials), $exclusionMapper->map($request, Phase::Materials)),
                     $loggedUser(),
                 );
             } catch (UnauthorizedActionException $e) {

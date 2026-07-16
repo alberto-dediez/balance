@@ -9,35 +9,45 @@
         <input type="hidden" name="_token" value="{{ csrf_token('materials_' ~ eventCarbonFootprint.id) }}">
     {% endif %}
 
-        <twig:CarbonFootprint:MaterialActivityTable
-            title="{{ 'Materiales fabricados y utilizados para el evento' | trans }}"
-            prefix="materials"
-            :rows="activityRows['material']"
-            :items="materials"
-            :units="units"
-            :eventId="eventId"
-            :readOnly="readOnly"
-        />
+        <div data-controller="source-exclusion">
+            <twig:CarbonFootprint:SourceExclusion
+                source="materials"
+                :exclusion="exclusions['materials'] ?? null"
+                :reasons="exclusionReasons"
+                :readOnly="readOnly"
+            />
+            <fieldset data-source-exclusion-target="sections">
+                <twig:CarbonFootprint:MaterialActivityTable
+                    title="{{ 'Materiales fabricados y utilizados para el evento' | trans }}"
+                    prefix="materials"
+                    :rows="activityRows['material']"
+                    :items="materials"
+                    :units="units"
+                    :eventId="eventId"
+                    :readOnly="readOnly"
+                />
 
-        <twig:CarbonFootprint:MerchandisingItemActivityTable
-            title="{{ 'Merchandising fabricado y utilizado para el evento' | trans }}"
-            prefix="merchandisingItems"
-            :rows="activityRows['merchandising_item']"
-            :items="merchandisingItems"
-            :units="units"
-            :eventId="eventId"
-            :readOnly="readOnly"
-        />
+                <twig:CarbonFootprint:MerchandisingItemActivityTable
+                    title="{{ 'Merchandising fabricado y utilizado para el evento' | trans }}"
+                    prefix="merchandisingItems"
+                    :rows="activityRows['merchandising_item']"
+                    :items="merchandisingItems"
+                    :units="units"
+                    :eventId="eventId"
+                    :readOnly="readOnly"
+                />
 
-        <twig:CarbonFootprint:CateringItemActivityTable
-            title="{{ 'Catering adquirido para el evento' | trans }}"
-            prefix="cateringItems"
-            :rows="activityRows['catering_item']"
-            :items="cateringItems"
-            :units="units"
-            :eventId="eventId"
-            :readOnly="readOnly"
-        />
+                <twig:CarbonFootprint:CateringItemActivityTable
+                    title="{{ 'Catering adquirido para el evento' | trans }}"
+                    prefix="cateringItems"
+                    :rows="activityRows['catering_item']"
+                    :items="cateringItems"
+                    :units="units"
+                    :eventId="eventId"
+                    :readOnly="readOnly"
+                />
+            </fieldset>
+        </div>
 
     {% if not readOnly %}
         <div class="d-flex justify-content-end mt-3">

@@ -54,6 +54,35 @@ class AnswerPhaseService implements CommandHandler
             $sectionAnswers[] = new SectionAnswer($definition, $sectionAnswer->answers);
         }
 
+        $phaseSources = [];
+        foreach ($request->phase->sections() as $section) {
+            $phaseSources[$section->source->value] = $section->source;
+        }
+
+        $exclusionsBySource = [];
+        foreach ($request->exclusions as $exclusion) {
+            if (!isset($phaseSources[$exclusion->source->value])) {
+                throw new \InvalidArgumentException(sprintf('Source "%s" does not belong to phase "%s".', $exclusion->source->value, $request->phase->value));
+            }
+
+            $exclusionsBySource[$exclusion->source->value] = $exclusion;
+        }
+
+        foreach ($sectionAnswers as $sectionAnswer) {
+            if ([] !== $sectionAnswer->answers && isset($exclusionsBySource[$sectionAnswer->definition->source->value])) {
+                throw new \InvalidArgumentException(sprintf('Section "%s" cannot have answers because its source "%s" is excluded.', $sectionAnswer->definition->key, $sectionAnswer->definition->source->value));
+            }
+        }
+
+        foreach ($phaseSources as $sourceValue => $source) {
+            if (isset($exclusionsBySource[$sourceValue])) {
+                $exclusion = $exclusionsBySource[$sourceValue];
+                $eventCarbonFootprint->excludeSource($request->phase, $source, $exclusion->reason, $exclusion->comment);
+            } else {
+                $eventCarbonFootprint->includeSource($request->phase, $source);
+            }
+        }
+
         $this->answersSynchronizer->sync($eventCarbonFootprint, $request->phase, $sectionAnswers, $user);
 
         $eventCarbonFootprint->answerPhase($request->phase);

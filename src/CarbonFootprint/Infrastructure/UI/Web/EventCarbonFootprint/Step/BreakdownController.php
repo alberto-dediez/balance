@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRe
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\GetEventCarbonFootprintFromEventIdTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\Answer\PhaseAnswerHttpMapper;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\Answer\PhaseExclusionHttpMapper;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\AssemblyBreakdownStepView;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
@@ -34,6 +35,7 @@ class BreakdownController extends AbstractController
         EventRepository $eventRepository,
         EventCarbonFootprintRepository $eventCarbonFootprintRepository,
         PhaseAnswerHttpMapper $answerMapper,
+        PhaseExclusionHttpMapper $exclusionMapper,
         AnswerPhaseService $answerPhase,
         GetPhaseService $getPhase,
         AssemblyBreakdownStepView $stepView,
@@ -62,7 +64,7 @@ class BreakdownController extends AbstractController
 
             try {
                 $answerPhase(
-                    new AnswerPhaseRequest($eventCarbonFootprint->id(), Phase::Breakdown, $answerMapper->map($request, Phase::Breakdown)),
+                    new AnswerPhaseRequest($eventCarbonFootprint->id(), Phase::Breakdown, $answerMapper->map($request, Phase::Breakdown), $exclusionMapper->map($request, Phase::Breakdown)),
                     $loggedUser(),
                 );
             } catch (UnauthorizedActionException $e) {

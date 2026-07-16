@@ -77,6 +77,8 @@ class CelebrationStepViewTest extends TestCase
                 'wasteRows',
                 'attendeesMobilityRows',
                 'attendeesOvernightStayRows',
+                'exclusions',
+                'exclusionReasons',
             ],
             array_keys($view),
         );

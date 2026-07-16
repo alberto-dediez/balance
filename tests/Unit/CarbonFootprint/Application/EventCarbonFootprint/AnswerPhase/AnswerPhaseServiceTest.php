@@ -23,6 +23,8 @@ use App\CarbonFootprint\Domain\Model\Activity\MaterialActivity;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintStatus;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionAnswer;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionAnswer;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionDefinition;
@@ -175,6 +177,83 @@ class AnswerPhaseServiceTest extends TestCase
 
         ($this->sut)(new AnswerPhaseRequest($eventCarbonFootprint->id(), Phase::Breakdown), $this->ownerUser());
         $this->assertSame(EventCarbonFootprintStatus::BreakdownAnswered, $eventCarbonFootprint->status());
+    }
+
+    public function testAnExclusionIsRegisteredAndRemovesThePreviousActivitiesOfThatSource(): void
+    {
+        $eventCarbonFootprint = $this->registeredEventCarbonFootprint();
+
+        ($this->sut)(new AnswerPhaseRequest($eventCarbonFootprint->id(), Phase::Materials, [$this->materialsSection()]), $this->ownerUser());
+        $this->assertCount(1, $eventCarbonFootprint->activities()->filterBySource(Source::Materials)->activityIds());
+
+        ($this->sut)(
+            new AnswerPhaseRequest(
+                $eventCarbonFootprint->id(),
+                Phase::Materials,
+                [],
+                [new ExclusionAnswer(Source::Materials, ExclusionReason::NoDataAvailable, 'no invoices yet')],
+            ),
+            $this->ownerUser(),
+        );
+
+        $exclusion = $eventCarbonFootprint->exclusions()->forPhaseAndSource(Phase::Materials, Source::Materials);
+        $this->assertNotNull($exclusion);
+        $this->assertSame(ExclusionReason::NoDataAvailable, $exclusion->reason());
+        $this->assertSame('no invoices yet', $exclusion->comment());
+        $this->assertCount(0, $eventCarbonFootprint->activities()->filterBySource(Source::Materials)->activityIds());
+    }
+
+    public function testAnswersForAnExcludedSourceThrow(): void
+    {
+        $eventCarbonFootprint = $this->registeredEventCarbonFootprint();
+
+        $this->expectException(\InvalidArgumentException::class);
+        ($this->sut)(
+            new AnswerPhaseRequest(
+                $eventCarbonFootprint->id(),
+                Phase::Materials,
+                [$this->materialsSection()],
+                [new ExclusionAnswer(Source::Materials, ExclusionReason::NotApplicable)],
+            ),
+            $this->ownerUser(),
+        );
+    }
+
+    public function testAnExclusionOfASourceForeignToThePhaseThrows(): void
+    {
+        $eventCarbonFootprint = $this->registeredEventCarbonFootprint();
+
+        $this->expectException(\InvalidArgumentException::class);
+        ($this->sut)(
+            new AnswerPhaseRequest(
+                $eventCarbonFootprint->id(),
+                Phase::Materials,
+                [],
+                [new ExclusionAnswer(Source::WasteManagement, ExclusionReason::NotApplicable)],
+            ),
+            $this->ownerUser(),
+        );
+    }
+
+    public function testOmittingAPreviousExclusionReIncludesTheSource(): void
+    {
+        $eventCarbonFootprint = $this->registeredEventCarbonFootprint();
+
+        ($this->sut)(
+            new AnswerPhaseRequest(
+                $eventCarbonFootprint->id(),
+                Phase::Materials,
+                [],
+                [new ExclusionAnswer(Source::Materials, ExclusionReason::NotSignificant)],
+            ),
+            $this->ownerUser(),
+        );
+        $this->assertTrue($eventCarbonFootprint->exclusions()->isExcluded(Phase::Materials, Source::Materials));
+
+        ($this->sut)(new AnswerPhaseRequest($eventCarbonFootprint->id(), Phase::Materials, [$this->materialsSection()]), $this->ownerUser());
+
+        $this->assertFalse($eventCarbonFootprint->exclusions()->isExcluded(Phase::Materials, Source::Materials));
+        $this->assertCount(1, $eventCarbonFootprint->activities()->filterBySource(Source::Materials)->activityIds());
     }
 
     public function testIsHandled(): void

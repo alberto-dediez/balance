@@ -21,6 +21,9 @@ class EventCarbonFootprint implements \Stringable
     /** @var iterable<EventCarbonFootprintActivity> */
     private iterable $activities = [];
 
+    /** @var iterable<EventCarbonFootprintExclusion> */
+    private iterable $exclusions = [];
+
     /** @param array<\App\Shared\Domain\Event\DomainEvent> $events */
     public function __construct(
         private EventCarbonFootprintId $id,
@@ -370,6 +373,10 @@ class EventCarbonFootprint implements \Stringable
             }
         }
 
+        if (null === $providerId && $this->exclusions()->isExcluded($phase, $source)) {
+            return;
+        }
+
         $this->recordApplyAndPublish(
             new EventCarbonFootprintActivityAdded(
                 eventCarbonFootprintId: $this->id,
@@ -396,6 +403,95 @@ class EventCarbonFootprint implements \Stringable
     public function activities(): EventCarbonFootprintActivities
     {
         return new EventCarbonFootprintActivities($this->activities);
+    }
+
+    public function exclusions(): EventCarbonFootprintExclusions
+    {
+        return new EventCarbonFootprintExclusions($this->exclusions);
+    }
+
+    public function excludeSource(Phase $phase, Source $source, ExclusionReason $reason, ?string $comment = null): void
+    {
+        $this->ensureIsEditable();
+
+        $existing = $this->exclusions()->forPhaseAndSource($phase, $source);
+        if (null !== $existing && $existing->reason() === $reason && $existing->comment() === $comment) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new EventCarbonFootprintSourceExcluded(
+                eventCarbonFootprintId: $this->id,
+                phase: $phase,
+                source: $source,
+                reason: $reason,
+                comment: $comment,
+            ),
+        );
+
+        $this->retainActivities($phase, $source, [], null);
+    }
+
+    public function includeSource(Phase $phase, Source $source): void
+    {
+        $this->ensureIsEditable();
+
+        if (!$this->exclusions()->isExcluded($phase, $source)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new EventCarbonFootprintSourceIncluded(
+                eventCarbonFootprintId: $this->id,
+                phase: $phase,
+                source: $source,
+            ),
+        );
+    }
+
+    public function applyEventCarbonFootprintSourceExcluded(EventCarbonFootprintSourceExcluded $event): void
+    {
+        $this->removeExclusionChild($event->phase(), $event->source());
+
+        $exclusion = new EventCarbonFootprintExclusion(
+            id: EventCarbonFootprintExclusionId::generate(),
+            eventCarbonFootprint: $this,
+            phase: $event->phase(),
+            source: $event->source(),
+            reason: $event->reason(),
+            comment: $event->comment(),
+            excludedAt: $event->occurredOn(),
+        );
+
+        if (is_array($this->exclusions)) {
+            $this->exclusions[] = $exclusion;
+        } elseif ($this->exclusions instanceof \Doctrine\Common\Collections\Collection) {
+            $this->exclusions->add($exclusion);
+        }
+
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyEventCarbonFootprintSourceIncluded(EventCarbonFootprintSourceIncluded $event): void
+    {
+        $this->removeExclusionChild($event->phase(), $event->source());
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    private function removeExclusionChild(Phase $phase, Source $source): void
+    {
+        foreach ($this->exclusions as $key => $exclusion) {
+            if ($exclusion->phase() !== $phase || $exclusion->source() !== $source) {
+                continue;
+            }
+            if (is_array($this->exclusions)) {
+                unset($this->exclusions[$key]);
+            } elseif ($this->exclusions instanceof \Doctrine\Common\Collections\Collection) {
+                $this->exclusions->removeElement($exclusion);
+            }
+
+            return;
+        }
     }
 
     public function applyEventCarbonFootprintActivityAdded(EventCarbonFootprintActivityAdded $event): void

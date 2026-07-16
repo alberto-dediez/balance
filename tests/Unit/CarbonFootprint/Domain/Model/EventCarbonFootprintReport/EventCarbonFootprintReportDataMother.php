@@ -10,6 +10,7 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportActivityLine;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportData;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportExclusionLine;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\EventOperations\Domain\Model\Event\DateRange;
 use App\EventOperations\Domain\Model\Event\EventSector;
@@ -18,7 +19,8 @@ use App\EventOperations\Domain\Model\Event\EventTypology;
 
 class EventCarbonFootprintReportDataMother
 {
-    public static function random(): EventCarbonFootprintReportData
+    /** @param list<EventCarbonFootprintReportExclusionLine> $exclusionLines */
+    public static function random(array $exclusionLines = []): EventCarbonFootprintReportData
     {
         $emissionsBySource = [];
         foreach (Source::cases() as $source) {
@@ -69,6 +71,7 @@ class EventCarbonFootprintReportDataMother
                     emissionsCo2eq: '10',
                 ),
             ],
+            exclusionLines: $exclusionLines,
         );
     }
 }

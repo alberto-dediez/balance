@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\AI;
 
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportExclusionLine;
 use App\CarbonFootprint\Infrastructure\AI\Gemini\GenerateReportTextsPrompt;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\Gemini\GeminiModelTier;
@@ -48,5 +52,25 @@ class GenerateReportTextsPromptTest extends TestCase
         $prompt = new GenerateReportTextsPrompt($data, Locale::Spanish);
 
         $this->assertStringContainsString($data->eventName, $prompt->text());
+    }
+
+    public function testTextIncludesTheExclusionsBlockWhenThereAreExclusionLines(): void
+    {
+        $data = EventCarbonFootprintReportDataMother::random([
+            new EventCarbonFootprintReportExclusionLine(Phase::Assembly, Source::WasteManagement, ExclusionReason::NoDataAvailable, 'no invoices'),
+        ]);
+        $prompt = new GenerateReportTextsPrompt($data, Locale::Spanish);
+
+        $text = $prompt->text();
+        $this->assertStringContainsString('Excluded emission sources', $text);
+        $this->assertStringContainsString('assembly | waste_management | no_data_available | no invoices', $text);
+        $this->assertStringContainsString('limits of the scope', $text);
+    }
+
+    public function testTextOmitsTheExclusionsBlockWhenThereAreNoExclusionLines(): void
+    {
+        $prompt = new GenerateReportTextsPrompt(EventCarbonFootprintReportDataMother::random(), Locale::Spanish);
+
+        $this->assertStringNotContainsString('Excluded emission sources', $prompt->text());
     }
 }

@@ -45,7 +45,7 @@ class MaterialsStepViewTest extends TestCase
         $view = $this->sut->build($eventCarbonFootprint, $this->response());
 
         $this->assertSame(
-            ['eventCarbonFootprint', 'activityRows', 'materials', 'cateringItems', 'merchandisingItems', 'units', 'conditions'],
+            ['eventCarbonFootprint', 'activityRows', 'materials', 'cateringItems', 'merchandisingItems', 'units', 'conditions', 'exclusions', 'exclusionReasons'],
             array_keys($view),
         );
         $this->assertIsArray($view['activityRows']);

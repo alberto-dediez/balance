@@ -13,10 +13,11 @@ use App\EventOperations\Domain\Model\Event\EventTypology;
 final class EventCarbonFootprintReportData
 {
     /**
-     * @param array<string, Emissions>                     $emissionsBySource
-     * @param array<string, Emissions>                     $emissionsByPhase
-     * @param array<string, array<string, Emissions>>      $emissionsByPhaseAndSource
-     * @param list<EventCarbonFootprintReportActivityLine> $activityLines
+     * @param array<string, Emissions>                      $emissionsBySource
+     * @param array<string, Emissions>                      $emissionsByPhase
+     * @param array<string, array<string, Emissions>>       $emissionsByPhaseAndSource
+     * @param list<EventCarbonFootprintReportActivityLine>  $activityLines
+     * @param list<EventCarbonFootprintReportExclusionLine> $exclusionLines
      */
     public function __construct(
         public readonly string $eventName,
@@ -35,5 +36,6 @@ final class EventCarbonFootprintReportData
         public readonly array $emissionsByPhase,
         public readonly array $emissionsByPhaseAndSource,
         public readonly array $activityLines,
+        public readonly array $exclusionLines = [],
     ) {}
 }

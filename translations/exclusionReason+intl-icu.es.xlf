@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="es" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="i7ic7kr" resname="not_applicable">
+        <source>not_applicable</source>
+        <target>No aplica</target>
+      </trans-unit>
+      <trans-unit id="IHkaFPo" resname="no_data_available">
+        <source>no_data_available</source>
+        <target>Sin datos disponibles</target>
+      </trans-unit>
+      <trans-unit id="9Y1UgOs" resname="not_significant">
+        <source>not_significant</source>
+        <target>No significativa</target>
+      </trans-unit>
+      <trans-unit id="fvnAi.y" resname="out_of_scope">
+        <source>out_of_scope</source>
+        <target>Fuera de alcance</target>
+      </trans-unit>
+      <trans-unit id="8aHe0YP" resname="other">
+        <source>other</source>
+        <target>Otro</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

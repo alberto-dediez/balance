@@ -75,6 +75,8 @@ class AssemblyBreakdownStepViewTest extends TestCase
                 'overnightStayRows',
                 'mobilityRows',
                 'wasteRows',
+                'exclusions',
+                'exclusionReasons',
             ],
             array_keys($view),
         );

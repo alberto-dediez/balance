@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\Vi
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseResponse;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\PhaseSection;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\OvernightStay\CategoryOvernight;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStay;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -53,7 +54,23 @@ final class CelebrationStepView
             'wasteRows' => $this->rows($wastes),
             'attendeesMobilityRows' => $this->rows($attendeesMobilities),
             'attendeesOvernightStayRows' => $this->rows($attendeesOvernightStays),
+            'exclusions' => $this->exclusions($response),
+            'exclusionReasons' => ExclusionReason::cases(),
         ];
+    }
+
+    /** @return array<string, array{reason: string, comment: ?string}> */
+    private function exclusions(GetPhaseResponse $response): array
+    {
+        $exclusions = [];
+        foreach ($response->exclusions as $sourceValue => $exclusion) {
+            $exclusions[$sourceValue] = [
+                'reason' => $exclusion->reason()->value,
+                'comment' => $exclusion->comment(),
+            ];
+        }
+
+        return $exclusions;
     }
 
     /**

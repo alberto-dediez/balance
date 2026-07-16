@@ -3897,6 +3897,38 @@
         <source>La huella de carbono de este evento está completada: los datos solo se pueden consultar.</source>
         <target>La huella de carbono de este evento está completada: los datos solo se pueden consultar.</target>
       </trans-unit>
+      <trans-unit id="bB78Th8" resname="Exclusiones de fuentes de emisión">
+        <source>Exclusiones de fuentes de emisión</source>
+        <target>Exclusiones de fuentes de emisión</target>
+      </trans-unit>
+      <trans-unit id="5Tqo5nC" resname="Motivo">
+        <source>Motivo</source>
+        <target>Motivo</target>
+      </trans-unit>
+      <trans-unit id="lU2lPte" resname="Comentario">
+        <source>Comentario</source>
+        <target>Comentario</target>
+      </trans-unit>
+      <trans-unit id="XR5QK9K" resname="Fuente excluida">
+        <source>Fuente excluida</source>
+        <target>Fuente excluida</target>
+      </trans-unit>
+      <trans-unit id="XJekCdy" resname="Excluir esta fuente de emisión">
+        <source>Excluir esta fuente de emisión</source>
+        <target>Excluir esta fuente de emisión</target>
+      </trans-unit>
+      <trans-unit id="tGB8TVA" resname="Motivo de la exclusión">
+        <source>Motivo de la exclusión</source>
+        <target>Motivo de la exclusión</target>
+      </trans-unit>
+      <trans-unit id="jdx3wio" resname="Comentario (opcional)">
+        <source>Comentario (opcional)</source>
+        <target>Comentario (opcional)</target>
+      </trans-unit>
+      <trans-unit id="jchYUNy" resname="Fuentes de emisión excluidas">
+        <source>Fuentes de emisión excluidas</source>
+        <target>Fuentes de emisión excluidas</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

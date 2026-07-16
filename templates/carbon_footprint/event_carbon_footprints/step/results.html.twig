@@ -178,6 +178,33 @@
             </div>
         </twig:Card>
 
+        {% if exclusions is not empty %}
+            <twig:Card title="{{ 'Fuentes de emisión excluidas' | trans }}">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>{{ 'Fase' | trans }}</th>
+                            <th>{{ 'Fuente' | trans }}</th>
+                            <th>{{ 'Motivo' | trans }}</th>
+                            <th>{{ 'Comentario' | trans }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for exclusion in exclusions %}
+                            <tr>
+                                <td>{{ exclusion.phase }}</td>
+                                <td>{{ exclusion.source }}</td>
+                                <td>{{ exclusion.reason }}</td>
+                                <td>{{ exclusion.comment ?? '-' }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </twig:Card>
+        {% endif %}
+
         <twig:Card title="{{ 'Matriz fase × fuente' | trans }}">
             <div class="table-responsive">
                 <table class="table table-striped">

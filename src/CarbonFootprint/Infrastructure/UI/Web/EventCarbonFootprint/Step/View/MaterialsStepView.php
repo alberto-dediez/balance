@@ -9,6 +9,7 @@ use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\PhaseSection;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\Unit;
 
 final class MaterialsStepView
@@ -34,7 +35,23 @@ final class MaterialsStepView
             'merchandisingItems' => $merchandisingItems->catalog,
             'units' => Unit::cases(),
             'conditions' => ItemCondition::cases(),
+            'exclusions' => $this->exclusions($response),
+            'exclusionReasons' => ExclusionReason::cases(),
         ];
+    }
+
+    /** @return array<string, array{reason: string, comment: ?string}> */
+    private function exclusions(GetPhaseResponse $response): array
+    {
+        $exclusions = [];
+        foreach ($response->exclusions as $sourceValue => $exclusion) {
+            $exclusions[$sourceValue] = [
+                'reason' => $exclusion->reason()->value,
+                'comment' => $exclusion->comment(),
+            ];
+        }
+
+        return $exclusions;
     }
 
     /** @return list<ActivityRowView> */

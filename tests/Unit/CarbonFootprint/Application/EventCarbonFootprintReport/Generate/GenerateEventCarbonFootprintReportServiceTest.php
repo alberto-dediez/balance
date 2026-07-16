@@ -12,7 +12,9 @@ use App\CarbonFootprint\Application\EventCarbonFootprintReport\Generate\Activity
 use App\CarbonFootprint\Application\EventCarbonFootprintReport\Generate\GenerateEventCarbonFootprintReportRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprintReport\Generate\GenerateEventCarbonFootprintReportService;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReport;
@@ -91,6 +93,23 @@ class GenerateEventCarbonFootprintReportServiceTest extends TestCase
         }
     }
 
+    public function testReportDataContainsTheExclusionLines(): void
+    {
+        [$sut, , , $textsGenerator, $report, $eventCarbonFootprint] = $this->createSUT();
+
+        $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::NoDataAvailable, 'no invoices');
+
+        ($sut)(new GenerateEventCarbonFootprintReportRequest($report->id()), UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id')));
+
+        $data = $textsGenerator->lastData();
+        $this->assertNotNull($data);
+        $this->assertCount(1, $data->exclusionLines);
+        $this->assertSame(Phase::Assembly, $data->exclusionLines[0]->phase);
+        $this->assertSame(Source::WasteManagement, $data->exclusionLines[0]->source);
+        $this->assertSame(ExclusionReason::NoDataAvailable, $data->exclusionLines[0]->reason);
+        $this->assertSame('no invoices', $data->exclusionLines[0]->comment);
+    }
+
     public function testIsIdempotentWhenAlreadyGenerated(): void
     {
         [$sut, $reportRepository, , $textsGenerator, $report] = $this->createSUT();
@@ -103,7 +122,7 @@ class GenerateEventCarbonFootprintReportServiceTest extends TestCase
     }
 
     /**
-     * @return array{0: GenerateEventCarbonFootprintReportService, 1: InMemoryEventCarbonFootprintReportRepository, 2: InMemoryEventCarbonFootprintReportStorage, 3: FakeReportTextsGenerator, 4: EventCarbonFootprintReport}
+     * @return array{0: GenerateEventCarbonFootprintReportService, 1: InMemoryEventCarbonFootprintReportRepository, 2: InMemoryEventCarbonFootprintReportStorage, 3: FakeReportTextsGenerator, 4: EventCarbonFootprintReport, 5: EventCarbonFootprint}
      */
     private function createSUT(): array
     {
@@ -169,6 +188,6 @@ class GenerateEventCarbonFootprintReportServiceTest extends TestCase
             'es|en',
         );
 
-        return [$sut, $reportRepository, $storage, $textsGenerator, $report];
+        return [$sut, $reportRepository, $storage, $textsGenerator, $report, $eventCarbonFootprint];
     }
 }

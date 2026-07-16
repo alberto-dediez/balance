@@ -3897,6 +3897,38 @@
         <source>La huella de carbono de este evento está completada: los datos solo se pueden consultar.</source>
         <target>This event's carbon footprint is completed: the data can only be viewed.</target>
       </trans-unit>
+      <trans-unit id="bB78Th8" resname="Exclusiones de fuentes de emisión">
+        <source>Exclusiones de fuentes de emisión</source>
+        <target>Emission source exclusions</target>
+      </trans-unit>
+      <trans-unit id="5Tqo5nC" resname="Motivo">
+        <source>Motivo</source>
+        <target>Reason</target>
+      </trans-unit>
+      <trans-unit id="lU2lPte" resname="Comentario">
+        <source>Comentario</source>
+        <target>Comment</target>
+      </trans-unit>
+      <trans-unit id="XR5QK9K" resname="Fuente excluida">
+        <source>Fuente excluida</source>
+        <target>Excluded source</target>
+      </trans-unit>
+      <trans-unit id="XJekCdy" resname="Excluir esta fuente de emisión">
+        <source>Excluir esta fuente de emisión</source>
+        <target>Exclude this emission source</target>
+      </trans-unit>
+      <trans-unit id="tGB8TVA" resname="Motivo de la exclusión">
+        <source>Motivo de la exclusión</source>
+        <target>Reason for the exclusion</target>
+      </trans-unit>
+      <trans-unit id="jdx3wio" resname="Comentario (opcional)">
+        <source>Comentario (opcional)</source>
+        <target>Comment (optional)</target>
+      </trans-unit>
+      <trans-unit id="jchYUNy" resname="Fuentes de emisión excluidas">
+        <source>Fuentes de emisión excluidas</source>
+        <target>Excluded emission sources</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -63,6 +63,11 @@ final class GetPhaseService
             );
         }
 
-        return new GetPhaseResponse($sections);
+        $exclusions = [];
+        foreach ($eventCarbonFootprint->exclusions()->filterByPhase($request->phase)->toArray() as $exclusion) {
+            $exclusions[$exclusion->source()->value] = $exclusion;
+        }
+
+        return new GetPhaseResponse($sections, $exclusions);
     }
 }

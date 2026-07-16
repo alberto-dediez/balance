@@ -40,7 +40,25 @@ final class ResultsView
                 fn(Phase $phase) => $this->translator->trans($phase->value, [], 'phase'),
                 Phase::cases(),
             ),
+            'exclusions' => $this->exclusions($results),
         ];
+    }
+
+    /** @return list<array{phase: string, source: string, reason: string, comment: ?string}> */
+    private function exclusions(GetResultsResponse $results): array
+    {
+        $rows = [];
+
+        foreach ($results->exclusions as $exclusion) {
+            $rows[] = [
+                'phase' => $this->translator->trans($exclusion->phase()->value, [], 'phase'),
+                'source' => $this->translator->trans($exclusion->source()->value, [], 'source'),
+                'reason' => $this->translator->trans($exclusion->reason()->value, [], 'exclusionReason'),
+                'comment' => $exclusion->comment(),
+            ];
+        }
+
+        return $rows;
     }
 
     /** @return array<string, mixed> */

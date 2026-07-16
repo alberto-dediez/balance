@@ -1,0 +1,48 @@
+{% props source, exclusion = null, reasons = [], readOnly = false %}
+
+{% if readOnly %}
+    {% if exclusion %}
+        <div class="alert alert-secondary d-flex align-items-center gap-2 mb-3">
+            <span class="badge text-bg-secondary">{{ 'Fuente excluida' | trans }}</span>
+            <span>{{ exclusion.reason | trans({}, 'exclusionReason') }}</span>
+            {% if exclusion.comment %}
+                <span class="text-muted">{{ exclusion.comment }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+{% else %}
+    <div class="mb-3">
+        <div class="form-check">
+            <input
+                class="form-check-input"
+                type="checkbox"
+                value="1"
+                name="exclusions[{{ source }}][excluded]"
+                id="exclusion_{{ source }}"
+                data-source-exclusion-target="checkbox"
+                data-action="source-exclusion#toggle"
+                {% if exclusion %}checked{% endif %}
+            >
+            <label class="form-check-label" for="exclusion_{{ source }}">
+                {{ 'Excluir esta fuente de emisión' | trans }}
+            </label>
+        </div>
+
+        <div class="row g-2 mt-1 {% if not exclusion %}d-none{% endif %}" data-source-exclusion-target="details">
+            <div class="col-md-4">
+                <label class="form-label" for="exclusion_{{ source }}_reason">{{ 'Motivo de la exclusión' | trans }}</label>
+                <select class="form-select" name="exclusions[{{ source }}][reason]" id="exclusion_{{ source }}_reason">
+                    {% for reason in reasons %}
+                        <option value="{{ reason.value }}" {% if exclusion and exclusion.reason == reason.value %}selected{% endif %}>
+                            {{ reason.value | trans({}, 'exclusionReason') }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-8">
+                <label class="form-label" for="exclusion_{{ source }}_comment">{{ 'Comentario (opcional)' | trans }}</label>
+                <textarea class="form-control" name="exclusions[{{ source }}][comment]" id="exclusion_{{ source }}_comment" rows="1">{{ exclusion ? exclusion.comment : '' }}</textarea>
+            </div>
+        </div>
+    </div>
+{% endif %}

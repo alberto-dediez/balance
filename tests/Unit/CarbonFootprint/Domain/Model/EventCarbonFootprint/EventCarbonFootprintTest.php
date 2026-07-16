@@ -14,10 +14,14 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintBr
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintCelebrationAnswered;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMaterialsAnswered;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintReopened;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintSourceExcluded;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintSourceIncluded;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintStatus;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\EventOperations\Domain\Model\Event\DateRange;
+use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use PHPUnit\Framework\TestCase;
 
@@ -149,6 +153,133 @@ class EventCarbonFootprintTest extends TestCase
         $eventCarbonFootprint->answerPhase(Phase::Materials);
 
         $this->assertSame(EventCarbonFootprintStatus::MaterialsAnswered, $eventCarbonFootprint->status());
+    }
+
+    public function testExcludeSourceRemovesOnlyOrganizerActivitiesOfThatPhaseAndSource(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
+
+        $organizerId = ActivityId::generate();
+        $otherSourceId = ActivityId::generate();
+        $otherPhaseId = ActivityId::generate();
+        $providerActivityId = ActivityId::generate();
+        $eventCarbonFootprint->addActivity($organizerId, Phase::Assembly, Source::WasteManagement);
+        $eventCarbonFootprint->addActivity($otherSourceId, Phase::Assembly, Source::FreightTransport);
+        $eventCarbonFootprint->addActivity($otherPhaseId, Phase::Celebration, Source::WasteManagement);
+        $eventCarbonFootprint->addActivity($providerActivityId, Phase::Assembly, Source::WasteManagement, ProviderId::generate());
+        $eventCarbonFootprint->clearEvents();
+
+        $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::NoDataAvailable);
+
+        $remainingIds = $eventCarbonFootprint->activities()->activityIds();
+        $this->assertCount(3, $remainingIds);
+        foreach ($remainingIds as $remainingId) {
+            $this->assertFalse($remainingId->equals($organizerId));
+        }
+
+        $this->assertTrue($eventCarbonFootprint->exclusions()->isExcluded(Phase::Assembly, Source::WasteManagement));
+        $this->assertEventPublished($eventCarbonFootprint, EventCarbonFootprintSourceExcluded::class);
+        $removedEvents = array_filter($eventCarbonFootprint->recordedEvents(), static fn($e) => $e instanceof EventCarbonFootprintActivityRemoved);
+        $this->assertCount(1, $removedEvents);
+    }
+
+    public function testExcludeSourceIsIdempotentForSameReasonAndComment(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
+        $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::Other, 'a comment');
+        $eventCarbonFootprint->clearEvents();
+
+        $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::Other, 'a comment');
+
+        $this->assertEmpty($eventCarbonFootprint->recordedEvents());
+        $this->assertCount(1, $eventCarbonFootprint->exclusions()->toArray());
+    }
+
+    public function testExcludeSourceWithDifferentReasonReplacesTheExclusion(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
+        $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::Other, 'a comment');
+        $eventCarbonFootprint->clearEvents();
+
+        $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::NotSignificant);
+
+        $this->assertEventPublished($eventCarbonFootprint, EventCarbonFootprintSourceExcluded::class);
+        $exclusions = $eventCarbonFootprint->exclusions()->toArray();
+        $this->assertCount(1, $exclusions);
+        $this->assertSame(ExclusionReason::NotSignificant, $exclusions[0]->reason());
+        $this->assertNull($exclusions[0]->comment());
+    }
+
+    public function testIncludeSourceRemovesTheExclusion(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
+        $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::NotApplicable);
+        $eventCarbonFootprint->clearEvents();
+
+        $eventCarbonFootprint->includeSource(Phase::Assembly, Source::WasteManagement);
+
+        $this->assertFalse($eventCarbonFootprint->exclusions()->isExcluded(Phase::Assembly, Source::WasteManagement));
+        $this->assertEventPublished($eventCarbonFootprint, EventCarbonFootprintSourceIncluded::class);
+    }
+
+    public function testIncludeSourceIsNoOpWhenNotExcluded(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
+        $eventCarbonFootprint->clearEvents();
+
+        $eventCarbonFootprint->includeSource(Phase::Assembly, Source::WasteManagement);
+
+        $this->assertEmpty($eventCarbonFootprint->recordedEvents());
+    }
+
+    public function testAddActivityIsNoOpForExcludedSourceWithoutProvider(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
+        $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::NoDataAvailable);
+
+        $eventCarbonFootprint->addActivity(ActivityId::generate(), Phase::Assembly, Source::WasteManagement);
+
+        $this->assertCount(0, $eventCarbonFootprint->activities()->activityIds());
+    }
+
+    public function testAddActivityStillAddsProviderActivitiesForExcludedSource(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
+        $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::NoDataAvailable);
+
+        $eventCarbonFootprint->addActivity(ActivityId::generate(), Phase::Assembly, Source::WasteManagement, ProviderId::generate());
+
+        $this->assertCount(1, $eventCarbonFootprint->activities()->activityIds());
+    }
+
+    public function testExcludeSourceThrowsWhenCompleted(): void
+    {
+        $eventCarbonFootprint = $this->completedEventCarbonFootprintWithOneActivity();
+
+        $this->expectException(EventCarbonFootprintAlreadyCompletedException::class);
+        $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::NotApplicable);
+    }
+
+    public function testIncludeSourceThrowsWhenCompleted(): void
+    {
+        $eventCarbonFootprint = $this->completedEventCarbonFootprintWithOneActivity();
+
+        $this->expectException(EventCarbonFootprintAlreadyCompletedException::class);
+        $eventCarbonFootprint->includeSource(Phase::Assembly, Source::WasteManagement);
+    }
+
+    public function testReopenKeepsExclusions(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
+        $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::OutOfScope);
+        $eventCarbonFootprint->complete(
+            totalEmissions: new Emissions('30', '30', '0', '0'),
+            emissionsPerAttendee: new Emissions('10', '10', '0', '0'),
+        );
+
+        $eventCarbonFootprint->reopen();
+
+        $this->assertTrue($eventCarbonFootprint->exclusions()->isExcluded(Phase::Assembly, Source::WasteManagement));
     }
 
     private function completedEventCarbonFootprintWithOneActivity(): EventCarbonFootprint
