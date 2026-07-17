@@ -19,7 +19,7 @@ Feature:
         Given provider "444" has a linked user
         Given provider contribution with id "111" for event carbon footprint "999" and provider "444" of account "666" with token "token-abc" exists
         When I go to "/es/carbon-footprint/contribution/token-abc/assembly"
-        When I submit a form with "" and button "Guardar y continuar"
+        When I submit a form with "" and button "Siguiente"
         Then I am redirected to route "public_carbon_footprint_contribution_celebration"
 
     Scenario: Submitting the breakdown step marks the contribution as answered
@@ -48,5 +48,5 @@ Feature:
         Given provider "444" has a linked user
         Given provider contribution with id "111" for event carbon footprint "999" and provider "444" of account "666" with token "token-abc" exists
         When I go to "/es/carbon-footprint/contribution/token-abc/assembly"
-        When I submit a form with "" and button "Guardar y continuar"
+        When I submit a form with "" and button "Siguiente"
         Then the response status should be 409

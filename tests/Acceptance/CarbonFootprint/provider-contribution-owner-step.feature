@@ -29,7 +29,7 @@ Feature:
         Given provider "Proveedor A" with id "444" of account "666" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/events/333/carbon-footprint/step/providers"
-        When I submit a form with "[providerIds][0]:444" and button "Guardar y continuar"
+        When I submit a form with "[providerIds][0]:444" and button "Siguiente"
         Then I am redirected to route "events_carbon_footprint_employees"
 
     Scenario: As a user, I can't access the providers step

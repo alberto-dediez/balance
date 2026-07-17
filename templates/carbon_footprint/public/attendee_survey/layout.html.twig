@@ -1,9 +1,38 @@
-{% extends '@shared/layout/public-wizard.html.twig' %}
+{% extends '@shared/layout/public.html.twig' %}
+
+{#
+    Variables expected from the child template:
+      survey_step — 1-based index of the current step (required)
+      event, token — provided by the controller
+#}
+
+{% block page_header %}{% endblock %}
 
 {% block content %}
-    {% set wizard_steps = [
-        {label: 'Movilidad interurbana' | trans, href: path('public_carbon_footprint_attendee_survey_intercity', {token: token})},
-        {label: 'Movilidad en la ciudad' | trans, href: path('public_carbon_footprint_attendee_survey_city', {token: token})},
+    {% set survey_steps = [
+        'Movilidad interurbana' | trans,
+        'Movilidad en la ciudad' | trans,
     ] %}
-    {{ parent() }}
+    {% set survey_total = survey_steps | length %}
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-9 col-lg-7 col-xl-5">
+            <div class="mb-3">
+                <h4 class="fw-semibold mb-1">{{ event.name }}</h4>
+                <div class="d-flex justify-content-between align-items-baseline mb-2">
+                    <span class="text-muted">{{ survey_steps[survey_step - 1] }}</span>
+                    <span class="text-muted text-nowrap ms-2">{{ 'Paso {step} de {total}' | trans({'{step}': survey_step, '{total}': survey_total}) }}</span>
+                </div>
+                <div class="progress" style="height: 6px" role="progressbar" aria-label="{{ 'Paso {step} de {total}' | trans({'{step}': survey_step, '{total}': survey_total}) }}" aria-valuenow="{{ survey_step }}" aria-valuemin="1" aria-valuemax="{{ survey_total }}">
+                    <div class="progress-bar" style="width: {{ ((survey_step / survey_total) * 100) | round }}%"></div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    {% block survey_body %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

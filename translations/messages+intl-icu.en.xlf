@@ -4069,6 +4069,10 @@
         <source>Volver a resultados</source>
         <target>Back to results</target>
       </trans-unit>
+      <trans-unit id="hw0VLuv" resname="Paso {step} de {total}">
+        <source>Paso {step} de {total}</source>
+        <target>Step {step} of {total}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

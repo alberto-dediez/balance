@@ -2,13 +2,16 @@
 
 {% set page_title = 'Gracias' | trans %}
 
+{% block page_header %}{% endblock %}
+
 {% block content %}
     <div class="row justify-content-center">
-        <div class="col-md-8 text-center">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5 text-center">
             <div class="card">
-                <div class="card-body py-5">
+                <div class="card-body py-5 px-4">
+                    <twig:Icon name="solar:check-circle-bold" size="xl" class="text-success mb-3" />
                     <h3 class="text-success">{{ '¡Gracias por responder a la encuesta!' | trans }}</h3>
-                    <p class="text-muted mt-3">
+                    <p class="text-muted mt-3 mb-0">
                         {{ 'Tu respuesta se ha registrado correctamente y nos ayudará a calcular la huella de carbono del evento.' | trans }}
                     </p>
                 </div>
