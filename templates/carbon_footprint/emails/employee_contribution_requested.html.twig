@@ -1,0 +1,16 @@
+{% extends '@shared/layout/email.html.twig' %}
+
+{% block content %}
+    <h3>{% trans -%}Aporta tus datos de movilidad y pernoctaciones para el evento{%- endtrans %}</h3>
+    <p>
+        {% trans with {'{name}': employeeName ?? ''} -%}
+            Hola {name}, se te ha solicitado aportar tus datos de movilidad y pernoctaciones para este evento.
+        {%- endtrans %}
+    </p>
+    <p>{% trans -%}Por favor, accede al siguiente enlace para completar los datos:{%- endtrans %}</p>
+    <p>
+        <a href="{{ url('public_carbon_footprint_employee_contribution', {token: token}) }}" class="btn btn-primary">
+            {% trans -%}Aportar datos{%- endtrans %}
+        </a>
+    </p>
+{% endblock %}

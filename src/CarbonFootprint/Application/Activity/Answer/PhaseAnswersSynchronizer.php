@@ -21,7 +21,7 @@ final class PhaseAnswersSynchronizer
      * @param list<SectionAnswer>      $sectionAnswers
      * @param ?list<SectionDefinition> $sections
      */
-    public function sync(EventCarbonFootprint $eventCarbonFootprint, Phase $phase, array $sectionAnswers, User $user, ?array $sections = null, ?ProviderId $providerId = null): void
+    public function sync(EventCarbonFootprint $eventCarbonFootprint, Phase $phase, array $sectionAnswers, User $user, ?array $sections = null, ?ProviderId $providerId = null, bool $fromEmployees = false): void
     {
         $sections ??= $phase->sections();
 
@@ -52,6 +52,7 @@ final class PhaseAnswersSynchronizer
                 ->filterByPhase($phase)
                 ->filterBySource($source)
                 ->filterByProviderId($providerId)
+                ->filterByFromEmployees($fromEmployees)
                 ->activityIds();
 
             $keptIds = [];
@@ -70,12 +71,12 @@ final class PhaseAnswersSynchronizer
                     }
 
                     $activityId = $handler->register($answer, $year, $emissionFactorGroupId, $accountId, $user);
-                    $eventCarbonFootprint->addActivity($activityId, $phase, $source, $providerId);
+                    $eventCarbonFootprint->addActivity($activityId, $phase, $source, $providerId, $fromEmployees);
                     $keptIds[] = $activityId;
                 }
             }
 
-            $eventCarbonFootprint->retainActivities($phase, $source, $keptIds, $providerId);
+            $eventCarbonFootprint->retainActivities($phase, $source, $keptIds, $providerId, $fromEmployees);
         }
     }
 

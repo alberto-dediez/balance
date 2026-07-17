@@ -8,6 +8,10 @@ framework:
             policy: sliding_window
             limit: 30
             interval: '1 minute'
+        employee_contribution_token:
+            policy: sliding_window
+            limit: 30
+            interval: '1 minute'
         attendee_survey_token:
             policy: sliding_window
             limit: 30
@@ -21,6 +25,10 @@ when@test:
                 limit: 500
                 interval: '1 minute'
             provider_contribution_token:
+                policy: sliding_window
+                limit: 500
+                interval: '1 minute'
+            employee_contribution_token:
                 policy: sliding_window
                 limit: 500
                 interval: '1 minute'

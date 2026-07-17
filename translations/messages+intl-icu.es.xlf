@@ -3945,6 +3945,130 @@
         <source>¿Estás seguro de que deseas cerrar la encuesta y el calculo de huella? Esta acción no se puede deshacer</source>
         <target>¿Estás seguro de que deseas cerrar la encuesta y el calculo de huella? Esta acción no se puede deshacer</target>
       </trans-unit>
+      <trans-unit id="9a67i_c" resname="No se han podido guardar los datos: {error}">
+        <source>No se han podido guardar los datos: {error}</source>
+        <target>No se han podido guardar los datos: {error}</target>
+      </trans-unit>
+      <trans-unit id="y2Ju1.I" resname="Introduce un número total de empleados válido y un nivel de confianza.">
+        <source>Introduce un número total de empleados válido y un nivel de confianza.</source>
+        <target>Introduce un número total de empleados válido y un nivel de confianza.</target>
+      </trans-unit>
+      <trans-unit id="E.2l4RO" resname="No se han podido asignar los empleados: {error}">
+        <source>No se han podido asignar los empleados: {error}</source>
+        <target>No se han podido asignar los empleados: {error}</target>
+      </trans-unit>
+      <trans-unit id="0FhifN8" resname="Aporta tus datos de movilidad y pernoctaciones para el evento">
+        <source>Aporta tus datos de movilidad y pernoctaciones para el evento</source>
+        <target>Aporta tus datos de movilidad y pernoctaciones para el evento</target>
+      </trans-unit>
+      <trans-unit id="67dU_qq" resname="Indica el número total de empleados que participan en el evento y selecciona los empleados que deben aportar sus datos de movilidad y pernoctaciones. El enlace se enviará al email de cada empleado.">
+        <source>Indica el número total de empleados que participan en el evento y selecciona los empleados que deben aportar sus datos de movilidad y pernoctaciones. El enlace se enviará al email de cada empleado.</source>
+        <target>Indica el número total de empleados que participan en el evento y selecciona los empleados que deben aportar sus datos de movilidad y pernoctaciones. El enlace se enviará al email de cada empleado.</target>
+      </trans-unit>
+      <trans-unit id="CHXvndE" resname="Total de empleados">
+        <source>Total de empleados</source>
+        <target>Total de empleados</target>
+      </trans-unit>
+      <trans-unit id="TypO6xI" resname="Empleado">
+        <source>Empleado</source>
+        <target>Empleado</target>
+      </trans-unit>
+      <trans-unit id="OU41lQ2" resname="No hay empleados registrados para esta cuenta.">
+        <source>No hay empleados registrados para esta cuenta.</source>
+        <target>No hay empleados registrados para esta cuenta.</target>
+      </trans-unit>
+      <trans-unit id="_DcNlQC" resname="Pendientes">
+        <source>Pendientes</source>
+        <target>Pendientes</target>
+      </trans-unit>
+      <trans-unit id="D5lH_Je" resname="Contestadas">
+        <source>Contestadas</source>
+        <target>Contestadas</target>
+      </trans-unit>
+      <trans-unit id="Y3rVWt1" resname="% contestado">
+        <source>% contestado</source>
+        <target>% contestado</target>
+      </trans-unit>
+      <trans-unit id="8pKo5Xo" resname="Fecha de respuesta">
+        <source>Fecha de respuesta</source>
+        <target>Fecha de respuesta</target>
+      </trans-unit>
+      <trans-unit id="3F0NH6R" resname="No trabajó en esta fase.">
+        <source>No trabajó en esta fase.</source>
+        <target>No trabajó en esta fase.</target>
+      </trans-unit>
+      <trans-unit id="HB3fFhW" resname="Km por trayecto/día">
+        <source>Km por trayecto/día</source>
+        <target>Km por trayecto/día</target>
+      </trans-unit>
+      <trans-unit id="ndM3a0d" resname="Días">
+        <source>Días</source>
+        <target>Días</target>
+      </trans-unit>
+      <trans-unit id="m7epL1u" resname="Noches de hotel">
+        <source>Noches de hotel</source>
+        <target>Noches de hotel</target>
+      </trans-unit>
+      <trans-unit id="Ftm_SA_" resname="Contribución de empleado">
+        <source>Contribución de empleado</source>
+        <target>Contribución de empleado</target>
+      </trans-unit>
+      <trans-unit id="q0xrhdl" resname="Datos del empleado">
+        <source>Datos del empleado</source>
+        <target>Datos del empleado</target>
+      </trans-unit>
+      <trans-unit id="dcT2CG5" resname="Contribución de empleado - Montaje">
+        <source>Contribución de empleado - Montaje</source>
+        <target>Contribución de empleado - Montaje</target>
+      </trans-unit>
+      <trans-unit id="w3j6qtn" resname="Cuéntanos cómo te has movido y dónde has pernoctado durante la fase de montaje.">
+        <source>Cuéntanos cómo te has movido y dónde has pernoctado durante la fase de montaje.</source>
+        <target>Cuéntanos cómo te has movido y dónde has pernoctado durante la fase de montaje.</target>
+      </trans-unit>
+      <trans-unit id="WhWEHA6" resname="¿Trabajaste en esta fase?">
+        <source>¿Trabajaste en esta fase?</source>
+        <target>¿Trabajaste en esta fase?</target>
+      </trans-unit>
+      <trans-unit id="ZVdrtwZ" resname="Contribución de empleado - Celebración">
+        <source>Contribución de empleado - Celebración</source>
+        <target>Contribución de empleado - Celebración</target>
+      </trans-unit>
+      <trans-unit id="_Ku5lDF" resname="Cuéntanos cómo te has movido y dónde has pernoctado durante la fase de celebración.">
+        <source>Cuéntanos cómo te has movido y dónde has pernoctado durante la fase de celebración.</source>
+        <target>Cuéntanos cómo te has movido y dónde has pernoctado durante la fase de celebración.</target>
+      </trans-unit>
+      <trans-unit id="uCZRYMX" resname="Contribución de empleado - Desmontaje">
+        <source>Contribución de empleado - Desmontaje</source>
+        <target>Contribución de empleado - Desmontaje</target>
+      </trans-unit>
+      <trans-unit id="bybBqyf" resname="Cuéntanos cómo te has movido y dónde has pernoctado durante la fase de desmontaje.">
+        <source>Cuéntanos cómo te has movido y dónde has pernoctado durante la fase de desmontaje.</source>
+        <target>Cuéntanos cómo te has movido y dónde has pernoctado durante la fase de desmontaje.</target>
+      </trans-unit>
+      <trans-unit id="xPRBvP_" resname="¡Gracias por tu contribución!">
+        <source>¡Gracias por tu contribución!</source>
+        <target>¡Gracias por tu contribución!</target>
+      </trans-unit>
+      <trans-unit id="1bVRpj5" resname="Se han guardado correctamente los datos aportados. Puedes volver a este enlace en cualquier momento para revisarlos o modificarlos mientras la huella de carbono del evento siga abierta.">
+        <source>Se han guardado correctamente los datos aportados. Puedes volver a este enlace en cualquier momento para revisarlos o modificarlos mientras la huella de carbono del evento siga abierta.</source>
+        <target>Se han guardado correctamente los datos aportados. Puedes volver a este enlace en cualquier momento para revisarlos o modificarlos mientras la huella de carbono del evento siga abierta.</target>
+      </trans-unit>
+      <trans-unit id="MQB67uz" resname="Se te ha solicitado aportar tus datos de movilidad y pernoctaciones para un evento.">
+        <source>Se te ha solicitado aportar tus datos de movilidad y pernoctaciones para un evento.</source>
+        <target>Se te ha solicitado aportar tus datos de movilidad y pernoctaciones para un evento.</target>
+      </trans-unit>
+      <trans-unit id="zi36U7h" resname="Hola {name}, se te ha solicitado aportar tus datos de movilidad y pernoctaciones para este evento.">
+        <source>Hola {name}, se te ha solicitado aportar tus datos de movilidad y pernoctaciones para este evento.</source>
+        <target>Hola {name}, se te ha solicitado aportar tus datos de movilidad y pernoctaciones para este evento.</target>
+      </trans-unit>
+      <trans-unit id="dq2F9cM" resname="Los empleados no tienen respuestas: se han conservado las actividades manuales de empleados.">
+        <source>Los empleados no tienen respuestas: se han conservado las actividades manuales de empleados.</source>
+        <target>Los empleados no tienen respuestas: se han conservado las actividades manuales de empleados.</target>
+      </trans-unit>
+      <trans-unit id="DMmXBmw" resname="Volver a resultados">
+        <source>Volver a resultados</source>
+        <target>Volver a resultados</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

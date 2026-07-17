@@ -15,21 +15,22 @@ export default class extends Controller {
 
         const showable = this.containerValue ? this.element.closest(this.containerValue) : this.element;
 
-        controller.addEventListener('change', function (e) {
-            var value = controller.value;
+        const toggle = function () {
+            var value = controller.matches('input[type="checkbox"]') ? (controller.checked ? controller.value : '') : controller.value;
             var optionValue = null;
 
             if (controller.matches('select')) {
-                var optionValue = controller.querySelector('option[value="' + value + '"]')?.getAttribute('data-value');
+                optionValue = controller.querySelector('option[value="' + value + '"]')?.getAttribute('data-value');
             }
 
-            if (controller.value == condition || optionValue == condition || conditions.includes(controller.value) || conditions.includes(optionValue)) {
+            if (value == condition || optionValue == condition || conditions.includes(value) || conditions.includes(optionValue)) {
                 showable.classList.remove('d-none');
             } else {
                 showable.classList.add('d-none');
             }
-        });
+        };
 
-        controller.dispatchEvent(new Event("change"));
+        controller.addEventListener('change', toggle);
+        toggle();
     }
 }

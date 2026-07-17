@@ -18,6 +18,11 @@
         <field name="phase" type="string" enum-type="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase" nullable="false" />
         <field name="source" type="string" enum-type="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source" nullable="false" />
         <field name="providerId" type="provider_id" column="provider_id" nullable="true" />
+        <field name="fromEmployees" type="boolean" column="from_employees" nullable="false">
+            <options>
+                <option name="default">0</option>
+            </options>
+        </field>
         <field name="addedAt" type="datetime_immutable" column="added_at" nullable="false" />
     </entity>
 

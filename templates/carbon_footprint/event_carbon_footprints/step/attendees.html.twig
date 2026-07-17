@@ -1,6 +1,6 @@
 {% extends '@carbon_footprint/event_carbon_footprints/wizard-layout.html.twig' %}
 
-{% set wizard_selected = 6 %}
+{% set wizard_selected = 7 %}
 {% set readOnly = readOnly | default(false) %}
 
 {% block wizard_panels %}
@@ -87,7 +87,7 @@
             {% endif %}
 
             <div class="d-flex justify-content-between mt-3">
-                <a href="{{ path('events_carbon_footprint_providers', {eventId: eventId}) }}" class="btn btn-outline-secondary">
+                <a href="{{ path('events_carbon_footprint_employees', {eventId: eventId}) }}" class="btn btn-outline-primary">
                     &larr; {{ 'Anterior' | trans }}
                 </a>
                 <button type="submit" class="btn btn-primary">
@@ -96,5 +96,14 @@
             </div>
         </form>
     </twig:Card>
+    {% else %}
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ path('events_carbon_footprint_results', {eventId: eventId, step: 'employees'}) }}" class="btn btn-outline-primary">
+                &larr; {{ 'Anterior' | trans }}
+            </a>
+            <a href="{{ path('events_carbon_footprint_results', {eventId: eventId}) }}" class="btn btn-primary">
+                {{ 'Siguiente' | trans }} &rarr;
+            </a>
+        </div>
     {% endif %}
 {% endblock %}

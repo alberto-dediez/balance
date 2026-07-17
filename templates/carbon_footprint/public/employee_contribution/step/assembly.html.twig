@@ -1,0 +1,66 @@
+{% extends '@carbon_footprint/public/employee_contribution/layout.html.twig' %}
+
+{% set page_title = 'Contribución de empleado - Montaje' | trans %}
+{% set wizard_selected = 1 %}
+
+{% block wizard_panels %}
+    <div class="card mb-3">
+        <div class="card-header"><h5 class="mb-0">{{ event.name }}</h5></div>
+        <div class="card-body">
+            <p class="text-muted mb-0">
+                {{ 'Cuéntanos cómo te has movido y dónde has pernoctado durante la fase de montaje.' | trans }}
+            </p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h5 class="mb-0">{{ 'Montaje' | trans }}</h5></div>
+        <div class="card-body">
+            <form method="post" name="assembly">
+                <input type="hidden" name="_token" value="{{ csrf_token('employee_contribution_assembly_' ~ token) }}">
+
+                <div class="form-check form-switch mb-3">
+                    <input type="checkbox" class="form-check-input" id="worked" name="worked" value="1" {{ employeeContribution.workedAssembly ? 'checked' : '' }}>
+                    <label class="form-check-label" for="worked">{{ '¿Trabajaste en esta fase?' | trans }}</label>
+                </div>
+
+                <div data-controller="showable" data-showable-selector-value="#worked" data-showable-condition-value="1" class="{{ employeeContribution.workedAssembly ? '' : 'd-none' }}">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ 'Medio de transporte' | trans }}</label>
+                            <select class="form-select" name="mobilityId">
+                                <option value="">{{ 'Selecciona un medio de transporte' | trans }}</option>
+                                {% for mobility in mobilities %}
+                                    <option value="{{ mobility.id }}" {{ employeeContribution.assemblyMobilityId is not null and (employeeContribution.assemblyMobilityId ~ '') == (mobility.id ~ '') ? 'selected' : '' }}>{{ mobility.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ 'Km por trayecto/día' | trans }}</label>
+                            <input type="number" min="0" step="0.1" inputmode="decimal" class="form-control" name="distanceKm" value="{{ employeeContribution.assemblyDistanceKm }}">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">{{ 'Ocupantes del vehículo' | trans }}</label>
+                            <input type="number" min="1" step="1" inputmode="numeric" class="form-control" name="vehicleOccupants" value="{{ employeeContribution.assemblyVehicleOccupants }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">{{ 'Días' | trans }}</label>
+                            <input type="number" min="1" step="1" inputmode="numeric" class="form-control" name="days" value="{{ employeeContribution.assemblyDays }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">{{ 'Noches de hotel' | trans }}</label>
+                            <input type="number" min="0" step="1" inputmode="numeric" class="form-control" name="hotelNights" value="{{ employeeContribution.assemblyHotelNights }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">{{ 'Siguiente' | trans }} &rarr;</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

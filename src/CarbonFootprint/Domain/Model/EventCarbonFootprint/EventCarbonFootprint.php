@@ -167,9 +167,9 @@ class EventCarbonFootprint implements \Stringable
     }
 
     /** @param ActivityId[] $keptIds */
-    public function retainActivities(Phase $phase, Source $source, array $keptIds, ?ProviderId $providerId = null): void
+    public function retainActivities(Phase $phase, Source $source, array $keptIds, ?ProviderId $providerId = null, bool $fromEmployees = false): void
     {
-        $existingIds = $this->activities()->filterByPhase($phase)->filterBySource($source)->filterByProviderId($providerId)->activityIds();
+        $existingIds = $this->activities()->filterByPhase($phase)->filterBySource($source)->filterByProviderId($providerId)->filterByFromEmployees($fromEmployees)->activityIds();
 
         foreach ($existingIds as $existingId) {
             $kept = false;
@@ -237,6 +237,17 @@ class EventCarbonFootprint implements \Stringable
 
         $this->recordApplyAndPublish(
             new EventCarbonFootprintProvidersAnswered(
+                eventCarbonFootprintId: $this->id,
+            ),
+        );
+    }
+
+    public function answerEmployees(): void
+    {
+        $this->ensureIsEditable();
+
+        $this->recordApplyAndPublish(
+            new EventCarbonFootprintEmployeesAnswered(
                 eventCarbonFootprintId: $this->id,
             ),
         );
@@ -332,6 +343,12 @@ class EventCarbonFootprint implements \Stringable
         $this->updatedAt = $event->occurredOn();
     }
 
+    public function applyEventCarbonFootprintEmployeesAnswered(EventCarbonFootprintEmployeesAnswered $event): void
+    {
+        $this->status = EventCarbonFootprintStatus::EmployeesAnswered;
+        $this->updatedAt = $event->occurredOn();
+    }
+
     public function applyEventCarbonFootprintAttendeesAnswered(EventCarbonFootprintAttendeesAnswered $event): void
     {
         if (EventCarbonFootprintStatus::Completed !== $this->status) {
@@ -363,7 +380,7 @@ class EventCarbonFootprint implements \Stringable
         $this->removedAt = $event->occurredOn();
     }
 
-    public function addActivity(ActivityId $activityId, Phase $phase, Source $source, ?ProviderId $providerId = null): void
+    public function addActivity(ActivityId $activityId, Phase $phase, Source $source, ?ProviderId $providerId = null, bool $fromEmployees = false): void
     {
         $this->ensureIsEditable();
 
@@ -373,7 +390,7 @@ class EventCarbonFootprint implements \Stringable
             }
         }
 
-        if (null === $providerId && $this->exclusions()->isExcluded($phase, $source)) {
+        if ($this->exclusions()->isExcluded($phase, $source)) {
             return;
         }
 
@@ -384,6 +401,7 @@ class EventCarbonFootprint implements \Stringable
                 phase: $phase,
                 source: $source,
                 providerId: $providerId,
+                fromEmployees: $fromEmployees,
             ),
         );
     }
@@ -398,6 +416,13 @@ class EventCarbonFootprint implements \Stringable
                 activityId: $activityId,
             ),
         );
+    }
+
+    public function removeEmployeeActivities(): void
+    {
+        foreach ($this->activities()->filterByFromEmployees(true)->activityIds() as $activityId) {
+            $this->removeActivity($activityId);
+        }
     }
 
     public function activities(): EventCarbonFootprintActivities
@@ -503,6 +528,7 @@ class EventCarbonFootprint implements \Stringable
             phase: $event->phase(),
             source: $event->source(),
             providerId: $event->providerId(),
+            fromEmployees: $event->fromEmployees(),
             addedAt: $event->occurredOn(),
         );
 

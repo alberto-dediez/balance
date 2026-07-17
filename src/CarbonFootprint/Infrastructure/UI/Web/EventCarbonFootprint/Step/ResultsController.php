@@ -17,6 +17,7 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootp
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\GetEventCarbonFootprintFromEventIdTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\AssemblyBreakdownStepView;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\CelebrationStepView;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\EmployeesStepView;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\MaterialsStepView;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\ProvidersStepView;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\ResultsView;
@@ -48,6 +49,7 @@ class ResultsController extends AbstractController
         AssemblyBreakdownStepView $assemblyBreakdownStepView,
         CelebrationStepView $celebrationStepView,
         ProvidersStepView $providersStepView,
+        EmployeesStepView $employeesStepView,
         ResultsView $resultsView,
         LoggedUser $loggedUser,
         Request $request,
@@ -102,6 +104,13 @@ class ResultsController extends AbstractController
             return $this->render(
                 '@carbon_footprint/event_carbon_footprints/step/providers.html.twig',
                 $providersStepView->build($eventCarbonFootprint, $user) + ['event' => $event, 'eventId' => $eventId, 'readOnly' => true],
+            );
+        }
+
+        if ('employees' === $step) {
+            return $this->render(
+                '@carbon_footprint/event_carbon_footprints/step/employees.html.twig',
+                $employeesStepView->build($eventCarbonFootprint, $user) + ['event' => $event, 'eventId' => $eventId, 'readOnly' => true],
             );
         }
 

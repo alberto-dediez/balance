@@ -139,6 +139,36 @@ class PhaseAnswersSynchronizerTest extends TestCase
         $this->assertTrue($activityIds[0]->equals($machineryFuelActivityId));
     }
 
+    public function testManualSyncDoesNotEraseEmployeeActivitiesOnTheSamePhaseAndSource(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
+        $employeeActivityId = ActivityId::generate();
+        $eventCarbonFootprint->addActivity($employeeActivityId, Phase::Materials, Source::Materials, null, true);
+
+        $sut = $this->createSUT();
+
+        $sut->sync($eventCarbonFootprint, Phase::Materials, [], UserMother::ownerUser());
+
+        $activityIds = $eventCarbonFootprint->activities()->activityIds();
+        $this->assertCount(1, $activityIds);
+        $this->assertTrue($activityIds[0]->equals($employeeActivityId));
+    }
+
+    public function testEmployeeSyncDoesNotEraseManualActivitiesOnTheSamePhaseAndSource(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
+        $manualActivityId = ActivityId::generate();
+        $eventCarbonFootprint->addActivity($manualActivityId, Phase::Materials, Source::Materials);
+
+        $sut = $this->createSUT();
+
+        $sut->sync($eventCarbonFootprint, Phase::Materials, [], UserMother::ownerUser(), null, null, true);
+
+        $activityIds = $eventCarbonFootprint->activities()->activityIds();
+        $this->assertCount(1, $activityIds);
+        $this->assertTrue($activityIds[0]->equals($manualActivityId));
+    }
+
     public function testThrowsWhenEventCarbonFootprintHasNoEmissionFactorGroupConfigured(): void
     {
         $eventCarbonFootprint = new EventCarbonFootprint(id: EventCarbonFootprintId::generate());

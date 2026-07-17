@@ -20,6 +20,7 @@ final class EventCarbonFootprintActivityAdded extends DomainEvent
         private Phase $phase,
         private Source $source,
         private ?ProviderId $providerId = null,
+        private bool $fromEmployees = false,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -51,6 +52,11 @@ final class EventCarbonFootprintActivityAdded extends DomainEvent
         return $this->providerId;
     }
 
+    public function fromEmployees(): bool
+    {
+        return $this->fromEmployees;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->eventCarbonFootprintId;
@@ -64,6 +70,7 @@ final class EventCarbonFootprintActivityAdded extends DomainEvent
             'phase' => $this->phase->value,
             'source' => $this->source->value,
             'providerId' => $this->providerId instanceof ProviderId ? (string) $this->providerId : null,
+            'fromEmployees' => $this->fromEmployees,
         ];
     }
 
@@ -84,6 +91,7 @@ final class EventCarbonFootprintActivityAdded extends DomainEvent
             phase: $phase,
             source: $source,
             providerId: isset($payload['providerId']) ? new ProviderId($payload['providerId']) : null,
+            fromEmployees: $payload['fromEmployees'] ?? false,
             id: $id,
             occurredOn: $occurredOn,
         );

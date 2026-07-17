@@ -242,14 +242,24 @@ class EventCarbonFootprintTest extends TestCase
         $this->assertCount(0, $eventCarbonFootprint->activities()->activityIds());
     }
 
-    public function testAddActivityStillAddsProviderActivitiesForExcludedSource(): void
+    public function testAddActivitySkipsProviderActivitiesForExcludedSource(): void
     {
         $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
         $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::NoDataAvailable);
 
         $eventCarbonFootprint->addActivity(ActivityId::generate(), Phase::Assembly, Source::WasteManagement, ProviderId::generate());
 
-        $this->assertCount(1, $eventCarbonFootprint->activities()->activityIds());
+        $this->assertCount(0, $eventCarbonFootprint->activities()->activityIds());
+    }
+
+    public function testAddActivitySkipsEmployeeActivitiesForExcludedSource(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
+        $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::SuppliersAndStaffMobility, ExclusionReason::NoDataAvailable);
+
+        $eventCarbonFootprint->addActivity(ActivityId::generate(), Phase::Assembly, Source::SuppliersAndStaffMobility, null, true);
+
+        $this->assertCount(0, $eventCarbonFootprint->activities()->activityIds());
     }
 
     public function testExcludeSourceThrowsWhenCompleted(): void

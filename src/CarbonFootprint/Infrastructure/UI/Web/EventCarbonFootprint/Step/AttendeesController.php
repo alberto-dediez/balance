@@ -10,7 +10,10 @@ use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveySta
 use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveyStatsService;
 use App\CarbonFootprint\Application\AttendeeSurvey\Register\RegisterAttendeeSurveyRequest;
 use App\CarbonFootprint\Application\AttendeeSurvey\Register\RegisterAttendeeSurveyService;
+use App\CarbonFootprint\Application\EmployeeParticipation\GetStats\GetEmployeeParticipationStatsRequest;
+use App\CarbonFootprint\Application\EmployeeParticipation\GetStats\GetEmployeeParticipationStatsService;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\ConfidenceLevel;
+use App\CarbonFootprint\Domain\Model\EmployeeParticipation\EmployeeParticipationRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\GetEventCarbonFootprintFromEventIdTrait;
 use App\EventOperations\Domain\Model\Event\EventId;
@@ -36,6 +39,8 @@ class AttendeesController extends AbstractController
         RegisterAttendeeSurveyService $registerAttendeeSurvey,
         GetAttendeeSurveyStatsService $getAttendeeSurveyStats,
         CloseAttendeeSurveyService $closeAttendeeSurvey,
+        GetEmployeeParticipationStatsService $getEmployeeParticipationStats,
+        EmployeeParticipationRepository $employeeParticipationRepository,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -50,8 +55,8 @@ class AttendeesController extends AbstractController
             return $this->redirectToRoute('events_carbon_footprint_results', ['eventId' => $eventId, 'step' => 'attendees']);
         }
 
-        if (!$eventCarbonFootprint->status()->isProvidersAnswered()) {
-            return $this->redirectToRoute('events_carbon_footprint_providers', ['eventId' => $eventId]);
+        if (!$eventCarbonFootprint->status()->isEmployeesAnswered()) {
+            return $this->redirectToRoute('events_carbon_footprint_employees', ['eventId' => $eventId]);
         }
 
         $registerAttendeeSurvey(new RegisterAttendeeSurveyRequest($event->id()), $loggedUser());
@@ -78,6 +83,17 @@ class AttendeesController extends AbstractController
 
                 if (0 === $statsBeforeClose->responsesCount) {
                     $this->addFlash('warning', new TranslatableMessage('La encuesta no tiene respuestas: se han conservado las actividades manuales de asistentes.'));
+                }
+
+                if (null !== $employeeParticipationRepository->findByEventCarbonFootprintId($eventCarbonFootprint->id())) {
+                    $employeeStats = $getEmployeeParticipationStats(
+                        new GetEmployeeParticipationStatsRequest($eventCarbonFootprint->id()),
+                        $loggedUser(),
+                    );
+
+                    if (0 === $employeeStats->answeredCount) {
+                        $this->addFlash('warning', new TranslatableMessage('Los empleados no tienen respuestas: se han conservado las actividades manuales de empleados.'));
+                    }
                 }
 
                 $closeResponse = $closeAttendeeSurvey(

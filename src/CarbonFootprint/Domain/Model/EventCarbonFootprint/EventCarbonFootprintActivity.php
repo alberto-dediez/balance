@@ -16,6 +16,7 @@ class EventCarbonFootprintActivity
         private Phase $phase,
         private Source $source,
         private ?ProviderId $providerId = null,
+        private bool $fromEmployees = false,
         private \DateTimeImmutable $addedAt = new \DateTimeImmutable('NOW'),
     ) {}
 
@@ -47,6 +48,11 @@ class EventCarbonFootprintActivity
     public function providerId(): ?ProviderId
     {
         return $this->providerId;
+    }
+
+    public function fromEmployees(): bool
+    {
+        return $this->fromEmployees;
     }
 
     public function addedAt(): \DateTimeImmutable

@@ -1,0 +1,177 @@
+{% extends '@carbon_footprint/event_carbon_footprints/wizard-layout.html.twig' %}
+
+{% set wizard_selected = 6 %}
+{% set readOnly = readOnly | default(false) %}
+
+{% block wizard_panels %}
+
+    {% if not readOnly %}
+    <form method="post" name="employees">
+    {% endif %}
+
+        <twig:Card title="{{ 'Empleados' | trans }}">
+            {% if not readOnly %}
+                <p class="text-muted">
+                    {{ 'Indica el número total de empleados que participan en el evento y selecciona los empleados que deben aportar sus datos de movilidad y pernoctaciones. El enlace se enviará al email de cada empleado.' | trans }}
+                </p>
+
+                <input type="hidden" name="_token" value="{{ csrf_token('employees_' ~ eventCarbonFootprint.id) }}">
+            {% endif %}
+
+            {% if readOnly %}
+                <dl class="row">
+                    <dt class="col-sm-4">{{ 'Total de empleados' | trans }}</dt>
+                    <dd class="col-sm-8">{{ employeeParticipation is not null ? (employeeParticipation.totalEmployees ?? '-') : '-' }}</dd>
+
+                    <dt class="col-sm-4">{{ 'Nivel de confianza' | trans }}</dt>
+                    <dd class="col-sm-8">{{ employeeParticipation is not null and employeeParticipation.confidenceLevel is not null ? employeeParticipation.confidenceLevel.value ~ '%' : '-' }}</dd>
+                </dl>
+            {% else %}
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <label class="form-label">{{ 'Total de empleados' | trans }}</label>
+                        <input type="number" min="1" step="1" class="form-control" name="totalEmployees" value="{{ employeeParticipation is not null ? employeeParticipation.totalEmployees : '' }}" required>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label">{{ 'Nivel de confianza' | trans }}</label>
+                        <select class="form-select" name="confidenceLevel">
+                            {% set selectedConfidenceLevel = employeeParticipation is not null and employeeParticipation.confidenceLevel is not null ? employeeParticipation.confidenceLevel.value : null %}
+                            {% for level in confidenceLevels %}
+                                <option value="{{ level.value }}" {{ selectedConfidenceLevel == level.value ? 'selected' : (level.value == 95 and selectedConfidenceLevel is null ? 'selected' : '') }}>
+                                    {{ level.value }}%
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>{{ 'Empleado' | trans }}</th>
+                            <th>{{ 'Email' | trans }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for employee in employees %}
+                            {% set isAssigned = assignedEmployeeIds[employee.id ~ ''] is defined %}
+                            <tr>
+                                <td>
+                                    {% if readOnly %}
+                                        {% if isAssigned %}
+                                            <twig:Icon name="solar:check-circle-bold" class="text-success" />
+                                        {% endif %}
+                                    {% else %}
+                                        <input type="checkbox" class="form-check-input" name="employees[employeeIds][]" value="{{ employee.id }}" {{ isAssigned ? 'checked' : '' }}>
+                                    {% endif %}
+                                </td>
+                                <td>{{ employee.name }}</td>
+                                <td>{{ employee.email }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="3" class="text-muted">{{ 'No hay empleados registrados para esta cuenta.' | trans }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </twig:Card>
+
+        <twig:Card title="{{ 'Contribuciones' | trans }}">
+            <dl class="row">
+                <dt class="col-sm-4">{{ 'Pendientes' | trans }}</dt>
+                <dd class="col-sm-8">{{ pendingCount }}</dd>
+
+                <dt class="col-sm-4">{{ 'Contestadas' | trans }}</dt>
+                <dd class="col-sm-8">{{ answeredCount }}</dd>
+
+                <dt class="col-sm-4">{{ '% contestado' | trans }}</dt>
+                <dd class="col-sm-8">{{ answeredPercentage is not null ? (answeredPercentage | number_format(1)) ~ ' %' : '-' }}</dd>
+
+                {% if employeeParticipation is not null and employeeParticipation.status.isClosed %}
+                    <dt class="col-sm-4">{{ 'Margen de error' | trans }}</dt>
+                    <dd class="col-sm-8">{{ (employeeParticipation.marginOfError * 100) | number_format(2) }}%</dd>
+                {% endif %}
+            </dl>
+
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                    <tr>
+                        <th>{{ 'Empleado' | trans }}</th>
+                        <th>{{ 'Email' | trans }}</th>
+                        <th>{{ 'Estado' | trans }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for contribution in contributions %}
+                        <tr>
+                            <td>{{ contribution.employeeName ?? '-' }}</td>
+                            <td>{{ employeesById[contribution.employeeId ~ ''] is defined ? employeesById[contribution.employeeId ~ ''].email : '-' }}</td>
+                            <td>
+                                {% if contribution.status.isAnswered %}
+                                    <span class="badge bg-success">{{ 'Contestado' | trans }}</span>
+                                {% elseif contribution.status.isIgnored %}
+                                    <span class="badge bg-secondary">{{ 'Descartado' | trans }}</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">{{ 'Pendiente' | trans }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <a href="{{ path('events_carbon_footprint_employee_contribution_show', {eventId: eventId, employeeContributionId: contribution.id}) }}" class="btn btn-sm btn-outline-secondary">
+                                    {{ 'Ver' | trans }}
+                                </a>
+
+                                {% if not readOnly %}
+                                    {% if not contribution.status.isIgnored %}
+                                        <a href="{{ path('events_carbon_footprint_employee_contribution_resend', {eventId: eventId, employeeContributionId: contribution.id, _token: csrf_token('employee_contribution_resend_' ~ contribution.id)}) }}" class="btn btn-sm btn-outline-secondary">
+                                            {{ 'Reenviar' | trans }}
+                                        </a>
+                                        <a href="{{ path('events_carbon_footprint_employee_contribution_ignore', {eventId: eventId, employeeContributionId: contribution.id, _token: csrf_token('employee_contribution_ignore_' ~ contribution.id)}) }}" class="btn btn-sm btn-outline-danger">
+                                            {{ 'Descartar' | trans }}
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ path('events_carbon_footprint_employee_contribution_unignore', {eventId: eventId, employeeContributionId: contribution.id, _token: csrf_token('employee_contribution_unignore_' ~ contribution.id)}) }}" class="btn btn-sm btn-outline-secondary">
+                                            {{ 'Reactivar' | trans }}
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-muted">{{ 'No hay contribuciones registradas.' | trans }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </twig:Card>
+
+    {% if not readOnly %}
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ path('events_carbon_footprint_providers', {eventId: eventId}) }}" class="btn btn-outline-primary">
+                &larr; {{ 'Anterior' | trans }}
+            </a>
+            <button type="submit" class="btn btn-primary">
+                {{ 'Siguiente' | trans }} &rarr;
+            </button>
+        </div>
+    </form>
+    {% else %}
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ path('events_carbon_footprint_results', {eventId: eventId, step: 'providers'}) }}" class="btn btn-outline-primary">
+                &larr; {{ 'Anterior' | trans }}
+            </a>
+            <a href="{{ path('events_carbon_footprint_results', {eventId: eventId, step: 'attendees'}) }}" class="btn btn-primary">
+                {{ 'Siguiente' | trans }} &rarr;
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}

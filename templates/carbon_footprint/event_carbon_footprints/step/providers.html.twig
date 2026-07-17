@@ -111,13 +111,22 @@
 
     {% if not readOnly %}
         <div class="d-flex justify-content-between mt-3">
-            <a href="{{ path('events_carbon_footprint_breakdown', {eventId: eventId}) }}" class="btn btn-outline-secondary">
+            <a href="{{ path('events_carbon_footprint_breakdown', {eventId: eventId}) }}" class="btn btn-outline-primary">
                 &larr; {{ 'Anterior' | trans }}
             </a>
             <button type="submit" class="btn btn-primary">
-                {{ 'Guardar y continuar' | trans }} &rarr;
+                {{ 'Siguiente' | trans }} &rarr;
             </button>
         </div>
     </form>
+    {% else %}
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ path('events_carbon_footprint_results', {eventId: eventId, step: 'breakdown'}) }}" class="btn btn-outline-primary">
+                &larr; {{ 'Anterior' | trans }}
+            </a>
+            <a href="{{ path('events_carbon_footprint_results', {eventId: eventId, step: 'employees'}) }}" class="btn btn-primary">
+                {{ 'Siguiente' | trans }} &rarr;
+            </a>
+        </div>
     {% endif %}
 {% endblock %}

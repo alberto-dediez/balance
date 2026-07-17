@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContribution" table="employee_contributions">
+        <id name="id" type="employee_contribution_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="eventCarbonFootprintId" type="event_carbon_footprint_id" column="event_carbon_footprint_id" nullable="false" />
+        <field name="accountId" type="account_id" column="account_id" nullable="false" />
+        <field name="employeeId" type="employee_id" column="employee_id" nullable="false" />
+        <field name="token" type="string" length="64" nullable="false" unique="true" />
+        <field name="status" type="string" length="20" enum-type="App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionStatus" nullable="false" />
+        <field name="stepStatus" type="string" length="30" column="step_status" enum-type="App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionStepStatus" nullable="false" />
+        <field name="answeredAt" type="datetime_immutable" column="answered_at" nullable="true" />
+        <field name="ignoredAt" type="datetime_immutable" column="ignored_at" nullable="true" />
+
+        <field name="employeeName" type="string" length="255" column="employee_name" nullable="true" />
+
+        <field name="workedAssembly" type="boolean" column="worked_assembly" nullable="false" />
+        <field name="assemblyMobilityId" type="mobility_id" column="assembly_mobility_id" nullable="true" />
+        <field name="assemblyDistanceKm" type="float" column="assembly_distance_km" nullable="true" />
+        <field name="assemblyVehicleOccupants" type="integer" column="assembly_vehicle_occupants" nullable="true" />
+        <field name="assemblyDays" type="integer" column="assembly_days" nullable="true" />
+        <field name="assemblyHotelNights" type="integer" column="assembly_hotel_nights" nullable="true" />
+
+        <field name="workedCelebration" type="boolean" column="worked_celebration" nullable="false" />
+        <field name="celebrationMobilityId" type="mobility_id" column="celebration_mobility_id" nullable="true" />
+        <field name="celebrationDistanceKm" type="float" column="celebration_distance_km" nullable="true" />
+        <field name="celebrationVehicleOccupants" type="integer" column="celebration_vehicle_occupants" nullable="true" />
+        <field name="celebrationDays" type="integer" column="celebration_days" nullable="true" />
+        <field name="celebrationHotelNights" type="integer" column="celebration_hotel_nights" nullable="true" />
+
+        <field name="workedBreakdown" type="boolean" column="worked_breakdown" nullable="false" />
+        <field name="breakdownMobilityId" type="mobility_id" column="breakdown_mobility_id" nullable="true" />
+        <field name="breakdownDistanceKm" type="float" column="breakdown_distance_km" nullable="true" />
+        <field name="breakdownVehicleOccupants" type="integer" column="breakdown_vehicle_occupants" nullable="true" />
+        <field name="breakdownDays" type="integer" column="breakdown_days" nullable="true" />
+        <field name="breakdownHotelNights" type="integer" column="breakdown_hotel_nights" nullable="true" />
+
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true" />
+    </entity>
+
+</doctrine-mapping>

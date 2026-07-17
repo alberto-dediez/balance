@@ -12,6 +12,7 @@ enum EventCarbonFootprintStatus: string
     case CelebrationAnswered = 'celebration_answered';
     case BreakdownAnswered   = 'breakdown_answered';
     case ProvidersAnswered   = 'providers_answered';
+    case EmployeesAnswered   = 'employees_answered';
     case AttendeesAnswered   = 'attendees_answered';
     case Completed           = 'completed';
 
@@ -19,7 +20,7 @@ enum EventCarbonFootprintStatus: string
     {
         return match ($this) {
             self::MaterialsAnswered, self::AssemblyAnswered, self::CelebrationAnswered,
-            self::BreakdownAnswered, self::ProvidersAnswered, self::AttendeesAnswered, self::Completed => true,
+            self::BreakdownAnswered, self::ProvidersAnswered, self::EmployeesAnswered, self::AttendeesAnswered, self::Completed => true,
             default => false,
         };
     }
@@ -28,7 +29,7 @@ enum EventCarbonFootprintStatus: string
     {
         return match ($this) {
             self::AssemblyAnswered, self::CelebrationAnswered,
-            self::BreakdownAnswered, self::ProvidersAnswered, self::AttendeesAnswered, self::Completed => true,
+            self::BreakdownAnswered, self::ProvidersAnswered, self::EmployeesAnswered, self::AttendeesAnswered, self::Completed => true,
             default => false,
         };
     }
@@ -37,7 +38,7 @@ enum EventCarbonFootprintStatus: string
     {
         return match ($this) {
             self::CelebrationAnswered, self::BreakdownAnswered, self::ProvidersAnswered,
-            self::AttendeesAnswered, self::Completed => true,
+            self::EmployeesAnswered, self::AttendeesAnswered, self::Completed => true,
             default => false,
         };
     }
@@ -45,7 +46,7 @@ enum EventCarbonFootprintStatus: string
     public function isBreakdownAnswered(): bool
     {
         return match ($this) {
-            self::BreakdownAnswered, self::ProvidersAnswered, self::AttendeesAnswered, self::Completed => true,
+            self::BreakdownAnswered, self::ProvidersAnswered, self::EmployeesAnswered, self::AttendeesAnswered, self::Completed => true,
             default => false,
         };
     }
@@ -53,7 +54,15 @@ enum EventCarbonFootprintStatus: string
     public function isProvidersAnswered(): bool
     {
         return match ($this) {
-            self::ProvidersAnswered, self::AttendeesAnswered, self::Completed => true,
+            self::ProvidersAnswered, self::EmployeesAnswered, self::AttendeesAnswered, self::Completed => true,
+            default => false,
+        };
+    }
+
+    public function isEmployeesAnswered(): bool
+    {
+        return match ($this) {
+            self::EmployeesAnswered, self::AttendeesAnswered, self::Completed => true,
             default => false,
         };
     }
@@ -80,8 +89,9 @@ enum EventCarbonFootprintStatus: string
             self::CelebrationAnswered => 4,
             self::BreakdownAnswered => 5,
             self::ProvidersAnswered => 6,
-            self::AttendeesAnswered => 7,
-            self::Completed => 8,
+            self::EmployeesAnswered => 7,
+            self::AttendeesAnswered => 8,
+            self::Completed => 9,
         };
     }
 
@@ -93,7 +103,8 @@ enum EventCarbonFootprintStatus: string
             self::AssemblyAnswered    => 'events_carbon_footprint_celebration',
             self::CelebrationAnswered => 'events_carbon_footprint_breakdown',
             self::BreakdownAnswered => 'events_carbon_footprint_providers',
-            self::ProvidersAnswered => 'events_carbon_footprint_attendees',
+            self::ProvidersAnswered => 'events_carbon_footprint_employees',
+            self::EmployeesAnswered => 'events_carbon_footprint_attendees',
             self::AttendeesAnswered => 'events_carbon_footprint_results',
             self::Completed => 'events_carbon_footprint_results',
         };

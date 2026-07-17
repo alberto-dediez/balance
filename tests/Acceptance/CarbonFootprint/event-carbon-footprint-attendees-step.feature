@@ -1,21 +1,21 @@
 Feature:
     I want to make sure that the system handles the "Asistentes" step of the carbon footprint wizard correctly
 
-    Scenario: Accessing the attendees step without the providers step completed redirects back to providers
+    Scenario: Accessing the attendees step without the employees step completed redirects back to employees
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given event "Evento A" with id "333" of account "666" exists
         Given event carbon footprint with id "999" for event "333" of account "666" with breakdown answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/events/333/carbon-footprint/step/attendees"
-        Then I am redirected to route "events_carbon_footprint_providers"
+        Then I am redirected to route "events_carbon_footprint_employees"
 
     Scenario: The attendees step shows the responses counter and the surveyed percentage
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given event "Evento A" with id "333" of account "666" exists
         Given event "333" has 100 estimated attendees
-        Given event carbon footprint with id "999" for event "333" of account "666" with providers answered exists
+        Given event carbon footprint with id "999" for event "333" of account "666" with employees answered exists
         Given mobility "Coche" with id "M1" exists
         Given attendee survey with id "AS1" and token "token-abc" for event "333" of account "666" exists
         Given attendee survey response with id "R1" for attendee survey "AS1" using mobility "M1" exists
@@ -31,7 +31,7 @@ Feature:
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given event "Evento A" with id "333" of account "666" exists
-        Given event carbon footprint with id "999" for event "333" of account "666" with providers answered exists
+        Given event carbon footprint with id "999" for event "333" of account "666" with employees answered exists
         Given mobility "Coche" with id "M1" and emission factor for year "2026" exists
         Given overnight stay "Hotel" with id "OS1" and emission factor for year "2026" exists
         Given attendee survey with id "AS1" and token "token-abc" for event "333" of account "666" exists
@@ -48,7 +48,7 @@ Feature:
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given event "Evento A" with id "333" of account "666" exists
-        Given event carbon footprint with id "999" for event "333" of account "666" with providers answered exists
+        Given event carbon footprint with id "999" for event "333" of account "666" with employees answered exists
         Given mobility "Coche" with id "M1" and emission factor for year "2026" exists
         Given event carbon footprint "999" has a manual attendees mobility activity using mobility "M1"
         Given attendee survey with id "AS1" and token "token-abc" for event "333" of account "666" exists
@@ -64,7 +64,7 @@ Feature:
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given event "Evento A" with id "333" of account "666" exists
-        Given event carbon footprint with id "999" for event "333" of account "666" with providers answered exists
+        Given event carbon footprint with id "999" for event "333" of account "666" with employees answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/events/333/carbon-footprint/step/results"
         Then I am redirected to route "events_carbon_footprint_attendees"

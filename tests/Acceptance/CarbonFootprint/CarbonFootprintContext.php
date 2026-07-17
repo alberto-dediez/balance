@@ -518,6 +518,22 @@ final readonly class CarbonFootprintContext implements Context
         $this->getEventCarbonFootprintRepository()->add($eventCarbonFootprint);
     }
 
+    #[Given('event carbon footprint with id :id for event :eventId of account :account with employees answered exists')]
+    public function eventCarbonFootprintWithIdForEventOfAccountWithEmployeesAnsweredExists(string $id, string $eventId, string $account): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $eventCarbonFootprint = EventCarbonFootprintMother::from(eventId: $eventId, id: $id, accountId: $account);
+        $eventCarbonFootprint->answerPhase(Phase::Materials);
+        $eventCarbonFootprint->answerPhase(Phase::Assembly);
+        $eventCarbonFootprint->answerPhase(Phase::Celebration);
+        $eventCarbonFootprint->answerPhase(Phase::Breakdown);
+        $eventCarbonFootprint->answerProviders();
+        $eventCarbonFootprint->answerEmployees();
+
+        $this->getEventCarbonFootprintRepository()->add($eventCarbonFootprint);
+    }
+
     #[Given('event carbon footprint with id :id for event :eventId of account :account completed exists')]
     public function eventCarbonFootprintWithIdForEventOfAccountCompletedExists(string $id, string $eventId, string $account): void
     {

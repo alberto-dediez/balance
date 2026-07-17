@@ -89,6 +89,19 @@ class EventCarbonFootprintActivities
         return new self($filtered);
     }
 
+    public function filterByFromEmployees(bool $fromEmployees): self
+    {
+        $filtered = [];
+
+        foreach ($this->activities as $activity) {
+            if ($activity->fromEmployees() === $fromEmployees) {
+                $filtered[] = $activity;
+            }
+        }
+
+        return new self($filtered);
+    }
+
     /** @return ActivityId[] */
     public function activityIds(): array
     {

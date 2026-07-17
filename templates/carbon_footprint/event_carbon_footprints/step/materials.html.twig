@@ -53,5 +53,11 @@
             </button>
         </div>
     </form>
+    {% else %}
+        <div class="d-flex justify-content-end mt-3">
+            <a href="{{ path('events_carbon_footprint_results', {eventId: eventId, step: 'assembly'}) }}" class="btn btn-primary">
+                {{ 'Siguiente' | trans }} &rarr;
+            </a>
+        </div>
     {% endif %}
 {% endblock %}

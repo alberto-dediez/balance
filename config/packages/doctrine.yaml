@@ -59,6 +59,8 @@ doctrine:
             provider_contribution_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ProviderContributionIdType
             attendee_survey_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\AttendeeSurveyIdType
             attendee_survey_response_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\AttendeeSurveyResponseIdType
+            employee_participation_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EmployeeParticipationIdType
+            employee_contribution_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EmployeeContributionIdType
             event_carbon_footprint_report_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EventCarbonFootprintReportIdType
 
     orm:

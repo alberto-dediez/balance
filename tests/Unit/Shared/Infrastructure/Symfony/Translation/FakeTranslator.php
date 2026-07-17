@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Shared\Infrastructure\Symfony\Translation;
 
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class FakeTranslator implements TranslatorInterface
+class FakeTranslator implements TranslatorInterface, LocaleAwareInterface
 {
     private string $locale = 'es';
 

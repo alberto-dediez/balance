@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\EventCarbonFootprint\Complete;
 
+use App\CarbonFootprint\Application\EmployeeParticipation\Close\CloseEmployeeParticipationRequest;
+use App\CarbonFootprint\Application\EmployeeParticipation\Close\CloseEmployeeParticipationService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepository;
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\EmployeeParticipation\EmployeeParticipationRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\Security\Application\Action as SecurityAction;
@@ -27,6 +30,8 @@ class CompleteEventCarbonFootprintService implements CommandHandler
         private ActivityRepository $activityRepository,
         private EventRepository $eventRepository,
         private AttendeeSurveyRepository $attendeeSurveyRepository,
+        private EmployeeParticipationRepository $employeeParticipationRepository,
+        private CloseEmployeeParticipationService $closeEmployeeParticipationService,
     ) {}
 
     public function __invoke(CompleteEventCarbonFootprintRequest $request, User $user): void
@@ -38,6 +43,21 @@ class CompleteEventCarbonFootprintService implements CommandHandler
         }
 
         $this->authorizer->denyUnlessCanDoThat($eventCarbonFootprint, SecurityAction::Edit, $user);
+
+        $employeeParticipation = $this->employeeParticipationRepository->findByEventCarbonFootprintId($request->eventCarbonFootprintId);
+
+        if (null !== $employeeParticipation && !$employeeParticipation->status()->isClosed()) {
+            ($this->closeEmployeeParticipationService)(
+                new CloseEmployeeParticipationRequest($request->eventCarbonFootprintId),
+                $user,
+            );
+
+            $eventCarbonFootprint = $this->eventCarbonFootprintRepository->find($request->eventCarbonFootprintId);
+
+            if (null === $eventCarbonFootprint) {
+                throw new \InvalidArgumentException('EventCarbonFootprint not found');
+            }
+        }
 
         $activityIds = $eventCarbonFootprint->activities()->activityIds();
 

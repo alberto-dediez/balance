@@ -30,7 +30,7 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/events/333/carbon-footprint/step/providers"
         When I submit a form with "[providerIds][0]:444" and button "Guardar y continuar"
-        Then I am redirected to route "events_carbon_footprint_attendees"
+        Then I am redirected to route "events_carbon_footprint_employees"
 
     Scenario: As a user, I can't access the providers step
         Given user "user1@dediez.software" with role "ROLE_USER" exists

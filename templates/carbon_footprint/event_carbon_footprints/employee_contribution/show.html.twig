@@ -1,0 +1,70 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set page_title = ('Eventos' | trans)
+    ~ ' > '
+    ~ event.name
+    ~ ' > '
+    ~ ('Huella de Carbono' | trans)
+    ~ ' > '
+    ~ ('Contribución de empleado' | trans)
+    ~ ' > '
+    ~ (employeeContribution.employeeName ?? '')
+%}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('events_carbon_footprint_employees', {eventId: eventId}) }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card title="{{ 'Datos del empleado' | trans }}">
+        <dl class="row">
+            <dt class="col-sm-3">{{ 'Empleado' | trans }}</dt>
+            <dd class="col-sm-9">{{ employeeContribution.employeeName ?? '-' }}</dd>
+
+            <dt class="col-sm-3">{{ 'Estado' | trans }}</dt>
+            <dd class="col-sm-9">
+                {% if employeeContribution.status.isAnswered %}
+                    <span class="badge bg-success">{{ 'Contestado' | trans }}</span>
+                {% elseif employeeContribution.status.isIgnored %}
+                    <span class="badge bg-secondary">{{ 'Descartado' | trans }}</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark">{{ 'Pendiente' | trans }}</span>
+                {% endif %}
+            </dd>
+
+            <dt class="col-sm-3">{{ 'Fecha de respuesta' | trans }}</dt>
+            <dd class="col-sm-9">{{ employeeContribution.answeredAt ? employeeContribution.answeredAt | date('d/m/Y H:i') : '-' }}</dd>
+        </dl>
+    </twig:Card>
+
+    {% set phases = [
+        {label: 'Montaje' | trans, worked: employeeContribution.workedAssembly, mobilityId: employeeContribution.assemblyMobilityId, distanceKm: employeeContribution.assemblyDistanceKm, vehicleOccupants: employeeContribution.assemblyVehicleOccupants, days: employeeContribution.assemblyDays, hotelNights: employeeContribution.assemblyHotelNights},
+        {label: 'Celebración' | trans, worked: employeeContribution.workedCelebration, mobilityId: employeeContribution.celebrationMobilityId, distanceKm: employeeContribution.celebrationDistanceKm, vehicleOccupants: employeeContribution.celebrationVehicleOccupants, days: employeeContribution.celebrationDays, hotelNights: employeeContribution.celebrationHotelNights},
+        {label: 'Desmontaje' | trans, worked: employeeContribution.workedBreakdown, mobilityId: employeeContribution.breakdownMobilityId, distanceKm: employeeContribution.breakdownDistanceKm, vehicleOccupants: employeeContribution.breakdownVehicleOccupants, days: employeeContribution.breakdownDays, hotelNights: employeeContribution.breakdownHotelNights},
+    ] %}
+
+    {% for phase in phases %}
+        <twig:Card title="{{ phase.label }}">
+            {% if not phase.worked %}
+                <p class="text-muted">{{ 'No trabajó en esta fase.' | trans }}</p>
+            {% else %}
+                <dl class="row">
+                    <dt class="col-sm-3">{{ 'Medio de transporte' | trans }}</dt>
+                    <dd class="col-sm-9">{{ phase.mobilityId is not null and mobilitiesById[phase.mobilityId ~ ''] is defined ? mobilitiesById[phase.mobilityId ~ ''].name : '-' }}</dd>
+
+                    <dt class="col-sm-3">{{ 'Km por trayecto/día' | trans }}</dt>
+                    <dd class="col-sm-9">{{ phase.distanceKm ?? '-' }}</dd>
+
+                    <dt class="col-sm-3">{{ 'Ocupantes del vehículo' | trans }}</dt>
+                    <dd class="col-sm-9">{{ phase.vehicleOccupants ?? '-' }}</dd>
+
+                    <dt class="col-sm-3">{{ 'Días' | trans }}</dt>
+                    <dd class="col-sm-9">{{ phase.days ?? '-' }}</dd>
+
+                    <dt class="col-sm-3">{{ 'Noches de hotel' | trans }}</dt>
+                    <dd class="col-sm-9">{{ phase.hotelNights ?? '-' }}</dd>
+                </dl>
+            {% endif %}
+        </twig:Card>
+    {% endfor %}
+{% endblock %}
