@@ -10,17 +10,30 @@ use Symfony\Component\RateLimiter\RateLimiterFactory;
 
 trait ProviderContributionPublicControllerTrait
 {
-    private function checkProviderContributionRateLimit(RateLimiterFactory $limiter, Request $request): ?Response
+    private function checkProviderContributionRateLimit(RateLimiterFactory $limiter, RateLimiterFactory $invalidTokenLimiter, Request $request): ?Response
     {
-        if (!$limiter->create($request->getClientIp() ?? 'unknown')->consume(1)->isAccepted()) {
+        $clientIp = $request->getClientIp() ?? 'unknown';
+
+        if (!$limiter->create($clientIp)->consume(1)->isAccepted()) {
+            return new Response('Demasiados intentos. Por favor espere.', Response::HTTP_TOO_MANY_REQUESTS);
+        }
+
+        if ($invalidTokenLimiter->create($clientIp)->consume(0)->getRemainingTokens() <= 0) {
             return new Response('Demasiados intentos. Por favor espere.', Response::HTTP_TOO_MANY_REQUESTS);
         }
 
         return null;
     }
 
-    private function providerContributionInvalidResponse(): Response
+    private function penalizeProviderContributionInvalidToken(RateLimiterFactory $invalidTokenLimiter, Request $request): void
     {
+        $invalidTokenLimiter->create($request->getClientIp() ?? 'unknown')->consume(1);
+    }
+
+    private function providerContributionInvalidResponse(RateLimiterFactory $invalidTokenLimiter, Request $request): Response
+    {
+        $this->penalizeProviderContributionInvalidToken($invalidTokenLimiter, $request);
+
         return $this->render('@carbon_footprint/public/contribution/invalid.html.twig', [], new Response('', Response::HTTP_NOT_FOUND));
     }
 

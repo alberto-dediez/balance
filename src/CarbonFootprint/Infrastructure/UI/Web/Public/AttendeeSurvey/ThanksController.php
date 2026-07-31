@@ -15,11 +15,14 @@ class ThanksController extends AbstractController
 {
     use AttendeeSurveyPublicControllerTrait;
 
-    public function __construct(private RateLimiterFactory $attendeeSurveyTokenLimiter) {}
+    public function __construct(
+        private RateLimiterFactory $attendeeSurveyTokenLimiter,
+        private RateLimiterFactory $attendeeSurveyInvalidTokenLimiter,
+    ) {}
 
     public function __invoke(string $token, Request $request): Response
     {
-        if ($limited = $this->checkAttendeeSurveyRateLimit($this->attendeeSurveyTokenLimiter, $request)) {
+        if ($limited = $this->checkAttendeeSurveyRateLimit($this->attendeeSurveyTokenLimiter, $this->attendeeSurveyInvalidTokenLimiter, $request)) {
             return $limited;
         }
 

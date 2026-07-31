@@ -23,7 +23,10 @@ class CityController extends AbstractController
 {
     use AttendeeSurveyPublicControllerTrait;
 
-    public function __construct(private RateLimiterFactory $attendeeSurveyTokenLimiter) {}
+    public function __construct(
+        private RateLimiterFactory $attendeeSurveyTokenLimiter,
+        private RateLimiterFactory $attendeeSurveyInvalidTokenLimiter,
+    ) {}
 
     public function __invoke(
         string $token,
@@ -31,14 +34,14 @@ class CityController extends AbstractController
         RegisterAttendeeSurveyResponseService $registerResponse,
         Request $request,
     ): Response {
-        if ($limited = $this->checkAttendeeSurveyRateLimit($this->attendeeSurveyTokenLimiter, $request)) {
+        if ($limited = $this->checkAttendeeSurveyRateLimit($this->attendeeSurveyTokenLimiter, $this->attendeeSurveyInvalidTokenLimiter, $request)) {
             return $limited;
         }
 
         try {
             $response = $getByToken(new GetAttendeeSurveyByTokenRequest($token));
         } catch (AttendeeSurveyTokenInvalidException) {
-            return $this->attendeeSurveyInvalidResponse();
+            return $this->attendeeSurveyInvalidResponse($this->attendeeSurveyInvalidTokenLimiter, $request);
         }
 
         if ($response->attendeeSurvey->status()->isClosed()) {
@@ -84,7 +87,7 @@ class CityController extends AbstractController
                     cityDistanceKm: !empty($city['distanceKm']) ? (float) str_replace(',', '.', (string) $city['distanceKm']) : null,
                 ));
             } catch (AttendeeSurveyTokenInvalidException) {
-                return $this->attendeeSurveyInvalidResponse();
+                return $this->attendeeSurveyInvalidResponse($this->attendeeSurveyInvalidTokenLimiter, $request);
             } catch (AttendeeSurveyClosedException) {
                 return $this->attendeeSurveyClosedResponse();
             } catch (\InvalidArgumentException $e) {

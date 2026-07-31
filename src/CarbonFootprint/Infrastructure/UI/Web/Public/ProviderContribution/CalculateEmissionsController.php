@@ -24,14 +24,17 @@ class CalculateEmissionsController extends AbstractController
 {
     use ProviderContributionPublicControllerTrait;
 
-    public function __construct(private RateLimiterFactory $providerContributionTokenLimiter) {}
+    public function __construct(
+        private RateLimiterFactory $providerContributionTokenLimiter,
+        private RateLimiterFactory $providerContributionInvalidTokenLimiter,
+    ) {}
 
     public function __invoke(
         string $token,
         CalculateProviderContributionActivityEmissionsService $calculateActivityEmissions,
         Request $request,
     ): JsonResponse|Response {
-        if ($limited = $this->checkProviderContributionRateLimit($this->providerContributionTokenLimiter, $request)) {
+        if ($limited = $this->checkProviderContributionRateLimit($this->providerContributionTokenLimiter, $this->providerContributionInvalidTokenLimiter, $request)) {
             return $limited;
         }
 
@@ -61,6 +64,8 @@ class CalculateEmissionsController extends AbstractController
                 secondaryItemId: '' !== $secondaryItemId ? $secondaryItemId : null,
             ));
         } catch (ProviderContributionTokenInvalidException|ProviderContributionIgnoredException) {
+            $this->penalizeProviderContributionInvalidToken($this->providerContributionInvalidTokenLimiter, $request);
+
             return $this->json(['error' => 'Invalid token'], Response::HTTP_NOT_FOUND);
         } catch (\InvalidArgumentException $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);

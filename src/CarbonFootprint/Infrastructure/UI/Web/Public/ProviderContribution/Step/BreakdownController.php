@@ -11,6 +11,8 @@ use App\CarbonFootprint\Application\ProviderContribution\AnswerPhase\AnswerProvi
 use App\CarbonFootprint\Application\ProviderContribution\GetPhase\GetProviderContributionPhaseRequest;
 use App\CarbonFootprint\Application\ProviderContribution\GetPhase\GetProviderContributionPhaseService;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionAnswer;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionDefinition;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionClosedException;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionIgnoredException;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionTokenInvalidException;
@@ -31,7 +33,10 @@ class BreakdownController extends AbstractController
 
     private const Phase PHASE = Phase::Breakdown;
 
-    public function __construct(private RateLimiterFactory $providerContributionTokenLimiter) {}
+    public function __construct(
+        private RateLimiterFactory $providerContributionTokenLimiter,
+        private RateLimiterFactory $providerContributionInvalidTokenLimiter,
+    ) {}
 
     public function __invoke(
         string $token,
@@ -42,7 +47,7 @@ class BreakdownController extends AbstractController
         ProviderContributionPhaseStepView $stepView,
         Request $request,
     ): Response {
-        if ($limited = $this->checkProviderContributionRateLimit($this->providerContributionTokenLimiter, $request)) {
+        if ($limited = $this->checkProviderContributionRateLimit($this->providerContributionTokenLimiter, $this->providerContributionInvalidTokenLimiter, $request)) {
             return $limited;
         }
 
@@ -51,16 +56,20 @@ class BreakdownController extends AbstractController
                 throw $this->createAccessDeniedException('Token CSRF no válido');
             }
 
+            $worked = 'yes' === $request->request->getString('worked');
+
             try {
                 $answerPhase(new AnswerProviderContributionPhaseRequest(
                     token: $token,
                     phase: self::PHASE,
-                    sectionAnswers: $answerMapper->map($request, self::PHASE, self::PHASE->providerSections()),
+                    sectionAnswers: $worked
+                        ? $answerMapper->map($request, self::PHASE, self::PHASE->providerSections())
+                        : array_map(static fn(SectionDefinition $section): SectionAnswer => new SectionAnswer($section, []), self::PHASE->providerSections()),
                 ));
 
                 $answerProviderContribution(new AnswerProviderContributionRequest($token));
             } catch (ProviderContributionTokenInvalidException|ProviderContributionIgnoredException) {
-                return $this->providerContributionInvalidResponse();
+                return $this->providerContributionInvalidResponse($this->providerContributionInvalidTokenLimiter, $request);
             } catch (ProviderContributionClosedException) {
                 return $this->providerContributionClosedResponse();
             } catch (\InvalidArgumentException $e) {
@@ -75,7 +84,7 @@ class BreakdownController extends AbstractController
         try {
             $response = $getPhase(new GetProviderContributionPhaseRequest($token, self::PHASE));
         } catch (ProviderContributionTokenInvalidException|ProviderContributionIgnoredException) {
-            return $this->providerContributionInvalidResponse();
+            return $this->providerContributionInvalidResponse($this->providerContributionInvalidTokenLimiter, $request);
         }
 
         return $this->render('@carbon_footprint/public/contribution/step/breakdown.html.twig', $stepView->build($response->sections) + [

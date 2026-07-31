@@ -4,9 +4,20 @@
 {% set wizard_selected = 4 %}
 
 {% block wizard_panels %}
+    {% set worked = hasActivities
+        ? 'yes'
+        : (providerContribution.stepStatus.isCompleted
+            ? 'no'
+            : (providerContribution.workersBreakdown is null
+                ? null
+                : (providerContribution.workersBreakdown > 0 ? 'yes' : 'no'))) %}
+
     <form method="post">
         <input type="hidden" name="_token" value="{{ csrf_token('contribution_breakdown_' ~ token) }}">
 
+        {% include '@carbon_footprint/public/contribution/step/_worked_question.html.twig' with {question: '¿Tu empresa trabajó durante el desmontaje?' | trans, worked: worked} only %}
+
+        <div id="worked-activities">
         <twig:CarbonFootprint:CombustibleActivityTable
             title="{{ 'Combustible (instalaciones fijas, calderas, motores estacionarios, etc)' | trans }}"
             prefix="combustibles"
@@ -42,6 +53,9 @@
             :units="units"
             calculateUrl="{{ path('public_carbon_footprint_contribution_emissions_calculate', {token: token}) }}"
         />
+        </div>
+
+        {% include '@carbon_footprint/public/contribution/step/_worked_note.html.twig' %}
 
         <div class="d-flex justify-content-between mt-3">
             <a href="{{ path('public_carbon_footprint_contribution_celebration', {token: token}) }}" class="btn btn-outline-primary">

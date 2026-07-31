@@ -4069,9 +4069,33 @@
         <source>Volver a resultados</source>
         <target>Volver a resultados</target>
       </trans-unit>
-      <trans-unit id="hw0VLuv" resname="Paso {step} de {total}">
+      <trans-unit id="YZ9Y362" resname="Paso {step} de {total}">
         <source>Paso {step} de {total}</source>
         <target>Paso {step} de {total}</target>
+      </trans-unit>
+      <trans-unit id="JjQOy1o" resname="¿Tu empresa trabajó durante el montaje?">
+        <source>¿Tu empresa trabajó durante el montaje?</source>
+        <target>¿Tu empresa trabajó durante el montaje?</target>
+      </trans-unit>
+      <trans-unit id="C47HzTb" resname="Has indicado que tu empresa no trabajó en esta fase, así que no hay preguntas que responder. Puedes continuar.">
+        <source>Has indicado que tu empresa no trabajó en esta fase, así que no hay preguntas que responder. Puedes continuar.</source>
+        <target>Has indicado que tu empresa no trabajó en esta fase, así que no hay preguntas que responder. Puedes continuar.</target>
+      </trans-unit>
+      <trans-unit id="LB8GgCG" resname="¿Tu empresa trabajó durante la celebración?">
+        <source>¿Tu empresa trabajó durante la celebración?</source>
+        <target>¿Tu empresa trabajó durante la celebración?</target>
+      </trans-unit>
+      <trans-unit id="p9dwJEj" resname="Indícanos primero si tu empresa trabajó en esta fase del evento. Solo si es así te pediremos el detalle de actividades.">
+        <source>Indícanos primero si tu empresa trabajó en esta fase del evento. Solo si es así te pediremos el detalle de actividades.</source>
+        <target>Indícanos primero si tu empresa trabajó en esta fase del evento. Solo si es así te pediremos el detalle de actividades.</target>
+      </trans-unit>
+      <trans-unit id="FWdm0sP" resname="¿Tu empresa trabajó durante el desmontaje?">
+        <source>¿Tu empresa trabajó durante el desmontaje?</source>
+        <target>¿Tu empresa trabajó durante el desmontaje?</target>
+      </trans-unit>
+      <trans-unit id="mQCyBTA" resname="Ayúdanos a calcular la huella de carbono de este evento contándonos la actividad de tu empresa en cada fase. Solo te llevará unos minutos.">
+        <source>Ayúdanos a calcular la huella de carbono de este evento contándonos la actividad de tu empresa en cada fase. Solo te llevará unos minutos.</source>
+        <target>Ayúdanos a calcular la huella de carbono de este evento contándonos la actividad de tu empresa en cada fase. Solo te llevará unos minutos.</target>
       </trans-unit>
     </body>
   </file>

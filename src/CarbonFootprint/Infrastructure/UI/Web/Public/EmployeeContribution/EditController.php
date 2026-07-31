@@ -18,18 +18,21 @@ class EditController extends AbstractController
 {
     use EmployeeContributionPublicControllerTrait;
 
-    public function __construct(private RateLimiterFactory $employeeContributionTokenLimiter) {}
+    public function __construct(
+        private RateLimiterFactory $employeeContributionTokenLimiter,
+        private RateLimiterFactory $employeeContributionInvalidTokenLimiter,
+    ) {}
 
     public function __invoke(string $token, EmployeeContributionAuthenticator $authenticator, Request $request): Response
     {
-        if ($limited = $this->checkEmployeeContributionRateLimit($this->employeeContributionTokenLimiter, $request)) {
+        if ($limited = $this->checkEmployeeContributionRateLimit($this->employeeContributionTokenLimiter, $this->employeeContributionInvalidTokenLimiter, $request)) {
             return $limited;
         }
 
         try {
             $authentication = $authenticator->authenticate($token);
         } catch (EmployeeContributionTokenInvalidException|EmployeeContributionIgnoredException) {
-            return $this->employeeContributionInvalidResponse();
+            return $this->employeeContributionInvalidResponse($this->employeeContributionInvalidTokenLimiter, $request);
         }
 
         return $this->redirectToRoute(

@@ -30,16 +30,22 @@ final class ProviderContributionPhaseStepView
         $overnightStays = $this->section($sections, 'overnightStays');
         $mobilities = $this->section($sections, 'mobilities');
 
+        $combustibleRows = $this->rows($combustibles);
+        $machineryFuelRows = $this->rows($machineryFuels);
+        $overnightStayRows = $this->rows($overnightStays);
+        $mobilityRows = $this->rows($mobilities);
+
         return [
             'combustibles' => $combustibles->catalog,
             'machineryFuels' => $machineryFuels->catalog,
             'overnightStays' => $this->allowedOvernightStays($overnightStays->catalog),
             'mobilities' => $mobilities->catalog,
             'units' => Unit::cases(),
-            'combustibleRows' => $this->rows($combustibles),
-            'machineryFuelRows' => $this->rows($machineryFuels),
-            'overnightStayRows' => $this->rows($overnightStays),
-            'mobilityRows' => $this->rows($mobilities),
+            'combustibleRows' => $combustibleRows,
+            'machineryFuelRows' => $machineryFuelRows,
+            'overnightStayRows' => $overnightStayRows,
+            'mobilityRows' => $mobilityRows,
+            'hasActivities' => [] !== $combustibleRows || [] !== $machineryFuelRows || [] !== $overnightStayRows || [] !== $mobilityRows,
         ];
     }
 

@@ -18,18 +18,21 @@ class AnsweredController extends AbstractController
 {
     use ProviderContributionPublicControllerTrait;
 
-    public function __construct(private RateLimiterFactory $providerContributionTokenLimiter) {}
+    public function __construct(
+        private RateLimiterFactory $providerContributionTokenLimiter,
+        private RateLimiterFactory $providerContributionInvalidTokenLimiter,
+    ) {}
 
     public function __invoke(string $token, ProviderContributionAuthenticator $authenticator, Request $request): Response
     {
-        if ($limited = $this->checkProviderContributionRateLimit($this->providerContributionTokenLimiter, $request)) {
+        if ($limited = $this->checkProviderContributionRateLimit($this->providerContributionTokenLimiter, $this->providerContributionInvalidTokenLimiter, $request)) {
             return $limited;
         }
 
         try {
             $authenticator->authenticate($token);
         } catch (ProviderContributionTokenInvalidException|ProviderContributionIgnoredException) {
-            return $this->providerContributionInvalidResponse();
+            return $this->providerContributionInvalidResponse($this->providerContributionInvalidTokenLimiter, $request);
         }
 
         return $this->render('@carbon_footprint/public/contribution/answered.html.twig');

@@ -29,7 +29,10 @@ class AssemblyController extends AbstractController
     private const Phase PHASE = Phase::Assembly;
     private const string NEXT_ROUTE = 'public_carbon_footprint_employee_contribution_celebration';
 
-    public function __construct(private RateLimiterFactory $employeeContributionTokenLimiter) {}
+    public function __construct(
+        private RateLimiterFactory $employeeContributionTokenLimiter,
+        private RateLimiterFactory $employeeContributionInvalidTokenLimiter,
+    ) {}
 
     public function __invoke(
         string $token,
@@ -37,7 +40,7 @@ class AssemblyController extends AbstractController
         AnswerEmployeeContributionPhaseService $answerPhase,
         Request $request,
     ): Response {
-        if ($limited = $this->checkEmployeeContributionRateLimit($this->employeeContributionTokenLimiter, $request)) {
+        if ($limited = $this->checkEmployeeContributionRateLimit($this->employeeContributionTokenLimiter, $this->employeeContributionInvalidTokenLimiter, $request)) {
             return $limited;
         }
 
@@ -65,7 +68,7 @@ class AssemblyController extends AbstractController
                     hotelNights: $worked && '' !== $hotelNights ? (int) $hotelNights : null,
                 ));
             } catch (EmployeeContributionTokenInvalidException|EmployeeContributionIgnoredException) {
-                return $this->employeeContributionInvalidResponse();
+                return $this->employeeContributionInvalidResponse($this->employeeContributionInvalidTokenLimiter, $request);
             } catch (EmployeeContributionClosedException) {
                 return $this->employeeContributionClosedResponse();
             } catch (\InvalidArgumentException $e) {
@@ -80,7 +83,7 @@ class AssemblyController extends AbstractController
         try {
             $response = $getByToken(new GetEmployeeContributionByTokenRequest($token));
         } catch (EmployeeContributionTokenInvalidException|EmployeeContributionIgnoredException) {
-            return $this->employeeContributionInvalidResponse();
+            return $this->employeeContributionInvalidResponse($this->employeeContributionInvalidTokenLimiter, $request);
         }
 
         return $this->render('@carbon_footprint/public/employee_contribution/step/assembly.html.twig', [

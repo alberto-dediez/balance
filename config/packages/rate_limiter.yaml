@@ -6,15 +6,27 @@ framework:
             interval: '1 minute'
         provider_contribution_token:
             policy: sliding_window
-            limit: 30
+            limit: 1000
+            interval: '1 minute'
+        provider_contribution_invalid_token:
+            policy: sliding_window
+            limit: 10
             interval: '1 minute'
         employee_contribution_token:
             policy: sliding_window
-            limit: 30
+            limit: 1000
+            interval: '1 minute'
+        employee_contribution_invalid_token:
+            policy: sliding_window
+            limit: 10
             interval: '1 minute'
         attendee_survey_token:
             policy: sliding_window
-            limit: 30
+            limit: 1000
+            interval: '1 minute'
+        attendee_survey_invalid_token:
+            policy: sliding_window
+            limit: 10
             interval: '1 minute'
 
 when@test:
@@ -28,11 +40,23 @@ when@test:
                 policy: sliding_window
                 limit: 500
                 interval: '1 minute'
+            provider_contribution_invalid_token:
+                policy: sliding_window
+                limit: 500
+                interval: '1 minute'
             employee_contribution_token:
                 policy: sliding_window
                 limit: 500
                 interval: '1 minute'
+            employee_contribution_invalid_token:
+                policy: sliding_window
+                limit: 500
+                interval: '1 minute'
             attendee_survey_token:
+                policy: sliding_window
+                limit: 500
+                interval: '1 minute'
+            attendee_survey_invalid_token:
                 policy: sliding_window
                 limit: 500
                 interval: '1 minute'

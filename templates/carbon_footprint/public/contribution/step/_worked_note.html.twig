@@ -1,0 +1,20 @@
+<div id="worked-note" class="alert alert-info" style="display: none">
+    {{ 'Has indicado que tu empresa no trabajó en esta fase, así que no hay preguntas que responder. Puedes continuar.' | trans }}
+</div>
+
+<script>
+    (function () {
+        var radios = document.querySelectorAll('input[name="worked"]');
+        var activities = document.getElementById('worked-activities');
+        var note = document.getElementById('worked-note');
+
+        function toggle() {
+            var checked = document.querySelector('input[name="worked"]:checked');
+            activities.style.display = checked && checked.value === 'yes' ? '' : 'none';
+            note.style.display = checked && checked.value === 'no' ? '' : 'none';
+        }
+
+        radios.forEach(function (radio) { radio.addEventListener('change', toggle); });
+        toggle();
+    })();
+</script>
