@@ -50,10 +50,12 @@
     {% set field_name = multiple ? full_name ~ '[]' : full_name %}
 
     <div id="{{ id }}" class="media-picker"{% for key, attr_value in attr %} {{ key }}="{{ attr_value }}"{% endfor %}>
-        <div class="row g-2 mb-2" data-media-picker-target="selection">
+        <div class="row g-2 mb-2" data-media-picker-target="selection" data-remove-text="{{ 'Quitar archivo' | trans }}" data-empty-text="{{ placeholder | trans }}">
             {% for element in selected %}
                 <div class="col-6 col-md-3" data-media-id="{{ element.id }}">
-                    <div class="border rounded p-2">
+                    <div class="border rounded p-2 position-relative">
+                        <button type="button" class="btn-close position-absolute top-0 end-0 m-1" data-action="media-picker#removeItem" aria-label="{{ 'Quitar archivo' | trans }}"></button>
+
                         {% if element.isImage %}
                             <img src="{{ element.url }}" alt="" class="w-100 rounded mb-2" style="height: 96px; object-fit: cover;">
                         {% else %}
@@ -99,7 +101,7 @@
                   data-error-text="{{ 'No se ha podido subir el archivo' | trans }}"></span>
         </div>
 
-        <input type="file" class="d-none" data-media-picker-target="file" data-action="change->media-picker#upload">
+        <input type="file" class="d-none" data-media-picker-target="file" data-action="change->media-picker#upload"{% if multiple %} multiple{% endif %}>
 
         <div class="modal fade" tabindex="-1" data-media-picker-target="modal">
             <div class="modal-dialog modal-lg modal-dialog-scrollable">

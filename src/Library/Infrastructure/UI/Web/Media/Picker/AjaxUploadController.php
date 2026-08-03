@@ -6,6 +6,7 @@ namespace App\Library\Infrastructure\UI\Web\Media\Picker;
 
 use App\Library\Application\Media\Upload\UploadMediaService;
 use App\Library\Domain\Model\Media\MediaRepository;
+use App\Library\Domain\Model\Media\MediaType;
 use App\Library\Infrastructure\Symfony\Form\Type\MediaPickerType;
 use App\Library\Infrastructure\Symfony\Http\UploadedFileMapper;
 use App\Security\Application\UnauthorizedActionException;
@@ -51,6 +52,14 @@ class AjaxUploadController extends AbstractController
         if (!$this->isCsrfTokenValid(MediaPickerType::CSRF_TOKEN_ID, (string) $request->request->get('_token'))) {
             return $this->json([
                 'error' => $translator->trans('Token de seguridad inválido'),
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $allowedTypes = array_filter(explode(',', (string) $request->request->get('types', '')));
+
+        if ([] !== $allowedTypes && !in_array(MediaType::fromMimeType((string) $uploadedFile->getMimeType())->value, $allowedTypes, true)) {
+            return $this->json([
+                'error' => $translator->trans('El tipo de archivo no está permitido'),
             ], Response::HTTP_BAD_REQUEST);
         }
 

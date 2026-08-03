@@ -6,6 +6,7 @@ namespace App\Library\Infrastructure\UI\Web\Media;
 
 use App\Library\Application\Media\MediaAuthorizer;
 use App\Library\Application\Media\Upload\UploadMediaRequest;
+use App\Library\Application\Media\Upload\UploadMediaResponse;
 use App\Library\Application\Media\Upload\UploadMediaService;
 use App\Library\Domain\Model\Media\Media;
 use App\Library\Domain\Model\Media\MediaId;
@@ -47,17 +48,36 @@ class UploadController extends AbstractController
             $authorizer->denyUnlessCanDoThat(new Media(MediaId::generate(), $account?->id()), Action::Register, $user);
 
             $needsRedirect = $this->register($request, $form, function ($form) use ($uploadMedia, $uploadedFileMapper, $user, $account): true {
-                /** @var UploadedFile $uploadedFile */
-                $uploadedFile = $form->get('file')->getData();
+                /** @var UploadedFile[] $uploadedFiles */
+                $uploadedFiles = $form->get('file')->getData();
 
-                /** @var UploadMediaRequest $uploadRequest */
-                $uploadRequest = $form->getData();
+                /** @var UploadMediaRequest $formRequest */
+                $formRequest = $form->getData();
 
-                $uploadRequest = $uploadedFileMapper($uploadedFile, $account?->id(), $user->id(), $uploadRequest);
+                $keepMetadata = 1 === count($uploadedFiles);
 
-                $response = $uploadMedia($uploadRequest, $user);
+                /** @var UploadMediaResponse[] $responses */
+                $responses = [];
 
-                $this->addFlash('success', new TranslatableMessage('Archivo subido correctamente: {name}', ['{name}' => $response->name]));
+                foreach ($uploadedFiles as $uploadedFile) {
+                    $uploadRequest = new UploadMediaRequest(
+                        name: $keepMetadata ? $formRequest->name : '',
+                        description: $keepMetadata ? $formRequest->description : null,
+                        alternativeText: $keepMetadata ? $formRequest->alternativeText : null,
+                    );
+
+                    $uploadRequest = $uploadedFileMapper($uploadedFile, $account?->id(), $user->id(), $uploadRequest);
+
+                    $responses[] = $uploadMedia($uploadRequest, $user);
+                }
+
+                $names = implode(', ', array_map(static fn(UploadMediaResponse $response): string => $response->name, $responses));
+
+                $message = $keepMetadata
+                    ? new TranslatableMessage('Archivo subido correctamente: {name}', ['{name}' => $names])
+                    : new TranslatableMessage('Archivos subidos correctamente: {names}', ['{names}' => $names]);
+
+                $this->addFlash('success', $message);
 
                 return true;
             });
