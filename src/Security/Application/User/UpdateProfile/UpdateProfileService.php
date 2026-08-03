@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security\Application\User\UpdateProfile;
 
+use App\Library\Domain\Model\Media\MediaId;
 use App\Security\Application\Action;
 use App\Security\Application\User\UserAuthorizer;
 use App\Security\Domain\Model\User\User;
@@ -32,9 +33,22 @@ class UpdateProfileService implements CommandHandler
 
         $user->changePreferredLocale($request->preferredLocale);
 
+        if (!$this->isSamePicture($user->pictureId(), $request->pictureId)) {
+            $user->changePicture($request->pictureId);
+        }
+
         $this->repository->add($user);
 
         return new UpdateProfileResponse(userId: $user->id());
+    }
+
+    private function isSamePicture(?MediaId $current, ?MediaId $new): bool
+    {
+        if (!$current instanceof MediaId || !$new instanceof MediaId) {
+            return !$current instanceof MediaId && !$new instanceof MediaId;
+        }
+
+        return $current->equals($new);
     }
 
     public function isHandled(Command $command): bool

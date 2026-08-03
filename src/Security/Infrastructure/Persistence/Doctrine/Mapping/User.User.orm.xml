@@ -20,6 +20,7 @@
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
         <field name="accountId" type="account_id" nullable="true"/>
         <field name="preferredLocale" type="locale" column="preferred_locale" nullable="true"/>
+        <field name="pictureId" type="media_id" column="picture_id" nullable="true"/>
 
         <many-to-one field="account" target-entity="App\Security\Domain\Model\Account\Account">
             <cascade><cascade-remove /></cascade>

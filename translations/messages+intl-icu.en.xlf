@@ -4097,6 +4097,130 @@
         <source>Ayúdanos a calcular la huella de carbono de este evento contándonos la actividad de tu empresa en cada fase. Solo te llevará unos minutos.</source>
         <target>Help us calculate this event's carbon footprint by telling us about your company's activity in each phase. It will only take a few minutes.</target>
       </trans-unit>
+      <trans-unit id="uEMS1dT" resname="Archivo actualizado con éxito">
+        <source>Archivo actualizado con éxito</source>
+        <target>File successfully updated</target>
+      </trans-unit>
+      <trans-unit id="PrMHu0x" resname="Se ha eliminado el archivo {media}">
+        <source>Se ha eliminado el archivo {media}</source>
+        <target>File {media} has been removed</target>
+      </trans-unit>
+      <trans-unit id="ylAoVIG" resname="No se ha podido eliminar el archivo {media}">
+        <source>No se ha podido eliminar el archivo {media}</source>
+        <target>File {media} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="TbctZVt" resname="No se ha recibido ningún archivo">
+        <source>No se ha recibido ningún archivo</source>
+        <target>No file was received</target>
+      </trans-unit>
+      <trans-unit id="bRzmiky" resname="Token de seguridad inválido">
+        <source>Token de seguridad inválido</source>
+        <target>Invalid security token</target>
+      </trans-unit>
+      <trans-unit id="c3xR4kJ" resname="Archivo subido correctamente: {name}">
+        <source>Archivo subido correctamente: {name}</source>
+        <target>File successfully uploaded: {name}</target>
+      </trans-unit>
+      <trans-unit id="DMotPcy" resname="Se ha eliminado el archivo {id}">
+        <source>Se ha eliminado el archivo {id}</source>
+        <target>File {id} has been removed</target>
+      </trans-unit>
+      <trans-unit id="TDEFBuu" resname="No se ha podido eliminar el archivo {id}">
+        <source>No se ha podido eliminar el archivo {id}</source>
+        <target>File {id} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="vSIaw4i" resname="Tipo">
+        <source>Tipo</source>
+        <target>Type</target>
+      </trans-unit>
+      <trans-unit id="sUU2pd0" resname="Todos los tipos">
+        <source>Todos los tipos</source>
+        <target>All types</target>
+      </trans-unit>
+      <trans-unit id="AVIMr.n" resname="Texto alternativo">
+        <source>Texto alternativo</source>
+        <target>Alternative text</target>
+      </trans-unit>
+      <trans-unit id="PFvFnoX" resname="Descripción">
+        <source>Descripción</source>
+        <target>Description</target>
+      </trans-unit>
+      <trans-unit id="XtHUd1h" resname="Archivo">
+        <source>Archivo</source>
+        <target>File</target>
+      </trans-unit>
+      <trans-unit id="jGWDGzY" resname="Si se deja vacío se usará el nombre del archivo">
+        <source>Si se deja vacío se usará el nombre del archivo</source>
+        <target>If left empty the file name will be used</target>
+      </trans-unit>
+      <trans-unit id="PvEC2bh" resname="Subir">
+        <source>Subir</source>
+        <target>Upload</target>
+      </trans-unit>
+      <trans-unit id="gLGeB5L" resname="No hay ningún archivo seleccionado">
+        <source>No hay ningún archivo seleccionado</source>
+        <target>No file selected</target>
+      </trans-unit>
+      <trans-unit id="WDfrlep" resname="Biblioteca">
+        <source>Biblioteca</source>
+        <target>Library</target>
+      </trans-unit>
+      <trans-unit id="Qgo_LVX" resname="Archivos">
+        <source>Archivos</source>
+        <target>Files</target>
+      </trans-unit>
+      <trans-unit id="pphRlMn" resname="Subir archivo">
+        <source>Subir archivo</source>
+        <target>Upload file</target>
+      </trans-unit>
+      <trans-unit id="pnwDm75" resname="La notificación ha sido eliminada">
+        <source>La notificación ha sido eliminada</source>
+        <target>The notification has been removed</target>
+      </trans-unit>
+      <trans-unit id="4jds0TY" resname="Seleccionar de la biblioteca">
+        <source>Seleccionar de la biblioteca</source>
+        <target>Select from the library</target>
+      </trans-unit>
+      <trans-unit id="PIyHheX" resname="Quitar">
+        <source>Quitar</source>
+        <target>Remove</target>
+      </trans-unit>
+      <trans-unit id="dB_udgZ" resname="Subiendo archivo...">
+        <source>Subiendo archivo...</source>
+        <target>Uploading file...</target>
+      </trans-unit>
+      <trans-unit id="blRzl7T" resname="No se ha podido subir el archivo">
+        <source>No se ha podido subir el archivo</source>
+        <target>The file could not be uploaded</target>
+      </trans-unit>
+      <trans-unit id="_S.bVFa" resname="Buscar archivos">
+        <source>Buscar archivos</source>
+        <target>Search files</target>
+      </trans-unit>
+      <trans-unit id="kDIaT3l" resname="No hay archivos en la biblioteca">
+        <source>No hay archivos en la biblioteca</source>
+        <target>There are no files in the library</target>
+      </trans-unit>
+      <trans-unit id="7j0NNbT" resname="Tamaño">
+        <source>Tamaño</source>
+        <target>Size</target>
+      </trans-unit>
+      <trans-unit id="loFGyc." resname="Fecha de subida">
+        <source>Fecha de subida</source>
+        <target>Upload date</target>
+      </trans-unit>
+      <trans-unit id="MR_NqT7" resname="Descargar">
+        <source>Descargar</source>
+        <target>Download</target>
+      </trans-unit>
+      <trans-unit id="KDlDrQy" resname="Imagen de perfil">
+        <source>Imagen de perfil</source>
+        <target>Profile picture</target>
+      </trans-unit>
+      <trans-unit id="xJ5NhA9" resname="No tienes ninguna imagen de perfil">
+        <source>No tienes ninguna imagen de perfil</source>
+        <target>You have no profile picture</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

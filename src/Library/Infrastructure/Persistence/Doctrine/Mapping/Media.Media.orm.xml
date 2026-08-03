@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Library\Domain\Model\Media\Media" table="media">
+        <id name="id" type="media_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="name" type="string" length="255" nullable="false"/>
+        <field name="fileName" type="string" length="255" column="file_name" nullable="false"/>
+        <field name="path" type="string" length="512" nullable="false"/>
+        <field name="extension" type="string" length="16" nullable="false"/>
+        <field name="mimeType" type="string" length="255" column="mime_type" nullable="false"/>
+        <field name="type" type="string" enum-type="App\Library\Domain\Model\Media\MediaType" nullable="false"/>
+        <field name="size" type="integer" nullable="false"/>
+        <field name="description" type="text" nullable="true"/>
+        <field name="alternativeText" type="string" length="255" column="alternative_text" nullable="true"/>
+        <field name="accountId" type="account_id" column="account_id" nullable="true"/>
+        <field name="uploadedBy" type="user_id" column="uploaded_by" nullable="true"/>
+        <field name="removed" type="boolean" nullable="false"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+    </entity>
+
+</doctrine-mapping>

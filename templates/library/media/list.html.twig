@@ -1,0 +1,66 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Biblioteca' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': ''
+        }, {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': 'Tipo' | trans
+        }, {
+            'label': 'Tamaño' | trans,
+            'sortable': true,
+            'sortableBy': 'size'
+        }, {
+            'label': 'Fecha de subida' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="media" :bulkForm="bulkForm">
+        <td style="width: 64px;">
+            {% if element.image %}
+                <img src="{{ path('library_media_show', {'mediaId': element.id}) }}"
+                     alt="{{ element.alternativeText | default(element.name) }}"
+                     class="rounded"
+                     style="width: 48px; height: 48px; object-fit: cover;">
+            {% else %}
+                <twig:Icon name="solar:file-text-line-duotone" size="xl" />
+            {% endif %}
+        </td>
+        <td>
+            {{ element.name }}
+            <div class="text-muted fs-2">{{ element.fileName }}</div>
+        </td>
+        <td>{{ element.type.value | trans({}, 'mediaType') }}</td>
+        <td>{{ element.size | file_size }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y H:i') }}</td>
+        <td>
+            <twig:List:Action:View path="{{ path('library_media_show', {'mediaId': element.id}) }}" />
+
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('library_media_edit', {'mediaId': element.id}) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('library_media_remove', {'mediaId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link path="{{ path('library_media_upload') }}" color="primary">
+        <twig:Icon name="solar:upload-square-line-duotone" size="lg" class="me-2" />
+
+        {% trans %}Subir archivo{% endtrans %}
+    </twig:Link>
+{% endblock list_actions %}

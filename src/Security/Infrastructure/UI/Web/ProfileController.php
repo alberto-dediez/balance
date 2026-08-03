@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security\Infrastructure\UI\Web;
 
+use App\Library\Domain\Model\Media\MediaId;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Application\User\UpdateProfile\UpdateProfileRequest;
 use App\Security\Application\User\UpdateProfile\UpdateProfileService;
@@ -28,7 +29,9 @@ class ProfileController extends AbstractController
     ): Response {
         $user = $loggedUser();
 
-        $form = $this->createForm(ProfileType::class);
+        $form = $this->createForm(ProfileType::class, null, [
+            'picture_id' => $user->pictureId(),
+        ]);
 
         $form->handleRequest($request);
 
@@ -36,10 +39,14 @@ class ProfileController extends AbstractController
             /** @var Locale $preferredLocale */
             $preferredLocale = $form->get('preferredLocale')->getData();
 
+            /** @var ?MediaId $pictureId */
+            $pictureId = $form->get('picture')->getData();
+
             try {
                 $updateProfile(new UpdateProfileRequest(
                     userId: $user->id(),
                     preferredLocale: $preferredLocale,
+                    pictureId: $pictureId,
                 ), $user);
 
                 $this->addFlash('success', new TranslatableMessage('Tu perfil se ha actualizado correctamente'));

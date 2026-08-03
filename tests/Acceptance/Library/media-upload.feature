@@ -1,0 +1,19 @@
+Feature:
+    Ability to upload new files to the media library
+
+    Scenario: As a user I can access the upload form
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media/upload"
+        Then the response status should be 200
+        Then I see a form
+
+    Scenario: As a user I can upload a new file
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media/upload"
+        When I submit the upload form with file "picture.png"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "Archivo subido correctamente"
+        Then the library contains 1 files
