@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Unit\Shared\Infrastructure\UI\Web\Navigation;
 
 use App\Security\Domain\Model\User\Role;
+use App\Shared\Infrastructure\UI\Web\Navigation\Node;
 use App\Shared\Infrastructure\UI\Web\Navigation\NodeLister;
 use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeSecurity;
 use PHPUnit\Framework\TestCase;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class NodeListerTest extends TestCase
 {
@@ -61,11 +63,26 @@ class NodeListerTest extends TestCase
 
         $result = $sut->nodes();
 
-        $items = $result[count($result) - 2]->items;
+        $adminNode = $this->findNodeByLabel($result, 'Administración');
 
-        $this->assertTrue($result[count($result) - 2]->selected);
-        $this->assertFalse($items[2]->selected);
-        $this->assertTrue($items[4]->selected);
+        $this->assertNotNull($adminNode);
+        $this->assertTrue($adminNode->selected);
+        $this->assertFalse($adminNode->items[2]->selected);
+        $this->assertTrue($adminNode->items[4]->selected);
+    }
+
+    /**
+     * @param list<Node> $nodes
+     */
+    private function findNodeByLabel(array $nodes, string $label): ?Node
+    {
+        foreach ($nodes as $node) {
+            if ($node->label instanceof TranslatableMessage && $label === $node->label->getMessage()) {
+                return $node;
+            }
+        }
+
+        return null;
     }
 
     /**

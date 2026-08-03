@@ -45,6 +45,6 @@ class DestinationExtension extends AbstractExtension
             }
         }
 
-        return $this->destinations[(string) $destinationId];
+        return $this->destinations[(string) $destinationId] ?? null;
     }
 }

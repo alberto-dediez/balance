@@ -17,6 +17,7 @@ twig:
         'templates/carbon_footprint': 'carbon_footprint'
         'templates/event_operations': 'event_operations'
         'templates/library': 'library'
+        'templates/balance': 'balance'
         '%kernel.project_dir%/assets': assets
 
 when@test:

@@ -1,0 +1,24 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_projects') }}" />
+{% endblock %}
+
+{% set page_title = ('Proyectos' | trans)
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ project.name %}
+
+{% block content %}
+    {{ form_start(form) }}
+        {% include '@balance/admin/projects/_form.html.twig' %}
+
+        <twig:Card>
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

@@ -63,6 +63,7 @@ doctrine:
             employee_participation_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EmployeeParticipationIdType
             employee_contribution_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EmployeeContributionIdType
             event_carbon_footprint_report_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EventCarbonFootprintReportIdType
+            project_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\ProjectIdType
 
     orm:
         auto_generate_proxy_classes: true
@@ -130,6 +131,13 @@ doctrine:
                 dir: '%kernel.project_dir%/src/EventOperations/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\EventOperations\Domain\Model'
                 alias: EventOperations
+
+            Balance:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Balance/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Balance\Domain\Model'
+                alias: Balance
 
             Shared:
                 type: xml

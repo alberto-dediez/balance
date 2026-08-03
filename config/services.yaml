@@ -8,3 +8,4 @@ imports:
     - { resource: '../src/CarbonFootprint/Infrastructure/Symfony/DependencyInjection/services.yaml' }
     - { resource: '../src/EventOperations/Infrastructure/Symfony/DependencyInjection/services.yaml' }
     - { resource: '../src/Library/Infrastructure/Symfony/DependencyInjection/services.yaml' }
+    - { resource: '../src/Balance/Infrastructure/Symfony/DependencyInjection/services.yaml' }

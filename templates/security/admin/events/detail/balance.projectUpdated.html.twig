@@ -1,0 +1,4 @@
+{% trans with {
+    '{project}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado el proyecto "{project}" por el usuario {user}{% endtrans %}

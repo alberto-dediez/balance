@@ -1,0 +1,25 @@
+<twig:Card title="{{ 'General' | trans }}">
+    <div class="row">
+        <div class="col-12">
+            {{ form_row(form.name) }}
+            {{ form_row(form.mitecoId) }}
+            {{ form_row(form.location) }}
+            {{ form_row(form.projectType) }}
+            {{ form_row(form.projectStatus) }}
+        </div>
+    </div>
+</twig:Card>
+<twig:Card title="{{ 'Descripción' | trans }}">
+    <div class="row">
+        <div class="col-12">
+            {{ form_row(form.description) }}
+        </div>
+    </div>
+</twig:Card>
+<twig:Card title="{{ 'Galería' | trans }}">
+    <div class="row">
+        <div class="col-12">
+            {{ form_row(form.gallery) }}
+        </div>
+    </div>
+</twig:Card>

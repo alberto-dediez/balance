@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Balance\Domain\Model\Project\Project" table="projects">
+        <id name="id" type="project_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="name" type="string" length="255" nullable="false"/>
+        <field name="description" type="text" nullable="false"/>
+        <field name="location" type="destination_id" column="location" nullable="true"/>
+        <field name="gallery" type="json" nullable="false"/>
+        <field name="projectType" type="string" column="project_type" enum-type="App\Balance\Domain\Model\Project\ProjectType" nullable="true"/>
+        <field name="projectStatus" type="string" column="project_status" enum-type="App\Balance\Domain\Model\Project\ProjectStatus" nullable="true"/>
+        <field name="mitecoId" type="string" column="miteco_id" length="255" nullable="true"/>
+
+        <one-to-many field="translations"
+                     target-entity="App\Balance\Domain\Model\Project\ProjectTranslation"
+                     mapped-by="translatable"
+                     fetch="EXTRA_LAZY">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <field name="removed" type="boolean" nullable="false"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+    </entity>
+</doctrine-mapping>

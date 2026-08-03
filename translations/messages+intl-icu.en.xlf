@@ -4153,10 +4153,6 @@
         <source>Si se deja vacío se usará el nombre del archivo</source>
         <target>If left empty the file name will be used</target>
       </trans-unit>
-      <trans-unit id="PvEC2bh" resname="Subir">
-        <source>Subir</source>
-        <target>Upload</target>
-      </trans-unit>
       <trans-unit id="gLGeB5L" resname="No hay ningún archivo seleccionado">
         <source>No hay ningún archivo seleccionado</source>
         <target>No file selected</target>
@@ -4172,10 +4168,6 @@
       <trans-unit id="pphRlMn" resname="Subir archivo">
         <source>Subir archivo</source>
         <target>Upload file</target>
-      </trans-unit>
-      <trans-unit id="pnwDm75" resname="La notificación ha sido eliminada">
-        <source>La notificación ha sido eliminada</source>
-        <target>The notification has been removed</target>
       </trans-unit>
       <trans-unit id="4jds0TY" resname="Seleccionar de la biblioteca">
         <source>Seleccionar de la biblioteca</source>
@@ -4201,17 +4193,9 @@
         <source>No hay archivos en la biblioteca</source>
         <target>There are no files in the library</target>
       </trans-unit>
-      <trans-unit id="7j0NNbT" resname="Tamaño">
-        <source>Tamaño</source>
-        <target>Size</target>
-      </trans-unit>
       <trans-unit id="loFGyc." resname="Fecha de subida">
         <source>Fecha de subida</source>
         <target>Upload date</target>
-      </trans-unit>
-      <trans-unit id="MR_NqT7" resname="Descargar">
-        <source>Descargar</source>
-        <target>Download</target>
       </trans-unit>
       <trans-unit id="KDlDrQy" resname="Imagen de perfil">
         <source>Imagen de perfil</source>
@@ -4220,6 +4204,70 @@
       <trans-unit id="xJ5NhA9" resname="No tienes ninguna imagen de perfil">
         <source>No tienes ninguna imagen de perfil</source>
         <target>You have no profile picture</target>
+      </trans-unit>
+      <trans-unit id="kl0Zs12" resname="Proyecto creado correctamente: {name}">
+        <source>Proyecto creado correctamente: {name}</source>
+        <target>Project created successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="qjWbzwJ" resname="Proyecto actualizado con éxito">
+        <source>Proyecto actualizado con éxito</source>
+        <target>Project updated successfully</target>
+      </trans-unit>
+      <trans-unit id="_RvaG9G" resname="Se ha eliminado el proyecto {project}">
+        <source>Se ha eliminado el proyecto {project}</source>
+        <target>Project {project} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="ndiCJUa" resname="No se ha podido eliminar el proyecto {project}">
+        <source>No se ha podido eliminar el proyecto {project}</source>
+        <target>Unable to delete project {project}</target>
+      </trans-unit>
+      <trans-unit id="osq0zwO" resname="Se ha eliminado el proyecto {id}">
+        <source>Se ha eliminado el proyecto {id}</source>
+        <target>Project {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="bUOLIzW" resname="No se ha podido eliminar el proyecto {id}">
+        <source>No se ha podido eliminar el proyecto {id}</source>
+        <target>Unable to delete project {id}</target>
+      </trans-unit>
+      <trans-unit id="CwBc1BU" resname="Tipo de proyecto">
+        <source>Tipo de proyecto</source>
+        <target>Project Type</target>
+      </trans-unit>
+      <trans-unit id="wlsfy8R" resname="Estado del proyecto">
+        <source>Estado del proyecto</source>
+        <target>Project Status</target>
+      </trans-unit>
+      <trans-unit id="Cps1dAR" resname="Código Registro Miteco">
+        <source>Código Registro Miteco</source>
+        <target>Miteco Registration Code</target>
+      </trans-unit>
+      <trans-unit id="Mf_S7z7" resname="Localización">
+        <source>Localización</source>
+        <target>Location</target>
+      </trans-unit>
+      <trans-unit id="0Khk9kc" resname="Galería">
+        <source>Galería</source>
+        <target>Gallery</target>
+      </trans-unit>
+      <trans-unit id="AfCIYpX" resname="Proyectos">
+        <source>Proyectos</source>
+        <target>Projects</target>
+      </trans-unit>
+      <trans-unit id="Zbz2.wf" resname="Se ha registrado el proyecto &quot;{project}&quot; por el usuario {user}">
+        <source>Se ha registrado el proyecto "{project}" por el usuario {user}</source>
+        <target>The project “{project}” has been registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="49kL6H5" resname="Se ha eliminado el proyecto {project} por el usuario {user}">
+        <source>Se ha eliminado el proyecto {project} por el usuario {user}</source>
+        <target>The project {project} has been deleted by user {user}</target>
+      </trans-unit>
+      <trans-unit id="6K0LSwj" resname="Se ha actualizado el proyecto &quot;{project}&quot; por el usuario {user}">
+        <source>Se ha actualizado el proyecto "{project}" por el usuario {user}</source>
+        <target>The project “{project}” has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="o.yiAHO" resname="Se ha traducido el proyecto &quot;{project}&quot; por el usuario {user}">
+        <source>Se ha traducido el proyecto "{project}" por el usuario {user}</source>
+        <target>The project “{project}” has been translated by user {user}</target>
       </trans-unit>
     </body>
   </file>

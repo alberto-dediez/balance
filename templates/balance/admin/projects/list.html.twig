@@ -1,0 +1,54 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Proyectos' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': 'Localización' | trans,
+            'sortable': false
+        }, {
+            'label': 'Tipo de proyecto' | trans,
+            'sortable': false
+        }, {
+            'label': 'Estado del proyecto' | trans,
+            'sortable': false
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': 'Fecha de actualización' | trans,
+            'sortable': true,
+            'sortableBy': 'updatedAt'
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="projects" :bulkForm="bulkForm">
+        <td>{{ element.name }}</td>
+        <td>{{ element.location | destination_name }}</td>
+        <td>{{ element.projectType ? element.projectType.value | trans({}, 'projectType') : '' }}</td>
+        <td>{{ element.projectStatus ? element.projectStatus.value | trans({}, 'projectStatusType') : '' }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>{{ element.updatedAt ? element.updatedAt | date('d/m/Y') : '' }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('admin_projects_edit', {'projectId': element.id}) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('admin_projects_remove', {'projectId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('admin_projects_register') }}" />
+{% endblock list_actions %}

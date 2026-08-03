@@ -1,0 +1,23 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = ('Proyectos' | trans)
+    ~ ' > '
+    ~ ('Registrar' | trans)  %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_projects') }}" />
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    {% include '@balance/admin/projects/_form.html.twig' %}
+
+    <twig:Card>
+        <twig:ActionBar>
+            <twig:ActionBar:Button type="primary" :button="form.register" />
+        </twig:ActionBar>
+    </twig:Card>
+
+    {{ form_end(form)}}
+{% endblock %}
