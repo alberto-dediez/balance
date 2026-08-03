@@ -95,6 +95,26 @@ class NodeLister
         return $currentPath === $target || str_starts_with($currentPath, $target . '/');
     }
 
+    private function libraryNode(): Node
+    {
+        return new Node(
+            label: new TranslatableMessage('Biblioteca'),
+            icon: 'solar:gallery-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Archivos'),
+                    icon: 'solar:folder-with-files-line-duotone',
+                    target: $this->router->generate('library_media'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Subir archivo'),
+                    icon: 'solar:upload-square-line-duotone',
+                    target: $this->router->generate('library_media_upload'),
+                ),
+            ],
+        );
+    }
+
     /**
      * @return list<Node>
      */
@@ -128,6 +148,8 @@ class NodeLister
                 ),
             ],
         );
+
+        $nodes[] = $this->libraryNode();
 
         if ($this->internalNotificationsEnabled) {
             $nodes[] = new Node(
@@ -175,6 +197,8 @@ class NodeLister
             ],
         );
 
+        $nodes[] = $this->libraryNode();
+
         if ($this->internalNotificationsEnabled) {
             $nodes[] = new Node(
                 label: new TranslatableMessage('Notificaciones'),
@@ -198,6 +222,8 @@ class NodeLister
     private function toUsers(): array
     {
         $nodes = [];
+
+        $nodes[] = $this->libraryNode();
 
         if ($this->internalNotificationsEnabled) {
             $nodes[] = new Node(

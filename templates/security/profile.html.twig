@@ -6,10 +6,13 @@
     <twig:Card>
         {{ form_start(form) }}
         <div class="row">
-            <div class="col-12">
+            <div class="col-8">
                 <twig:View:Field label="{{ 'Nombre de usuario' | trans }}">{{ user.username }}</twig:View:Field>
 
                 {{ form_row(form.preferredLocale) }}
+            </div>
+            <div class="col-4">
+                {{ form_row(form.picture) }}
             </div>
         </div>
 

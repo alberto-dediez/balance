@@ -56,6 +56,21 @@ final class AcceptanceClient
         }
     }
 
+    /**
+     * @param array<string, mixed> $parameters
+     * @param array<string, mixed> $files
+     */
+    public function requestWithFiles(string $method, string $path, array $parameters = [], array $files = []): void
+    {
+        try {
+            $this->crawler = $this->client->request($method, $path, $parameters, $files, $this->server);
+
+            $this->exception = null;
+        } catch (\Exception $e) {
+            $this->exception = $e;
+        }
+    }
+
     public function submit(Form $formData): void
     {
         try {

@@ -13,6 +13,7 @@ default:
                 - App\Tests\Acceptance\Security\SecurityContext
                 - App\Tests\Acceptance\DataExchange\DataExchangeContext
                 - App\Tests\Acceptance\Notifications\NotificationsContext
+                - App\Tests\Acceptance\Library\LibraryContext
 
     extensions:
         FriendsOfBehat\SymfonyExtension:

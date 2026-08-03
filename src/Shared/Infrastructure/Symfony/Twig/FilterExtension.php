@@ -21,7 +21,27 @@ class FilterExtension extends AbstractExtension
             new TwigFilter('is_stringable', $this->isStringable(...)),
             new TwigFilter('show_field_value', $this->showFieldValue(...)),
             new TwigFilter('show_fields', $this->getShowFields(...)),
+            new TwigFilter('file_size', $this->fileSize(...)),
         ];
+    }
+
+    public function fileSize(int $bytes): string
+    {
+        if ($bytes < 1024) {
+            return sprintf('%d B', $bytes);
+        }
+
+        $units = ['KB', 'MB', 'GB', 'TB'];
+
+        $value = $bytes / 1024;
+        $unit = 0;
+
+        while ($value >= 1024 && $unit < count($units) - 1) {
+            $value /= 1024;
+            ++$unit;
+        }
+
+        return sprintf('%s %s', round($value, 1), $units[$unit]);
     }
 
     /** @return list<TwigFunction>  */

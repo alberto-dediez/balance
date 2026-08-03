@@ -75,7 +75,7 @@ final readonly class WebContext implements Context
 
             $key = '[' == $name[0] ? sprintf('%s%s', $form->attr('name'), $name) : sprintf('%s[%s]', $form->attr('name'), $name);
 
-            if ('[' == $value[0]) {
+            if ('' !== $value && '[' == $value[0]) {
                 $value = explode(',', substr($value, 1, -1));
             }
 
@@ -191,5 +191,15 @@ final readonly class WebContext implements Context
         Assert::assertNotFalse($response);
 
         Assert::assertStringContainsString($text, $response);
+    }
+
+    #[Then('I do not see a text :text')]
+    public function iDoNotSeeAText(string $text): void
+    {
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        Assert::assertStringNotContainsString($text, $response);
     }
 }

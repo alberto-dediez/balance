@@ -12,6 +12,7 @@ twig:
         'templates/security': 'security'
         'templates/data_exchange': 'data_exchange'
         'templates/notifications': 'notifications'
+        'templates/library': 'library'
         '%kernel.project_dir%/assets': assets
 
 when@test:

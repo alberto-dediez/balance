@@ -1,0 +1,27 @@
+parameters:
+    app.media_dir: '%app.uploads_dir%/library'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\Library\:
+        resource: '../../../'
+        exclude:
+            - '../../../Infrastructure/Symfony/DependencyInjection/'
+
+    App\Library\Infrastructure\Storage\LocalMediaStorage:
+        arguments:
+            $basePath: '%app.media_dir%'
+
+    App\Library\Domain\Model\Media\MediaStorage:
+        alias: App\Library\Infrastructure\Storage\LocalMediaStorage
+
+when@test:
+    services:
+        App\Library\Domain\Model\Media\MediaStorage:
+            alias: App\Library\Infrastructure\Storage\InMemoryMediaStorage
+
+        App\Library\Infrastructure\Storage\InMemoryMediaStorage:
+            public: true

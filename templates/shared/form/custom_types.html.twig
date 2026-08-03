@@ -45,3 +45,85 @@
         {% endif %}
     </select>
 {%- endblock autocomplete_remote_widget %}
+
+{% block media_picker_widget %}
+    {% set field_name = multiple ? full_name ~ '[]' : full_name %}
+
+    <div id="{{ id }}" class="media-picker"{% for key, attr_value in attr %} {{ key }}="{{ attr_value }}"{% endfor %}>
+        <div class="row g-2 mb-2" data-media-picker-target="selection">
+            {% for element in selected %}
+                <div class="col-6 col-md-3" data-media-id="{{ element.id }}">
+                    <div class="border rounded p-2">
+                        {% if element.isImage %}
+                            <img src="{{ element.url }}" alt="" class="w-100 rounded mb-2" style="height: 96px; object-fit: cover;">
+                        {% else %}
+                            <div class="d-flex align-items-center justify-content-center bg-light rounded mb-2" style="height: 96px;">
+                                {{ element.type | trans({}, 'mediaType') }}
+                            </div>
+                        {% endif %}
+
+                        <div class="text-truncate fs-2">{{ element.name }}</div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12 text-muted">{{ placeholder | trans }}</div>
+            {% endfor %}
+        </div>
+
+        <div data-media-picker-target="inputs" data-field-name="{{ field_name }}">
+            {% if multiple %}
+                {% for element in selected %}
+                    <input type="hidden" name="{{ field_name }}" value="{{ element.id }}">
+                {% endfor %}
+            {% else %}
+                <input type="hidden" name="{{ field_name }}" value="{{ selected | first.id | default('') }}">
+            {% endif %}
+        </div>
+
+        <div class="d-flex gap-2 align-items-center">
+            <button type="button" class="btn btn-outline-primary" data-action="media-picker#openLibrary">
+                {% trans %}Seleccionar de la biblioteca{% endtrans %}
+            </button>
+
+            <button type="button" class="btn btn-outline-secondary" data-action="media-picker#browseFile">
+                {% trans %}Subir archivo{% endtrans %}
+            </button>
+
+            <button type="button" class="btn btn-link text-danger" data-action="media-picker#clear">
+                {% trans %}Quitar{% endtrans %}
+            </button>
+
+            <span class="text-muted fs-2"
+                  data-media-picker-target="feedback"
+                  data-uploading-text="{{ 'Subiendo archivo...' | trans }}"
+                  data-error-text="{{ 'No se ha podido subir el archivo' | trans }}"></span>
+        </div>
+
+        <input type="file" class="d-none" data-media-picker-target="file" data-action="change->media-picker#upload">
+
+        <div class="modal fade" tabindex="-1" data-media-picker-target="modal">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{% trans %}Biblioteca{% endtrans %}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'Cerrar' | trans }}"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="input-group mb-3">
+                            <input type="search"
+                                   class="form-control"
+                                   placeholder="{{ 'Buscar archivos' | trans }}"
+                                   data-media-picker-target="query"
+                                   data-action="input->media-picker#search">
+                        </div>
+
+                        <div class="row g-2"
+                             data-media-picker-target="results"
+                             data-empty-text="{{ 'No hay archivos en la biblioteca' | trans }}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock media_picker_widget %}

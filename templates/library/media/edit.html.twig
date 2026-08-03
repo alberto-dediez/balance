@@ -1,0 +1,50 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('library_media') }}" />
+{% endblock %}
+
+{% set page_title = ('Biblioteca' | trans)
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ media.name %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12 col-md-4">
+                    {% if media.image %}
+                        <img src="{{ path('library_media_show', {'mediaId': media.id}) }}"
+                             alt="{{ media.alternativeText | default(media.name) }}"
+                             class="img-fluid rounded mb-3">
+                    {% else %}
+                        <div class="text-center mb-3">
+                            <twig:Icon name="solar:file-text-line-duotone" size="xl" />
+                        </div>
+                    {% endif %}
+
+                    <twig:View:Field label="{{ 'Archivo' | trans }}">{{ media.fileName }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Tipo' | trans }}">{{ media.type.value | trans({}, 'mediaType') }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Tamaño' | trans }}">{{ media.size | file_size }}</twig:View:Field>
+
+                    <a href="{{ path('library_media_show', {'mediaId': media.id, 'download': 1}) }}" class="btn btn-outline-primary w-100">
+                        {% trans %}Descargar{% endtrans %}
+                    </a>
+                </div>
+
+                <div class="col-12 col-md-8">
+                    {{ form_row(form.name) }}
+                    {{ form_row(form.alternativeText) }}
+                    {{ form_row(form.description) }}
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

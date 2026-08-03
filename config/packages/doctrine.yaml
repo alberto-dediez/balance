@@ -18,6 +18,7 @@ doctrine:
             recorded_event_id: App\Security\Infrastructure\Persistence\Doctrine\Type\RecordedEventIdType
             signature_request_id: App\Security\Infrastructure\Persistence\Doctrine\Type\SignatureRequestIdType
             notification_id: App\Notifications\Infrastructure\Persistence\Doctrine\Type\NotificationIdType
+            media_id: App\Library\Infrastructure\Persistence\Doctrine\Type\MediaIdType
 
     orm:
         auto_generate_proxy_classes: true
@@ -54,6 +55,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Notifications/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Notifications\Domain\Model'
                 alias: Notifications
+            Library:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Library/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Library\Domain\Model'
+                alias: Library
         controller_resolver:
             auto_mapping: false
 

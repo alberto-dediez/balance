@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security\Domain\Model\User;
 
+use App\Library\Domain\Model\Media\MediaId;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEvent;
@@ -31,6 +32,7 @@ class User implements \Stringable
         protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         protected ?\DateTimeImmutable $removedAt = null,
         protected ?Locale $preferredLocale = null,
+        protected ?MediaId $pictureId = null,
     ) {
         $this->events = $events;
     }
@@ -123,6 +125,16 @@ class User implements \Stringable
         return $this->preferredLocale;
     }
 
+    public function pictureId(): ?MediaId
+    {
+        return $this->pictureId;
+    }
+
+    public function hasPicture(): bool
+    {
+        return $this->pictureId instanceof MediaId;
+    }
+
     public function register(string $username, string $password, ?AccountId $accountId = null): void
     {
         $this->recordApplyAndPublish(
@@ -171,6 +183,16 @@ class User implements \Stringable
             new PreferredLocaleChanged(
                 userId: $this->id(),
                 locale: $locale,
+            ),
+        );
+    }
+
+    public function changePicture(?MediaId $pictureId): void
+    {
+        $this->recordApplyAndPublish(
+            new UserPictureChanged(
+                userId: $this->id(),
+                pictureId: $pictureId,
             ),
         );
     }
@@ -247,6 +269,11 @@ class User implements \Stringable
     public function applyPreferredLocaleChanged(PreferredLocaleChanged $event): void
     {
         $this->preferredLocale = $event->locale();
+    }
+
+    public function applyUserPictureChanged(UserPictureChanged $event): void
+    {
+        $this->pictureId = $event->pictureId();
     }
 
     public function applyPasswordRecoveryInitialized(PasswordRecoveryInitialized $event): void
