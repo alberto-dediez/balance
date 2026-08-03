@@ -26,20 +26,23 @@ class UploadMediaType extends AbstractType
                 'label' => new TranslatableMessage('Archivo'),
                 'required' => true,
                 'mapped' => false,
+                'multiple' => true,
             ])
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('Nombre'),
-                'help' => new TranslatableMessage('Si se deja vacío se usará el nombre del archivo'),
+                'help' => new TranslatableMessage('Si se deja vacío se usará el nombre del archivo. Solo aplica si se sube un único archivo'),
                 'required' => false,
                 'empty_data' => '',
             ])
             ->add('alternativeText', TextType::class, [
                 'label' => new TranslatableMessage('Texto alternativo'),
+                'help' => new TranslatableMessage('Solo aplica si se sube un único archivo'),
                 'required' => false,
                 'empty_data' => null,
             ])
             ->add('description', TextareaType::class, [
                 'label' => new TranslatableMessage('Descripción'),
+                'help' => new TranslatableMessage('Solo aplica si se sube un único archivo'),
                 'required' => false,
                 'empty_data' => null,
             ])

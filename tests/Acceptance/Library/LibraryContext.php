@@ -80,7 +80,11 @@ final class LibraryContext implements Context
 
         $form = $crawler->selectButton('Subir')->form();
 
-        $field = $form['upload_media[file]'];
+        $fileFields = $form['upload_media[file]'];
+
+        assert(is_array($fileFields));
+
+        $field = $fileFields[0];
 
         assert($field instanceof FileFormField);
 
@@ -89,10 +93,28 @@ final class LibraryContext implements Context
         $this->client->submit($form);
     }
 
+    #[When('I submit the upload form with files :fileNames')]
+    public function iSubmitTheUploadFormWithFiles(string $fileNames): void
+    {
+        $form = $this->client->getCrawler()->selectButton('Subir')->form();
+
+        $files = array_map(
+            fn(string $fileName): UploadedFile => new UploadedFile($this->createLocalFile(trim($fileName)), trim($fileName), null, null, true),
+            explode(',', $fileNames),
+        );
+
+        $fileValues = $form->getPhpFiles();
+        $fileValues['upload_media']['file'] = $files;
+
+        $this->client->requestWithFiles($form->getMethod(), $form->getUri(), $form->getPhpValues(), $fileValues);
+    }
+
     #[When('I upload the file :fileName through the media picker of :path')]
     public function iUploadTheFileThroughTheMediaPickerOf(string $fileName, string $path): void
     {
-        $this->uploadThroughThePicker($fileName, $this->pickerCsrfToken($path));
+        $this->client->request('GET', $path);
+
+        $this->uploadThroughThePicker($fileName, $this->pickerAttribute('data-media-picker-token-value'), $this->pickerAttribute('data-media-picker-types-value'));
     }
 
     #[When('I upload the file :fileName through the media picker with the token :token')]
@@ -107,29 +129,27 @@ final class LibraryContext implements Context
         Assert::assertCount($total, $this->getMediaRepository()->findByFilter(new MediaFilter(limit: 0)));
     }
 
-    private function uploadThroughThePicker(string $fileName, string $token): void
+    private function uploadThroughThePicker(string $fileName, string $token, string $types = ''): void
     {
         $this->client->requestWithFiles(
             'POST',
             '/es/library/media/ajax-upload',
-            ['_token' => $token],
-            ['file' => new UploadedFile($this->createLocalFile($fileName), $fileName, 'image/png', null, true)],
+            ['_token' => $token, 'types' => $types],
+            ['file' => new UploadedFile($this->createLocalFile($fileName), $fileName, null, null, true)],
         );
     }
 
     /**
-     * Reads the token exactly where the browser reads it: the picker widget
-     * rendered in the page holding it.
+     * Reads the attribute exactly where the browser reads it: the picker
+     * widget rendered in the page holding it.
      */
-    private function pickerCsrfToken(string $path): string
+    private function pickerAttribute(string $attribute): string
     {
-        $this->client->request('GET', $path);
+        $value = $this->client->getCrawler()->filter('[data-media-picker-token-value]')->attr($attribute);
 
-        $token = $this->client->getCrawler()->filter('[data-media-picker-token-value]')->attr('data-media-picker-token-value');
+        Assert::assertNotNull($value);
 
-        Assert::assertNotNull($token);
-
-        return $token;
+        return $value;
     }
 
     private function addMedia(Media $media): void
@@ -144,11 +164,20 @@ final class LibraryContext implements Context
         $this->getMediaRepository()->add($media);
     }
 
+    /**
+     * The uploaded content must match the extension for real, since the mime
+     * type validation reads it from the actual file content rather than
+     * trusting the file name.
+     */
     private function createLocalFile(string $fileName): string
     {
         $path = sprintf('%s/%s', sys_get_temp_dir(), uniqid('behat-media-', true));
 
-        file_put_contents($path, sprintf('contents of %s', $fileName));
+        file_put_contents($path, match (pathinfo($fileName, PATHINFO_EXTENSION)) {
+            'png' => base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII='),
+            'pdf' => "%PDF-1.4\n%behat\n",
+            default => sprintf('contents of %s', $fileName),
+        });
 
         return $path;
     }

@@ -152,20 +152,69 @@ export default class extends Controller {
         const item = document.createElement('div');
         item.className = 'col-6 col-md-3';
         item.dataset.mediaId = element.id;
-        item.innerHTML = `<div class="border rounded p-2">${this.previewMarkup(element)}</div>`;
+        item.innerHTML = `
+            <div class="border rounded p-2 position-relative">
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-1" data-action="media-picker#removeItem" aria-label="${this.escape(this.selectionTarget.dataset.removeText || '')}"></button>
+                ${this.previewMarkup(element)}
+            </div>`;
 
         this.selectionTarget.appendChild(item);
     }
 
+    removeItem(event) {
+        event.preventDefault();
+
+        const item = event.target.closest('[data-media-id]');
+
+        if (!item) {
+            return;
+        }
+
+        this.removeInput(item.dataset.mediaId);
+        item.remove();
+
+        if (0 === this.selectionTarget.children.length) {
+            this.selectionTarget.innerHTML = `<div class="col-12 text-muted">${this.selectionTarget.dataset.emptyText || ''}</div>`;
+        }
+    }
+
+    removeInput(id) {
+        if (!this.isMultiple) {
+            this.inputsTarget.querySelector('input').value = '';
+
+            return;
+        }
+
+        const input = this.inputsTarget.querySelector(`input[value="${id}"]`);
+
+        if (input) {
+            input.remove();
+        }
+    }
+
     upload() {
-        const file = this.fileTarget.files[0];
+        const files = Array.from(this.fileTarget.files);
+
+        if (0 === files.length) {
+            return;
+        }
+
+        this.uploadNext(files);
+    }
+
+    uploadNext(files) {
+        const [file, ...rest] = files;
 
         if (!file) {
+            this.setFeedback('');
+            this.fileTarget.value = '';
+
             return;
         }
 
         const body = new FormData();
         body.append('file', file);
+        body.append('types', this.typesValue);
         body.append('_token', this.tokenValue);
 
         this.setFeedback(this.feedbackTarget.dataset.uploadingText);
@@ -179,13 +228,10 @@ export default class extends Controller {
                     return;
                 }
 
-                this.setFeedback('');
                 this.select(json.element);
             })
             .catch(() => this.setFeedback(this.feedbackTarget.dataset.errorText))
-            .finally(() => {
-                this.fileTarget.value = '';
-            });
+            .finally(() => this.uploadNext(rest));
     }
 
     setFeedback(message) {

@@ -34,6 +34,13 @@ Feature:
         Then I see a text "picture.png"
         Then the library contains 1 files
 
+    Scenario: An upload of a non allowed file type is rejected
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        When I am logged as "user1@dediez.software"
+        When I upload the file "document.pdf" through the media picker of "/es/profile"
+        Then the response status should be 400
+        Then the library contains 0 files
+
     Scenario: An upload with a forged token is rejected
         Given user "user1@dediez.software" with role "ROLE_USER" exists
         When I am logged as "user1@dediez.software"
