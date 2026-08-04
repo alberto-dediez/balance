@@ -69,6 +69,8 @@
 
 .message-body {
     max-height: 360px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .dropdown-menu-nav {

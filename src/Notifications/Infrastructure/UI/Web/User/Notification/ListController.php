@@ -6,6 +6,7 @@ namespace App\Notifications\Infrastructure\UI\Web\User\Notification;
 
 use App\Notifications\Application\Notification\List\ListNotificationsRequest;
 use App\Notifications\Application\Notification\List\ListNotificationsService;
+use App\Notifications\Application\Notification\Unread\UnreadNotificationsProvider;
 use App\Notifications\Domain\Model\Notification\NotificationChannel;
 use App\Notifications\Infrastructure\Symfony\Form\ListUserNotificationsType;
 use App\Security\Application\UnauthorizedActionException;
@@ -27,8 +28,12 @@ class ListController extends AbstractController
 
     public function __construct(private bool $internalNotificationsEnabled = true) {}
 
-    public function __invoke(ListNotificationsService $listNotifications, LoggedUser $loggedUser, Request $request): Response
-    {
+    public function __invoke(
+        ListNotificationsService $listNotifications,
+        UnreadNotificationsProvider $unreadNotifications,
+        LoggedUser $loggedUser,
+        Request $request,
+    ): Response {
         if (!$this->internalNotificationsEnabled) {
             throw $this->createNotFoundException();
         }
@@ -59,6 +64,7 @@ class ListController extends AbstractController
         return $this->render('@notifications/user/list.html.twig', [
             'notifications' => $response->notifications,
             'totalResults' => $response->totalResults,
+            'unreadCount' => $unreadNotifications->count(),
             'form' => $form->createView(),
         ]);
     }

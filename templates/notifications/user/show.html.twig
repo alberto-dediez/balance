@@ -1,29 +1,35 @@
-{% extends '@shared/layout/app.html.twig' %}
+{% extends '@shared/layout/action.html.twig' %}
 
 {% set page_title = ('Mis notificaciones' | trans)
     ~ ' > '
     ~ notification.subject %}
 
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('notifications') }}" />
+
+    <twig:TopAction path="{{ path('notification_remove', {'id': notification.id}) }}"
+        class="text-danger"
+        data-controller="confirm"
+        data-confirm-text-param="{{ '¿Esta seguro de que desea eliminar este elemento? Esta acción no se puede deshacer' | trans }}"
+        data-action="confirm#link:prevent"
+    >
+        <twig:Icon name="solar:close-square-line-duotone" size="lg" class="me-2" />
+
+        {{ 'Eliminar' | trans }}
+    </twig:TopAction>
+{% endblock %}
+
 {% block content %}
-    <div class="card">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="card-title mb-0">{{ notification.subject }}</h4>
-                <small class="text-body-secondary">{{ notification.createdAt | date('d/m/Y H:i') }}</small>
+    <twig:Card>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Asunto' | trans }}">{{ notification.subject }}</twig:View:Field>
             </div>
-
-            <div>{{ notification.body | raw }}</div>
-
-            <div class="mt-4 d-flex gap-2">
-                <a href="{{ path('notifications') }}" class="btn btn-outline-primary">
-                    <twig:Icon name="solar:arrow-left-line-duotone" />
-                    {% trans -%}Volver{%- endtrans %}
-                </a>
-                <a href="{{ path('notification_remove', {'id': notification.id}) }}" class="btn btn-outline-danger">
-                    <twig:Icon name="solar:close-square-line-duotone" />
-                    {% trans -%}Eliminar{%- endtrans %}
-                </a>
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Fecha' | trans }}">{{ notification.createdAt | date('d/m/Y H:i') }}</twig:View:Field>
             </div>
         </div>
-    </div>
+
+        <div class="mt-3">{{ notification.body | raw }}</div>
+    </twig:Card>
 {% endblock %}

@@ -2,44 +2,64 @@
 
 {% set page_title = 'Mis notificaciones' | trans %}
 
-{% block list_actions %}
-    <form method="post" action="{{ path('notifications_mark_all_read') }}">
-        <button type="submit" class="btn btn-outline-primary">
-            <twig:Icon name="solar:check-read-line-duotone" />
-            {% trans -%}Marcar todas como leídas{%- endtrans %}
-        </button>
-    </form>
+{% block table %}
+    {% set columns = [
+        {
+            'label': ''
+        }, {
+            'label': 'Asunto' | trans
+        }, {
+            'label': 'Fecha' | trans,
+            'sortable': true,
+            'sortableBy': 'default'
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="notifications">
+        <td style="width: 48px;">
+            <span class="d-flex align-items-center justify-content-center rounded round {{ element.isRead ? 'bg-body-secondary text-body-secondary' : 'bg-primary-subtle text-primary' }}"
+                  data-notification-icon>
+                <twig:Icon name="solar:bell-bing-line-duotone" />
+            </span>
+        </td>
+        <td>
+            <a href="{{ path('notification_show', {'id': element.id}) }}"
+               class="text-decoration-none text-reset {{ element.isRead ? '' : 'fw-semibold' }}"
+               data-notification-subject>
+                {{ element.subject }}
+            </a>
+
+            {% if not element.isRead %}
+                <span class="badge text-bg-primary ms-1" data-notification-unread>{% trans -%}Nueva{%- endtrans %}</span>
+            {% endif %}
+
+            <div class="text-muted fs-2 text-truncate" style="max-width: 480px;">
+                {{ element.body | striptags | trim }}
+            </div>
+        </td>
+        <td>{{ element.createdAt | date('d/m/Y H:i') }}</td>
+        <td>
+            <twig:List:Action:View path="{{ path('notification_show', {'id': element.id}) }}" />
+
+            <twig:List:Action:Delete path="{{ path('notification_remove', {'id': element.id}) }}" />
+        </td>
+    </twig:List:Table>
 {% endblock %}
 
-{% block table %}
-    <div class="list-group mb-3">
-        {% for notification in notifications %}
-            <div class="list-group-item d-flex align-items-start gap-3 {{ notification.isRead ? '' : 'list-group-item-primary' }}">
-                <a href="{{ path('notification_show', {'id': notification.id}) }}"
-                   class="d-flex align-items-start gap-3 flex-grow-1 text-decoration-none text-reset">
-                    <span class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded round flex-shrink-0">
-                        <twig:Icon name="solar:bell-bing-line-duotone" />
-                    </span>
-                    <div class="flex-grow-1">
-                        <div class="d-flex justify-content-between">
-                            <h6 class="mb-1 fw-semibold">
-                                {{ notification.subject }}
-                                {% if not notification.isRead %}
-                                    <span class="badge text-bg-primary ms-1">{% trans -%}Nueva{%- endtrans %}</span>
-                                {% endif %}
-                            </h6>
-                            <small class="text-body-secondary">{{ notification.createdAt | date('d/m/Y H:i') }}</small>
-                        </div>
-                        <p class="mb-0 text-body-secondary text-truncate">{{ notification.body | striptags }}</p>
-                    </div>
-                </a>
-                <a href="{{ path('notification_remove', {'id': notification.id}) }}"
-                   class="text-danger flex-shrink-0" title="{{ 'Eliminar' | trans }}">
-                    <twig:Icon name="solar:close-square-line-duotone" />
-                </a>
-            </div>
-        {% else %}
-            <p class="text-center text-body-secondary my-5">{% trans -%}No tienes notificaciones{%- endtrans %}</p>
-        {% endfor %}
-    </div>
-{% endblock %}
+{% block list_actions %}
+    {% if unreadCount > 0 %}
+        <form method="post"
+              action="{{ path('notifications_mark_all_read') }}"
+              data-controller="mark-all-read"
+              data-action="mark-all-read#submit"
+              data-notifications-mark-all>
+            <button type="submit" class="btn btn-info d-flex">
+                <twig:Icon name="solar:check-read-line-duotone" size="lg" class="me-2" />
+
+                {% trans %}Marcar todas como leídas{% endtrans %}
+            </button>
+        </form>
+    {% endif %}
+{% endblock list_actions %}
