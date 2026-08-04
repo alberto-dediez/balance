@@ -4269,6 +4269,98 @@
         <source>Se ha traducido el proyecto "{project}" por el usuario {user}</source>
         <target>Se ha traducido el proyecto "{project}" por el usuario {user}</target>
       </trans-unit>
+      <trans-unit id="Zzq5Mn8" resname="Se ha adherido el proyecto {project} a su cuenta">
+        <source>Se ha adherido el proyecto {project} a su cuenta</source>
+        <target>Se ha adherido el proyecto {project} a su cuenta</target>
+      </trans-unit>
+      <trans-unit id="_GYGmtB" resname="No se ha podido adherir el proyecto {project}">
+        <source>No se ha podido adherir el proyecto {project}</source>
+        <target>No se ha podido adherir el proyecto {project}</target>
+      </trans-unit>
+      <trans-unit id="XH5aw3H" resname="Se ha retirado el proyecto {project} de su cuenta">
+        <source>Se ha retirado el proyecto {project} de su cuenta</source>
+        <target>Se ha retirado el proyecto {project} de su cuenta</target>
+      </trans-unit>
+      <trans-unit id="EaWPYVJ" resname="No se ha podido retirar el proyecto {project}">
+        <source>No se ha podido retirar el proyecto {project}</source>
+        <target>No se ha podido retirar el proyecto {project}</target>
+      </trans-unit>
+      <trans-unit id="vpVkB.Z" resname="El tipo de archivo no está permitido">
+        <source>El tipo de archivo no está permitido</source>
+        <target>El tipo de archivo no está permitido</target>
+      </trans-unit>
+      <trans-unit id="9d4t2nt" resname="Archivos subidos correctamente: {names}">
+        <source>Archivos subidos correctamente: {names}</source>
+        <target>Archivos subidos correctamente: {names}</target>
+      </trans-unit>
+      <trans-unit id="xb6F1Vp" resname="Si se deja vacío se usará el nombre del archivo. Solo aplica si se sube un único archivo">
+        <source>Si se deja vacío se usará el nombre del archivo. Solo aplica si se sube un único archivo</source>
+        <target>Si se deja vacío se usará el nombre del archivo. Solo aplica si se sube un único archivo</target>
+      </trans-unit>
+      <trans-unit id="fmEHX4u" resname="Solo aplica si se sube un único archivo">
+        <source>Solo aplica si se sube un único archivo</source>
+        <target>Solo aplica si se sube un único archivo</target>
+      </trans-unit>
+      <trans-unit id="zH5zS5." resname="Catálogo de proyectos">
+        <source>Catálogo de proyectos</source>
+        <target>Catálogo de proyectos</target>
+      </trans-unit>
+      <trans-unit id="9lYHQJn" resname="Mis proyectos">
+        <source>Mis proyectos</source>
+        <target>Mis proyectos</target>
+      </trans-unit>
+      <trans-unit id="Qc_.dgo" resname="Retirar de mi cuenta">
+        <source>Retirar de mi cuenta</source>
+        <target>Retirar de mi cuenta</target>
+      </trans-unit>
+      <trans-unit id="2oKrrh9" resname="¿Está seguro de que desea retirar este proyecto de su cuenta?">
+        <source>¿Está seguro de que desea retirar este proyecto de su cuenta?</source>
+        <target>¿Está seguro de que desea retirar este proyecto de su cuenta?</target>
+      </trans-unit>
+      <trans-unit id="mI66A5x" resname="Quitar archivo">
+        <source>Quitar archivo</source>
+        <target>Quitar archivo</target>
+      </trans-unit>
+      <trans-unit id="QEk8qxE" resname="Fecha de adhesión">
+        <source>Fecha de adhesión</source>
+        <target>Fecha de adhesión</target>
+      </trans-unit>
+      <trans-unit id="5jV3tHg" resname="Ninguna cuenta ha adherido este proyecto">
+        <source>Ninguna cuenta ha adherido este proyecto</source>
+        <target>Ninguna cuenta ha adherido este proyecto</target>
+      </trans-unit>
+      <trans-unit id="tJEidFQ" resname="Cuentas adheridas">
+        <source>Cuentas adheridas</source>
+        <target>Cuentas adheridas</target>
+      </trans-unit>
+      <trans-unit id="FoAYk2H" resname="Adherir a mi cuenta">
+        <source>Adherir a mi cuenta</source>
+        <target>Adherir a mi cuenta</target>
+      </trans-unit>
+      <trans-unit id="gnLsdzm" resname="Adherido a su cuenta desde el">
+        <source>Adherido a su cuenta desde el</source>
+        <target>Adherido a su cuenta desde el</target>
+      </trans-unit>
+      <trans-unit id="UxwnI76" resname="Este proyecto no tiene imágenes">
+        <source>Este proyecto no tiene imágenes</source>
+        <target>Este proyecto no tiene imágenes</target>
+      </trans-unit>
+      <trans-unit id="hAraFnZ" resname="Fecha de alta">
+        <source>Fecha de alta</source>
+        <target>Fecha de alta</target>
+      </trans-unit>
+      <trans-unit id="Oo428Ku" resname="Adherido">
+        <source>Adherido</source>
+        <target>Adherido</target>
+      </trans-unit>
+      <trans-unit id="5h9eSMA" resname="Solo adheridos">
+        <source>Solo adheridos</source>
+        <target>Solo adheridos</target>
+      </trans-unit>
+      <trans-unit id="sN0dtKi" resname="Solo no adheridos">
+        <source>Solo no adheridos</source>
+        <target>Solo no adheridos</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

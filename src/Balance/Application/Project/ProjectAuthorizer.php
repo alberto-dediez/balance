@@ -13,17 +13,17 @@ final class ProjectAuthorizer extends AbstractAuthorizer
 {
     protected function canRegister(mixed $subject, User $user): bool
     {
-        return $this->canList($subject, $user);
+        return $this->canEdit($subject, $user);
     }
 
     protected function canView(mixed $subject, User $user): bool
     {
-        return $this->canEdit($subject, $user);
+        return $this->canList($subject, $user);
     }
 
     protected function canList(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin);
+        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin) || $user->hasRole(Role::Owner);
     }
 
     protected function canEdit(mixed $subject, User $user): bool

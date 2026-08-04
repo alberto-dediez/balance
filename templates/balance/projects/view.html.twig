@@ -1,0 +1,95 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('projects') }}" />
+{% endblock %}
+
+{% set page_title = ('Proyectos' | trans) ~ ' > ' ~ project.name %}
+
+{% block content %}
+    <twig:Card>
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div>
+                <h4 class="mb-1">{{ project.name }}</h4>
+            </div>
+
+            <div>
+                {% if accountProject %}
+                    <a href="{{ path('projects_deselect', {'projectId': project.id}) }}"
+                       class="btn btn-outline-danger"
+                       data-controller="confirm"
+                       data-confirm-text-param="{{ '¿Está seguro de que desea retirar este proyecto de su cuenta?' | trans }}"
+                       data-action="confirm#link:prevent">
+                        <twig:Icon name="solar:close-square-line-duotone" size="lg" />
+                        {{ 'Retirar de mi cuenta' | trans }}
+                    </a>
+                {% else %}
+                    <a href="{{ path('projects_select', {'projectId': project.id}) }}" class="btn btn-primary">
+                        <twig:Icon name="solar:heart-line-duotone" size="lg" />
+                        {{ 'Adherir a mi cuenta' | trans }}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if accountProject %}
+            <p class="text-muted mt-3 mb-0">
+                {{ 'Adherido a su cuenta desde el' | trans }} {{ accountProject.selectedAt | date('d/m/Y') }}
+            </p>
+        {% endif %}
+    </twig:Card>
+
+    <twig:Card title="{{ 'Información' | trans }}">
+        <dl class="row mb-0">
+            {% if project.location %}
+                <dt class="col-sm-3">{{ 'Localización' | trans }}</dt>
+                <dd class="col-sm-9">{{ project.location | destination_name }}</dd>
+            {% endif %}
+
+            {% if project.projectType %}
+                <dt class="col-sm-3">{{ 'Tipo de proyecto' | trans }}</dt>
+                <dd class="col-sm-9">{{ project.projectType.value | trans({}, 'projectType') }}</dd>
+            {% endif %}
+
+            {% if project.projectStatus %}
+                <dt class="col-sm-3">{{ 'Estado del proyecto' | trans }}</dt>
+                <dd class="col-sm-9">{{ project.projectStatus.value | trans({}, 'projectStatusType') }}</dd>
+            {% endif %}
+
+            {% if project.mitecoId %}
+                <dt class="col-sm-3">{{ 'Código Registro Miteco' | trans }}</dt>
+                <dd class="col-sm-9">{{ project.mitecoId }}</dd>
+            {% endif %}
+
+            <dt class="col-sm-3">{{ 'Fecha de alta' | trans }}</dt>
+            <dd class="col-sm-9">{{ project.registeredAt | date('d/m/Y') }}</dd>
+        </dl>
+    </twig:Card>
+
+    {% if gallery is not empty %}
+        <twig:Card title="{{ 'Galería' | trans }}">
+            <div class="row g-2">
+                {% for media in gallery %}
+                    <div class="col-6 col-md-3">
+                        <a href="{{ path('library_media_show', {'mediaId': media.id}) }}" target="_blank">
+                            <img src="{{ path('library_media_show', {'mediaId': media.id}) }}"
+                                 alt="{{ media.alternativeText | default(media.name) }}"
+                                 class="rounded w-100"
+                                 style="height: 150px; object-fit: cover;">
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </twig:Card>
+    {% else %}
+        <twig:Card>
+            <p class="text-muted mb-0">{{ 'Este proyecto no tiene imágenes' | trans }}</p>
+        </twig:Card>
+    {% endif %}
+
+    {% if project.description %}
+        <twig:Card title="{{ 'Descripción' | trans }}">
+            {{ project.description | md_to_html }}
+        </twig:Card>
+    {% endif %}
+{% endblock %}

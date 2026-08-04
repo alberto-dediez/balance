@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Balance\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\Balance\Domain\Model\AccountProject\AccountProject;
 use App\Balance\Domain\Model\Project\Project;
 use App\Balance\Domain\Model\Project\ProjectFilter;
 use App\Balance\Domain\Model\Project\ProjectId;
@@ -108,6 +109,24 @@ class DoctrineProjectRepository implements ProjectRepository
             $qb
                 ->andWhere($qb->expr()->like('p.mitecoId', ':mitecoId'))
                 ->setParameter('mitecoId', "%{$filter->mitecoId}%")
+            ;
+        }
+
+        if (null !== $filter->selected && null !== $filter->selectedByAccountId) {
+            $selectedProjects = $this->manager->createQueryBuilder()
+                ->select('ap.id')
+                ->from(AccountProject::class, 'ap')
+                ->where($qb->expr()->eq('ap.projectId', 'p.id'))
+                ->andWhere($qb->expr()->eq('ap.accountId', ':selectedByAccountId'))
+            ;
+
+            $qb
+                ->andWhere(
+                    true === $filter->selected
+                        ? $qb->expr()->exists($selectedProjects->getDQL())
+                        : $qb->expr()->not($qb->expr()->exists($selectedProjects->getDQL())),
+                )
+                ->setParameter('selectedByAccountId', (string) $filter->selectedByAccountId)
             ;
         }
 

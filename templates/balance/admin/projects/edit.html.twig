@@ -14,6 +14,21 @@
     {{ form_start(form) }}
         {% include '@balance/admin/projects/_form.html.twig' %}
 
+        <twig:Card title="{{ 'Cuentas adheridas' | trans }}">
+            {% if accountProjects is empty %}
+                <p class="text-muted mb-0">{{ 'Ninguna cuenta ha adherido este proyecto' | trans }}</p>
+            {% else %}
+                <ul class="list-unstyled mb-0">
+                    {% for accountProject in accountProjects %}
+                        <li>
+                            {{ accountProject.accountId | account_name }}
+                            <span class="text-muted">({{ accountProject.selectedAt | date('d/m/Y') }})</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </twig:Card>
+
         <twig:Card>
             <twig:ActionBar>
                 <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />

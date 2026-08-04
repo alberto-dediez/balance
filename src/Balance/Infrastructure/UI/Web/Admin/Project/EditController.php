@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Balance\Infrastructure\UI\Web\Admin\Project;
 
+use App\Balance\Application\AccountProject\List\ListAccountProjectsRequest;
+use App\Balance\Application\AccountProject\List\ListAccountProjectsService;
 use App\Balance\Application\Project\Update\UpdateProjectRequest;
 use App\Balance\Application\Project\Update\UpdateProjectService;
 use App\Balance\Domain\Model\Project\ProjectRepository;
@@ -28,12 +30,18 @@ class EditController extends AbstractController
         string $projectId,
         ProjectRepository $projectRepository,
         UpdateProjectService $updateProject,
+        ListAccountProjectsService $listAccountProjects,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
         $project = $this->getProjectFromId($projectId, $projectRepository);
 
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $project);
+
+        $accountProjectsResponse = $listAccountProjects(
+            new ListAccountProjectsRequest(projectId: $project->id(), limit: 0),
+            $loggedUser(),
+        );
 
         $projectRequest = new UpdateProjectRequest(
             projectId: $project->id(),
@@ -67,6 +75,7 @@ class EditController extends AbstractController
         return $this->render('@balance/admin/projects/edit.html.twig', [
             'project' => $project,
             'form' => $form->createView(),
+            'accountProjects' => $accountProjectsResponse->accountProjects,
         ]);
     }
 }

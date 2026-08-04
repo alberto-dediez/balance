@@ -64,6 +64,7 @@ doctrine:
             employee_contribution_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EmployeeContributionIdType
             event_carbon_footprint_report_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EventCarbonFootprintReportIdType
             project_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\ProjectIdType
+            account_project_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\AccountProjectIdType
 
     orm:
         auto_generate_proxy_classes: true

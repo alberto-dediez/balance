@@ -1,0 +1,12 @@
+{% props path %}
+
+<twig:List:Action :path="path"
+    title="{{ 'Retirar de mi cuenta' | trans }}"
+    class="text-danger"
+    data-controller="confirm"
+    data-confirm-text-param="{{ '¿Está seguro de que desea retirar este proyecto de su cuenta?' | trans }}"
+    data-action="confirm#link:prevent"
+    :attributes="attributes"
+>
+    <twig:Icon name="solar:close-square-line-duotone" size="lg" />
+</twig:List:Action>

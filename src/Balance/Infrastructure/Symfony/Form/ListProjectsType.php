@@ -8,6 +8,7 @@ use App\Balance\Application\Project\List\ListProjectsRequest;
 use App\Balance\Infrastructure\Symfony\Form\Type\ProjectStatusType;
 use App\Balance\Infrastructure\Symfony\Form\Type\ProjectTypeType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
+use App\Shared\Infrastructure\Symfony\Form\Type\BooleanType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -38,6 +39,18 @@ class ListProjectsType extends BaseFilterType
             ])
         ;
 
+        if (true === $options['selectable']) {
+            $builder->add('selected', BooleanType::class, [
+                'label' => new TranslatableMessage('Adherido'),
+                'choices' => [
+                    'Solo adheridos' => true,
+                    'Solo no adheridos' => false,
+                ],
+                'placeholder' => new TranslatableMessage('Todos'),
+                'required' => false,
+            ]);
+        }
+
         parent::buildForm($builder, $options);
     }
 
@@ -45,6 +58,9 @@ class ListProjectsType extends BaseFilterType
     {
         $resolver->setDefaults([
             'data_class' => ListProjectsRequest::class,
+            'selectable' => false,
         ]);
+
+        $resolver->setAllowedTypes('selectable', 'bool');
     }
 }

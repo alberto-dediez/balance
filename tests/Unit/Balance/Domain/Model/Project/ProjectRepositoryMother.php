@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Balance\Domain\Model\Project;
 
+use App\Balance\Domain\Model\AccountProject\AccountProjectRepository;
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryProjectRepository;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
 
 class ProjectRepositoryMother
 {
-    public static function inMemory(Locale $locale = Locale::Spanish): InMemoryProjectRepository
+    public static function inMemory(Locale $locale = Locale::Spanish, ?AccountProjectRepository $accountProjectRepository = null): InMemoryProjectRepository
     {
         FakeLocaleSetter::set($locale);
 
-        return new InMemoryProjectRepository();
+        return new InMemoryProjectRepository(accountProjectRepository: $accountProjectRepository);
     }
 }

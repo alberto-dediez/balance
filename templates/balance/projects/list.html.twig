@@ -1,0 +1,42 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Proyectos' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': 'Localización' | trans,
+            'sortable': false
+        }, {
+            'label': 'Tipo de proyecto' | trans,
+            'sortable': false
+        }, {
+            'label': 'Estado del proyecto' | trans,
+            'sortable': false
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="projects">
+        <td>{{ element.name }}</td>
+        <td>{{ element.location | destination_name }}</td>
+        <td>{{ element.projectType ? element.projectType.value | trans({}, 'projectType') : '' }}</td>
+        <td>{{ element.projectStatus ? element.projectStatus.value | trans({}, 'projectStatusType') : '' }}</td>
+        <td>
+            <twig:List:Action:View path="{{ path('projects_view', {'projectId': element.id}) }}" />
+
+            {% if (element.id ~ '') in selectedProjectIds %}
+                <twig:List:Action:Deselect path="{{ path('projects_deselect', {'projectId': element.id}) }}" />
+            {% else %}
+                <twig:List:Action path="{{ path('projects_select', {'projectId': element.id}) }}" title="{{ 'Adherir a mi cuenta' | trans }}">
+                    <twig:Icon name="solar:heart-line-duotone" size="lg" />
+                </twig:List:Action>
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}

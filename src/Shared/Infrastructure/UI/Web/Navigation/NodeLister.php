@@ -356,6 +356,18 @@ class NodeLister
             ],
         );
 
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Proyectos'),
+            icon: 'solar:hand-heart-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Proyectos'),
+                    icon: 'solar:hand-heart-line-duotone',
+                    target: $this->router->generate('projects'),
+                ),
+            ],
+        );
+
         $nodes[] =  new Node(
             label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',

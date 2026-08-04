@@ -46,12 +46,23 @@ class ProjectAuthorizerTest extends TestCase
         $this->assertTrue($this->createSUT()->canDoThat($subject, Action::Remove, $user));
     }
 
-    public function testOwnerCannotListProjects(): void
+    public function testOwnerCanListAndViewProjects(): void
     {
         $user = UserMother::fromUsernameAndRole('owner', Role::Owner);
         $subject = new Project(ProjectId::generate());
 
-        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::List, $user));
+        $this->assertTrue($this->createSUT()->canDoThat($subject, Action::List, $user));
+        $this->assertTrue($this->createSUT()->canDoThat($subject, Action::View, $user));
+    }
+
+    public function testOwnerCannotRegisterOrEditOrRemoveProjects(): void
+    {
+        $user = UserMother::fromUsernameAndRole('owner', Role::Owner);
+        $subject = new Project(ProjectId::generate());
+
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Register, $user));
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Edit, $user));
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Remove, $user));
     }
 
     public function testUserCannotListProjects(): void

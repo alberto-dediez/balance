@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Balance;
 
+use App\Balance\Domain\Model\AccountProject\AccountProject;
+use App\Balance\Domain\Model\AccountProject\AccountProjectId;
+use App\Balance\Domain\Model\AccountProject\AccountProjectRepository;
+use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\Project\ProjectRepository;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use Behat\Behat\Context\Context;
@@ -25,6 +30,11 @@ final class BalanceContext implements Context
         return $this->client->getContainer()->get(ProjectRepository::class);
     }
 
+    public function getAccountProjectRepository(): AccountProjectRepository
+    {
+        return $this->client->getContainer()->get(AccountProjectRepository::class);
+    }
+
     #[Given('project :name with id :id exists')]
     public function projectWithIdExists(string $name, string $id): void
     {
@@ -39,5 +49,14 @@ final class BalanceContext implements Context
         $project = ProjectMother::fromNameAndIdAndLocation($name, $id, $location);
 
         $this->getProjectRepository()->add($project);
+    }
+
+    #[Given('project :id is adhered to account :accountId')]
+    public function projectIsAdheredToAccount(string $id, string $accountId): void
+    {
+        $accountProject = new AccountProject(id: AccountProjectId::generate());
+        $accountProject->select(new AccountId($accountId), new ProjectId($id));
+
+        $this->getAccountProjectRepository()->add($accountProject);
     }
 }

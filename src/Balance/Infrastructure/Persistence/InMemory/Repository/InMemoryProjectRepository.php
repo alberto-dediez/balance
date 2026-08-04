@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Balance\Infrastructure\Persistence\InMemory\Repository;
 
+use App\Balance\Domain\Model\AccountProject\AccountProjectFilter;
+use App\Balance\Domain\Model\AccountProject\AccountProjectRepository;
 use App\Balance\Domain\Model\Project\Project;
 use App\Balance\Domain\Model\Project\ProjectFilter;
 use App\Balance\Domain\Model\Project\ProjectId;
@@ -16,6 +18,7 @@ class InMemoryProjectRepository implements ProjectRepository
     /** @param array<string, Project> $projects */
     public function __construct(
         private array $projects = [],
+        private ?AccountProjectRepository $accountProjectRepository = null,
     ) {}
 
     public function add(Project $project): void
@@ -42,6 +45,19 @@ class InMemoryProjectRepository implements ProjectRepository
             ? $this->projects[(string) $projectId]
             : null
         ;
+    }
+
+    private function isSelected(Project $project, ProjectFilter $filter): bool
+    {
+        if (null === $this->accountProjectRepository || null === $filter->selectedByAccountId) {
+            return false;
+        }
+
+        $accountProjects = $this->accountProjectRepository->findByFilter(
+            new AccountProjectFilter(accountId: $filter->selectedByAccountId, projectId: $project->id(), limit: 1),
+        );
+
+        return count($accountProjects) > 0;
     }
 
     /** @return array<int, Project> */
@@ -83,6 +99,10 @@ class InMemoryProjectRepository implements ProjectRepository
             }
 
             if (true == $project->isRemoved()) {
+                continue;
+            }
+
+            if (null !== $filter->selected && $filter->selected !== $this->isSelected($project, $filter)) {
                 continue;
             }
 
