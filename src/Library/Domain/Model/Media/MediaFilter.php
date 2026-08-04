@@ -11,14 +11,9 @@ class MediaFilter
 {
     use Filter;
 
-    /**
-     * When true only the media not belonging to any account is returned.
-     *
-     * Declared with a default value on purpose: filters are stored in the session
-     * and restored without calling the constructor, so a promoted property would
-     * stay uninitialized for every filter serialized before this field existed.
-     */
     public ?bool $withoutAccount = null;
+
+    public ?bool $includeShared = null;
 
     /**
      * @param list<MediaType> $types restricts the results to the given media types
@@ -29,9 +24,11 @@ class MediaFilter
         public ?AccountId $accountId = null,
         public array $types = [],
         ?bool $withoutAccount = null,
+        ?bool $includeShared = null,
         int $limit = 24,
     ) {
         $this->withoutAccount = $withoutAccount;
+        $this->includeShared = $includeShared;
         $this->limit = $limit;
         $this->orderBy = 'registeredAt';
         $this->orderWay = 'DESC';

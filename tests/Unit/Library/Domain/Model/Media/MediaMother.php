@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Library\Domain\Model\Media;
 
 use App\Library\Domain\Model\Media\Media;
 use App\Library\Domain\Model\Media\MediaId;
+use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
 
@@ -36,6 +37,11 @@ class MediaMother
         return self::from(MediaId::generate(), $name, 'image/png', null, $uploadedBy);
     }
 
+    public static function fromNameAndVisibility(string $name, MediaVisibility $visibility, ?AccountId $accountId = null): Media
+    {
+        return self::from(MediaId::generate(), $name, 'image/png', $accountId, null, $visibility);
+    }
+
     public static function document(): Media
     {
         return self::fromName('contract.pdf', 'application/pdf');
@@ -52,6 +58,7 @@ class MediaMother
         string $mimeType = 'image/png',
         ?AccountId $accountId = null,
         ?UserId $uploadedBy = null,
+        MediaVisibility $visibility = MediaVisibility::Account,
     ): Media {
         $media = new Media(id: $mediaId);
 
@@ -64,6 +71,7 @@ class MediaMother
             size: 2048,
             accountId: $accountId,
             uploadedBy: $uploadedBy,
+            visibility: $visibility,
         );
 
         return $media;

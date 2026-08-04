@@ -8,6 +8,7 @@ use App\Library\Domain\Model\Media\Media;
 use App\Library\Domain\Model\Media\MediaFilter;
 use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Domain\Model\Media\MediaRepository;
+use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Security\Domain\Model\Account\AccountId;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
@@ -93,19 +94,35 @@ class DoctrineMediaRepository implements MediaRepository
             ;
         }
 
+        $accountScope = $qb->expr()->andX();
+
         if ($filter->accountId instanceof AccountId) {
-            $qb
-                ->andWhere(
-                    $qb->expr()->eq('m.accountId', ':accountId'),
-                )
-                ->setParameter('accountId', $filter->accountId)
-            ;
+            $accountScope->add($qb->expr()->eq('m.accountId', ':accountId'));
+
+            $qb->setParameter('accountId', $filter->accountId);
         }
 
         if (true === $filter->withoutAccount) {
-            $qb->andWhere(
-                $qb->expr()->isNull('m.accountId'),
-            );
+            $accountScope->add($qb->expr()->isNull('m.accountId'));
+        }
+
+        if ($accountScope->count() > 0) {
+            if (true === $filter->includeShared) {
+                $qb
+                    ->andWhere(
+                        $qb->expr()->orX(
+                            $accountScope,
+                            $qb->expr()->in('m.visibility', ':sharedVisibilities'),
+                        ),
+                    )
+                    ->setParameter(
+                        'sharedVisibilities',
+                        array_map(static fn(MediaVisibility $visibility): string => $visibility->value, MediaVisibility::sharedCases()),
+                    )
+                ;
+            } else {
+                $qb->andWhere($accountScope);
+            }
         }
 
         $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';

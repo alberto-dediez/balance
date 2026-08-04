@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Library\Application\Media\List;
 use App\Library\Application\Media\List\ListMediaRequest;
 use App\Library\Application\Media\List\ListMediaService;
 use App\Library\Domain\Model\Media\MediaType;
+use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryMediaRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
@@ -99,6 +100,52 @@ class ListMediaServiceTest extends TestCase
 
         $this->assertCount(1, $result->media);
         $this->assertEquals('without-account.png', $result->media[0]->name());
+    }
+
+    public function testSharedMediaIsNotBrowsedByDefault(): void
+    {
+        $repository = new InMemoryMediaRepository();
+
+        $accountId = AccountId::generate();
+
+        $repository->add(MediaMother::fromNameAndAccount('own.png', $accountId));
+        $repository->add(MediaMother::fromNameAndVisibility('manual.pdf', MediaVisibility::System, AccountId::generate()));
+        $repository->add(MediaMother::fromNameAndVisibility('terms.pdf', MediaVisibility::Public, AccountId::generate()));
+
+        $sut = $this->createSUT($repository);
+
+        $user = UserMother::fromUsernameAndRoleAndAccount('user@dediez.software', Role::User, $accountId);
+
+        $result = $sut(new ListMediaRequest(), $user);
+
+        $this->assertCount(1, $result->media);
+        $this->assertEquals('own.png', $result->media[0]->name());
+    }
+
+    public function testSharedMediaIsBrowsedWhenAskedForThroughTheFilter(): void
+    {
+        $repository = new InMemoryMediaRepository();
+
+        $accountId = AccountId::generate();
+        $foreignAccountId = AccountId::generate();
+
+        $repository->add(MediaMother::fromNameAndAccount('own.png', $accountId));
+        $repository->add(MediaMother::fromNameAndAccount('foreign.png', $foreignAccountId));
+        $repository->add(MediaMother::fromNameAndVisibility('manual.pdf', MediaVisibility::System, $foreignAccountId));
+        $repository->add(MediaMother::fromNameAndVisibility('terms.pdf', MediaVisibility::Public, $foreignAccountId));
+
+        $sut = $this->createSUT($repository);
+
+        $user = UserMother::fromUsernameAndRoleAndAccount('user@dediez.software', Role::User, $accountId);
+
+        $result = $sut(new ListMediaRequest(includeShared: true), $user);
+
+        $names = array_map(static fn($media): string => $media->name(), $result->media);
+
+        $this->assertCount(3, $result->media);
+        $this->assertContains('own.png', $names);
+        $this->assertContains('manual.pdf', $names);
+        $this->assertContains('terms.pdf', $names);
     }
 
     private function createSUT(InMemoryMediaRepository $repository): ListMediaService

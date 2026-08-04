@@ -9,6 +9,8 @@ use App\Library\Application\Media\Update\UpdateMediaService;
 use App\Library\Domain\Model\Media\MediaDetailsChanged;
 use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Domain\Model\Media\MediaNotFoundException;
+use App\Library\Domain\Model\Media\MediaVisibility;
+use App\Library\Domain\Model\Media\MediaVisibilityChanged;
 use App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryMediaRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
@@ -82,6 +84,55 @@ class UpdateMediaServiceTest extends TestCase
         $lastEvent = $this->spySubscriber->lastEvent();
 
         $this->assertFalse($lastEvent instanceof MediaDetailsChanged);
+    }
+
+    public function testAdminsChangeTheVisibility(): void
+    {
+        $repository = new InMemoryMediaRepository();
+
+        $media = MediaMother::uploadedMedia();
+
+        $repository->add($media);
+
+        $sut = $this->createSUT($repository);
+
+        $result = $sut(
+            new UpdateMediaRequest(
+                mediaId: $media->id(),
+                name: $media->name(),
+                visibility: MediaVisibility::Public,
+            ),
+            UserMother::adminUser(),
+        );
+
+        $this->assertEquals(MediaVisibility::Public, $result->visibility);
+        $this->assertTrue($this->spySubscriber->lastEvent() instanceof MediaVisibilityChanged);
+    }
+
+    public function testTheVisibilityIsOnlyChangedByAdmins(): void
+    {
+        $this->expectException(UnauthorizedActionException::class);
+
+        $repository = new InMemoryMediaRepository();
+
+        $accountId = AccountId::generate();
+
+        $media = MediaMother::fromNameAndAccount('logo.png', $accountId);
+
+        $repository->add($media);
+
+        $sut = $this->createSUT($repository);
+
+        $owner = UserMother::fromUsernameAndRoleAndAccount('owner@dediez.software', Role::Owner, $accountId);
+
+        $sut(
+            new UpdateMediaRequest(
+                mediaId: $media->id(),
+                name: $media->name(),
+                visibility: MediaVisibility::System,
+            ),
+            $owner,
+        );
     }
 
     public function testUnknownMedia(): void

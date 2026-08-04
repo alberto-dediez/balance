@@ -4361,6 +4361,30 @@
         <source>Solo no adheridos</source>
         <target>Only not adhered</target>
       </trans-unit>
+      <trans-unit id="_v6i0Pz" resname="Visibilidad">
+        <source>Visibilidad</source>
+        <target>Visibility</target>
+      </trans-unit>
+      <trans-unit id="BMeQlHK" resname="Quién puede acceder a este archivo">
+        <source>Quién puede acceder a este archivo</source>
+        <target>Who can access this file</target>
+      </trans-unit>
+      <trans-unit id="3RXFaxK" resname="Quién puede acceder a los archivos subidos">
+        <source>Quién puede acceder a los archivos subidos</source>
+        <target>Who can access the uploaded files</target>
+      </trans-unit>
+      <trans-unit id="tr1nQl6" resname="Enlace público">
+        <source>Enlace público</source>
+        <target>Public link</target>
+      </trans-unit>
+      <trans-unit id="iKBgpBp" resname="Ver archivos compartidos">
+        <source>Ver archivos compartidos</source>
+        <target>Show shared files</target>
+      </trans-unit>
+      <trans-unit id="uWb5OZi" resname="Incluye los archivos compartidos con toda la plataforma">
+        <source>Incluye los archivos compartidos con toda la plataforma</source>
+        <target>Includes the files shared with the whole platform</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

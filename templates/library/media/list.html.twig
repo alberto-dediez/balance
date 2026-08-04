@@ -38,13 +38,20 @@
         </td>
         <td>
             {{ element.name }}
+
+            {% if element.shared and element | is_authorized('admin') %}
+                <span class="badge text-bg-primary">
+                    {{ element.visibility.value | trans({}, 'mediaVisibility') }}
+                </span>
+            {% endif %}
+
             <div class="text-muted fs-2">{{ element.fileName }}</div>
         </td>
         <td>{{ element.type.value | trans({}, 'mediaType') }}</td>
         <td>{{ element.size | file_size }}</td>
         <td>{{ element.registeredAt | date('d/m/Y H:i') }}</td>
         <td>
-            <twig:List:Action:View path="{{ path('library_media_show', {'mediaId': element.id}) }}" />
+            <twig:List:Action:Download path="{{ path('library_media_show', {'mediaId': element.id, 'download': 1}) }}" />
 
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('library_media_edit', {'mediaId': element.id}) }}" />

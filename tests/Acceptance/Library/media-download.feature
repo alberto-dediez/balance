@@ -22,3 +22,15 @@ Feature:
         When I am logged as "user1@dediez.software"
         When I go to "/es/library/media/3333/show"
         Then the response status should be 403
+
+    Scenario: A file shared with the whole platform is served to any user
+        Given account "Minotour" with id "1111" exists
+        Given account "Bioscore" with id "2222" exists
+        Given user "user1@dediez.software" with role "ROLE_USER" of account "2222" exists
+        Given media "manual.png" with id "3333" and visibility "System" of account "1111" exists
+        Given media "terms.png" with id "4444" and visibility "Public" of account "1111" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media/3333/show"
+        Then the response status should be 200
+        When I go to "/es/library/media/4444/show"
+        Then the response status should be 200

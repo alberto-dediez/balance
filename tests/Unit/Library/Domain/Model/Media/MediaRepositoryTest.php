@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Library\Domain\Model\Media;
 use App\Library\Domain\Model\Media\MediaFilter;
 use App\Library\Domain\Model\Media\MediaRepository;
 use App\Library\Domain\Model\Media\MediaType;
+use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -137,6 +138,41 @@ abstract class MediaRepositoryTest extends KernelTestCase
 
         $this->assertCount(1, $result);
         $this->assertEquals('without-account.png', $result[0]->name());
+    }
+
+    public function testFindByFilterIncludingTheSharedMedia(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+        $anotherAccountId = AccountId::generate();
+
+        $repository->add(MediaMother::fromNameAndAccount('own.png', $accountId));
+        $repository->add(MediaMother::fromNameAndAccount('foreign.png', $anotherAccountId));
+        $repository->add(MediaMother::fromNameAndVisibility('manual.pdf', MediaVisibility::System, $anotherAccountId));
+        $repository->add(MediaMother::fromNameAndVisibility('terms.pdf', MediaVisibility::Public, $anotherAccountId));
+
+        $result = $repository->findByFilter(new MediaFilter(accountId: $accountId, includeShared: true));
+
+        $names = array_map(static fn($media): string => $media->name(), $result);
+
+        $this->assertCount(3, $result);
+        $this->assertContains('own.png', $names);
+        $this->assertContains('manual.pdf', $names);
+        $this->assertContains('terms.pdf', $names);
+    }
+
+    public function testFindByFilterWithoutAccountIncludingTheSharedMedia(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(MediaMother::fromNameAndAccount('own.png', AccountId::generate()));
+        $repository->add(MediaMother::fromName('without-account.png'));
+        $repository->add(MediaMother::fromNameAndVisibility('manual.pdf', MediaVisibility::System, AccountId::generate()));
+
+        $result = $repository->findByFilter(new MediaFilter(withoutAccount: true, includeShared: true));
+
+        $this->assertCount(2, $result);
     }
 
     public function testTotalResultsIgnoresPagination(): void

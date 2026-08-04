@@ -62,6 +62,7 @@ security:
         - { path: ^/openapi/admin/documentation, roles: ROLE_ADMIN }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         - { path: '^/[a-z]{2}/sign', roles: PUBLIC_ACCESS }
+        - { path: '^/[a-z]{2}/library/public/media', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/carbon-footprint/contribution', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/carbon-footprint/employee-contribution', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/carbon-footprint/attendee-survey', roles: PUBLIC_ACCESS }

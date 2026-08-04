@@ -8,8 +8,11 @@ use App\Library\Application\Media\Upload\UploadMediaRequest;
 use App\Library\Application\Media\Upload\UploadMediaService;
 use App\Library\Domain\Model\Media\MediaType;
 use App\Library\Domain\Model\Media\MediaUploaded;
+use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryMediaRepository;
 use App\Library\Infrastructure\Storage\InMemoryMediaStorage;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Library\Application\Media\MediaAuthorizerMother;
 use App\Tests\Unit\Library\Domain\Model\Media\MediaStorageMother;
@@ -84,6 +87,37 @@ class UploadMediaServiceTest extends TestCase
         $this->assertNotNull($media);
         $this->assertNotNull($media->uploadedBy());
         $this->assertTrue($media->uploadedBy()->equals($user->id()));
+    }
+
+    public function testAdminsUploadSharedMedia(): void
+    {
+        $repository = new InMemoryMediaRepository();
+
+        $sut = $this->createSUT($repository, MediaStorageMother::inMemory());
+
+        $request = $this->createRequest();
+        $request->visibility = MediaVisibility::Public;
+
+        $result = $sut($request, UserMother::adminUser());
+
+        $this->assertEquals(MediaVisibility::Public, $result->visibility);
+
+        $media = $repository->find($result->mediaId);
+
+        $this->assertNotNull($media);
+        $this->assertTrue($media->isPublic());
+    }
+
+    public function testSharedMediaIsOnlyUploadedByAdmins(): void
+    {
+        $this->expectException(UnauthorizedActionException::class);
+
+        $sut = $this->createSUT(new InMemoryMediaRepository(), MediaStorageMother::inMemory());
+
+        $request = $this->createRequest();
+        $request->visibility = MediaVisibility::System;
+
+        $sut($request, UserMother::fromUsernameAndRole('user@dediez.software', Role::User));
     }
 
     public function testIsHandle(): void

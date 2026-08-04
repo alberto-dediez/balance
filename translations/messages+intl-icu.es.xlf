@@ -4361,6 +4361,30 @@
         <source>Solo no adheridos</source>
         <target>Solo no adheridos</target>
       </trans-unit>
+      <trans-unit id="iKBgpBp" resname="Ver archivos compartidos">
+        <source>Ver archivos compartidos</source>
+        <target>Ver archivos compartidos</target>
+      </trans-unit>
+      <trans-unit id="uWb5OZi" resname="Incluye los archivos compartidos con toda la plataforma">
+        <source>Incluye los archivos compartidos con toda la plataforma</source>
+        <target>Incluye los archivos compartidos con toda la plataforma</target>
+      </trans-unit>
+      <trans-unit id="_v6i0Pz" resname="Visibilidad">
+        <source>Visibilidad</source>
+        <target>Visibilidad</target>
+      </trans-unit>
+      <trans-unit id="BMeQlHK" resname="Quién puede acceder a este archivo">
+        <source>Quién puede acceder a este archivo</source>
+        <target>Quién puede acceder a este archivo</target>
+      </trans-unit>
+      <trans-unit id="3RXFaxK" resname="Quién puede acceder a los archivos subidos">
+        <source>Quién puede acceder a los archivos subidos</source>
+        <target>Quién puede acceder a los archivos subidos</target>
+      </trans-unit>
+      <trans-unit id="tr1nQl6" resname="Enlace público">
+        <source>Enlace público</source>
+        <target>Enlace público</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

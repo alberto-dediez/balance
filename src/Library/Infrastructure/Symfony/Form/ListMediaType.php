@@ -7,6 +7,7 @@ namespace App\Library\Infrastructure\Symfony\Form;
 use App\Library\Application\Media\List\ListMediaRequest;
 use App\Library\Domain\Model\Media\MediaType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -28,6 +29,11 @@ class ListMediaType extends BaseFilterType
                 'required' => false,
                 'placeholder' => new TranslatableMessage('Todos los tipos'),
                 'choice_translation_domain' => 'mediaType',
+            ])
+            ->add('includeShared', CheckboxType::class, [
+                'label' => new TranslatableMessage('Ver archivos compartidos'),
+                'help' => new TranslatableMessage('Incluye los archivos compartidos con toda la plataforma'),
+                'required' => false,
             ])
         ;
 

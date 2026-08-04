@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Library\Infrastructure\Symfony\Form;
 
 use App\Library\Application\Media\Upload\UploadMediaRequest;
+use App\Library\Domain\Model\Media\MediaVisibility;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -46,16 +48,30 @@ class UploadMediaType extends AbstractType
                 'required' => false,
                 'empty_data' => null,
             ])
-            ->add('register', SubmitType::class, [
-                'label' => new TranslatableMessage('Subir'),
-            ])
         ;
+
+        if (true === $options['manage_visibility']) {
+            $builder->add('visibility', EnumType::class, [
+                'class' => MediaVisibility::class,
+                'label' => new TranslatableMessage('Visibilidad'),
+                'help' => new TranslatableMessage('Quién puede acceder a los archivos subidos'),
+                'required' => true,
+                'choice_translation_domain' => 'mediaVisibility',
+            ]);
+        }
+
+        $builder->add('register', SubmitType::class, [
+            'label' => new TranslatableMessage('Subir'),
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => UploadMediaRequest::class,
+            'manage_visibility' => false,
         ]);
+
+        $resolver->setAllowedTypes('manage_visibility', 'bool');
     }
 }

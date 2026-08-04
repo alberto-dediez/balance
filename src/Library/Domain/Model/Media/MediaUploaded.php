@@ -22,6 +22,7 @@ final class MediaUploaded extends DomainEvent
         private readonly string $extension,
         private readonly string $mimeType,
         private readonly MediaType $type,
+        private readonly MediaVisibility $visibility,
         private readonly int $size,
         private readonly ?AccountId $accountId = null,
         private readonly ?UserId $uploadedBy = null,
@@ -68,6 +69,11 @@ final class MediaUploaded extends DomainEvent
         return $this->type;
     }
 
+    public function visibility(): MediaVisibility
+    {
+        return $this->visibility;
+    }
+
     public function size(): int
     {
         return $this->size;
@@ -108,6 +114,7 @@ final class MediaUploaded extends DomainEvent
             'extension' => $this->extension,
             'mimeType' => $this->mimeType,
             'type' => $this->type->value,
+            'visibility' => $this->visibility->value,
             'size' => $this->size,
             'accountId' => $this->accountId instanceof AccountId ? (string) $this->accountId : null,
             'uploadedBy' => $this->uploadedBy instanceof UserId ? (string) $this->uploadedBy : null,
@@ -129,6 +136,7 @@ final class MediaUploaded extends DomainEvent
             extension: $payload['extension'],
             mimeType: $payload['mimeType'],
             type: MediaType::from($payload['type']),
+            visibility: MediaVisibility::from($payload['visibility'] ?? MediaVisibility::Account->value),
             size: (int) $payload['size'],
             accountId: null === $payload['accountId'] ? null : new AccountId($payload['accountId']),
             uploadedBy: null === $payload['uploadedBy'] ? null : new UserId($payload['uploadedBy']),

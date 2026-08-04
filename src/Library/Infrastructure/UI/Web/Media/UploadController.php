@@ -42,10 +42,14 @@ class UploadController extends AbstractController
         $user = $loggedUser();
         $account = $loggedAccount();
 
-        $form = $this->createForm(UploadMediaType::class);
+        $media = new Media(MediaId::generate(), $account?->id());
+
+        $form = $this->createForm(UploadMediaType::class, null, [
+            'manage_visibility' => $authorizer->canDoThat($media, Action::Admin, $user),
+        ]);
 
         try {
-            $authorizer->denyUnlessCanDoThat(new Media(MediaId::generate(), $account?->id()), Action::Register, $user);
+            $authorizer->denyUnlessCanDoThat($media, Action::Register, $user);
 
             $needsRedirect = $this->register($request, $form, function ($form) use ($uploadMedia, $uploadedFileMapper, $user, $account): true {
                 /** @var UploadedFile[] $uploadedFiles */
@@ -64,6 +68,7 @@ class UploadController extends AbstractController
                         name: $keepMetadata ? $formRequest->name : '',
                         description: $keepMetadata ? $formRequest->description : null,
                         alternativeText: $keepMetadata ? $formRequest->alternativeText : null,
+                        visibility: $formRequest->visibility,
                     );
 
                     $uploadRequest = $uploadedFileMapper($uploadedFile, $account?->id(), $user->id(), $uploadRequest);
