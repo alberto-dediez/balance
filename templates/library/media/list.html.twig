@@ -12,7 +12,18 @@
             'sortableBy': 'name'
         }, {
             'label': 'Tipo' | trans
-        }, {
+        },
+    ] %}
+
+    {% if dummy | is_authorized('admin') %}
+        {% set columns = columns | merge([{
+            'label': 'Visibilidad' | trans,
+            'sortable': false
+        }]) %}
+    {% endif %}
+
+
+    {% set columns = columns | merge([{
             'label': 'Tamaño' | trans,
             'sortable': true,
             'sortableBy': 'size'
@@ -23,7 +34,7 @@
         }, {
             'label': ''
         }
-    ] %}
+    ]) %}
 
     <twig:List:Table :columns="columns" :elements="media" :bulkForm="bulkForm">
         <td style="width: 64px;">
@@ -39,15 +50,16 @@
         <td>
             {{ element.name }}
 
-            {% if element.shared and element | is_authorized('admin') %}
-                <span class="badge text-bg-primary">
-                    {{ element.visibility.value | trans({}, 'mediaVisibility') }}
-                </span>
-            {% endif %}
-
-            <div class="text-muted fs-2">{{ element.fileName }}</div>
+            <div class="text-muted fs-2">
+                {{ element.fileName }}
+            </div>
         </td>
         <td>{{ element.type.value | trans({}, 'mediaType') }}</td>
+
+        {% if dummy | is_authorized('admin') %}
+            <td>{{ element.visibility.value | trans({}, 'mediaVisibility') }}</td>
+        {% endif %}
+
         <td>{{ element.size | file_size }}</td>
         <td>{{ element.registeredAt | date('d/m/Y H:i') }}</td>
         <td>

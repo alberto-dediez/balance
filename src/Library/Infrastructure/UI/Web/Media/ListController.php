@@ -6,6 +6,8 @@ namespace App\Library\Infrastructure\UI\Web\Media;
 
 use App\Library\Application\Media\List\ListMediaRequest;
 use App\Library\Application\Media\List\ListMediaService;
+use App\Library\Domain\Model\Media\Media;
+use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Infrastructure\Symfony\Form\ListMediaType;
 use App\Library\Infrastructure\UI\Web\Media\Bulk\RemoveMedia;
 use App\Security\Application\UnauthorizedActionException;
@@ -55,6 +57,7 @@ class ListController extends AbstractController
             'media' => $response->media,
             'totalResults' => $response->totalResults,
             'form' => $form->createView(),
+            'dummy' => new Media(MediaId::generate()),
         ]);
     }
 }
