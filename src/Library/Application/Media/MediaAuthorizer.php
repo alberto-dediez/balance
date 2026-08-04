@@ -20,6 +20,10 @@ final class MediaAuthorizer extends AbstractAuthorizer
 
     protected function canView(mixed $subject, User $user): bool
     {
+        if ($subject->isShared()) {
+            return true;
+        }
+
         return $this->belongsToUserAccount($subject, $user);
     }
 
@@ -48,6 +52,19 @@ final class MediaAuthorizer extends AbstractAuthorizer
     protected function canRemove(mixed $subject, User $user): bool
     {
         return $this->canEdit($subject, $user);
+    }
+
+    /**
+     * Only the administrators decide the visibility of a file: the rest of the users
+     * neither see nor know about that option.
+     */
+    protected function canAdmin(mixed $subject, User $user): bool
+    {
+        if (!$this->belongsToUserAccount($subject, $user)) {
+            return false;
+        }
+
+        return $this->isAdmin($user);
     }
 
     public function supports(mixed $subject): bool

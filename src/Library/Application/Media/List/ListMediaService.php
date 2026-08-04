@@ -36,6 +36,10 @@ class ListMediaService
     /**
      * Every user, whatever its role, only browses the library of its own account.
      * Users without account only browse the media not belonging to any account.
+     *
+     * The media shared with the platform stays out of the listing unless it is
+     * explicitly asked for through the filter: sharing opens the access to the file,
+     * it does not mix it into the library of every account.
      */
     private function scopeToUserAccount(ListMediaRequest $request, User $user): ListMediaRequest
     {

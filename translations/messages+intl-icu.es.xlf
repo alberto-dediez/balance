@@ -1489,6 +1489,50 @@
         <source>No tienes ninguna imagen de perfil</source>
         <target>No tienes ninguna imagen de perfil</target>
       </trans-unit>
+      <trans-unit id="vpVkB.Z" resname="El tipo de archivo no está permitido">
+        <source>El tipo de archivo no está permitido</source>
+        <target>El tipo de archivo no está permitido</target>
+      </trans-unit>
+      <trans-unit id="9d4t2nt" resname="Archivos subidos correctamente: {names}">
+        <source>Archivos subidos correctamente: {names}</source>
+        <target>Archivos subidos correctamente: {names}</target>
+      </trans-unit>
+      <trans-unit id="_v6i0Pz" resname="Visibilidad">
+        <source>Visibilidad</source>
+        <target>Visibilidad</target>
+      </trans-unit>
+      <trans-unit id="BMeQlHK" resname="Quién puede acceder a este archivo">
+        <source>Quién puede acceder a este archivo</source>
+        <target>Quién puede acceder a este archivo</target>
+      </trans-unit>
+      <trans-unit id="xb6F1Vp" resname="Si se deja vacío se usará el nombre del archivo. Solo aplica si se sube un único archivo">
+        <source>Si se deja vacío se usará el nombre del archivo. Solo aplica si se sube un único archivo</source>
+        <target>Si se deja vacío se usará el nombre del archivo. Solo aplica si se sube un único archivo</target>
+      </trans-unit>
+      <trans-unit id="fmEHX4u" resname="Solo aplica si se sube un único archivo">
+        <source>Solo aplica si se sube un único archivo</source>
+        <target>Solo aplica si se sube un único archivo</target>
+      </trans-unit>
+      <trans-unit id="3RXFaxK" resname="Quién puede acceder a los archivos subidos">
+        <source>Quién puede acceder a los archivos subidos</source>
+        <target>Quién puede acceder a los archivos subidos</target>
+      </trans-unit>
+      <trans-unit id="mI66A5x" resname="Quitar archivo">
+        <source>Quitar archivo</source>
+        <target>Quitar archivo</target>
+      </trans-unit>
+      <trans-unit id="tr1nQl6" resname="Enlace público">
+        <source>Enlace público</source>
+        <target>Enlace público</target>
+      </trans-unit>
+      <trans-unit id="iKBgpBp" resname="Ver archivos compartidos">
+        <source>Ver archivos compartidos</source>
+        <target>Ver archivos compartidos</target>
+      </trans-unit>
+      <trans-unit id="uWb5OZi" resname="Incluye los archivos compartidos con toda la plataforma">
+        <source>Incluye los archivos compartidos con toda la plataforma</source>
+        <target>Incluye los archivos compartidos con toda la plataforma</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

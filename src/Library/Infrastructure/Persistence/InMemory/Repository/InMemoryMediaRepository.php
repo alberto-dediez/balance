@@ -106,6 +106,15 @@ class InMemoryMediaRepository implements MediaRepository
             return false;
         }
 
+        return $this->matchesAccountScope($media, $filter);
+    }
+
+    private function matchesAccountScope(Media $media, MediaFilter $filter): bool
+    {
+        if (true === $filter->includeShared && $media->isShared()) {
+            return true;
+        }
+
         if (true === $filter->withoutAccount && $media->accountId() instanceof AccountId) {
             return false;
         }

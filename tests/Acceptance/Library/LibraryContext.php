@@ -9,6 +9,7 @@ use App\Library\Domain\Model\Media\MediaFilter;
 use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Domain\Model\Media\MediaRepository;
 use App\Library\Domain\Model\Media\MediaStorage;
+use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Library\Domain\Model\Media\MediaMother;
@@ -20,6 +21,7 @@ use Behat\Step\Then;
 use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\DomCrawler\Field\FileFormField;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -73,6 +75,18 @@ final class LibraryContext implements Context
         $this->addMedia(MediaMother::from(new MediaId($id), $name, 'image/png', new AccountId($account)));
     }
 
+    #[Given('media :name with id :id and visibility :visibility exists')]
+    public function mediaWithVisibilityExists(string $name, string $id, string $visibility): void
+    {
+        $this->addMedia(MediaMother::from(new MediaId($id), $name, 'image/png', null, null, MediaVisibility::from($visibility)));
+    }
+
+    #[Given('media :name with id :id and visibility :visibility of account :account exists')]
+    public function mediaWithVisibilityOfAccountExists(string $name, string $id, string $visibility, string $account): void
+    {
+        $this->addMedia(MediaMother::from(new MediaId($id), $name, 'image/png', new AccountId($account), null, MediaVisibility::from($visibility)));
+    }
+
     #[When('I submit the upload form with file :fileName')]
     public function iSubmitTheUploadFormWithFile(string $fileName): void
     {
@@ -121,6 +135,26 @@ final class LibraryContext implements Context
     public function iUploadTheFileThroughTheMediaPickerWithTheToken(string $fileName, string $token): void
     {
         $this->uploadThroughThePicker($fileName, $token);
+    }
+
+    /**
+     * The list page holds two buttons labelled "Filtrar" — the one opening the side
+     * panel and the one submitting it — so the form is reached from its own field.
+     */
+    #[When('I filter the library including the shared media')]
+    public function iFilterTheLibraryIncludingTheSharedMedia(): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $form = $crawler->filter('[name$="[filter]"]')->form();
+
+        $field = $form[(string) $crawler->filter('input[name$="[includeShared]"]')->attr('name')];
+
+        assert($field instanceof ChoiceFormField);
+
+        $field->tick();
+
+        $this->client->submit($form);
     }
 
     #[Then('the library contains :total files')]

@@ -51,3 +51,34 @@ Feature:
         When I go to "/es/library/media"
         Then the response status should be 200
         Then I see a text "own.png"
+
+    Scenario: The media shared with the whole platform stays out of my library
+        Given account "Minotour" with id "1111" exists
+        Given account "Bioscore" with id "2222" exists
+        Given user "user1@dediez.software" with role "ROLE_USER" of account "1111" exists
+        Given media "own.png" of account "1111" exists
+        Given media "manual.png" with id "3333" and visibility "System" of account "2222" exists
+        Given media "terms.png" with id "4444" and visibility "Public" of account "2222" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media"
+        Then the response status should be 200
+        Then I see a table with 3 rows
+        Then I do not see a text "manual.png"
+        Then I do not see a text "terms.png"
+
+    Scenario: As a user I can filter to see the media shared with the whole platform
+        Given account "Minotour" with id "1111" exists
+        Given account "Bioscore" with id "2222" exists
+        Given user "user1@dediez.software" with role "ROLE_USER" of account "1111" exists
+        Given media "own.png" of account "1111" exists
+        Given media "foreign.png" of account "2222" exists
+        Given media "manual.png" with id "3333" and visibility "System" of account "2222" exists
+        Given media "terms.png" with id "4444" and visibility "Public" of account "2222" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media"
+        When I filter the library including the shared media
+        Then the response status should be 200
+        Then I see a table with 5 rows
+        Then I see a text "manual.png"
+        Then I see a text "terms.png"
+        Then I do not see a text "foreign.png"

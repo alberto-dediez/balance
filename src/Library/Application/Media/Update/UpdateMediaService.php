@@ -42,6 +42,12 @@ class UpdateMediaService implements CommandHandler
             $media->changeDetails($request->name, $request->description, $request->alternativeText);
         }
 
+        if ($request->visibility !== $media->visibility()) {
+            $this->authorizer->denyUnlessCanDoThat($media, Action::Admin, $user);
+
+            $media->changeVisibility($request->visibility);
+        }
+
         $this->repository->add($media);
 
         return new UpdateMediaResponse(
@@ -49,6 +55,7 @@ class UpdateMediaService implements CommandHandler
             name: $media->name(),
             description: $media->description(),
             alternativeText: $media->alternativeText(),
+            visibility: $media->visibility(),
         );
     }
 

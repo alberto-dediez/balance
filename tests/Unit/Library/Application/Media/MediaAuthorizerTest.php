@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Library\Application\Media;
 
+use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
@@ -107,6 +108,54 @@ class MediaAuthorizerTest extends TestCase
         $foreignUser = UserMother::fromUsernameAndRoleAndAccount('foreign@dediez.software', Role::User, AccountId::generate());
 
         $this->assertFalse($sut->canDoThat($media, Action::View, $foreignUser));
+    }
+
+    public function testSharedMediaIsReachedByAnyUser(): void
+    {
+        $sut = MediaAuthorizerMother::create();
+
+        $foreignUser = UserMother::fromUsernameAndRoleAndAccount('foreign@dediez.software', Role::User, AccountId::generate());
+
+        $systemMedia = MediaMother::fromNameAndVisibility('manual.pdf', MediaVisibility::System, AccountId::generate());
+        $publicMedia = MediaMother::fromNameAndVisibility('terms.pdf', MediaVisibility::Public, AccountId::generate());
+
+        $this->assertTrue($sut->canDoThat($systemMedia, Action::View, $foreignUser));
+        $this->assertTrue($sut->canDoThat($publicMedia, Action::View, $foreignUser));
+    }
+
+    public function testSharedMediaIsOnlyEditedWithinTheAccountItBelongsTo(): void
+    {
+        $sut = MediaAuthorizerMother::create();
+
+        $accountId = AccountId::generate();
+
+        $media = MediaMother::fromNameAndVisibility('manual.pdf', MediaVisibility::System, $accountId);
+
+        $admin = UserMother::fromUsernameAndRoleAndAccount('admin@dediez.software', Role::Admin, $accountId);
+        $foreignAdmin = UserMother::fromUsernameAndRoleAndAccount('foreign@dediez.software', Role::Admin, AccountId::generate());
+
+        $this->assertTrue($sut->canDoThat($media, Action::Edit, $admin));
+        $this->assertFalse($sut->canDoThat($media, Action::Edit, $foreignAdmin));
+        $this->assertFalse($sut->canDoThat($media, Action::Remove, $foreignAdmin));
+    }
+
+    public function testOnlyAdminsManageTheVisibility(): void
+    {
+        $sut = MediaAuthorizerMother::create();
+
+        $accountId = AccountId::generate();
+
+        $media = MediaMother::fromNameAndAccount('logo.png', $accountId);
+
+        $admin = UserMother::fromUsernameAndRoleAndAccount('admin@dediez.software', Role::Admin, $accountId);
+        $owner = UserMother::fromUsernameAndRoleAndAccount('owner@dediez.software', Role::Owner, $accountId);
+        $user = UserMother::fromUsernameAndRoleAndAccount('user@dediez.software', Role::User, $accountId);
+        $foreignAdmin = UserMother::fromUsernameAndRoleAndAccount('foreign@dediez.software', Role::Admin, AccountId::generate());
+
+        $this->assertTrue($sut->canDoThat($media, Action::Admin, $admin));
+        $this->assertFalse($sut->canDoThat($media, Action::Admin, $owner));
+        $this->assertFalse($sut->canDoThat($media, Action::Admin, $user));
+        $this->assertFalse($sut->canDoThat($media, Action::Admin, $foreignAdmin));
     }
 
     public function testItOnlySupportsMedia(): void

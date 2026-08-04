@@ -25,6 +25,7 @@ class Media implements \Stringable
         protected string $extension = '',
         protected string $mimeType = '',
         protected MediaType $type = MediaType::Other,
+        protected MediaVisibility $visibility = MediaVisibility::Account,
         protected int $size = 0,
         protected ?string $description = null,
         protected ?string $alternativeText = null,
@@ -75,6 +76,21 @@ class Media implements \Stringable
     public function type(): MediaType
     {
         return $this->type;
+    }
+
+    public function visibility(): MediaVisibility
+    {
+        return $this->visibility;
+    }
+
+    public function isShared(): bool
+    {
+        return $this->visibility->isShared();
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->visibility->isPublic();
     }
 
     public function size(): int
@@ -128,6 +144,7 @@ class Media implements \Stringable
         ?UserId $uploadedBy = null,
         ?string $description = null,
         ?string $alternativeText = null,
+        MediaVisibility $visibility = MediaVisibility::Account,
     ): void {
         $this->recordApplyAndPublish(
             new MediaUploaded(
@@ -138,6 +155,7 @@ class Media implements \Stringable
                 extension: $extension,
                 mimeType: $mimeType,
                 type: MediaType::fromMimeType($mimeType),
+                visibility: $visibility,
                 size: $size,
                 accountId: $accountId,
                 uploadedBy: $uploadedBy,
@@ -155,6 +173,16 @@ class Media implements \Stringable
                 name: $name,
                 description: $description,
                 alternativeText: $alternativeText,
+            ),
+        );
+    }
+
+    public function changeVisibility(MediaVisibility $visibility): void
+    {
+        $this->recordApplyAndPublish(
+            new MediaVisibilityChanged(
+                mediaId: $this->id(),
+                visibility: $visibility,
             ),
         );
     }
@@ -177,6 +205,7 @@ class Media implements \Stringable
         $this->extension = $event->extension();
         $this->mimeType = $event->mimeType();
         $this->type = $event->type();
+        $this->visibility = $event->visibility();
         $this->size = $event->size();
         $this->accountId = $event->accountId();
         $this->uploadedBy = $event->uploadedBy();
@@ -191,6 +220,11 @@ class Media implements \Stringable
         $this->name = $event->name();
         $this->description = $event->description();
         $this->alternativeText = $event->alternativeText();
+    }
+
+    public function applyMediaVisibilityChanged(MediaVisibilityChanged $event): void
+    {
+        $this->visibility = $event->visibility();
     }
 
     public function applyMediaRemoved(MediaRemoved $event): void
