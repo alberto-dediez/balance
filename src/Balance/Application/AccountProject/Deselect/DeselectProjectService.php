@@ -7,6 +7,8 @@ namespace App\Balance\Application\AccountProject\Deselect;
 use App\Balance\Application\AccountProject\AccountProjectAuthorizer;
 use App\Balance\Domain\Model\AccountProject\AccountProjectFilter;
 use App\Balance\Domain\Model\AccountProject\AccountProjectRepository;
+use App\Balance\Domain\Model\AccountProject\ProjectHasAvailableCreditsException;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -21,6 +23,7 @@ class DeselectProjectService implements CommandHandler
 
     public function __construct(
         private AccountProjectRepository $repository,
+        private CreditPurchaseRepository $creditPurchaseRepository,
         private AccountProjectAuthorizer $authorizer,
     ) {}
 
@@ -37,6 +40,12 @@ class DeselectProjectService implements CommandHandler
         $accountProject = $existing[0];
 
         $this->authorizer->denyUnlessCanDoThat($accountProject, SecurityAction::Remove, $user);
+
+        $balance = $this->creditPurchaseRepository->balanceFor($request->accountId, $request->projectId);
+
+        if ($balance->availableTonnes() > 0.0) {
+            throw new ProjectHasAvailableCreditsException($request->projectId);
+        }
 
         $accountProject->deselect();
 

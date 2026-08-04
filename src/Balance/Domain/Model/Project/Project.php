@@ -239,4 +239,9 @@ class Project implements Translatable
         $this->removed = true;
         $this->removedAt = $event->occurredOn();
     }
+
+    public function __toString(): string
+    {
+        return $this->name();
+    }
 }

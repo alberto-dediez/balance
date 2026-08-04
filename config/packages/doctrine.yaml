@@ -65,6 +65,7 @@ doctrine:
             event_carbon_footprint_report_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EventCarbonFootprintReportIdType
             project_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\ProjectIdType
             account_project_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\AccountProjectIdType
+            credit_purchase_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\CreditPurchaseIdType
 
     orm:
         auto_generate_proxy_classes: true

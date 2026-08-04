@@ -1,0 +1,58 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Compras de créditos de CO2' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Cuenta' | trans,
+            'sortable': false
+        }, {
+            'label': 'Proyecto' | trans,
+            'sortable': false
+        }, {
+            'label': 'Solicitadas' | trans,
+            'sortable': false
+        }, {
+            'label': 'Compradas' | trans,
+            'sortable': false
+        }, {
+            'label': 'Importe' | trans,
+            'sortable': false
+        }, {
+            'label': 'Identificador' | trans,
+            'sortable': false
+        }, {
+            'label': 'Estado' | trans,
+            'sortable': false
+        }, {
+            'label': 'Fecha de solicitud' | trans,
+            'sortable': true,
+            'sortableBy': 'requestedAt'
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="creditPurchases">
+        <td>{{ element.accountId | account_name }}</td>
+        <td>{{ element.projectId | project_name }}</td>
+        <td>{{ element.requestedTonnes }}</td>
+        <td>{{ element.purchasedTonnes ?? '-' }}</td>
+        <td>{{ element.amount is not null ? (element.amount ~ ' €') : '-' }}</td>
+        <td>{{ element.reference ?? '-' }}</td>
+        <td>
+            {{ element.status.value | trans({}, 'creditPurchaseStatus') }}
+            {% if element.isPartiallyFulfilled %}
+                <span class="badge bg-warning text-dark">{{ 'Parcial' | trans }}</span>
+            {% endif %}
+        </td>
+        <td>{{ element.requestedAt | date('d/m/Y') }}</td>
+        <td>
+            {% if element.status.value == 'pending' %}
+                <twig:List:Action:Edit path="{{ path('admin_credit_purchases_validate', {'creditPurchaseId': element.id}) }}" />
+                <twig:List:Action:Delete path="{{ path('admin_credit_purchases_reject', {'creditPurchaseId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}

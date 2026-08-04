@@ -1,0 +1,33 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% set page_title = ('Compras de créditos de CO2' | trans) ~ ' > ' ~ ('Rechazar' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_credit_purchases') }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card title="{{ 'Solicitud' | trans }}">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">{{ 'Cuenta' | trans }}</dt>
+            <dd class="col-sm-9">{{ creditPurchase.accountId | account_name }}</dd>
+
+            <dt class="col-sm-3">{{ 'Toneladas solicitadas' | trans }}</dt>
+            <dd class="col-sm-9">{{ creditPurchase.requestedTonnes }}</dd>
+        </dl>
+    </twig:Card>
+
+    {{ form_start(form) }}
+
+    <twig:Card title="{{ 'Rechazo' | trans }}">
+        {{ form_row(form.reason) }}
+    </twig:Card>
+
+    <twig:Card>
+        <twig:ActionBar>
+            <twig:ActionBar:Button type="danger" :button="form.saveAndReturn" />
+        </twig:ActionBar>
+    </twig:Card>
+
+    {{ form_end(form) }}
+{% endblock %}

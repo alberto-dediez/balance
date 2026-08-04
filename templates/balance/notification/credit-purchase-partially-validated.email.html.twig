@@ -1,0 +1,18 @@
+<h3>{% trans -%}Su compra de créditos ha sido validada parcialmente{%- endtrans -%}</h3>
+<p>
+    {% trans with {
+        '{project}': projectName,
+        '{requested}': requestedTonnes,
+        '{purchased}': purchasedTonnes,
+        '{amount}': amount,
+        '{reference}': reference
+    } -%}
+        No ha sido posible comprar la cantidad solicitada para el proyecto {project}. Solicitó {requested} toneladas y se han comprado {purchased} toneladas por un importe de {amount} € (identificador {reference}).
+    {%- endtrans %}
+    {% if projectMitecoId %}
+        {% trans with {'{mitecoId}': projectMitecoId} -%}(Registro Miteco {mitecoId}){%- endtrans %}
+    {% endif %}
+</p>
+<a href="{{ url('credit_purchases') }}" class="btn btn-primary">
+    {% trans -%}Ver mis créditos{%- endtrans -%}
+</a>

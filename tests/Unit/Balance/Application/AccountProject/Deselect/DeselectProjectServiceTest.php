@@ -9,12 +9,16 @@ use App\Balance\Application\AccountProject\Deselect\DeselectProjectRequest;
 use App\Balance\Application\AccountProject\Deselect\DeselectProjectService;
 use App\Balance\Domain\Model\AccountProject\AccountProjectDeselected;
 use App\Balance\Domain\Model\AccountProject\AccountProjectRepository;
+use App\Balance\Domain\Model\AccountProject\ProjectHasAvailableCreditsException;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
+use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryCreditPurchaseRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectRepositoryMother;
+use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseMother;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
@@ -90,8 +94,35 @@ class DeselectProjectServiceTest extends TestCase
         $sut(new DeselectProjectRequest($accountId, $projectId), $user);
     }
 
-    private function createSUT(AccountProjectRepository $repository): DeselectProjectService
+    public function testThrowsWhenAccountHasAvailableCredits(): void
     {
-        return new DeselectProjectService($repository, new AccountProjectAuthorizer());
+        $repository = AccountProjectRepositoryMother::inMemory();
+
+        $accountId = AccountId::generate();
+        $projectId = ProjectMother::random()->id();
+
+        $repository->add(AccountProjectMother::from($accountId, $projectId));
+
+        $creditPurchaseRepository = new InMemoryCreditPurchaseRepository();
+        $creditPurchaseRepository->add(CreditPurchaseMother::validated($accountId, $projectId));
+
+        $sut = $this->createSUT($repository, $creditPurchaseRepository);
+
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $accountId);
+
+        $this->expectException(ProjectHasAvailableCreditsException::class);
+
+        $sut(new DeselectProjectRequest($accountId, $projectId), $user);
+    }
+
+    private function createSUT(
+        AccountProjectRepository $repository,
+        ?CreditPurchaseRepository $creditPurchaseRepository = null,
+    ): DeselectProjectService {
+        return new DeselectProjectService(
+            $repository,
+            $creditPurchaseRepository ?? new InMemoryCreditPurchaseRepository(),
+            new AccountProjectAuthorizer(),
+        );
     }
 }

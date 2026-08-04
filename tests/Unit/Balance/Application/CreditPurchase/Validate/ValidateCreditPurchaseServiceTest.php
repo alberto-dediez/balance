@@ -1,0 +1,125 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\Balance\Application\CreditPurchase\Validate;
+
+use App\Balance\Application\CreditPurchase\CreditPurchaseAuthorizer;
+use App\Balance\Application\CreditPurchase\Validate\ValidateCreditPurchaseRequest;
+use App\Balance\Application\CreditPurchase\Validate\ValidateCreditPurchaseService;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseNotPendingException;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseValidated;
+use App\Balance\Domain\Model\CreditPurchase\DuplicatedPurchaseReferenceException;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseMother;
+use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
+
+class ValidateCreditPurchaseServiceTest extends TestCase
+{
+    private SpyDomainEventSubscriber $spySubscriber;
+
+    protected function setUp(): void
+    {
+        DomainEventPublisher::instance()->reset();
+
+        $this->spySubscriber = new SpyDomainEventSubscriber();
+    }
+
+    public function testValidatesFullAmount(): void
+    {
+        $repository = CreditPurchaseRepositoryMother::inMemory();
+        $creditPurchase = CreditPurchaseMother::pending(tonnes: 10.0);
+        $repository->add($creditPurchase);
+
+        $sut = $this->createSUT($repository);
+        $user = UserMother::adminUser();
+
+        $result = $sut(
+            new ValidateCreditPurchaseRequest($creditPurchase->id(), 10.0, 150.0, 'REF-1'),
+            $user,
+        );
+
+        $this->assertFalse($result->partiallyFulfilled);
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(CreditPurchaseValidated::class, $lastEvent);
+    }
+
+    public function testValidatesPartialAmount(): void
+    {
+        $repository = CreditPurchaseRepositoryMother::inMemory();
+        $creditPurchase = CreditPurchaseMother::pending(tonnes: 10.0);
+        $repository->add($creditPurchase);
+
+        $sut = $this->createSUT($repository);
+        $user = UserMother::adminUser();
+
+        $result = $sut(
+            new ValidateCreditPurchaseRequest($creditPurchase->id(), 6.0, 90.0, 'REF-2'),
+            $user,
+        );
+
+        $this->assertTrue($result->partiallyFulfilled);
+    }
+
+    public function testThrowsWhenReferenceIsDuplicated(): void
+    {
+        $repository = CreditPurchaseRepositoryMother::inMemory();
+
+        $alreadyValidated = CreditPurchaseMother::validated();
+        $repository->add($alreadyValidated);
+
+        $pending = CreditPurchaseMother::pending();
+        $repository->add($pending);
+
+        $sut = $this->createSUT($repository);
+        $user = UserMother::adminUser();
+
+        $this->expectException(DuplicatedPurchaseReferenceException::class);
+
+        $sut(
+            new ValidateCreditPurchaseRequest($pending->id(), 5.0, 5.0, (string) $alreadyValidated->reference()),
+            $user,
+        );
+    }
+
+    public function testThrowsWhenNotPending(): void
+    {
+        $repository = CreditPurchaseRepositoryMother::inMemory();
+        $creditPurchase = CreditPurchaseMother::validated();
+        $repository->add($creditPurchase);
+
+        $sut = $this->createSUT($repository);
+        $user = UserMother::adminUser();
+
+        $this->expectException(CreditPurchaseNotPendingException::class);
+
+        $sut(new ValidateCreditPurchaseRequest($creditPurchase->id(), 5.0, 5.0, 'REF-3'), $user);
+    }
+
+    public function testThrowsWhenUserIsNotAdmin(): void
+    {
+        $repository = CreditPurchaseRepositoryMother::inMemory();
+        $creditPurchase = CreditPurchaseMother::pending();
+        $repository->add($creditPurchase);
+
+        $sut = $this->createSUT($repository);
+        $user = UserMother::fromUsernameAndRole('owner', Role::Owner);
+
+        $this->expectException(UnauthorizedActionException::class);
+
+        $sut(new ValidateCreditPurchaseRequest($creditPurchase->id(), 5.0, 5.0, 'REF-4'), $user);
+    }
+
+    private function createSUT(CreditPurchaseRepository $repository): ValidateCreditPurchaseService
+    {
+        return new ValidateCreditPurchaseService($repository, new CreditPurchaseAuthorizer());
+    }
+}

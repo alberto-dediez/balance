@@ -4385,6 +4385,222 @@
         <source>Enlace público</source>
         <target>Enlace público</target>
       </trans-unit>
+      <trans-unit id="aHdG4DB" resname="Solicitud de créditos enviada correctamente">
+        <source>Solicitud de créditos enviada correctamente</source>
+        <target>Solicitud de créditos enviada correctamente</target>
+      </trans-unit>
+      <trans-unit id="s5BKwKO" resname="Solicitud de créditos cancelada">
+        <source>Solicitud de créditos cancelada</source>
+        <target>Solicitud de créditos cancelada</target>
+      </trans-unit>
+      <trans-unit id="LpG1TQe" resname="No se ha podido cancelar la solicitud de créditos">
+        <source>No se ha podido cancelar la solicitud de créditos</source>
+        <target>No se ha podido cancelar la solicitud de créditos</target>
+      </trans-unit>
+      <trans-unit id=".v3NWNx" resname="Solicitud rechazada correctamente">
+        <source>Solicitud rechazada correctamente</source>
+        <target>Solicitud rechazada correctamente</target>
+      </trans-unit>
+      <trans-unit id=".9gG8yM" resname="Compra validada parcialmente">
+        <source>Compra validada parcialmente</source>
+        <target>Compra validada parcialmente</target>
+      </trans-unit>
+      <trans-unit id="hZ3B5M7" resname="Compra validada correctamente">
+        <source>Compra validada correctamente</source>
+        <target>Compra validada correctamente</target>
+      </trans-unit>
+      <trans-unit id="sl4UCRC" resname="No se puede retirar el proyecto {project}: la cuenta tiene toneladas disponibles">
+        <source>No se puede retirar el proyecto {project}: la cuenta tiene toneladas disponibles</source>
+        <target>No se puede retirar el proyecto {project}: la cuenta tiene toneladas disponibles</target>
+      </trans-unit>
+      <trans-unit id="fUGhoZA" resname="Toneladas de CO2 solicitadas">
+        <source>Toneladas de CO2 solicitadas</source>
+        <target>Toneladas de CO2 solicitadas</target>
+      </trans-unit>
+      <trans-unit id="Bd6sxOt" resname="Solicitar créditos">
+        <source>Solicitar créditos</source>
+        <target>Solicitar créditos</target>
+      </trans-unit>
+      <trans-unit id="IbuoPz." resname="Motivo del rechazo">
+        <source>Motivo del rechazo</source>
+        <target>Motivo del rechazo</target>
+      </trans-unit>
+      <trans-unit id="7ved36P" resname="Rechazar solicitud">
+        <source>Rechazar solicitud</source>
+        <target>Rechazar solicitud</target>
+      </trans-unit>
+      <trans-unit id="cDLxM2n" resname="Toneladas compradas">
+        <source>Toneladas compradas</source>
+        <target>Toneladas compradas</target>
+      </trans-unit>
+      <trans-unit id="CSI7bkF" resname="Importe total (€)">
+        <source>Importe total (€)</source>
+        <target>Importe total (€)</target>
+      </trans-unit>
+      <trans-unit id="ZouU9BR" resname="Identificador de la compra">
+        <source>Identificador de la compra</source>
+        <target>Identificador de la compra</target>
+      </trans-unit>
+      <trans-unit id="K8lp1Si" resname="Certificado">
+        <source>Certificado</source>
+        <target>Certificado</target>
+      </trans-unit>
+      <trans-unit id="Djp7RmS" resname="Validar compra">
+        <source>Validar compra</source>
+        <target>Validar compra</target>
+      </trans-unit>
+      <trans-unit id="fCsAUuz" resname="Su compra de créditos ha sido validada parcialmente">
+        <source>Su compra de créditos ha sido validada parcialmente</source>
+        <target>Su compra de créditos ha sido validada parcialmente</target>
+      </trans-unit>
+      <trans-unit id="U6pU2mj" resname="Su compra de créditos ha sido validada">
+        <source>Su compra de créditos ha sido validada</source>
+        <target>Su compra de créditos ha sido validada</target>
+      </trans-unit>
+      <trans-unit id="g479qHt" resname="Su solicitud de créditos ha sido rechazada">
+        <source>Su solicitud de créditos ha sido rechazada</source>
+        <target>Su solicitud de créditos ha sido rechazada</target>
+      </trans-unit>
+      <trans-unit id="chXoNSh" resname="Nueva solicitud de créditos de CO2">
+        <source>Nueva solicitud de créditos de CO2</source>
+        <target>Nueva solicitud de créditos de CO2</target>
+      </trans-unit>
+      <trans-unit id="hfGQxG5" resname="Créditos de CO2">
+        <source>Créditos de CO2</source>
+        <target>Créditos de CO2</target>
+      </trans-unit>
+      <trans-unit id="um9U51r" resname="Mis créditos">
+        <source>Mis créditos</source>
+        <target>Mis créditos</target>
+      </trans-unit>
+      <trans-unit id="Rlabl1I" resname="Historial de solicitudes">
+        <source>Historial de solicitudes</source>
+        <target>Historial de solicitudes</target>
+      </trans-unit>
+      <trans-unit id="mz4HtFg" resname="Créditos">
+        <source>Créditos</source>
+        <target>Créditos</target>
+      </trans-unit>
+      <trans-unit id="wppcez3" resname="Parcial">
+        <source>Parcial</source>
+        <target>Parcial</target>
+      </trans-unit>
+      <trans-unit id="sH60IrW" resname="¿Está seguro de que desea cancelar esta solicitud?">
+        <source>¿Está seguro de que desea cancelar esta solicitud?</source>
+        <target>¿Está seguro de que desea cancelar esta solicitud?</target>
+      </trans-unit>
+      <trans-unit id="6RzkG5X" resname="Cancelar">
+        <source>Cancelar</source>
+        <target>Cancelar</target>
+      </trans-unit>
+      <trans-unit id="6M83dwn" resname="Historial de solicitudes de créditos">
+        <source>Historial de solicitudes de créditos</source>
+        <target>Historial de solicitudes de créditos</target>
+      </trans-unit>
+      <trans-unit id="k7JnZPo" resname="Proyecto">
+        <source>Proyecto</source>
+        <target>Proyecto</target>
+      </trans-unit>
+      <trans-unit id="u05PR_e" resname="Solicitadas">
+        <source>Solicitadas</source>
+        <target>Solicitadas</target>
+      </trans-unit>
+      <trans-unit id="schhXww" resname="Compradas">
+        <source>Compradas</source>
+        <target>Compradas</target>
+      </trans-unit>
+      <trans-unit id=".JFeLP6" resname="Importe">
+        <source>Importe</source>
+        <target>Importe</target>
+      </trans-unit>
+      <trans-unit id="_hUcykF" resname="Fecha de solicitud">
+        <source>Fecha de solicitud</source>
+        <target>Fecha de solicitud</target>
+      </trans-unit>
+      <trans-unit id="dqUDFlU" resname="Todavía no tiene créditos comprados">
+        <source>Todavía no tiene créditos comprados</source>
+        <target>Todavía no tiene créditos comprados</target>
+      </trans-unit>
+      <trans-unit id="D5ckMjZ" resname="Toneladas disponibles">
+        <source>Toneladas disponibles</source>
+        <target>Toneladas disponibles</target>
+      </trans-unit>
+      <trans-unit id="3vkiBbU" resname="Precio medio / tonelada">
+        <source>Precio medio / tonelada</source>
+        <target>Precio medio / tonelada</target>
+      </trans-unit>
+      <trans-unit id="MmL9ibg" resname="Mis créditos de CO2">
+        <source>Mis créditos de CO2</source>
+        <target>Mis créditos de CO2</target>
+      </trans-unit>
+      <trans-unit id="3QfhPoV" resname="Saldo por proyecto">
+        <source>Saldo por proyecto</source>
+        <target>Saldo por proyecto</target>
+      </trans-unit>
+      <trans-unit id="K_XmGfG" resname="Se ha solicitado la compra de {tonnes} toneladas de CO2 para el proyecto {project}. Puede validarla desde el panel de administración.">
+        <source>Se ha solicitado la compra de {tonnes} toneladas de CO2 para el proyecto {project}. Puede validarla desde el panel de administración.</source>
+        <target>Se ha solicitado la compra de {tonnes} toneladas de CO2 para el proyecto {project}. Puede validarla desde el panel de administración.</target>
+      </trans-unit>
+      <trans-unit id="aXkKoiD" resname="(Registro Miteco {mitecoId})">
+        <source>(Registro Miteco {mitecoId})</source>
+        <target>(Registro Miteco {mitecoId})</target>
+      </trans-unit>
+      <trans-unit id="1c16GCe" resname="Ver solicitud">
+        <source>Ver solicitud</source>
+        <target>Ver solicitud</target>
+      </trans-unit>
+      <trans-unit id="gxgrAII" resname="No ha sido posible comprar la cantidad solicitada para el proyecto {project}. Solicitó {requested} toneladas y se han comprado {purchased} toneladas por un importe de {amount} € (identificador {reference}).">
+        <source>No ha sido posible comprar la cantidad solicitada para el proyecto {project}. Solicitó {requested} toneladas y se han comprado {purchased} toneladas por un importe de {amount} € (identificador {reference}).</source>
+        <target>No ha sido posible comprar la cantidad solicitada para el proyecto {project}. Solicitó {requested} toneladas y se han comprado {purchased} toneladas por un importe de {amount} € (identificador {reference}).</target>
+      </trans-unit>
+      <trans-unit id="vpKHEY6" resname="Ver mis créditos">
+        <source>Ver mis créditos</source>
+        <target>Ver mis créditos</target>
+      </trans-unit>
+      <trans-unit id="OrU2o3S" resname="Su solicitud de créditos de CO2 ha sido rechazada. Motivo: {reason}">
+        <source>Su solicitud de créditos de CO2 ha sido rechazada. Motivo: {reason}</source>
+        <target>Su solicitud de créditos de CO2 ha sido rechazada. Motivo: {reason}</target>
+      </trans-unit>
+      <trans-unit id="QbGYVEw" resname="Su compra de {tonnes} toneladas de CO2 del proyecto {project} ha sido validada por un importe de {amount} € (identificador {reference}).">
+        <source>Su compra de {tonnes} toneladas de CO2 del proyecto {project} ha sido validada por un importe de {amount} € (identificador {reference}).</source>
+        <target>Su compra de {tonnes} toneladas de CO2 del proyecto {project} ha sido validada por un importe de {amount} € (identificador {reference}).</target>
+      </trans-unit>
+      <trans-unit id="x3bwcpo" resname="Se ha solicitado la compra de {tonnes} toneladas de CO2 para el proyecto {project}.">
+        <source>Se ha solicitado la compra de {tonnes} toneladas de CO2 para el proyecto {project}.</source>
+        <target>Se ha solicitado la compra de {tonnes} toneladas de CO2 para el proyecto {project}.</target>
+      </trans-unit>
+      <trans-unit id="UM3OVxo" resname="Compras de créditos de CO2">
+        <source>Compras de créditos de CO2</source>
+        <target>Compras de créditos de CO2</target>
+      </trans-unit>
+      <trans-unit id="m57lEBh" resname="Toneladas solicitadas">
+        <source>Toneladas solicitadas</source>
+        <target>Toneladas solicitadas</target>
+      </trans-unit>
+      <trans-unit id="yhUn3Mg" resname="Rechazar">
+        <source>Rechazar</source>
+        <target>Rechazar</target>
+      </trans-unit>
+      <trans-unit id="ED8Nq_Q" resname="Rechazo">
+        <source>Rechazo</source>
+        <target>Rechazo</target>
+      </trans-unit>
+      <trans-unit id="Wongu2o" resname="Validar">
+        <source>Validar</source>
+        <target>Validar</target>
+      </trans-unit>
+      <trans-unit id="ZKHCCvM" resname="Validación">
+        <source>Validación</source>
+        <target>Validación</target>
+      </trans-unit>
+      <trans-unit id="4tDhTGq" resname="Ver transacciones">
+        <source>Ver transacciones</source>
+        <target>Ver transacciones</target>
+      </trans-unit>
+      <trans-unit id="YCKSMOO" resname="No se puede retirar: la cuenta tiene toneladas disponibles">
+        <source>No se puede retirar: la cuenta tiene toneladas disponibles</source>
+        <target>No se puede retirar: la cuenta tiene toneladas disponibles</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

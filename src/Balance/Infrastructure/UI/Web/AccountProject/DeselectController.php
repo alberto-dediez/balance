@@ -6,6 +6,7 @@ namespace App\Balance\Infrastructure\UI\Web\AccountProject;
 
 use App\Balance\Application\AccountProject\Deselect\DeselectProjectRequest;
 use App\Balance\Application\AccountProject\Deselect\DeselectProjectService;
+use App\Balance\Domain\Model\AccountProject\ProjectHasAvailableCreditsException;
 use App\Balance\Domain\Model\Project\ProjectRepository;
 use App\Balance\Infrastructure\UI\Web\Project\GetProjectFromIdTrait;
 use App\Security\Application\UnauthorizedActionException;
@@ -46,6 +47,8 @@ class DeselectController extends AbstractController
             $this->addFlash('success', new TranslatableMessage('Se ha retirado el proyecto {project} de su cuenta', ['{project}' => $project->name()]));
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
+        } catch (ProjectHasAvailableCreditsException) {
+            $this->addFlash('danger', new TranslatableMessage('No se puede retirar el proyecto {project}: la cuenta tiene toneladas disponibles', ['{project}' => $project->name()]));
         } catch (\Exception) {
             $this->addFlash('danger', new TranslatableMessage('No se ha podido retirar el proyecto {project}', ['{project}' => $project->name()]));
         }

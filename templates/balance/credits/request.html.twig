@@ -1,0 +1,23 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = ('Créditos' | trans) ~ ' > ' ~ ('Solicitar créditos' | trans) ~ ' > ' ~ project.name %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('projects_view', {'projectId': project.id}) }}" />
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <twig:Card title="{{ project.name }}">
+        {{ form_row(form.tonnes) }}
+    </twig:Card>
+
+    <twig:Card>
+        <twig:ActionBar>
+            <twig:ActionBar:Button type="primary" :button="form.request" />
+        </twig:ActionBar>
+    </twig:Card>
+
+    {{ form_end(form) }}
+{% endblock %}

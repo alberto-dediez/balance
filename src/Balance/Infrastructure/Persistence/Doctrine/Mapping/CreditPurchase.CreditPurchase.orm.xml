@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Balance\Domain\Model\CreditPurchase\CreditPurchase" table="credit_purchases">
+        <id name="id" type="credit_purchase_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="accountId" type="account_id" column="account_id" nullable="false"/>
+        <field name="projectId" type="project_id" column="project_id" nullable="false"/>
+        <field name="requestedBy" type="user_id" column="requested_by" nullable="false"/>
+        <field name="requestedTonnes" type="float" column="requested_tonnes" nullable="false"/>
+        <field name="status" type="string" column="status" length="20" enum-type="App\Balance\Domain\Model\CreditPurchase\CreditPurchaseStatus" nullable="false"/>
+        <field name="purchasedTonnes" type="float" column="purchased_tonnes" nullable="true"/>
+        <field name="amount" type="float" column="amount" nullable="true"/>
+        <field name="reference" type="string" column="reference" length="255" nullable="true" unique="true"/>
+        <field name="certificate" type="string" column="certificate" length="36" nullable="true"/>
+        <field name="resolvedBy" type="user_id" column="resolved_by" nullable="true"/>
+        <field name="rejectionReason" type="text" column="rejection_reason" nullable="true"/>
+        <field name="requestedAt" type="datetime_immutable" column="requested_at" nullable="false"/>
+        <field name="resolvedAt" type="datetime_immutable" column="resolved_at" nullable="true"/>
+        <field name="cancelledAt" type="datetime_immutable" column="cancelled_at" nullable="true"/>
+
+        <indexes>
+            <index columns="account_id" name="idx_credit_purchase_account_id"/>
+            <index columns="project_id" name="idx_credit_purchase_project_id"/>
+            <index columns="status" name="idx_credit_purchase_status"/>
+            <index columns="account_id,project_id,status" name="idx_credit_purchase_balance"/>
+        </indexes>
+    </entity>
+</doctrine-mapping>

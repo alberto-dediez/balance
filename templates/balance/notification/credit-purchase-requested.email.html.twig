@@ -1,0 +1,15 @@
+<h3>{% trans -%}Nueva solicitud de créditos de CO2{%- endtrans -%}</h3>
+<p>
+    {% trans with {
+        '{project}': projectName,
+        '{tonnes}': requestedTonnes
+    } -%}
+        Se ha solicitado la compra de {tonnes} toneladas de CO2 para el proyecto {project}. Puede validarla desde el panel de administración.
+    {%- endtrans %}
+    {% if projectMitecoId %}
+        {% trans with {'{mitecoId}': projectMitecoId} -%}(Registro Miteco {mitecoId}){%- endtrans %}
+    {% endif %}
+</p>
+<a href="{{ url('admin_credit_purchases_validate', {'creditPurchaseId': creditPurchaseId}) }}" class="btn btn-primary">
+    {% trans -%}Ver solicitud{%- endtrans -%}
+</a>

@@ -2,6 +2,24 @@
 
 {% block top_actions %}
     <twig:TopAction:Return path="{{ path('projects') }}" />
+
+    {% if accountProject %}
+        <twig:TopAction
+            class="text-danger"
+            path="{{ path('projects_deselect', {'projectId': project.id}) }}"
+            data-controller="confirm"
+            data-confirm-text-param="{{ '¿Está seguro de que desea retirar este proyecto de su cuenta?' | trans }}"
+            data-action="confirm#link:prevent"
+        >
+            <twig:Icon name="solar:close-square-line-duotone" size="lg" class="me-2" />
+            {{ 'Retirar de mi cuenta' | trans }}
+        </twig:TopAction>
+    {% else %}
+        <twig:TopAction path="{{ path('projects_select', {'projectId': project.id}) }}">
+            <twig:Icon name="solar:heart-line-duotone" size="lg" class="me-2" />
+            {{ 'Adherir a mi cuenta' | trans }}
+        </twig:TopAction>
+    {% endif %}
 {% endblock %}
 
 {% set page_title = ('Proyectos' | trans) ~ ' > ' ~ project.name %}
@@ -13,20 +31,11 @@
                 <h4 class="mb-1">{{ project.name }}</h4>
             </div>
 
-            <div>
-                {% if accountProject %}
-                    <a href="{{ path('projects_deselect', {'projectId': project.id}) }}"
-                       class="btn btn-outline-danger"
-                       data-controller="confirm"
-                       data-confirm-text-param="{{ '¿Está seguro de que desea retirar este proyecto de su cuenta?' | trans }}"
-                       data-action="confirm#link:prevent">
-                        <twig:Icon name="solar:close-square-line-duotone" size="lg" />
-                        {{ 'Retirar de mi cuenta' | trans }}
-                    </a>
-                {% else %}
-                    <a href="{{ path('projects_select', {'projectId': project.id}) }}" class="btn btn-primary">
-                        <twig:Icon name="solar:heart-line-duotone" size="lg" />
-                        {{ 'Adherir a mi cuenta' | trans }}
+            <div class="d-flex gap-2">
+                {% if project.projectType and project.projectType.value == 'emission_compensation' %}
+                    <a href="{{ path('credit_purchases_request', {'projectId': project.id}) }}" class="btn btn-primary">
+                        <twig:Icon name="solar:leaf-line-duotone" size="lg" />
+                        {{ 'Solicitar créditos' | trans }}
                     </a>
                 {% endif %}
             </div>
@@ -37,7 +46,64 @@
                 {{ 'Adherido a su cuenta desde el' | trans }} {{ accountProject.selectedAt | date('d/m/Y') }}
             </p>
         {% endif %}
+
+        {% if creditBalance and creditBalance.purchasesCount > 0 %}
+            <p class="text-muted mt-1 mb-0">
+                {{ 'Toneladas disponibles' | trans }}: {{ creditBalance.availableTonnes }}
+            </p>
+        {% endif %}
     </twig:Card>
+
+    {% if project.projectType and project.projectType.value == 'emission_compensation' %}
+        <twig:Card title="{{ 'Transacciones de créditos' | trans }}">
+            {% if creditPurchases is empty %}
+                <p class="text-muted mb-0">{{ 'Este proyecto no tiene transacciones de créditos' | trans }}</p>
+            {% else %}
+                {% set columns = [
+                    {
+                        'label': 'Solicitadas' | trans,
+                    }, {
+                        'label': 'Compradas' | trans,
+                    }, {
+                        'label': 'Importe' | trans,
+                    }, {
+                        'label': 'Identificador' | trans,
+                    }, {
+                        'label': 'Estado' | trans,
+                    }, {
+                        'label': 'Fecha de solicitud' | trans,
+                    }, {
+                        'label': ''
+                    },
+                ] %}
+
+                <twig:List:Table :columns="columns" :elements="creditPurchases">
+                    <td>{{ element.requestedTonnes }}</td>
+                    <td>{{ element.purchasedTonnes ?? '-' }}</td>
+                    <td>{{ element.amount is not null ? (element.amount ~ ' €') : '-' }}</td>
+                    <td>{{ element.reference ?? '-' }}</td>
+                    <td>
+                        {{ element.status.value | trans({}, 'creditPurchaseStatus') }}
+                        {% if element.isPartiallyFulfilled %}
+                            <span class="badge bg-warning text-dark">{{ 'Parcial' | trans }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ element.requestedAt | date('d/m/Y') }}</td>
+                    <td>
+                        {% if element.status.value == 'pending' %}
+                            <a href="{{ path('credit_purchases_cancel', {'creditPurchaseId': element.id}) }}"
+                               class="btn btn-sm btn-outline-danger"
+                               data-controller="confirm"
+                               data-confirm-text-param="{{ '¿Está seguro de que desea cancelar esta solicitud?' | trans }}"
+                               data-action="confirm#link:prevent">
+                                {{ 'Cancelar' | trans }}
+                            </a>
+                        {% endif %}
+                    </td>
+                </twig:List:Table>
+            {% endif %}
+        </twig:Card>
+    {% endif %}
 
     <twig:Card title="{{ 'Información' | trans }}">
         <dl class="row mb-0">

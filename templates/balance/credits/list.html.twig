@@ -1,0 +1,31 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% set page_title = 'Mis créditos de CO2' | trans %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('credit_purchases') }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card title="{{ 'Saldo por proyecto' | trans }}">
+        {% if balances is empty %}
+            <p class="text-muted mb-0">{{ 'Todavía no tiene créditos comprados' | trans }}</p>
+        {% else %}
+            {% set columns = [
+                {'label': 'Proyecto' | trans},
+                {'label': 'Toneladas compradas' | trans},
+                {'label': 'Toneladas disponibles' | trans},
+                {'label': 'Importe' | trans},
+                {'label': 'Precio medio / tonelada' | trans},
+            ] %}
+
+            <twig:List:Table :columns="columns" :elements="balances">
+                <td>{{ element.projectId | project_name }}</td>
+                <td>{{ element.purchasedTonnes }}</td>
+                <td>{{ element.availableTonnes }}</td>
+                <td>{{ element.amount }} €</td>
+                <td>{{ element.pricePerTonne is not null ? (element.pricePerTonne | number_format(2) ~ ' €') : '-' }}</td>
+            </twig:List:Table>
+        {% endif %}
+    </twig:Card>
+{% endblock %}

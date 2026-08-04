@@ -28,6 +28,8 @@
                             {% set value = value | category_name %}
                         {% elseif field == 'companyId' %}
                             {% set value = value | company_name %}
+                        {% elseif field == 'projectId' %}
+                            {% set value = value | project_name %}
                         {% elseif field == 'signatureStatus' %}
                             {% set value = value.value | trans({}, 'signatureRequestStatus') %}
                         {% elseif field == 'size' %}

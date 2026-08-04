@@ -168,6 +168,11 @@ class NodeLister
                     icon: 'solar:hand-heart-line-duotone',
                     target: $this->router->generate('admin_projects'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Créditos de CO2'),
+                    icon: 'solar:leaf-line-duotone',
+                    target: $this->router->generate('admin_credit_purchases'),
+                ),
             ],
         );
 
@@ -364,6 +369,16 @@ class NodeLister
                     label: new TranslatableMessage('Proyectos'),
                     icon: 'solar:hand-heart-line-duotone',
                     target: $this->router->generate('projects'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Mis créditos'),
+                    icon: 'solar:leaf-line-duotone',
+                    target: $this->router->generate('credits'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Historial de solicitudes'),
+                    icon: 'solar:history-line-duotone',
+                    target: $this->router->generate('credit_purchases'),
                 ),
             ],
         );

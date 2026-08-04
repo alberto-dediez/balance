@@ -1,0 +1,46 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% set page_title = ('Compras de créditos de CO2' | trans) ~ ' > ' ~ ('Validar' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_credit_purchases') }}" />
+{% endblock %}
+
+{% block content %}
+    {% set project = creditPurchase.projectId | project_name %}
+
+    <twig:Card title="{{ 'Solicitud' | trans }}">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">{{ 'Cuenta' | trans }}</dt>
+            <dd class="col-sm-9">{{ creditPurchase.accountId | account_name }}</dd>
+
+            <dt class="col-sm-3">{{ 'Proyecto' | trans }}</dt>
+            <dd class="col-sm-9">{{ project }}</dd>
+
+            {% if project and project.mitecoId %}
+                <dt class="col-sm-3">{{ 'Código Registro Miteco' | trans }}</dt>
+                <dd class="col-sm-9">{{ project.mitecoId }}</dd>
+            {% endif %}
+
+            <dt class="col-sm-3">{{ 'Toneladas solicitadas' | trans }}</dt>
+            <dd class="col-sm-9">{{ creditPurchase.requestedTonnes }}</dd>
+        </dl>
+    </twig:Card>
+
+    {{ form_start(form) }}
+
+    <twig:Card title="{{ 'Validación' | trans }}">
+        {{ form_row(form.purchasedTonnes) }}
+        {{ form_row(form.amount) }}
+        {{ form_row(form.reference) }}
+        {{ form_row(form.certificate) }}
+    </twig:Card>
+
+    <twig:Card>
+        <twig:ActionBar>
+            <twig:ActionBar:Button type="primary" :button="form.saveAndReturn" />
+        </twig:ActionBar>
+    </twig:Card>
+
+    {{ form_end(form) }}
+{% endblock %}
