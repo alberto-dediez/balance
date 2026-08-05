@@ -45,6 +45,7 @@ class UpdateMobilityService implements CommandHandler
         $mobility->update(
             name: $request->name,
             unit: $request->unit,
+            travelMode: $request->travelMode,
             locale: $isDefaultLocale ? null : $locale,
         );
 

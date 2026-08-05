@@ -9,6 +9,8 @@ use App\CarbonFootprint\Application\Mobility\Update\EmissionFactorData;
 use App\CarbonFootprint\Application\Mobility\Update\UpdateMobilityRequest;
 use App\CarbonFootprint\Application\Mobility\Update\UpdateMobilityService;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
+use App\CarbonFootprint\Domain\Model\Geo\TravelMode;
+use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityTranslated;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityUpdated;
@@ -148,6 +150,32 @@ class UpdateMobilityServiceTest extends TestCase
         $this->assertSame('1.5', $persistedFactor->co2eq());
         // The emission factor unit is derived from the mobility's unit, not user input.
         $this->assertSame(Unit::Piece, $persistedFactor->unit());
+    }
+
+    public function testUpdatesTheTravelModeOfTheMobility(): void
+    {
+        $repository = MobilityRepositoryMother::inMemory();
+
+        $mobility = MobilityMother::fromNameIdAndTravelMode('Tren', (string) MobilityId::generate(), TravelMode::Transit);
+
+        $repository->add($mobility);
+
+        $sut = $this->createSUT($repository, Locale::Spanish);
+
+        $result = $sut(
+            new UpdateMobilityRequest(
+                mobilityId: $mobility->id(),
+                name: 'Tren',
+                unit: Unit::Kilometer,
+                travelMode: TravelMode::Flight,
+            ),
+            UserMother::fromUsernameAndRole('admin', Role::Admin),
+        );
+
+        $mobilityPersisted = $repository->find($result->mobilityId);
+
+        $this->assertNotNull($mobilityPersisted);
+        $this->assertSame(TravelMode::Flight, $mobilityPersisted->travelMode());
     }
 
     private function createSUT(

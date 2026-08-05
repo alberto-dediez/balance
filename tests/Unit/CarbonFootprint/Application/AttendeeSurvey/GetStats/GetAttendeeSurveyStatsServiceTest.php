@@ -10,7 +10,9 @@ use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAut
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryAttendeeSurveyRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryAttendeeSurveyResponseRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEventCarbonFootprintRepository;
+use App\EventOperations\Application\Event\EventVenueLocator;
 use App\EventOperations\Infrastructure\Persistence\InMemory\Repository\InMemoryEventRepository;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
@@ -46,6 +48,7 @@ class GetAttendeeSurveyStatsServiceTest extends TestCase
             $this->attendeeSurveyRepository,
             $this->attendeeSurveyResponseRepository,
             $this->eventRepository,
+            new EventVenueLocator(new InMemoryPropertyRepository()),
         );
     }
 

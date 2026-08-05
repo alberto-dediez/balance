@@ -24,6 +24,7 @@ class RegisterEventRequest implements Command
         public ?int $estimatedAttendees = null,
         public ?EventSector $sector = null,
         public ?EventTypology $typology = null,
+        public ?string $venuePlaceReference = null,
         public ?\DateTimeImmutable $assemblyStartDate = null,
         public ?\DateTimeImmutable $assemblyEndDate = null,
         public ?\DateTimeImmutable $celebrationStartDate = null,

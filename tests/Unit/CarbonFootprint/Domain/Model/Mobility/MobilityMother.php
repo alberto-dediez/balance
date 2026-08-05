@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility;
 
+use App\CarbonFootprint\Domain\Model\Geo\TravelMode;
 use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -31,15 +32,25 @@ class MobilityMother
         );
     }
 
+    public static function fromNameIdAndTravelMode(string $name, string $id, TravelMode $travelMode): Mobility
+    {
+        return self::from(
+            name: $name,
+            id: $id,
+            travelMode: $travelMode,
+        );
+    }
+
     public static function from(
         string $name,
         string $id,
         Unit $unit = Unit::Kilometer,
+        ?TravelMode $travelMode = null,
     ): Mobility {
         $mobility = new Mobility(
             id: new MobilityId($id),
         );
-        $mobility->register($name, $unit);
+        $mobility->register($name, $unit, $travelMode);
 
         return $mobility;
     }

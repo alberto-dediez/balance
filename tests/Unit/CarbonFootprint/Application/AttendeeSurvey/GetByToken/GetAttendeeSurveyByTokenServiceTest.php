@@ -9,9 +9,12 @@ use App\CarbonFootprint\Application\AttendeeSurvey\GetByToken\GetAttendeeSurveyB
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyTokenInvalidException;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryAttendeeSurveyRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMobilityRepository;
+use App\EventOperations\Application\Event\EventVenueLocator;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Infrastructure\Persistence\InMemory\Repository\InMemoryEventRepository;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Shared\Infrastructure\Geo\NullPlaceFinder;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventMother;
@@ -36,6 +39,8 @@ class GetAttendeeSurveyByTokenServiceTest extends TestCase
             $this->attendeeSurveyRepository,
             $this->eventRepository,
             $this->mobilityRepository,
+            new EventVenueLocator(new InMemoryPropertyRepository()),
+            new NullPlaceFinder(),
         );
     }
 

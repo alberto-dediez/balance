@@ -55,6 +55,7 @@ class EditController extends AbstractController
             estimatedAttendees: $event->estimatedAttendees(),
             sector: $event->sector(),
             typology: $event->typology(),
+            venuePlaceReference: $event->venuePlaceReference(),
             assemblyStartDate: $event->assembly()->startDate(),
             assemblyEndDate: $event->assembly()->endDate(),
             celebrationStartDate: $event->celebration()->startDate(),
@@ -66,6 +67,7 @@ class EditController extends AbstractController
         try {
             $form = $this->createForm(UpdateEventType::class, $eventRequest, [
                 'disabled' => $event->isLocked(),
+                'venue_label' => $event->venueLabel(),
             ]);
 
             if (!$event->isLocked()) {

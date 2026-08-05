@@ -19,6 +19,7 @@
         <field name="marginOfError" type="float" column="margin_of_error" nullable="true" />
         <field name="closedAt" type="datetime_immutable" column="closed_at" nullable="true" />
 
+
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
         <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true" />
     </entity>

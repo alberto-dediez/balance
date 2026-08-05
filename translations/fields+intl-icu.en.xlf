@@ -21,6 +21,10 @@
         <source>unit</source>
         <target>Unit</target>
       </trans-unit>
+      <trans-unit id="bEOU3DZ" resname="travelMode">
+        <source>travelMode</source>
+        <target>Route calculation mode</target>
+      </trans-unit>
       <trans-unit id="2yur8vv" resname="year">
         <source>year</source>
         <target>Year</target>

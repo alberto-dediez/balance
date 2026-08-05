@@ -16,4 +16,9 @@ interface AttendeeSurveyResponseRepository
     public function findByAttendeeSurveyId(AttendeeSurveyId $attendeeSurveyId): array;
 
     public function countByAttendeeSurveyId(AttendeeSurveyId $attendeeSurveyId): int;
+
+    /** @return array<string, int> Number of legs of the survey keyed by the origin of their distance. */
+    public function countLegsByDistanceSource(AttendeeSurveyId $attendeeSurveyId): array;
+
+    public function countMultimodalResponses(AttendeeSurveyId $attendeeSurveyId): int;
 }

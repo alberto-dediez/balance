@@ -10,6 +10,9 @@ parameters:
     app.gemini_log_enabled: '%env(bool:GEMINI_LOG_ENABLED)%'
     app.uploads_dir: '%kernel.project_dir%/var/uploads'
     app.chart_endpoint: '%env(CHART_ENDPOINT)%'
+    app.google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
+    app.google_maps_enabled: '%env(bool:GOOGLE_MAPS_ENABLED)%'
+    app.google_maps_region: '%env(GOOGLE_MAPS_REGION)%'
 
 services:
     _defaults:
@@ -68,3 +71,20 @@ services:
 
     App\Shared\Infrastructure\Chart\ApexChartClient:
         alias: App\Shared\Infrastructure\Chart\ApexChartHttpClient
+
+    App\Shared\Infrastructure\Geo\Google\GooglePlacesApiPlaceFinder:
+        arguments:
+            $apiKey: '%app.google_maps_api_key%'
+            $enabled: '%app.google_maps_enabled%'
+            $region: '%app.google_maps_region%'
+
+    App\Shared\Infrastructure\Geo\CachedPlaceFinder:
+        arguments:
+            $placeFinder: '@App\Shared\Infrastructure\Geo\Google\GooglePlacesApiPlaceFinder'
+            $cache: '@cache.app'
+
+    App\Shared\Domain\Model\Geo\PlaceFinder: '@App\Shared\Infrastructure\Geo\CachedPlaceFinder'
+
+when@test:
+    services:
+        App\Shared\Domain\Model\Geo\PlaceFinder: '@App\Shared\Infrastructure\Geo\NullPlaceFinder'

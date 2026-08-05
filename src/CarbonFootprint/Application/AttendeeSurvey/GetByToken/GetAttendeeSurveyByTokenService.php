@@ -8,7 +8,9 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepository;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyTokenInvalidException;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityFilter;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
+use App\EventOperations\Application\Event\EventVenueLocator;
 use App\EventOperations\Domain\Model\Event\EventRepository;
+use App\Shared\Domain\Model\Geo\PlaceFinder;
 
 final class GetAttendeeSurveyByTokenService
 {
@@ -16,6 +18,9 @@ final class GetAttendeeSurveyByTokenService
         private AttendeeSurveyRepository $attendeeSurveyRepository,
         private EventRepository $eventRepository,
         private MobilityRepository $mobilityRepository,
+        private EventVenueLocator $eventVenueLocator,
+        private PlaceFinder $placeFinder,
+        private int $maxLegs = 4,
     ) {}
 
     public function __invoke(GetAttendeeSurveyByTokenRequest $request): GetAttendeeSurveyByTokenResponse
@@ -35,6 +40,12 @@ final class GetAttendeeSurveyByTokenService
 
         $mobilities = $this->mobilityRepository->findByFilter(new MobilityFilter(limit: 0));
 
-        return new GetAttendeeSurveyByTokenResponse($attendeeSurvey, $event, $mobilities);
+        return new GetAttendeeSurveyByTokenResponse(
+            attendeeSurvey: $attendeeSurvey,
+            event: $event,
+            mobilities: $mobilities,
+            geoEnabled: $this->placeFinder->isOperative() && null !== $this->eventVenueLocator->locate($event),
+            maxLegs: $this->maxLegs,
+        );
     }
 }

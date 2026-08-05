@@ -16,6 +16,9 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurvey\MarginOfError;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
+use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\LegKind;
+use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\ResolvedLeg;
+use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\TripWaypoint;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
@@ -28,9 +31,13 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
+use App\CarbonFootprint\Domain\Model\Geo\DistanceSource;
+use App\CarbonFootprint\Domain\Model\Geo\TravelMode;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
+use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
+use App\CarbonFootprint\Domain\Model\Mobility\MobilityFilter;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
@@ -50,6 +57,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
+use App\Tests\Acceptance\Shared\AcceptancePlaceFinder;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
@@ -391,6 +399,59 @@ final readonly class CarbonFootprintContext implements Context
         $this->getMobilityRepository()->add($mobility);
     }
 
+    #[Given('mobility :name with id :id and travel mode :travelMode exists')]
+    public function mobilityWithIdAndTravelModeExists(string $name, string $id, string $travelMode): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $mobility = MobilityMother::fromNameIdAndTravelMode($name, $id, TravelMode::from($travelMode));
+
+        $this->getMobilityRepository()->add($mobility);
+    }
+
+    #[Then('mobility :id has travel mode :travelMode')]
+    public function mobilityHasTravelMode(string $id, string $travelMode): void
+    {
+        $mobility = $this->getMobilityRepository()->find(new MobilityId($id));
+
+        Assert::assertNotNull($mobility);
+        Assert::assertSame(TravelMode::from($travelMode), $mobility->travelMode());
+    }
+
+    #[Then('mobility :id has no travel mode')]
+    public function mobilityHasNoTravelMode(string $id): void
+    {
+        $mobility = $this->getMobilityRepository()->find(new MobilityId($id));
+
+        Assert::assertNotNull($mobility);
+        Assert::assertNull($mobility->travelMode());
+    }
+
+    #[Then('mobility named :name has travel mode :travelMode')]
+    public function mobilityNamedHasTravelMode(string $name, string $travelMode): void
+    {
+        Assert::assertSame(TravelMode::from($travelMode), $this->findMobilityByName($name)->travelMode());
+    }
+
+    #[Then('mobility named :name has no travel mode')]
+    public function mobilityNamedHasNoTravelMode(string $name): void
+    {
+        Assert::assertNull($this->findMobilityByName($name)->travelMode());
+    }
+
+    private function findMobilityByName(string $name): Mobility
+    {
+        $mobilities = $this->getMobilityRepository()->findByFilter(new MobilityFilter(name: $name));
+
+        Assert::assertCount(1, $mobilities);
+
+        $mobility = reset($mobilities);
+
+        Assert::assertInstanceOf(Mobility::class, $mobility);
+
+        return $mobility;
+    }
+
     #[Given('mobility :name with id :id and emission factor for year :year exists')]
     public function mobilityWithEmissionFactorExists(string $name, string $id, string $year): void
     {
@@ -663,6 +724,44 @@ final readonly class CarbonFootprintContext implements Context
         $this->getAttendeeSurveyRepository()->add($attendeeSurvey);
     }
 
+    #[Given('attendee survey :id has venue location :label at :latitude, :longitude')]
+    public function attendeeSurveyHasVenueLocationAt(string $id, string $label, string $latitude, string $longitude): void
+    {
+        $attendeeSurvey = $this->getAttendeeSurveyRepository()->find(new AttendeeSurveyId($id));
+
+        Assert::assertNotNull($attendeeSurvey);
+
+        $eventId = $attendeeSurvey->eventId();
+
+        Assert::assertNotNull($eventId);
+
+        $eventRepository = $this->client->getContainer()->get(EventRepository::class);
+        $event = $eventRepository->find($eventId);
+
+        Assert::assertNotNull($event);
+
+        $event->setVenueLocation('venue-' . $id, $label, (float) $latitude, (float) $longitude);
+
+        $eventRepository->add($event);
+    }
+
+    #[Given('place :reference named :label at :latitude, :longitude exists')]
+    public function placeNamedAtExists(string $reference, string $label, string $latitude, string $longitude): void
+    {
+        $this->getPlaceFinder()->add($reference, $label, (float) $latitude, (float) $longitude);
+    }
+
+    #[Given('the places provider is disabled')]
+    public function thePlacesProviderIsDisabled(): void
+    {
+        $this->getPlaceFinder()->disable();
+    }
+
+    private function getPlaceFinder(): AcceptancePlaceFinder
+    {
+        return $this->client->getContainer()->get(AcceptancePlaceFinder::class);
+    }
+
     #[Given('attendee survey response with id :id for attendee survey :attendeeSurveyId using mobility :mobilityId exists')]
     public function attendeeSurveyResponseWithIdForAttendeeSurveyUsingMobilityExists(string $id, string $attendeeSurveyId, string $mobilityId): void
     {
@@ -670,16 +769,38 @@ final readonly class CarbonFootprintContext implements Context
         $response->register(
             attendeeSurveyId: new AttendeeSurveyId($attendeeSurveyId),
             cameFromAnotherCity: true,
-            intercityDays: 2,
-            intercityMobilityId: new MobilityId($mobilityId),
-            intercityVehicleOccupants: 1,
-            intercityDistanceKm: 100.0,
+            origin: null,
             usedHotel: true,
+            accommodation: null,
             hotelNights: 2,
-            cityDays: 2,
-            cityMobilityId: new MobilityId($mobilityId),
-            cityVehicleOccupants: 1,
-            cityDistanceKm: 10.0,
+            intercityRoundTrip: false,
+            intercityTrips: 2,
+            movedWithinCity: true,
+            cityOrigin: null,
+            cityRoundTrip: false,
+            cityTrips: 2,
+            legs: [
+                new ResolvedLeg(
+                    position: 1,
+                    kind: LegKind::Intercity,
+                    mobilityId: new MobilityId($mobilityId),
+                    vehicleOccupants: 1,
+                    origin: new TripWaypoint(),
+                    destination: new TripWaypoint(),
+                    distanceKm: 100.0,
+                    distanceSource: DistanceSource::Manual,
+                ),
+                new ResolvedLeg(
+                    position: 1,
+                    kind: LegKind::City,
+                    mobilityId: new MobilityId($mobilityId),
+                    vehicleOccupants: 1,
+                    origin: new TripWaypoint(),
+                    destination: new TripWaypoint(),
+                    distanceKm: 10.0,
+                    distanceSource: DistanceSource::Manual,
+                ),
+            ],
         );
 
         $this->getAttendeeSurveyResponseRepository()->add($response);
@@ -721,7 +842,7 @@ final readonly class CarbonFootprintContext implements Context
     {
         $crawler = $this->client->getCrawler();
 
-        $form = $crawler->filter('form')->form();
+        $form = $crawler->filter('form[name="attendees_close"]')->form();
         $form['realAttendees'] = $realAttendees;
         $form['confidenceLevel'] = $level;
 

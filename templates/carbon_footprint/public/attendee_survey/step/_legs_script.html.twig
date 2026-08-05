@@ -1,0 +1,95 @@
+<script>
+    (function () {
+        document.querySelectorAll('[data-legs-block]').forEach(function (block) {
+            var prefix = block.getAttribute('data-legs-block');
+            var geoEnabled = block.getAttribute('data-legs-geo') === '1';
+            var rows = Array.prototype.slice.call(block.querySelectorAll('.leg-row'));
+            var addButton = block.querySelector('[data-legs-add]');
+            var removeButton = block.querySelector('[data-legs-remove]');
+            var originInput = document.querySelector('[name="' + prefix + '[originPlaceReference]"]');
+            var visible = 1;
+
+            function isMultimodal() {
+                var checked = block.querySelector('input[name="' + prefix + '[multimodal]"]:checked');
+
+                return checked !== null && checked.value === 'yes';
+            }
+
+            function isFilled(input) {
+                return input !== null && input.value.trim() !== '';
+            }
+
+            function destinationInput(row) {
+                return row.querySelector('.leg-destination input');
+            }
+
+            // The last leg always ends at a point we already know (the venue, or the accommodation).
+            function isGeolocatable(index) {
+                if (!geoEnabled) {
+                    return false;
+                }
+
+                var originKnown = index === 0
+                    ? isFilled(originInput)
+                    : isFilled(destinationInput(rows[index - 1]));
+
+                var destinationKnown = index === visible - 1 || isFilled(destinationInput(rows[index]));
+
+                return originKnown && destinationKnown;
+            }
+
+            function refresh() {
+                var multimodal = isMultimodal();
+
+                if (!multimodal) {
+                    visible = 1;
+                }
+
+                rows.forEach(function (row, index) {
+                    var shown = index < visible;
+
+                    row.classList.toggle('d-none', !shown);
+                    row.querySelector('.leg-destination').classList.toggle('d-none', !shown || index === visible - 1);
+                    row.querySelector('details').classList.toggle('d-none', shown && isGeolocatable(index));
+
+                    if (!shown) {
+                        row.querySelector('select').value = '';
+                    }
+                });
+
+                addButton.classList.toggle('d-none', !multimodal || visible >= rows.length);
+                removeButton.classList.toggle('d-none', !multimodal || visible < 2);
+            }
+
+            block.querySelectorAll('input[name="' + prefix + '[multimodal]"]').forEach(function (radio) {
+                radio.addEventListener('change', refresh);
+            });
+
+            block.addEventListener('change', function (event) {
+                if (event.target.closest('.leg-destination')) {
+                    refresh();
+                }
+            });
+
+            if (originInput !== null) {
+                originInput.addEventListener('change', refresh);
+            }
+
+            addButton.addEventListener('click', function () {
+                if (visible < rows.length) {
+                    visible++;
+                    refresh();
+                }
+            });
+
+            removeButton.addEventListener('click', function () {
+                if (visible > 1) {
+                    visible--;
+                    refresh();
+                }
+            });
+
+            refresh();
+        });
+    })();
+</script>

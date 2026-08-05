@@ -9,10 +9,15 @@ use App\Shared\Application\CommandBus\CommandResponse;
 
 class GetAttendeeSurveyStatsResponse implements CommandResponse
 {
+    /** @param array<string, int> $legsByDistanceSource */
     public function __construct(
         public AttendeeSurvey $attendeeSurvey,
         public int $responsesCount,
         public ?int $estimatedAttendees,
         public ?float $surveyedPercentage,
+        public bool $venueLocated = false,
+        public ?string $venueLabel = null,
+        public array $legsByDistanceSource = [],
+        public int $multimodalResponsesCount = 0,
     ) {}
 }

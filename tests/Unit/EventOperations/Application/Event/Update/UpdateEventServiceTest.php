@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\EventOperations\Application\Event\Update;
 
 use App\EventOperations\Application\Event\EventAuthorizer;
+use App\EventOperations\Application\Event\EventVenueLocationSetter;
 use App\EventOperations\Application\Event\Update\UpdateEventRequest;
 use App\EventOperations\Application\Event\Update\UpdateEventService;
 use App\EventOperations\Domain\Model\Event\EventId;
@@ -18,6 +19,7 @@ use App\Tests\Unit\EventOperations\Domain\Model\Event\EventMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Shared\Domain\Model\Geo\InMemoryPlaceFinder;
 use PHPUnit\Framework\TestCase;
 
 class UpdateEventServiceTest extends TestCase
@@ -82,11 +84,40 @@ class UpdateEventServiceTest extends TestCase
         $sut($request, UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $accountId));
     }
 
+    public function testDoesNotTouchTheEventWhenTheVenueCannotBeResolved(): void
+    {
+        $repository = EventRepositoryMother::inMemory();
+
+        $accountId = new AccountId('account-id-test');
+
+        $event = EventMother::fromNameAndAccountAndId('Event', 'account-id-test', (string) EventId::generate());
+
+        $repository->add($event);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateEventRequest(
+            eventId: $event->id(),
+            name: 'Updated Name',
+            venuePlaceReference: 'unknown-reference',
+        );
+
+        try {
+            $sut($request, UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $accountId));
+            $this->fail('The unresolvable venue reference should have been rejected.');
+        } catch (\InvalidArgumentException) {
+        }
+
+        $this->assertEquals('Event', $event->name());
+        $this->assertNotInstanceOf(EventUpdated::class, $this->spySubscriber->lastEvent());
+    }
+
     private function createSUT(EventRepository $repository): UpdateEventService
     {
         return new UpdateEventService(
             eventRepository: $repository,
             authorizer: new EventAuthorizer(),
+            venueLocationSetter: new EventVenueLocationSetter(new InMemoryPlaceFinder()),
         );
     }
 }

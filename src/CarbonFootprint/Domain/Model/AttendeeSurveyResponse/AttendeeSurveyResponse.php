@@ -5,29 +5,41 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse;
 
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
-use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
+use Doctrine\Common\Collections\Collection;
 
 class AttendeeSurveyResponse implements \Stringable
 {
     use AggregateRoot;
+
+    /** @var iterable<AttendeeSurveyResponseLeg>|Collection<int, AttendeeSurveyResponseLeg> */
+    private iterable $legs = [];
 
     /** @param array<DomainEvent> $events */
     public function __construct(
         private AttendeeSurveyResponseId $id,
         private ?AttendeeSurveyId $attendeeSurveyId = null,
         private bool $cameFromAnotherCity = false,
-        private ?int $intercityDays = null,
-        private ?MobilityId $intercityMobilityId = null,
-        private ?int $intercityVehicleOccupants = null,
-        private ?float $intercityDistanceKm = null,
+        private ?string $originPlaceReference = null,
+        private ?string $originLabel = null,
+        private ?float $originLatitude = null,
+        private ?float $originLongitude = null,
         private bool $usedHotel = false,
+        private ?string $accommodationPlaceReference = null,
+        private ?string $accommodationLabel = null,
+        private ?float $accommodationLatitude = null,
+        private ?float $accommodationLongitude = null,
         private ?int $hotelNights = null,
-        private ?int $cityDays = null,
-        private ?MobilityId $cityMobilityId = null,
-        private ?int $cityVehicleOccupants = null,
-        private ?float $cityDistanceKm = null,
+        private bool $intercityRoundTrip = false,
+        private ?int $intercityTrips = null,
+        private bool $movedWithinCity = false,
+        private ?string $cityOriginPlaceReference = null,
+        private ?string $cityOriginLabel = null,
+        private ?float $cityOriginLatitude = null,
+        private ?float $cityOriginLongitude = null,
+        private bool $cityRoundTrip = false,
+        private ?int $cityTrips = null,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
     ) {
@@ -49,24 +61,24 @@ class AttendeeSurveyResponse implements \Stringable
         return $this->cameFromAnotherCity;
     }
 
-    public function intercityDays(): ?int
+    public function originPlaceReference(): ?string
     {
-        return $this->intercityDays;
+        return $this->originPlaceReference;
     }
 
-    public function intercityMobilityId(): ?MobilityId
+    public function originLabel(): ?string
     {
-        return $this->intercityMobilityId;
+        return $this->originLabel;
     }
 
-    public function intercityVehicleOccupants(): ?int
+    public function originLatitude(): ?float
     {
-        return $this->intercityVehicleOccupants;
+        return $this->originLatitude;
     }
 
-    public function intercityDistanceKm(): ?float
+    public function originLongitude(): ?float
     {
-        return $this->intercityDistanceKm;
+        return $this->originLongitude;
     }
 
     public function usedHotel(): bool
@@ -74,29 +86,74 @@ class AttendeeSurveyResponse implements \Stringable
         return $this->usedHotel;
     }
 
+    public function accommodationPlaceReference(): ?string
+    {
+        return $this->accommodationPlaceReference;
+    }
+
+    public function accommodationLabel(): ?string
+    {
+        return $this->accommodationLabel;
+    }
+
+    public function accommodationLatitude(): ?float
+    {
+        return $this->accommodationLatitude;
+    }
+
+    public function accommodationLongitude(): ?float
+    {
+        return $this->accommodationLongitude;
+    }
+
     public function hotelNights(): ?int
     {
         return $this->hotelNights;
     }
 
-    public function cityDays(): ?int
+    public function intercityRoundTrip(): bool
     {
-        return $this->cityDays;
+        return $this->intercityRoundTrip;
     }
 
-    public function cityMobilityId(): ?MobilityId
+    public function intercityTrips(): ?int
     {
-        return $this->cityMobilityId;
+        return $this->intercityTrips;
     }
 
-    public function cityVehicleOccupants(): ?int
+    public function movedWithinCity(): bool
     {
-        return $this->cityVehicleOccupants;
+        return $this->movedWithinCity;
     }
 
-    public function cityDistanceKm(): ?float
+    public function cityOriginPlaceReference(): ?string
     {
-        return $this->cityDistanceKm;
+        return $this->cityOriginPlaceReference;
+    }
+
+    public function cityOriginLabel(): ?string
+    {
+        return $this->cityOriginLabel;
+    }
+
+    public function cityOriginLatitude(): ?float
+    {
+        return $this->cityOriginLatitude;
+    }
+
+    public function cityOriginLongitude(): ?float
+    {
+        return $this->cityOriginLongitude;
+    }
+
+    public function cityRoundTrip(): bool
+    {
+        return $this->cityRoundTrip;
+    }
+
+    public function cityTrips(): ?int
+    {
+        return $this->cityTrips;
     }
 
     public function registeredAt(): \DateTimeImmutable
@@ -104,35 +161,65 @@ class AttendeeSurveyResponse implements \Stringable
         return $this->registeredAt;
     }
 
+    /** @return list<AttendeeSurveyResponseLeg> */
+    public function legs(): array
+    {
+        $legs = $this->legs instanceof Collection ? $this->legs->toArray() : (array) $this->legs;
+        $legs = array_values($legs);
+
+        usort(
+            $legs,
+            static fn(AttendeeSurveyResponseLeg $a, AttendeeSurveyResponseLeg $b): int => [self::kindRank($a->kind()), $a->position()] <=> [self::kindRank($b->kind()), $b->position()],
+        );
+
+        return $legs;
+    }
+
+    private static function kindRank(LegKind $kind): int
+    {
+        return LegKind::Intercity === $kind ? 0 : 1;
+    }
+
+    /** @return list<AttendeeSurveyResponseLeg> */
+    public function legsOfKind(LegKind $kind): array
+    {
+        return array_values(
+            array_filter($this->legs(), static fn(AttendeeSurveyResponseLeg $leg): bool => $leg->kind() === $kind),
+        );
+    }
+
+    /** @param list<ResolvedLeg> $legs */
     public function register(
         AttendeeSurveyId $attendeeSurveyId,
         bool $cameFromAnotherCity,
-        ?int $intercityDays,
-        ?MobilityId $intercityMobilityId,
-        ?int $intercityVehicleOccupants,
-        ?float $intercityDistanceKm,
+        ?TripWaypoint $origin,
         bool $usedHotel,
+        ?TripWaypoint $accommodation,
         ?int $hotelNights,
-        ?int $cityDays,
-        ?MobilityId $cityMobilityId,
-        ?int $cityVehicleOccupants,
-        ?float $cityDistanceKm,
+        bool $intercityRoundTrip,
+        ?int $intercityTrips,
+        bool $movedWithinCity,
+        ?TripWaypoint $cityOrigin,
+        bool $cityRoundTrip,
+        ?int $cityTrips,
+        array $legs,
     ): void {
         $this->recordApplyAndPublish(
             new AttendeeSurveyResponseRegistered(
                 attendeeSurveyResponseId: $this->id(),
                 attendeeSurveyId: $attendeeSurveyId,
                 cameFromAnotherCity: $cameFromAnotherCity,
-                intercityDays: $intercityDays,
-                intercityMobilityId: $intercityMobilityId,
-                intercityVehicleOccupants: $intercityVehicleOccupants,
-                intercityDistanceKm: $intercityDistanceKm,
+                origin: $origin,
                 usedHotel: $usedHotel,
+                accommodation: $accommodation,
                 hotelNights: $hotelNights,
-                cityDays: $cityDays,
-                cityMobilityId: $cityMobilityId,
-                cityVehicleOccupants: $cityVehicleOccupants,
-                cityDistanceKm: $cityDistanceKm,
+                intercityRoundTrip: $intercityRoundTrip,
+                intercityTrips: $intercityTrips,
+                movedWithinCity: $movedWithinCity,
+                cityOrigin: $cityOrigin,
+                cityRoundTrip: $cityRoundTrip,
+                cityTrips: $cityTrips,
+                legs: $legs,
             ),
         );
     }
@@ -141,17 +228,57 @@ class AttendeeSurveyResponse implements \Stringable
     {
         $this->attendeeSurveyId = $event->attendeeSurveyId();
         $this->cameFromAnotherCity = $event->cameFromAnotherCity();
-        $this->intercityDays = $event->intercityDays();
-        $this->intercityMobilityId = $event->intercityMobilityId();
-        $this->intercityVehicleOccupants = $event->intercityVehicleOccupants();
-        $this->intercityDistanceKm = $event->intercityDistanceKm();
+
+        $origin = $event->origin();
+        $this->originPlaceReference = $origin?->reference;
+        $this->originLabel = $origin?->label;
+        $this->originLatitude = $origin?->point?->latitude;
+        $this->originLongitude = $origin?->point?->longitude;
+
         $this->usedHotel = $event->usedHotel();
+
+        $accommodation = $event->accommodation();
+        $this->accommodationPlaceReference = $accommodation?->reference;
+        $this->accommodationLabel = $accommodation?->label;
+        $this->accommodationLatitude = $accommodation?->point?->latitude;
+        $this->accommodationLongitude = $accommodation?->point?->longitude;
+
         $this->hotelNights = $event->hotelNights();
-        $this->cityDays = $event->cityDays();
-        $this->cityMobilityId = $event->cityMobilityId();
-        $this->cityVehicleOccupants = $event->cityVehicleOccupants();
-        $this->cityDistanceKm = $event->cityDistanceKm();
+        $this->intercityRoundTrip = $event->intercityRoundTrip();
+        $this->intercityTrips = $event->intercityTrips();
+        $this->movedWithinCity = $event->movedWithinCity();
+
+        $cityOrigin = $event->cityOrigin();
+        $this->cityOriginPlaceReference = $cityOrigin?->reference;
+        $this->cityOriginLabel = $cityOrigin?->label;
+        $this->cityOriginLatitude = $cityOrigin?->point?->latitude;
+        $this->cityOriginLongitude = $cityOrigin?->point?->longitude;
+
+        $this->cityRoundTrip = $event->cityRoundTrip();
+        $this->cityTrips = $event->cityTrips();
         $this->registeredAt = $event->occurredOn();
+
+        $this->legs = array_map(
+            fn(ResolvedLeg $leg): AttendeeSurveyResponseLeg => new AttendeeSurveyResponseLeg(
+                id: AttendeeSurveyResponseLegId::generate(),
+                response: $this,
+                position: $leg->position,
+                kind: $leg->kind,
+                mobilityId: $leg->mobilityId,
+                vehicleOccupants: $leg->vehicleOccupants,
+                originPlaceReference: $leg->origin->reference,
+                originLabel: $leg->origin->label,
+                originLatitude: $leg->origin->point?->latitude,
+                originLongitude: $leg->origin->point?->longitude,
+                destinationPlaceReference: $leg->destination->reference,
+                destinationLabel: $leg->destination->label,
+                destinationLatitude: $leg->destination->point?->latitude,
+                destinationLongitude: $leg->destination->point?->longitude,
+                distanceKm: $leg->distanceKm,
+                distanceSource: $leg->distanceSource,
+            ),
+            $event->legs(),
+        );
     }
 
     public function __toString(): string

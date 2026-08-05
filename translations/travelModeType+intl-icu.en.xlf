@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="jc7OLzC" resname="driving">
+        <source>driving</source>
+        <target>Road</target>
+      </trans-unit>
+      <trans-unit id="ZlYd5tC" resname="transit">
+        <source>transit</source>
+        <target>Public transport</target>
+      </trans-unit>
+      <trans-unit id="CqlF3Y9" resname="cycling">
+        <source>cycling</source>
+        <target>Cycling</target>
+      </trans-unit>
+      <trans-unit id="kC1XBxg" resname="walking">
+        <source>walking</source>
+        <target>Walking</target>
+      </trans-unit>
+      <trans-unit id="LD6zUPm" resname="flight">
+        <source>flight</source>
+        <target>Flight</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

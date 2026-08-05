@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAut
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepository;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
+use App\EventOperations\Application\Event\EventVenueLocator;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
@@ -27,6 +28,7 @@ class GetAttendeeSurveyStatsService implements CommandHandler
         private AttendeeSurveyRepository $attendeeSurveyRepository,
         private AttendeeSurveyResponseRepository $attendeeSurveyResponseRepository,
         private EventRepository $eventRepository,
+        private EventVenueLocator $eventVenueLocator,
     ) {}
 
     public function __invoke(GetAttendeeSurveyStatsRequest $request, User $user): GetAttendeeSurveyStatsResponse
@@ -59,6 +61,10 @@ class GetAttendeeSurveyStatsService implements CommandHandler
             responsesCount: $responsesCount,
             estimatedAttendees: $estimatedAttendees,
             surveyedPercentage: $surveyedPercentage,
+            venueLocated: null !== $this->eventVenueLocator->locate($event),
+            venueLabel: $event?->venueLabel(),
+            legsByDistanceSource: $this->attendeeSurveyResponseRepository->countLegsByDistanceSource($attendeeSurvey->id()),
+            multimodalResponsesCount: $this->attendeeSurveyResponseRepository->countMultimodalResponses($attendeeSurvey->id()),
         );
     }
 

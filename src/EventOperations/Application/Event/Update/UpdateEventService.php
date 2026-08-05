@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\EventOperations\Application\Event\Update;
 
 use App\EventOperations\Application\Event\EventAuthorizer;
+use App\EventOperations\Application\Event\EventVenueLocationSetter;
 use App\EventOperations\Domain\Model\Event\DateRange;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\Security\Application\Action as SecurityAction;
@@ -22,6 +23,7 @@ class UpdateEventService implements CommandHandler
     public function __construct(
         private EventRepository $eventRepository,
         private EventAuthorizer $authorizer,
+        private EventVenueLocationSetter $venueLocationSetter,
     ) {}
 
     public function __invoke(UpdateEventRequest $request, User $user): UpdateEventResponse
@@ -47,6 +49,8 @@ class UpdateEventService implements CommandHandler
             endDate: $request->breakdownEndDate,
         );
 
+        $venueLocation = $this->venueLocationSetter->resolve($event, $request->venuePlaceReference);
+
         $event->update(
             name: $request->name,
             location: $request->location,
@@ -60,6 +64,8 @@ class UpdateEventService implements CommandHandler
             celebration: $celebration,
             breakdown: $breakdown,
         );
+
+        $this->venueLocationSetter->apply($event, $venueLocation);
 
         $this->eventRepository->add($event);
 

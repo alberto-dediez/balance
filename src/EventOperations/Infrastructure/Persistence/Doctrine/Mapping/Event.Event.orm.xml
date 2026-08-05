@@ -25,6 +25,11 @@
 
         <field name="accountId" type="account_id" column="account_id" nullable="true" />
 
+        <field name="venuePlaceReference" type="string" length="255" column="venue_place_reference" nullable="true" />
+        <field name="venueLabel" type="string" length="255" column="venue_label" nullable="true" />
+        <field name="venueLatitude" type="float" column="venue_latitude" nullable="true" />
+        <field name="venueLongitude" type="float" column="venue_longitude" nullable="true" />
+
         <field name="removed" type="boolean" nullable="true" />
         <field name="locked" type="boolean" nullable="false" />
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />

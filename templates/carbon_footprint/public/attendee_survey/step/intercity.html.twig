@@ -23,42 +23,67 @@
 
         <div id="intercity-block">
             <div class="mb-3">
-                <label class="form-label">{{ 'Medio de transporte' | trans }}</label>
-                <select class="form-select" name="intercity[mobilityId]">
-                    <option value="">{{ 'Selecciona un medio de transporte' | trans }}</option>
-                    {% for mobility in mobilities %}
-                        <option value="{{ mobility.id }}" {{ stored.intercityMobilityId is defined and stored.intercityMobilityId == mobility.id ? 'selected' : '' }}>{{ mobility.name }}</option>
-                    {% endfor %}
-                </select>
+                <label class="form-label" for="intercity-origin">{{ '¿Desde dónde viajaste al evento?' | trans }}</label>
+                <input id="intercity-origin"
+                       type="text"
+                       class="form-control"
+                       name="intercity[originPlaceReference]"
+                       value="{{ stored.originPlaceReference|default('') }}"
+                       data-controller="autocomplete"
+                       data-autocomplete-path-value="{{ path('public_carbon_footprint_attendee_survey_places', {token: token, kind: 'city'}) }}">
             </div>
 
-            <div class="row">
-                <div class="col-6 mb-3">
-                    <label class="form-label">{{ 'Nº de días' | trans }}</label>
-                    <input type="number" min="1" step="1" inputmode="numeric" class="form-control" name="intercity[days]" value="{{ stored.intercityDays|default('') }}">
+            {% include '@carbon_footprint/public/attendee_survey/step/_legs.html.twig' with {
+                prefix: 'intercity',
+                destinationKind: 'city',
+                chainHelp: 'Indica el medio de transporte de tu viaje. Si cambiaste de medio por el camino, dinos dónde lo hiciste.' | trans,
+                mobilities: mobilities,
+                token: token,
+                maxLegs: maxLegs,
+                geoEnabled: geoEnabled,
+            } only %}
+
+            <div class="mb-3">
+                <label class="form-label d-block">{{ '¿Fue un viaje de ida y vuelta?' | trans }}</label>
+                <div class="btn-group w-100" role="group">
+                    <input class="btn-check" type="radio" name="intercity[roundTrip]" id="intercity_roundtrip_yes" value="yes" {{ stored.intercityRoundTrip is defined and stored.intercityRoundTrip ? 'checked' : '' }}>
+                    <label class="btn btn-outline-primary" for="intercity_roundtrip_yes">{{ 'Ida y vuelta' | trans }}</label>
+                    <input class="btn-check" type="radio" name="intercity[roundTrip]" id="intercity_roundtrip_no" value="no" {{ stored.intercityRoundTrip is defined and not stored.intercityRoundTrip ? 'checked' : '' }}>
+                    <label class="btn btn-outline-primary" for="intercity_roundtrip_no">{{ 'Solo ida' | trans }}</label>
                 </div>
-                <div class="col-6 mb-3">
-                    <label class="form-label">{{ 'Distancia (km)' | trans }}</label>
-                    <input type="number" min="0" step="0.1" inputmode="decimal" class="form-control" name="intercity[distanceKm]" value="{{ stored.intercityDistanceKm|default('') }}">
-                </div>
+            </div>
+        </div>
+
+        <div class="mb-3" id="hotel-question-block">
+            <label class="form-label d-block">{{ '¿Te alojaste en la ciudad del evento?' | trans }}</label>
+            <div class="btn-group w-100" role="group" aria-label="{{ '¿Te alojaste en la ciudad del evento?' | trans }}">
+                <input class="btn-check" type="radio" name="intercity[usedHotel]" id="usedhotel_yes" value="yes" {{ stored.usedHotel is defined and stored.usedHotel ? 'checked' : '' }}>
+                <label class="btn btn-outline-primary" for="usedhotel_yes">{{ 'Sí' | trans }}</label>
+                <input class="btn-check" type="radio" name="intercity[usedHotel]" id="usedhotel_no" value="no" {{ stored.usedHotel is defined and not stored.usedHotel ? 'checked' : '' }}>
+                <label class="btn btn-outline-primary" for="usedhotel_no">{{ 'No' | trans }}</label>
+            </div>
+        </div>
+
+        <div class="mb-3" id="intercity-trips-block">
+            <label class="form-label">{{ '¿Cuántas veces hiciste este viaje?' | trans }}</label>
+            <input type="number" min="1" step="1" inputmode="numeric" class="form-control" name="intercity[trips]" value="{{ stored.intercityTrips|default(1) }}">
+        </div>
+
+        <div id="hotel-block">
+            <div class="mb-3">
+                <label class="form-label" for="intercity-accommodation">{{ '¿Dónde te alojaste?' | trans }}</label>
+                <input id="intercity-accommodation"
+                       type="text"
+                       class="form-control"
+                       name="intercity[accommodationPlaceReference]"
+                       value="{{ stored.accommodationPlaceReference|default('') }}"
+                       data-controller="autocomplete"
+                       data-autocomplete-selected-label-value="{{ stored.accommodationLabel|default('') }}"
+                       data-autocomplete-path-value="{{ path('public_carbon_footprint_attendee_survey_places', {token: token, kind: 'lodging'}) }}">
+                <input type="hidden" name="intercity[accommodationLabel]" id="intercity-accommodation-label" value="{{ stored.accommodationLabel|default('') }}">
             </div>
 
             <div class="mb-3">
-                <label class="form-label">{{ 'Ocupantes del vehículo' | trans }}</label>
-                <input type="number" min="1" step="1" inputmode="numeric" class="form-control" name="intercity[vehicleOccupants]" value="{{ stored.intercityVehicleOccupants|default('') }}">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label d-block">{{ '¿Te alojaste en hotel?' | trans }}</label>
-                <div class="btn-group w-100" role="group" aria-label="{{ '¿Te alojaste en hotel?' | trans }}">
-                    <input class="btn-check" type="radio" name="intercity[usedHotel]" id="usedhotel_yes" value="yes" {{ stored.usedHotel is defined and stored.usedHotel ? 'checked' : '' }}>
-                    <label class="btn btn-outline-primary" for="usedhotel_yes">{{ 'Sí' | trans }}</label>
-                    <input class="btn-check" type="radio" name="intercity[usedHotel]" id="usedhotel_no" value="no" {{ stored.usedHotel is defined and not stored.usedHotel ? 'checked' : '' }}>
-                    <label class="btn btn-outline-primary" for="usedhotel_no">{{ 'No' | trans }}</label>
-                </div>
-            </div>
-
-            <div id="hotel-block" class="mb-3">
                 <label class="form-label">{{ 'Nº de noches' | trans }}</label>
                 <input type="number" min="1" step="1" inputmode="numeric" class="form-control" name="intercity[hotelNights]" value="{{ stored.hotelNights|default('') }}">
             </div>
@@ -69,27 +94,55 @@
         </div>
     </form>
 
+    {% include '@carbon_footprint/public/attendee_survey/step/_legs_script.html.twig' %}
+
     <script>
         (function () {
             var intercityRadios = document.querySelectorAll('input[name="intercity[cameFromAnotherCity]"]');
             var intercityBlock = document.getElementById('intercity-block');
             var hotelRadios = document.querySelectorAll('input[name="intercity[usedHotel]"]');
             var hotelBlock = document.getElementById('hotel-block');
+            var hotelQuestionBlock = document.getElementById('hotel-question-block');
+            var tripsBlock = document.getElementById('intercity-trips-block');
+            var accommodationInput = document.getElementById('intercity-accommodation');
+            var accommodationLabel = document.getElementById('intercity-accommodation-label');
 
-            function toggle(radios, block) {
+            function isYes(radios) {
                 var checked = document.querySelector('input[name="' + radios[0].name + '"]:checked');
-                block.style.display = checked && checked.value === 'yes' ? '' : 'none';
+
+                return checked !== null && checked.value === 'yes';
+            }
+
+            function isNo(radios) {
+                var checked = document.querySelector('input[name="' + radios[0].name + '"]:checked');
+
+                return checked !== null && checked.value === 'no';
+            }
+
+            function refresh() {
+                var fromAnotherCity = isYes(intercityRadios);
+
+                intercityBlock.style.display = fromAnotherCity ? '' : 'none';
+                hotelQuestionBlock.style.display = fromAnotherCity ? '' : 'none';
+                hotelBlock.style.display = fromAnotherCity && isYes(hotelRadios) ? '' : 'none';
+                tripsBlock.style.display = fromAnotherCity && isNo(hotelRadios) ? 'block' : 'none';
             }
 
             intercityRadios.forEach(function (radio) {
-                radio.addEventListener('change', function () { toggle(intercityRadios, intercityBlock); });
+                radio.addEventListener('change', refresh);
             });
             hotelRadios.forEach(function (radio) {
-                radio.addEventListener('change', function () { toggle(hotelRadios, hotelBlock); });
+                radio.addEventListener('change', refresh);
             });
 
-            toggle(intercityRadios, intercityBlock);
-            toggle(hotelRadios, hotelBlock);
+            accommodationInput.addEventListener('change', function () {
+                var control = accommodationInput.tomselect;
+                var selected = control ? control.options[control.getValue()] : null;
+
+                accommodationLabel.value = selected ? selected.label : accommodationInput.value;
+            });
+
+            refresh();
         })();
     </script>
 {% endblock %}

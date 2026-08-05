@@ -1,3 +1,6 @@
+parameters:
+    app.attendee_survey_max_legs: 4
+
 services:
     _defaults:
         autowire: true
@@ -17,3 +20,28 @@ services:
             $basePath: '%app.uploads_dir%/carbon-footprint-reports'
 
     App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportStorage: '@App\CarbonFootprint\Infrastructure\Storage\LocalEventCarbonFootprintReportStorage'
+
+    App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeTripLegsResolver:
+        arguments:
+            $maxLegs: '%app.attendee_survey_max_legs%'
+
+    App\CarbonFootprint\Application\AttendeeSurvey\GetByToken\GetAttendeeSurveyByTokenService:
+        arguments:
+            $maxLegs: '%app.attendee_survey_max_legs%'
+
+    App\CarbonFootprint\Infrastructure\Geo\Google\GoogleRoutesApiDistanceCalculator:
+        arguments:
+            $apiKey: '%app.google_maps_api_key%'
+            $enabled: '%app.google_maps_enabled%'
+            $region: '%app.google_maps_region%'
+
+    App\CarbonFootprint\Infrastructure\Geo\CachedRouteDistanceCalculator:
+        arguments:
+            $calculator: '@App\CarbonFootprint\Infrastructure\Geo\Google\GoogleRoutesApiDistanceCalculator'
+            $cache: '@cache.app'
+
+    App\CarbonFootprint\Domain\Model\Geo\RouteDistanceCalculator: '@App\CarbonFootprint\Infrastructure\Geo\CachedRouteDistanceCalculator'
+
+when@test:
+    services:
+        App\CarbonFootprint\Domain\Model\Geo\RouteDistanceCalculator: '@App\CarbonFootprint\Domain\Model\Geo\GreatCircleRouteDistanceCalculator'

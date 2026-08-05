@@ -6,6 +6,7 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurvey;
 
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyResponsesAggregator;
+use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\LegKind;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseMother;
 use PHPUnit\Framework\TestCase;
@@ -29,14 +30,13 @@ class AttendeeSurveyResponsesAggregatorTest extends TestCase
 
     public function testCalculatesKmForIntercityBlockOnlyWhenCameFromAnotherCity(): void
     {
-        $attendeeSurveyId = (string) AttendeeSurveyId::generate();
         $mobilityId = (string) MobilityId::generate();
 
         $response = AttendeeSurveyResponseMother::intercityOnly(
-            attendeeSurveyId: $attendeeSurveyId,
+            attendeeSurveyId: (string) AttendeeSurveyId::generate(),
             mobilityId: $mobilityId,
             distanceKm: 300.0,
-            days: 2,
+            trips: 2,
             occupants: 3,
         );
 
@@ -45,16 +45,33 @@ class AttendeeSurveyResponsesAggregatorTest extends TestCase
         $this->assertEqualsWithDelta(200.0, $aggregation->kmByMobilityId[$mobilityId], 0.0001);
     }
 
-    public function testOccupantsAreClampedToMinimumOfOne(): void
+    public function testDoublesTheDistanceOfARoundTrip(): void
     {
-        $attendeeSurveyId = (string) AttendeeSurveyId::generate();
         $mobilityId = (string) MobilityId::generate();
 
         $response = AttendeeSurveyResponseMother::intercityOnly(
-            attendeeSurveyId: $attendeeSurveyId,
+            attendeeSurveyId: (string) AttendeeSurveyId::generate(),
+            mobilityId: $mobilityId,
+            distanceKm: 300.0,
+            trips: 1,
+            occupants: 1,
+            roundTrip: true,
+        );
+
+        $aggregation = $this->sut->aggregate([$response], realAttendees: 1);
+
+        $this->assertEqualsWithDelta(600.0, $aggregation->kmByMobilityId[$mobilityId], 0.0001);
+    }
+
+    public function testOccupantsAreClampedToMinimumOfOne(): void
+    {
+        $mobilityId = (string) MobilityId::generate();
+
+        $response = AttendeeSurveyResponseMother::intercityOnly(
+            attendeeSurveyId: (string) AttendeeSurveyId::generate(),
             mobilityId: $mobilityId,
             distanceKm: 100.0,
-            days: 1,
+            trips: 1,
             occupants: 0,
         );
 
@@ -63,16 +80,15 @@ class AttendeeSurveyResponsesAggregatorTest extends TestCase
         $this->assertEqualsWithDelta(100.0, $aggregation->kmByMobilityId[$mobilityId], 0.0001);
     }
 
-    public function testCalculatesKmForCityBlockRegardlessOfCameFromAnotherCity(): void
+    public function testCalculatesKmForCityBlockOnlyWhenTheAttendeeMovedWithinTheCity(): void
     {
-        $attendeeSurveyId = (string) AttendeeSurveyId::generate();
         $mobilityId = (string) MobilityId::generate();
 
         $response = AttendeeSurveyResponseMother::cityOnly(
-            attendeeSurveyId: $attendeeSurveyId,
+            attendeeSurveyId: (string) AttendeeSurveyId::generate(),
             mobilityId: $mobilityId,
             distanceKm: 10.0,
-            days: 3,
+            trips: 3,
             occupants: 2,
         );
 
@@ -81,22 +97,56 @@ class AttendeeSurveyResponsesAggregatorTest extends TestCase
         $this->assertEqualsWithDelta(15.0, $aggregation->kmByMobilityId[$mobilityId], 0.0001);
     }
 
+    public function testIgnoresTheCityLegsWhenTheAttendeeDidNotMoveWithinTheCity(): void
+    {
+        $mobilityId = (string) MobilityId::generate();
+
+        $response = AttendeeSurveyResponseMother::from(
+            attendeeSurveyId: (string) AttendeeSurveyId::generate(),
+            movedWithinCity: false,
+            cityTrips: 3,
+            legs: [AttendeeSurveyResponseMother::leg(1, LegKind::City, $mobilityId, 10.0)],
+        );
+
+        $aggregation = $this->sut->aggregate([$response], realAttendees: 1);
+
+        $this->assertSame([], $aggregation->kmByMobilityId);
+    }
+
+    public function testSplitsAMultimodalTripBetweenItsMeansOfTransport(): void
+    {
+        $flightMobilityId = (string) MobilityId::generate();
+        $trainMobilityId = (string) MobilityId::generate();
+
+        $response = AttendeeSurveyResponseMother::multimodalIntercity(
+            attendeeSurveyId: (string) AttendeeSurveyId::generate(),
+            legs: [
+                ['mobilityId' => $flightMobilityId, 'distanceKm' => 400.0, 'occupants' => 1],
+                ['mobilityId' => $trainMobilityId, 'distanceKm' => 70.0, 'occupants' => 1],
+            ],
+            roundTrip: true,
+        );
+
+        $aggregation = $this->sut->aggregate([$response], realAttendees: 1);
+
+        $this->assertEqualsWithDelta(800.0, $aggregation->kmByMobilityId[$flightMobilityId], 0.0001);
+        $this->assertEqualsWithDelta(140.0, $aggregation->kmByMobilityId[$trainMobilityId], 0.0001);
+    }
+
     public function testMixesIntercityAndCityBlocksAndSumsPerMobilityId(): void
     {
-        $attendeeSurveyId = (string) AttendeeSurveyId::generate();
         $sharedMobilityId = (string) MobilityId::generate();
 
         $response = AttendeeSurveyResponseMother::from(
-            attendeeSurveyId: $attendeeSurveyId,
+            attendeeSurveyId: (string) AttendeeSurveyId::generate(),
             cameFromAnotherCity: true,
-            intercityDays: 2,
-            intercityMobilityId: $sharedMobilityId,
-            intercityVehicleOccupants: 1,
-            intercityDistanceKm: 100.0,
-            cityDays: 1,
-            cityMobilityId: $sharedMobilityId,
-            cityVehicleOccupants: 1,
-            cityDistanceKm: 20.0,
+            intercityTrips: 2,
+            movedWithinCity: true,
+            cityTrips: 1,
+            legs: [
+                AttendeeSurveyResponseMother::leg(1, LegKind::Intercity, $sharedMobilityId, 100.0),
+                AttendeeSurveyResponseMother::leg(1, LegKind::City, $sharedMobilityId, 20.0),
+            ],
         );
 
         $aggregation = $this->sut->aggregate([$response], realAttendees: 1);

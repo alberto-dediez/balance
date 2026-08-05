@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\Mobility;
 
 use App\CarbonFootprint\Domain\DomainEvent;
+use App\CarbonFootprint\Domain\Model\Geo\TravelMode;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
@@ -17,6 +18,7 @@ final class MobilityUpdated extends DomainEvent
         private MobilityId $mobilityId,
         private string $name,
         private Unit $unit,
+        private ?TravelMode $travelMode = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -38,6 +40,11 @@ final class MobilityUpdated extends DomainEvent
         return $this->unit;
     }
 
+    public function travelMode(): ?TravelMode
+    {
+        return $this->travelMode;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->mobilityId();
@@ -49,6 +56,7 @@ final class MobilityUpdated extends DomainEvent
             'mobilityId' => (string) $this->mobilityId,
             'name' => $this->name,
             'unit' => $this->unit->value,
+            'travelMode' => $this->travelMode?->value,
         ];
     }
 
@@ -63,6 +71,7 @@ final class MobilityUpdated extends DomainEvent
             mobilityId: new MobilityId($payload['mobilityId']),
             name: $payload['name'],
             unit: $unit,
+            travelMode: null !== ($payload['travelMode'] ?? null) ? TravelMode::from($payload['travelMode']) : null,
             id: $id,
             occurredOn: $occurredOn,
         );

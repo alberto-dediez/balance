@@ -128,6 +128,9 @@ class AttendeesController extends AbstractController
             'responsesCount' => $stats->responsesCount,
             'estimatedAttendees' => $stats->estimatedAttendees,
             'surveyedPercentage' => $stats->surveyedPercentage,
+            'venueLocated' => $stats->venueLocated,
+            'legsByDistanceSource' => $stats->legsByDistanceSource,
+            'multimodalResponsesCount' => $stats->multimodalResponsesCount,
             'confidenceLevels' => ConfidenceLevel::cases(),
         ]);
     }

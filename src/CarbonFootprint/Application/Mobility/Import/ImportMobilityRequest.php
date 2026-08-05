@@ -12,6 +12,7 @@ class ImportMobilityRequest implements Command
         public ?string $mobility = null,
         public ?string $name = null,
         public ?string $unit = null,
+        public ?string $travelMode = null,
         public ?string $year = null,
         public ?string $co2eq = null,
         public ?string $co2 = null,

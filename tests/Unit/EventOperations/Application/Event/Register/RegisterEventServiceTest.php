@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\EventOperations\Application\Event\Register;
 
 use App\EventOperations\Application\Event\EventAuthorizer;
+use App\EventOperations\Application\Event\EventVenueLocationSetter;
 use App\EventOperations\Application\Event\Register\RegisterEventRequest;
 use App\EventOperations\Application\Event\Register\RegisterEventService;
 use App\EventOperations\Domain\Model\Event\EventRegistered;
@@ -15,6 +16,7 @@ use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Shared\Domain\Model\Geo\InMemoryPlaceFinder;
 use PHPUnit\Framework\TestCase;
 
 class RegisterEventServiceTest extends TestCase
@@ -77,6 +79,7 @@ class RegisterEventServiceTest extends TestCase
         return new RegisterEventService(
             eventRepository: $repository,
             authorizer: new EventAuthorizer(),
+            venueLocationSetter: new EventVenueLocationSetter(new InMemoryPlaceFinder()),
         );
     }
 }

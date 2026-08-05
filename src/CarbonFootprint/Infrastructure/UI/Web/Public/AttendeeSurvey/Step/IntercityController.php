@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\AttendeeSurvey\GetByToken\GetAttendeeSurveyB
 use App\CarbonFootprint\Application\AttendeeSurvey\GetByToken\GetAttendeeSurveyByTokenService;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyTokenInvalidException;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\AttendeeSurveyPublicControllerTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\LegInputsHttpMapper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,12 +56,14 @@ class IntercityController extends AbstractController
 
             $session->set($sessionKey, [
                 'cameFromAnotherCity' => $cameFromAnotherCity,
-                'intercityDays' => !empty($intercity['days']) ? (int) $intercity['days'] : null,
-                'intercityMobilityId' => !empty($intercity['mobilityId']) ? (string) $intercity['mobilityId'] : null,
-                'intercityVehicleOccupants' => !empty($intercity['vehicleOccupants']) ? (int) $intercity['vehicleOccupants'] : null,
-                'intercityDistanceKm' => !empty($intercity['distanceKm']) ? (float) str_replace(',', '.', (string) $intercity['distanceKm']) : null,
+                'originPlaceReference' => !empty($intercity['originPlaceReference']) ? (string) $intercity['originPlaceReference'] : null,
                 'usedHotel' => $usedHotel,
+                'accommodationPlaceReference' => !empty($intercity['accommodationPlaceReference']) ? (string) $intercity['accommodationPlaceReference'] : null,
+                'accommodationLabel' => !empty($intercity['accommodationLabel']) ? (string) $intercity['accommodationLabel'] : null,
                 'hotelNights' => !empty($intercity['hotelNights']) ? (int) $intercity['hotelNights'] : null,
+                'intercityRoundTrip' => 'yes' === ($intercity['roundTrip'] ?? null),
+                'intercityTrips' => !empty($intercity['trips']) ? (int) $intercity['trips'] : null,
+                'intercityLegs' => LegInputsHttpMapper::toSessionData($intercity),
             ]);
 
             return $this->redirectToRoute('public_carbon_footprint_attendee_survey_city', ['token' => $token]);
@@ -74,6 +77,8 @@ class IntercityController extends AbstractController
             'event' => $response->event,
             'mobilities' => $response->mobilities,
             'stored' => $stored,
+            'geoEnabled' => $response->geoEnabled,
+            'maxLegs' => $response->maxLegs,
         ]);
     }
 }

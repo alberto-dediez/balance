@@ -6,9 +6,14 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\Geo\TravelMode;
 use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
+use App\CarbonFootprint\Domain\Model\Mobility\MobilityRegistered;
+use App\CarbonFootprint\Domain\Model\Mobility\MobilityUpdated;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Shared\Domain\Event\DomainEvent;
+use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
@@ -157,6 +162,145 @@ class MobilityTest extends TestCase
         $mobility = new Mobility(id: MobilityId::generate());
 
         $this->assertSame(Unit::Kilometer, $mobility->unit());
+    }
+
+    public function testTravelModeIsNullByDefault(): void
+    {
+        $mobility = new Mobility(id: MobilityId::generate());
+
+        $this->assertNull($mobility->travelMode());
+    }
+
+    public function testRegisterAppliesTheTravelMode(): void
+    {
+        $mobility = new Mobility(id: MobilityId::generate());
+
+        $mobility->register('mobility-name', Unit::Kilometer, TravelMode::Flight);
+
+        $this->assertSame(TravelMode::Flight, $mobility->travelMode());
+
+        $event = $this->firstEvent($mobility, MobilityRegistered::class);
+
+        $this->assertSame(TravelMode::Flight, $event->travelMode());
+        $this->assertSame(TravelMode::Flight->value, $event->payload()['travelMode']);
+    }
+
+    public function testRegisterWithoutTravelModeKeepsItNull(): void
+    {
+        $mobility = new Mobility(id: MobilityId::generate());
+
+        $mobility->register('mobility-name', Unit::Kilometer);
+
+        $this->assertNull($mobility->travelMode());
+        $this->assertNull($this->firstEvent($mobility, MobilityRegistered::class)->payload()['travelMode']);
+    }
+
+    public function testUpdateAppliesTheTravelMode(): void
+    {
+        $mobility = new Mobility(id: MobilityId::generate());
+        $mobility->register('mobility-name', Unit::Kilometer, TravelMode::Transit);
+
+        $mobility->update('mobility-name', Unit::Kilometer, TravelMode::Driving);
+
+        $this->assertSame(TravelMode::Driving, $mobility->travelMode());
+
+        $event = $this->firstEvent($mobility, MobilityUpdated::class);
+
+        $this->assertSame(TravelMode::Driving, $event->travelMode());
+        $this->assertSame(TravelMode::Driving->value, $event->payload()['travelMode']);
+    }
+
+    public function testUpdateWithoutTravelModeClearsIt(): void
+    {
+        $mobility = new Mobility(id: MobilityId::generate());
+        $mobility->register('mobility-name', Unit::Kilometer, TravelMode::Transit);
+
+        $mobility->update('mobility-name', Unit::Kilometer);
+
+        $this->assertNull($mobility->travelMode());
+        $this->assertNull($this->firstEvent($mobility, MobilityUpdated::class)->payload()['travelMode']);
+    }
+
+    public function testRebuildFromRegisteredEventRestoresTheTravelMode(): void
+    {
+        $mobilityId = MobilityId::generate();
+        $event = MobilityRegistered::rebuildFromPayload(
+            id: DomainEventId::generate(),
+            occurredOn: new \DateTimeImmutable('2024-01-01 10:00:00'),
+            payload: [
+                'mobilityId' => (string) $mobilityId,
+                'name' => 'mobility-name',
+                'unit' => Unit::Kilometer->value,
+                'travelMode' => TravelMode::Cycling->value,
+            ],
+        );
+
+        $mobility = new Mobility(id: $mobilityId, events: [(string) $event->id() => $event]);
+        $mobility->rebuild();
+
+        $this->assertSame('mobility-name', $mobility->name());
+        $this->assertSame(Unit::Kilometer, $mobility->unit());
+        $this->assertSame(TravelMode::Cycling, $mobility->travelMode());
+    }
+
+    public function testRebuildFromUpdatedEventRestoresTheTravelMode(): void
+    {
+        $mobilityId = MobilityId::generate();
+        $event = MobilityUpdated::rebuildFromPayload(
+            id: DomainEventId::generate(),
+            occurredOn: new \DateTimeImmutable('2024-02-01 10:00:00'),
+            payload: [
+                'mobilityId' => (string) $mobilityId,
+                'name' => 'updated-name',
+                'unit' => Unit::Piece->value,
+                'travelMode' => TravelMode::Walking->value,
+            ],
+        );
+
+        $mobility = new Mobility(id: $mobilityId, travelMode: TravelMode::Flight, events: [(string) $event->id() => $event]);
+        $mobility->rebuild();
+
+        $this->assertSame('updated-name', $mobility->name());
+        $this->assertSame(Unit::Piece, $mobility->unit());
+        $this->assertSame(TravelMode::Walking, $mobility->travelMode());
+    }
+
+    public function testRebuildFromEventWithoutTravelModeLeavesItNull(): void
+    {
+        $mobilityId = MobilityId::generate();
+        $event = MobilityRegistered::rebuildFromPayload(
+            id: DomainEventId::generate(),
+            occurredOn: new \DateTimeImmutable('2024-01-01 10:00:00'),
+            payload: [
+                'mobilityId' => (string) $mobilityId,
+                'name' => 'mobility-name',
+                'unit' => Unit::Kilometer->value,
+            ],
+        );
+
+        $mobility = new Mobility(id: $mobilityId, events: [(string) $event->id() => $event]);
+        $mobility->rebuild();
+
+        $this->assertNull($mobility->travelMode());
+    }
+
+    /**
+     * @template T of DomainEvent
+     *
+     * @param class-string<T> $eventClass
+     *
+     * @return T
+     */
+    private function firstEvent(Mobility $mobility, string $eventClass): object
+    {
+        $events = array_values(array_filter(
+            $mobility->recordedEvents(),
+            static fn($event) => $event instanceof $eventClass,
+        ));
+
+        $this->assertNotEmpty($events);
+
+        return $events[0];
     }
 
     private function mobility(): Mobility

@@ -30,6 +30,10 @@ class Event implements \Stringable
         private DateRange $celebration = new DateRange(),
         private DateRange $breakdown = new DateRange(),
         private ?AccountId $accountId = null,
+        private ?string $venuePlaceReference = null,
+        private ?string $venueLabel = null,
+        private ?float $venueLatitude = null,
+        private ?float $venueLongitude = null,
         private ?bool $removed = false,
         private bool $locked = false,
         array $events = [],
@@ -103,6 +107,31 @@ class Event implements \Stringable
     public function accountId(): ?AccountId
     {
         return $this->accountId;
+    }
+
+    public function venuePlaceReference(): ?string
+    {
+        return $this->venuePlaceReference;
+    }
+
+    public function venueLabel(): ?string
+    {
+        return $this->venueLabel;
+    }
+
+    public function venueLatitude(): ?float
+    {
+        return $this->venueLatitude;
+    }
+
+    public function venueLongitude(): ?float
+    {
+        return $this->venueLongitude;
+    }
+
+    public function hasVenueLocation(): bool
+    {
+        return null !== $this->venueLatitude && null !== $this->venueLongitude;
     }
 
     public function isRemoved(): bool
@@ -196,6 +225,25 @@ class Event implements \Stringable
         );
     }
 
+    public function setVenueLocation(
+        ?string $venuePlaceReference,
+        ?string $venueLabel,
+        ?float $venueLatitude,
+        ?float $venueLongitude,
+    ): void {
+        $this->ensureIsEditable();
+
+        $this->recordApplyAndPublish(
+            new EventVenueLocationSet(
+                eventId: $this->id(),
+                venuePlaceReference: $venuePlaceReference,
+                venueLabel: $venueLabel,
+                venueLatitude: $venueLatitude,
+                venueLongitude: $venueLongitude,
+            ),
+        );
+    }
+
     public function remove(): void
     {
         $this->recordApplyAndPublish(
@@ -261,6 +309,15 @@ class Event implements \Stringable
         $this->assembly = $event->assembly();
         $this->celebration = $event->celebration();
         $this->breakdown = $event->breakdown();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyEventVenueLocationSet(EventVenueLocationSet $event): void
+    {
+        $this->venuePlaceReference = $event->venuePlaceReference();
+        $this->venueLabel = $event->venueLabel();
+        $this->venueLatitude = $event->venueLatitude();
+        $this->venueLongitude = $event->venueLongitude();
         $this->updatedAt = $event->occurredOn();
     }
 

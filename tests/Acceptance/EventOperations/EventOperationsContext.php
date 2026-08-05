@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\EventOperations;
 
+use App\EventOperations\Domain\Model\Event\Event;
+use App\EventOperations\Domain\Model\Event\EventFilter;
+use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\EventOperations\Domain\Model\Provider\ProviderRepository;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
@@ -11,6 +14,8 @@ use App\Tests\Unit\EventOperations\Domain\Model\Event\EventMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Provider\ProviderMother;
 use Behat\Behat\Context\Context;
 use Behat\Step\Given;
+use Behat\Step\Then;
+use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 final readonly class EventOperationsContext implements Context
@@ -71,5 +76,29 @@ final readonly class EventOperationsContext implements Context
         $event = EventMother::fromNameAndAccountAndIdAndLocation($name, $account, $id, $location);
 
         $this->getEventRepository()->add($event);
+    }
+
+    #[Then('event :id has venue location :label')]
+    public function eventHasVenueLocation(string $id, string $label): void
+    {
+        $event = $this->getEventRepository()->find(new EventId($id));
+
+        Assert::assertNotNull($event);
+        Assert::assertSame($label, $event->venueLabel());
+        Assert::assertTrue($event->hasVenueLocation());
+    }
+
+    #[Then('event named :name has venue location :label')]
+    public function eventNamedHasVenueLocation(string $name, string $label): void
+    {
+        $events = $this->getEventRepository()->findByFilter(new EventFilter(name: $name));
+
+        Assert::assertCount(1, $events);
+
+        $event = reset($events);
+
+        Assert::assertInstanceOf(Event::class, $event);
+        Assert::assertSame($label, $event->venueLabel());
+        Assert::assertTrue($event->hasVenueLocation());
     }
 }

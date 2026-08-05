@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Domain\Model\Mobility;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\Geo\TravelMode;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -28,6 +29,7 @@ class Mobility implements Translatable, \Stringable
         private MobilityId $id,
         private string $name = '',
         private Unit $unit = Unit::Kilometer,
+        private ?TravelMode $travelMode = null,
         private bool $removed = false,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
@@ -54,6 +56,11 @@ class Mobility implements Translatable, \Stringable
     public function unit(): Unit
     {
         return $this->unit;
+    }
+
+    public function travelMode(): ?TravelMode
+    {
+        return $this->travelMode;
     }
 
     public function translations(): Translations
@@ -100,6 +107,7 @@ class Mobility implements Translatable, \Stringable
     public function register(
         string $name,
         Unit $unit,
+        ?TravelMode $travelMode = null,
         ?Locale $locale = null,
     ): void {
         $this->recordApplyAndPublish(
@@ -107,6 +115,7 @@ class Mobility implements Translatable, \Stringable
                 mobilityId: $this->id(),
                 name: $name,
                 unit: $unit,
+                travelMode: $travelMode,
             ),
         );
 
@@ -118,6 +127,7 @@ class Mobility implements Translatable, \Stringable
     public function update(
         string $name,
         Unit $unit,
+        ?TravelMode $travelMode = null,
         ?Locale $locale = null,
     ): void {
         $previousUnit = $this->unit;
@@ -127,6 +137,7 @@ class Mobility implements Translatable, \Stringable
                 mobilityId: $this->id(),
                 name: $locale instanceof Locale ? $this->name : $name,
                 unit: $unit,
+                travelMode: $travelMode,
             ),
         );
 
@@ -253,6 +264,7 @@ class Mobility implements Translatable, \Stringable
     {
         $this->name = $event->name();
         $this->unit = $event->unit();
+        $this->travelMode = $event->travelMode();
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -260,6 +272,7 @@ class Mobility implements Translatable, \Stringable
     {
         $this->name = $event->name();
         $this->unit = $event->unit();
+        $this->travelMode = $event->travelMode();
         $this->updatedAt = $event->occurredOn();
     }
 

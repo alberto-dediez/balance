@@ -12,6 +12,7 @@
 
         <field name="name" type="string" length="255" nullable="false"/>
         <field name="unit" type="string" enum-type="App\CarbonFootprint\Domain\Model\Unit" nullable="false"/>
+        <field name="travelMode" column="travel_mode" type="string" length="20" enum-type="App\CarbonFootprint\Domain\Model\Geo\TravelMode" nullable="true"/>
         <field name="removed" type="boolean" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>

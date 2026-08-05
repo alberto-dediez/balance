@@ -7,6 +7,10 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseId;
+use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\LegKind;
+use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\ResolvedLeg;
+use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\TripWaypoint;
+use App\CarbonFootprint\Domain\Model\Geo\DistanceSource;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 
 class AttendeeSurveyResponseMother
@@ -20,20 +24,20 @@ class AttendeeSurveyResponseMother
         string $attendeeSurveyId,
         string $mobilityId,
         float $distanceKm,
-        int $days,
+        int $trips,
         int $occupants,
         bool $usedHotel = false,
         ?int $hotelNights = null,
+        bool $roundTrip = false,
     ): AttendeeSurveyResponse {
         return self::from(
             attendeeSurveyId: $attendeeSurveyId,
             cameFromAnotherCity: true,
-            intercityDays: $days,
-            intercityMobilityId: $mobilityId,
-            intercityVehicleOccupants: $occupants,
-            intercityDistanceKm: $distanceKm,
+            intercityTrips: $trips,
+            intercityRoundTrip: $roundTrip,
             usedHotel: $usedHotel,
             hotelNights: $hotelNights,
+            legs: [self::leg(1, LegKind::Intercity, $mobilityId, $distanceKm, $occupants)],
         );
     }
 
@@ -41,48 +45,70 @@ class AttendeeSurveyResponseMother
         string $attendeeSurveyId,
         string $mobilityId,
         float $distanceKm,
-        int $days,
+        int $trips,
         int $occupants,
+        bool $roundTrip = false,
     ): AttendeeSurveyResponse {
         return self::from(
             attendeeSurveyId: $attendeeSurveyId,
-            cameFromAnotherCity: false,
-            cityDays: $days,
-            cityMobilityId: $mobilityId,
-            cityVehicleOccupants: $occupants,
-            cityDistanceKm: $distanceKm,
+            movedWithinCity: true,
+            cityTrips: $trips,
+            cityRoundTrip: $roundTrip,
+            legs: [self::leg(1, LegKind::City, $mobilityId, $distanceKm, $occupants)],
         );
     }
 
+    /** @param list<array{mobilityId: string, distanceKm: float, occupants: int}> $legs */
+    public static function multimodalIntercity(
+        string $attendeeSurveyId,
+        array $legs,
+        int $trips = 1,
+        bool $roundTrip = false,
+    ): AttendeeSurveyResponse {
+        $resolvedLegs = [];
+
+        foreach ($legs as $index => $leg) {
+            $resolvedLegs[] = self::leg($index + 1, LegKind::Intercity, $leg['mobilityId'], $leg['distanceKm'], $leg['occupants']);
+        }
+
+        return self::from(
+            attendeeSurveyId: $attendeeSurveyId,
+            cameFromAnotherCity: true,
+            intercityTrips: $trips,
+            intercityRoundTrip: $roundTrip,
+            legs: $resolvedLegs,
+        );
+    }
+
+    /** @param list<ResolvedLeg> $legs */
     public static function from(
         string $attendeeSurveyId,
         bool $cameFromAnotherCity = false,
-        ?int $intercityDays = null,
-        ?string $intercityMobilityId = null,
-        ?int $intercityVehicleOccupants = null,
-        ?float $intercityDistanceKm = null,
+        bool $intercityRoundTrip = false,
+        ?int $intercityTrips = null,
         bool $usedHotel = false,
         ?int $hotelNights = null,
-        ?int $cityDays = null,
-        ?string $cityMobilityId = null,
-        ?int $cityVehicleOccupants = null,
-        ?float $cityDistanceKm = null,
+        bool $movedWithinCity = false,
+        bool $cityRoundTrip = false,
+        ?int $cityTrips = null,
+        array $legs = [],
         ?string $id = null,
     ): AttendeeSurveyResponse {
         $response = new AttendeeSurveyResponse(id: new AttendeeSurveyResponseId($id ?? (string) AttendeeSurveyResponseId::generate()));
         $response->register(
             attendeeSurveyId: new AttendeeSurveyId($attendeeSurveyId),
             cameFromAnotherCity: $cameFromAnotherCity,
-            intercityDays: $intercityDays,
-            intercityMobilityId: null !== $intercityMobilityId ? new MobilityId($intercityMobilityId) : null,
-            intercityVehicleOccupants: $intercityVehicleOccupants,
-            intercityDistanceKm: $intercityDistanceKm,
+            origin: null,
             usedHotel: $usedHotel,
+            accommodation: null,
             hotelNights: $hotelNights,
-            cityDays: $cityDays,
-            cityMobilityId: null !== $cityMobilityId ? new MobilityId($cityMobilityId) : null,
-            cityVehicleOccupants: $cityVehicleOccupants,
-            cityDistanceKm: $cityDistanceKm,
+            intercityRoundTrip: $intercityRoundTrip,
+            intercityTrips: $intercityTrips,
+            movedWithinCity: $movedWithinCity,
+            cityOrigin: null,
+            cityRoundTrip: $cityRoundTrip,
+            cityTrips: $cityTrips,
+            legs: $legs,
         );
 
         return $response;
@@ -91,5 +117,25 @@ class AttendeeSurveyResponseMother
     public static function random(): AttendeeSurveyResponse
     {
         return self::fromAttendeeSurveyId((string) AttendeeSurveyId::generate());
+    }
+
+    public static function leg(
+        int $position,
+        LegKind $kind,
+        string $mobilityId,
+        float $distanceKm,
+        int $occupants = 1,
+        DistanceSource $distanceSource = DistanceSource::Manual,
+    ): ResolvedLeg {
+        return new ResolvedLeg(
+            position: $position,
+            kind: $kind,
+            mobilityId: new MobilityId($mobilityId),
+            vehicleOccupants: $occupants,
+            origin: new TripWaypoint(),
+            destination: new TripWaypoint(),
+            distanceKm: $distanceKm,
+            distanceSource: $distanceSource,
+        );
     }
 }

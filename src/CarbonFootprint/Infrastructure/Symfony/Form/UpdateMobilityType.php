@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Infrastructure\Symfony\Form;
 use App\CarbonFootprint\Application\Mobility\Update\UpdateMobilityRequest;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\GroupedEmissionFactorsType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MobilityEmissionFactorType;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\TravelModeType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\UnitType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -34,6 +35,12 @@ class UpdateMobilityType extends AbstractType
                 'label' => new TranslatableMessage('Unidad'),
                 'required' => true,
                 'constraints' => [new Assert\NotNull()],
+            ])
+            ->add('travelMode', TravelModeType::class, [
+                'label' => new TranslatableMessage('Modo de cálculo de rutas'),
+                'help' => new TranslatableMessage('Si se deja vacío no se calcularán distancias automáticas para este medio de transporte.'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Sin cálculo automático'),
             ])
             ->add('emissionFactors', GroupedEmissionFactorsType::class, [
                 'label' => new TranslatableMessage('Factores de emisión'),

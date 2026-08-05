@@ -34,7 +34,7 @@ class AutocompleteRemoteType extends AbstractType
 
         $view->vars['attr'] = $attr;
         $view->vars['placeholder'] = $options['placeholder'];
-        $view->vars['valueLabel'] = null !== $options['repository'] && null !== $form->getData() ? $options['repository']->find($form->getData()) : null;
+        $view->vars['valueLabel'] = $this->valueLabel($form, $options);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -42,11 +42,30 @@ class AutocompleteRemoteType extends AbstractType
         $resolver->setDefaults([
             'autocomplete-path' => '',
             'placeholder' => null,
+            'repository' => null,
+            'value_label' => null,
         ]);
     }
 
     public function getParent()
     {
         return TextType::class;
+    }
+
+    /**
+     * @param FormInterface<mixed> $form
+     * @param array<string, mixed> $options
+     */
+    private function valueLabel(FormInterface $form, array $options): mixed
+    {
+        if (null !== $options['value_label']) {
+            return $options['value_label'];
+        }
+
+        if (null === $options['repository'] || null === $form->getData()) {
+            return null;
+        }
+
+        return $options['repository']->find($form->getData());
     }
 }

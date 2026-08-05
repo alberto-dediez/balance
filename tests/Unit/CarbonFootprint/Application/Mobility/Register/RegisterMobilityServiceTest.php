@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Mobility\Register;
 use App\CarbonFootprint\Application\Mobility\MobilityAuthorizer;
 use App\CarbonFootprint\Application\Mobility\Register\RegisterMobilityRequest;
 use App\CarbonFootprint\Application\Mobility\Register\RegisterMobilityService;
+use App\CarbonFootprint\Domain\Model\Geo\TravelMode;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRegistered;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityTranslated;
@@ -100,6 +101,44 @@ class RegisterMobilityServiceTest extends TestCase
         ));
 
         $this->assertTrue($result);
+    }
+
+    public function testRegistersTheTravelModeOfTheMobility(): void
+    {
+        $repository = MobilityRepositoryMother::inMemory(Locale::Spanish);
+
+        $sut = $this->createSUT($repository, Locale::Spanish);
+
+        $result = $sut(
+            new RegisterMobilityRequest(
+                name: 'Avión',
+                unit: Unit::Kilometer,
+                travelMode: TravelMode::Flight,
+            ),
+            UserMother::adminUser(),
+        );
+
+        $mobilityPersisted = $repository->find($result->mobilityId);
+
+        $this->assertNotNull($mobilityPersisted);
+        $this->assertSame(TravelMode::Flight, $mobilityPersisted->travelMode());
+    }
+
+    public function testRegistersAMobilityWithoutTravelMode(): void
+    {
+        $repository = MobilityRepositoryMother::inMemory(Locale::Spanish);
+
+        $sut = $this->createSUT($repository, Locale::Spanish);
+
+        $result = $sut(
+            new RegisterMobilityRequest(name: 'Otro medio', unit: Unit::Kilometer),
+            UserMother::adminUser(),
+        );
+
+        $mobilityPersisted = $repository->find($result->mobilityId);
+
+        $this->assertNotNull($mobilityPersisted);
+        $this->assertNull($mobilityPersisted->travelMode());
     }
 
     private function createSUT(MobilityRepository $repository, Locale $locale): RegisterMobilityService

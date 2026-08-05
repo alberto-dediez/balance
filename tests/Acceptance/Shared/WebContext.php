@@ -133,6 +133,21 @@ final class WebContext implements Context
         $this->files = [];
     }
 
+    /** Reproduces what the autocomplete controller does in the browser: injecting the chosen option into the select. */
+    #[When('I pick :value in the autocomplete :field')]
+    public function iPickInTheAutocomplete(string $value, string $field): void
+    {
+        $select = $this->client->getCrawler()->filter(sprintf('select[name$="[%s]"]', $field))->getNode(0);
+
+        Assert::assertNotNull($select);
+        Assert::assertNotNull($select->ownerDocument);
+
+        $option = $select->ownerDocument->createElement('option', $value);
+        $option->setAttribute('value', $value);
+
+        $select->appendChild($option);
+    }
+
     #[When('I attach the file :path to :field')]
     public function iAttachTheFileTo(string $path, string $field): void
     {

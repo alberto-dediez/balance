@@ -13,20 +13,43 @@
         <field name="attendeeSurveyId" type="attendee_survey_id" column="attendee_survey_id" nullable="false" />
 
         <field name="cameFromAnotherCity" type="boolean" column="came_from_another_city" nullable="false" />
-        <field name="intercityDays" type="integer" column="intercity_days" nullable="true" />
-        <field name="intercityMobilityId" type="mobility_id" column="intercity_mobility_id" nullable="true" />
-        <field name="intercityVehicleOccupants" type="integer" column="intercity_vehicle_occupants" nullable="true" />
-        <field name="intercityDistanceKm" type="float" column="intercity_distance_km" nullable="true" />
+        <field name="originPlaceReference" type="string" length="255" column="origin_place_reference" nullable="true" />
+        <field name="originLabel" type="string" length="255" column="origin_label" nullable="true" />
+        <field name="originLatitude" type="float" column="origin_latitude" nullable="true" />
+        <field name="originLongitude" type="float" column="origin_longitude" nullable="true" />
 
         <field name="usedHotel" type="boolean" column="used_hotel" nullable="false" />
+        <field name="accommodationPlaceReference" type="string" length="255" column="accommodation_place_reference" nullable="true" />
+        <field name="accommodationLabel" type="string" length="255" column="accommodation_label" nullable="true" />
+        <field name="accommodationLatitude" type="float" column="accommodation_latitude" nullable="true" />
+        <field name="accommodationLongitude" type="float" column="accommodation_longitude" nullable="true" />
         <field name="hotelNights" type="integer" column="hotel_nights" nullable="true" />
 
-        <field name="cityDays" type="integer" column="city_days" nullable="true" />
-        <field name="cityMobilityId" type="mobility_id" column="city_mobility_id" nullable="true" />
-        <field name="cityVehicleOccupants" type="integer" column="city_vehicle_occupants" nullable="true" />
-        <field name="cityDistanceKm" type="float" column="city_distance_km" nullable="true" />
+        <field name="intercityRoundTrip" type="boolean" column="intercity_round_trip" nullable="false" />
+        <field name="intercityTrips" type="integer" column="intercity_trips" nullable="true" />
+
+        <field name="movedWithinCity" type="boolean" column="moved_within_city" nullable="false" />
+        <field name="cityOriginPlaceReference" type="string" length="255" column="city_origin_place_reference" nullable="true" />
+        <field name="cityOriginLabel" type="string" length="255" column="city_origin_label" nullable="true" />
+        <field name="cityOriginLatitude" type="float" column="city_origin_latitude" nullable="true" />
+        <field name="cityOriginLongitude" type="float" column="city_origin_longitude" nullable="true" />
+        <field name="cityRoundTrip" type="boolean" column="city_round_trip" nullable="false" />
+        <field name="cityTrips" type="integer" column="city_trips" nullable="true" />
 
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
+
+        <one-to-many field="legs"
+                     target-entity="App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseLeg"
+                     mapped-by="response"
+                     orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+            <order-by>
+                <order-by-field name="position" direction="ASC"/>
+            </order-by>
+        </one-to-many>
 
         <indexes>
             <index name="idx_attendee_survey_responses_attendee_survey_id" columns="attendee_survey_id" />

@@ -12,6 +12,7 @@ use App\Property\Infrastructure\Symfony\Form\Type\CompanyIdType;
 use App\Property\Infrastructure\Symfony\Form\Type\DestinationIdType;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
+use App\Shared\Infrastructure\Symfony\Form\Type\PlaceReferenceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -85,6 +86,12 @@ class RegisterEventType extends AbstractType
                 'constraints' => [
                     new Assert\NotNull(),
                 ],
+            ])
+            ->add('venuePlaceReference', PlaceReferenceType::class, [
+                'label' => new TranslatableMessage('Sede del evento'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Sin ubicación'),
+                'help' => new TranslatableMessage('Punto exacto de celebración. Se usa para calcular las distancias de los asistentes en la huella de carbono.'),
             ])
             ->add('assemblyStartDate', DateType::class, [
                 'label' => new TranslatableMessage('Inicio del montaje'),

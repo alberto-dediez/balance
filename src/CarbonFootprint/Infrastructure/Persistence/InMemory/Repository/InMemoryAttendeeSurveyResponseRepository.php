@@ -8,6 +8,7 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
+use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\LegKind;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]
@@ -45,5 +46,35 @@ class InMemoryAttendeeSurveyResponseRepository implements AttendeeSurveyResponse
     public function countByAttendeeSurveyId(AttendeeSurveyId $attendeeSurveyId): int
     {
         return count($this->findByAttendeeSurveyId($attendeeSurveyId));
+    }
+
+    /** @return array<string, int> */
+    public function countLegsByDistanceSource(AttendeeSurveyId $attendeeSurveyId): array
+    {
+        $counts = [];
+
+        foreach ($this->findByAttendeeSurveyId($attendeeSurveyId) as $attendeeSurveyResponse) {
+            foreach ($attendeeSurveyResponse->legs() as $leg) {
+                $source = $leg->distanceSource()->value;
+                $counts[$source] = ($counts[$source] ?? 0) + 1;
+            }
+        }
+
+        return $counts;
+    }
+
+    public function countMultimodalResponses(AttendeeSurveyId $attendeeSurveyId): int
+    {
+        $count = 0;
+
+        foreach ($this->findByAttendeeSurveyId($attendeeSurveyId) as $attendeeSurveyResponse) {
+            if (count($attendeeSurveyResponse->legsOfKind(LegKind::Intercity)) > 1
+                || count($attendeeSurveyResponse->legsOfKind(LegKind::City)) > 1
+            ) {
+                ++$count;
+            }
+        }
+
+        return $count;
     }
 }

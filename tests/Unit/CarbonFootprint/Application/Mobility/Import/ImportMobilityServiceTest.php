@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Mobility\Import;
 use App\CarbonFootprint\Application\Mobility\Import\ImportMobilityRequest;
 use App\CarbonFootprint\Application\Mobility\Import\ImportMobilityService;
 use App\CarbonFootprint\Application\Mobility\MobilityAuthorizer;
+use App\CarbonFootprint\Domain\Model\Geo\TravelMode;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -86,6 +87,98 @@ class ImportMobilityServiceTest extends TestCase
         $this->assertEquals('Vuelo', $mobility->name());
         $this->assertEquals(Unit::Kilometer, $mobility->unit());
         $this->assertEquals('3.0', $mobility->emissionFactorFor(2025, EmissionFactorGroupMother::defaultId())?->co2eq());
+    }
+
+    public function testCreatesNewMobilityWithTheImportedTravelMode(): void
+    {
+        $repository = MobilityRepositoryMother::inMemory(Locale::Spanish);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new ImportMobilityRequest(
+            name: 'Vuelo',
+            unit: Unit::Kilometer->value,
+            travelMode: TravelMode::Flight->value,
+            year: '2024',
+            co2eq: '1.5',
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
+        );
+
+        $result = $sut($request, UserMother::adminUser());
+
+        $mobility = $repository->find($result->mobilityId);
+
+        $this->assertNotNull($mobility);
+        $this->assertSame(TravelMode::Flight, $mobility->travelMode());
+    }
+
+    public function testCreatesNewMobilityWithoutTravelModeWhenNoneIsImported(): void
+    {
+        $repository = MobilityRepositoryMother::inMemory(Locale::Spanish);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new ImportMobilityRequest(
+            name: 'Vuelo',
+            unit: Unit::Kilometer->value,
+            year: '2024',
+            co2eq: '1.5',
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
+        );
+
+        $result = $sut($request, UserMother::adminUser());
+
+        $mobility = $repository->find($result->mobilityId);
+
+        $this->assertNotNull($mobility);
+        $this->assertNull($mobility->travelMode());
+    }
+
+    public function testCreatesNewMobilityWithoutTravelModeWhenTheImportedValueIsInvalid(): void
+    {
+        $repository = MobilityRepositoryMother::inMemory(Locale::Spanish);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new ImportMobilityRequest(
+            name: 'Vuelo',
+            unit: Unit::Kilometer->value,
+            travelMode: 'teleporting',
+            year: '2024',
+            co2eq: '1.5',
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
+        );
+
+        $result = $sut($request, UserMother::adminUser());
+
+        $mobility = $repository->find($result->mobilityId);
+
+        $this->assertNotNull($mobility);
+        $this->assertNull($mobility->travelMode());
+    }
+
+    public function testExplicitMobilityKeepsItsTravelMode(): void
+    {
+        $repository = MobilityRepositoryMother::inMemory(Locale::Spanish);
+        $existing = MobilityMother::fromNameIdAndTravelMode('Tren', (string) MobilityId::generate(), TravelMode::Transit);
+        $repository->add($existing);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new ImportMobilityRequest(
+            mobility: (string) $existing->id(),
+            travelMode: TravelMode::Flight->value,
+            year: '2025',
+            co2eq: '3.0',
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
+        );
+
+        $result = $sut($request, UserMother::adminUser());
+
+        $mobility = $repository->find($result->mobilityId);
+
+        $this->assertNotNull($mobility);
+        $this->assertSame(TravelMode::Transit, $mobility->travelMode());
     }
 
     public function testThrowsWhenNeitherMobilityNorNameProvided(): void

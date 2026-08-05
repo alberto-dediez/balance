@@ -12,6 +12,7 @@ use App\Property\Infrastructure\Symfony\Form\Type\CompanyIdType;
 use App\Property\Infrastructure\Symfony\Form\Type\DestinationIdType;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
+use App\Shared\Infrastructure\Symfony\Form\Type\PlaceReferenceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -86,6 +87,13 @@ class UpdateEventType extends AbstractType
                     new Assert\NotNull(),
                 ],
             ])
+            ->add('venuePlaceReference', PlaceReferenceType::class, [
+                'label' => new TranslatableMessage('Sede del evento'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Sin ubicación'),
+                'help' => new TranslatableMessage('Punto exacto de celebración. Se usa para calcular las distancias de los asistentes en la huella de carbono.'),
+                'value_label' => $options['venue_label'],
+            ])
             ->add('assemblyStartDate', DateType::class, [
                 'label' => new TranslatableMessage('Inicio del montaje'),
                 'required' => true,
@@ -153,8 +161,11 @@ class UpdateEventType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => UpdateEventRequest::class,
+            'venue_label' => null,
             'constraints' => [new Assert\Callback([self::class, 'validateDateRangesForUpdate'])],
         ]);
+
+        $resolver->setAllowedTypes('venue_label', ['null', 'string']);
     }
 
     public static function validateDateRangesForUpdate(UpdateEventRequest $request, ExecutionContextInterface $context): void

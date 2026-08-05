@@ -24,6 +24,23 @@
             <dt class="col-sm-4">{{ '% encuestados' | trans }}</dt>
             <dd class="col-sm-8">{{ surveyedPercentage is not null ? (surveyedPercentage | number_format(1)) ~ ' %' : '-' }}</dd>
 
+            <dt class="col-sm-4">{{ 'Tramos por origen del dato' | trans }}</dt>
+            <dd class="col-sm-8">
+                {% if legsByDistanceSource is empty %}
+                    -
+                {% else %}
+                    <span class="badge bg-success">{{ 'Ruta real' | trans }}: {{ legsByDistanceSource.route ?? 0 }}</span>
+                    <span class="badge bg-info text-dark">{{ 'Distancia aproximada' | trans }}: {{ legsByDistanceSource.great_circle ?? 0 }}</span>
+                    <span class="badge bg-secondary">{{ 'Introducidos a mano' | trans }}: {{ legsByDistanceSource.manual ?? 0 }}</span>
+                {% endif %}
+            </dd>
+
+            <dt class="col-sm-4">{{ 'Respuestas multimodales' | trans }}</dt>
+            <dd class="col-sm-8">{{ multimodalResponsesCount }}</dd>
+
+            <dt class="col-sm-4">{{ 'Sede del evento' | trans }}</dt>
+            <dd class="col-sm-8">{{ event.venueLabel ?? '-' }}</dd>
+
             <dt class="col-sm-4">{{ 'Estado de la encuesta' | trans }}</dt>
             <dd class="col-sm-8">
                 {% if attendeeSurvey.status.isClosed %}
@@ -33,6 +50,15 @@
                 {% endif %}
             </dd>
         </dl>
+
+        {% if not venueLocated %}
+            <div class="alert alert-warning">
+                {{ 'Sin ubicación de la sede no se calcularán distancias automáticas; los asistentes tendrán que introducir sus km.' | trans }}
+                {% if not readOnly %}
+                    <a href="{{ path('events_edit', {eventId: eventId}) }}">{{ 'Indica la sede en la ficha del evento' | trans }}</a>.
+                {% endif %}
+            </div>
+        {% endif %}
     </twig:Card>
 
     {% if attendeeSurvey.status.isClosed %}
@@ -56,6 +82,7 @@
     {% if not readOnly %}
     <twig:Card title="{{ 'Cerrar la encuesta' | trans }}">
         <form method="post"
+            name="attendees_close"
             data-controller="confirm"
             data-confirm-text-param="{{ '¿Estás seguro de que deseas cerrar la encuesta y el calculo de huella? Esta acción no se puede deshacer' | trans }}"
             data-action="confirm#submit"

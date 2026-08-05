@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\EventOperations\Application\Event\Register;
 
 use App\EventOperations\Application\Event\EventAuthorizer;
+use App\EventOperations\Application\Event\EventVenueLocationSetter;
 use App\EventOperations\Domain\Model\Event\DateRange;
 use App\EventOperations\Domain\Model\Event\Event;
 use App\EventOperations\Domain\Model\Event\EventId;
@@ -24,6 +25,7 @@ class RegisterEventService implements CommandHandler
     public function __construct(
         private EventRepository $eventRepository,
         private EventAuthorizer $authorizer,
+        private EventVenueLocationSetter $venueLocationSetter,
     ) {}
 
     public function __invoke(RegisterEventRequest $request, User $user): RegisterEventResponse
@@ -49,6 +51,9 @@ class RegisterEventService implements CommandHandler
         );
 
         $event = new Event($id);
+
+        $venueLocation = $this->venueLocationSetter->resolve($event, $request->venuePlaceReference);
+
         $event->register(
             name: $request->name,
             location: $request->location,
@@ -63,6 +68,8 @@ class RegisterEventService implements CommandHandler
             breakdown: $breakdown,
             accountId: $request->accountId,
         );
+
+        $this->venueLocationSetter->apply($event, $venueLocation);
 
         $this->eventRepository->add($event);
 

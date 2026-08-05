@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorGroupChoiceType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\MobilityChoiceType;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\TravelModeCodeType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\UnitCodeType;
 use App\DataExchange\Application\Importation\Execute\Extractor\AssignValueExtractor;
 use App\DataExchange\Application\Importation\Execute\Extractor\DirectExtractor;
@@ -51,6 +52,7 @@ class MobilityImportationType implements ImportationType
             (string) new TranslatableMessage('mobility', [], 'fields'),
             (string) new TranslatableMessage('name', [], 'fields'),
             (string) new TranslatableMessage('unit', [], 'fields'),
+            (string) new TranslatableMessage('travelMode', [], 'fields'),
             (string) new TranslatableMessage('year', [], 'fields'),
             (string) new TranslatableMessage('co2eq', [], 'fields'),
             (string) new TranslatableMessage('co2', [], 'fields'),
@@ -66,6 +68,7 @@ class MobilityImportationType implements ImportationType
         return [
             'mobility' => new FieldDefinition(fieldType: MobilityChoiceType::class),
             'unit' => new FieldDefinition(fieldType: UnitCodeType::class),
+            'travelMode' => new FieldDefinition(fieldType: TravelModeCodeType::class),
             'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
@@ -76,6 +79,7 @@ class MobilityImportationType implements ImportationType
             'mobility' => new FieldDefinition(fieldType: MobilityChoiceType::class),
             'name' => new FieldDefinition(fieldType: TextType::class),
             'unit' => new FieldDefinition(fieldType: UnitCodeType::class),
+            'travelMode' => new FieldDefinition(fieldType: TravelModeCodeType::class),
             'year' => new FieldDefinition(fieldType: TextType::class),
             'co2eq' => new FieldDefinition(fieldType: TextType::class),
             'co2' => new FieldDefinition(fieldType: TextType::class),
@@ -92,6 +96,7 @@ class MobilityImportationType implements ImportationType
             mobility: $this->stringOrNull($data['mobility'] ?? null),
             name: $this->stringOrNull($data['name'] ?? null),
             unit: $this->stringOrNull($data['unit'] ?? null),
+            travelMode: $this->stringOrNull($data['travelMode'] ?? null),
             year: $this->stringOrNull($data['year'] ?? null),
             co2eq: $this->stringOrNull($data['co2eq'] ?? null),
             co2: $this->stringOrNull($data['co2'] ?? null),
@@ -115,6 +120,7 @@ class MobilityImportationType implements ImportationType
                 switch ($field) {
                     case 'mobility':
                     case 'unit':
+                    case 'travelMode':
                     case 'emissionFactorGroup':
                         $rowExtractor->addFieldExtractor(
                             new MapExtractor($configuration),

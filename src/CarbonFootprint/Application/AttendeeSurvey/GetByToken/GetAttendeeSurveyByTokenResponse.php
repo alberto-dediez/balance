@@ -15,5 +15,7 @@ final class GetAttendeeSurveyByTokenResponse
         public readonly AttendeeSurvey $attendeeSurvey,
         public readonly Event $event,
         public readonly array $mobilities,
+        public readonly bool $geoEnabled = false,
+        public readonly int $maxLegs = 4,
     ) {}
 }

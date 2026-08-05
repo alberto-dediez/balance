@@ -11,6 +11,7 @@ use App\CarbonFootprint\Application\AttendeeSurveyResponse\Register\RegisterAtte
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyClosedException;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyTokenInvalidException;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\AttendeeSurveyPublicControllerTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\LegInputsHttpMapper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -65,26 +66,28 @@ class CityController extends AbstractController
 
             $city = $request->request->all('city');
 
-            $intercityDays = $intercityData['intercityDays'] ?? null;
-            $intercityMobilityId = $intercityData['intercityMobilityId'] ?? null;
-            $intercityVehicleOccupants = $intercityData['intercityVehicleOccupants'] ?? null;
-            $intercityDistanceKm = $intercityData['intercityDistanceKm'] ?? null;
             $hotelNights = $intercityData['hotelNights'] ?? null;
+            $intercityTrips = $intercityData['intercityTrips'] ?? null;
+
+            /** @var array<mixed> $intercityLegs */
+            $intercityLegs = is_array($intercityData['intercityLegs'] ?? null) ? $intercityData['intercityLegs'] : [];
 
             try {
                 $registerResponse(new RegisterAttendeeSurveyResponseRequest(
                     token: $token,
                     cameFromAnotherCity: (bool) $intercityData['cameFromAnotherCity'],
-                    intercityDays: null !== $intercityDays ? (int) $intercityDays : null,
-                    intercityMobilityId: null !== $intercityMobilityId ? (string) $intercityMobilityId : null,
-                    intercityVehicleOccupants: null !== $intercityVehicleOccupants ? (int) $intercityVehicleOccupants : null,
-                    intercityDistanceKm: null !== $intercityDistanceKm ? (float) $intercityDistanceKm : null,
+                    originPlaceReference: null !== ($intercityData['originPlaceReference'] ?? null) ? (string) $intercityData['originPlaceReference'] : null,
                     usedHotel: (bool) ($intercityData['usedHotel'] ?? false),
+                    accommodationPlaceReference: null !== ($intercityData['accommodationPlaceReference'] ?? null) ? (string) $intercityData['accommodationPlaceReference'] : null,
                     hotelNights: null !== $hotelNights ? (int) $hotelNights : null,
-                    cityDays: !empty($city['days']) ? (int) $city['days'] : null,
-                    cityMobilityId: !empty($city['mobilityId']) ? (string) $city['mobilityId'] : null,
-                    cityVehicleOccupants: !empty($city['vehicleOccupants']) ? (int) $city['vehicleOccupants'] : null,
-                    cityDistanceKm: !empty($city['distanceKm']) ? (float) str_replace(',', '.', (string) $city['distanceKm']) : null,
+                    intercityRoundTrip: (bool) ($intercityData['intercityRoundTrip'] ?? false),
+                    intercityTrips: null !== $intercityTrips ? (int) $intercityTrips : null,
+                    intercityLegs: LegInputsHttpMapper::toLegInputs($intercityLegs),
+                    movedWithinCity: 'yes' === ($city['moved'] ?? null),
+                    cityOriginPlaceReference: !empty($city['originPlaceReference']) ? (string) $city['originPlaceReference'] : null,
+                    cityRoundTrip: 'yes' === ($city['roundTrip'] ?? null),
+                    cityTrips: !empty($city['trips']) ? (int) $city['trips'] : null,
+                    cityLegs: LegInputsHttpMapper::toLegInputs(LegInputsHttpMapper::toSessionData($city)),
                 ));
             } catch (AttendeeSurveyTokenInvalidException) {
                 return $this->attendeeSurveyInvalidResponse($this->attendeeSurveyInvalidTokenLimiter, $request);
@@ -106,6 +109,10 @@ class CityController extends AbstractController
             'token' => $token,
             'event' => $response->event,
             'mobilities' => $response->mobilities,
+            'geoEnabled' => $response->geoEnabled,
+            'maxLegs' => $response->maxLegs,
+            'accommodationPlaceReference' => $intercityData['accommodationPlaceReference'] ?? null,
+            'accommodationLabel' => $intercityData['accommodationLabel'] ?? null,
         ]);
     }
 }

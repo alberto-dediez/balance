@@ -4601,6 +4601,170 @@
         <source>No se puede retirar: la cuenta tiene toneladas disponibles</source>
         <target>No se puede retirar: la cuenta tiene toneladas disponibles</target>
       </trans-unit>
+      <trans-unit id="eeKhodq" resname="Ubicación de la sede guardada: {label}">
+        <source>Ubicación de la sede guardada: {label}</source>
+        <target>Ubicación de la sede guardada: {label}</target>
+      </trans-unit>
+      <trans-unit id="NCAqJgj" resname="Se ha borrado la ubicación de la sede.">
+        <source>Se ha borrado la ubicación de la sede.</source>
+        <target>Se ha borrado la ubicación de la sede.</target>
+      </trans-unit>
+      <trans-unit id="CViFUCp" resname="El evento está bloqueado y no se puede cambiar la ubicación de la sede.">
+        <source>El evento está bloqueado y no se puede cambiar la ubicación de la sede.</source>
+        <target>El evento está bloqueado y no se puede cambiar la ubicación de la sede.</target>
+      </trans-unit>
+      <trans-unit id="yYWsFwS" resname="No se ha podido guardar la ubicación de la sede: {error}">
+        <source>No se ha podido guardar la ubicación de la sede: {error}</source>
+        <target>No se ha podido guardar la ubicación de la sede: {error}</target>
+      </trans-unit>
+      <trans-unit id="sXRw5NW" resname="Modo de cálculo de rutas">
+        <source>Modo de cálculo de rutas</source>
+        <target>Modo de cálculo de rutas</target>
+      </trans-unit>
+      <trans-unit id="_eDDGA." resname="Si se deja vacío no se calcularán distancias automáticas para este medio de transporte.">
+        <source>Si se deja vacío no se calcularán distancias automáticas para este medio de transporte.</source>
+        <target>Si se deja vacío no se calcularán distancias automáticas para este medio de transporte.</target>
+      </trans-unit>
+      <trans-unit id="nwaoGW1" resname="Sin cálculo automático">
+        <source>Sin cálculo automático</source>
+        <target>Sin cálculo automático</target>
+      </trans-unit>
+      <trans-unit id="gRjEekY" resname="Sede del evento">
+        <source>Sede del evento</source>
+        <target>Sede del evento</target>
+      </trans-unit>
+      <trans-unit id="mMHQ_wk" resname="Sin ubicación">
+        <source>Sin ubicación</source>
+        <target>Sin ubicación</target>
+      </trans-unit>
+      <trans-unit id="tesu.Dj" resname="Punto exacto de celebración. Se usa para calcular las distancias de los asistentes en la huella de carbono.">
+        <source>Punto exacto de celebración. Se usa para calcular las distancias de los asistentes en la huella de carbono.</source>
+        <target>Punto exacto de celebración. Se usa para calcular las distancias de los asistentes en la huella de carbono.</target>
+      </trans-unit>
+      <trans-unit id="u7p0NCz" resname="Tramos por origen del dato">
+        <source>Tramos por origen del dato</source>
+        <target>Tramos por origen del dato</target>
+      </trans-unit>
+      <trans-unit id="M.1DhAs" resname="Ruta real">
+        <source>Ruta real</source>
+        <target>Ruta real</target>
+      </trans-unit>
+      <trans-unit id=".IA8CCR" resname="Distancia aproximada">
+        <source>Distancia aproximada</source>
+        <target>Distancia aproximada</target>
+      </trans-unit>
+      <trans-unit id="597D4jn" resname="Introducidos a mano">
+        <source>Introducidos a mano</source>
+        <target>Introducidos a mano</target>
+      </trans-unit>
+      <trans-unit id="3pM4Vpf" resname="Respuestas multimodales">
+        <source>Respuestas multimodales</source>
+        <target>Respuestas multimodales</target>
+      </trans-unit>
+      <trans-unit id="Na1GLfh" resname="Las distancias de los asistentes se calculan hasta este punto. Si no se indica, los asistentes tendrán que introducir sus kilómetros a mano.">
+        <source>Las distancias de los asistentes se calculan hasta este punto. Si no se indica, los asistentes tendrán que introducir sus kilómetros a mano.</source>
+        <target>Las distancias de los asistentes se calculan hasta este punto. Si no se indica, los asistentes tendrán que introducir sus kilómetros a mano.</target>
+      </trans-unit>
+      <trans-unit id="5FgqfaK" resname="Sin ubicación de la sede no se calcularán distancias automáticas; los asistentes tendrán que introducir sus km.">
+        <source>Sin ubicación de la sede no se calcularán distancias automáticas; los asistentes tendrán que introducir sus km.</source>
+        <target>Sin ubicación de la sede no se calcularán distancias automáticas; los asistentes tendrán que introducir sus km.</target>
+      </trans-unit>
+      <trans-unit id="4k87hrS" resname="Guardar ubicación">
+        <source>Guardar ubicación</source>
+        <target>Guardar ubicación</target>
+      </trans-unit>
+      <trans-unit id="6nUYjiq" resname="Ubicación de la sede">
+        <source>Ubicación de la sede</source>
+        <target>Ubicación de la sede</target>
+      </trans-unit>
+      <trans-unit id="uCtjo1x" resname="¿Usaste más de un medio de transporte?">
+        <source>¿Usaste más de un medio de transporte?</source>
+        <target>¿Usaste más de un medio de transporte?</target>
+      </trans-unit>
+      <trans-unit id="sfpZ1nC" resname="¿Hasta dónde llegaste en este medio?">
+        <source>¿Hasta dónde llegaste en este medio?</source>
+        <target>¿Hasta dónde llegaste en este medio?</target>
+      </trans-unit>
+      <trans-unit id="w6HkQol" resname="No encuentro mi ubicación">
+        <source>No encuentro mi ubicación</source>
+        <target>No encuentro mi ubicación</target>
+      </trans-unit>
+      <trans-unit id="o_zMcsT" resname="Distancia de este tramo, solo ida (km)">
+        <source>Distancia de este tramo, solo ida (km)</source>
+        <target>Distancia de este tramo, solo ida (km)</target>
+      </trans-unit>
+      <trans-unit id="632mePX" resname="Añadir tramo">
+        <source>Añadir tramo</source>
+        <target>Añadir tramo</target>
+      </trans-unit>
+      <trans-unit id="2lNBLhD" resname="Quitar tramo">
+        <source>Quitar tramo</source>
+        <target>Quitar tramo</target>
+      </trans-unit>
+      <trans-unit id="CtiflB_" resname="¿Desde dónde viajaste al evento?">
+        <source>¿Desde dónde viajaste al evento?</source>
+        <target>¿Desde dónde viajaste al evento?</target>
+      </trans-unit>
+      <trans-unit id="ZW87hix" resname="¿Te alojaste en la ciudad del evento?">
+        <source>¿Te alojaste en la ciudad del evento?</source>
+        <target>¿Te alojaste en la ciudad del evento?</target>
+      </trans-unit>
+      <trans-unit id="x.Q1K1l" resname="¿Dónde te alojaste?">
+        <source>¿Dónde te alojaste?</source>
+        <target>¿Dónde te alojaste?</target>
+      </trans-unit>
+      <trans-unit id="qPZFI8y" resname="Indica el medio de transporte de tu viaje. Si cambiaste de medio por el camino, dinos dónde lo hiciste.">
+        <source>Indica el medio de transporte de tu viaje. Si cambiaste de medio por el camino, dinos dónde lo hiciste.</source>
+        <target>Indica el medio de transporte de tu viaje. Si cambiaste de medio por el camino, dinos dónde lo hiciste.</target>
+      </trans-unit>
+      <trans-unit id="9oGF_iA" resname="¿Fue un viaje de ida y vuelta?">
+        <source>¿Fue un viaje de ida y vuelta?</source>
+        <target>¿Fue un viaje de ida y vuelta?</target>
+      </trans-unit>
+      <trans-unit id="7Ogue3B" resname="Ida y vuelta">
+        <source>Ida y vuelta</source>
+        <target>Ida y vuelta</target>
+      </trans-unit>
+      <trans-unit id="SDQGoPY" resname="Solo ida">
+        <source>Solo ida</source>
+        <target>Solo ida</target>
+      </trans-unit>
+      <trans-unit id="OPEteQF" resname="¿Cuántas veces hiciste este viaje?">
+        <source>¿Cuántas veces hiciste este viaje?</source>
+        <target>¿Cuántas veces hiciste este viaje?</target>
+      </trans-unit>
+      <trans-unit id="j12ruFU" resname="¿Te desplazaste dentro de la ciudad del evento?">
+        <source>¿Te desplazaste dentro de la ciudad del evento?</source>
+        <target>¿Te desplazaste dentro de la ciudad del evento?</target>
+      </trans-unit>
+      <trans-unit id="HeOyUiU" resname="¿Desde dónde te desplazabas hasta el recinto?">
+        <source>¿Desde dónde te desplazabas hasta el recinto?</source>
+        <target>¿Desde dónde te desplazabas hasta el recinto?</target>
+      </trans-unit>
+      <trans-unit id="G.ibjtx" resname="Indica el medio de transporte con el que llegabas al recinto. Si combinabas varios, dinos dónde cambiabas.">
+        <source>Indica el medio de transporte con el que llegabas al recinto. Si combinabas varios, dinos dónde cambiabas.</source>
+        <target>Indica el medio de transporte con el que llegabas al recinto. Si combinabas varios, dinos dónde cambiabas.</target>
+      </trans-unit>
+      <trans-unit id="DNZkuF2" resname="¿Cada desplazamiento fue de ida y vuelta?">
+        <source>¿Cada desplazamiento fue de ida y vuelta?</source>
+        <target>¿Cada desplazamiento fue de ida y vuelta?</target>
+      </trans-unit>
+      <trans-unit id="ioShtmT" resname="¿Cuántas veces te desplazaste hasta el recinto?">
+        <source>¿Cuántas veces te desplazaste hasta el recinto?</source>
+        <target>¿Cuántas veces te desplazaste hasta el recinto?</target>
+      </trans-unit>
+      <trans-unit id="sN7jZbd" resname="Este proyecto no tiene transacciones de créditos">
+        <source>Este proyecto no tiene transacciones de créditos</source>
+        <target>Este proyecto no tiene transacciones de créditos</target>
+      </trans-unit>
+      <trans-unit id="XL55JBU" resname="Transacciones de créditos">
+        <source>Transacciones de créditos</source>
+        <target>Transacciones de créditos</target>
+      </trans-unit>
+      <trans-unit id="kEUaUFE" resname="Indica la sede en la ficha del evento">
+        <source>Indica la sede en la ficha del evento</source>
+        <target>Indica la sede en la ficha del evento</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
