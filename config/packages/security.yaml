@@ -66,6 +66,7 @@ security:
         - { path: '^/[a-z]{2}/carbon-footprint/contribution', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/carbon-footprint/employee-contribution', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/carbon-footprint/attendee-survey', roles: PUBLIC_ACCESS }
+        - { path: '^/[a-z]{2}/carbon-footprint/property-trip/', roles: PUBLIC_ACCESS }
         - { path: /recover-password, roles: PUBLIC_ACCESS }
         - { path: /login, roles: PUBLIC_ACCESS }
         - { path: /logout, role: PUBLIC_ACCESS }

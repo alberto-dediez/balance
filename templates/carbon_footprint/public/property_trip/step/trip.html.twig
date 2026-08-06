@@ -1,0 +1,110 @@
+{% extends '@carbon_footprint/public/property_trip/layout.html.twig' %}
+
+{% set page_title = 'Calculadora de huella' | trans %}
+
+{% block trip_body %}
+    <p class="text-muted">
+        {{ 'Cuéntanos cómo llegaste hasta aquí y te diremos la huella de carbono de tu viaje.' | trans }}
+    </p>
+
+    <form method="post" name="trip">
+        <input type="hidden" name="_token" value="{{ csrf_token('property_trip_' ~ token) }}">
+
+        <div class="mb-3">
+            <label class="form-label d-block">{{ '¿Te has desplazado desde otra ciudad?' | trans }}</label>
+            <div class="btn-group w-100" role="group" aria-label="{{ '¿Te has desplazado desde otra ciudad?' | trans }}">
+                <input class="btn-check" type="radio" name="trip[cameFromAnotherCity]" id="trip_camefromanothercity_yes" value="yes" required>
+                <label class="btn btn-outline-primary" for="trip_camefromanothercity_yes">{{ 'Sí' | trans }}</label>
+                <input class="btn-check" type="radio" name="trip[cameFromAnotherCity]" id="trip_camefromanothercity_no" value="no" required>
+                <label class="btn btn-outline-primary" for="trip_camefromanothercity_no">{{ 'No' | trans }}</label>
+            </div>
+        </div>
+
+        <div id="trip-block">
+            <div class="mb-3">
+                <label class="form-label" for="trip-origin">{{ '¿Desde dónde viajaste?' | trans }}</label>
+                <input id="trip-origin"
+                       type="text"
+                       class="form-control"
+                       name="trip[originPlaceReference]"
+                       data-controller="autocomplete"
+                       data-autocomplete-path-value="{{ path('public_carbon_footprint_property_trip_places', {token: token, kind: 'city'}) }}">
+            </div>
+
+            {% include '@carbon_footprint/public/trip/_legs.html.twig' with {
+                prefix: 'trip',
+                chainHelp: 'Indica el medio de transporte de tu viaje. Si cambiaste de medio por el camino, dinos dónde lo hiciste.' | trans,
+                mobilities: mobilities,
+                placesPath: path('public_carbon_footprint_property_trip_places', {token: token, kind: 'city'}),
+                maxLegs: maxLegs,
+                geoEnabled: geoEnabled,
+            } only %}
+
+            <div class="mb-3">
+                <label class="form-label d-block">{{ '¿Fue un viaje de ida y vuelta?' | trans }}</label>
+                <div class="btn-group w-100" role="group">
+                    <input class="btn-check" type="radio" name="trip[roundTrip]" id="trip_roundtrip_yes" value="yes" checked>
+                    <label class="btn btn-outline-primary" for="trip_roundtrip_yes">{{ 'Ida y vuelta' | trans }}</label>
+                    <input class="btn-check" type="radio" name="trip[roundTrip]" id="trip_roundtrip_no" value="no">
+                    <label class="btn btn-outline-primary" for="trip_roundtrip_no">{{ 'Solo ida' | trans }}</label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">{{ '¿Cuántas veces hiciste este viaje?' | trans }}</label>
+                <input type="number" min="1" step="1" inputmode="numeric" class="form-control" name="trip[trips]" value="1">
+            </div>
+
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label d-block">{{ '¿Dormiste alguna noche fuera de tu casa?' | trans }}</label>
+            <div class="btn-group w-100" role="group" aria-label="{{ '¿Dormiste alguna noche fuera de tu casa?' | trans }}">
+                <input class="btn-check" type="radio" name="trip[overnight]" id="trip_overnight_yes" value="yes">
+                <label class="btn btn-outline-primary" for="trip_overnight_yes">{{ 'Sí' | trans }}</label>
+                <input class="btn-check" type="radio" name="trip[overnight]" id="trip_overnight_no" value="no" checked>
+                <label class="btn btn-outline-primary" for="trip_overnight_no">{{ 'No' | trans }}</label>
+            </div>
+        </div>
+
+        <div class="mb-3" id="trip-nights-block">
+            <label class="form-label">{{ 'Nº de noches' | trans }}</label>
+            <input type="number" min="1" step="1" inputmode="numeric" class="form-control" name="trip[nights]" value="1">
+        </div>
+
+        <div class="d-grid d-md-flex justify-content-md-end mt-4">
+            <button type="submit" class="btn btn-primary">{{ 'Calcular mi huella' | trans }} &rarr;</button>
+        </div>
+    </form>
+
+    {% include '@carbon_footprint/public/trip/_legs_script.html.twig' %}
+
+    <script>
+        (function () {
+            var cityRadios = document.querySelectorAll('input[name="trip[cameFromAnotherCity]"]');
+            var overnightRadios = document.querySelectorAll('input[name="trip[overnight]"]');
+            var tripBlock = document.getElementById('trip-block');
+            var nightsBlock = document.getElementById('trip-nights-block');
+
+            function isYes(radios) {
+                var checked = document.querySelector('input[name="' + radios[0].name + '"]:checked');
+
+                return checked !== null && checked.value === 'yes';
+            }
+
+            function refresh() {
+                tripBlock.style.display = isYes(cityRadios) ? '' : 'none';
+                nightsBlock.style.display = isYes(overnightRadios) ? '' : 'none';
+            }
+
+            cityRadios.forEach(function (radio) {
+                radio.addEventListener('change', refresh);
+            });
+            overnightRadios.forEach(function (radio) {
+                radio.addEventListener('change', refresh);
+            });
+
+            refresh();
+        })();
+    </script>
+{% endblock %}

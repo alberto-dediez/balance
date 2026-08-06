@@ -7,9 +7,9 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\LegKind;
 use App\CarbonFootprint\Domain\Model\Geo\DistanceSource;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
+use App\CarbonFootprint\Domain\Model\Trip\LegKind;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class AttendeeSurveyResponseRepositoryTest extends KernelTestCase

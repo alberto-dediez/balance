@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\AttendeeSurveyResponse\Register;
 
+use App\CarbonFootprint\Application\Trip\LegInput;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyClosedException;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepository;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyTokenInvalidException;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeTripLegsResolver;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\LegKind;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\ResolvedLeg;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\TripLegChoice;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\TripWaypoint;
 use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
+use App\CarbonFootprint\Domain\Model\Trip\LegKind;
+use App\CarbonFootprint\Domain\Model\Trip\ResolvedLeg;
+use App\CarbonFootprint\Domain\Model\Trip\TripLegChoice;
+use App\CarbonFootprint\Domain\Model\Trip\TripLegsResolver;
+use App\CarbonFootprint\Domain\Model\Trip\TripWaypoint;
 use App\EventOperations\Application\Event\EventVenueLocator;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\Shared\Domain\Model\Geo\PlaceFinder;
@@ -32,7 +33,7 @@ final class RegisterAttendeeSurveyResponseService
         private EventRepository $eventRepository,
         private EventVenueLocator $eventVenueLocator,
         private PlaceFinder $placeFinder,
-        private AttendeeTripLegsResolver $tripLegsResolver,
+        private TripLegsResolver $tripLegsResolver,
     ) {}
 
     public function __invoke(RegisterAttendeeSurveyResponseRequest $request): RegisterAttendeeSurveyResponseResponse

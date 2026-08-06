@@ -21,4 +21,10 @@
             </twig:ActionBar>
         </twig:Card>
     {{ form_end(form)}}
+
+    {% if property.accountId %}
+        <twig:Card title="{{ 'Calculadora de huella de huéspedes' | trans }}">
+            <twig:CarbonFootprint:PropertyTripQr propertyId="{{ property.id }}" />
+        </twig:Card>
+    {% endif %}
 {% endblock %}

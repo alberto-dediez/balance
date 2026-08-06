@@ -28,6 +28,7 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
+use App\CarbonFootprint\Domain\Model\Trip\TripLegsAccumulator;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryAttendeeSurveyRepository;
@@ -102,7 +103,7 @@ class CloseAttendeeSurveyServiceTest extends TestCase
             new EventCarbonFootprintAuthorizer(),
             $this->attendeeSurveyRepository,
             $this->attendeeSurveyResponseRepository,
-            new AttendeeSurveyResponsesAggregator(),
+            new AttendeeSurveyResponsesAggregator(new TripLegsAccumulator()),
             $this->overnightStayRepository,
             new PhaseAnswersSynchronizer($handlers),
         );

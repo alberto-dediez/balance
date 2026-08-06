@@ -6,8 +6,9 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurvey;
 
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyResponsesAggregator;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\LegKind;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
+use App\CarbonFootprint\Domain\Model\Trip\LegKind;
+use App\CarbonFootprint\Domain\Model\Trip\TripLegsAccumulator;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseMother;
 use PHPUnit\Framework\TestCase;
 
@@ -17,7 +18,7 @@ class AttendeeSurveyResponsesAggregatorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->sut = new AttendeeSurveyResponsesAggregator();
+        $this->sut = new AttendeeSurveyResponsesAggregator(new TripLegsAccumulator());
     }
 
     public function testReturnsEmptyAggregationWhenNoResponses(): void

@@ -4,30 +4,15 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey;
 
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
 
 trait AttendeeSurveyPublicControllerTrait
 {
-    private function checkAttendeeSurveyRateLimit(RateLimiterFactory $limiter, RateLimiterFactory $invalidTokenLimiter, Request $request): ?Response
+    private function attendeeSurveyInvalidResponse(PublicFormRateLimiter $rateLimiter, Request $request): Response
     {
-        $clientIp = $request->getClientIp() ?? 'unknown';
-
-        if (!$limiter->create($clientIp)->consume(1)->isAccepted()) {
-            return new Response('Demasiados intentos. Por favor espere.', Response::HTTP_TOO_MANY_REQUESTS);
-        }
-
-        if ($invalidTokenLimiter->create($clientIp)->consume(0)->getRemainingTokens() <= 0) {
-            return new Response('Demasiados intentos. Por favor espere.', Response::HTTP_TOO_MANY_REQUESTS);
-        }
-
-        return null;
-    }
-
-    private function attendeeSurveyInvalidResponse(RateLimiterFactory $invalidTokenLimiter, Request $request): Response
-    {
-        $invalidTokenLimiter->create($request->getClientIp() ?? 'unknown')->consume(1);
+        $rateLimiter->penalizeInvalidToken($request);
 
         return $this->render('@carbon_footprint/public/attendee_survey/invalid.html.twig', [], new Response('', Response::HTTP_NOT_FOUND));
     }

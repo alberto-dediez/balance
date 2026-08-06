@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetByToken\GetAttendeeSurveyByTokenRequest;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetByToken\GetAttendeeSurveyByTokenService;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyTokenInvalidException;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\Shared\Application\Place\Suggest\SuggestPlacesRequest;
 use App\Shared\Application\Place\Suggest\SuggestPlacesService;
 use App\Shared\Domain\Model\Geo\PlaceKind;
@@ -16,7 +17,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/carbon-footprint/attendee-survey/{token}/places', name: 'public_carbon_footprint_attendee_survey_places', methods: ['GET'])]
@@ -25,9 +25,7 @@ class PlaceSuggestionsController extends AbstractController
     use AttendeeSurveyPublicControllerTrait;
 
     public function __construct(
-        private RateLimiterFactory $attendeeSurveyTokenLimiter,
-        private RateLimiterFactory $attendeeSurveyInvalidTokenLimiter,
-        private RateLimiterFactory $attendeeSurveyPlacesLimiter,
+        private PublicFormRateLimiter $attendeeSurveyRateLimiter,
     ) {}
 
     public function __invoke(
@@ -40,18 +38,18 @@ class PlaceSuggestionsController extends AbstractController
         #[MapQueryParameter]
         ?string $kind = null,
     ): Response {
-        if ($limited = $this->checkAttendeeSurveyRateLimit($this->attendeeSurveyTokenLimiter, $this->attendeeSurveyInvalidTokenLimiter, $request)) {
+        if ($limited = $this->attendeeSurveyRateLimiter->check($request)) {
             return $limited;
         }
 
-        if (!$this->attendeeSurveyPlacesLimiter->create($request->getClientIp() ?? 'unknown')->consume(1)->isAccepted()) {
+        if (!$this->attendeeSurveyRateLimiter->checkPlaces($request)) {
             return new JsonResponse([], Response::HTTP_TOO_MANY_REQUESTS);
         }
 
         try {
             $survey = $getByToken(new GetAttendeeSurveyByTokenRequest($token));
         } catch (AttendeeSurveyTokenInvalidException) {
-            $this->attendeeSurveyInvalidTokenLimiter->create($request->getClientIp() ?? 'unknown')->consume(1);
+            $this->attendeeSurveyRateLimiter->penalizeInvalidToken($request);
 
             return new JsonResponse([], Response::HTTP_NOT_FOUND);
         }

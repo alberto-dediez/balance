@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Application\AttendeeSurveyResponse\Register;
 
-use App\CarbonFootprint\Application\AttendeeSurveyResponse\Register\LegInput;
 use App\CarbonFootprint\Application\AttendeeSurveyResponse\Register\RegisterAttendeeSurveyResponseRequest;
 use App\CarbonFootprint\Application\AttendeeSurveyResponse\Register\RegisterAttendeeSurveyResponseService;
+use App\CarbonFootprint\Application\Trip\LegInput;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurvey;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyClosedException;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyTokenInvalidException;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\ConfidenceLevel;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeTripLegsResolver;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\LegKind;
 use App\CarbonFootprint\Domain\Model\Geo\DistanceSource;
 use App\CarbonFootprint\Domain\Model\Geo\GreatCircleRouteDistanceCalculator;
 use App\CarbonFootprint\Domain\Model\Geo\TravelMode;
 use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
+use App\CarbonFootprint\Domain\Model\Trip\LegKind;
+use App\CarbonFootprint\Domain\Model\Trip\TripLegsResolver;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryAttendeeSurveyRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryAttendeeSurveyResponseRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMobilityRepository;
@@ -63,7 +63,7 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
             $this->eventRepository,
             new EventVenueLocator(new InMemoryPropertyRepository()),
             $this->placeFinder,
-            new AttendeeTripLegsResolver(new GreatCircleRouteDistanceCalculator()),
+            new TripLegsResolver(new GreatCircleRouteDistanceCalculator()),
         );
     }
 

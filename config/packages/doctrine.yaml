@@ -61,6 +61,9 @@ doctrine:
             attendee_survey_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\AttendeeSurveyIdType
             attendee_survey_response_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\AttendeeSurveyResponseIdType
             attendee_survey_response_leg_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\AttendeeSurveyResponseLegIdType
+            trip_calculation_link_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\TripCalculationLinkIdType
+            trip_calculation_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\TripCalculationIdType
+            trip_calculation_leg_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\TripCalculationLegIdType
             employee_participation_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EmployeeParticipationIdType
             employee_contribution_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EmployeeContributionIdType
             event_carbon_footprint_report_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EventCarbonFootprintReportIdType

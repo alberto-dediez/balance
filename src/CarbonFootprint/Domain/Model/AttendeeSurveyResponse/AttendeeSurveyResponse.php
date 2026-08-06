@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse;
 
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
+use App\CarbonFootprint\Domain\Model\Trip\LegKind;
+use App\CarbonFootprint\Domain\Model\Trip\ResolvedLeg;
+use App\CarbonFootprint\Domain\Model\Trip\TripWaypoint;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
 use Doctrine\Common\Collections\Collection;

@@ -20,7 +20,7 @@ final class GetAttendeeSurveyByTokenService
         private MobilityRepository $mobilityRepository,
         private EventVenueLocator $eventVenueLocator,
         private PlaceFinder $placeFinder,
-        private int $maxLegs = 4,
+        private int $maxLegs = 16,
     ) {}
 
     public function __invoke(GetAttendeeSurveyByTokenRequest $request): GetAttendeeSurveyByTokenResponse

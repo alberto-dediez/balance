@@ -9,8 +9,8 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyRespon
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseLeg;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\LegKind;
 use App\CarbonFootprint\Domain\Model\Geo\DistanceSource;
+use App\CarbonFootprint\Domain\Model\Trip\LegKind;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\DependencyInjection\Attribute\When;

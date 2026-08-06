@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\AttendeeSurvey;
 
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseLeg;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\LegKind;
+use App\CarbonFootprint\Domain\Model\Trip\LegKind;
+use App\CarbonFootprint\Domain\Model\Trip\TripLegsAccumulator;
 
 final class AttendeeSurveyResponsesAggregator
 {
+    public function __construct(private readonly TripLegsAccumulator $legsAccumulator) {}
+
     /** @param list<AttendeeSurveyResponse> $responses */
     public function aggregate(array $responses, int $realAttendees): AttendeeSurveyAggregation
     {
@@ -24,7 +26,7 @@ final class AttendeeSurveyResponsesAggregator
 
         foreach ($responses as $response) {
             if ($response->cameFromAnotherCity()) {
-                $this->accumulate(
+                $this->legsAccumulator->accumulate(
                     $kmByMobilityId,
                     $response->legsOfKind(LegKind::Intercity),
                     $response->intercityTrips(),
@@ -33,7 +35,7 @@ final class AttendeeSurveyResponsesAggregator
             }
 
             if ($response->movedWithinCity()) {
-                $this->accumulate(
+                $this->legsAccumulator->accumulate(
                     $kmByMobilityId,
                     $response->legsOfKind(LegKind::City),
                     $response->cityTrips(),
@@ -57,32 +59,5 @@ final class AttendeeSurveyResponsesAggregator
             kmByMobilityId: $kmByMobilityId,
             hotelNights: $hotelNights * $extrapolationFactor,
         );
-    }
-
-    /**
-     * @param array<string, float>            $kmByMobilityId
-     * @param list<AttendeeSurveyResponseLeg> $legs
-     */
-    private function accumulate(array &$kmByMobilityId, array $legs, ?int $trips, bool $roundTrip): void
-    {
-        if (null === $trips || $trips < 1) {
-            return;
-        }
-
-        $roundTripFactor = $roundTrip ? 2 : 1;
-
-        foreach ($legs as $leg) {
-            $distanceKm = $leg->distanceKm();
-
-            if (null === $distanceKm) {
-                continue;
-            }
-
-            $mobilityId = (string) $leg->mobilityId();
-            $occupants = max(1, $leg->vehicleOccupants() ?? 1);
-            $km = $distanceKm * $trips * $roundTripFactor / $occupants;
-
-            $kmByMobilityId[$mobilityId] = ($kmByMobilityId[$mobilityId] ?? 0.0) + $km;
-        }
     }
 }

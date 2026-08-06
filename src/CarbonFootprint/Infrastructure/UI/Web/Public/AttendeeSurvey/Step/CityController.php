@@ -11,11 +11,11 @@ use App\CarbonFootprint\Application\AttendeeSurveyResponse\Register\RegisterAtte
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyClosedException;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyTokenInvalidException;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\AttendeeSurveyPublicControllerTrait;
-use App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\LegInputsHttpMapper;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\Trip\LegInputsHttpMapper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -25,8 +25,7 @@ class CityController extends AbstractController
     use AttendeeSurveyPublicControllerTrait;
 
     public function __construct(
-        private RateLimiterFactory $attendeeSurveyTokenLimiter,
-        private RateLimiterFactory $attendeeSurveyInvalidTokenLimiter,
+        private PublicFormRateLimiter $attendeeSurveyRateLimiter,
     ) {}
 
     public function __invoke(
@@ -35,14 +34,14 @@ class CityController extends AbstractController
         RegisterAttendeeSurveyResponseService $registerResponse,
         Request $request,
     ): Response {
-        if ($limited = $this->checkAttendeeSurveyRateLimit($this->attendeeSurveyTokenLimiter, $this->attendeeSurveyInvalidTokenLimiter, $request)) {
+        if ($limited = $this->attendeeSurveyRateLimiter->check($request)) {
             return $limited;
         }
 
         try {
             $response = $getByToken(new GetAttendeeSurveyByTokenRequest($token));
         } catch (AttendeeSurveyTokenInvalidException) {
-            return $this->attendeeSurveyInvalidResponse($this->attendeeSurveyInvalidTokenLimiter, $request);
+            return $this->attendeeSurveyInvalidResponse($this->attendeeSurveyRateLimiter, $request);
         }
 
         if ($response->attendeeSurvey->status()->isClosed()) {
@@ -90,7 +89,7 @@ class CityController extends AbstractController
                     cityLegs: LegInputsHttpMapper::toLegInputs(LegInputsHttpMapper::toSessionData($city)),
                 ));
             } catch (AttendeeSurveyTokenInvalidException) {
-                return $this->attendeeSurveyInvalidResponse($this->attendeeSurveyInvalidTokenLimiter, $request);
+                return $this->attendeeSurveyInvalidResponse($this->attendeeSurveyRateLimiter, $request);
             } catch (AttendeeSurveyClosedException) {
                 return $this->attendeeSurveyClosedResponse();
             } catch (\InvalidArgumentException $e) {

@@ -7,11 +7,11 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseId;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\LegKind;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\ResolvedLeg;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\TripWaypoint;
 use App\CarbonFootprint\Domain\Model\Geo\DistanceSource;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
+use App\CarbonFootprint\Domain\Model\Trip\LegKind;
+use App\CarbonFootprint\Domain\Model\Trip\ResolvedLeg;
+use App\CarbonFootprint\Domain\Model\Trip\TripWaypoint;
 
 class AttendeeSurveyResponseMother
 {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\AttendeeSurveyResponse\Register;
 
+use App\CarbonFootprint\Application\Trip\LegInput;
+
 final class RegisterAttendeeSurveyResponseRequest
 {
     /**

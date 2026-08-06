@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink" table="trip_calculation_links">
+        <id name="id" type="trip_calculation_link_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="propertyId" type="property_id" column="property_id" nullable="false" unique="true" />
+        <field name="accountId" type="account_id" column="account_id" nullable="false" />
+        <field name="token" type="string" length="64" nullable="false" unique="true" />
+
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
+    </entity>
+
+</doctrine-mapping>

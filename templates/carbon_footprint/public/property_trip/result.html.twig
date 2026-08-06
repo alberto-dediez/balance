@@ -1,0 +1,54 @@
+{% extends '@carbon_footprint/public/property_trip/layout.html.twig' %}
+
+{% set page_title = 'Tu huella de carbono' | trans %}
+
+{% block trip_body %}
+    <div class="text-center mb-4">
+        <twig:Icon name="solar:leaf-bold" size="xl" class="text-success mb-3" />
+        <h3 class="text-success mb-1">{{ tripCalculation.emissions.co2eq | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</h3>
+        <p class="text-muted mb-0">{{ 'Esta es la huella de carbono de tu viaje.' | trans }}</p>
+    </div>
+
+    <table class="table table-sm mb-4">
+        <tbody>
+            <tr>
+                <th scope="row" class="fw-normal">{{ 'Desplazamientos' | trans }}</th>
+                <td class="text-end text-nowrap">{{ tripCalculation.mobilityEmissions.co2eq | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</td>
+            </tr>
+            <tr>
+                <th scope="row" class="fw-normal">{{ 'Pernoctaciones' | trans }}</th>
+                <td class="text-end text-nowrap">{{ tripCalculation.overnightEmissions.co2eq | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    {% if tripCalculation.legs is not empty %}
+        <h6 class="text-muted">{{ 'Tramos de tu viaje' | trans }}</h6>
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th scope="col">{{ 'Medio de transporte' | trans }}</th>
+                    <th scope="col" class="text-end">{{ 'Distancia (km)' | trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for leg in tripCalculation.legs %}
+                    <tr>
+                        <td>{{ mobilityNames[leg.mobilityId] | default('—') }}</td>
+                        <td class="text-end text-nowrap">{{ leg.distanceKm ? leg.distanceKm | number_format(2, ',', '.') : '—' }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-muted small">
+            {{ 'No te has desplazado desde otra ciudad, así que tu visita no genera emisiones de desplazamiento.' | trans }}
+        </p>
+    {% endif %}
+
+    {% if tripCalculation.nights %}
+        <p class="text-muted small mb-0">
+            {{ 'Noches declaradas: {nights}' | trans({'{nights}': tripCalculation.nights}) }}
+        </p>
+    {% endif %}
+{% endblock %}

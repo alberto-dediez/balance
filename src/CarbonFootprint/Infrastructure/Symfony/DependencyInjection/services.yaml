@@ -1,15 +1,33 @@
 parameters:
-    app.attendee_survey_max_legs: 4
+    app.trip_max_legs: 16
 
 services:
     _defaults:
         autowire: true
         autoconfigure: true
+        bind:
+            App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter $attendeeSurveyRateLimiter: '@carbon_footprint.attendee_survey_rate_limiter'
+            App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter $propertyTripRateLimiter: '@carbon_footprint.property_trip_rate_limiter'
 
     App\CarbonFootprint\:
         resource: '../../../'
         exclude:
             - '../../../Infrastructure/Symfony/DependencyInjection/'
+            - '../../../Infrastructure/UI/Web/Public/PublicFormRateLimiter.php'
+
+    carbon_footprint.attendee_survey_rate_limiter:
+        class: App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter
+        arguments:
+            $tokenLimiter: '@limiter.attendee_survey_token'
+            $invalidTokenLimiter: '@limiter.attendee_survey_invalid_token'
+            $placesLimiter: '@limiter.attendee_survey_places'
+
+    carbon_footprint.property_trip_rate_limiter:
+        class: App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter
+        arguments:
+            $tokenLimiter: '@limiter.property_trip_token'
+            $invalidTokenLimiter: '@limiter.property_trip_invalid_token'
+            $placesLimiter: '@limiter.property_trip_places'
 
     App\CarbonFootprint\Application\EventCarbonFootprintReport\Generate\GenerateEventCarbonFootprintReportService:
         arguments:
@@ -21,13 +39,17 @@ services:
 
     App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportStorage: '@App\CarbonFootprint\Infrastructure\Storage\LocalEventCarbonFootprintReportStorage'
 
-    App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeTripLegsResolver:
+    App\CarbonFootprint\Domain\Model\Trip\TripLegsResolver:
         arguments:
-            $maxLegs: '%app.attendee_survey_max_legs%'
+            $maxLegs: '%app.trip_max_legs%'
 
     App\CarbonFootprint\Application\AttendeeSurvey\GetByToken\GetAttendeeSurveyByTokenService:
         arguments:
-            $maxLegs: '%app.attendee_survey_max_legs%'
+            $maxLegs: '%app.trip_max_legs%'
+
+    App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenService:
+        arguments:
+            $maxLegs: '%app.trip_max_legs%'
 
     App\CarbonFootprint\Infrastructure\Geo\Google\GoogleRoutesApiDistanceCalculator:
         arguments:

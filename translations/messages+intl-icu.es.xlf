@@ -4765,6 +4765,134 @@
         <source>Indica la sede en la ficha del evento</source>
         <target>Indica la sede en la ficha del evento</target>
       </trans-unit>
+      <trans-unit id="YmzxBLK" resname="No se ha podido calcular tu huella: {error}">
+        <source>No se ha podido calcular tu huella: {error}</source>
+        <target>No se ha podido calcular tu huella: {error}</target>
+      </trans-unit>
+      <trans-unit id=".eXZqXo" resname="Enlace de la calculadora de huéspedes">
+        <source>Enlace de la calculadora de huéspedes</source>
+        <target>Enlace de la calculadora de huéspedes</target>
+      </trans-unit>
+      <trans-unit id="DlBnL05" resname="Ver resultados">
+        <source>Ver resultados</source>
+        <target>Ver resultados</target>
+      </trans-unit>
+      <trans-unit id="XrlbE9X" resname="Desde">
+        <source>Desde</source>
+        <target>Desde</target>
+      </trans-unit>
+      <trans-unit id="3PIwCM1" resname="Hasta">
+        <source>Hasta</source>
+        <target>Hasta</target>
+      </trans-unit>
+      <trans-unit id="pgSP4pQ" resname="Respuestas">
+        <source>Respuestas</source>
+        <target>Respuestas</target>
+      </trans-unit>
+      <trans-unit id="2Lv4ur8" resname="kg CO₂eq">
+        <source>kg CO₂eq</source>
+        <target>kg CO₂eq</target>
+      </trans-unit>
+      <trans-unit id="TRTm7wA" resname="Emisiones medias por huésped">
+        <source>Emisiones medias por huésped</source>
+        <target>Emisiones medias por huésped</target>
+      </trans-unit>
+      <trans-unit id="upJabjg" resname="Todavía no hay respuestas en este periodo.">
+        <source>Todavía no hay respuestas en este periodo.</source>
+        <target>Todavía no hay respuestas en este periodo.</target>
+      </trans-unit>
+      <trans-unit id="8_dNcGg" resname="Huella de los huéspedes">
+        <source>Huella de los huéspedes</source>
+        <target>Huella de los huéspedes</target>
+      </trans-unit>
+      <trans-unit id="9CyvFC7" resname="Periodo">
+        <source>Periodo</source>
+        <target>Periodo</target>
+      </trans-unit>
+      <trans-unit id="_nUHVoV" resname="Resumen">
+        <source>Resumen</source>
+        <target>Resumen</target>
+      </trans-unit>
+      <trans-unit id="AXvke1M" resname="Desglose por medio de transporte">
+        <source>Desglose por medio de transporte</source>
+        <target>Desglose por medio de transporte</target>
+      </trans-unit>
+      <trans-unit id="3X0fnHV" resname="Tu huella de carbono">
+        <source>Tu huella de carbono</source>
+        <target>Tu huella de carbono</target>
+      </trans-unit>
+      <trans-unit id="IXXsqYH" resname="Esta es la huella de carbono de tu estancia.">
+        <source>Esta es la huella de carbono de tu estancia.</source>
+        <target>Esta es la huella de carbono de tu estancia.</target>
+      </trans-unit>
+      <trans-unit id="5XXzEWp" resname="Desplazamientos">
+        <source>Desplazamientos</source>
+        <target>Desplazamientos</target>
+      </trans-unit>
+      <trans-unit id="h2nWuea" resname="Tramos de tu viaje">
+        <source>Tramos de tu viaje</source>
+        <target>Tramos de tu viaje</target>
+      </trans-unit>
+      <trans-unit id="ccs3te7" resname="Noches declaradas: {nights}">
+        <source>Noches declaradas: {nights}</source>
+        <target>Noches declaradas: {nights}</target>
+      </trans-unit>
+      <trans-unit id="7zhCkNP" resname="Calculadora de huella">
+        <source>Calculadora de huella</source>
+        <target>Calculadora de huella</target>
+      </trans-unit>
+      <trans-unit id="T5VPLnn" resname="Cuéntanos cómo llegaste hasta aquí y cuántas noches te alojaste, y te diremos la huella de carbono de tu estancia.">
+        <source>Cuéntanos cómo llegaste hasta aquí y cuántas noches te alojaste, y te diremos la huella de carbono de tu estancia.</source>
+        <target>Cuéntanos cómo llegaste hasta aquí y cuántas noches te alojaste, y te diremos la huella de carbono de tu estancia.</target>
+      </trans-unit>
+      <trans-unit id="0Hpt6PZ" resname="¿Desde dónde viajaste?">
+        <source>¿Desde dónde viajaste?</source>
+        <target>¿Desde dónde viajaste?</target>
+      </trans-unit>
+      <trans-unit id="78u53_q" resname="Nº de noches que te alojaste">
+        <source>Nº de noches que te alojaste</source>
+        <target>Nº de noches que te alojaste</target>
+      </trans-unit>
+      <trans-unit id="UFw9Kwq" resname="Calcular mi huella">
+        <source>Calcular mi huella</source>
+        <target>Calcular mi huella</target>
+      </trans-unit>
+      <trans-unit id="OaEBQSq" resname="Calculadora de huella de tu estancia">
+        <source>Calculadora de huella de tu estancia</source>
+        <target>Calculadora de huella de tu estancia</target>
+      </trans-unit>
+      <trans-unit id="fhkgYWN" resname="El enlace de la calculadora que has utilizado no es válido o ya no está disponible.">
+        <source>El enlace de la calculadora que has utilizado no es válido o ya no está disponible.</source>
+        <target>El enlace de la calculadora que has utilizado no es válido o ya no está disponible.</target>
+      </trans-unit>
+      <trans-unit id="PIWJ8Kn" resname="Calculadora de huella de huéspedes">
+        <source>Calculadora de huella de huéspedes</source>
+        <target>Calculadora de huella de huéspedes</target>
+      </trans-unit>
+      <trans-unit id="OmRXCwt" resname="Esta es la huella de carbono de tu viaje.">
+        <source>Esta es la huella de carbono de tu viaje.</source>
+        <target>Esta es la huella de carbono de tu viaje.</target>
+      </trans-unit>
+      <trans-unit id="3hwjlll" resname="No te has desplazado desde otra ciudad, así que tu visita no genera emisiones de desplazamiento.">
+        <source>No te has desplazado desde otra ciudad, así que tu visita no genera emisiones de desplazamiento.</source>
+        <target>No te has desplazado desde otra ciudad, así que tu visita no genera emisiones de desplazamiento.</target>
+      </trans-unit>
+      <trans-unit id="FFSyXWi" resname="Cuéntanos cómo llegaste hasta aquí y te diremos la huella de carbono de tu viaje.">
+        <source>Cuéntanos cómo llegaste hasta aquí y te diremos la huella de carbono de tu viaje.</source>
+        <target>Cuéntanos cómo llegaste hasta aquí y te diremos la huella de carbono de tu viaje.</target>
+      </trans-unit>
+      <trans-unit id="MrV9aym" resname="¿Te has desplazado desde otra ciudad?">
+        <source>¿Te has desplazado desde otra ciudad?</source>
+        <target>¿Te has desplazado desde otra ciudad?</target>
+      </trans-unit>
+      <trans-unit id="yIj.Y3p" resname="Calculadora de huella de tu viaje">
+        <source>Calculadora de huella de tu viaje</source>
+        <target>Calculadora de huella de tu viaje</target>
+      </trans-unit>
+      <trans-unit id="PEczJn5" resname="¿Dormiste alguna noche fuera de tu casa?">
+        <source>¿Dormiste alguna noche fuera de tu casa?</source>
+        <target>¿Dormiste alguna noche fuera de tu casa?</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

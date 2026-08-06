@@ -1,0 +1,21 @@
+{% set propertyTripUrl = this.url %}
+
+<div class="d-flex flex-column flex-sm-row align-items-center gap-3">
+    <twig:Container:Qr :qrCode="this.qrCode" />
+
+    <div class="flex-grow-1 w-100">
+        <label class="form-label">{{ 'Enlace de la calculadora de huéspedes' | trans }}</label>
+        <div class="input-group">
+            <input type="text" class="form-control" value="{{ propertyTripUrl }}" readonly data-property-trip-url>
+            <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-property-trip-copy
+                onclick="navigator.clipboard.writeText(this.parentElement.querySelector('[data-property-trip-url]').value)"
+            >
+                {{ 'Copiar' | trans }}
+            </button>
+        </div>
+        <a class="btn btn-link px-0 mt-2" href="{{ this.resultsPath }}">{{ 'Ver resultados' | trans }}</a>
+    </div>
+</div>

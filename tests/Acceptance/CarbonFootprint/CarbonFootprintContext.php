@@ -16,9 +16,6 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurvey\MarginOfError;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\LegKind;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\ResolvedLeg;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\TripWaypoint;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
@@ -46,6 +43,13 @@ use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionId
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionRepository;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
+use App\CarbonFootprint\Domain\Model\Trip\LegKind;
+use App\CarbonFootprint\Domain\Model\Trip\ResolvedLeg;
+use App\CarbonFootprint\Domain\Model\Trip\TripWaypoint;
+use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
 use App\CarbonFootprint\Domain\Model\Waste\WasteRepository;
@@ -53,6 +57,9 @@ use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\EventOperations\Domain\Model\Provider\ProviderRepository;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Property\Domain\Model\Property\PropertyInfo;
+use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserRepository;
@@ -473,6 +480,12 @@ final readonly class CarbonFootprintContext implements Context
         $this->getMobilityRepository()->add($mobility);
     }
 
+    #[Given('mobility :name with id :id and emission factor for the current year exists')]
+    public function mobilityWithEmissionFactorForTheCurrentYearExists(string $name, string $id): void
+    {
+        $this->mobilityWithEmissionFactorExists($name, $id, (new \DateTimeImmutable('NOW'))->format('Y'));
+    }
+
     #[Given('waste :name with id :id exists')]
     public function wasteWithIdExists(string $name, string $id): void
     {
@@ -537,6 +550,12 @@ final readonly class CarbonFootprintContext implements Context
         ));
 
         $this->getOvernightStayRepository()->add($overnightStay);
+    }
+
+    #[Given('overnight stay :name with id :id and emission factor for the current year exists')]
+    public function overnightStayWithEmissionFactorForTheCurrentYearExists(string $name, string $id): void
+    {
+        $this->overnightStayWithEmissionFactorExists($name, $id, (new \DateTimeImmutable('NOW'))->format('Y'));
     }
 
     #[Given('event carbon footprint with id :id for event :eventId of account :account with materials answered exists')]
@@ -1006,5 +1025,51 @@ final readonly class CarbonFootprintContext implements Context
             ->toArray();
 
         Assert::assertCount($count, $activities);
+    }
+
+    #[Given('trip calculation link with id :id and token :token for property :propertyId of account :account exists')]
+    public function tripCalculationLinkWithIdAndTokenForPropertyOfAccountExists(string $id, string $token, string $propertyId, string $account): void
+    {
+        $tripCalculationLink = new TripCalculationLink(new TripCalculationLinkId($id));
+        $tripCalculationLink->register(
+            propertyId: new PropertyId($propertyId),
+            accountId: new AccountId($account),
+            token: $token,
+        );
+
+        $this->getTripCalculationLinkRepository()->add($tripCalculationLink);
+    }
+
+    #[Given('property :id is located at :latitude, :longitude')]
+    public function propertyIsLocatedAt(string $id, string $latitude, string $longitude): void
+    {
+        $propertyRepository = $this->client->getContainer()->get(PropertyRepository::class);
+        $property = $propertyRepository->find(new PropertyId($id));
+
+        Assert::assertNotNull($property);
+
+        $property->update(
+            name: $property->name(),
+            accountId: $property->accountId(),
+            info: new PropertyInfo(latitude: $latitude, longitude: $longitude),
+        );
+
+        $propertyRepository->add($property);
+    }
+
+    #[Then('trip calculation link :id should have :count trip calculations')]
+    public function tripCalculationLinkShouldHaveTripCalculations(string $id, int $count): void
+    {
+        Assert::assertCount($count, $this->getTripCalculationRepository()->findByLinkId(new TripCalculationLinkId($id)));
+    }
+
+    private function getTripCalculationLinkRepository(): TripCalculationLinkRepository
+    {
+        return $this->client->getContainer()->get(TripCalculationLinkRepository::class);
+    }
+
+    private function getTripCalculationRepository(): TripCalculationRepository
+    {
+        return $this->client->getContainer()->get(TripCalculationRepository::class);
     }
 }

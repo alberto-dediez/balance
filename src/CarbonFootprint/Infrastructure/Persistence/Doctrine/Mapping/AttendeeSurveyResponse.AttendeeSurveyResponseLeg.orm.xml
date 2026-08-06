@@ -11,7 +11,7 @@
         </id>
 
         <field name="position" type="integer" column="position" nullable="false" />
-        <field name="kind" type="string" length="20" column="kind" enum-type="App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\LegKind" nullable="false" />
+        <field name="kind" type="string" length="20" column="kind" enum-type="App\CarbonFootprint\Domain\Model\Trip\LegKind" nullable="false" />
         <field name="mobilityId" type="mobility_id" column="mobility_id" nullable="false" />
         <field name="vehicleOccupants" type="integer" column="vehicle_occupants" nullable="true" />
 

@@ -6,8 +6,10 @@ namespace App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse;
 
 use App\CarbonFootprint\Domain\Model\Geo\DistanceSource;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
+use App\CarbonFootprint\Domain\Model\Trip\LegKind;
+use App\CarbonFootprint\Domain\Model\Trip\TripLeg;
 
-class AttendeeSurveyResponseLeg
+class AttendeeSurveyResponseLeg implements TripLeg
 {
     public function __construct(
         private AttendeeSurveyResponseLegId $id,

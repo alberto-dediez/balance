@@ -1,0 +1,77 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('properties') }}" />
+{% endblock %}
+
+{% set page_title = ('Propiedades' | trans)
+    ~ ' > '
+    ~ property.name
+    ~ ' > '
+    ~ ('Huella de los huéspedes' | trans) %}
+
+{% block content %}
+    <twig:Card title="{{ 'Periodo' | trans }}">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-12 col-md-4">
+                <label class="form-label" for="from">{{ 'Desde' | trans }}</label>
+                <input id="from" type="date" class="form-control" name="from" value="{{ from | default('') }}">
+            </div>
+            <div class="col-12 col-md-4">
+                <label class="form-label" for="to">{{ 'Hasta' | trans }}</label>
+                <input id="to" type="date" class="form-control" name="to" value="{{ to | default('') }}">
+            </div>
+            <div class="col-12 col-md-4">
+                <button type="submit" class="btn btn-primary">{{ 'Filtrar' | trans }}</button>
+            </div>
+        </form>
+    </twig:Card>
+
+    <twig:Card title="{{ 'Resumen' | trans }}">
+        <table class="table table-sm mb-0">
+            <tbody>
+                <tr>
+                    <th scope="row" class="fw-normal">{{ 'Respuestas' | trans }}</th>
+                    <td class="text-end text-nowrap">{{ aggregation.calculations }}</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="fw-normal">{{ 'Pernoctaciones' | trans }}</th>
+                    <td class="text-end text-nowrap">{{ aggregation.nights | number_format(0, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="fw-normal">{{ 'Emisiones totales' | trans }}</th>
+                    <td class="text-end text-nowrap">{{ aggregation.totalEmissions.co2eq | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="fw-normal">{{ 'Emisiones medias por huésped' | trans }}</th>
+                    <td class="text-end text-nowrap">{{ aggregation.averageEmissions.co2eq | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </twig:Card>
+
+    <twig:Card title="{{ 'Desglose por medio de transporte' | trans }}">
+        {% if mobilityBreakdown is empty %}
+            <p class="text-muted mb-0">{{ 'Todavía no hay respuestas en este periodo.' | trans }}</p>
+        {% else %}
+            <table class="table table-sm mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col">{{ 'Medio de transporte' | trans }}</th>
+                        <th scope="col" class="text-end">{{ 'Distancia (km)' | trans }}</th>
+                        <th scope="col" class="text-end">{{ 'Emisiones' | trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in mobilityBreakdown %}
+                        <tr>
+                            <td>{{ row.mobility.name }}</td>
+                            <td class="text-end text-nowrap">{{ row.km | number_format(2, ',', '.') }}</td>
+                            <td class="text-end text-nowrap">{{ row.emissions.co2eq | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </twig:Card>
+{% endblock %}

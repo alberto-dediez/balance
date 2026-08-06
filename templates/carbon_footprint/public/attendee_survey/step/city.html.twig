@@ -34,12 +34,11 @@
                        data-autocomplete-path-value="{{ path('public_carbon_footprint_attendee_survey_places', {token: token, kind: 'any'}) }}">
             </div>
 
-            {% include '@carbon_footprint/public/attendee_survey/step/_legs.html.twig' with {
+            {% include '@carbon_footprint/public/trip/_legs.html.twig' with {
                 prefix: 'city',
-                destinationKind: 'any',
                 chainHelp: 'Indica el medio de transporte con el que llegabas al recinto. Si combinabas varios, dinos dónde cambiabas.' | trans,
                 mobilities: mobilities,
-                token: token,
+                placesPath: path('public_carbon_footprint_attendee_survey_places', {token: token, kind: 'any'}),
                 maxLegs: maxLegs,
                 geoEnabled: geoEnabled,
             } only %}
@@ -68,7 +67,7 @@
         </div>
     </form>
 
-    {% include '@carbon_footprint/public/attendee_survey/step/_legs_script.html.twig' %}
+    {% include '@carbon_footprint/public/trip/_legs_script.html.twig' %}
 
     <script>
         (function () {

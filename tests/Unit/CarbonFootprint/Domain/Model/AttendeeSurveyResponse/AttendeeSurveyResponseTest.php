@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurveyResponse;
 
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRegistered;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\LegKind;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
+use App\CarbonFootprint\Domain\Model\Trip\LegKind;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use PHPUnit\Framework\TestCase;
 

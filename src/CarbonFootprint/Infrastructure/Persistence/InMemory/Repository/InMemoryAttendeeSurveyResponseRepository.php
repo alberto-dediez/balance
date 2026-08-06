@@ -8,7 +8,7 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
-use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\LegKind;
+use App\CarbonFootprint\Domain\Model\Trip\LegKind;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]
