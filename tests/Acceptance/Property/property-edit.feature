@@ -48,6 +48,19 @@ Feature:
         Then the response status should be 200
         Then I see a text "Propiedad actualizada"
 
+    Scenario: As an owner, I can set the exact location of my property and it replaces its coordinates
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given place "place-ref" named "Hotel Ritz, Madrid" at "40.4180", "-3.6940" exists
+        Given property "Hotel" with id "333" of account "666" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/properties/edit/333"
+        When I pick "place-ref" in the autocomplete "placeReference"
+        When I submit a form with "name:Hotel|[info][placeReference]:place-ref|[info][latitude]:1|[info][longitude]:2" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then property "333" has place location "Hotel Ritz, Madrid" at "40.4180", "-3.6940"
+
     Scenario: As an owner, I can't access to edit properties of other accounts
         Given account "MyCompany" with id "666" exists
         Given account "OtherCompany" with id "111" exists

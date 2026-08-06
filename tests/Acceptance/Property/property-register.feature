@@ -34,6 +34,18 @@ Feature:
         Then the response status should be 200
         Then I see a text "Propiedad creada correctamente"
 
+    Scenario: As an owner, the exact location I pick sets the coordinates of the property
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given place "place-ref" named "Hotel Ritz, Madrid" at "40.4180", "-3.6940" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/properties/register"
+        When I pick "place-ref" in the autocomplete "placeReference"
+        When I submit a form with "name:Hotel Ritz|[info][placeReference]:place-ref" and button "Registrar"
+        When I follow redirect
+        Then the response status should be 200
+        Then property named "Hotel Ritz" has place location "Hotel Ritz, Madrid" at "40.4180", "-3.6940"
+
     Scenario: As an owner, I can register a property for my account via API
         Given account "MyCompany" with id "mycompany" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" with id "owner" of account "mycompany" exists

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Property\Application\Property\Register;
 
 use App\Property\Application\Property\PropertyAuthorizer;
+use App\Property\Application\Property\PropertyPlaceLocationSetter;
 use App\Property\Domain\Model\Company\CompanyRepository;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -21,7 +22,7 @@ class RegisterPropertyService implements CommandHandler
     use RegisterHandlerTrait;
     use CommandInvokeHandlerTrait;
 
-    public function __construct(private PropertyRepository $propertyRepository, private CompanyRepository $companyRepository, private PropertyAuthorizer $authorizer) {}
+    public function __construct(private PropertyRepository $propertyRepository, private CompanyRepository $companyRepository, private PropertyAuthorizer $authorizer, private PropertyPlaceLocationSetter $placeLocationSetter) {}
 
     public function __invoke(RegisterPropertyRequest $request, User $user): RegisterPropertyResponse
     {
@@ -46,11 +47,13 @@ class RegisterPropertyService implements CommandHandler
             }
         }
 
+        $info = $this->placeLocationSetter->resolve($request->info);
+
         $property = new Property($id);
         $property->register(
             name: $request->name,
             accountId: $request->accountId,
-            info: $request->info,
+            info: $info,
             externalId: $request->externalId,
             companyId: $companyId,
             numberOfEmployees: $request->numberOfEmployees,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Property\Application\Property\Update;
 
 use App\Property\Application\Property\PropertyAuthorizer;
+use App\Property\Application\Property\PropertyPlaceLocationSetter;
 use App\Property\Application\Property\Update\UpdatePropertyRequest;
 use App\Property\Application\Property\Update\UpdatePropertyService;
 use App\Property\Domain\Model\Property\PropertyUpdated;
@@ -17,6 +18,7 @@ use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Shared\Domain\Model\Geo\InMemoryPlaceFinder;
 use PHPUnit\Framework\TestCase;
 
 class UpdatePropertyServiceTest extends TestCase
@@ -82,6 +84,6 @@ class UpdatePropertyServiceTest extends TestCase
 
     private function createSUT(InMemoryPropertyRepository $repository): UpdatePropertyService
     {
-        return new UpdatePropertyService($repository, CompanyRepositoryMother::inMemory(), new PropertyAuthorizer());
+        return new UpdatePropertyService($repository, CompanyRepositoryMother::inMemory(), new PropertyAuthorizer(), new PropertyPlaceLocationSetter(new InMemoryPlaceFinder()));
     }
 }

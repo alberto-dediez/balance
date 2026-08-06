@@ -4893,6 +4893,14 @@
         <source>¿Dormiste alguna noche fuera de tu casa?</source>
         <target>¿Dormiste alguna noche fuera de tu casa?</target>
       </trans-unit>
+      <trans-unit id="nGumR0E" resname="Ubicación exacta">
+        <source>Ubicación exacta</source>
+        <target>Ubicación exacta</target>
+      </trans-unit>
+      <trans-unit id="9c5XaAC" resname="Punto exacto de la propiedad. Al seleccionarlo se sustituyen sus coordenadas.">
+        <source>Punto exacto de la propiedad. Al seleccionarlo se sustituyen sus coordenadas.</source>
+        <target>Punto exacto de la propiedad. Al seleccionarlo se sustituyen sus coordenadas.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

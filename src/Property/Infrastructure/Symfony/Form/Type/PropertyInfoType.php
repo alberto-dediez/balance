@@ -10,11 +10,15 @@ use App\Property\Domain\Model\Destination\Destination;
 use App\Property\Domain\Model\Destination\DestinationRepository;
 use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Domain\Model\Property\PropertyType;
+use App\Shared\Domain\Model\Geo\PlaceKind;
+use App\Shared\Infrastructure\Symfony\Form\Type\PlaceReferenceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -39,6 +43,8 @@ class PropertyInfoType extends AbstractType
             $web = $info->web();
             $destinationId = $info->destinationId();
             $countryId = $info->countryId();
+            $placeReference = $info->placeReference();
+            $placeLabel = $info->placeLabel();
 
             foreach ($changes as $name => $value) {
                 switch ($name) {
@@ -66,8 +72,25 @@ class PropertyInfoType extends AbstractType
                 web: $web,
                 destinationId: $destinationId,
                 countryId: $countryId,
+                placeReference: $placeReference,
+                placeLabel: $placeLabel,
             );
         };
+
+        /** @return array<string, mixed> */
+        $placeReferenceOptions = fn(?string $placeLabel): array => [
+            'label' => new TranslatableMessage('Ubicación exacta'),
+            'required' => false,
+            'kind' => PlaceKind::Any,
+            'placeholder' => new TranslatableMessage('Sin ubicación'),
+            'help' => new TranslatableMessage('Punto exacto de la propiedad. Al seleccionarlo se sustituyen sus coordenadas.'),
+            'value_label' => $placeLabel,
+            'setter' => function (PropertyInfo &$info, ?string $value, FormInterface $form) use ($changePropertyInfo): void {
+                $info = $changePropertyInfo($info, [
+                    'placeReference' => $value,
+                ]);
+            },
+        ];
 
         $builder
             ->add('propertyType', PropertyTypeType::class, [
@@ -115,6 +138,7 @@ class PropertyInfoType extends AbstractType
                 },
                 'required' => false,
             ])
+            ->add('placeReference', PlaceReferenceType::class, $placeReferenceOptions(null))
             ->add('latitude', NumberType::class, [
                 'label' => new TranslatableMessage('Latitud'),
                 'setter' => function (PropertyInfo &$info, ?string $value, FormInterface $form) use ($changePropertyInfo): void {
@@ -122,6 +146,7 @@ class PropertyInfoType extends AbstractType
                         'latitude' => $value,
                     ]);
                 },
+                'scale' => 10,
                 'required' => false,
             ])
             ->add('longitude', NumberType::class, [
@@ -131,6 +156,7 @@ class PropertyInfoType extends AbstractType
                         'longitude' => $value,
                     ]);
                 },
+                'scale' => 10,
                 'required' => false,
             ])
             ->add('rooms', NumberType::class, [
@@ -171,6 +197,16 @@ class PropertyInfoType extends AbstractType
                 'required' => true,
             ])
         ;
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($placeReferenceOptions): void {
+            $info = $event->getData();
+
+            $event->getForm()->add(
+                'placeReference',
+                PlaceReferenceType::class,
+                $placeReferenceOptions($info instanceof PropertyInfo ? $info->placeLabel() : null),
+            );
+        });
 
         $repository = $this->destinationRepository;
 

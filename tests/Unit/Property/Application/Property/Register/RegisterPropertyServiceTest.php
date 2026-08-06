@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Property\Application\Property\Register;
 
 use App\Property\Application\Property\PropertyAuthorizer;
+use App\Property\Application\Property\PropertyPlaceLocationSetter;
 use App\Property\Application\Property\Register\RegisterPropertyRequest;
 use App\Property\Application\Property\Register\RegisterPropertyService;
 use App\Property\Domain\Model\Property\PropertyRegistered;
@@ -16,6 +17,7 @@ use App\Tests\Unit\Property\Domain\Model\Company\CompanyRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Shared\Domain\Model\Geo\InMemoryPlaceFinder;
 use PHPUnit\Framework\TestCase;
 
 class RegisterPropertyServiceTest extends TestCase
@@ -75,6 +77,6 @@ class RegisterPropertyServiceTest extends TestCase
 
     private function createSUT(InMemoryPropertyRepository $repository): RegisterPropertyService
     {
-        return new RegisterPropertyService($repository, CompanyRepositoryMother::inMemory(), new PropertyAuthorizer());
+        return new RegisterPropertyService($repository, CompanyRepositoryMother::inMemory(), new PropertyAuthorizer(), new PropertyPlaceLocationSetter(new InMemoryPlaceFinder()));
     }
 }

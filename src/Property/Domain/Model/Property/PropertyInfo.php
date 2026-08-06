@@ -24,6 +24,8 @@ class PropertyInfo implements \Stringable
         private readonly ?string $web = null,
         private readonly ?DestinationId $destinationId = null,
         private readonly ?CountryId $countryId = null,
+        private readonly ?string $placeReference = null,
+        private readonly ?string $placeLabel = null,
     ) {}
 
     public function __toString(): string
@@ -41,6 +43,8 @@ class PropertyInfo implements \Stringable
             'web => ' . $this->web(),
             'destinationId => ' . $this->destinationId(),
             'countryId => ' . $this->countryId(),
+            'placeReference => ' . $this->placeReference(),
+            'placeLabel => ' . $this->placeLabel(),
         ]);
     }
 
@@ -104,6 +108,41 @@ class PropertyInfo implements \Stringable
         return $this->countryId;
     }
 
+    public function placeReference(): ?string
+    {
+        return $this->placeReference;
+    }
+
+    public function placeLabel(): ?string
+    {
+        return $this->placeLabel;
+    }
+
+    public function hasPlace(): bool
+    {
+        return null !== $this->placeReference && '' !== $this->placeReference;
+    }
+
+    public function withPlace(?string $placeReference, ?string $placeLabel, ?string $latitude, ?string $longitude): self
+    {
+        return new self(
+            propertyType: $this->propertyType(),
+            categoryId: $this->categoryId(),
+            brandId: $this->brandId(),
+            address: $this->address(),
+            postalCode: $this->postalCode(),
+            longitude: $longitude,
+            latitude: $latitude,
+            rooms: $this->rooms(),
+            zone: $this->zone(),
+            web: $this->web(),
+            destinationId: $this->destinationId(),
+            countryId: $this->countryId(),
+            placeReference: $placeReference,
+            placeLabel: $placeLabel,
+        );
+    }
+
     public function equals(PropertyInfo $other): bool
     {
         if ($this->propertyType() !== $other->propertyType()) {
@@ -162,6 +201,14 @@ class PropertyInfo implements \Stringable
             return false;
         }
 
+        if ($this->placeReference() !== $other->placeReference()) {
+            return false;
+        }
+
+        if ($this->placeLabel() !== $other->placeLabel()) {
+            return false;
+        }
+
         if (
             (null == $this->destinationId() && $other->destinationId() instanceof DestinationId)
             || ($this->destinationId() instanceof DestinationId && null == $other->destinationId())
@@ -178,6 +225,22 @@ class PropertyInfo implements \Stringable
     }
 
     public function combine(PropertyInfo $other): PropertyInfo
+    {
+        $place = $this->hasPlace() ? $this : ($other->hasPlace() ? $other : null);
+
+        if ($place instanceof PropertyInfo) {
+            return $this->combineWithoutPlace($other)->withPlace(
+                placeReference: $place->placeReference(),
+                placeLabel: $place->placeLabel(),
+                latitude: $place->latitude(),
+                longitude: $place->longitude(),
+            );
+        }
+
+        return $this->combineWithoutPlace($other);
+    }
+
+    private function combineWithoutPlace(PropertyInfo $other): PropertyInfo
     {
         return new PropertyInfo(
             propertyType: $this->propertyType() ?? $other->propertyType(),

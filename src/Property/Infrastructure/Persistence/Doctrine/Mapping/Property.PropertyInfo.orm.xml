@@ -18,5 +18,7 @@
         <field name="web" type="string" length="1024" nullable="true" />
         <field name="destinationId" type="destination_id" nullable="true"/>
         <field name="countryId" type="country_id" nullable="true"/>
+        <field name="placeReference" type="string" length="512" nullable="true"/>
+        <field name="placeLabel" type="string" length="512" nullable="true"/>
     </embeddable>
 </doctrine-mapping>

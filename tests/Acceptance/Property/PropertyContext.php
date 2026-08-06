@@ -10,6 +10,8 @@ use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Company\CompanyRepository;
 use App\Property\Domain\Model\Country\CountryRepository;
 use App\Property\Domain\Model\Destination\DestinationRepository;
+use App\Property\Domain\Model\Property\Property;
+use App\Property\Domain\Model\Property\PropertyFilter;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
@@ -21,6 +23,8 @@ use App\Tests\Unit\Property\Domain\Model\Destination\DestinationMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use Behat\Behat\Context\Context;
 use Behat\Step\Given;
+use Behat\Step\Then;
+use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 final readonly class PropertyContext implements Context
@@ -150,5 +154,34 @@ final readonly class PropertyContext implements Context
             externalId: $property->externalId(),
             companyId: $company->id(),
         );
+    }
+
+    #[Then('property :id has place location :label at :latitude, :longitude')]
+    public function propertyHasPlaceLocation(string $id, string $label, string $latitude, string $longitude): void
+    {
+        $property = $this->getPropertyRepository()->find(new PropertyId($id));
+
+        Assert::assertNotNull($property);
+        $this->assertPlaceLocation($property, $label, $latitude, $longitude);
+    }
+
+    #[Then('property named :name has place location :label at :latitude, :longitude')]
+    public function propertyNamedHasPlaceLocation(string $name, string $label, string $latitude, string $longitude): void
+    {
+        $properties = $this->getPropertyRepository()->findByFilter(new PropertyFilter(name: $name));
+
+        Assert::assertCount(1, $properties);
+
+        $property = reset($properties);
+
+        Assert::assertInstanceOf(Property::class, $property);
+        $this->assertPlaceLocation($property, $label, $latitude, $longitude);
+    }
+
+    private function assertPlaceLocation(Property $property, string $label, string $latitude, string $longitude): void
+    {
+        Assert::assertSame($label, $property->info()->placeLabel());
+        Assert::assertSame((float) $latitude, (float) $property->info()->latitude());
+        Assert::assertSame((float) $longitude, (float) $property->info()->longitude());
     }
 }
