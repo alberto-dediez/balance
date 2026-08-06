@@ -4901,6 +4901,10 @@
         <source>Punto exacto de la propiedad. Al seleccionarlo se sustituyen sus coordenadas.</source>
         <target>Exact point of the property. Selecting it replaces its coordinates.</target>
       </trans-unit>
+      <trans-unit id="4mr13gi" resname="Huella de carbono">
+        <source>Huella de carbono</source>
+        <target>Carbon footprint</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

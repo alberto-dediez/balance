@@ -30,6 +30,10 @@
         <td>{{ element.companyId | company_name }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
+            {% if element.accountId and element | is_authorized('view') %}
+                <twig:List:Action:CarbonFootprint path="{{ path('carbon_footprint_property_trip_calculations', {'propertyId': element.id}) }}" />
+            {% endif %}
+
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('properties_edit', {'propertyId': element.id}) }}" />
             {% endif %}

@@ -42,14 +42,6 @@ final class PropertyTripQr
         return $this->qrCodeGenerator->generate($this->url());
     }
 
-    public function resultsPath(): string
-    {
-        return $this->urlGenerator->generate(
-            'carbon_footprint_property_trip_calculations',
-            ['propertyId' => $this->propertyId],
-        );
-    }
-
     private function tripCalculationLinkResponse(): RegisterTripCalculationLinkResponse
     {
         return $this->registerTripCalculationLinkResponse ??= ($this->registerTripCalculationLink)(

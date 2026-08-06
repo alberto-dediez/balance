@@ -8,9 +8,15 @@
     ~ ' > '
     ~ property.name
     ~ ' > '
-    ~ ('Huella de los huéspedes' | trans) %}
+    ~ ('Huella de carbono' | trans) %}
 
 {% block content %}
+    {% if property.accountId %}
+        <twig:Card title="{{ 'Calculadora de huella de huéspedes' | trans }}">
+            <twig:CarbonFootprint:PropertyTripQr propertyId="{{ property.id }}" />
+        </twig:Card>
+    {% endif %}
+
     <twig:Card title="{{ 'Periodo' | trans }}">
         <form method="get" class="row g-3 align-items-end">
             <div class="col-12 col-md-4">

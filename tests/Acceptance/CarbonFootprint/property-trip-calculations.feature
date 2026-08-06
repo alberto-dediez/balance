@@ -1,12 +1,12 @@
 Feature:
     I want to make sure that the owner of a property can consult the aggregated footprint of their guests
 
-    Scenario: The calculator link and QR are shown when editing a property
+    Scenario: The calculator link and QR are shown in the carbon footprint screen of a property
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given property "Hotel A" with id "777" of account "666" exists
         When I am logged as "owner@dediez.software"
-        When I go to "/es/properties/edit/777"
+        When I go to "/es/carbon-footprint/property-trip-calculations/777"
         Then the response status should be 200
         Then I see a text "Calculadora de huella de huéspedes"
         Then I see a text "Enlace de la calculadora de huéspedes"
@@ -24,7 +24,7 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/carbon-footprint/property-trip-calculations/777"
         Then the response status should be 200
-        Then I see a text "Huella de los huéspedes"
+        Then I see a text "Huella de carbono"
         Then I see a text "Desglose por medio de transporte"
         Then I see a text "Coche"
 
