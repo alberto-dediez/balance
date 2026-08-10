@@ -1,0 +1,33 @@
+parameters:
+    app.stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
+    app.stripe.webhook_secret: '%env(STRIPE_WEBHOOK_SECRET)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\Payments\:
+        resource: '../../../'
+        exclude:
+            - '../../../Infrastructure/Symfony/DependencyInjection/'
+
+    App\Payments\Domain\Model\Vat\VatCalculator:
+        arguments:
+            $rates: '%app.vat.rates%'
+            $euCountries: '%app.vat.eu_countries%'
+            $homeCountry: '%app.vat.home_country%'
+
+    App\Payments\Infrastructure\Payment\Stripe\StripePaymentGateway:
+        arguments:
+            $secretKey: '%app.stripe.secret_key%'
+
+    App\Payments\Infrastructure\Payment\Stripe\StripeWebhookVerifier:
+        arguments:
+            $webhookSecret: '%app.stripe.webhook_secret%'
+
+    App\Payments\Domain\Model\Payment\PaymentGateway: '@App\Payments\Infrastructure\Payment\Stripe\StripePaymentGateway'
+
+when@test:
+    services:
+        App\Payments\Domain\Model\Payment\PaymentGateway: '@App\Payments\Infrastructure\Payment\Fake\FakePaymentGateway'

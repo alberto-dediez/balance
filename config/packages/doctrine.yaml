@@ -70,6 +70,8 @@ doctrine:
             project_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\ProjectIdType
             account_project_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\AccountProjectIdType
             credit_purchase_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\CreditPurchaseIdType
+            project_contribution_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\ProjectContributionIdType
+            payment_id: App\Payments\Infrastructure\Persistence\Doctrine\Type\PaymentIdType
 
     orm:
         auto_generate_proxy_classes: true
@@ -144,6 +146,13 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Balance/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Balance\Domain\Model'
                 alias: Balance
+
+            Payments:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Payments/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Payments\Domain\Model'
+                alias: Payments
 
             Shared:
                 type: xml

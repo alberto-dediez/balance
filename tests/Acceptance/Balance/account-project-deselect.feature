@@ -30,7 +30,7 @@ Feature:
         Given project "Item 1" with id "1111" exists
         Given project "1111" is adhered to account "666"
         Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
-        Given credit purchase "2222" is validated with "10" tonnes for "150" euros and reference "REF-1"
+        Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
         When I am logged as "owner@dediez.software"
         When I go to "/es/projects/1111/deselect"
         When I follow redirect

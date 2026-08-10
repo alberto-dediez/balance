@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Balance\Infrastructure\UI\Web\Project;
 
+use App\Balance\Application\CreditPurchase\Balance\CreditAvailability;
 use App\Balance\Application\CreditPurchase\List\ListCreditPurchasesRequest;
 use App\Balance\Application\CreditPurchase\List\ListCreditPurchasesService;
 use App\Balance\Domain\Model\AccountProject\AccountProjectFilter;
 use App\Balance\Domain\Model\AccountProject\AccountProjectRepository;
-use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
 use App\Balance\Domain\Model\Project\ProjectRepository;
 use App\Balance\Domain\Model\Project\ProjectType;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Library\Domain\Model\Media\MediaRepository;
 use App\Security\Application\Action;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
@@ -30,7 +31,8 @@ class ViewController extends AbstractController
         ProjectRepository $projectRepository,
         MediaRepository $mediaRepository,
         AccountProjectRepository $accountProjectRepository,
-        CreditPurchaseRepository $creditPurchaseRepository,
+        CreditAvailability $creditAvailability,
+        ProjectContributionRepository $projectContributionRepository,
         ListCreditPurchasesService $listCreditPurchases,
         LoggedAccount $loggedAccount,
         LoggedUser $loggedUser,
@@ -57,7 +59,9 @@ class ViewController extends AbstractController
 
         $accountProject = $accountProjects[0] ?? null;
 
-        $creditBalance = $creditPurchaseRepository->balanceFor($account->id(), $project->id());
+        $now = new \DateTimeImmutable('NOW');
+        $creditBalance = $creditAvailability->for($account->id(), $project->id(), $now);
+        $reservedTonnes = $projectContributionRepository->reservedTonnes($account->id(), $project->id(), $now);
 
         $creditPurchases = [];
 
@@ -75,6 +79,7 @@ class ViewController extends AbstractController
             'gallery' => $gallery,
             'accountProject' => $accountProject,
             'creditBalance' => $creditBalance,
+            'reservedTonnes' => $reservedTonnes,
             'creditPurchases' => $creditPurchases,
         ]);
     }

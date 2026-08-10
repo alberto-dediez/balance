@@ -4,7 +4,7 @@ DOCKER_COMP = docker compose --env-file .env $(shell [ -f .env.local ] && echo "
 # Docker containers
 PHP_CONT = $(DOCKER_COMP) exec php
 DATABASE_CONT = $(DOCKER_COMP) exec database
-TEST_CONT     = $(DOCKER_COMP) exec -e APP_ENV=test -e DATABASE_URL="sqlite:///./var/data.db" -e SYMFONY_DEPRECATIONS_HELPER="disabled=1" php
+TEST_CONT     = $(DOCKER_COMP) exec -e APP_ENV=test -e DATABASE_URL="sqlite:///./var/data.db" -e SYMFONY_DEPRECATIONS_HELPER="disabled=1" -e STRIPE_SECRET_KEY="sk_test_dummy" -e STRIPE_WEBHOOK_SECRET="whsec_dummy" php
 
 # Executables
 PHP      = $(PHP_CONT) php
@@ -125,6 +125,9 @@ behat-init:
 
 behat-snippets:
 	@$(PHP) vendor/bin/behat --dry-run --append-snippets
+
+stripe-webhook:
+	stripe listen --skip-verify --forward-to https://events.local/webhooks/stripe
 
 ## —— Bugs and errors ———————————————————————————————————————————————————————
 external-php:

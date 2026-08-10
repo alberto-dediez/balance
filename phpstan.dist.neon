@@ -39,3 +39,13 @@ parameters:
         -
             identifier: symfonyContainer.privateService
             path: tests/Acceptance/
+        -
+            # ProjectContributionOrigin has a single case today, so comparing it is provably
+            # constant. The checks stay because the enum is meant to grow with new origins.
+            message: '#between App\\Balance\\Domain\\Model\\ProjectContribution\\ProjectContributionOrigin.* will always evaluate to false\.#'
+            paths:
+                - src/Balance/Infrastructure/Persistence/InMemory/Repository/InMemoryProjectContributionRepository.php
+                - src/CarbonFootprint/Infrastructure/UI/Web/Public/PropertyTrip/Contribution/CancelController.php
+        -
+            message: '#Result of && is always false\.#'
+            path: src/Balance/Infrastructure/Persistence/InMemory/Repository/InMemoryProjectContributionRepository.php

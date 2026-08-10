@@ -13,7 +13,6 @@ class ValidateCreditPurchaseRequest implements Command
     public function __construct(
         public CreditPurchaseId $creditPurchaseId,
         public float $purchasedTonnes,
-        public float $amount,
         public string $reference,
         public ?MediaId $certificate = null,
     ) {}

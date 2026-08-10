@@ -136,13 +136,11 @@ class InMemoryCreditPurchaseRepository implements CreditPurchaseRepository
                 $balances[$key] = [
                     'projectId' => $projectId,
                     'purchasedTonnes' => 0.0,
-                    'amount' => 0.0,
                     'purchasesCount' => 0,
                 ];
             }
 
             $balances[$key]['purchasedTonnes'] += (float) $creditPurchase->purchasedTonnes();
-            $balances[$key]['amount'] += (float) $creditPurchase->amount();
             ++$balances[$key]['purchasesCount'];
         }
 
@@ -151,7 +149,6 @@ class InMemoryCreditPurchaseRepository implements CreditPurchaseRepository
                 projectId: $balance['projectId'],
                 purchasedTonnes: $balance['purchasedTonnes'],
                 consumedTonnes: 0.0,
-                amount: $balance['amount'],
                 purchasesCount: $balance['purchasesCount'],
             ),
             array_values($balances),
@@ -170,7 +167,6 @@ class InMemoryCreditPurchaseRepository implements CreditPurchaseRepository
             projectId: $projectId,
             purchasedTonnes: 0.0,
             consumedTonnes: 0.0,
-            amount: 0.0,
             purchasesCount: 0,
         );
     }

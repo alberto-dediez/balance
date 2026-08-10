@@ -24,6 +24,11 @@
 
             <dt class="col-sm-3">{{ 'Toneladas solicitadas' | trans }}</dt>
             <dd class="col-sm-9">{{ creditPurchase.requestedTonnes }}</dd>
+
+            {% if project and project.costPerTonne is not null %}
+                <dt class="col-sm-3">{{ 'Coste por tonelada' | trans }}</dt>
+                <dd class="col-sm-9">{{ project.costPerTonne | number_format(2, ',', '.') }} €</dd>
+            {% endif %}
         </dl>
     </twig:Card>
 
@@ -31,7 +36,6 @@
 
     <twig:Card title="{{ 'Validación' | trans }}">
         {{ form_row(form.purchasedTonnes) }}
-        {{ form_row(form.amount) }}
         {{ form_row(form.reference) }}
         {{ form_row(form.certificate) }}
     </twig:Card>

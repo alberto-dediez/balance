@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Balance\Application\AccountProject\Deselect;
 
 use App\Balance\Application\AccountProject\AccountProjectAuthorizer;
+use App\Balance\Application\CreditPurchase\Balance\CreditAvailability;
 use App\Balance\Domain\Model\AccountProject\AccountProjectFilter;
 use App\Balance\Domain\Model\AccountProject\AccountProjectRepository;
 use App\Balance\Domain\Model\AccountProject\ProjectHasAvailableCreditsException;
-use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -23,7 +24,8 @@ class DeselectProjectService implements CommandHandler
 
     public function __construct(
         private AccountProjectRepository $repository,
-        private CreditPurchaseRepository $creditPurchaseRepository,
+        private CreditAvailability $creditAvailability,
+        private ProjectContributionRepository $projectContributionRepository,
         private AccountProjectAuthorizer $authorizer,
     ) {}
 
@@ -41,9 +43,11 @@ class DeselectProjectService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($accountProject, SecurityAction::Remove, $user);
 
-        $balance = $this->creditPurchaseRepository->balanceFor($request->accountId, $request->projectId);
+        $now = new \DateTimeImmutable('NOW');
+        $balance = $this->creditAvailability->for($request->accountId, $request->projectId, $now);
+        $reserved = $this->projectContributionRepository->reservedTonnes($request->accountId, $request->projectId, $now);
 
-        if ($balance->availableTonnes() > 0.0) {
+        if ($balance->availableTonnes() > 0.0 || $reserved > 0.0) {
             throw new ProjectHasAvailableCreditsException($request->projectId);
         }
 

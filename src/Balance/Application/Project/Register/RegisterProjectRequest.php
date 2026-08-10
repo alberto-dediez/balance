@@ -21,5 +21,7 @@ class RegisterProjectRequest implements Command
         public ?ProjectType $projectType = null,
         public ?ProjectStatus $projectStatus = null,
         public ?string $mitecoId = null,
+        public ?float $pricePerTonne = null,
+        public ?float $costPerTonne = null,
     ) {}
 }

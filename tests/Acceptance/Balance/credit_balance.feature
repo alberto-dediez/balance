@@ -6,7 +6,7 @@ Feature:
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given project "Item 1" with id "1111" exists
         Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
-        Given credit purchase "2222" is validated with "10" tonnes for "150" euros and reference "REF-1"
+        Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
         When I am logged as "owner@dediez.software"
         When I go to "/es/credits"
         Then the response status should be 200

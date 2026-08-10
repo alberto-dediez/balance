@@ -23,7 +23,6 @@ class CreditPurchase
         private float $requestedTonnes = 0.0,
         private CreditPurchaseStatus $status = CreditPurchaseStatus::Pending,
         private ?float $purchasedTonnes = null,
-        private ?float $amount = null,
         private ?string $reference = null,
         private ?string $certificate = null,
         private ?UserId $resolvedBy = null,
@@ -71,11 +70,6 @@ class CreditPurchase
         return $this->purchasedTonnes;
     }
 
-    public function amount(): ?float
-    {
-        return $this->amount;
-    }
-
     public function reference(): ?string
     {
         return $this->reference;
@@ -109,15 +103,6 @@ class CreditPurchase
     public function cancelledAt(): ?\DateTimeImmutable
     {
         return $this->cancelledAt;
-    }
-
-    public function pricePerTonne(): ?float
-    {
-        if (null === $this->amount || null === $this->purchasedTonnes || 0.0 === $this->purchasedTonnes) {
-            return null;
-        }
-
-        return $this->amount / $this->purchasedTonnes;
     }
 
     public function isPartiallyFulfilled(): bool
@@ -155,7 +140,6 @@ class CreditPurchase
 
     public function validate(
         float $purchasedTonnes,
-        float $amount,
         string $reference,
         ?MediaId $certificate,
         UserId $validatedBy,
@@ -168,16 +152,11 @@ class CreditPurchase
             throw new \InvalidArgumentException('Purchased tonnes must be greater than zero.');
         }
 
-        if ($amount < 0.0) {
-            throw new \InvalidArgumentException('Amount must be greater than or equal to zero.');
-        }
-
         $this->recordApplyAndPublish(
             new CreditPurchaseValidated(
                 creditPurchaseId: $this->id(),
                 requestedTonnes: $this->requestedTonnes,
                 purchasedTonnes: $purchasedTonnes,
-                amount: $amount,
                 reference: $reference,
                 certificate: $certificate,
                 validatedBy: $validatedBy,
@@ -227,7 +206,6 @@ class CreditPurchase
     {
         $this->status = CreditPurchaseStatus::Validated;
         $this->purchasedTonnes = $event->purchasedTonnes();
-        $this->amount = $event->amount();
         $this->reference = $event->reference();
         $this->certificate = null !== $event->certificate() ? (string) $event->certificate() : null;
         $this->resolvedBy = $event->validatedBy();

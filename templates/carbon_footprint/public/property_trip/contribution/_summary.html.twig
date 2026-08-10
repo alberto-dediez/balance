@@ -1,0 +1,76 @@
+{#
+    Breakdown of the contribution, refreshed on its own whenever the guest changes the amount or
+    their tax data. Nothing outside this fragment may be needed to read it: it is the whole body of
+    the response the checkout returns to those refreshes.
+#}
+{% set amounts = quote ? quote.amounts : null %}
+
+{% if amountError %}
+    <div class="alert alert-warning" role="alert">
+        {{ 'El importe debe ser un número entre 0,01 € y {max} €.' | trans({'{max}': maxAmount | number_format(2, ',', '.')}) }}
+    </div>
+{% endif %}
+
+{% if exceedsCredit %}
+    <div class="alert alert-warning" role="alert">
+        {{ 'Este proyecto no tiene crédito suficiente para el importe que has indicado. Reduce el importe o elige otro proyecto.' | trans }}
+    </div>
+{% endif %}
+
+{% if belowMinimum %}
+    <div class="alert alert-warning" role="alert">
+        {{ 'El importe mínimo de una aportación es {min} €.' | trans({'{min}': minAmount | number_format(2, ',', '.')}) }}
+    </div>
+{% endif %}
+
+{% if amounts %}
+    <h6 class="fw-semibold">{{ 'Desglose' | trans }}</h6>
+    <table class="table table-sm mb-4">
+        <tbody>
+            <tr>
+                <th scope="row" class="fw-normal">{{ 'Aportación al proyecto' | trans }}</th>
+                <td class="text-end text-nowrap">{{ amounts.contributionAmount | number_format(2, ',', '.') }} €</td>
+            </tr>
+            <tr>
+                <th scope="row" class="fw-normal">{{ 'Margen de gestión' | trans }}</th>
+                <td class="text-end text-nowrap">{{ amounts.managementFeeAmount | number_format(2, ',', '.') }} €</td>
+            </tr>
+            <tr>
+                <th scope="row" class="fw-normal">
+                    {{ 'IVA' | trans }} ({{ amounts.vatRate | number_format(2, ',', '.') }} %)
+                    {% if amounts.vatRate == 0 %}
+                        <span class="d-block text-muted small">
+                            {{ ('vat.reason.' ~ amounts.vatReason.value) | trans }}
+                        </span>
+                    {% endif %}
+                </th>
+                <td class="text-end text-nowrap">{{ amounts.vatAmount | number_format(2, ',', '.') }} €</td>
+            </tr>
+            <tr class="fw-semibold">
+                <th scope="row">{{ 'Total' | trans }}</th>
+                <td class="text-end text-nowrap">{{ amounts.totalAmount | number_format(2, ',', '.') }} €</td>
+            </tr>
+        </tbody>
+    </table>
+{% elseif country is null %}
+    <p class="text-muted small">
+        {{ 'Elige tu país para ver el desglose de tu aportación.' | trans }}
+    </p>
+{% elseif not amountError %}
+    <p class="text-muted small">
+        {{ 'Indica el importe que quieres aportar para ver el desglose.' | trans }}
+    </p>
+{% endif %}
+
+<div class="d-grid gap-2">
+    {% if amounts and not exceedsCredit and not belowMinimum %}
+        <button class="btn btn-success" type="submit" name="contribution[pay]" value="1">
+            {{ 'Pagar {total} €' | trans({'{total}': amounts.totalAmount | number_format(2, ',', '.')}) }}
+        </button>
+    {% endif %}
+    <noscript>
+        <button class="btn btn-outline-secondary w-100" type="submit">
+            {{ 'Recalcular' | trans }}
+        </button>
+    </noscript>
+</div>

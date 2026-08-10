@@ -82,6 +82,19 @@ final class WebContext implements Context
     #[When('I submit a form with :data and button :text')]
     public function iSubmitAFormWith(string $data, string $text): void
     {
+        $this->submitForm($data, $text);
+    }
+
+    /** Reproduces what a form refreshing itself in the browser does: submitting it through fetch. */
+    #[When('I submit a form with :data and button :text as an ajax request')]
+    public function iSubmitAFormWithAsAnAjaxRequest(string $data, string $text): void
+    {
+        $this->submitForm($data, $text, ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']);
+    }
+
+    /** @param array<string, string> $serverParameters */
+    private function submitForm(string $data, string $text, array $serverParameters = []): void
+    {
         $crawler = $this->client->getCrawler();
 
         $buttonCrawlerNode = $crawler->selectButton($text);
@@ -128,7 +141,7 @@ final class WebContext implements Context
             $fileField->upload($path);
         }
 
-        $this->client->submit($formData);
+        $this->client->submit($formData, $serverParameters);
 
         $this->files = [];
     }

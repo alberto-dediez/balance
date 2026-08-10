@@ -1,0 +1,15 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% set page_title = ('Aportaciones a proyectos' | trans) ~ ' > ' ~ contribution.contributorName %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_project_contributions') }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card title="{{ 'Cuenta' | trans }}">
+        <p class="mb-0">{{ contribution.accountId | account_name }}</p>
+    </twig:Card>
+
+    {{ include('@balance/contributions/_detail.html.twig') }}
+{% endblock %}

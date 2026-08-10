@@ -11,6 +11,7 @@ use App\Library\Infrastructure\Symfony\Form\Type\MediaPickerType;
 use App\Property\Infrastructure\Symfony\Form\Type\DestinationIdType;
 use App\Shared\Infrastructure\Symfony\Form\Type\MarkdownEditorType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -72,6 +73,25 @@ class UpdateProjectType extends AbstractType
                 'empty_data' => '',
                 'constraints' => [
                     new Assert\Length(max: 255),
+                ],
+            ])
+            ->add('costPerTonne', NumberType::class, [
+                'label' => new TranslatableMessage('Coste por tonelada (€)'),
+                'required' => true,
+                'scale' => 2,
+                'html5' => true,
+                'constraints' => [
+                    new Assert\NotNull(),
+                    new Assert\PositiveOrZero(),
+                ],
+            ])
+            ->add('pricePerTonne', NumberType::class, [
+                'label' => new TranslatableMessage('Precio por tonelada (€)'),
+                'required' => false,
+                'scale' => 2,
+                'html5' => true,
+                'constraints' => [
+                    new Assert\PositiveOrZero(),
                 ],
             ])
             ->add('save', SubmitType::class, [

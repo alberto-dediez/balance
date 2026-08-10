@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Balance\Domain\Model\ProjectContribution\ProjectContribution" table="project_contributions">
+        <id name="id" type="project_contribution_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="accountId" type="account_id" column="account_id" nullable="false"/>
+        <field name="projectId" type="project_id" column="project_id" nullable="false"/>
+        <field name="origin" type="string" column="origin" length="40" enum-type="App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin" nullable="false"/>
+        <field name="originId" type="string" column="origin_id" length="36" nullable="true"/>
+        <field name="co2eqKg" type="float" column="co2eq_kg" nullable="true"/>
+        <field name="tonnes" type="float" column="tonnes" nullable="false"/>
+        <field name="pricePerTonne" type="float" column="price_per_tonne" nullable="false"/>
+        <field name="costPerTonne" type="float" column="cost_per_tonne" nullable="true"/>
+        <field name="freeAmount" type="boolean" column="free_amount" nullable="false"/>
+        <field name="contributionAmount" type="float" column="contribution_amount" nullable="false"/>
+        <field name="managementFeeAmount" type="float" column="management_fee_amount" nullable="false"/>
+        <field name="taxableAmount" type="float" column="taxable_amount" nullable="false"/>
+        <field name="vatRate" type="float" column="vat_rate" nullable="false"/>
+        <field name="vatAmount" type="float" column="vat_amount" nullable="false"/>
+        <field name="totalAmount" type="float" column="total_amount" nullable="false"/>
+        <field name="vatReason" type="string" column="vat_reason" length="30" enum-type="App\Payments\Domain\Model\Vat\VatExemptionReason" nullable="true"/>
+        <field name="currency" type="string" column="currency" length="3" nullable="false"/>
+        <field name="contributorName" type="string" column="contributor_name" length="255" nullable="false"/>
+        <field name="contributorEmail" type="string" column="contributor_email" length="255" nullable="false"/>
+        <field name="contributorCountry" type="string" column="contributor_country" length="2" nullable="false"/>
+        <field name="contributorIsCompany" type="boolean" column="contributor_is_company" nullable="false"/>
+        <field name="contributorCompanyName" type="string" column="contributor_company_name" length="255" nullable="true"/>
+        <field name="contributorVatNumber" type="string" column="contributor_vat_number" length="40" nullable="true"/>
+        <field name="status" type="string" column="status" length="20" enum-type="App\Balance\Domain\Model\ProjectContribution\ProjectContributionStatus" nullable="false"/>
+        <field name="paymentId" type="payment_id" column="payment_id" nullable="true"/>
+        <field name="failureReason" type="text" column="failure_reason" nullable="true"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="expiresAt" type="datetime_immutable" column="expires_at" nullable="true"/>
+        <field name="paidAt" type="datetime_immutable" column="paid_at" nullable="true"/>
+        <field name="resolvedAt" type="datetime_immutable" column="resolved_at" nullable="true"/>
+
+        <indexes>
+            <index columns="account_id,project_id,status" name="idx_project_contribution_balance"/>
+            <index columns="status,expires_at" name="idx_project_contribution_expiration"/>
+            <index columns="origin,origin_id" name="idx_project_contribution_origin"/>
+            <index columns="payment_id" name="idx_project_contribution_payment"/>
+        </indexes>
+    </entity>
+</doctrine-mapping>

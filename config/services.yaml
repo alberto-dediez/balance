@@ -9,3 +9,7 @@ imports:
     - { resource: '../src/EventOperations/Infrastructure/Symfony/DependencyInjection/services.yaml' }
     - { resource: '../src/Library/Infrastructure/Symfony/DependencyInjection/services.yaml' }
     - { resource: '../src/Balance/Infrastructure/Symfony/DependencyInjection/services.yaml' }
+    - { resource: '../src/Payments/Infrastructure/Symfony/DependencyInjection/services.yaml' }
+
+parameters:
+    app.contribution.reservation_hours: 12

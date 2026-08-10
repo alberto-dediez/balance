@@ -48,9 +48,19 @@
         {% endif %}
 
         {% if creditBalance and creditBalance.purchasesCount > 0 %}
-            <p class="text-muted mt-1 mb-0">
-                {{ 'Toneladas disponibles' | trans }}: {{ creditBalance.availableTonnes }}
-            </p>
+            <dl class="row text-muted mt-3 mb-0">
+                <dt class="col-sm-3 fw-normal">{{ 'Compradas' | trans }}</dt>
+                <dd class="col-sm-3">{{ creditBalance.purchasedTonnes | number_format(4, ',', '.') }} t</dd>
+
+                <dt class="col-sm-3 fw-normal">{{ 'Reservadas' | trans }}</dt>
+                <dd class="col-sm-3">{{ reservedTonnes | number_format(4, ',', '.') }} t</dd>
+
+                <dt class="col-sm-3 fw-normal">{{ 'Consumidas' | trans }}</dt>
+                <dd class="col-sm-3">{{ (creditBalance.consumedTonnes - reservedTonnes) | number_format(4, ',', '.') }} t</dd>
+
+                <dt class="col-sm-3 fw-normal">{{ 'Disponibles' | trans }}</dt>
+                <dd class="col-sm-3 fw-semibold">{{ creditBalance.availableTonnes | number_format(4, ',', '.') }} t</dd>
+            </dl>
         {% endif %}
     </twig:Card>
 
@@ -80,7 +90,7 @@
                 <twig:List:Table :columns="columns" :elements="creditPurchases">
                     <td>{{ element.requestedTonnes }}</td>
                     <td>{{ element.purchasedTonnes ?? '-' }}</td>
-                    <td>{{ element.amount is not null ? (element.amount ~ ' €') : '-' }}</td>
+                    <td>{{ element.purchasedTonnes is not null and project.costPerTonne is not null ? ((element.purchasedTonnes * project.costPerTonne) | number_format(2, ',', '.') ~ ' €') : '-' }}</td>
                     <td>{{ element.reference ?? '-' }}</td>
                     <td>
                         {{ element.status.value | trans({}, 'creditPurchaseStatus') }}

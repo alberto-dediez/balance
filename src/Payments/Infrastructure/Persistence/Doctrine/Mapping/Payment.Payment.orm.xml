@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Payments\Domain\Model\Payment\Payment" table="payments">
+        <id name="id" type="payment_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="subjectType" type="string" column="subject_type" length="64" nullable="false"/>
+        <field name="subjectId" type="string" column="subject_id" length="36" nullable="false"/>
+        <field name="description" type="string" column="description" length="255" nullable="false"/>
+        <field name="amount" type="float" column="amount" nullable="false"/>
+        <field name="currency" type="string" column="currency" length="3" nullable="false"/>
+        <field name="customerEmail" type="string" column="customer_email" length="255" nullable="false"/>
+        <field name="customerName" type="string" column="customer_name" length="255" nullable="false"/>
+        <field name="status" type="string" column="status" length="20" enum-type="App\Payments\Domain\Model\Payment\PaymentStatus" nullable="false"/>
+        <field name="gateway" type="string" column="gateway" length="30" nullable="true"/>
+        <field name="externalId" type="string" column="external_id" length="255" nullable="true" unique="true"/>
+        <field name="externalPaymentId" type="string" column="external_payment_id" length="255" nullable="true"/>
+        <field name="failureReason" type="text" column="failure_reason" nullable="true"/>
+        <field name="startedAt" type="datetime_immutable" column="started_at" nullable="false"/>
+        <field name="paidAt" type="datetime_immutable" column="paid_at" nullable="true"/>
+        <field name="resolvedAt" type="datetime_immutable" column="resolved_at" nullable="true"/>
+
+        <indexes>
+            <index columns="subject_type,subject_id" name="idx_payment_subject"/>
+            <index columns="status" name="idx_payment_status"/>
+            <index columns="external_id" name="idx_payment_external_id"/>
+        </indexes>
+    </entity>
+</doctrine-mapping>

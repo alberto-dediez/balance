@@ -47,6 +47,7 @@ class RegisterProjectServiceTest extends TestCase
             projectType: ProjectType::EmissionCompensation,
             projectStatus: ProjectStatus::Pending,
             mitecoId: 'MITECO-1',
+            pricePerTonne: 20.0,
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -58,6 +59,7 @@ class RegisterProjectServiceTest extends TestCase
         $projectPersisted = $repository->find($result->projectId);
 
         $this->assertNotNull($projectPersisted);
+        $this->assertSame(20.0, $projectPersisted->pricePerTonne());
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

@@ -7,3 +7,13 @@ services:
         resource: '../../../'
         exclude:
             - '../../../Infrastructure/Symfony/DependencyInjection/'
+
+    App\Balance\Infrastructure\UI\Console\:
+        resource: '../../../Infrastructure/UI/Console/'
+        tags: ['console.command']
+
+    App\Balance\Application\ProjectContribution\Register\RegisterProjectContributionService:
+        arguments:
+            $reservationHours: '%app.contribution.reservation_hours%'
+
+    App\Balance\Application\ProjectContribution\Expire\ContributionExpirationScheduler: '@App\Balance\Infrastructure\Messenger\MessengerContributionExpirationScheduler'

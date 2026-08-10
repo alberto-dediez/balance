@@ -16,7 +16,6 @@
         <field name="requestedTonnes" type="float" column="requested_tonnes" nullable="false"/>
         <field name="status" type="string" column="status" length="20" enum-type="App\Balance\Domain\Model\CreditPurchase\CreditPurchaseStatus" nullable="false"/>
         <field name="purchasedTonnes" type="float" column="purchased_tonnes" nullable="true"/>
-        <field name="amount" type="float" column="amount" nullable="true"/>
         <field name="reference" type="string" column="reference" length="255" nullable="true" unique="true"/>
         <field name="certificate" type="string" column="certificate" length="36" nullable="true"/>
         <field name="resolvedBy" type="user_id" column="resolved_by" nullable="true"/>

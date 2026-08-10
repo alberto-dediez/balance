@@ -31,15 +31,6 @@ class ValidateCreditPurchaseType extends AbstractType
                     new Assert\Positive(),
                 ],
             ])
-            ->add('amount', NumberType::class, [
-                'label' => new TranslatableMessage('Importe total (€)'),
-                'required' => true,
-                'scale' => 2,
-                'constraints' => [
-                    new Assert\NotBlank(),
-                    new Assert\PositiveOrZero(),
-                ],
-            ])
             ->add('reference', TextType::class, [
                 'label' => new TranslatableMessage('Identificador de la compra'),
                 'required' => true,

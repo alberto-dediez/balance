@@ -52,6 +52,8 @@ class ProjectMother
         ProjectType $projectType = ProjectType::EmissionCompensation,
         ProjectStatus $projectStatus = ProjectStatus::Pending,
         ?string $mitecoId = null,
+        ?float $pricePerTonne = null,
+        ?float $costPerTonne = null,
     ): Project {
         $project = new Project(
             id: new ProjectId($id),
@@ -64,9 +66,26 @@ class ProjectMother
             projectType: $projectType,
             projectStatus: $projectStatus,
             mitecoId: $mitecoId,
+            pricePerTonne: $pricePerTonne,
+            costPerTonne: $costPerTonne,
         );
 
         return $project;
+    }
+
+    public static function contributable(
+        ProjectType $projectType = ProjectType::EmissionCompensation,
+        float $pricePerTonne = 20.0,
+        ?float $costPerTonne = 15.0,
+        ?ProjectId $id = null,
+    ): Project {
+        return self::from(
+            name: 'project-' . rand(100, 999),
+            id: (string) ($id ?? ProjectId::generate()),
+            projectType: $projectType,
+            pricePerTonne: $pricePerTonne,
+            costPerTonne: $costPerTonne,
+        );
     }
 
     public static function random(): Project

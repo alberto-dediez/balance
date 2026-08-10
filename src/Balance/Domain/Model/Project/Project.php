@@ -31,6 +31,8 @@ class Project implements Translatable
         private ?ProjectType $projectType = null,
         private ?ProjectStatus $projectStatus = null,
         private ?string $mitecoId = null,
+        private ?float $pricePerTonne = null,
+        private ?float $costPerTonne = null,
         private bool $removed = false,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
@@ -88,6 +90,16 @@ class Project implements Translatable
         return $this->mitecoId;
     }
 
+    public function pricePerTonne(): ?float
+    {
+        return $this->pricePerTonne;
+    }
+
+    public function costPerTonne(): ?float
+    {
+        return $this->costPerTonne;
+    }
+
     public function translations(): Translations
     {
         if ($this->translations instanceof Translations) {
@@ -128,6 +140,8 @@ class Project implements Translatable
         ?ProjectType $projectType,
         ?ProjectStatus $projectStatus,
         ?string $mitecoId,
+        ?float $pricePerTonne = null,
+        ?float $costPerTonne = null,
         ?Locale $locale = null,
     ): void {
         $this->recordApplyAndPublish(
@@ -140,6 +154,8 @@ class Project implements Translatable
                 projectType: $projectType,
                 projectStatus: $projectStatus,
                 mitecoId: $mitecoId,
+                pricePerTonne: $pricePerTonne,
+                costPerTonne: $costPerTonne,
             ),
         );
 
@@ -157,6 +173,8 @@ class Project implements Translatable
         ?ProjectType $projectType,
         ?ProjectStatus $projectStatus,
         ?string $mitecoId,
+        ?float $pricePerTonne = null,
+        ?float $costPerTonne = null,
         ?Locale $locale = null,
     ): void {
         $this->recordApplyAndPublish(
@@ -169,6 +187,8 @@ class Project implements Translatable
                 projectType: $projectType,
                 projectStatus: $projectStatus,
                 mitecoId: $mitecoId,
+                pricePerTonne: $pricePerTonne,
+                costPerTonne: $costPerTonne,
             ),
         );
 
@@ -207,6 +227,8 @@ class Project implements Translatable
         $this->projectType = $event->projectType();
         $this->projectStatus = $event->projectStatus();
         $this->mitecoId = $event->mitecoId();
+        $this->pricePerTonne = $event->pricePerTonne();
+        $this->costPerTonne = $event->costPerTonne();
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -219,6 +241,8 @@ class Project implements Translatable
         $this->projectType = $event->projectType();
         $this->projectStatus = $event->projectStatus();
         $this->mitecoId = $event->mitecoId();
+        $this->pricePerTonne = $event->pricePerTonne();
+        $this->costPerTonne = $event->costPerTonne();
         $this->updatedAt = $event->occurredOn();
     }
 

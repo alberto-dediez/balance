@@ -32,6 +32,8 @@
                             {% set value = value | project_name %}
                         {% elseif field == 'signatureStatus' %}
                             {% set value = value.value | trans({}, 'signatureRequestStatus') %}
+                        {% elseif field == 'status' %}
+                            {% set value = value.value | trans({}, value | enum_domain) %}
                         {% elseif field == 'size' %}
                             {% set value = value.value | trans({}, 'eventSizeType') %}
                         {% elseif field == 'sector' %}

@@ -17,6 +17,8 @@
         <field name="projectType" type="string" column="project_type" enum-type="App\Balance\Domain\Model\Project\ProjectType" nullable="true"/>
         <field name="projectStatus" type="string" column="project_status" enum-type="App\Balance\Domain\Model\Project\ProjectStatus" nullable="true"/>
         <field name="mitecoId" type="string" column="miteco_id" length="255" nullable="true"/>
+        <field name="pricePerTonne" type="float" column="price_per_tonne" nullable="true"/>
+        <field name="costPerTonne" type="float" column="cost_per_tonne" nullable="true"/>
 
         <one-to-many field="translations"
                      target-entity="App\Balance\Domain\Model\Project\ProjectTranslation"

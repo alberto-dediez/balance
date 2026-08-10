@@ -24,6 +24,8 @@ final class ProjectUpdated extends DomainEvent
         private ?ProjectType $projectType,
         private ?ProjectStatus $projectStatus,
         private ?string $mitecoId,
+        private ?float $pricePerTonne = null,
+        private ?float $costPerTonne = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -71,6 +73,16 @@ final class ProjectUpdated extends DomainEvent
         return $this->mitecoId;
     }
 
+    public function pricePerTonne(): ?float
+    {
+        return $this->pricePerTonne;
+    }
+
+    public function costPerTonne(): ?float
+    {
+        return $this->costPerTonne;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->projectId();
@@ -87,6 +99,8 @@ final class ProjectUpdated extends DomainEvent
             'projectType' => $this->projectType?->value,
             'projectStatus' => $this->projectStatus?->value,
             'mitecoId' => $this->mitecoId,
+            'pricePerTonne' => $this->pricePerTonne,
+            'costPerTonne' => $this->costPerTonne,
         ];
     }
 
@@ -107,6 +121,8 @@ final class ProjectUpdated extends DomainEvent
             projectType: $projectType,
             projectStatus: $projectStatus,
             mitecoId: $payload['mitecoId'],
+            pricePerTonne: isset($payload['pricePerTonne']) ? (float) $payload['pricePerTonne'] : null,
+            costPerTonne: isset($payload['costPerTonne']) ? (float) $payload['costPerTonne'] : null,
             id: $id,
             occurredOn: $occurredOn,
         );

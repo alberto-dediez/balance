@@ -41,7 +41,7 @@ class ValidateCreditPurchaseServiceTest extends TestCase
         $user = UserMother::adminUser();
 
         $result = $sut(
-            new ValidateCreditPurchaseRequest($creditPurchase->id(), 10.0, 150.0, 'REF-1'),
+            new ValidateCreditPurchaseRequest($creditPurchase->id(), 10.0, 'REF-1'),
             $user,
         );
 
@@ -62,7 +62,7 @@ class ValidateCreditPurchaseServiceTest extends TestCase
         $user = UserMother::adminUser();
 
         $result = $sut(
-            new ValidateCreditPurchaseRequest($creditPurchase->id(), 6.0, 90.0, 'REF-2'),
+            new ValidateCreditPurchaseRequest($creditPurchase->id(), 6.0, 'REF-2'),
             $user,
         );
 
@@ -85,7 +85,7 @@ class ValidateCreditPurchaseServiceTest extends TestCase
         $this->expectException(DuplicatedPurchaseReferenceException::class);
 
         $sut(
-            new ValidateCreditPurchaseRequest($pending->id(), 5.0, 5.0, (string) $alreadyValidated->reference()),
+            new ValidateCreditPurchaseRequest($pending->id(), 5.0, (string) $alreadyValidated->reference()),
             $user,
         );
     }
@@ -101,7 +101,7 @@ class ValidateCreditPurchaseServiceTest extends TestCase
 
         $this->expectException(CreditPurchaseNotPendingException::class);
 
-        $sut(new ValidateCreditPurchaseRequest($creditPurchase->id(), 5.0, 5.0, 'REF-3'), $user);
+        $sut(new ValidateCreditPurchaseRequest($creditPurchase->id(), 5.0, 'REF-3'), $user);
     }
 
     public function testThrowsWhenUserIsNotAdmin(): void
@@ -115,7 +115,7 @@ class ValidateCreditPurchaseServiceTest extends TestCase
 
         $this->expectException(UnauthorizedActionException::class);
 
-        $sut(new ValidateCreditPurchaseRequest($creditPurchase->id(), 5.0, 5.0, 'REF-4'), $user);
+        $sut(new ValidateCreditPurchaseRequest($creditPurchase->id(), 5.0, 'REF-4'), $user);
     }
 
     private function createSUT(CreditPurchaseRepository $repository): ValidateCreditPurchaseService

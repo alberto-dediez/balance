@@ -1,0 +1,18 @@
+<h3>{% trans -%}Pago recibido de una aportación ya cerrada{%- endtrans -%}</h3>
+<p>
+    {% trans with {
+        '{status}': status,
+        '{email}': contributorEmail
+    } -%}
+        Se ha recibido el pago de una aportación que ya estaba {status}. El crédito reservado se liberó, así que el cobro no tiene aportación viva detrás y hay que conciliarlo a mano. Aportante: {email}.
+    {%- endtrans %}
+    {% if totalAmount %}
+        {% trans with {'{total}': totalAmount | number_format(2, ',', '.'), '{currency}': currency} -%}Importe: {total} {currency}.{%- endtrans %}
+    {% endif %}
+    {% if paymentId %}
+        {% trans with {'{paymentId}': paymentId} -%}Pago: {paymentId}.{%- endtrans %}
+    {% endif %}
+</p>
+<a href="{{ url('admin_project_contributions_view', {'projectContributionId': projectContributionId}) }}" class="btn btn-primary">
+    {% trans -%}Ver aportación{%- endtrans -%}
+</a>

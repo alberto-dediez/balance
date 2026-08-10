@@ -55,7 +55,32 @@ class ProjectTest extends TestCase
         $this->assertEquals('translated-description-it', $project->description());
     }
 
-    private function registeredProject(): Project
+    public function testRegisterKeepsThePricePerTonne(): void
+    {
+        $project = $this->registeredProject(pricePerTonne: 20.0);
+
+        $this->assertSame(20.0, $project->pricePerTonne());
+    }
+
+    public function testUpdateChangesThePricePerTonne(): void
+    {
+        $project = $this->registeredProject(pricePerTonne: 20.0);
+
+        $project->update(
+            name: 'project-name',
+            description: 'project-description',
+            location: DestinationId::generate(),
+            gallery: [],
+            projectType: ProjectType::EmissionCompensation,
+            projectStatus: ProjectStatus::Pending,
+            mitecoId: null,
+            pricePerTonne: 25.0,
+        );
+
+        $this->assertSame(25.0, $project->pricePerTonne());
+    }
+
+    private function registeredProject(?float $pricePerTonne = null): Project
     {
         $project = new Project(id: ProjectId::generate());
 
@@ -67,6 +92,7 @@ class ProjectTest extends TestCase
             projectType: ProjectType::EmissionCompensation,
             projectStatus: ProjectStatus::Pending,
             mitecoId: null,
+            pricePerTonne: $pricePerTonne,
         );
 
         return $project;

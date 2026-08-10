@@ -1,0 +1,47 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Aportaciones a proyectos' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Cuenta' | trans,
+            'sortable': false
+        }, {
+            'label': 'Proyecto' | trans,
+            'sortable': false
+        }, {
+            'label': 'Aportante' | trans,
+            'sortable': false
+        }, {
+            'label': 'Toneladas' | trans,
+            'sortable': false
+        }, {
+            'label': 'Total' | trans,
+            'sortable': true,
+            'sortableBy': 'totalAmount'
+        }, {
+            'label': 'Estado' | trans,
+            'sortable': false
+        }, {
+            'label': 'Fecha' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="projectContributions">
+        <td>{{ element.accountId | account_name }}</td>
+        <td>{{ element.projectId | project_name }}</td>
+        <td>{{ element.contributorName }}</td>
+        <td>{{ element.tonnes | number_format(4, ',', '.') }}</td>
+        <td>{{ element.totalAmount | number_format(2, ',', '.') }} €</td>
+        <td>{{ element.status.value | trans({}, 'projectContributionStatus') }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y H:i') }}</td>
+        <td>
+            <twig:List:Action:View path="{{ path('admin_project_contributions_view', {'projectContributionId': element.id}) }}" />
+        </td>
+    </twig:List:Table>
+{% endblock %}

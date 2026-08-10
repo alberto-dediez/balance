@@ -8,11 +8,12 @@ use App\Balance\Domain\Model\Project\ProjectId;
 
 final class CreditBalance
 {
+    private const TONNE_TOLERANCE = 0.000001;
+
     public function __construct(
         private ProjectId $projectId,
         private float $purchasedTonnes,
         private float $consumedTonnes,
-        private float $amount,
         private int $purchasesCount,
     ) {}
 
@@ -31,27 +32,20 @@ final class CreditBalance
         return $this->consumedTonnes;
     }
 
+    /** Consuming more than what was purchased breaks the invariant of the balance and is never a valid state. */
     public function availableTonnes(): float
     {
-        return $this->purchasedTonnes - $this->consumedTonnes;
-    }
+        $availableTonnes = $this->purchasedTonnes - $this->consumedTonnes;
 
-    public function amount(): float
-    {
-        return $this->amount;
+        if ($availableTonnes < -self::TONNE_TOLERANCE) {
+            throw new NegativeCreditBalanceException($this->projectId, $this->purchasedTonnes, $this->consumedTonnes);
+        }
+
+        return $availableTonnes;
     }
 
     public function purchasesCount(): int
     {
         return $this->purchasesCount;
-    }
-
-    public function pricePerTonne(): ?float
-    {
-        if (0.0 === $this->purchasedTonnes) {
-            return null;
-        }
-
-        return $this->amount / $this->purchasedTonnes;
     }
 }

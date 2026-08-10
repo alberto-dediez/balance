@@ -1,0 +1,83 @@
+{% extends '@carbon_footprint/public/property_trip/layout.html.twig' %}
+
+{% set page_title = project.name %}
+
+{% block trip_body %}
+    {% if gallery is not empty %}
+        {% set cover = gallery | first %}
+        <img src="{{ path('library_media_public_show', {mediaId: cover.id}) }}"
+             alt="{{ cover.alternativeText | default(project.name) }}"
+             class="rounded w-100 object-fit-cover mb-3"
+             style="max-height: 14rem;">
+    {% endif %}
+
+    <h5 class="mb-2">{{ project.name }}</h5>
+
+    <div class="d-flex flex-wrap gap-2 mb-3">
+        {% if project.projectType %}
+            <span class="badge text-bg-light">{{ project.projectType.value | trans({}, 'projectType') }}</span>
+        {% endif %}
+
+        {% if project.projectStatus %}
+            <span class="badge text-bg-light">{{ project.projectStatus.value | trans({}, 'projectStatusType') }}</span>
+        {% endif %}
+
+        {% set location = project.location | destination_name %}
+        {% if location %}
+            <span class="badge text-bg-light">
+                <twig:Icon name="solar:map-point-line-duotone" class="me-1" />
+                {{ location }}
+            </span>
+        {% endif %}
+    </div>
+
+    {% if project.description %}
+        <div class="mb-3">{{ project.description | md_to_html }}</div>
+    {% else %}
+        <p class="text-muted mb-3">{{ 'Este proyecto todavía no tiene una descripción.' | trans }}</p>
+    {% endif %}
+
+    {% if gallery | length > 1 %}
+        <div class="row g-2 mb-3">
+            {% for media in gallery | slice(1) %}
+                <div class="col-6">
+                    <img src="{{ path('library_media_public_show', {mediaId: media.id}) }}"
+                         alt="{{ media.alternativeText | default(project.name) }}"
+                         class="rounded w-100 object-fit-cover"
+                         style="height: 8rem;">
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if option.suggestedAmount is not null %}
+        <p class="mb-3 fw-semibold text-success">
+            {{ 'Compensar tu huella en este proyecto cuesta {amount} €.' | trans({
+                '{amount}': option.suggestedAmount | number_format(2, ',', '.'),
+            }) }}
+            <span class="text-muted fw-normal small">{{ '(sin impuestos)' | trans }}</span>
+        </p>
+    {% endif %}
+
+    <div class="d-grid">
+        <a class="btn btn-success"
+           href="{{ path('public_carbon_footprint_property_trip_contribution_checkout', {
+               token: token,
+               tripCalculationId: tripCalculationId,
+               projectId: project.id,
+           }) }}">
+            <twig:Icon name="solar:hand-heart-bold" class="me-1" />
+            {{ 'Aportar a este proyecto' | trans }}
+        </a>
+    </div>
+
+    <div class="text-center mt-4">
+        <a class="btn btn-link btn-sm text-muted"
+           href="{{ path('public_carbon_footprint_property_trip_contribution_choose', {
+               token: token,
+               tripCalculationId: tripCalculationId,
+           }) }}">
+            {{ 'Volver a los proyectos' | trans }}
+        </a>
+    </div>
+{% endblock %}

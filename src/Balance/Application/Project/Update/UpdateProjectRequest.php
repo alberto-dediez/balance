@@ -23,5 +23,7 @@ class UpdateProjectRequest implements Command
         public ?ProjectType $projectType,
         public ?ProjectStatus $projectStatus,
         public ?string $mitecoId,
+        public ?float $pricePerTonne = null,
+        public ?float $costPerTonne = null,
     ) {}
 }

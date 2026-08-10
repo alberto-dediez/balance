@@ -35,11 +35,12 @@
     ] %}
 
     <twig:List:Table :columns="columns" :elements="creditPurchases">
+        {% set project = element.projectId | project_name %}
         <td>{{ element.accountId | account_name }}</td>
-        <td>{{ element.projectId | project_name }}</td>
+        <td>{{ project }}</td>
         <td>{{ element.requestedTonnes }}</td>
         <td>{{ element.purchasedTonnes ?? '-' }}</td>
-        <td>{{ element.amount is not null ? (element.amount ~ ' €') : '-' }}</td>
+        <td>{{ element.purchasedTonnes is not null and project.costPerTonne is not null ? ((element.purchasedTonnes * project.costPerTonne) | number_format(2, ',', '.') ~ ' €') : '-' }}</td>
         <td>{{ element.reference ?? '-' }}</td>
         <td>
             {{ element.status.value | trans({}, 'creditPurchaseStatus') }}

@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Balance\Application\AccountProject\Deselect;
 use App\Balance\Application\AccountProject\AccountProjectAuthorizer;
 use App\Balance\Application\AccountProject\Deselect\DeselectProjectRequest;
 use App\Balance\Application\AccountProject\Deselect\DeselectProjectService;
+use App\Balance\Application\CreditPurchase\Balance\CreditAvailability;
 use App\Balance\Domain\Model\AccountProject\AccountProjectDeselected;
 use App\Balance\Domain\Model\AccountProject\AccountProjectRepository;
 use App\Balance\Domain\Model\AccountProject\ProjectHasAvailableCreditsException;
@@ -20,6 +21,7 @@ use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseMother;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
+use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use PHPUnit\Framework\TestCase;
@@ -119,9 +121,15 @@ class DeselectProjectServiceTest extends TestCase
         AccountProjectRepository $repository,
         ?CreditPurchaseRepository $creditPurchaseRepository = null,
     ): DeselectProjectService {
+        $projectContributionRepository = ProjectContributionRepositoryMother::inMemory();
+
         return new DeselectProjectService(
             $repository,
-            $creditPurchaseRepository ?? new InMemoryCreditPurchaseRepository(),
+            new CreditAvailability(
+                $creditPurchaseRepository ?? new InMemoryCreditPurchaseRepository(),
+                $projectContributionRepository,
+            ),
+            $projectContributionRepository,
             new AccountProjectAuthorizer(),
         );
     }

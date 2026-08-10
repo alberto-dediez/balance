@@ -1,0 +1,73 @@
+{% extends '@carbon_footprint/public/property_trip/layout.html.twig' %}
+
+{% set page_title = 'Tu aportación' | trans %}
+
+{% block trip_body %}
+    <div class="text-center mb-4">
+        {% if contribution.paid %}
+            <twig:Icon name="solar:check-circle-bold" size="xl" class="text-success mb-3" />
+            <h5 class="text-success mb-1">{{ '¡Gracias por tu aportación!' | trans }}</h5>
+            <p class="text-muted small mb-0">
+                {{ 'Hemos recibido tu pago correctamente.' | trans }}
+            </p>
+        {% elseif contribution.pending %}
+            <twig:Icon name="solar:clock-circle-bold" size="xl" class="text-warning mb-3" />
+            <h5 class="mb-1">{{ 'Estamos confirmando tu pago' | trans }}</h5>
+            <p class="text-muted small mb-0">
+                {{ 'En cuanto la pasarela nos confirme el cobro, tu aportación quedará registrada.' | trans }}
+            </p>
+        {% else %}
+            <twig:Icon name="solar:close-circle-bold" size="xl" class="text-danger mb-3" />
+            <h5 class="text-danger mb-1">{{ 'Tu aportación no se ha completado' | trans }}</h5>
+            <p class="text-muted small mb-0">
+                {{ 'El pago no llegó a realizarse, así que no se ha cobrado nada.' | trans }}
+            </p>
+        {% endif %}
+    </div>
+
+    {% if project %}
+        <p class="text-center mb-4">
+            <span class="text-muted">{{ 'Proyecto' | trans }}:</span> <strong>{{ project.name }}</strong>
+        </p>
+    {% endif %}
+
+    <table class="table table-sm mb-4">
+        <tbody>
+            <tr>
+                <th scope="row" class="fw-normal">{{ 'Aportación al proyecto' | trans }}</th>
+                <td class="text-end text-nowrap">{{ contribution.contributionAmount | number_format(2, ',', '.') }} €</td>
+            </tr>
+            <tr>
+                <th scope="row" class="fw-normal">{{ 'Margen de gestión' | trans }}</th>
+                <td class="text-end text-nowrap">{{ contribution.managementFeeAmount | number_format(2, ',', '.') }} €</td>
+            </tr>
+            <tr>
+                <th scope="row" class="fw-normal">
+                    {{ 'IVA' | trans }} ({{ contribution.vatRate | number_format(2, ',', '.') }} %)
+                    {% if contribution.vatRate == 0 and contribution.vatReason %}
+                        <span class="d-block text-muted small">
+                            {{ ('vat.reason.' ~ contribution.vatReason.value) | trans }}
+                        </span>
+                    {% endif %}
+                </th>
+                <td class="text-end text-nowrap">{{ contribution.vatAmount | number_format(2, ',', '.') }} €</td>
+            </tr>
+            <tr class="fw-semibold">
+                <th scope="row">{{ 'Total' | trans }}</th>
+                <td class="text-end text-nowrap">{{ contribution.totalAmount | number_format(2, ',', '.') }} €</td>
+            </tr>
+            {% if contribution.co2eqKg is not null %}
+                <tr>
+                    <th scope="row" class="fw-normal">{{ 'Emisiones compensadas' | trans }}</th>
+                    <td class="text-end text-nowrap">{{ contribution.co2eqKg | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    {% if payment and payment.externalPaymentId %}
+        <p class="text-muted small text-center mb-0">
+            {{ 'Referencia del pago' | trans }}: <code>{{ payment.externalPaymentId }}</code>
+        </p>
+    {% endif %}
+{% endblock %}

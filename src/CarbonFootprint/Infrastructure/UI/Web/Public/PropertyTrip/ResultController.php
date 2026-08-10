@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip;
 
+use App\Balance\Application\ProjectContribution\Options\ListContributionOptionsRequest;
+use App\Balance\Application\ProjectContribution\Options\ListContributionOptionsService;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenRequest;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenService;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationId;
@@ -11,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
+use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,6 +33,7 @@ class ResultController extends AbstractController
         string $tripCalculationId,
         GetTripCalculationLinkByTokenService $getByToken,
         TripCalculationRepository $tripCalculationRepository,
+        ListContributionOptionsService $listContributionOptions,
         Request $request,
     ): Response {
         if ($limited = $this->propertyTripRateLimiter->check($request)) {
@@ -55,11 +59,24 @@ class ResultController extends AbstractController
             $mobilityNames[(string) $mobility->id()] = $mobility->name();
         }
 
+        $accountId = $response->tripCalculationLink->accountId() ?? $response->property->accountId();
+        $hasContributionOptions = false;
+
+        if ($accountId instanceof AccountId) {
+            $options = $listContributionOptions(new ListContributionOptionsRequest(
+                accountId: $accountId,
+                co2eqKg: (float) $tripCalculation->emissions()->co2eq(),
+            ));
+
+            $hasContributionOptions = !$options->isEmpty();
+        }
+
         return $this->render('@carbon_footprint/public/property_trip/result.html.twig', [
             'token' => $token,
             'property' => $response->property,
             'tripCalculation' => $tripCalculation,
             'mobilityNames' => $mobilityNames,
+            'hasContributionOptions' => $hasContributionOptions,
         ]);
     }
 }

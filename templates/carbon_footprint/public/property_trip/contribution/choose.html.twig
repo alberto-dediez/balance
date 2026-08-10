@@ -1,0 +1,79 @@
+{% extends '@carbon_footprint/public/property_trip/layout.html.twig' %}
+
+{% set page_title = 'Compensa tu huella' | trans %}
+
+{% block trip_body %}
+    <div class="text-center mb-4">
+        <twig:Icon name="solar:hand-heart-bold" size="xl" class="text-success mb-3" />
+        <h5 class="mb-1">{{ 'Elige un proyecto' | trans }}</h5>
+        <p class="text-muted small mb-0">
+            {{ 'Vas a compensar {kg} kg CO₂eq.' | trans({'{kg}': tripCalculation.emissions.co2eq | number_format(2, ',', '.')}) }}
+        </p>
+    </div>
+
+    {% if options is empty %}
+        <p class="text-muted text-center mb-0">
+            {{ 'Ahora mismo no hay proyectos disponibles para compensar tu huella.' | trans }}
+        </p>
+    {% else %}
+        <div class="d-grid gap-3">
+            {% for option in options %}
+                {% set project = option.project %}
+                {% set detailPath = path('public_carbon_footprint_property_trip_contribution_project', {
+                    token: token,
+                    tripCalculationId: tripCalculation.id,
+                    projectId: project.id,
+                }) %}
+                <div class="card">
+                    {% set cover = covers[project.id] | default(null) %}
+                    {% if cover %}
+                        <a href="{{ detailPath }}">
+                            <img src="{{ path('library_media_public_show', {mediaId: cover.id}) }}"
+                                 alt="{{ project.name }}"
+                                 class="card-img-top object-fit-cover"
+                                 style="max-height: 10rem;">
+                        </a>
+                    {% endif %}
+                    <div class="card-body">
+                        <h6 class="card-title mb-1">
+                            <a class="text-decoration-none text-body" href="{{ detailPath }}">{{ project.name }}</a>
+                        </h6>
+                        <span class="badge text-bg-light mb-2">
+                            {{ project.projectType ? project.projectType.value | trans({}, 'projectType') : '' }}
+                        </span>
+                        {% if option.suggestedAmount is not null %}
+                            <p class="mb-0 fw-semibold text-success">
+                                {{ option.suggestedAmount | number_format(2, ',', '.') }} €
+                                <span class="text-muted fw-normal small">{{ '(sin impuestos)' | trans }}</span>
+                            </p>
+                        {% endif %}
+
+                        <div class="d-grid gap-2 mt-3">
+                            <a class="btn btn-success"
+                               href="{{ path('public_carbon_footprint_property_trip_contribution_checkout', {
+                                   token: token,
+                                   tripCalculationId: tripCalculation.id,
+                                   projectId: project.id,
+                               }) }}">
+                                {{ 'Aportar' | trans }}
+                            </a>
+                            <a class="btn btn-outline-secondary btn-sm" href="{{ detailPath }}">
+                                {{ 'Ver detalles' | trans }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <a class="btn btn-link btn-sm text-muted"
+           href="{{ path('public_carbon_footprint_property_trip_result', {
+               token: token,
+               tripCalculationId: tripCalculation.id,
+           }) }}">
+            {{ 'Volver al resultado' | trans }}
+        </a>
+    </div>
+{% endblock %}

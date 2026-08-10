@@ -62,11 +62,9 @@ class CreditPurchaseTest extends TestCase
     {
         $creditPurchase = CreditPurchaseMother::pending(tonnes: 10.0);
 
-        $creditPurchase->validate(10.0, 150.0, 'REF-1', null, UserId::generate());
+        $creditPurchase->validate(10.0, 'REF-1', null, UserId::generate());
 
         $this->assertSame(10.0, $creditPurchase->purchasedTonnes());
-        $this->assertSame(150.0, $creditPurchase->amount());
-        $this->assertSame(15.0, $creditPurchase->pricePerTonne());
         $this->assertFalse($creditPurchase->isPartiallyFulfilled());
 
         $lastEvent = $this->spySubscriber->lastEvent();
@@ -79,7 +77,7 @@ class CreditPurchaseTest extends TestCase
     {
         $creditPurchase = CreditPurchaseMother::pending(tonnes: 10.0);
 
-        $creditPurchase->validate(6.0, 90.0, 'REF-2', null, UserId::generate());
+        $creditPurchase->validate(6.0, 'REF-2', null, UserId::generate());
 
         $this->assertTrue($creditPurchase->isPartiallyFulfilled());
 
@@ -93,7 +91,7 @@ class CreditPurchaseTest extends TestCase
     {
         $creditPurchase = CreditPurchaseMother::pending(tonnes: 10.0);
 
-        $creditPurchase->validate(12.0, 180.0, 'REF-3', null, UserId::generate());
+        $creditPurchase->validate(12.0, 'REF-3', null, UserId::generate());
 
         $this->assertFalse($creditPurchase->isPartiallyFulfilled());
     }
@@ -104,7 +102,7 @@ class CreditPurchaseTest extends TestCase
 
         $this->expectException(CreditPurchaseNotPendingException::class);
 
-        $creditPurchase->validate(1.0, 1.0, 'REF-4', null, UserId::generate());
+        $creditPurchase->validate(1.0, 'REF-4', null, UserId::generate());
     }
 
     public function testRejectPublishesCreditPurchaseRejected(): void
@@ -147,13 +145,6 @@ class CreditPurchaseTest extends TestCase
         $this->expectException(CreditPurchaseNotPendingException::class);
 
         $creditPurchase->cancel();
-    }
-
-    public function testPricePerTonneIsNullWithZeroTonnes(): void
-    {
-        $creditPurchase = new CreditPurchase(id: CreditPurchaseId::generate());
-
-        $this->assertNull($creditPurchase->pricePerTonne());
     }
 
     public function testAvailableTonnesIsZeroUnlessValidated(): void

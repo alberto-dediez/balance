@@ -18,7 +18,6 @@ final class CreditPurchaseValidated extends DomainEvent
         private CreditPurchaseId $creditPurchaseId,
         private float $requestedTonnes,
         private float $purchasedTonnes,
-        private float $amount,
         private string $reference,
         private ?MediaId $certificate,
         private UserId $validatedBy,
@@ -41,11 +40,6 @@ final class CreditPurchaseValidated extends DomainEvent
     public function purchasedTonnes(): float
     {
         return $this->purchasedTonnes;
-    }
-
-    public function amount(): float
-    {
-        return $this->amount;
     }
 
     public function reference(): string
@@ -79,7 +73,6 @@ final class CreditPurchaseValidated extends DomainEvent
             'creditPurchaseId' => (string) $this->creditPurchaseId,
             'requestedTonnes' => $this->requestedTonnes,
             'purchasedTonnes' => $this->purchasedTonnes,
-            'amount' => $this->amount,
             'reference' => $this->reference,
             'certificate' => null !== $this->certificate ? (string) $this->certificate : null,
             'validatedBy' => (string) $this->validatedBy,
@@ -95,7 +88,6 @@ final class CreditPurchaseValidated extends DomainEvent
             creditPurchaseId: new CreditPurchaseId($payload['creditPurchaseId']),
             requestedTonnes: (float) $payload['requestedTonnes'],
             purchasedTonnes: (float) $payload['purchasedTonnes'],
-            amount: (float) $payload['amount'],
             reference: $payload['reference'],
             certificate: null !== $payload['certificate'] ? new MediaId($payload['certificate']) : null,
             validatedBy: new UserId($payload['validatedBy']),

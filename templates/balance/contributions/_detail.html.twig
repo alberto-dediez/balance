@@ -1,0 +1,121 @@
+{#
+    Variables expected: contribution, project, payment
+#}
+<twig:Card title="{{ 'Aportación' | trans }}">
+    <dl class="row mb-0">
+        {% if project %}
+            <dt class="col-sm-4">{{ 'Proyecto' | trans }}</dt>
+            <dd class="col-sm-8">{{ project.name }}</dd>
+        {% endif %}
+
+        <dt class="col-sm-4">{{ 'Estado' | trans }}</dt>
+        <dd class="col-sm-8">{{ contribution.status.value | trans({}, 'projectContributionStatus') }}</dd>
+
+        <dt class="col-sm-4">{{ 'Toneladas' | trans }}</dt>
+        <dd class="col-sm-8">{{ contribution.tonnes | number_format(4, ',', '.') }} t</dd>
+
+        {% if contribution.co2eqKg is not null %}
+            <dt class="col-sm-4">{{ 'Emisiones compensadas' | trans }}</dt>
+            <dd class="col-sm-8">{{ contribution.co2eqKg | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</dd>
+        {% endif %}
+
+        <dt class="col-sm-4">{{ 'Aportación libre' | trans }}</dt>
+        <dd class="col-sm-8">{{ contribution.freeAmount ? 'Sí' | trans : 'No' | trans }}</dd>
+
+        <dt class="col-sm-4">{{ 'Precio por tonelada' | trans }}</dt>
+        <dd class="col-sm-8">{{ contribution.pricePerTonne | number_format(2, ',', '.') }} €</dd>
+
+        {% if contribution.costPerTonne is not null %}
+            <dt class="col-sm-4">{{ 'Coste por tonelada' | trans }}</dt>
+            <dd class="col-sm-8">{{ contribution.costPerTonne | number_format(2, ',', '.') }} €</dd>
+        {% endif %}
+
+        <dt class="col-sm-4">{{ 'Fecha' | trans }}</dt>
+        <dd class="col-sm-8">{{ contribution.registeredAt | date('d/m/Y H:i') }}</dd>
+
+        {% if contribution.expiresAt %}
+            <dt class="col-sm-4">{{ 'Reserva hasta' | trans }}</dt>
+            <dd class="col-sm-8">{{ contribution.expiresAt | date('d/m/Y H:i') }}</dd>
+        {% endif %}
+
+        {% if contribution.paidAt %}
+            <dt class="col-sm-4">{{ 'Fecha de pago' | trans }}</dt>
+            <dd class="col-sm-8">{{ contribution.paidAt | date('d/m/Y H:i') }}</dd>
+        {% endif %}
+
+        {% if contribution.failureReason %}
+            <dt class="col-sm-4">{{ 'Motivo del fallo' | trans }}</dt>
+            <dd class="col-sm-8">{{ contribution.failureReason }}</dd>
+        {% endif %}
+    </dl>
+</twig:Card>
+
+<twig:Card title="{{ 'Desglose económico' | trans }}">
+    <dl class="row mb-0">
+        <dt class="col-sm-4">{{ 'Aportación al proyecto' | trans }}</dt>
+        <dd class="col-sm-8">{{ contribution.contributionAmount | number_format(2, ',', '.') }} €</dd>
+
+        <dt class="col-sm-4">{{ 'Margen de gestión' | trans }}</dt>
+        <dd class="col-sm-8">{{ contribution.managementFeeAmount | number_format(2, ',', '.') }} €</dd>
+
+        <dt class="col-sm-4">{{ 'Base imponible' | trans }}</dt>
+        <dd class="col-sm-8">{{ contribution.taxableAmount | number_format(2, ',', '.') }} €</dd>
+
+        <dt class="col-sm-4">{{ 'IVA' | trans }} ({{ contribution.vatRate | number_format(2, ',', '.') }} %)</dt>
+        <dd class="col-sm-8">
+            {{ contribution.vatAmount | number_format(2, ',', '.') }} €
+            {% if contribution.vatReason %}
+                <span class="d-block text-muted small">{{ ('vat.reason.' ~ contribution.vatReason.value) | trans }}</span>
+            {% endif %}
+        </dd>
+
+        <dt class="col-sm-4 fw-semibold">{{ 'Total' | trans }}</dt>
+        <dd class="col-sm-8 fw-semibold">{{ contribution.totalAmount | number_format(2, ',', '.') }} {{ contribution.currency }}</dd>
+    </dl>
+</twig:Card>
+
+<twig:Card title="{{ 'Datos fiscales del aportante' | trans }}">
+    <dl class="row mb-0">
+        <dt class="col-sm-4">{{ 'Nombre' | trans }}</dt>
+        <dd class="col-sm-8">{{ contribution.contributorName }}</dd>
+
+        <dt class="col-sm-4">{{ 'Email' | trans }}</dt>
+        <dd class="col-sm-8">{{ contribution.contributorEmail }}</dd>
+
+        <dt class="col-sm-4">{{ 'País' | trans }}</dt>
+        <dd class="col-sm-8">{{ contribution.contributorCountry }}</dd>
+
+        {% if contribution.contributorIsCompany %}
+            <dt class="col-sm-4">{{ 'Razón social' | trans }}</dt>
+            <dd class="col-sm-8">{{ contribution.contributorCompanyName ?? '-' }}</dd>
+
+            <dt class="col-sm-4">{{ 'NIF / NIF-IVA' | trans }}</dt>
+            <dd class="col-sm-8">{{ contribution.contributorVatNumber ?? '-' }}</dd>
+        {% endif %}
+    </dl>
+</twig:Card>
+
+<twig:Card title="{{ 'Pago' | trans }}">
+    {% if payment %}
+        <dl class="row mb-0">
+            <dt class="col-sm-4">{{ 'Estado' | trans }}</dt>
+            <dd class="col-sm-8">{{ payment.status.value | trans({}, 'paymentStatus') }}</dd>
+
+            <dt class="col-sm-4">{{ 'Pasarela' | trans }}</dt>
+            <dd class="col-sm-8">{{ payment.gateway ?? '-' }}</dd>
+
+            <dt class="col-sm-4">{{ 'Sesión de pago' | trans }}</dt>
+            <dd class="col-sm-8"><code>{{ payment.externalId ?? '-' }}</code></dd>
+
+            <dt class="col-sm-4">{{ 'Referencia del pago' | trans }}</dt>
+            <dd class="col-sm-8"><code>{{ payment.externalPaymentId ?? '-' }}</code></dd>
+
+            {% if payment.failureReason %}
+                <dt class="col-sm-4">{{ 'Motivo del fallo' | trans }}</dt>
+                <dd class="col-sm-8">{{ payment.failureReason }}</dd>
+            {% endif %}
+        </dl>
+    {% else %}
+        <p class="text-muted mb-0">{{ 'Esta aportación no tiene ningún pago asociado' | trans }}</p>
+    {% endif %}
+</twig:Card>

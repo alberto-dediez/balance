@@ -56,6 +56,7 @@ class UpdateProjectServiceTest extends TestCase
             projectType: ProjectType::SocialProject,
             projectStatus: ProjectStatus::Executed,
             mitecoId: 'MITECO-2',
+            pricePerTonne: 25.0,
         );
 
         $result = $sut($request, $user);
@@ -63,6 +64,7 @@ class UpdateProjectServiceTest extends TestCase
         $projectPersisted = $repository->find($result->projectId);
 
         $this->assertNotNull($projectPersisted);
+        $this->assertSame(25.0, $projectPersisted->pricePerTonne());
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

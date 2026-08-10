@@ -42,7 +42,6 @@ class ValidateCreditPurchaseService implements CommandHandler
 
         $creditPurchase->validate(
             purchasedTonnes: $request->purchasedTonnes,
-            amount: $request->amount,
             reference: $request->reference,
             certificate: $request->certificate,
             validatedBy: $user->id(),

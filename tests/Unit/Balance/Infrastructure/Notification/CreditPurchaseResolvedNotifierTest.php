@@ -48,7 +48,7 @@ class CreditPurchaseResolvedNotifierTest extends TestCase
 
         new CreditPurchaseResolvedNotifier($notifier, $creditPurchaseRepository, $projectRepository, $userRepository);
 
-        $creditPurchase->validate(10.0, 150.0, 'REF-1', null, UserId::generate());
+        $creditPurchase->validate(10.0, 'REF-1', null, UserId::generate());
 
         $notifications = $notifier->notifications();
 
@@ -79,7 +79,7 @@ class CreditPurchaseResolvedNotifierTest extends TestCase
 
         new CreditPurchaseResolvedNotifier($notifier, $creditPurchaseRepository, $projectRepository, $userRepository);
 
-        $creditPurchase->validate(6.0, 90.0, 'REF-2', null, UserId::generate());
+        $creditPurchase->validate(6.0, 'REF-2', null, UserId::generate());
 
         $notifications = $notifier->notifications();
 

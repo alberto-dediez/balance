@@ -8,6 +8,7 @@ use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRejected;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseValidated;
+use App\Balance\Domain\Model\Project\Project;
 use App\Balance\Domain\Model\Project\ProjectRepository;
 use App\Notifications\Application\Notification\Notify\SystemNotification;
 use App\Notifications\Application\Notification\Notify\SystemNotifier;
@@ -47,12 +48,16 @@ class CreditPurchaseResolvedNotifier implements DomainEventSubscriber
 
     private function handleCreditPurchaseValidated(CreditPurchaseValidated $event): void
     {
+        $project = $this->projectFor($event->creditPurchaseId());
+        $costPerTonne = $project?->costPerTonne();
+
         $params = [
             'requestedTonnes' => $event->requestedTonnes(),
             'purchasedTonnes' => $event->purchasedTonnes(),
-            'amount' => $event->amount(),
+            'amount' => null !== $costPerTonne ? round($event->purchasedTonnes() * $costPerTonne, 2) : '-',
             'reference' => $event->reference(),
-            ...$this->projectParamsFor($event->creditPurchaseId()),
+            'projectName' => $project?->name(),
+            'projectMitecoId' => $project?->mitecoId(),
         ];
 
         $template = $event->isPartiallyFulfilled()
@@ -123,19 +128,13 @@ class CreditPurchaseResolvedNotifier implements DomainEventSubscriber
         return $this->userRepository->find($creditPurchase->requestedBy());
     }
 
-    /** @return array{projectName: ?string, projectMitecoId: ?string} */
-    private function projectParamsFor(CreditPurchaseId $creditPurchaseId): array
+    private function projectFor(CreditPurchaseId $creditPurchaseId): ?Project
     {
         $creditPurchase = $this->creditPurchaseRepository->find($creditPurchaseId);
 
-        $project = null !== $creditPurchase?->projectId()
+        return null !== $creditPurchase?->projectId()
             ? $this->projectRepository->find($creditPurchase->projectId())
             : null;
-
-        return [
-            'projectName' => $project?->name(),
-            'projectMitecoId' => $project?->mitecoId(),
-        ];
     }
 
     public function isSubscribedTo(DomainEvent $event): bool

@@ -15,16 +15,17 @@
                 {'label': 'Proyecto' | trans},
                 {'label': 'Toneladas compradas' | trans},
                 {'label': 'Toneladas disponibles' | trans},
-                {'label': 'Importe' | trans},
-                {'label': 'Precio medio / tonelada' | trans},
+                {'label': 'Coste / tonelada' | trans},
+                {'label': 'Coste total' | trans},
             ] %}
 
             <twig:List:Table :columns="columns" :elements="balances">
-                <td>{{ element.projectId | project_name }}</td>
+                {% set project = element.projectId | project_name %}
+                <td>{{ project }}</td>
                 <td>{{ element.purchasedTonnes }}</td>
                 <td>{{ element.availableTonnes }}</td>
-                <td>{{ element.amount }} €</td>
-                <td>{{ element.pricePerTonne is not null ? (element.pricePerTonne | number_format(2) ~ ' €') : '-' }}</td>
+                <td>{{ project.costPerTonne is not null ? (project.costPerTonne | number_format(2, ',', '.') ~ ' €') : '-' }}</td>
+                <td>{{ project.costPerTonne is not null ? ((element.purchasedTonnes * project.costPerTonne) | number_format(2, ',', '.') ~ ' €') : '-' }}</td>
             </twig:List:Table>
         {% endif %}
     </twig:Card>

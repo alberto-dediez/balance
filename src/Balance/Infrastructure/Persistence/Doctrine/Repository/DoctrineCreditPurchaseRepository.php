@@ -136,7 +136,7 @@ class DoctrineCreditPurchaseRepository implements CreditPurchaseRepository
         $qb = $this->manager->createQueryBuilder();
 
         $rows = $qb
-            ->select('cp.projectId as projectId, SUM(cp.purchasedTonnes) as purchasedTonnes, SUM(cp.amount) as amount, COUNT(cp) as purchasesCount')
+            ->select('cp.projectId as projectId, SUM(cp.purchasedTonnes) as purchasedTonnes, COUNT(cp) as purchasesCount')
             ->from(CreditPurchase::class, 'cp')
             ->andWhere($qb->expr()->eq('cp.accountId', ':accountId'))
             ->andWhere($qb->expr()->eq('cp.status', ':status'))
@@ -152,7 +152,6 @@ class DoctrineCreditPurchaseRepository implements CreditPurchaseRepository
                 projectId: $row['projectId'],
                 purchasedTonnes: (float) $row['purchasedTonnes'],
                 consumedTonnes: 0.0,
-                amount: (float) $row['amount'],
                 purchasesCount: (int) $row['purchasesCount'],
             ),
             $rows,
@@ -171,7 +170,6 @@ class DoctrineCreditPurchaseRepository implements CreditPurchaseRepository
             projectId: $projectId,
             purchasedTonnes: 0.0,
             consumedTonnes: 0.0,
-            amount: 0.0,
             purchasesCount: 0,
         );
     }

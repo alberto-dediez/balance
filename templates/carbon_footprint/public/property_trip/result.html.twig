@@ -51,4 +51,6 @@
             {{ 'Noches declaradas: {nights}' | trans({'{nights}': tripCalculation.nights}) }}
         </p>
     {% endif %}
+
+    {{ include('@carbon_footprint/public/property_trip/_compensate_cta.html.twig') }}
 {% endblock %}

@@ -4905,6 +4905,362 @@
         <source>Huella de carbono</source>
         <target>Carbon footprint</target>
       </trans-unit>
+      <trans-unit id="MzKEw5q" resname="Necesitamos tu nombre, tu email y tu país para poder emitir el recibo.">
+        <source>Necesitamos tu nombre, tu email y tu país para poder emitir el recibo.</source>
+        <target>We need your name, email and country to be able to issue the receipt.</target>
+      </trans-unit>
+      <trans-unit id="hH3tx.h" resname="Este proyecto ya no tiene crédito suficiente para compensar tu huella.">
+        <source>Este proyecto ya no tiene crédito suficiente para compensar tu huella.</source>
+        <target>This project no longer has enough credit to offset your footprint.</target>
+      </trans-unit>
+      <trans-unit id="kzCz7N4" resname="El importe mínimo de una aportación es {min} €.">
+        <source>El importe mínimo de una aportación es {min} €.</source>
+        <target>The minimum contribution amount is {min} €.</target>
+      </trans-unit>
+      <trans-unit id="2W6Y_K2" resname="No hemos podido preparar tu aportación: {error}">
+        <source>No hemos podido preparar tu aportación: {error}</source>
+        <target>We couldn't prepare your contribution: {error}</target>
+      </trans-unit>
+      <trans-unit id="zu.zZMx" resname="No hemos podido conectar con la pasarela de pago. Inténtalo de nuevo en unos minutos.">
+        <source>No hemos podido conectar con la pasarela de pago. Inténtalo de nuevo en unos minutos.</source>
+        <target>We couldn't connect to the payment gateway. Please try again in a few minutes.</target>
+      </trans-unit>
+      <trans-unit id=".KfklSf" resname="Has cancelado el pago. Puedes volver a intentarlo cuando quieras.">
+        <source>Has cancelado el pago. Puedes volver a intentarlo cuando quieras.</source>
+        <target>You cancelled the payment. You can try again whenever you want.</target>
+      </trans-unit>
+      <trans-unit id="_Ixpz.R" resname="El precio por tonelada ({price} €) es inferior al coste por tonelada ({cost} €).">
+        <source>El precio por tonelada ({price} €) es inferior al coste por tonelada ({cost} €).</source>
+        <target>The price per tonne ({price} €) is lower than the cost per tonne ({cost} €).</target>
+      </trans-unit>
+      <trans-unit id="x91c.Fi" resname="Coste por tonelada (€)">
+        <source>Coste por tonelada (€)</source>
+        <target>Cost per tonne (€)</target>
+      </trans-unit>
+      <trans-unit id="tHEMylJ" resname="Precio por tonelada (€)">
+        <source>Precio por tonelada (€)</source>
+        <target>Price per tonne (€)</target>
+      </trans-unit>
+      <trans-unit id="iGXk0pg" resname="Pago recibido de una aportación ya cerrada">
+        <source>Pago recibido de una aportación ya cerrada</source>
+        <target>Payment received for a contribution that is already closed</target>
+      </trans-unit>
+      <trans-unit id="40dVQ8z" resname="Aportaciones">
+        <source>Aportaciones</source>
+        <target>Contributions</target>
+      </trans-unit>
+      <trans-unit id="TSCxSt4" resname="Compensa tu huella">
+        <source>Compensa tu huella</source>
+        <target>Offset your footprint</target>
+      </trans-unit>
+      <trans-unit id="bHHOErl" resname="Elige un proyecto">
+        <source>Elige un proyecto</source>
+        <target>Choose a project</target>
+      </trans-unit>
+      <trans-unit id="rc4txWi" resname="Vas a compensar {kg} kg CO₂eq.">
+        <source>Vas a compensar {kg} kg CO₂eq.</source>
+        <target>You are going to offset {kg} kg CO₂eq.</target>
+      </trans-unit>
+      <trans-unit id="_wlWvVd" resname="Ahora mismo no hay proyectos disponibles para compensar tu huella.">
+        <source>Ahora mismo no hay proyectos disponibles para compensar tu huella.</source>
+        <target>There are no projects currently available to offset your footprint.</target>
+      </trans-unit>
+      <trans-unit id="IsVeJYy" resname="(sin impuestos)">
+        <source>(sin impuestos)</source>
+        <target>(tax not included)</target>
+      </trans-unit>
+      <trans-unit id="gN09yYF" resname="Aportar">
+        <source>Aportar</source>
+        <target>Contribute</target>
+      </trans-unit>
+      <trans-unit id="_vMWfEW" resname="Ver detalles">
+        <source>Ver detalles</source>
+        <target>View details</target>
+      </trans-unit>
+      <trans-unit id="D1eW4E4" resname="Volver al resultado">
+        <source>Volver al resultado</source>
+        <target>Back to result</target>
+      </trans-unit>
+      <trans-unit id="CD5_fJJ" resname="Tu aportación">
+        <source>Tu aportación</source>
+        <target>Your contribution</target>
+      </trans-unit>
+      <trans-unit id="4FfREJ3" resname="Tu huella es de {kg} kg CO₂eq.">
+        <source>Tu huella es de {kg} kg CO₂eq.</source>
+        <target>Your footprint is {kg} kg CO₂eq.</target>
+      </trans-unit>
+      <trans-unit id="iM1xYba" resname="Tu visita no genera emisiones que compensar, pero puedes hacer una aportación al proyecto.">
+        <source>Tu visita no genera emisiones que compensar, pero puedes hacer una aportación al proyecto.</source>
+        <target>Your visit does not generate emissions to offset, but you can still make a contribution to the project.</target>
+      </trans-unit>
+      <trans-unit id="kwFWahx" resname="¿Cuánto quieres aportar?">
+        <source>¿Cuánto quieres aportar?</source>
+        <target>How much do you want to contribute?</target>
+      </trans-unit>
+      <trans-unit id="HY8i.0L" resname="Compensar mis emisiones">
+        <source>Compensar mis emisiones</source>
+        <target>Offset my emissions</target>
+      </trans-unit>
+      <trans-unit id="u441sT." resname="Aportación libre">
+        <source>Aportación libre</source>
+        <target>Free contribution</target>
+      </trans-unit>
+      <trans-unit id="LK6F1Qx" resname="Importe (€)">
+        <source>Importe (€)</source>
+        <target>Amount (€)</target>
+      </trans-unit>
+      <trans-unit id="0LdCY0i" resname="Tus datos">
+        <source>Tus datos</source>
+        <target>Your details</target>
+      </trans-unit>
+      <trans-unit id="XFW7N3B" resname="Nombre y apellidos">
+        <source>Nombre y apellidos</source>
+        <target>Full name</target>
+      </trans-unit>
+      <trans-unit id="Oq2RRnU" resname="Elige tu país">
+        <source>Elige tu país</source>
+        <target>Choose your country</target>
+      </trans-unit>
+      <trans-unit id="xjNGG.7" resname="Aporto como empresa">
+        <source>Aporto como empresa</source>
+        <target>I'm contributing as a company</target>
+      </trans-unit>
+      <trans-unit id="TaQH4ZC" resname="Razón social">
+        <source>Razón social</source>
+        <target>Company name</target>
+      </trans-unit>
+      <trans-unit id="XCUQ1ZT" resname="NIF / NIF-IVA">
+        <source>NIF / NIF-IVA</source>
+        <target>Tax ID / VAT number</target>
+      </trans-unit>
+      <trans-unit id="P1OKIS." resname="Si aportas como empresa de otro país de la UE, indica tu NIF-IVA intracomunitario para que la aportación quede exenta.">
+        <source>Si aportas como empresa de otro país de la UE, indica tu NIF-IVA intracomunitario para que la aportación quede exenta.</source>
+        <target>If you are contributing as a company from another EU country, enter your intra-community VAT number so the contribution is exempt.</target>
+      </trans-unit>
+      <trans-unit id="aYDE.GZ" resname="Elegir otro proyecto">
+        <source>Elegir otro proyecto</source>
+        <target>Choose another project</target>
+      </trans-unit>
+      <trans-unit id="dgjlZg2" resname="El importe debe ser un número entre 0,01 € y {max} €.">
+        <source>El importe debe ser un número entre 0,01 € y {max} €.</source>
+        <target>The amount must be a number between 0.01 € and {max} €.</target>
+      </trans-unit>
+      <trans-unit id="DH9a64X" resname="Este proyecto no tiene crédito suficiente para el importe que has indicado. Reduce el importe o elige otro proyecto.">
+        <source>Este proyecto no tiene crédito suficiente para el importe que has indicado. Reduce el importe o elige otro proyecto.</source>
+        <target>This project does not have enough credit for the amount you entered. Reduce the amount or choose another project.</target>
+      </trans-unit>
+      <trans-unit id="FW_HX.H" resname="Desglose">
+        <source>Desglose</source>
+        <target>Breakdown</target>
+      </trans-unit>
+      <trans-unit id="qqJBzYe" resname="Aportación al proyecto">
+        <source>Aportación al proyecto</source>
+        <target>Contribution to the project</target>
+      </trans-unit>
+      <trans-unit id="EHgMJs7" resname="Margen de gestión">
+        <source>Margen de gestión</source>
+        <target>Management fee</target>
+      </trans-unit>
+      <trans-unit id="7pM_YCN" resname="IVA">
+        <source>IVA</source>
+        <target>VAT</target>
+      </trans-unit>
+      <trans-unit id="x2_GNId" resname="Total">
+        <source>Total</source>
+        <target>Total</target>
+      </trans-unit>
+      <trans-unit id="rQQhvVt" resname="Elige tu país para ver el desglose de tu aportación.">
+        <source>Elige tu país para ver el desglose de tu aportación.</source>
+        <target>Choose your country to see the breakdown of your contribution.</target>
+      </trans-unit>
+      <trans-unit id="cdOVwx_" resname="Indica el importe que quieres aportar para ver el desglose.">
+        <source>Indica el importe que quieres aportar para ver el desglose.</source>
+        <target>Enter the amount you want to contribute to see the breakdown.</target>
+      </trans-unit>
+      <trans-unit id="2mSrFsc" resname="Pagar {total} €">
+        <source>Pagar {total} €</source>
+        <target>Pay {total} €</target>
+      </trans-unit>
+      <trans-unit id="t3G12s4" resname="Recalcular">
+        <source>Recalcular</source>
+        <target>Recalculate</target>
+      </trans-unit>
+      <trans-unit id="bicNXVh" resname="¡Gracias por tu aportación!">
+        <source>¡Gracias por tu aportación!</source>
+        <target>Thank you for your contribution!</target>
+      </trans-unit>
+      <trans-unit id="zWSFX43" resname="Hemos recibido tu pago correctamente.">
+        <source>Hemos recibido tu pago correctamente.</source>
+        <target>We have received your payment successfully.</target>
+      </trans-unit>
+      <trans-unit id="_.gDbGA" resname="Estamos confirmando tu pago">
+        <source>Estamos confirmando tu pago</source>
+        <target>We are confirming your payment</target>
+      </trans-unit>
+      <trans-unit id="2eIcIC5" resname="En cuanto la pasarela nos confirme el cobro, tu aportación quedará registrada.">
+        <source>En cuanto la pasarela nos confirme el cobro, tu aportación quedará registrada.</source>
+        <target>As soon as the gateway confirms the charge, your contribution will be registered.</target>
+      </trans-unit>
+      <trans-unit id=".OYfyll" resname="Tu aportación no se ha completado">
+        <source>Tu aportación no se ha completado</source>
+        <target>Your contribution has not been completed</target>
+      </trans-unit>
+      <trans-unit id="unlciPo" resname="El pago no llegó a realizarse, así que no se ha cobrado nada.">
+        <source>El pago no llegó a realizarse, así que no se ha cobrado nada.</source>
+        <target>The payment was not completed, so nothing has been charged.</target>
+      </trans-unit>
+      <trans-unit id="ZdUxQjS" resname="Emisiones compensadas">
+        <source>Emisiones compensadas</source>
+        <target>Emissions offset</target>
+      </trans-unit>
+      <trans-unit id="9buhtfj" resname="Referencia del pago">
+        <source>Referencia del pago</source>
+        <target>Payment reference</target>
+      </trans-unit>
+      <trans-unit id="MK.M_zJ" resname="Este proyecto todavía no tiene una descripción.">
+        <source>Este proyecto todavía no tiene una descripción.</source>
+        <target>This project does not have a description yet.</target>
+      </trans-unit>
+      <trans-unit id="QvUqQEq" resname="Compensar tu huella en este proyecto cuesta {amount} €.">
+        <source>Compensar tu huella en este proyecto cuesta {amount} €.</source>
+        <target>Offsetting your footprint in this project costs {amount} €.</target>
+      </trans-unit>
+      <trans-unit id="9Ot3yVP" resname="Aportar a este proyecto">
+        <source>Aportar a este proyecto</source>
+        <target>Contribute to this project</target>
+      </trans-unit>
+      <trans-unit id="Q4_pTKa" resname="Volver a los proyectos">
+        <source>Volver a los proyectos</source>
+        <target>Back to projects</target>
+      </trans-unit>
+      <trans-unit id="qWDVG_m" resname="Puedes contribuir a uno de los proyectos ambientales y sociales de este alojamiento.">
+        <source>Puedes contribuir a uno de los proyectos ambientales y sociales de este alojamiento.</source>
+        <target>You can contribute to one of this venue's environmental and social projects.</target>
+      </trans-unit>
+      <trans-unit id="FHbK4Jl" resname="Compensar mi huella">
+        <source>Compensar mi huella</source>
+        <target>Offset my footprint</target>
+      </trans-unit>
+      <trans-unit id="WwhaHmv" resname="vat.reason.standard">
+        <source>vat.reason.standard</source>
+        <target>vat.reason.standard</target>
+      </trans-unit>
+      <trans-unit id="AUzUiAW" resname="vat.reason.oss_destination">
+        <source>vat.reason.oss_destination</source>
+        <target>vat.reason.oss_destination</target>
+      </trans-unit>
+      <trans-unit id="FCWf5He" resname="vat.reason.reverse_charge">
+        <source>vat.reason.reverse_charge</source>
+        <target>vat.reason.reverse_charge</target>
+      </trans-unit>
+      <trans-unit id="ly_GpH6" resname="vat.reason.outside_eu">
+        <source>vat.reason.outside_eu</source>
+        <target>vat.reason.outside_eu</target>
+      </trans-unit>
+      <trans-unit id="1d608oO" resname="Aportaciones a proyectos">
+        <source>Aportaciones a proyectos</source>
+        <target>Project contributions</target>
+      </trans-unit>
+      <trans-unit id="8J9Pvgv" resname="Aportante">
+        <source>Aportante</source>
+        <target>Contributor</target>
+      </trans-unit>
+      <trans-unit id="gNDVroP" resname="Toneladas">
+        <source>Toneladas</source>
+        <target>Tonnes</target>
+      </trans-unit>
+      <trans-unit id="tOxD_7g" resname="Precio por tonelada">
+        <source>Precio por tonelada</source>
+        <target>Price per tonne</target>
+      </trans-unit>
+      <trans-unit id="PXQSnAY" resname="Coste por tonelada">
+        <source>Coste por tonelada</source>
+        <target>Cost per tonne</target>
+      </trans-unit>
+      <trans-unit id="8GJs2ox" resname="Reserva hasta">
+        <source>Reserva hasta</source>
+        <target>Reserved until</target>
+      </trans-unit>
+      <trans-unit id="2UcJuTj" resname="Fecha de pago">
+        <source>Fecha de pago</source>
+        <target>Payment date</target>
+      </trans-unit>
+      <trans-unit id="j0W6WXk" resname="Motivo del fallo">
+        <source>Motivo del fallo</source>
+        <target>Failure reason</target>
+      </trans-unit>
+      <trans-unit id="QYQOpy_" resname="Base imponible">
+        <source>Base imponible</source>
+        <target>Taxable base</target>
+      </trans-unit>
+      <trans-unit id="9PxQjAa" resname="Pasarela">
+        <source>Pasarela</source>
+        <target>Gateway</target>
+      </trans-unit>
+      <trans-unit id="Lg6HvQS" resname="Sesión de pago">
+        <source>Sesión de pago</source>
+        <target>Payment session</target>
+      </trans-unit>
+      <trans-unit id="1p_xATm" resname="Esta aportación no tiene ningún pago asociado">
+        <source>Esta aportación no tiene ningún pago asociado</source>
+        <target>This contribution has no associated payment</target>
+      </trans-unit>
+      <trans-unit id="rohSnLE" resname="Aportación">
+        <source>Aportación</source>
+        <target>Contribution</target>
+      </trans-unit>
+      <trans-unit id="y2Snmkc" resname="Desglose económico">
+        <source>Desglose económico</source>
+        <target>Financial breakdown</target>
+      </trans-unit>
+      <trans-unit id="ziFOmsz" resname="Datos fiscales del aportante">
+        <source>Datos fiscales del aportante</source>
+        <target>Contributor's tax details</target>
+      </trans-unit>
+      <trans-unit id="1fYVciG" resname="Pago">
+        <source>Pago</source>
+        <target>Payment</target>
+      </trans-unit>
+      <trans-unit id="XT3rJbj" resname="Coste / tonelada">
+        <source>Coste / tonelada</source>
+        <target>Cost / tonne</target>
+      </trans-unit>
+      <trans-unit id="p7O_Ie_" resname="Coste total">
+        <source>Coste total</source>
+        <target>Total cost</target>
+      </trans-unit>
+      <trans-unit id="wBQOYOZ" resname="Se ha recibido el pago de una aportación que ya estaba {status}. El crédito reservado se liberó, así que el cobro no tiene aportación viva detrás y hay que conciliarlo a mano. Aportante: {email}.">
+        <source>Se ha recibido el pago de una aportación que ya estaba {status}. El crédito reservado se liberó, así que el cobro no tiene aportación viva detrás y hay que conciliarlo a mano. Aportante: {email}.</source>
+        <target>A payment has been received for a contribution that was already {status}. The reserved credit was released, so the charge has no active contribution behind it and needs to be reconciled manually. Contributor: {email}.</target>
+      </trans-unit>
+      <trans-unit id="pQciitS" resname="Importe: {total} {currency}.">
+        <source>Importe: {total} {currency}.</source>
+        <target>Amount: {total} {currency}.</target>
+      </trans-unit>
+      <trans-unit id="GWlAkfH" resname="Pago: {paymentId}.">
+        <source>Pago: {paymentId}.</source>
+        <target>Payment: {paymentId}.</target>
+      </trans-unit>
+      <trans-unit id="8DVOQzi" resname="Ver aportación">
+        <source>Ver aportación</source>
+        <target>View contribution</target>
+      </trans-unit>
+      <trans-unit id="0t8UNvl" resname="Se ha recibido el pago de una aportación que ya estaba {status}. El crédito reservado se liberó, así que hay que revisarla manualmente. Aportante: {email}.">
+        <source>Se ha recibido el pago de una aportación que ya estaba {status}. El crédito reservado se liberó, así que hay que revisarla manualmente. Aportante: {email}.</source>
+        <target>A payment has been received for a contribution that was already {status}. The reserved credit was released, so it needs to be reviewed manually. Contributor: {email}.</target>
+      </trans-unit>
+      <trans-unit id="9Dts0mq" resname="Reservadas">
+        <source>Reservadas</source>
+        <target>Reserved</target>
+      </trans-unit>
+      <trans-unit id="9y6lwHM" resname="Consumidas">
+        <source>Consumidas</source>
+        <target>Consumed</target>
+      </trans-unit>
+      <trans-unit id="uIQOMbZ" resname="Disponibles">
+        <source>Disponibles</source>
+        <target>Available</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

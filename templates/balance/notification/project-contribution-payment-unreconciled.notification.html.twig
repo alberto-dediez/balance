@@ -1,0 +1,16 @@
+<p>
+    {% trans with {
+        '{status}': status,
+        '{email}': contributorEmail
+    } -%}
+        Se ha recibido el pago de una aportación que ya estaba {status}. El crédito reservado se liberó, así que hay que revisarla manualmente. Aportante: {email}.
+    {%- endtrans %}
+    {% if totalAmount %}
+        {% trans with {'{total}': totalAmount | number_format(2, ',', '.'), '{currency}': currency} -%}Importe: {total} {currency}.{%- endtrans %}
+    {% endif %}
+</p>
+<p>
+    <a href="{{ path('admin_project_contributions_view', {'projectContributionId': projectContributionId}) }}">
+        {% trans -%}Ver aportación{%- endtrans -%}
+    </a>
+</p>

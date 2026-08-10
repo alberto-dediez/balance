@@ -52,6 +52,8 @@ class EditController extends AbstractController
             projectType: $project->projectType(),
             projectStatus: $project->projectStatus(),
             mitecoId: $project->mitecoId(),
+            pricePerTonne: $project->pricePerTonne(),
+            costPerTonne: $project->costPerTonne(),
         );
 
         try {
@@ -63,6 +65,8 @@ class EditController extends AbstractController
                 $updateProject($projectRequest, $loggedUser());
 
                 $this->addFlash('success', new TranslatableMessage('Proyecto actualizado con éxito'));
+
+                $this->warnIfPriceIsBelowCost($projectRequest->pricePerTonne, $projectRequest->costPerTonne);
             });
 
             if ($needsRedirect) {
@@ -77,5 +81,20 @@ class EditController extends AbstractController
             'form' => $form->createView(),
             'accountProjects' => $accountProjectsResponse->accountProjects,
         ]);
+    }
+
+    private function warnIfPriceIsBelowCost(?float $pricePerTonne, ?float $costPerTonne): void
+    {
+        if (null === $pricePerTonne || null === $costPerTonne || $pricePerTonne >= $costPerTonne) {
+            return;
+        }
+
+        $this->addFlash('warning', new TranslatableMessage(
+            'El precio por tonelada ({price} €) es inferior al coste por tonelada ({cost} €).',
+            [
+                '{price}' => number_format($pricePerTonne, 2, ',', '.'),
+                '{cost}' => number_format($costPerTonne, 2, ',', '.'),
+            ],
+        ));
     }
 }

@@ -1,0 +1,136 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Balance\Domain\Model\ProjectContribution;
+
+use App\Payments\Domain\Model\Vat\VatCalculator;
+
+/**
+ * Turns either the emissions to offset or a freely chosen amount into the full breakdown
+ * the guest sees: contribution to the project, management fee, VAT and total.
+ */
+final class ContributionCalculator
+{
+    /** Ceiling of a single contribution: beyond it the gateway refuses the charge anyway. */
+    public const MAX_FREE_AMOUNT = 999999.99;
+
+    /**
+     * Floor of what can be charged: the gateway rejects a checkout whose total does not reach
+     * half a unit of currency, so a smaller contribution can only fail on its way to the payment.
+     */
+    public const MIN_TOTAL_AMOUNT = 0.50;
+
+    public function __construct(private VatCalculator $vatCalculator) {}
+
+    public function fromEmissions(
+        float $co2eqKg,
+        float $pricePerTonne,
+        float $costPerTonne,
+        string $countryCode,
+        bool $isCompany = false,
+        ?string $vatNumber = null,
+    ): ContributionAmounts {
+        $this->assertPrice($pricePerTonne);
+
+        if ($co2eqKg <= 0.0) {
+            throw new \InvalidArgumentException('Emissions to offset must be greater than zero.');
+        }
+
+        $tonnes = $co2eqKg / 1000;
+
+        return $this->build(
+            co2eqKg: $co2eqKg,
+            tonnes: $tonnes,
+            taxableAmount: round($tonnes * $pricePerTonne, 2),
+            pricePerTonne: $pricePerTonne,
+            costPerTonne: $costPerTonne,
+            freeAmount: false,
+            countryCode: $countryCode,
+            isCompany: $isCompany,
+            vatNumber: $vatNumber,
+        );
+    }
+
+    public function fromFreeAmount(
+        float $amount,
+        float $pricePerTonne,
+        float $costPerTonne,
+        string $countryCode,
+        bool $isCompany = false,
+        ?string $vatNumber = null,
+    ): ContributionAmounts {
+        $this->assertPrice($pricePerTonne);
+
+        if (!is_finite($amount) || $amount <= 0.0) {
+            throw new \InvalidArgumentException('The contribution amount must be greater than zero.');
+        }
+
+        if ($amount > self::MAX_FREE_AMOUNT) {
+            throw new \InvalidArgumentException(sprintf('The contribution amount cannot exceed %s.', self::MAX_FREE_AMOUNT));
+        }
+
+        $taxableAmount = round($amount, 2);
+
+        return $this->build(
+            co2eqKg: null,
+            tonnes: $taxableAmount / $pricePerTonne,
+            taxableAmount: $taxableAmount,
+            pricePerTonne: $pricePerTonne,
+            costPerTonne: $costPerTonne,
+            freeAmount: true,
+            countryCode: $countryCode,
+            isCompany: $isCompany,
+            vatNumber: $vatNumber,
+        );
+    }
+
+    private function build(
+        ?float $co2eqKg,
+        float $tonnes,
+        float $taxableAmount,
+        float $pricePerTonne,
+        float $costPerTonne,
+        bool $freeAmount,
+        string $countryCode,
+        bool $isCompany,
+        ?string $vatNumber,
+    ): ContributionAmounts {
+        $managementFeeAmount = $this->managementFee($tonnes, $pricePerTonne, $costPerTonne, $taxableAmount);
+        $vat = $this->vatCalculator->calculate($taxableAmount, $countryCode, $isCompany, $vatNumber);
+
+        return new ContributionAmounts(
+            co2eqKg: $co2eqKg,
+            tonnes: $tonnes,
+            pricePerTonne: $pricePerTonne,
+            costPerTonne: $costPerTonne,
+            freeAmount: $freeAmount,
+            contributionAmount: round($taxableAmount - $managementFeeAmount, 2),
+            managementFeeAmount: $managementFeeAmount,
+            taxableAmount: $taxableAmount,
+            vatRate: $vat->rate,
+            vatAmount: $vat->amount,
+            totalAmount: round($taxableAmount + $vat->amount, 2),
+            vatReason: $vat->reason,
+        );
+    }
+
+    /** When the price set for the project is below its cost per tonne the fee is zero rather than negative. */
+    private function managementFee(
+        float $tonnes,
+        float $pricePerTonne,
+        float $costPerTonne,
+        float $taxableAmount,
+    ): float {
+        $fee = round($tonnes * ($pricePerTonne - $costPerTonne), 2);
+
+        return max(0.0, min($fee, $taxableAmount));
+    }
+
+    private function assertPrice(float $pricePerTonne): void
+    {
+        if ($pricePerTonne <= 0.0) {
+            throw new \InvalidArgumentException('The project price per tonne must be greater than zero.');
+        }
+    }
+}

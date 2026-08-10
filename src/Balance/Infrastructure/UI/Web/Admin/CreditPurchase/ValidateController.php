@@ -39,7 +39,6 @@ class ValidateController extends AbstractController
         $validateRequest = new ValidateCreditPurchaseRequest(
             creditPurchaseId: $creditPurchase->id(),
             purchasedTonnes: $creditPurchase->requestedTonnes(),
-            amount: 0.0,
             reference: '',
         );
 

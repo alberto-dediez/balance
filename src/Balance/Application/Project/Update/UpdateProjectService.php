@@ -45,6 +45,8 @@ class UpdateProjectService implements CommandHandler
             projectType: $request->projectType,
             projectStatus: $request->projectStatus,
             mitecoId: $request->mitecoId,
+            pricePerTonne: $request->pricePerTonne,
+            costPerTonne: $request->costPerTonne,
             locale: $isDefaultLocale ? null : $locale,
         );
 

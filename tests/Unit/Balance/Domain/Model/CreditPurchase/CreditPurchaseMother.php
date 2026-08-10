@@ -30,7 +30,6 @@ class CreditPurchaseMother
         $creditPurchase = self::pending($accountId, $projectId, $tonnes);
         $creditPurchase->validate(
             purchasedTonnes: $tonnes,
-            amount: $tonnes * 15.0,
             reference: 'ref-' . (string) $creditPurchase->id(),
             certificate: null,
             validatedBy: UserId::generate(),
@@ -44,7 +43,6 @@ class CreditPurchaseMother
         $creditPurchase = self::pending($accountId, $projectId, 10.0);
         $creditPurchase->validate(
             purchasedTonnes: 6.0,
-            amount: 90.0,
             reference: 'ref-' . (string) $creditPurchase->id(),
             certificate: null,
             validatedBy: UserId::generate(),
