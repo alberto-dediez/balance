@@ -165,6 +165,7 @@ class ResultsController extends AbstractController
             'venueLocated' => $stats->venueLocated,
             'legsByDistanceSource' => $stats->legsByDistanceSource,
             'multimodalResponsesCount' => $stats->multimodalResponsesCount,
+            'contributions' => $stats->contributions,
             'readOnly' => true,
         ]);
     }

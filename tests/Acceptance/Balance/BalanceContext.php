@@ -30,6 +30,7 @@ use App\Payments\Domain\Model\Payment\PaymentRepository;
 use App\Payments\Domain\Model\Vat\VatExemptionReason;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\Payments\Domain\Model\Payment\PaymentMother;
@@ -307,6 +308,7 @@ final class BalanceContext implements Context
             contributorIsCompany: false,
             contributorCompanyName: null,
             contributorVatNumber: null,
+            locale: Locale::Spanish,
             expiresAt: new \DateTimeImmutable($expiresAt),
             paymentId: $payment->id(),
         );

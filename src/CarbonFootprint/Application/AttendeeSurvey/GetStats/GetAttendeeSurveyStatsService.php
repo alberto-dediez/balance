@@ -4,8 +4,16 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\AttendeeSurvey\GetStats;
 
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFilter;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregation;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregator;
+use App\CarbonFootprint\Application\Contribution\ContributionsSummary;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepository;
+use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\EventOperations\Application\Event\EventVenueLocator;
@@ -29,6 +37,8 @@ class GetAttendeeSurveyStatsService implements CommandHandler
         private AttendeeSurveyResponseRepository $attendeeSurveyResponseRepository,
         private EventRepository $eventRepository,
         private EventVenueLocator $eventVenueLocator,
+        private ProjectContributionRepository $projectContributionRepository,
+        private ProjectContributionsAggregator $contributionsAggregator,
     ) {}
 
     public function __invoke(GetAttendeeSurveyStatsRequest $request, User $user): GetAttendeeSurveyStatsResponse
@@ -61,11 +71,66 @@ class GetAttendeeSurveyStatsService implements CommandHandler
             responsesCount: $responsesCount,
             estimatedAttendees: $estimatedAttendees,
             surveyedPercentage: $surveyedPercentage,
+            contributions: $this->contributions($attendeeSurvey->id()),
             venueLocated: null !== $this->eventVenueLocator->locate($event),
             venueLabel: $event?->venueLabel(),
             legsByDistanceSource: $this->attendeeSurveyResponseRepository->countLegsByDistanceSource($attendeeSurvey->id()),
             multimodalResponsesCount: $this->attendeeSurveyResponseRepository->countMultimodalResponses($attendeeSurvey->id()),
         );
+    }
+
+    /**
+     * The contributions of the survey are the ones started from its answers, so the rates compare
+     * like with like even when the attendee paid days after answering.
+     */
+    private function contributions(AttendeeSurveyId $attendeeSurveyId): ContributionsSummary
+    {
+        $responses = $this->attendeeSurveyResponseRepository->findByAttendeeSurveyId($attendeeSurveyId);
+        $originIds = array_map(static fn(AttendeeSurveyResponse $response): string => (string) $response->id(), $responses);
+
+        $contributions = [] === $originIds
+            ? $this->contributionsAggregator->aggregate([])
+            : $this->contributionsAggregator->aggregate($this->projectContributionRepository->findByFilter(
+                new ProjectContributionFilter(
+                    origin: ProjectContributionOrigin::AttendeeSurveyResponse,
+                    originIds: $originIds,
+                    limit: 0,
+                ),
+            ));
+
+        return new ContributionsSummary(
+            aggregation: $contributions,
+            startedRate: $this->rate($contributions->contributions, count($responses)),
+            paidRate: $this->rate($contributions->paid, count($responses)),
+            completionRate: $this->rate($contributions->paid, $contributions->contributions),
+            compensatedEmissionsRate: $this->compensatedEmissionsRate($contributions, $responses),
+        );
+    }
+
+    /**
+     * The rate is measured against the sum of the individual footprints, not against the total of the
+     * event: that one is extrapolated to every attendee and would make the rate incomparable.
+     *
+     * @param list<AttendeeSurveyResponse> $responses
+     */
+    private function compensatedEmissionsRate(ProjectContributionsAggregation $contributions, array $responses): float
+    {
+        $emitted = 0.0;
+
+        foreach ($responses as $response) {
+            $emitted += (float) $response->emissions()->co2eq();
+        }
+
+        if ($emitted <= 0.0) {
+            return 0.0;
+        }
+
+        return $contributions->paidTonnes * 1000 * 100 / $emitted;
+    }
+
+    private function rate(int $part, int $total): float
+    {
+        return 0 === $total ? 0.0 : $part * 100 / $total;
     }
 
     public function isHandled(Command $command): bool

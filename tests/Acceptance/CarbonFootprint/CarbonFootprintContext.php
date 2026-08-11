@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\CarbonFootprint;
 
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFilter;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityRequest;
 use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityService;
 use App\CarbonFootprint\Application\Activity\Register\RegisterWasteActivityRequest;
@@ -986,6 +988,34 @@ final readonly class CarbonFootprintContext implements Context
     public function attendeeSurveyShouldHaveResponses(string $id, int $count): void
     {
         Assert::assertSame($count, $this->getAttendeeSurveyResponseRepository()->countByAttendeeSurveyId(new AttendeeSurveyId($id)));
+    }
+
+    #[When('I go to the thank-you page of the only contribution with attendee survey token :token')]
+    public function iGoToTheThankYouPageOfTheOnlyContribution(string $token): void
+    {
+        $this->client->request(
+            'GET',
+            sprintf('/es/carbon-footprint/attendee-survey/%s/contribution/%s/return', $token, $this->onlyContributionId()),
+        );
+    }
+
+    #[When('I download the certificate of the only contribution with attendee survey token :token')]
+    public function iDownloadTheCertificateOfTheOnlyContribution(string $token): void
+    {
+        $this->client->request(
+            'GET',
+            sprintf('/es/carbon-footprint/attendee-survey/%s/contribution/%s/certificate', $token, $this->onlyContributionId()),
+        );
+    }
+
+    private function onlyContributionId(): string
+    {
+        $projectContributionRepository = $this->client->getContainer()->get(ProjectContributionRepository::class);
+        $contributions = $projectContributionRepository->findByFilter(new ProjectContributionFilter(limit: 0));
+
+        Assert::assertCount(1, $contributions);
+
+        return (string) $contributions[0]->id();
     }
 
     #[Then('attendee survey for event :eventId should be closed')]

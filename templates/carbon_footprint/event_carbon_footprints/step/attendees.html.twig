@@ -61,6 +61,70 @@
         {% endif %}
     </twig:Card>
 
+    {% if contributions.aggregation.contributions > 0 %}
+        <twig:Card title="{{ 'Aportaciones de los asistentes' | trans }}">
+            <table class="table table-sm mb-0">
+                <tbody>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Aportaciones iniciadas' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ contributions.aggregation.contributions }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Aportaciones pagadas' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ contributions.aggregation.paid }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Aportaciones pendientes' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ contributions.aggregation.pending }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Aportaciones fallidas' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ contributions.aggregation.failed }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Aportaciones caducadas' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ contributions.aggregation.expired }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Importe pagado' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ contributions.aggregation.paidTotalAmount | number_format(2, ',', '.') }} €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Aportación media' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ contributions.aggregation.averagePaidAmount | number_format(2, ',', '.') }} €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Emisiones compensadas' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ (contributions.aggregation.paidTonnes * 1000) | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </twig:Card>
+
+        <twig:Card title="{{ 'Conversión' | trans }}">
+            <table class="table table-sm mb-0">
+                <tbody>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Respuestas que inician una aportación' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ contributions.startedRate | number_format(1, ',', '.') }} %</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Respuestas que acaban pagando' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ contributions.paidRate | number_format(1, ',', '.') }} %</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Aportaciones iniciadas que se completan' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ contributions.completionRate | number_format(1, ',', '.') }} %</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Emisiones compensadas sobre las declaradas' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ contributions.compensatedEmissionsRate | number_format(1, ',', '.') }} %</td>
+                    </tr>
+                </tbody>
+            </table>
+        </twig:Card>
+    {% endif %}
+
     {% if attendeeSurvey.status.isClosed %}
         <twig:Card title="{{ 'Resumen del cierre' | trans }}">
             <dl class="row">

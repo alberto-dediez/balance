@@ -9,6 +9,7 @@ use App\Payments\Domain\Model\Payment\PaymentId;
 use App\Payments\Domain\Model\Vat\VatExemptionReason;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\AggregateRoot;
+use App\Shared\Domain\Model\Locale\Locale;
 use Doctrine\Common\Collections\Collection;
 
 class ProjectContribution
@@ -44,6 +45,7 @@ class ProjectContribution
         private bool $contributorIsCompany = false,
         private ?string $contributorCompanyName = null,
         private ?string $contributorVatNumber = null,
+        private Locale $locale = Locale::Spanish,
         private ProjectContributionStatus $status = ProjectContributionStatus::Pending,
         private ?PaymentId $paymentId = null,
         private ?string $failureReason = null,
@@ -174,6 +176,12 @@ class ProjectContribution
     public function contributorVatNumber(): ?string
     {
         return $this->contributorVatNumber;
+    }
+
+    /** The language the guest was contributing in; the certificate is later issued in it. */
+    public function locale(): Locale
+    {
+        return $this->locale;
     }
 
     public function status(): ProjectContributionStatus
@@ -312,6 +320,7 @@ class ProjectContribution
         bool $contributorIsCompany,
         ?string $contributorCompanyName,
         ?string $contributorVatNumber,
+        Locale $locale,
         \DateTimeImmutable $expiresAt,
         ?PaymentId $paymentId = null,
     ): void {
@@ -349,6 +358,7 @@ class ProjectContribution
                 contributorIsCompany: $contributorIsCompany,
                 contributorCompanyName: $contributorCompanyName,
                 contributorVatNumber: $contributorVatNumber,
+                locale: $locale,
                 expiresAt: $expiresAt,
                 paymentId: $paymentId,
             ),
@@ -483,6 +493,7 @@ class ProjectContribution
         $this->contributorIsCompany = $event->contributorIsCompany();
         $this->contributorCompanyName = $event->contributorCompanyName();
         $this->contributorVatNumber = $event->contributorVatNumber();
+        $this->locale = $event->locale();
         $this->paymentId = $event->paymentId();
         $this->status = ProjectContributionStatus::Pending;
         $this->registeredAt = $event->occurredOn();

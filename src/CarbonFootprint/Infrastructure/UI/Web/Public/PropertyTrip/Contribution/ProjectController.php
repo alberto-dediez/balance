@@ -73,11 +73,10 @@ class ProjectController extends AbstractController
 
         $gallery = $this->publicGallery($option->project->gallery(), $mediaRepository);
 
-        return $this->render('@carbon_footprint/public/property_trip/contribution/project.html.twig', [
+        return $this->render('@carbon_footprint/public/project_contribution/project.html.twig', [
             'token' => $token,
             'property' => $link->property,
-            'tripCalculation' => $tripCalculation,
-            'tripCalculationId' => $tripCalculationId,
+            'routes' => $this->contributionRoutes($token, $tripCalculationId),
             'project' => $option->project,
             'option' => $option,
             'gallery' => $gallery,

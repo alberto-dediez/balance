@@ -5,21 +5,28 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\AttendeeSurveyResponse\Register;
 
 use App\CarbonFootprint\Application\Trip\LegInput;
+use App\CarbonFootprint\Application\Trip\TripEmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyClosedException;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepository;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyTokenInvalidException;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
+use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\Trip\LegKind;
 use App\CarbonFootprint\Domain\Model\Trip\ResolvedLeg;
 use App\CarbonFootprint\Domain\Model\Trip\TripLegChoice;
+use App\CarbonFootprint\Domain\Model\Trip\TripLegsAccumulator;
 use App\CarbonFootprint\Domain\Model\Trip\TripLegsResolver;
 use App\CarbonFootprint\Domain\Model\Trip\TripWaypoint;
 use App\EventOperations\Application\Event\EventVenueLocator;
+use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\Shared\Domain\Model\Geo\PlaceFinder;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
@@ -34,6 +41,10 @@ final class RegisterAttendeeSurveyResponseService
         private EventVenueLocator $eventVenueLocator,
         private PlaceFinder $placeFinder,
         private TripLegsResolver $tripLegsResolver,
+        private TripLegsAccumulator $tripLegsAccumulator,
+        private TripEmissionsCalculator $tripEmissionsCalculator,
+        private EmissionFactorGroupRepository $emissionFactorGroupRepository,
+        private EventCarbonFootprintRepository $eventCarbonFootprintRepository,
     ) {}
 
     public function __invoke(RegisterAttendeeSurveyResponseRequest $request): RegisterAttendeeSurveyResponseResponse
@@ -98,6 +109,35 @@ final class RegisterAttendeeSurveyResponseService
             );
         }
 
+        $kmByMobilityId = [];
+        $this->tripLegsAccumulator->accumulate($kmByMobilityId, $intercityLegs, $intercityTrips, $cameFromAnotherCity && $request->intercityRoundTrip);
+        $this->tripLegsAccumulator->accumulate($kmByMobilityId, $cityLegs, $cityTrips, $movedWithinCity && $request->cityRoundTrip);
+
+        [$emissionFactorGroupId, $calculationYear] = $this->calculationContext($eventId);
+
+        $mobilityEmissions = new Emissions();
+        $overnightEmissions = new Emissions();
+        $overnightStayCatalogMissing = false;
+
+        if (null !== $emissionFactorGroupId && null !== $calculationYear) {
+            try {
+                $tripEmissions = $this->tripEmissionsCalculator->calculate(
+                    kmByMobilityId: $kmByMobilityId,
+                    nights: (float) ($usedHotel ? $request->hotelNights ?? 0 : 0),
+                    emissionFactorGroupId: $emissionFactorGroupId,
+                    year: $calculationYear,
+                );
+
+                $mobilityEmissions = $tripEmissions->mobility;
+                $overnightEmissions = $tripEmissions->overnight;
+                $overnightStayCatalogMissing = $tripEmissions->overnightStayCatalogMissing;
+            } catch (\InvalidArgumentException) {
+                // Losing the answer of the attendee is worse than losing their footprint.
+                $emissionFactorGroupId = null;
+                $calculationYear = null;
+            }
+        }
+
         $attendeeSurveyResponse = new AttendeeSurveyResponse(id: AttendeeSurveyResponseId::generate());
         $attendeeSurveyResponse->register(
             attendeeSurveyId: $attendeeSurvey->id(),
@@ -113,11 +153,40 @@ final class RegisterAttendeeSurveyResponseService
             cityRoundTrip: $movedWithinCity && $request->cityRoundTrip,
             cityTrips: $cityTrips,
             legs: array_merge($intercityLegs, $cityLegs),
+            mobilityEmissions: $mobilityEmissions,
+            overnightEmissions: $overnightEmissions,
+            emissionFactorGroupId: $emissionFactorGroupId,
+            calculationYear: $calculationYear,
         );
 
         $this->attendeeSurveyResponseRepository->add($attendeeSurveyResponse);
 
-        return new RegisterAttendeeSurveyResponseResponse($attendeeSurveyResponse->id());
+        return new RegisterAttendeeSurveyResponseResponse(
+            attendeeSurveyResponseId: $attendeeSurveyResponse->id(),
+            emissions: $attendeeSurveyResponse->emissions(),
+            mobilityEmissions: $mobilityEmissions,
+            overnightEmissions: $overnightEmissions,
+            overnightStayCatalogMissing: $overnightStayCatalogMissing,
+        );
+    }
+
+    /** @return array{0: ?EmissionFactorGroupId, 1: ?int} */
+    private function calculationContext(?EventId $eventId): array
+    {
+        $eventCarbonFootprint = null !== $eventId ? $this->eventCarbonFootprintRepository->findByEventId($eventId) : null;
+        $emissionFactorGroupId = $eventCarbonFootprint?->emissionFactorGroupId();
+
+        if (null !== $emissionFactorGroupId) {
+            return [$emissionFactorGroupId, $eventCarbonFootprint->calculationYear()];
+        }
+
+        $emissionFactorGroup = $this->emissionFactorGroupRepository->findDefault();
+
+        if (null === $emissionFactorGroup) {
+            return [null, null];
+        }
+
+        return [$emissionFactorGroup->id(), (int) (new \DateTimeImmutable('NOW'))->format('Y')];
     }
 
     /**

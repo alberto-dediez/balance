@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\TripCalculation\GetResults;
 
+use App\CarbonFootprint\Application\Contribution\ContributionsSummary;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationsAggregation;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\Property\Domain\Model\Property\Property;

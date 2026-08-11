@@ -72,7 +72,7 @@ class CityController extends AbstractController
             $intercityLegs = is_array($intercityData['intercityLegs'] ?? null) ? $intercityData['intercityLegs'] : [];
 
             try {
-                $registerResponse(new RegisterAttendeeSurveyResponseRequest(
+                $registered = $registerResponse(new RegisterAttendeeSurveyResponseRequest(
                     token: $token,
                     cameFromAnotherCity: (bool) $intercityData['cameFromAnotherCity'],
                     originPlaceReference: null !== ($intercityData['originPlaceReference'] ?? null) ? (string) $intercityData['originPlaceReference'] : null,
@@ -101,7 +101,14 @@ class CityController extends AbstractController
             $session->remove($sessionKey);
             $session->set('attendee_survey_' . $token . '_answered', true);
 
-            return $this->redirectToRoute('public_carbon_footprint_attendee_survey_thanks', ['token' => $token]);
+            if ((float) $registered->emissions->co2eq() <= 0.0) {
+                return $this->redirectToRoute('public_carbon_footprint_attendee_survey_thanks', ['token' => $token]);
+            }
+
+            return $this->redirectToRoute('public_carbon_footprint_attendee_survey_result', [
+                'token' => $token,
+                'responseId' => (string) $registered->attendeeSurveyResponseId,
+            ]);
         }
 
         return $this->render('@carbon_footprint/public/attendee_survey/step/city.html.twig', [

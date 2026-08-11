@@ -1,8 +1,8 @@
-{% extends '@carbon_footprint/public/property_trip/layout.html.twig' %}
+{% extends routes.layout %}
 
 {% set page_title = project.name %}
 
-{% block trip_body %}
+{% block contribution_body %}
     {% if gallery is not empty %}
         {% set cover = gallery | first %}
         <img src="{{ path('library_media_public_show', {mediaId: cover.id}) }}"
@@ -61,11 +61,7 @@
 
     <div class="d-grid">
         <a class="btn btn-success"
-           href="{{ path('public_carbon_footprint_property_trip_contribution_checkout', {
-               token: token,
-               tripCalculationId: tripCalculationId,
-               projectId: project.id,
-           }) }}">
+           href="{{ path(routes.checkout, routes.routeParams | merge({projectId: project.id})) }}">
             <twig:Icon name="solar:hand-heart-bold" class="me-1" />
             {{ 'Aportar a este proyecto' | trans }}
         </a>
@@ -73,10 +69,7 @@
 
     <div class="text-center mt-4">
         <a class="btn btn-link btn-sm text-muted"
-           href="{{ path('public_carbon_footprint_property_trip_contribution_choose', {
-               token: token,
-               tripCalculationId: tripCalculationId,
-           }) }}">
+           href="{{ path(routes.choose, routes.routeParams) }}">
             {{ 'Volver a los proyectos' | trans }}
         </a>
     </div>

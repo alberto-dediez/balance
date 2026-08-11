@@ -33,6 +33,7 @@
         <field name="contributorIsCompany" type="boolean" column="contributor_is_company" nullable="false"/>
         <field name="contributorCompanyName" type="string" column="contributor_company_name" length="255" nullable="true"/>
         <field name="contributorVatNumber" type="string" column="contributor_vat_number" length="40" nullable="true"/>
+        <field name="locale" type="string" column="locale" length="5" enum-type="App\Shared\Domain\Model\Locale\Locale" nullable="false"/>
         <field name="status" type="string" column="status" length="20" enum-type="App\Balance\Domain\Model\ProjectContribution\ProjectContributionStatus" nullable="false"/>
         <field name="paymentId" type="payment_id" column="payment_id" nullable="true"/>
         <field name="failureReason" type="text" column="failure_reason" nullable="true"/>

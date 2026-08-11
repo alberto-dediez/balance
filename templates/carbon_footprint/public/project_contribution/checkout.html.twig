@@ -1,13 +1,13 @@
-{% extends '@carbon_footprint/public/property_trip/layout.html.twig' %}
+{% extends routes.layout %}
 
 {% set page_title = 'Tu aportación' | trans %}
 
-{% block trip_body %}
+{% block contribution_body %}
     <div class="mb-4">
         <h5 class="mb-1">{{ project.name }}</h5>
         {% if offersEmissions %}
             <p class="text-muted small mb-0">
-                {{ 'Tu huella es de {kg} kg CO₂eq.' | trans({'{kg}': tripCalculation.emissions.co2eq | number_format(2, ',', '.')}) }}
+                {{ 'Tu huella es de {kg} kg CO₂eq.' | trans({'{kg}': co2eqKg | number_format(2, ',', '.')}) }}
             </p>
         {% else %}
             <p class="text-muted small mb-0">
@@ -17,7 +17,7 @@
     </div>
 
     <form method="post" name="contribution" novalidate>
-        <input type="hidden" name="_token" value="{{ csrf_token('property_trip_' ~ token) }}">
+        <input type="hidden" name="_token" value="{{ csrf_token(routes.csrfTokenId) }}">
 
         <fieldset class="mb-4">
             <legend class="fs-6 fw-semibold">{{ '¿Cuánto quieres aportar?' | trans }}</legend>
@@ -107,7 +107,7 @@
         </fieldset>
 
         <div id="contribution_summary">
-            {{ include('@carbon_footprint/public/property_trip/contribution/_summary.html.twig') }}
+            {{ include('@carbon_footprint/public/project_contribution/_summary.html.twig') }}
         </div>
     </form>
 
@@ -186,10 +186,7 @@
 
     <div class="text-center mt-4">
         <a class="btn btn-link btn-sm text-muted"
-           href="{{ path('public_carbon_footprint_property_trip_contribution_choose', {
-               token: token,
-               tripCalculationId: tripCalculationId,
-           }) }}">
+           href="{{ path(routes.choose, routes.routeParams) }}">
             {{ 'Elegir otro proyecto' | trans }}
         </a>
     </div>

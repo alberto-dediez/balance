@@ -5309,6 +5309,202 @@
         <source>Conversión</source>
         <target>Conversion</target>
       </trans-unit>
+      <trans-unit id="1wNZl1i" resname="Te hemos enviado el certificado por correo.">
+        <source>Te hemos enviado el certificado por correo.</source>
+        <target>We have mailed the certificate to you.</target>
+      </trans-unit>
+      <trans-unit id="WhjsnGX" resname="No hemos podido enviar el certificado a esa dirección.">
+        <source>No hemos podido enviar el certificado a esa dirección.</source>
+        <target>We were unable to send the certificate to that address.</target>
+      </trans-unit>
+      <trans-unit id="04_CSsV" resname="Tu certificado de compensación de carbono">
+        <source>Tu certificado de compensación de carbono</source>
+        <target>Your Carbon Offset Certificate</target>
+      </trans-unit>
+      <trans-unit id="UQ4j3Fq" resname="Tu certificado de aportación">
+        <source>Tu certificado de aportación</source>
+        <target>Your Contribution Certificate</target>
+      </trans-unit>
+      <trans-unit id="P1awmZM" resname="Certificado de Compensación de Carbono">
+        <source>Certificado de Compensación de Carbono</source>
+        <target>Carbon Offset Certificate</target>
+      </trans-unit>
+      <trans-unit id="U6Ik1cR" resname="Certificado de Aportación Social">
+        <source>Certificado de Aportación Social</source>
+        <target>Social Contribution Certificate</target>
+      </trans-unit>
+      <trans-unit id="r.6zjyc" resname="Emisor">
+        <source>Emisor</source>
+        <target>Issuer</target>
+      </trans-unit>
+      <trans-unit id="Jpkr4j4" resname="Entidad emisora">
+        <source>Entidad emisora</source>
+        <target>Issuing Entity</target>
+      </trans-unit>
+      <trans-unit id="b5aQy5." resname="Fecha de emisión">
+        <source>Fecha de emisión</source>
+        <target>Issue Date</target>
+      </trans-unit>
+      <trans-unit id="Ys2tHBS" resname="Código del certificado">
+        <source>Código del certificado</source>
+        <target>Certificate Code</target>
+      </trans-unit>
+      <trans-unit id="3bBz38w" resname="Persona de contacto">
+        <source>Persona de contacto</source>
+        <target>Contact Person</target>
+      </trans-unit>
+      <trans-unit id=".zs9seW" resname="Beneficiario">
+        <source>Beneficiario</source>
+        <target>Beneficiary</target>
+      </trans-unit>
+      <trans-unit id="7ZczMbm" resname="Aportación recibida">
+        <source>Aportación recibida</source>
+        <target>Contribution Received</target>
+      </trans-unit>
+      <trans-unit id="1dhYM9B" resname="Registro oficial">
+        <source>Registro oficial</source>
+        <target>Official Registry</target>
+      </trans-unit>
+      <trans-unit id="H.vJsjk" resname="Números de serie maestros">
+        <source>Números de serie maestros</source>
+        <target>Master Serial Numbers</target>
+      </trans-unit>
+      <trans-unit id="gnEVZpy" resname="Escanea este código QR para verificar el certificado.">
+        <source>Escanea este código QR para verificar el certificado.</source>
+        <target>Scan this QR code to verify the certificate.</target>
+      </trans-unit>
+      <trans-unit id="LBBsgQi" resname="La referencia mostrada debe coincidir con la de este documento:">
+        <source>La referencia mostrada debe coincidir con la de este documento:</source>
+        <target>The reference number shown must match the one on this document:</target>
+      </trans-unit>
+      <trans-unit id="_5MXH0V" resname="Este certificado acredita la retirada de créditos de carbono verificados por los lotes indicados. Los créditos consumidos quedan trazados y no pueden volver a utilizarse ni contabilizarse por ninguna otra parte.">
+        <source>Este certificado acredita la retirada de créditos de carbono verificados por los lotes indicados. Los créditos consumidos quedan trazados y no pueden volver a utilizarse ni contabilizarse por ninguna otra parte.</source>
+        <target>This certificate attests to the retirement of verified carbon credits for the specified batches. The credits used are tracked and cannot be reused or accounted for by any other party.</target>
+      </trans-unit>
+      <trans-unit id="hqDxiD7" resname="Este documento acredita la recepción de la aportación económica indicada y su destino al proyecto descrito. No acredita la reducción, la retirada ni la compensación de emisiones de gases de efecto invernadero.">
+        <source>Este documento acredita la recepción de la aportación económica indicada y su destino al proyecto descrito. No acredita la reducción, la retirada ni la compensación de emisiones de gases de efecto invernadero.</source>
+        <target>This document certifies the receipt of the indicated financial contribution and its allocation to the described project. It does not certify the reduction, retirement, or offset of greenhouse gas emissions.</target>
+      </trans-unit>
+      <trans-unit id="wSjdJhN" resname="Certificado enviado.">
+        <source>Certificado enviado.</source>
+        <target>Certificate sent.</target>
+      </trans-unit>
+      <trans-unit id="acLQXn0" resname="Aportación sin crédito suficiente asignado">
+        <source>Aportación sin crédito suficiente asignado</source>
+        <target>Contribution without sufficient credits allocated</target>
+      </trans-unit>
+      <trans-unit id="us1RDFF" resname="Emisiones compensadas sobre las declaradas">
+        <source>Emisiones compensadas sobre las declaradas</source>
+        <target>Emissions offset in excess of those reported</target>
+      </trans-unit>
+      <trans-unit id="DP6RrRz" resname="Aportaciones de los asistentes">
+        <source>Aportaciones de los asistentes</source>
+        <target>Contributions from attendees</target>
+      </trans-unit>
+      <trans-unit id="lMyqgqf" resname="Estamos preparando tu certificado">
+        <source>Estamos preparando tu certificado</source>
+        <target>We are preparing your certificate</target>
+      </trans-unit>
+      <trans-unit id="CbYTUjd" resname="En cuanto esté listo lo recibirás por correo y podrás descargarlo desde aquí.">
+        <source>En cuanto esté listo lo recibirás por correo y podrás descargarlo desde aquí.</source>
+        <target>As soon as it is ready, you will receive it by email and will be able to download it here.</target>
+      </trans-unit>
+      <trans-unit id="dOiWBsz" resname="Descargar certificado">
+        <source>Descargar certificado</source>
+        <target>Download certificate</target>
+      </trans-unit>
+      <trans-unit id="tA_Wb9H" resname="Correo electrónico">
+        <source>Correo electrónico</source>
+        <target>Email</target>
+      </trans-unit>
+      <trans-unit id="Up3cbta" resname="Enviar por correo">
+        <source>Enviar por correo</source>
+        <target>Send by email</target>
+      </trans-unit>
+      <trans-unit id="umxujiR" resname="Tu certificado se está preparando y te lo enviaremos por correo en cuanto esté listo.">
+        <source>Tu certificado se está preparando y te lo enviaremos por correo en cuanto esté listo.</source>
+        <target>Your certificate is being prepared, and we will send it to you by email as soon as it is ready.</target>
+      </trans-unit>
+      <trans-unit id="bdrVzCJ" resname="Esta es la huella de carbono de tu asistencia al evento.">
+        <source>Esta es la huella de carbono de tu asistencia al evento.</source>
+        <target>This is the carbon footprint of your attendance at the event.</target>
+      </trans-unit>
+      <trans-unit id="r0WohUx" resname="Puedes contribuir a uno de los proyectos ambientales y sociales de este evento.">
+        <source>Puedes contribuir a uno de los proyectos ambientales y sociales de este evento.</source>
+        <target>You can contribute to one of this event’s environmental and social projects.</target>
+      </trans-unit>
+      <trans-unit id="tDtTyMD" resname="Verificación de certificado">
+        <source>Verificación de certificado</source>
+        <target>Certificate Verification</target>
+      </trans-unit>
+      <trans-unit id="QjYvMFS" resname="Certificado válido">
+        <source>Certificado válido</source>
+        <target>Valid certificate</target>
+      </trans-unit>
+      <trans-unit id="HKBEtCy" resname="Certificado en preparación">
+        <source>Certificado en preparación</source>
+        <target>Certificate in progress</target>
+      </trans-unit>
+      <trans-unit id="r73epJT" resname="Esta referencia debe coincidir con la impresa en el documento">
+        <source>Esta referencia debe coincidir con la impresa en el documento</source>
+        <target>This reference must match the one printed on the document</target>
+      </trans-unit>
+      <trans-unit id="htWOXtZ" resname="Tipo de documento">
+        <source>Tipo de documento</source>
+        <target>Document type</target>
+      </trans-unit>
+      <trans-unit id="t903y_e" resname="Hola {name}, adjuntamos tu certificado de compensación de carbono por la aportación al proyecto {project}.">
+        <source>Hola {name}, adjuntamos tu certificado de compensación de carbono por la aportación al proyecto {project}.</source>
+        <target>Hello {name}, please find attached your carbon offset certificate for your contribution to the {project} project.</target>
+      </trans-unit>
+      <trans-unit id="WyAOQS2" resname="El certificado lleva el código {code} y puede verificarse en la página pública de validación a la que apunta su código QR.">
+        <source>El certificado lleva el código {code} y puede verificarse en la página pública de validación a la que apunta su código QR.</source>
+        <target>The certificate bears the code {code} and can be verified on the public validation page linked to its QR code.</target>
+      </trans-unit>
+      <trans-unit id="b23MpM_" resname="Hola {name}, adjuntamos el documento que acredita la recepción de tu aportación económica al proyecto {project}.">
+        <source>Hola {name}, adjuntamos el documento que acredita la recepción de tu aportación económica al proyecto {project}.</source>
+        <target>Hello {name}, please find attached the document confirming receipt of your financial contribution to the {project} project.</target>
+      </trans-unit>
+      <trans-unit id="i1iSk_j" resname="El documento lleva el código {code}.">
+        <source>El documento lleva el código {code}.</source>
+        <target>The document bears the code {code}.</target>
+      </trans-unit>
+      <trans-unit id="_Ri7h74" resname="Una aportación pagada necesita {requested} t de crédito y solo se han podido asignar {allocated} t: faltan {missing} t. Hay que comprar o validar crédito para cerrar la trazabilidad.">
+        <source>Una aportación pagada necesita {requested} t de crédito y solo se han podido asignar {allocated} t: faltan {missing} t. Hay que comprar o validar crédito para cerrar la trazabilidad.</source>
+        <target>A paid contribution requires {requested} t of credits, but only {allocated} t have been assigned: {missing} t are missing. You must purchase or validate credits to complete the traceability.</target>
+      </trans-unit>
+      <trans-unit id="_6dDX8H" resname="Una aportación pagada necesita {requested} t de crédito y solo se han podido asignar {allocated} t: faltan {missing} t. El certificado se emitirá con los lotes disponibles, así que hay que comprar o validar crédito para cerrar la trazabilidad.">
+        <source>Una aportación pagada necesita {requested} t de crédito y solo se han podido asignar {allocated} t: faltan {missing} t. El certificado se emitirá con los lotes disponibles, así que hay que comprar o validar crédito para cerrar la trazabilidad.</source>
+        <target>A paid contribution requires {requested} t of credit, but only {allocated} t could be assigned: {missing} t are missing. The certificate will be issued with the available lots, so you must purchase or validate credit to complete the traceability.</target>
+      </trans-unit>
+      <trans-unit id="EiywGBW" resname="Esta aportación todavía no tiene certificado">
+        <source>Esta aportación todavía no tiene certificado</source>
+        <target>This contribution does not yet have a certificate</target>
+      </trans-unit>
+      <trans-unit id="AnrYu0A" resname="Compra de crédito">
+        <source>Compra de crédito</source>
+        <target>Purchase credit</target>
+      </trans-unit>
+      <trans-unit id="KMyT1mh" resname="Referencia">
+        <source>Referencia</source>
+        <target>Reference</target>
+      </trans-unit>
+      <trans-unit id="y75q67Z" resname="No hay lotes de crédito asignados a esta aportación">
+        <source>No hay lotes de crédito asignados a esta aportación</source>
+        <target>There are no credit lots assigned to this contribution</target>
+      </trans-unit>
+      <trans-unit id="fqpm4rQ" resname="Lotes de crédito consumidos">
+        <source>Lotes de crédito consumidos</source>
+        <target>Credit lots consumed</target>
+      </trans-unit>
+      <trans-unit id="RcuBlMM" resname="Acabamos de enviarte el certificado. Espera un minuto antes de volver a pedirlo.">
+        <source>Acabamos de enviarte el certificado. Espera un minuto antes de volver a pedirlo.</source>
+        <target>We have just sent you the certificate. Please wait a minute before asking for it again.</target>
+      </trans-unit>
+      <trans-unit id="pvS7yi7" resname="Reenviar certificado">
+        <source>Reenviar certificado</source>
+        <target>Resend certificate</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

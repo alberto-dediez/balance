@@ -78,9 +78,10 @@ class ReturnController extends AbstractController
 
         $projectId = $projectContribution->projectId();
 
-        return $this->render('@carbon_footprint/public/property_trip/contribution/confirmation.html.twig', [
+        return $this->render('@carbon_footprint/public/project_contribution/confirmation.html.twig', [
             'token' => $token,
             'property' => $link->property,
+            'routes' => $this->contributionRoutes($token, (string) $projectContribution->originId()),
             'contribution' => $projectContribution,
             'project' => null !== $projectId ? $projectRepository->find($projectId) : null,
             'payment' => $payment,

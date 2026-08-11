@@ -10,8 +10,10 @@ use App\Balance\Application\ContributionCertificate\Download\DownloadContributio
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepository;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenService;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution\PublicContributionCertificateTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\PropertyTripPublicControllerTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
+use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,10 +53,16 @@ class CertificateController extends AbstractController
             return $limited;
         }
 
+        $link = $this->resolveLink($token, $getByToken);
+        $accountId = null !== $link ? $this->accountIdOf($link) : null;
+
+        if (!$accountId instanceof AccountId) {
+            return $this->propertyTripInvalidResponse($this->propertyTripRateLimiter, $request);
+        }
+
         $certificate = $this->resolveCertificate(
-            $token,
+            $accountId,
             $contributionId,
-            $getByToken,
             $projectContributionRepository,
             $contributionCertificateRepository,
         );

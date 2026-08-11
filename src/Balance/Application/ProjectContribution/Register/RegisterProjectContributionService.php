@@ -20,6 +20,7 @@ use App\Security\Application\User\SystemActor\SystemActorResolver;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Application\CommandBus\Priority;
+use App\Shared\Domain\Model\Locale\LocaleGetter;
 
 /**
  * Public entry point of the compensation flow: prices the contribution, holds the credit back,
@@ -156,6 +157,9 @@ final class RegisterProjectContributionService
             contributorIsCompany: $request->contributorIsCompany,
             contributorCompanyName: $request->contributorCompanyName,
             contributorVatNumber: $request->contributorVatNumber,
+            // Kept with the contribution so the certificate is issued in the language the guest
+            // contributed in, whoever confirms the payment later.
+            locale: $request->locale ?? LocaleGetter::locale(),
             expiresAt: $expiresAt,
         );
 

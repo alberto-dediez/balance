@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\Contribution;
 
-use App\Balance\Application\ContributionCertificate\Send\SendContributionCertificateRequest;
 use App\Balance\Application\ContributionCertificate\Send\SendContributionCertificateService;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepository;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenService;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution\PublicContributionCertificateTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\PropertyTripPublicControllerTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
+use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route(
     '/carbon-footprint/property-trip/{token}/contribution/{contributionId}/certificate/email',
@@ -30,6 +31,7 @@ class CertificateEmailController extends AbstractController
 
     public function __construct(
         private PublicFormRateLimiter $propertyTripRateLimiter,
+        private RateLimiterFactory $certificateResendLimiter,
     ) {}
 
     public function __invoke(
@@ -49,10 +51,16 @@ class CertificateEmailController extends AbstractController
             throw $this->createAccessDeniedException('Token CSRF no válido');
         }
 
+        $link = $this->resolveLink($token, $getByToken);
+        $accountId = null !== $link ? $this->accountIdOf($link) : null;
+
+        if (!$accountId instanceof AccountId) {
+            return $this->propertyTripInvalidResponse($this->propertyTripRateLimiter, $request);
+        }
+
         $certificate = $this->resolveCertificate(
-            $token,
+            $accountId,
             $contributionId,
-            $getByToken,
             $projectContributionRepository,
             $contributionCertificateRepository,
         );
@@ -61,18 +69,12 @@ class CertificateEmailController extends AbstractController
             return $this->propertyTripInvalidResponse($this->propertyTripRateLimiter, $request);
         }
 
-        $email = trim($request->request->getString('email'));
-
-        try {
-            $sendContributionCertificate(new SendContributionCertificateRequest(
-                contributionCertificateId: $certificate->id(),
-                email: '' === $email ? null : $email,
-            ));
-
-            $this->addFlash('success', new TranslatableMessage('Te hemos enviado el certificado por correo.'));
-        } catch (\InvalidArgumentException) {
-            $this->addFlash('danger', new TranslatableMessage('No hemos podido enviar el certificado a esa dirección.'));
-        }
+        $this->resendCertificate(
+            $certificate,
+            trim($request->request->getString('email')),
+            $this->certificateResendLimiter,
+            $sendContributionCertificate,
+        );
 
         return $this->redirectToRoute(
             'public_carbon_footprint_property_trip_contribution_return',

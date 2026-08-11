@@ -10,6 +10,7 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregation;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregator;
 use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
+use App\CarbonFootprint\Application\Contribution\ContributionsSummary;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;

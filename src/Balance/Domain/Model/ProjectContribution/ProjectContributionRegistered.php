@@ -11,6 +11,7 @@ use App\Payments\Domain\Model\Vat\VatExemptionReason;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
+use App\Shared\Domain\Model\Locale\Locale;
 
 final class ProjectContributionRegistered extends DomainEvent
 {
@@ -41,6 +42,7 @@ final class ProjectContributionRegistered extends DomainEvent
         private bool $contributorIsCompany,
         private ?string $contributorCompanyName,
         private ?string $contributorVatNumber,
+        private Locale $locale,
         private \DateTimeImmutable $expiresAt,
         private ?PaymentId $paymentId = null,
         ?DomainEventId $id = null,
@@ -169,6 +171,11 @@ final class ProjectContributionRegistered extends DomainEvent
         return $this->contributorVatNumber;
     }
 
+    public function locale(): Locale
+    {
+        return $this->locale;
+    }
+
     public function expiresAt(): \DateTimeImmutable
     {
         return $this->expiresAt;
@@ -211,6 +218,7 @@ final class ProjectContributionRegistered extends DomainEvent
             'contributorIsCompany' => $this->contributorIsCompany,
             'contributorCompanyName' => $this->contributorCompanyName,
             'contributorVatNumber' => $this->contributorVatNumber,
+            'locale' => $this->locale->value,
             'expiresAt' => $this->expiresAt->format(\DateTimeInterface::ATOM),
             'paymentId' => null !== $this->paymentId ? (string) $this->paymentId : null,
         ];
@@ -246,6 +254,8 @@ final class ProjectContributionRegistered extends DomainEvent
             contributorIsCompany: (bool) $payload['contributorIsCompany'],
             contributorCompanyName: null !== $payload['contributorCompanyName'] ? (string) $payload['contributorCompanyName'] : null,
             contributorVatNumber: null !== $payload['contributorVatNumber'] ? (string) $payload['contributorVatNumber'] : null,
+            // Contributions registered before the language was recorded replay in the default one.
+            locale: Locale::tryFrom((string) ($payload['locale'] ?? '')) ?? Locale::Spanish,
             expiresAt: new \DateTimeImmutable($payload['expiresAt']),
             paymentId: null !== $payload['paymentId'] ? new PaymentId($payload['paymentId']) : null,
             id: $id,

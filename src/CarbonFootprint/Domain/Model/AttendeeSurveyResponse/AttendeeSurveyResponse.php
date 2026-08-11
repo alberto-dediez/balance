@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse;
 
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Trip\LegKind;
 use App\CarbonFootprint\Domain\Model\Trip\ResolvedLeg;
 use App\CarbonFootprint\Domain\Model\Trip\TripWaypoint;
@@ -43,6 +45,11 @@ class AttendeeSurveyResponse implements \Stringable
         private ?float $cityOriginLongitude = null,
         private bool $cityRoundTrip = false,
         private ?int $cityTrips = null,
+        private ?Emissions $emissions = null,
+        private ?Emissions $mobilityEmissions = null,
+        private ?Emissions $overnightEmissions = null,
+        private ?EmissionFactorGroupId $emissionFactorGroupId = null,
+        private ?int $calculationYear = null,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
     ) {
@@ -159,6 +166,31 @@ class AttendeeSurveyResponse implements \Stringable
         return $this->cityTrips;
     }
 
+    public function emissions(): Emissions
+    {
+        return $this->emissions ??= new Emissions();
+    }
+
+    public function mobilityEmissions(): Emissions
+    {
+        return $this->mobilityEmissions ??= new Emissions();
+    }
+
+    public function overnightEmissions(): Emissions
+    {
+        return $this->overnightEmissions ??= new Emissions();
+    }
+
+    public function emissionFactorGroupId(): ?EmissionFactorGroupId
+    {
+        return $this->emissionFactorGroupId;
+    }
+
+    public function calculationYear(): ?int
+    {
+        return $this->calculationYear;
+    }
+
     public function registeredAt(): \DateTimeImmutable
     {
         return $this->registeredAt;
@@ -206,6 +238,10 @@ class AttendeeSurveyResponse implements \Stringable
         bool $cityRoundTrip,
         ?int $cityTrips,
         array $legs,
+        Emissions $mobilityEmissions = new Emissions(),
+        Emissions $overnightEmissions = new Emissions(),
+        ?EmissionFactorGroupId $emissionFactorGroupId = null,
+        ?int $calculationYear = null,
     ): void {
         $this->recordApplyAndPublish(
             new AttendeeSurveyResponseRegistered(
@@ -223,6 +259,10 @@ class AttendeeSurveyResponse implements \Stringable
                 cityRoundTrip: $cityRoundTrip,
                 cityTrips: $cityTrips,
                 legs: $legs,
+                mobilityEmissions: $mobilityEmissions,
+                overnightEmissions: $overnightEmissions,
+                emissionFactorGroupId: $emissionFactorGroupId,
+                calculationYear: $calculationYear,
             ),
         );
     }
@@ -259,6 +299,13 @@ class AttendeeSurveyResponse implements \Stringable
 
         $this->cityRoundTrip = $event->cityRoundTrip();
         $this->cityTrips = $event->cityTrips();
+
+        $this->mobilityEmissions = $event->mobilityEmissions();
+        $this->overnightEmissions = $event->overnightEmissions();
+        $this->emissions = $event->mobilityEmissions()->add($event->overnightEmissions());
+
+        $this->emissionFactorGroupId = $event->emissionFactorGroupId();
+        $this->calculationYear = $event->calculationYear();
         $this->registeredAt = $event->occurredOn();
 
         $this->legs = array_map(

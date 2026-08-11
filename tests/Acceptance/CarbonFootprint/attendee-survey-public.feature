@@ -23,6 +23,26 @@ Feature:
         Then I see a text "Gracias"
         Then attendee survey "AS1" should have 1 responses
 
+    Scenario: An attendee sees their individual footprint after answering the survey
+        Given account "MyCompany" with id "666" exists
+        Given event "Evento A" with id "333" of account "666" exists
+        Given mobility "Coche" with id "M1" and emission factor for the current year exists
+        Given overnight stay "Hotel" with id "O1" and emission factor for the current year exists
+        Given attendee survey with id "AS1" and token "token-abc" for event "333" of account "666" exists
+        Given attendee survey "AS1" has venue location "IFEMA, Madrid" at "40.4680", "-3.6160"
+        Given place "sevilla" named "Sevilla, España" at "37.3891", "-5.9845" exists
+        Given place "hotel" named "Hotel Madrid" at "40.4200", "-3.7000" exists
+        When I go to "/es/carbon-footprint/attendee-survey/token-abc/intercity"
+        When I submit a form with "cameFromAnotherCity:yes|originPlaceReference:sevilla|usedHotel:yes|accommodationPlaceReference:hotel|hotelNights:2|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes" and button "Continuar"
+        When I go to "/es/carbon-footprint/attendee-survey/token-abc/city"
+        When I submit a form with "moved:no" and button "Enviar respuesta"
+        Then I am redirected to route "public_carbon_footprint_attendee_survey_result"
+        Then the response status should be 200
+        Then I see a text "Tu huella de carbono"
+        Then I see a text "kg CO₂eq"
+        Then I see a text "Noches declaradas: 2"
+        Then attendee survey "AS1" should have 1 responses
+
     Scenario: An attendee can declare a multimodal trip with a plane and a train
         Given account "MyCompany" with id "666" exists
         Given event "Evento A" with id "333" of account "666" exists

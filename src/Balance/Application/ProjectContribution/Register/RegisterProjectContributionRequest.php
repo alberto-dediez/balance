@@ -8,6 +8,7 @@ use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Model\Locale\Locale;
 
 final class RegisterProjectContributionRequest
 {
@@ -31,6 +32,7 @@ final class RegisterProjectContributionRequest
         public readonly bool $contributorIsCompany = false,
         public readonly ?string $contributorCompanyName = null,
         public readonly ?string $contributorVatNumber = null,
+        public readonly ?Locale $locale = null,
         public readonly ?\DateTimeImmutable $now = null,
     ) {}
 }

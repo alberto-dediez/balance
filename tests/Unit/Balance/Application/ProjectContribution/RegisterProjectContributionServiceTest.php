@@ -30,6 +30,7 @@ use App\Payments\Infrastructure\Payment\Fake\FakePaymentGateway;
 use App\Security\Application\User\SystemActor\SystemActorResolver;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseMother;
@@ -89,6 +90,16 @@ class RegisterProjectContributionServiceTest extends TestCase
         $this->assertSame(48.4, $contribution->totalAmount());
         $this->assertSame(VatExemptionReason::Standard, $contribution->vatReason());
         $this->assertStringStartsWith('https://checkout.stripe.test/', $response->redirectUrl);
+    }
+
+    /** Kept from the request so the certificate is not left to the language of whoever confirms the payment. */
+    public function testTheLanguageOfTheGuestIsKeptWithTheContribution(): void
+    {
+        $sut = $this->createSUT();
+
+        $response = $sut($this->request(locale: Locale::English));
+
+        $this->assertSame(Locale::English, $this->contributions->find($response->projectContributionId)?->locale());
     }
 
     public function testTheReservationIsScheduledForExpiration(): void
@@ -262,6 +273,7 @@ class RegisterProjectContributionServiceTest extends TestCase
         ?float $co2eqKg = 2000.0,
         ?float $freeAmount = null,
         ?\DateTimeImmutable $now = null,
+        ?Locale $locale = null,
     ): RegisterProjectContributionRequest {
         return new RegisterProjectContributionRequest(
             projectContributionId: ProjectContributionId::generate(),
@@ -275,6 +287,7 @@ class RegisterProjectContributionServiceTest extends TestCase
             originId: 'trip-1',
             co2eqKg: $co2eqKg,
             freeAmount: $freeAmount,
+            locale: $locale,
             now: $now,
         );
     }

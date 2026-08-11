@@ -27,7 +27,6 @@ use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Application\CommandBus\Priority;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
-use App\Shared\Domain\Model\Locale\LocaleGetter;
 
 /**
  * The only place a certificate is born. Everything the document says is copied here, so the paper
@@ -88,7 +87,7 @@ class IssueContributionCertificateService implements CommandHandler
             code: $this->codeGenerator->generate(),
             verificationToken: $this->verificationTokenGenerator->generate(),
             type: $type,
-            locale: $request->locale ?? LocaleGetter::locale(),
+            locale: $request->locale ?? $projectContribution->locale(),
             beneficiaryName: $this->beneficiaryName($projectContribution),
             beneficiaryIsCompany: $projectContribution->contributorIsCompany(),
             beneficiaryVatNumber: $projectContribution->contributorVatNumber(),

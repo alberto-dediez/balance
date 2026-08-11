@@ -7,6 +7,8 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Geo\DistanceSource;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Trip\LegKind;
@@ -80,6 +82,23 @@ class AttendeeSurveyResponseMother
         );
     }
 
+    public static function withEmissions(
+        string $attendeeSurveyId,
+        string $co2eq,
+        ?string $id = null,
+    ): AttendeeSurveyResponse {
+        return self::from(
+            attendeeSurveyId: $attendeeSurveyId,
+            cameFromAnotherCity: true,
+            intercityTrips: 1,
+            legs: [self::leg(1, LegKind::Intercity, (string) MobilityId::generate(), 300.0)],
+            id: $id,
+            mobilityEmissions: new Emissions(co2eq: $co2eq, co2: $co2eq),
+            emissionFactorGroupId: EmissionFactorGroupId::generate(),
+            calculationYear: 2026,
+        );
+    }
+
     /** @param list<ResolvedLeg> $legs */
     public static function from(
         string $attendeeSurveyId,
@@ -93,6 +112,10 @@ class AttendeeSurveyResponseMother
         ?int $cityTrips = null,
         array $legs = [],
         ?string $id = null,
+        Emissions $mobilityEmissions = new Emissions(),
+        Emissions $overnightEmissions = new Emissions(),
+        ?EmissionFactorGroupId $emissionFactorGroupId = null,
+        ?int $calculationYear = null,
     ): AttendeeSurveyResponse {
         $response = new AttendeeSurveyResponse(id: new AttendeeSurveyResponseId($id ?? (string) AttendeeSurveyResponseId::generate()));
         $response->register(
@@ -109,6 +132,10 @@ class AttendeeSurveyResponseMother
             cityRoundTrip: $cityRoundTrip,
             cityTrips: $cityTrips,
             legs: $legs,
+            mobilityEmissions: $mobilityEmissions,
+            overnightEmissions: $overnightEmissions,
+            emissionFactorGroupId: $emissionFactorGroupId,
+            calculationYear: $calculationYear,
         );
 
         return $response;

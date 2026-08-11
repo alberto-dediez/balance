@@ -6,6 +6,8 @@ namespace App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse;
 
 use App\CarbonFootprint\Domain\DomainEvent;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Geo\DistanceSource;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Trip\LegKind;
@@ -35,6 +37,10 @@ final class AttendeeSurveyResponseRegistered extends DomainEvent
         private bool $cityRoundTrip,
         private ?int $cityTrips,
         private array $legs = [],
+        private Emissions $mobilityEmissions = new Emissions(),
+        private Emissions $overnightEmissions = new Emissions(),
+        private ?EmissionFactorGroupId $emissionFactorGroupId = null,
+        private ?int $calculationYear = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -112,6 +118,26 @@ final class AttendeeSurveyResponseRegistered extends DomainEvent
         return $this->legs;
     }
 
+    public function mobilityEmissions(): Emissions
+    {
+        return $this->mobilityEmissions;
+    }
+
+    public function overnightEmissions(): Emissions
+    {
+        return $this->overnightEmissions;
+    }
+
+    public function emissionFactorGroupId(): ?EmissionFactorGroupId
+    {
+        return $this->emissionFactorGroupId;
+    }
+
+    public function calculationYear(): ?int
+    {
+        return $this->calculationYear;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->attendeeSurveyResponseId();
@@ -134,6 +160,10 @@ final class AttendeeSurveyResponseRegistered extends DomainEvent
             'cityRoundTrip' => $this->cityRoundTrip,
             'cityTrips' => $this->cityTrips,
             'legs' => array_map(self::legToPrimitives(...), $this->legs),
+            'mobilityEmissions' => self::emissionsToPrimitives($this->mobilityEmissions),
+            'overnightEmissions' => self::emissionsToPrimitives($this->overnightEmissions),
+            'emissionFactorGroupId' => null !== $this->emissionFactorGroupId ? (string) $this->emissionFactorGroupId : null,
+            'calculationYear' => $this->calculationYear,
         ];
     }
 
@@ -141,6 +171,12 @@ final class AttendeeSurveyResponseRegistered extends DomainEvent
     {
         /** @var list<array<string, mixed>> $legs */
         $legs = $payload['legs'] ?? [];
+
+        /** @var array<string, mixed>|null $mobilityEmissions */
+        $mobilityEmissions = $payload['mobilityEmissions'] ?? null;
+
+        /** @var array<string, mixed>|null $overnightEmissions */
+        $overnightEmissions = $payload['overnightEmissions'] ?? null;
 
         return new self(
             attendeeSurveyResponseId: new AttendeeSurveyResponseId($payload['attendeeSurveyResponseId']),
@@ -157,8 +193,40 @@ final class AttendeeSurveyResponseRegistered extends DomainEvent
             cityRoundTrip: $payload['cityRoundTrip'] ?? false,
             cityTrips: $payload['cityTrips'] ?? null,
             legs: array_map(self::legFromPrimitives(...), $legs),
+            mobilityEmissions: self::emissionsFromPrimitives($mobilityEmissions),
+            overnightEmissions: self::emissionsFromPrimitives($overnightEmissions),
+            emissionFactorGroupId: null !== ($payload['emissionFactorGroupId'] ?? null)
+                ? new EmissionFactorGroupId((string) $payload['emissionFactorGroupId'])
+                : null,
+            calculationYear: null !== ($payload['calculationYear'] ?? null) ? (int) $payload['calculationYear'] : null,
             id: $id,
             occurredOn: $occurredOn,
+        );
+    }
+
+    /** @return array<string, string> */
+    private static function emissionsToPrimitives(Emissions $emissions): array
+    {
+        return [
+            'co2eq' => $emissions->co2eq(),
+            'co2' => $emissions->co2(),
+            'ch4' => $emissions->ch4(),
+            'n2o' => $emissions->n2o(),
+        ];
+    }
+
+    /** @param array<string, mixed>|null $payload */
+    private static function emissionsFromPrimitives(?array $payload): Emissions
+    {
+        if (null === $payload) {
+            return new Emissions();
+        }
+
+        return new Emissions(
+            co2eq: (string) ($payload['co2eq'] ?? '0'),
+            co2: (string) ($payload['co2'] ?? '0'),
+            ch4: (string) ($payload['ch4'] ?? '0'),
+            n2o: (string) ($payload['n2o'] ?? '0'),
         );
     }
 

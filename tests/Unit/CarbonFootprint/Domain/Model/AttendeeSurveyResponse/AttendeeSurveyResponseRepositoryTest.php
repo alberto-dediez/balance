@@ -30,6 +30,23 @@ abstract class AttendeeSurveyResponseRepositoryTest extends KernelTestCase
         $this->assertEquals($attendeeSurveyResponse->id(), $recovered->id());
     }
 
+    public function testRecoversTheEmissionsSnapshotOfTheResponse(): void
+    {
+        $repository = $this->createSUT();
+
+        $attendeeSurveyResponse = AttendeeSurveyResponseMother::withEmissions((string) AttendeeSurveyId::generate(), '12.5');
+
+        $repository->add($attendeeSurveyResponse);
+
+        $recovered = $repository->find($attendeeSurveyResponse->id());
+
+        $this->assertNotNull($recovered);
+        $this->assertEqualsWithDelta(12.5, (float) $recovered->emissions()->co2eq(), 0.001);
+        $this->assertEqualsWithDelta(12.5, (float) $recovered->mobilityEmissions()->co2eq(), 0.001);
+        $this->assertEquals($attendeeSurveyResponse->emissionFactorGroupId(), $recovered->emissionFactorGroupId());
+        $this->assertSame(2026, $recovered->calculationYear());
+    }
+
     public function testFindByAttendeeSurveyId(): void
     {
         $repository = $this->createSUT();

@@ -1,13 +1,13 @@
-{% extends '@carbon_footprint/public/property_trip/layout.html.twig' %}
+{% extends routes.layout %}
 
 {% set page_title = 'Compensa tu huella' | trans %}
 
-{% block trip_body %}
+{% block contribution_body %}
     <div class="text-center mb-4">
         <twig:Icon name="solar:hand-heart-bold" size="xl" class="text-success mb-3" />
         <h5 class="mb-1">{{ 'Elige un proyecto' | trans }}</h5>
         <p class="text-muted small mb-0">
-            {{ 'Vas a compensar {kg} kg CO₂eq.' | trans({'{kg}': tripCalculation.emissions.co2eq | number_format(2, ',', '.')}) }}
+            {{ 'Vas a compensar {kg} kg CO₂eq.' | trans({'{kg}': co2eqKg | number_format(2, ',', '.')}) }}
         </p>
     </div>
 
@@ -19,11 +19,7 @@
         <div class="d-grid gap-3">
             {% for option in options %}
                 {% set project = option.project %}
-                {% set detailPath = path('public_carbon_footprint_property_trip_contribution_project', {
-                    token: token,
-                    tripCalculationId: tripCalculation.id,
-                    projectId: project.id,
-                }) %}
+                {% set detailPath = path(routes.project, routes.routeParams | merge({projectId: project.id})) %}
                 <div class="card">
                     {% set cover = covers[project.id] | default(null) %}
                     {% if cover %}
@@ -50,11 +46,7 @@
 
                         <div class="d-grid gap-2 mt-3">
                             <a class="btn btn-success"
-                               href="{{ path('public_carbon_footprint_property_trip_contribution_checkout', {
-                                   token: token,
-                                   tripCalculationId: tripCalculation.id,
-                                   projectId: project.id,
-                               }) }}">
+                               href="{{ path(routes.checkout, routes.routeParams | merge({projectId: project.id})) }}">
                                 {{ 'Aportar' | trans }}
                             </a>
                             <a class="btn btn-outline-secondary btn-sm" href="{{ detailPath }}">
@@ -68,11 +60,7 @@
     {% endif %}
 
     <div class="text-center mt-4">
-        <a class="btn btn-link btn-sm text-muted"
-           href="{{ path('public_carbon_footprint_property_trip_result', {
-               token: token,
-               tripCalculationId: tripCalculation.id,
-           }) }}">
+        <a class="btn btn-link btn-sm text-muted" href="{{ path(routes.result, routes.routeParams) }}">
             {{ 'Volver al resultado' | trans }}
         </a>
     </div>

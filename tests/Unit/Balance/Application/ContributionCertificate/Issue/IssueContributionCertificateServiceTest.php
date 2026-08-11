@@ -20,6 +20,8 @@ use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryProjectRe
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDestinationRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Shared\Domain\Model\Locale\Locale;
+use App\Shared\Domain\Model\Locale\LocaleGetter;
 use App\Tests\Unit\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
@@ -127,6 +129,28 @@ class IssueContributionCertificateServiceTest extends TestCase
         $this->assertTrue($first->issued);
         $this->assertFalse($second->issued);
         $this->assertSame($first->contributionCertificate->code(), $second->contributionCertificate->code());
+    }
+
+    /**
+     * The confirmation may well run in a language of its own (the Stripe webhook carries none), so
+     * the document has to take the one the guest was contributing in.
+     */
+    public function testTheCertificateIsIssuedInTheLanguageOfTheContribution(): void
+    {
+        $this->givenProject(ProjectType::EmissionCompensation);
+
+        $contribution = ProjectContributionMother::paid($this->accountId, $this->projectId, locale: Locale::English);
+        $this->contributions->add($contribution);
+
+        LocaleGetter::setLocale(Locale::Spanish);
+
+        try {
+            $certificate = $this->issue($contribution->id())->contributionCertificate;
+        } finally {
+            LocaleGetter::setLocale(null);
+        }
+
+        $this->assertSame(Locale::English, $certificate->locale());
     }
 
     public function testAnUnpaidContributionIsRejected(): void

@@ -12,13 +12,31 @@ use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationId;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
-use App\Library\Domain\Model\Media\Media;
-use App\Library\Domain\Model\Media\MediaId;
-use App\Library\Domain\Model\Media\MediaRepository;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution\ContributionRoutes;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution\PublicGalleryTrait;
 use App\Security\Domain\Model\Account\AccountId;
 
 trait PropertyTripContributionTrait
 {
+    use PublicGalleryTrait;
+
+    private function contributionRoutes(string $token, string $tripCalculationId): ContributionRoutes
+    {
+        return new ContributionRoutes(
+            result: 'public_carbon_footprint_property_trip_result',
+            choose: 'public_carbon_footprint_property_trip_contribution_choose',
+            project: 'public_carbon_footprint_property_trip_contribution_project',
+            checkout: 'public_carbon_footprint_property_trip_contribution_checkout',
+            return: 'public_carbon_footprint_property_trip_contribution_return',
+            cancel: 'public_carbon_footprint_property_trip_contribution_cancel',
+            certificate: 'public_carbon_footprint_property_trip_contribution_certificate',
+            certificateEmail: 'public_carbon_footprint_property_trip_contribution_certificate_email',
+            routeParams: ['token' => $token, 'tripCalculationId' => $tripCalculationId],
+            layout: '@carbon_footprint/public/property_trip/layout.html.twig',
+            csrfTokenId: 'property_trip_' . $token,
+        );
+    }
+
     private function resolveLink(
         string $token,
         GetTripCalculationLinkByTokenService $getByToken,
@@ -48,26 +66,5 @@ trait PropertyTripContributionTrait
     private function accountIdOf(GetTripCalculationLinkByTokenResponse $link): ?AccountId
     {
         return $link->tripCalculationLink->accountId() ?? $link->property->accountId();
-    }
-
-    /**
-     * The guest is not logged in, so only the media anyone can reach may be painted: anything else
-     * would end up as a broken image.
-     *
-     * @param array<MediaId> $gallery
-     *
-     * @return list<Media>
-     */
-    private function publicGallery(array $gallery, MediaRepository $mediaRepository): array
-    {
-        $media = array_map(
-            static fn(MediaId $mediaId): ?Media => $mediaRepository->find($mediaId),
-            $gallery,
-        );
-
-        return array_values(array_filter(
-            $media,
-            static fn(?Media $media): bool => $media instanceof Media && $media->isPublic(),
-        ));
     }
 }

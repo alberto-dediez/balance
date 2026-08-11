@@ -13,7 +13,6 @@ use App\Shared\Application\CommandBus\Priority;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
-use App\Shared\Domain\Model\Locale\LocaleGetter;
 
 /**
  * Drawing the document takes seconds, so it is deferred: neither the Stripe webhook nor the browser
@@ -38,10 +37,10 @@ class IssueContributionCertificateOnPaidSubscriber implements DomainEventSubscri
 
         CommandBusDispatcher::instance()->dispatch(
             new DeferredCommand(
-                command: new IssueContributionCertificateRequest(
-                    projectContributionId: $event->projectContributionId(),
-                    locale: LocaleGetter::locale(),
-                ),
+                // No language is passed: the certificate takes the one the contribution was
+                // registered with, which is not necessarily the one this confirmation runs in
+                // (the Stripe webhook and the expiration command carry no language of their own).
+                command: new IssueContributionCertificateRequest($event->projectContributionId()),
                 priority: Priority::LOW,
             ),
             ($this->systemActor)(),

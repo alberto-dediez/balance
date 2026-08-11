@@ -36,7 +36,14 @@
         <field name="cityRoundTrip" type="boolean" column="city_round_trip" nullable="false" />
         <field name="cityTrips" type="integer" column="city_trips" nullable="true" />
 
+        <field name="emissionFactorGroupId" type="emission_factor_group_id" column="emission_factor_group_id" nullable="true" />
+        <field name="calculationYear" type="integer" column="calculation_year" nullable="true" />
+
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
+
+        <embedded name="emissions" class="App\CarbonFootprint\Domain\Model\Emissions" column-prefix="emissions_" />
+        <embedded name="mobilityEmissions" class="App\CarbonFootprint\Domain\Model\Emissions" column-prefix="mobility_emissions_" />
+        <embedded name="overnightEmissions" class="App\CarbonFootprint\Domain\Model\Emissions" column-prefix="overnight_emissions_" />
 
         <one-to-many field="legs"
                      target-entity="App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseLeg"

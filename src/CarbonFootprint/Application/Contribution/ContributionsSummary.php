@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\CarbonFootprint\Application\TripCalculation\GetResults;
+namespace App\CarbonFootprint\Application\Contribution;
 
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregation;
 

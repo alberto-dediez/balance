@@ -11,6 +11,7 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 use App\Payments\Domain\Model\Payment\PaymentId;
 use App\Payments\Domain\Model\Vat\VatExemptionReason;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Model\Locale\Locale;
 
 class ProjectContributionMother
 {
@@ -23,12 +24,14 @@ class ProjectContributionMother
         ?ProjectContributionId $id = null,
         ?string $originId = null,
         bool $isCompany = false,
+        ProjectContributionOrigin $origin = ProjectContributionOrigin::PropertyTripCalculation,
+        Locale $locale = Locale::Spanish,
     ): ProjectContribution {
         $projectContribution = new ProjectContribution(id: $id ?? ProjectContributionId::generate());
         $projectContribution->register(
             accountId: $accountId ?? AccountId::generate(),
             projectId: $projectId ?? ProjectId::generate(),
-            origin: ProjectContributionOrigin::PropertyTripCalculation,
+            origin: $origin,
             originId: $originId ?? (string) ProjectContributionId::generate(),
             co2eqKg: $tonnes * 1000,
             tonnes: $tonnes,
@@ -49,6 +52,7 @@ class ProjectContributionMother
             contributorIsCompany: $isCompany,
             contributorCompanyName: $isCompany ? 'Acme SL' : null,
             contributorVatNumber: $isCompany ? 'B12345678' : null,
+            locale: $locale,
             expiresAt: $expiresAt ?? new \DateTimeImmutable('+12 hours'),
             paymentId: $paymentId,
         );
@@ -61,11 +65,43 @@ class ProjectContributionMother
         ?ProjectId $projectId = null,
         float $tonnes = 1.0,
         ?string $originId = null,
+        ProjectContributionOrigin $origin = ProjectContributionOrigin::PropertyTripCalculation,
+        Locale $locale = Locale::Spanish,
     ): ProjectContribution {
-        $projectContribution = self::pending($accountId, $projectId, $tonnes, originId: $originId);
+        $projectContribution = self::pending($accountId, $projectId, $tonnes, originId: $originId, origin: $origin, locale: $locale);
         $projectContribution->pay();
 
         return $projectContribution;
+    }
+
+    public static function pendingFromAttendeeSurveyResponse(
+        AccountId $accountId,
+        ProjectId $projectId,
+        string $originId,
+        float $tonnes = 1.0,
+    ): ProjectContribution {
+        return self::pending(
+            $accountId,
+            $projectId,
+            $tonnes,
+            originId: $originId,
+            origin: ProjectContributionOrigin::AttendeeSurveyResponse,
+        );
+    }
+
+    public static function paidFromAttendeeSurveyResponse(
+        AccountId $accountId,
+        ProjectId $projectId,
+        string $originId,
+        float $tonnes = 1.0,
+    ): ProjectContribution {
+        return self::paid(
+            $accountId,
+            $projectId,
+            $tonnes,
+            originId: $originId,
+            origin: ProjectContributionOrigin::AttendeeSurveyResponse,
+        );
     }
 
     public static function paidCompany(

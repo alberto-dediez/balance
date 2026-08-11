@@ -8,6 +8,7 @@ services:
         bind:
             App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter $attendeeSurveyRateLimiter: '@carbon_footprint.attendee_survey_rate_limiter'
             App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter $propertyTripRateLimiter: '@carbon_footprint.property_trip_rate_limiter'
+            Symfony\Component\RateLimiter\RateLimiterFactory $certificateResendLimiter: '@limiter.certificate_resend'
 
     App\CarbonFootprint\:
         resource: '../../../'

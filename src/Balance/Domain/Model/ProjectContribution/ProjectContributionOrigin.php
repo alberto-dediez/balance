@@ -7,4 +7,5 @@ namespace App\Balance\Domain\Model\ProjectContribution;
 enum ProjectContributionOrigin: string
 {
     case PropertyTripCalculation = 'property_trip_calculation';
+    case AttendeeSurveyResponse = 'attendee_survey_response';
 }
