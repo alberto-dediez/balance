@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace App\Balance\Application\ProjectContribution\Confirm;
 
+use App\Balance\Application\ProjectContribution\Allocate\AllocateContributionCreditsRequest;
+use App\Balance\Application\ProjectContribution\Allocate\AllocateContributionCreditsService;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 
-/** Idempotent: the webhook, the browser return and the deferred check may all confirm the same contribution. */
 final class ConfirmProjectContributionService
 {
-    public function __construct(private ProjectContributionRepository $projectContributionRepository) {}
+    public function __construct(
+        private ProjectContributionRepository $projectContributionRepository,
+        private AllocateContributionCreditsService $allocateContributionCredits,
+    ) {}
 
     public function __invoke(ConfirmProjectContributionRequest $request): ConfirmProjectContributionResponse
     {
@@ -30,6 +34,10 @@ final class ConfirmProjectContributionService
         }
 
         $this->projectContributionRepository->add($projectContribution);
+
+        $this->allocateContributionCredits->__invoke(
+            new AllocateContributionCreditsRequest($projectContribution->id()),
+        );
 
         return new ConfirmProjectContributionResponse(status: $projectContribution->status(), changed: true);
     }

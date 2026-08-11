@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Balance\Application\ProjectContribution\Register;
 
 use App\Balance\Application\CreditPurchase\Balance\CreditReservationLock;
-use App\Balance\Application\ProjectContribution\Expire\ContributionExpirationScheduler;
+use App\Balance\Application\ProjectContribution\Expire\ExpireProjectContributionRequest;
 use App\Balance\Application\ProjectContribution\Quote\QuoteContributionRequest;
 use App\Balance\Application\ProjectContribution\Quote\QuoteContributionResponse;
 use App\Balance\Application\ProjectContribution\Quote\QuoteContributionService;
@@ -16,6 +16,10 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Payments\Application\Payment\Start\StartPaymentRequest;
 use App\Payments\Application\Payment\Start\StartPaymentService;
+use App\Security\Application\User\SystemActor\SystemActorResolver;
+use App\Shared\Application\CommandBus\CommandBusDispatcher;
+use App\Shared\Application\CommandBus\DeferredCommand;
+use App\Shared\Application\CommandBus\Priority;
 
 /**
  * Public entry point of the compensation flow: prices the contribution, holds the credit back,
@@ -34,7 +38,7 @@ final class RegisterProjectContributionService
         private QuoteContributionService $quoteContribution,
         private ProjectContributionRepository $projectContributionRepository,
         private StartPaymentService $startPayment,
-        private ContributionExpirationScheduler $expirationScheduler,
+        private SystemActorResolver $systemActor,
         private CreditReservationLock $creditReservationLock,
         private int $reservationHours = 12,
     ) {}
@@ -76,7 +80,16 @@ final class RegisterProjectContributionService
         $projectContribution->linkPayment($payment->paymentId);
         $this->projectContributionRepository->add($projectContribution);
 
-        $this->expirationScheduler->scheduleExpiration($id, $expiresAt);
+        // Re-checked once the reservation window is over, so a guest who never came back from the
+        // gateway stops holding the credit.
+        CommandBusDispatcher::instance()->dispatch(
+            new DeferredCommand(
+                command: new ExpireProjectContributionRequest($id),
+                priority: Priority::LOW,
+                executeAt: $expiresAt,
+            ),
+            ($this->systemActor)(),
+        );
 
         return new RegisterProjectContributionResponse(
             projectContributionId: $id,

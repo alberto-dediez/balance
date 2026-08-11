@@ -2,6 +2,7 @@ Feature:
     Ability for a guest to compensate the footprint of their trip by contributing to a project
 
     Background:
+        Given user "payment" with role "ROLE_ADMIN" exists
         Given account "MyCompany" with id "666" exists
         Given property "Hotel A" with id "777" of account "666" exists
         Given mobility "Coche" with id "M1" and emission factor for the current year exists

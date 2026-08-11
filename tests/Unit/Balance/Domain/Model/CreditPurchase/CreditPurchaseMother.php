@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Balance\Domain\Model\CreditPurchase;
 
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseStatus;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -36,6 +37,29 @@ class CreditPurchaseMother
         );
 
         return $creditPurchase;
+    }
+
+    /** Reconstituted rather than replayed: the FIFO assignment orders lots by their resolution date. */
+    public static function validatedAt(
+        \DateTimeImmutable $resolvedAt,
+        AccountId $accountId,
+        ProjectId $projectId,
+        float $tonnes = 10.0,
+    ): CreditPurchase {
+        $id = CreditPurchaseId::generate();
+
+        return new CreditPurchase(
+            id: $id,
+            accountId: $accountId,
+            projectId: $projectId,
+            requestedBy: UserId::generate(),
+            requestedTonnes: $tonnes,
+            status: CreditPurchaseStatus::Validated,
+            purchasedTonnes: $tonnes,
+            reference: 'ref-' . $id,
+            resolvedBy: UserId::generate(),
+            resolvedAt: $resolvedAt,
+        );
     }
 
     public static function partiallyValidated(?AccountId $accountId = null, ?ProjectId $projectId = null): CreditPurchase

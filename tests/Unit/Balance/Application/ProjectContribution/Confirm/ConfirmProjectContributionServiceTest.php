@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Balance\Application\ProjectContribution\Confirm;
 
+use App\Balance\Application\ProjectContribution\Allocate\AllocateContributionCreditsService;
 use App\Balance\Application\ProjectContribution\Confirm\ConfirmProjectContributionRequest;
 use App\Balance\Application\ProjectContribution\Confirm\ConfirmProjectContributionService;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionPaymentUnreconciled;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionStatus;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Balance\Application\ProjectContribution\FakeCreditReservationLock;
+use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepositoryMother;
+use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
@@ -23,7 +28,7 @@ class ConfirmProjectContributionServiceTest extends TestCase
         $contribution = ProjectContributionMother::pending();
         $contributions->add($contribution);
 
-        $response = (new ConfirmProjectContributionService($contributions))(
+        $response = (self::service($contributions))(
             new ConfirmProjectContributionRequest($contribution->id()),
         );
 
@@ -38,7 +43,7 @@ class ConfirmProjectContributionServiceTest extends TestCase
         $contribution = ProjectContributionMother::overdue();
         $contributions->add($contribution);
 
-        $response = (new ConfirmProjectContributionService($contributions))(
+        $response = (self::service($contributions))(
             new ConfirmProjectContributionRequest($contribution->id()),
         );
 
@@ -52,7 +57,7 @@ class ConfirmProjectContributionServiceTest extends TestCase
         $contribution = ProjectContributionMother::pending();
         $contributions->add($contribution);
 
-        $sut = new ConfirmProjectContributionService($contributions);
+        $sut = self::service($contributions);
 
         $sut(new ConfirmProjectContributionRequest($contribution->id()));
         $response = $sut(new ConfirmProjectContributionRequest($contribution->id()));
@@ -71,7 +76,7 @@ class ConfirmProjectContributionServiceTest extends TestCase
 
         $spy = new SpyDomainEventSubscriber();
 
-        $response = (new ConfirmProjectContributionService($contributions))(
+        $response = (self::service($contributions))(
             new ConfirmProjectContributionRequest($contribution->id()),
         );
 
@@ -84,8 +89,22 @@ class ConfirmProjectContributionServiceTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        (new ConfirmProjectContributionService(ProjectContributionRepositoryMother::inMemory()))(
+        (self::service(ProjectContributionRepositoryMother::inMemory()))(
             new ConfirmProjectContributionRequest(ProjectContributionId::generate()),
+        );
+    }
+
+    /** The project catalogue is empty here, so credit allocation stays out of the way of these cases. */
+    private static function service(ProjectContributionRepository $contributions): ConfirmProjectContributionService
+    {
+        return new ConfirmProjectContributionService(
+            $contributions,
+            new AllocateContributionCreditsService(
+                $contributions,
+                CreditPurchaseRepositoryMother::inMemory(),
+                ProjectRepositoryMother::inMemory(),
+                new FakeCreditReservationLock(),
+            ),
         );
     }
 }

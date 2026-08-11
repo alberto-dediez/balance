@@ -66,8 +66,51 @@
     </table>
 
     {% if payment and payment.externalPaymentId %}
-        <p class="text-muted small text-center mb-0">
+        <p class="text-muted small text-center mb-3">
             {{ 'Referencia del pago' | trans }}: <code>{{ payment.externalPaymentId }}</code>
         </p>
+    {% endif %}
+
+    {% if contribution.paid %}
+        <hr class="my-4">
+
+        {% if certificate is null or certificate.status.value == 'pending' %}
+            <div class="text-center">
+                <twig:Icon name="solar:document-add-bold" size="lg" class="text-muted mb-2" />
+                <p class="mb-0">{{ 'Estamos preparando tu certificado' | trans }}</p>
+                <p class="text-muted small mb-0">
+                    {{ 'En cuanto esté listo lo recibirás por correo y podrás descargarlo desde aquí.' | trans }}
+                </p>
+            </div>
+            {# Plain page refresh: the certificate is drawn in the background and lands in a few seconds. #}
+            <meta http-equiv="refresh" content="8">
+        {% elseif certificate.generated %}
+            <div class="text-center mb-3">
+                <a class="btn btn-primary"
+                   href="{{ path('public_carbon_footprint_property_trip_contribution_certificate', {token: token, contributionId: contribution.id}) }}">
+                    <twig:Icon name="solar:download-minimalistic-bold" /> {{ 'Descargar certificado' | trans }}
+                </a>
+            </div>
+
+            <form method="post"
+                  action="{{ path('public_carbon_footprint_property_trip_contribution_certificate_email', {token: token, contributionId: contribution.id}) }}"
+                  class="row g-2 justify-content-center">
+                <input type="hidden" name="_token" value="{{ csrf_token('property_trip_' ~ token) }}">
+                <div class="col-12 col-sm-7">
+                    <label class="visually-hidden" for="certificate-email">{{ 'Correo electrónico' | trans }}</label>
+                    <input type="email" class="form-control" id="certificate-email" name="email"
+                           value="{{ certificate.contactEmail }}" required>
+                </div>
+                <div class="col-12 col-sm-auto">
+                    <button type="submit" class="btn btn-outline-secondary w-100">
+                        {{ 'Enviar por correo' | trans }}
+                    </button>
+                </div>
+            </form>
+        {% else %}
+            <p class="text-center text-muted small mb-0">
+                {{ 'Tu certificado se está preparando y te lo enviaremos por correo en cuanto esté listo.' | trans }}
+            </p>
+        {% endif %}
     {% endif %}
 {% endblock %}

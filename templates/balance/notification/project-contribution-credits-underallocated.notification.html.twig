@@ -1,0 +1,14 @@
+<p>
+    {% trans with {
+        '{requested}': requestedTonnes | number_format(4, ',', '.'),
+        '{allocated}': allocatedTonnes | number_format(4, ',', '.'),
+        '{missing}': missingTonnes | number_format(4, ',', '.')
+    } -%}
+        Una aportación pagada necesita {requested} t de crédito y solo se han podido asignar {allocated} t: faltan {missing} t. Hay que comprar o validar crédito para cerrar la trazabilidad.
+    {%- endtrans %}
+</p>
+<p>
+    <a href="{{ path('admin_project_contributions_view', {'projectContributionId': projectContributionId}) }}">
+        {% trans -%}Ver aportación{%- endtrans -%}
+    </a>
+</p>

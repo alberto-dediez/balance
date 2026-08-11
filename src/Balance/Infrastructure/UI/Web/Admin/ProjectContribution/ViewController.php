@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Balance\Infrastructure\UI\Web\Admin\ProjectContribution;
 
+use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepository;
 use App\Balance\Domain\Model\Project\ProjectRepository;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Balance\Infrastructure\UI\Web\ProjectContribution\GetProjectContributionFromIdTrait;
@@ -24,6 +25,7 @@ class ViewController extends AbstractController
         ProjectContributionRepository $projectContributionRepository,
         ProjectRepository $projectRepository,
         PaymentRepository $paymentRepository,
+        ContributionCertificateRepository $contributionCertificateRepository,
     ): Response {
         $projectContribution = $this->getProjectContributionFromId($projectContributionId, $projectContributionRepository);
 
@@ -36,6 +38,7 @@ class ViewController extends AbstractController
             'contribution' => $projectContribution,
             'project' => null !== $projectId ? $projectRepository->find($projectId) : null,
             'payment' => $paymentId instanceof PaymentId ? $paymentRepository->find($paymentId) : null,
+            'certificate' => $contributionCertificateRepository->findByProjectContributionId($projectContribution->id()),
         ]);
     }
 }

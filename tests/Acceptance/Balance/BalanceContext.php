@@ -10,6 +10,9 @@ use App\Balance\Application\ProjectContribution\Expire\ExpirePendingContribution
 use App\Balance\Domain\Model\AccountProject\AccountProject;
 use App\Balance\Domain\Model\AccountProject\AccountProjectId;
 use App\Balance\Domain\Model\AccountProject\AccountProjectRepository;
+use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepository;
+use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateStatus;
+use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateType;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
@@ -37,9 +40,21 @@ use Behat\Step\Then;
 use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\ReceivedStamp;
+use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 
 final class BalanceContext implements Context
 {
+    private const int MAX_QUEUE_ROUNDS = 10;
+
+    /** @var list<string> */
+    private const array TRANSPORTS = [
+        'messenger.transport.async_high',
+        'messenger.transport.async',
+        'messenger.transport.async_low',
+    ];
+
     private readonly AcceptanceClient $client;
 
     public function __construct(KernelBrowser $client)
@@ -306,6 +321,127 @@ final class BalanceContext implements Context
             new ExpirePendingContributionsRequest(new \DateTimeImmutable('NOW')),
             UserMother::systemUser(),
         );
+    }
+
+    /**
+     * The certificate is drawn out of band, so the queue has to be drained before the thank-you page
+     * can show anything. Handling a message may queue the next one, hence the loop.
+     */
+    #[When('the queued messages are processed')]
+    public function theQueuedMessagesAreProcessed(): void
+    {
+        $bus = $this->client->getContainer()->get(MessageBusInterface::class);
+
+        for ($round = 0; $round < self::MAX_QUEUE_ROUNDS; ++$round) {
+            $messages = [];
+
+            foreach (self::TRANSPORTS as $transportId) {
+                $transport = $this->client->getContainer()->get($transportId);
+
+                assert($transport instanceof InMemoryTransport);
+
+                foreach ($transport->getSent() as $envelope) {
+                    $messages[] = $envelope->getMessage();
+                }
+
+                $transport->reset();
+            }
+
+            if ([] === $messages) {
+                return;
+            }
+
+            foreach ($messages as $message) {
+                $bus->dispatch($message, [new ReceivedStamp('async')]);
+            }
+        }
+    }
+
+    #[Then('contribution :id should consume :tonnes tonnes of credit purchase :creditPurchaseId')]
+    public function contributionShouldConsumeTonnesOfCreditPurchase(string $id, string $tonnes, string $creditPurchaseId): void
+    {
+        $contribution = $this->getProjectContributionRepository()->find(new ProjectContributionId($id));
+
+        Assert::assertNotNull($contribution);
+
+        $consumed = 0.0;
+
+        foreach ($contribution->creditAllocations() as $allocation) {
+            if ((string) $allocation->creditPurchaseId() === $creditPurchaseId) {
+                $consumed += $allocation->tonnes();
+            }
+        }
+
+        Assert::assertEqualsWithDelta((float) $tonnes, $consumed, 0.0001);
+    }
+
+    #[Then('contribution :id should consume no credit')]
+    public function contributionShouldConsumeNoCredit(string $id): void
+    {
+        $contribution = $this->getProjectContributionRepository()->find(new ProjectContributionId($id));
+
+        Assert::assertNotNull($contribution);
+        Assert::assertSame([], $contribution->creditAllocations());
+    }
+
+    #[Then('the certificate of contribution :id should be :status')]
+    public function theCertificateOfContributionShouldBe(string $id, string $status): void
+    {
+        $certificate = $this->getContributionCertificateRepository()
+            ->findByProjectContributionId(new ProjectContributionId($id))
+        ;
+
+        Assert::assertNotNull($certificate);
+        Assert::assertSame(ContributionCertificateStatus::from($status), $certificate->status());
+    }
+
+    #[Then('the certificate of contribution :id should be a :type document')]
+    public function theCertificateOfContributionShouldBeOfType(string $id, string $type): void
+    {
+        $certificate = $this->getContributionCertificateRepository()
+            ->findByProjectContributionId(new ProjectContributionId($id))
+        ;
+
+        Assert::assertNotNull($certificate);
+        Assert::assertSame(ContributionCertificateType::from($type), $certificate->type());
+    }
+
+    #[When('I go to the verification page of the certificate of contribution :id')]
+    public function iGoToTheVerificationPageOfTheCertificate(string $id): void
+    {
+        $certificate = $this->getContributionCertificateRepository()
+            ->findByProjectContributionId(new ProjectContributionId($id))
+        ;
+
+        Assert::assertNotNull($certificate);
+
+        $this->client->request('GET', '/es/certificate/' . $certificate->verificationToken());
+    }
+
+    #[When('I go to the verification page of the certificate of contribution :id using its printed reference')]
+    public function iGoToTheVerificationPageOfTheCertificateWithItsCode(string $id): void
+    {
+        $certificate = $this->getContributionCertificateRepository()
+            ->findByProjectContributionId(new ProjectContributionId($id))
+        ;
+
+        Assert::assertNotNull($certificate);
+
+        $this->client->request('GET', '/es/certificate/' . $certificate->code());
+    }
+
+    #[When('I download the certificate of contribution :id with token :token')]
+    public function iDownloadTheCertificateOfContribution(string $id, string $token): void
+    {
+        $this->client->request(
+            'GET',
+            sprintf('/es/carbon-footprint/property-trip/%s/contribution/%s/certificate', $token, $id),
+        );
+    }
+
+    public function getContributionCertificateRepository(): ContributionCertificateRepository
+    {
+        return $this->client->getContainer()->get(ContributionCertificateRepository::class);
     }
 
     /** @param array<string, mixed> $extra */

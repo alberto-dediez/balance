@@ -1,0 +1,13 @@
+<h3>{% trans -%}Aportación sin crédito suficiente asignado{%- endtrans -%}</h3>
+<p>
+    {% trans with {
+        '{requested}': requestedTonnes | number_format(4, ',', '.'),
+        '{allocated}': allocatedTonnes | number_format(4, ',', '.'),
+        '{missing}': missingTonnes | number_format(4, ',', '.')
+    } -%}
+        Una aportación pagada necesita {requested} t de crédito y solo se han podido asignar {allocated} t: faltan {missing} t. El certificado se emitirá con los lotes disponibles, así que hay que comprar o validar crédito para cerrar la trazabilidad.
+    {%- endtrans %}
+</p>
+<a href="{{ url('admin_project_contributions_view', {'projectContributionId': projectContributionId}) }}" class="btn btn-primary">
+    {% trans -%}Ver aportación{%- endtrans -%}
+</a>

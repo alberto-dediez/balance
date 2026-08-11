@@ -8,6 +8,11 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Payments\Domain\Model\Payment\Payment;
 use App\Payments\Domain\Model\Payment\PaymentId;
 use App\Payments\Domain\Model\Payment\PaymentRepository;
+use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CommandBus\Command;
+use App\Shared\Application\CommandBus\CommandHandler;
+use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 
 /**
  * Releases the reservation of a contribution whose window is over, or whose checkout session the
@@ -15,14 +20,17 @@ use App\Payments\Domain\Model\Payment\PaymentRepository;
  * payment is checked first, so a lost webhook confirms the contribution instead of wrongly
  * expiring a paid one.
  */
-final class ExpireProjectContributionService
+class ExpireProjectContributionService implements CommandHandler
 {
+    use RegisterHandlerTrait;
+    use CommandInvokeHandlerTrait;
+
     public function __construct(
         private ProjectContributionRepository $projectContributionRepository,
         private PaymentRepository $paymentRepository,
     ) {}
 
-    public function __invoke(ExpireProjectContributionRequest $request): ExpireProjectContributionResponse
+    public function __invoke(ExpireProjectContributionRequest $request, User $user): ExpireProjectContributionResponse
     {
         $now = $request->now ?? new \DateTimeImmutable('NOW');
         $projectContribution = $this->projectContributionRepository->find($request->projectContributionId);
@@ -53,5 +61,10 @@ final class ExpireProjectContributionService
         $this->projectContributionRepository->add($projectContribution);
 
         return new ExpireProjectContributionResponse(status: $projectContribution->status(), changed: true);
+    }
+
+    public function isHandled(Command $command): bool
+    {
+        return $command instanceof ExpireProjectContributionRequest;
     }
 }

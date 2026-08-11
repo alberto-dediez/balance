@@ -1,0 +1,81 @@
+{% extends '@shared/layout/public.html.twig' %}
+
+{% set page_title = 'Verificación de certificado' | trans %}
+
+{% block page_header %}{% endblock %}
+
+{#
+    Public page: it may show only what the certificate proves, never who holds it.
+#}
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-9 col-lg-7 col-xl-5">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        {% if certificate.valid %}
+                            <twig:Icon name="solar:verified-check-bold" size="xl" class="text-success mb-3" />
+                            <h5 class="text-success mb-1">{{ 'Certificado válido' | trans }}</h5>
+                        {% else %}
+                            <twig:Icon name="solar:clock-circle-bold" size="xl" class="text-warning mb-3" />
+                            <h5 class="mb-1">{{ 'Certificado en preparación' | trans }}</h5>
+                        {% endif %}
+                        <p class="mb-1"><code>{{ certificate.code }}</code></p>
+                        <p class="text-muted small mb-0">
+                            {{ 'Esta referencia debe coincidir con la impresa en el documento' | trans }}
+                        </p>
+                    </div>
+
+                    <table class="table table-sm mb-0">
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="fw-normal">{{ 'Tipo de documento' | trans }}</th>
+                                <td class="text-end">
+                                    {{ certificate.type.value | trans({}, 'contributionCertificateType') }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="fw-normal">{{ 'Proyecto' | trans }}</th>
+                                <td class="text-end">{{ certificate.projectName }}</td>
+                            </tr>
+                            {% if certificate.projectLocation %}
+                                <tr>
+                                    <th scope="row" class="fw-normal">{{ 'Ubicación' | trans }}</th>
+                                    <td class="text-end">{{ certificate.projectLocation }}</td>
+                                </tr>
+                            {% endif %}
+                            {% if certificate.projectRegistryId %}
+                                <tr>
+                                    <th scope="row" class="fw-normal">{{ 'Registro oficial' | trans }}</th>
+                                    <td class="text-end">{{ certificate.projectRegistryId }}</td>
+                                </tr>
+                            {% endif %}
+                            {% if certificate.co2eqKg is not null %}
+                                <tr>
+                                    <th scope="row" class="fw-normal">{{ 'Emisiones compensadas' | trans }}</th>
+                                    <td class="text-end text-nowrap">
+                                        {{ certificate.co2eqKg | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            {% if certificate.masterSerials is not empty %}
+                                <tr>
+                                    <th scope="row" class="fw-normal">{{ 'Números de serie maestros' | trans }}</th>
+                                    <td class="text-end">
+                                        {% for serial in certificate.masterSerials %}
+                                            <code class="d-block">{{ serial }}</code>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            <tr>
+                                <th scope="row" class="fw-normal">{{ 'Fecha de emisión' | trans }}</th>
+                                <td class="text-end">{{ certificate.issuedAt | date('d/m/Y') }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -22,6 +22,7 @@ class ProjectContributionMother
         ?PaymentId $paymentId = null,
         ?ProjectContributionId $id = null,
         ?string $originId = null,
+        bool $isCompany = false,
     ): ProjectContribution {
         $projectContribution = new ProjectContribution(id: $id ?? ProjectContributionId::generate());
         $projectContribution->register(
@@ -45,9 +46,9 @@ class ProjectContributionMother
             contributorName: 'Guest',
             contributorEmail: 'guest@example.com',
             contributorCountry: 'ES',
-            contributorIsCompany: false,
-            contributorCompanyName: null,
-            contributorVatNumber: null,
+            contributorIsCompany: $isCompany,
+            contributorCompanyName: $isCompany ? 'Acme SL' : null,
+            contributorVatNumber: $isCompany ? 'B12345678' : null,
             expiresAt: $expiresAt ?? new \DateTimeImmutable('+12 hours'),
             paymentId: $paymentId,
         );
@@ -62,6 +63,22 @@ class ProjectContributionMother
         ?string $originId = null,
     ): ProjectContribution {
         $projectContribution = self::pending($accountId, $projectId, $tonnes, originId: $originId);
+        $projectContribution->pay();
+
+        return $projectContribution;
+    }
+
+    public static function paidCompany(
+        ?AccountId $accountId = null,
+        ?ProjectId $projectId = null,
+        float $tonnes = 1.0,
+    ): ProjectContribution {
+        $projectContribution = self::pending(
+            $accountId,
+            $projectId,
+            $tonnes,
+            isCompany: true,
+        );
         $projectContribution->pay();
 
         return $projectContribution;

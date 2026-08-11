@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Balance\Domain\Model\ContributionCertificate\ContributionCertificate" table="contribution_certificates">
+        <unique-constraints>
+            <unique-constraint columns="code" name="uniq_contribution_certificate_code"/>
+            <unique-constraint columns="verification_token" name="uniq_contribution_certificate_verification_token"/>
+            <unique-constraint columns="project_contribution_id" name="uniq_contribution_certificate_contribution"/>
+        </unique-constraints>
+
+        <id name="id" type="contribution_certificate_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="accountId" type="account_id" column="account_id" nullable="false"/>
+        <field name="projectContributionId" type="project_contribution_id" column="project_contribution_id" nullable="false"/>
+        <field name="code" type="string" column="code" length="20" nullable="false"/>
+        <field name="verificationToken" type="string" column="verification_token" length="64" nullable="false"/>
+        <field name="type" type="string" column="type" length="30" enum-type="App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateType" nullable="false"/>
+        <field name="status" type="string" column="status" length="20" enum-type="App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateStatus" nullable="false"/>
+        <field name="locale" type="string" column="locale" length="5" enum-type="App\Shared\Domain\Model\Locale\Locale" nullable="false"/>
+        <field name="beneficiaryName" type="string" column="beneficiary_name" length="255" nullable="false"/>
+        <field name="beneficiaryIsCompany" type="boolean" column="beneficiary_is_company" nullable="false"/>
+        <field name="beneficiaryVatNumber" type="string" column="beneficiary_vat_number" length="40" nullable="true"/>
+        <field name="contactName" type="string" column="contact_name" length="255" nullable="false"/>
+        <field name="contactEmail" type="string" column="contact_email" length="255" nullable="false"/>
+        <field name="contributorCountry" type="string" column="contributor_country" length="2" nullable="false"/>
+        <field name="co2eqKg" type="float" column="co2eq_kg" nullable="true"/>
+        <field name="tonnes" type="float" column="tonnes" nullable="false"/>
+        <field name="contributionAmount" type="float" column="contribution_amount" nullable="false"/>
+        <field name="currency" type="string" column="currency" length="3" nullable="false"/>
+        <field name="projectId" type="project_id" column="project_id" nullable="true"/>
+        <field name="projectName" type="string" column="project_name" length="255" nullable="false"/>
+        <field name="projectLocation" type="string" column="project_location" length="255" nullable="true"/>
+        <field name="projectRegistryId" type="string" column="project_registry_id" length="100" nullable="true"/>
+        <field name="masterSerials" type="json" column="master_serials" nullable="false"/>
+        <field name="files" type="json" column="files" nullable="false"/>
+        <field name="failureReason" type="text" column="failure_reason" nullable="true"/>
+        <field name="issuedAt" type="datetime_immutable" column="issued_at" nullable="false"/>
+        <field name="generatedAt" type="datetime_immutable" column="generated_at" nullable="true"/>
+        <field name="failedAt" type="datetime_immutable" column="failed_at" nullable="true"/>
+
+        <indexes>
+            <index columns="account_id" name="idx_contribution_certificate_account"/>
+            <index columns="status" name="idx_contribution_certificate_status"/>
+        </indexes>
+    </entity>
+
+</doctrine-mapping>

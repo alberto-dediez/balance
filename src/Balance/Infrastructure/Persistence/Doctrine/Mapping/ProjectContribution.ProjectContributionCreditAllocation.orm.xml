@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Balance\Domain\Model\ProjectContribution\ProjectContributionCreditAllocation" table="project_contribution_credit_allocations">
+        <id name="id" type="project_contribution_credit_allocation_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="position" type="integer" column="position" nullable="false"/>
+        <field name="creditPurchaseId" type="credit_purchase_id" column="credit_purchase_id" nullable="false"/>
+        <field name="purchaseReference" type="string" column="purchase_reference" length="255" nullable="true"/>
+        <field name="tonnes" type="float" column="tonnes" nullable="false"/>
+
+        <many-to-one field="projectContribution" target-entity="App\Balance\Domain\Model\ProjectContribution\ProjectContribution" inversed-by="creditAllocations">
+            <join-column name="project_contribution_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <indexes>
+            <index name="idx_contribution_credit_allocation_contribution" columns="project_contribution_id,position"/>
+            <index name="idx_contribution_credit_allocation_purchase" columns="credit_purchase_id"/>
+        </indexes>
+    </entity>
+
+</doctrine-mapping>

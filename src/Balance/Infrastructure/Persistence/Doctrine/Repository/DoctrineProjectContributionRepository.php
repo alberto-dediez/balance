@@ -6,6 +6,7 @@ namespace App\Balance\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionCreditAllocation;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFilter;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
@@ -215,6 +216,33 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
         }
 
         return $committed;
+    }
+
+    /** @return array<string, float> */
+    public function allocatedTonnesByPurchase(AccountId $accountId, ProjectId $projectId): array
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        $rows = $qb
+            ->select('a.creditPurchaseId as creditPurchaseId, SUM(a.tonnes) as tonnes')
+            ->from(ProjectContributionCreditAllocation::class, 'a')
+            ->innerJoin('a.projectContribution', 'pc')
+            ->andWhere($qb->expr()->eq('pc.accountId', ':accountId'))
+            ->andWhere($qb->expr()->eq('pc.projectId', ':projectId'))
+            ->groupBy('a.creditPurchaseId')
+            ->setParameter('accountId', (string) $accountId)
+            ->setParameter('projectId', (string) $projectId)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        $allocated = [];
+
+        foreach ($rows as $row) {
+            $allocated[(string) $row['creditPurchaseId']] = (float) $row['tonnes'];
+        }
+
+        return $allocated;
     }
 
     public function reservedTonnes(AccountId $accountId, ProjectId $projectId, \DateTimeImmutable $now): float

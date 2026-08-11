@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\Contribu
 
 use App\Balance\Application\ProjectContribution\Confirm\ConfirmProjectContributionRequest;
 use App\Balance\Application\ProjectContribution\Confirm\ConfirmProjectContributionService;
+use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepository;
 use App\Balance\Domain\Model\Project\ProjectRepository;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
@@ -40,6 +41,7 @@ class ReturnController extends AbstractController
         ProjectContributionRepository $projectContributionRepository,
         ProjectRepository $projectRepository,
         PaymentRepository $paymentRepository,
+        ContributionCertificateRepository $contributionCertificateRepository,
         ConfirmProjectContributionService $confirmProjectContribution,
         Request $request,
     ): Response {
@@ -82,6 +84,7 @@ class ReturnController extends AbstractController
             'contribution' => $projectContribution,
             'project' => null !== $projectId ? $projectRepository->find($projectId) : null,
             'payment' => $payment,
+            'certificate' => $contributionCertificateRepository->findByProjectContributionId($projectContribution->id()),
         ]);
     }
 }

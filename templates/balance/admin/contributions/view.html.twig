@@ -12,4 +12,76 @@
     </twig:Card>
 
     {{ include('@balance/contributions/_detail.html.twig') }}
+
+    <twig:Card title="{{ 'Certificado' | trans }}">
+        {% if certificate %}
+            <dl class="row mb-0">
+                <dt class="col-sm-4">{{ 'Código' | trans }}</dt>
+                <dd class="col-sm-8"><code>{{ certificate.code }}</code></dd>
+
+                <dt class="col-sm-4">{{ 'Tipo' | trans }}</dt>
+                <dd class="col-sm-8">{{ certificate.type.value | trans({}, 'contributionCertificateType') }}</dd>
+
+                <dt class="col-sm-4">{{ 'Estado' | trans }}</dt>
+                <dd class="col-sm-8">{{ certificate.status.value | trans({}, 'contributionCertificateStatus') }}</dd>
+
+                <dt class="col-sm-4">{{ 'Fecha de emisión' | trans }}</dt>
+                <dd class="col-sm-8">{{ certificate.issuedAt | date('d/m/Y H:i') }}</dd>
+
+                {% if certificate.failureReason %}
+                    <dt class="col-sm-4">{{ 'Motivo del fallo' | trans }}</dt>
+                    <dd class="col-sm-8">{{ certificate.failureReason }}</dd>
+                {% endif %}
+            </dl>
+
+            {% if certificate.generated %}
+                <hr>
+                <a class="btn btn-outline-primary mb-3"
+                   href="{{ path('admin_project_contributions_certificate_download', {projectContributionId: contribution.id}) }}">
+                    {{ 'Descargar' | trans }}
+                </a>
+
+                <form method="post"
+                      action="{{ path('admin_project_contributions_certificate_resend', {projectContributionId: contribution.id}) }}"
+                      class="row g-2">
+                    <input type="hidden" name="_token" value="{{ csrf_token('certificate_resend_' ~ contribution.id) }}">
+                    <div class="col-12 col-sm-6">
+                        <label class="visually-hidden" for="resend-email">{{ 'Correo electrónico' | trans }}</label>
+                        <input type="email" class="form-control" id="resend-email" name="email"
+                               value="{{ certificate.contactEmail }}" required>
+                    </div>
+                    <div class="col-12 col-sm-auto">
+                        <button type="submit" class="btn btn-outline-secondary w-100">{{ 'Reenviar' | trans }}</button>
+                    </div>
+                </form>
+            {% endif %}
+        {% else %}
+            <p class="text-muted mb-0">{{ 'Esta aportación todavía no tiene certificado' | trans }}</p>
+        {% endif %}
+    </twig:Card>
+
+    <twig:Card title="{{ 'Lotes de crédito consumidos' | trans }}">
+        {% if contribution.creditAllocations is not empty %}
+            <table class="table table-sm mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col">{{ 'Compra de crédito' | trans }}</th>
+                        <th scope="col">{{ 'Referencia' | trans }}</th>
+                        <th scope="col" class="text-end">{{ 'Toneladas' | trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for allocation in contribution.creditAllocations %}
+                        <tr>
+                            <td><code>{{ allocation.creditPurchaseId }}</code></td>
+                            <td>{{ allocation.purchaseReference ?? '-' }}</td>
+                            <td class="text-end text-nowrap">{{ allocation.tonnes | number_format(4, ',', '.') }} t</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-muted mb-0">{{ 'No hay lotes de crédito asignados a esta aportación' | trans }}</p>
+        {% endif %}
+    </twig:Card>
 {% endblock %}

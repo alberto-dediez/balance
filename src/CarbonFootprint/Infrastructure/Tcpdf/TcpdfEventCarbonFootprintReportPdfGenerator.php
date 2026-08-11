@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootp
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportTexts;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
+use App\Shared\Infrastructure\Tcpdf\GenericGenerator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class TcpdfEventCarbonFootprintReportPdfGenerator implements EventCarbonFootprintReportPdfGenerator

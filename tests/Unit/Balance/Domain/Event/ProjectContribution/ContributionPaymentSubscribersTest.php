@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Balance\Domain\Event\ProjectContribution;
 
+use App\Balance\Application\ProjectContribution\Allocate\AllocateContributionCreditsService;
 use App\Balance\Application\ProjectContribution\Confirm\ConfirmProjectContributionService;
 use App\Balance\Application\ProjectContribution\Expire\ExpireProjectContributionService;
 use App\Balance\Application\ProjectContribution\Fail\FailProjectContributionService;
@@ -18,10 +19,14 @@ use App\Payments\Domain\Model\Payment\PaymentFailed;
 use App\Payments\Domain\Model\Payment\PaymentId;
 use App\Payments\Domain\Model\Payment\PaymentSucceeded;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Balance\Application\ProjectContribution\FakeCreditReservationLock;
+use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepositoryMother;
+use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
 use App\Tests\Unit\Payments\Domain\Model\Payment\PaymentMother;
 use App\Tests\Unit\Payments\Domain\Model\Payment\PaymentRepositoryMother;
+use App\Tests\Unit\Security\Application\User\SystemActor\SystemActorResolverMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use PHPUnit\Framework\TestCase;
 
@@ -47,7 +52,7 @@ class ContributionPaymentSubscribersTest extends TestCase
         $this->contributions->add($contribution);
 
         new PayContributionOnPaymentSucceededSubscriber(
-            new ConfirmProjectContributionService($this->contributions),
+            $this->confirmService(),
         );
 
         $spy = new SpyDomainEventSubscriber();
@@ -80,6 +85,7 @@ class ContributionPaymentSubscribersTest extends TestCase
 
         new ExpireContributionOnPaymentExpiredSubscriber(
             new ExpireProjectContributionService($this->contributions, PaymentRepositoryMother::inMemory()),
+            SystemActorResolverMother::withPaymentUser(),
         );
 
         PaymentMother::pending(subjectId: (string) $contribution->id())->expire();
@@ -90,7 +96,7 @@ class ContributionPaymentSubscribersTest extends TestCase
     public function testPaymentsOfAnotherSubjectAreIgnored(): void
     {
         $subscriber = new PayContributionOnPaymentSucceededSubscriber(
-            new ConfirmProjectContributionService($this->contributions),
+            $this->confirmService(),
         );
 
         $this->assertFalse($subscriber->isSubscribedTo(new PaymentSucceeded(
@@ -113,6 +119,7 @@ class ContributionPaymentSubscribersTest extends TestCase
         );
         $expireSubscriber = new ExpireContributionOnPaymentExpiredSubscriber(
             new ExpireProjectContributionService($this->contributions, PaymentRepositoryMother::inMemory()),
+            SystemActorResolverMother::withPaymentUser(),
         );
 
         $this->assertFalse($failSubscriber->isSubscribedTo(new PaymentFailed(
@@ -127,5 +134,19 @@ class ContributionPaymentSubscribersTest extends TestCase
             subjectType: 'other.subject',
             subjectId: 'whatever',
         )));
+    }
+
+    /** The project catalogue is empty here, so credit allocation stays out of the way of these cases. */
+    private function confirmService(): ConfirmProjectContributionService
+    {
+        return new ConfirmProjectContributionService(
+            $this->contributions,
+            new AllocateContributionCreditsService(
+                $this->contributions,
+                CreditPurchaseRepositoryMother::inMemory(),
+                ProjectRepositoryMother::inMemory(),
+                new FakeCreditReservationLock(),
+            ),
+        );
     }
 }

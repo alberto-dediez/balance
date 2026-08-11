@@ -1,0 +1,29 @@
+{% extends '@shared/layout/email.html.twig' %}
+
+{% block content %}
+    {% if isCompensation %}
+        <h3>{% trans -%}Tu certificado de compensación de carbono{%- endtrans %}</h3>
+        <p>
+            {% trans with {'{name}': contactName, '{project}': projectName} -%}
+                Hola {name}, adjuntamos tu certificado de compensación de carbono por la aportación al proyecto {project}.
+            {%- endtrans %}
+        </p>
+        <p>
+            {% trans with {'{code}': certificate.code} -%}
+                El certificado lleva el código {code} y puede verificarse en la página pública de validación a la que apunta su código QR.
+            {%- endtrans %}
+        </p>
+    {% else %}
+        <h3>{% trans -%}Tu certificado de aportación{%- endtrans %}</h3>
+        <p>
+            {% trans with {'{name}': contactName, '{project}': projectName} -%}
+                Hola {name}, adjuntamos el documento que acredita la recepción de tu aportación económica al proyecto {project}.
+            {%- endtrans %}
+        </p>
+        <p>
+            {% trans with {'{code}': certificate.code} -%}
+                El documento lleva el código {code}.
+            {%- endtrans %}
+        </p>
+    {% endif %}
+{% endblock %}

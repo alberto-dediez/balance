@@ -48,6 +48,10 @@ framework:
             policy: sliding_window
             limit: 120
             interval: '1 minute'
+        certificate_verification:
+            policy: sliding_window
+            limit: 30
+            interval: '1 minute'
 
 when@test:
     framework:
@@ -97,6 +101,10 @@ when@test:
                 limit: 500
                 interval: '1 minute'
             place_suggest:
+                policy: sliding_window
+                limit: 500
+                interval: '1 minute'
+            certificate_verification:
                 policy: sliding_window
                 limit: 500
                 interval: '1 minute'

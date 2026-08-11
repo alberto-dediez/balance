@@ -38,6 +38,7 @@ class ExpirePendingContributionsService implements CommandHandler
         foreach ($pending as $projectContribution) {
             $response = $this->expireProjectContribution->__invoke(
                 new ExpireProjectContributionRequest($projectContribution->id(), $request->now),
+                $user,
             );
 
             if (!$response->changed) {

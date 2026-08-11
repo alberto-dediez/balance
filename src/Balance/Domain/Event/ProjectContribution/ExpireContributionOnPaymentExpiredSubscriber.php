@@ -9,6 +9,7 @@ use App\Balance\Application\ProjectContribution\Expire\ExpireProjectContribution
 use App\Balance\Application\ProjectContribution\Register\RegisterProjectContributionService;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Payments\Domain\Model\Payment\PaymentExpired;
+use App\Security\Application\User\SystemActor\SystemActorResolver;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
@@ -19,6 +20,7 @@ class ExpireContributionOnPaymentExpiredSubscriber implements DomainEventSubscri
 
     public function __construct(
         private ExpireProjectContributionService $expireProjectContribution,
+        private SystemActorResolver $systemActor,
     ) {
         $this->register();
     }
@@ -33,6 +35,7 @@ class ExpireContributionOnPaymentExpiredSubscriber implements DomainEventSubscri
 
         $this->expireProjectContribution->__invoke(
             new ExpireProjectContributionRequest(new ProjectContributionId($event->subjectId())),
+            ($this->systemActor)(),
         );
     }
 

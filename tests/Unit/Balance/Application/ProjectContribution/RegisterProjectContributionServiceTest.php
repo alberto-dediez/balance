@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Balance\Application\ProjectContribution;
 
 use App\Balance\Application\CreditPurchase\Balance\CreditAvailability;
+use App\Balance\Application\ProjectContribution\Expire\ExpireProjectContributionRequest;
 use App\Balance\Application\ProjectContribution\Quote\QuoteContributionService;
 use App\Balance\Application\ProjectContribution\Register\RegisterProjectContributionRequest;
 use App\Balance\Application\ProjectContribution\Register\RegisterProjectContributionService;
@@ -26,7 +27,9 @@ use App\Payments\Domain\Model\Vat\VatCalculator;
 use App\Payments\Domain\Model\Vat\VatExemptionReason;
 use App\Payments\Domain\Model\Vat\VatNumberFormatValidator;
 use App\Payments\Infrastructure\Payment\Fake\FakePaymentGateway;
+use App\Security\Application\User\SystemActor\SystemActorResolver;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseMother;
@@ -35,7 +38,9 @@ use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
+use App\Tests\Unit\Notifications\Application\Notification\Send\SpyDeferredCommandHandler;
 use App\Tests\Unit\Payments\Domain\Model\Payment\PaymentRepositoryMother;
+use App\Tests\Unit\Security\Application\User\SystemActor\SystemActorResolverMother;
 use PHPUnit\Framework\TestCase;
 
 class RegisterProjectContributionServiceTest extends TestCase
@@ -43,7 +48,8 @@ class RegisterProjectContributionServiceTest extends TestCase
     private AccountId $accountId;
     private ProjectId $projectId;
     private InMemoryProjectContributionRepository $contributions;
-    private FakeContributionExpirationScheduler $scheduler;
+    private SystemActorResolver $systemActor;
+    private SpyDeferredCommandHandler $deferredCommands;
     private FakePaymentGateway $gateway;
     private FakeCreditReservationLock $lock;
 
@@ -52,9 +58,18 @@ class RegisterProjectContributionServiceTest extends TestCase
         $this->accountId = AccountId::generate();
         $this->projectId = ProjectId::generate();
         $this->contributions = ProjectContributionRepositoryMother::inMemory();
-        $this->scheduler = new FakeContributionExpirationScheduler();
+        CommandBusDispatcher::instance()->reset();
+
+        $this->systemActor = SystemActorResolverMother::withPaymentUser();
+        $this->deferredCommands = new SpyDeferredCommandHandler();
+        $this->deferredCommands->register();
         $this->gateway = new FakePaymentGateway();
         $this->lock = new FakeCreditReservationLock();
+    }
+
+    protected function tearDown(): void
+    {
+        CommandBusDispatcher::instance()->reset();
     }
 
     public function testRegistersTheContributionAndStartsThePayment(): void
@@ -86,8 +101,11 @@ class RegisterProjectContributionServiceTest extends TestCase
 
         $this->assertNotNull($contribution);
         $this->assertEquals($now->modify('+12 hours'), $contribution->expiresAt());
-        $this->assertCount(1, $this->scheduler->scheduled());
-        $this->assertEquals($now->modify('+12 hours'), $this->scheduler->scheduled()[0][1]);
+        $deferred = $this->deferredCommands->commands();
+
+        $this->assertCount(1, $deferred);
+        $this->assertInstanceOf(ExpireProjectContributionRequest::class, $deferred[0]->command());
+        $this->assertEquals($now->modify('+12 hours'), $deferred[0]->executeAt());
     }
 
     public function testThePaymentCarriesTheContributionAsItsSubject(): void
@@ -219,7 +237,7 @@ class RegisterProjectContributionServiceTest extends TestCase
         $this->assertNotNull($contribution);
         $this->assertSame(ProjectContributionStatus::Failed, $contribution->status());
         $this->assertSame(0.0, $this->contributions->committedTonnes($this->accountId, $this->projectId, new \DateTimeImmutable('NOW')));
-        $this->assertCount(0, $this->scheduler->scheduled());
+        $this->assertCount(0, $this->deferredCommands->commands());
     }
 
     public function testRejectsAProjectTheAccountHasNotAdhered(): void
@@ -302,7 +320,7 @@ class RegisterProjectContributionServiceTest extends TestCase
             ),
             $this->contributions,
             new StartPaymentService(PaymentRepositoryMother::inMemory(), $gateway ?? $this->gateway),
-            $this->scheduler,
+            $this->systemActor,
             $this->lock,
             reservationHours: 12,
         );

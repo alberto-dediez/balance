@@ -17,3 +17,22 @@ services:
             $reservationHours: '%app.contribution.reservation_hours%'
 
     App\Balance\Application\ProjectContribution\Expire\ContributionExpirationScheduler: '@App\Balance\Infrastructure\Messenger\MessengerContributionExpirationScheduler'
+
+    App\Balance\Application\ContributionCertificate\Generate\GenerateContributionCertificateService:
+        arguments:
+            $localeList: '%app.locale_list%'
+
+    App\Balance\Infrastructure\Storage\LocalContributionCertificateStorage:
+        arguments:
+            $basePath: '%app.uploads_dir%/contribution-certificates'
+
+    App\Balance\Infrastructure\UI\Web\Public\Certificate\VerifyController:
+        arguments:
+            $certificateVerificationLimiter: '@limiter.certificate_verification'
+        tags: ['controller.service_arguments']
+
+    App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateStorage: '@App\Balance\Infrastructure\Storage\LocalContributionCertificateStorage'
+    App\Balance\Domain\Model\ContributionCertificate\ContributionCertificatePdfGenerator: '@App\Balance\Infrastructure\Tcpdf\TcpdfContributionCertificatePdfGenerator'
+    App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateCodeGenerator: '@App\Balance\Infrastructure\Certificate\RandomContributionCertificateCodeGenerator'
+    App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateVerificationTokenGenerator: '@App\Balance\Infrastructure\Certificate\RandomContributionCertificateVerificationTokenGenerator'
+    App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateVerificationUrlGenerator: '@App\Balance\Infrastructure\Certificate\RouterContributionCertificateVerificationUrlGenerator'

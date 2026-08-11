@@ -9,10 +9,14 @@ use App\Payments\Domain\Model\Payment\PaymentId;
 use App\Payments\Domain\Model\Vat\VatExemptionReason;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\AggregateRoot;
+use Doctrine\Common\Collections\Collection;
 
 class ProjectContribution
 {
     use AggregateRoot;
+
+    /** @var iterable<ProjectContributionCreditAllocation> */
+    private iterable $creditAllocations = [];
 
     /** @param array<mixed> $events */
     public function __construct(
@@ -235,6 +239,55 @@ class ProjectContribution
         return $this->isPending() && $this->expiresAt instanceof \DateTimeImmutable && $this->expiresAt <= $now;
     }
 
+    /** @return list<ProjectContributionCreditAllocation> */
+    public function creditAllocations(): array
+    {
+        $allocations = $this->creditAllocations instanceof Collection
+            ? $this->creditAllocations->toArray()
+            : (array) $this->creditAllocations;
+
+        $allocations = array_values($allocations);
+
+        usort(
+            $allocations,
+            static fn(ProjectContributionCreditAllocation $a, ProjectContributionCreditAllocation $b): int => $a->position() <=> $b->position(),
+        );
+
+        return $allocations;
+    }
+
+    public function hasCreditAllocations(): bool
+    {
+        return [] !== $this->creditAllocations();
+    }
+
+    /** @return list<string> Lot references backing the contribution, without repetitions and in consumption order. */
+    public function masterSerials(): array
+    {
+        $serials = [];
+
+        foreach ($this->creditAllocations() as $allocation) {
+            $reference = $allocation->purchaseReference();
+
+            if (null !== $reference && '' !== $reference && !in_array($reference, $serials, true)) {
+                $serials[] = $reference;
+            }
+        }
+
+        return $serials;
+    }
+
+    public function allocatedTonnes(): float
+    {
+        $allocated = 0.0;
+
+        foreach ($this->creditAllocations() as $allocation) {
+            $allocated += $allocation->tonnes();
+        }
+
+        return $allocated;
+    }
+
     public function register(
         AccountId $accountId,
         ProjectId $projectId,
@@ -345,6 +398,39 @@ class ProjectContribution
         );
     }
 
+    /**
+     * The lots backing the contribution are written once and never revisited, so the assignment can
+     * be replayed by the confirmation arriving twice without moving the credit around.
+     *
+     * @param list<AllocatedCreditLine> $lines
+     */
+    public function allocateCredits(array $lines): void
+    {
+        if ([] === $lines || $this->hasCreditAllocations()) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new ProjectContributionCreditsAllocated(
+                projectContributionId: $this->id(),
+                lines: $lines,
+            ),
+        );
+    }
+
+    public function reportUnderallocatedCredits(float $allocatedTonnes): void
+    {
+        $this->recordApplyAndPublish(
+            new ProjectContributionCreditsUnderallocated(
+                projectContributionId: $this->id(),
+                accountId: $this->accountId,
+                projectId: $this->projectId,
+                requestedTonnes: $this->tonnes,
+                allocatedTonnes: $allocatedTonnes,
+            ),
+        );
+    }
+
     public function fail(string $reason): void
     {
         if ($this->status->isResolved()) {
@@ -428,6 +514,24 @@ class ProjectContribution
         $this->resolvedAt = $event->occurredOn();
     }
 
+    public function applyProjectContributionCreditsAllocated(ProjectContributionCreditsAllocated $event): void
+    {
+        $this->creditAllocations = array_map(
+            fn(AllocatedCreditLine $line): ProjectContributionCreditAllocation => new ProjectContributionCreditAllocation(
+                id: ProjectContributionCreditAllocationId::generate(),
+                projectContribution: $this,
+                position: $line->position,
+                creditPurchaseId: $line->creditPurchaseId,
+                purchaseReference: $line->purchaseReference,
+                tonnes: $line->tonnes,
+            ),
+            $event->lines(),
+        );
+    }
+
     /** The contribution keeps its resolved state: the event only reports the mismatch. */
     public function applyProjectContributionPaymentUnreconciled(ProjectContributionPaymentUnreconciled $event): void {}
+
+    /** The shortfall is reported for an administrator to reconcile; the contribution itself is untouched. */
+    public function applyProjectContributionCreditsUnderallocated(ProjectContributionCreditsUnderallocated $event): void {}
 }

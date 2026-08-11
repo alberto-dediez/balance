@@ -29,4 +29,7 @@ interface ProjectContributionRepository
 
     /** Tonnes held by pending contributions whose reservation window is still open. */
     public function reservedTonnes(AccountId $accountId, ProjectId $projectId, \DateTimeImmutable $now): float;
+
+    /** @return array<string, float> Tonnes already assigned per credit purchase id, for the account/project pair. */
+    public function allocatedTonnesByPurchase(AccountId $accountId, ProjectId $projectId): array;
 }

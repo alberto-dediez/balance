@@ -30,8 +30,6 @@ framework:
             failed: 'doctrine://default?queue_name=failed'
             sync: 'sync://'
 
-        routing:
-            App\Balance\Application\ProjectContribution\Expire\ExpireProjectContributionCommand: async_low
 
 when@test:
     framework:

@@ -13,6 +13,7 @@ use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionM
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
 use App\Tests\Unit\Payments\Domain\Model\Payment\PaymentMother;
 use App\Tests\Unit\Payments\Domain\Model\Payment\PaymentRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 
 class ExpireProjectContributionServiceTest extends TestCase
@@ -25,6 +26,7 @@ class ExpireProjectContributionServiceTest extends TestCase
 
         $response = (new ExpireProjectContributionService($contributions, PaymentRepositoryMother::inMemory()))(
             new ExpireProjectContributionRequest($contribution->id()),
+            UserMother::systemUser(),
         );
 
         $this->assertTrue($response->changed);
@@ -39,6 +41,7 @@ class ExpireProjectContributionServiceTest extends TestCase
 
         $response = (new ExpireProjectContributionService($contributions, PaymentRepositoryMother::inMemory()))(
             new ExpireProjectContributionRequest($contribution->id()),
+            UserMother::systemUser(),
         );
 
         $this->assertFalse($response->changed);
@@ -57,6 +60,7 @@ class ExpireProjectContributionServiceTest extends TestCase
 
         $response = (new ExpireProjectContributionService($contributions, $payments))(
             new ExpireProjectContributionRequest($contribution->id()),
+            UserMother::systemUser(),
         );
 
         $this->assertTrue($response->changed);
@@ -75,6 +79,7 @@ class ExpireProjectContributionServiceTest extends TestCase
 
         $response = (new ExpireProjectContributionService($contributions, $payments))(
             new ExpireProjectContributionRequest($contribution->id()),
+            UserMother::systemUser(),
         );
 
         $this->assertTrue($response->changed);
@@ -93,6 +98,7 @@ class ExpireProjectContributionServiceTest extends TestCase
 
         $response = (new ExpireProjectContributionService($contributions, $payments))(
             new ExpireProjectContributionRequest($contribution->id()),
+            UserMother::systemUser(),
         );
 
         $this->assertFalse($response->changed);
@@ -107,6 +113,7 @@ class ExpireProjectContributionServiceTest extends TestCase
 
         $response = (new ExpireProjectContributionService($contributions, PaymentRepositoryMother::inMemory()))(
             new ExpireProjectContributionRequest($contribution->id()),
+            UserMother::systemUser(),
         );
 
         $this->assertFalse($response->changed);
@@ -120,7 +127,7 @@ class ExpireProjectContributionServiceTest extends TestCase
         (new ExpireProjectContributionService(
             ProjectContributionRepositoryMother::inMemory(),
             new InMemoryPaymentRepository(),
-        ))(new ExpireProjectContributionRequest(ProjectContributionMother::pending()->id()));
+        ))(new ExpireProjectContributionRequest(ProjectContributionMother::pending()->id()), UserMother::systemUser());
     }
 
     public function testAMissingPaymentDoesNotBlockTheExpiration(): void
@@ -131,6 +138,7 @@ class ExpireProjectContributionServiceTest extends TestCase
 
         $response = (new ExpireProjectContributionService($contributions, PaymentRepositoryMother::inMemory()))(
             new ExpireProjectContributionRequest($contribution->id()),
+            UserMother::systemUser(),
         );
 
         $this->assertTrue($response->changed);

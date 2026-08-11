@@ -71,6 +71,8 @@ doctrine:
             account_project_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\AccountProjectIdType
             credit_purchase_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\CreditPurchaseIdType
             project_contribution_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\ProjectContributionIdType
+            project_contribution_credit_allocation_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\ProjectContributionCreditAllocationIdType
+            contribution_certificate_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\ContributionCertificateIdType
             payment_id: App\Payments\Infrastructure\Persistence\Doctrine\Type\PaymentIdType
 
     orm:
