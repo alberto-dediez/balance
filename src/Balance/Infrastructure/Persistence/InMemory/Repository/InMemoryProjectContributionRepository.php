@@ -72,6 +72,10 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
             return false;
         }
 
+        if (null !== $filter->originIds && !in_array($projectContribution->originId(), $filter->originIds, true)) {
+            return false;
+        }
+
         if (null !== $filter->paymentId && (null === $paymentId || !$filter->paymentId->equals($paymentId))) {
             return false;
         }

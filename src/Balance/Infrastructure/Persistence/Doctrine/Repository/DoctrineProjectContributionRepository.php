@@ -98,6 +98,17 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
             ;
         }
 
+        if (null !== $filter->originIds) {
+            if ([] === $filter->originIds) {
+                $qb->andWhere('1 = 0');
+            } else {
+                $qb
+                    ->andWhere($qb->expr()->in('pc.originId', ':originIds'))
+                    ->setParameter('originIds', $filter->originIds)
+                ;
+            }
+        }
+
         if (null !== $filter->paymentId) {
             $qb
                 ->andWhere($qb->expr()->eq('pc.paymentId', ':paymentId'))

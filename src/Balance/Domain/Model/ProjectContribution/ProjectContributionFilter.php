@@ -13,12 +13,14 @@ class ProjectContributionFilter
 {
     use Filter;
 
+    /** @param list<string>|null $originIds */
     public function __construct(
         public ?AccountId $accountId = null,
         public ?ProjectId $projectId = null,
         public ?ProjectContributionStatus $status = null,
         public ?ProjectContributionOrigin $origin = null,
         public ?string $originId = null,
+        public ?array $originIds = null,
         public ?PaymentId $paymentId = null,
         public ?\DateTimeImmutable $from = null,
         public ?\DateTimeImmutable $to = null,

@@ -41,6 +41,7 @@ class ResultsController extends AbstractController
             'property' => $response->property,
             'aggregation' => $response->aggregation,
             'mobilityBreakdown' => $response->mobilityBreakdown,
+            'contributions' => $response->contributions,
             'from' => $request->query->get('from'),
             'to' => $request->query->get('to'),
         ]);

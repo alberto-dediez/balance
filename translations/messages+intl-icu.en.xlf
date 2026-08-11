@@ -5261,6 +5261,54 @@
         <source>Disponibles</source>
         <target>Available</target>
       </trans-unit>
+      <trans-unit id="e8cIh4O" resname="Aportaciones iniciadas">
+        <source>Aportaciones iniciadas</source>
+        <target>Contributions started</target>
+      </trans-unit>
+      <trans-unit id="soALBly" resname="Aportaciones pagadas">
+        <source>Aportaciones pagadas</source>
+        <target>Contributions paid</target>
+      </trans-unit>
+      <trans-unit id="UMCLHPj" resname="Aportaciones pendientes">
+        <source>Aportaciones pendientes</source>
+        <target>Pending contributions</target>
+      </trans-unit>
+      <trans-unit id="TzTIf1x" resname="Aportaciones fallidas">
+        <source>Aportaciones fallidas</source>
+        <target>Failed contributions</target>
+      </trans-unit>
+      <trans-unit id="0MifJpI" resname="Aportaciones caducadas">
+        <source>Aportaciones caducadas</source>
+        <target>Expired contributions</target>
+      </trans-unit>
+      <trans-unit id="B.7QUNu" resname="Importe pagado">
+        <source>Importe pagado</source>
+        <target>Amount paid</target>
+      </trans-unit>
+      <trans-unit id="HAxYZJY" resname="Aportación media">
+        <source>Aportación media</source>
+        <target>Average contribution</target>
+      </trans-unit>
+      <trans-unit id="v6_kmlW" resname="Respuestas que inician una aportación">
+        <source>Respuestas que inician una aportación</source>
+        <target>Answers that start a contribution</target>
+      </trans-unit>
+      <trans-unit id="AD9IneJ" resname="Respuestas que acaban pagando">
+        <source>Respuestas que acaban pagando</source>
+        <target>Answers that end up paying</target>
+      </trans-unit>
+      <trans-unit id="y_J8luW" resname="Aportaciones iniciadas que se completan">
+        <source>Aportaciones iniciadas que se completan</source>
+        <target>Started contributions that complete</target>
+      </trans-unit>
+      <trans-unit id="DLmWFdE" resname="Emisiones compensadas sobre el total">
+        <source>Emisiones compensadas sobre el total</source>
+        <target>Offset emissions out of the total</target>
+      </trans-unit>
+      <trans-unit id="JpuuBEh" resname="Conversión">
+        <source>Conversión</source>
+        <target>Conversion</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

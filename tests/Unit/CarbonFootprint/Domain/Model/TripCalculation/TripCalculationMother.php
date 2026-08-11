@@ -32,6 +32,7 @@ class TripCalculationMother
         ?int $nights = null,
         ?Emissions $mobilityEmissions = null,
         ?Emissions $overnightEmissions = null,
+        ?string $id = null,
     ): TripCalculation {
         return self::from(
             tripCalculationLinkId: $tripCalculationLinkId,
@@ -41,6 +42,7 @@ class TripCalculationMother
             legs: [self::leg(1, $mobilityId, $distanceKm, $occupants)],
             mobilityEmissions: $mobilityEmissions,
             overnightEmissions: $overnightEmissions,
+            id: $id,
         );
     }
 

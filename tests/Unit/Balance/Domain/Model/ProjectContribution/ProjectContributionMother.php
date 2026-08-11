@@ -21,13 +21,14 @@ class ProjectContributionMother
         ?\DateTimeImmutable $expiresAt = null,
         ?PaymentId $paymentId = null,
         ?ProjectContributionId $id = null,
+        ?string $originId = null,
     ): ProjectContribution {
         $projectContribution = new ProjectContribution(id: $id ?? ProjectContributionId::generate());
         $projectContribution->register(
             accountId: $accountId ?? AccountId::generate(),
             projectId: $projectId ?? ProjectId::generate(),
             origin: ProjectContributionOrigin::PropertyTripCalculation,
-            originId: (string) ProjectContributionId::generate(),
+            originId: $originId ?? (string) ProjectContributionId::generate(),
             co2eqKg: $tonnes * 1000,
             tonnes: $tonnes,
             pricePerTonne: 20.0,
@@ -58,8 +59,9 @@ class ProjectContributionMother
         ?AccountId $accountId = null,
         ?ProjectId $projectId = null,
         float $tonnes = 1.0,
+        ?string $originId = null,
     ): ProjectContribution {
-        $projectContribution = self::pending($accountId, $projectId, $tonnes);
+        $projectContribution = self::pending($accountId, $projectId, $tonnes, originId: $originId);
         $projectContribution->pay();
 
         return $projectContribution;

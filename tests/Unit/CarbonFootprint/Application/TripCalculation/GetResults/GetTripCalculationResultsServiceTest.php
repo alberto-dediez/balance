@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Application\TripCalculation\GetResults;
 
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregator;
+use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryProjectContributionRepository;
 use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\EmissionFactorSelectorRegistry;
 use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
@@ -13,7 +15,10 @@ use App\CarbonFootprint\Application\TripCalculation\GetResults\GetTripCalculatio
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Trip\TripLegsAccumulator;
+use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculation;
+use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationId;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationsAggregator;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEmissionFactorGroupRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMobilityRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryTripCalculationLinkRepository;
@@ -27,6 +32,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
@@ -43,6 +49,8 @@ class GetTripCalculationResultsServiceTest extends TestCase
 
     private InMemoryMobilityRepository $mobilityRepository;
 
+    private InMemoryProjectContributionRepository $projectContributionRepository;
+
     private GetTripCalculationResultsService $sut;
 
     protected function setUp(): void
@@ -53,6 +61,7 @@ class GetTripCalculationResultsServiceTest extends TestCase
         $this->tripCalculationLinkRepository = new InMemoryTripCalculationLinkRepository();
         $this->tripCalculationRepository = new InMemoryTripCalculationRepository();
         $this->mobilityRepository = new InMemoryMobilityRepository();
+        $this->projectContributionRepository = new InMemoryProjectContributionRepository();
 
         $this->sut = new GetTripCalculationResultsService(
             $this->propertyRepository,
@@ -66,6 +75,8 @@ class GetTripCalculationResultsServiceTest extends TestCase
                 new EmissionsCalculator(),
             ),
             new InMemoryEmissionFactorGroupRepository(),
+            $this->projectContributionRepository,
+            new ProjectContributionsAggregator(),
         );
     }
 
@@ -132,6 +143,54 @@ class GetTripCalculationResultsServiceTest extends TestCase
         $this->assertSame(1, $response->aggregation->calculations);
     }
 
+    public function testAggregatesTheContributionsStartedFromTheCalculationsOfThePeriod(): void
+    {
+        $property = $this->property();
+        $link = TripCalculationLinkMother::fromPropertyId((string) $property->id());
+        $this->tripCalculationLinkRepository->add($link);
+
+        $paidCalculationId = (string) TripCalculationId::generate();
+        $pendingCalculationId = (string) TripCalculationId::generate();
+
+        $this->tripCalculationRepository->add($this->calculation($link, $paidCalculationId, new Emissions(co2eq: '1500')));
+        $this->tripCalculationRepository->add($this->calculation($link, $pendingCalculationId, new Emissions(co2eq: '500')));
+        $this->tripCalculationRepository->add($this->calculation($link, (string) TripCalculationId::generate(), new Emissions(co2eq: '1000')));
+
+        $this->projectContributionRepository->add(ProjectContributionMother::paid(tonnes: 1.5, originId: $paidCalculationId));
+        $this->projectContributionRepository->add(ProjectContributionMother::pending(originId: $pendingCalculationId));
+        $this->projectContributionRepository->add(ProjectContributionMother::paid(tonnes: 2.0));
+
+        $response = ($this->sut)(new GetTripCalculationResultsRequest($property->id()), $this->ownerUser());
+
+        $this->assertSame(2, $response->contributions->aggregation->contributions);
+        $this->assertSame(1, $response->contributions->aggregation->paid);
+        $this->assertSame(1, $response->contributions->aggregation->pending);
+        $this->assertEqualsWithDelta(1.5, $response->contributions->aggregation->paidTonnes, 0.001);
+        $this->assertEqualsWithDelta(36.3, $response->contributions->aggregation->paidTotalAmount, 0.001);
+        $this->assertEqualsWithDelta(36.3, $response->contributions->aggregation->averagePaidAmount, 0.001);
+
+        $this->assertEqualsWithDelta(66.666, $response->contributions->startedRate, 0.01);
+        $this->assertEqualsWithDelta(33.333, $response->contributions->paidRate, 0.01);
+        $this->assertEqualsWithDelta(50.0, $response->contributions->completionRate, 0.01);
+        $this->assertEqualsWithDelta(50.0, $response->contributions->compensatedEmissionsRate, 0.01);
+    }
+
+    public function testReturnsEmptyContributionStatisticsWhenThereAreNoCalculations(): void
+    {
+        $property = $this->property();
+        $this->tripCalculationLinkRepository->add(TripCalculationLinkMother::fromPropertyId((string) $property->id()));
+
+        $this->projectContributionRepository->add(ProjectContributionMother::paid());
+
+        $response = ($this->sut)(new GetTripCalculationResultsRequest($property->id()), $this->ownerUser());
+
+        $this->assertSame(0, $response->contributions->aggregation->contributions);
+        $this->assertSame(0.0, $response->contributions->startedRate);
+        $this->assertSame(0.0, $response->contributions->paidRate);
+        $this->assertSame(0.0, $response->contributions->completionRate);
+        $this->assertSame(0.0, $response->contributions->compensatedEmissionsRate);
+    }
+
     public function testDeniesAnOwnerOfAnotherAccount(): void
     {
         $property = $this->property();
@@ -149,6 +208,17 @@ class GetTripCalculationResultsServiceTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         ($this->sut)(new GetTripCalculationResultsRequest(PropertyId::generate()), $this->ownerUser());
+    }
+
+    private function calculation(TripCalculationLink $link, string $id, Emissions $mobilityEmissions): TripCalculation
+    {
+        return TripCalculationMother::singleLeg(
+            tripCalculationLinkId: (string) $link->id(),
+            mobilityId: (string) MobilityId::generate(),
+            distanceKm: 100.0,
+            mobilityEmissions: $mobilityEmissions,
+            id: $id,
+        );
     }
 
     private function property(): Property

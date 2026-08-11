@@ -16,5 +16,6 @@ final class GetTripCalculationResultsResponse
         public readonly ?TripCalculationLink $tripCalculationLink,
         public readonly TripCalculationsAggregation $aggregation,
         public readonly array $mobilityBreakdown,
+        public readonly ContributionsSummary $contributions,
     ) {}
 }
