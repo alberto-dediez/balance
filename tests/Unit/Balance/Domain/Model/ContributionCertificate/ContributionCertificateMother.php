@@ -15,7 +15,10 @@ use App\Shared\Domain\Model\Locale\Locale;
 
 class ContributionCertificateMother
 {
-    /** @param list<string> $masterSerials */
+    /**
+     * @param list<string>                                                      $masterSerials
+     * @param list<array{serial: string, startTonnes: float, endTonnes: float}> $creditLots
+     */
     public static function issued(
         ContributionCertificateType $type = ContributionCertificateType::Compensation,
         ?AccountId $accountId = null,
@@ -23,6 +26,7 @@ class ContributionCertificateMother
         string $code = 'ABCD-2345-EFGH',
         ?string $verificationToken = null,
         array $masterSerials = ['2024-b012'],
+        array $creditLots = [['serial' => '2024-b012', 'startTonnes' => 0.0, 'endTonnes' => 1.0]],
         ?float $co2eqKg = 1000.0,
         bool $beneficiaryIsCompany = false,
         ?ProjectContributionOrigin $origin = ProjectContributionOrigin::PropertyTripCalculation,
@@ -53,6 +57,7 @@ class ContributionCertificateMother
             projectLocation: 'Segovia',
             projectRegistryId: '2024-b012',
             masterSerials: $masterSerials,
+            creditLots: $creditLots,
             origin: $origin,
             originName: $originName,
         );

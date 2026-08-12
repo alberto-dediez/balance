@@ -44,7 +44,7 @@ class VerifyContributionCertificateServiceTest extends TestCase
         $this->assertSame(1000.0, $response->co2eqKg);
     }
 
-    public function testTheResponseCarriesNoPersonalData(): void
+    public function testTheResponseCarriesTheBeneficiaryButNoOtherPersonalData(): void
     {
         $certificate = ContributionCertificateMother::generated();
         $this->certificates->add($certificate);
@@ -52,12 +52,27 @@ class VerifyContributionCertificateServiceTest extends TestCase
         $response = $this->verify($certificate->verificationToken());
 
         $this->assertNotNull($response);
+        $this->assertSame('Guest', $response->beneficiaryName);
 
         $fields = array_keys(get_object_vars($response));
 
-        foreach (['beneficiaryName', 'beneficiaryVatNumber', 'contactName', 'contactEmail', 'contributionAmount', 'contributorCountry'] as $personalField) {
+        foreach (['beneficiaryVatNumber', 'contactName', 'contactEmail', 'contributionAmount', 'contributorCountry'] as $personalField) {
             $this->assertNotContains($personalField, $fields);
         }
+    }
+
+    public function testTheLotsAreExposedWithTheirTonneRange(): void
+    {
+        $certificate = ContributionCertificateMother::generated();
+        $this->certificates->add($certificate);
+
+        $response = $this->verify($certificate->verificationToken());
+
+        $this->assertNotNull($response);
+        $this->assertSame(
+            [['serial' => '2024-b012', 'startTonnes' => 0.0, 'endTonnes' => 1.0]],
+            $response->creditLots,
+        );
     }
 
     public function testASocialCertificateReportsNoEmissions(): void
@@ -70,6 +85,7 @@ class VerifyContributionCertificateServiceTest extends TestCase
         $this->assertNotNull($response);
         $this->assertNull($response->co2eqKg);
         $this->assertSame([], $response->masterSerials);
+        $this->assertSame([], $response->creditLots);
     }
 
     public function testAnUnknownTokenReturnsNothing(): void

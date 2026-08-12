@@ -16,9 +16,10 @@ class ContributionCertificate implements \Stringable
     use AggregateRoot;
 
     /**
-     * @param list<string>          $masterSerials
-     * @param array<string, string> $files
-     * @param array<mixed>          $events
+     * @param list<string>                                                      $masterSerials
+     * @param list<array{serial: string, startTonnes: float, endTonnes: float}> $creditLots
+     * @param array<string, string>                                             $files
+     * @param array<mixed>                                                      $events
      */
     public function __construct(
         private ContributionCertificateId $id,
@@ -44,6 +45,7 @@ class ContributionCertificate implements \Stringable
         private ?string $projectLocation = null,
         private ?string $projectRegistryId = null,
         private array $masterSerials = [],
+        private array $creditLots = [],
         private ?ProjectContributionOrigin $origin = null,
         private ?string $originName = null,
         private array $files = [],
@@ -182,6 +184,12 @@ class ContributionCertificate implements \Stringable
         return $this->masterSerials;
     }
 
+    /** @return list<array{serial: string, startTonnes: float, endTonnes: float}> */
+    public function creditLots(): array
+    {
+        return $this->creditLots;
+    }
+
     /** @return array<string, string> */
     public function files(): array
     {
@@ -223,7 +231,10 @@ class ContributionCertificate implements \Stringable
         return $this->files[$locale->value] ?? $this->files[$this->locale->value] ?? null;
     }
 
-    /** @param list<string> $masterSerials */
+    /**
+     * @param list<string>                                                      $masterSerials
+     * @param list<array{serial: string, startTonnes: float, endTonnes: float}> $creditLots
+     */
     public function issue(
         AccountId $accountId,
         ProjectContributionId $projectContributionId,
@@ -246,6 +257,7 @@ class ContributionCertificate implements \Stringable
         ?string $projectLocation,
         ?string $projectRegistryId,
         array $masterSerials,
+        array $creditLots,
         ?ProjectContributionOrigin $origin = null,
         ?string $originName = null,
     ): void {
@@ -281,6 +293,7 @@ class ContributionCertificate implements \Stringable
                 projectLocation: $projectLocation,
                 projectRegistryId: $type->isCompensation() ? $projectRegistryId : null,
                 masterSerials: $type->isCompensation() ? $masterSerials : [],
+                creditLots: $type->isCompensation() ? $creditLots : [],
                 origin: $origin,
                 originName: $originName,
             ),
@@ -341,6 +354,7 @@ class ContributionCertificate implements \Stringable
         $this->projectLocation = $event->projectLocation();
         $this->projectRegistryId = $event->projectRegistryId();
         $this->masterSerials = $event->masterSerials();
+        $this->creditLots = $event->creditLots();
         $this->origin = $event->origin();
         $this->originName = $event->originName();
         $this->status = ContributionCertificateStatus::Pending;

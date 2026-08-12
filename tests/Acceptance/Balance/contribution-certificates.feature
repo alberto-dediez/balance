@@ -68,7 +68,7 @@ Feature:
         Then I see a text "Estamos preparando tu certificado"
         Then I do not see a text "Descargar certificado"
 
-    Scenario: Anybody can verify a compensation certificate without learning who paid for it
+    Scenario: Anybody can verify a compensation certificate against the document in their hands
         Given project "Reforestación" with id "1111" and price per tonne "20" exists
         Given project "1111" is adhered to account "666"
         Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
@@ -81,7 +81,9 @@ Feature:
         Then I see a text "Certificado válido"
         Then I see a text "Reforestación"
         Then I see a text "REF-1"
-        Then I do not see a text "Guest"
+        Then I see a text "Guest"
+        Then I see a text "0,000000"
+        Then I see a text "2,000000"
         Then I do not see a text "guest@example.com"
 
     Scenario: The reference printed on the certificate does not open the verification page

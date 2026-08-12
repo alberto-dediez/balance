@@ -90,6 +90,48 @@ class AllocateContributionCreditsServiceTest extends TestCase
         );
     }
 
+    public function testEachLotRecordsTheTonneRangeTakenFromItsPurchase(): void
+    {
+        $this->givenCompensationProject();
+
+        $oldest = $this->givenValidatedPurchase(3.0, '-3 days');
+        $newest = $this->givenValidatedPurchase(10.0, '-1 day');
+
+        $contribution = $this->givenPaidContribution(5.0);
+
+        $this->allocate($contribution);
+
+        $this->assertSame(
+            [
+                ['serial' => $oldest->reference(), 'startTonnes' => 0.0, 'endTonnes' => 3.0],
+                ['serial' => $newest->reference(), 'startTonnes' => 0.0, 'endTonnes' => 2.0],
+            ],
+            $contribution->creditLots(),
+        );
+    }
+
+    public function testTwoContributionsNeverShareTheSameLotRange(): void
+    {
+        $this->givenCompensationProject();
+
+        $purchase = $this->givenValidatedPurchase(10.0, '-2 days');
+
+        $first = $this->givenPaidContribution(4.0);
+        $this->allocate($first);
+
+        $second = $this->givenPaidContribution(3.0);
+        $this->allocate($second);
+
+        $this->assertSame(
+            [['serial' => $purchase->reference(), 'startTonnes' => 0.0, 'endTonnes' => 4.0]],
+            $first->creditLots(),
+        );
+        $this->assertSame(
+            [['serial' => $purchase->reference(), 'startTonnes' => 4.0, 'endTonnes' => 7.0]],
+            $second->creditLots(),
+        );
+    }
+
     public function testASocialProjectRetiresNoCredit(): void
     {
         $project = ProjectMother::contributable(projectType: ProjectType::SocialProject, id: $this->projectId);

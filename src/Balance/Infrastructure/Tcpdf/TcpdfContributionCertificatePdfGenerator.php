@@ -272,19 +272,44 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
 
     private function renderSerials(ReportTcpdf $pdf, ContributionCertificateData $data, Locale $locale, float $y): float
     {
-        if (!$data->type->isCompensation() || [] === $data->masterSerials) {
+        if (!$data->type->isCompensation()) {
+            return $y;
+        }
+
+        $lines = $this->serialLines($data);
+
+        if ([] === $lines) {
             return $y;
         }
 
         $width = self::RIGHT - self::DETAILS_LEFT;
+        $label = [] === $data->creditLots ? 'Números de serie maestros' : 'Lotes de créditos';
 
-        $this->renderLabel($pdf, self::DETAILS_LEFT, $y, $width, $this->trans('Números de serie maestros', $locale));
+        $this->renderLabel($pdf, self::DETAILS_LEFT, $y, $width, $this->trans($label, $locale));
 
         $this->setFont($pdf, 12, self::FONT_STYLE_MEDIUM, self::COLOR_DARK_TEAL);
         $pdf->setXY(self::DETAILS_LEFT, $y + 4.5);
-        $pdf->MultiCell($width, 5, implode(' · ', $data->masterSerials), 0, 'L');
+        $pdf->MultiCell($width, 5, implode("\n", $lines), 0, 'L');
 
         return $pdf->GetY() + 2;
+    }
+
+    /** @return list<string> */
+    private function serialLines(ContributionCertificateData $data): array
+    {
+        if ([] === $data->creditLots) {
+            return $data->masterSerials;
+        }
+
+        return array_map(
+            static fn(array $lot): string => sprintf(
+                '%s · %s – %s t',
+                $lot['serial'],
+                number_format($lot['startTonnes'], 6, ',', '.'),
+                number_format($lot['endTonnes'], 6, ',', '.'),
+            ),
+            $data->creditLots,
+        );
     }
 
     private function renderVerification(ReportTcpdf $pdf, ContributionCertificateData $data, Locale $locale, float $y): ?float

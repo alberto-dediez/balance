@@ -14,6 +14,7 @@
         <field name="creditPurchaseId" type="credit_purchase_id" column="credit_purchase_id" nullable="false"/>
         <field name="purchaseReference" type="string" column="purchase_reference" length="255" nullable="true"/>
         <field name="tonnes" type="float" column="tonnes" nullable="false"/>
+        <field name="startTonnes" type="float" column="start_tonnes" nullable="false"/>
 
         <many-to-one field="projectContribution" target-entity="App\Balance\Domain\Model\ProjectContribution\ProjectContribution" inversed-by="creditAllocations">
             <join-column name="project_contribution_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>

@@ -28,6 +28,10 @@ class ContributionCertificateDataMother
             projectLocation: 'Sevilla',
             projectRegistryId: 'VCS-1234',
             masterSerials: ['2024-b012', '2024-b013'],
+            creditLots: [
+                ['serial' => '2024-b012', 'startTonnes' => 3.5, 'endTonnes' => 4.1],
+                ['serial' => '2024-b013', 'startTonnes' => 0.0, 'endTonnes' => 0.6345],
+            ],
             issuedAt: new \DateTimeImmutable('2026-08-11'),
             verificationUrl: 'https://example.com/certificado/verificar/2f8c1a',
             origin: ProjectContributionOrigin::AttendeeSurveyResponse,
@@ -53,6 +57,7 @@ class ContributionCertificateDataMother
             projectLocation: 'Sevilla',
             projectRegistryId: null,
             masterSerials: [],
+            creditLots: [],
             issuedAt: new \DateTimeImmutable('2026-08-11'),
             verificationUrl: 'https://example.com/certificado/verificar/7b3d9e',
             origin: ProjectContributionOrigin::PropertyTripCalculation,
@@ -78,6 +83,7 @@ class ContributionCertificateDataMother
             projectLocation: null,
             projectRegistryId: null,
             masterSerials: [],
+            creditLots: [],
             issuedAt: new \DateTimeImmutable('2026-08-11'),
             verificationUrl: null,
         );

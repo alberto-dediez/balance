@@ -99,6 +99,7 @@ class IssueContributionCertificateService implements CommandHandler
             projectLocation: $this->projectLocation($project),
             projectRegistryId: $project->mitecoId(),
             masterSerials: $projectContribution->masterSerials(),
+            creditLots: $projectContribution->creditLots(),
             origin: $projectContribution->origin(),
             originName: $projectContribution->originName(),
         );

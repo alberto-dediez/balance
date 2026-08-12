@@ -4,9 +4,6 @@
 
 {% block page_header %}{% endblock %}
 
-{#
-    Public page: it may show only what the certificate proves, never who holds it.
-#}
 {% block content %}
     <div class="row justify-content-center">
         <div class="col-12 col-md-9 col-lg-7 col-xl-5">
@@ -35,6 +32,10 @@
                                 </td>
                             </tr>
                             <tr>
+                                <th scope="row" class="fw-normal">{{ 'Beneficiario' | trans }}</th>
+                                <td class="text-end">{{ certificate.beneficiaryName }}</td>
+                            </tr>
+                            <tr>
                                 <th scope="row" class="fw-normal">{{ 'Proyecto' | trans }}</th>
                                 <td class="text-end">{{ certificate.projectName }}</td>
                             </tr>
@@ -58,7 +59,20 @@
                                     </td>
                                 </tr>
                             {% endif %}
-                            {% if certificate.masterSerials is not empty %}
+                            {% if certificate.creditLots is not empty %}
+                                <tr>
+                                    <th scope="row" class="fw-normal">{{ 'Lotes de créditos' | trans }}</th>
+                                    <td class="text-end">
+                                        {% for lot in certificate.creditLots %}
+                                            <code class="d-block text-nowrap">
+                                                {{ lot.serial }} ·
+                                                {{ lot.startTonnes | number_format(6, ',', '.') }} –
+                                                {{ lot.endTonnes | number_format(6, ',', '.') }} t
+                                            </code>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            {% elseif certificate.masterSerials is not empty %}
                                 <tr>
                                     <th scope="row" class="fw-normal">{{ 'Números de serie maestros' | trans }}</th>
                                     <td class="text-end">
@@ -74,6 +88,12 @@
                             </tr>
                         </tbody>
                     </table>
+
+                    {% if certificate.creditLots is not empty %}
+                        <p class="text-muted small mt-3 mb-0">
+                            {{ 'Cada lote identifica un tramo de toneladas dentro de un serial de compra. Ningún otro certificado emitido puede reclamar el mismo tramo. La retirada de los créditos en el registro oficial debe verificarse en el propio registro.' | trans }}
+                        </p>
+                    {% endif %}
                 </div>
             </div>
         </div>

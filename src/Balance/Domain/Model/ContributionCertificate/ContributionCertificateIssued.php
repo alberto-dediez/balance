@@ -17,7 +17,10 @@ final class ContributionCertificateIssued extends DomainEvent
 {
     protected static string $eventName = 'contributionCertificateIssued';
 
-    /** @param list<string> $masterSerials */
+    /**
+     * @param list<string>                                                      $masterSerials
+     * @param list<array{serial: string, startTonnes: float, endTonnes: float}> $creditLots
+     */
     public function __construct(
         private ContributionCertificateId $contributionCertificateId,
         private ?AccountId $accountId,
@@ -41,6 +44,7 @@ final class ContributionCertificateIssued extends DomainEvent
         private ?string $projectLocation,
         private ?string $projectRegistryId,
         private array $masterSerials,
+        private array $creditLots = [],
         private ?ProjectContributionOrigin $origin = null,
         private ?string $originName = null,
         ?DomainEventId $id = null,
@@ -170,6 +174,12 @@ final class ContributionCertificateIssued extends DomainEvent
         return $this->masterSerials;
     }
 
+    /** @return list<array{serial: string, startTonnes: float, endTonnes: float}> */
+    public function creditLots(): array
+    {
+        return $this->creditLots;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->contributionCertificateId();
@@ -200,6 +210,7 @@ final class ContributionCertificateIssued extends DomainEvent
             'projectLocation' => $this->projectLocation,
             'projectRegistryId' => $this->projectRegistryId,
             'masterSerials' => $this->masterSerials,
+            'creditLots' => $this->creditLots,
             'origin' => $this->origin?->value,
             'originName' => $this->originName,
         ];
@@ -212,6 +223,9 @@ final class ContributionCertificateIssued extends DomainEvent
     ): static {
         /** @var list<string> $masterSerials */
         $masterSerials = $payload['masterSerials'] ?? [];
+
+        /** @var list<array{serial: string, startTonnes: float, endTonnes: float}> $creditLots */
+        $creditLots = $payload['creditLots'] ?? [];
 
         return new ContributionCertificateIssued(
             contributionCertificateId: new ContributionCertificateId($payload['contributionCertificateId']),
@@ -236,6 +250,7 @@ final class ContributionCertificateIssued extends DomainEvent
             projectLocation: null !== ($payload['projectLocation'] ?? null) ? (string) $payload['projectLocation'] : null,
             projectRegistryId: null !== ($payload['projectRegistryId'] ?? null) ? (string) $payload['projectRegistryId'] : null,
             masterSerials: $masterSerials,
+            creditLots: $creditLots,
             origin: null !== ($payload['origin'] ?? null) ? ProjectContributionOrigin::from((string) $payload['origin']) : null,
             originName: null !== ($payload['originName'] ?? null) ? (string) $payload['originName'] : null,
             id: $id,

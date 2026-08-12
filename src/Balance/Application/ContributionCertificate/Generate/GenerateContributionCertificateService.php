@@ -133,6 +133,7 @@ class GenerateContributionCertificateService implements CommandHandler
             projectLocation: $contributionCertificate->projectLocation(),
             projectRegistryId: $contributionCertificate->projectRegistryId(),
             masterSerials: $contributionCertificate->masterSerials(),
+            creditLots: $contributionCertificate->creditLots(),
             issuedAt: $contributionCertificate->issuedAt(),
             verificationUrl: $this->verificationUrlGenerator->generate($contributionCertificate->verificationToken(), $locale),
             origin: $contributionCertificate->origin(),

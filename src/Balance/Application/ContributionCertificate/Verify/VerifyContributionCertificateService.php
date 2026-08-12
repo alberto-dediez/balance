@@ -29,11 +29,13 @@ final class VerifyContributionCertificateService
         return new VerifyContributionCertificateResponse(
             code: $contributionCertificate->code(),
             type: $contributionCertificate->type(),
+            beneficiaryName: $contributionCertificate->beneficiaryName(),
             projectName: $contributionCertificate->projectName(),
             projectLocation: $contributionCertificate->projectLocation(),
             projectRegistryId: $contributionCertificate->projectRegistryId(),
             co2eqKg: $contributionCertificate->isCompensation() ? $contributionCertificate->co2eqKg() : null,
             masterSerials: $contributionCertificate->masterSerials(),
+            creditLots: $contributionCertificate->creditLots(),
             issuedAt: $contributionCertificate->issuedAt(),
             valid: $contributionCertificate->isGenerated(),
         );

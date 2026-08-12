@@ -37,8 +37,13 @@ class VerifyController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        return $this->render('@balance/public/certificate/verify.html.twig', [
+        $response = $this->render('@balance/public/certificate/verify.html.twig', [
             'certificate' => $certificate,
         ]);
+
+        $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
+        $response->headers->set('Referrer-Policy', 'no-referrer');
+
+        return $response;
     }
 }

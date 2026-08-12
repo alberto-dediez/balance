@@ -8,7 +8,10 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 
 final readonly class ContributionCertificateData
 {
-    /** @param list<string> $masterSerials */
+    /**
+     * @param list<string>                                                      $masterSerials
+     * @param list<array{serial: string, startTonnes: float, endTonnes: float}> $creditLots
+     */
     public function __construct(
         public string $code,
         public ContributionCertificateType $type,
@@ -25,6 +28,7 @@ final readonly class ContributionCertificateData
         public ?string $projectLocation,
         public ?string $projectRegistryId,
         public array $masterSerials,
+        public array $creditLots,
         public \DateTimeImmutable $issuedAt,
         public ?string $verificationUrl,
         public ?ProjectContributionOrigin $origin = null,

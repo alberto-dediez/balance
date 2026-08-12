@@ -15,6 +15,7 @@ class ProjectContributionCreditAllocation
         private CreditPurchaseId $creditPurchaseId,
         private ?string $purchaseReference = null,
         private float $tonnes = 0.0,
+        private float $startTonnes = 0.0,
     ) {}
 
     public function id(): ProjectContributionCreditAllocationId
@@ -45,5 +46,15 @@ class ProjectContributionCreditAllocation
     public function tonnes(): float
     {
         return $this->tonnes;
+    }
+
+    public function startTonnes(): float
+    {
+        return $this->startTonnes;
+    }
+
+    public function endTonnes(): float
+    {
+        return $this->startTonnes + $this->tonnes;
     }
 }

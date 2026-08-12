@@ -81,7 +81,8 @@ final class AllocateContributionCreditsService
                 break;
             }
 
-            $available = $creditPurchase->availableTonnes() - ($alreadyAllocated[(string) $creditPurchase->id()] ?? 0.0);
+            $startTonnes = $alreadyAllocated[(string) $creditPurchase->id()] ?? 0.0;
+            $available = $creditPurchase->availableTonnes() - $startTonnes;
 
             if ($available <= self::MIN_ALLOCATABLE_TONNES) {
                 continue;
@@ -94,6 +95,7 @@ final class AllocateContributionCreditsService
                 creditPurchaseId: $creditPurchase->id(),
                 purchaseReference: $creditPurchase->reference(),
                 tonnes: $consumed,
+                startTonnes: $startTonnes,
             );
 
             $pending -= $consumed;

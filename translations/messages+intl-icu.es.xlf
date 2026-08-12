@@ -5597,6 +5597,14 @@
         <source>Firma del emisor</source>
         <target>Firma del emisor</target>
       </trans-unit>
+      <trans-unit id="Q7l.KN7" resname="Lotes de créditos">
+        <source>Lotes de créditos</source>
+        <target>Lotes de créditos</target>
+      </trans-unit>
+      <trans-unit id="x0DeIeB" resname="Cada lote identifica un tramo de toneladas dentro de un serial de compra. Ningún otro certificado emitido puede reclamar el mismo tramo. La retirada de los créditos en el registro oficial debe verificarse en el propio registro.">
+        <source>Cada lote identifica un tramo de toneladas dentro de un serial de compra. Ningún otro certificado emitido puede reclamar el mismo tramo. La retirada de los créditos en el registro oficial debe verificarse en el propio registro.</source>
+        <target>Cada lote identifica un tramo de toneladas dentro de un serial de compra. Ningún otro certificado emitido puede reclamar el mismo tramo. La retirada de los créditos en el registro oficial debe verificarse en el propio registro.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -286,6 +286,28 @@ class ProjectContribution
         return $serials;
     }
 
+    /** @return list<array{serial: string, startTonnes: float, endTonnes: float}> */
+    public function creditLots(): array
+    {
+        $lots = [];
+
+        foreach ($this->creditAllocations() as $allocation) {
+            $reference = $allocation->purchaseReference();
+
+            if (null === $reference || '' === $reference) {
+                continue;
+            }
+
+            $lots[] = [
+                'serial' => $reference,
+                'startTonnes' => $allocation->startTonnes(),
+                'endTonnes' => $allocation->endTonnes(),
+            ];
+        }
+
+        return $lots;
+    }
+
     public function allocatedTonnes(): float
     {
         $allocated = 0.0;
@@ -531,6 +553,7 @@ class ProjectContribution
                 creditPurchaseId: $line->creditPurchaseId,
                 purchaseReference: $line->purchaseReference,
                 tonnes: $line->tonnes,
+                startTonnes: $line->startTonnes,
             ),
             $event->lines(),
         );

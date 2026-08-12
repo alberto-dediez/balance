@@ -96,13 +96,34 @@ class IssueContributionCertificateServiceTest extends TestCase
 
         $contribution = $this->givenPaidContribution();
         $contribution->allocateCredits([
-            new AllocatedCreditLine(0, CreditPurchaseId::generate(), '2024-b012', 0.6),
-            new AllocatedCreditLine(1, CreditPurchaseId::generate(), '2024-b013', 0.4),
+            new AllocatedCreditLine(0, CreditPurchaseId::generate(), '2024-b012', 0.6, 2.0),
+            new AllocatedCreditLine(1, CreditPurchaseId::generate(), '2024-b013', 0.4, 0.0),
         ]);
 
         $certificate = $this->issue($contribution->id())->contributionCertificate;
 
         $this->assertSame(['2024-b012', '2024-b013'], $certificate->masterSerials());
+    }
+
+    public function testTheTonneRangeOfEachLotIsCopied(): void
+    {
+        $this->givenProject(ProjectType::EmissionCompensation);
+
+        $contribution = $this->givenPaidContribution();
+        $contribution->allocateCredits([
+            new AllocatedCreditLine(0, CreditPurchaseId::generate(), '2024-b012', 0.6, 2.0),
+            new AllocatedCreditLine(1, CreditPurchaseId::generate(), '2024-b013', 0.4, 0.0),
+        ]);
+
+        $certificate = $this->issue($contribution->id())->contributionCertificate;
+
+        $this->assertSame(
+            [
+                ['serial' => '2024-b012', 'startTonnes' => 2.0, 'endTonnes' => 2.6],
+                ['serial' => '2024-b013', 'startTonnes' => 0.0, 'endTonnes' => 0.4],
+            ],
+            $certificate->creditLots(),
+        );
     }
 
     public function testTheFlowTheContributionCameFromIsCopied(): void

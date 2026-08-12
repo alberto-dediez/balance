@@ -38,6 +38,7 @@
         <field name="projectLocation" type="string" column="project_location" length="255" nullable="true"/>
         <field name="projectRegistryId" type="string" column="project_registry_id" length="100" nullable="true"/>
         <field name="masterSerials" type="json" column="master_serials" nullable="false"/>
+        <field name="creditLots" type="json" column="credit_lots" nullable="false"/>
         <field name="origin" type="string" column="origin" length="40" enum-type="App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin" nullable="true"/>
         <field name="originName" type="string" column="origin_name" length="255" nullable="true"/>
         <field name="files" type="json" column="files" nullable="false"/>

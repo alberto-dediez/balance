@@ -71,6 +71,7 @@ final class ProjectContributionCreditsAllocated extends DomainEvent
             'creditPurchaseId' => (string) $line->creditPurchaseId,
             'purchaseReference' => $line->purchaseReference,
             'tonnes' => $line->tonnes,
+            'startTonnes' => $line->startTonnes,
         ];
     }
 
@@ -82,6 +83,7 @@ final class ProjectContributionCreditsAllocated extends DomainEvent
             creditPurchaseId: new CreditPurchaseId((string) $line['creditPurchaseId']),
             purchaseReference: null !== ($line['purchaseReference'] ?? null) ? (string) $line['purchaseReference'] : null,
             tonnes: (float) $line['tonnes'],
+            startTonnes: (float) ($line['startTonnes'] ?? 0.0),
         );
     }
 }

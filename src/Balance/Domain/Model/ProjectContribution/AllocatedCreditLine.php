@@ -13,5 +13,6 @@ final readonly class AllocatedCreditLine
         public CreditPurchaseId $creditPurchaseId,
         public ?string $purchaseReference,
         public float $tonnes,
+        public float $startTonnes,
     ) {}
 }
