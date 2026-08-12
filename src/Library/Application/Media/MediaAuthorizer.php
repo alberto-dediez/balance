@@ -20,7 +20,9 @@ final class MediaAuthorizer extends AbstractAuthorizer
 
     protected function canView(mixed $subject, User $user): bool
     {
-        if ($subject->isShared()) {
+        // Being able to open the file has nothing to do with browsing it in the library:
+        // the audience of the file is what opens the access, not the sharing.
+        if ($subject->isAccessibleOutsideAccount()) {
             return true;
         }
 
@@ -57,6 +59,10 @@ final class MediaAuthorizer extends AbstractAuthorizer
     /**
      * The library is scoped to the account even for the administrators: an administrator
      * of another account is a stranger to this file.
+     *
+     * Publishing a file in the library of every account is an administration action:
+     * left to any user it would turn the shared library into a channel to spread spam
+     * or malware across the accounts.
      */
     protected function canAdmin(mixed $subject, User $user): bool
     {

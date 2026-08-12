@@ -44,7 +44,9 @@ class UploadController extends AbstractController
 
         $media = new Media(MediaId::generate(), $account?->id());
 
-        $form = $this->createForm(UploadMediaType::class);
+        $form = $this->createForm(UploadMediaType::class, options: [
+            'shareable' => $authorizer->canDoThat($media, Action::Admin, $user),
+        ]);
 
         try {
             $authorizer->denyUnlessCanDoThat($media, Action::Register, $user);
@@ -67,6 +69,7 @@ class UploadController extends AbstractController
                         description: $keepMetadata ? $formRequest->description : null,
                         alternativeText: $keepMetadata ? $formRequest->alternativeText : null,
                         visibility: $formRequest->visibility,
+                        shared: $formRequest->shared,
                     );
 
                     $uploadRequest = $uploadedFileMapper($uploadedFile, $account?->id(), $user->id(), $uploadRequest);

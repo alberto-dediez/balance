@@ -9,11 +9,11 @@ use PHPUnit\Framework\TestCase;
 
 class MediaVisibilityTest extends TestCase
 {
-    public function testTheSharedVisibilitiesEscapeTheAccount(): void
+    public function testTheWiderVisibilitiesEscapeTheAccount(): void
     {
-        $this->assertFalse(MediaVisibility::Account->isShared());
-        $this->assertTrue(MediaVisibility::System->isShared());
-        $this->assertTrue(MediaVisibility::Public->isShared());
+        $this->assertFalse(MediaVisibility::Account->isAccessibleOutsideAccount());
+        $this->assertTrue(MediaVisibility::System->isAccessibleOutsideAccount());
+        $this->assertTrue(MediaVisibility::Public->isAccessibleOutsideAccount());
     }
 
     public function testAWiderVisibilitySatisfiesANarrowerRequirement(): void

@@ -36,6 +36,9 @@ class SearchController extends AbstractController
             name: $request->query->getString('query') ?: null,
             types: $this->requestedTypes($request),
             visibility: MediaVisibility::tryFrom($request->query->getString('visibility')),
+            // The files the other accounts published in the shared library are meant to
+            // be used, so the picker reaches them on demand as the library listing does
+            includeShared: $request->query->getBoolean('includeShared') ?: null,
             limit: min(48, max(1, $request->query->getInt('limit', 24))),
         );
 

@@ -56,7 +56,10 @@ class ShareMediaServiceTest extends TestCase
         $mediaPersisted = $repository->find($media->id());
 
         $this->assertNotNull($mediaPersisted);
-        $this->assertTrue($mediaPersisted->isShared());
+        $this->assertTrue($mediaPersisted->isAccessibleOutsideAccount());
+
+        // the file becomes reachable, it does not land in the library of every account
+        $this->assertFalse($mediaPersisted->isShared());
 
         $this->assertTrue($this->spySubscriber->lastEvent() instanceof MediaVisibilityChanged);
     }

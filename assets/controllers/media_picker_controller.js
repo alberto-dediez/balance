@@ -7,7 +7,7 @@ import { Modal } from 'bootstrap';
  * without leaving the page.
  */
 export default class extends Controller {
-    static targets = ['selection', 'inputs', 'file', 'modal', 'results', 'query', 'feedback'];
+    static targets = ['selection', 'inputs', 'file', 'modal', 'results', 'query', 'feedback', 'includeShared'];
 
     static values = {
         searchPath: String,
@@ -75,7 +75,9 @@ export default class extends Controller {
     search() {
         const query = this.hasQueryTarget ? this.queryTarget.value : '';
 
-        const url = `${this.searchPathValue}?query=${encodeURIComponent(query)}&types=${encodeURIComponent(this.typesValue)}&visibility=${encodeURIComponent(this.visibilityValue)}`;
+        const includeShared = this.hasIncludeSharedTarget && this.includeSharedTarget.checked ? '1' : '';
+
+        const url = `${this.searchPathValue}?query=${encodeURIComponent(query)}&types=${encodeURIComponent(this.typesValue)}&visibility=${encodeURIComponent(this.visibilityValue)}&includeShared=${includeShared}`;
 
         fetch(url, { headers: { 'Accept': 'application/json' } })
             .then(response => response.json())

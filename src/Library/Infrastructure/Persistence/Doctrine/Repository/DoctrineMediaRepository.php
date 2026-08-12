@@ -127,13 +127,10 @@ class DoctrineMediaRepository implements MediaRepository
                     ->andWhere(
                         $qb->expr()->orX(
                             $accountScope,
-                            $qb->expr()->in('m.visibility', ':sharedVisibilities'),
+                            $qb->expr()->eq('m.shared', ':shared'),
                         ),
                     )
-                    ->setParameter(
-                        'sharedVisibilities',
-                        array_map(static fn(MediaVisibility $visibility): string => $visibility->value, MediaVisibility::sharedCases()),
-                    )
+                    ->setParameter('shared', true)
                 ;
             } else {
                 $qb->andWhere($accountScope);

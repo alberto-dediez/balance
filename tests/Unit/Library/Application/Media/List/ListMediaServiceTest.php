@@ -131,8 +131,10 @@ class ListMediaServiceTest extends TestCase
 
         $repository->add(MediaMother::fromNameAndAccount('own.png', $accountId));
         $repository->add(MediaMother::fromNameAndAccount('foreign.png', $foreignAccountId));
-        $repository->add(MediaMother::fromNameAndVisibility('manual.pdf', MediaVisibility::System, $foreignAccountId));
-        $repository->add(MediaMother::fromNameAndVisibility('terms.pdf', MediaVisibility::Public, $foreignAccountId));
+        $repository->add(MediaMother::sharedMedia('manual.pdf', $foreignAccountId));
+
+        // an avatar of another account: reachable by everybody, browsable by nobody else
+        $repository->add(MediaMother::fromNameAndVisibility('avatar.png', MediaVisibility::System, $foreignAccountId));
 
         $sut = $this->createSUT($repository);
 
@@ -142,10 +144,10 @@ class ListMediaServiceTest extends TestCase
 
         $names = array_map(static fn($media): string => $media->name(), $result->media);
 
-        $this->assertCount(3, $result->media);
+        $this->assertCount(2, $result->media);
         $this->assertContains('own.png', $names);
         $this->assertContains('manual.pdf', $names);
-        $this->assertContains('terms.pdf', $names);
+        $this->assertNotContains('avatar.png', $names);
     }
 
     private function createSUT(InMemoryMediaRepository $repository): ListMediaService

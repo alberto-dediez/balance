@@ -26,6 +26,7 @@ class Media implements \Stringable
         protected string $mimeType = '',
         protected MediaType $type = MediaType::Other,
         protected MediaVisibility $visibility = MediaVisibility::Account,
+        protected bool $shared = false,
         protected int $size = 0,
         protected ?string $description = null,
         protected ?string $alternativeText = null,
@@ -83,9 +84,19 @@ class Media implements \Stringable
         return $this->visibility;
     }
 
+    /**
+     * Shared files are browsable from the library of every account, not only the one
+     * owning them. It is a decision of the owner, unrelated to the audience the file
+     * is accessible to: an avatar reaches every user without ever being shared.
+     */
     public function isShared(): bool
     {
-        return $this->visibility->isShared();
+        return $this->shared;
+    }
+
+    public function isAccessibleOutsideAccount(): bool
+    {
+        return $this->visibility->isAccessibleOutsideAccount();
     }
 
     public function isPublic(): bool
@@ -145,6 +156,7 @@ class Media implements \Stringable
         ?string $description = null,
         ?string $alternativeText = null,
         MediaVisibility $visibility = MediaVisibility::Account,
+        bool $shared = false,
     ): void {
         $this->recordApplyAndPublish(
             new MediaUploaded(
@@ -155,7 +167,8 @@ class Media implements \Stringable
                 extension: $extension,
                 mimeType: $mimeType,
                 type: MediaType::fromMimeType($mimeType),
-                visibility: $visibility,
+                visibility: $shared ? self::visibilityReachingEveryAccount($visibility) : $visibility,
+                shared: $shared,
                 size: $size,
                 accountId: $accountId,
                 uploadedBy: $uploadedBy,
@@ -185,6 +198,31 @@ class Media implements \Stringable
                 visibility: $visibility,
             ),
         );
+
+        // A file nobody outside the account may open has nothing to do in the library
+        // of the other accounts.
+        if ($this->isShared() && !$visibility->isAccessibleOutsideAccount()) {
+            $this->changeSharing(false);
+        }
+    }
+
+    /**
+     * Publishes the file in the library of every account, or withdraws it from there.
+     */
+    public function changeSharing(bool $shared): void
+    {
+        // Sharing a file the other accounts cannot even open would list an unusable
+        // file, so the audience follows the decision.
+        if ($shared && !$this->isAccessibleOutsideAccount()) {
+            $this->changeVisibility(self::visibilityReachingEveryAccount($this->visibility()));
+        }
+
+        $this->recordApplyAndPublish(
+            new MediaSharingChanged(
+                mediaId: $this->id(),
+                shared: $shared,
+            ),
+        );
     }
 
     public function remove(): void
@@ -206,6 +244,7 @@ class Media implements \Stringable
         $this->mimeType = $event->mimeType();
         $this->type = $event->type();
         $this->visibility = $event->visibility();
+        $this->shared = $event->isShared();
         $this->size = $event->size();
         $this->accountId = $event->accountId();
         $this->uploadedBy = $event->uploadedBy();
@@ -227,6 +266,11 @@ class Media implements \Stringable
         $this->visibility = $event->visibility();
     }
 
+    public function applyMediaSharingChanged(MediaSharingChanged $event): void
+    {
+        $this->shared = $event->isShared();
+    }
+
     public function applyMediaRemoved(MediaRemoved $event): void
     {
         $this->removed = true;
@@ -236,5 +280,14 @@ class Media implements \Stringable
     public function __toString(): string
     {
         return $this->name();
+    }
+
+    /**
+     * The narrowest audience letting every account reach the file, keeping a wider one
+     * already granted.
+     */
+    private static function visibilityReachingEveryAccount(MediaVisibility $visibility): MediaVisibility
+    {
+        return $visibility->satisfies(MediaVisibility::System) ? $visibility : MediaVisibility::System;
     }
 }

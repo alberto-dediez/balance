@@ -21,6 +21,7 @@ class UploadMediaRequest implements Command
         public ?string $description = null,
         public ?string $alternativeText = null,
         public MediaVisibility $visibility = MediaVisibility::Account,
+        public bool $shared = false,
         public ?AccountId $accountId = null,
         public ?UserId $uploadedBy = null,
     ) {}

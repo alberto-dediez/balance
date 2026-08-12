@@ -171,8 +171,11 @@ abstract class MediaRepositoryTest extends KernelTestCase
 
         $repository->add(MediaMother::fromNameAndAccount('own.png', $accountId));
         $repository->add(MediaMother::fromNameAndAccount('foreign.png', $anotherAccountId));
-        $repository->add(MediaMother::fromNameAndVisibility('manual.pdf', MediaVisibility::System, $anotherAccountId));
-        $repository->add(MediaMother::fromNameAndVisibility('terms.pdf', MediaVisibility::Public, $anotherAccountId));
+        $repository->add(MediaMother::sharedMedia('manual.pdf', $anotherAccountId));
+        $repository->add(MediaMother::sharedMedia('terms.pdf', $anotherAccountId));
+
+        // reachable by everybody, yet never published in the library of the others
+        $repository->add(MediaMother::fromNameAndVisibility('avatar.png', MediaVisibility::System, $anotherAccountId));
 
         $result = $repository->findByFilter(new MediaFilter(accountId: $accountId, includeShared: true));
 
@@ -182,6 +185,7 @@ abstract class MediaRepositoryTest extends KernelTestCase
         $this->assertContains('own.png', $names);
         $this->assertContains('manual.pdf', $names);
         $this->assertContains('terms.pdf', $names);
+        $this->assertNotContains('avatar.png', $names);
     }
 
     public function testFindByFilterWithoutAccountIncludingTheSharedMedia(): void
@@ -190,7 +194,7 @@ abstract class MediaRepositoryTest extends KernelTestCase
 
         $repository->add(MediaMother::fromNameAndAccount('own.png', AccountId::generate()));
         $repository->add(MediaMother::fromName('without-account.png'));
-        $repository->add(MediaMother::fromNameAndVisibility('manual.pdf', MediaVisibility::System, AccountId::generate()));
+        $repository->add(MediaMother::sharedMedia('manual.pdf', AccountId::generate()));
 
         $result = $repository->findByFilter(new MediaFilter(withoutAccount: true, includeShared: true));
 

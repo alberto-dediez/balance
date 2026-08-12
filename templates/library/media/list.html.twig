@@ -51,7 +51,15 @@
         </td>
         <td>{{ element.type.value | trans({}, 'mediaType') }}</td>
 
-        <td>{{ element.visibility.value | trans({}, 'mediaVisibility') }}</td>
+        <td>
+            {{ element.visibility.value | trans({}, 'mediaVisibility') }}
+
+            {% if element.shared %}
+                <div class="text-muted fs-2">
+                    {{ 'Compartido en la biblioteca' | trans }}
+                </div>
+            {% endif %}
+        </td>
         <td>{{ element.size | file_size }}</td>
         <td>{{ element.registeredAt | date('d/m/Y H:i') }}</td>
         <td>

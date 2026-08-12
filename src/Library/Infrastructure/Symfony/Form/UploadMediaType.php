@@ -7,6 +7,7 @@ namespace App\Library\Infrastructure\Symfony\Form;
 use App\Library\Application\Media\Upload\UploadMediaRequest;
 use App\Library\Domain\Model\Media\MediaVisibility;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -51,7 +52,7 @@ class UploadMediaType extends AbstractType
             ->add('visibility', EnumType::class, [
                 'class' => MediaVisibility::class,
                 'label' => new TranslatableMessage('Visibilidad'),
-                'help' => new TranslatableMessage('Quién puede acceder a los archivos subidos'),
+                'help' => new TranslatableMessage('Quién puede abrir los archivos subidos allí donde se usen'),
                 'required' => true,
                 'choice_translation_domain' => 'mediaVisibility',
             ])
@@ -59,12 +60,25 @@ class UploadMediaType extends AbstractType
                 'label' => new TranslatableMessage('Subir'),
             ])
         ;
+
+        // Sharing spreads the file over every account, so it stays in the hands of the
+        // administrators: see MediaAuthorizer::canAdmin()
+        if (true === $options['shareable']) {
+            $builder->add('shared', CheckboxType::class, [
+                'label' => new TranslatableMessage('Compartir en la biblioteca'),
+                'help' => new TranslatableMessage('Los archivos aparecerán en la biblioteca del resto de cuentas, que podrán usarlos'),
+                'required' => false,
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => UploadMediaRequest::class,
+            'shareable' => false,
         ]);
+
+        $resolver->setAllowedTypes('shareable', 'bool');
     }
 }

@@ -1537,6 +1537,34 @@
         <source>Los archivos de este campo son accesibles para: {visibility}</source>
         <target>Los archivos de este campo son accesibles para: {visibility}</target>
       </trans-unit>
+      <trans-unit id="CGDey1J" resname="Incluye los archivos que otras cuentas han compartido en su biblioteca">
+        <source>Incluye los archivos que otras cuentas han compartido en su biblioteca</source>
+        <target>Incluye los archivos que otras cuentas han compartido en su biblioteca</target>
+      </trans-unit>
+      <trans-unit id="Rzkrw12" resname="Quién puede abrir este archivo allí donde se use">
+        <source>Quién puede abrir este archivo allí donde se use</source>
+        <target>Quién puede abrir este archivo allí donde se use</target>
+      </trans-unit>
+      <trans-unit id="2o9kXr." resname="Compartir en la biblioteca">
+        <source>Compartir en la biblioteca</source>
+        <target>Compartir en la biblioteca</target>
+      </trans-unit>
+      <trans-unit id="GIDivqy" resname="El archivo aparecerá en la biblioteca del resto de cuentas, que podrán usarlo">
+        <source>El archivo aparecerá en la biblioteca del resto de cuentas, que podrán usarlo</source>
+        <target>El archivo aparecerá en la biblioteca del resto de cuentas, que podrán usarlo</target>
+      </trans-unit>
+      <trans-unit id="40LlMAe" resname="Quién puede abrir los archivos subidos allí donde se usen">
+        <source>Quién puede abrir los archivos subidos allí donde se usen</source>
+        <target>Quién puede abrir los archivos subidos allí donde se usen</target>
+      </trans-unit>
+      <trans-unit id="4K3.3KB" resname="Los archivos aparecerán en la biblioteca del resto de cuentas, que podrán usarlos">
+        <source>Los archivos aparecerán en la biblioteca del resto de cuentas, que podrán usarlos</source>
+        <target>Los archivos aparecerán en la biblioteca del resto de cuentas, que podrán usarlos</target>
+      </trans-unit>
+      <trans-unit id="P5bm0P4" resname="Compartido en la biblioteca">
+        <source>Compartido en la biblioteca</source>
+        <target>Compartido en la biblioteca</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

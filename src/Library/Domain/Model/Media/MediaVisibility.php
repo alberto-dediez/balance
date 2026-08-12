@@ -16,9 +16,11 @@ enum MediaVisibility: string
     case Public = 'Public';
 
     /**
-     * Shared media escapes the account it belongs to.
+     * The access to the file escapes the account it belongs to. It says nothing about
+     * the file being browsable from the library of the other accounts, which is the
+     * separate decision Media::isShared() carries.
      */
-    public function isShared(): bool
+    public function isAccessibleOutsideAccount(): bool
     {
         return self::Account !== $this;
     }
@@ -26,14 +28,6 @@ enum MediaVisibility: string
     public function isPublic(): bool
     {
         return self::Public === $this;
-    }
-
-    /**
-     * @return list<self>
-     */
-    public static function sharedCases(): array
-    {
-        return [self::System, self::Public];
     }
 
     /**

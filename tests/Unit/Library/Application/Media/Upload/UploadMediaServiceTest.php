@@ -11,6 +11,7 @@ use App\Library\Domain\Model\Media\MediaUploaded;
 use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryMediaRepository;
 use App\Library\Infrastructure\Storage\InMemoryMediaStorage;
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Library\Application\Media\MediaAuthorizerMother;
@@ -127,7 +128,45 @@ class UploadMediaServiceTest extends TestCase
 
         $this->assertNotNull($media);
         $this->assertEquals(MediaVisibility::System, $media->visibility());
+
+        // widening the audience does not publish the file in the library of the others
+        $this->assertFalse($media->isShared());
+    }
+
+    /**
+     * The shared library would become a channel to spread spam or malware over the
+     * other accounts if any user could publish in it.
+     */
+    public function testOnlyAnAdminUploadsAFileSharedWithTheOtherAccounts(): void
+    {
+        $repository = new InMemoryMediaRepository();
+
+        $sut = $this->createSUT($repository, MediaStorageMother::inMemory());
+
+        $request = $this->createRequest();
+        $request->shared = true;
+
+        $this->expectException(UnauthorizedActionException::class);
+
+        $sut($request, UserMother::fromUsernameAndRole('user@dediez.software', Role::User));
+    }
+
+    public function testAnAdminUploadsAFileSharedWithTheOtherAccounts(): void
+    {
+        $repository = new InMemoryMediaRepository();
+
+        $sut = $this->createSUT($repository, MediaStorageMother::inMemory());
+
+        $request = $this->createRequest();
+        $request->shared = true;
+
+        $result = $sut($request, UserMother::adminUser());
+
+        $media = $repository->find($result->mediaId);
+
+        $this->assertNotNull($media);
         $this->assertTrue($media->isShared());
+        $this->assertEquals(MediaVisibility::System, $media->visibility());
     }
 
     public function testIsHandle(): void

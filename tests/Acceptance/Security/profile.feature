@@ -28,6 +28,7 @@ Feature:
         When I follow redirect
         Then the response status should be 200
         Then the file "avatar.png" has the visibility "System"
+        Then the file "avatar.png" is not shared in the library
 
     Scenario: As a logged user I can remove my profile picture
         Given user "user@dediez.software" with role "ROLE_USER" exists
