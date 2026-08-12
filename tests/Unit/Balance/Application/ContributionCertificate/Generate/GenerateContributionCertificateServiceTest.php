@@ -66,14 +66,18 @@ class GenerateContributionCertificateServiceTest extends TestCase
         $this->assertStringNotContainsString($certificate->code(), (string) $rendered[0]->verificationUrl);
     }
 
-    public function testASocialCertificateCarriesNoVerificationUrl(): void
+    /** It proves no retirement, but it still proves the paper is genuine. */
+    public function testASocialCertificateCarriesAVerificationUrlToo(): void
     {
         $certificate = $this->givenIssuedCertificate(ContributionCertificateType::SocialContribution);
 
         $pdfGenerator = new FakeContributionCertificatePdfGenerator();
         $this->generate($certificate, $pdfGenerator);
 
-        $this->assertNull($pdfGenerator->rendered()[0]->verificationUrl);
+        $rendered = $pdfGenerator->rendered();
+
+        $this->assertNotNull($rendered[0]->verificationUrl);
+        $this->assertStringContainsString($certificate->verificationToken(), (string) $rendered[0]->verificationUrl);
     }
 
     public function testAFailureCleansUpWhatWasAlreadyStored(): void

@@ -15,6 +15,7 @@ final readonly class ContributionContext
         public float $co2eqKg,
         public ProjectContributionOrigin $origin,
         public string $originId,
+        public string $originName,
         public string $token,
     ) {}
 }

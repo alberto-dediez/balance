@@ -9,6 +9,7 @@ use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateId;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateType;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\Locale\Locale;
 
@@ -24,6 +25,8 @@ class ContributionCertificateMother
         array $masterSerials = ['2024-b012'],
         ?float $co2eqKg = 1000.0,
         bool $beneficiaryIsCompany = false,
+        ?ProjectContributionOrigin $origin = ProjectContributionOrigin::PropertyTripCalculation,
+        ?string $originName = 'Hotel Los Olivos',
         ?ContributionCertificateId $id = null,
     ): ContributionCertificate {
         $contributionCertificate = new ContributionCertificate(id: $id ?? ContributionCertificateId::generate());
@@ -50,6 +53,8 @@ class ContributionCertificateMother
             projectLocation: 'Segovia',
             projectRegistryId: '2024-b012',
             masterSerials: $masterSerials,
+            origin: $origin,
+            originName: $originName,
         );
 
         return $contributionCertificate;

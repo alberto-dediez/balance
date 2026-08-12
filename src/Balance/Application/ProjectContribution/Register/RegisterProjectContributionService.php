@@ -138,6 +138,7 @@ final class RegisterProjectContributionService
             projectId: $request->projectId,
             origin: $request->origin,
             originId: $request->originId,
+            originName: $request->originName,
             co2eqKg: $amounts->co2eqKg,
             tonnes: $amounts->tonnes,
             pricePerTonne: $amounts->pricePerTonne,

@@ -7,6 +7,7 @@ namespace App\Balance\Domain\Model\ContributionCertificate;
 use App\Balance\Domain\DomainEvent;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
@@ -40,6 +41,8 @@ final class ContributionCertificateIssued extends DomainEvent
         private ?string $projectLocation,
         private ?string $projectRegistryId,
         private array $masterSerials,
+        private ?ProjectContributionOrigin $origin = null,
+        private ?string $originName = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -151,6 +154,16 @@ final class ContributionCertificateIssued extends DomainEvent
         return $this->projectRegistryId;
     }
 
+    public function origin(): ?ProjectContributionOrigin
+    {
+        return $this->origin;
+    }
+
+    public function originName(): ?string
+    {
+        return $this->originName;
+    }
+
     /** @return list<string> */
     public function masterSerials(): array
     {
@@ -187,6 +200,8 @@ final class ContributionCertificateIssued extends DomainEvent
             'projectLocation' => $this->projectLocation,
             'projectRegistryId' => $this->projectRegistryId,
             'masterSerials' => $this->masterSerials,
+            'origin' => $this->origin?->value,
+            'originName' => $this->originName,
         ];
     }
 
@@ -221,6 +236,8 @@ final class ContributionCertificateIssued extends DomainEvent
             projectLocation: null !== ($payload['projectLocation'] ?? null) ? (string) $payload['projectLocation'] : null,
             projectRegistryId: null !== ($payload['projectRegistryId'] ?? null) ? (string) $payload['projectRegistryId'] : null,
             masterSerials: $masterSerials,
+            origin: null !== ($payload['origin'] ?? null) ? ProjectContributionOrigin::from((string) $payload['origin']) : null,
+            originName: null !== ($payload['originName'] ?? null) ? (string) $payload['originName'] : null,
             id: $id,
             occurredOn: $occurredOn,
         );

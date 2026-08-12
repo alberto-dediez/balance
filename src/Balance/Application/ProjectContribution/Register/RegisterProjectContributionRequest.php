@@ -27,6 +27,7 @@ final class RegisterProjectContributionRequest
         public readonly string $cancelUrl,
         public readonly ProjectContributionOrigin $origin = ProjectContributionOrigin::PropertyTripCalculation,
         public readonly ?string $originId = null,
+        public readonly ?string $originName = null,
         public readonly ?float $co2eqKg = null,
         public readonly ?float $freeAmount = null,
         public readonly bool $contributorIsCompany = false,

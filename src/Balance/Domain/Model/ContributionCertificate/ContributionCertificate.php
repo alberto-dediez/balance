@@ -6,6 +6,7 @@ namespace App\Balance\Domain\Model\ContributionCertificate;
 
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -47,6 +48,8 @@ class ContributionCertificate implements \Stringable
         private ?string $projectLocation = null,
         private ?string $projectRegistryId = null,
         private array $masterSerials = [],
+        private ?ProjectContributionOrigin $origin = null,
+        private ?string $originName = null,
         private array $files = [],
         private ?string $failureReason = null,
         array $events = [],
@@ -171,6 +174,20 @@ class ContributionCertificate implements \Stringable
         return $this->projectRegistryId;
     }
 
+    /**
+     * The flow the contribution came from, kept so the document can name the event attended or the
+     * property stayed at. Certificates issued before it was captured simply carry none.
+     */
+    public function origin(): ?ProjectContributionOrigin
+    {
+        return $this->origin;
+    }
+
+    public function originName(): ?string
+    {
+        return $this->originName;
+    }
+
     /** @return list<string> */
     public function masterSerials(): array
     {
@@ -241,6 +258,8 @@ class ContributionCertificate implements \Stringable
         ?string $projectLocation,
         ?string $projectRegistryId,
         array $masterSerials,
+        ?ProjectContributionOrigin $origin = null,
+        ?string $originName = null,
     ): void {
         if ('' === $code) {
             throw new \InvalidArgumentException('Contribution certificate code cannot be empty.');
@@ -276,6 +295,8 @@ class ContributionCertificate implements \Stringable
                 projectLocation: $projectLocation,
                 projectRegistryId: $type->isCompensation() ? $projectRegistryId : null,
                 masterSerials: $type->isCompensation() ? $masterSerials : [],
+                origin: $origin,
+                originName: $originName,
             ),
         );
     }
@@ -334,6 +355,8 @@ class ContributionCertificate implements \Stringable
         $this->projectLocation = $event->projectLocation();
         $this->projectRegistryId = $event->projectRegistryId();
         $this->masterSerials = $event->masterSerials();
+        $this->origin = $event->origin();
+        $this->originName = $event->originName();
         $this->status = ContributionCertificateStatus::Pending;
         $this->issuedAt = $event->occurredOn();
     }

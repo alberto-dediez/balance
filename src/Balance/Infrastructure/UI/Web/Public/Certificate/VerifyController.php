@@ -13,9 +13,10 @@ use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * Destination of the QR printed on the compensation certificate. It is only reachable with the
- * token the QR carries, and it answers with the reference to match against the paper, what was
- * retired and against which lots — never with anything about who paid for it.
+ * Destination of the QR printed on every certificate. It is only reachable with the token the QR
+ * carries, and it answers with the reference to match against the paper and what the document
+ * proves — never with anything about who paid for it. A social contribution reaches here too, and
+ * the page names it for what it is: nothing on it is claimed to be retired or offset.
  */
 #[Route(
     '/certificate/{token}',

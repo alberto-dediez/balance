@@ -210,6 +210,7 @@ final class ContributionCheckoutHandler
                 ),
                 origin: $context->origin,
                 originId: $context->originId,
+                originName: $context->originName,
                 co2eqKg: null === $freeAmount ? $context->co2eqKg : null,
                 freeAmount: $freeAmount,
                 contributorIsCompany: $this->isCompany($contribution),

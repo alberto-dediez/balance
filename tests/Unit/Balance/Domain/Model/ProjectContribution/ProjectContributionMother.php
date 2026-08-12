@@ -23,6 +23,7 @@ class ProjectContributionMother
         ?PaymentId $paymentId = null,
         ?ProjectContributionId $id = null,
         ?string $originId = null,
+        ?string $originName = 'Hotel Los Olivos',
         bool $isCompany = false,
         ProjectContributionOrigin $origin = ProjectContributionOrigin::PropertyTripCalculation,
         Locale $locale = Locale::Spanish,
@@ -33,6 +34,7 @@ class ProjectContributionMother
             projectId: $projectId ?? ProjectId::generate(),
             origin: $origin,
             originId: $originId ?? (string) ProjectContributionId::generate(),
+            originName: $originName,
             co2eqKg: $tonnes * 1000,
             tonnes: $tonnes,
             pricePerTonne: 20.0,
@@ -66,9 +68,10 @@ class ProjectContributionMother
         float $tonnes = 1.0,
         ?string $originId = null,
         ProjectContributionOrigin $origin = ProjectContributionOrigin::PropertyTripCalculation,
+        ?string $originName = 'Hotel Los Olivos',
         Locale $locale = Locale::Spanish,
     ): ProjectContribution {
-        $projectContribution = self::pending($accountId, $projectId, $tonnes, originId: $originId, origin: $origin, locale: $locale);
+        $projectContribution = self::pending($accountId, $projectId, $tonnes, originId: $originId, originName: $originName, origin: $origin, locale: $locale);
         $projectContribution->pay();
 
         return $projectContribution;
@@ -86,6 +89,7 @@ class ProjectContributionMother
             $tonnes,
             originId: $originId,
             origin: ProjectContributionOrigin::AttendeeSurveyResponse,
+            originName: 'Congreso Andalucía Sostenible',
         );
     }
 
@@ -101,6 +105,7 @@ class ProjectContributionMother
             $tonnes,
             originId: $originId,
             origin: ProjectContributionOrigin::AttendeeSurveyResponse,
+            originName: 'Congreso Andalucía Sostenible',
         );
     }
 

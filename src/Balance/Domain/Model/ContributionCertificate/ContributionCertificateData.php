@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Balance\Domain\Model\ContributionCertificate;
 
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
+
 /** Everything the document prints, already resolved for the locale being rendered. */
 final readonly class ContributionCertificateData
 {
@@ -26,5 +28,7 @@ final readonly class ContributionCertificateData
         public array $masterSerials,
         public \DateTimeImmutable $issuedAt,
         public ?string $verificationUrl,
+        public ?ProjectContributionOrigin $origin = null,
+        public ?string $originName = null,
     ) {}
 }

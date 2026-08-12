@@ -289,6 +289,7 @@ final class BalanceContext implements Context
             projectId: new ProjectId($projectId),
             origin: ProjectContributionOrigin::PropertyTripCalculation,
             originId: null,
+            originName: null,
             co2eqKg: (float) $tonnes * 1000,
             tonnes: (float) $tonnes,
             pricePerTonne: 20.0,

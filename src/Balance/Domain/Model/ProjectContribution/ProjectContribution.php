@@ -26,6 +26,7 @@ class ProjectContribution
         private ?ProjectId $projectId = null,
         private ProjectContributionOrigin $origin = ProjectContributionOrigin::PropertyTripCalculation,
         private ?string $originId = null,
+        private ?string $originName = null,
         private ?float $co2eqKg = null,
         private float $tonnes = 0.0,
         private float $pricePerTonne = 0.0,
@@ -81,6 +82,15 @@ class ProjectContribution
     public function originId(): ?string
     {
         return $this->originId;
+    }
+
+    /**
+     * The name the flow the contributor came from had when they paid: the event they attended or the
+     * property they stayed at. It is copied here because only the public flow knows how to read it.
+     */
+    public function originName(): ?string
+    {
+        return $this->originName;
     }
 
     public function co2eqKg(): ?float
@@ -301,6 +311,7 @@ class ProjectContribution
         ProjectId $projectId,
         ProjectContributionOrigin $origin,
         ?string $originId,
+        ?string $originName,
         ?float $co2eqKg,
         float $tonnes,
         float $pricePerTonne,
@@ -339,6 +350,7 @@ class ProjectContribution
                 projectId: $projectId,
                 origin: $origin,
                 originId: $originId,
+                originName: $originName,
                 co2eqKg: $co2eqKg,
                 tonnes: $tonnes,
                 pricePerTonne: $pricePerTonne,
@@ -474,6 +486,7 @@ class ProjectContribution
         $this->projectId = $event->projectId();
         $this->origin = $event->origin();
         $this->originId = $event->originId();
+        $this->originName = $event->originName();
         $this->co2eqKg = $event->co2eqKg();
         $this->tonnes = $event->tonnes();
         $this->pricePerTonne = $event->pricePerTonne();

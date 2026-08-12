@@ -23,6 +23,7 @@ final class ProjectContributionRegistered extends DomainEvent
         private ProjectId $projectId,
         private ProjectContributionOrigin $origin,
         private ?string $originId,
+        private ?string $originName,
         private ?float $co2eqKg,
         private float $tonnes,
         private float $pricePerTonne,
@@ -74,6 +75,11 @@ final class ProjectContributionRegistered extends DomainEvent
     public function originId(): ?string
     {
         return $this->originId;
+    }
+
+    public function originName(): ?string
+    {
+        return $this->originName;
     }
 
     public function co2eqKg(): ?float
@@ -199,6 +205,7 @@ final class ProjectContributionRegistered extends DomainEvent
             'projectId' => (string) $this->projectId,
             'origin' => $this->origin->value,
             'originId' => $this->originId,
+            'originName' => $this->originName,
             'co2eqKg' => $this->co2eqKg,
             'tonnes' => $this->tonnes,
             'pricePerTonne' => $this->pricePerTonne,
@@ -235,6 +242,7 @@ final class ProjectContributionRegistered extends DomainEvent
             projectId: new ProjectId($payload['projectId']),
             origin: ProjectContributionOrigin::from($payload['origin']),
             originId: null !== $payload['originId'] ? (string) $payload['originId'] : null,
+            originName: null !== ($payload['originName'] ?? null) ? (string) $payload['originName'] : null,
             co2eqKg: null !== $payload['co2eqKg'] ? (float) $payload['co2eqKg'] : null,
             tonnes: (float) $payload['tonnes'],
             pricePerTonne: (float) $payload['pricePerTonne'],

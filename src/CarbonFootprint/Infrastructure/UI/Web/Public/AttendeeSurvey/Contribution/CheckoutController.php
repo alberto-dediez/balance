@@ -67,6 +67,7 @@ class CheckoutController extends AbstractController
                 co2eqKg: (float) $response->emissions()->co2eq(),
                 origin: ProjectContributionOrigin::AttendeeSurveyResponse,
                 originId: $responseId,
+                originName: $survey->event->name(),
                 token: $token,
             ),
             $this->contributionRoutes($token, $responseId),

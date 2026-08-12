@@ -105,6 +105,17 @@ class IssueContributionCertificateServiceTest extends TestCase
         $this->assertSame(['2024-b012', '2024-b013'], $certificate->masterSerials());
     }
 
+    public function testTheFlowTheContributionCameFromIsCopied(): void
+    {
+        $this->givenProject(ProjectType::EmissionCompensation);
+        $contribution = $this->givenPaidContribution();
+
+        $certificate = $this->issue($contribution->id())->contributionCertificate;
+
+        $this->assertSame($contribution->origin(), $certificate->origin());
+        $this->assertSame($contribution->originName(), $certificate->originName());
+    }
+
     public function testACompanyBecomesTheBeneficiaryAndThePersonTheContact(): void
     {
         $this->givenProject(ProjectType::EmissionCompensation);

@@ -139,10 +139,11 @@ class GenerateContributionCertificateService implements CommandHandler
             projectRegistryId: $contributionCertificate->projectRegistryId(),
             masterSerials: $contributionCertificate->masterSerials(),
             issuedAt: $contributionCertificate->issuedAt(),
-            // A social contribution has no lot to verify, so it carries no QR either.
-            verificationUrl: $contributionCertificate->isCompensation()
-                ? $this->verificationUrlGenerator->generate($contributionCertificate->verificationToken(), $locale)
-                : null,
+            // A social contribution has no lot to verify, but the QR still answers whether the paper
+            // is genuine. What the page says about it is decided there, not here.
+            verificationUrl: $this->verificationUrlGenerator->generate($contributionCertificate->verificationToken(), $locale),
+            origin: $contributionCertificate->origin(),
+            originName: $contributionCertificate->originName(),
         );
     }
 }

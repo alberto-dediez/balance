@@ -67,6 +67,7 @@ class CheckoutController extends AbstractController
                 co2eqKg: (float) $tripCalculation->emissions()->co2eq(),
                 origin: ProjectContributionOrigin::PropertyTripCalculation,
                 originId: $tripCalculationId,
+                originName: $link->property->name(),
                 token: $token,
             ),
             $this->contributionRoutes($token, $tripCalculationId),

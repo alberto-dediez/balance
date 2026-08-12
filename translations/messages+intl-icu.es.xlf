@@ -5589,6 +5589,14 @@
         <source>Los archivos de este campo son accesibles para: {visibility}</source>
         <target>Los archivos de este campo son accesibles para: {visibility}</target>
       </trans-unit>
+      <trans-unit id="j8BHwid" resname="Certificado nº">
+        <source>Certificado nº</source>
+        <target>Certificado nº</target>
+      </trans-unit>
+      <trans-unit id="qyvXCsx" resname="Firma del emisor">
+        <source>Firma del emisor</source>
+        <target>Firma del emisor</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
