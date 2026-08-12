@@ -19,10 +19,6 @@ trait AttendeeSurveyContributionTrait
 {
     use PublicGalleryTrait;
 
-    /**
-     * A closed survey only refuses new answers: an attendee that already answered may still
-     * compensate the footprint they were shown.
-     */
     private function resolveSurvey(
         string $token,
         GetAttendeeSurveyByTokenService $getByToken,

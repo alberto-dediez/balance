@@ -27,10 +27,6 @@ class MediaFilterTest extends TestCase
     }
 
     /**
-     * Filters are kept in the session and restored without calling the
-     * constructor, so every field must stay readable even for filters stored
-     * before that field existed.
-     *
      * @dataProvider filterClasses
      *
      * @param class-string<MediaFilter> $class

@@ -14,15 +14,6 @@ use App\Shared\Infrastructure\Tcpdf\GenericGenerator;
 use App\Shared\Infrastructure\Tcpdf\ReportTcpdf;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * One landscape page, two documents. The compensation variant states the volume offset and the lots
- * behind it; the social one deliberately carries none of that, nor any wording about offsetting or
- * neutrality. Both print the QR of the public verification page: it answers whether the paper is
- * genuine, which is worth as much to a donation as it is to a retirement.
- *
- * The page is laid out with absolute coordinates rather than the flowing chrome of the reports:
- * a certificate is a fixed composition and must look identical whatever the data behind it.
- */
 final class TcpdfContributionCertificatePdfGenerator implements ContributionCertificatePdfGenerator
 {
     use GenericGenerator;
@@ -77,8 +68,6 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
 
             $this->renderChrome($pdf, $documentName);
             $this->renderHeading($pdf, $data, $documentName, $locale);
-            // The right column is laid out first only to learn where it ends: the box is then drawn
-            // down to that same line, so both halves of the page finish level.
             $this->renderBeneficiaryBox($pdf, $data, $locale, $this->renderDetails($pdf, $data, $locale));
             $this->renderFooter($pdf, $data, $locale);
 
@@ -135,7 +124,6 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
         $pdf->Line(self::LEFT, self::LIME_RULE_Y, self::LEFT + 26, self::LIME_RULE_Y, ['width' => 1.4, 'color' => self::COLOR_LIME_RGB]);
     }
 
-    /** The box never shrinks below its own content: $desiredBottom only ever stretches it. */
     private function renderBeneficiaryBox(ReportTcpdf $pdf, ContributionCertificateData $data, Locale $locale, float $desiredBottom): void
     {
         $innerLeft = self::LEFT + self::BOX_PADDING;
@@ -201,11 +189,7 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
         return implode('    ', $parts);
     }
 
-    /**
-     * A row with no unit is plain text; one with a unit is a figure whose unit trails it in small.
-     *
-     * @return list<array{0: string, 1: string, 2: string|null}>
-     */
+    /** @return list<array{0: string, 1: string, 2: string|null}> */
     private function contributionRows(ContributionCertificateData $data, Locale $locale): array
     {
         $rows = [];
@@ -227,7 +211,6 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
         return $rows;
     }
 
-    /** Certificates issued before the origin was captured carry none, and print no such row. */
     private function originLabel(ContributionCertificateData $data, Locale $locale): ?string
     {
         return match ($data->origin) {
@@ -237,7 +220,6 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
         };
     }
 
-    /** @return float the line the column ends on, so the box opposite can be drawn down to it */
     private function renderDetails(ReportTcpdf $pdf, ContributionCertificateData $data, Locale $locale): float
     {
         $y = self::DETAILS_TOP;
@@ -305,7 +287,6 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
         return $pdf->GetY() + 2;
     }
 
-    /** @return float|null the bottom of the QR block, or null when there is nothing to verify */
     private function renderVerification(ReportTcpdf $pdf, ContributionCertificateData $data, Locale $locale, float $y): ?float
     {
         if (null === $data->verificationUrl) {
@@ -328,8 +309,6 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
 
         $this->setFont($pdf, 9, self::FONT_STYLE_REGULAR, self::COLOR_BODY_TEXT);
         $pdf->setXY($textLeft, $top);
-        // The link carries the verification secret, so it is only offered as a QR: written out
-        // it would be unusable to type and one more place for the token to leak from.
         $pdf->MultiCell(
             $textWidth,
             4.6,
@@ -395,7 +374,6 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
         }
     }
 
-    /** The generator hands back a data URI; TCPDF wants the raw bytes behind it. */
     private function qrPng(string $url): ?string
     {
         $dataUri = $this->qrCodeGenerator->generate($url)->path;

@@ -155,10 +155,6 @@ final class LibraryContext implements Context
         $this->uploadThroughThePicker($fileName, $token);
     }
 
-    /**
-     * The list page holds two buttons labelled "Filtrar" — the one opening the side
-     * panel and the one submitting it — so the form is reached from its own field.
-     */
     #[When('I filter the library including the shared media')]
     public function iFilterTheLibraryIncludingTheSharedMedia(): void
     {
@@ -200,10 +196,6 @@ final class LibraryContext implements Context
         );
     }
 
-    /**
-     * Reads the attribute exactly where the browser reads it: the picker
-     * widget rendered in the page holding it.
-     */
     private function pickerAttribute(string $attribute): string
     {
         $value = $this->client->getCrawler()->filter('[data-media-picker-token-value]')->attr($attribute);
@@ -225,11 +217,6 @@ final class LibraryContext implements Context
         $this->getMediaRepository()->add($media);
     }
 
-    /**
-     * The uploaded content must match the extension for real, since the mime
-     * type validation reads it from the actual file content rather than
-     * trusting the file name.
-     */
     private function createLocalFile(string $fileName): string
     {
         $path = sprintf('%s/%s', sys_get_temp_dir(), uniqid('behat-media-', true));

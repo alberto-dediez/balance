@@ -132,7 +132,6 @@ final class RegisterAttendeeSurveyResponseService
                 $overnightEmissions = $tripEmissions->overnight;
                 $overnightStayCatalogMissing = $tripEmissions->overnightStayCatalogMissing;
             } catch (\InvalidArgumentException) {
-                // Losing the answer of the attendee is worse than losing their footprint.
                 $emissionFactorGroupId = null;
                 $calculationYear = null;
             }

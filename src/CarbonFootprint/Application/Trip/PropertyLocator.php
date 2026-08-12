@@ -7,7 +7,6 @@ namespace App\CarbonFootprint\Application\Trip;
 use App\Property\Domain\Model\Property\Property;
 use App\Shared\Domain\Model\Geo\GeoPoint;
 
-/** Resolves the geographic point of a property from the coordinates stored in its info. */
 final class PropertyLocator
 {
     public function locate(?Property $property): ?GeoPoint

@@ -17,9 +17,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * Feeds the media picker embedded in any other form.
- */
 #[Route('/library/media/search', name: 'library_media_search', methods: ['GET'])]
 #[IsGranted('ROLE_USER')]
 class SearchController extends AbstractController

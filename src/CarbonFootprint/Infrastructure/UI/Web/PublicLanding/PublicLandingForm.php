@@ -20,10 +20,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
-/**
- * The landing is edited from a tab of the page of its owner (a property, an event), so the form
- * has to be built and handled from controllers that belong to other pages.
- */
 final readonly class PublicLandingForm
 {
     public function __construct(

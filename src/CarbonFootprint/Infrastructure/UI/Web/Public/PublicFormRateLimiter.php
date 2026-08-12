@@ -8,10 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 
-/**
- * Rate limiters guarding a public form reached through a token: one instance per flow,
- * so a flood on one of them never locks the others out.
- */
 final class PublicFormRateLimiter
 {
     public function __construct(
@@ -20,7 +16,6 @@ final class PublicFormRateLimiter
         private readonly RateLimiterFactory $placesLimiter,
     ) {}
 
-    /** @return Response|null The response to return right away when the client is over the limit. */
     public function check(Request $request): ?Response
     {
         $clientIp = $this->clientIp($request);

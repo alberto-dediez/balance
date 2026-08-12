@@ -21,10 +21,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * The document carries personal data, so the download hangs off the survey token the attendee
- * already holds and never off the certificate code, which is public by design.
- */
 #[Route(
     '/carbon-footprint/attendee-survey/{token}/contribution/{contributionId}/certificate',
     name: 'public_carbon_footprint_attendee_survey_contribution_certificate',

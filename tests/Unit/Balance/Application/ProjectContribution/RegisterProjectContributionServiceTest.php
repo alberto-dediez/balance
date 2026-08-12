@@ -92,7 +92,6 @@ class RegisterProjectContributionServiceTest extends TestCase
         $this->assertStringStartsWith('https://checkout.stripe.test/', $response->redirectUrl);
     }
 
-    /** Kept from the request so the certificate is not left to the language of whoever confirms the payment. */
     public function testTheLanguageOfTheGuestIsKeptWithTheContribution(): void
     {
         $sut = $this->createSUT();

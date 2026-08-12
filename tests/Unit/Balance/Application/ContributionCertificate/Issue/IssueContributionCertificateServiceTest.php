@@ -142,10 +142,6 @@ class IssueContributionCertificateServiceTest extends TestCase
         $this->assertSame($first->contributionCertificate->code(), $second->contributionCertificate->code());
     }
 
-    /**
-     * The confirmation may well run in a language of its own (the Stripe webhook carries none), so
-     * the document has to take the one the guest was contributing in.
-     */
     public function testTheCertificateIsIssuedInTheLanguageOfTheContribution(): void
     {
         $this->givenProject(ProjectType::EmissionCompensation);

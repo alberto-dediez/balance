@@ -10,10 +10,6 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 
-/**
- * Guests register contributions through the public flow, so there is no Register permission here:
- * only reading them back from the admin area is authorized.
- */
 final class ProjectContributionAuthorizer extends AbstractAuthorizer
 {
     protected function canRegister(mixed $subject, User $user): bool

@@ -326,10 +326,6 @@ final class BalanceContext implements Context
         );
     }
 
-    /**
-     * The certificate is drawn out of band, so the queue has to be drained before the thank-you page
-     * can show anything. Handling a message may queue the next one, hence the loop.
-     */
     #[When('the queued messages are processed')]
     public function theQueuedMessagesAreProcessed(): void
     {

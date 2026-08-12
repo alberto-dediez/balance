@@ -79,10 +79,6 @@ class GetAttendeeSurveyStatsService implements CommandHandler
         );
     }
 
-    /**
-     * The contributions of the survey are the ones started from its answers, so the rates compare
-     * like with like even when the attendee paid days after answering.
-     */
     private function contributions(AttendeeSurveyId $attendeeSurveyId): ContributionsSummary
     {
         $responses = $this->attendeeSurveyResponseRepository->findByAttendeeSurveyId($attendeeSurveyId);
@@ -108,9 +104,6 @@ class GetAttendeeSurveyStatsService implements CommandHandler
     }
 
     /**
-     * The rate is measured against the sum of the individual footprints, not against the total of the
-     * event: that one is extrapolated to every attendee and would make the rate incomparable.
-     *
      * @param list<AttendeeSurveyResponse> $responses
      */
     private function compensatedEmissionsRate(ProjectContributionsAggregation $contributions, array $responses): float

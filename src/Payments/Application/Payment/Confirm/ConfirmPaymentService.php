@@ -6,10 +6,6 @@ namespace App\Payments\Application\Payment\Confirm;
 
 use App\Payments\Domain\Model\Payment\PaymentRepository;
 
-/**
- * Idempotent: the webhook and the browser return may arrive in any order and more than once,
- * so confirming an already resolved payment is a no-op.
- */
 final class ConfirmPaymentService
 {
     public function __construct(private PaymentRepository $paymentRepository) {}

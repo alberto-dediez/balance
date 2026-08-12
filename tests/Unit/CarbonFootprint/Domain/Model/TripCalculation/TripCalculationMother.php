@@ -81,7 +81,6 @@ class TripCalculationMother
         return self::fromLinkId((string) TripCalculationLinkId::generate());
     }
 
-    /** Reconstituted as the repository would hand it back, so its date can be placed in the past. */
     public static function registeredAt(string $tripCalculationLinkId, string $registeredAt): TripCalculation
     {
         return new TripCalculation(

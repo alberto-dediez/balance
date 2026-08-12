@@ -21,15 +21,13 @@ interface ProjectContributionRepository
 
     public function totalResultsByFilter(ProjectContributionFilter $filter): int;
 
-    /** Tonnes held by paid contributions plus pending ones still within their reservation window. */
     public function committedTonnes(AccountId $accountId, ProjectId $projectId, \DateTimeImmutable $now): float;
 
-    /** @return array<string, float> Committed tonnes per project id, for every project of the account. */
+    /** @return array<string, float> */
     public function committedTonnesByAccount(AccountId $accountId, \DateTimeImmutable $now): array;
 
-    /** Tonnes held by pending contributions whose reservation window is still open. */
     public function reservedTonnes(AccountId $accountId, ProjectId $projectId, \DateTimeImmutable $now): float;
 
-    /** @return array<string, float> Tonnes already assigned per credit purchase id, for the account/project pair. */
+    /** @return array<string, float> */
     public function allocatedTonnesByPurchase(AccountId $accountId, ProjectId $projectId): array;
 }

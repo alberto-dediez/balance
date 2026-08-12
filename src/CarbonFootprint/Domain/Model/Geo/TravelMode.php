@@ -12,10 +12,6 @@ enum TravelMode: string
     case Walking = 'walking';
     case Flight = 'flight';
 
-    /**
-     * Multiplier applied to the great circle distance when no real route is available,
-     * so the fallback approximates the detour of an actual trip.
-     */
     public function detourFactor(): float
     {
         return match ($this) {

@@ -9,11 +9,6 @@ use App\Library\Domain\Model\Media\MediaRepository;
 use App\Library\Domain\Model\Media\MediaStorage;
 use App\Library\Domain\Model\Media\NotStoredMediaException;
 
-/**
- * Serves the media marked as public, the only one reachable without being logged in.
- *
- * Any other media is answered as if it did not exist.
- */
 class DownloadPublicMediaService
 {
     public function __construct(

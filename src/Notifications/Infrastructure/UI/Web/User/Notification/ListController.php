@@ -51,8 +51,6 @@ class ListController extends AbstractController
                 ListUserNotificationsType::class,
             );
 
-            // The recipient and channel are not exposed in the form: always force them
-            // so a stale session or tampered request cannot list other users' notifications.
             $filter->recipientId = $user->id();
             $filter->channel = NotificationChannel::Internal;
 

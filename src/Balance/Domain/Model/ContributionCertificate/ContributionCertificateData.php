@@ -6,7 +6,6 @@ namespace App\Balance\Domain\Model\ContributionCertificate;
 
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 
-/** Everything the document prints, already resolved for the locale being rendered. */
 final readonly class ContributionCertificateData
 {
     /** @param list<string> $masterSerials */

@@ -89,12 +89,7 @@ final class GetTripCalculationResultsService
         );
     }
 
-    /**
-     * The contributions of the period are the ones started from its calculations, so the rates
-     * compare like with like even when the guest paid days after answering.
-     *
-     * @param list<TripCalculation> $tripCalculations
-     */
+    /** @param list<TripCalculation> $tripCalculations */
     private function contributions(array $tripCalculations, TripCalculationsAggregation $aggregation): ContributionsSummary
     {
         $originIds = array_map(static fn(TripCalculation $tripCalculation): string => (string) $tripCalculation->id(), $tripCalculations);
@@ -166,9 +161,6 @@ final class GetTripCalculationResultsService
     }
 
     /**
-     * The factors the answers were calculated with are the ones that make their kilometres
-     * comparable, so the most recent answer of the period leads.
-     *
      * @param list<TripCalculation> $tripCalculations
      *
      * @return array{0: EmissionFactorGroupId|null, 1: int}

@@ -15,10 +15,6 @@ use App\Security\Application\Action;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
 
-/**
- * Resolves the event or property a landing hangs from: both the account it belongs to and
- * the authorization to work on it live on the owner, never on the landing itself.
- */
 final class PublicLandingOwnerLocator
 {
     public function __construct(

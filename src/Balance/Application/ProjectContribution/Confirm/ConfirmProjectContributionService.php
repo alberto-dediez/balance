@@ -25,8 +25,6 @@ final class ConfirmProjectContributionService
 
         $wasPending = $projectContribution->isPending();
 
-        // Even when there is nothing to change the aggregate is told about the payment, so that a
-        // confirmation landing on an expired or failed contribution is reported instead of lost.
         $projectContribution->pay();
 
         if (!$wasPending) {

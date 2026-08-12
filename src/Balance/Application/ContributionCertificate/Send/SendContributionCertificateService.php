@@ -14,7 +14,6 @@ use App\Shared\Domain\Model\Locale\Locale;
 use Symfony\Component\Translation\LocaleSwitcher;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/** Delivers the document as an attachment, both for the automatic email and for later resends. */
 final class SendContributionCertificateService
 {
     private const string TEMPLATE = '@balance/email/contribution-certificate.email.html.twig';
@@ -94,7 +93,6 @@ final class SendContributionCertificateService
         );
     }
 
-    /** The compensation wording is unusable for a social contribution, so even the subject differs. */
     private function subject(ContributionCertificate $contributionCertificate): string
     {
         return $contributionCertificate->isCompensation()

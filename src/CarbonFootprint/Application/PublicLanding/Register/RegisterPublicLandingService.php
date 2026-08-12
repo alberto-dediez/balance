@@ -15,7 +15,6 @@ use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 
-/** Idempotent: an owner always has exactly one landing, created empty and inactive the first time it is asked for. */
 class RegisterPublicLandingService implements CommandHandler
 {
     use RegisterHandlerTrait;

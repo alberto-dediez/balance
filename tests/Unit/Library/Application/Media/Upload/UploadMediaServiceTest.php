@@ -107,11 +107,6 @@ class UploadMediaServiceTest extends TestCase
         $this->assertTrue($media->isPublic());
     }
 
-    /**
-     * The visibility is a decision of whoever uploads the file, whatever its role: the
-     * plain users choose it in the library, and the forms embedding a media picker
-     * impose it on the file they receive.
-     */
     public function testAnyUserUploadsSharedMedia(): void
     {
         $repository = new InMemoryMediaRepository();

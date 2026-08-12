@@ -14,10 +14,6 @@ use App\Shared\Domain\Model\Locale\Translations;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-/**
- * Informative page shown before the public carbon footprint form of a property or an
- * event: whoever scans the QR lands here first whenever it is active.
- */
 class PublicLanding implements Translatable, \Stringable
 {
     use AggregateRoot;
@@ -145,7 +141,6 @@ class PublicLanding implements Translatable, \Stringable
         return $blocks;
     }
 
-    /** Whether there is enough content to be worth painting the page. */
     public function hasContent(): bool
     {
         return '' !== trim($this->title) || '' !== trim($this->intro) || [] !== $this->blocks();
@@ -213,10 +208,6 @@ class PublicLanding implements Translatable, \Stringable
         );
     }
 
-    /**
-     * Adds or overwrites the block sitting at the given position. The image and the position
-     * are shared by every language; the texts land on the translation when a locale is given.
-     */
     public function setBlock(
         int $position,
         ?MediaId $image,
@@ -273,7 +264,6 @@ class PublicLanding implements Translatable, \Stringable
         );
     }
 
-    /** Drops every block sitting beyond the given amount, so a shorter list removes the leftovers. */
     public function truncateBlocks(int $count): void
     {
         foreach ($this->blocks() as $block) {

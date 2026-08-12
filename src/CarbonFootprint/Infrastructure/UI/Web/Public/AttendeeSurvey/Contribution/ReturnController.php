@@ -73,7 +73,6 @@ class ReturnController extends AbstractController
         $paymentId = $projectContribution->paymentId();
         $payment = $paymentId instanceof PaymentId ? $paymentRepository->find($paymentId) : null;
 
-        // The webhook may not have landed yet, so the gateway state decides rather than the redirect itself.
         if ($projectContribution->isPending() && null !== $payment && $payment->isPaid()) {
             $confirmProjectContribution(new ConfirmProjectContributionRequest($projectContribution->id()));
         }

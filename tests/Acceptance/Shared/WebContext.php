@@ -16,12 +16,6 @@ use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\DomCrawler\Field\FileFormField;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/**
- * This context class contains the definitions of the steps used by the demo
- * feature file. Learn how to get started with Behat and BDD on Behat's website.
- *
- * @see http://behat.org/en/latest/quick_start.html
- */
 final class WebContext implements Context
 {
     private readonly AcceptanceClient $client;
@@ -85,7 +79,6 @@ final class WebContext implements Context
         $this->submitForm($data, $text);
     }
 
-    /** Reproduces what a form refreshing itself in the browser does: submitting it through fetch. */
     #[When('I submit a form with :data and button :text as an ajax request')]
     public function iSubmitAFormWithAsAnAjaxRequest(string $data, string $text): void
     {
@@ -146,7 +139,6 @@ final class WebContext implements Context
         $this->files = [];
     }
 
-    /** Reproduces what the autocomplete controller does in the browser: injecting the chosen option into the select. */
     #[When('I pick :value in the autocomplete :field')]
     public function iPickInTheAutocomplete(string $value, string $field): void
     {

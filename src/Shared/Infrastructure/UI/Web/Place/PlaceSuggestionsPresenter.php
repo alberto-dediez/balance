@@ -6,7 +6,6 @@ namespace App\Shared\Infrastructure\UI\Web\Place;
 
 use App\Shared\Domain\Model\Geo\PlaceSuggestion;
 
-/** Maps place suggestions to the payload the autocomplete Stimulus controller consumes. */
 final class PlaceSuggestionsPresenter
 {
     /**

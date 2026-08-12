@@ -24,9 +24,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * Uploads a new media from the picker embedded in any other form.
- */
 #[Route('/library/media/ajax-upload', name: 'library_media_ajax_upload', methods: ['POST'])]
 #[IsGranted('ROLE_USER')]
 class AjaxUploadController extends AbstractController

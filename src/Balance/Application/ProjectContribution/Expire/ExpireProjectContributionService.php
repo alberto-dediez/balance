@@ -14,12 +14,6 @@ use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 
-/**
- * Releases the reservation of a contribution whose window is over, or whose checkout session the
- * gateway already closed: waiting for the window would hold the credit back for nothing. The
- * payment is checked first, so a lost webhook confirms the contribution instead of wrongly
- * expiring a paid one.
- */
 class ExpireProjectContributionService implements CommandHandler
 {
     use RegisterHandlerTrait;

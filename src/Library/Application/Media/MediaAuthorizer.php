@@ -54,10 +54,6 @@ final class MediaAuthorizer extends AbstractAuthorizer
         return $this->canEdit($subject, $user);
     }
 
-    /**
-     * The library is scoped to the account even for the administrators: an administrator
-     * of another account is a stranger to this file.
-     */
     protected function canAdmin(mixed $subject, User $user): bool
     {
         if (!$this->belongsToUserAccount($subject, $user)) {
@@ -81,10 +77,6 @@ final class MediaAuthorizer extends AbstractAuthorizer
         return $user->hasRole(Role::Admin);
     }
 
-    /**
-     * The library is always scoped to the account of the user, whatever its role.
-     * Users without account only reach the media not belonging to any account.
-     */
     private function belongsToUserAccount(Media $media, User $user): bool
     {
         if (!$media->accountId() instanceof AccountId) {

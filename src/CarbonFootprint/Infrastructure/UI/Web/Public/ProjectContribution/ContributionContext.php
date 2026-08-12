@@ -7,7 +7,6 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 use App\Security\Domain\Model\Account\AccountId;
 
-/** Everything the checkout needs to know about the flow the contributor came from. */
 final readonly class ContributionContext
 {
     public function __construct(

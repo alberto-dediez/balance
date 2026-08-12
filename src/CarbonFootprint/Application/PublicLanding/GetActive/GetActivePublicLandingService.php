@@ -10,10 +10,6 @@ use App\Library\Domain\Model\Media\Media;
 use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Domain\Model\Media\MediaRepository;
 
-/**
- * Reads the landing shown to whoever scans the QR: no user is logged in here, so only the
- * media anyone can reach is handed over and an empty or inactive landing yields nothing.
- */
 final class GetActivePublicLandingService
 {
     public function __construct(

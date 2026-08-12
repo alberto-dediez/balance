@@ -39,7 +39,6 @@ class StripeWebhookController extends AbstractController
             return new Response('Invalid signature', Response::HTTP_BAD_REQUEST);
         }
 
-        // toArray() unwraps the StripeObject recursively; a plain (array) cast would keep its private storage.
         /** @var array<string, mixed> $object */
         $object = $event->data->object->toArray();
         $payment = $this->payment($object);
@@ -65,10 +64,6 @@ class StripeWebhookController extends AbstractController
     }
 
     /**
-     * The endpoint may receive events that are none of our business: the same Stripe account can
-     * serve several environments, and a payment may no longer exist. Those are answered with a 200
-     * instead of an exception, so Stripe stops redelivering them.
-     *
      * @param array<string, mixed> $object
      */
     private function payment(array $object): ?Payment

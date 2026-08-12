@@ -6,7 +6,6 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\Trip;
 
 use App\CarbonFootprint\Application\Trip\LegInput;
 
-/** Maps the repeatable legs of a trip block from their HTTP payload. */
 final class LegInputsHttpMapper
 {
     /**

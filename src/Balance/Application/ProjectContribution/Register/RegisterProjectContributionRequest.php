@@ -12,10 +12,6 @@ use App\Shared\Domain\Model\Locale\Locale;
 
 final class RegisterProjectContributionRequest
 {
-    /**
-     * The id is provided by the caller so that it can build the gateway return URLs
-     * before the payment session exists.
-     */
     public function __construct(
         public readonly ProjectContributionId $projectContributionId,
         public readonly AccountId $accountId,

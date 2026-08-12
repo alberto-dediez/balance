@@ -6,19 +6,10 @@ namespace App\Balance\Domain\Model\ProjectContribution;
 
 use App\Payments\Domain\Model\Vat\VatCalculator;
 
-/**
- * Turns either the emissions to offset or a freely chosen amount into the full breakdown
- * the guest sees: contribution to the project, management fee, VAT and total.
- */
 final class ContributionCalculator
 {
-    /** Ceiling of a single contribution: beyond it the gateway refuses the charge anyway. */
     public const MAX_FREE_AMOUNT = 999999.99;
 
-    /**
-     * Floor of what can be charged: the gateway rejects a checkout whose total does not reach
-     * half a unit of currency, so a smaller contribution can only fail on its way to the payment.
-     */
     public const MIN_TOTAL_AMOUNT = 0.50;
 
     public function __construct(private VatCalculator $vatCalculator) {}
@@ -115,7 +106,6 @@ final class ContributionCalculator
         );
     }
 
-    /** When the price set for the project is below its cost per tonne the fee is zero rather than negative. */
     private function managementFee(
         float $tonnes,
         float $pricePerTonne,

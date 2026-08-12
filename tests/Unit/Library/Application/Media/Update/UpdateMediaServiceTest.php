@@ -109,10 +109,6 @@ class UpdateMediaServiceTest extends TestCase
         $this->assertTrue($this->spySubscriber->lastEvent() instanceof MediaVisibilityChanged);
     }
 
-    /**
-     * The visibility belongs to whoever may edit the file, not only to the
-     * administrators of the account.
-     */
     public function testAnyUserEditingTheMediaChangesTheVisibility(): void
     {
         $repository = new InMemoryMediaRepository();

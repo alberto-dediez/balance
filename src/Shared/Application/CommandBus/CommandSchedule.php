@@ -8,15 +8,6 @@ use App\Balance\Application\ProjectContribution\Expire\ExpirePendingContribution
 use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsRequest;
 use App\Security\Application\SignatureRequest\PurgeExpired\PurgeExpiredSignatureRequestsRequest;
 
-/**
- * Hardcoded registry of commands that must be dispatched periodically.
- *
- * Add one {@see ScheduledCommand} per recurring task. The interval is
- * expressed in minutes and must be a multiple of
- * {@see ScheduledCommand::TICK_IN_MINUTES}. Wrap the inner command in a
- * {@see DeferredCommand} when it should run asynchronously through the
- * message bus instead of inline.
- */
 class CommandSchedule
 {
     /**

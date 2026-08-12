@@ -21,10 +21,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * The document carries personal data, so the download hangs off the link token the guest already
- * holds and never off the certificate code, which is public by design.
- */
 #[Route(
     '/carbon-footprint/property-trip/{token}/contribution/{contributionId}/certificate',
     name: 'public_carbon_footprint_property_trip_contribution_certificate',

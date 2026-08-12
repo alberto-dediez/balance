@@ -14,7 +14,6 @@ use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
 
-/** Turns the kilometres and the nights of a single trip into its emissions. */
 final class TripEmissionsCalculator
 {
     public function __construct(

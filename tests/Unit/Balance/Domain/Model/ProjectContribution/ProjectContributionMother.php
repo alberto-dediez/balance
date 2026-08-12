@@ -136,7 +136,6 @@ class ProjectContributionMother
         return $projectContribution;
     }
 
-    /** Still pending but past its reservation window, so it no longer holds credit. */
     public static function overdue(
         ?AccountId $accountId = null,
         ?ProjectId $projectId = null,

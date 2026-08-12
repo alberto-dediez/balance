@@ -7,13 +7,8 @@ namespace App\Balance\Infrastructure\Certificate;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateCodeGenerator;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepository;
 
-/**
- * The code is the public handle of the certificate, so it is drawn at random rather than derived
- * from the contribution: knowing one code must not let anybody walk to the next.
- */
 final class RandomContributionCertificateCodeGenerator implements ContributionCertificateCodeGenerator
 {
-    /** Ambiguous glyphs (0/O, 1/I/L, U/V) are left out so a code read off paper types back correctly. */
     private const string ALPHABET = '23456789ABCDEFGHJKMNPQRSTWXYZ';
 
     private const int GROUPS = 3;

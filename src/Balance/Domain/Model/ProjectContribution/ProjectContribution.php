@@ -84,10 +84,6 @@ class ProjectContribution
         return $this->originId;
     }
 
-    /**
-     * The name the flow the contributor came from had when they paid: the event they attended or the
-     * property they stayed at. It is copied here because only the public flow knows how to read it.
-     */
     public function originName(): ?string
     {
         return $this->originName;
@@ -188,7 +184,6 @@ class ProjectContribution
         return $this->contributorVatNumber;
     }
 
-    /** The language the guest was contributing in; the certificate is later issued in it. */
     public function locale(): Locale
     {
         return $this->locale;
@@ -239,10 +234,6 @@ class ProjectContribution
         return ProjectContributionStatus::Paid === $this->status;
     }
 
-    /**
-     * A contribution holds tonnes back from the account balance while it is paid,
-     * or still pending and within its reservation window.
-     */
     public function reservesCredit(\DateTimeImmutable $now): bool
     {
         if ($this->isPaid()) {
@@ -279,7 +270,7 @@ class ProjectContribution
         return [] !== $this->creditAllocations();
     }
 
-    /** @return list<string> Lot references backing the contribution, without repetitions and in consumption order. */
+    /** @return list<string> */
     public function masterSerials(): array
     {
         $serials = [];
@@ -377,7 +368,6 @@ class ProjectContribution
         );
     }
 
-    /** The reservation is written before the gateway is called, so the payment is attached afterwards. */
     public function linkPayment(PaymentId $paymentId): void
     {
         if ($this->paymentId instanceof PaymentId && $this->paymentId->equals($paymentId)) {
@@ -395,8 +385,6 @@ class ProjectContribution
     public function pay(): void
     {
         if ($this->status->isResolved()) {
-            // Paying twice is routine (webhook, return and cron all confirm), but paying something
-            // already expired or failed means money came in without a reservation behind it.
             if (!$this->isPaid()) {
                 $this->recordApplyAndPublish(
                     new ProjectContributionPaymentUnreconciled(
@@ -420,12 +408,7 @@ class ProjectContribution
         );
     }
 
-    /**
-     * The lots backing the contribution are written once and never revisited, so the assignment can
-     * be replayed by the confirmation arriving twice without moving the credit around.
-     *
-     * @param list<AllocatedCreditLine> $lines
-     */
+    /** @param list<AllocatedCreditLine> $lines */
     public function allocateCredits(array $lines): void
     {
         if ([] === $lines || $this->hasCreditAllocations()) {
@@ -553,9 +536,7 @@ class ProjectContribution
         );
     }
 
-    /** The contribution keeps its resolved state: the event only reports the mismatch. */
     public function applyProjectContributionPaymentUnreconciled(ProjectContributionPaymentUnreconciled $event): void {}
 
-    /** The shortfall is reported for an administrator to reconcile; the contribution itself is untouched. */
     public function applyProjectContributionCreditsUnderallocated(ProjectContributionCreditsUnderallocated $event): void {}
 }

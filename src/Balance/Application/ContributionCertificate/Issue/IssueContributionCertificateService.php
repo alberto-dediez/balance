@@ -28,10 +28,6 @@ use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Application\CommandBus\Priority;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 
-/**
- * The only place a certificate is born. Everything the document says is copied here, so the paper
- * keeps its figures however the project, its price or its registry entry move afterwards.
- */
 class IssueContributionCertificateService implements CommandHandler
 {
     use RegisterHandlerTrait;
@@ -109,8 +105,6 @@ class IssueContributionCertificateService implements CommandHandler
 
         $this->contributionCertificateRepository->add($contributionCertificate);
 
-        // Drawing the PDFs is a second deferred hop, so a retried issue never redraws documents
-        // that are already on disk.
         CommandBusDispatcher::instance()->dispatch(
             new DeferredCommand(
                 command: new GenerateContributionCertificateRequest($contributionCertificate->id()),
@@ -127,7 +121,6 @@ class IssueContributionCertificateService implements CommandHandler
         return $command instanceof IssueContributionCertificateRequest;
     }
 
-    /** A company is the one that receives the document; the person who paid stays on it as contact. */
     private function beneficiaryName(ProjectContribution $projectContribution): string
     {
         if (!$projectContribution->contributorIsCompany()) {

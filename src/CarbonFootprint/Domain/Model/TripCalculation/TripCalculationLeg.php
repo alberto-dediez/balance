@@ -100,7 +100,6 @@ class TripCalculationLeg implements TripLeg
         return $this->destinationLongitude;
     }
 
-    /** One way distance of this leg. */
     public function distanceKm(): ?float
     {
         return $this->distanceKm;

@@ -11,10 +11,6 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Shared\Domain\Model\Locale\Locale;
 
-/**
- * Immutable proof of a contribution: the figures are snapshotted when it is issued, so the document
- * keeps saying the same thing however the project or its prices change afterwards.
- */
 class ContributionCertificate implements \Stringable
 {
     use AggregateRoot;
@@ -80,10 +76,6 @@ class ContributionCertificate implements \Stringable
         return $this->code;
     }
 
-    /**
-     * The secret the QR carries. It is never printed as text: whoever scans the document reaches the
-     * verification page holding it, and the page answers with the reference to compare against paper.
-     */
     public function verificationToken(): string
     {
         return $this->verificationToken;
@@ -174,10 +166,6 @@ class ContributionCertificate implements \Stringable
         return $this->projectRegistryId;
     }
 
-    /**
-     * The flow the contribution came from, kept so the document can name the event attended or the
-     * property stayed at. Certificates issued before it was captured simply carry none.
-     */
     public function origin(): ?ProjectContributionOrigin
     {
         return $this->origin;
@@ -284,8 +272,6 @@ class ContributionCertificate implements \Stringable
                 contactName: $contactName,
                 contactEmail: $contactEmail,
                 contributorCountry: $contributorCountry,
-                // A social contribution never states a volume of emissions, so the figure is not
-                // even stored: nothing downstream can print what is not there.
                 co2eqKg: $type->isCompensation() ? $co2eqKg : null,
                 tonnes: $tonnes,
                 contributionAmount: $contributionAmount,
@@ -377,7 +363,6 @@ class ContributionCertificate implements \Stringable
         $this->failedAt = $event->occurredOn();
     }
 
-    /** Deliveries do not change the document, they are only recorded for the audit trail. */
     public function applyContributionCertificateSent(ContributionCertificateSent $event): void {}
 
     public function __toString(): string

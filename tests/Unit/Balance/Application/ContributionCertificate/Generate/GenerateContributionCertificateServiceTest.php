@@ -62,11 +62,9 @@ class GenerateContributionCertificateServiceTest extends TestCase
 
         $this->assertNotNull($rendered[0]->verificationUrl);
         $this->assertStringContainsString($certificate->verificationToken(), (string) $rendered[0]->verificationUrl);
-        // The printed reference stays off the QR: scanning it must not be a way of guessing another one.
         $this->assertStringNotContainsString($certificate->code(), (string) $rendered[0]->verificationUrl);
     }
 
-    /** It proves no retirement, but it still proves the paper is genuine. */
     public function testASocialCertificateCarriesAVerificationUrlToo(): void
     {
         $certificate = $this->givenIssuedCertificate(ContributionCertificateType::SocialContribution);
@@ -88,7 +86,6 @@ class GenerateContributionCertificateServiceTest extends TestCase
             $this->generate($certificate, new FakeContributionCertificatePdfGenerator(failOn: Locale::English));
             $this->fail('The generation was expected to fail.');
         } catch (\RuntimeException) {
-            // The exception is re-thrown on purpose so Messenger can retry the command.
         }
 
         $this->assertSame(ContributionCertificateStatus::Failed, $certificate->status());

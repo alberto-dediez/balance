@@ -35,8 +35,6 @@ class MarkAllReadController extends AbstractController
 
         $message = new TranslatableMessage('Todas las notificaciones se han marcado como leídas');
 
-        // The action is triggered from the topbar widget, so it must not force a
-        // navigation: answer the asynchronous call in place and let the page update itself.
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse(['message' => $message->trans($translator)]);
         }

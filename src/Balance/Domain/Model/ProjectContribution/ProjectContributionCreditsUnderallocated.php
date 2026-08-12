@@ -10,10 +10,6 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
-/**
- * The reservation should have kept enough credit aside, so a contribution that cannot be backed by
- * validated lots means the books do not add up and an administrator has to look at it.
- */
 final class ProjectContributionCreditsUnderallocated extends DomainEvent
 {
     protected static string $eventName = 'projectContributionCreditsUnderallocated';

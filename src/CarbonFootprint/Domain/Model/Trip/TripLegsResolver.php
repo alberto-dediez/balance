@@ -7,14 +7,8 @@ namespace App\CarbonFootprint\Domain\Model\Trip;
 use App\CarbonFootprint\Domain\Model\Geo\DistanceSource;
 use App\CarbonFootprint\Domain\Model\Geo\RouteDistanceCalculator;
 
-/**
- * Turns the chain of points of a trip block into its legs, resolving the one way
- * distance of each of them: real route first, the kilometers declared by the respondent
- * next and the great circle between both points as the last resort. It never throws.
- */
 final class TripLegsResolver
 {
-    /** Detour applied to the great circle distance when the means of transport has no travel mode. */
     private const float UNKNOWN_MODE_DETOUR_FACTOR = 1.25;
 
     public function __construct(
@@ -24,8 +18,8 @@ final class TripLegsResolver
     ) {}
 
     /**
-     * @param list<TripWaypoint>  $waypoints N points: origin, intermediate stops and destination
-     * @param list<TripLegChoice> $choices   N-1 choices, one per jump between consecutive points
+     * @param list<TripWaypoint>  $waypoints
+     * @param list<TripLegChoice> $choices
      *
      * @return list<ResolvedLeg>
      */
@@ -68,9 +62,6 @@ final class TripLegsResolver
     }
 
     /**
-     * The last choice always ends at the final point of the chain, so a chain with
-     * more points than choices collapses its tail into the last leg.
-     *
      * @param list<TripWaypoint>  $waypoints
      * @param list<TripLegChoice> $choices
      */
@@ -83,15 +74,7 @@ final class TripLegsResolver
         return $waypoints[$index + 1];
     }
 
-    /**
-     * A leg the respondent declared always represents a real trip, so a distance that
-     * collapses to zero (points inside the same block, venue and origin resolved to
-     * the same coordinates) is floored instead of discarded. Two known points are
-     * always enough to estimate it, even when the means of transport has no travel
-     * mode to route it with.
-     *
-     * @return array{0: float|null, 1: DistanceSource}
-     */
+    /** @return array{0: float|null, 1: DistanceSource} */
     private function distanceFor(TripWaypoint $origin, TripWaypoint $destination, TripLegChoice $choice): array
     {
         if (null !== $origin->point && null !== $destination->point && null !== $choice->travelMode) {

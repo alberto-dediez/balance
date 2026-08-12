@@ -143,7 +143,6 @@ class MobilityTest extends TestCase
         $this->assertNotNull($factor2024);
         $this->assertSame(Unit::Piece, $factor2023->unit());
         $this->assertSame(Unit::Piece, $factor2024->unit());
-        // Other fields are preserved.
         $this->assertSame('1.0', $factor2023->co2eq());
     }
 

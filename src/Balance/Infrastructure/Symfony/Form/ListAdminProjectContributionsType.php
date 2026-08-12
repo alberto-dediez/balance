@@ -10,7 +10,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
-/** Same filters as the account list plus the account itself, which only the superadmin can choose. */
 class ListAdminProjectContributionsType extends ListProjectContributionsType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

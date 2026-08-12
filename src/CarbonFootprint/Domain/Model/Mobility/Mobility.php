@@ -213,12 +213,7 @@ class Mobility implements Translatable, \Stringable
         );
     }
 
-    /**
-     * Reconciles the stored emission factors with the provided list: adds new ones,
-     * updates changed ones and removes the years no longer present.
-     *
-     * @param EmissionFactor[] $emissionFactors
-     */
+    /** @param EmissionFactor[] $emissionFactors */
     public function syncEmissionFactors(array $emissionFactors): void
     {
         $newKeys = [];
@@ -243,10 +238,6 @@ class Mobility implements Translatable, \Stringable
         }
     }
 
-    /**
-     * Re-stamps the unit of every stored emission factor so it always mirrors
-     * the mobility's own unit when the latter changes.
-     */
     private function restampEmissionFactorUnits(Unit $unit): void
     {
         foreach ($this->emissionFactors() as $mobilityEmissionFactor) {

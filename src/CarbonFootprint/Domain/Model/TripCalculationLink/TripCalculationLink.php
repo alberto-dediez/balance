@@ -9,7 +9,6 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
 
-/** Permanent QR of a property: it never opens nor closes, every guest answer is dated instead. */
 class TripCalculationLink implements \Stringable
 {
     use AggregateRoot;

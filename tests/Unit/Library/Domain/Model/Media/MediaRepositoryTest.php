@@ -110,10 +110,6 @@ abstract class MediaRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    /**
-     * A field requiring a given audience only offers the files already reaching it, the
-     * wider ones included.
-     */
     public function testFindByFilterByVisibilityRecoversTheMediaReachingAtLeastThatAudience(): void
     {
         $repository = $this->createSUT();

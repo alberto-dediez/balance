@@ -13,11 +13,6 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\Loader\XliffFileLoader;
 use Symfony\Component\Translation\Translator;
 
-/**
- * The document is drawn with absolute coordinates, so what it says is only half the story: whether it
- * still holds together once a block folds away cannot be asserted, only looked at. Every rendered
- * variant is therefore left under var/certificate-preview/ to be opened.
- */
 final class TcpdfContributionCertificatePdfGeneratorTest extends TestCase
 {
     private const string PREVIEW_DIRECTORY = 'var/certificate-preview';
@@ -32,13 +27,11 @@ final class TcpdfContributionCertificatePdfGeneratorTest extends TestCase
         $this->assertPreviewIsAPdf(ContributionCertificateDataMother::socialContribution(), Locale::Spanish, 'aportacion-social');
     }
 
-    /** The layout has to survive a certificate carrying none of its optional blocks. */
     public function testItDrawsACertificateWithoutOptionalBlocks(): void
     {
         $this->assertPreviewIsAPdf(ContributionCertificateDataMother::withoutOptionalBlocks(), Locale::Spanish, 'minimo');
     }
 
-    /** English runs longer than Spanish on most labels, which is where the columns give first. */
     public function testItDrawsACompensationCertificateInEnglish(): void
     {
         $this->assertPreviewIsAPdf(ContributionCertificateDataMother::compensation(), Locale::English, 'compensacion');
@@ -67,10 +60,6 @@ final class TcpdfContributionCertificatePdfGeneratorTest extends TestCase
         return new TcpdfContributionCertificatePdfGenerator($this->translator(), new QrCodeGenerator());
     }
 
-    /**
-     * The real catalogues, so the preview shows the wording that ships rather than the source ids.
-     * Symfony resolves the "messages" domain to its ICU variant on its own.
-     */
     private function translator(): Translator
     {
         $translator = new Translator(Locale::Spanish->value);

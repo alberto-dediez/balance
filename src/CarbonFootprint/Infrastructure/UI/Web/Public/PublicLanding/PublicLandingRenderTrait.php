@@ -11,12 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 trait PublicLandingRenderTrait
 {
-    /**
-     * Paints the informative page configured for the owner, or nothing at all when there is
-     * none active: the caller then falls back to sending the visitor straight to the form.
-     *
-     * @param array<string, string> $ctaRouteParams
-     */
+    /** @param array<string, string> $ctaRouteParams */
     private function renderPublicLanding(
         GetActivePublicLandingService $getActivePublicLanding,
         PublicLandingOwnerType $ownerType,

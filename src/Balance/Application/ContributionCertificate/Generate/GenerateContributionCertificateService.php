@@ -21,7 +21,6 @@ use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
 
-/** Renders the document once per configured locale, so any of them can be handed out later. */
 class GenerateContributionCertificateService implements CommandHandler
 {
     use RegisterHandlerTrait;
@@ -109,10 +108,6 @@ class GenerateContributionCertificateService implements CommandHandler
         return $command instanceof GenerateContributionCertificateRequest;
     }
 
-    /**
-     * The project name and its location are read back in the locale being rendered; the snapshot
-     * taken when the certificate was issued stands in whenever the project no longer answers.
-     */
     private function composeData(
         ContributionCertificate $contributionCertificate,
         ?Project $project,
@@ -139,8 +134,6 @@ class GenerateContributionCertificateService implements CommandHandler
             projectRegistryId: $contributionCertificate->projectRegistryId(),
             masterSerials: $contributionCertificate->masterSerials(),
             issuedAt: $contributionCertificate->issuedAt(),
-            // A social contribution has no lot to verify, but the QR still answers whether the paper
-            // is genuine. What the page says about it is decided there, not here.
             verificationUrl: $this->verificationUrlGenerator->generate($contributionCertificate->verificationToken(), $locale),
             origin: $contributionCertificate->origin(),
             originName: $contributionCertificate->originName(),

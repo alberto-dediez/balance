@@ -8,7 +8,6 @@ use App\Balance\Domain\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
-/** Every delivery of the document is recorded, first send and resends alike, for the audit trail. */
 final class ContributionCertificateSent extends DomainEvent
 {
     protected static string $eventName = 'contributionCertificateSent';

@@ -24,9 +24,6 @@ use Symfony\Component\Security\Csrf\SameOriginCsrfTokenManager;
 
 class MediaPickerTypeTest extends KernelTestCase
 {
-    /**
-     * The picker issues a CSRF token, so a request with a session is needed.
-     */
     protected function setUp(): void
     {
         $requestStack = self::getContainer()->get(RequestStack::class);
@@ -66,12 +63,6 @@ class MediaPickerTypeTest extends KernelTestCase
         $this->assertNotEmpty($attributes['data-media-picker-token-value']);
     }
 
-    /**
-     * The picker uploads through fetch(), so it cannot use one of the stateless
-     * token ids of the application: those resolve to the CSRF cookie name and are
-     * only validated together with the double-submit cookie that the
-     * csrf-protection controller writes when a form is submitted.
-     */
     public function testItIssuesARealSecretToken(): void
     {
         $attributes = $this->createForm()->createView()->children['picture']->vars['attr'];
@@ -91,10 +82,6 @@ class MediaPickerTypeTest extends KernelTestCase
         $this->assertEquals('System', $attributes['data-media-picker-visibility-value']);
     }
 
-    /**
-     * The token proves the application really asked for that visibility, so it cannot
-     * be reused to upload a file reaching a wider audience.
-     */
     public function testTheTokenIsBoundToTheRequiredVisibility(): void
     {
         $withoutVisibility = $this->createForm()->createView()->children['picture']->vars['attr'];
@@ -110,10 +97,6 @@ class MediaPickerTypeTest extends KernelTestCase
         $this->assertNotEquals(MediaPickerType::CSRF_TOKEN_ID, MediaPickerType::csrfTokenId(MediaVisibility::System));
     }
 
-    /**
-     * A file only works where it is used once it reaches the audience the field
-     * requires, so picking it widens its visibility.
-     */
     public function testThePickedMediaReachesTheRequiredVisibility(): void
     {
         $media = MediaMother::uploadedMedia();

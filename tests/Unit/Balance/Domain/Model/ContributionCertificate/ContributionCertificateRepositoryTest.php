@@ -60,7 +60,6 @@ abstract class ContributionCertificateRepositoryTest extends KernelTestCase
         $this->assertNull($repository->findByVerificationToken('not-a-token'));
     }
 
-    /** The reference printed on the document must not be a way into the verification page. */
     public function testTheCodeIsNotAVerificationToken(): void
     {
         $repository = $this->createSUT();

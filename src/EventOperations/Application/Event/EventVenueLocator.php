@@ -8,10 +8,6 @@ use App\EventOperations\Domain\Model\Event\Event;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Shared\Domain\Model\Geo\GeoPoint;
 
-/**
- * Resolves the geographic point of the venue: the coordinates explicitly set on the
- * event take precedence over the ones stored in the property of the event.
- */
 final class EventVenueLocator
 {
     public function __construct(private readonly PropertyRepository $propertyRepository) {}

@@ -10,7 +10,6 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 
 class ContributionCertificateDataMother
 {
-    /** A compensation certificate with every optional block filled: the longest the page ever gets. */
     public static function compensation(): ContributionCertificateData
     {
         return new ContributionCertificateData(
@@ -36,7 +35,6 @@ class ContributionCertificateDataMother
         );
     }
 
-    /** A company beneficiary, so the subtitle carries the VAT number and the contact person too. */
     public static function socialContribution(): ContributionCertificateData
     {
         return new ContributionCertificateData(
@@ -62,10 +60,6 @@ class ContributionCertificateDataMother
         );
     }
 
-    /**
-     * What a certificate issued before the origin was captured looks like: no flow, no location, no
-     * registry entry and no lots, so every optional block of the page has to fold away.
-     */
     public static function withoutOptionalBlocks(): ContributionCertificateData
     {
         return new ContributionCertificateData(

@@ -14,10 +14,6 @@ use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
 
-/**
- * Drawing the document takes seconds, so it is deferred: neither the Stripe webhook nor the browser
- * coming back from the gateway waits for it.
- */
 class IssueContributionCertificateOnPaidSubscriber implements DomainEventSubscriber
 {
     use RegisterTrait;
@@ -37,9 +33,6 @@ class IssueContributionCertificateOnPaidSubscriber implements DomainEventSubscri
 
         CommandBusDispatcher::instance()->dispatch(
             new DeferredCommand(
-                // No language is passed: the certificate takes the one the contribution was
-                // registered with, which is not necessarily the one this confirmation runs in
-                // (the Stripe webhook and the expiration command carry no language of their own).
                 command: new IssueContributionCertificateRequest($event->projectContributionId()),
                 priority: Priority::LOW,
             ),

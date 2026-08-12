@@ -16,9 +16,7 @@ class MediaFilter
     public ?bool $includeShared = null;
 
     /**
-     * @param list<MediaType>  $types      restricts the results to the given media types
-     * @param ?MediaVisibility $visibility restricts the results to the files reaching at
-     *                                     least that audience
+     * @param list<MediaType> $types
      */
     public function __construct(
         public ?string $name = null,

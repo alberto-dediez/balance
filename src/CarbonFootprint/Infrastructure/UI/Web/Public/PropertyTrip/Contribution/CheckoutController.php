@@ -85,8 +85,6 @@ class CheckoutController extends AbstractController
 
         $parameters = $result->parameters + ['property' => $link->property];
 
-        // The guest changing an amount or their tax data only needs the breakdown back, so the page
-        // around it is neither rendered nor replaced: what they were typing stays untouched.
         if ($request->isXmlHttpRequest()) {
             return $this->render('@carbon_footprint/public/project_contribution/_summary.html.twig', $parameters);
         }

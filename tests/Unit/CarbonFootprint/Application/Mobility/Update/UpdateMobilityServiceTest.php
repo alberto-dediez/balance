@@ -146,9 +146,7 @@ class UpdateMobilityServiceTest extends TestCase
         $persistedFactor = $mobilityPersisted->emissionFactorFor(2024, $emissionFactorGroup->id());
 
         $this->assertNotNull($persistedFactor);
-        // co2eq is respected as provided by the user (non-zero), not recomputed from co2/ch4/n2o.
         $this->assertSame('1.5', $persistedFactor->co2eq());
-        // The emission factor unit is derived from the mobility's unit, not user input.
         $this->assertSame(Unit::Piece, $persistedFactor->unit());
     }
 

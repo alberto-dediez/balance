@@ -7,10 +7,6 @@ namespace App\Balance\Infrastructure\Certificate;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepository;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateVerificationTokenGenerator;
 
-/**
- * The token travels only inside the QR, so it is drawn long and URL safe: holding the certificate,
- * or even its printed reference, must not be enough to reach anybody else's verification page.
- */
 final class RandomContributionCertificateVerificationTokenGenerator implements ContributionCertificateVerificationTokenGenerator
 {
     private const int BYTES = 32;

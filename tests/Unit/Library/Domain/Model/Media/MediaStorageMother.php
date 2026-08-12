@@ -13,9 +13,6 @@ class MediaStorageMother
         return new InMemoryMediaStorage();
     }
 
-    /**
-     * Creates a real local file so that the storage adapters have something to read.
-     */
     public static function localFile(string $contents = 'a-file'): string
     {
         $path = tempnam(sys_get_temp_dir(), 'media');

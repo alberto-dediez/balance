@@ -16,7 +16,6 @@ use App\Security\Application\AbstractAuthorizer;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 
-/** The landing is never authorized on its own: it always inherits from the event or property it belongs to. */
 final class PublicLandingAuthorizer extends AbstractAuthorizer
 {
     public function __construct(

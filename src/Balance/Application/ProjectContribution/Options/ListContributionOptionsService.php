@@ -12,10 +12,6 @@ use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\Project\ProjectRepository;
 use App\Balance\Domain\Model\Project\ProjectType;
 
-/**
- * Projects a guest may contribute to: the ones the owning account adhered to, priced,
- * and — for offsetting projects — backed by enough credit left.
- */
 final class ListContributionOptionsService
 {
     public function __construct(

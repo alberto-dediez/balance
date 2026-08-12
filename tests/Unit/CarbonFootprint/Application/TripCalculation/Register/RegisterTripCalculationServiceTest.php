@@ -129,7 +129,6 @@ class RegisterTripCalculationServiceTest extends TestCase
         $this->assertSame('Sevilla, España', $stored->originLabel());
         $this->assertFalse($response->overnightStayCatalogMissing);
 
-        // Both ends are geolocated, so the route between them wins over the declared kilometres.
         $distanceKm = $stored->legs()[0]->distanceKm();
         $this->assertNotNull($distanceKm);
 

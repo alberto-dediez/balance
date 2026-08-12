@@ -16,10 +16,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-/**
- * The guest came back from the gateway without paying. The contribution stays pending until its
- * reservation window closes, so all we do is take them back to the checkout with a notice.
- */
 #[Route(
     '/carbon-footprint/property-trip/{token}/contribution/{contributionId}/cancel',
     name: 'public_carbon_footprint_property_trip_contribution_cancel',

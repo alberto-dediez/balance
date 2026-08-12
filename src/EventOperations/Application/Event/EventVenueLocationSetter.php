@@ -8,12 +8,6 @@ use App\EventOperations\Domain\Model\Event\Event;
 use App\Shared\Domain\Model\Geo\PlaceFinder;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
 
-/**
- * Turns the place reference coming from the UI into the venue coordinates of the event.
- * Resolution is kept apart from the mutation so the provider is queried before the aggregate is touched:
- * an unresolvable reference must not leave the event half updated.
- * The place is only resolved against the provider when the reference actually changed.
- */
 final class EventVenueLocationSetter
 {
     public function __construct(private readonly PlaceFinder $placeFinder) {}

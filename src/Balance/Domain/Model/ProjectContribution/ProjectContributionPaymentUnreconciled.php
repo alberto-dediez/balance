@@ -9,10 +9,6 @@ use App\Payments\Domain\Model\Payment\PaymentId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
-/**
- * The gateway confirmed a payment for a contribution that was already resolved as expired or
- * failed: the money came in but the credit reservation is gone, so it needs manual reconciliation.
- */
 final class ProjectContributionPaymentUnreconciled extends DomainEvent
 {
     protected static string $eventName = 'projectContributionPaymentUnreconciled';

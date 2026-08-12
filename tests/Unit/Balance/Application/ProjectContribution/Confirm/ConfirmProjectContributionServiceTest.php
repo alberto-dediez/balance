@@ -94,7 +94,6 @@ class ConfirmProjectContributionServiceTest extends TestCase
         );
     }
 
-    /** The project catalogue is empty here, so credit allocation stays out of the way of these cases. */
     private static function service(ProjectContributionRepository $contributions): ConfirmProjectContributionService
     {
         return new ConfirmProjectContributionService(

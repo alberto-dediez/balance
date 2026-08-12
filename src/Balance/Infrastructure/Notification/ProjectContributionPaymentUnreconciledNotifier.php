@@ -19,7 +19,6 @@ use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
 use Symfony\Component\Translation\TranslatableMessage;
 
-/** Warns the administrators about a payment nobody can match to a live contribution. */
 class ProjectContributionPaymentUnreconciledNotifier implements DomainEventSubscriber
 {
     use RegisterTrait;

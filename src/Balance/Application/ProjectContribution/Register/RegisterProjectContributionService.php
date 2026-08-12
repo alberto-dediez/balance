@@ -22,13 +22,6 @@ use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Application\CommandBus\Priority;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
 
-/**
- * Public entry point of the compensation flow: prices the contribution, holds the credit back,
- * opens the payment and hands the guest the gateway URL.
- *
- * The hold is taken under a lock and committed before the gateway is called, so two guests can
- * never validate their availability against a credit the other one is already consuming.
- */
 final class RegisterProjectContributionService
 {
     public const SUBJECT_TYPE = 'balance.project_contribution';
@@ -81,8 +74,6 @@ final class RegisterProjectContributionService
         $projectContribution->linkPayment($payment->paymentId);
         $this->projectContributionRepository->add($projectContribution);
 
-        // Re-checked once the reservation window is over, so a guest who never came back from the
-        // gateway stops holding the credit.
         CommandBusDispatcher::instance()->dispatch(
             new DeferredCommand(
                 command: new ExpireProjectContributionRequest($id),
@@ -101,9 +92,6 @@ final class RegisterProjectContributionService
     }
 
     /**
-     * Quoting, checking the availability and writing the hold happen together: any of the three on
-     * its own would leave the window where a concurrent guest reserves the same tonnes.
-     *
      * @return array{ProjectContribution, QuoteContributionResponse}
      */
     private function reserve(
@@ -158,8 +146,6 @@ final class RegisterProjectContributionService
             contributorIsCompany: $request->contributorIsCompany,
             contributorCompanyName: $request->contributorCompanyName,
             contributorVatNumber: $request->contributorVatNumber,
-            // Kept with the contribution so the certificate is issued in the language the guest
-            // contributed in, whoever confirms the payment later.
             locale: $request->locale ?? LocaleGetter::locale(),
             expiresAt: $expiresAt,
         );

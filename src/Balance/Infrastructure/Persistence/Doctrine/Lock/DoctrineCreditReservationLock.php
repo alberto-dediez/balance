@@ -12,10 +12,6 @@ use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * The adhesion of the account to the project is unique and mandatory to contribute, so its row is
- * used as the mutex guarding the credit of that pair.
- */
 #[When(env: 'dev')]
 #[When(env: 'prod')]
 class DoctrineCreditReservationLock implements CreditReservationLock
@@ -40,7 +36,6 @@ class DoctrineCreditReservationLock implements CreditReservationLock
         );
     }
 
-    /** An account without adhesion has nothing to lock: the reservation itself rejects it afterwards. */
     private function lockAdhesion(AccountId $accountId, ProjectId $projectId): void
     {
         $qb = $this->manager->createQueryBuilder();

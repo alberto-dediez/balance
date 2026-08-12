@@ -19,10 +19,6 @@ final class DownloadContributionCertificateService
         private ContributionCertificateStorage $storage,
     ) {}
 
-    /**
-     * A logged user goes through the authorizer. A guest reaching this from the public flow arrives
-     * with no user at all: there the link token has already proved they may see it.
-     */
     public function __invoke(DownloadContributionCertificateRequest $request, ?User $user = null): DownloadContributionCertificateResponse
     {
         $contributionCertificate = $this->contributionCertificateRepository->find($request->contributionCertificateId);

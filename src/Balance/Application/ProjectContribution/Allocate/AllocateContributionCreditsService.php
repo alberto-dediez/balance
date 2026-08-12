@@ -16,13 +16,8 @@ use App\Balance\Domain\Model\ProjectContribution\AllocatedCreditLine;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Security\Domain\Model\Account\AccountId;
 
-/**
- * Ties the tonnes of a paid contribution to the validated lots that back them, oldest lot first, so
- * the certificate can print the master serial of the credits actually consumed.
- */
 final class AllocateContributionCreditsService
 {
-    /** Tonnes below this are rounding noise from the FIFO walk, not a lot worth recording. */
     private const float MIN_ALLOCATABLE_TONNES = 0.000001;
 
     public function __construct(
@@ -53,7 +48,6 @@ final class AllocateContributionCreditsService
 
         $project = $this->projectRepository->find($projectId);
 
-        // Only compensation projects retire credits: a social contribution has no lot behind it.
         if (null === $project || ProjectType::EmissionCompensation !== $project->projectType()) {
             return;
         }
@@ -109,7 +103,7 @@ final class AllocateContributionCreditsService
         return $lines;
     }
 
-    /** @return list<CreditPurchase> Validated lots of the pair, oldest resolution first. */
+    /** @return list<CreditPurchase> */
     private function validatedPurchases(AccountId $accountId, ProjectId $projectId): array
     {
         $purchases = $this->creditPurchaseRepository->findByFilter(new CreditPurchaseFilter(

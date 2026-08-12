@@ -11,9 +11,6 @@ use App\Library\Domain\Model\Media\MediaRepository;
 trait PublicGalleryTrait
 {
     /**
-     * The contributor is not logged in, so only the media anyone can reach may be painted: anything
-     * else would end up as a broken image.
-     *
      * @param array<MediaId> $gallery
      *
      * @return list<Media>

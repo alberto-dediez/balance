@@ -39,7 +39,6 @@ class CreditPurchaseMother
         return $creditPurchase;
     }
 
-    /** Reconstituted rather than replayed: the FIFO assignment orders lots by their resolution date. */
     public static function validatedAt(
         \DateTimeImmutable $resolvedAt,
         AccountId $accountId,

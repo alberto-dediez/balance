@@ -7,10 +7,6 @@ namespace App\CarbonFootprint\Domain\Model\TripCalculation;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Trip\TripLegsAccumulator;
 
-/**
- * Adds up the answers of a period as they were declared: unlike the attendee survey there is
- * no known number of guests to extrapolate them to.
- */
 final class TripCalculationsAggregator
 {
     public function __construct(private readonly TripLegsAccumulator $legsAccumulator) {}

@@ -11,7 +11,6 @@ use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
 
-/** Sends the finished document to the contributor, in the language they used to contribute. */
 class ContributionCertificateMailer implements DomainEventSubscriber
 {
     use RegisterTrait;

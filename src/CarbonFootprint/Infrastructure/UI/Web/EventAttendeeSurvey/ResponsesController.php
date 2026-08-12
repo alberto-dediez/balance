@@ -52,7 +52,6 @@ class ResponsesController extends AbstractController
         ]);
     }
 
-    /** The event may not have started its carbon footprint yet: the QR still works, there are just no figures to show. */
     private function stats(
         EventId $eventId,
         User $user,

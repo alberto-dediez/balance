@@ -14,10 +14,6 @@ use App\Balance\Domain\Model\ProjectContribution\ContributionAmounts;
 use App\Balance\Domain\Model\ProjectContribution\ContributionCalculator;
 use App\Balance\Domain\Model\ProjectContribution\ProjectNotContributableException;
 
-/**
- * Recomputes the breakdown from the project and the emissions on every request:
- * nothing the guest sees or pays is ever taken from the submitted form.
- */
 final class QuoteContributionService
 {
     public function __construct(

@@ -10,11 +10,6 @@ use App\Payments\Domain\Model\Payment\PaymentRedirect;
 use App\Payments\Infrastructure\Payment\Stripe\StripePaymentGateway;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * Stand-in for {@see StripePaymentGateway} in tests: it never reaches Stripe and returns a
- * deterministic checkout session id and URL. It reuses the Stripe gateway name so the payments
- * recorded in tests go through the same webhook path as the real ones.
- */
 #[When(env: 'test')]
 final class FakePaymentGateway implements PaymentGateway
 {

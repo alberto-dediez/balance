@@ -64,9 +64,6 @@ class NodeLister
     }
 
     /**
-     * When several targets match the current path (e.g. /delivery-logs and
-     * /delivery-logs/export), only the most specific one must be selected.
-     *
      * @param list<Node> $nodes
      */
     private function bestMatchingTarget(string $currentPath, array $nodes): ?string

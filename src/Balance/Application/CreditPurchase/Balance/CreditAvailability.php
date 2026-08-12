@@ -10,10 +10,6 @@ use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Security\Domain\Model\Account\AccountId;
 
-/**
- * Consumption crosses two aggregates — purchases give the tonnes, contributions take them —
- * so the real balance is composed here instead of inside either repository.
- */
 final class CreditAvailability
 {
     public function __construct(

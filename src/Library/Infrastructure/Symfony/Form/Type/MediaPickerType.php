@@ -68,12 +68,9 @@ class MediaPickerType extends AbstractType
             return;
         }
 
-        // Whatever the file comes from, the library or a fresh upload, it only works
-        // where it is used once it reaches the audience the field requires.
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) use ($visibility): void {
-                // POST_SUBMIT carries the view data, while the ids live in the model one
                 $this->shareSubmittedMedia($event->getForm(), $event->getForm()->getData(), $visibility);
             },
         );
@@ -102,7 +99,6 @@ class MediaPickerType extends AbstractType
             try {
                 ($this->shareMedia)(new ShareMediaRequest($mediaId, $visibility), $user);
             } catch (MediaNotFoundException) {
-                // a file removed after the form was rendered: the field validation reports it
             } catch (UnauthorizedActionException) {
                 $form->addError(new FormError('No puedes usar ese archivo en este campo'));
             }

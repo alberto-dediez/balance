@@ -6,9 +6,6 @@ namespace App\EventOperations\Application\Event;
 
 use App\Shared\Domain\Model\Geo\GeoPlace;
 
-/**
- * The outcome of resolving a place reference, ready to be applied to the event without any further failure.
- */
 final readonly class EventVenueLocationChange
 {
     private function __construct(

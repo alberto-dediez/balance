@@ -78,7 +78,6 @@ class VerifyContributionCertificateServiceTest extends TestCase
         $this->assertNull($this->verify('  '));
     }
 
-    /** The reference travels on paper in plain sight, so it must open nothing by itself. */
     public function testThePrintedCodeDoesNotVerifyTheCertificate(): void
     {
         $certificate = ContributionCertificateMother::generated();
@@ -87,7 +86,6 @@ class VerifyContributionCertificateServiceTest extends TestCase
         $this->assertNull($this->verify($certificate->code()));
     }
 
-    /** What proves the QR belongs to the document in hand is the reference coming back. */
     public function testTheResponseCarriesTheReferencePrintedOnTheDocument(): void
     {
         $certificate = ContributionCertificateMother::generated();

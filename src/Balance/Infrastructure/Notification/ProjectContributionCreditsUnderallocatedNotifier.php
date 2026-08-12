@@ -17,7 +17,6 @@ use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
 use Symfony\Component\Translation\TranslatableMessage;
 
-/** Warns the administrators about a paid contribution that no validated lot fully backs. */
 class ProjectContributionCreditsUnderallocatedNotifier implements DomainEventSubscriber
 {
     use RegisterTrait;

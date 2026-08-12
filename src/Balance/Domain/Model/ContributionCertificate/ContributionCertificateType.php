@@ -6,10 +6,6 @@ namespace App\Balance\Domain\Model\ContributionCertificate;
 
 use App\Balance\Domain\Model\Project\ProjectType;
 
-/**
- * The two documents European and Spanish environmental-claim rules keep apart: only the
- * compensation one may speak of offsetting emissions.
- */
 enum ContributionCertificateType: string
 {
     case Compensation = 'compensation';

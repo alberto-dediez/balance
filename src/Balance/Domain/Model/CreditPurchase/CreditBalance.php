@@ -32,7 +32,6 @@ final class CreditBalance
         return $this->consumedTonnes;
     }
 
-    /** Consuming more than what was purchased breaks the invariant of the balance and is never a valid state. */
     public function availableTonnes(): float
     {
         $availableTonnes = $this->purchasedTonnes - $this->consumedTonnes;

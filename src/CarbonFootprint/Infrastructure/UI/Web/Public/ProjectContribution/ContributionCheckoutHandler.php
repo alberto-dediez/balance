@@ -25,10 +25,6 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
-/**
- * Everything the checkout of a contribution does that does not depend on the flow the contributor
- * came from: the quote, the limits of the credit left and the registration of the contribution.
- */
 final class ContributionCheckoutHandler
 {
     public function __construct(
@@ -54,9 +50,6 @@ final class ContributionCheckoutHandler
             && null === $freeAmount
             && '' !== $this->amountTyped($contribution);
 
-        // A local visitor has nothing to offset, so only a free amount can be quoted — and until they
-        // type one there is no breakdown to show yet. The country decides the VAT, so without it the
-        // breakdown would be a figure the contributor is not going to be charged.
         $offersEmissions = $context->co2eqKg > 0.0;
         $canQuote = null !== $country && ($offersEmissions || null !== $freeAmount);
 
@@ -82,18 +75,12 @@ final class ContributionCheckoutHandler
             return ContributionCheckoutResult::invalid();
         }
 
-        // The free amount is only known here, so this is the earliest point where it can be checked
-        // against the credit left: without this the contributor would see a valid breakdown and only
-        // find out when paying.
         $exceedsCredit = null !== $quote
             && $quote->limitedByCredit
             && $quote->amounts->tonnes > $quote->availableTonnes;
 
-        // The gateway refuses a charge under half a euro, so the breakdown says it here instead of
-        // letting the contributor hit a payment error they cannot do anything about.
         $belowMinimum = null !== $quote && $quote->amounts->totalAmount < ContributionCalculator::MIN_TOTAL_AMOUNT;
 
-        // Every other submit only re-renders the breakdown; the payment starts on the explicit pay submit.
         if (null !== $quote && !$exceedsCredit && !$belowMinimum && $request->isMethod('POST') && isset($contribution['pay'])) {
             $redirect = $this->register($context, $routes, $projectId, $freeAmount, $country, $contribution, $request);
 
@@ -123,9 +110,6 @@ final class ContributionCheckoutHandler
     }
 
     /**
-     * The contributor can only pick from the country catalogue, so the ISO code that ends up in the
-     * invoice — and decides the VAT — is always one the application knows.
-     *
      * @return array<string, string>
      */
     private function countries(): array
@@ -156,10 +140,6 @@ final class ContributionCheckoutHandler
         return isset($countries[$country]) ? $country : null;
     }
 
-    /**
-     * Largest free amount the credit left still backs, rounded down so the amount the contributor
-     * types never lands above the availability once the breakdown rounds it to cents.
-     */
     private function maxFreeAmount(?QuoteContributionResponse $quote): ?float
     {
         if (!$quote instanceof QuoteContributionResponse || !$quote->limitedByCredit || is_infinite($quote->availableTonnes)) {
@@ -251,12 +231,7 @@ final class ContributionCheckoutHandler
         }
     }
 
-    /**
-     * Anything the contributor types that is not a plain amount within range is discarded here: the
-     * gateway would refuse it later, and notations such as "1e9" do reach this point as numeric.
-     *
-     * @param array<string, mixed> $contribution
-     */
+    /** @param array<string, mixed> $contribution */
     private function freeAmount(array $contribution): ?float
     {
         if (!$this->isFreeMode($contribution)) {

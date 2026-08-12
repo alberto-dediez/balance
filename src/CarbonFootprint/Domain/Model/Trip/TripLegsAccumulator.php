@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Domain\Model\Trip;
 
-/**
- * Adds the kilometres of a block of legs to a running total keyed by means of transport,
- * applying the number of trips, the round trip and the occupants that shared the vehicle.
- */
 final class TripLegsAccumulator
 {
     /**

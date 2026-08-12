@@ -262,7 +262,6 @@ final class ProjectContributionRegistered extends DomainEvent
             contributorIsCompany: (bool) $payload['contributorIsCompany'],
             contributorCompanyName: null !== $payload['contributorCompanyName'] ? (string) $payload['contributorCompanyName'] : null,
             contributorVatNumber: null !== $payload['contributorVatNumber'] ? (string) $payload['contributorVatNumber'] : null,
-            // Contributions registered before the language was recorded replay in the default one.
             locale: Locale::tryFrom((string) ($payload['locale'] ?? '')) ?? Locale::Spanish,
             expiresAt: new \DateTimeImmutable($payload['expiresAt']),
             paymentId: null !== $payload['paymentId'] ? new PaymentId($payload['paymentId']) : null,

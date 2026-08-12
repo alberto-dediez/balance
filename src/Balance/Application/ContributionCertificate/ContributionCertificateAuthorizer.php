@@ -10,10 +10,6 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 
-/**
- * Certificates are issued by the payment flow and never edited, so the backoffice only reads them:
- * an account may look at its own, administrators at every one.
- */
 final class ContributionCertificateAuthorizer extends AbstractAuthorizer
 {
     protected function canRegister(mixed $subject, User $user): bool

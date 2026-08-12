@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution;
 
-/**
- * Either the gateway the contributor has to be sent to, the parameters of the checkout page, or
- * nothing at all when the project cannot be reached from this flow.
- */
 final readonly class ContributionCheckoutResult
 {
     /** @param array<string, mixed> $parameters */

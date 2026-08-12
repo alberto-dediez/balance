@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace App\Payments\Domain\Model\Vat;
 
-/**
- * Applies the EU VAT rules for a B2C/B2B digital-style supply:
- * home country → domestic rate; EU consumer → destination rate (OSS);
- * EU business with a well-formed VAT number → reverse charge; outside the EU → not subject.
- */
 final class VatCalculator
 {
     /**

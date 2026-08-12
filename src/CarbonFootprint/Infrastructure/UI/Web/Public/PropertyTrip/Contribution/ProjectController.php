@@ -63,8 +63,6 @@ class ProjectController extends AbstractController
             co2eqKg: (float) $tripCalculation->emissions()->co2eq(),
         ));
 
-        // Only a project the guest could actually contribute to is worth showing: anything else
-        // would expose a project the account no longer offers here.
         $option = $options->find($projectId);
 
         if (null === $option) {
