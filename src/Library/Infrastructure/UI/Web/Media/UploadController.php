@@ -44,9 +44,7 @@ class UploadController extends AbstractController
 
         $media = new Media(MediaId::generate(), $account?->id());
 
-        $form = $this->createForm(UploadMediaType::class, null, [
-            'manage_visibility' => $authorizer->canDoThat($media, Action::Admin, $user),
-        ]);
+        $form = $this->createForm(UploadMediaType::class);
 
         try {
             $authorizer->denyUnlessCanDoThat($media, Action::Register, $user);

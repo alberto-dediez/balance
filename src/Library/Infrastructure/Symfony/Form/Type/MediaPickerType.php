@@ -4,14 +4,24 @@ declare(strict_types=1);
 
 namespace App\Library\Infrastructure\Symfony\Form\Type;
 
+use App\Library\Application\Media\Share\ShareMediaRequest;
+use App\Library\Application\Media\Share\ShareMediaService;
 use App\Library\Domain\Model\Media\Media;
 use App\Library\Domain\Model\Media\MediaId;
+use App\Library\Domain\Model\Media\MediaNotFoundException;
 use App\Library\Domain\Model\Media\MediaRepository;
 use App\Library\Domain\Model\Media\MediaType;
+use App\Library\Domain\Model\Media\MediaVisibility;
+use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\User\User;
+use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\Symfony\Form\DataTransformer\AggregateRootIdTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -20,23 +30,25 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 /**
- * Reusable field that lets any form pick an already existing media from the
- * library or upload a new one without leaving the page.
- *
  * @extends AbstractType<mixed>
  */
 class MediaPickerType extends AbstractType
 {
-    /**
-     * A session backed token id on purpose: the stateless ids listed in
-     * config/packages/csrf.yaml rely on the double-submit cookie written by the
-     * csrf-protection Stimulus controller when a form is submitted, and the
-     * picker uploads through fetch() instead.
-     */
     public const CSRF_TOKEN_ID = 'library_media_upload';
+
+    public static function csrfTokenId(?MediaVisibility $visibility): string
+    {
+        if (!$visibility instanceof MediaVisibility || MediaVisibility::Account === $visibility) {
+            return self::CSRF_TOKEN_ID;
+        }
+
+        return self::CSRF_TOKEN_ID . '_' . $visibility->value;
+    }
 
     public function __construct(
         private readonly MediaRepository $repository,
+        private readonly ShareMediaService $shareMedia,
+        private readonly LoggedUser $loggedUser,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
     ) {}
@@ -49,6 +61,52 @@ class MediaPickerType extends AbstractType
         $builder->addModelTransformer(
             new AggregateRootIdTransformer(MediaId::class),
         );
+
+        $visibility = $options['visibility'];
+
+        if (!$visibility instanceof MediaVisibility) {
+            return;
+        }
+
+        // Whatever the file comes from, the library or a fresh upload, it only works
+        // where it is used once it reaches the audience the field requires.
+        $builder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) use ($visibility): void {
+                // POST_SUBMIT carries the view data, while the ids live in the model one
+                $this->shareSubmittedMedia($event->getForm(), $event->getForm()->getData(), $visibility);
+            },
+        );
+    }
+
+    /**
+     * @param FormInterface<mixed> $form
+     */
+    private function shareSubmittedMedia(FormInterface $form, mixed $data, MediaVisibility $visibility): void
+    {
+        if (null === $data || '' === $data || [] === $data) {
+            return;
+        }
+
+        $user = $this->loggedUser->getLoggedUserOrNull();
+
+        if (!$user instanceof User) {
+            return;
+        }
+
+        foreach (is_array($data) ? $data : [$data] as $mediaId) {
+            if (!$mediaId instanceof MediaId) {
+                continue;
+            }
+
+            try {
+                ($this->shareMedia)(new ShareMediaRequest($mediaId, $visibility), $user);
+            } catch (MediaNotFoundException) {
+                // a file removed after the form was rendered: the field validation reports it
+            } catch (UnauthorizedActionException) {
+                $form->addError(new FormError('No puedes usar ese archivo en este campo'));
+            }
+        }
     }
 
     /**
@@ -60,6 +118,8 @@ class MediaPickerType extends AbstractType
         /** @var list<MediaType> $types */
         $types = $options['types'];
 
+        $visibility = $options['visibility'];
+
         $attr = $options['attr'] ?? [];
 
         $attr = array_merge($attr, [
@@ -69,29 +129,32 @@ class MediaPickerType extends AbstractType
             'data-media-picker-multiple-value' => $options['multiple'] ? 'true' : 'false',
             'data-media-picker-types-value' => implode(',', array_map(static fn(MediaType $type): string => $type->value, $types)),
             'data-media-picker-accept-value' => $options['accept'],
-            'data-media-picker-token-value' => $this->csrfTokenManager->getToken(self::CSRF_TOKEN_ID)->getValue(),
+            'data-media-picker-visibility-value' => $visibility instanceof MediaVisibility ? $visibility->value : '',
+            'data-media-picker-token-value' => $this->csrfTokenManager->getToken(self::csrfTokenId($visibility))->getValue(),
         ]);
 
         $view->vars['attr'] = $attr;
         $view->vars['multiple'] = $options['multiple'];
         $view->vars['placeholder'] = $options['placeholder'];
+        $view->vars['visibility'] = $visibility;
         $view->vars['selected'] = $this->selectedMedia($form->getData());
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            // the field holds a MediaId, never a compound object
             'data_class' => null,
             'multiple' => false,
             'types' => [],
             'accept' => '',
+            'visibility' => null,
             'placeholder' => new TranslatableMessage('No hay ningún archivo seleccionado'),
         ]);
 
         $resolver->setAllowedTypes('multiple', 'bool');
         $resolver->setAllowedTypes('types', 'array');
         $resolver->setAllowedTypes('accept', 'string');
+        $resolver->setAllowedTypes('visibility', ['null', MediaVisibility::class]);
     }
 
     public function getParent(): string

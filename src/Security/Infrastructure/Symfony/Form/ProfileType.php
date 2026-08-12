@@ -6,6 +6,7 @@ namespace App\Security\Infrastructure\Symfony\Form;
 
 use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Domain\Model\Media\MediaType;
+use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Library\Infrastructure\Symfony\Form\Type\MediaPickerType;
 use App\Shared\Infrastructure\Symfony\Form\Type\LocaleType;
 use Symfony\Component\Form\AbstractType;
@@ -28,6 +29,7 @@ class ProfileType extends AbstractType
                 'mapped' => false,
                 'types' => [MediaType::Image],
                 'accept' => 'image/*',
+                'visibility' => MediaVisibility::System,
                 'placeholder' => new TranslatableMessage('No tienes ninguna imagen de perfil'),
                 'data' => $options['picture_id'],
             ])

@@ -94,6 +94,21 @@ class DoctrineMediaRepository implements MediaRepository
             ;
         }
 
+        if ($filter->visibility instanceof MediaVisibility) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->in('m.visibility', ':visibilities'),
+                )
+                ->setParameter(
+                    'visibilities',
+                    array_map(
+                        static fn(MediaVisibility $visibility): string => $visibility->value,
+                        MediaVisibility::casesSatisfying($filter->visibility),
+                    ),
+                )
+            ;
+        }
+
         $accountScope = $qb->expr()->andX();
 
         if ($filter->accountId instanceof AccountId) {

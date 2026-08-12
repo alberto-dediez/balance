@@ -18,6 +18,12 @@ Feature:
         Then I see a text "Archivo subido correctamente"
         Then the library contains 1 files
 
+    Scenario: As a user I decide the visibility of the files I upload
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media/upload"
+        Then I see a text "Visibilidad"
+
     Scenario: As a user I can upload several files at once
         Given user "user1@dediez.software" with role "ROLE_USER" exists
         When I am logged as "user1@dediez.software"

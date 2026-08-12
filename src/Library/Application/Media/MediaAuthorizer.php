@@ -55,8 +55,8 @@ final class MediaAuthorizer extends AbstractAuthorizer
     }
 
     /**
-     * Only the administrators decide the visibility of a file: the rest of the users
-     * neither see nor know about that option.
+     * The library is scoped to the account even for the administrators: an administrator
+     * of another account is a stranger to this file.
      */
     protected function canAdmin(mixed $subject, User $user): bool
     {

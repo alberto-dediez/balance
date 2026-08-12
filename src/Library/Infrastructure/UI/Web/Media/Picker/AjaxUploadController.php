@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Library\Infrastructure\UI\Web\Media\Picker;
 
+use App\Library\Application\Media\Upload\UploadMediaRequest;
 use App\Library\Application\Media\Upload\UploadMediaService;
 use App\Library\Domain\Model\Media\MediaRepository;
 use App\Library\Domain\Model\Media\MediaType;
+use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Library\Infrastructure\Symfony\Form\Type\MediaPickerType;
 use App\Library\Infrastructure\Symfony\Http\UploadedFileMapper;
 use App\Security\Application\UnauthorizedActionException;
@@ -49,7 +51,9 @@ class AjaxUploadController extends AbstractController
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        if (!$this->isCsrfTokenValid(MediaPickerType::CSRF_TOKEN_ID, (string) $request->request->get('_token'))) {
+        $visibility = MediaVisibility::tryFrom((string) $request->request->get('visibility', '')) ?? MediaVisibility::Account;
+
+        if (!$this->isCsrfTokenValid(MediaPickerType::csrfTokenId($visibility), (string) $request->request->get('_token'))) {
             return $this->json([
                 'error' => $translator->trans('Token de seguridad inválido'),
             ], Response::HTTP_BAD_REQUEST);
@@ -68,7 +72,12 @@ class AjaxUploadController extends AbstractController
 
         try {
             $response = $uploadMedia(
-                $uploadedFileMapper($uploadedFile, $account?->id(), $user->id()),
+                $uploadedFileMapper(
+                    $uploadedFile,
+                    $account?->id(),
+                    $user->id(),
+                    new UploadMediaRequest(visibility: $visibility),
+                ),
                 $user,
             );
         } catch (UnauthorizedActionException $exception) {

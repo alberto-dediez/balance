@@ -7,6 +7,7 @@ namespace App\Library\Infrastructure\UI\Web\Media\Picker;
 use App\Library\Application\Media\List\ListMediaRequest;
 use App\Library\Application\Media\List\ListMediaService;
 use App\Library\Domain\Model\Media\MediaType;
+use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,6 +35,7 @@ class SearchController extends AbstractController
         $filter = new ListMediaRequest(
             name: $request->query->getString('query') ?: null,
             types: $this->requestedTypes($request),
+            visibility: MediaVisibility::tryFrom($request->query->getString('visibility')),
             limit: min(48, max(1, $request->query->getInt('limit', 24))),
         );
 

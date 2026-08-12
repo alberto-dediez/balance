@@ -8,6 +8,7 @@ use App\Library\Domain\Model\Media\Media;
 use App\Library\Domain\Model\Media\MediaFilter;
 use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Domain\Model\Media\MediaRepository;
+use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -103,6 +104,10 @@ class InMemoryMediaRepository implements MediaRepository
         }
 
         if ([] !== $filter->types && !in_array($media->type(), $filter->types, true)) {
+            return false;
+        }
+
+        if ($filter->visibility instanceof MediaVisibility && !$media->visibility()->satisfies($filter->visibility)) {
             return false;
         }
 

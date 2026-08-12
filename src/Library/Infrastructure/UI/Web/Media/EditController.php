@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Library\Infrastructure\UI\Web\Media;
 
-use App\Library\Application\Media\MediaAuthorizer;
 use App\Library\Application\Media\Update\UpdateMediaRequest;
 use App\Library\Application\Media\Update\UpdateMediaService;
 use App\Library\Domain\Model\Media\MediaRepository;
 use App\Library\Infrastructure\Symfony\Form\UpdateMediaType;
-use App\Security\Application\Action;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
@@ -30,7 +28,6 @@ class EditController extends AbstractController
     public function __invoke(
         string $mediaId,
         MediaRepository $mediaRepository,
-        MediaAuthorizer $authorizer,
         LoggedUser $loggedUser,
         UpdateMediaService $updateMedia,
         Request $request,
@@ -47,9 +44,7 @@ class EditController extends AbstractController
             visibility: $media->visibility(),
         );
 
-        $form = $this->createForm(UpdateMediaType::class, $updateRequest, [
-            'manage_visibility' => $authorizer->canDoThat($media, Action::Admin, $user),
-        ]);
+        $form = $this->createForm(UpdateMediaType::class, $updateRequest);
 
         try {
             $needsRedirect = $this->edit($request, $form, function ($form) use ($updateMedia, $user): void {

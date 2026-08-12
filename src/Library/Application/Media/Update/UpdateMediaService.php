@@ -43,8 +43,6 @@ class UpdateMediaService implements CommandHandler
         }
 
         if ($request->visibility !== $media->visibility()) {
-            $this->authorizer->denyUnlessCanDoThat($media, Action::Admin, $user);
-
             $media->changeVisibility($request->visibility);
         }
 

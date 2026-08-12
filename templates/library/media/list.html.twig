@@ -12,16 +12,11 @@
             'sortableBy': 'name'
         }, {
             'label': 'Tipo' | trans
-        },
-    ] %}
-
-    {% if dummy | is_authorized('admin') %}
-        {% set columns = columns | merge([{
+        }, {
             'label': 'Visibilidad' | trans,
             'sortable': false
-        }]) %}
-    {% endif %}
-
+        },
+    ] %}
 
     {% set columns = columns | merge([{
         'label': 'Tamaño' | trans,
@@ -56,10 +51,7 @@
         </td>
         <td>{{ element.type.value | trans({}, 'mediaType') }}</td>
 
-        {% if dummy | is_authorized('admin') %}
-            <td>{{ element.visibility.value | trans({}, 'mediaVisibility') }}</td>
-        {% endif %}
-
+        <td>{{ element.visibility.value | trans({}, 'mediaVisibility') }}</td>
         <td>{{ element.size | file_size }}</td>
         <td>{{ element.registeredAt | date('d/m/Y H:i') }}</td>
         <td>

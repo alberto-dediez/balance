@@ -15,6 +15,7 @@ export default class extends Controller {
         multiple: String,
         types: String,
         accept: String,
+        visibility: String,
         token: String,
     }
 
@@ -74,7 +75,7 @@ export default class extends Controller {
     search() {
         const query = this.hasQueryTarget ? this.queryTarget.value : '';
 
-        const url = `${this.searchPathValue}?query=${encodeURIComponent(query)}&types=${encodeURIComponent(this.typesValue)}`;
+        const url = `${this.searchPathValue}?query=${encodeURIComponent(query)}&types=${encodeURIComponent(this.typesValue)}&visibility=${encodeURIComponent(this.visibilityValue)}`;
 
         fetch(url, { headers: { 'Accept': 'application/json' } })
             .then(response => response.json())
@@ -215,6 +216,7 @@ export default class extends Controller {
         const body = new FormData();
         body.append('file', file);
         body.append('types', this.typesValue);
+        body.append('visibility', this.visibilityValue);
         body.append('_token', this.tokenValue);
 
         this.setFeedback(this.feedbackTarget.dataset.uploadingText);

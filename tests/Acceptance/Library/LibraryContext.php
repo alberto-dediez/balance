@@ -128,7 +128,25 @@ final class LibraryContext implements Context
     {
         $this->client->request('GET', $path);
 
-        $this->uploadThroughThePicker($fileName, $this->pickerAttribute('data-media-picker-token-value'), $this->pickerAttribute('data-media-picker-types-value'));
+        $this->uploadThroughThePicker(
+            $fileName,
+            $this->pickerAttribute('data-media-picker-token-value'),
+            $this->pickerAttribute('data-media-picker-types-value'),
+            $this->pickerAttribute('data-media-picker-visibility-value'),
+        );
+    }
+
+    #[When('I upload the file :fileName through the media picker of :path asking for the visibility :visibility')]
+    public function iUploadTheFileThroughTheMediaPickerAskingForTheVisibility(string $fileName, string $path, string $visibility): void
+    {
+        $this->client->request('GET', $path);
+
+        $this->uploadThroughThePicker(
+            $fileName,
+            $this->pickerAttribute('data-media-picker-token-value'),
+            $this->pickerAttribute('data-media-picker-types-value'),
+            $visibility,
+        );
     }
 
     #[When('I upload the file :fileName through the media picker with the token :token')]
@@ -157,18 +175,27 @@ final class LibraryContext implements Context
         $this->client->submit($form);
     }
 
+    #[Then('the file :fileName has the visibility :visibility')]
+    public function theFileHasTheVisibility(string $fileName, string $visibility): void
+    {
+        $media = $this->getMediaRepository()->findByFilter(new MediaFilter(name: $fileName, limit: 0));
+
+        Assert::assertCount(1, $media);
+        Assert::assertEquals(MediaVisibility::from($visibility), $media[0]->visibility());
+    }
+
     #[Then('the library contains :total files')]
     public function theLibraryContainsFiles(int $total): void
     {
         Assert::assertCount($total, $this->getMediaRepository()->findByFilter(new MediaFilter(limit: 0)));
     }
 
-    private function uploadThroughThePicker(string $fileName, string $token, string $types = ''): void
+    private function uploadThroughThePicker(string $fileName, string $token, string $types = '', string $visibility = ''): void
     {
         $this->client->requestWithFiles(
             'POST',
             '/es/library/media/ajax-upload',
-            ['_token' => $token, 'types' => $types],
+            ['_token' => $token, 'types' => $types, 'visibility' => $visibility],
             ['file' => new UploadedFile($this->createLocalFile($fileName), $fileName, null, null, true)],
         );
     }

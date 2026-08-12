@@ -39,16 +39,14 @@
                     {{ form_row(form.alternativeText) }}
                     {{ form_row(form.description) }}
 
-                    {% if form.visibility is defined %}
-                        {{ form_row(form.visibility) }}
+                    {{ form_row(form.visibility) }}
 
-                        {% if media.public %}
-                            <twig:View:Field label="{{ 'Enlace público' | trans }}">
-                                <a href="{{ url('library_media_public_show', {'mediaId': media.id}) }}" target="_blank" rel="noopener">
-                                    {{ url('library_media_public_show', {'mediaId': media.id}) }}
-                                </a>
-                            </twig:View:Field>
-                        {% endif %}
+                    {% if media.public %}
+                        <twig:View:Field label="{{ 'Enlace público' | trans }}">
+                            <a href="{{ url('library_media_public_show', {'mediaId': media.id}) }}" target="_blank" rel="noopener">
+                                {{ url('library_media_public_show', {'mediaId': media.id}) }}
+                            </a>
+                        </twig:View:Field>
                     {% endif %}
                 </div>
             </div>

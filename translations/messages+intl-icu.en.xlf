@@ -1533,6 +1533,10 @@
         <source>Incluye los archivos compartidos con toda la plataforma</source>
         <target>Includes the files shared with the whole platform</target>
       </trans-unit>
+      <trans-unit id="uwqnZuB" resname="Los archivos de este campo son accesibles para: {visibility}">
+        <source>Los archivos de este campo son accesibles para: {visibility}</source>
+        <target>The files of this field are accessible to: {visibility}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
