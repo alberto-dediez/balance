@@ -110,10 +110,6 @@ abstract class MediaRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    /**
-     * A field requiring a given audience only offers the files already reaching it, the
-     * wider ones included.
-     */
     public function testFindByFilterByVisibilityRecoversTheMediaReachingAtLeastThatAudience(): void
     {
         $repository = $this->createSUT();
@@ -174,7 +170,6 @@ abstract class MediaRepositoryTest extends KernelTestCase
         $repository->add(MediaMother::sharedMedia('manual.pdf', $anotherAccountId));
         $repository->add(MediaMother::sharedMedia('terms.pdf', $anotherAccountId));
 
-        // reachable by everybody, yet never published in the library of the others
         $repository->add(MediaMother::fromNameAndVisibility('avatar.png', MediaVisibility::System, $anotherAccountId));
 
         $result = $repository->findByFilter(new MediaFilter(accountId: $accountId, includeShared: true));

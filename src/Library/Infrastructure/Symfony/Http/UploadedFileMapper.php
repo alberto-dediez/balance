@@ -9,9 +9,6 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-/**
- * Translates a Symfony uploaded file into the command the application layer understands.
- */
 class UploadedFileMapper
 {
     public function __invoke(

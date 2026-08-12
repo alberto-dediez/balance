@@ -61,10 +61,6 @@ class UpdateMediaServiceTest extends TestCase
         $this->assertEquals('Logotipo', $lastEvent->alternativeText());
     }
 
-    /**
-     * The shared library would become a channel to spread spam or malware over the
-     * other accounts if any user could publish in it.
-     */
     public function testOnlyAnAdminSharesAFileWithTheOtherAccounts(): void
     {
         $repository = new InMemoryMediaRepository();
@@ -152,10 +148,6 @@ class UpdateMediaServiceTest extends TestCase
         $this->assertTrue($this->spySubscriber->lastEvent() instanceof MediaVisibilityChanged);
     }
 
-    /**
-     * The visibility belongs to whoever may edit the file, not only to the
-     * administrators of the account.
-     */
     public function testAnyUserEditingTheMediaChangesTheVisibility(): void
     {
         $repository = new InMemoryMediaRepository();

@@ -7,11 +7,6 @@ namespace App\Tests\Unit\Library\Domain\Model\Media;
 use App\Library\Domain\Model\Media\MediaVisibility;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Two independent decisions live in a file: the audience able to open it, which the
- * places using the file impose, and its presence in the library of the other accounts,
- * which only its owner decides.
- */
 class MediaTest extends TestCase
 {
     public function testWideningTheAudienceDoesNotShareTheFile(): void

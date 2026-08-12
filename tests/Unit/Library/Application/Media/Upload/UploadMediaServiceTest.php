@@ -108,11 +108,6 @@ class UploadMediaServiceTest extends TestCase
         $this->assertTrue($media->isPublic());
     }
 
-    /**
-     * The visibility is a decision of whoever uploads the file, whatever its role: the
-     * plain users choose it in the library, and the forms embedding a media picker
-     * impose it on the file they receive.
-     */
     public function testAnyUserUploadsSharedMedia(): void
     {
         $repository = new InMemoryMediaRepository();
@@ -129,14 +124,9 @@ class UploadMediaServiceTest extends TestCase
         $this->assertNotNull($media);
         $this->assertEquals(MediaVisibility::System, $media->visibility());
 
-        // widening the audience does not publish the file in the library of the others
         $this->assertFalse($media->isShared());
     }
 
-    /**
-     * The shared library would become a channel to spread spam or malware over the
-     * other accounts if any user could publish in it.
-     */
     public function testOnlyAnAdminUploadsAFileSharedWithTheOtherAccounts(): void
     {
         $repository = new InMemoryMediaRepository();

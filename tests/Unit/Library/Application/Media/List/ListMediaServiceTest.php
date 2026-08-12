@@ -133,7 +133,6 @@ class ListMediaServiceTest extends TestCase
         $repository->add(MediaMother::fromNameAndAccount('foreign.png', $foreignAccountId));
         $repository->add(MediaMother::sharedMedia('manual.pdf', $foreignAccountId));
 
-        // an avatar of another account: reachable by everybody, browsable by nobody else
         $repository->add(MediaMother::fromNameAndVisibility('avatar.png', MediaVisibility::System, $foreignAccountId));
 
         $sut = $this->createSUT($repository);

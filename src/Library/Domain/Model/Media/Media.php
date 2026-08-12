@@ -84,11 +84,6 @@ class Media implements \Stringable
         return $this->visibility;
     }
 
-    /**
-     * Shared files are browsable from the library of every account, not only the one
-     * owning them. It is a decision of the owner, unrelated to the audience the file
-     * is accessible to: an avatar reaches every user without ever being shared.
-     */
     public function isShared(): bool
     {
         return $this->shared;
@@ -199,20 +194,13 @@ class Media implements \Stringable
             ),
         );
 
-        // A file nobody outside the account may open has nothing to do in the library
-        // of the other accounts.
         if ($this->isShared() && !$visibility->isAccessibleOutsideAccount()) {
             $this->changeSharing(false);
         }
     }
 
-    /**
-     * Publishes the file in the library of every account, or withdraws it from there.
-     */
     public function changeSharing(bool $shared): void
     {
-        // Sharing a file the other accounts cannot even open would list an unusable
-        // file, so the audience follows the decision.
         if ($shared && !$this->isAccessibleOutsideAccount()) {
             $this->changeVisibility(self::visibilityReachingEveryAccount($this->visibility()));
         }
@@ -282,10 +270,6 @@ class Media implements \Stringable
         return $this->name();
     }
 
-    /**
-     * The narrowest audience letting every account reach the file, keeping a wider one
-     * already granted.
-     */
     private static function visibilityReachingEveryAccount(MediaVisibility $visibility): MediaVisibility
     {
         return $visibility->satisfies(MediaVisibility::System) ? $visibility : MediaVisibility::System;

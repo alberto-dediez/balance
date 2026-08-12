@@ -61,8 +61,6 @@ class UploadMediaType extends AbstractType
             ])
         ;
 
-        // Sharing spreads the file over every account, so it stays in the hands of the
-        // administrators: see MediaAuthorizer::canAdmin()
         if (true === $options['shareable']) {
             $builder->add('shared', CheckboxType::class, [
                 'label' => new TranslatableMessage('Compartir en la biblioteca'),

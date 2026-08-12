@@ -47,8 +47,6 @@ class UpdateMediaService implements CommandHandler
         }
 
         if ($request->shared !== $media->isShared()) {
-            // Only an administrator publishes a file in the library of every account,
-            // or withdraws it from there
             $this->authorizer->denyUnlessCanDoThat($media, Action::Admin, $user);
 
             $media->changeSharing($request->shared);

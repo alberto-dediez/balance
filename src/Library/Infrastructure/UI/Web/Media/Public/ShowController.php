@@ -15,9 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * Serves the media marked as public to anyone, even without being logged in.
- */
 #[Route('/library/public/media/{mediaId}', name: 'library_media_public_show', methods: ['GET'])]
 class ShowController extends AbstractController
 {

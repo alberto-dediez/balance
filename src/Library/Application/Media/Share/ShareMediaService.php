@@ -14,15 +14,6 @@ use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandInvokeHandlerTrait;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 
-/**
- * Widens the audience of a file up to the one a place using it requires: a profile
- * picture is useless while it stays visible only to the account owning the file.
- *
- * Unlike the visibility chosen in the library, which the user owning the file decides,
- * this one is imposed by the field the file is used in, so any user reaching the file
- * may widen it. The audience is never narrowed: a file already reaching further than
- * required is left untouched.
- */
 class ShareMediaService implements CommandHandler
 {
     use RegisterHandlerTrait;

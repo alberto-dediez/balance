@@ -35,7 +35,6 @@ class UploadMediaService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($media, Action::Register, $user);
 
-        // Only an administrator publishes a file in the library of every account
         if ($request->shared) {
             $this->authorizer->denyUnlessCanDoThat($media, Action::Admin, $user);
         }

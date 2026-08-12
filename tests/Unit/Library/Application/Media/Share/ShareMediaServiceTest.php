@@ -32,10 +32,6 @@ class ShareMediaServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
-    /**
-     * Any user widens the audience of the files it uses: it is the field requiring it,
-     * not a decision of the user, so it does not need the admin rights the library asks for.
-     */
     public function testUseCase(): void
     {
         $repository = new InMemoryMediaRepository();
@@ -58,7 +54,6 @@ class ShareMediaServiceTest extends TestCase
         $this->assertNotNull($mediaPersisted);
         $this->assertTrue($mediaPersisted->isAccessibleOutsideAccount());
 
-        // the file becomes reachable, it does not land in the library of every account
         $this->assertFalse($mediaPersisted->isShared());
 
         $this->assertTrue($this->spySubscriber->lastEvent() instanceof MediaVisibilityChanged);

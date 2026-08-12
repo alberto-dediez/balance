@@ -20,8 +20,6 @@ final class MediaAuthorizer extends AbstractAuthorizer
 
     protected function canView(mixed $subject, User $user): bool
     {
-        // Being able to open the file has nothing to do with browsing it in the library:
-        // the audience of the file is what opens the access, not the sharing.
         if ($subject->isAccessibleOutsideAccount()) {
             return true;
         }
@@ -56,14 +54,6 @@ final class MediaAuthorizer extends AbstractAuthorizer
         return $this->canEdit($subject, $user);
     }
 
-    /**
-     * The library is scoped to the account even for the administrators: an administrator
-     * of another account is a stranger to this file.
-     *
-     * Publishing a file in the library of every account is an administration action:
-     * left to any user it would turn the shared library into a channel to spread spam
-     * or malware across the accounts.
-     */
     protected function canAdmin(mixed $subject, User $user): bool
     {
         if (!$this->belongsToUserAccount($subject, $user)) {
@@ -87,10 +77,6 @@ final class MediaAuthorizer extends AbstractAuthorizer
         return $user->hasRole(Role::Admin);
     }
 
-    /**
-     * The library is always scoped to the account of the user, whatever its role.
-     * Users without account only reach the media not belonging to any account.
-     */
     private function belongsToUserAccount(Media $media, User $user): bool
     {
         if (!$media->accountId() instanceof AccountId) {
