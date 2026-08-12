@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Infrastructure\Symfony\Form;
 
 use App\CarbonFootprint\Application\PublicLanding\Update\UpdatePublicLandingRequest;
 use App\Library\Domain\Model\Media\MediaType;
+use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Library\Infrastructure\Symfony\Form\Type\MediaPickerType;
 use App\Shared\Infrastructure\Symfony\Form\Type\MarkdownEditorType;
 use Symfony\Component\Form\AbstractType;
@@ -32,6 +33,7 @@ class UpdatePublicLandingType extends AbstractType
                 'label' => new TranslatableMessage('Imagen principal'),
                 'required' => false,
                 'types' => [MediaType::Image],
+                'visibility' => MediaVisibility::Public,
             ])
             ->add('title', TextType::class, [
                 'label' => new TranslatableMessage('Título'),

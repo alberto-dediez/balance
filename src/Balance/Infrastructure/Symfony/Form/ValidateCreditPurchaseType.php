@@ -6,6 +6,7 @@ namespace App\Balance\Infrastructure\Symfony\Form;
 
 use App\Balance\Application\CreditPurchase\Validate\ValidateCreditPurchaseRequest;
 use App\Library\Domain\Model\Media\MediaType;
+use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Library\Infrastructure\Symfony\Form\Type\MediaPickerType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -43,6 +44,7 @@ class ValidateCreditPurchaseType extends AbstractType
                 'label' => new TranslatableMessage('Certificado'),
                 'required' => false,
                 'types' => [MediaType::Document, MediaType::Image],
+                'visibility' => MediaVisibility::System,
             ])
             ->add('saveAndReturn', SubmitType::class, [
                 'label' => new TranslatableMessage('Validar compra'),

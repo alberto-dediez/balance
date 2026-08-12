@@ -7,6 +7,7 @@ namespace App\Balance\Infrastructure\Symfony\Form;
 use App\Balance\Application\Project\Register\RegisterProjectRequest;
 use App\Balance\Infrastructure\Symfony\Form\Type\ProjectStatusType;
 use App\Balance\Infrastructure\Symfony\Form\Type\ProjectTypeType;
+use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Library\Infrastructure\Symfony\Form\Type\MediaPickerType;
 use App\Property\Infrastructure\Symfony\Form\Type\DestinationIdType;
 use App\Shared\Infrastructure\Symfony\Form\Type\MarkdownEditorType;
@@ -52,6 +53,7 @@ class RegisterProjectType extends AbstractType
                 'required' => false,
                 'multiple' => true,
                 'empty_data' => [],
+                'visibility' => MediaVisibility::Public,
             ])
             ->add('projectType', ProjectTypeType::class, [
                 'label' => new TranslatableMessage('Tipo de proyecto'),
