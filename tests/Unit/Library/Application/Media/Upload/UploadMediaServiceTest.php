@@ -11,7 +11,6 @@ use App\Library\Domain\Model\Media\MediaUploaded;
 use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryMediaRepository;
 use App\Library\Infrastructure\Storage\InMemoryMediaStorage;
-use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Library\Application\Media\MediaAuthorizerMother;
@@ -89,7 +88,7 @@ class UploadMediaServiceTest extends TestCase
         $this->assertTrue($media->uploadedBy()->equals($user->id()));
     }
 
-    public function testAdminsUploadSharedMedia(): void
+    public function testSharedMediaIsUploaded(): void
     {
         $repository = new InMemoryMediaRepository();
 
@@ -108,16 +107,27 @@ class UploadMediaServiceTest extends TestCase
         $this->assertTrue($media->isPublic());
     }
 
-    public function testSharedMediaIsOnlyUploadedByAdmins(): void
+    /**
+     * The visibility is a decision of whoever uploads the file, whatever its role: the
+     * plain users choose it in the library, and the forms embedding a media picker
+     * impose it on the file they receive.
+     */
+    public function testAnyUserUploadsSharedMedia(): void
     {
-        $this->expectException(UnauthorizedActionException::class);
+        $repository = new InMemoryMediaRepository();
 
-        $sut = $this->createSUT(new InMemoryMediaRepository(), MediaStorageMother::inMemory());
+        $sut = $this->createSUT($repository, MediaStorageMother::inMemory());
 
         $request = $this->createRequest();
         $request->visibility = MediaVisibility::System;
 
-        $sut($request, UserMother::fromUsernameAndRole('user@dediez.software', Role::User));
+        $result = $sut($request, UserMother::fromUsernameAndRole('user@dediez.software', Role::User));
+
+        $media = $repository->find($result->mediaId);
+
+        $this->assertNotNull($media);
+        $this->assertEquals(MediaVisibility::System, $media->visibility());
+        $this->assertTrue($media->isShared());
     }
 
     public function testIsHandle(): void

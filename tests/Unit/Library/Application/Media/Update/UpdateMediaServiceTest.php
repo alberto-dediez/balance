@@ -86,7 +86,7 @@ class UpdateMediaServiceTest extends TestCase
         $this->assertFalse($lastEvent instanceof MediaDetailsChanged);
     }
 
-    public function testAdminsChangeTheVisibility(): void
+    public function testTheVisibilityIsChanged(): void
     {
         $repository = new InMemoryMediaRepository();
 
@@ -109,10 +109,12 @@ class UpdateMediaServiceTest extends TestCase
         $this->assertTrue($this->spySubscriber->lastEvent() instanceof MediaVisibilityChanged);
     }
 
-    public function testTheVisibilityIsOnlyChangedByAdmins(): void
+    /**
+     * The visibility belongs to whoever may edit the file, not only to the
+     * administrators of the account.
+     */
+    public function testAnyUserEditingTheMediaChangesTheVisibility(): void
     {
-        $this->expectException(UnauthorizedActionException::class);
-
         $repository = new InMemoryMediaRepository();
 
         $accountId = AccountId::generate();
@@ -125,7 +127,7 @@ class UpdateMediaServiceTest extends TestCase
 
         $owner = UserMother::fromUsernameAndRoleAndAccount('owner@dediez.software', Role::Owner, $accountId);
 
-        $sut(
+        $result = $sut(
             new UpdateMediaRequest(
                 mediaId: $media->id(),
                 name: $media->name(),
@@ -133,6 +135,9 @@ class UpdateMediaServiceTest extends TestCase
             ),
             $owner,
         );
+
+        $this->assertEquals(MediaVisibility::System, $result->visibility);
+        $this->assertTrue($this->spySubscriber->lastEvent() instanceof MediaVisibilityChanged);
     }
 
     public function testUnknownMedia(): void

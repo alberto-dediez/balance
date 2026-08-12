@@ -110,6 +110,28 @@ abstract class MediaRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
+    /**
+     * A field requiring a given audience only offers the files already reaching it, the
+     * wider ones included.
+     */
+    public function testFindByFilterByVisibilityRecoversTheMediaReachingAtLeastThatAudience(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(MediaMother::fromNameAndVisibility('private.png', MediaVisibility::Account));
+        $repository->add(MediaMother::fromNameAndVisibility('manual.png', MediaVisibility::System));
+        $repository->add(MediaMother::fromNameAndVisibility('terms.png', MediaVisibility::Public));
+
+        $result = $repository->findByFilter(new MediaFilter(visibility: MediaVisibility::System));
+
+        $names = array_map(static fn($media): string => $media->name(), $result);
+
+        $this->assertCount(2, $result);
+        $this->assertContains('manual.png', $names);
+        $this->assertContains('terms.png', $names);
+        $this->assertNotContains('private.png', $names);
+    }
+
     public function testFindByFilterByAccountOnlyRecoversTheMediaOfThatAccount(): void
     {
         $repository = $this->createSUT();

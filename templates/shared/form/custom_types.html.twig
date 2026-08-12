@@ -101,6 +101,12 @@
                   data-error-text="{{ 'No se ha podido subir el archivo' | trans }}"></span>
         </div>
 
+        {% if visibility is not null and visibility.isShared %}
+            <div class="form-text">
+                {% trans with {'{visibility}': visibility.value | trans({}, 'mediaVisibility')} %}Los archivos de este campo son accesibles para: {visibility}{% endtrans %}
+            </div>
+        {% endif %}
+
         <input type="file" class="d-none" data-media-picker-target="file" data-action="change->media-picker#upload"{% if multiple %} multiple{% endif %}>
 
         <div class="modal fade" tabindex="-1" data-media-picker-target="modal">

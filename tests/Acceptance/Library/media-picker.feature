@@ -26,6 +26,18 @@ Feature:
         Then the response status should be 200
         Then I see a text "contract.pdf"
 
+    Scenario: The search only offers the files reaching the audience the field requires
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        Given media "private.png" with id "1111" exists
+        Given media "manual.png" with id "2222" and visibility "System" exists
+        Given media "terms.png" with id "3333" and visibility "Public" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media/search?visibility=System"
+        Then the response status should be 200
+        Then I see a text "manual.png"
+        Then I see a text "terms.png"
+        Then I do not see a text "private.png"
+
     Scenario: As a user I can upload a new file by ajax from a form holding a picker
         Given user "user1@dediez.software" with role "ROLE_USER" exists
         When I am logged as "user1@dediez.software"
@@ -33,6 +45,20 @@ Feature:
         Then the response status should be 200
         Then I see a text "picture.png"
         Then the library contains 1 files
+
+    Scenario: A file uploaded from a picker is born with the visibility the form requires
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        When I am logged as "user1@dediez.software"
+        When I upload the file "picture.png" through the media picker of "/es/profile"
+        Then the response status should be 200
+        Then the file "picture.png" has the visibility "System"
+
+    Scenario: An upload asking for a wider visibility than the form requires is rejected
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        When I am logged as "user1@dediez.software"
+        When I upload the file "picture.png" through the media picker of "/es/profile" asking for the visibility "Public"
+        Then the response status should be 400
+        Then the library contains 0 files
 
     Scenario: An upload of a non allowed file type is rejected
         Given user "user1@dediez.software" with role "ROLE_USER" exists

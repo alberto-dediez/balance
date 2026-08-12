@@ -37,19 +37,13 @@ class UpdateMediaType extends AbstractType
                 'required' => false,
                 'empty_data' => null,
             ])
-        ;
-
-        if (true === $options['manage_visibility']) {
-            $builder->add('visibility', EnumType::class, [
+            ->add('visibility', EnumType::class, [
                 'class' => MediaVisibility::class,
                 'label' => new TranslatableMessage('Visibilidad'),
                 'help' => new TranslatableMessage('Quién puede acceder a este archivo'),
                 'required' => true,
                 'choice_translation_domain' => 'mediaVisibility',
-            ]);
-        }
-
-        $builder
+            ])
             ->add('save', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar'),
             ])
@@ -63,9 +57,6 @@ class UpdateMediaType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => UpdateMediaRequest::class,
-            'manage_visibility' => false,
         ]);
-
-        $resolver->setAllowedTypes('manage_visibility', 'bool');
     }
 }

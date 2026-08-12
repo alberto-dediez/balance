@@ -19,6 +19,16 @@ Feature:
         Then I see a text "Tu perfil se ha actualizado correctamente"
         Then I see a text "/es/library/media/1111/show"
 
+    Scenario: A picture picked for the profile becomes visible to the whole platform
+        Given user "user@dediez.software" with role "ROLE_USER" exists
+        Given media "avatar.png" with id "1111" exists
+        When I am logged as "user@dediez.software"
+        When I go to "/es/profile"
+        When I submit a form with "preferredLocale:es|picture:1111" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then the file "avatar.png" has the visibility "System"
+
     Scenario: As a logged user I can remove my profile picture
         Given user "user@dediez.software" with role "ROLE_USER" exists
         Given media "avatar.png" with id "1111" exists

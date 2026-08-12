@@ -25,7 +25,7 @@ Feature:
         When I go to "/es/library/media/edit/9999"
         Then the response status should be 404
 
-    Scenario: As an admin I can change the visibility of a file
+    Scenario: I can change the visibility of a file
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
         Given media "logo.png" with id "1111" exists
         When I am logged as "admin@dediez.software"
@@ -37,10 +37,10 @@ Feature:
         When I go to "/es/library/media/edit/1111"
         Then I see a text "Enlace público"
 
-    Scenario: A regular user does not know about the visibility of a file
+    Scenario: A regular user also decides the visibility of a file
         Given user "user1@dediez.software" with role "ROLE_USER" exists
         Given media "logo.png" with id "1111" exists
         When I am logged as "user1@dediez.software"
         When I go to "/es/library/media/edit/1111"
         Then the response status should be 200
-        Then I do not see a text "Visibilidad"
+        Then I see a text "Visibilidad"

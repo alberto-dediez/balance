@@ -139,7 +139,7 @@ class MediaAuthorizerTest extends TestCase
         $this->assertFalse($sut->canDoThat($media, Action::Remove, $foreignAdmin));
     }
 
-    public function testOnlyAdminsManageTheVisibility(): void
+    public function testOnlyTheAdminsOfTheAccountAdministerTheMedia(): void
     {
         $sut = MediaAuthorizerMother::create();
 

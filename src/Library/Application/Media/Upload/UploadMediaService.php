@@ -35,10 +35,6 @@ class UploadMediaService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($media, Action::Register, $user);
 
-        if ($request->visibility->isShared()) {
-            $this->authorizer->denyUnlessCanDoThat($media, Action::Admin, $user);
-        }
-
         $path = $this->storage->store($id, $request->accountId, $request->extension, $request->localPath);
 
         $media->upload(

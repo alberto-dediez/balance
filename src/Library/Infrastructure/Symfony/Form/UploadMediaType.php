@@ -48,30 +48,23 @@ class UploadMediaType extends AbstractType
                 'required' => false,
                 'empty_data' => null,
             ])
-        ;
-
-        if (true === $options['manage_visibility']) {
-            $builder->add('visibility', EnumType::class, [
+            ->add('visibility', EnumType::class, [
                 'class' => MediaVisibility::class,
                 'label' => new TranslatableMessage('Visibilidad'),
                 'help' => new TranslatableMessage('Quién puede acceder a los archivos subidos'),
                 'required' => true,
                 'choice_translation_domain' => 'mediaVisibility',
-            ]);
-        }
-
-        $builder->add('register', SubmitType::class, [
-            'label' => new TranslatableMessage('Subir'),
-        ]);
+            ])
+            ->add('register', SubmitType::class, [
+                'label' => new TranslatableMessage('Subir'),
+            ])
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => UploadMediaRequest::class,
-            'manage_visibility' => false,
         ]);
-
-        $resolver->setAllowedTypes('manage_visibility', 'bool');
     }
 }

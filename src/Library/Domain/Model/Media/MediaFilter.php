@@ -16,13 +16,16 @@ class MediaFilter
     public ?bool $includeShared = null;
 
     /**
-     * @param list<MediaType> $types restricts the results to the given media types
+     * @param list<MediaType>  $types      restricts the results to the given media types
+     * @param ?MediaVisibility $visibility restricts the results to the files reaching at
+     *                                     least that audience
      */
     public function __construct(
         public ?string $name = null,
         public ?MediaType $type = null,
         public ?AccountId $accountId = null,
         public array $types = [],
+        public ?MediaVisibility $visibility = null,
         ?bool $withoutAccount = null,
         ?bool $includeShared = null,
         int $limit = 24,

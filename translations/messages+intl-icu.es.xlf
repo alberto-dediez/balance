@@ -5585,6 +5585,10 @@
         <source>Comparte este QR o su enlace con los huéspedes para recoger sus desplazamientos y sus pernoctaciones.</source>
         <target>Comparte este QR o su enlace con los huéspedes para recoger sus desplazamientos y sus pernoctaciones.</target>
       </trans-unit>
+      <trans-unit id="uwqnZuB" resname="Los archivos de este campo son accesibles para: {visibility}">
+        <source>Los archivos de este campo son accesibles para: {visibility}</source>
+        <target>Los archivos de este campo son accesibles para: {visibility}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

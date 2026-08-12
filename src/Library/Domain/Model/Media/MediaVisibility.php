@@ -35,4 +35,32 @@ enum MediaVisibility: string
     {
         return [self::System, self::Public];
     }
+
+    /**
+     * The visibilities reaching at least the given audience: a field requiring shared
+     * files accepts the wider ones too.
+     *
+     * @return list<self>
+     */
+    public static function casesSatisfying(self $required): array
+    {
+        return array_values(array_filter(
+            self::cases(),
+            static fn(self $visibility): bool => $visibility->satisfies($required),
+        ));
+    }
+
+    public function level(): int
+    {
+        return match ($this) {
+            self::Account => 0,
+            self::System => 1,
+            self::Public => 2,
+        };
+    }
+
+    public function satisfies(self $required): bool
+    {
+        return $this->level() >= $required->level();
+    }
 }
