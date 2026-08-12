@@ -43,6 +43,10 @@ use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContribution;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionId;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionRepository;
+use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLanding;
+use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLandingId;
+use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLandingOwnerType;
+use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLandingRepository;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
 use App\CarbonFootprint\Domain\Model\Trip\LegKind;
@@ -1091,6 +1095,54 @@ final readonly class CarbonFootprintContext implements Context
     public function tripCalculationLinkShouldHaveTripCalculations(string $id, int $count): void
     {
         Assert::assertCount($count, $this->getTripCalculationRepository()->findByLinkId(new TripCalculationLinkId($id)));
+    }
+
+    #[Given('active public landing for :ownerType :ownerId of account :account with title :title exists')]
+    public function activePublicLandingForOwnerOfAccountWithTitleExists(string $ownerType, string $ownerId, string $account, string $title): void
+    {
+        $publicLanding = new PublicLanding(PublicLandingId::generate());
+        $publicLanding->register(
+            ownerType: PublicLandingOwnerType::from($ownerType),
+            ownerId: $ownerId,
+            accountId: new AccountId($account),
+        );
+
+        $publicLanding->update(
+            active: true,
+            title: $title,
+            subtitle: 'Antes de empezar',
+            intro: 'Este proyecto mide su impacto.',
+            heroImage: null,
+            ctaLabel: 'Quiero calcular mi huella',
+        );
+
+        $publicLanding->setBlock(0, null, 'Por qué lo hacemos', 'Porque medir es el primer paso.');
+
+        $this->getPublicLandingRepository()->add($publicLanding);
+    }
+
+    #[Then('public landing for :ownerType :ownerId should be active with title :title')]
+    public function publicLandingForOwnerShouldBeActiveWithTitle(string $ownerType, string $ownerId, string $title): void
+    {
+        $publicLanding = $this->getPublicLandingRepository()->findByOwner(PublicLandingOwnerType::from($ownerType), $ownerId);
+
+        Assert::assertNotNull($publicLanding);
+        Assert::assertTrue($publicLanding->isActive());
+        Assert::assertSame($title, $publicLanding->title());
+    }
+
+    #[Then('public landing for :ownerType :ownerId should have :count blocks')]
+    public function publicLandingForOwnerShouldHaveBlocks(string $ownerType, string $ownerId, int $count): void
+    {
+        $publicLanding = $this->getPublicLandingRepository()->findByOwner(PublicLandingOwnerType::from($ownerType), $ownerId);
+
+        Assert::assertNotNull($publicLanding);
+        Assert::assertCount($count, $publicLanding->blocks());
+    }
+
+    private function getPublicLandingRepository(): PublicLandingRepository
+    {
+        return $this->client->getContainer()->get(PublicLandingRepository::class);
     }
 
     private function getTripCalculationLinkRepository(): TripCalculationLinkRepository

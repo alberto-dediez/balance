@@ -1,0 +1,25 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('properties') }}" />
+{% endblock %}
+
+{% set page_title = ('Propiedades' | trans)
+    ~ ' > '
+    ~ ('Calculadora' | trans)
+    ~ ' > '
+    ~ property.name %}
+
+{% block content %}
+    {% if property.accountId %}
+        <twig:Card title="{{ 'Calculadora de huella de huéspedes' | trans }}">
+            <p class="text-muted">
+                {{ 'Comparte este QR o su enlace con los huéspedes para recoger sus desplazamientos y sus pernoctaciones.' | trans }}
+            </p>
+
+            <twig:CarbonFootprint:PropertyTripQr propertyId="{{ property.id }}" />
+        </twig:Card>
+    {% endif %}
+
+    {% include '@carbon_footprint/public_landing/_tab.html.twig' with {form: landingForm} %}
+{% endblock %}

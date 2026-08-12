@@ -1,9 +1,72 @@
+// In-page tabs: the whole tabbed area is a single card and the tabs live in its header, so the
+// active one is underlined against the rule that separates the header from the panel.
+.tabs-card {
+    > .card-header {
+        padding: 0 $card-spacer-x !important;
+        background-color: transparent;
+    }
+}
+
+.page-tabs {
+    gap: 24px;
+    border-bottom: 0;
+
+    .nav-link {
+        margin-bottom: -1px;
+        padding: 18px 0;
+        color: var(--bs-secondary-color);
+        font-weight: 500;
+        background-color: transparent;
+        border: 0;
+        border-bottom: 3px solid transparent;
+        border-radius: 0;
+        transition: color 0.2s ease, border-color 0.2s ease;
+
+        &:hover:not(.active) {
+            color: var(--bs-body-color);
+            border-bottom-color: $border-color;
+        }
+
+        &.active {
+            color: $nav-tabs-link-active-color;
+            font-weight: 600;
+            border-bottom-color: $nav-tabs-link-active-color;
+        }
+    }
+}
+
+// The panes are written with cards, which inside the tabs card become plain sections.
+.tab-content-flush {
+    .card {
+        margin-bottom: 0;
+        background-color: transparent;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .card + .card {
+        border-top: 1px solid $border-color;
+    }
+
+    .card > .card-header {
+        padding-left: 0;
+        padding-right: 0;
+        background-color: transparent;
+        border-bottom: 0;
+    }
+
+    .card > .card-body {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
 .nav-pills {
     .nav-link {
         border-bottom: 2px solid transparent;
     }
 
-    .nav-link.active, 
+    .nav-link.active,
     &.show > .nav-link {
         border-bottom: 2px solid $nav-pills-link-active-color;
         transition: border 0.3s ease;
@@ -41,7 +104,7 @@
 .language-switch {
     .nav-link > * {
         border: 3px solid transparent;
-        transition: border 0.3 ease;    
+        transition: border 0.3 ease;
     }
 
     .nav-link.active > * {

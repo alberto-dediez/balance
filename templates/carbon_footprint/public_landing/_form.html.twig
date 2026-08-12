@@ -1,0 +1,74 @@
+{#
+    Shared by the property and the event tabs: the composition of the public page is always
+    the same, only its content changes.
+#}
+
+<twig:Card title="{{ 'Página de bienvenida' | trans }}">
+    <p class="text-muted">
+        {{ 'Quien escanee el QR verá esta pantalla antes del formulario. Si la desactivas, irá directamente a la calculadora.' | trans }}
+    </p>
+
+    {{ form_row(form.active) }}<twig:Card title="{{ 'Cabecera' | trans }}">
+        <div class="row">
+            <div class="col-12 col-md-6">
+                {{ form_row(form.heroImage) }}
+            </div>
+            <div class="col-12 col-md-6">
+                {{ form_row(form.title) }}
+                {{ form_row(form.subtitle) }}
+            </div>
+        </div>
+    </twig:Card>
+
+    <twig:Card title="{{ 'Introducción' | trans }}">
+        {{ form_row(form.intro) }}
+    </twig:Card>
+
+    <twig:Card title="{{ 'Bloques de contenido' | trans }}">
+        {% set blockPrototype %}
+            <div class="collection-element border rounded p-3 mb-3">
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-action="collection#remove">
+                        <twig:Icon name="solar:trash-bin-minimalistic-outline" />
+                    </button>
+                </div>
+                {% include '@carbon_footprint/public_landing/_block_fields.html.twig' with {block: form.blocks.vars.prototype} %}
+            </div>
+        {% endset %}
+
+        <div
+            data-controller="collection"
+            data-collection-prototype-value="{{ blockPrototype | e('html_attr') }}"
+        >
+            <div class="collection">
+                {% for blockForm in form.blocks %}
+                    <div class="collection-element border rounded p-3 mb-3">
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-action="collection#remove">
+                                <twig:Icon name="solar:trash-bin-minimalistic-outline" />
+                            </button>
+                        </div>
+                        {% include '@carbon_footprint/public_landing/_block_fields.html.twig' with {block: blockForm} %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <button type="button" class="btn btn-outline-info" data-action="collection#add">
+                <twig:Icon name="solar:add-circle-outline" />
+                {{ 'Añadir bloque' | trans }}
+            </button>
+        </div>
+
+        {% do form.blocks.setRendered %}
+    </twig:Card>
+
+    <twig:Card title="{{ 'Botón' | trans }}">
+        <div class="row">
+            <div class="col-12 col-md-6">
+                {{ form_row(form.ctaLabel) }}
+            </div>
+        </div>
+    </twig:Card>
+</twig:Card>
+
+

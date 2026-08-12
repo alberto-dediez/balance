@@ -147,7 +147,7 @@
       </trans-unit>
       <trans-unit id="hrL9ZOh" resname="Guardar">
         <source>Guardar</source>
-        <target>Save</target>
+        <target>Save welcome page</target>
       </trans-unit>
       <trans-unit id="0WQ3rNG" resname="Guardar y salir">
         <source>Guardar y salir</source>
@@ -5504,6 +5504,86 @@
       <trans-unit id="pvS7yi7" resname="Reenviar certificado">
         <source>Reenviar certificado</source>
         <target>Resend certificate</target>
+      </trans-unit>
+      <trans-unit id="p0flFpa" resname="Página de bienvenida actualizada con éxito">
+        <source>Página de bienvenida actualizada con éxito</source>
+        <target>Welcome page updated successfully</target>
+      </trans-unit>
+      <trans-unit id="N8_sXf2" resname="Mostrar la página de bienvenida antes del formulario">
+        <source>Mostrar la página de bienvenida antes del formulario</source>
+        <target>Show the welcome page before the form</target>
+      </trans-unit>
+      <trans-unit id="TDPI6Zz" resname="Imagen principal">
+        <source>Imagen principal</source>
+        <target>Main image</target>
+      </trans-unit>
+      <trans-unit id="4ln2Gzy" resname="Título">
+        <source>Título</source>
+        <target>Title</target>
+      </trans-unit>
+      <trans-unit id="rTqvj9P" resname="Subtítulo">
+        <source>Subtítulo</source>
+        <target>Subtitle</target>
+      </trans-unit>
+      <trans-unit id="iGGSwQa" resname="Introducción">
+        <source>Introducción</source>
+        <target>Introduction</target>
+      </trans-unit>
+      <trans-unit id="MpkRLf1" resname="Texto del botón">
+        <source>Texto del botón</source>
+        <target>Button text</target>
+      </trans-unit>
+      <trans-unit id="QN0PtnJ" resname="Imagen">
+        <source>Imagen</source>
+        <target>Image</target>
+      </trans-unit>
+      <trans-unit id="Y8lA9Kj" resname="Texto">
+        <source>Texto</source>
+        <target>Text</target>
+      </trans-unit>
+      <trans-unit id="_dDtknP" resname="Página de bienvenida">
+        <source>Página de bienvenida</source>
+        <target>Welcome page</target>
+      </trans-unit>
+      <trans-unit id="0iwruPd" resname="Quien escanee el QR verá esta pantalla antes del formulario. Si la desactivas, irá directamente a la calculadora.">
+        <source>Quien escanee el QR verá esta pantalla antes del formulario. Si la desactivas, irá directamente a la calculadora.</source>
+        <target>Whoever scans the QR will see this screen before the form. If you turn it off, they will go straight to the calculator.</target>
+      </trans-unit>
+      <trans-unit id="t5qzfyR" resname="Añadir bloque">
+        <source>Añadir bloque</source>
+        <target>Add block</target>
+      </trans-unit>
+      <trans-unit id="KH3FoOq" resname="Cabecera">
+        <source>Cabecera</source>
+        <target>Header</target>
+      </trans-unit>
+      <trans-unit id="O4FhO.1" resname="Bloques de contenido">
+        <source>Bloques de contenido</source>
+        <target>Content blocks</target>
+      </trans-unit>
+      <trans-unit id="FDKKWsg" resname="Botón">
+        <source>Botón</source>
+        <target>Button</target>
+      </trans-unit>
+      <trans-unit id="ve.Ulzw" resname="Comparte este QR o su enlace con los asistentes para recoger su movilidad y sus pernoctaciones.">
+        <source>Comparte este QR o su enlace con los asistentes para recoger su movilidad y sus pernoctaciones.</source>
+        <target>Share this QR or its link with the attendees to collect their mobility and overnight stays.</target>
+      </trans-unit>
+      <trans-unit id="_e5nVGP" resname="Este evento todavía no tiene un cálculo de huella de carbono, así que aún no hay emisiones que mostrar.">
+        <source>Este evento todavía no tiene un cálculo de huella de carbono, así que aún no hay emisiones que mostrar.</source>
+        <target>This event does not have a carbon footprint calculation yet, so there are no emissions to show.</target>
+      </trans-unit>
+      <trans-unit id="S.RCtwb" resname="Encuesta">
+        <source>Encuesta</source>
+        <target>Survey</target>
+      </trans-unit>
+      <trans-unit id="canR0mm" resname="Calculadora">
+        <source>Calculadora</source>
+        <target>Calculator</target>
+      </trans-unit>
+      <trans-unit id="iCjN3bJ" resname="Comparte este QR o su enlace con los huéspedes para recoger sus desplazamientos y sus pernoctaciones.">
+        <source>Comparte este QR o su enlace con los huéspedes para recoger sus desplazamientos y sus pernoctaciones.</source>
+        <target>Share this QR or its link with the guests to collect their trips and overnight stays.</target>
       </trans-unit>
     </body>
   </file>

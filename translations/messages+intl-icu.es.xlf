@@ -5505,6 +5505,86 @@
         <source>Reenviar certificado</source>
         <target>Reenviar certificado</target>
       </trans-unit>
+      <trans-unit id="p0flFpa" resname="Página de bienvenida actualizada con éxito">
+        <source>Página de bienvenida actualizada con éxito</source>
+        <target>Página de bienvenida actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id="N8_sXf2" resname="Mostrar la página de bienvenida antes del formulario">
+        <source>Mostrar la página de bienvenida antes del formulario</source>
+        <target>Mostrar la página de bienvenida antes del formulario</target>
+      </trans-unit>
+      <trans-unit id="TDPI6Zz" resname="Imagen principal">
+        <source>Imagen principal</source>
+        <target>Imagen principal</target>
+      </trans-unit>
+      <trans-unit id="4ln2Gzy" resname="Título">
+        <source>Título</source>
+        <target>Título</target>
+      </trans-unit>
+      <trans-unit id="rTqvj9P" resname="Subtítulo">
+        <source>Subtítulo</source>
+        <target>Subtítulo</target>
+      </trans-unit>
+      <trans-unit id="iGGSwQa" resname="Introducción">
+        <source>Introducción</source>
+        <target>Introducción</target>
+      </trans-unit>
+      <trans-unit id="MpkRLf1" resname="Texto del botón">
+        <source>Texto del botón</source>
+        <target>Texto del botón</target>
+      </trans-unit>
+      <trans-unit id="QN0PtnJ" resname="Imagen">
+        <source>Imagen</source>
+        <target>Imagen</target>
+      </trans-unit>
+      <trans-unit id="Y8lA9Kj" resname="Texto">
+        <source>Texto</source>
+        <target>Texto</target>
+      </trans-unit>
+      <trans-unit id="_dDtknP" resname="Página de bienvenida">
+        <source>Página de bienvenida</source>
+        <target>Página de bienvenida</target>
+      </trans-unit>
+      <trans-unit id="0iwruPd" resname="Quien escanee el QR verá esta pantalla antes del formulario. Si la desactivas, irá directamente a la calculadora.">
+        <source>Quien escanee el QR verá esta pantalla antes del formulario. Si la desactivas, irá directamente a la calculadora.</source>
+        <target>Quien escanee el QR verá esta pantalla antes del formulario. Si la desactivas, irá directamente a la calculadora.</target>
+      </trans-unit>
+      <trans-unit id="t5qzfyR" resname="Añadir bloque">
+        <source>Añadir bloque</source>
+        <target>Añadir bloque</target>
+      </trans-unit>
+      <trans-unit id="KH3FoOq" resname="Cabecera">
+        <source>Cabecera</source>
+        <target>Cabecera</target>
+      </trans-unit>
+      <trans-unit id="O4FhO.1" resname="Bloques de contenido">
+        <source>Bloques de contenido</source>
+        <target>Bloques de contenido</target>
+      </trans-unit>
+      <trans-unit id="FDKKWsg" resname="Botón">
+        <source>Botón</source>
+        <target>Botón</target>
+      </trans-unit>
+      <trans-unit id="ve.Ulzw" resname="Comparte este QR o su enlace con los asistentes para recoger su movilidad y sus pernoctaciones.">
+        <source>Comparte este QR o su enlace con los asistentes para recoger su movilidad y sus pernoctaciones.</source>
+        <target>Comparte este QR o su enlace con los asistentes para recoger su movilidad y sus pernoctaciones.</target>
+      </trans-unit>
+      <trans-unit id="_e5nVGP" resname="Este evento todavía no tiene un cálculo de huella de carbono, así que aún no hay emisiones que mostrar.">
+        <source>Este evento todavía no tiene un cálculo de huella de carbono, así que aún no hay emisiones que mostrar.</source>
+        <target>Este evento todavía no tiene un cálculo de huella de carbono, así que aún no hay emisiones que mostrar.</target>
+      </trans-unit>
+      <trans-unit id="S.RCtwb" resname="Encuesta">
+        <source>Encuesta</source>
+        <target>Encuesta</target>
+      </trans-unit>
+      <trans-unit id="canR0mm" resname="Calculadora">
+        <source>Calculadora</source>
+        <target>Calculadora</target>
+      </trans-unit>
+      <trans-unit id="iCjN3bJ" resname="Comparte este QR o su enlace con los huéspedes para recoger sus desplazamientos y sus pernoctaciones.">
+        <source>Comparte este QR o su enlace con los huéspedes para recoger sus desplazamientos y sus pernoctaciones.</source>
+        <target>Comparte este QR o su enlace con los huéspedes para recoger sus desplazamientos y sus pernoctaciones.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

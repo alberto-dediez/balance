@@ -1,0 +1,100 @@
+{% extends '@shared/layout/public.html.twig' %}
+
+{#
+    Variables expected from the controller:
+      publicLanding — the configured landing
+      images — public media indexed by media id, so a private or missing image is simply skipped
+      ownerName — event or property name, used as a fallback title
+      ctaPath — where the button sends the visitor
+#}
+
+{% set page_title = publicLanding.title | default(ownerName) %}
+
+{% block page_header %}{% endblock %}
+
+{% block content %}
+    {% set ctaLabel = publicLanding.ctaLabel %}
+    {% set ctaLabel = ctaLabel is empty ? 'Calcular mi huella' | trans : ctaLabel %}
+    {% set heroImageKey = publicLanding.heroImage ~ '' %}
+    {% set heroImage = images[heroImageKey] | default(null) %}
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-8">
+            <div class="card overflow-hidden mb-4">
+                {% if heroImage %}
+                    <img src="{{ path('library_media_public_show', {mediaId: heroImageKey}) }}"
+                         alt="{{ heroImage.alternativeText | default(publicLanding.title | default(ownerName)) }}"
+                         class="w-100 object-fit-cover"
+                         style="max-height: 22rem;">
+                {% endif %}
+
+                <div class="card-body text-center p-4 p-md-5">
+                    <p class="text-uppercase text-muted small fw-semibold mb-2">{{ ownerName }}</p>
+
+                    {% if publicLanding.title %}
+                        <h1 class="fw-semibold fs-3 mb-2">{{ publicLanding.title }}</h1>
+                    {% endif %}
+
+                    {% if publicLanding.subtitle %}
+                        <p class="text-muted fs-4 mb-0">{{ publicLanding.subtitle }}</p>
+                    {% endif %}
+
+                    <div class="d-grid d-sm-inline-block mt-4">
+                        <a class="btn btn-primary btn-lg px-4" href="{{ ctaPath }}">
+                            {{ ctaLabel }}
+                            <twig:Icon name="solar:alt-arrow-right-line-duotone" class="ms-1" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {% if publicLanding.intro %}
+                <div class="card mb-4">
+                    <div class="card-body p-4 p-md-5">
+                        {{ publicLanding.intro | md_to_html }}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% for block in publicLanding.blocks %}
+                {% set blockImageKey = block.image ~ '' %}
+                {% set blockImage = images[blockImageKey] | default(null) %}
+
+                <div class="card mb-4">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="row g-4 align-items-center {{ loop.index is odd ? '' : 'flex-md-row-reverse' }}">
+                            {% if blockImage %}
+                                <div class="col-12 col-md-5">
+                                    <img src="{{ path('library_media_public_show', {mediaId: blockImageKey}) }}"
+                                         alt="{{ blockImage.alternativeText | default(block.title) }}"
+                                         class="rounded w-100 object-fit-cover"
+                                         style="max-height: 16rem;"
+                                         loading="lazy">
+                                </div>
+                            {% endif %}
+
+                            <div class="col-12 {{ blockImage ? 'col-md-7' : '' }}">
+                                {% if block.title %}
+                                    <h2 class="fw-semibold fs-5 mb-2">{{ block.title }}</h2>
+                                {% endif %}
+
+                                {% if block.text %}
+                                    <div class="text-muted">{{ block.text | md_to_html }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="text-center mb-5">
+                <div class="d-grid d-sm-inline-block">
+                    <a class="btn btn-primary btn-lg px-4" href="{{ ctaPath }}">
+                        {{ ctaLabel }}
+                        <twig:Icon name="solar:alt-arrow-right-line-duotone" class="ms-1" />
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

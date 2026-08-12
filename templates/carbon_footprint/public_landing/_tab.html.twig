@@ -1,0 +1,14 @@
+{#
+    Landing tab shared by the property and the event pages: the form posts to the page it is
+    rendered in, which brings the user back to this same tab.
+#}
+
+{{ form_start(form) }}
+    {% include '@carbon_footprint/public_landing/_form.html.twig' %}
+
+    <twig:Card>
+        <twig:ActionBar>
+            <twig:ActionBar:Button type="primary" :button="form.save" />
+        </twig:ActionBar>
+    </twig:Card>
+{{ form_end(form) }}

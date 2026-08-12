@@ -1,0 +1,35 @@
+{% props tabs, active = null %}
+
+{#
+    In-page tabs: `tabs` is a list of {key, label} and the panes go inside this component as
+    <twig:TabPane key="..."> children. Everything lives in the same page, no extra URLs.
+#}
+
+{% set active = active ?? tabs | first.key %}
+
+<div class="card tabs-card">
+    <div class="card-header">
+        <ul class="nav nav-tabs page-tabs flex-nowrap overflow-x-auto overflow-y-hidden" role="tablist" data-controller="tabs">
+            {% for tab in tabs %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link text-nowrap {{ tab.key == active ? 'active' : '' }}"
+                            id="tab-{{ tab.key }}"
+                            type="button"
+                            role="tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#pane-{{ tab.key }}"
+                            aria-controls="pane-{{ tab.key }}"
+                            aria-selected="{{ tab.key == active ? 'true' : 'false' }}">
+                        {{ tab.label }}
+                    </button>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="card-body">
+        <div class="tab-content tab-content-flush">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,23 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('events') }}" />
+{% endblock %}
+
+{% set page_title = ('Eventos' | trans)
+    ~ ' > '
+    ~ ('Calculadora' | trans)
+    ~ ' > '
+    ~ event.name %}
+
+{% block content %}
+    <twig:Card title="{{ 'Encuesta de asistentes' | trans }}">
+        <p class="text-muted">
+            {{ 'Comparte este QR o su enlace con los asistentes para recoger su movilidad y sus pernoctaciones.' | trans }}
+        </p>
+
+        <twig:CarbonFootprint:AttendeeSurveyQr eventId="{{ event.id }}" />
+    </twig:Card>
+
+    {% include '@carbon_footprint/public_landing/_tab.html.twig' with {form: landingForm} %}
+{% endblock %}

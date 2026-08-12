@@ -31,7 +31,8 @@
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
             {% if element.accountId and element | is_authorized('view') %}
-                <twig:List:Action:CarbonFootprint path="{{ path('carbon_footprint_property_trip_calculations', {'propertyId': element.id}) }}" />
+                <twig:List:Action:Calculator path="{{ path('carbon_footprint_property_trip_calculations', {'propertyId': element.id}) }}" />
+                <twig:List:Action:Responses path="{{ path('carbon_footprint_property_trip_calculations_responses', {'propertyId': element.id}) }}" />
             {% endif %}
 
             {% if element | is_authorized('edit') %}

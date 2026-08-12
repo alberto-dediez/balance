@@ -12,16 +12,10 @@
             'label': 'Ubicación' | trans,
             'sortable': false
         }, {
-            'label': 'Empresa' | trans,
-            'sortable': false
-        }, {
             'label': 'Tamaño del evento' | trans,
             'sortable': false
         }, {
             'label': 'Sector del evento' | trans,
-            'sortable': false
-        }, {
-            'label': 'Tipología del evento' | trans,
             'sortable': false
         }, {
             'label': 'Fecha de registro' | trans,
@@ -43,10 +37,8 @@
 
             {{ element.location ? (element.location | destination_name) : '' }}
         </td>
-        <td>{{ element.companyId ? (element.companyId | company_name) : '' }}</td>
         <td>{{ element.size ? (element.size.value | trans({}, 'eventSizeType')) : '' }}</td>
         <td>{{ element.sector ? (element.sector.value | trans({}, 'eventSectorType')) : '' }}</td>
-        <td>{{ element.typology ? (element.typology.value | trans({}, 'eventTypologyType')) : '' }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
             {% set carbonFootprint = event_carbon_footprint(element.id) %}
@@ -64,6 +56,8 @@
             {% endif %}
 
             {% if element | is_authorized('edit') %}
+                <twig:List:Action:Calculator path="{{ path('events_attendee_survey', {'eventId': element.id}) }}" />
+                <twig:List:Action:Responses path="{{ path('events_attendee_survey_responses', {'eventId': element.id}) }}" />
                 <twig:List:Action:Edit path="{{ path('events_edit', {'eventId': element.id}) }}" />
             {% endif %}
 

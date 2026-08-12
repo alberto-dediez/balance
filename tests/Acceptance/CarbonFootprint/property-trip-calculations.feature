@@ -22,9 +22,9 @@ Feature:
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
         When I submit a form with "cameFromAnotherCity:yes|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:120|roundTrip:no|trips:1|overnight:no" and button "Calcular mi huella"
         When I am logged as "owner@dediez.software"
-        When I go to "/es/carbon-footprint/property-trip-calculations/777"
+        When I go to "/es/carbon-footprint/property-trip-calculations/777/responses"
         Then the response status should be 200
-        Then I see a text "Huella de carbono"
+        Then I see a text "Respuestas"
         Then I see a text "Desglose por medio de transporte"
         Then I see a text "Coche"
 
@@ -33,7 +33,7 @@ Feature:
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given property "Hotel A" with id "777" of account "666" exists
         When I am logged as "owner@dediez.software"
-        When I go to "/es/carbon-footprint/property-trip-calculations/777"
+        When I go to "/es/carbon-footprint/property-trip-calculations/777/responses"
         Then the response status should be 200
         Then I see a text "Todavía no hay respuestas en este periodo"
 
@@ -43,5 +43,5 @@ Feature:
         Given user "other@dediez.software" with role "ROLE_OWNER" of account "667" exists
         Given property "Hotel A" with id "777" of account "666" exists
         When I am logged as "other@dediez.software"
-        When I go to "/es/carbon-footprint/property-trip-calculations/777"
+        When I go to "/es/carbon-footprint/property-trip-calculations/777/responses"
         Then the response status should be 403

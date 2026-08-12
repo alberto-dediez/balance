@@ -1,0 +1,81 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('events') }}" />
+{% endblock %}
+
+{% set page_title = ('Eventos' | trans)
+    ~ ' > '
+    ~ ('Respuestas' | trans)
+    ~ ' > '
+    ~ event.name %}
+
+{% block content %}
+    {% if stats is null %}
+        <twig:Card title="{{ 'Emisiones' | trans }}">
+            <p class="text-muted mb-0">
+                {{ 'Este evento todavía no tiene un cálculo de huella de carbono, así que aún no hay emisiones que mostrar.' | trans }}
+            </p>
+        </twig:Card>
+    {% else %}
+        <twig:Card title="{{ 'Respuestas' | trans }}">
+            <table class="table table-sm mb-0">
+                <tbody>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Respuestas recibidas' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ stats.responsesCount }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Asistentes estimados' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ stats.estimatedAttendees ?? '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ '% encuestados' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ stats.surveyedPercentage is not null ? (stats.surveyedPercentage | number_format(1, ',', '.')) ~ ' %' : '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Respuestas multimodales' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ stats.multimodalResponsesCount }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Estado de la encuesta' | trans }}</th>
+                        <td class="text-end text-nowrap">
+                            {% if stats.attendeeSurvey.status.isClosed %}
+                                <span class="badge bg-success">{{ 'Cerrada' | trans }}</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">{{ 'Abierta' | trans }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </twig:Card>
+
+        <twig:Card title="{{ 'Aportaciones de los asistentes' | trans }}">
+            <table class="table table-sm mb-0">
+                <tbody>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Aportaciones iniciadas' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ stats.contributions.aggregation.contributions }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Aportaciones pagadas' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ stats.contributions.aggregation.paid }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Importe pagado' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ stats.contributions.aggregation.paidTotalAmount | number_format(2, ',', '.') }} €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Emisiones compensadas' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ (stats.contributions.aggregation.paidTonnes * 1000) | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="fw-normal">{{ 'Emisiones compensadas sobre las declaradas' | trans }}</th>
+                        <td class="text-end text-nowrap">{{ stats.contributions.compensatedEmissionsRate | number_format(1, ',', '.') }} %</td>
+                    </tr>
+                </tbody>
+            </table>
+        </twig:Card>
+    {% endif %}
+{% endblock %}

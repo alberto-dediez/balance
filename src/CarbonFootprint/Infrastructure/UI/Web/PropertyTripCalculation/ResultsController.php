@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/carbon-footprint/property-trip-calculations/{propertyId}', name: 'carbon_footprint_property_trip_calculations', methods: ['GET'])]
+#[Route('/carbon-footprint/property-trip-calculations/{propertyId}/responses', name: 'carbon_footprint_property_trip_calculations_responses', methods: ['GET'])]
 class ResultsController extends AbstractController
 {
     public function __invoke(
