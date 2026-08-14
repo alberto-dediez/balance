@@ -20,6 +20,9 @@
             'label': 'Importe' | trans,
             'sortable': false
         }, {
+            'label': 'Tipo de pago' | trans,
+            'sortable': false
+        }, {
             'label': 'Identificador' | trans,
             'sortable': false
         }, {
@@ -41,6 +44,7 @@
         <td>{{ element.requestedTonnes }}</td>
         <td>{{ element.purchasedTonnes ?? '-' }}</td>
         <td>{{ element.purchasedTonnes is not null and project.costPerTonne is not null ? ((element.purchasedTonnes * project.costPerTonne) | number_format(2, ',', '.') ~ ' €') : '-' }}</td>
+        <td>{{ element.paymentType ? (element.paymentType.value | trans({}, 'creditPurchasePaymentType')) : '-' }}</td>
         <td>{{ element.reference ?? '-' }}</td>
         <td>
             {{ element.status.value | trans({}, 'creditPurchaseStatus') }}

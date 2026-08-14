@@ -8,6 +8,7 @@ use App\Balance\Application\CreditPurchase\CreditPurchaseAuthorizer;
 use App\Balance\Application\CreditPurchase\Validate\ValidateCreditPurchaseRequest;
 use App\Balance\Application\CreditPurchase\Validate\ValidateCreditPurchaseService;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseNotPendingException;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseValidated;
 use App\Balance\Domain\Model\CreditPurchase\DuplicatedPurchaseReferenceException;
@@ -41,15 +42,30 @@ class ValidateCreditPurchaseServiceTest extends TestCase
         $user = UserMother::adminUser();
 
         $result = $sut(
-            new ValidateCreditPurchaseRequest($creditPurchase->id(), 10.0, 'REF-1'),
+            new ValidateCreditPurchaseRequest($creditPurchase->id(), 10.0, 'REF-1', CreditPurchasePaymentType::PaidByClient),
             $user,
         );
 
         $this->assertFalse($result->partiallyFulfilled);
+        $this->assertSame(CreditPurchasePaymentType::PaidByClient, $creditPurchase->paymentType());
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
         $this->assertInstanceOf(CreditPurchaseValidated::class, $lastEvent);
+    }
+
+    public function testThrowsWhenPaymentTypeIsMissing(): void
+    {
+        $repository = CreditPurchaseRepositoryMother::inMemory();
+        $creditPurchase = CreditPurchaseMother::pending(tonnes: 10.0);
+        $repository->add($creditPurchase);
+
+        $sut = $this->createSUT($repository);
+        $user = UserMother::adminUser();
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $sut(new ValidateCreditPurchaseRequest($creditPurchase->id(), 10.0, 'REF-0'), $user);
     }
 
     public function testValidatesPartialAmount(): void
@@ -62,7 +78,7 @@ class ValidateCreditPurchaseServiceTest extends TestCase
         $user = UserMother::adminUser();
 
         $result = $sut(
-            new ValidateCreditPurchaseRequest($creditPurchase->id(), 6.0, 'REF-2'),
+            new ValidateCreditPurchaseRequest($creditPurchase->id(), 6.0, 'REF-2', CreditPurchasePaymentType::PaidByClient),
             $user,
         );
 
@@ -85,7 +101,7 @@ class ValidateCreditPurchaseServiceTest extends TestCase
         $this->expectException(DuplicatedPurchaseReferenceException::class);
 
         $sut(
-            new ValidateCreditPurchaseRequest($pending->id(), 5.0, (string) $alreadyValidated->reference()),
+            new ValidateCreditPurchaseRequest($pending->id(), 5.0, (string) $alreadyValidated->reference(), CreditPurchasePaymentType::PaidByClient),
             $user,
         );
     }
@@ -101,7 +117,7 @@ class ValidateCreditPurchaseServiceTest extends TestCase
 
         $this->expectException(CreditPurchaseNotPendingException::class);
 
-        $sut(new ValidateCreditPurchaseRequest($creditPurchase->id(), 5.0, 'REF-3'), $user);
+        $sut(new ValidateCreditPurchaseRequest($creditPurchase->id(), 5.0, 'REF-3', CreditPurchasePaymentType::PaidByClient), $user);
     }
 
     public function testThrowsWhenUserIsNotAdmin(): void
@@ -115,7 +131,7 @@ class ValidateCreditPurchaseServiceTest extends TestCase
 
         $this->expectException(UnauthorizedActionException::class);
 
-        $sut(new ValidateCreditPurchaseRequest($creditPurchase->id(), 5.0, 'REF-4'), $user);
+        $sut(new ValidateCreditPurchaseRequest($creditPurchase->id(), 5.0, 'REF-4', CreditPurchasePaymentType::PaidByClient), $user);
     }
 
     private function createSUT(CreditPurchaseRepository $repository): ValidateCreditPurchaseService

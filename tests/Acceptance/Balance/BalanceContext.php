@@ -15,6 +15,7 @@ use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateStat
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateType;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\Project\ProjectRepository;
@@ -139,7 +140,13 @@ final class BalanceContext implements Context
 
         assert($creditPurchase instanceof CreditPurchase);
 
-        $creditPurchase->validate((float) $purchasedTonnes, $reference, null, UserId::generate());
+        $creditPurchase->validate(
+            (float) $purchasedTonnes,
+            CreditPurchasePaymentType::PaidByClient,
+            $reference,
+            null,
+            UserId::generate(),
+        );
 
         $this->getCreditPurchaseRepository()->add($creditPurchase);
     }

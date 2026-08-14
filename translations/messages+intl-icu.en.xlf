@@ -4433,6 +4433,10 @@
         <source>Toneladas compradas</source>
         <target>Tons purchased</target>
       </trans-unit>
+      <trans-unit id="cPpTL01" resname="Tipo de pago">
+        <source>Tipo de pago</source>
+        <target>Payment type</target>
+      </trans-unit>
       <trans-unit id="CSI7bkF" resname="Importe total (€)">
         <source>Importe total (€)</source>
         <target>Total amount (?)</target>

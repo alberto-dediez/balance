@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Balance\Infrastructure\Notification;
 
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Infrastructure\Notification\CreditPurchaseResolvedNotifier;
 use App\Notifications\Domain\Model\Notification\NotificationChannel;
 use App\Security\Domain\Model\Account\AccountId;
@@ -48,7 +49,7 @@ class CreditPurchaseResolvedNotifierTest extends TestCase
 
         new CreditPurchaseResolvedNotifier($notifier, $creditPurchaseRepository, $projectRepository, $userRepository);
 
-        $creditPurchase->validate(10.0, 'REF-1', null, UserId::generate());
+        $creditPurchase->validate(10.0, CreditPurchasePaymentType::PaidByClient, 'REF-1', null, UserId::generate());
 
         $notifications = $notifier->notifications();
 
@@ -79,7 +80,7 @@ class CreditPurchaseResolvedNotifierTest extends TestCase
 
         new CreditPurchaseResolvedNotifier($notifier, $creditPurchaseRepository, $projectRepository, $userRepository);
 
-        $creditPurchase->validate(6.0, 'REF-2', null, UserId::generate());
+        $creditPurchase->validate(6.0, CreditPurchasePaymentType::PaidByClient, 'REF-2', null, UserId::generate());
 
         $notifications = $notifier->notifications();
 

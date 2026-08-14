@@ -42,6 +42,8 @@ class ValidateCreditPurchaseService implements CommandHandler
 
         $creditPurchase->validate(
             purchasedTonnes: $request->purchasedTonnes,
+            paymentType: $request->paymentType
+                ?? throw new \InvalidArgumentException('Payment type is required to validate a credit purchase.'),
             reference: $request->reference,
             certificate: $request->certificate,
             validatedBy: $user->id(),

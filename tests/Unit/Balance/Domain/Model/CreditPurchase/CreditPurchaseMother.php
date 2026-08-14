@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Balance\Domain\Model\CreditPurchase;
 
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseStatus;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -26,11 +27,16 @@ class CreditPurchaseMother
         return $creditPurchase;
     }
 
-    public static function validated(?AccountId $accountId = null, ?ProjectId $projectId = null, float $tonnes = 10.0): CreditPurchase
-    {
+    public static function validated(
+        ?AccountId $accountId = null,
+        ?ProjectId $projectId = null,
+        float $tonnes = 10.0,
+        CreditPurchasePaymentType $paymentType = CreditPurchasePaymentType::PaidByClient,
+    ): CreditPurchase {
         $creditPurchase = self::pending($accountId, $projectId, $tonnes);
         $creditPurchase->validate(
             purchasedTonnes: $tonnes,
+            paymentType: $paymentType,
             reference: 'ref-' . (string) $creditPurchase->id(),
             certificate: null,
             validatedBy: UserId::generate(),
@@ -55,6 +61,7 @@ class CreditPurchaseMother
             requestedTonnes: $tonnes,
             status: CreditPurchaseStatus::Validated,
             purchasedTonnes: $tonnes,
+            paymentType: CreditPurchasePaymentType::PaidByClient,
             reference: 'ref-' . $id,
             resolvedBy: UserId::generate(),
             resolvedAt: $resolvedAt,
@@ -66,6 +73,7 @@ class CreditPurchaseMother
         $creditPurchase = self::pending($accountId, $projectId, 10.0);
         $creditPurchase->validate(
             purchasedTonnes: 6.0,
+            paymentType: CreditPurchasePaymentType::PaidByClient,
             reference: 'ref-' . (string) $creditPurchase->id(),
             certificate: null,
             validatedBy: UserId::generate(),

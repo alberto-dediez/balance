@@ -27,6 +27,11 @@
         <dt class="col-sm-4">{{ 'Toneladas compradas' | trans }}</dt>
         <dd class="col-sm-8">{{ creditPurchase.purchasedTonnes is not null ? (creditPurchase.purchasedTonnes | number_format(4, ',', '.') ~ ' t') : '-' }}</dd>
 
+        {% if creditPurchase.paymentType %}
+            <dt class="col-sm-4">{{ 'Tipo de pago' | trans }}</dt>
+            <dd class="col-sm-8">{{ creditPurchase.paymentType.value | trans({}, 'creditPurchasePaymentType') }}</dd>
+        {% endif %}
+
         <dt class="col-sm-4">{{ 'Toneladas compensadas' | trans }}</dt>
         <dd class="col-sm-8">{{ allocatedTonnes | number_format(4, ',', '.') }} t</dd>
 

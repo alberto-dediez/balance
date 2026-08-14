@@ -23,6 +23,7 @@ class CreditPurchase
         private float $requestedTonnes = 0.0,
         private CreditPurchaseStatus $status = CreditPurchaseStatus::Pending,
         private ?float $purchasedTonnes = null,
+        private ?CreditPurchasePaymentType $paymentType = null,
         private ?string $reference = null,
         private ?string $certificate = null,
         private ?UserId $resolvedBy = null,
@@ -68,6 +69,11 @@ class CreditPurchase
     public function purchasedTonnes(): ?float
     {
         return $this->purchasedTonnes;
+    }
+
+    public function paymentType(): ?CreditPurchasePaymentType
+    {
+        return $this->paymentType;
     }
 
     public function reference(): ?string
@@ -140,6 +146,7 @@ class CreditPurchase
 
     public function validate(
         float $purchasedTonnes,
+        CreditPurchasePaymentType $paymentType,
         string $reference,
         ?MediaId $certificate,
         UserId $validatedBy,
@@ -157,6 +164,7 @@ class CreditPurchase
                 creditPurchaseId: $this->id(),
                 requestedTonnes: $this->requestedTonnes,
                 purchasedTonnes: $purchasedTonnes,
+                paymentType: $paymentType,
                 reference: $reference,
                 certificate: $certificate,
                 validatedBy: $validatedBy,
@@ -206,6 +214,7 @@ class CreditPurchase
     {
         $this->status = CreditPurchaseStatus::Validated;
         $this->purchasedTonnes = $event->purchasedTonnes();
+        $this->paymentType = $event->paymentType();
         $this->reference = $event->reference();
         $this->certificate = null !== $event->certificate() ? (string) $event->certificate() : null;
         $this->resolvedBy = $event->validatedBy();

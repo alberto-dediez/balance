@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Balance\Infrastructure\Symfony\Form;
 
 use App\Balance\Application\CreditPurchase\Validate\ValidateCreditPurchaseRequest;
+use App\Balance\Infrastructure\Symfony\Form\Type\CreditPurchasePaymentTypeType;
 use App\Library\Domain\Model\Media\MediaType;
 use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Library\Infrastructure\Symfony\Form\Type\MediaPickerType;
@@ -30,6 +31,13 @@ class ValidateCreditPurchaseType extends AbstractType
                 'constraints' => [
                     new Assert\NotBlank(),
                     new Assert\Positive(),
+                ],
+            ])
+            ->add('paymentType', CreditPurchasePaymentTypeType::class, [
+                'label' => new TranslatableMessage('Tipo de pago'),
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotNull(),
                 ],
             ])
             ->add('reference', TextType::class, [

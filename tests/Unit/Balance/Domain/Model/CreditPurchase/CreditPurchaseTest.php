@@ -8,6 +8,7 @@ use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseCancelled;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseNotPendingException;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRejected;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRequested;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseValidated;
@@ -62,7 +63,7 @@ class CreditPurchaseTest extends TestCase
     {
         $creditPurchase = CreditPurchaseMother::pending(tonnes: 10.0);
 
-        $creditPurchase->validate(10.0, 'REF-1', null, UserId::generate());
+        $creditPurchase->validate(10.0, CreditPurchasePaymentType::PaidByClient, 'REF-1', null, UserId::generate());
 
         $this->assertSame(10.0, $creditPurchase->purchasedTonnes());
         $this->assertFalse($creditPurchase->isPartiallyFulfilled());
@@ -73,11 +74,33 @@ class CreditPurchaseTest extends TestCase
         $this->assertFalse($lastEvent->isPartiallyFulfilled());
     }
 
+    public function testValidateKeepsThePaymentType(): void
+    {
+        $creditPurchase = CreditPurchaseMother::pending(tonnes: 10.0);
+
+        $creditPurchase->validate(10.0, CreditPurchasePaymentType::PaidByBioscore, 'REF-1', null, UserId::generate());
+
+        $this->assertSame(CreditPurchasePaymentType::PaidByBioscore, $creditPurchase->paymentType());
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(CreditPurchaseValidated::class, $lastEvent);
+        $this->assertSame(CreditPurchasePaymentType::PaidByBioscore, $lastEvent->paymentType());
+
+        $rebuilt = CreditPurchaseValidated::rebuildFromPayload(
+            $lastEvent->id(),
+            $lastEvent->occurredOn(),
+            $lastEvent->payload(),
+        );
+
+        $this->assertSame(CreditPurchasePaymentType::PaidByBioscore, $rebuilt->paymentType());
+    }
+
     public function testValidateWithLessTonnesThanRequestedIsPartiallyFulfilled(): void
     {
         $creditPurchase = CreditPurchaseMother::pending(tonnes: 10.0);
 
-        $creditPurchase->validate(6.0, 'REF-2', null, UserId::generate());
+        $creditPurchase->validate(6.0, CreditPurchasePaymentType::PaidByClient, 'REF-2', null, UserId::generate());
 
         $this->assertTrue($creditPurchase->isPartiallyFulfilled());
 
@@ -91,7 +114,7 @@ class CreditPurchaseTest extends TestCase
     {
         $creditPurchase = CreditPurchaseMother::pending(tonnes: 10.0);
 
-        $creditPurchase->validate(12.0, 'REF-3', null, UserId::generate());
+        $creditPurchase->validate(12.0, CreditPurchasePaymentType::PaidByClient, 'REF-3', null, UserId::generate());
 
         $this->assertFalse($creditPurchase->isPartiallyFulfilled());
     }
@@ -102,7 +125,7 @@ class CreditPurchaseTest extends TestCase
 
         $this->expectException(CreditPurchaseNotPendingException::class);
 
-        $creditPurchase->validate(1.0, 'REF-4', null, UserId::generate());
+        $creditPurchase->validate(1.0, CreditPurchasePaymentType::PaidByClient, 'REF-4', null, UserId::generate());
     }
 
     public function testRejectPublishesCreditPurchaseRejected(): void
