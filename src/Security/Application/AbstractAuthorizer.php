@@ -26,6 +26,7 @@ abstract class AbstractAuthorizer implements Authorizer
             Action::Import => $this->canImport($subject, $user),
             Action::Export => $this->canExport($subject, $user),
             Action::History => $this->canHistory($subject, $user),
+            Action::Impersonate => $this->canImpersonate($subject, $user),
         };
     }
 
@@ -53,6 +54,11 @@ abstract class AbstractAuthorizer implements Authorizer
     protected function canHistory(mixed $subject, User $user): bool
     {
         return $this->canAdmin($subject, $user);
+    }
+
+    protected function canImpersonate(mixed $subject, User $user): bool
+    {
+        return false;
     }
 
     protected function canImport(mixed $subject, User $user): bool

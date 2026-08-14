@@ -82,6 +82,15 @@ class DoctrineRecordedEventRepository implements RecordedEventRepository
             ;
         }
 
+        if ($filter->impersonatorId instanceof UserId) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('e.impersonatorId', ':impersonatorId'),
+                )
+                ->setParameter('impersonatorId', $filter->impersonatorId)
+            ;
+        }
+
         if (!in_array($filter->aggregateRootId, [null, '', '0'], true)) {
             $qb
                 ->andWhere(

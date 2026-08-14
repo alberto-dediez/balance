@@ -10,7 +10,7 @@
 
                         {% set value = attribute(form.vars.value, field) %}
 
-                        {% if field == 'userId' %}
+                        {% if field == 'userId' or field == 'impersonatorId' %}
                             {% set value = value | user_name %}
                         {% elseif field == 'accountId' %}
                             {% set value = value | account_name %}

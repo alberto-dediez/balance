@@ -48,6 +48,14 @@ final class UserAuthorizer extends AbstractAuthorizer
         return $this->canEdit($subject, $user);
     }
 
+    protected function canImpersonate(mixed $subject, User $user): bool
+    {
+        return $user->hasRole(Role::SuperAdmin)
+            && $subject->isActive()
+            && !$subject->id()->equals($user->id())
+        ;
+    }
+
     protected function canExport(mixed $subject, User $user): bool
     {
         return $this->canList($subject, $user);

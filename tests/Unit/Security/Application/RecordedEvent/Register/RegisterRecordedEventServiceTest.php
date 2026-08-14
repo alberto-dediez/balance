@@ -38,6 +38,52 @@ class RegisterRecordedEventServiceTest extends TestCase
         $this->assertNotNull($recordedEventPersisted);
     }
 
+    public function testRecordsTheImpersonator(): void
+    {
+        $repository = new InMemoryRecordedEventRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $impersonator = UserMother::superAdminUser();
+        $impersonated = UserMother::registeredUser();
+
+        $request = new RegisterRecordedEventRequest(
+            userId: $impersonated->id(),
+            event: new UserRemoved(UserId::generate()),
+            impersonatorId: $impersonator->id(),
+        );
+
+        $result = $sut($request, $impersonated);
+
+        $this->assertEquals($impersonator->id(), $result->impersonatorId);
+
+        $recordedEventPersisted = $repository->find($result->recordedEventId);
+
+        $this->assertNotNull($recordedEventPersisted);
+        $this->assertTrue($recordedEventPersisted->isImpersonated());
+        $this->assertEquals($impersonator->id(), $recordedEventPersisted->impersonatorId());
+    }
+
+    public function testEventsAreNotImpersonatedByDefault(): void
+    {
+        $repository = new InMemoryRecordedEventRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $request = new RegisterRecordedEventRequest(
+            userId: UserId::generate(),
+            event: new UserRemoved(UserId::generate()),
+        );
+
+        $result = $sut($request, UserMother::registeredUser());
+
+        $recordedEventPersisted = $repository->find($result->recordedEventId);
+
+        $this->assertNotNull($recordedEventPersisted);
+        $this->assertFalse($recordedEventPersisted->isImpersonated());
+        $this->assertNull($recordedEventPersisted->impersonatorId());
+    }
+
     public function testNoUserCanRecordEvents(): void
     {
         $repository = new InMemoryRecordedEventRepository();

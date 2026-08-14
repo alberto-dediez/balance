@@ -9,6 +9,8 @@
         }, {
             'label': 'Usuario' | trans
         }, {
+            'label': 'Suplantado por' | trans
+        }, {
             'label': 'Nombre' | trans,
             'sortable': true,
             'sortableBy': 'eventName'
@@ -35,6 +37,11 @@
             } %}
         </td>
         <td>{{ element.userId | user_name | trans | raw }}</td>
+        <td>
+            {% if element.isImpersonated %}
+                <span class="badge bg-warning-subtle text-warning">{{ element.impersonatorId | user_name | trans | raw }}</span>
+            {% endif %}
+        </td>
         <td>{{ element.eventName }}</td>
         <td>{{ element.context }}</td>
         <td>{{ element.occurredOn | date('H:i d/m/Y') }}</td>

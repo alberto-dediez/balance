@@ -45,7 +45,7 @@
                 </div>
             </a>
 
-            {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+            {% if is_granted('IS_IMPERSONATOR') %}
                 <a href="{{ path('home', {'_switch_user': '_exit'}) }}" class="py-8 px-7 mt-8 d-flex align-items-center">
                     <span class="d-flex align-items-center justify-content-center bg-warning-subtle text-warning rounded round">
                         <twig:Icon name="solar:key-square-2-line-duotone" size="lg" />

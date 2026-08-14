@@ -1565,6 +1565,18 @@
         <source>Compartido en la biblioteca</source>
         <target>Shared in the library</target>
       </trans-unit>
+      <trans-unit id="Bd.IblR" resname="Suplantado por">
+        <source>Suplantado por</source>
+        <target>Impersonated by</target>
+      </trans-unit>
+      <trans-unit id="AE6Wexu" resname="Suplantando a">
+        <source>Suplantando a</source>
+        <target>Impersonating</target>
+      </trans-unit>
+      <trans-unit id="QupisYN" resname="Suplantar">
+        <source>Suplantar</source>
+        <target>Impersonate</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -6,6 +6,8 @@ namespace App\Tests\Acceptance\Security;
 
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
+use App\Security\Domain\Model\RecordedEvent\RecordedEventFilter;
+use App\Security\Domain\Model\RecordedEvent\RecordedEventRepository;
 use App\Security\Domain\Model\SignatureRequest\DocumentReference;
 use App\Security\Domain\Model\SignatureRequest\NotificationChannel;
 use App\Security\Domain\Model\SignatureRequest\OtpChallenge;
@@ -27,6 +29,7 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Hook\AfterScenario;
 use Behat\Step\Given;
+use Behat\Step\Then;
 use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 
@@ -65,6 +68,11 @@ final class SecurityContext implements Context
     private function getSignatureRequestRepository(): SignatureRequestRepository
     {
         return $this->client->getContainer()->get(SignatureRequestRepository::class);
+    }
+
+    private function getRecordedEventRepository(): RecordedEventRepository
+    {
+        return $this->client->getContainer()->get(RecordedEventRepository::class);
     }
 
     #[Given('user :username with role :role exists')]
@@ -314,6 +322,39 @@ final class SecurityContext implements Context
         $forms = $this->client->getCrawler()->filter('form');
         $resendForm = $forms->count() > 1 ? $forms->last()->form() : $forms->first()->form();
         $this->client->submit($resendForm);
+    }
+
+    #[Then('the recorded events of :username are impersonated by :impersonator')]
+    public function theRecordedEventsOfAreImpersonatedBy(string $username, string $impersonator): void
+    {
+        $user = $this->getUserRepository()->findByUsername($username);
+        $impersonatorUser = $this->getUserRepository()->findByUsername($impersonator);
+
+        Assert::assertNotNull($user);
+        Assert::assertNotNull($impersonatorUser);
+
+        $events = $this->getRecordedEventRepository()->findByFilter(new RecordedEventFilter(
+            userId: $user->id(),
+            impersonatorId: $impersonatorUser->id(),
+            limit: 0,
+        ));
+
+        Assert::assertNotEmpty($events, 'No se registró ningún evento suplantado');
+
+        foreach ($events as $event) {
+            Assert::assertTrue($event->isImpersonated());
+            Assert::assertEquals($impersonatorUser->id(), $event->impersonatorId());
+        }
+    }
+
+    #[Then('no recorded event is impersonated')]
+    public function noRecordedEventIsImpersonated(): void
+    {
+        $events = $this->getRecordedEventRepository()->findByFilter(new RecordedEventFilter(limit: 0));
+
+        foreach ($events as $event) {
+            Assert::assertFalse($event->isImpersonated());
+        }
     }
 
     private function setOtpVerifiedInSession(string $plainToken): void

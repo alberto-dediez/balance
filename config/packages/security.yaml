@@ -9,11 +9,9 @@ security:
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false        
+            security: false
 
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-        api_login: 
+        api_login:
             pattern: ^/api/login
             provider: app_user_provider
             user_checker: App\Security\Infrastructure\Symfony\Security\UserChecker
@@ -48,6 +46,9 @@ security:
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 604800
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            switch_user: { role: ROLE_ALLOWED_TO_SWITCH }
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used

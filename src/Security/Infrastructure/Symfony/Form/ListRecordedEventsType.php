@@ -29,6 +29,10 @@ class ListRecordedEventsType extends BaseFilterType
                 'label' => new TranslatableMessage('Usuario'),
                 'required' => false,
             ])
+            ->add('impersonatorId', UserIdType::class, [
+                'label' => new TranslatableMessage('Suplantado por'),
+                'required' => false,
+            ])
             ->add('aggregateRootId', TextType::class, [
                 'label' => new TranslatableMessage('Entidad'),
                 'required' => false,

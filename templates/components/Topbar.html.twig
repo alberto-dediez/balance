@@ -21,6 +21,15 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <div class="d-flex align-items-center justify-content-between">
                     <ul class="navbar-nav flex-row mx-auto ms-lg-auto align-items-center justify-content-center">
+                        {% if is_granted('IS_IMPERSONATOR') %}
+                            <li class="nav-item me-2">
+                                <a href="{{ path('home', {'_switch_user': '_exit'}) }}" class="badge bg-warning-subtle text-warning d-flex align-items-center gap-1">
+                                    <twig:Icon name="solar:masks-line-duotone" />
+                                    <span>{% trans -%}Suplantando a{%- endtrans %} {{ app.user.username }}</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
                         <li class="nav-item nav-icon-hover">
                             <a class="nav-link moon dark-layout" href="javascript:void(0)">
                                 <twig:Icon name="solar:moon-line-duotone" class="moon" />
