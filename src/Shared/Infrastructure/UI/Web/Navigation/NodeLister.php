@@ -378,11 +378,6 @@ class NodeLister
                     target: $this->router->generate('credits'),
                 ),
                 new Node(
-                    label: new TranslatableMessage('Historial de solicitudes'),
-                    icon: 'solar:history-line-duotone',
-                    target: $this->router->generate('credit_purchases'),
-                ),
-                new Node(
                     label: new TranslatableMessage('Aportaciones'),
                     icon: 'solar:hand-money-line-duotone',
                     target: $this->router->generate('project_contributions'),

@@ -1,0 +1,11 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% set page_title = ('Mis créditos de CO2' | trans) ~ ' > ' ~ (creditPurchase.reference ?? (creditPurchase.requestedAt | date('d/m/Y'))) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('credits') }}" />
+{% endblock %}
+
+{% block content %}
+    {{ include('@balance/credits/_allocations.html.twig', {'contributionRoute': 'project_contributions_view'}) }}
+{% endblock %}

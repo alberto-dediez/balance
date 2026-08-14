@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Balance\Domain\Model\ProjectContribution;
 
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Payments\Domain\Model\Payment\PaymentId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -30,4 +31,10 @@ interface ProjectContributionRepository
 
     /** @return array<string, float> */
     public function allocatedTonnesByPurchase(AccountId $accountId, ProjectId $projectId): array;
+
+    /** @return list<ProjectContributionCreditAllocation> */
+    public function findAllocationsByCreditPurchase(CreditPurchaseId $creditPurchaseId): array;
+
+    /** @return array<string, list<ProjectContributionCreditAllocation>> */
+    public function findAllocationsByAccount(AccountId $accountId): array;
 }

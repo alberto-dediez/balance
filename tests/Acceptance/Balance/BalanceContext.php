@@ -29,7 +29,9 @@ use App\Payments\Domain\Model\Payment\PaymentId;
 use App\Payments\Domain\Model\Payment\PaymentRepository;
 use App\Payments\Domain\Model\Vat\VatExemptionReason;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
+use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
@@ -78,6 +80,11 @@ final class BalanceContext implements Context
         return $this->client->getContainer()->get(CreditPurchaseRepository::class);
     }
 
+    public function getUserRepository(): UserRepository
+    {
+        return $this->client->getContainer()->get(UserRepository::class);
+    }
+
     #[Given('project :name with id :id exists')]
     public function projectWithIdExists(string $name, string $id): void
     {
@@ -108,6 +115,19 @@ final class BalanceContext implements Context
     {
         $creditPurchase = new CreditPurchase(id: new CreditPurchaseId($id));
         $creditPurchase->request(new AccountId($accountId), new ProjectId($projectId), UserId::generate(), (float) $tonnes);
+
+        $this->getCreditPurchaseRepository()->add($creditPurchase);
+    }
+
+    #[Given('credit purchase :id for account :accountId and project :projectId requested by :username with :tonnes tonnes exists')]
+    public function creditPurchaseRequestedByUserExists(string $id, string $accountId, string $projectId, string $username, string $tonnes): void
+    {
+        $requester = $this->getUserRepository()->findByUsername($username);
+
+        assert($requester instanceof User);
+
+        $creditPurchase = new CreditPurchase(id: new CreditPurchaseId($id));
+        $creditPurchase->request(new AccountId($accountId), new ProjectId($projectId), $requester->id(), (float) $tonnes);
 
         $this->getCreditPurchaseRepository()->add($creditPurchase);
     }

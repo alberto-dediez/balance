@@ -1,32 +1,106 @@
-{% extends '@shared/layout/edit.html.twig' %}
+{% extends '@shared/layout/app.html.twig' %}
 
 {% set page_title = 'Mis créditos de CO2' | trans %}
 
-{% block top_actions %}
-    <twig:TopAction:Return path="{{ path('credit_purchases') }}" />
-{% endblock %}
-
 {% block content %}
-    <twig:Card title="{{ 'Saldo por proyecto' | trans }}">
-        {% if balances is empty %}
+    {% if balances is empty %}
+        <twig:Card title="{{ 'Saldo por proyecto' | trans }}">
             <p class="text-muted mb-0">{{ 'Todavía no tiene créditos comprados' | trans }}</p>
-        {% else %}
-            {% set columns = [
-                {'label': 'Proyecto' | trans},
-                {'label': 'Toneladas compradas' | trans},
-                {'label': 'Toneladas disponibles' | trans},
-                {'label': 'Coste / tonelada' | trans},
-                {'label': 'Coste total' | trans},
-            ] %}
+        </twig:Card>
+    {% endif %}
 
-            <twig:List:Table :columns="columns" :elements="balances">
-                {% set project = element.projectId | project_name %}
-                <td>{{ project }}</td>
-                <td>{{ element.purchasedTonnes }}</td>
-                <td>{{ element.availableTonnes }}</td>
-                <td>{{ project.costPerTonne is not null ? (project.costPerTonne | number_format(2, ',', '.') ~ ' €') : '-' }}</td>
-                <td>{{ project.costPerTonne is not null ? ((element.purchasedTonnes * project.costPerTonne) | number_format(2, ',', '.') ~ ' €') : '-' }}</td>
-            </twig:List:Table>
-        {% endif %}
-    </twig:Card>
+    {% for balance in balances %}
+        {% set project = balance.projectId | project_name %}
+        {% set purchases = purchasesByProject[balance.projectId ~ ''] ?? [] %}
+
+        <twig:Card>
+            <twig:block name="title">
+                <div class="card-header fw-semibold row">
+                    <div class="col-9">{{ project }}</div>
+                    <div class="col-3 text-end">
+                        <a href="{{ path('credit_purchases_request', {'projectId': balance.projectId}) }}" class="btn btn-sm btn-primary">
+                            {{ 'Solicitar créditos' | trans }}
+                        </a>
+                    </div>
+                </div>
+            </twig:block>
+
+            <dl class="row">
+                <dt class="col-sm-3">{{ 'Toneladas compradas' | trans }}</dt>
+                <dd class="col-sm-3">{{ balance.purchasedTonnes | number_format(4, ',', '.') }} t</dd>
+
+                <dt class="col-sm-3">{{ 'Toneladas comprometidas' | trans }}</dt>
+                <dd class="col-sm-3">{{ balance.consumedTonnes | number_format(4, ',', '.') }} t</dd>
+
+                <dt class="col-sm-3">{{ 'Toneladas disponibles' | trans }}</dt>
+                <dd class="col-sm-3">{{ balance.availableTonnes | number_format(4, ',', '.') }} t</dd>
+
+                <dt class="col-sm-3">{{ 'Coste / tonelada' | trans }}</dt>
+                <dd class="col-sm-3">{{ project.costPerTonne is not null ? (project.costPerTonne | number_format(2, ',', '.') ~ ' €') : '-' }}</dd>
+            </dl>
+
+            {% if purchases is empty %}
+                <p class="text-muted mb-0">{{ 'Todavía no hay solicitudes de compra para este proyecto' | trans }}</p>
+            {% else %}
+                {% set columns = [
+                    {'label': 'Fecha de solicitud' | trans},
+                    {'label': 'Solicitadas' | trans},
+                    {'label': 'Compradas' | trans},
+                    {'label': 'Importe' | trans},
+                    {'label': 'Identificador' | trans},
+                    {'label': 'Estado' | trans},
+                    {'label': 'Reparto' | trans},
+                    {'label': ''},
+                ] %}
+
+                <twig:List:Table :columns="columns" :elements="purchases">
+                    {% set allocations = allocationsByPurchase[element.id ~ ''] ?? [] %}
+                    {% set purchasedTonnes = element.purchasedTonnes ?? 0 %}
+                    {% set allocatedTonnes = allocations | reduce((total, allocation) => total + allocation.tonnes, 0) %}
+
+                    <td>{{ element.requestedAt | date('d/m/Y') }}</td>
+                    <td>{{ element.requestedTonnes | number_format(4, ',', '.') }}</td>
+                    <td>{{ element.purchasedTonnes is not null ? (element.purchasedTonnes | number_format(4, ',', '.')) : '-' }}</td>
+                    <td>{{ element.purchasedTonnes is not null and project.costPerTonne is not null ? ((element.purchasedTonnes * project.costPerTonne) | number_format(2, ',', '.') ~ ' €') : '-' }}</td>
+                    <td>{{ element.reference ?? '-' }}</td>
+                    <td>
+                        {{ element.status.value | trans({}, 'creditPurchaseStatus') }}
+                        {% if element.isPartiallyFulfilled %}
+                            <span class="badge bg-warning text-dark">{{ 'Parcial' | trans }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="min-width: 160px;">
+                        {% if purchasedTonnes > 0 %}
+                            {{ include('@balance/credits/_bar.html.twig', {
+                                'allocations': allocations,
+                                'purchasedTonnes': purchasedTonnes,
+                                'availableTonnes': purchasedTonnes - allocatedTonnes,
+                            }) }}
+                            <small class="text-muted">
+                                {{ allocatedTonnes | number_format(2, ',', '.') }} t {{ 'compensadas' | trans }} /
+                                {{ (purchasedTonnes - allocatedTonnes) | number_format(2, ',', '.') }} t {{ 'libres' | trans }}
+                            </small>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if element.status.value == 'validated' %}
+                            <twig:List:Action:View path="{{ path('credit_purchases_view', {'creditPurchaseId': element.id}) }}" />
+                        {% endif %}
+
+                        {% if element.status.value == 'pending' %}
+                            <a href="{{ path('credit_purchases_cancel', {'creditPurchaseId': element.id}) }}"
+                               class="btn btn-sm btn-outline-danger"
+                               data-controller="confirm"
+                               data-confirm-text-param="{{ '¿Está seguro de que desea cancelar esta solicitud?' | trans }}"
+                               data-action="confirm#link:prevent">
+                                {{ 'Cancelar' | trans }}
+                            </a>
+                        {% endif %}
+                    </td>
+                </twig:List:Table>
+            {% endif %}
+        </twig:Card>
+    {% endfor %}
 {% endblock %}

@@ -1,0 +1,89 @@
+{#
+    Variables expected: creditPurchase, project, allocations, allocatedTonnes, availableTonnes, contributionRoute
+#}
+{% set purchasedTonnes = creditPurchase.purchasedTonnes ?? 0 %}
+
+<twig:Card title="{{ 'Compra de créditos' | trans }}">
+    <dl class="row mb-0">
+        {% if project %}
+            <dt class="col-sm-4">{{ 'Proyecto' | trans }}</dt>
+            <dd class="col-sm-8">{{ project.name }}</dd>
+        {% endif %}
+
+        <dt class="col-sm-4">{{ 'Estado' | trans }}</dt>
+        <dd class="col-sm-8">
+            {{ creditPurchase.status.value | trans({}, 'creditPurchaseStatus') }}
+            {% if creditPurchase.isPartiallyFulfilled %}
+                <span class="badge bg-warning text-dark">{{ 'Parcial' | trans }}</span>
+            {% endif %}
+        </dd>
+
+        <dt class="col-sm-4">{{ 'Identificador' | trans }}</dt>
+        <dd class="col-sm-8">{{ creditPurchase.reference ?? '-' }}</dd>
+
+        <dt class="col-sm-4">{{ 'Toneladas solicitadas' | trans }}</dt>
+        <dd class="col-sm-8">{{ creditPurchase.requestedTonnes | number_format(4, ',', '.') }} t</dd>
+
+        <dt class="col-sm-4">{{ 'Toneladas compradas' | trans }}</dt>
+        <dd class="col-sm-8">{{ creditPurchase.purchasedTonnes is not null ? (creditPurchase.purchasedTonnes | number_format(4, ',', '.') ~ ' t') : '-' }}</dd>
+
+        <dt class="col-sm-4">{{ 'Toneladas compensadas' | trans }}</dt>
+        <dd class="col-sm-8">{{ allocatedTonnes | number_format(4, ',', '.') }} t</dd>
+
+        <dt class="col-sm-4">{{ 'Toneladas libres' | trans }}</dt>
+        <dd class="col-sm-8">{{ availableTonnes | number_format(4, ',', '.') }} t</dd>
+
+        <dt class="col-sm-4">{{ 'Fecha de solicitud' | trans }}</dt>
+        <dd class="col-sm-8">{{ creditPurchase.requestedAt | date('d/m/Y H:i') }}</dd>
+
+        {% if creditPurchase.resolvedAt %}
+            <dt class="col-sm-4">{{ 'Fecha de resolución' | trans }}</dt>
+            <dd class="col-sm-8">{{ creditPurchase.resolvedAt | date('d/m/Y H:i') }}</dd>
+        {% endif %}
+    </dl>
+</twig:Card>
+
+<twig:Card title="{{ 'Reparto del crédito' | trans }}">
+    {% if purchasedTonnes <= 0 %}
+        <p class="text-muted mb-0">{{ 'Esta compra todavía no tiene créditos disponibles' | trans }}</p>
+    {% else %}
+        {{ include('@balance/credits/_bar.html.twig', {
+            'allocations': allocations,
+            'purchasedTonnes': purchasedTonnes,
+            'availableTonnes': availableTonnes,
+            'height': 24,
+            'labels': true,
+        }) }}
+    {% endif %}
+</twig:Card>
+
+<twig:Card title="{{ 'Compensaciones' | trans }}">
+    {% if allocations is empty %}
+        <p class="text-muted mb-0">{{ 'Este crédito todavía no se ha utilizado en ninguna compensación' | trans }}</p>
+    {% else %}
+        {% set columns = [
+            {'label': 'Aportación' | trans},
+            {'label': 'Estado' | trans},
+            {'label': 'Toneladas' | trans},
+            {'label': 'Desde' | trans},
+            {'label': 'Hasta' | trans},
+            {'label': '% del crédito' | trans},
+            {'label': 'Fecha' | trans},
+            {'label': ''},
+        ] %}
+
+        <twig:List:Table :columns="columns" :elements="allocations">
+            {% set contribution = element.projectContribution %}
+            <td>{{ contribution.originName ?? contribution.contributorName }}</td>
+            <td>{{ contribution.status.value | trans({}, 'projectContributionStatus') }}</td>
+            <td>{{ element.tonnes | number_format(4, ',', '.') }} t</td>
+            <td>{{ element.startTonnes | number_format(4, ',', '.') }} t</td>
+            <td>{{ element.endTonnes | number_format(4, ',', '.') }} t</td>
+            <td>{{ purchasedTonnes > 0 ? ((element.tonnes / purchasedTonnes * 100) | number_format(2, ',', '.') ~ ' %') : '-' }}</td>
+            <td>{{ contribution.registeredAt | date('d/m/Y') }}</td>
+            <td>
+                <twig:List:Action:View path="{{ path(contributionRoute, {'projectContributionId': contribution.id}) }}" />
+            </td>
+        </twig:List:Table>
+    {% endif %}
+</twig:Card>

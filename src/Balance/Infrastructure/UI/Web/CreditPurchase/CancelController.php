@@ -45,6 +45,6 @@ class CancelController extends AbstractController
             return $this->redirect($referer);
         }
 
-        return $this->redirectToRoute('credit_purchases');
+        return $this->redirectToRoute('credits');
     }
 }

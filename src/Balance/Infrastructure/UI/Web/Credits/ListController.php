@@ -37,6 +37,8 @@ class ListController extends AbstractController
 
         return $this->render('@balance/credits/list.html.twig', [
             'balances' => $response->balances,
+            'purchasesByProject' => $response->purchasesByProject,
+            'allocationsByPurchase' => $response->allocationsByPurchase,
         ]);
     }
 }

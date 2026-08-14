@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Balance\Infrastructure\Persistence\InMemory\Repository;
 
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionCreditAllocation;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFilter;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
@@ -171,6 +173,50 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
         }
 
         return $allocated;
+    }
+
+    /** @return list<ProjectContributionCreditAllocation> */
+    public function findAllocationsByCreditPurchase(CreditPurchaseId $creditPurchaseId): array
+    {
+        $allocations = [];
+
+        foreach ($this->projectContributions as $projectContribution) {
+            foreach ($projectContribution->creditAllocations() as $allocation) {
+                if ($allocation->creditPurchaseId()->equals($creditPurchaseId)) {
+                    $allocations[] = $allocation;
+                }
+            }
+        }
+
+        usort(
+            $allocations,
+            static fn(ProjectContributionCreditAllocation $a, ProjectContributionCreditAllocation $b): int => $a->startTonnes() <=> $b->startTonnes(),
+        );
+
+        return $allocations;
+    }
+
+    /** @return array<string, list<ProjectContributionCreditAllocation>> */
+    public function findAllocationsByAccount(AccountId $accountId): array
+    {
+        $allocations = [];
+
+        foreach ($this->findByFilter(new ProjectContributionFilter(accountId: $accountId, limit: 0)) as $projectContribution) {
+            foreach ($projectContribution->creditAllocations() as $allocation) {
+                $allocations[(string) $allocation->creditPurchaseId()][] = $allocation;
+            }
+        }
+
+        foreach ($allocations as $creditPurchaseId => $purchaseAllocations) {
+            usort(
+                $purchaseAllocations,
+                static fn(ProjectContributionCreditAllocation $a, ProjectContributionCreditAllocation $b): int => $a->startTonnes() <=> $b->startTonnes(),
+            );
+
+            $allocations[$creditPurchaseId] = $purchaseAllocations;
+        }
+
+        return $allocations;
     }
 
     public function reservedTonnes(AccountId $accountId, ProjectId $projectId, \DateTimeImmutable $now): float

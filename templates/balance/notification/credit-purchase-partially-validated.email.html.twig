@@ -13,6 +13,6 @@
         {% trans with {'{mitecoId}': projectMitecoId} -%}(Registro Miteco {mitecoId}){%- endtrans %}
     {% endif %}
 </p>
-<a href="{{ url('credit_purchases') }}" class="btn btn-primary">
-    {% trans -%}Ver mis créditos{%- endtrans -%}
+<a href="{{ url('credit_purchases_view', {'creditPurchaseId': creditPurchaseId}) }}" class="btn btn-primary">
+    {% trans -%}Ver el detalle de la compra{%- endtrans -%}
 </a>

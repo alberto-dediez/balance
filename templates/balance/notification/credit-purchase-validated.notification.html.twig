@@ -12,7 +12,7 @@
     {% endif %}
 </p>
 <p>
-    <a href="{{ path('credit_purchases') }}">
-        {% trans -%}Ver mis créditos{%- endtrans -%}
+    <a href="{{ path('credit_purchases_view', {'creditPurchaseId': creditPurchaseId}) }}">
+        {% trans -%}Ver el detalle de la compra{%- endtrans -%}
     </a>
 </p>

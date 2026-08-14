@@ -50,6 +50,10 @@
         </td>
         <td>{{ element.requestedAt | date('d/m/Y') }}</td>
         <td>
+            {% if element.status.value == 'validated' %}
+                <twig:List:Action:View path="{{ path('admin_credit_purchases_view', {'creditPurchaseId': element.id}) }}" />
+            {% endif %}
+
             {% if element.status.value == 'pending' %}
                 <twig:List:Action:Edit path="{{ path('admin_credit_purchases_validate', {'creditPurchaseId': element.id}) }}" />
                 <twig:List:Action:Delete path="{{ path('admin_credit_purchases_reject', {'creditPurchaseId': element.id}) }}" />

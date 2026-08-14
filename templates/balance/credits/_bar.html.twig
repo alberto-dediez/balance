@@ -1,0 +1,52 @@
+{#
+    Variables expected: allocations, purchasedTonnes, availableTonnes; optional: height, labels
+#}
+{% set colors = ['bg-primary', 'bg-success', 'bg-info', 'bg-warning', 'bg-danger', 'bg-secondary'] %}
+{% set height = height | default(12) %}
+{% set labels = labels | default(false) %}
+
+<div class="progress" style="height: {{ height }}px;">
+    {% for allocation in allocations %}
+        {% set percent = purchasedTonnes > 0 ? (allocation.tonnes / purchasedTonnes * 100) : 0 %}
+        <div class="progress-bar {{ colors[loop.index0 % colors|length] }}"
+             role="progressbar"
+             style="width: {{ percent }}%"
+             aria-valuenow="{{ percent }}"
+             aria-valuemin="0"
+             aria-valuemax="100"
+             title="{{ allocation.projectContribution.originName ?? allocation.projectContribution.contributorName }}: {{ allocation.tonnes | number_format(4, ',', '.') }} t">
+            {% if labels and percent >= 8 %}{{ allocation.tonnes | number_format(2, ',', '.') }} t{% endif %}
+        </div>
+    {% endfor %}
+
+    {% if availableTonnes > 0 and purchasedTonnes > 0 %}
+        {% set freePercent = availableTonnes / purchasedTonnes * 100 %}
+        <div class="progress-bar bg-light text-dark"
+             role="progressbar"
+             style="width: {{ freePercent }}%"
+             aria-valuenow="{{ freePercent }}"
+             aria-valuemin="0"
+             aria-valuemax="100"
+             title="{{ 'Libre' | trans }}: {{ availableTonnes | number_format(4, ',', '.') }} t">
+            {% if labels and freePercent >= 8 %}{{ 'Libre' | trans }}{% endif %}
+        </div>
+    {% endif %}
+</div>
+
+{% if labels %}
+    <div class="d-flex flex-wrap gap-3 small text-muted mt-2">
+        {% for allocation in allocations %}
+            <span>
+                <span class="badge {{ colors[loop.index0 % colors|length] }}">&nbsp;</span>
+                {{ allocation.projectContribution.originName ?? allocation.projectContribution.contributorName }}
+            </span>
+        {% endfor %}
+
+        {% if availableTonnes > 0 %}
+            <span>
+                <span class="badge bg-light border">&nbsp;</span>
+                {{ 'Libre' | trans }}
+            </span>
+        {% endif %}
+    </div>
+{% endif %}

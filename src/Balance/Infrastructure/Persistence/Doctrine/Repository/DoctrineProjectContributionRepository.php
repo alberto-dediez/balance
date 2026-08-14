@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Balance\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionCreditAllocation;
@@ -243,6 +244,52 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
         }
 
         return $allocated;
+    }
+
+    /** @return list<ProjectContributionCreditAllocation> */
+    public function findAllocationsByCreditPurchase(CreditPurchaseId $creditPurchaseId): array
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        /** @var list<ProjectContributionCreditAllocation> $allocations */
+        $allocations = $qb
+            ->select('a', 'pc')
+            ->from(ProjectContributionCreditAllocation::class, 'a')
+            ->innerJoin('a.projectContribution', 'pc')
+            ->andWhere($qb->expr()->eq('a.creditPurchaseId', ':creditPurchaseId'))
+            ->orderBy('a.startTonnes', 'ASC')
+            ->setParameter('creditPurchaseId', (string) $creditPurchaseId)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        return $allocations;
+    }
+
+    /** @return array<string, list<ProjectContributionCreditAllocation>> */
+    public function findAllocationsByAccount(AccountId $accountId): array
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        /** @var list<ProjectContributionCreditAllocation> $rows */
+        $rows = $qb
+            ->select('a', 'pc')
+            ->from(ProjectContributionCreditAllocation::class, 'a')
+            ->innerJoin('a.projectContribution', 'pc')
+            ->andWhere($qb->expr()->eq('pc.accountId', ':accountId'))
+            ->orderBy('a.startTonnes', 'ASC')
+            ->setParameter('accountId', (string) $accountId)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        $allocations = [];
+
+        foreach ($rows as $allocation) {
+            $allocations[(string) $allocation->creditPurchaseId()][] = $allocation;
+        }
+
+        return $allocations;
     }
 
     public function reservedTonnes(AccountId $accountId, ProjectId $projectId, \DateTimeImmutable $now): float

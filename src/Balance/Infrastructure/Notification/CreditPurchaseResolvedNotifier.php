@@ -52,6 +52,7 @@ class CreditPurchaseResolvedNotifier implements DomainEventSubscriber
         $costPerTonne = $project?->costPerTonne();
 
         $params = [
+            'creditPurchaseId' => (string) $event->creditPurchaseId(),
             'requestedTonnes' => $event->requestedTonnes(),
             'purchasedTonnes' => $event->purchasedTonnes(),
             'amount' => null !== $costPerTonne ? round($event->purchasedTonnes() * $costPerTonne, 2) : '-',
