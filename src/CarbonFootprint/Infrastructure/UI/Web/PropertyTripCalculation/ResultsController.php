@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\PropertyTripCalculation;
 
 use App\CarbonFootprint\Application\TripCalculation\GetResults\GetTripCalculationResultsRequest;
 use App\CarbonFootprint\Application\TripCalculation\GetResults\GetTripCalculationResultsService;
+use App\CarbonFootprint\Infrastructure\UI\Web\PropertyTripCalculation\View\ResultsView;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
@@ -20,6 +21,7 @@ class ResultsController extends AbstractController
     public function __invoke(
         string $propertyId,
         GetTripCalculationResultsService $getResults,
+        ResultsView $resultsView,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -37,14 +39,17 @@ class ResultsController extends AbstractController
             throw $this->createNotFoundException($e->getMessage());
         }
 
-        return $this->render('@carbon_footprint/property_trip_calculations/results.html.twig', [
-            'property' => $response->property,
-            'aggregation' => $response->aggregation,
-            'mobilityBreakdown' => $response->mobilityBreakdown,
-            'contributions' => $response->contributions,
-            'from' => $request->query->get('from'),
-            'to' => $request->query->get('to'),
-        ]);
+        return $this->render(
+            '@carbon_footprint/property_trip_calculations/results.html.twig',
+            $resultsView->build($response, $this->queryString($request, 'from'), $this->queryString($request, 'to')),
+        );
+    }
+
+    private function queryString(Request $request, string $key): ?string
+    {
+        $value = $request->query->get($key);
+
+        return is_string($value) ? $value : null;
     }
 
     private function date(mixed $value, bool $endOfDay = false): ?\DateTimeImmutable

@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\EmissionFactorSelectorRegistry;
 use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
+use App\CarbonFootprint\Application\Trip\MobilityBreakdownCalculator;
 use App\CarbonFootprint\Application\TripCalculation\GetResults\GetTripCalculationResultsRequest;
 use App\CarbonFootprint\Application\TripCalculation\GetResults\GetTripCalculationResultsService;
 use App\CarbonFootprint\Domain\Model\Emissions;
@@ -69,12 +70,14 @@ class GetTripCalculationResultsServiceTest extends TestCase
             $this->tripCalculationLinkRepository,
             $this->tripCalculationRepository,
             new TripCalculationsAggregator(new TripLegsAccumulator()),
-            $this->mobilityRepository,
-            new ActivityEmissionsResolver(
-                new EmissionFactorSelectorRegistry([new MobilityEmissionFactorSelector($this->mobilityRepository)]),
-                new EmissionsCalculator(),
+            new MobilityBreakdownCalculator(
+                $this->mobilityRepository,
+                new ActivityEmissionsResolver(
+                    new EmissionFactorSelectorRegistry([new MobilityEmissionFactorSelector($this->mobilityRepository)]),
+                    new EmissionsCalculator(),
+                ),
+                new InMemoryEmissionFactorGroupRepository(),
             ),
-            new InMemoryEmissionFactorGroupRepository(),
             $this->projectContributionRepository,
             new ProjectContributionsAggregator(),
         );

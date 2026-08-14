@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveySta
 use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveyStatsResponse;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveyStatsService;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventAttendeeSurvey\View\ResponsesView;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\Security\Application\Action as SecurityAction;
@@ -28,6 +29,7 @@ class ResponsesController extends AbstractController
         EventRepository $eventRepository,
         EventCarbonFootprintRepository $eventCarbonFootprintRepository,
         GetAttendeeSurveyStatsService $getAttendeeSurveyStats,
+        ResponsesView $responsesView,
         LoggedUser $loggedUser,
         LoggedAccount $loggedAccount,
         TranslatorInterface $translator,
@@ -46,10 +48,13 @@ class ResponsesController extends AbstractController
 
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $event);
 
-        return $this->render('@carbon_footprint/event_attendee_survey/responses.html.twig', [
-            'event' => $event,
-            'stats' => $this->stats($event->id(), $loggedUser(), $eventCarbonFootprintRepository, $getAttendeeSurveyStats),
-        ]);
+        return $this->render(
+            '@carbon_footprint/event_attendee_survey/responses.html.twig',
+            $responsesView->build(
+                $event,
+                $this->stats($event->id(), $loggedUser(), $eventCarbonFootprintRepository, $getAttendeeSurveyStats),
+            ),
+        );
     }
 
     private function stats(

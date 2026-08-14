@@ -18,64 +18,334 @@
             </p>
         </twig:Card>
     {% else %}
-        <twig:Card title="{{ 'Respuestas' | trans }}">
-            <table class="table table-sm mb-0">
-                <tbody>
-                    <tr>
-                        <th scope="row" class="fw-normal">{{ 'Respuestas recibidas' | trans }}</th>
-                        <td class="text-end text-nowrap">{{ stats.responsesCount }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row" class="fw-normal">{{ 'Asistentes estimados' | trans }}</th>
-                        <td class="text-end text-nowrap">{{ stats.estimatedAttendees ?? '-' }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row" class="fw-normal">{{ '% encuestados' | trans }}</th>
-                        <td class="text-end text-nowrap">{{ stats.surveyedPercentage is not null ? (stats.surveyedPercentage | number_format(1, ',', '.')) ~ ' %' : '-' }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row" class="fw-normal">{{ 'Respuestas multimodales' | trans }}</th>
-                        <td class="text-end text-nowrap">{{ stats.multimodalResponsesCount }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row" class="fw-normal">{{ 'Estado de la encuesta' | trans }}</th>
-                        <td class="text-end text-nowrap">
-                            {% if stats.attendeeSurvey.status.isClosed %}
-                                <span class="badge bg-success">{{ 'Cerrada' | trans }}</span>
-                            {% else %}
-                                <span class="badge bg-warning text-dark">{{ 'Abierta' | trans }}</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </twig:Card>
+        {% set surveyedPercent = stats.surveyedPercentage is not null ? stats.surveyedPercentage | round : 0 %}
+        {% set compensatedPercent = min(100, stats.contributions.compensatedEmissionsRate | round) %}
 
-        <twig:Card title="{{ 'Aportaciones de los asistentes' | trans }}">
-            <table class="table table-sm mb-0">
-                <tbody>
-                    <tr>
-                        <th scope="row" class="fw-normal">{{ 'Aportaciones iniciadas' | trans }}</th>
-                        <td class="text-end text-nowrap">{{ stats.contributions.aggregation.contributions }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row" class="fw-normal">{{ 'Aportaciones pagadas' | trans }}</th>
-                        <td class="text-end text-nowrap">{{ stats.contributions.aggregation.paid }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row" class="fw-normal">{{ 'Importe pagado' | trans }}</th>
-                        <td class="text-end text-nowrap">{{ stats.contributions.aggregation.paidTotalAmount | number_format(2, ',', '.') }} €</td>
-                    </tr>
-                    <tr>
-                        <th scope="row" class="fw-normal">{{ 'Emisiones compensadas' | trans }}</th>
-                        <td class="text-end text-nowrap">{{ (stats.contributions.aggregation.paidTonnes * 1000) | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row" class="fw-normal">{{ 'Emisiones compensadas sobre las declaradas' | trans }}</th>
-                        <td class="text-end text-nowrap">{{ stats.contributions.compensatedEmissionsRate | number_format(1, ',', '.') }} %</td>
-                    </tr>
-                </tbody>
-            </table>
-        </twig:Card>
+        <div class="row">
+            <div class="col-sm-6 col-xl-3 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-muted fw-normal mb-1">{{ 'Respuestas recibidas' | trans }}</h6>
+                                <h3 class="fw-semibold mb-0">
+                                    {{ stats.responsesCount | number_format(0, ',', '.') }}
+                                    {% if stats.estimatedAttendees %}
+                                        <small class="fs-4 text-muted">/ {{ stats.estimatedAttendees | number_format(0, ',', '.') }}</small>
+                                    {% endif %}
+                                </h3>
+                            </div>
+                            <span class="p-2 bg-primary-subtle rounded d-flex">
+                                <twig:Icon name="solar:users-group-rounded-line-duotone" size="lg" class="text-primary" />
+                            </span>
+                        </div>
+                        <div class="progress mt-2" style="height: 6px;">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ surveyedPercent }}%" aria-valuenow="{{ surveyedPercent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted">{{ '% encuestados' | trans }}: {{ stats.surveyedPercentage is not null ? (stats.surveyedPercentage | number_format(1, ',', '.')) ~ ' %' : '-' }}</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-muted fw-normal mb-1">{{ 'Emisiones declaradas' | trans }}</h6>
+                                <h3 class="fw-semibold mb-0">
+                                    {{ stats.totalEmissions.co2eq | number_format(0, ',', '.') }}
+                                    <small class="fs-4 text-muted">kg CO₂eq</small>
+                                </h3>
+                            </div>
+                            <span class="p-2 bg-warning-subtle rounded d-flex">
+                                <twig:Icon name="carbon:sustainability" size="lg" class="text-warning" />
+                            </span>
+                        </div>
+                        <small class="text-muted">{{ 'Media por respuesta' | trans }}: {{ stats.averageEmissions.co2eq | number_format(2, ',', '.') }} kg</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-muted fw-normal mb-1">{{ 'Emisiones compensadas' | trans }}</h6>
+                                <h3 class="fw-semibold mb-0">
+                                    {{ (stats.contributions.aggregation.paidTonnes * 1000) | number_format(0, ',', '.') }}
+                                    <small class="fs-4 text-muted">kg CO₂eq</small>
+                                </h3>
+                            </div>
+                            <span class="p-2 bg-success-subtle rounded d-flex">
+                                <twig:Icon name="solar:leaf-line-duotone" size="lg" class="text-success" />
+                            </span>
+                        </div>
+                        <div class="progress mt-2" style="height: 6px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ compensatedPercent }}%" aria-valuenow="{{ compensatedPercent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted">{{ stats.contributions.compensatedEmissionsRate | number_format(1, ',', '.') }} % {{ 'de las emisiones declaradas' | trans }}</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-muted fw-normal mb-1">{{ 'Importe aportado' | trans }}</h6>
+                                <h3 class="fw-semibold mb-0">
+                                    {{ stats.contributions.aggregation.paidTotalAmount | number_format(2, ',', '.') }}
+                                    <small class="fs-4 text-muted">€</small>
+                                </h3>
+                            </div>
+                            <span class="p-2 bg-info-subtle rounded d-flex">
+                                <twig:Icon name="solar:hand-money-line-duotone" size="lg" class="text-info" />
+                            </span>
+                        </div>
+                        <small class="text-muted">
+                            {{ stats.contributions.aggregation.paid }} {{ 'aportaciones pagadas de' | trans }} {{ stats.contributions.aggregation.contributions }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-header fw-semibold">{{ 'Respuestas recibidas por día' | trans }}</div>
+                    <div class="card-body">
+                        {% if trendChart.values is not empty %}
+                            <twig:Chart:Line
+                                title="{{ 'Respuestas' | trans }}"
+                                :values="trendChart.values"
+                                :categories="trendChart.categories"
+                                :colors="['var(--bs-primary)']"
+                                :decimals="0"
+                                :labelDecimals="0"
+                            />
+                        {% else %}
+                            <p class="text-muted mb-0">{{ 'Todavía no se ha recibido ninguna respuesta.' | trans }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-header fw-semibold">{{ 'Emisiones por concepto' | trans }} <span class="text-muted fw-normal">(kg CO₂eq)</span></div>
+                    <div class="card-body">
+                        {% if emissionsSplitChart.values is not empty %}
+                            <twig:Chart:Donut
+                                title="{{ 'Emisiones' | trans }}"
+                                :values="emissionsSplitChart.values"
+                                :categories="emissionsSplitChart.categories"
+                                :colors="['var(--bs-primary)', 'var(--bs-warning)']"
+                                unit="kg"
+                                :decimals="0"
+                                :legend="true"
+                            />
+                        {% else %}
+                            <p class="text-muted mb-0">{{ 'Todavía no hay emisiones declaradas.' | trans }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-7 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-header fw-semibold">{{ 'Distancia por medio de transporte' | trans }} <span class="text-muted fw-normal">(km)</span></div>
+                    <div class="card-body">
+                        {% if mobilityKmChart.values is not empty %}
+                            <twig:Chart:Bar
+                                title="{{ 'Distancia' | trans }}"
+                                :values="mobilityKmChart.values"
+                                :categories="mobilityKmChart.categories"
+                                unit="km"
+                                :decimals="0"
+                            />
+                        {% else %}
+                            <p class="text-muted mb-0">{{ 'Todavía no hay desplazamientos registrados.' | trans }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-header fw-semibold">{{ 'Emisiones por medio de transporte' | trans }} <span class="text-muted fw-normal">(kg CO₂eq)</span></div>
+                    <div class="card-body">
+                        {% if mobilityEmissionsChart.values is not empty %}
+                            <twig:Chart:Donut
+                                title="{{ 'Emisiones' | trans }}"
+                                :values="mobilityEmissionsChart.values"
+                                :categories="mobilityEmissionsChart.categories"
+                                unit="kg"
+                                :decimals="0"
+                                :legend="true"
+                            />
+                        {% else %}
+                            <p class="text-muted mb-0">{{ 'Todavía no hay emisiones de movilidad.' | trans }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-header fw-semibold">{{ 'Perfil de los asistentes' | trans }}</div>
+                    <div class="card-body">
+                        {% if profileChart.values is not empty %}
+                            <twig:Chart:Bar
+                                title="{{ 'Respuestas' | trans }}"
+                                :values="profileChart.values"
+                                :categories="profileChart.categories"
+                                :decimals="0"
+                                :labelDecimals="0"
+                            />
+                        {% else %}
+                            <p class="text-muted mb-0">{{ 'Todavía no hay respuestas que perfilar.' | trans }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-header fw-semibold">{{ 'Origen de las distancias' | trans }}</div>
+                    <div class="card-body">
+                        {% if distanceSourceChart.values is not empty %}
+                            <twig:Chart:Donut
+                                title="{{ 'Trayectos' | trans }}"
+                                :values="distanceSourceChart.values"
+                                :categories="distanceSourceChart.categories"
+                                :decimals="0"
+                                :labelDecimals="0"
+                                :legend="true"
+                            />
+                        {% else %}
+                            <p class="text-muted mb-0">{{ 'Todavía no hay trayectos registrados.' | trans }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-header fw-semibold">{{ 'Aportaciones por estado' | trans }}</div>
+                    <div class="card-body">
+                        {% if contributionsChart.values is not empty %}
+                            <twig:Chart:Bar
+                                title="{{ 'Aportaciones' | trans }}"
+                                :values="contributionsChart.values"
+                                :categories="contributionsChart.categories"
+                                :colors="['var(--bs-success)', 'var(--bs-warning)', 'var(--bs-danger)', 'var(--bs-secondary)']"
+                                :decimals="0"
+                                :labelDecimals="0"
+                            />
+                        {% else %}
+                            <p class="text-muted mb-0">{{ 'Todavía no se ha iniciado ninguna aportación.' | trans }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-7 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-header fw-semibold">{{ 'Principales orígenes' | trans }}</div>
+                    <div class="card-body">
+                        {% if originsChart.values is not empty %}
+                            <twig:Chart:Bar
+                                title="{{ 'Respuestas' | trans }}"
+                                :values="originsChart.values"
+                                :categories="originsChart.categories"
+                                :colors="['var(--bs-info)']"
+                                :decimals="0"
+                                :labelDecimals="0"
+                            />
+                        {% else %}
+                            <p class="text-muted mb-0">{{ 'Todavía no hay orígenes registrados.' | trans }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 d-flex">
+                <twig:Card title="{{ 'Detalle de la encuesta' | trans }}" class="flex-fill">
+                    <table class="table table-sm mb-0">
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="fw-normal">{{ 'Estado de la encuesta' | trans }}</th>
+                                <td class="text-end text-nowrap">
+                                    {% if stats.attendeeSurvey.status.isClosed %}
+                                        <span class="badge bg-success">{{ 'Cerrada' | trans }}</span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">{{ 'Abierta' | trans }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="fw-normal">{{ 'Asistentes estimados' | trans }}</th>
+                                <td class="text-end text-nowrap">{{ stats.estimatedAttendees ?? '-' }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="fw-normal">{{ 'Respuestas multimodales' | trans }}</th>
+                                <td class="text-end text-nowrap">{{ stats.multimodalResponsesCount }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="fw-normal">{{ 'Pernoctaciones declaradas' | trans }}</th>
+                                <td class="text-end text-nowrap">{{ stats.totalNights | number_format(0, ',', '.') }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="fw-normal">{{ 'Respuestas que inician una aportación' | trans }}</th>
+                                <td class="text-end text-nowrap">{{ stats.contributions.startedRate | number_format(1, ',', '.') }} %</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="fw-normal">{{ 'Respuestas que acaban pagando' | trans }}</th>
+                                <td class="text-end text-nowrap">{{ stats.contributions.paidRate | number_format(1, ',', '.') }} %</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="fw-normal">{{ 'Aportaciones iniciadas que se completan' | trans }}</th>
+                                <td class="text-end text-nowrap">{{ stats.contributions.completionRate | number_format(1, ',', '.') }} %</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </twig:Card>
+            </div>
+        </div>
+
+        {% if stats.mobilityBreakdown is not empty %}
+            <twig:Card title="{{ 'Desglose por medio de transporte' | trans }}">
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">{{ 'Medio de transporte' | trans }}</th>
+                                <th scope="col" class="text-end">{{ 'Distancia (km)' | trans }}</th>
+                                <th scope="col" class="text-end">{{ 'Emisiones' | trans }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in stats.mobilityBreakdown %}
+                                <tr>
+                                    <td>{{ row.mobility.name }}</td>
+                                    <td class="text-end text-nowrap">{{ row.km | number_format(2, ',', '.') }}</td>
+                                    <td class="text-end text-nowrap">{{ row.emissions.co2eq | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </twig:Card>
+        {% endif %}
     {% endif %}
 {% endblock %}

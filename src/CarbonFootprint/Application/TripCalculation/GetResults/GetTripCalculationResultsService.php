@@ -9,22 +9,16 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregation;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregator;
-use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
 use App\CarbonFootprint\Application\Contribution\ContributionsSummary;
-use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
+use App\CarbonFootprint\Application\Trip\MobilityBreakdownCalculator;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
-use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Emissions;
-use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
-use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
-use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculation;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationFilter;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationsAggregation;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationsAggregator;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
-use App\CarbonFootprint\Domain\Model\Unit;
 use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action;
@@ -32,15 +26,15 @@ use App\Security\Domain\Model\User\User;
 
 final class GetTripCalculationResultsService
 {
+    private const int TOP_ORIGINS = 8;
+
     public function __construct(
         private PropertyRepository $propertyRepository,
         private PropertyAuthorizer $propertyAuthorizer,
         private TripCalculationLinkRepository $tripCalculationLinkRepository,
         private TripCalculationRepository $tripCalculationRepository,
         private TripCalculationsAggregator $aggregator,
-        private MobilityRepository $mobilityRepository,
-        private ActivityEmissionsResolver $activityEmissionsResolver,
-        private EmissionFactorGroupRepository $emissionFactorGroupRepository,
+        private MobilityBreakdownCalculator $mobilityBreakdownCalculator,
         private ProjectContributionRepository $projectContributionRepository,
         private ProjectContributionsAggregator $contributionsAggregator,
     ) {}
@@ -66,6 +60,12 @@ final class GetTripCalculationResultsService
                 aggregation: $aggregation,
                 mobilityBreakdown: [],
                 contributions: $this->contributions([], $aggregation),
+                mobilityEmissions: new Emissions(),
+                overnightEmissions: new Emissions(),
+                calculationsByDay: [],
+                topOrigins: [],
+                withOvernightStayCount: 0,
+                roundTripCount: 0,
             );
         }
 
@@ -79,14 +79,79 @@ final class GetTripCalculationResultsService
         );
 
         $aggregation = $this->aggregator->aggregate($tripCalculations);
+        [$emissionFactorGroupId, $calculationYear] = $this->factorContext($tripCalculations);
 
         return new GetTripCalculationResultsResponse(
             property: $property,
             tripCalculationLink: $tripCalculationLink,
             aggregation: $aggregation,
-            mobilityBreakdown: $this->mobilityBreakdown($aggregation->kmByMobilityId, $tripCalculations),
+            mobilityBreakdown: $this->mobilityBreakdownCalculator->calculate($aggregation->kmByMobilityId, $emissionFactorGroupId, $calculationYear),
             contributions: $this->contributions($tripCalculations, $aggregation),
+            mobilityEmissions: $this->sumEmissions($tripCalculations, static fn(TripCalculation $tripCalculation): Emissions => $tripCalculation->mobilityEmissions()),
+            overnightEmissions: $this->sumEmissions($tripCalculations, static fn(TripCalculation $tripCalculation): Emissions => $tripCalculation->overnightEmissions()),
+            calculationsByDay: $this->calculationsByDay($tripCalculations),
+            topOrigins: $this->topOrigins($tripCalculations),
+            withOvernightStayCount: count(array_filter($tripCalculations, static fn(TripCalculation $tripCalculation): bool => ($tripCalculation->nights() ?? 0) > 0)),
+            roundTripCount: count(array_filter($tripCalculations, static fn(TripCalculation $tripCalculation): bool => $tripCalculation->roundTrip())),
         );
+    }
+
+    /**
+     * @param list<TripCalculation>                $tripCalculations
+     * @param callable(TripCalculation): Emissions $emissions
+     */
+    private function sumEmissions(array $tripCalculations, callable $emissions): Emissions
+    {
+        $total = new Emissions();
+
+        foreach ($tripCalculations as $tripCalculation) {
+            $total = $total->add($emissions($tripCalculation));
+        }
+
+        return $total;
+    }
+
+    /**
+     * @param list<TripCalculation> $tripCalculations
+     *
+     * @return array<string, int>
+     */
+    private function calculationsByDay(array $tripCalculations): array
+    {
+        $byDay = [];
+
+        foreach ($tripCalculations as $tripCalculation) {
+            $day = $tripCalculation->registeredAt()->format('Y-m-d');
+            $byDay[$day] = ($byDay[$day] ?? 0) + 1;
+        }
+
+        ksort($byDay);
+
+        return $byDay;
+    }
+
+    /**
+     * @param list<TripCalculation> $tripCalculations
+     *
+     * @return array<string, int>
+     */
+    private function topOrigins(array $tripCalculations): array
+    {
+        $byOrigin = [];
+
+        foreach ($tripCalculations as $tripCalculation) {
+            $origin = $tripCalculation->originLabel();
+
+            if (null === $origin || '' === trim($origin)) {
+                continue;
+            }
+
+            $byOrigin[$origin] = ($byOrigin[$origin] ?? 0) + 1;
+        }
+
+        arsort($byOrigin);
+
+        return array_slice($byOrigin, 0, self::TOP_ORIGINS, true);
     }
 
     /** @param list<TripCalculation> $tripCalculations */
@@ -130,40 +195,9 @@ final class GetTripCalculationResultsService
     }
 
     /**
-     * @param array<string, float>  $kmByMobilityId
      * @param list<TripCalculation> $tripCalculations
      *
-     * @return list<MobilityBreakdownRow>
-     */
-    private function mobilityBreakdown(array $kmByMobilityId, array $tripCalculations): array
-    {
-        [$emissionFactorGroupId, $year] = $this->factorContext($tripCalculations);
-
-        $rows = [];
-
-        foreach ($kmByMobilityId as $mobilityId => $km) {
-            $mobility = $this->mobilityRepository->find(new MobilityId($mobilityId));
-
-            if (null === $mobility) {
-                continue;
-            }
-
-            $rows[] = new MobilityBreakdownRow(
-                mobility: $mobility,
-                km: $km,
-                emissions: $this->emissionsFor($mobilityId, $km, $emissionFactorGroupId, $year),
-            );
-        }
-
-        usort($rows, static fn(MobilityBreakdownRow $a, MobilityBreakdownRow $b): int => $b->km <=> $a->km);
-
-        return $rows;
-    }
-
-    /**
-     * @param list<TripCalculation> $tripCalculations
-     *
-     * @return array{0: EmissionFactorGroupId|null, 1: int}
+     * @return array{0: EmissionFactorGroupId|null, 1: int|null}
      */
     private function factorContext(array $tripCalculations): array
     {
@@ -176,30 +210,6 @@ final class GetTripCalculationResultsService
             }
         }
 
-        return [
-            $this->emissionFactorGroupRepository->findDefault()?->id(),
-            (int) (new \DateTimeImmutable('NOW'))->format('Y'),
-        ];
-    }
-
-    private function emissionsFor(string $mobilityId, float $km, ?EmissionFactorGroupId $emissionFactorGroupId, int $year): Emissions
-    {
-        if (null === $emissionFactorGroupId || $km <= 0.0) {
-            return new Emissions();
-        }
-
-        try {
-            return $this->activityEmissionsResolver->resolveForGroupAndYear(
-                $emissionFactorGroupId,
-                $year,
-                ActivityType::Mobility,
-                $mobilityId,
-                null,
-                new Quantity($km, Unit::Kilometer),
-                null,
-            )->emissions;
-        } catch (\InvalidArgumentException) {
-            return new Emissions();
-        }
+        return [null, null];
     }
 }

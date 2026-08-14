@@ -7,14 +7,22 @@ namespace App\Tests\Unit\CarbonFootprint\Application\AttendeeSurvey\GetStats;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregator;
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryProjectContributionRepository;
+use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
+use App\CarbonFootprint\Application\Activity\EmissionFactorSelectorRegistry;
+use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
+use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveyStatsRequest;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveyStatsResponse;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveyStatsService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\Trip\MobilityBreakdownCalculator;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurvey;
+use App\CarbonFootprint\Domain\Model\Trip\TripLegsAccumulator;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryAttendeeSurveyRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryAttendeeSurveyResponseRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEmissionFactorGroupRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEventCarbonFootprintRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMobilityRepository;
 use App\EventOperations\Application\Event\EventVenueLocator;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Infrastructure\Persistence\InMemory\Repository\InMemoryEventRepository;
@@ -50,6 +58,7 @@ class GetAttendeeSurveyStatsServiceTest extends TestCase
         $this->attendeeSurveyResponseRepository = new InMemoryAttendeeSurveyResponseRepository();
         $this->eventRepository = new InMemoryEventRepository();
         $this->projectContributionRepository = new InMemoryProjectContributionRepository();
+        $mobilityRepository = new InMemoryMobilityRepository();
 
         $this->sut = new GetAttendeeSurveyStatsService(
             $this->eventCarbonFootprintRepository,
@@ -60,6 +69,15 @@ class GetAttendeeSurveyStatsServiceTest extends TestCase
             new EventVenueLocator(new InMemoryPropertyRepository()),
             $this->projectContributionRepository,
             new ProjectContributionsAggregator(),
+            new TripLegsAccumulator(),
+            new MobilityBreakdownCalculator(
+                $mobilityRepository,
+                new ActivityEmissionsResolver(
+                    new EmissionFactorSelectorRegistry([new MobilityEmissionFactorSelector($mobilityRepository)]),
+                    new EmissionsCalculator(),
+                ),
+                new InMemoryEmissionFactorGroupRepository(),
+            ),
         );
     }
 

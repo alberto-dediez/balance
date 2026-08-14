@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\CarbonFootprint\Application\TripCalculation\GetResults;
+namespace App\CarbonFootprint\Application\Trip;
 
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
