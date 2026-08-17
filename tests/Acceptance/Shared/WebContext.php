@@ -12,7 +12,7 @@ use Behat\Step\Then;
 use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 /**
  * This context class contains the definitions of the steps used by the demo
@@ -66,14 +66,14 @@ final readonly class WebContext implements Context
         $buttonCrawlerNode = $crawler->selectButton($text);
         $formData = $buttonCrawlerNode->form();
 
-        $form = $crawler->filter('form');
+        $formName = $formData->getFormNode()->getAttribute('name');
 
         $arguments = explode('|', $data);
 
         foreach ($arguments as $argument) {
             [$name, $value] = explode(':', $argument);
 
-            $key = '[' == $name[0] ? sprintf('%s%s', $form->attr('name'), $name) : sprintf('%s[%s]', $form->attr('name'), $name);
+            $key = '[' == $name[0] ? sprintf('%s%s', $formName, $name) : sprintf('%s[%s]', $formName, $name);
 
             if ('' !== $value && '[' == $value[0]) {
                 $value = explode(',', substr($value, 1, -1));
@@ -93,8 +93,8 @@ final readonly class WebContext implements Context
         if (null == $exception) {
             $code = $this->client->getResponse()->getStatusCode();
         } else {
-            $code = match ($exception::class) {
-                NotFoundHttpException::class => 404,
+            $code = match (true) {
+                $exception instanceof HttpExceptionInterface => $exception->getStatusCode(),
                 default => $exception->getCode(),
             };
         }

@@ -60,7 +60,9 @@ final class ImportationAuthorizer extends AbstractAuthorizer
             return true;
         }
 
-        return $user->hasRole(Role::Owner) && ($user->accountId() instanceof AccountId && $subject->accountId()->equals($user->accountId()));
+        $currentAccountId = $this->currentAccountId($user);
+
+        return $user->hasRole(Role::Owner) && ($currentAccountId instanceof AccountId && $subject->accountId()->equals($currentAccountId));
     }
 
     public function supports(mixed $subject): bool

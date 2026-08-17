@@ -2,7 +2,8 @@ parameters:
     app.signature_hmac_secret: '%env(SIGNATURE_HMAC_SECRET)%'
     app.signature_sms_enabled: '%env(bool:SIGNATURE_SMS_ENABLED)%'
     app.signature_whatsapp_enabled: '%env(bool:SIGNATURE_WHATSAPP_ENABLED)%'
-    
+    app.account_impersonation_enabled: '%env(bool:ACCOUNT_IMPERSONATION_ENABLED)%'
+
 services:
     _defaults:
         autowire: true
@@ -10,6 +11,7 @@ services:
         bind:
             $smsEnabled: '%app.signature_sms_enabled%'
             $whatsappEnabled: '%app.signature_whatsapp_enabled%'
+            $accountImpersonationEnabled: '%app.account_impersonation_enabled%'
 
     App\Security\:
         resource: '../../../'
@@ -19,6 +21,9 @@ services:
     App\Security\Infrastructure\UI\Console\:
         resource: '../../../Infrastructure/UI/Console/'
         tags: ['console.command']
+
+    App\Shared\Application\CurrentAccount\CurrentAccountIdProvider:
+        alias: App\Security\Infrastructure\Symfony\Security\LoggedAccount
 
     App\Security\Application\User\Register\RegisterUserService:
         arguments:

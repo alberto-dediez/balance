@@ -6,9 +6,11 @@ namespace App\Tests\Unit\Security\Application\User;
 
 use App\Security\Application\Action;
 use App\Security\Application\User\UserAuthorizer;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
 
 class UserAuthorizerTest extends TestCase
@@ -84,8 +86,63 @@ class UserAuthorizerTest extends TestCase
         $this->assertFalse($result);
     }
 
+    public function testOwnerEditsTheUsersOfTheCurrentAccountWhenItIsSwitched(): void
+    {
+        $switchedAccount = AccountMother::random();
+
+        $subject = UserMother::fromUsernameAndAccount('username', $switchedAccount);
+        $performer = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, AccountId::generate());
+
+        $sut = $this->createSUTWithCurrentAccount($switchedAccount->id());
+
+        $this->assertTrue($sut->canDoThat($subject, Action::List, $performer));
+        $this->assertTrue($sut->canDoThat($subject, Action::Edit, $performer));
+    }
+
+    public function testOwnerDoesNotEditTheUsersOfItsOwnAccountWhileAnotherOneIsCurrent(): void
+    {
+        $ownAccount = AccountMother::random();
+
+        $subject = UserMother::fromUsernameAndAccount('username', $ownAccount);
+        $performer = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $ownAccount->id());
+
+        $sut = $this->createSUTWithCurrentAccount(AccountId::generate());
+
+        $this->assertFalse($sut->canDoThat($subject, Action::List, $performer));
+        $this->assertFalse($sut->canDoThat($subject, Action::Edit, $performer));
+    }
+
+    public function testOwnerGrantsRolesWithinTheCurrentAccountWhenItIsSwitched(): void
+    {
+        $switchedAccount = AccountMother::random();
+
+        $subject = UserMother::fromUsernameAndAccount('username', $switchedAccount);
+        $performer = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, AccountId::generate());
+
+        $sut = $this->createSUTWithCurrentAccount($switchedAccount->id());
+
+        $this->assertTrue($sut->canChangeRole($subject, Role::Owner, $performer));
+    }
+
+    public function testTheAccountOfTheUserIsUsedWhenThereIsNoCurrentAccount(): void
+    {
+        $account = AccountMother::random();
+
+        $subject = UserMother::fromUsernameAndAccount('username', $account);
+        $performer = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $account->id());
+
+        $sut = $this->createSUTWithCurrentAccount(null);
+
+        $this->assertTrue($sut->canDoThat($subject, Action::Edit, $performer));
+    }
+
     private function createSUT(): UserAuthorizer
     {
         return new UserAuthorizer();
+    }
+
+    private function createSUTWithCurrentAccount(?AccountId $currentAccountId): UserAuthorizer
+    {
+        return new UserAuthorizer(new StubCurrentAccountIdProvider($currentAccountId));
     }
 }

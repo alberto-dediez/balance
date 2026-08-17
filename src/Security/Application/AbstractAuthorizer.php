@@ -4,11 +4,20 @@ declare(strict_types=1);
 
 namespace App\Security\Application;
 
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CurrentAccount\CurrentAccountIdProvider;
 
 abstract class AbstractAuthorizer implements Authorizer
 {
+    public function __construct(private readonly ?CurrentAccountIdProvider $currentAccountIdProvider = null) {}
+
+    protected function currentAccountId(User $user): ?AccountId
+    {
+        return $this->currentAccountIdProvider?->currentAccountId() ?? $user->accountId();
+    }
+
     public function canDoThat(mixed $subject, Action $action, User $user): bool
     {
         if (!$this->supports($subject)) {

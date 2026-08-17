@@ -36,6 +36,7 @@ use PHPUnit\Framework\Assert;
 use function PHPUnit\Framework\assertNotEmpty;
 
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 final class SecurityContext implements Context
 {
@@ -322,6 +323,60 @@ final class SecurityContext implements Context
         $forms = $this->client->getCrawler()->filter('form');
         $resendForm = $forms->count() > 1 ? $forms->last()->form() : $forms->first()->form();
         $this->client->submit($resendForm);
+    }
+
+    #[When('I impersonate account :name')]
+    public function iImpersonateAccount(string $name): void
+    {
+        $account = $this->getAccountRepository()->findByName($name);
+        Assert::assertNotNull($account, sprintf('Account "%s" not found', $name));
+
+        $this->client->request('GET', '/es/admin/users');
+        $token = $this->extractImpersonationToken() ?? $this->generateImpersonationToken();
+
+        $this->client->requestWithFiles('POST', '/es/admin/accounts/impersonate', [
+            'accountId' => (string) $account->id(),
+            '_token' => $token,
+        ], []);
+    }
+
+    #[When('I exit account impersonation')]
+    public function iExitAccountImpersonation(): void
+    {
+        $this->client->request('GET', '/es/admin/users');
+        $token = $this->extractImpersonationToken() ?? $this->generateImpersonationToken();
+
+        $this->client->requestWithFiles('POST', '/es/admin/accounts/impersonate/exit', [
+            '_token' => $token,
+        ], []);
+    }
+
+    private function extractImpersonationToken(): ?string
+    {
+        try {
+            $wrapper = $this->client->getCrawler()->filter('[data-account-switch-token-value]');
+        } catch (\Throwable) {
+            return null;
+        }
+
+        if (0 === $wrapper->count()) {
+            return null;
+        }
+
+        return $wrapper->first()->attr('data-account-switch-token-value');
+    }
+
+    private function generateImpersonationToken(): string
+    {
+        try {
+            $csrfManager = $this->client->getContainer()->get('security.csrf.token_manager');
+
+            Assert::assertInstanceOf(CsrfTokenManagerInterface::class, $csrfManager);
+
+            return $csrfManager->getToken('account_impersonate')->getValue();
+        } catch (\Throwable) {
+            return '';
+        }
     }
 
     #[Then('the recorded events of :username are impersonated by :impersonator')]

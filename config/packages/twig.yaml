@@ -3,6 +3,7 @@ twig:
     globals:
         locale_list: '%app.locale_list%'
         company_name: '%company.name%'
+        account_impersonation_enabled: '%app.account_impersonation_enabled%'
     form_themes: 
         - 'bootstrap_5_layout.html.twig'
         - '@shared/form/custom_types.html.twig'

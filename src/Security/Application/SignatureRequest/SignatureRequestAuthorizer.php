@@ -13,7 +13,7 @@ final class SignatureRequestAuthorizer extends AbstractAuthorizer
 {
     protected function canRegister(mixed $subject, User $user): bool
     {
-        return $this->canList($subject, $user) || null !== $user->accountId();
+        return $this->canList($subject, $user) || null !== $this->currentAccountId($user);
     }
 
     protected function canView(mixed $subject, User $user): bool

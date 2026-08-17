@@ -9,6 +9,8 @@ use App\Library\Application\Media\List\ListMediaService;
 use App\Library\Domain\Model\Media\MediaType;
 use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,13 +28,18 @@ class SearchController extends AbstractController
     public function __invoke(
         ListMediaService $listMedia,
         LoggedUser $loggedUser,
+        LoggedAccount $loggedAccount,
         UrlGeneratorInterface $urlGenerator,
         Request $request,
     ): JsonResponse {
+        $accountId = $loggedAccount->currentAccountId();
+
         $filter = new ListMediaRequest(
             name: $request->query->getString('query') ?: null,
+            accountId: $accountId,
             types: $this->requestedTypes($request),
             visibility: MediaVisibility::tryFrom($request->query->getString('visibility')),
+            withoutAccount: !$accountId instanceof AccountId,
             includeShared: $request->query->getBoolean('includeShared') ?: null,
             limit: min(48, max(1, $request->query->getInt('limit', 24))),
         );

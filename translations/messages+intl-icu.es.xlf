@@ -1577,6 +1577,18 @@
         <source>Suplantar</source>
         <target>Suplantar</target>
       </trans-unit>
+      <trans-unit id="CmbrCta" resname="Cambiar de cuenta">
+        <source>Cambiar de cuenta</source>
+        <target>Cambiar de cuenta</target>
+      </trans-unit>
+      <trans-unit id="SplCtaC" resname="Suplantando cuenta">
+        <source>Suplantando cuenta</source>
+        <target>Suplantando cuenta</target>
+      </trans-unit>
+      <trans-unit id="VlvrMCta" resname="Volver a mi cuenta">
+        <source>Volver a mi cuenta</source>
+        <target>Volver a mi cuenta</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

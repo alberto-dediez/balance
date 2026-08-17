@@ -62,7 +62,7 @@ class ListMediaServiceTest extends TestCase
 
         $user = UserMother::fromUsernameAndRoleAndAccount('owner@dediez.software', Role::Owner, $accountId);
 
-        $result = $sut(new ListMediaRequest(), $user);
+        $result = $sut(new ListMediaRequest(accountId: $accountId), $user);
 
         $this->assertCount(1, $result->media);
         $this->assertEquals('own.png', $result->media[0]->name());
@@ -81,7 +81,7 @@ class ListMediaServiceTest extends TestCase
 
         $admin = UserMother::fromUsernameAndRoleAndAccount('admin@dediez.software', Role::Admin, $accountId);
 
-        $result = $sut(new ListMediaRequest(), $admin);
+        $result = $sut(new ListMediaRequest(accountId: $accountId), $admin);
 
         $this->assertCount(1, $result->media);
         $this->assertEquals('own.png', $result->media[0]->name());
@@ -96,7 +96,7 @@ class ListMediaServiceTest extends TestCase
 
         $sut = $this->createSUT($repository);
 
-        $result = $sut(new ListMediaRequest(), UserMother::adminUser());
+        $result = $sut(new ListMediaRequest(withoutAccount: true), UserMother::adminUser());
 
         $this->assertCount(1, $result->media);
         $this->assertEquals('without-account.png', $result->media[0]->name());
@@ -116,7 +116,7 @@ class ListMediaServiceTest extends TestCase
 
         $user = UserMother::fromUsernameAndRoleAndAccount('user@dediez.software', Role::User, $accountId);
 
-        $result = $sut(new ListMediaRequest(), $user);
+        $result = $sut(new ListMediaRequest(accountId: $accountId), $user);
 
         $this->assertCount(1, $result->media);
         $this->assertEquals('own.png', $result->media[0]->name());
@@ -139,7 +139,7 @@ class ListMediaServiceTest extends TestCase
 
         $user = UserMother::fromUsernameAndRoleAndAccount('user@dediez.software', Role::User, $accountId);
 
-        $result = $sut(new ListMediaRequest(includeShared: true), $user);
+        $result = $sut(new ListMediaRequest(accountId: $accountId, includeShared: true), $user);
 
         $names = array_map(static fn($media): string => $media->name(), $result->media);
 

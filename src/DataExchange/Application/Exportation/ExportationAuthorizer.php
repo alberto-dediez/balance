@@ -57,10 +57,12 @@ final class ExportationAuthorizer extends AbstractAuthorizer
             return true;
         }
 
+        $currentAccountId = $this->currentAccountId($user);
+
         return $user->hasRole(Role::Owner)
-            && $user->accountId() instanceof AccountId
+            && $currentAccountId instanceof AccountId
             && null !== $subject->accountId()
-            && $subject->accountId()->equals($user->accountId());
+            && $subject->accountId()->equals($currentAccountId);
     }
 
     public function supports(mixed $subject): bool

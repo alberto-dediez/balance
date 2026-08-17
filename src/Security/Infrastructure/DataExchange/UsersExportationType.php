@@ -17,6 +17,7 @@ use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Symfony\Form\AdminUsersExportType;
+use App\Shared\Application\CurrentAccount\CurrentAccountIdProvider;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -27,6 +28,7 @@ class UsersExportationType implements ExportationType
         private readonly AccountRepository $accountRepository,
         private readonly UserAuthorizer $authorizer,
         private readonly TranslatorInterface $translator,
+        private readonly ?CurrentAccountIdProvider $currentAccountIdProvider = null,
     ) {}
 
     public function code(): string
@@ -128,7 +130,7 @@ class UsersExportationType implements ExportationType
     {
         $subject = new User(
             id: UserId::generate(),
-            accountId: $user->accountId(),
+            accountId: $this->currentAccountIdProvider?->currentAccountId() ?? $user->accountId(),
         );
 
         return $this->authorizer->canDoThat($subject, Action::Export, $user);

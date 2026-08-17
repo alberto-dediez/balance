@@ -23,7 +23,8 @@ final class UserAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        $isFromSameAccount = null !== $subject->accountId() && $user->accountId() instanceof AccountId && $user->accountId()->equals($subject->accountId());
+        $currentAccountId = $this->currentAccountId($user);
+        $isFromSameAccount = null !== $subject->accountId() && $currentAccountId instanceof AccountId && $currentAccountId->equals($subject->accountId());
         if ($user->hasRole(Role::SuperAdmin)) {
             return true;
         }
@@ -36,9 +37,11 @@ final class UserAuthorizer extends AbstractAuthorizer
 
     protected function canEdit(mixed $subject, User $user): bool
     {
+        $currentAccountId = $this->currentAccountId($user);
+
         return $user->hasRole(Role::Admin)
             || $user->hasRole(Role::SuperAdmin)
-            || ($user->hasRole(Role::Owner) && ($user->accountId() instanceof AccountId && $user->accountId()->equals($subject->accountId())))
+            || ($user->hasRole(Role::Owner) && ($currentAccountId instanceof AccountId && $currentAccountId->equals($subject->accountId())))
             || $subject->id()->equals($user->id())
         ;
     }
@@ -79,10 +82,12 @@ final class UserAuthorizer extends AbstractAuthorizer
             return true;
         }
 
+        $currentAccountId = $this->currentAccountId($user);
+
         return $user->hasRole(Role::Owner)
-        && $user->accountId() instanceof AccountId
+        && $currentAccountId instanceof AccountId
         && $subject->accountId() instanceof AccountId
-        && $user->accountId()->equals($subject->accountId())
+        && $currentAccountId->equals($subject->accountId())
         && in_array($role, Role::casesForOwners());
     }
 

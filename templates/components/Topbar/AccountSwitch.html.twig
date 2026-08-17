@@ -1,0 +1,24 @@
+{% if this.enabled %}
+    {% set impersonated = this.impersonatedAccount %}
+    <div class="d-flex align-items-center gap-2 ms-2 col-12 col-lg-3 col-xl-2"
+         data-controller="account-switch"
+         data-account-switch-path-value="{{ path('admin_accounts_impersonate') }}"
+         data-account-switch-exit-path-value="{{ path('admin_accounts_impersonate_exit') }}"
+         data-account-switch-token-value="{{ this.csrfToken }}"
+         data-account-switch-current-value="{{ impersonated is not null ? impersonated.id : '' }}">
+        <select data-account-switch-target="input"
+                class="form-select form-select-sm">
+            <option value="">{{ 'Cambiar de cuenta'|trans }}</option>
+            {% for account in this.accounts %}
+                <option value="{{ account.id }}">{{ account }}</option>
+            {% endfor %}
+        </select>
+        {% if impersonated is not null %}
+            <a href="#" data-action="click->account-switch#exit"
+                    class="badge bg-warning-subtle text-warning d-none d-lg-flex align-items-center py-2"
+                    title="{{ 'Volver a mi cuenta'|trans }}">
+                <twig:Icon name="solar:masks-line-duotone" />
+            </a>
+        {% endif %}
+    </div>
+{% endif %}

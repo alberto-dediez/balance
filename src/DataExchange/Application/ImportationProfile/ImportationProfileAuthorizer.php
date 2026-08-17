@@ -51,10 +51,12 @@ final class ImportationProfileAuthorizer extends AbstractAuthorizer
             return true;
         }
 
+        $currentAccountId = $this->currentAccountId($user);
+
         return $user->hasRole(Role::Owner)
             && $subject->accountId() instanceof AccountId
-            && $user->accountId() instanceof AccountId
-            && $subject->accountId()->equals($user->accountId());
+            && $currentAccountId instanceof AccountId
+            && $subject->accountId()->equals($currentAccountId);
     }
 
     public function supports(mixed $subject): bool

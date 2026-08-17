@@ -9,6 +9,8 @@ use App\Library\Application\Media\List\ListMediaService;
 use App\Library\Infrastructure\Symfony\Form\ListMediaType;
 use App\Library\Infrastructure\UI\Web\Media\Bulk\RemoveMedia;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\Symfony\Form\BulkType;
 use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
@@ -27,9 +29,13 @@ class ListController extends AbstractController
     use FilterTrait;
     use BulkTrait;
 
-    public function __invoke(ListMediaService $listMedia, LoggedUser $loggedUser, Request $request): Response
+    public function __invoke(ListMediaService $listMedia, LoggedUser $loggedUser, LoggedAccount $loggedAccount, Request $request): Response
     {
-        [$filter, $form] = $this->filter($request, fn(): ListMediaRequest => new ListMediaRequest(), ListMediaType::class);
+        $accountId = $loggedAccount->currentAccountId();
+
+        [$filter, $form] = $this->filter($request, function () use ($accountId) {
+            return new ListMediaRequest(accountId: $accountId, withoutAccount: !$accountId instanceof AccountId);
+        }, ListMediaType::class);
 
         try {
             $response = $listMedia($filter, $loggedUser());
