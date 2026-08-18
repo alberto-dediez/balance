@@ -16,6 +16,7 @@ class CreditPurchaseFilter
         public ?AccountId $accountId = null,
         public ?ProjectId $projectId = null,
         public ?CreditPurchaseStatus $status = null,
+        public ?CreditPurchasePaymentType $paymentType = null,
         public ?string $reference = null,
         int $limit = 10,
     ) {

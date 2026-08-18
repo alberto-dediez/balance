@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Balance\Domain\Model\ProjectContribution;
 
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFunding;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 use App\Payments\Domain\Model\Payment\PaymentId;
@@ -72,6 +73,50 @@ class ProjectContributionMother
         Locale $locale = Locale::Spanish,
     ): ProjectContribution {
         $projectContribution = self::pending($accountId, $projectId, $tonnes, originId: $originId, originName: $originName, origin: $origin, locale: $locale);
+        $projectContribution->pay();
+
+        return $projectContribution;
+    }
+
+    public static function ownCreditFunded(
+        ?AccountId $accountId = null,
+        ?ProjectId $projectId = null,
+        float $tonnes = 1.0,
+        ?ProjectContributionId $id = null,
+        ?string $originId = null,
+        ProjectContributionOrigin $origin = ProjectContributionOrigin::EventCarbonFootprint,
+        ?string $originName = 'Congreso Andalucía Sostenible',
+    ): ProjectContribution {
+        $projectContribution = new ProjectContribution(id: $id ?? ProjectContributionId::generate());
+        $projectContribution->register(
+            accountId: $accountId ?? AccountId::generate(),
+            projectId: $projectId ?? ProjectId::generate(),
+            origin: $origin,
+            originId: $originId ?? (string) ProjectContributionId::generate(),
+            originName: $originName,
+            co2eqKg: $tonnes * 1000,
+            tonnes: $tonnes,
+            pricePerTonne: 20.0,
+            costPerTonne: 15.0,
+            freeAmount: false,
+            contributionAmount: round($tonnes * 15.0, 2),
+            managementFeeAmount: 0.0,
+            taxableAmount: 0.0,
+            vatRate: 0.0,
+            vatAmount: 0.0,
+            totalAmount: 0.0,
+            vatReason: null,
+            currency: 'EUR',
+            contributorName: 'Hoteles del Sur SL',
+            contributorEmail: 'owner@example.com',
+            contributorCountry: 'ES',
+            contributorIsCompany: true,
+            contributorCompanyName: 'Hoteles del Sur SL',
+            contributorVatNumber: 'B12345678',
+            locale: Locale::Spanish,
+            expiresAt: null,
+            funding: ProjectContributionFunding::OwnCredit,
+        );
         $projectContribution->pay();
 
         return $projectContribution;

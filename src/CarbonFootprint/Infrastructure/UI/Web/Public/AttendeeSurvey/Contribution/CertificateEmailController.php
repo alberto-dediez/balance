@@ -8,8 +8,8 @@ use App\Balance\Application\ContributionCertificate\Send\SendContributionCertifi
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepository;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetByToken\GetAttendeeSurveyByTokenService;
+use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionCertificateTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\AttendeeSurveyPublicControllerTrait;
-use App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution\PublicContributionCertificateTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,7 +27,7 @@ class CertificateEmailController extends AbstractController
 {
     use AttendeeSurveyPublicControllerTrait;
     use AttendeeSurveyContributionTrait;
-    use PublicContributionCertificateTrait;
+    use ContributionCertificateTrait;
 
     public function __construct(
         private PublicFormRateLimiter $attendeeSurveyRateLimiter,

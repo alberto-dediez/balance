@@ -7,8 +7,8 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\Contribu
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenService;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
-use App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution\ContributionCheckoutHandler;
-use App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution\ContributionContext;
+use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionCheckoutHandler;
+use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionContext;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\PropertyTripPublicControllerTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\Security\Domain\Model\Account\AccountId;
@@ -86,9 +86,9 @@ class CheckoutController extends AbstractController
         $parameters = $result->parameters + ['property' => $link->property];
 
         if ($request->isXmlHttpRequest()) {
-            return $this->render('@carbon_footprint/public/project_contribution/_summary.html.twig', $parameters);
+            return $this->render('@carbon_footprint/project_contribution/_summary.html.twig', $parameters);
         }
 
-        return $this->render('@carbon_footprint/public/project_contribution/checkout.html.twig', $parameters);
+        return $this->render('@carbon_footprint/project_contribution/checkout.html.twig', $parameters);
     }
 }

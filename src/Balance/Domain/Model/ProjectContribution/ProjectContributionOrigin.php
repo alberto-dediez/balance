@@ -8,4 +8,7 @@ enum ProjectContributionOrigin: string
 {
     case PropertyTripCalculation = 'property_trip_calculation';
     case AttendeeSurveyResponse = 'attendee_survey_response';
+    case EventCarbonFootprint = 'event_carbon_footprint';
+    case Property = 'property';
+    case Account = 'account';
 }

@@ -93,6 +93,13 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
             ;
         }
 
+        if (null !== $filter->funding) {
+            $qb
+                ->andWhere($qb->expr()->eq('pc.funding', ':funding'))
+                ->setParameter('funding', $filter->funding->value)
+            ;
+        }
+
         if (null !== $filter->originId) {
             $qb
                 ->andWhere($qb->expr()->eq('pc.originId', ':originId'))

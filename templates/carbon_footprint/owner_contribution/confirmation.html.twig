@@ -1,0 +1,141 @@
+{% extends routes.layout %}
+
+{% set page_title = 'Tu compensación' | trans %}
+
+{% block contribution_body %}
+    <div class="text-center mb-4">
+        {% if contribution.paid %}
+            <twig:Icon name="solar:check-circle-bold" size="xl" class="text-success mb-3" />
+            <h5 class="text-success mb-1">{{ '¡Compensación registrada!' | trans }}</h5>
+            <p class="text-muted small mb-0">
+                {% if contribution.ownCreditFunded %}
+                    {{ 'Hemos descontado las toneladas de tus lotes de crédito. No se ha cobrado nada.' | trans }}
+                {% else %}
+                    {{ 'Hemos recibido tu pago correctamente.' | trans }}
+                {% endif %}
+            </p>
+        {% elseif contribution.pending %}
+            <twig:Icon name="solar:clock-circle-bold" size="xl" class="text-warning mb-3" />
+            <h5 class="mb-1">{{ 'Estamos confirmando tu pago' | trans }}</h5>
+            <p class="text-muted small mb-0">
+                {{ 'En cuanto la pasarela nos confirme el cobro, tu aportación quedará registrada.' | trans }}
+            </p>
+        {% else %}
+            <twig:Icon name="solar:close-circle-bold" size="xl" class="text-danger mb-3" />
+            <h5 class="text-danger mb-1">{{ 'Tu aportación no se ha completado' | trans }}</h5>
+            <p class="text-muted small mb-0">
+                {{ 'El pago no llegó a realizarse, así que no se ha cobrado nada.' | trans }}
+            </p>
+        {% endif %}
+    </div>
+
+    {% if project %}
+        <p class="text-center mb-4">
+            <span class="text-muted">{{ 'Proyecto' | trans }}:</span> <strong>{{ project.name }}</strong>
+        </p>
+    {% endif %}
+
+    <table class="table table-sm mb-4">
+        <tbody>
+            {% if contribution.co2eqKg is not null %}
+                <tr>
+                    <th scope="row" class="fw-normal">{{ 'Emisiones compensadas' | trans }}</th>
+                    <td class="text-end text-nowrap">{{ contribution.co2eqKg | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</td>
+                </tr>
+            {% endif %}
+            <tr>
+                <th scope="row" class="fw-normal">{{ 'Toneladas' | trans }}</th>
+                <td class="text-end text-nowrap">{{ contribution.tonnes | number_format(3, ',', '.') }} t</td>
+            </tr>
+            {% if contribution.ownCreditFunded %}
+                <tr>
+                    <th scope="row" class="fw-normal">{{ 'Valoración al coste de tus lotes' | trans }}</th>
+                    <td class="text-end text-nowrap">{{ contribution.contributionAmount | number_format(2, ',', '.') }} €</td>
+                </tr>
+                <tr class="fw-semibold">
+                    <th scope="row">{{ 'Total' | trans }}</th>
+                    <td class="text-end text-nowrap">{{ 'Sin cobro' | trans }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <th scope="row" class="fw-normal">{{ 'Aportación al proyecto' | trans }}</th>
+                    <td class="text-end text-nowrap">{{ contribution.contributionAmount | number_format(2, ',', '.') }} €</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="fw-normal">{{ 'Margen de gestión' | trans }}</th>
+                    <td class="text-end text-nowrap">{{ contribution.managementFeeAmount | number_format(2, ',', '.') }} €</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="fw-normal">
+                        {{ 'IVA' | trans }} ({{ contribution.vatRate | number_format(2, ',', '.') }} %)
+                    </th>
+                    <td class="text-end text-nowrap">{{ contribution.vatAmount | number_format(2, ',', '.') }} €</td>
+                </tr>
+                <tr class="fw-semibold">
+                    <th scope="row">{{ 'Total' | trans }}</th>
+                    <td class="text-end text-nowrap">{{ contribution.totalAmount | number_format(2, ',', '.') }} €</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    {% if payment and payment.externalPaymentId %}
+        <p class="text-muted small text-center mb-3">
+            {{ 'Referencia del pago' | trans }}: <code>{{ payment.externalPaymentId }}</code>
+        </p>
+    {% endif %}
+
+    {% if contribution.paid %}
+        <hr class="my-4">
+
+        {% if certificate is null or certificate.status.value == 'pending' %}
+            <div class="text-center">
+                <twig:Icon name="solar:document-add-bold" size="lg" class="text-muted mb-2" />
+                <p class="mb-0">{{ 'Estamos preparando tu certificado' | trans }}</p>
+                <p class="text-muted small mb-0">
+                    {{ 'En cuanto esté listo lo recibirás por correo y podrás descargarlo desde aquí.' | trans }}
+                </p>
+            </div>
+            <meta http-equiv="refresh" content="8">
+        {% elseif certificate.generated %}
+            <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center mb-3">
+                <a class="btn btn-primary"
+                   href="{{ path(routes.certificate, routes.contributionParams(contribution.id)) }}">
+                    <twig:Icon name="solar:download-minimalistic-bold" /> {{ 'Descargar certificado' | trans }}
+                </a>
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="collapse"
+                        data-bs-target="#certificate-resend" aria-expanded="false" aria-controls="certificate-resend">
+                    <twig:Icon name="solar:letter-bold" /> {{ 'Reenviar certificado' | trans }}
+                </button>
+            </div>
+
+            <div class="collapse" id="certificate-resend">
+                <form method="post"
+                      action="{{ path(routes.certificateEmail, routes.contributionParams(contribution.id)) }}"
+                      class="row g-2 justify-content-center">
+                    <input type="hidden" name="_token" value="{{ csrf_token(routes.csrfTokenId) }}">
+                    <div class="col-12 col-sm-7">
+                        <label class="visually-hidden" for="certificate-email">{{ 'Correo electrónico' | trans }}</label>
+                        <input type="email" class="form-control" id="certificate-email" name="email"
+                               value="{{ certificate.contactEmail }}" required>
+                    </div>
+                    <div class="col-12 col-sm-auto">
+                        <button type="submit" class="btn btn-outline-primary w-100">
+                            {{ 'Enviar por correo' | trans }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        {% else %}
+            <p class="text-center text-muted small mb-0">
+                {{ 'Tu certificado se está preparando y te lo enviaremos por correo en cuanto esté listo.' | trans }}
+            </p>
+        {% endif %}
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <a class="btn btn-link btn-sm text-muted" href="{{ path(routes.result, routes.resultRouteParams) }}">
+            {{ 'Volver' | trans }}
+        </a>
+    </div>
+{% endblock %}

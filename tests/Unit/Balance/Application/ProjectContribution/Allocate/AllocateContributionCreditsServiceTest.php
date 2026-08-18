@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Balance\Application\ProjectContribution\Allocate;
 use App\Balance\Application\ProjectContribution\Allocate\AllocateContributionCreditsRequest;
 use App\Balance\Application\ProjectContribution\Allocate\AllocateContributionCreditsService;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\Project\ProjectType;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
@@ -181,6 +182,25 @@ class AllocateContributionCreditsServiceTest extends TestCase
         $this->assertCount(1, $underallocated);
     }
 
+    public function testAnOwnCreditContributionOnlyConsumesTheLotsTheClientPaid(): void
+    {
+        $this->givenCompensationProject();
+
+        $this->givenValidatedPurchase(10.0, '-3 days', CreditPurchasePaymentType::PaidByBioscore);
+        $own = $this->givenValidatedPurchase(10.0, '-1 day');
+
+        $contribution = ProjectContributionMother::ownCreditFunded($this->accountId, $this->projectId, tonnes: 4.0);
+        $this->contributions->add($contribution);
+
+        $this->allocate($contribution);
+
+        $allocations = $contribution->creditAllocations();
+
+        $this->assertCount(1, $allocations);
+        $this->assertTrue($own->id()->equals($allocations[0]->creditPurchaseId()));
+        $this->assertSame(4.0, $allocations[0]->tonnes());
+    }
+
     private function givenCompensationProject(): void
     {
         $this->projects->add(ProjectMother::contributable(
@@ -189,13 +209,17 @@ class AllocateContributionCreditsServiceTest extends TestCase
         ));
     }
 
-    private function givenValidatedPurchase(float $tonnes, string $resolvedAt): CreditPurchase
-    {
+    private function givenValidatedPurchase(
+        float $tonnes,
+        string $resolvedAt,
+        CreditPurchasePaymentType $paymentType = CreditPurchasePaymentType::PaidByClient,
+    ): CreditPurchase {
         $purchase = CreditPurchaseMother::validatedAt(
             new \DateTimeImmutable($resolvedAt),
             $this->accountId,
             $this->projectId,
             $tonnes,
+            $paymentType,
         );
 
         $this->purchases->add($purchase);

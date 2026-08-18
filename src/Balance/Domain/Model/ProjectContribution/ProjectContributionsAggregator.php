@@ -17,6 +17,7 @@ final class ProjectContributionsAggregator
             ProjectContributionStatus::Expired->value => 0,
         ];
 
+        $charged = 0;
         $paidTotalAmount = 0.0;
         $paidContributionAmount = 0.0;
         $paidManagementFeeAmount = 0.0;
@@ -31,11 +32,17 @@ final class ProjectContributionsAggregator
                 continue;
             }
 
+            $paidTonnes += $projectContribution->tonnes();
+            $paidCo2eqKg += $projectContribution->co2eqKg() ?? 0.0;
+
+            if ($projectContribution->isOwnCreditFunded()) {
+                continue;
+            }
+
+            ++$charged;
             $paidTotalAmount += $projectContribution->totalAmount();
             $paidContributionAmount += $projectContribution->contributionAmount();
             $paidManagementFeeAmount += $projectContribution->managementFeeAmount();
-            $paidTonnes += $projectContribution->tonnes();
-            $paidCo2eqKg += $projectContribution->co2eqKg() ?? 0.0;
         }
 
         $paid = $counts[ProjectContributionStatus::Paid->value];
@@ -51,7 +58,7 @@ final class ProjectContributionsAggregator
             paidManagementFeeAmount: $paidManagementFeeAmount,
             paidTonnes: $paidTonnes,
             paidCo2eqKg: $paidCo2eqKg,
-            averagePaidAmount: 0 === $paid ? 0.0 : $paidTotalAmount / $paid,
+            averagePaidAmount: 0 === $charged ? 0.0 : $paidTotalAmount / $charged,
         );
     }
 }

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution;
+namespace App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution;
 
 use App\Library\Domain\Model\Media\Media;
 use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Domain\Model\Media\MediaRepository;
 
-trait PublicGalleryTrait
+trait ContributionGalleryTrait
 {
     /**
      * @param array<MediaId> $gallery

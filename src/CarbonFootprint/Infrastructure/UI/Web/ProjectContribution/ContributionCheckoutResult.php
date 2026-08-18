@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution;
+namespace App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution;
 
 final readonly class ContributionCheckoutResult
 {

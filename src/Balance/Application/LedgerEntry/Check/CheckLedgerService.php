@@ -141,6 +141,10 @@ final class CheckLedgerService implements CommandHandler
         }
 
         if (0 === $entriesCount) {
+            if ($projectContribution->isOwnCreditFunded()) {
+                return null;
+            }
+
             return new LedgerFinding(
                 code: LedgerFindingCode::PaidContributionWithoutEntries,
                 subjectId: (string) $projectContribution->id(),

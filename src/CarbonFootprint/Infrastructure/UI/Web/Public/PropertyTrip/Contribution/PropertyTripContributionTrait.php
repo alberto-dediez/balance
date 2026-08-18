@@ -12,13 +12,13 @@ use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationId;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
-use App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution\ContributionRoutes;
-use App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution\PublicGalleryTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionGalleryTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionRoutes;
 use App\Security\Domain\Model\Account\AccountId;
 
 trait PropertyTripContributionTrait
 {
-    use PublicGalleryTrait;
+    use ContributionGalleryTrait;
 
     private function contributionRoutes(string $token, string $tripCalculationId): ContributionRoutes
     {
@@ -32,6 +32,8 @@ trait PropertyTripContributionTrait
             certificate: 'public_carbon_footprint_property_trip_contribution_certificate',
             certificateEmail: 'public_carbon_footprint_property_trip_contribution_certificate_email',
             routeParams: ['token' => $token, 'tripCalculationId' => $tripCalculationId],
+            contributionRouteParams: ['token' => $token],
+            resultRouteParams: ['token' => $token, 'tripCalculationId' => $tripCalculationId],
             layout: '@carbon_footprint/public/property_trip/layout.html.twig',
             csrfTokenId: 'property_trip_' . $token,
         );

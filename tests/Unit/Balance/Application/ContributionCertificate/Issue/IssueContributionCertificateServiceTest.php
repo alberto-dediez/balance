@@ -137,6 +137,27 @@ class IssueContributionCertificateServiceTest extends TestCase
         $this->assertSame($contribution->originName(), $certificate->originName());
     }
 
+    public function testAnOwnCreditContributionIsCertifiedAtTheCostOfItsLots(): void
+    {
+        $this->givenProject(ProjectType::EmissionCompensation);
+
+        $contribution = ProjectContributionMother::ownCreditFunded($this->accountId, $this->projectId, tonnes: 2.0);
+        $contribution->allocateCredits([
+            new AllocatedCreditLine(0, CreditPurchaseId::generate(), '2024-b012', 2.0, 0.0),
+        ]);
+        $this->contributions->add($contribution);
+
+        $certificate = $this->issue($contribution->id())->contributionCertificate;
+
+        $this->assertSame(ContributionCertificateType::Compensation, $certificate->type());
+        $this->assertSame(2000.0, $certificate->co2eqKg());
+        $this->assertSame(30.0, $certificate->contributionAmount());
+        $this->assertSame(
+            [['serial' => '2024-b012', 'startTonnes' => 0.0, 'endTonnes' => 2.0]],
+            $certificate->creditLots(),
+        );
+    }
+
     public function testACompanyBecomesTheBeneficiaryAndThePersonTheContact(): void
     {
         $this->givenProject(ProjectType::EmissionCompensation);

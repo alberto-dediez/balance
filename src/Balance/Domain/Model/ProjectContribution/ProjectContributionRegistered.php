@@ -35,7 +35,7 @@ final class ProjectContributionRegistered extends DomainEvent
         private float $vatRate,
         private float $vatAmount,
         private float $totalAmount,
-        private VatExemptionReason $vatReason,
+        private ?VatExemptionReason $vatReason,
         private string $currency,
         private string $contributorName,
         private string $contributorEmail,
@@ -44,7 +44,8 @@ final class ProjectContributionRegistered extends DomainEvent
         private ?string $contributorCompanyName,
         private ?string $contributorVatNumber,
         private Locale $locale,
-        private \DateTimeImmutable $expiresAt,
+        private ?\DateTimeImmutable $expiresAt,
+        private ProjectContributionFunding $funding = ProjectContributionFunding::Payment,
         private ?PaymentId $paymentId = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
@@ -137,7 +138,7 @@ final class ProjectContributionRegistered extends DomainEvent
         return $this->totalAmount;
     }
 
-    public function vatReason(): VatExemptionReason
+    public function vatReason(): ?VatExemptionReason
     {
         return $this->vatReason;
     }
@@ -182,9 +183,14 @@ final class ProjectContributionRegistered extends DomainEvent
         return $this->locale;
     }
 
-    public function expiresAt(): \DateTimeImmutable
+    public function expiresAt(): ?\DateTimeImmutable
     {
         return $this->expiresAt;
+    }
+
+    public function funding(): ProjectContributionFunding
+    {
+        return $this->funding;
     }
 
     public function paymentId(): ?PaymentId
@@ -217,7 +223,7 @@ final class ProjectContributionRegistered extends DomainEvent
             'vatRate' => $this->vatRate,
             'vatAmount' => $this->vatAmount,
             'totalAmount' => $this->totalAmount,
-            'vatReason' => $this->vatReason->value,
+            'vatReason' => $this->vatReason?->value,
             'currency' => $this->currency,
             'contributorName' => $this->contributorName,
             'contributorEmail' => $this->contributorEmail,
@@ -226,7 +232,8 @@ final class ProjectContributionRegistered extends DomainEvent
             'contributorCompanyName' => $this->contributorCompanyName,
             'contributorVatNumber' => $this->contributorVatNumber,
             'locale' => $this->locale->value,
-            'expiresAt' => $this->expiresAt->format(\DateTimeInterface::ATOM),
+            'expiresAt' => $this->expiresAt?->format(\DateTimeInterface::ATOM),
+            'funding' => $this->funding->value,
             'paymentId' => null !== $this->paymentId ? (string) $this->paymentId : null,
         ];
     }
@@ -254,7 +261,7 @@ final class ProjectContributionRegistered extends DomainEvent
             vatRate: (float) $payload['vatRate'],
             vatAmount: (float) $payload['vatAmount'],
             totalAmount: (float) $payload['totalAmount'],
-            vatReason: VatExemptionReason::from($payload['vatReason']),
+            vatReason: null !== ($payload['vatReason'] ?? null) ? VatExemptionReason::from((string) $payload['vatReason']) : null,
             currency: (string) $payload['currency'],
             contributorName: (string) $payload['contributorName'],
             contributorEmail: (string) $payload['contributorEmail'],
@@ -263,7 +270,8 @@ final class ProjectContributionRegistered extends DomainEvent
             contributorCompanyName: null !== $payload['contributorCompanyName'] ? (string) $payload['contributorCompanyName'] : null,
             contributorVatNumber: null !== $payload['contributorVatNumber'] ? (string) $payload['contributorVatNumber'] : null,
             locale: Locale::tryFrom((string) ($payload['locale'] ?? '')) ?? Locale::Spanish,
-            expiresAt: new \DateTimeImmutable($payload['expiresAt']),
+            expiresAt: null !== ($payload['expiresAt'] ?? null) ? new \DateTimeImmutable((string) $payload['expiresAt']) : null,
+            funding: ProjectContributionFunding::tryFrom((string) ($payload['funding'] ?? '')) ?? ProjectContributionFunding::Payment,
             paymentId: null !== $payload['paymentId'] ? new PaymentId($payload['paymentId']) : null,
             id: $id,
             occurredOn: $occurredOn,

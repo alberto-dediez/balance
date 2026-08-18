@@ -7,9 +7,9 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\Contri
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetByToken\GetAttendeeSurveyByTokenService;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
+use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionCheckoutHandler;
+use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionContext;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\AttendeeSurveyPublicControllerTrait;
-use App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution\ContributionCheckoutHandler;
-use App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution\ContributionContext;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -86,9 +86,9 @@ class CheckoutController extends AbstractController
         $parameters = $result->parameters + ['event' => $survey->event];
 
         if ($request->isXmlHttpRequest()) {
-            return $this->render('@carbon_footprint/public/project_contribution/_summary.html.twig', $parameters);
+            return $this->render('@carbon_footprint/project_contribution/_summary.html.twig', $parameters);
         }
 
-        return $this->render('@carbon_footprint/public/project_contribution/checkout.html.twig', $parameters);
+        return $this->render('@carbon_footprint/project_contribution/checkout.html.twig', $parameters);
     }
 }

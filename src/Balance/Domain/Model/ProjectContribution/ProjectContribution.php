@@ -49,6 +49,7 @@ class ProjectContribution
         private ?string $contributorCompanyName = null,
         private ?string $contributorVatNumber = null,
         private Locale $locale = Locale::Spanish,
+        private ProjectContributionFunding $funding = ProjectContributionFunding::Payment,
         private ProjectContributionStatus $status = ProjectContributionStatus::Pending,
         private ?PaymentId $paymentId = null,
         private ?string $failureReason = null,
@@ -189,6 +190,16 @@ class ProjectContribution
     public function locale(): Locale
     {
         return $this->locale;
+    }
+
+    public function funding(): ProjectContributionFunding
+    {
+        return $this->funding;
+    }
+
+    public function isOwnCreditFunded(): bool
+    {
+        return $this->funding->isOwnCredit();
     }
 
     public function status(): ProjectContributionStatus
@@ -338,7 +349,7 @@ class ProjectContribution
         float $vatRate,
         float $vatAmount,
         float $totalAmount,
-        VatExemptionReason $vatReason,
+        ?VatExemptionReason $vatReason,
         string $currency,
         string $contributorName,
         string $contributorEmail,
@@ -347,14 +358,15 @@ class ProjectContribution
         ?string $contributorCompanyName,
         ?string $contributorVatNumber,
         Locale $locale,
-        \DateTimeImmutable $expiresAt,
+        ?\DateTimeImmutable $expiresAt,
+        ProjectContributionFunding $funding = ProjectContributionFunding::Payment,
         ?PaymentId $paymentId = null,
     ): void {
         if ($tonnes <= 0.0) {
             throw new \InvalidArgumentException('Contribution tonnes must be greater than zero.');
         }
 
-        if ($totalAmount <= 0.0) {
+        if (!$funding->isOwnCredit() && $totalAmount <= 0.0) {
             throw new \InvalidArgumentException('Contribution total amount must be greater than zero.');
         }
 
@@ -387,6 +399,7 @@ class ProjectContribution
                 contributorVatNumber: $contributorVatNumber,
                 locale: $locale,
                 expiresAt: $expiresAt,
+                funding: $funding,
                 paymentId: $paymentId,
             ),
         );
@@ -551,6 +564,7 @@ class ProjectContribution
         $this->contributorCompanyName = $event->contributorCompanyName();
         $this->contributorVatNumber = $event->contributorVatNumber();
         $this->locale = $event->locale();
+        $this->funding = $event->funding();
         $this->paymentId = $event->paymentId();
         $this->status = ProjectContributionStatus::Pending;
         $this->registeredAt = $event->occurredOn();

@@ -6349,6 +6349,134 @@
         <source>Remesa</source>
         <target>Remittance</target>
       </trans-unit>
+      <trans-unit id="GERLwUI" resname="Necesitamos tu nombre, tu email y tu país para poder emitir el certificado.">
+        <source>Necesitamos tu nombre, tu email y tu país para poder emitir el certificado.</source>
+        <target>We need your name, email and country to issue the certificate.</target>
+      </trans-unit>
+      <trans-unit id="T0sYFSq" resname="Ya no tienes crédito propio suficiente en este proyecto para compensar esas emisiones.">
+        <source>Ya no tienes crédito propio suficiente en este proyecto para compensar esas emisiones.</source>
+        <target>You no longer have enough own credit in this project to offset those emissions.</target>
+      </trans-unit>
+      <trans-unit id="dGAtA2u" resname="No tienes permiso para compensar en nombre de esta cuenta.">
+        <source>No tienes permiso para compensar en nombre de esta cuenta.</source>
+        <target>You are not allowed to offset on behalf of this account.</target>
+      </trans-unit>
+      <trans-unit id="QlwpRlS" resname="No hemos podido registrar la compensación: {error}">
+        <source>No hemos podido registrar la compensación: {error}</source>
+        <target>We could not register the offset: {error}</target>
+      </trans-unit>
+      <trans-unit id="1Geadvp" resname="Compensar">
+        <source>Compensar</source>
+        <target>Offset</target>
+      </trans-unit>
+      <trans-unit id="VwlUCwm" resname="Compensar emisiones">
+        <source>Compensar emisiones</source>
+        <target>Offset emissions</target>
+      </trans-unit>
+      <trans-unit id="pM9VnWa" resname="Tienes {tonnes} t disponibles en tus lotes.">
+        <source>Tienes {tonnes} t disponibles en tus lotes.</source>
+        <target>You have {tonnes} t available in your lots.</target>
+      </trans-unit>
+      <trans-unit id="GpY0Ah1" resname="Sin cobro">
+        <source>Sin cobro</source>
+        <target>No charge</target>
+      </trans-unit>
+      <trans-unit id="iDyzELx" resname="La huella calculada es de {kg} kg CO₂eq.">
+        <source>La huella calculada es de {kg} kg CO₂eq.</source>
+        <target>The calculated footprint is {kg} kg CO₂eq.</target>
+      </trans-unit>
+      <trans-unit id="waUL6g1" resname="Indica libremente cuánto quieres compensar o aportar.">
+        <source>Indica libremente cuánto quieres compensar o aportar.</source>
+        <target>Freely choose how much you want to offset or contribute.</target>
+      </trans-unit>
+      <trans-unit id="lUP37oY" resname="Ahora mismo no hay proyectos disponibles para compensar.">
+        <source>Ahora mismo no hay proyectos disponibles para compensar.</source>
+        <target>There are no projects available to offset right now.</target>
+      </trans-unit>
+      <trans-unit id="wJfOXxh" resname="Solicitar un lote de crédito">
+        <source>Solicitar un lote de crédito</source>
+        <target>Request a credit lot</target>
+      </trans-unit>
+      <trans-unit id="6BBekeE" resname="Compensar con tus créditos">
+        <source>Compensar con tus créditos</source>
+        <target>Offset with your credits</target>
+      </trans-unit>
+      <trans-unit id="72Z1JqO" resname="Compensación de emisiones">
+        <source>Compensación de emisiones</source>
+        <target>Emissions offsetting</target>
+      </trans-unit>
+      <trans-unit id="TpdEjjQ" resname="Compensas con tus propios lotes de crédito, así que no se te cobra nada.">
+        <source>Compensas con tus propios lotes de crédito, así que no se te cobra nada.</source>
+        <target>You are offsetting with your own credit lots, so nothing is charged to you.</target>
+      </trans-unit>
+      <trans-unit id="gkHZn4u" resname="¿Cuánto quieres compensar?">
+        <source>¿Cuánto quieres compensar?</source>
+        <target>How much do you want to offset?</target>
+      </trans-unit>
+      <trans-unit id="4doFgTF" resname="Crédito propio disponible: {tonnes} t.">
+        <source>Crédito propio disponible: {tonnes} t.</source>
+        <target>Own credit available: {tonnes} t.</target>
+      </trans-unit>
+      <trans-unit id="zZsZ8Nl" resname="Equivale a {tonnes} t, valoradas en {amount} € al coste de tus lotes.">
+        <source>Equivale a {tonnes} t, valoradas en {amount} € al coste de tus lotes.</source>
+        <target>That is {tonnes} t, valued at {amount} € at the cost of your lots.</target>
+      </trans-unit>
+      <trans-unit id="fA3c0LG" resname="Datos del certificado">
+        <source>Datos del certificado</source>
+        <target>Certificate details</target>
+      </trans-unit>
+      <trans-unit id="cPfoVYl" resname="Elige un país">
+        <source>Elige un país</source>
+        <target>Choose a country</target>
+      </trans-unit>
+      <trans-unit id="LQo0gB3" resname="Compenso como empresa">
+        <source>Compenso como empresa</source>
+        <target>I offset as a company</target>
+      </trans-unit>
+      <trans-unit id="ZxvrIF5" resname="Indica las emisiones a compensar en kg CO₂eq.">
+        <source>Indica las emisiones a compensar en kg CO₂eq.</source>
+        <target>Enter the emissions to offset in kg CO₂eq.</target>
+      </trans-unit>
+      <trans-unit id="Biw21W2" resname="No tienes crédito propio suficiente para compensar esas emisiones. Reduce la cantidad o solicita un lote nuevo.">
+        <source>No tienes crédito propio suficiente para compensar esas emisiones. Reduce la cantidad o solicita un lote nuevo.</source>
+        <target>You do not have enough own credit to offset those emissions. Reduce the amount or request a new lot.</target>
+      </trans-unit>
+      <trans-unit id="tw3TpZ_" resname="Tu compensación">
+        <source>Tu compensación</source>
+        <target>Your offset</target>
+      </trans-unit>
+      <trans-unit id="exPsIOI" resname="¡Compensación registrada!">
+        <source>¡Compensación registrada!</source>
+        <target>Offset registered!</target>
+      </trans-unit>
+      <trans-unit id="ma5E3rV" resname="Hemos descontado las toneladas de tus lotes de crédito. No se ha cobrado nada.">
+        <source>Hemos descontado las toneladas de tus lotes de crédito. No se ha cobrado nada.</source>
+        <target>We have deducted the tonnes from your credit lots. Nothing has been charged.</target>
+      </trans-unit>
+      <trans-unit id="160KCzB" resname="Valoración al coste de tus lotes">
+        <source>Valoración al coste de tus lotes</source>
+        <target>Valuation at the cost of your lots</target>
+      </trans-unit>
+      <trans-unit id="oUudCtO" resname="Tienes {tonnes} t disponibles en tus lotes de este proyecto.">
+        <source>Tienes {tonnes} t disponibles en tus lotes de este proyecto.</source>
+        <target>You have {tonnes} t available in your lots for this project.</target>
+      </trans-unit>
+      <trans-unit id="a7_gKGv" resname="Compensar contra tus lotes no tiene coste adicional.">
+        <source>Compensar contra tus lotes no tiene coste adicional.</source>
+        <target>Offsetting against your lots has no additional cost.</target>
+      </trans-unit>
+      <trans-unit id="MWoGIGn" resname="Compensar esta huella en este proyecto cuesta {amount} €.">
+        <source>Compensar esta huella en este proyecto cuesta {amount} €.</source>
+        <target>Offsetting this footprint in this project costs {amount} €.</target>
+      </trans-unit>
+      <trans-unit id="GjMpNCM" resname="Compensar en este proyecto">
+        <source>Compensar en este proyecto</source>
+        <target>Offset in this project</target>
+      </trans-unit>
+      <trans-unit id="K8jFwWu" resname="Compensar {tonnes} t">
+        <source>Compensar {tonnes} t</source>
+        <target>Offset {tonnes} t</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

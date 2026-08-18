@@ -69,7 +69,7 @@ class ProjectController extends AbstractController
             return $this->attendeeSurveyInvalidResponse($this->attendeeSurveyRateLimiter, $request);
         }
 
-        return $this->render('@carbon_footprint/public/project_contribution/project.html.twig', [
+        return $this->render('@carbon_footprint/project_contribution/project.html.twig', [
             'token' => $token,
             'event' => $survey->event,
             'routes' => $this->contributionRoutes($token, $responseId),

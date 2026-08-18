@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Balance\Application\CreditPurchase\Balance;
 
 use App\Balance\Domain\Model\CreditPurchase\CreditBalance;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseFilter;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseStatus;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Security\Domain\Model\Account\AccountId;
@@ -26,6 +29,32 @@ final class CreditAvailability
             $balance,
             $this->projectContributionRepository->committedTonnes($accountId, $projectId, $now),
         );
+    }
+
+    public function ownFor(AccountId $accountId, ProjectId $projectId, ?\DateTimeImmutable $now = null): float
+    {
+        $purchases = $this->creditPurchaseRepository->findByFilter(new CreditPurchaseFilter(
+            accountId: $accountId,
+            projectId: $projectId,
+            status: CreditPurchaseStatus::Validated,
+            paymentType: CreditPurchasePaymentType::PaidByClient,
+            limit: 0,
+        ));
+
+        $allocated = $this->projectContributionRepository->allocatedTonnesByPurchase($accountId, $projectId);
+
+        $ownPurchased = 0.0;
+        $ownAllocated = 0.0;
+
+        foreach ($purchases as $creditPurchase) {
+            $ownPurchased += $creditPurchase->availableTonnes();
+            $ownAllocated += $allocated[(string) $creditPurchase->id()] ?? 0.0;
+        }
+
+        return max(0.0, min(
+            $ownPurchased - $ownAllocated,
+            $this->for($accountId, $projectId, $now)->availableTonnes(),
+        ));
     }
 
     /** @return array<CreditBalance> */

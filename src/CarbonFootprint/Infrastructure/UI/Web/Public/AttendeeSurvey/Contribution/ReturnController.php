@@ -79,7 +79,7 @@ class ReturnController extends AbstractController
 
         $projectId = $projectContribution->projectId();
 
-        return $this->render('@carbon_footprint/public/project_contribution/confirmation.html.twig', [
+        return $this->render('@carbon_footprint/project_contribution/confirmation.html.twig', [
             'token' => $token,
             'event' => $survey->event,
             'routes' => $this->contributionRoutes($token, $originId),

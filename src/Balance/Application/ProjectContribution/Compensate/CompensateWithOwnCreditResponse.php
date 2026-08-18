@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Balance\Application\ProjectContribution\Compensate;
+
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
+use App\Shared\Application\CommandBus\CommandResponse;
+
+final class CompensateWithOwnCreditResponse implements CommandResponse
+{
+    public function __construct(
+        public readonly ProjectContributionId $projectContributionId,
+        public readonly float $tonnes,
+        public readonly float $contributionAmount,
+    ) {}
+}

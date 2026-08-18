@@ -14,7 +14,14 @@ final class ProjectContributionAuthorizer extends AbstractAuthorizer
 {
     protected function canRegister(mixed $subject, User $user): bool
     {
-        return false;
+        assert($subject instanceof ProjectContribution);
+
+        $subjectAccountId = $subject->accountId();
+
+        return $user->hasRole(Role::Owner)
+            && $user->accountId() instanceof AccountId
+            && null !== $subjectAccountId
+            && $user->accountId()->equals($subjectAccountId);
     }
 
     protected function canView(mixed $subject, User $user): bool

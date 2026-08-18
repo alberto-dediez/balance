@@ -1,0 +1,57 @@
+{% extends routes.layout %}
+
+{% set page_title = 'Compensar emisiones' | trans %}
+
+{% set ownOptions = options | filter(option => option.funding.isOwnCredit) %}
+{% set paidOptions = options | filter(option => not option.funding.isOwnCredit) %}
+
+{% block contribution_body %}
+    <div class="text-center mb-4">
+        <twig:Icon name="solar:hand-heart-bold" size="xl" class="text-success mb-3" />
+        <h5 class="mb-1">{{ 'Elige un proyecto' | trans }}</h5>
+        {% if co2eqKg is not null %}
+            <p class="text-muted small mb-0">
+                {{ 'La huella calculada es de {kg} kg CO₂eq.' | trans({'{kg}': co2eqKg | number_format(2, ',', '.')}) }}
+            </p>
+        {% else %}
+            <p class="text-muted small mb-0">
+                {{ 'Indica libremente cuánto quieres compensar o aportar.' | trans }}
+            </p>
+        {% endif %}
+    </div>
+
+    {% if options is empty %}
+        <p class="text-muted text-center mb-3">
+            {{ 'Ahora mismo no hay proyectos disponibles para compensar.' | trans }}
+        </p>
+        <div class="d-grid">
+            <a class="btn btn-outline-success" href="{{ path('projects') }}">
+                {{ 'Solicitar un lote de crédito' | trans }}
+            </a>
+        </div>
+    {% else %}
+        {% if ownOptions is not empty %}
+            <h6 class="fw-semibold mb-3">{{ 'Compensar con tus créditos' | trans }}</h6>
+            <div class="d-grid gap-3 mb-4">
+                {% for option in ownOptions %}
+                    {{ include('@carbon_footprint/owner_contribution/_option.html.twig', {option: option}) }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if paidOptions is not empty %}
+            <h6 class="fw-semibold mb-3">{{ 'Aportar' | trans }}</h6>
+            <div class="d-grid gap-3">
+                {% for option in paidOptions %}
+                    {{ include('@carbon_footprint/owner_contribution/_option.html.twig', {option: option}) }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <a class="btn btn-link btn-sm text-muted" href="{{ path(routes.result, routes.resultRouteParams) }}">
+            {{ 'Volver' | trans }}
+        </a>
+    </div>
+{% endblock %}

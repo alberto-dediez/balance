@@ -11,6 +11,7 @@ use App\Balance\Domain\Model\Project\Project;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\Project\ProjectRepository;
 use App\Balance\Domain\Model\Project\ProjectType;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFunding;
 
 final class ListContributionOptionsService
 {
@@ -51,6 +52,8 @@ final class ListContributionOptionsService
 
             $limitedByCredit = ProjectType::EmissionCompensation === $project->projectType();
             $availableTonnes = \INF;
+            $ownAvailableTonnes = 0.0;
+            $funding = ProjectContributionFunding::Payment;
 
             if ($limitedByCredit) {
                 $availableTonnes = $this->creditAvailability
@@ -58,7 +61,18 @@ final class ListContributionOptionsService
                     ->availableTonnes()
                 ;
 
-                if ($availableTonnes <= 0.0 || !$this->hasEnoughCredit($availableTonnes, $request->co2eqKg)) {
+                if ($availableTonnes <= 0.0) {
+                    continue;
+                }
+
+                if ($request->ownerMode) {
+                    $ownAvailableTonnes = $this->creditAvailability->ownFor($request->accountId, $projectId, $now);
+
+                    if ($ownAvailableTonnes > 0.0) {
+                        $funding = ProjectContributionFunding::OwnCredit;
+                        $availableTonnes = $ownAvailableTonnes;
+                    }
+                } elseif (!$this->hasEnoughCredit($availableTonnes, $request->co2eqKg)) {
                     continue;
                 }
             }
@@ -72,6 +86,8 @@ final class ListContributionOptionsService
                 suggestedAmount: null !== $request->co2eqKg
                     ? round($request->co2eqKg / 1000 * $pricePerTonne, 2)
                     : null,
+                funding: $funding,
+                ownAvailableTonnes: $ownAvailableTonnes,
             );
         }
 

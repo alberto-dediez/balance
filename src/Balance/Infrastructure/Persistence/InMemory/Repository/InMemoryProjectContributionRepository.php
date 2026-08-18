@@ -70,6 +70,10 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
             return false;
         }
 
+        if (null !== $filter->funding && $filter->funding !== $projectContribution->funding()) {
+            return false;
+        }
+
         if (null !== $filter->originId && $filter->originId !== $projectContribution->originId()) {
             return false;
         }

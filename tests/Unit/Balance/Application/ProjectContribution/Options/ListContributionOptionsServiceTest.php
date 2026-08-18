@@ -7,9 +7,11 @@ namespace App\Tests\Unit\Balance\Application\ProjectContribution\Options;
 use App\Balance\Application\CreditPurchase\Balance\CreditAvailability;
 use App\Balance\Application\ProjectContribution\Options\ListContributionOptionsRequest;
 use App\Balance\Application\ProjectContribution\Options\ListContributionOptionsService;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\Project\Project;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\Project\ProjectType;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFunding;
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountProjectRepository;
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryCreditPurchaseRepository;
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryProjectContributionRepository;
@@ -157,11 +159,63 @@ class ListContributionOptionsServiceTest extends TestCase
         $this->assertTrue($response->isEmpty());
     }
 
+    public function testInOwnerModeAnOffsettingProjectWithOwnLotsIsFundedWithOwnCredit(): void
+    {
+        $project = $this->adheredProject(purchasedTonnes: 10.0);
+
+        $option = $this->createSUT()(new ListContributionOptionsRequest($this->accountId, ownerMode: true))
+            ->find((string) $project->id());
+
+        $this->assertNotNull($option);
+        $this->assertSame(ProjectContributionFunding::OwnCredit, $option->funding);
+        $this->assertSame(10.0, $option->ownAvailableTonnes);
+        $this->assertSame(10.0, $option->availableTonnes);
+    }
+
+    public function testInOwnerModeAProjectWithOnlyBioscoreLotsIsStillPaid(): void
+    {
+        $project = $this->adheredProject(
+            purchasedTonnes: 10.0,
+            paymentType: CreditPurchasePaymentType::PaidByBioscore,
+        );
+
+        $option = $this->createSUT()(new ListContributionOptionsRequest($this->accountId, ownerMode: true))
+            ->find((string) $project->id());
+
+        $this->assertNotNull($option);
+        $this->assertSame(ProjectContributionFunding::Payment, $option->funding);
+        $this->assertSame(0.0, $option->ownAvailableTonnes);
+    }
+
+    public function testInOwnerModeASocialProjectIsAlwaysPaid(): void
+    {
+        $project = $this->adheredProject(purchasedTonnes: 0.0, projectType: ProjectType::SocialProject);
+
+        $option = $this->createSUT()(new ListContributionOptionsRequest($this->accountId, ownerMode: true))
+            ->find((string) $project->id());
+
+        $this->assertNotNull($option);
+        $this->assertSame(ProjectContributionFunding::Payment, $option->funding);
+    }
+
+    public function testInOwnerModeAProjectIsNotDiscardedForNotCoveringTheWholeFootprint(): void
+    {
+        $project = $this->adheredProject(purchasedTonnes: 1.0);
+
+        $option = $this->createSUT()(new ListContributionOptionsRequest($this->accountId, co2eqKg: 2000.0, ownerMode: true))
+            ->find((string) $project->id());
+
+        $this->assertNotNull($option);
+        $this->assertSame(ProjectContributionFunding::OwnCredit, $option->funding);
+        $this->assertSame(1.0, $option->ownAvailableTonnes);
+    }
+
     private function adheredProject(
         float $purchasedTonnes,
         ProjectType $projectType = ProjectType::EmissionCompensation,
         float $pricePerTonne = 20.0,
         ?float $costPerTonne = 15.0,
+        CreditPurchasePaymentType $paymentType = CreditPurchasePaymentType::PaidByClient,
     ): Project {
         $projectId = ProjectId::generate();
 
@@ -176,7 +230,7 @@ class ListContributionOptionsServiceTest extends TestCase
 
         if ($purchasedTonnes > 0.0) {
             $this->creditPurchases->add(
-                CreditPurchaseMother::validated($this->accountId, $projectId, tonnes: $purchasedTonnes),
+                CreditPurchaseMother::validated($this->accountId, $projectId, tonnes: $purchasedTonnes, paymentType: $paymentType),
             );
         }
 

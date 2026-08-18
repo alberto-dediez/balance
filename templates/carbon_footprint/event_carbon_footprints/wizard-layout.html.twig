@@ -9,6 +9,14 @@
 
             {{ 'Descargar informe' | trans }}
         </twig:TopAction>
+
+        {% if is_granted('ROLE_OWNER') %}
+            <twig:TopAction path="{{ path('owner_contribution_choose', {origin: 'event_carbon_footprint', originId: eventId}) }}" target="_blank">
+                <twig:Icon name="solar:hand-heart-bold" size="lg" class="me-2" />
+
+                {{ 'Compensar emisiones' | trans }}
+            </twig:TopAction>
+        {% endif %}
     {% endif %}
 
     <twig:TopAction:Return path="{{ path('events') }}" />

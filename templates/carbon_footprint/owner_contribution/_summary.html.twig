@@ -1,0 +1,44 @@
+{#
+    Valuation of the compensation, refreshed on its own whenever the owner changes the emissions.
+    Nothing outside this fragment may be needed to read it: it is the whole body of the response
+    the checkout returns to those refreshes.
+#}
+{% if ownAvailableTonnes is not null %}
+    <p class="text-muted small mb-1">
+        {{ 'Crédito propio disponible: {tonnes} t.' | trans({'{tonnes}': ownAvailableTonnes | number_format(3, ',', '.')}) }}
+    </p>
+{% endif %}
+
+{% if quote %}
+    <p class="text-muted small mb-3">
+        {{ 'Equivale a {tonnes} t, valoradas en {amount} € al coste de tus lotes.' | trans({
+            '{tonnes}': quote.tonnes | number_format(3, ',', '.'),
+            '{amount}': quote.contributionAmount | number_format(2, ',', '.'),
+        }) }}
+    </p>
+{% endif %}
+
+{% if amountError %}
+    <div class="alert alert-warning" role="alert">
+        {{ 'Indica las emisiones a compensar en kg CO₂eq.' | trans }}
+    </div>
+{% endif %}
+
+{% if exceedsCredit %}
+    <div class="alert alert-warning" role="alert">
+        {{ 'No tienes crédito propio suficiente para compensar esas emisiones. Reduce la cantidad o solicita un lote nuevo.' | trans }}
+    </div>
+{% endif %}
+
+<div class="d-grid gap-2">
+    {% if quote and not exceedsCredit %}
+        <button class="btn btn-success" type="submit" name="contribution[compensate]" value="1">
+            {{ 'Compensar {tonnes} t' | trans({'{tonnes}': quote.tonnes | number_format(3, ',', '.')}) }}
+        </button>
+    {% endif %}
+    <noscript>
+        <button class="btn btn-outline-secondary w-100" type="submit">
+            {{ 'Recalcular' | trans }}
+        </button>
+    </noscript>
+</div>

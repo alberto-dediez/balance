@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution;
+namespace App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution;
 
 use App\Balance\Application\ProjectContribution\Quote\QuoteContributionRequest;
 use App\Balance\Application\ProjectContribution\Quote\QuoteContributionResponse;
@@ -35,13 +35,15 @@ final class ContributionCheckoutHandler
         private UrlGeneratorInterface $urlGenerator,
     ) {}
 
+    /** @param array<string, mixed> $defaults */
     public function handle(
         ContributionContext $context,
         ContributionRoutes $routes,
         string $projectId,
         Request $request,
+        array $defaults = [],
     ): ContributionCheckoutResult {
-        $contribution = $request->request->all('contribution');
+        $contribution = $request->isMethod('POST') ? $request->request->all('contribution') : $defaults;
         $countries = $this->countries();
         $country = $this->country($contribution, $countries);
         $freeAmount = $this->freeAmount($contribution);

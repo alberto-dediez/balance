@@ -7,12 +7,14 @@ namespace App\Balance\Application\ProjectContribution\Allocate;
 use App\Balance\Application\CreditPurchase\Balance\CreditReservationLock;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseFilter;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseStatus;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\Project\ProjectRepository;
 use App\Balance\Domain\Model\Project\ProjectType;
 use App\Balance\Domain\Model\ProjectContribution\AllocatedCreditLine;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Security\Domain\Model\Account\AccountId;
 
@@ -53,7 +55,7 @@ final class AllocateContributionCreditsService
         }
 
         $this->creditReservationLock->withLock($accountId, $projectId, function () use ($projectContribution, $accountId, $projectId): void {
-            $lines = $this->allocate($accountId, $projectId, $projectContribution->tonnes());
+            $lines = $this->allocate($accountId, $projectId, $projectContribution);
 
             $projectContribution->allocateCredits($lines);
 
@@ -68,15 +70,15 @@ final class AllocateContributionCreditsService
     }
 
     /** @return list<AllocatedCreditLine> */
-    private function allocate(AccountId $accountId, ProjectId $projectId, float $tonnes): array
+    private function allocate(AccountId $accountId, ProjectId $projectId, ProjectContribution $projectContribution): array
     {
         $alreadyAllocated = $this->projectContributionRepository->allocatedTonnesByPurchase($accountId, $projectId);
 
         $lines = [];
         $position = 0;
-        $pending = $tonnes;
+        $pending = $projectContribution->tonnes();
 
-        foreach ($this->validatedPurchases($accountId, $projectId) as $creditPurchase) {
+        foreach ($this->validatedPurchases($accountId, $projectId, $projectContribution) as $creditPurchase) {
             if ($pending <= self::MIN_ALLOCATABLE_TONNES) {
                 break;
             }
@@ -106,12 +108,16 @@ final class AllocateContributionCreditsService
     }
 
     /** @return list<CreditPurchase> */
-    private function validatedPurchases(AccountId $accountId, ProjectId $projectId): array
-    {
+    private function validatedPurchases(
+        AccountId $accountId,
+        ProjectId $projectId,
+        ProjectContribution $projectContribution,
+    ): array {
         $purchases = $this->creditPurchaseRepository->findByFilter(new CreditPurchaseFilter(
             accountId: $accountId,
             projectId: $projectId,
             status: CreditPurchaseStatus::Validated,
+            paymentType: $projectContribution->isOwnCreditFunded() ? CreditPurchasePaymentType::PaidByClient : null,
             limit: 0,
         ));
 

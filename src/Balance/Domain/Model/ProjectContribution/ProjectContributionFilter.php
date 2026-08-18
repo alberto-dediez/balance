@@ -19,6 +19,7 @@ class ProjectContributionFilter
         public ?ProjectId $projectId = null,
         public ?ProjectContributionStatus $status = null,
         public ?ProjectContributionOrigin $origin = null,
+        public ?ProjectContributionFunding $funding = null,
         public ?string $originId = null,
         public ?array $originIds = null,
         public ?PaymentId $paymentId = null,

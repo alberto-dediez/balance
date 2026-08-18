@@ -37,6 +37,34 @@ class ProjectContributionAuthorizerTest extends TestCase
         $this->assertFalse($this->createSUT()->canDoThat($this->subject($accountId), Action::Edit, $user));
     }
 
+    public function testOnlyTheOwnerOfTheAccountCanRegisterAContribution(): void
+    {
+        $accountId = AccountId::generate();
+        $subject = $this->subject($accountId);
+
+        $this->assertTrue($this->createSUT()->canDoThat(
+            $subject,
+            Action::Register,
+            UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $accountId),
+        ));
+        $this->assertFalse($this->createSUT()->canDoThat(
+            $subject,
+            Action::Register,
+            UserMother::fromUsernameAndRoleAndAccount('other', Role::Owner, AccountId::generate()),
+        ));
+        $this->assertFalse($this->createSUT()->canDoThat(
+            $subject,
+            Action::Register,
+            UserMother::fromUsernameAndRoleAndAccount('user', Role::User, $accountId),
+        ));
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Register, UserMother::adminUser()));
+        $this->assertFalse($this->createSUT()->canDoThat(
+            $subject,
+            Action::Register,
+            UserMother::fromUsernameAndRole('super', Role::SuperAdmin),
+        ));
+    }
+
     public function testOwnerOfAnotherAccountIsDenied(): void
     {
         $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, AccountId::generate());

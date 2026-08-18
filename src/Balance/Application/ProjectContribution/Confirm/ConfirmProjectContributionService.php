@@ -40,9 +40,11 @@ final class ConfirmProjectContributionService
             new AllocateContributionCreditsRequest($projectContribution->id()),
         );
 
-        $this->recordContributionLedgerEntries->__invoke(
-            new RecordContributionLedgerEntriesRequest($projectContribution->id()),
-        );
+        if (!$projectContribution->isOwnCreditFunded()) {
+            $this->recordContributionLedgerEntries->__invoke(
+                new RecordContributionLedgerEntriesRequest($projectContribution->id()),
+            );
+        }
 
         return new ConfirmProjectContributionResponse(status: $projectContribution->status(), changed: true);
     }

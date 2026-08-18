@@ -11,6 +11,7 @@ final class ListContributionOptionsRequest
     public function __construct(
         public readonly AccountId $accountId,
         public readonly ?float $co2eqKg = null,
+        public readonly bool $ownerMode = false,
         public readonly ?\DateTimeImmutable $now = null,
     ) {}
 }

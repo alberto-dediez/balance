@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution;
+namespace App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution;
 
 use App\Balance\Application\ContributionCertificate\Send\SendContributionCertificateRequest;
 use App\Balance\Application\ContributionCertificate\Send\SendContributionCertificateService;
@@ -15,7 +15,7 @@ use App\Shared\Domain\Model\Locale\LocaleGetter;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Translation\TranslatableMessage;
 
-trait PublicContributionCertificateTrait
+trait ContributionCertificateTrait
 {
     private function resolveCertificate(
         AccountId $accountId,

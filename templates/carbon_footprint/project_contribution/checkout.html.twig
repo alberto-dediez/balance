@@ -1,0 +1,193 @@
+{% extends routes.layout %}
+
+{% set page_title = 'Tu aportación' | trans %}
+
+{% block contribution_body %}
+    <div class="mb-4">
+        <h5 class="mb-1">{{ project.name }}</h5>
+        {% if offersEmissions %}
+            <p class="text-muted small mb-0">
+                {{ 'Tu huella es de {kg} kg CO₂eq.' | trans({'{kg}': co2eqKg | number_format(2, ',', '.')}) }}
+            </p>
+        {% else %}
+            <p class="text-muted small mb-0">
+                {{ 'Tu visita no genera emisiones que compensar, pero puedes hacer una aportación al proyecto.' | trans }}
+            </p>
+        {% endif %}
+    </div>
+
+    <form method="post" name="contribution" novalidate>
+        <input type="hidden" name="_token" value="{{ csrf_token(routes.csrfTokenId) }}">
+
+        <fieldset class="mb-4">
+            <legend class="fs-6 fw-semibold">{{ '¿Cuánto quieres aportar?' | trans }}</legend>
+
+            {% if offersEmissions %}
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="contribution_mode_emissions"
+                           name="contribution[mode]" value="emissions"
+                           {{ contribution.mode | default('emissions') != 'free' ? 'checked' : '' }}>
+                    <label class="form-check-label" for="contribution_mode_emissions">
+                        {{ 'Compensar mis emisiones' | trans }}
+                    </label>
+                </div>
+            {% endif %}
+
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="contribution_mode_free"
+                       name="contribution[mode]" value="free"
+                       {{ not offersEmissions or contribution.mode | default('') == 'free' ? 'checked' : '' }}>
+                <label class="form-check-label" for="contribution_mode_free">
+                    {{ 'Aportación libre' | trans }}
+                </label>
+            </div>
+
+            <div class="mt-2" id="contribution_amount_group">
+                <label class="form-label" for="contribution_amount">{{ 'Importe (€)' | trans }}</label>
+                <input class="form-control" type="number" min="1" step="0.01"
+                       {{ maxFreeAmount ? 'max="' ~ maxFreeAmount ~ '"' : '' }}
+                       id="contribution_amount" name="contribution[amount]"
+                       value="{{ contribution.amount | default('') }}">
+            </div>
+        </fieldset>
+
+        <fieldset class="mb-4">
+            <legend class="fs-6 fw-semibold">{{ 'Tus datos' | trans }}</legend>
+
+            <div class="mb-2">
+                <label class="form-label" for="contribution_name">{{ 'Nombre y apellidos' | trans }}</label>
+                <input class="form-control" type="text" required
+                       id="contribution_name" name="contribution[name]"
+                       value="{{ contribution.name | default('') }}">
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label" for="contribution_email">{{ 'Email' | trans }}</label>
+                <input class="form-control" type="email" required
+                       id="contribution_email" name="contribution[email]"
+                       value="{{ contribution.email | default('') }}">
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label" for="contribution_country">{{ 'País' | trans }}</label>
+                <select class="form-select" required
+                        id="contribution_country" name="contribution[country]">
+                    <option value="">{{ 'Elige tu país' | trans }}</option>
+                    {% for iso, name in countries %}
+                        <option value="{{ iso }}" {{ iso == country ? 'selected' : '' }}>{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" value="1"
+                       id="contribution_is_company" name="contribution[isCompany]"
+                       {{ contribution.isCompany | default(false) ? 'checked' : '' }}>
+                <label class="form-check-label" for="contribution_is_company">
+                    {{ 'Aporto como empresa' | trans }}
+                </label>
+            </div>
+
+            <div class="mb-2 contribution-company-field">
+                <label class="form-label" for="contribution_company_name">{{ 'Razón social' | trans }}</label>
+                <input class="form-control" type="text"
+                       id="contribution_company_name" name="contribution[companyName]"
+                       value="{{ contribution.companyName | default('') }}">
+            </div>
+
+            <div class="mb-2 contribution-company-field">
+                <label class="form-label" for="contribution_vat_number">{{ 'NIF / NIF-IVA' | trans }}</label>
+                <input class="form-control text-uppercase" type="text"
+                       id="contribution_vat_number" name="contribution[vatNumber]"
+                       value="{{ contribution.vatNumber | default('') }}">
+                <div class="form-text">
+                    {{ 'Si aportas como empresa de otro país de la UE, indica tu NIF-IVA intracomunitario para que la aportación quede exenta.' | trans }}
+                </div>
+            </div>
+        </fieldset>
+
+        <div id="contribution_summary">
+            {{ include('@carbon_footprint/project_contribution/_summary.html.twig') }}
+        </div>
+    </form>
+
+    <script>
+        (function () {
+            var form = document.forms.contribution;
+            var summary = document.getElementById('contribution_summary');
+            var amountGroup = document.getElementById('contribution_amount_group');
+            var isCompany = document.getElementById('contribution_is_company');
+            var companyFields = document.querySelectorAll('.contribution-company-field');
+            var pending = null;
+
+            function freeMode() {
+                var checked = form.querySelector('input[name="contribution[mode]"]:checked');
+
+                return !checked || checked.value === 'free';
+            }
+
+            function toggle() {
+                amountGroup.style.display = freeMode() ? '' : 'none';
+                companyFields.forEach(function (field) {
+                    field.style.display = isCompany.checked ? '' : 'none';
+                });
+            }
+
+            // The breakdown depends on the amount and on the tax data, so every change of them asks
+            // for it again instead of leaving the guest to recalculate by hand. Only the breakdown
+            // is replaced: what they have typed stays as it is.
+            function recalculate() {
+                toggle();
+                summary.setAttribute('aria-busy', 'true');
+
+                var request = fetch(window.location.href, {
+                    method: 'POST',
+                    headers: {'X-Requested-With': 'XMLHttpRequest'},
+                    body: new FormData(form),
+                });
+
+                pending = request;
+
+                request
+                    .then(function (response) {
+                        if (!response.ok) {
+                            throw new Error('The breakdown could not be refreshed.');
+                        }
+
+                        return response.text();
+                    })
+                    .then(function (html) {
+                        // A slower answer to an older change must not overwrite the last one.
+                        if (pending === request) {
+                            summary.innerHTML = html;
+                            summary.removeAttribute('aria-busy');
+                        }
+                    })
+                    .catch(function () {
+                        if (pending === request) {
+                            summary.removeAttribute('aria-busy');
+                            form.submit();
+                        }
+                    });
+            }
+
+            form.querySelectorAll('input[name="contribution[mode]"]').forEach(function (radio) {
+                radio.addEventListener('change', recalculate);
+            });
+
+            ['contribution_amount', 'contribution_country', 'contribution_is_company', 'contribution_vat_number']
+                .forEach(function (id) {
+                    document.getElementById(id).addEventListener('change', recalculate);
+                });
+
+            toggle();
+        })();
+    </script>
+
+    <div class="text-center mt-4">
+        <a class="btn btn-link btn-sm text-muted"
+           href="{{ path(routes.choose, routes.routeParams) }}">
+            {{ 'Elegir otro proyecto' | trans }}
+        </a>
+    </div>
+{% endblock %}

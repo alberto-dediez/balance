@@ -51,6 +51,7 @@ class DashboardController extends AbstractController
 
         return $this->render('@carbon_footprint/dashboard/dashboard.html.twig', [
             'dashboard' => $dashboard,
+            'accountId' => (string) $account->id(),
             'emissionsYearCategories' => array_keys($dashboard->emissionsByYear),
             'emissionsYearValues' => $this->roundValues($dashboard->emissionsByYear),
             'phaseCategories' => $this->translateKeys($dashboard->emissionsByPhase, 'phase', $translator),

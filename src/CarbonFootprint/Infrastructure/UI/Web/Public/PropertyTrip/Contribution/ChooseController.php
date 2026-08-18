@@ -69,7 +69,7 @@ class ChooseController extends AbstractController
             $covers[(string) $option->project->id()] = $gallery[0] ?? null;
         }
 
-        return $this->render('@carbon_footprint/public/project_contribution/choose.html.twig', [
+        return $this->render('@carbon_footprint/project_contribution/choose.html.twig', [
             'token' => $token,
             'property' => $link->property,
             'co2eqKg' => (float) $tripCalculation->emissions()->co2eq(),

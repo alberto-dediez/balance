@@ -63,6 +63,10 @@ class InMemoryCreditPurchaseRepository implements CreditPurchaseRepository
             return false;
         }
 
+        if (null !== $filter->paymentType && $filter->paymentType !== $creditPurchase->paymentType()) {
+            return false;
+        }
+
         if (
             !empty($filter->reference)
             && !str_contains(strtolower((string) $creditPurchase->reference()), strtolower($filter->reference))

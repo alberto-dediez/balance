@@ -11,13 +11,13 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyTokenInvalidEx
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
-use App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution\ContributionRoutes;
-use App\CarbonFootprint\Infrastructure\UI\Web\Public\ProjectContribution\PublicGalleryTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionGalleryTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionRoutes;
 use App\Security\Domain\Model\Account\AccountId;
 
 trait AttendeeSurveyContributionTrait
 {
-    use PublicGalleryTrait;
+    use ContributionGalleryTrait;
 
     private function resolveSurvey(
         string $token,
@@ -62,6 +62,8 @@ trait AttendeeSurveyContributionTrait
             certificate: 'public_carbon_footprint_attendee_survey_contribution_certificate',
             certificateEmail: 'public_carbon_footprint_attendee_survey_contribution_certificate_email',
             routeParams: ['token' => $token, 'responseId' => $responseId],
+            contributionRouteParams: ['token' => $token],
+            resultRouteParams: ['token' => $token, 'responseId' => $responseId],
             layout: '@carbon_footprint/public/attendee_survey/layout.html.twig',
             csrfTokenId: 'attendee_survey_contribution_' . $token,
         );
