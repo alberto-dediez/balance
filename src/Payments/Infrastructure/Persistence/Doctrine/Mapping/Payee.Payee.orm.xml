@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Payments\Domain\Model\Payee\Payee" table="payees">
+        <id name="id" type="payee_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <embedded name="address" class="App\Shared\Domain\Model\Address" use-column-prefix="false" />
+
+        <field name="type" type="string" column="type" length="20" enum-type="App\Payments\Domain\Model\Payee\PayeeType" nullable="true"/>
+        <field name="subjectId" type="string" column="subject_id" length="36" nullable="true"/>
+        <field name="legalName" type="string" column="legal_name" length="255" nullable="false"/>
+        <field name="taxId" type="string" column="tax_id" length="50" nullable="true"/>
+        <field name="iban" type="string" column="iban" length="50" nullable="true"/>
+        <field name="bic" type="string" column="bic" length="20" nullable="true"/>
+        <field name="holderName" type="string" column="holder_name" length="255" nullable="true"/>
+        <field name="status" type="string" column="status" length="20" enum-type="App\Payments\Domain\Model\Payee\PayeeStatus" nullable="false"/>
+        <field name="externalId" type="string" column="external_id" length="255" nullable="true"/>
+        <field name="notes" type="text" column="notes" nullable="true"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
+
+        <unique-constraints>
+            <unique-constraint columns="type,subject_id" name="uniq_payee_subject"/>
+        </unique-constraints>
+
+        <indexes>
+            <index columns="status" name="idx_payee_status"/>
+            <index columns="subject_id" name="idx_payee_subject_id"/>
+        </indexes>
+    </entity>
+</doctrine-mapping>

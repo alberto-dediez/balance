@@ -6,6 +6,7 @@ namespace App\Balance\Infrastructure\UI\Web\Admin\Project;
 
 use App\Balance\Application\AccountProject\List\ListAccountProjectsRequest;
 use App\Balance\Application\AccountProject\List\ListAccountProjectsService;
+use App\Balance\Application\Project\Credits\ProjectCreditAvailability;
 use App\Balance\Application\Project\Update\UpdateProjectRequest;
 use App\Balance\Application\Project\Update\UpdateProjectService;
 use App\Balance\Domain\Model\Project\ProjectRepository;
@@ -31,6 +32,7 @@ class EditController extends AbstractController
         ProjectRepository $projectRepository,
         UpdateProjectService $updateProject,
         ListAccountProjectsService $listAccountProjects,
+        ProjectCreditAvailability $projectCreditAvailability,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -57,7 +59,9 @@ class EditController extends AbstractController
         );
 
         try {
-            $form = $this->createForm(UpdateProjectType::class, $projectRequest);
+            $form = $this->createForm(UpdateProjectType::class, $projectRequest, [
+                'costLocked' => $projectCreditAvailability->hasUnconsumedCredits($project->id()),
+            ]);
 
             $needsRedirect = $this->edit($request, $form, function ($form) use ($updateProject, $loggedUser) {
                 $projectRequest = $form->getData();

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Balance\Domain\Model\LedgerEntry\LedgerEntry" table="ledger_entries">
+        <id name="id" type="ledger_entry_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="type" type="string" column="type" length="30" enum-type="App\Balance\Domain\Model\LedgerEntry\LedgerEntryType" nullable="false"/>
+        <field name="beneficiary" type="string" column="beneficiary" length="20" enum-type="App\Balance\Domain\Model\LedgerEntry\LedgerBeneficiary" nullable="false"/>
+        <field name="beneficiaryId" type="string" column="beneficiary_id" length="36" nullable="true"/>
+        <field name="amount" type="float" column="amount" nullable="false"/>
+        <field name="currency" type="string" column="currency" length="3" nullable="false"/>
+        <field name="projectContributionId" type="project_contribution_id" column="project_contribution_id" nullable="true"/>
+        <field name="projectId" type="project_id" column="project_id" nullable="true"/>
+        <field name="creditPurchaseId" type="credit_purchase_id" column="credit_purchase_id" nullable="true"/>
+        <field name="tonnes" type="float" column="tonnes" nullable="true"/>
+        <field name="reversesEntryId" type="ledger_entry_id" column="reverses_entry_id" nullable="true"/>
+        <field name="concept" type="text" column="concept" nullable="true"/>
+        <field name="recordedBy" type="user_id" column="recorded_by" nullable="true"/>
+        <field name="payoutId" type="payout_id" column="payout_id" nullable="true"/>
+        <field name="occurredAt" type="datetime_immutable" column="occurred_at" nullable="false"/>
+        <field name="settledAt" type="datetime_immutable" column="settled_at" nullable="true"/>
+
+        <indexes>
+            <index columns="beneficiary,beneficiary_id,payout_id" name="idx_ledger_entry_pending"/>
+            <index columns="project_contribution_id" name="idx_ledger_entry_contribution"/>
+            <index columns="payout_id" name="idx_ledger_entry_payout"/>
+            <index columns="occurred_at" name="idx_ledger_entry_occurred_at"/>
+            <index columns="type" name="idx_ledger_entry_type"/>
+            <index columns="credit_purchase_id" name="idx_ledger_entry_credit_purchase"/>
+        </indexes>
+    </entity>
+</doctrine-mapping>

@@ -1,0 +1,29 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% set page_title = ('Tesorería' | trans) ~ ' > ' ~ project.name %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_treasury') }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card title="{{ 'Saldo' | trans }}">
+        {% include '@balance/admin/treasury/_balance.html.twig' %}
+
+        <dl class="row mb-0">
+            <dt class="col-sm-4">{{ 'Tipo de proyecto' | trans }}</dt>
+            <dd class="col-sm-8">{{ project.projectType.value | trans({}, 'projectType') }}</dd>
+
+            <dt class="col-sm-4">{{ 'Margen de Bioscore' | trans }}</dt>
+            <dd class="col-sm-8">{{ bioscoreMargin | number_format(2, ',', '.') }} €</dd>
+        </dl>
+    </twig:Card>
+
+    <twig:Card title="{{ 'Lotes del proyecto' | trans }}">
+        {% include '@balance/admin/treasury/_purchases.html.twig' %}
+    </twig:Card>
+
+    <twig:Card title="{{ 'Asientos' | trans }}">
+        {% include '@balance/admin/treasury/_entries.html.twig' %}
+    </twig:Card>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% props label, color = 'primary' %}
+
+<div class="dropdown">
+    <button type="button" class="btn btn-{{ color }} dropdown-toggle waves-effect" data-bs-toggle="dropdown" aria-expanded="false">
+        {{ label }}
+    </button>
+
+    <div class="dropdown-menu dropdown-menu-end">
+        {% block content %}{% endblock %}
+    </div>
+</div>

@@ -1,0 +1,53 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set page_title = 'Mis datos de cobro' | trans %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('my_balance') }}" />
+{% endblock %}
+
+{% block content %}
+    {% if payee and payee.isBlocked %}
+        <twig:Card>
+            <p>{{ 'Sus datos de cobro están bloqueados. Póngase en contacto con nosotros para poder modificarlos.' | trans }}</p>
+
+            <dl class="row mb-0">
+                <dt class="col-sm-4">{{ 'Razón social' | trans }}</dt>
+                <dd class="col-sm-8">{{ payee.legalName }}</dd>
+
+                <dt class="col-sm-4">{{ 'NIF / CIF' | trans }}</dt>
+                <dd class="col-sm-8">{{ payee.taxId ?? '-' }}</dd>
+
+                <dt class="col-sm-4">{{ 'IBAN' | trans }}</dt>
+                <dd class="col-sm-8">{{ payee.maskedIban ?? '-' }}</dd>
+
+                <dt class="col-sm-4">{{ 'Titular de la cuenta' | trans }}</dt>
+                <dd class="col-sm-8">{{ payee.holderName ?? '-' }}</dd>
+            </dl>
+        </twig:Card>
+    {% else %}
+        {% if payee is null or not payee.isReady %}
+            <twig:Card>
+                <p class="mb-0">{{ 'Complete la razón social, el NIF, el IBAN y el titular de la cuenta para que podamos abonarle su saldo pendiente.' | trans }}</p>
+            </twig:Card>
+        {% endif %}
+
+        {{ form_start(form) }}
+            <twig:Card>
+                <div class="row">
+                    <div class="col-12">
+                        {% for field in form %}
+                            {% if field.vars.name not in ['register', 'saveAndReturn'] %}
+                                {{ form_row(field) }}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <twig:ActionBar>
+                    <twig:ActionBar:Button type="primary" :button="payee ? form.saveAndReturn : form.register" />
+                </twig:ActionBar>
+            </twig:Card>
+        {{ form_end(form) }}
+    {% endif %}
+{% endblock %}

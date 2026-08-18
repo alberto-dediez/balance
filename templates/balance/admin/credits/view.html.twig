@@ -7,5 +7,5 @@
 {% endblock %}
 
 {% block content %}
-    {{ include('@balance/credits/_allocations.html.twig', {'contributionRoute': 'admin_project_contributions_view'}) }}
+    {{ include('@balance/credits/_allocations.html.twig', {'contributionRoute': 'admin_project_contributions_view', 'showCost': true}) }}
 {% endblock %}

@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Shared\Application\CommandBus;
 
+use App\Balance\Application\LedgerEntry\Check\CheckLedgerRequest;
 use App\Balance\Application\ProjectContribution\Expire\ExpirePendingContributionsRequest;
 use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsRequest;
 use App\Security\Application\SignatureRequest\PurgeExpired\PurgeExpiredSignatureRequestsRequest;
 
 class CommandSchedule
 {
+    private const int LEDGER_CHECK_DAYS = 45;
+
     /**
      * @return ScheduledCommand[]
      */
@@ -30,6 +33,15 @@ class CommandSchedule
                 id: 'balance:expire-pending-contributions',
                 command: new ExpirePendingContributionsRequest(new \DateTimeImmutable('NOW')),
                 hours: 1,
+            ),
+            ScheduledCommand::dailyAt(
+                id: 'balance:check-ledger',
+                command: new CheckLedgerRequest(
+                    repair: false,
+                    from: new \DateTimeImmutable('-' . self::LEDGER_CHECK_DAYS . ' days'),
+                    to: new \DateTimeImmutable('NOW'),
+                ),
+                time: '03:00',
             ),
         ];
     }

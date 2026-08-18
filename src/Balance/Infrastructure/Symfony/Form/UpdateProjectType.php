@@ -82,6 +82,10 @@ class UpdateProjectType extends AbstractType
                 'required' => true,
                 'scale' => 2,
                 'html5' => true,
+                'disabled' => $options['costLocked'],
+                'help' => $options['costLocked']
+                    ? new TranslatableMessage('No se puede modificar mientras queden créditos comprados sin consumir en este proyecto.')
+                    : null,
                 'constraints' => [
                     new Assert\NotNull(),
                     new Assert\PositiveOrZero(),
@@ -107,8 +111,12 @@ class UpdateProjectType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
-            'data_class' => UpdateProjectRequest::class,
-        ]);
+        $resolver
+            ->setDefaults([
+                'data_class' => UpdateProjectRequest::class,
+                'costLocked' => false,
+            ])
+            ->setAllowedTypes('costLocked', 'bool')
+        ;
     }
 }

@@ -47,6 +47,7 @@ class ValidateCreditPurchaseService implements CommandHandler
             reference: $request->reference,
             certificate: $request->certificate,
             validatedBy: $user->id(),
+            amount: $request->amount,
         );
 
         $this->creditPurchaseRepository->add($creditPurchase);

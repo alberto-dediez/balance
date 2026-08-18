@@ -170,4 +170,19 @@ class InMemoryCreditPurchaseRepository implements CreditPurchaseRepository
             purchasesCount: 0,
         );
     }
+
+    public function purchasedTonnesForProject(ProjectId $projectId): float
+    {
+        $purchased = 0.0;
+
+        $validated = $this->findByFilter(
+            new CreditPurchaseFilter(projectId: $projectId, status: CreditPurchaseStatus::Validated, limit: 0),
+        );
+
+        foreach ($validated as $creditPurchase) {
+            $purchased += (float) $creditPurchase->purchasedTonnes();
+        }
+
+        return $purchased;
+    }
 }

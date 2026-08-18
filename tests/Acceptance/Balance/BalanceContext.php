@@ -17,6 +17,9 @@ use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
+use App\Balance\Domain\Model\LedgerEntry\LedgerBeneficiary;
+use App\Balance\Domain\Model\LedgerEntry\LedgerEntryFilter;
+use App\Balance\Domain\Model\LedgerEntry\LedgerEntryRepository;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\Project\ProjectRepository;
 use App\Balance\Domain\Model\Project\ProjectType;
@@ -60,6 +63,9 @@ final class BalanceContext implements Context
     ];
 
     private readonly AcceptanceClient $client;
+
+    /** @var array<string, string> */
+    private array $settleTokens = [];
 
     public function __construct(KernelBrowser $client)
     {
@@ -505,6 +511,110 @@ final class BalanceContext implements Context
                 'HTTP_STRIPE_SIGNATURE' => sprintf('t=%d,v1=%s', $timestamp, $signature),
             ],
             $payload,
+        );
+    }
+
+    public function getLedgerEntryRepository(): LedgerEntryRepository
+    {
+        return $this->client->getContainer()->get(LedgerEntryRepository::class);
+    }
+
+    #[Given('credit purchase :id is validated with :purchasedTonnes tonnes and reference :reference paid by :paymentType')]
+    public function creditPurchaseIsValidatedPaidBy(
+        string $id,
+        string $purchasedTonnes,
+        string $reference,
+        string $paymentType,
+    ): void {
+        $creditPurchase = $this->getCreditPurchaseRepository()->find(new CreditPurchaseId($id));
+
+        assert($creditPurchase instanceof CreditPurchase);
+
+        $creditPurchase->validate(
+            (float) $purchasedTonnes,
+            CreditPurchasePaymentType::from($paymentType),
+            $reference,
+            null,
+            UserId::generate(),
+        );
+
+        $this->getCreditPurchaseRepository()->add($creditPurchase);
+    }
+
+    #[When('I settle the :beneficiary :beneficiaryId')]
+    public function iSettleTheBeneficiary(string $beneficiary, string $beneficiaryId): void
+    {
+        $path = sprintf('/es/admin/treasury/settle/%s/%s', $beneficiary, $beneficiaryId);
+
+        $this->client->request('GET', '/es/admin/treasury');
+
+        $link = $this->client->getCrawler()
+            ->filter(sprintf('a[href^="%s"]', $path))
+            ->extract(['href'])
+        ;
+
+        if ([] !== $link) {
+            $this->settleTokens[$path] = $link[0];
+        }
+
+        $this->client->request('GET', $this->settleTokens[$path] ?? $path);
+    }
+
+    #[Then('the ledger balance of account :accountId should be :amount')]
+    public function theLedgerBalanceOfAccountShouldBe(string $accountId, string $amount): void
+    {
+        $this->assertLedgerBalance(LedgerBeneficiary::Account, $accountId, $amount);
+    }
+
+    #[Then('the ledger balance of project :projectId should be :amount')]
+    public function theLedgerBalanceOfProjectShouldBe(string $projectId, string $amount): void
+    {
+        $this->assertLedgerBalance(LedgerBeneficiary::Project, $projectId, $amount);
+    }
+
+    #[Then('the bioscore ledger balance should be :amount')]
+    public function theBioscoreLedgerBalanceShouldBe(string $amount): void
+    {
+        $this->assertLedgerBalance(LedgerBeneficiary::Bioscore, null, $amount);
+    }
+
+    #[Then('the unassigned ledger balance should be :amount')]
+    public function theUnassignedLedgerBalanceShouldBe(string $amount): void
+    {
+        $this->assertLedgerBalance(LedgerBeneficiary::Unassigned, null, $amount);
+    }
+
+    #[Then('contribution :id should have :count ledger entries')]
+    public function contributionShouldHaveLedgerEntries(string $id, int $count): void
+    {
+        Assert::assertCount(
+            $count,
+            $this->getLedgerEntryRepository()->findByFilter(
+                new LedgerEntryFilter(projectContributionId: new ProjectContributionId($id), limit: 0),
+            ),
+        );
+    }
+
+    #[Then('the ledger entries of contribution :id should add up to its total amount')]
+    public function theLedgerEntriesOfContributionShouldAddUp(string $id): void
+    {
+        $contribution = $this->getProjectContributionRepository()->find(new ProjectContributionId($id));
+
+        assert($contribution instanceof ProjectContribution);
+
+        Assert::assertEqualsWithDelta(
+            $contribution->totalAmount(),
+            $this->getLedgerEntryRepository()->recordedAmountFor($contribution->id()),
+            0.01,
+        );
+    }
+
+    private function assertLedgerBalance(LedgerBeneficiary $beneficiary, ?string $beneficiaryId, string $amount): void
+    {
+        Assert::assertEqualsWithDelta(
+            (float) $amount,
+            $this->getLedgerEntryRepository()->balanceFor($beneficiary, $beneficiaryId)->accruedAmount(),
+            0.01,
         );
     }
 }

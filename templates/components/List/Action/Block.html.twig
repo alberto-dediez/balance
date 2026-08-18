@@ -1,0 +1,9 @@
+{% props path, blocked = false %}
+
+<twig:List:Action :path="path"
+    title="{{ blocked ? ('Desbloquear' | trans) : ('Bloquear' | trans) }}"
+    class="{{ blocked ? 'text-primary' : 'text-danger' }}"
+    :attributes="attributes"
+>
+    <twig:Icon name="{{ blocked ? 'solar:lock-keyhole-unlocked-line-duotone' : 'solar:lock-keyhole-line-duotone' }}" size="lg" />
+</twig:List:Action>

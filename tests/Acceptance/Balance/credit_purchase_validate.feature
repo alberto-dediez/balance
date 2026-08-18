@@ -79,3 +79,22 @@ Feature:
         When I go to "/es/credits/purchases/2222"
         Then the response status should be 200
         Then I see a text "Pagado por Bioscore"
+
+    Scenario: The cost of the lot entered when validating is only visible to admins
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given project "Item 1" with id "1111" exists
+        Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/credits/2222/validate"
+        When I submit a form with "purchasedTonnes:8|amount:600|paymentType:paid_by_client|reference:REF-COST" and button "Validar compra"
+        When I go to "/es/admin/credits/2222"
+        Then the response status should be 200
+        Then I see a text "Coste del lote"
+        Then I see a text "600,00 €"
+        Then I see a text "75,00 €/t"
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/credits/purchases/2222"
+        Then the response status should be 200
+        Then I do not see a text "Coste del lote"

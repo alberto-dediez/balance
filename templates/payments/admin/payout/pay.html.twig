@@ -1,0 +1,27 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% set page_title = ('Liquidaciones' | trans) ~ ' > ' ~ (payout.number ?? '') ~ ' > ' ~ ('Pagar' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_payouts') }}" />
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <twig:Card title="{{ 'Pago de la liquidación' | trans }}">
+        <div class="row">
+            <div class="col-12">
+                <p>{{ 'Importe a transferir' | trans }}: <strong>{{ payout.payableAmount | number_format(2, ',', '.') }} €</strong></p>
+                {{ form_row(form.reference) }}
+                {{ form_row(form.evidence) }}
+            </div>
+        </div>
+
+        <twig:ActionBar>
+            <twig:ActionBar:Button type="primary" :button="form.saveAndReturn" />
+        </twig:ActionBar>
+    </twig:Card>
+
+    {{ form_end(form) }}
+{% endblock %}

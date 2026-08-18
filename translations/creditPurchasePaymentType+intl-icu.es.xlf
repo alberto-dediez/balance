@@ -5,11 +5,11 @@
       <tool tool-id="symfony" tool-name="Symfony"/>
     </header>
     <body>
-      <trans-unit id="cPpT001" resname="paid_by_client">
+      <trans-unit id="6gQkqfU" resname="paid_by_client">
         <source>paid_by_client</source>
         <target>Pagado por el cliente</target>
       </trans-unit>
-      <trans-unit id="cPpT002" resname="paid_by_bioscore">
+      <trans-unit id="uuddJ_x" resname="paid_by_bioscore">
         <source>paid_by_bioscore</source>
         <target>Pagado por Bioscore</target>
       </trans-unit>

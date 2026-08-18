@@ -23,6 +23,7 @@ class CreditPurchase
         private float $requestedTonnes = 0.0,
         private CreditPurchaseStatus $status = CreditPurchaseStatus::Pending,
         private ?float $purchasedTonnes = null,
+        private ?float $amount = null,
         private ?CreditPurchasePaymentType $paymentType = null,
         private ?string $reference = null,
         private ?string $certificate = null,
@@ -69,6 +70,20 @@ class CreditPurchase
     public function purchasedTonnes(): ?float
     {
         return $this->purchasedTonnes;
+    }
+
+    public function amount(): ?float
+    {
+        return $this->amount;
+    }
+
+    public function pricePerTonne(): ?float
+    {
+        if (null === $this->amount || null === $this->purchasedTonnes || 0.0 === $this->purchasedTonnes) {
+            return null;
+        }
+
+        return round($this->amount / $this->purchasedTonnes, 6);
     }
 
     public function paymentType(): ?CreditPurchasePaymentType
@@ -150,6 +165,7 @@ class CreditPurchase
         string $reference,
         ?MediaId $certificate,
         UserId $validatedBy,
+        ?float $amount = null,
     ): void {
         if (CreditPurchaseStatus::Pending !== $this->status) {
             throw new CreditPurchaseNotPendingException($this->id());
@@ -159,11 +175,16 @@ class CreditPurchase
             throw new \InvalidArgumentException('Purchased tonnes must be greater than zero.');
         }
 
+        if (null !== $amount && $amount < 0.0) {
+            throw new \InvalidArgumentException('Purchase amount cannot be negative.');
+        }
+
         $this->recordApplyAndPublish(
             new CreditPurchaseValidated(
                 creditPurchaseId: $this->id(),
                 requestedTonnes: $this->requestedTonnes,
                 purchasedTonnes: $purchasedTonnes,
+                amount: $amount,
                 paymentType: $paymentType,
                 reference: $reference,
                 certificate: $certificate,
@@ -214,6 +235,7 @@ class CreditPurchase
     {
         $this->status = CreditPurchaseStatus::Validated;
         $this->purchasedTonnes = $event->purchasedTonnes();
+        $this->amount = $event->amount();
         $this->paymentType = $event->paymentType();
         $this->reference = $event->reference();
         $this->certificate = null !== $event->certificate() ? (string) $event->certificate() : null;

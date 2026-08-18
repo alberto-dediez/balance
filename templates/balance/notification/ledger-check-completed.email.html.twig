@@ -1,0 +1,30 @@
+<h3>{% trans -%}Incidencias en el libro mayor{%- endtrans -%}</h3>
+<p>
+    {% trans with {'{findings}': findingsCount, '{contributions}': checkedContributions} -%}
+        La revisión automática del libro mayor ha encontrado {findings} incidencia(s) sobre {contributions} aportación(es) revisadas. No se ha modificado ningún asiento: revíselas y corríjalas manualmente.
+    {%- endtrans %}
+</p>
+{% if from and to %}
+    <p>{{ 'Periodo revisado' | trans }}: {{ from | date('d/m/Y') }} - {{ to | date('d/m/Y') }}</p>
+{% endif %}
+<table>
+    <thead>
+        <tr>
+            <th>{{ 'Comprobación' | trans }}</th>
+            <th>{{ 'Sujeto' | trans }}</th>
+            <th>{{ 'Detalle' | trans }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for finding in findings %}
+            <tr>
+                <td>{{ finding.code | trans({}, 'ledgerFindingCode') }}</td>
+                <td>{{ finding.subjectId }}</td>
+                <td>{{ finding.detail }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url('admin_treasury_ledger') }}" class="btn btn-primary">
+    {% trans -%}Ver libro mayor{%- endtrans -%}
+</a>

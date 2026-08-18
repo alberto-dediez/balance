@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="rkigSqF" resname="account">
+        <source>account</source>
+        <target>Account</target>
+      </trans-unit>
+      <trans-unit id="e0jwNc9" resname="project">
+        <source>project</source>
+        <target>Project</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

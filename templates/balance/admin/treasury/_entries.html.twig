@@ -1,0 +1,60 @@
+{% if ledgerEntries is empty %}
+    <p class="text-muted mb-0">{{ 'No hay asientos' | trans }}</p>
+{% else %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>{{ 'Fecha' | trans }}</th>
+                <th>{{ 'Tipo' | trans }}</th>
+                <th>{{ 'Destino' | trans }}</th>
+                <th>{{ 'Aportación' | trans }}</th>
+                <th>{{ 'Lote' | trans }}</th>
+                <th>{{ 'Toneladas' | trans }}</th>
+                <th>{{ 'Importe' | trans }}</th>
+                <th>{{ 'Liquidación' | trans }}</th>
+                {% if reversible | default(false) %}<th></th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in ledgerEntries %}
+                <tr>
+                    <td>{{ entry.occurredAt | date('d/m/Y') }}</td>
+                    <td>{{ entry.type.value | trans({}, 'ledgerEntryType') }}</td>
+                    <td>{{ entry.beneficiary.value | trans({}, 'ledgerBeneficiary') }}</td>
+                    <td>
+                        {% if entry.projectContributionId %}
+                            <a href="{{ path('admin_project_contributions_view', {'projectContributionId': entry.projectContributionId}) }}">
+                                {{ entry.projectContributionId }}
+                            </a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if entry.creditPurchaseId %}
+                            <a href="{{ path('admin_credit_purchases_view', {'creditPurchaseId': entry.creditPurchaseId}) }}">
+                                {{ 'Ver lote' | trans }}
+                            </a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>{{ entry.tonnes is not null ? (entry.tonnes | number_format(4, ',', '.') ~ ' t') : '-' }}</td>
+                    <td>{{ entry.amount | number_format(2, ',', '.') }} €</td>
+                    <td>
+                        {% if entry.payoutId %}
+                            <a href="{{ path('admin_payouts_view', {'payoutId': entry.payoutId}) }}">{{ 'Ver' | trans }}</a>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">{{ 'Pendiente' | trans }}</span>
+                        {% endif %}
+                    </td>
+                    {% if reversible | default(false) %}
+                        <td>
+                            <twig:List:Action:Reverse path="{{ path('admin_treasury_adjustments_register', {'reverses': entry.id}) }}" />
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}

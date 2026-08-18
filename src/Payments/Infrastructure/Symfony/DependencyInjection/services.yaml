@@ -1,11 +1,21 @@
 parameters:
     app.stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
     app.stripe.webhook_secret: '%env(STRIPE_WEBHOOK_SECRET)%'
+    app.sepa.debtor_name: '%env(default:sepa_debtor_name_default:SEPA_DEBTOR_NAME)%'
+    app.sepa.debtor_iban: '%env(default:sepa_debtor_iban_default:SEPA_DEBTOR_IBAN)%'
+    app.sepa.debtor_bic: '%env(default::SEPA_DEBTOR_BIC)%'
+    app.sepa.initiating_party_id: '%env(default::SEPA_INITIATING_PARTY_ID)%'
+    sepa_debtor_name_default: 'Bioscore Sustainability'
+    sepa_debtor_iban_default: 'ES0000000000000000000000'
 
 services:
     _defaults:
         autowire: true
         autoconfigure: true
+
+    _instanceof:
+        App\Payments\Domain\Model\Payout\PayoutRemittanceGenerator:
+            tags: ['payments.payout_remittance_generator']
 
     App\Payments\:
         resource: '../../../'
@@ -26,8 +36,22 @@ services:
         arguments:
             $webhookSecret: '%app.stripe.webhook_secret%'
 
+    App\Payments\Infrastructure\Remittance\SepaPain001RemittanceGenerator:
+        arguments:
+            $debtorName: '%app.sepa.debtor_name%'
+            $debtorIban: '%app.sepa.debtor_iban%'
+            $debtorBic: '%app.sepa.debtor_bic%'
+            $initiatingPartyId: '%app.sepa.initiating_party_id%'
+
+    App\Payments\Application\Payout\Remittance\GeneratePayoutRemittanceService:
+        arguments:
+            $generators: !tagged_iterator payments.payout_remittance_generator
+
     App\Payments\Domain\Model\Payment\PaymentGateway: '@App\Payments\Infrastructure\Payment\Stripe\StripePaymentGateway'
+    App\Payments\Domain\Model\Payout\PayoutGateway: '@App\Payments\Infrastructure\Payout\Manual\ManualPayoutGateway'
+    App\Payments\Domain\Model\Payout\PayoutStatementPdfGenerator: '@App\Payments\Infrastructure\Tcpdf\TcpdfPayoutStatementPdfGenerator'
 
 when@test:
     services:
         App\Payments\Domain\Model\Payment\PaymentGateway: '@App\Payments\Infrastructure\Payment\Fake\FakePaymentGateway'
+        App\Payments\Domain\Model\Payout\PayoutGateway: '@App\Payments\Infrastructure\Payout\Fake\FakePayoutGateway'

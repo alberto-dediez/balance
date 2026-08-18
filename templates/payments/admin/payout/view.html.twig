@@ -1,0 +1,74 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% set page_title = ('Liquidaciones' | trans) ~ ' > ' ~ (payout.number ?? '') %}
+
+{% block top_actions %}
+    <twig:TopAction path="{{ path('admin_payouts_statement', {'payoutId': payout.id}) }}">
+        <twig:Icon name="solar:diploma-verified-line-duotone" size="lg" class="me-2" />
+
+        {{ 'Descargar justificante' | trans }}
+    </twig:TopAction>
+
+    <twig:TopAction:Return path="{{ path('admin_payouts') }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card title="{{ 'Liquidación' | trans }}">
+        <dl class="row mb-0">
+            <dt class="col-sm-4">{{ 'Número' | trans }}</dt>
+            <dd class="col-sm-8">{{ payout.number ?? '-' }}</dd>
+
+            <dt class="col-sm-4">{{ 'Beneficiario' | trans }}</dt>
+            <dd class="col-sm-8">{{ payee ? payee.legalName : '-' }}</dd>
+
+            <dt class="col-sm-4">{{ 'IBAN' | trans }}</dt>
+            <dd class="col-sm-8">{{ payee and payee.maskedIban ? payee.maskedIban : '-' }}</dd>
+
+            <dt class="col-sm-4">{{ 'Importe devengado' | trans }}</dt>
+            <dd class="col-sm-8">{{ payout.baseAmount | number_format(2, ',', '.') }} €</dd>
+
+            <dt class="col-sm-4">{{ 'Importe a transferir' | trans }}</dt>
+            <dd class="col-sm-8">{{ payout.payableAmount | number_format(2, ',', '.') }} €</dd>
+
+            <dt class="col-sm-4">{{ 'Estado' | trans }}</dt>
+            <dd class="col-sm-8">{{ payout.status.value | trans({}, 'payoutStatus') }}</dd>
+
+            {% if payout.reference %}
+                <dt class="col-sm-4">{{ 'Referencia de la transferencia' | trans }}</dt>
+                <dd class="col-sm-8">{{ payout.reference }}</dd>
+            {% endif %}
+
+            {% if payout.failureReason %}
+                <dt class="col-sm-4">{{ 'Motivo del fallo' | trans }}</dt>
+                <dd class="col-sm-8">{{ payout.failureReason }}</dd>
+            {% endif %}
+
+            <dt class="col-sm-4">{{ 'Creada' | trans }}</dt>
+            <dd class="col-sm-8">{{ payout.createdAt | date('d/m/Y H:i') }}</dd>
+        </dl>
+    </twig:Card>
+
+    <twig:Card title="{{ 'Detalle de asientos' | trans }}">
+        {% if lines is empty %}
+            <p class="text-muted mb-0">{{ 'Esta liquidación no tiene asientos' | trans }}</p>
+        {% else %}
+            {% set columns = [
+                {'label': 'Fecha' | trans},
+                {'label': 'Concepto' | trans},
+                {'label': 'Proyecto' | trans},
+                {'label': 'Lote' | trans},
+                {'label': 'Toneladas' | trans},
+                {'label': 'Importe' | trans},
+            ] %}
+
+            <twig:List:Table :columns="columns" :elements="lines">
+                <td>{{ element.occurredAt | date('d/m/Y') }}</td>
+                <td>{{ element.concept }}</td>
+                <td>{{ element.projectName ?? '-' }}</td>
+                <td>{{ element.purchaseReference ?? '-' }}</td>
+                <td>{{ element.tonnes is not null ? (element.tonnes | number_format(4, ',', '.') ~ ' t') : '-' }}</td>
+                <td>{{ element.amount | number_format(2, ',', '.') }} €</td>
+            </twig:List:Table>
+        {% endif %}
+    </twig:Card>
+{% endblock %}

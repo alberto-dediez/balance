@@ -39,3 +39,6 @@ parameters:
         -
             identifier: symfonyContainer.privateService
             path: tests/Acceptance/
+        -
+            identifier: classConstant.unused
+            message: '#Constant .*::CONTENT_WIDTH is unused\.#'

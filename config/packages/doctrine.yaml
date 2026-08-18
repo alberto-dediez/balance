@@ -75,7 +75,10 @@ doctrine:
             project_contribution_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\ProjectContributionIdType
             project_contribution_credit_allocation_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\ProjectContributionCreditAllocationIdType
             contribution_certificate_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\ContributionCertificateIdType
+            ledger_entry_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\LedgerEntryIdType
+            payee_id: App\Payments\Infrastructure\Persistence\Doctrine\Type\PayeeIdType
             payment_id: App\Payments\Infrastructure\Persistence\Doctrine\Type\PaymentIdType
+            payout_id: App\Payments\Infrastructure\Persistence\Doctrine\Type\PayoutIdType
 
     orm:
         auto_generate_proxy_classes: true

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Balance\Domain\Event\ProjectContribution;
 
+use App\Balance\Application\LedgerEntry\Record\RecordContributionLedgerEntriesService;
 use App\Balance\Application\ProjectContribution\Allocate\AllocateContributionCreditsService;
 use App\Balance\Application\ProjectContribution\Confirm\ConfirmProjectContributionService;
 use App\Balance\Application\ProjectContribution\Expire\ExpireProjectContributionService;
@@ -21,6 +22,7 @@ use App\Payments\Domain\Model\Payment\PaymentSucceeded;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Balance\Application\ProjectContribution\FakeCreditReservationLock;
 use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepositoryMother;
+use App\Tests\Unit\Balance\Domain\Model\LedgerEntry\LedgerEntryRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
@@ -145,6 +147,12 @@ class ContributionPaymentSubscribersTest extends TestCase
                 CreditPurchaseRepositoryMother::inMemory(),
                 ProjectRepositoryMother::inMemory(),
                 new FakeCreditReservationLock(),
+            ),
+            new RecordContributionLedgerEntriesService(
+                $this->contributions,
+                CreditPurchaseRepositoryMother::inMemory(),
+                ProjectRepositoryMother::inMemory(),
+                LedgerEntryRepositoryMother::inMemory(),
             ),
         );
     }

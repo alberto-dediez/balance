@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Balance\Application\ProjectContribution\Confirm;
 
+use App\Balance\Application\LedgerEntry\Record\RecordContributionLedgerEntriesRequest;
+use App\Balance\Application\LedgerEntry\Record\RecordContributionLedgerEntriesService;
 use App\Balance\Application\ProjectContribution\Allocate\AllocateContributionCreditsRequest;
 use App\Balance\Application\ProjectContribution\Allocate\AllocateContributionCreditsService;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
@@ -13,6 +15,7 @@ final class ConfirmProjectContributionService
     public function __construct(
         private ProjectContributionRepository $projectContributionRepository,
         private AllocateContributionCreditsService $allocateContributionCredits,
+        private RecordContributionLedgerEntriesService $recordContributionLedgerEntries,
     ) {}
 
     public function __invoke(ConfirmProjectContributionRequest $request): ConfirmProjectContributionResponse
@@ -35,6 +38,10 @@ final class ConfirmProjectContributionService
 
         $this->allocateContributionCredits->__invoke(
             new AllocateContributionCreditsRequest($projectContribution->id()),
+        );
+
+        $this->recordContributionLedgerEntries->__invoke(
+            new RecordContributionLedgerEntriesRequest($projectContribution->id()),
         );
 
         return new ConfirmProjectContributionResponse(status: $projectContribution->status(), changed: true);

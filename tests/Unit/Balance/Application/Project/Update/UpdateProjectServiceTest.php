@@ -4,20 +4,30 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Balance\Application\Project\Update;
 
+use App\Balance\Application\Project\Credits\ProjectCreditAvailability;
 use App\Balance\Application\Project\ProjectAuthorizer;
 use App\Balance\Application\Project\Update\UpdateProjectRequest;
 use App\Balance\Application\Project\Update\UpdateProjectService;
+use App\Balance\Domain\Model\Project\Project;
+use App\Balance\Domain\Model\Project\ProjectHasUnconsumedCreditsException;
 use App\Balance\Domain\Model\Project\ProjectRepository;
 use App\Balance\Domain\Model\Project\ProjectStatus;
 use App\Balance\Domain\Model\Project\ProjectTranslated;
 use App\Balance\Domain\Model\Project\ProjectType;
 use App\Balance\Domain\Model\Project\ProjectUpdated;
+use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryCreditPurchaseRepository;
+use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryProjectContributionRepository;
 use App\Property\Domain\Model\Destination\DestinationId;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseMother;
+use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
+use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
+use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
@@ -110,13 +120,103 @@ class UpdateProjectServiceTest extends TestCase
         $this->assertTrue($projectPersisted->id()->equals($lastEvent->projectId()));
     }
 
-    private function createSUT(ProjectRepository $repository, Locale $locale = Locale::Spanish): UpdateProjectService
+    public function testItRefusesToChangeTheCostWhenThereAreUnconsumedCredits(): void
     {
+        $repository = ProjectRepositoryMother::inMemory();
+        $project = ProjectMother::contributable(costPerTonne: 15.0);
+        $repository->add($project);
+
+        $purchases = CreditPurchaseRepositoryMother::inMemory();
+        $purchases->add(CreditPurchaseMother::validatedAt(
+            new \DateTimeImmutable('-1 day'),
+            AccountId::generate(),
+            $project->id(),
+            10.0,
+        ));
+
+        $sut = $this->createSUT($repository, purchases: $purchases);
+
+        $this->expectException(ProjectHasUnconsumedCreditsException::class);
+
+        $sut($this->updateCostRequest($project, 17.0), UserMother::fromUsernameAndRole('admin', Role::Admin));
+    }
+
+    public function testItAllowsChangingTheCostWhenEveryCreditIsConsumed(): void
+    {
+        $repository = ProjectRepositoryMother::inMemory();
+        $project = ProjectMother::contributable(costPerTonne: 15.0);
+        $repository->add($project);
+
+        $accountId = AccountId::generate();
+
+        $purchases = CreditPurchaseRepositoryMother::inMemory();
+        $purchases->add(CreditPurchaseMother::validatedAt(new \DateTimeImmutable('-1 day'), $accountId, $project->id(), 10.0));
+
+        $contributions = ProjectContributionRepositoryMother::inMemory();
+        $contributions->add(ProjectContributionMother::paid($accountId, $project->id(), 10.0));
+
+        $sut = $this->createSUT($repository, purchases: $purchases, contributions: $contributions);
+
+        $result = $sut($this->updateCostRequest($project, 17.0), UserMother::fromUsernameAndRole('admin', Role::Admin));
+
+        $this->assertSame(17.0, $repository->find($result->projectId)?->costPerTonne());
+    }
+
+    public function testItAllowsEditingOtherFieldsWhileTheCostIsLocked(): void
+    {
+        $repository = ProjectRepositoryMother::inMemory();
+        $project = ProjectMother::contributable(costPerTonne: 15.0);
+        $repository->add($project);
+
+        $purchases = CreditPurchaseRepositoryMother::inMemory();
+        $purchases->add(CreditPurchaseMother::validatedAt(
+            new \DateTimeImmutable('-1 day'),
+            AccountId::generate(),
+            $project->id(),
+            10.0,
+        ));
+
+        $sut = $this->createSUT($repository, purchases: $purchases);
+
+        $request = $this->updateCostRequest($project, 15.0);
+        $request->name = 'changedName';
+
+        $result = $sut($request, UserMother::fromUsernameAndRole('admin', Role::Admin));
+
+        $this->assertSame('changedName', $repository->find($result->projectId)?->name());
+    }
+
+    private function createSUT(
+        ProjectRepository $repository,
+        Locale $locale = Locale::Spanish,
+        ?InMemoryCreditPurchaseRepository $purchases = null,
+        ?InMemoryProjectContributionRepository $contributions = null,
+    ): UpdateProjectService {
         FakeLocaleSetter::set($locale);
 
         return new UpdateProjectService(
             projectRepository: $repository,
+            projectCreditAvailability: new ProjectCreditAvailability(
+                $purchases ?? CreditPurchaseRepositoryMother::inMemory(),
+                $contributions ?? ProjectContributionRepositoryMother::inMemory(),
+            ),
             authorizer: new ProjectAuthorizer(),
+        );
+    }
+
+    private function updateCostRequest(Project $project, float $costPerTonne): UpdateProjectRequest
+    {
+        return new UpdateProjectRequest(
+            projectId: $project->id(),
+            name: $project->name(),
+            description: $project->description(),
+            location: $project->location(),
+            gallery: [],
+            projectType: $project->projectType(),
+            projectStatus: $project->projectStatus(),
+            mitecoId: $project->mitecoId(),
+            pricePerTonne: $project->pricePerTonne(),
+            costPerTonne: $costPerTonne,
         );
     }
 }

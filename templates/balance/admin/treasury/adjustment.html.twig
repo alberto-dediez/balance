@@ -1,0 +1,29 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = ('Tesorería' | trans) ~ ' > ' ~ (reversedEntry ? ('Revertir asiento' | trans) : ('Registrar ajuste' | trans)) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_treasury_ledger') }}" />
+{% endblock %}
+
+{% block content %}
+    {% if reversedEntry %}
+        <twig:Card title="{{ 'Asiento que se revierte' | trans }}">
+            <dl class="row mb-0">
+                <dt class="col-sm-4">{{ 'Fecha' | trans }}</dt>
+                <dd class="col-sm-8">{{ reversedEntry.occurredAt | date('d/m/Y') }}</dd>
+
+                <dt class="col-sm-4">{{ 'Tipo' | trans }}</dt>
+                <dd class="col-sm-8">{{ reversedEntry.type.value | trans({}, 'ledgerEntryType') }}</dd>
+
+                <dt class="col-sm-4">{{ 'Destino' | trans }}</dt>
+                <dd class="col-sm-8">{{ reversedEntry.beneficiary.value | trans({}, 'ledgerBeneficiary') }}</dd>
+
+                <dt class="col-sm-4">{{ 'Importe original' | trans }}</dt>
+                <dd class="col-sm-8">{{ reversedEntry.amount | number_format(2, ',', '.') }} €</dd>
+            </dl>
+        </twig:Card>
+    {% endif %}
+
+    {{ parent() }}
+{% endblock %}

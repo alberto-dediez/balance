@@ -16,6 +16,7 @@ class ValidateCreditPurchaseRequest implements Command
         public float $purchasedTonnes,
         public string $reference,
         public ?CreditPurchasePaymentType $paymentType = null,
+        public ?float $amount = null,
         public ?MediaId $certificate = null,
     ) {}
 }

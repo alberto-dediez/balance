@@ -24,4 +24,6 @@ interface CreditPurchaseRepository
     public function balancesByAccount(AccountId $accountId): array;
 
     public function balanceFor(AccountId $accountId, ProjectId $projectId): CreditBalance;
+
+    public function purchasedTonnesForProject(ProjectId $projectId): float;
 }

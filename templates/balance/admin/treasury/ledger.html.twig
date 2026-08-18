@@ -1,0 +1,11 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = ('Tesorería' | trans) ~ ' > ' ~ ('Libro mayor' | trans) %}
+
+{% block list_actions %}
+    <a class="btn btn-primary" href="{{ path('admin_treasury_adjustments_register') }}">{{ 'Registrar ajuste' | trans }}</a>
+{% endblock list_actions %}
+
+{% block table %}
+    {% include '@balance/admin/treasury/_entries.html.twig' with {'reversible': true} %}
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = ('Beneficiarios' | trans) ~ ' > ' ~ ('Registrar' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_payees') }}" />
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <twig:Card title="{{ 'Beneficiario' | trans }}">
+        <div class="row">
+            <div class="col-12">
+                {{ form_row(form.type) }}
+                {{ form_row(form.subjectId) }}
+            </div>
+        </div>
+    </twig:Card>
+
+    {% include '@payments/admin/payee/_form.html.twig' %}
+
+    <twig:Card>
+        <twig:ActionBar>
+            <twig:ActionBar:Button type="primary" :button="form.register" />
+        </twig:ActionBar>
+    </twig:Card>
+
+    {{ form_end(form) }}
+{% endblock %}

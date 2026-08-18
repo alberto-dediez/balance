@@ -1,0 +1,19 @@
+<dl class="row mb-0">
+    <dt class="col-sm-4">{{ 'Devengado' | trans }}</dt>
+    <dd class="col-sm-8">{{ balance.accruedAmount | number_format(2, ',', '.') }} €</dd>
+
+    <dt class="col-sm-4">{{ 'Liquidado' | trans }}</dt>
+    <dd class="col-sm-8">{{ balance.settledAmount | number_format(2, ',', '.') }} €</dd>
+
+    <dt class="col-sm-4">{{ 'Pendiente' | trans }}</dt>
+    <dd class="col-sm-8">{{ balance.pendingAmount | number_format(2, ',', '.') }} €</dd>
+
+    <dt class="col-sm-4">{{ 'Beneficiario' | trans }}</dt>
+    <dd class="col-sm-8">
+        {% if payee %}
+            {{ payee.legalName }} <span class="badge bg-secondary">{{ payee.status.value | trans({}, 'payeeStatus') }}</span>
+        {% else %}
+            <span class="badge bg-warning text-dark">{{ 'Sin ficha de cobro' | trans }}</span>
+        {% endif %}
+    </dd>
+</dl>

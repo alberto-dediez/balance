@@ -67,6 +67,16 @@ final class WebContext implements Context
         $this->client->click($link);
     }
 
+    #[When('I click on the action :title')]
+    public function iClickOnTheAction(string $title): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $link = $crawler->filter(sprintf('a[title="%s"]', $title))->link();
+
+        $this->client->click($link);
+    }
+
     #[When('I follow redirect')]
     public function iFollowredirect(): void
     {

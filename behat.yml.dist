@@ -19,6 +19,7 @@ default:
                 - App\Tests\Acceptance\CarbonFootprint\CarbonFootprintContext
                 - App\Tests\Acceptance\EventOperations\EventOperationsContext
                 - App\Tests\Acceptance\Balance\BalanceContext
+                - App\Tests\Acceptance\Payments\PaymentsContext
 
     extensions:
         FriendsOfBehat\SymfonyExtension:

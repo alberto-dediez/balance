@@ -33,6 +33,14 @@ class ValidateCreditPurchaseType extends AbstractType
                     new Assert\Positive(),
                 ],
             ])
+            ->add('amount', NumberType::class, [
+                'label' => new TranslatableMessage('Coste del lote'),
+                'required' => false,
+                'scale' => 2,
+                'constraints' => [
+                    new Assert\PositiveOrZero(),
+                ],
+            ])
             ->add('paymentType', CreditPurchasePaymentTypeType::class, [
                 'label' => new TranslatableMessage('Tipo de pago'),
                 'required' => true,

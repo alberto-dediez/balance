@@ -219,6 +219,19 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
         return $allocations;
     }
 
+    public function committedTonnesForProject(ProjectId $projectId, \DateTimeImmutable $now): float
+    {
+        $committed = 0.0;
+
+        foreach ($this->findByFilter(new ProjectContributionFilter(projectId: $projectId, limit: 0)) as $projectContribution) {
+            if ($projectContribution->reservesCredit($now)) {
+                $committed += $projectContribution->tonnes();
+            }
+        }
+
+        return $committed;
+    }
+
     public function reservedTonnes(AccountId $accountId, ProjectId $projectId, \DateTimeImmutable $now): float
     {
         $reserved = 0.0;

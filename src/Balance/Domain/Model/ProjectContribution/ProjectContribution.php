@@ -16,6 +16,8 @@ class ProjectContribution
 {
     use AggregateRoot;
 
+    private const float TONNE_TOLERANCE = 0.000001;
+
     /** @var iterable<ProjectContributionCreditAllocation> */
     private iterable $creditAllocations = [];
 
@@ -445,6 +447,43 @@ class ProjectContribution
         );
     }
 
+    /** @param list<AllocatedCreditLine> $lines */
+    public function allocateAdditionalCredits(array $lines): void
+    {
+        if ([] === $lines) {
+            return;
+        }
+
+        $additionalTonnes = array_sum(array_map(static fn(AllocatedCreditLine $line): float => $line->tonnes, $lines));
+
+        if ($this->allocatedTonnes() + $additionalTonnes > $this->tonnes + self::TONNE_TOLERANCE) {
+            throw new \InvalidArgumentException('Allocated tonnes cannot exceed the contribution tonnes.');
+        }
+
+        $this->recordApplyAndPublish(
+            new ProjectContributionCreditsReallocated(
+                projectContributionId: $this->id(),
+                lines: $lines,
+            ),
+        );
+    }
+
+    public function unallocatedTonnes(): float
+    {
+        return round($this->tonnes - $this->allocatedTonnes(), 6);
+    }
+
+    public function nextAllocationPosition(): int
+    {
+        $allocations = $this->creditAllocations();
+
+        if ([] === $allocations) {
+            return 0;
+        }
+
+        return $allocations[count($allocations) - 1]->position() + 1;
+    }
+
     public function reportUnderallocatedCredits(float $allocatedTonnes): void
     {
         $this->recordApplyAndPublish(
@@ -557,6 +596,25 @@ class ProjectContribution
             ),
             $event->lines(),
         );
+    }
+
+    public function applyProjectContributionCreditsReallocated(ProjectContributionCreditsReallocated $event): void
+    {
+        $allocations = $this->creditAllocations();
+
+        foreach ($event->lines() as $line) {
+            $allocations[] = new ProjectContributionCreditAllocation(
+                id: ProjectContributionCreditAllocationId::generate(),
+                projectContribution: $this,
+                position: $line->position,
+                creditPurchaseId: $line->creditPurchaseId,
+                purchaseReference: $line->purchaseReference,
+                tonnes: $line->tonnes,
+                startTonnes: $line->startTonnes,
+            );
+        }
+
+        $this->creditAllocations = $allocations;
     }
 
     public function applyProjectContributionPaymentUnreconciled(ProjectContributionPaymentUnreconciled $event): void {}

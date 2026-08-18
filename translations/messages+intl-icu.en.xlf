@@ -4433,7 +4433,7 @@
         <source>Toneladas compradas</source>
         <target>Tons purchased</target>
       </trans-unit>
-      <trans-unit id="cPpTL01" resname="Tipo de pago">
+      <trans-unit id="Y7.IWjk" resname="Tipo de pago">
         <source>Tipo de pago</source>
         <target>Payment type</target>
       </trans-unit>
@@ -5608,6 +5608,746 @@
       <trans-unit id="x0DeIeB" resname="Cada lote identifica un tramo de toneladas dentro de un serial de compra. Ningún otro certificado emitido puede reclamar el mismo tramo. La retirada de los créditos en el registro oficial debe verificarse en el propio registro.">
         <source>Cada lote identifica un tramo de toneladas dentro de un serial de compra. Ningún otro certificado emitido puede reclamar el mismo tramo. La retirada de los créditos en el registro oficial debe verificarse en el propio registro.</source>
         <target>Each lot identifies a tonne range within a purchase serial. No other issued certificate can claim the same range. The retirement of the credits in the official registry must be checked in the registry itself.</target>
+      </trans-unit>
+      <trans-unit id="5XsmzLn" resname="Justificante de liquidación">
+        <source>Justificante de liquidación</source>
+        <target>Payout statement</target>
+      </trans-unit>
+      <trans-unit id="U45K2.H" resname="Tesorería">
+        <source>Tesorería</source>
+        <target>Treasury</target>
+      </trans-unit>
+      <trans-unit id="EaRDB.4" resname="Concepto">
+        <source>Concepto</source>
+        <target>Concept</target>
+      </trans-unit>
+      <trans-unit id="wI1y.pF" resname="Detalle de asientos">
+        <source>Detalle de asientos</source>
+        <target>Ledger entry detail</target>
+      </trans-unit>
+      <trans-unit id="uWUKhKG" resname="Lote">
+        <source>Lote</source>
+        <target>Lot</target>
+      </trans-unit>
+      <trans-unit id="L2nt9tG" resname="Liquidación">
+        <source>Liquidación</source>
+        <target>Payout</target>
+      </trans-unit>
+      <trans-unit id="0emWK1x" resname="NIF / CIF">
+        <source>NIF / CIF</source>
+        <target>Tax ID</target>
+      </trans-unit>
+      <trans-unit id="_k4CfCt" resname="IBAN">
+        <source>IBAN</source>
+        <target>IBAN</target>
+      </trans-unit>
+      <trans-unit id="ISYBPjI" resname="Beneficiario creado correctamente: {name}">
+        <source>Beneficiario creado correctamente: {name}</source>
+        <target>Payee created successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="GhZWo4E" resname="Beneficiario actualizado con éxito">
+        <source>Beneficiario actualizado con éxito</source>
+        <target>Payee updated successfully</target>
+      </trans-unit>
+      <trans-unit id="ihNlduz" resname="Beneficiario desbloqueado">
+        <source>Beneficiario desbloqueado</source>
+        <target>Payee unblocked</target>
+      </trans-unit>
+      <trans-unit id="RLyvAmg" resname="Beneficiario bloqueado">
+        <source>Beneficiario bloqueado</source>
+        <target>Payee blocked</target>
+      </trans-unit>
+      <trans-unit id="OfzzJWH" resname="Liquidación marcada como pagada">
+        <source>Liquidación marcada como pagada</source>
+        <target>Payout marked as paid</target>
+      </trans-unit>
+      <trans-unit id="jyuYzz8" resname="Liquidación cancelada">
+        <source>Liquidación cancelada</source>
+        <target>Payout cancelled</target>
+      </trans-unit>
+      <trans-unit id="cg_kMmk" resname="BIC">
+        <source>BIC</source>
+        <target>BIC</target>
+      </trans-unit>
+      <trans-unit id="lTIkUyw" resname="Titular de la cuenta">
+        <source>Titular de la cuenta</source>
+        <target>Account holder</target>
+      </trans-unit>
+      <trans-unit id="jCUhMCX" resname="Notas">
+        <source>Notas</source>
+        <target>Notes</target>
+      </trans-unit>
+      <trans-unit id="smMjCpn" resname="Guardar beneficiario">
+        <source>Guardar beneficiario</source>
+        <target>Save payee</target>
+      </trans-unit>
+      <trans-unit id="QfsTLp2" resname="Número">
+        <source>Número</source>
+        <target>Number</target>
+      </trans-unit>
+      <trans-unit id="AMAA8Pn" resname="Tipo de beneficiario">
+        <source>Tipo de beneficiario</source>
+        <target>Payee type</target>
+      </trans-unit>
+      <trans-unit id="CibqBmH" resname="Cuenta o proyecto">
+        <source>Cuenta o proyecto</source>
+        <target>Account or project</target>
+      </trans-unit>
+      <trans-unit id="ouuuCc0" resname="Crear beneficiario">
+        <source>Crear beneficiario</source>
+        <target>Create payee</target>
+      </trans-unit>
+      <trans-unit id="XOgyHLN" resname="Buscar">
+        <source>Buscar</source>
+        <target>Search</target>
+      </trans-unit>
+      <trans-unit id="z1fWWNC" resname="Referencia de la transferencia">
+        <source>Referencia de la transferencia</source>
+        <target>Transfer reference</target>
+      </trans-unit>
+      <trans-unit id="ilezIF2" resname="Justificante">
+        <source>Justificante</source>
+        <target>Receipt</target>
+      </trans-unit>
+      <trans-unit id="srk5SQS" resname="Marcar como pagada">
+        <source>Marcar como pagada</source>
+        <target>Mark as paid</target>
+      </trans-unit>
+      <trans-unit id="3BZPsl7" resname="Con pernoctación">
+        <source>Con pernoctación</source>
+        <target>With overnight stay</target>
+      </trans-unit>
+      <trans-unit id="Wpt42L8" resname="De otra ciudad">
+        <source>De otra ciudad</source>
+        <target>From another city</target>
+      </trans-unit>
+      <trans-unit id="XELL6zg" resname="Con alojamiento">
+        <source>Con alojamiento</source>
+        <target>With accommodation</target>
+      </trans-unit>
+      <trans-unit id="bc3mWfh" resname="Movilidad urbana">
+        <source>Movilidad urbana</source>
+        <target>Urban mobility</target>
+      </trans-unit>
+      <trans-unit id="h6CqM4H" resname="Multimodales">
+        <source>Multimodales</source>
+        <target>Multimodal</target>
+      </trans-unit>
+      <trans-unit id="oHQa5Nr" resname="Pagadas">
+        <source>Pagadas</source>
+        <target>Paid</target>
+      </trans-unit>
+      <trans-unit id="dM0eqGA" resname="Fallidas">
+        <source>Fallidas</source>
+        <target>Failed</target>
+      </trans-unit>
+      <trans-unit id="zp1_npV" resname="Caducadas">
+        <source>Caducadas</source>
+        <target>Expired</target>
+      </trans-unit>
+      <trans-unit id="jJKGME6" resname="Ruta calculada">
+        <source>Ruta calculada</source>
+        <target>Calculated route</target>
+      </trans-unit>
+      <trans-unit id="t_nZD2y" resname="Distancia en línea recta">
+        <source>Distancia en línea recta</source>
+        <target>Straight-line distance</target>
+      </trans-unit>
+      <trans-unit id="bP6wtXd" resname="Introducida manualmente">
+        <source>Introducida manualmente</source>
+        <target>Entered manually</target>
+      </trans-unit>
+      <trans-unit id="EtGFBHD" resname="Liquidación {number} creada por {amount} €">
+        <source>Liquidación {number} creada por {amount} €</source>
+        <target>Payout {number} created for {amount} €</target>
+      </trans-unit>
+      <trans-unit id="BwbhsLB" resname="El beneficiario no tiene ficha de cobro">
+        <source>El beneficiario no tiene ficha de cobro</source>
+        <target>The beneficiary has no payee record</target>
+      </trans-unit>
+      <trans-unit id="bSBIhZj" resname="Ajuste registrado correctamente">
+        <source>Ajuste registrado correctamente</source>
+        <target>Adjustment recorded successfully</target>
+      </trans-unit>
+      <trans-unit id="HabqxyM" resname="Identificador de la cuenta o proyecto">
+        <source>Identificador de la cuenta o proyecto</source>
+        <target>Account or project identifier</target>
+      </trans-unit>
+      <trans-unit id="DSDJgjn" resname="Registrar ajuste">
+        <source>Registrar ajuste</source>
+        <target>Record adjustment</target>
+      </trans-unit>
+      <trans-unit id="W4UeziP" resname="Coste del lote">
+        <source>Coste del lote</source>
+        <target>Lot cost</target>
+      </trans-unit>
+      <trans-unit id="1k3zeFL" resname="Panel">
+        <source>Panel</source>
+        <target>Dashboard</target>
+      </trans-unit>
+      <trans-unit id="_xuCYTh" resname="Libro mayor">
+        <source>Libro mayor</source>
+        <target>Ledger</target>
+      </trans-unit>
+      <trans-unit id="wE3XCTp" resname="Beneficiarios">
+        <source>Beneficiarios</source>
+        <target>Payees</target>
+      </trans-unit>
+      <trans-unit id="hUkz7PZ" resname="Liquidaciones">
+        <source>Liquidaciones</source>
+        <target>Payouts</target>
+      </trans-unit>
+      <trans-unit id="KbUnLv_" resname="Mi saldo">
+        <source>Mi saldo</source>
+        <target>My balance</target>
+      </trans-unit>
+      <trans-unit id="o.wwmh_" resname="Media por huésped">
+        <source>Media por huésped</source>
+        <target>Average per guest</target>
+      </trans-unit>
+      <trans-unit id="eRkyVV5" resname="del total emitido">
+        <source>del total emitido</source>
+        <target>of the total emitted</target>
+      </trans-unit>
+      <trans-unit id="_KYEkD2" resname="Importe aportado">
+        <source>Importe aportado</source>
+        <target>Contributed amount</target>
+      </trans-unit>
+      <trans-unit id="VAtnjoG" resname="Respuestas recibidas por día">
+        <source>Respuestas recibidas por día</source>
+        <target>Responses received per day</target>
+      </trans-unit>
+      <trans-unit id="lGVG9H7" resname="Emisiones por concepto">
+        <source>Emisiones por concepto</source>
+        <target>Emissions by concept</target>
+      </trans-unit>
+      <trans-unit id="mbjgBOs" resname="Todavía no hay emisiones registradas.">
+        <source>Todavía no hay emisiones registradas.</source>
+        <target>There are no recorded emissions yet.</target>
+      </trans-unit>
+      <trans-unit id="U2EKLCo" resname="Distancia por medio de transporte">
+        <source>Distancia por medio de transporte</source>
+        <target>Distance by means of transport</target>
+      </trans-unit>
+      <trans-unit id="M4D4W5r" resname="Distancia">
+        <source>Distancia</source>
+        <target>Distance</target>
+      </trans-unit>
+      <trans-unit id="HDltZoT" resname="Todavía no hay desplazamientos registrados.">
+        <source>Todavía no hay desplazamientos registrados.</source>
+        <target>There are no recorded journeys yet.</target>
+      </trans-unit>
+      <trans-unit id="GzEIP5D" resname="Emisiones por medio de transporte">
+        <source>Emisiones por medio de transporte</source>
+        <target>Emissions by means of transport</target>
+      </trans-unit>
+      <trans-unit id=".97yVd2" resname="Todavía no hay emisiones de movilidad.">
+        <source>Todavía no hay emisiones de movilidad.</source>
+        <target>There are no mobility emissions yet.</target>
+      </trans-unit>
+      <trans-unit id="RpI5w.C" resname="Perfil de los viajes">
+        <source>Perfil de los viajes</source>
+        <target>Trip profile</target>
+      </trans-unit>
+      <trans-unit id="wys.iMN" resname="Todavía no hay respuestas que perfilar.">
+        <source>Todavía no hay respuestas que perfilar.</source>
+        <target>There are no responses to profile yet.</target>
+      </trans-unit>
+      <trans-unit id="6zdnn8F" resname="Aportaciones por estado">
+        <source>Aportaciones por estado</source>
+        <target>Contributions by status</target>
+      </trans-unit>
+      <trans-unit id="Mt6fCzc" resname="Todavía no se ha iniciado ninguna aportación.">
+        <source>Todavía no se ha iniciado ninguna aportación.</source>
+        <target>No contribution has been started yet.</target>
+      </trans-unit>
+      <trans-unit id="FWvZylh" resname="Principales orígenes">
+        <source>Principales orígenes</source>
+        <target>Main origins</target>
+      </trans-unit>
+      <trans-unit id="6xSbUf5" resname="Todavía no hay orígenes registrados.">
+        <source>Todavía no hay orígenes registrados.</source>
+        <target>There are no recorded origins yet.</target>
+      </trans-unit>
+      <trans-unit id="uIU7.Tl" resname="Pernoctaciones declaradas">
+        <source>Pernoctaciones declaradas</source>
+        <target>Declared overnight stays</target>
+      </trans-unit>
+      <trans-unit id="23jgW0r" resname="Emisiones declaradas">
+        <source>Emisiones declaradas</source>
+        <target>Declared emissions</target>
+      </trans-unit>
+      <trans-unit id="8c_nyD8" resname="Media por respuesta">
+        <source>Media por respuesta</source>
+        <target>Average per response</target>
+      </trans-unit>
+      <trans-unit id="3jd89xp" resname="de las emisiones declaradas">
+        <source>de las emisiones declaradas</source>
+        <target>of the declared emissions</target>
+      </trans-unit>
+      <trans-unit id="kxCyKSA" resname="aportaciones pagadas de">
+        <source>aportaciones pagadas de</source>
+        <target>paid contributions of</target>
+      </trans-unit>
+      <trans-unit id="ITh.xyQ" resname="Todavía no se ha recibido ninguna respuesta.">
+        <source>Todavía no se ha recibido ninguna respuesta.</source>
+        <target>No response has been received yet.</target>
+      </trans-unit>
+      <trans-unit id="RI67hCQ" resname="Todavía no hay emisiones declaradas.">
+        <source>Todavía no hay emisiones declaradas.</source>
+        <target>There are no declared emissions yet.</target>
+      </trans-unit>
+      <trans-unit id="48dkltV" resname="Perfil de los asistentes">
+        <source>Perfil de los asistentes</source>
+        <target>Attendee profile</target>
+      </trans-unit>
+      <trans-unit id="i_x4hVr" resname="Origen de las distancias">
+        <source>Origen de las distancias</source>
+        <target>Source of the distances</target>
+      </trans-unit>
+      <trans-unit id="ZKEV_9h" resname="Trayectos">
+        <source>Trayectos</source>
+        <target>Legs</target>
+      </trans-unit>
+      <trans-unit id=".ht23GN" resname="Todavía no hay trayectos registrados.">
+        <source>Todavía no hay trayectos registrados.</source>
+        <target>There are no recorded legs yet.</target>
+      </trans-unit>
+      <trans-unit id="X_mok.A" resname="Detalle de la encuesta">
+        <source>Detalle de la encuesta</source>
+        <target>Survey detail</target>
+      </trans-unit>
+      <trans-unit id="MEULfyb" resname="Importe a transferir">
+        <source>Importe a transferir</source>
+        <target>Amount to transfer</target>
+      </trans-unit>
+      <trans-unit id="IbUaIaW" resname="Pagar">
+        <source>Pagar</source>
+        <target>Pay</target>
+      </trans-unit>
+      <trans-unit id="O6XkBz7" resname="Pago de la liquidación">
+        <source>Pago de la liquidación</source>
+        <target>Payout payment</target>
+      </trans-unit>
+      <trans-unit id="RWgdbLv" resname="Remesa SEPA">
+        <source>Remesa SEPA</source>
+        <target>SEPA remittance</target>
+      </trans-unit>
+      <trans-unit id="k90TuvY" resname="Remesa CSV">
+        <source>Remesa CSV</source>
+        <target>CSV remittance</target>
+      </trans-unit>
+      <trans-unit id="c4YRBCt" resname="Asientos">
+        <source>Asientos</source>
+        <target>Entries</target>
+      </trans-unit>
+      <trans-unit id="_fxltT8" resname="Creada">
+        <source>Creada</source>
+        <target>Created</target>
+      </trans-unit>
+      <trans-unit id="Gu6bxnc" resname="Importe devengado">
+        <source>Importe devengado</source>
+        <target>Accrued amount</target>
+      </trans-unit>
+      <trans-unit id="scbD_Ou" resname="Descargar justificante">
+        <source>Descargar justificante</source>
+        <target>Download statement</target>
+      </trans-unit>
+      <trans-unit id="KiPhPWs" resname="Esta liquidación no tiene asientos">
+        <source>Esta liquidación no tiene asientos</source>
+        <target>This payout has no entries</target>
+      </trans-unit>
+      <trans-unit id="xaUlYh5" resname="Desbloquear">
+        <source>Desbloquear</source>
+        <target>Unblock</target>
+      </trans-unit>
+      <trans-unit id="0_r8fBP" resname="Bloquear">
+        <source>Bloquear</source>
+        <target>Block</target>
+      </trans-unit>
+      <trans-unit id="hNUt4Lk" resname="Datos fiscales">
+        <source>Datos fiscales</source>
+        <target>Tax details</target>
+      </trans-unit>
+      <trans-unit id="KqWQlUA" resname="Datos bancarios">
+        <source>Datos bancarios</source>
+        <target>Bank details</target>
+      </trans-unit>
+      <trans-unit id="3bEsBpp" resname="Devengado">
+        <source>Devengado</source>
+        <target>Accrued</target>
+      </trans-unit>
+      <trans-unit id="FDohUBI" resname="Liquidado">
+        <source>Liquidado</source>
+        <target>Settled</target>
+      </trans-unit>
+      <trans-unit id="a2fcHZk" resname="Pendiente de cobro">
+        <source>Pendiente de cobro</source>
+        <target>Pending payment</target>
+      </trans-unit>
+      <trans-unit id="ZXH.ElN" resname="Todavía no hay importes devengados a su favor">
+        <source>Todavía no hay importes devengados a su favor</source>
+        <target>There are no amounts accrued in your favour yet</target>
+      </trans-unit>
+      <trans-unit id="2.ZcbYf" resname="Importe neto">
+        <source>Importe neto</source>
+        <target>Net amount</target>
+      </trans-unit>
+      <trans-unit id="p3zfQaO" resname="Todavía no hay liquidaciones">
+        <source>Todavía no hay liquidaciones</source>
+        <target>There are no payouts yet</target>
+      </trans-unit>
+      <trans-unit id="CDPrVXA" resname="Saldo">
+        <source>Saldo</source>
+        <target>Balance</target>
+      </trans-unit>
+      <trans-unit id="PioAgUc" resname="Detalle por aportación">
+        <source>Detalle por aportación</source>
+        <target>Detail by contribution</target>
+      </trans-unit>
+      <trans-unit id="rn71Qmh" resname="Mis liquidaciones">
+        <source>Mis liquidaciones</source>
+        <target>My payouts</target>
+      </trans-unit>
+      <trans-unit id="8fVmUD3" resname="compensadas">
+        <source>compensadas</source>
+        <target>offset</target>
+      </trans-unit>
+      <trans-unit id=".MB7lpS" resname="libres">
+        <source>libres</source>
+        <target>free</target>
+      </trans-unit>
+      <trans-unit id="5oBUMMp" resname="Toneladas comprometidas">
+        <source>Toneladas comprometidas</source>
+        <target>Committed tonnes</target>
+      </trans-unit>
+      <trans-unit id="qEnOJz8" resname="Todavía no hay solicitudes de compra para este proyecto">
+        <source>Todavía no hay solicitudes de compra para este proyecto</source>
+        <target>There are no purchase requests for this project yet</target>
+      </trans-unit>
+      <trans-unit id="NbsgCzj" resname="Reparto">
+        <source>Reparto</source>
+        <target>Split</target>
+      </trans-unit>
+      <trans-unit id="Ol.a0h8" resname="Libre">
+        <source>Libre</source>
+        <target>Free</target>
+      </trans-unit>
+      <trans-unit id="H8wgDGR" resname="Sin informar">
+        <source>Sin informar</source>
+        <target>Not reported</target>
+      </trans-unit>
+      <trans-unit id="WJGiUUu" resname="Toneladas compensadas">
+        <source>Toneladas compensadas</source>
+        <target>Offset tonnes</target>
+      </trans-unit>
+      <trans-unit id="l.aoxSM" resname="Toneladas libres">
+        <source>Toneladas libres</source>
+        <target>Free tonnes</target>
+      </trans-unit>
+      <trans-unit id="WFx6SMP" resname="Fecha de resolución">
+        <source>Fecha de resolución</source>
+        <target>Resolution date</target>
+      </trans-unit>
+      <trans-unit id="xgoBfRl" resname="Esta compra todavía no tiene créditos disponibles">
+        <source>Esta compra todavía no tiene créditos disponibles</source>
+        <target>This purchase has no available credits yet</target>
+      </trans-unit>
+      <trans-unit id="xfN5oXy" resname="Este crédito todavía no se ha utilizado en ninguna compensación">
+        <source>Este crédito todavía no se ha utilizado en ninguna compensación</source>
+        <target>This credit has not been used in any offset yet</target>
+      </trans-unit>
+      <trans-unit id="p3DJKJH" resname="% del crédito">
+        <source>% del crédito</source>
+        <target>% of the credit</target>
+      </trans-unit>
+      <trans-unit id="976FYDH" resname="Compra de créditos">
+        <source>Compra de créditos</source>
+        <target>Credit purchase</target>
+      </trans-unit>
+      <trans-unit id="SDpfylI" resname="Reparto del crédito">
+        <source>Reparto del crédito</source>
+        <target>Credit split</target>
+      </trans-unit>
+      <trans-unit id="a4lbx57" resname="Compensaciones">
+        <source>Compensaciones</source>
+        <target>Offsets</target>
+      </trans-unit>
+      <trans-unit id="Xd6_CTK" resname="Ver el detalle de la compra">
+        <source>Ver el detalle de la compra</source>
+        <target>See the purchase detail</target>
+      </trans-unit>
+      <trans-unit id="0iVXk20" resname="PDF">
+        <source>PDF</source>
+        <target>PDF</target>
+      </trans-unit>
+      <trans-unit id="oFoWVDz" resname="Compras de crédito">
+        <source>Compras de crédito</source>
+        <target>Credit purchases</target>
+      </trans-unit>
+      <trans-unit id="cARnF0z" resname="No hay lotes validados">
+        <source>No hay lotes validados</source>
+        <target>There are no validated lots</target>
+      </trans-unit>
+      <trans-unit id="vNt_CGS" resname="Lotes comprados">
+        <source>Lotes comprados</source>
+        <target>Purchased lots</target>
+      </trans-unit>
+      <trans-unit id="M30BU4K" resname="Coste sin informar">
+        <source>Coste sin informar</source>
+        <target>Cost not reported</target>
+      </trans-unit>
+      <trans-unit id="i0e8aFl" resname="Vendidas">
+        <source>Vendidas</source>
+        <target>Sold</target>
+      </trans-unit>
+      <trans-unit id="L8fXghM" resname="Inmovilizado">
+        <source>Inmovilizado</source>
+        <target>Idle</target>
+      </trans-unit>
+      <trans-unit id="DbAwIkq" resname="Inmovilizadas">
+        <source>Inmovilizadas</source>
+        <target>Idle</target>
+      </trans-unit>
+      <trans-unit id="Yv14PCc" resname="Coste">
+        <source>Coste</source>
+        <target>Cost</target>
+      </trans-unit>
+      <trans-unit id="mUz_B7P" resname="Sin ficha de cobro">
+        <source>Sin ficha de cobro</source>
+        <target>No payee record</target>
+      </trans-unit>
+      <trans-unit id="QZG5Xe1" resname="No hay asientos">
+        <source>No hay asientos</source>
+        <target>There are no entries</target>
+      </trans-unit>
+      <trans-unit id="8q0.m6W" resname="Ver lote">
+        <source>Ver lote</source>
+        <target>See lot</target>
+      </trans-unit>
+      <trans-unit id="6xdvPlD" resname="Margen de Bioscore">
+        <source>Margen de Bioscore</source>
+        <target>Bioscore margin</target>
+      </trans-unit>
+      <trans-unit id="quaYgge" resname="Lotes del proyecto">
+        <source>Lotes del proyecto</source>
+        <target>Project lots</target>
+      </trans-unit>
+      <trans-unit id="SgiAXS6" resname="Total cobrado">
+        <source>Total cobrado</source>
+        <target>Total collected</target>
+      </trans-unit>
+      <trans-unit id="20r3seW" resname="Neto a propietarios">
+        <source>Neto a propietarios</source>
+        <target>Net to owners</target>
+      </trans-unit>
+      <trans-unit id="mBe74Xm" resname="pendiente">
+        <source>pendiente</source>
+        <target>pending</target>
+      </trans-unit>
+      <trans-unit id="okd82ol" resname="Neto a proyectos">
+        <source>Neto a proyectos</source>
+        <target>Net to projects</target>
+      </trans-unit>
+      <trans-unit id="LR8fam9" resname="Neto retenido por Bioscore">
+        <source>Neto retenido por Bioscore</source>
+        <target>Net retained by Bioscore</target>
+      </trans-unit>
+      <trans-unit id=".GJhgTD" resname="Gastos de gestión">
+        <source>Gastos de gestión</source>
+        <target>Management fee</target>
+      </trans-unit>
+      <trans-unit id="Ue45eRz" resname="IVA repercutido">
+        <source>IVA repercutido</source>
+        <target>Output VAT</target>
+      </trans-unit>
+      <trans-unit id="ng.QfQb" resname="a liquidar con Hacienda">
+        <source>a liquidar con Hacienda</source>
+        <target>to be settled with the tax office</target>
+      </trans-unit>
+      <trans-unit id="eUAcpUo" resname="Sin asignar">
+        <source>Sin asignar</source>
+        <target>Unassigned</target>
+      </trans-unit>
+      <trans-unit id="WCcap__" resname="No hay saldos pendientes">
+        <source>No hay saldos pendientes</source>
+        <target>There are no pending balances</target>
+      </trans-unit>
+      <trans-unit id="xUqXrSX" resname="No hay alertas">
+        <source>No hay alertas</source>
+        <target>There are no alerts</target>
+      </trans-unit>
+      <trans-unit id="2gyI0lX" resname="Todavía no hay saldos que liquidar">
+        <source>Todavía no hay saldos que liquidar</source>
+        <target>There are no balances to settle yet</target>
+      </trans-unit>
+      <trans-unit id="hKZvGU6" resname="Sin beneficiario">
+        <source>Sin beneficiario</source>
+        <target>No payee</target>
+      </trans-unit>
+      <trans-unit id="uC6dMsw" resname="Crear liquidación">
+        <source>Crear liquidación</source>
+        <target>Create payout</target>
+      </trans-unit>
+      <trans-unit id="Hw3Ykoz" resname="Cobrado en el periodo">
+        <source>Cobrado en el periodo</source>
+        <target>Collected in the period</target>
+      </trans-unit>
+      <trans-unit id="uXM8ttN" resname="Reparto mensual por destino">
+        <source>Reparto mensual por destino</source>
+        <target>Monthly split by destination</target>
+      </trans-unit>
+      <trans-unit id="XqgXnEY" resname="Devengado vs. liquidado">
+        <source>Devengado vs. liquidado</source>
+        <target>Accrued vs. settled</target>
+      </trans-unit>
+      <trans-unit id="35yWX98" resname="Top beneficiarios por saldo pendiente">
+        <source>Top beneficiarios por saldo pendiente</source>
+        <target>Top payees by pending balance</target>
+      </trans-unit>
+      <trans-unit id="xOtMi1m" resname="Alertas">
+        <source>Alertas</source>
+        <target>Alerts</target>
+      </trans-unit>
+      <trans-unit id="kKHO2lM" resname="Saldos pendientes">
+        <source>Saldos pendientes</source>
+        <target>Pending balances</target>
+      </trans-unit>
+      <trans-unit id="4XZZeHf" resname="No hay liquidaciones pendientes de remesar">
+        <source>No hay liquidaciones pendientes de remesar</source>
+        <target>There are no payouts pending remittance</target>
+      </trans-unit>
+      <trans-unit id="04IUz0t" resname="Liquidaciones marcadas como remesadas: {count}">
+        <source>Liquidaciones marcadas como remesadas: {count}</source>
+        <target>Payouts marked as remitted: {count}</target>
+      </trans-unit>
+      <trans-unit id="tmeDegB" resname="Remesada">
+        <source>Remesada</source>
+        <target>Remitted</target>
+      </trans-unit>
+      <trans-unit id="dhtf0mb" resname="Marcar como remesadas">
+        <source>Marcar como remesadas</source>
+        <target>Mark as remitted</target>
+      </trans-unit>
+      <trans-unit id="dkLxgXb" resname="Datos de cobro guardados con éxito">
+        <source>Datos de cobro guardados con éxito</source>
+        <target>Payment details saved successfully</target>
+      </trans-unit>
+      <trans-unit id="9dzGkiY" resname="Guardar datos de cobro">
+        <source>Guardar datos de cobro</source>
+        <target>Save payment details</target>
+      </trans-unit>
+      <trans-unit id="bntnx6P" resname="No se puede modificar mientras queden créditos comprados sin consumir en este proyecto.">
+        <source>No se puede modificar mientras queden créditos comprados sin consumir en este proyecto.</source>
+        <target>It cannot be changed while there are purchased credits left unconsumed in this project.</target>
+      </trans-unit>
+      <trans-unit id="WsmoE0o" resname="Seleccione un beneficiario">
+        <source>Seleccione un beneficiario</source>
+        <target>Select a beneficiary</target>
+      </trans-unit>
+      <trans-unit id="XZja_k." resname="Bioscore">
+        <source>Bioscore</source>
+        <target>Bioscore</target>
+      </trans-unit>
+      <trans-unit id="Wwxwb8y" resname="Incidencias en el libro mayor">
+        <source>Incidencias en el libro mayor</source>
+        <target>Ledger findings</target>
+      </trans-unit>
+      <trans-unit id="0wPpOKR" resname="Mis datos de cobro">
+        <source>Mis datos de cobro</source>
+        <target>My payment details</target>
+      </trans-unit>
+      <trans-unit id="G0IRXGS" resname="Sus datos de cobro están bloqueados. Póngase en contacto con nosotros para poder modificarlos.">
+        <source>Sus datos de cobro están bloqueados. Póngase en contacto con nosotros para poder modificarlos.</source>
+        <target>Your payment details are blocked. Please contact us in order to change them.</target>
+      </trans-unit>
+      <trans-unit id="7t2RJG5" resname="Complete la razón social, el NIF, el IBAN y el titular de la cuenta para que podamos abonarle su saldo pendiente.">
+        <source>Complete la razón social, el NIF, el IBAN y el titular de la cuenta para que podamos abonarle su saldo pendiente.</source>
+        <target>Fill in the legal name, the tax id, the IBAN and the account holder so that we can pay your pending balance.</target>
+      </trans-unit>
+      <trans-unit id="wsIUONR" resname="Se marcará la liquidación {number} como remesada. ¿Desea continuar?">
+        <source>Se marcará la liquidación {number} como remesada. ¿Desea continuar?</source>
+        <target>Payout {number} will be marked as remitted. Do you want to continue?</target>
+      </trans-unit>
+      <trans-unit id="ccN78BB" resname="Se marcarán como remesadas todas las liquidaciones en borrador. ¿Desea continuar?">
+        <source>Se marcarán como remesadas todas las liquidaciones en borrador. ¿Desea continuar?</source>
+        <target>Every draft payout will be marked as remitted. Do you want to continue?</target>
+      </trans-unit>
+      <trans-unit id="v9OSWmB" resname="Sus datos de cobro están incompletos, así que no podemos abonarle su saldo pendiente.">
+        <source>Sus datos de cobro están incompletos, así que no podemos abonarle su saldo pendiente.</source>
+        <target>Your payment details are incomplete, so we cannot pay your pending balance.</target>
+      </trans-unit>
+      <trans-unit id="P2nJoK9" resname="Sus datos de cobro están bloqueados. Póngase en contacto con nosotros.">
+        <source>Sus datos de cobro están bloqueados. Póngase en contacto con nosotros.</source>
+        <target>Your payment details are blocked. Please contact us.</target>
+      </trans-unit>
+      <trans-unit id="fPsYErv" resname="Completar datos de cobro">
+        <source>Completar datos de cobro</source>
+        <target>Complete payment details</target>
+      </trans-unit>
+      <trans-unit id="4vztfLo" resname="La revisión automática del libro mayor ha encontrado {findings} incidencia(s) sobre {contributions} aportación(es) revisadas.">
+        <source>La revisión automática del libro mayor ha encontrado {findings} incidencia(s) sobre {contributions} aportación(es) revisadas.</source>
+        <target>The automatic ledger review found {findings} finding(s) over {contributions} contribution(s) checked.</target>
+      </trans-unit>
+      <trans-unit id="6mYMONQ" resname="Ver libro mayor">
+        <source>Ver libro mayor</source>
+        <target>View ledger</target>
+      </trans-unit>
+      <trans-unit id="mCkYKOC" resname="La revisión automática del libro mayor ha encontrado {findings} incidencia(s) sobre {contributions} aportación(es) revisadas. No se ha modificado ningún asiento: revíselas y corríjalas manualmente.">
+        <source>La revisión automática del libro mayor ha encontrado {findings} incidencia(s) sobre {contributions} aportación(es) revisadas. No se ha modificado ningún asiento: revíselas y corríjalas manualmente.</source>
+        <target>The automatic ledger review found {findings} finding(s) over {contributions} contribution(s) checked. No entry has been modified: review them and correct them manually.</target>
+      </trans-unit>
+      <trans-unit id="_w8qgWX" resname="Periodo revisado">
+        <source>Periodo revisado</source>
+        <target>Period checked</target>
+      </trans-unit>
+      <trans-unit id="9f.1YtW" resname="Comprobación">
+        <source>Comprobación</source>
+        <target>Check</target>
+      </trans-unit>
+      <trans-unit id="xiPKiNw" resname="Sujeto">
+        <source>Sujeto</source>
+        <target>Subject</target>
+      </trans-unit>
+      <trans-unit id="GmSeY2o" resname="Importe original">
+        <source>Importe original</source>
+        <target>Original amount</target>
+      </trans-unit>
+      <trans-unit id="WPwRiXf" resname="Revertir asiento">
+        <source>Revertir asiento</source>
+        <target>Reverse entry</target>
+      </trans-unit>
+      <trans-unit id="v6Gec6t" resname="Asiento que se revierte">
+        <source>Asiento que se revierte</source>
+        <target>Entry being reversed</target>
+      </trans-unit>
+      <trans-unit id="Mt.v8T." resname="Revertir">
+        <source>Revertir</source>
+        <target>Reverse</target>
+      </trans-unit>
+      <trans-unit id="2TdkM7H" resname="Se creará una liquidación de {amount} € a favor de {name}. ¿Desea continuar?">
+        <source>Se creará una liquidación de {amount} € a favor de {name}. ¿Desea continuar?</source>
+        <target>A payout of {amount} € in favour of {name} will be created. Do you want to continue?</target>
+      </trans-unit>
+      <trans-unit id="V3rLEPj" resname="Pendiente de liquidar">
+        <source>Pendiente de liquidar</source>
+        <target>Pending settlement</target>
+      </trans-unit>
+      <trans-unit id="qsB0veZ" resname="Marcar como remesada">
+        <source>Marcar como remesada</source>
+        <target>Mark as remitted</target>
+      </trans-unit>
+      <trans-unit id="wqv3qOS" resname="Descargar remesa SEPA">
+        <source>Descargar remesa SEPA</source>
+        <target>Download SEPA remittance</target>
+      </trans-unit>
+      <trans-unit id="ckqpUBl" resname="Descargar remesa CSV">
+        <source>Descargar remesa CSV</source>
+        <target>Download CSV remittance</target>
+      </trans-unit>
+      <trans-unit id="nSkaZG6" resname="Remesa">
+        <source>Remesa</source>
+        <target>Remittance</target>
       </trans-unit>
     </body>
   </file>

@@ -1,0 +1,71 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Liquidaciones' | trans %}
+
+{% block list_actions %}
+    <twig:List:ActionDropdown label="{{ 'Acciones' | trans }}">
+        <twig:TopAction path="{{ path('admin_payouts_remittance', {'format': 'sepa'}) }}">
+            <twig:Icon name="solar:file-download-line-duotone" size="lg" class="me-2" />
+            {{ 'Descargar remesa SEPA' | trans }}
+        </twig:TopAction>
+
+        <twig:TopAction path="{{ path('admin_payouts_remittance', {'format': 'csv'}) }}">
+            <twig:Icon name="solar:file-text-line-duotone" size="lg" class="me-2" />
+            {{ 'Descargar remesa CSV' | trans }}
+        </twig:TopAction>
+
+        <twig:TopAction
+            path="{{ path('admin_payouts_remit', {_token: csrf_token('payouts_remit')}) }}"
+            data-controller="confirm"
+            data-confirm-text-param="{{ 'Se marcarán como remesadas todas las liquidaciones en borrador. ¿Desea continuar?' | trans }}"
+            data-action="confirm#link:prevent"
+        >
+            <twig:Icon name="solar:plain-line-duotone" size="lg" class="me-2" />
+            {{ 'Marcar como remesadas' | trans }}
+        </twig:TopAction>
+    </twig:List:ActionDropdown>
+{% endblock list_actions %}
+
+{% block table %}
+    {% set columns = [
+        {'label': 'Número' | trans, 'sortable': true, 'sortableBy': 'number'},
+        {'label': 'Beneficiario' | trans, 'sortable': false},
+        {'label': 'Importe' | trans, 'sortable': true, 'sortableBy': 'baseAmount'},
+        {'label': 'Asientos' | trans, 'sortable': false},
+        {'label': 'Periodo' | trans, 'sortable': false},
+        {'label': 'Estado' | trans, 'sortable': false},
+        {'label': 'Creada' | trans, 'sortable': true, 'sortableBy': 'createdAt'},
+        {'label': ''},
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="payouts">
+        <td>{{ element.number ?? '-' }}</td>
+        <td>{{ payeeNames.of(element.payeeId) }}</td>
+        <td>{{ element.payableAmount | number_format(2, ',', '.') }} €</td>
+        <td>{{ element.linesCount }}</td>
+        <td>
+            {% if element.periodFrom and element.periodTo %}
+                {{ element.periodFrom | date('d/m/Y') }} - {{ element.periodTo | date('d/m/Y') }}
+            {% else %}
+                -
+            {% endif %}
+        </td>
+        <td>{{ element.status.value | trans({}, 'payoutStatus') }}</td>
+        <td>{{ element.createdAt | date('d/m/Y') }}</td>
+        <td>
+            <twig:List:Action:View path="{{ path('admin_payouts_view', {'payoutId': element.id}) }}" />
+            {% if element.isSendable %}
+                <twig:List:Action:Remit
+                    path="{{ path('admin_payouts_remit', {'ids': element.id, _token: csrf_token('payouts_remit')}) }}"
+                    confirm="{{ 'Se marcará la liquidación {number} como remesada. ¿Desea continuar?' | trans({'{number}': element.number}) }}"
+                />
+            {% endif %}
+            {% if not element.status.isResolved %}
+                <twig:List:Action:Pay path="{{ path('admin_payouts_pay', {'payoutId': element.id}) }}" />
+            {% endif %}
+            {% if element.isCancellable %}
+                <twig:List:Action:Delete path="{{ path('admin_payouts_cancel', {'payoutId': element.id, _token: csrf_token('payout_cancel_' ~ element.id)}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}

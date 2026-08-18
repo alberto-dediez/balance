@@ -1,0 +1,13 @@
+<p>
+    {% trans with {'{findings}': findingsCount, '{contributions}': checkedContributions} -%}
+        La revisión automática del libro mayor ha encontrado {findings} incidencia(s) sobre {contributions} aportación(es) revisadas.
+    {%- endtrans %}
+</p>
+<ul>
+    {% for finding in findings %}
+        <li>{{ finding.code | trans({}, 'ledgerFindingCode') }}: {{ finding.detail }}</li>
+    {% endfor %}
+</ul>
+<p>
+    <a href="{{ path('admin_treasury_ledger') }}">{% trans -%}Ver libro mayor{%- endtrans -%}</a>
+</p>

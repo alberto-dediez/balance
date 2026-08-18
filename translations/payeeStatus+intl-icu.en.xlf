@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="rchOB90" resname="incomplete">
+        <source>incomplete</source>
+        <target>Incomplete</target>
+      </trans-unit>
+      <trans-unit id="jM9iYRW" resname="ready">
+        <source>ready</source>
+        <target>Ready</target>
+      </trans-unit>
+      <trans-unit id="gopJoie" resname="blocked">
+        <source>blocked</source>
+        <target>Blocked</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

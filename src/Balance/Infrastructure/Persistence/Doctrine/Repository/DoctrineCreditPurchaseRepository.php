@@ -173,4 +173,20 @@ class DoctrineCreditPurchaseRepository implements CreditPurchaseRepository
             purchasesCount: 0,
         );
     }
+
+    public function purchasedTonnesForProject(ProjectId $projectId): float
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        return (float) $qb
+            ->select('COALESCE(SUM(cp.purchasedTonnes), 0)')
+            ->from(CreditPurchase::class, 'cp')
+            ->andWhere($qb->expr()->eq('cp.projectId', ':projectId'))
+            ->andWhere($qb->expr()->eq('cp.status', ':status'))
+            ->setParameter('projectId', (string) $projectId)
+            ->setParameter('status', CreditPurchaseStatus::Validated->value)
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
 }

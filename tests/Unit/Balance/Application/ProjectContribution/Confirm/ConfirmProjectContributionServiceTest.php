@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Balance\Application\ProjectContribution\Confirm;
 
+use App\Balance\Application\LedgerEntry\Record\RecordContributionLedgerEntriesService;
 use App\Balance\Application\ProjectContribution\Allocate\AllocateContributionCreditsService;
 use App\Balance\Application\ProjectContribution\Confirm\ConfirmProjectContributionRequest;
 use App\Balance\Application\ProjectContribution\Confirm\ConfirmProjectContributionService;
@@ -14,6 +15,7 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionStatus;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Balance\Application\ProjectContribution\FakeCreditReservationLock;
 use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepositoryMother;
+use App\Tests\Unit\Balance\Domain\Model\LedgerEntry\LedgerEntryRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
@@ -103,6 +105,12 @@ class ConfirmProjectContributionServiceTest extends TestCase
                 CreditPurchaseRepositoryMother::inMemory(),
                 ProjectRepositoryMother::inMemory(),
                 new FakeCreditReservationLock(),
+            ),
+            new RecordContributionLedgerEntriesService(
+                $contributions,
+                CreditPurchaseRepositoryMother::inMemory(),
+                ProjectRepositoryMother::inMemory(),
+                LedgerEntryRepositoryMother::inMemory(),
             ),
         );
     }

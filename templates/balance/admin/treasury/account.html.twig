@@ -1,0 +1,53 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% set account = accountId | account_name %}
+{% set page_title = ('Tesorería' | trans) ~ ' > ' ~ (account ? account.name : accountId) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_treasury') }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card title="{{ 'Saldo' | trans }}">
+        {% include '@balance/admin/treasury/_balance.html.twig' %}
+    </twig:Card>
+
+    <twig:Card title="{{ 'Compras de crédito' | trans }}">
+        {% include '@balance/admin/treasury/_purchases.html.twig' %}
+    </twig:Card>
+
+    <twig:Card title="{{ 'Asientos' | trans }}">
+        {% include '@balance/admin/treasury/_entries.html.twig' %}
+    </twig:Card>
+
+    <twig:Card title="{{ 'Liquidaciones' | trans }}">
+        {% if payouts is empty %}
+            <p class="text-muted mb-0">{{ 'Todavía no hay liquidaciones' | trans }}</p>
+        {% else %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{{ 'Número' | trans }}</th>
+                        <th>{{ 'Importe' | trans }}</th>
+                        <th>{{ 'Estado' | trans }}</th>
+                        <th>{{ 'Creada' | trans }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payout in payouts %}
+                        <tr>
+                            <td>{{ payout.number ?? '-' }}</td>
+                            <td>{{ payout.payableAmount | number_format(2, ',', '.') }} €</td>
+                            <td>{{ payout.status.value | trans({}, 'payoutStatus') }}</td>
+                            <td>{{ payout.createdAt | date('d/m/Y') }}</td>
+                            <td>
+                                <a href="{{ path('admin_payouts_statement', {'payoutId': payout.id}) }}">{{ 'PDF' | trans }}</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </twig:Card>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% if view.purchases is empty %}
+    <p class="text-muted mb-0">{{ 'No hay lotes validados' | trans }}</p>
+{% else %}
+    <dl class="row">
+        <dt class="col-sm-4">{{ 'Lotes comprados' | trans }}</dt>
+        <dd class="col-sm-8">
+            {{ view.purchasedTonnes | number_format(4, ',', '.') }} t
+            {% if view.purchasedAmount is not null %}
+                · {{ view.purchasedAmount | number_format(2, ',', '.') }} €
+            {% else %}
+                · <span class="badge bg-warning text-dark">{{ 'Coste sin informar' | trans }}</span>
+            {% endif %}
+        </dd>
+
+        <dt class="col-sm-4">{{ 'Vendidas' | trans }}</dt>
+        <dd class="col-sm-8">{{ view.soldTonnes | number_format(4, ',', '.') }} t</dd>
+
+        <dt class="col-sm-4">{{ 'Inmovilizado' | trans }}</dt>
+        <dd class="col-sm-8">
+            {{ view.idleTonnes | number_format(4, ',', '.') }} t
+            {% if view.idleAmount is not null %}
+                · {{ view.idleAmount | number_format(2, ',', '.') }} €
+            {% endif %}
+        </dd>
+    </dl>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>{{ 'Identificador' | trans }}</th>
+                <th>{{ 'Tipo de pago' | trans }}</th>
+                <th>{{ 'Compradas' | trans }}</th>
+                <th>{{ 'Vendidas' | trans }}</th>
+                <th>{{ 'Inmovilizadas' | trans }}</th>
+                <th>{{ 'Coste' | trans }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in view.purchases %}
+                <tr>
+                    <td>
+                        <a href="{{ path('admin_credit_purchases_view', {'creditPurchaseId': row.creditPurchase.id}) }}">
+                            {{ row.creditPurchase.reference ?? row.creditPurchase.id }}
+                        </a>
+                    </td>
+                    <td>{{ row.creditPurchase.paymentType ? (row.creditPurchase.paymentType.value | trans({}, 'creditPurchasePaymentType')) : '-' }}</td>
+                    <td>{{ row.purchasedTonnes | number_format(4, ',', '.') }} t</td>
+                    <td>{{ row.allocatedTonnes | number_format(4, ',', '.') }} t</td>
+                    <td>{{ row.idleTonnes | number_format(4, ',', '.') }} t</td>
+                    <td>{{ row.creditPurchase.amount is not null ? (row.creditPurchase.amount | number_format(2, ',', '.') ~ ' €') : '-' }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}

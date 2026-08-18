@@ -145,6 +145,18 @@ balance-web:
     defaults:
         _locale: '%app.locale_default%'
 
+payments-web:
+    resource:
+        path: ../src/Payments/Infrastructure/UI/Web/
+        namespace: App\Payments\Infrastructure\UI\Web
+        exclude: '../src/Payments/Infrastructure/UI/Web/Public/'
+    type: attribute
+    prefix: /{_locale}
+    requirements:
+        _locale: '%app.locale_list%'
+    defaults:
+        _locale: '%app.locale_default%'
+
 payments-webhook:
     resource:
         path: ../src/Payments/Infrastructure/UI/Web/Public/

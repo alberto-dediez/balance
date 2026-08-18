@@ -29,6 +29,8 @@ interface ProjectContributionRepository
 
     public function reservedTonnes(AccountId $accountId, ProjectId $projectId, \DateTimeImmutable $now): float;
 
+    public function committedTonnesForProject(ProjectId $projectId, \DateTimeImmutable $now): float;
+
     /** @return array<string, float> */
     public function allocatedTonnesByPurchase(AccountId $accountId, ProjectId $projectId): array;
 

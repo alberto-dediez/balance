@@ -247,7 +247,7 @@ trait GenericGenerator
 
     private function renderSectionTitle(\TCPDF $pdf, string $title): void
     {
-        $pdf->setXY(16, 40);
+        $pdf->setXY(16, max(self::CONTENT_MARGIN_TOP, $pdf->GetY()));
         $this->setFont($pdf, 26, self::FONT_STYLE_REGULAR, self::COLOR_BODY_TEXT);
 
         $maxWidth = 170.0;

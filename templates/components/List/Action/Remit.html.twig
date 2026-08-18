@@ -1,0 +1,11 @@
+{% props path, confirm %}
+
+<twig:List:Action :path="path"
+    title="{{ 'Marcar como remesada' | trans }}"
+    data-controller="confirm"
+    data-confirm-text-param="{{ confirm }}"
+    data-action="confirm#link:prevent"
+    :attributes="attributes"
+>
+    <twig:Icon name="solar:plain-line-duotone" size="lg" />
+</twig:List:Action>

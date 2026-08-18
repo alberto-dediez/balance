@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="es" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="eWLkkVU" resname="contribution_sum_mismatch">
+        <source>contribution_sum_mismatch</source>
+        <target>Descuadre entre asientos y total cobrado</target>
+      </trans-unit>
+      <trans-unit id="Zkc_o.Y" resname="paid_contribution_without_entries">
+        <source>paid_contribution_without_entries</source>
+        <target>Aportación pagada sin asientos</target>
+      </trans-unit>
+      <trans-unit id="Pi3hX1e" resname="orphan_entries">
+        <source>orphan_entries</source>
+        <target>Asientos de una aportación no pagada</target>
+      </trans-unit>
+      <trans-unit id="mAgx3Ds" resname="overallocated_credit_purchase">
+        <source>overallocated_credit_purchase</source>
+        <target>Lote con más toneladas asignadas de las compradas</target>
+      </trans-unit>
+      <trans-unit id="OgyP_uX" resname="unbalanced_payout">
+        <source>unbalanced_payout</source>
+        <target>Liquidación descuadrada respecto a sus asientos</target>
+      </trans-unit>
+      <trans-unit id="T79VgS9" resname="payout_numbering_gap">
+        <source>payout_numbering_gap</source>
+        <target>Hueco en la numeración de liquidaciones</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

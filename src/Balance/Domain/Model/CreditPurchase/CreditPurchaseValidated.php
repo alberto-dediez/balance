@@ -18,6 +18,7 @@ final class CreditPurchaseValidated extends DomainEvent
         private CreditPurchaseId $creditPurchaseId,
         private float $requestedTonnes,
         private float $purchasedTonnes,
+        private ?float $amount,
         private CreditPurchasePaymentType $paymentType,
         private string $reference,
         private ?MediaId $certificate,
@@ -41,6 +42,11 @@ final class CreditPurchaseValidated extends DomainEvent
     public function purchasedTonnes(): float
     {
         return $this->purchasedTonnes;
+    }
+
+    public function amount(): ?float
+    {
+        return $this->amount;
     }
 
     public function paymentType(): CreditPurchasePaymentType
@@ -79,6 +85,7 @@ final class CreditPurchaseValidated extends DomainEvent
             'creditPurchaseId' => (string) $this->creditPurchaseId,
             'requestedTonnes' => $this->requestedTonnes,
             'purchasedTonnes' => $this->purchasedTonnes,
+            'amount' => $this->amount,
             'paymentType' => $this->paymentType->value,
             'reference' => $this->reference,
             'certificate' => null !== $this->certificate ? (string) $this->certificate : null,
@@ -95,6 +102,7 @@ final class CreditPurchaseValidated extends DomainEvent
             creditPurchaseId: new CreditPurchaseId($payload['creditPurchaseId']),
             requestedTonnes: (float) $payload['requestedTonnes'],
             purchasedTonnes: (float) $payload['purchasedTonnes'],
+            amount: isset($payload['amount']) ? (float) $payload['amount'] : null,
             paymentType: CreditPurchasePaymentType::tryFrom((string) ($payload['paymentType'] ?? ''))
                 ?? CreditPurchasePaymentType::PaidByClient,
             reference: $payload['reference'],

@@ -1,0 +1,99 @@
+{% extends '@shared/layout/app.html.twig' %}
+
+{% set page_title = 'Mi saldo' | trans %}
+
+{% block content %}
+    {% if payee is null or not payee.isReady %}
+        <div class="alert alert-warning d-flex justify-content-between align-items-center">
+            <span>
+                {% if payee is null or not payee.isBlocked %}
+                    {{ 'Sus datos de cobro están incompletos, así que no podemos abonarle su saldo pendiente.' | trans }}
+                {% else %}
+                    {{ 'Sus datos de cobro están bloqueados. Póngase en contacto con nosotros.' | trans }}
+                {% endif %}
+            </span>
+            <a class="btn btn-sm btn-warning" href="{{ path('my_payee') }}">{{ 'Completar datos de cobro' | trans }}</a>
+        </div>
+    {% endif %}
+
+    <twig:Card title="{{ 'Saldo' | trans }}">
+        <dl class="row mb-0">
+            <dt class="col-sm-4">{{ 'Devengado' | trans }}</dt>
+            <dd class="col-sm-8">{{ balance.accruedAmount | number_format(2, ',', '.') }} €</dd>
+
+            <dt class="col-sm-4">{{ 'Liquidado' | trans }}</dt>
+            <dd class="col-sm-8">{{ balance.settledAmount | number_format(2, ',', '.') }} €</dd>
+
+            <dt class="col-sm-4">{{ 'Pendiente de cobro' | trans }}</dt>
+            <dd class="col-sm-8">{{ balance.pendingAmount | number_format(2, ',', '.') }} €</dd>
+        </dl>
+    </twig:Card>
+
+    <twig:Card title="{{ 'Detalle por aportación' | trans }}">
+        {% if view.rows is empty %}
+            <p class="text-muted mb-0">{{ 'Todavía no hay importes devengados a su favor' | trans }}</p>
+        {% else %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{{ 'Fecha' | trans }}</th>
+                        <th>{{ 'Proyecto' | trans }}</th>
+                        <th>{{ 'Lote' | trans }}</th>
+                        <th>{{ 'Toneladas' | trans }}</th>
+                        <th>{{ 'Importe neto' | trans }}</th>
+                        <th>{{ 'Estado' | trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in view.rows %}
+                        <tr>
+                            <td>{{ row.entry.occurredAt | date('d/m/Y') }}</td>
+                            <td>{{ row.projectName ?? '-' }}</td>
+                            <td>{{ row.purchaseReference ?? '-' }}</td>
+                            <td>{{ row.entry.tonnes is not null ? (row.entry.tonnes | number_format(4, ',', '.') ~ ' t') : '-' }}</td>
+                            <td>{{ row.entry.amount | number_format(2, ',', '.') }} €</td>
+                            <td>
+                                {% if row.entry.isSettled %}
+                                    <span class="badge bg-success">{{ 'Liquidado' | trans }}</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">{{ 'Pendiente' | trans }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </twig:Card>
+
+    <twig:Card title="{{ 'Mis liquidaciones' | trans }}">
+        {% if payouts is empty %}
+            <p class="text-muted mb-0">{{ 'Todavía no hay liquidaciones' | trans }}</p>
+        {% else %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{{ 'Número' | trans }}</th>
+                        <th>{{ 'Importe' | trans }}</th>
+                        <th>{{ 'Estado' | trans }}</th>
+                        <th>{{ 'Fecha' | trans }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payout in payouts %}
+                        <tr>
+                            <td>{{ payout.number ?? '-' }}</td>
+                            <td>{{ payout.payableAmount | number_format(2, ',', '.') }} €</td>
+                            <td>{{ payout.status.value | trans({}, 'payoutStatus') }}</td>
+                            <td>{{ payout.createdAt | date('d/m/Y') }}</td>
+                            <td>
+                                <a href="{{ path('payouts_statement', {'payoutId': payout.id}) }}">{{ 'Descargar justificante' | trans }}</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </twig:Card>
+{% endblock %}

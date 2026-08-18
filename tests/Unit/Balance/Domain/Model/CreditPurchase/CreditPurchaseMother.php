@@ -50,6 +50,7 @@ class CreditPurchaseMother
         AccountId $accountId,
         ProjectId $projectId,
         float $tonnes = 10.0,
+        CreditPurchasePaymentType $paymentType = CreditPurchasePaymentType::PaidByClient,
     ): CreditPurchase {
         $id = CreditPurchaseId::generate();
 
@@ -61,7 +62,7 @@ class CreditPurchaseMother
             requestedTonnes: $tonnes,
             status: CreditPurchaseStatus::Validated,
             purchasedTonnes: $tonnes,
-            paymentType: CreditPurchasePaymentType::PaidByClient,
+            paymentType: $paymentType,
             reference: 'ref-' . $id,
             resolvedBy: UserId::generate(),
             resolvedAt: $resolvedAt,

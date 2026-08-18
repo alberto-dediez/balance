@@ -1,0 +1,155 @@
+{% extends '@shared/layout/app.html.twig' %}
+
+{% set page_title = 'Tesorería' | trans %}
+
+{% block content %}
+    <twig:Card title="{{ 'Periodo' | trans }}">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-auto">
+                <label class="form-label" for="treasury-from">{{ 'Desde' | trans }}</label>
+                <input class="form-control" type="date" id="treasury-from" name="from" value="{{ from | date('Y-m-d') }}">
+            </div>
+            <div class="col-auto">
+                <label class="form-label" for="treasury-to">{{ 'Hasta' | trans }}</label>
+                <input class="form-control" type="date" id="treasury-to" name="to" value="{{ to | date('Y-m-d') }}">
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-primary" type="submit">{{ 'Filtrar' | trans }}</button>
+            </div>
+        </form>
+    </twig:Card>
+
+    <twig:Card title="{{ 'Cobrado en el periodo' | trans }}">
+        <dl class="row mb-0">
+            <dt class="col-sm-6">{{ 'Total cobrado' | trans }}</dt>
+            <dd class="col-sm-6">{{ view.collectedAmount | number_format(2, ',', '.') }} €</dd>
+
+            <dt class="col-sm-6">{{ 'Neto a propietarios' | trans }}</dt>
+            <dd class="col-sm-6">
+                {{ view.netToAccounts | number_format(2, ',', '.') }} €
+                <span class="text-muted">({{ 'pendiente' | trans }} {{ view.pendingToAccounts | number_format(2, ',', '.') }} €)</span>
+            </dd>
+
+            <dt class="col-sm-6">{{ 'Neto a proyectos' | trans }}</dt>
+            <dd class="col-sm-6">
+                {{ view.netToProjects | number_format(2, ',', '.') }} €
+                <span class="text-muted">({{ 'pendiente' | trans }} {{ view.pendingToProjects | number_format(2, ',', '.') }} €)</span>
+            </dd>
+
+            <dt class="col-sm-6">{{ 'Neto retenido por Bioscore' | trans }}</dt>
+            <dd class="col-sm-6">{{ view.netRetainedByBioscore | number_format(2, ',', '.') }} €</dd>
+
+            <dt class="col-sm-6">{{ 'Gastos de gestión' | trans }}</dt>
+            <dd class="col-sm-6">{{ view.managementFee | number_format(2, ',', '.') }} €</dd>
+
+            <dt class="col-sm-6">{{ 'IVA repercutido' | trans }}</dt>
+            <dd class="col-sm-6">{{ view.vat | number_format(2, ',', '.') }} € <span class="text-muted">({{ 'a liquidar con Hacienda' | trans }})</span></dd>
+
+            <dt class="col-sm-6">{{ 'Sin asignar' | trans }}</dt>
+            <dd class="col-sm-6">{{ view.unassigned | number_format(2, ',', '.') }} €</dd>
+        </dl>
+    </twig:Card>
+
+    <div class="row">
+        <div class="col-lg-7 d-flex">
+            <div class="card flex-fill">
+                <div class="card-header fw-semibold">{{ 'Reparto mensual por destino' | trans }}</div>
+                <div class="card-body">
+                    <twig:Chart:Bar
+                        title="{{ 'Reparto' | trans }}"
+                        :categories="view.months"
+                        :series="view.splitSeries"
+                        unit="€"
+                        :stacked="true"
+                        :legend="true"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5 d-flex">
+            <div class="card flex-fill">
+                <div class="card-header fw-semibold">{{ 'Devengado vs. liquidado' | trans }}</div>
+                <div class="card-body">
+                    <twig:Chart:Line
+                        title="{{ 'Importe' | trans }}"
+                        :categories="view.months"
+                        :series="view.accruedVsSettledSeries"
+                        unit="€"
+                        :legend="true"
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <twig:Card title="{{ 'Top beneficiarios por saldo pendiente' | trans }}">
+        {% if view.topPendingValues is empty %}
+            <p class="text-muted mb-0">{{ 'No hay saldos pendientes' | trans }}</p>
+        {% else %}
+            <twig:Chart:Bar
+                title="{{ 'Pendiente' | trans }}"
+                :values="view.topPendingValues"
+                :categories="view.topPendingLabels"
+                unit="€"
+            />
+        {% endif %}
+    </twig:Card>
+
+    <twig:Card title="{{ 'Alertas' | trans }}">
+        {% if view.alerts is empty %}
+            <p class="text-muted mb-0">{{ 'No hay alertas' | trans }}</p>
+        {% else %}
+            <ul class="list-unstyled mb-0">
+                {% for alert in view.alerts %}
+                    <li class="mb-2">
+                        <span class="badge bg-{{ alert.level }}">!</span>
+                        {{ alert.message }}
+                        {% if alert.actionPath %}
+                            <a href="{{ alert.actionPath }}">{{ alert.actionLabel | trans }}</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </twig:Card>
+
+    <twig:Card title="{{ 'Saldos pendientes' | trans }}">
+        {% if view.rows is empty %}
+            <p class="text-muted mb-0">{{ 'Todavía no hay saldos que liquidar' | trans }}</p>
+        {% else %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{{ 'Beneficiario' | trans }}</th>
+                        <th>{{ 'Tipo' | trans }}</th>
+                        <th>{{ 'Devengado' | trans }}</th>
+                        <th>{{ 'Liquidado' | trans }}</th>
+                        <th>{{ 'Pendiente' | trans }}</th>
+                        <th>{{ 'Estado' | trans }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in view.rows %}
+                        <tr>
+                            <td><a href="{{ row.detailPath }}">{{ row.name }}</a></td>
+                            <td>{{ row.beneficiary.value | trans({}, 'ledgerBeneficiary') }}</td>
+                            <td>{{ row.accrued | number_format(2, ',', '.') }} €</td>
+                            <td>{{ row.settled | number_format(2, ',', '.') }} €</td>
+                            <td>{{ row.pending | number_format(2, ',', '.') }} €</td>
+                            <td>{{ row.payeeStatus ? (row.payeeStatus | trans({}, 'payeeStatus')) : ('Sin beneficiario' | trans) }}</td>
+                            <td>
+                                {% if row.isSettleable %}
+                                    <twig:List:Action:Settle
+                                        path="{{ row.settlePath }}"
+                                        confirm="{{ 'Se creará una liquidación de {amount} € a favor de {name}. ¿Desea continuar?' | trans({'{amount}': row.pending | number_format(2, ',', '.'), '{name}': row.name}) }}"
+                                    />
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </twig:Card>
+{% endblock %}

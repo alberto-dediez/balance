@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Balance\Application\Project\Update;
 
+use App\Balance\Application\Project\Credits\ProjectCreditAvailability;
 use App\Balance\Application\Project\ProjectAuthorizer;
+use App\Balance\Domain\Model\Project\Project;
+use App\Balance\Domain\Model\Project\ProjectHasUnconsumedCreditsException;
 use App\Balance\Domain\Model\Project\ProjectRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
@@ -21,6 +24,7 @@ class UpdateProjectService implements CommandHandler
 
     public function __construct(
         private ProjectRepository $projectRepository,
+        private ProjectCreditAvailability $projectCreditAvailability,
         private ProjectAuthorizer $authorizer,
     ) {}
 
@@ -33,6 +37,8 @@ class UpdateProjectService implements CommandHandler
         }
 
         $this->authorizer->denyUnlessCanDoThat($project, SecurityAction::Edit, $user);
+
+        $this->denyCostChangeWithUnconsumedCredits($project, $request->costPerTonne);
 
         $locale = LocaleGetter::locale();
         $isDefaultLocale = $locale === LocaleGetter::default();
@@ -56,6 +62,19 @@ class UpdateProjectService implements CommandHandler
             projectId: $project->id(),
             name: $project->name(),
         );
+    }
+
+    private function denyCostChangeWithUnconsumedCredits(Project $project, ?float $costPerTonne): void
+    {
+        if (round((float) $project->costPerTonne(), 2) === round((float) $costPerTonne, 2)) {
+            return;
+        }
+
+        $unconsumedTonnes = $this->projectCreditAvailability->unconsumedTonnes($project->id());
+
+        if ($unconsumedTonnes > ProjectCreditAvailability::TONNE_TOLERANCE) {
+            throw new ProjectHasUnconsumedCreditsException($project->id(), $unconsumedTonnes);
+        }
     }
 
     public function isHandled(Command $command): bool

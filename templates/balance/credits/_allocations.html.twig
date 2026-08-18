@@ -1,7 +1,8 @@
 {#
-    Variables expected: creditPurchase, project, allocations, allocatedTonnes, availableTonnes, contributionRoute
+    Variables expected: creditPurchase, project, allocations, allocatedTonnes, availableTonnes, contributionRoute, showCost
 #}
 {% set purchasedTonnes = creditPurchase.purchasedTonnes ?? 0 %}
+{% set showCost = showCost ?? false %}
 
 <twig:Card title="{{ 'Compra de créditos' | trans }}">
     <dl class="row mb-0">
@@ -26,6 +27,20 @@
 
         <dt class="col-sm-4">{{ 'Toneladas compradas' | trans }}</dt>
         <dd class="col-sm-8">{{ creditPurchase.purchasedTonnes is not null ? (creditPurchase.purchasedTonnes | number_format(4, ',', '.') ~ ' t') : '-' }}</dd>
+
+        {% if showCost %}
+            <dt class="col-sm-4">{{ 'Coste del lote' | trans }}</dt>
+            <dd class="col-sm-8">
+                {% if creditPurchase.amount is not null %}
+                    {{ creditPurchase.amount | number_format(2, ',', '.') }} €
+                    {% if creditPurchase.pricePerTonne is not null %}
+                        <span class="text-muted">({{ creditPurchase.pricePerTonne | number_format(2, ',', '.') }} €/t)</span>
+                    {% endif %}
+                {% else %}
+                    <span class="badge bg-warning text-dark">{{ 'Sin informar' | trans }}</span>
+                {% endif %}
+            </dd>
+        {% endif %}
 
         {% if creditPurchase.paymentType %}
             <dt class="col-sm-4">{{ 'Tipo de pago' | trans }}</dt>

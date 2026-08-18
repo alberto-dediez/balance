@@ -54,6 +54,42 @@ class ValidateCreditPurchaseServiceTest extends TestCase
         $this->assertInstanceOf(CreditPurchaseValidated::class, $lastEvent);
     }
 
+    public function testItStoresTheCostOfTheLot(): void
+    {
+        $repository = CreditPurchaseRepositoryMother::inMemory();
+        $creditPurchase = CreditPurchaseMother::pending(tonnes: 10.0);
+        $repository->add($creditPurchase);
+
+        $this->createSUT($repository)(
+            new ValidateCreditPurchaseRequest(
+                $creditPurchase->id(),
+                8.0,
+                'REF-COST',
+                CreditPurchasePaymentType::PaidByClient,
+                600.0,
+            ),
+            UserMother::adminUser(),
+        );
+
+        $this->assertSame(600.0, $creditPurchase->amount());
+        $this->assertSame(75.0, $creditPurchase->pricePerTonne());
+    }
+
+    public function testTheCostOfTheLotIsOptional(): void
+    {
+        $repository = CreditPurchaseRepositoryMother::inMemory();
+        $creditPurchase = CreditPurchaseMother::pending(tonnes: 10.0);
+        $repository->add($creditPurchase);
+
+        $this->createSUT($repository)(
+            new ValidateCreditPurchaseRequest($creditPurchase->id(), 10.0, 'REF-NO-COST', CreditPurchasePaymentType::PaidByClient),
+            UserMother::adminUser(),
+        );
+
+        $this->assertNull($creditPurchase->amount());
+        $this->assertNull($creditPurchase->pricePerTonne());
+    }
+
     public function testThrowsWhenPaymentTypeIsMissing(): void
     {
         $repository = CreditPurchaseRepositoryMother::inMemory();

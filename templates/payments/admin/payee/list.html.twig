@@ -1,0 +1,49 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Beneficiarios' | trans %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('admin_payees_register') }}" />
+{% endblock list_actions %}
+
+{% block table %}
+    {% set columns = [
+        {'label': 'Razón social' | trans, 'sortable': true, 'sortableBy': 'legalName'},
+        {'label': 'Tipo' | trans, 'sortable': false},
+        {'label': 'Cuenta o proyecto' | trans, 'sortable': false},
+        {'label': 'NIF / CIF' | trans, 'sortable': false},
+        {'label': 'IBAN' | trans, 'sortable': false},
+        {'label': 'Estado' | trans, 'sortable': true, 'sortableBy': 'status'},
+        {'label': 'Pendiente de liquidar' | trans, 'sortable': false},
+        {'label': ''},
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="payees">
+        <td>{{ element.legalName }}</td>
+        <td>{{ element.type.value | trans({}, 'payeeType') }}</td>
+        <td>{{ subjectDirectory.label(element.type, element.subjectId) ?? element.subjectId }}</td>
+        <td>{{ element.taxId ?? '-' }}</td>
+        <td>{{ element.maskedIban ?? '-' }}</td>
+        <td>
+            {% if element.status.value == 'ready' %}
+                <span class="badge bg-success">{{ element.status.value | trans({}, 'payeeStatus') }}</span>
+            {% elseif element.status.value == 'blocked' %}
+                <span class="badge bg-danger">{{ element.status.value | trans({}, 'payeeStatus') }}</span>
+            {% else %}
+                <span class="badge bg-warning text-dark">{{ element.status.value | trans({}, 'payeeStatus') }}</span>
+            {% endif %}
+        </td>
+        {% set settlement = settlements[element.id] %}
+        <td>{{ settlement.pendingAmount | number_format(2, ',', '.') }} €</td>
+        <td>
+            {% if settlement.isSettleable %}
+                <twig:List:Action:Settle
+                    path="{{ settlement.settlePath }}"
+                    confirm="{{ 'Se creará una liquidación de {amount} € a favor de {name}. ¿Desea continuar?' | trans({'{amount}': settlement.pendingAmount | number_format(2, ',', '.'), '{name}': element.legalName}) }}"
+                />
+            {% endif %}
+            <twig:List:Action:Edit path="{{ path('admin_payees_edit', {'payeeId': element.id}) }}" />
+            <twig:List:Action:Block path="{{ path('admin_payees_block', {'payeeId': element.id}) }}" :blocked="element.isBlocked" />
+        </td>
+    </twig:List:Table>
+{% endblock %}

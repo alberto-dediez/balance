@@ -292,6 +292,32 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
         return $allocations;
     }
 
+    public function committedTonnesForProject(ProjectId $projectId, \DateTimeImmutable $now): float
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        return (float) $qb
+            ->select('COALESCE(SUM(pc.tonnes), 0)')
+            ->from(ProjectContribution::class, 'pc')
+            ->andWhere($qb->expr()->eq('pc.projectId', ':projectId'))
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('pc.status', ':paid'),
+                    $qb->expr()->andX(
+                        $qb->expr()->eq('pc.status', ':pending'),
+                        $qb->expr()->gt('pc.expiresAt', ':now'),
+                    ),
+                ),
+            )
+            ->setParameter('projectId', (string) $projectId)
+            ->setParameter('paid', ProjectContributionStatus::Paid->value)
+            ->setParameter('pending', ProjectContributionStatus::Pending->value)
+            ->setParameter('now', $now)
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
     public function reservedTonnes(AccountId $accountId, ProjectId $projectId, \DateTimeImmutable $now): float
     {
         $qb = $this->manager->createQueryBuilder();

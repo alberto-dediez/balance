@@ -18,6 +18,7 @@ twig:
         'templates/event_operations': 'event_operations'
         'templates/library': 'library'
         'templates/balance': 'balance'
+        'templates/payments': 'payments'
         '%kernel.project_dir%/assets': assets
 
 when@test:

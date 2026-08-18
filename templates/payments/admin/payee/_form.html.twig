@@ -1,0 +1,30 @@
+<twig:Card title="{{ 'Datos fiscales' | trans }}">
+    <div class="row">
+        <div class="col-12">
+            {{ form_row(form.legalName) }}
+            {{ form_row(form.taxId) }}
+            {{ form_row(form.street) }}
+            {{ form_row(form.postalCode) }}
+            {{ form_row(form.city) }}
+            {{ form_row(form.country) }}
+        </div>
+    </div>
+</twig:Card>
+
+<twig:Card title="{{ 'Datos bancarios' | trans }}">
+    <div class="row">
+        <div class="col-12">
+            {{ form_row(form.iban) }}
+            {{ form_row(form.bic) }}
+            {{ form_row(form.holderName) }}
+        </div>
+    </div>
+</twig:Card>
+
+<twig:Card title="{{ 'Notas' | trans }}">
+    <div class="row">
+        <div class="col-12">
+            {{ form_row(form.notes) }}
+        </div>
+    </div>
+</twig:Card>

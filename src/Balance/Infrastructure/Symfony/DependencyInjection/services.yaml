@@ -36,3 +36,6 @@ services:
     App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateCodeGenerator: '@App\Balance\Infrastructure\Certificate\RandomContributionCertificateCodeGenerator'
     App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateVerificationTokenGenerator: '@App\Balance\Infrastructure\Certificate\RandomContributionCertificateVerificationTokenGenerator'
     App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateVerificationUrlGenerator: '@App\Balance\Infrastructure\Certificate\RouterContributionCertificateVerificationUrlGenerator'
+    App\Payments\Domain\Model\Payee\PayeeSubjectDirectory: '@App\Balance\Infrastructure\Payee\AccountAndProjectPayeeSubjectDirectory'
+    App\Payments\Domain\Model\Payout\PayoutStatementLinesProvider: '@App\Balance\Infrastructure\Payout\LedgerPayoutStatementLinesProvider'
+    App\Payments\Infrastructure\UI\Web\Admin\Payee\PayeeSettlementProvider: '@App\Balance\Infrastructure\Payee\LedgerPayeeSettlementProvider'

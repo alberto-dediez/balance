@@ -179,6 +179,33 @@ class NodeLister
         );
 
         $nodes[] = new Node(
+            label: new TranslatableMessage('Tesorería'),
+            icon: 'solar:wallet-money-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Panel'),
+                    icon: 'solar:chart-square-line-duotone',
+                    target: $this->router->generate('admin_treasury'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Libro mayor'),
+                    icon: 'solar:notebook-line-duotone',
+                    target: $this->router->generate('admin_treasury_ledger'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Beneficiarios'),
+                    icon: 'solar:users-group-rounded-line-duotone',
+                    target: $this->router->generate('admin_payees'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Liquidaciones'),
+                    icon: 'solar:banknote-2-line-duotone',
+                    target: $this->router->generate('admin_payouts'),
+                ),
+            ],
+        );
+
+        $nodes[] = new Node(
             label: new TranslatableMessage('Materiales'),
             icon: 'solar:layers-line-duotone',
             items: [
@@ -381,6 +408,16 @@ class NodeLister
                     label: new TranslatableMessage('Aportaciones'),
                     icon: 'solar:hand-money-line-duotone',
                     target: $this->router->generate('project_contributions'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Mi saldo'),
+                    icon: 'solar:wallet-money-line-duotone',
+                    target: $this->router->generate('my_balance'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Mis datos de cobro'),
+                    icon: 'solar:card-line-duotone',
+                    target: $this->router->generate('my_payee'),
                 ),
             ],
         );
