@@ -25,6 +25,9 @@ services:
     App\Shared\Application\CurrentAccount\CurrentAccountIdProvider:
         alias: App\Security\Infrastructure\Symfony\Security\LoggedAccount
 
+    App\Shared\Application\CurrentRoles\CurrentRolesProvider:
+        alias: App\Security\Infrastructure\Symfony\Security\CurrentRoles
+
     App\Security\Application\User\Register\RegisterUserService:
         arguments:
             $passwordHasher: '@App\Security\Infrastructure\Symfony\Security\UserPasswordHasher'

@@ -11,6 +11,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
+use App\Tests\Unit\Shared\Application\CurrentRoles\StubCurrentRolesProvider;
 use PHPUnit\Framework\TestCase;
 
 class UserAuthorizerTest extends TestCase
@@ -136,6 +137,42 @@ class UserAuthorizerTest extends TestCase
         $this->assertTrue($sut->canDoThat($subject, Action::Edit, $performer));
     }
 
+    public function testImpersonatingAdminActsAsOwnerOfTheImpersonatedAccount(): void
+    {
+        $impersonated = AccountMother::random();
+
+        $subject = UserMother::fromUsernameAndAccount('username', $impersonated);
+        $admin = UserMother::fromUsernameAndRoleAndAccount('admin', Role::Admin, AccountId::generate());
+
+        $sut = $this->createSUTWithImpersonation($impersonated->id());
+
+        $this->assertTrue($sut->canDoThat($subject, Action::Edit, $admin));
+    }
+
+    public function testImpersonatingAdminCannotEditUsersOfAnotherAccount(): void
+    {
+        $impersonated = AccountMother::random();
+
+        $subject = UserMother::fromUsernameAndAccount('username', AccountMother::random());
+        $admin = UserMother::fromUsernameAndRoleAndAccount('admin', Role::Admin, AccountId::generate());
+
+        $sut = $this->createSUTWithImpersonation($impersonated->id());
+
+        $this->assertFalse($sut->canDoThat($subject, Action::Edit, $admin));
+    }
+
+    public function testImpersonatingAdminCannotGrantAdminRoles(): void
+    {
+        $impersonated = AccountMother::random();
+
+        $subject = UserMother::fromUsernameAndAccount('username', $impersonated);
+        $admin = UserMother::fromUsernameAndRoleAndAccount('admin', Role::Admin, AccountId::generate());
+
+        $sut = $this->createSUTWithImpersonation($impersonated->id());
+
+        $this->assertFalse($sut->canChangeRole($subject, Role::Admin, $admin));
+    }
+
     private function createSUT(): UserAuthorizer
     {
         return new UserAuthorizer();
@@ -144,5 +181,13 @@ class UserAuthorizerTest extends TestCase
     private function createSUTWithCurrentAccount(?AccountId $currentAccountId): UserAuthorizer
     {
         return new UserAuthorizer(new StubCurrentAccountIdProvider($currentAccountId));
+    }
+
+    private function createSUTWithImpersonation(AccountId $impersonatedAccountId): UserAuthorizer
+    {
+        return new UserAuthorizer(
+            new StubCurrentAccountIdProvider($impersonatedAccountId),
+            new StubCurrentRolesProvider([Role::Owner, Role::User]),
+        );
     }
 }

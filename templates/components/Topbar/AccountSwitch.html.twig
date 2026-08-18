@@ -15,9 +15,10 @@
         </select>
         {% if impersonated is not null %}
             <a href="#" data-action="click->account-switch#exit"
-                    class="badge bg-warning-subtle text-warning d-none d-lg-flex align-items-center py-2"
+                    class="badge bg-warning-subtle text-warning d-none d-lg-flex align-items-center gap-1 py-2"
                     title="{{ 'Volver a mi cuenta'|trans }}">
                 <twig:Icon name="solar:masks-line-duotone" />
+                <span class="d-none">{{ 'Volver a mi cuenta'|trans }}</span>
             </a>
         {% endif %}
     </div>

@@ -10,14 +10,16 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CurrentAccount\CurrentAccountIdProvider;
+use App\Shared\Application\CurrentRoles\CurrentRolesProvider;
 
 final class AccountAuthorizer extends AbstractAuthorizer
 {
     public function __construct(
         ?CurrentAccountIdProvider $currentAccountIdProvider = null,
+        ?CurrentRolesProvider $currentRolesProvider = null,
         private readonly ImpersonationPolicy $impersonationPolicy = new ImpersonationPolicy(),
     ) {
-        parent::__construct($currentAccountIdProvider);
+        parent::__construct($currentAccountIdProvider, $currentRolesProvider);
     }
 
     protected function canRegister(mixed $subject, User $user): bool
@@ -32,25 +34,25 @@ final class AccountAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::SuperAdmin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin)) {
             return true;
         }
 
-        return $user->hasRole(Role::Admin);
+        return $this->userHasRole($user, Role::Admin);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::Admin)) {
+        if ($this->userHasRole($user, Role::Admin)) {
             return true;
         }
-        if ($user->hasRole(Role::SuperAdmin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin)) {
             return true;
         }
 
         $currentAccountId = $this->currentAccountId($user);
 
-        return $user->hasRole(Role::Owner) && ($currentAccountId instanceof AccountId && $subject->id()->equals($currentAccountId));
+        return $this->userHasRole($user, Role::Owner) && ($currentAccountId instanceof AccountId && $subject->id()->equals($currentAccountId));
     }
 
     protected function canRemove(mixed $subject, User $user): bool

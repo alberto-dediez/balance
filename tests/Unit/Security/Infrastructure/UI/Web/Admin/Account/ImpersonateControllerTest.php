@@ -15,6 +15,7 @@ use App\Security\Infrastructure\UI\Web\Admin\Account\ImpersonateController;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,6 +24,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
@@ -102,11 +104,22 @@ class ImpersonateControllerTest extends TestCase
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame((string) $account->id(), (string) $impersonated->accountId());
         $this->assertSame((string) $admin->id(), (string) $impersonated->impersonatorId());
+        $this->assertSame(['ok' => true, 'redirect' => '/es/'], json_decode((string) $response->getContent(), true));
     }
 
     private function buildSut(bool $enabled, CsrfTokenManagerInterface $csrf): ImpersonateController
     {
-        return new ImpersonateController($enabled, $csrf, new NullLogger());
+        $router = $this->createMock(RouterInterface::class);
+        $router->method('generate')->willReturn('/es/');
+
+        $container = $this->createMock(ContainerInterface::class);
+        $container->method('has')->willReturn(true);
+        $container->method('get')->willReturn($router);
+
+        $sut = new ImpersonateController($enabled, $csrf, new NullLogger());
+        $sut->setContainer($container);
+
+        return $sut;
     }
 
     private function csrfValid(): CsrfTokenManagerInterface

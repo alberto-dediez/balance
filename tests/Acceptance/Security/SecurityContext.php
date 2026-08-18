@@ -331,7 +331,7 @@ final class SecurityContext implements Context
         $account = $this->getAccountRepository()->findByName($name);
         Assert::assertNotNull($account, sprintf('Account "%s" not found', $name));
 
-        $this->client->request('GET', '/es/admin/users');
+        $this->client->request('GET', '/es/profile');
         $token = $this->extractImpersonationToken() ?? $this->generateImpersonationToken();
 
         $this->client->requestWithFiles('POST', '/es/admin/accounts/impersonate', [
@@ -343,7 +343,7 @@ final class SecurityContext implements Context
     #[When('I exit account impersonation')]
     public function iExitAccountImpersonation(): void
     {
-        $this->client->request('GET', '/es/admin/users');
+        $this->client->request('GET', '/es/profile');
         $token = $this->extractImpersonationToken() ?? $this->generateImpersonationToken();
 
         $this->client->requestWithFiles('POST', '/es/admin/accounts/impersonate/exit', [

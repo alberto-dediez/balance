@@ -85,6 +85,6 @@ class ImpersonateController extends AbstractController
             'action' => 'enter',
         ]);
 
-        return new JsonResponse(['ok' => true], Response::HTTP_OK);
+        return new JsonResponse(['ok' => true, 'redirect' => $this->generateUrl('home')], Response::HTTP_OK);
     }
 }

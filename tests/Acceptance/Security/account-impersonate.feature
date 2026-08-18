@@ -23,7 +23,7 @@ Feature:
         When I am logged as "admin@dediez.software"
         When I impersonate account "AcmeAccount"
         Then the response status should be 200
-        When I go to "/es/admin/users"
+        When I go to "/es/profile"
         Then the response status should be 200
         Then I see a text "Volver a mi cuenta"
 
@@ -35,7 +35,7 @@ Feature:
         When I am logged as "admin@dediez.software"
         When I impersonate account "AcmeAccount"
         Then the response status should be 200
-        When I go to "/es/admin/users"
+        When I go to "/es/users"
         Then the response status should be 200
         Then I see a text "acmeuser@dediez.software"
 
@@ -51,6 +51,27 @@ Feature:
         When I go to "/es/admin/users"
         Then the response status should be 200
         Then I do not see a text "Volver a mi cuenta"
+
+    Scenario: As admin impersonating an account I lose access to admin sections
+        Given account "AdminAccount" with id "admin-account-id" exists
+        Given account "AcmeAccount" with id "acme-account-id" exists
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" of account "admin-account-id" exists
+        When I am logged as "admin@dediez.software"
+        When I impersonate account "AcmeAccount"
+        Then the response status should be 200
+        When I go to "/es/admin/users"
+        Then the response status should be 403
+
+    Scenario: As admin impersonating an account I can still switch to another account
+        Given account "AdminAccount" with id "admin-account-id" exists
+        Given account "AcmeAccount" with id "acme-account-id" exists
+        Given account "OtherAccount" with id "other-account-id" exists
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" of account "admin-account-id" exists
+        When I am logged as "admin@dediez.software"
+        When I impersonate account "AcmeAccount"
+        Then the response status should be 200
+        When I impersonate account "OtherAccount"
+        Then the response status should be 200
 
     Scenario: As owner I cannot impersonate an account
         Given account "AdminAccount" with id "admin-account-id" exists

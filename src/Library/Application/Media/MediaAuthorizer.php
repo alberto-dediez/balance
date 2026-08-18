@@ -42,7 +42,7 @@ final class MediaAuthorizer extends AbstractAuthorizer
             return true;
         }
 
-        if ($user->hasRole(Role::Owner)) {
+        if ($this->userHasRole($user, Role::Owner)) {
             return true;
         }
 
@@ -70,11 +70,11 @@ final class MediaAuthorizer extends AbstractAuthorizer
 
     private function isAdmin(User $user): bool
     {
-        if ($user->hasRole(Role::SuperAdmin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin)) {
             return true;
         }
 
-        return $user->hasRole(Role::Admin);
+        return $this->userHasRole($user, Role::Admin);
     }
 
     private function belongsToUserAccount(Media $media, User $user): bool

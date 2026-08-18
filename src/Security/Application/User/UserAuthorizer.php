@@ -25,23 +25,23 @@ final class UserAuthorizer extends AbstractAuthorizer
     {
         $currentAccountId = $this->currentAccountId($user);
         $isFromSameAccount = null !== $subject->accountId() && $currentAccountId instanceof AccountId && $currentAccountId->equals($subject->accountId());
-        if ($user->hasRole(Role::SuperAdmin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin)) {
             return true;
         }
-        if ($user->hasRole(Role::Admin)) {
+        if ($this->userHasRole($user, Role::Admin)) {
             return true;
         }
 
-        return $user->hasRole(Role::Owner) && $isFromSameAccount;
+        return $this->userHasRole($user, Role::Owner) && $isFromSameAccount;
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
         $currentAccountId = $this->currentAccountId($user);
 
-        return $user->hasRole(Role::Admin)
-            || $user->hasRole(Role::SuperAdmin)
-            || ($user->hasRole(Role::Owner) && ($currentAccountId instanceof AccountId && $currentAccountId->equals($subject->accountId())))
+        return $this->userHasRole($user, Role::Admin)
+            || $this->userHasRole($user, Role::SuperAdmin)
+            || ($this->userHasRole($user, Role::Owner) && ($currentAccountId instanceof AccountId && $currentAccountId->equals($subject->accountId())))
             || $subject->id()->equals($user->id())
         ;
     }
@@ -53,7 +53,7 @@ final class UserAuthorizer extends AbstractAuthorizer
 
     protected function canImpersonate(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::SuperAdmin)
+        return $this->userHasRole($user, Role::SuperAdmin)
             && $subject->isActive()
             && !$subject->id()->equals($user->id())
         ;
@@ -66,25 +66,25 @@ final class UserAuthorizer extends AbstractAuthorizer
 
     protected function canAutocomplete(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::Admin)) {
+        if ($this->userHasRole($user, Role::Admin)) {
             return true;
         }
 
-        return $user->hasRole(Role::SuperAdmin);
+        return $this->userHasRole($user, Role::SuperAdmin);
     }
 
     public function canChangeRole(User $subject, Role $role, User $user): bool
     {
-        if ($user->hasRole(Role::SuperAdmin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin)) {
             return true;
         }
-        if ($user->hasRole(Role::Admin)) {
+        if ($this->userHasRole($user, Role::Admin)) {
             return true;
         }
 
         $currentAccountId = $this->currentAccountId($user);
 
-        return $user->hasRole(Role::Owner)
+        return $this->userHasRole($user, Role::Owner)
         && $currentAccountId instanceof AccountId
         && $subject->accountId() instanceof AccountId
         && $currentAccountId->equals($subject->accountId())

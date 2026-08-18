@@ -39,9 +39,15 @@ export default class extends Controller {
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
             body: new URLSearchParams({ accountId: accountId, _token: this.tokenValue }),
         }).then((response) => {
-            if (response.ok) {
-                window.location.reload();
+            if (!response.ok) {
+                return;
             }
+
+            response.json().then((data) => {
+                window.location.assign(data.redirect ?? '/');
+            }).catch(() => {
+                window.location.reload();
+            });
         });
     }
 
@@ -51,9 +57,15 @@ export default class extends Controller {
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
             body: new URLSearchParams({ _token: this.tokenValue }),
         }).then((response) => {
-            if (response.ok) {
-                window.location.reload();
+            if (!response.ok) {
+                return;
             }
+
+            response.json().then((data) => {
+                window.location.assign(data.redirect ?? '/');
+            }).catch(() => {
+                window.location.reload();
+            });
         });
     }
 

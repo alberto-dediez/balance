@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\UI\Web\Navigation;
 
 use App\Security\Domain\Model\User\Role;
+use App\Shared\Application\CurrentRoles\CurrentRolesProvider;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -17,6 +18,7 @@ class NodeLister
         private readonly RouterInterface $router,
         private readonly RequestStack $requestStack,
         private readonly bool $internalNotificationsEnabled = true,
+        private readonly ?CurrentRolesProvider $currentRolesProvider = null,
     ) {}
 
     /**
@@ -24,15 +26,26 @@ class NodeLister
      */
     public function nodes(): array
     {
-        if ($this->checker->isGranted(Role::Admin->value)) {
+        if ($this->hasRole(Role::Admin)) {
             return $this->markSelected($this->toAdmins());
         }
 
-        if ($this->checker->isGranted(Role::Owner->value)) {
+        if ($this->hasRole(Role::Owner)) {
             return $this->markSelected($this->toOwners());
         }
 
         return $this->markSelected($this->toUsers());
+    }
+
+    private function hasRole(Role $role): bool
+    {
+        $currentRoles = $this->currentRolesProvider?->currentLoggedUserRoles();
+
+        if (null === $currentRoles) {
+            return $this->checker->isGranted($role->value);
+        }
+
+        return in_array($role, $currentRoles, true);
     }
 
     /**
