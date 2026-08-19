@@ -1,27 +1,17 @@
-{% extends '@shared/base.html.twig' %}
+{% extends '@shared/layout/public-message.html.twig' %}
 
 {% set page_title = 'Documento ya firmado' | trans %}
+{% set message_variant = 'info' %}
+{% set message_icon = 'solar:document-text-line-duotone' %}
+{% set message_title = 'Este documento ya ha sido firmado' | trans %}
+{% set message_text = signatureRequest.signatureProof and signatureRequest.signatureProof.signedAt
+    ? ('Firmado el' | trans) ~ ': ' ~ (signatureRequest.signatureProof.signedAt | date('d/m/Y H:i'))
+    : '' %}
 
-{% block body %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 text-center">
-            <div class="card">
-                <div class="card-body py-5">
-                    <h3 class="text-info">{{ 'Este documento ya ha sido firmado' | trans }}</h3>
-                    <p class="text-muted mt-3">
-                        {% if signatureRequest.signatureProof and signatureRequest.signatureProof.signedAt %}
-                            {{ 'Firmado el' | trans }}: <strong>{{ signatureRequest.signatureProof.signedAt | date('d/m/Y H:i') }}</strong>
-                        {% endif %}
-                    </p>
-                    <p>
-                        <a href="{{ path('public_sign_verify', {'signatureRequestId': signatureRequest.id}) }}" class="btn btn-outline-primary">
-                            {{ 'Verificar la firma' | trans }}
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% block message_actions %}
+    <p class="mt-4 mb-0">
+        <a href="{{ path('public_sign_verify', {'signatureRequestId': signatureRequest.id}) }}" class="btn btn-outline-primary">
+            {{ 'Verificar la firma' | trans }}
+        </a>
+    </p>
 {% endblock %}

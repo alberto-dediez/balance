@@ -1,34 +1,18 @@
-{% extends '@shared/base.html.twig' %}
+{% extends '@shared/layout/public-message.html.twig' %}
 
 {% set page_title = 'Documento firmado' | trans %}
+{% set message_variant = 'success' %}
+{% set message_icon = 'solar:check-circle-bold' %}
+{% set message_title = 'Documento firmado correctamente' | trans %}
+{% set message_text = ('La firma ha quedado registrada.' | trans) ~ ' ' ~ (signatureRequest.signatureProof.signedAt | date('d/m/Y H:i:s')) %}
 
-{% block body %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 text-center">
-            <div class="card">
-                <div class="card-body py-5">
-                    <div class="mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="text-success" viewBox="0 0 16 16">
-                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-success">{{ 'Documento firmado correctamente' | trans }}</h3>
-                    <p class="text-muted mt-3">
-                        {{ 'La firma ha quedado registrada.' | trans }}
-                        <strong>{{ signatureRequest.signatureProof.signedAt | date('d/m/Y H:i:s') }}</strong>
-                    </p>
-                    <p class="text-muted">
-                        {{ 'ID de la solicitud' | trans }}: <code>{{ signatureRequest.id }}</code>
-                    </p>
-                    <p>
-                        <a href="{{ path('public_sign_verify', {'signatureRequestId': signatureRequest.id}) }}" class="btn btn-outline-primary">
-                            {{ 'Verificar la firma' | trans }}
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% block message_actions %}
+    <p class="text-muted mt-2 mb-0">
+        {{ 'ID de la solicitud' | trans }}: <code>{{ signatureRequest.id }}</code>
+    </p>
+    <p class="mt-4 mb-0">
+        <a href="{{ path('public_sign_verify', {'signatureRequestId': signatureRequest.id}) }}" class="btn btn-outline-primary">
+            {{ 'Verificar la firma' | trans }}
+        </a>
+    </p>
 {% endblock %}

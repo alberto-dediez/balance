@@ -1,0 +1,13 @@
+{#
+    Variables expected: hasContributionOptions, contribution_path, contribution_text
+#}
+{% if hasContributionOptions %}
+    <div class="border-top pt-4 mt-4 text-center">
+        <h6 class="fw-semibold mb-2">{{ 'Compensa tu huella' | trans }}</h6>
+        <p class="text-muted small">{{ contribution_text }}</p>
+        <a class="btn btn-success" href="{{ contribution_path }}">
+            <twig:Icon name="solar:hand-heart-bold" class="me-1" />
+            {{ 'Compensar mi huella' | trans }}
+        </a>
+    </div>
+{% endif %}

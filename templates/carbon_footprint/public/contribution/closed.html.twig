@@ -1,18 +1,7 @@
-{% extends '@shared/layout/public.html.twig' %}
+{% extends '@shared/layout/public-message.html.twig' %}
 
 {% set page_title = 'Huella cerrada' | trans %}
-
-{% block content %}
-    <div class="row justify-content-center">
-        <div class="col-md-8 text-center">
-            <div class="card">
-                <div class="card-body py-5">
-                    <h3 class="text-warning">{{ 'Esta huella de carbono ya se ha cerrado' | trans }}</h3>
-                    <p class="text-muted mt-3">
-                        {{ 'El evento ya ha calculado y cerrado su huella de carbono, por lo que no admite más cambios.' | trans }}
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-{% endblock %}
+{% set message_variant = 'warning' %}
+{% set message_icon = 'solar:lock-keyhole-minimalistic-line-duotone' %}
+{% set message_title = 'Esta huella de carbono ya se ha cerrado' | trans %}
+{% set message_text = 'El evento ya ha calculado y cerrado su huella de carbono, por lo que no admite más cambios.' | trans %}

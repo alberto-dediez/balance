@@ -1,0 +1,40 @@
+{% extends '@shared/layout/public.html.twig' %}
+
+{#
+    Variables expected from the child template:
+      card_title — heading shown above the card (required)
+      card_subtitle — text under the heading; ignored when a progress bar is shown
+      progress_steps — array of step labels; enables the progress bar
+      progress_step — 1-based index of the current step; enables the progress bar
+#}
+
+{% block page_header %}{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-8">
+            <div class="mb-3">
+                <h4 class="fw-semibold mb-1">{{ card_title }}</h4>
+                {% if progress_steps is defined and progress_step is defined and progress_step %}
+                    {% set progress_total = progress_steps | length %}
+                    {% set progress_label = 'Paso {step} de {total}' | trans({'{step}': progress_step, '{total}': progress_total}) %}
+                    <div class="d-flex justify-content-between align-items-baseline mb-2">
+                        <span class="text-muted">{{ progress_steps[progress_step - 1] }}</span>
+                        <span class="text-muted text-nowrap ms-2">{{ progress_label }}</span>
+                    </div>
+                    <div class="progress" style="height: 6px" role="progressbar" aria-label="{{ progress_label }}" aria-valuenow="{{ progress_step }}" aria-valuemin="1" aria-valuemax="{{ progress_total }}">
+                        <div class="progress-bar" style="width: {{ ((progress_step / progress_total) * 100) | round }}%"></div>
+                    </div>
+                {% elseif card_subtitle is defined and card_subtitle %}
+                    <span class="text-muted">{{ card_subtitle }}</span>
+                {% endif %}
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    {% block card_body %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

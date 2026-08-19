@@ -1,26 +1,9 @@
-{% extends '@shared/layout/public.html.twig' %}
+{% extends '@shared/layout/public-card.html.twig' %}
 
 {#
     Variables expected from the child template:
       property, token — provided by the controller
 #}
 
-{% block page_header %}{% endblock %}
-
-{% block content %}
-    <div class="row justify-content-center">
-        <div class="col-12 col-lg-10 col-xl-8">
-            <div class="mb-3">
-                <h4 class="fw-semibold mb-1">{{ property.name }}</h4>
-                <span class="text-muted">{{ 'Calculadora de huella de tu viaje' | trans }}</span>
-            </div>
-
-            <div class="card mb-4">
-                <div class="card-body">
-                    {% block trip_body %}{% endblock %}
-                    {% block contribution_body %}{% endblock %}
-                </div>
-            </div>
-        </div>
-    </div>
-{% endblock %}
+{% set card_title = property.name %}
+{% set card_subtitle = 'Calculadora de huella de tu viaje' | trans %}

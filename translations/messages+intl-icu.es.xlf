@@ -997,9 +997,9 @@
         <source>Firma el documento</source>
         <target>Firma el documento</target>
       </trans-unit>
-      <trans-unit id="6J2WB9A" resname="Por favor, lea el documento completo antes de firmarlo. Al firmar, acepta el contenido del documento.">
-        <source>Por favor, lea el documento completo antes de firmarlo. Al firmar, acepta el contenido del documento.</source>
-        <target>Por favor, lea el documento completo antes de firmarlo. Al firmar, acepta el contenido del documento.</target>
+      <trans-unit id="6ANHK6t" resname="Por favor, lee el documento completo antes de firmarlo. Al firmar, aceptas el contenido del documento.">
+        <source>Por favor, lee el documento completo antes de firmarlo. Al firmar, aceptas el contenido del documento.</source>
+        <target>Por favor, lee el documento completo antes de firmarlo. Al firmar, aceptas el contenido del documento.</target>
       </trans-unit>
       <trans-unit id="W6UF2fO" resname="Firmante">
         <source>Firmante</source>
@@ -1089,9 +1089,9 @@
         <source>Este enlace no es válido o ha expirado</source>
         <target>Este enlace no es válido o ha expirado</target>
       </trans-unit>
-      <trans-unit id="w7oPZNY" resname="El enlace de firma que ha utilizado no es válido, ha expirado o ya no está disponible.">
-        <source>El enlace de firma que ha utilizado no es válido, ha expirado o ya no está disponible.</source>
-        <target>El enlace de firma que ha utilizado no es válido, ha expirado o ya no está disponible.</target>
+      <trans-unit id="fJCFf7C" resname="El enlace de firma que has utilizado no es válido, ha expirado o ya no está disponible.">
+        <source>El enlace de firma que has utilizado no es válido, ha expirado o ya no está disponible.</source>
+        <target>El enlace de firma que has utilizado no es válido, ha expirado o ya no está disponible.</target>
       </trans-unit>
       <trans-unit id="pvGWBMz" resname="Solicitudes de firma">
         <source>Solicitudes de firma</source>
@@ -3433,14 +3433,6 @@
         <source>General</source>
         <target>General</target>
       </trans-unit>
-      <trans-unit id="nSFNBPA" resname="¡Gracias por su contribución!">
-        <source>¡Gracias por su contribución!</source>
-        <target>¡Gracias por su contribución!</target>
-      </trans-unit>
-      <trans-unit id="gF7Ok8I" resname="Se han guardado correctamente los datos aportados. Puede volver a este enlace en cualquier momento para revisarlos o modificarlos mientras la huella de carbono del evento siga abierta.">
-        <source>Se han guardado correctamente los datos aportados. Puede volver a este enlace en cualquier momento para revisarlos o modificarlos mientras la huella de carbono del evento siga abierta.</source>
-        <target>Se han guardado correctamente los datos aportados. Puede volver a este enlace en cualquier momento para revisarlos o modificarlos mientras la huella de carbono del evento siga abierta.</target>
-      </trans-unit>
       <trans-unit id="xKM4Oj1" resname="Huella cerrada">
         <source>Huella cerrada</source>
         <target>Huella cerrada</target>
@@ -3457,9 +3449,9 @@
         <source>Este enlace no es válido</source>
         <target>Este enlace no es válido</target>
       </trans-unit>
-      <trans-unit id=".Ue648B" resname="El enlace de contribución que ha utilizado no es válido o ya no está disponible.">
-        <source>El enlace de contribución que ha utilizado no es válido o ya no está disponible.</source>
-        <target>El enlace de contribución que ha utilizado no es válido o ya no está disponible.</target>
+      <trans-unit id="O9qLweQ" resname="El enlace de contribución que has utilizado no es válido o ya no está disponible.">
+        <source>El enlace de contribución que has utilizado no es válido o ya no está disponible.</source>
+        <target>El enlace de contribución que has utilizado no es válido o ya no está disponible.</target>
       </trans-unit>
       <trans-unit id="jI5Ky9V" resname="Hola {name}, se te ha solicitado aportar los datos de emisiones de tu empresa para este evento (combustible, combustible de maquinaria, pernoctación y movilidad).">
         <source>Hola {name}, se te ha solicitado aportar los datos de emisiones de tu empresa para este evento (combustible, combustible de maquinaria, pernoctación y movilidad).</source>

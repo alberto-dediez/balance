@@ -5,7 +5,7 @@
 {% set ownOptions = options | filter(option => option.funding.isOwnCredit) %}
 {% set paidOptions = options | filter(option => not option.funding.isOwnCredit) %}
 
-{% block contribution_body %}
+{% block card_body %}
     <div class="text-center mb-4">
         <twig:Icon name="solar:hand-heart-bold" size="xl" class="text-success mb-3" />
         <h5 class="mb-1">{{ 'Elige un proyecto' | trans }}</h5>

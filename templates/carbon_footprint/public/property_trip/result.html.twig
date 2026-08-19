@@ -2,7 +2,7 @@
 
 {% set page_title = 'Tu huella de carbono' | trans %}
 
-{% block trip_body %}
+{% block card_body %}
     <div class="text-center mb-4">
         <twig:Icon name="solar:leaf-bold" size="xl" class="text-success mb-3" />
         <h3 class="text-success mb-1">{{ tripCalculation.emissions.co2eq | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</h3>
@@ -52,5 +52,11 @@
         </p>
     {% endif %}
 
-    {{ include('@carbon_footprint/public/property_trip/_compensate_cta.html.twig') }}
+    {{ include('@carbon_footprint/public/_compensate_cta.html.twig', {
+        contribution_path: path('public_carbon_footprint_property_trip_contribution_choose', {
+            token: token,
+            tripCalculationId: tripCalculation.id,
+        }),
+        contribution_text: 'Puedes contribuir a uno de los proyectos ambientales y sociales de este alojamiento.' | trans,
+    }) }}
 {% endblock %}
