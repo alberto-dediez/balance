@@ -32,7 +32,7 @@
     {% else %}
         {% if ownOptions is not empty %}
             <h6 class="fw-semibold mb-3">{{ 'Compensar con tus créditos' | trans }}</h6>
-            <div class="d-grid gap-3 mb-4">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 mb-4">
                 {% for option in ownOptions %}
                     {{ include('@carbon_footprint/owner_contribution/_option.html.twig', {option: option}) }}
                 {% endfor %}
@@ -41,7 +41,7 @@
 
         {% if paidOptions is not empty %}
             <h6 class="fw-semibold mb-3">{{ 'Aportar' | trans }}</h6>
-            <div class="d-grid gap-3">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
                 {% for option in paidOptions %}
                     {{ include('@carbon_footprint/owner_contribution/_option.html.twig', {option: option}) }}
                 {% endfor %}

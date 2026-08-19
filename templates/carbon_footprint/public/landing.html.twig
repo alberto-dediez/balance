@@ -59,12 +59,13 @@
             {% for block in publicLanding.blocks %}
                 {% set blockImageKey = block.image ~ '' %}
                 {% set blockImage = images[blockImageKey] | default(null) %}
+                {% set hasText = block.title is not empty or block.text is not empty %}
 
                 <div class="card mb-4">
                     <div class="card-body p-4 p-md-5">
                         <div class="row g-4 align-items-center {{ loop.index is odd ? '' : 'flex-md-row-reverse' }}">
                             {% if blockImage %}
-                                <div class="col-12 col-md-5">
+                                <div class="col-12 col-md-{{ hasText ? '5' : '12' }}">
                                     <img src="{{ path('library_media_public_show', {mediaId: blockImageKey}) }}"
                                          alt="{{ blockImage.alternativeText | default(block.title) }}"
                                          class="rounded w-100 object-fit-cover"
