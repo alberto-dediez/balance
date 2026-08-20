@@ -4,6 +4,9 @@
 // ------------------------------------
 // Variables
 // ------------------------------------
+// Bootstrap's functions must load first: the overrides below call
+// `shade-color()` and would otherwise compile to invalid CSS.
+@import '../../vendor/twbs/bootstrap/scss/functions';
 @import "./variables/variables";
 @import "./variables/theme_variables";
 @import "./variables/variables-dark"; 
