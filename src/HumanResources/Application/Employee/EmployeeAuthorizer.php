@@ -24,26 +24,29 @@ final class EmployeeAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin)) {
             return true;
         }
 
         assert($subject instanceof Employee);
 
+        $currentAccountId = $this->currentAccountId($user);
         $subjectAccountId = $subject->accountId();
 
-        return $user->hasRole(Role::Owner)
-            && $user->accountId() instanceof AccountId
-            && $user->accountId()->equals($subjectAccountId);
+        return $this->userHasRole($user, Role::Owner)
+            && $currentAccountId instanceof AccountId
+            && $currentAccountId->equals($subjectAccountId);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin)) {
             return true;
         }
 
-        if (!$user->hasRole(Role::Owner) || !$user->accountId() instanceof AccountId) {
+        $currentAccountId = $this->currentAccountId($user);
+
+        if (!$this->userHasRole($user, Role::Owner) || !$currentAccountId instanceof AccountId) {
             return false;
         }
 
@@ -51,7 +54,7 @@ final class EmployeeAuthorizer extends AbstractAuthorizer
             return false;
         }
 
-        return $user->accountId()->equals($subject->accountId());
+        return $currentAccountId->equals($subject->accountId());
     }
 
     protected function canRemove(mixed $subject, User $user): bool

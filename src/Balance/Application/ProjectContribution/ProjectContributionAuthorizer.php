@@ -16,12 +16,13 @@ final class ProjectContributionAuthorizer extends AbstractAuthorizer
     {
         assert($subject instanceof ProjectContribution);
 
+        $currentAccountId = $this->currentAccountId($user);
         $subjectAccountId = $subject->accountId();
 
-        return $user->hasRole(Role::Owner)
-            && $user->accountId() instanceof AccountId
+        return $this->userHasRole($user, Role::Owner)
+            && $currentAccountId instanceof AccountId
             && null !== $subjectAccountId
-            && $user->accountId()->equals($subjectAccountId);
+            && $currentAccountId->equals($subjectAccountId);
     }
 
     protected function canView(mixed $subject, User $user): bool
@@ -31,22 +32,23 @@ final class ProjectContributionAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin)) {
             return true;
         }
 
         assert($subject instanceof ProjectContribution);
 
+        $currentAccountId = $this->currentAccountId($user);
         $subjectAccountId = $subject->accountId();
 
-        return $user->accountId() instanceof AccountId
+        return $currentAccountId instanceof AccountId
             && null !== $subjectAccountId
-            && $user->accountId()->equals($subjectAccountId);
+            && $currentAccountId->equals($subjectAccountId);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin);
+        return $this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin);
     }
 
     protected function canRemove(mixed $subject, User $user): bool

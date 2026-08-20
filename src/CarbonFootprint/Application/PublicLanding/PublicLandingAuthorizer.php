@@ -15,6 +15,8 @@ use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\AbstractAuthorizer;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CurrentAccount\CurrentAccountIdProvider;
+use App\Shared\Application\CurrentRoles\CurrentRolesProvider;
 
 final class PublicLandingAuthorizer extends AbstractAuthorizer
 {
@@ -23,7 +25,11 @@ final class PublicLandingAuthorizer extends AbstractAuthorizer
         private readonly PropertyAuthorizer $propertyAuthorizer,
         private readonly EventRepository $eventRepository,
         private readonly EventAuthorizer $eventAuthorizer,
-    ) {}
+        ?CurrentAccountIdProvider $currentAccountIdProvider = null,
+        ?CurrentRolesProvider $currentRolesProvider = null,
+    ) {
+        parent::__construct($currentAccountIdProvider, $currentRolesProvider);
+    }
 
     protected function canRegister(mixed $subject, User $user): bool
     {

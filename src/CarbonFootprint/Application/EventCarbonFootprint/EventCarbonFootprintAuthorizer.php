@@ -26,17 +26,20 @@ final class EventCarbonFootprintAuthorizer extends AbstractAuthorizer
     {
         assert($subject instanceof EventCarbonFootprint);
 
+        $currentAccountId = $this->currentAccountId($user);
         $subjectAccountId = $subject->accountId();
 
-        return $user->hasRole(Role::Owner)
-            && $user->accountId() instanceof AccountId
+        return $this->userHasRole($user, Role::Owner)
+            && $currentAccountId instanceof AccountId
             && null !== $subjectAccountId
-            && $user->accountId()->equals($subjectAccountId);
+            && $currentAccountId->equals($subjectAccountId);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        if (!$user->hasRole(Role::Owner) || !$user->accountId() instanceof AccountId) {
+        $currentAccountId = $this->currentAccountId($user);
+
+        if (!$this->userHasRole($user, Role::Owner) || !$currentAccountId instanceof AccountId) {
             return false;
         }
 
@@ -46,7 +49,7 @@ final class EventCarbonFootprintAuthorizer extends AbstractAuthorizer
 
         $subjectAccountId = $subject->accountId();
 
-        return null !== $subjectAccountId && $user->accountId()->equals($subjectAccountId);
+        return null !== $subjectAccountId && $currentAccountId->equals($subjectAccountId);
     }
 
     protected function canRemove(mixed $subject, User $user): bool

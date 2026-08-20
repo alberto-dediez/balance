@@ -57,14 +57,14 @@ final class PayeeAuthorizer extends AbstractAuthorizer
 
     private function isAdministrator(User $user): bool
     {
-        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin);
+        return $this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin);
     }
 
     private function isOwnAccountPayee(Payee $payee, User $user): bool
     {
-        $accountId = $user->accountId();
+        $accountId = $this->currentAccountId($user);
 
-        return $user->hasRole(Role::Owner)
+        return $this->userHasRole($user, Role::Owner)
             && $accountId instanceof AccountId
             && PayeeType::Account === $payee->type()
             && $payee->subjectId() === (string) $accountId;

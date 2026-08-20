@@ -14,6 +14,7 @@ use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Application\CurrentUser\CurrentUserContext;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -27,13 +28,16 @@ class DashboardController extends AbstractController
         GetAdminDashboardService $getAdminDashboard,
         LoggedUser $loggedUser,
         LoggedAccount $loggedAccount,
+        CurrentUserContext $currentUserContext,
         TranslatorInterface $translator,
     ): Response {
-        if ($this->isGranted(Role::Admin->value)) {
+        $user = $loggedUser();
+
+        if ($currentUserContext->hasRole($user, Role::Admin) || $currentUserContext->hasRole($user, Role::SuperAdmin)) {
             return $this->adminDashboard($getAdminDashboard, $loggedUser, $translator);
         }
 
-        if (!$this->isGranted(Role::Owner->value)) {
+        if (!$currentUserContext->hasRole($user, Role::Owner)) {
             return $this->render('@shared/home.html.twig');
         }
 
@@ -44,7 +48,7 @@ class DashboardController extends AbstractController
         }
 
         try {
-            $dashboard = $getOwnerDashboard(new GetOwnerDashboardRequest(accountId: $account->id()), $loggedUser());
+            $dashboard = $getOwnerDashboard(new GetOwnerDashboardRequest(accountId: $account->id()), $user);
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
         }

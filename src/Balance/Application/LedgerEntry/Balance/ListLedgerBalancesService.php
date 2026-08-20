@@ -14,21 +14,23 @@ use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CurrentUser\CurrentUserContext;
 
 final class ListLedgerBalancesService
 {
     public function __construct(
         private LedgerEntryRepository $repository,
         private LedgerEntryAuthorizer $authorizer,
+        private CurrentUserContext $currentUserContext = new CurrentUserContext(),
     ) {}
 
     public function __invoke(ListLedgerBalancesRequest $request, User $user): ListLedgerBalancesResponse
     {
-        if ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin)) {
+        if ($this->currentUserContext->hasRole($user, Role::SuperAdmin) || $this->currentUserContext->hasRole($user, Role::Admin)) {
             return new ListLedgerBalancesResponse($this->repository->balancesByBeneficiary($request->beneficiary));
         }
 
-        $accountId = $user->accountId();
+        $accountId = $this->currentUserContext->accountId($user);
 
         $this->authorizer->denyUnlessCanDoThat(
             new LedgerEntry(

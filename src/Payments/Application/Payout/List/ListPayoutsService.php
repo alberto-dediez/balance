@@ -14,6 +14,7 @@ use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CurrentUser\CurrentUserContext;
 
 class ListPayoutsService
 {
@@ -21,6 +22,7 @@ class ListPayoutsService
         private PayoutRepository $repository,
         private PayeeRepository $payeeRepository,
         private PayoutAuthorizer $authorizer,
+        private CurrentUserContext $currentUserContext = new CurrentUserContext(),
     ) {}
 
     public function __invoke(ListPayoutsRequest $request, User $user): ListPayoutsResponse
@@ -41,11 +43,11 @@ class ListPayoutsService
 
     private function restrictToOwnPayee(ListPayoutsRequest $request, User $user): ?ListPayoutsRequest
     {
-        if ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin)) {
+        if ($this->currentUserContext->hasRole($user, Role::SuperAdmin) || $this->currentUserContext->hasRole($user, Role::Admin)) {
             return $request;
         }
 
-        $accountId = $user->accountId();
+        $accountId = $this->currentUserContext->accountId($user);
 
         if (!$accountId instanceof AccountId) {
             return null;

@@ -12,6 +12,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Application\CurrentUser\CurrentUserContext;
 use Nelmio\ApiDocBundle\Attribute\Areas;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
@@ -40,11 +41,12 @@ class PropertyListController extends AbstractController
         PropertyResponseGenerator $propertyGenerator,
         LoggedUser $loggedUser,
         LoggedAccount $loggedAccount,
+        CurrentUserContext $currentUserContext,
     ): JsonResponse {
         $user = $loggedUser();
 
         $rawAccountId = $request->query->get('account_id');
-        $accountId = $user->hasRole(Role::Admin) && null !== $rawAccountId
+        $accountId = $currentUserContext->hasRole($user, Role::Admin) && null !== $rawAccountId
             ? new AccountId($rawAccountId)
             : $loggedAccount()?->id();
 

@@ -13,7 +13,7 @@ final class DestinationAuthorizer extends AbstractAuthorizer
 {
     protected function canRegister(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::Admin);
+        return $this->userHasRole($user, Role::Admin);
     }
 
     protected function canView(mixed $subject, User $user): bool

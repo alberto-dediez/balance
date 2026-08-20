@@ -24,17 +24,18 @@ final class ContributionCertificateAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin)) {
             return true;
         }
 
         assert($subject instanceof ContributionCertificate);
 
+        $currentAccountId = $this->currentAccountId($user);
         $subjectAccountId = $subject->accountId();
 
-        return $user->accountId() instanceof AccountId
+        return $currentAccountId instanceof AccountId
             && $subjectAccountId instanceof AccountId
-            && $user->accountId()->equals($subjectAccountId);
+            && $currentAccountId->equals($subjectAccountId);
     }
 
     protected function canEdit(mixed $subject, User $user): bool

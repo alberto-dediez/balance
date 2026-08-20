@@ -24,22 +24,23 @@ final class ActivityAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin) || $user->hasRole(Role::Owner) || $user->hasRole(Role::Provider);
+        return $this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin) || $this->userHasRole($user, Role::Owner) || $this->userHasRole($user, Role::Provider);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
         if (!$subject instanceof Activity) {
-            return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin)
-                || $user->hasRole(Role::Owner) || $user->hasRole(Role::Provider);
+            return $this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin)
+                || $this->userHasRole($user, Role::Owner) || $this->userHasRole($user, Role::Provider);
         }
 
+        $currentAccountId = $this->currentAccountId($user);
         $subjectAccountId = $subject->accountId();
 
-        return ($user->hasRole(Role::Owner) || $user->hasRole(Role::Provider))
-            && $user->accountId() instanceof AccountId
+        return ($this->userHasRole($user, Role::Owner) || $this->userHasRole($user, Role::Provider))
+            && $currentAccountId instanceof AccountId
             && null !== $subjectAccountId
-            && $user->accountId()->equals($subjectAccountId);
+            && $currentAccountId->equals($subjectAccountId);
     }
 
     protected function canRemove(mixed $subject, User $user): bool

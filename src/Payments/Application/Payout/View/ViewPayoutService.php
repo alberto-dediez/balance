@@ -15,6 +15,7 @@ use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CurrentUser\CurrentUserContext;
 
 final class ViewPayoutService
 {
@@ -22,6 +23,7 @@ final class ViewPayoutService
         private PayoutRepository $repository,
         private PayeeRepository $payeeRepository,
         private PayoutAuthorizer $authorizer,
+        private CurrentUserContext $currentUserContext = new CurrentUserContext(),
     ) {}
 
     public function __invoke(ViewPayoutRequest $request, User $user): ViewPayoutResponse
@@ -46,11 +48,11 @@ final class ViewPayoutService
 
     private function denyForeignPayout(Payout $payout, User $user): void
     {
-        if ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin)) {
+        if ($this->currentUserContext->hasRole($user, Role::SuperAdmin) || $this->currentUserContext->hasRole($user, Role::Admin)) {
             return;
         }
 
-        $accountId = $user->accountId();
+        $accountId = $this->currentUserContext->accountId($user);
 
         $payee = $accountId instanceof AccountId
             ? $this->payeeRepository->findOneBySubject(PayeeType::Account, (string) $accountId)

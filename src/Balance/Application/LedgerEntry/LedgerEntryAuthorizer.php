@@ -15,7 +15,7 @@ final class LedgerEntryAuthorizer extends AbstractAuthorizer
 {
     protected function canRegister(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin);
+        return $this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin);
     }
 
     protected function canView(mixed $subject, User $user): bool
@@ -25,7 +25,7 @@ final class LedgerEntryAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin)) {
             return true;
         }
 
@@ -51,9 +51,9 @@ final class LedgerEntryAuthorizer extends AbstractAuthorizer
 
     private function isOwnAccountEntry(LedgerEntry $ledgerEntry, User $user): bool
     {
-        $accountId = $user->accountId();
+        $accountId = $this->currentAccountId($user);
 
-        return $user->hasRole(Role::Owner)
+        return $this->userHasRole($user, Role::Owner)
             && $accountId instanceof AccountId
             && $ledgerEntry->belongsTo(LedgerBeneficiary::Account, (string) $accountId);
     }

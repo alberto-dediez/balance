@@ -47,7 +47,7 @@ final class NotificationAuthorizer extends AbstractAuthorizer
             return true;
         }
 
-        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin);
+        return $this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin);
     }
 
     public function supports(mixed $subject): bool

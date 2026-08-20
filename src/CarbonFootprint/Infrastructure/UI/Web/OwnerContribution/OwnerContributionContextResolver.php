@@ -15,6 +15,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CurrentUser\CurrentUserContext;
 
 final class OwnerContributionContextResolver
 {
@@ -23,13 +24,14 @@ final class OwnerContributionContextResolver
         private EventCarbonFootprintRepository $eventCarbonFootprintRepository,
         private PropertyRepository $propertyRepository,
         private AccountRepository $accountRepository,
+        private CurrentUserContext $currentUserContext = new CurrentUserContext(),
     ) {}
 
     public function __invoke(string $origin, string $originId, User $user): ?OwnerContributionContext
     {
-        $accountId = $user->accountId();
+        $accountId = $this->currentUserContext->accountId($user);
 
-        if (!$user->hasRole(Role::Owner) || !$accountId instanceof AccountId) {
+        if (!$this->currentUserContext->hasRole($user, Role::Owner) || !$accountId instanceof AccountId) {
             return null;
         }
 

@@ -90,3 +90,12 @@ Feature:
         When I go to "/es/profile"
         Then the response status should be 200
         Then I do not see a text "Cambiar de cuenta"
+    Scenario: As admin impersonating an account I see the owner dashboard on the index
+        Given account "AdminAccount" with id "admin-account-id" exists
+        Given account "AcmeAccount" with id "acme-account-id" exists
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" of account "admin-account-id" exists
+        When I am logged as "admin@dediez.software"
+        When I impersonate account "AcmeAccount"
+        Then the response status should be 200
+        When I go to "/es/"
+        Then the response status should be 200

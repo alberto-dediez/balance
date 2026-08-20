@@ -14,6 +14,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Branding\BrandingPalette;
 use App\Security\Domain\Model\Branding\BrandingRepository;
 use App\Security\Infrastructure\Symfony\Form\UpdateBrandingType;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Domain\Model\Theme\ThemeRegistry;
 use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
@@ -37,6 +38,7 @@ class EditController extends AbstractController
         UpdateBrandingService $updateBranding,
         ChangeBrandingThemeService $changeTheme,
         LoggedUser $loggedUser,
+        LoggedAccount $loggedAccount,
         BrandingAuthorizer $authorizer,
         BrandingPalette $palette,
         ThemeRegistry $themeRegistry,
@@ -44,7 +46,7 @@ class EditController extends AbstractController
         Request $request,
     ): Response {
         $user = $loggedUser();
-        $accountId = $user->accountId();
+        $accountId = $loggedAccount->currentAccountId();
 
         if (!$accountId instanceof AccountId) {
             throw $this->createNotFoundException('El usuario no pertenece a ninguna cuenta.');

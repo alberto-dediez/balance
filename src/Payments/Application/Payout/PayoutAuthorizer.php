@@ -13,7 +13,7 @@ final class PayoutAuthorizer extends AbstractAuthorizer
 {
     protected function canRegister(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin);
+        return $this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin);
     }
 
     protected function canView(mixed $subject, User $user): bool
@@ -23,7 +23,7 @@ final class PayoutAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        return $this->canRegister($subject, $user) || $user->hasRole(Role::Owner);
+        return $this->canRegister($subject, $user) || $this->userHasRole($user, Role::Owner);
     }
 
     protected function canEdit(mixed $subject, User $user): bool

@@ -13,14 +13,16 @@ final class PropertyAuthorizer extends AbstractAuthorizer
 {
     protected function canRegister(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::Owner)
-        && null != $user->accountId()
+        $currentAccountId = $this->currentAccountId($user);
+
+        if ($this->userHasRole($user, Role::Owner)
+        && null != $currentAccountId
         && null != $subject->accountId()
-        && $user->accountId()->equals($subject->accountId())) {
+        && $currentAccountId->equals($subject->accountId())) {
             return true;
         }
 
-        return $user->hasRole(Role::Admin);
+        return $this->userHasRole($user, Role::Admin);
     }
 
     protected function canView(mixed $subject, User $user): bool

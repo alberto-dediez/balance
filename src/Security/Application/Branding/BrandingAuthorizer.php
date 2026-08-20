@@ -26,23 +26,25 @@ final class BrandingAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::SuperAdmin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin)) {
             return true;
         }
 
-        return $user->hasRole(Role::Admin);
+        return $this->userHasRole($user, Role::Admin);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::Admin)) {
+        if ($this->userHasRole($user, Role::Admin)) {
             return true;
         }
-        if ($user->hasRole(Role::SuperAdmin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin)) {
             return true;
         }
 
-        return $user->hasRole(Role::Owner) && ($user->accountId() instanceof AccountId && $subject->accountId()->equals($user->accountId()));
+        $currentAccountId = $this->currentAccountId($user);
+
+        return $this->userHasRole($user, Role::Owner) && ($currentAccountId instanceof AccountId && $subject->accountId()->equals($currentAccountId));
     }
 
     protected function canRemove(mixed $subject, User $user): bool
@@ -52,11 +54,11 @@ final class BrandingAuthorizer extends AbstractAuthorizer
 
     public function canEditTheme(Branding $branding, User $user): bool
     {
-        if ($user->hasRole(Role::Admin)) {
+        if ($this->userHasRole($user, Role::Admin)) {
             return true;
         }
 
-        return $user->hasRole(Role::SuperAdmin);
+        return $this->userHasRole($user, Role::SuperAdmin);
     }
 
     public function denyUnlessCanEditTheme(Branding $branding, User $user): void
