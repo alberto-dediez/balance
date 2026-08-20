@@ -6469,6 +6469,262 @@
         <source>Compensar {tonnes} t</source>
         <target>Compensar {tonnes} t</target>
       </trans-unit>
+      <trans-unit id="CJk6ef4" resname="Personalización actualizada con éxito">
+        <source>Personalización actualizada con éxito</source>
+        <target>Personalización actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id="6dN36Pp" resname="Tema actualizado con éxito">
+        <source>Tema actualizado con éxito</source>
+        <target>Tema actualizado con éxito</target>
+      </trans-unit>
+      <trans-unit id="m0Mwqnx" resname="{pair}: contraste {ratio}:1, por debajo del mínimo recomendado de 4.5:1.">
+        <source>{pair}: contraste {ratio}:1, por debajo del mínimo recomendado de 4.5:1.</source>
+        <target>{pair}: contraste {ratio}:1, por debajo del mínimo recomendado de 4.5:1.</target>
+      </trans-unit>
+      <trans-unit id="zobv1rV" resname="Logotipo">
+        <source>Logotipo</source>
+        <target>Logotipo</target>
+      </trans-unit>
+      <trans-unit id="40G7Rl1" resname="Color principal">
+        <source>Color principal</source>
+        <target>Color principal</target>
+      </trans-unit>
+      <trans-unit id="16LPdBu" resname="Color secundario">
+        <source>Color secundario</source>
+        <target>Color secundario</target>
+      </trans-unit>
+      <trans-unit id="wYYz2Qq" resname="Color de éxito">
+        <source>Color de éxito</source>
+        <target>Color de éxito</target>
+      </trans-unit>
+      <trans-unit id="wSHHi8d" resname="Color informativo">
+        <source>Color informativo</source>
+        <target>Color informativo</target>
+      </trans-unit>
+      <trans-unit id="UWmi7zV" resname="Color de aviso">
+        <source>Color de aviso</source>
+        <target>Color de aviso</target>
+      </trans-unit>
+      <trans-unit id="O7RwWGY" resname="Color de error">
+        <source>Color de error</source>
+        <target>Color de error</target>
+      </trans-unit>
+      <trans-unit id="bgKjBpw" resname="Color claro">
+        <source>Color claro</source>
+        <target>Color claro</target>
+      </trans-unit>
+      <trans-unit id="DtiWSDM" resname="Color oscuro">
+        <source>Color oscuro</source>
+        <target>Color oscuro</target>
+      </trans-unit>
+      <trans-unit id="c.zXvpp" resname="Color del texto">
+        <source>Color del texto</source>
+        <target>Color del texto</target>
+      </trans-unit>
+      <trans-unit id="vR55Pxn" resname="Color de fondo">
+        <source>Color de fondo</source>
+        <target>Color de fondo</target>
+      </trans-unit>
+      <trans-unit id="01FmwYs" resname="Principal al pasar el ratón">
+        <source>Principal al pasar el ratón</source>
+        <target>Principal al pasar el ratón</target>
+      </trans-unit>
+      <trans-unit id="wXZUtyF" resname="Principal atenuado">
+        <source>Principal atenuado</source>
+        <target>Principal atenuado</target>
+      </trans-unit>
+      <trans-unit id="wU.6bSg" resname="Secundario al pasar el ratón">
+        <source>Secundario al pasar el ratón</source>
+        <target>Secundario al pasar el ratón</target>
+      </trans-unit>
+      <trans-unit id="7cTXcJQ" resname="Secundario atenuado">
+        <source>Secundario atenuado</source>
+        <target>Secundario atenuado</target>
+      </trans-unit>
+      <trans-unit id="gLkdZU_" resname="Tipografía web">
+        <source>Tipografía web</source>
+        <target>Tipografía web</target>
+      </trans-unit>
+      <trans-unit id="XzDleqS" resname="Nombre de una familia de Google Fonts, por ejemplo &quot;Poppins&quot;.">
+        <source>Nombre de una familia de Google Fonts, por ejemplo "Poppins".</source>
+        <target>Nombre de una familia de Google Fonts, por ejemplo "Poppins".</target>
+      </trans-unit>
+      <trans-unit id="IFXbnmT" resname="Grosores de la tipografía web">
+        <source>Grosores de la tipografía web</source>
+        <target>Grosores de la tipografía web</target>
+      </trans-unit>
+      <trans-unit id="pG_yx20" resname="Separados por punto y coma, por ejemplo &quot;400;600;700&quot;.">
+        <source>Separados por punto y coma, por ejemplo "400;600;700".</source>
+        <target>Separados por punto y coma, por ejemplo "400;600;700".</target>
+      </trans-unit>
+      <trans-unit id="LXxWIQw" resname="Tipografía del certificado PDF">
+        <source>Tipografía del certificado PDF</source>
+        <target>Tipografía del certificado PDF</target>
+      </trans-unit>
+      <trans-unit id="UJPTd.Q" resname="Tema visual">
+        <source>Tema visual</source>
+        <target>Tema visual</target>
+      </trans-unit>
+      <trans-unit id="eZ42GcD" resname="Cambiar tema">
+        <source>Cambiar tema</source>
+        <target>Cambiar tema</target>
+      </trans-unit>
+      <trans-unit id="4gYfQPt" resname="Personalización">
+        <source>Personalización</source>
+        <target>Personalización</target>
+      </trans-unit>
+      <trans-unit id="yNMT2KM" resname="Marca y colores">
+        <source>Marca y colores</source>
+        <target>Marca y colores</target>
+      </trans-unit>
+      <trans-unit id="FuWeGJe" resname="Vista previa">
+        <source>Vista previa</source>
+        <target>Vista previa</target>
+      </trans-unit>
+      <trans-unit id="ABZ0mBA" resname="Identidad">
+        <source>Identidad</source>
+        <target>Identidad</target>
+      </trans-unit>
+      <trans-unit id="VfUB3n6" resname="Gama de colores">
+        <source>Gama de colores</source>
+        <target>Gama de colores</target>
+      </trans-unit>
+      <trans-unit id="ZNeZPOR" resname="Deja un color vacío para heredarlo del tema.">
+        <source>Deja un color vacío para heredarlo del tema.</source>
+        <target>Deja un color vacío para heredarlo del tema.</target>
+      </trans-unit>
+      <trans-unit id="vqeYNkd" resname="Contraste insuficiente">
+        <source>Contraste insuficiente</source>
+        <target>Contraste insuficiente</target>
+      </trans-unit>
+      <trans-unit id="8eC37.o" resname="Avanzado: tonos derivados">
+        <source>Avanzado: tonos derivados</source>
+        <target>Avanzado: tonos derivados</target>
+      </trans-unit>
+      <trans-unit id="Lx2aDNb" resname="Si los dejas vacíos se calculan automáticamente a partir del color principal y del secundario.">
+        <source>Si los dejas vacíos se calculan automáticamente a partir del color principal y del secundario.</source>
+        <target>Si los dejas vacíos se calculan automáticamente a partir del color principal y del secundario.</target>
+      </trans-unit>
+      <trans-unit id="ePQoO5p" resname="Solo un superadministrador puede cambiar el tema de una cuenta.">
+        <source>Solo un superadministrador puede cambiar el tema de una cuenta.</source>
+        <target>Solo un superadministrador puede cambiar el tema de una cuenta.</target>
+      </trans-unit>
+      <trans-unit id="9HxSGmw" resname="Vista previa de la personalización">
+        <source>Vista previa de la personalización</source>
+        <target>Vista previa de la personalización</target>
+      </trans-unit>
+      <trans-unit id="xkS7Dux" resname="Así se verán las páginas públicas de la cuenta">
+        <source>Así se verán las páginas públicas de la cuenta</source>
+        <target>Así se verán las páginas públicas de la cuenta</target>
+      </trans-unit>
+      <trans-unit id="emUDubU" resname="Botones">
+        <source>Botones</source>
+        <target>Botones</target>
+      </trans-unit>
+      <trans-unit id="befCKEj" resname="Principal">
+        <source>Principal</source>
+        <target>Principal</target>
+      </trans-unit>
+      <trans-unit id="Dw4g7Sv" resname="Principal (contorno)">
+        <source>Principal (contorno)</source>
+        <target>Principal (contorno)</target>
+      </trans-unit>
+      <trans-unit id="rxTglAv" resname="Secundario">
+        <source>Secundario</source>
+        <target>Secundario</target>
+      </trans-unit>
+      <trans-unit id="TUb.eev" resname="Éxito">
+        <source>Éxito</source>
+        <target>Éxito</target>
+      </trans-unit>
+      <trans-unit id="9tmV6d7" resname="Aviso">
+        <source>Aviso</source>
+        <target>Aviso</target>
+      </trans-unit>
+      <trans-unit id="B9r0Hn5" resname="Error">
+        <source>Error</source>
+        <target>Error</target>
+      </trans-unit>
+      <trans-unit id="tx8q0I_" resname="Enlace">
+        <source>Enlace</source>
+        <target>Enlace</target>
+      </trans-unit>
+      <trans-unit id="EmwSsQv" resname="Avisos">
+        <source>Avisos</source>
+        <target>Avisos</target>
+      </trans-unit>
+      <trans-unit id="6VMl7bD" resname="Mensaje principal">
+        <source>Mensaje principal</source>
+        <target>Mensaje principal</target>
+      </trans-unit>
+      <trans-unit id="ECPqg4j" resname="Mensaje de éxito">
+        <source>Mensaje de éxito</source>
+        <target>Mensaje de éxito</target>
+      </trans-unit>
+      <trans-unit id="FGw3262" resname="Mensaje de aviso">
+        <source>Mensaje de aviso</source>
+        <target>Mensaje de aviso</target>
+      </trans-unit>
+      <trans-unit id="AuCYI89" resname="Mensaje de error">
+        <source>Mensaje de error</source>
+        <target>Mensaje de error</target>
+      </trans-unit>
+      <trans-unit id="EVeEwck" resname="Textos y fondos">
+        <source>Textos y fondos</source>
+        <target>Textos y fondos</target>
+      </trans-unit>
+      <trans-unit id="riH9dNz" resname="Texto principal">
+        <source>Texto principal</source>
+        <target>Texto principal</target>
+      </trans-unit>
+      <trans-unit id="8HQXNxo" resname="Texto de éxito">
+        <source>Texto de éxito</source>
+        <target>Texto de éxito</target>
+      </trans-unit>
+      <trans-unit id="kkhDG4R" resname="Texto de error">
+        <source>Texto de error</source>
+        <target>Texto de error</target>
+      </trans-unit>
+      <trans-unit id="gzuCBdm" resname="Un enlace de ejemplo">
+        <source>Un enlace de ejemplo</source>
+        <target>Un enlace de ejemplo</target>
+      </trans-unit>
+      <trans-unit id="yz52tst" resname="Progreso">
+        <source>Progreso</source>
+        <target>Progreso</target>
+      </trans-unit>
+      <trans-unit id="_29MceM" resname="Formularios">
+        <source>Formularios</source>
+        <target>Formularios</target>
+      </trans-unit>
+      <trans-unit id="nIRWmkM" resname="Campo de texto">
+        <source>Campo de texto</source>
+        <target>Campo de texto</target>
+      </trans-unit>
+      <trans-unit id=".iTG8x4" resname="Escribe algo">
+        <source>Escribe algo</source>
+        <target>Escribe algo</target>
+      </trans-unit>
+      <trans-unit id="yOTZcKx" resname="Casilla marcada">
+        <source>Casilla marcada</source>
+        <target>Casilla marcada</target>
+      </trans-unit>
+      <trans-unit id="u_R8lnk" resname="Opción seleccionada">
+        <source>Opción seleccionada</source>
+        <target>Opción seleccionada</target>
+      </trans-unit>
+      <trans-unit id="0Kd..6R" resname="Tabla">
+        <source>Tabla</source>
+        <target>Tabla</target>
+      </trans-unit>
+      <trans-unit id="XCdg1lz" resname="Selector de color">
+        <source>Selector de color</source>
+        <target>Selector de color</target>
+      </trans-unit>
+      <trans-unit id="zNVCPTs" resname="Heredar del tema">
+        <source>Heredar del tema</source>
+        <target>Heredar del tema</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -7,6 +7,7 @@ namespace App\Balance\Infrastructure\Tcpdf;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateData;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificatePdfGenerator;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
+use App\Shared\Domain\Model\Branding\PdfBranding;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
 use App\Shared\Infrastructure\Qr\QrCodeGenerator;
@@ -55,7 +56,7 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
         private readonly QrCodeGenerator $qrCodeGenerator,
     ) {}
 
-    public function generate(ContributionCertificateData $data, Locale $locale): string
+    public function generate(ContributionCertificateData $data, Locale $locale, PdfBranding $branding): string
     {
         $previousLocale = LocaleGetter::locale();
         LocaleGetter::setLocale($locale);
@@ -63,7 +64,7 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
         try {
             $documentName = $this->documentName($data, $locale);
 
-            $pdf = $this->createPDF($documentName);
+            $pdf = $this->createPDF($documentName, $branding);
             $pdf->AddPage('L');
 
             $this->renderChrome($pdf, $documentName);
@@ -89,21 +90,21 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
 
     private function renderChrome(ReportTcpdf $pdf, string $documentName): void
     {
-        $pdf->Rect(0, 0, self::SIDE_BAR_WIDTH, self::PAGE_HEIGHT, 'F', [], self::COLOR_LIME_RGB);
+        $pdf->Rect(0, 0, self::SIDE_BAR_WIDTH, self::PAGE_HEIGHT, 'F', [], $this->pdfBranding()->secondary);
 
-        $logoPath = $this->getImagePath('logo-dark.png');
+        $logoPath = $this->pdfBranding()->logoPath ?? $this->getImagePath('logo-dark.png');
 
         if (is_file($logoPath)) {
-            $pdf->Image($logoPath, self::LEFT, 12, 42, 14, '', '', '', false, 300);
+            $pdf->Image(file: $logoPath, x: self::LEFT, y: 12, w: 45, h: 14, resize: false, dpi: 300, fitbox: 'LM');
         }
 
-        $this->setFont($pdf, 8, self::FONT_STYLE_SEMIBOLD, self::COLOR_TEAL_RGB);
+        $this->setFont($pdf, 8, self::FONT_STYLE_SEMIBOLD, $this->pdfBranding()->primary);
         $pdf->setFontSpacing(0.7);
         $pdf->setXY(self::RIGHT - 130, 16);
         $pdf->Cell(130, 5, mb_strtoupper($documentName), 0, 0, 'R');
         $pdf->setFontSpacing(0);
 
-        $pdf->Line(self::LEFT, self::HEADER_RULE_Y, self::RIGHT, self::HEADER_RULE_Y, ['width' => 0.2, 'color' => self::COLOR_FAINT_LINE]);
+        $pdf->Line(self::LEFT, self::HEADER_RULE_Y, self::RIGHT, self::HEADER_RULE_Y, ['width' => 0.2, 'color' => $this->pdfBranding()->faintLine]);
     }
 
     private function renderHeading(ReportTcpdf $pdf, ContributionCertificateData $data, string $documentName, Locale $locale): void
@@ -111,17 +112,17 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
         $this->renderLabel($pdf, self::LEFT, self::CODE_Y, 160, $this->trans('Certificado nº', $locale) . ' ' . $data->code);
 
         $size = 30.0;
-        $this->setFont($pdf, $size, self::FONT_STYLE_MEDIUM, self::COLOR_DARK_TEAL);
+        $this->setFont($pdf, $size, self::FONT_STYLE_MEDIUM, $this->pdfBranding()->dark);
 
         while ($size > 18.0 && $pdf->getNumLines($documentName, self::TITLE_WIDTH) > 2) {
             $size -= 2.0;
-            $this->setFont($pdf, $size, self::FONT_STYLE_MEDIUM, self::COLOR_DARK_TEAL);
+            $this->setFont($pdf, $size, self::FONT_STYLE_MEDIUM, $this->pdfBranding()->dark);
         }
 
         $pdf->setXY(self::LEFT, self::TITLE_Y);
         $pdf->MultiCell(self::TITLE_WIDTH, $size * 0.42, $documentName, 0, 'L');
 
-        $pdf->Line(self::LEFT, self::LIME_RULE_Y, self::LEFT + 26, self::LIME_RULE_Y, ['width' => 1.4, 'color' => self::COLOR_LIME_RGB]);
+        $pdf->Line(self::LEFT, self::LIME_RULE_Y, self::LEFT + 26, self::LIME_RULE_Y, ['width' => 1.4, 'color' => $this->pdfBranding()->secondary]);
     }
 
     private function renderBeneficiaryBox(ReportTcpdf $pdf, ContributionCertificateData $data, Locale $locale, float $desiredBottom): void
@@ -141,13 +142,13 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
             $desiredBottom - self::BOX_TOP,
         );
 
-        $pdf->Rect(self::LEFT, self::BOX_TOP, self::BOX_WIDTH, $height, 'F', [], self::COLOR_CREAM);
+        $pdf->Rect(self::LEFT, self::BOX_TOP, self::BOX_WIDTH, $height, 'F', [], $this->pdfBranding()->subtle);
 
         $y = self::BOX_TOP + 6.5;
 
         $this->renderLabel($pdf, $innerLeft, $y, $innerWidth, $this->trans('Beneficiario', $locale));
 
-        $this->fitFont($pdf, $data->beneficiaryName, $innerWidth, 18.0, 11.0, self::FONT_STYLE_BOLD, self::COLOR_DARK_TEAL);
+        $this->fitFont($pdf, $data->beneficiaryName, $innerWidth, 18.0, 11.0, self::FONT_STYLE_BOLD, $this->pdfBranding()->dark);
         $pdf->setXY($innerLeft, $y + 4.5);
         $pdf->Cell($innerWidth, 8, $data->beneficiaryName, 0, 0, 'L');
 
@@ -158,12 +159,12 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
         $y += $headHeight;
 
         foreach ($rows as $row) {
-            $pdf->Line($innerLeft, $y, $innerLeft + $innerWidth, $y, ['width' => 0.2, 'color' => self::COLOR_FAINT_LINE]);
+            $pdf->Line($innerLeft, $y, $innerLeft + $innerWidth, $y, ['width' => 0.2, 'color' => $this->pdfBranding()->faintLine]);
 
             $this->renderLabel($pdf, $innerLeft, $y + 5, $innerWidth, $row[0]);
 
             if (null === $row[2]) {
-                $this->fitFont($pdf, $row[1], $innerWidth, 16.0, 10.0, self::FONT_STYLE_BOLD, self::COLOR_DARK_TEAL);
+                $this->fitFont($pdf, $row[1], $innerWidth, 16.0, 10.0, self::FONT_STYLE_BOLD, $this->pdfBranding()->dark);
                 $pdf->setXY($innerLeft, $y + 10.5);
                 $pdf->Cell($innerWidth, 8, $row[1], 0, 0, 'L');
             } else {
@@ -233,7 +234,7 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
 
                 $this->renderLabel($pdf, $x, $y, $columnWidth, $cell[0]);
 
-                $this->fitFont($pdf, $cell[1], $columnWidth, 14.0, 9.0, self::FONT_STYLE_MEDIUM, self::COLOR_DARK_TEAL);
+                $this->fitFont($pdf, $cell[1], $columnWidth, 14.0, 9.0, self::FONT_STYLE_MEDIUM, $this->pdfBranding()->dark);
                 $pdf->setXY($x, $y + 4.5);
                 $pdf->Cell($columnWidth, 6, $cell[1], 0, 0, 'L');
             }
@@ -263,7 +264,7 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
         }
 
         $cells[] = [$this->trans('Fecha de emisión', $locale), $data->issuedAt->format('d/m/Y')];
-        $cells[] = [$this->trans('Entidad emisora', $locale), self::DOCUMENT_AUTHOR];
+        $cells[] = [$this->trans('Entidad emisora', $locale), $this->pdfBranding()->documentAuthor];
 
         if ($data->type->isCompensation() && null !== $data->projectRegistryId && '' !== $data->projectRegistryId) {
             $cells[] = [$this->trans('Registro oficial', $locale), $data->projectRegistryId];
@@ -289,7 +290,7 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
 
         $this->renderLabel($pdf, self::DETAILS_LEFT, $y, $width, $this->trans($label, $locale));
 
-        $this->setFont($pdf, 12, self::FONT_STYLE_MEDIUM, self::COLOR_DARK_TEAL);
+        $this->setFont($pdf, 12, self::FONT_STYLE_MEDIUM, $this->pdfBranding()->dark);
         $pdf->setXY(self::DETAILS_LEFT, $y + 4.5);
         $pdf->MultiCell($width, 5, implode("\n", $lines), 0, 'L');
 
@@ -326,7 +327,7 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
             return null;
         }
 
-        $pdf->Line(self::DETAILS_LEFT, $y, self::RIGHT, $y, ['width' => 0.2, 'color' => self::COLOR_FAINT_LINE]);
+        $pdf->Line(self::DETAILS_LEFT, $y, self::RIGHT, $y, ['width' => 0.2, 'color' => $this->pdfBranding()->faintLine]);
 
         $top = $y + 6;
         $textLeft = self::DETAILS_LEFT + self::QR_SIZE + 5;
@@ -334,7 +335,7 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
 
         $pdf->Image('@' . $binary, self::DETAILS_LEFT, $top, self::QR_SIZE, self::QR_SIZE, 'PNG');
 
-        $this->setFont($pdf, 9, self::FONT_STYLE_REGULAR, self::COLOR_BODY_TEXT);
+        $this->setFont($pdf, 9, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
         $pdf->setXY($textLeft, $top);
         $pdf->MultiCell(
             $textWidth,
@@ -345,7 +346,7 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
             'L',
         );
 
-        $this->setFont($pdf, 9, self::FONT_STYLE_BOLD, self::COLOR_DARK_TEAL);
+        $this->setFont($pdf, 9, self::FONT_STYLE_BOLD, $this->pdfBranding()->dark);
         $pdf->setX($textLeft);
         $pdf->Cell($textWidth, 4.6, $data->code, 0, 0, 'L');
 
@@ -354,24 +355,24 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
 
     private function renderFooter(ReportTcpdf $pdf, ContributionCertificateData $data, Locale $locale): void
     {
-        $pdf->Line(self::LEFT, self::FOOTER_RULE_Y, self::RIGHT, self::FOOTER_RULE_Y, ['width' => 0.2, 'color' => self::COLOR_FAINT_LINE]);
+        $pdf->Line(self::LEFT, self::FOOTER_RULE_Y, self::RIGHT, self::FOOTER_RULE_Y, ['width' => 0.2, 'color' => $this->pdfBranding()->faintLine]);
 
         $notice = $data->type->isCompensation()
             ? $this->trans('Este certificado acredita la retirada de créditos de carbono verificados por los lotes indicados. Los créditos consumidos quedan trazados y no pueden volver a utilizarse ni contabilizarse por ninguna otra parte.', $locale)
             : $this->trans('Este documento acredita la recepción de la aportación económica indicada y su destino al proyecto descrito. No acredita la reducción, la retirada ni la compensación de emisiones de gases de efecto invernadero.', $locale);
 
-        $this->setFont($pdf, 8.5, self::FONT_STYLE_REGULAR, self::COLOR_BODY_TEXT);
+        $this->setFont($pdf, 8.5, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
         $pdf->setXY(self::LEFT, self::FOOTER_RULE_Y + 4);
         $pdf->MultiCell(self::CONTENT_WIDTH, 4.2, $notice, 0, 'L');
 
-        $pdf->Line(self::RIGHT - 55, self::SIGNATURE_LINE_Y, self::RIGHT, self::SIGNATURE_LINE_Y, ['width' => 0.4, 'color' => self::COLOR_DARK_TEAL]);
+        $pdf->Line(self::RIGHT - 55, self::SIGNATURE_LINE_Y, self::RIGHT, self::SIGNATURE_LINE_Y, ['width' => 0.4, 'color' => $this->pdfBranding()->dark]);
 
         $this->renderLabel($pdf, self::RIGHT - 55, self::SIGNATURE_LINE_Y + 2, 55, $this->trans('Firma del emisor', $locale), 'R');
     }
 
     private function renderLabel(ReportTcpdf $pdf, float $x, float $y, float $width, string $text, string $align = 'L'): void
     {
-        $this->setFont($pdf, 7, self::FONT_STYLE_SEMIBOLD, self::COLOR_TEAL_RGB);
+        $this->setFont($pdf, 7, self::FONT_STYLE_SEMIBOLD, $this->pdfBranding()->primary);
         $pdf->setFontSpacing(0.7);
         $pdf->setXY($x, $y);
         $pdf->Cell($width, 4, mb_strtoupper($text), 0, 0, $align);
@@ -380,12 +381,12 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
 
     private function renderAmount(ReportTcpdf $pdf, float $x, float $y, string $value, string $unit): void
     {
-        $this->setFont($pdf, 20, self::FONT_STYLE_BOLD, self::COLOR_DARK_TEAL);
+        $this->setFont($pdf, 20, self::FONT_STYLE_BOLD, $this->pdfBranding()->dark);
         $valueWidth = $pdf->GetStringWidth($value);
         $pdf->setXY($x, $y);
         $pdf->Cell($valueWidth + 2, 9, $value, 0, 0, 'L');
 
-        $this->setFont($pdf, 12, self::FONT_STYLE_REGULAR, self::COLOR_TEAL_RGB);
+        $this->setFont($pdf, 12, self::FONT_STYLE_REGULAR, $this->pdfBranding()->primary);
         $pdf->setXY($x + $valueWidth + 2, $y + 2);
         $pdf->Cell(40, 7, $unit, 0, 0, 'L');
     }

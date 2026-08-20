@@ -11,12 +11,16 @@ use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateSent
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateType;
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryContributionCertificateRepository;
 use App\Balance\Infrastructure\Storage\InMemoryContributionCertificateStorage;
+use App\Security\Application\Branding\Resolve\ResolveBrandingService;
+use App\Security\Domain\Model\Branding\BrandingPalette;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\Balance\Domain\Model\ContributionCertificate\ContributionCertificateMother;
 use App\Tests\Unit\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepositoryMother;
 use App\Tests\Unit\Notifications\Application\Notification\Deliver\SpyEmailSender;
+use App\Tests\Unit\Security\Domain\Model\Branding\BrandingRepositoryMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Shared\Infrastructure\Theme\ThemeRegistryMother;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\LocaleSwitcher;
 use Symfony\Component\Translation\Translator;
@@ -120,6 +124,11 @@ class SendContributionCertificateServiceTest extends TestCase
             $emailSender,
             new Translator('es'),
             new LocaleSwitcher('es', []),
+            new ResolveBrandingService(
+                BrandingRepositoryMother::inMemory(),
+                ThemeRegistryMother::withThemes(),
+                new BrandingPalette(),
+            ),
         ))(new SendContributionCertificateRequest($certificate->id(), $email));
     }
 }

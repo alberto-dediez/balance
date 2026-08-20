@@ -13,6 +13,7 @@ use App\HumanResources\Domain\Model\Employee\EmployeeRepository;
 use App\Notifications\Application\Notification\Notify\SystemNotification;
 use App\Notifications\Application\Notification\Notify\SystemNotifier;
 use App\Notifications\Domain\Model\Notification\NotificationChannel;
+use App\Security\Application\Branding\Resolve\BrandingResolver;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
@@ -38,6 +39,7 @@ class EmployeeContributionNotifier implements DomainEventSubscriber
         private EmployeeRepository $employeeRepository,
         private UserRepository $userRepository,
         private LocaleSwitcher $localeSwitcher,
+        private BrandingResolver $brandingResolver,
     ) {
         $this->register();
     }
@@ -100,6 +102,7 @@ class EmployeeContributionNotifier implements DomainEventSubscriber
                     params: [
                         'employeeName' => $employee->name(),
                         'token' => $token,
+                        'brandingTokens' => $this->brandingResolver->resolve($employee->accountId()),
                     ],
                 );
             });

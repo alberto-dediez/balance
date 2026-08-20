@@ -15,9 +15,11 @@ use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkToke
 use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionGalleryTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionRoutes;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 
 trait PropertyTripContributionTrait
 {
+    use BrandedPublicControllerTrait;
     use ContributionGalleryTrait;
 
     private function contributionRoutes(string $token, string $tripCalculationId): ContributionRoutes
@@ -44,10 +46,14 @@ trait PropertyTripContributionTrait
         GetTripCalculationLinkByTokenService $getByToken,
     ): ?GetTripCalculationLinkByTokenResponse {
         try {
-            return $getByToken(new GetTripCalculationLinkByTokenRequest($token));
+            $link = $getByToken(new GetTripCalculationLinkByTokenRequest($token));
         } catch (TripCalculationLinkTokenInvalidException) {
             return null;
         }
+
+        $this->brandFor($link->tripCalculationLink->accountId());
+
+        return $link;
     }
 
     private function resolveTripCalculation(

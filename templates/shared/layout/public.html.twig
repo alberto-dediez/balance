@@ -1,6 +1,10 @@
-{% extends '@shared/base.html.twig' %}
+{% extends theme_template('@shared/base.html.twig') %}
 
-{% block body_tag %}class="public-page"{% endblock %}
+{% block branding %}
+    {{ include(theme_template('@shared/layout/_branding.html.twig')) }}
+{% endblock %}
+
+{% block body_tag %}class="public-page branded-page" data-bs-theme-locked="true"{% endblock %}
 
 {% block body %}
     <div id="main-wrapper">

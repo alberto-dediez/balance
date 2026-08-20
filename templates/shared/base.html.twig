@@ -14,6 +14,8 @@
         {% block stylesheets %}
             <link href="{{ asset('styles/app.scss') }}" rel="stylesheet" type="text/css" />
         {% endblock %}
+
+        {% block branding %}{% endblock %}
     </head>
 
     <body {% block body_tag %}{% endblock %}>

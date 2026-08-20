@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\EmployeeContribution;
 use App\CarbonFootprint\Application\EmployeeContribution\EmployeeContributionAuthenticator;
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionIgnoredException;
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionTokenInvalidException;
+use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/carbon-footprint/employee-contribution/{token}', name: 'public_carbon_footprint_employee_contribution', methods: ['GET'])]
 class EditController extends AbstractController
 {
+    use BrandedPublicControllerTrait;
     use EmployeeContributionPublicControllerTrait;
 
     public function __construct(
@@ -34,6 +36,8 @@ class EditController extends AbstractController
         } catch (EmployeeContributionTokenInvalidException|EmployeeContributionIgnoredException) {
             return $this->employeeContributionInvalidResponse($this->employeeContributionInvalidTokenLimiter, $request);
         }
+
+        $this->brandFor($authentication->employeeContribution->accountId());
 
         return $this->redirectToRoute(
             $authentication->employeeContribution->stepStatus()->activeStepRouteName(),

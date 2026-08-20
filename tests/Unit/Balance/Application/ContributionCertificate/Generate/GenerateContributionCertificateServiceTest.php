@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Balance\Application\ContributionCertificate\Generate;
 
+use App\Balance\Application\ContributionCertificate\Generate\CertificateLogoDownloader;
 use App\Balance\Application\ContributionCertificate\Generate\GenerateContributionCertificateRequest;
 use App\Balance\Application\ContributionCertificate\Generate\GenerateContributionCertificateService;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificate;
@@ -11,12 +12,18 @@ use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateStat
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateType;
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryContributionCertificateRepository;
 use App\Balance\Infrastructure\Storage\InMemoryContributionCertificateStorage;
+use App\Security\Application\Branding\Resolve\ResolveBrandingService;
+use App\Security\Domain\Model\Branding\BrandingPalette;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\Balance\Domain\Model\ContributionCertificate\ContributionCertificateMother;
 use App\Tests\Unit\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
+use App\Tests\Unit\Library\Domain\Model\Media\MediaRepositoryMother;
+use App\Tests\Unit\Library\Domain\Model\Media\MediaStorageMother;
+use App\Tests\Unit\Security\Domain\Model\Branding\BrandingRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Infrastructure\Theme\ThemeRegistryMother;
 use PHPUnit\Framework\TestCase;
 
 class GenerateContributionCertificateServiceTest extends TestCase
@@ -122,7 +129,14 @@ class GenerateContributionCertificateServiceTest extends TestCase
             $pdfGenerator,
             $this->storage,
             new FakeContributionCertificateVerificationUrlGenerator(),
+            new ResolveBrandingService(
+                BrandingRepositoryMother::inMemory(),
+                ThemeRegistryMother::withThemes(),
+                new BrandingPalette(),
+            ),
+            new CertificateLogoDownloader(MediaRepositoryMother::inMemory(), MediaStorageMother::inMemory()),
             self::LOCALE_LIST,
+            'Bioscore Sustainability',
         ))(new GenerateContributionCertificateRequest($certificate->id()), UserMother::systemUser());
     }
 }

@@ -38,6 +38,7 @@ final class VerifyContributionCertificateService
             creditLots: $contributionCertificate->creditLots(),
             issuedAt: $contributionCertificate->issuedAt(),
             valid: $contributionCertificate->isGenerated(),
+            accountId: $contributionCertificate->accountId(),
         );
     }
 }

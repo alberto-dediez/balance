@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\ProviderContribution;
 use App\CarbonFootprint\Application\ProviderContribution\ProviderContributionAuthenticator;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionIgnoredException;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionTokenInvalidException;
+use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/carbon-footprint/contribution/{token}', name: 'public_carbon_footprint_contribution', methods: ['GET'])]
 class EditController extends AbstractController
 {
+    use BrandedPublicControllerTrait;
     use ProviderContributionPublicControllerTrait;
 
     public function __construct(
@@ -34,6 +36,8 @@ class EditController extends AbstractController
         } catch (ProviderContributionTokenInvalidException|ProviderContributionIgnoredException) {
             return $this->providerContributionInvalidResponse($this->providerContributionInvalidTokenLimiter, $request);
         }
+
+        $this->brandFor($authentication->providerContribution->accountId());
 
         return $this->redirectToRoute(
             $authentication->providerContribution->stepStatus()->activeStepRouteName(),

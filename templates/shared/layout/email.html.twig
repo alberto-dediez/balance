@@ -1,4 +1,5 @@
-{% apply inline_css(source(('@assets/styles/email.css'))) -%}
+{% set brandingTokens = brandingTokens|default(null) %}
+{% apply inline_css(source('@assets/styles/email.css'), branding_email_css(brandingTokens)) -%}
 	<!DOCTYPE html>
 	<html lang="en">
 	    <head>
@@ -16,7 +17,7 @@
                     <tr class="header-tr">
                         <td class="top">
                             <a href="{{ url('home') }}">
-                                <img src="{{ absolute_url(asset('images/logo-dark.png')) }}" height="40" alt="logo"/>
+                                <img src="{{ absolute_url(branding_email_logo_url(brandingTokens)) }}" height="40" alt="logo"/>
                             </a>
                         </td>
                     </tr>

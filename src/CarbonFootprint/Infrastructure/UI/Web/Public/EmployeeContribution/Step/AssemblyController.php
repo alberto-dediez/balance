@@ -14,6 +14,7 @@ use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionTo
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\EmployeeContribution\EmployeeContributionPublicControllerTrait;
+use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +26,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 class AssemblyController extends AbstractController
 {
     use EmployeeContributionPublicControllerTrait;
+    use BrandedPublicControllerTrait;
 
     private const Phase PHASE = Phase::Assembly;
     private const string NEXT_ROUTE = 'public_carbon_footprint_employee_contribution_celebration';
@@ -85,6 +87,8 @@ class AssemblyController extends AbstractController
         } catch (EmployeeContributionTokenInvalidException|EmployeeContributionIgnoredException) {
             return $this->employeeContributionInvalidResponse($this->employeeContributionInvalidTokenLimiter, $request);
         }
+
+        $this->brandFor($response->employeeContribution->accountId());
 
         return $this->render('@carbon_footprint/public/employee_contribution/step/assembly.html.twig', [
             'token' => $token,

@@ -26,6 +26,9 @@
         <td>
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('admin_accounts_edit', {'accountId': element.id}) }}" />
+                <twig:List:Action path="{{ path('admin_accounts_branding_edit', {'accountId': element.id}) }}" title="{{ 'Personalización' | trans }}">
+                    <twig:Icon name="solar:palette-line-duotone" size="lg" />
+                </twig:List:Action>
             {% endif %}
 
             {% if element | is_authorized('remove') %}

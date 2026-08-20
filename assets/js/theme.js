@@ -1,3 +1,7 @@
+function isThemeLocked() {
+  return null !== document.body && "true" === document.body.getAttribute("data-bs-theme-locked");
+}
+
 var userSettings = {
   Layout: "vertical", // vertical | horizontal
   SidebarType: "mini-sidebar", // full | mini-sidebar
@@ -191,6 +195,10 @@ var AdminSettings = {
   // Theme Dark or light
   //****************************
   ManageDarkThemeLayout: function () {
+    if (isThemeLocked()) {
+      return;
+    }
+
     let theme = (null != localStorage.getItem("theme")) ? localStorage.getItem('theme') : settings.Theme;
 
     switch (theme) {
@@ -243,6 +251,10 @@ document.addEventListener("DOMContentLoaded", function () {
   //****************************
 
   function handleTheme() {
+    if (isThemeLocked()) {
+      return;
+    }
+
     function setThemeAttributes(
       theme,
       sunDisplay,

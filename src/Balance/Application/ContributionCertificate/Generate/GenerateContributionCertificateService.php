@@ -13,11 +13,13 @@ use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateVeri
 use App\Balance\Domain\Model\Project\Project;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\Project\ProjectRepository;
+use App\Security\Application\Branding\Resolve\BrandingResolver;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandResponse;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Shared\Domain\Model\Branding\PdfBranding;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
 
@@ -31,7 +33,10 @@ class GenerateContributionCertificateService implements CommandHandler
         private ContributionCertificatePdfGenerator $pdfGenerator,
         private ContributionCertificateStorage $storage,
         private ContributionCertificateVerificationUrlGenerator $verificationUrlGenerator,
+        private BrandingResolver $brandingResolver,
+        private CertificateLogoDownloader $logoDownloader,
         private string $localeList,
+        private string $documentAuthor,
     ) {}
 
     public function __invoke(GenerateContributionCertificateRequest $request, User $user): void
@@ -55,6 +60,10 @@ class GenerateContributionCertificateService implements CommandHandler
         $projectId = $contributionCertificate->projectId();
         $project = $projectId instanceof ProjectId ? $this->projectRepository->find($projectId) : null;
 
+        $tokens = $this->brandingResolver->resolve($contributionCertificate->accountId());
+        $logoPath = $this->logoDownloader->download($tokens->logoMediaId);
+        $branding = PdfBranding::fromTokens($tokens, $this->documentAuthor, $logoPath);
+
         $previousLocale = LocaleGetter::locale();
         $files = [];
 
@@ -64,7 +73,7 @@ class GenerateContributionCertificateService implements CommandHandler
 
                 $data = $this->composeData($contributionCertificate, $project, $locale);
 
-                $localPath = $this->pdfGenerator->generate($data, $locale);
+                $localPath = $this->pdfGenerator->generate($data, $locale, $branding);
 
                 try {
                     $files[$locale->value] = $this->storage->store(
@@ -90,6 +99,10 @@ class GenerateContributionCertificateService implements CommandHandler
             throw $e;
         } finally {
             LocaleGetter::setLocale($previousLocale);
+
+            if (null !== $logoPath) {
+                @unlink($logoPath);
+            }
         }
 
         $this->contributionCertificateRepository->add($contributionCertificate);

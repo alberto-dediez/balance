@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyTokenInvalidEx
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\AttendeeSurveyPublicControllerTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\Trip\LegInputsHttpMapper;
+use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +24,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 class CityController extends AbstractController
 {
     use AttendeeSurveyPublicControllerTrait;
+    use BrandedPublicControllerTrait;
 
     public function __construct(
         private PublicFormRateLimiter $attendeeSurveyRateLimiter,
@@ -43,6 +45,8 @@ class CityController extends AbstractController
         } catch (AttendeeSurveyTokenInvalidException) {
             return $this->attendeeSurveyInvalidResponse($this->attendeeSurveyRateLimiter, $request);
         }
+
+        $this->brandFor($response->attendeeSurvey->accountId());
 
         if ($response->attendeeSurvey->status()->isClosed()) {
             return $this->attendeeSurveyClosedResponse();

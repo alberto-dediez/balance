@@ -15,6 +15,9 @@ doctrine:
             exportation_id: App\DataExchange\Infrastructure\Persistence\Doctrine\Type\ExportationIdType
             user_id: App\Security\Infrastructure\Persistence\Doctrine\Type\UserIdType
             account_id: App\Security\Infrastructure\Persistence\Doctrine\Type\AccountIdType
+            branding_id: App\Security\Infrastructure\Persistence\Doctrine\Type\BrandingIdType
+            hex_color: App\Security\Infrastructure\Persistence\Doctrine\Type\HexColorType
+            font_family_name: App\Security\Infrastructure\Persistence\Doctrine\Type\FontFamilyNameType
             recorded_event_id: App\Security\Infrastructure\Persistence\Doctrine\Type\RecordedEventIdType
             country_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CountryIdType
             destination_id: App\Property\Infrastructure\Persistence\Doctrine\Type\DestinationIdType

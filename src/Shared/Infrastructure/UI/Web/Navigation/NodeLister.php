@@ -436,6 +436,11 @@ class NodeLister
                     icon: 'solar:users-group-rounded-line-duotone',
                     target: $this->router->generate('users'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Marca y colores'),
+                    icon: 'solar:palette-round-line-duotone',
+                    target: $this->router->generate('branding_edit'),
+                ),
             ],
         );
 

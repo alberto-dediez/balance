@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Security\Domain\Model\Branding\Branding" table="branding">
+        <id name="id" type="branding_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <unique-constraints>
+            <unique-constraint columns="account_id" name="uq_branding_account_id"/>
+        </unique-constraints>
+
+        <field name="accountId" type="account_id" column="account_id" nullable="false"/>
+        <field name="themeSlug" type="string" column="theme_slug" length="64" nullable="false"/>
+        <field name="logoMediaId" type="media_id" column="logo_media_id" nullable="true"/>
+        <field name="primary" type="hex_color" column="`primary`" nullable="true"/>
+        <field name="secondary" type="hex_color" column="secondary" nullable="true"/>
+        <field name="success" type="hex_color" column="success" nullable="true"/>
+        <field name="info" type="hex_color" column="info" nullable="true"/>
+        <field name="warning" type="hex_color" column="warning" nullable="true"/>
+        <field name="danger" type="hex_color" column="danger" nullable="true"/>
+        <field name="light" type="hex_color" column="light" nullable="true"/>
+        <field name="dark" type="hex_color" column="dark" nullable="true"/>
+        <field name="bodyColor" type="hex_color" column="body_color" nullable="true"/>
+        <field name="bodyBg" type="hex_color" column="body_bg" nullable="true"/>
+        <field name="primaryHover" type="hex_color" column="primary_hover" nullable="true"/>
+        <field name="primarySubtle" type="hex_color" column="primary_subtle" nullable="true"/>
+        <field name="secondaryHover" type="hex_color" column="secondary_hover" nullable="true"/>
+        <field name="secondarySubtle" type="hex_color" column="secondary_subtle" nullable="true"/>
+        <field name="webFontFamily" type="font_family_name" column="web_font_family" nullable="true"/>
+        <field name="webFontWeights" type="string" column="web_font_weights" length="50" nullable="true"/>
+        <field name="pdfFontFamily" type="string" column="pdf_font_family" length="50" enum-type="App\Security\Domain\Model\Branding\PdfFontFamily" nullable="false"/>
+        <field name="removed" type="boolean" nullable="false"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+    </entity>
+
+</doctrine-mapping>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Balance\Application\ContributionCertificate\Verify;
 
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateType;
+use App\Security\Domain\Model\Account\AccountId;
 
 final readonly class VerifyContributionCertificateResponse
 {
@@ -24,5 +25,6 @@ final readonly class VerifyContributionCertificateResponse
         public array $creditLots,
         public \DateTimeImmutable $issuedAt,
         public bool $valid,
+        public ?AccountId $accountId = null,
     ) {}
 }

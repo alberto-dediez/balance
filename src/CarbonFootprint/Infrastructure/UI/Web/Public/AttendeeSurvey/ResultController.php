@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyRespon
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +23,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class ResultController extends AbstractController
 {
     use AttendeeSurveyPublicControllerTrait;
+    use BrandedPublicControllerTrait;
 
     public function __construct(
         private PublicFormRateLimiter $attendeeSurveyRateLimiter,
@@ -44,6 +46,8 @@ class ResultController extends AbstractController
         } catch (AttendeeSurveyTokenInvalidException) {
             return $this->attendeeSurveyInvalidResponse($this->attendeeSurveyRateLimiter, $request);
         }
+
+        $this->brandFor($response->attendeeSurvey->accountId());
 
         $attendeeSurveyResponse = $attendeeSurveyResponseRepository->find(new AttendeeSurveyResponseId($responseId));
         $attendeeSurveyId = $attendeeSurveyResponse?->attendeeSurveyId();

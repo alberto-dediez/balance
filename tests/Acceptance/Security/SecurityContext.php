@@ -6,6 +6,12 @@ namespace App\Tests\Acceptance\Security;
 
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
+use App\Security\Domain\Model\Branding\Branding;
+use App\Security\Domain\Model\Branding\BrandingId;
+use App\Security\Domain\Model\Branding\BrandingRepository;
+use App\Security\Domain\Model\Branding\FontFamilyName;
+use App\Security\Domain\Model\Branding\HexColor;
+use App\Security\Domain\Model\Branding\PdfFontFamily;
 use App\Security\Domain\Model\SignatureRequest\DocumentReference;
 use App\Security\Domain\Model\SignatureRequest\NotificationChannel;
 use App\Security\Domain\Model\SignatureRequest\OtpChallenge;
@@ -29,6 +35,7 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Hook\AfterScenario;
 use Behat\Step\Given;
+use Behat\Step\Then;
 use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 
@@ -64,6 +71,11 @@ final class SecurityContext implements Context
         return $this->client->getContainer()->get(AccountRepository::class);
     }
 
+    private function getBrandingRepository(): BrandingRepository
+    {
+        return $this->client->getContainer()->get(BrandingRepository::class);
+    }
+
     private function getSignatureRequestRepository(): SignatureRequestRepository
     {
         return $this->client->getContainer()->get(SignatureRequestRepository::class);
@@ -93,6 +105,73 @@ final class SecurityContext implements Context
         $account = AccountMother::fromNameAndId($username, $id);
 
         $this->getAccountRepository()->add($account);
+    }
+
+    #[Given('account :accountId has branding with primary colour :primary')]
+    public function accountHasBrandingWithPrimaryColour(string $accountId, string $primary): void
+    {
+        $branding = new Branding(BrandingId::generate(), new AccountId($accountId));
+        $branding->register();
+        $branding->change(
+            logoMediaId: null,
+            primary: new HexColor($primary),
+            secondary: null,
+            success: null,
+            info: null,
+            warning: null,
+            danger: null,
+            light: null,
+            dark: null,
+            bodyColor: null,
+            bodyBg: null,
+            primaryHover: null,
+            primarySubtle: null,
+            secondaryHover: null,
+            secondarySubtle: null,
+            webFontFamily: new FontFamilyName('Poppins'),
+            webFontWeights: '400;700',
+            pdfFontFamily: PdfFontFamily::Rubik,
+        );
+
+        $this->getBrandingRepository()->add($branding);
+    }
+
+    #[Given('account :accountId has branding with theme :themeSlug')]
+    public function accountHasBrandingWithTheme(string $accountId, string $themeSlug): void
+    {
+        $branding = new Branding(BrandingId::generate(), new AccountId($accountId));
+        $branding->register();
+        $branding->changeTheme($themeSlug);
+
+        $this->getBrandingRepository()->add($branding);
+    }
+
+    #[When('I go to the branding preview of account :accountId')]
+    public function iGoToTheBrandingPreviewOfAccount(string $accountId): void
+    {
+        $branding = $this->getBrandingRepository()->findByAccountId(new AccountId($accountId));
+
+        Assert::assertNotNull($branding);
+
+        $this->client->request('GET', sprintf('/es/branding/preview/%s', $branding->id()));
+    }
+
+    #[Then('account :accountId branding primary colour should be :colour')]
+    public function accountBrandingPrimaryColourShouldBe(string $accountId, string $colour): void
+    {
+        $branding = $this->getBrandingRepository()->findByAccountId(new AccountId($accountId));
+
+        Assert::assertNotNull($branding);
+        Assert::assertNotNull($branding->primary());
+        Assert::assertSame($colour, $branding->primary()->value);
+    }
+
+    #[Then('account :accountId should have no branding primary colour')]
+    public function accountShouldHaveNoBrandingPrimaryColour(string $accountId): void
+    {
+        $branding = $this->getBrandingRepository()->findByAccountId(new AccountId($accountId));
+
+        Assert::assertTrue(null === $branding || null === $branding->primary());
     }
 
     #[Given('user :username with role :role of account :account exists')]

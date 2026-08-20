@@ -7,6 +7,7 @@ namespace App\Balance\Application\ContributionCertificate\Send;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificate;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepository;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateStorage;
+use App\Security\Application\Branding\Resolve\BrandingResolver;
 use App\Shared\Domain\Model\Email\EmailAttachment;
 use App\Shared\Domain\Model\Email\EmailRecipient;
 use App\Shared\Domain\Model\Email\EmailSender;
@@ -24,6 +25,7 @@ final class SendContributionCertificateService
         private EmailSender $emailSender,
         private TranslatorInterface $translator,
         private LocaleSwitcher $localeSwitcher,
+        private BrandingResolver $brandingResolver,
     ) {}
 
     public function __invoke(SendContributionCertificateRequest $request): void
@@ -81,6 +83,7 @@ final class SendContributionCertificateService
                         'contactName' => $contributionCertificate->contactName(),
                         'projectName' => $contributionCertificate->projectName(),
                         'isCompensation' => $contributionCertificate->isCompensation(),
+                        'brandingTokens' => $this->brandingResolver->resolve($contributionCertificate->accountId()),
                     ],
                     attachments: [
                         new EmailAttachment(

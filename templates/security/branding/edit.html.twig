@@ -1,0 +1,79 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% set page_title = ('Personalización' | trans)
+    ~ (account is defined ? ' > ' ~ account.name : '') %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ account is defined ? path('admin_accounts') : path('home') }}" />
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12 col-lg-6">
+                    <h5 class="mb-3">{{ 'Identidad' | trans }}</h5>
+                    {% if form.themeSlug is defined %}
+                        {{ form_row(form.themeSlug) }}
+                    {% endif %}
+                    {{ form_row(form.logoMediaId) }}
+                    {{ form_row(form.webFontFamily) }}
+                    {{ form_row(form.webFontWeights) }}
+                    {{ form_row(form.pdfFontFamily) }}
+                </div>
+                <div class="col-12 col-lg-6">
+                    <h5 class="mb-3">{{ 'Gama de colores' | trans }}</h5>
+                    <p class="text-muted small">
+                        {{ 'Deja un color vacío para heredarlo del tema.' | trans }}
+                    </p>
+                    {{ form_row(form.primary) }}
+                    {{ form_row(form.secondary) }}
+                    {{ form_row(form.success) }}
+                    {{ form_row(form.info) }}
+                    {{ form_row(form.warning) }}
+                    {{ form_row(form.danger) }}
+                    {{ form_row(form.light) }}
+                    {{ form_row(form.dark) }}
+                    {{ form_row(form.bodyColor) }}
+                    {{ form_row(form.bodyBg) }}
+
+                    {% if contrastWarnings is defined and contrastWarnings is not empty %}
+                        <div class="alert alert-warning">
+                            <strong>{{ 'Contraste insuficiente' | trans }}</strong>
+                            <ul class="mb-0">
+                                {% for warning in contrastWarnings %}
+                                    <li>{{ warning|trans }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
+                    <details class="mt-3">
+                        <summary class="mb-3">{{ 'Avanzado: tonos derivados' | trans }}</summary>
+                        <p class="text-muted small">
+                            {{ 'Si los dejas vacíos se calculan automáticamente a partir del color principal y del secundario.' | trans }}
+                        </p>
+                        {{ form_row(form.primaryHover) }}
+                        {{ form_row(form.primarySubtle) }}
+                        {{ form_row(form.secondaryHover) }}
+                        {{ form_row(form.secondarySubtle) }}
+                    </details>
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <div class="col-sm-6 col-md-3 col-lg-2">
+                    <button type="submit"
+                            class="btn btn-outline-info w-100"
+                            formaction="{{ path('branding_preview', {brandingId: branding.id}) }}"
+                            formtarget="_blank"
+                            formnovalidate>
+                        {{ 'Vista previa' | trans }}
+                    </button>
+                </div>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form) }}
+{% endblock %}

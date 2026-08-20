@@ -14,9 +14,11 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyRespon
 use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionGalleryTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionRoutes;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 
 trait AttendeeSurveyContributionTrait
 {
+    use BrandedPublicControllerTrait;
     use ContributionGalleryTrait;
 
     private function resolveSurvey(
@@ -24,10 +26,14 @@ trait AttendeeSurveyContributionTrait
         GetAttendeeSurveyByTokenService $getByToken,
     ): ?GetAttendeeSurveyByTokenResponse {
         try {
-            return $getByToken(new GetAttendeeSurveyByTokenRequest($token));
+            $survey = $getByToken(new GetAttendeeSurveyByTokenRequest($token));
         } catch (AttendeeSurveyTokenInvalidException) {
             return null;
         }
+
+        $this->brandFor($this->accountIdOf($survey));
+
+        return $survey;
     }
 
     private function resolveResponse(

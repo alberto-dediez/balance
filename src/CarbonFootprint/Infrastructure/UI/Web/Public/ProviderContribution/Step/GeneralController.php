@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionCl
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionIgnoredException;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionTokenInvalidException;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\ProviderContribution\ProviderContributionPublicControllerTrait;
+use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,6 +22,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/carbon-footprint/contribution/{token}/general', name: 'public_carbon_footprint_contribution_general')]
 class GeneralController extends AbstractController
 {
+    use BrandedPublicControllerTrait;
     use ProviderContributionPublicControllerTrait;
 
     public function __construct(
@@ -69,6 +71,8 @@ class GeneralController extends AbstractController
         } catch (ProviderContributionTokenInvalidException|ProviderContributionIgnoredException) {
             return $this->providerContributionInvalidResponse($this->providerContributionInvalidTokenLimiter, $request);
         }
+
+        $this->brandFor($response->providerContribution->accountId());
 
         return $this->render('@carbon_footprint/public/contribution/step/general.html.twig', [
             'token' => $token,

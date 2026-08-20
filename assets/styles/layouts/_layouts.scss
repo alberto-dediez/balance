@@ -10,7 +10,7 @@
 
 // for editor
 body {
-  font-family: $font-family-sans-serif !important;
+  font-family: var(--brand-font-family, #{inspect($font-family-sans-serif)}) !important;
 }
 
 .page-wrapper {

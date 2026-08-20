@@ -134,9 +134,9 @@ trait BrandedPdfBuilderTrait
     private function setBrandedFont(\TCPDF $pdf, int|float $size, string $type, array $color): void
     {
         $fontName = match ($type) {
-            self::FONT_STYLE_SEMIBOLD => 'Rubik-SemiBold',
-            self::FONT_STYLE_MEDIUM => 'Rubik-Medium',
-            default => 'Rubik-Regular',
+            self::FONT_STYLE_SEMIBOLD => 'Rubik/Rubik-SemiBold',
+            self::FONT_STYLE_MEDIUM => 'Rubik/Rubik-Medium',
+            default => 'Rubik/Rubik-Regular',
         };
 
         $font = \TCPDF_FONTS::addTTFfont($this->getBrandedFontPath($fontName), 'TrueTypeUnicode', '', 96);

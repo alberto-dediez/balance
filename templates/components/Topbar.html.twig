@@ -14,8 +14,12 @@
                 </ul>
             {% endif %}
             <div class="topbar-logo | d-flex">
-                <img src="{{ asset('images/logo-light.png') }}" class="dark-logo" height="36" alt="{{ company_name }}" />
-                <img src="{{ asset('images/logo-dark.png') }}" class="light-logo" height="36" alt="{{ company_name }}" />
+                {% if public %}
+                    <img src="{{ branding_logo_url() }}" height="36" alt="{{ company_name }}" />
+                {% else %}
+                    <img src="{{ asset('images/logo-light.png') }}" class="dark-logo" height="36" alt="{{ company_name }}" />
+                    <img src="{{ asset('images/logo-dark.png') }}" class="light-logo" height="36" alt="{{ company_name }}" />
+                {% endif %}
             </div>
             <a class="navbar-toggler p-0 border-0 nav-icon-hover" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="p-2">
@@ -25,14 +29,16 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <div class="d-flex align-items-center justify-content-between">
                     <ul class="navbar-nav flex-row mx-auto ms-lg-auto align-items-center justify-content-center">
-                        <li class="nav-item nav-icon-hover">
-                            <a class="nav-link moon dark-layout" href="javascript:void(0)">
-                                <twig:Icon name="solar:moon-line-duotone" class="moon" />
-                            </a>
-                            <a class="nav-link sun light-layout" href="javascript:void(0)">
-                                <twig:Icon name="solar:sun-2-line-duotone" class="sun" />
-                            </a>
-                        </li>
+                        {% if not public %}
+                            <li class="nav-item nav-icon-hover">
+                                <a class="nav-link moon dark-layout" href="javascript:void(0)">
+                                    <twig:Icon name="solar:moon-line-duotone" class="moon" />
+                                </a>
+                                <a class="nav-link sun light-layout" href="javascript:void(0)">
+                                    <twig:Icon name="solar:sun-2-line-duotone" class="sun" />
+                                </a>
+                            </li>
+                        {% endif %}
                         <li class="nav-item nav-icon-hover dropdown">
                             <twig:Topbar:LanguageSwitch></twig:Topbar:LanguageSwitch>
                         </li>

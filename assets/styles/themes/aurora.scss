@@ -1,0 +1,33 @@
+// ------------------------------------------------------------------
+// Aurora theme
+//
+// Like assets/styles/_branding.scss, every rule MUST stay inside
+// `body.branded-page`. The isolation is enforced by
+// tests/Unit/Shared/Infrastructure/Styles/BrandingStylesheetTest.
+// ------------------------------------------------------------------
+
+body.branded-page {
+  .card {
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(36, 16, 53, 0.08);
+  }
+
+  .btn {
+    border-radius: 6px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  h1, h2, h3, h4, h5, h6,
+  .h1, .h2, .h3, .h4, .h5, .h6 {
+    letter-spacing: -0.01em;
+  }
+
+  .topbar {
+    border-bottom: 3px solid var(--brand-secondary);
+  }
+
+  .progress {
+    border-radius: 0;
+  }
+}

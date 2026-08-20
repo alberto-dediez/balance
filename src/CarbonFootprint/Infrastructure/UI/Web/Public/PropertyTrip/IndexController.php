@@ -11,6 +11,7 @@ use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLandingOwnerType;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicLanding\PublicLandingRenderTrait;
+use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,6 +21,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class IndexController extends AbstractController
 {
     use PropertyTripPublicControllerTrait;
+    use BrandedPublicControllerTrait;
     use PublicLandingRenderTrait;
 
     public function __construct(
@@ -41,6 +43,8 @@ class IndexController extends AbstractController
         } catch (TripCalculationLinkTokenInvalidException) {
             return $this->propertyTripInvalidResponse($this->propertyTripRateLimiter, $request);
         }
+
+        $this->brandFor($response->tripCalculationLink->accountId());
 
         $landing = $this->renderPublicLanding(
             getActivePublicLanding: $getActivePublicLanding,

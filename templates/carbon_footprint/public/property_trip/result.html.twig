@@ -1,4 +1,4 @@
-{% extends '@carbon_footprint/public/property_trip/layout.html.twig' %}
+{% extends theme_template('@carbon_footprint/public/property_trip/layout.html.twig') %}
 
 {% set page_title = 'Tu huella de carbono' | trans %}
 
@@ -52,7 +52,7 @@
         </p>
     {% endif %}
 
-    {{ include('@carbon_footprint/public/_compensate_cta.html.twig', {
+    {{ include(theme_template('@carbon_footprint/public/_compensate_cta.html.twig'), {
         contribution_path: path('public_carbon_footprint_property_trip_contribution_choose', {
             token: token,
             tripCalculationId: tripCalculation.id,

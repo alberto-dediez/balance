@@ -19,6 +19,10 @@ services:
         autowire: true
         autoconfigure: true
 
+    _instanceof:
+        App\Shared\Domain\Model\Theme\Theme:
+            tags: ['app.theme']
+
     App\Shared\:
         resource: '../../../'
 

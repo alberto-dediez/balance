@@ -29,7 +29,7 @@ final class TcpdfPayoutStatementPdfGenerator implements PayoutStatementPdfGenera
         $pdf->AddPage();
 
         $this->renderSectionTitle($pdf, sprintf('%s %s', $documentName, $number));
-        $this->setFont($pdf, 9, self::FONT_STYLE_REGULAR, self::COLOR_BODY_TEXT);
+        $this->setFont($pdf, 9, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
         $pdf->writeHTML($this->buildTableHtml(
             [$this->translator->trans('Concepto'), $this->translator->trans('Valor')],
             $this->summaryRows($payout, $payee),
@@ -39,7 +39,7 @@ final class TcpdfPayoutStatementPdfGenerator implements PayoutStatementPdfGenera
         $pdf->Ln(8);
 
         $this->renderSectionTitle($pdf, $this->translator->trans('Detalle de asientos'));
-        $this->setFont($pdf, 8, self::FONT_STYLE_REGULAR, self::COLOR_BODY_TEXT);
+        $this->setFont($pdf, 8, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
         $pdf->writeHTML($this->buildTableHtml(
             [
                 $this->translator->trans('Fecha'),

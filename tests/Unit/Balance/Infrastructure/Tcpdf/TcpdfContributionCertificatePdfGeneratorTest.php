@@ -6,9 +6,11 @@ namespace App\Tests\Unit\Balance\Infrastructure\Tcpdf;
 
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateData;
 use App\Balance\Infrastructure\Tcpdf\TcpdfContributionCertificatePdfGenerator;
+use App\Shared\Domain\Model\Branding\PdfBranding;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\Qr\QrCodeGenerator;
 use App\Tests\Unit\Balance\Domain\Model\ContributionCertificate\ContributionCertificateDataMother;
+use App\Tests\Unit\Security\Domain\Model\Branding\BrandingTokensMother;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\Loader\XliffFileLoader;
 use Symfony\Component\Translation\Translator;
@@ -37,9 +39,19 @@ final class TcpdfContributionCertificatePdfGeneratorTest extends TestCase
         $this->assertPreviewIsAPdf(ContributionCertificateDataMother::compensation(), Locale::English, 'compensacion');
     }
 
-    private function assertPreviewIsAPdf(ContributionCertificateData $data, Locale $locale, string $name): void
+    public function testItDrawsABrandedCertificate(): void
     {
-        $path = $this->generator()->generate($data, $locale);
+        $branding = PdfBranding::fromTokens(
+            BrandingTokensMother::branded(),
+            'Acme Sustainability',
+        );
+
+        $this->assertPreviewIsAPdf(ContributionCertificateDataMother::compensation(), Locale::Spanish, 'marca-blanca', $branding);
+    }
+
+    private function assertPreviewIsAPdf(ContributionCertificateData $data, Locale $locale, string $name, ?PdfBranding $branding = null): void
+    {
+        $path = $this->generator()->generate($data, $locale, $branding ?? PdfBranding::bioscore());
 
         try {
             $this->assertFileExists($path);

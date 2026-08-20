@@ -1,4 +1,4 @@
-{% extends routes.layout %}
+{% extends theme_template(routes.layout) %}
 
 {% set page_title = 'Tu aportación' | trans %}
 
@@ -107,7 +107,7 @@
         </fieldset>
 
         <div id="contribution_summary">
-            {{ include('@carbon_footprint/project_contribution/_summary.html.twig') }}
+            {{ include(theme_template('@carbon_footprint/project_contribution/_summary.html.twig')) }}
         </div>
     </form>
 

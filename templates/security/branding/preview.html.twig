@@ -1,0 +1,76 @@
+{% extends '@shared/layout/public-card.html.twig' %}
+
+{% set page_title = 'Vista previa de la personalización' | trans %}
+{% set card_title = 'Vista previa de la personalización' | trans %}
+{% set card_subtitle = 'Así se verán las páginas públicas de la cuenta' | trans %}
+
+{% block card_body %}
+    <h5>{{ 'Botones' | trans }}</h5>
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <button type="button" class="btn btn-primary">{{ 'Principal' | trans }}</button>
+        <button type="button" class="btn btn-outline-primary">{{ 'Principal (contorno)' | trans }}</button>
+        <button type="button" class="btn btn-secondary">{{ 'Secundario' | trans }}</button>
+        <button type="button" class="btn btn-success">{{ 'Éxito' | trans }}</button>
+        <button type="button" class="btn btn-info">{{ 'Información' | trans }}</button>
+        <button type="button" class="btn btn-warning">{{ 'Aviso' | trans }}</button>
+        <button type="button" class="btn btn-danger">{{ 'Error' | trans }}</button>
+        <button type="button" class="btn btn-link">{{ 'Enlace' | trans }}</button>
+    </div>
+
+    <h5>{{ 'Avisos' | trans }}</h5>
+    <div class="mb-4">
+        <div class="alert alert-primary">{{ 'Mensaje principal' | trans }}</div>
+        <div class="alert alert-success">{{ 'Mensaje de éxito' | trans }}</div>
+        <div class="alert alert-warning">{{ 'Mensaje de aviso' | trans }}</div>
+        <div class="alert alert-danger">{{ 'Mensaje de error' | trans }}</div>
+    </div>
+
+    <h5>{{ 'Textos y fondos' | trans }}</h5>
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <span class="badge text-bg-primary">{{ 'Principal' | trans }}</span>
+        <span class="badge text-bg-secondary">{{ 'Secundario' | trans }}</span>
+        <span class="text-primary">{{ 'Texto principal' | trans }}</span>
+        <span class="text-success">{{ 'Texto de éxito' | trans }}</span>
+        <span class="text-danger">{{ 'Texto de error' | trans }}</span>
+        <a href="#">{{ 'Un enlace de ejemplo' | trans }}</a>
+    </div>
+
+    <h5>{{ 'Progreso' | trans }}</h5>
+    <div class="progress mb-4" style="height: 6px" role="progressbar" aria-label="{{ 'Progreso' | trans }}" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" style="width: 60%"></div>
+    </div>
+
+    <h5>{{ 'Formularios' | trans }}</h5>
+    <div class="mb-4">
+        <label class="form-label" for="preview-input">{{ 'Campo de texto' | trans }}</label>
+        <input type="text" class="form-control mb-3" id="preview-input" placeholder="{{ 'Escribe algo' | trans }}">
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="preview-check" checked>
+            <label class="form-check-label" for="preview-check">{{ 'Casilla marcada' | trans }}</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="preview-radio" id="preview-radio" checked>
+            <label class="form-check-label" for="preview-radio">{{ 'Opción seleccionada' | trans }}</label>
+        </div>
+    </div>
+
+    <h5>{{ 'Tabla' | trans }}</h5>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th scope="col">{{ 'Concepto' | trans }}</th>
+                <th scope="col" class="text-end">{{ 'Valor' | trans }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ 'Desplazamientos' | trans }}</td>
+                <td class="text-end">120,00 {{ 'kg CO₂eq' | trans }}</td>
+            </tr>
+            <tr>
+                <td>{{ 'Pernoctaciones' | trans }}</td>
+                <td class="text-end">45,00 {{ 'kg CO₂eq' | trans }}</td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

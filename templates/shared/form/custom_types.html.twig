@@ -135,3 +135,21 @@
         </div>
     </div>
 {% endblock media_picker_widget %}
+{% block hex_color_widget %}
+    <div class="input-group" data-controller="hex-color" data-hex-color-fallback-value="{{ fallback }}">
+        <input type="color"
+               class="form-control form-control-color"
+               value="{{ value|default('') matches '/^#[0-9A-Fa-f]{6}$/' ? value : fallback }}"
+               aria-label="{{ 'Selector de color' | trans }}"
+               data-hex-color-target="swatch"
+               data-action="input->hex-color#syncText">
+        {% set attr = attr|merge({
+            'data-hex-color-target': 'text',
+            'data-action': (attr['data-action']|default('') ~ ' input->hex-color#syncSwatch')|trim,
+        }) %}
+        {{- block('form_widget_simple') -}}
+        <button type="button" class="btn btn-outline-secondary" data-action="hex-color#reset" title="{{ 'Heredar del tema' | trans }}">
+            <twig:Icon name="solar:restart-line-duotone" />
+        </button>
+    </div>
+{% endblock hex_color_widget %}

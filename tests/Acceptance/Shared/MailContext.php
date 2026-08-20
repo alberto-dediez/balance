@@ -40,6 +40,31 @@ final readonly class MailContext implements Context
         return $this->kernel->getContainer()->get(EmailListener::class);
     }
 
+    #[Then('the email with subject :subject contains :text')]
+    public function theEmailWithSubjectContains(string $subject, string $text): void
+    {
+        Assert::assertStringContainsString($text, $this->emailBodyWithSubject($subject));
+    }
+
+    #[Then('the email with subject :subject does not contain :text')]
+    public function theEmailWithSubjectDoesNotContain(string $subject, string $text): void
+    {
+        Assert::assertStringNotContainsString($text, $this->emailBodyWithSubject($subject));
+    }
+
+    private function emailBodyWithSubject(string $subject): string
+    {
+        foreach ($this->getEmailListener()->getMessages() as $message) {
+            Assert::assertInstanceOf(Email::class, $message);
+
+            if ($subject === $message->getSubject()) {
+                return (string) $message->getHtmlBody();
+            }
+        }
+
+        Assert::fail(sprintf('No se ha enviado ningún email con asunto "%s".', $subject));
+    }
+
     #[Then('I received an email with subject :subject to :address')]
     public function iReceivedAnEmailWithSubjectTo(string $subject, string $address): void
     {

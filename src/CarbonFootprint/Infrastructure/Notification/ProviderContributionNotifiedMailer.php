@@ -10,6 +10,7 @@ use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionRe
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionRepository;
 use App\EventOperations\Domain\Model\Provider\Provider;
 use App\EventOperations\Domain\Model\Provider\ProviderRepository;
+use App\Security\Application\Branding\Resolve\BrandingResolver;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
@@ -29,6 +30,7 @@ class ProviderContributionNotifiedMailer implements DomainEventSubscriber
         private ProviderContributionRepository $providerContributionRepository,
         private ProviderRepository $providerRepository,
         private LocaleSwitcher $localeSwitcher,
+        private BrandingResolver $brandingResolver,
     ) {
         $this->register();
     }
@@ -78,7 +80,7 @@ class ProviderContributionNotifiedMailer implements DomainEventSubscriber
 
         $contactName = $contact->name();
 
-        $this->localeSwitcher->runWithLocale($locale, function () use ($contact, $contactName, $companyName, $token): void {
+        $this->localeSwitcher->runWithLocale($locale, function () use ($provider, $contact, $contactName, $companyName, $token): void {
             $this->emailSender->__invoke(
                 recipient: new EmailRecipient(name: $contactName ?? $companyName ?? $contact->email(), email: $contact->email()),
                 subject: $this->translator->trans('Aporta tus datos de emisiones para el evento'),
@@ -87,6 +89,7 @@ class ProviderContributionNotifiedMailer implements DomainEventSubscriber
                     'contactName' => $contactName,
                     'companyName' => $companyName,
                     'token' => $token,
+                    'brandingTokens' => $this->brandingResolver->resolve($provider->accountId()),
                 ],
             );
         });

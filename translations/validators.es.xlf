@@ -693,6 +693,18 @@
         <source>Ya existe un factor de emisión para el año {{ year }}</source>
         <target>Ya existe un factor de emisión para el año {{ year }}</target>
       </trans-unit>
+      <trans-unit id="zMjGhvy" resname="Usa solo números separados por punto y coma.">
+        <source>Usa solo números separados por punto y coma.</source>
+        <target>Usa solo números separados por punto y coma.</target>
+      </trans-unit>
+      <trans-unit id="6wB7G3U" resname="Introduce un color hexadecimal de 6 dígitos, por ejemplo #8A2432.">
+        <source>Introduce un color hexadecimal de 6 dígitos, por ejemplo #8A2432.</source>
+        <target>Introduce un color hexadecimal de 6 dígitos, por ejemplo #8A2432.</target>
+      </trans-unit>
+      <trans-unit id="vcMlDy5" resname="Usa solo letras, números, espacios y guiones: no es un nombre de familia válido.">
+        <source>Usa solo letras, números, espacios y guiones: no es un nombre de familia válido.</source>
+        <target>Usa solo letras, números, espacios y guiones: no es un nombre de familia válido.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

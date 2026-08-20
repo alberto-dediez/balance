@@ -6,6 +6,7 @@ namespace App\Balance\Infrastructure\UI\Web\Public\Certificate;
 
 use App\Balance\Application\ContributionCertificate\Verify\VerifyContributionCertificateRequest;
 use App\Balance\Application\ContributionCertificate\Verify\VerifyContributionCertificateService;
+use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,6 +21,8 @@ use Symfony\Component\Routing\Attribute\Route;
 )]
 class VerifyController extends AbstractController
 {
+    use BrandedPublicControllerTrait;
+
     public function __construct(private RateLimiterFactory $certificateVerificationLimiter) {}
 
     public function __invoke(
@@ -36,6 +39,8 @@ class VerifyController extends AbstractController
         if (null === $certificate) {
             throw $this->createNotFoundException();
         }
+
+        $this->brandFor($certificate->accountId);
 
         $response = $this->render('@balance/public/certificate/verify.html.twig', [
             'certificate' => $certificate,

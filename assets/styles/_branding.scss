@@ -1,0 +1,348 @@
+// ------------------------------------------------------------------
+// Branding layer
+//
+// Every rule in this file MUST live inside `body.branded-page`, so the
+// backoffice can never be reached by an account's palette. The isolation
+// is enforced by tests/Unit/Shared/BrandingStylesheetTest.
+// ------------------------------------------------------------------
+
+body.branded-page {
+  --brand-primary: #{$primary};
+  --brand-primary-rgb: #{red($primary)}, #{green($primary)}, #{blue($primary)};
+  --brand-primary-hover: #{shade-color($primary, 15%)};
+  --brand-primary-subtle: #{tint-color($primary, 80%)};
+  --brand-secondary: #{$secondary};
+  --brand-secondary-rgb: #{red($secondary)}, #{green($secondary)}, #{blue($secondary)};
+  --brand-secondary-hover: #{shade-color($secondary, 15%)};
+  --brand-secondary-subtle: #{tint-color($secondary, 80%)};
+  --brand-success: #{$success};
+  --brand-success-rgb: #{red($success)}, #{green($success)}, #{blue($success)};
+  --brand-info: #{$info};
+  --brand-info-rgb: #{red($info)}, #{green($info)}, #{blue($info)};
+  --brand-warning: #{$warning};
+  --brand-warning-rgb: #{red($warning)}, #{green($warning)}, #{blue($warning)};
+  --brand-danger: #{$danger};
+  --brand-danger-rgb: #{red($danger)}, #{green($danger)}, #{blue($danger)};
+  --brand-light: #{$light};
+  --brand-light-rgb: #{red($light)}, #{green($light)}, #{blue($light)};
+  --brand-dark: #{$dark};
+  --brand-dark-rgb: #{red($dark)}, #{green($dark)}, #{blue($dark)};
+  --brand-body-color: #{$body-color};
+  --brand-body-color-rgb: #{red($body-color)}, #{green($body-color)}, #{blue($body-color)};
+  --brand-body-bg: #{$body-bg};
+  --brand-body-bg-rgb: #{red($body-bg)}, #{green($body-bg)}, #{blue($body-bg)};
+  --brand-font-family: #{inspect($font-family-sans-serif)};
+
+  // Subtle and emphasis ramps are derived from the runtime colours so a
+  // palette override reaches `-subtle` / `-emphasis` utilities too.
+  --brand-success-subtle: color-mix(in srgb, var(--brand-success) 20%, #fff);
+  --brand-info-subtle: color-mix(in srgb, var(--brand-info) 20%, #fff);
+  --brand-warning-subtle: color-mix(in srgb, var(--brand-warning) 20%, #fff);
+  --brand-danger-subtle: color-mix(in srgb, var(--brand-danger) 20%, #fff);
+  --brand-light-subtle: color-mix(in srgb, var(--brand-light) 20%, #fff);
+  --brand-dark-subtle: color-mix(in srgb, var(--brand-dark) 20%, #fff);
+  --brand-primary-emphasis: color-mix(in srgb, var(--brand-primary) 40%, #000);
+  --brand-secondary-emphasis: color-mix(in srgb, var(--brand-secondary) 40%, #000);
+  --brand-success-emphasis: color-mix(in srgb, var(--brand-success) 40%, #000);
+  --brand-info-emphasis: color-mix(in srgb, var(--brand-info) 40%, #000);
+  --brand-warning-emphasis: color-mix(in srgb, var(--brand-warning) 40%, #000);
+  --brand-danger-emphasis: color-mix(in srgb, var(--brand-danger) 40%, #000);
+  --brand-light-emphasis: var(--brand-light);
+  --brand-dark-emphasis: var(--brand-dark);
+
+  // Everything Bootstrap and the theme resolve through `var(--bs-*)`
+  // follows the brand for free once these are redefined.
+  --bs-primary: var(--brand-primary);
+  --bs-primary-rgb: var(--brand-primary-rgb);
+  --bs-primary-bg-subtle: var(--brand-primary-subtle);
+  --bs-primary-border-subtle: var(--brand-primary-subtle);
+  --bs-primary-text-emphasis: var(--brand-primary-emphasis);
+  --bs-secondary: var(--brand-secondary);
+  --bs-secondary-rgb: var(--brand-secondary-rgb);
+  --bs-secondary-bg-subtle: var(--brand-secondary-subtle);
+  --bs-secondary-border-subtle: var(--brand-secondary-subtle);
+  --bs-secondary-text-emphasis: var(--brand-secondary-emphasis);
+  --bs-success: var(--brand-success);
+  --bs-success-rgb: var(--brand-success-rgb);
+  --bs-success-bg-subtle: var(--brand-success-subtle);
+  --bs-success-border-subtle: var(--brand-success-subtle);
+  --bs-success-text-emphasis: var(--brand-success-emphasis);
+  --bs-info: var(--brand-info);
+  --bs-info-rgb: var(--brand-info-rgb);
+  --bs-info-bg-subtle: var(--brand-info-subtle);
+  --bs-info-border-subtle: var(--brand-info-subtle);
+  --bs-info-text-emphasis: var(--brand-info-emphasis);
+  --bs-warning: var(--brand-warning);
+  --bs-warning-rgb: var(--brand-warning-rgb);
+  --bs-warning-bg-subtle: var(--brand-warning-subtle);
+  --bs-warning-border-subtle: var(--brand-warning-subtle);
+  --bs-warning-text-emphasis: var(--brand-warning-emphasis);
+  --bs-danger: var(--brand-danger);
+  --bs-danger-rgb: var(--brand-danger-rgb);
+  --bs-danger-bg-subtle: var(--brand-danger-subtle);
+  --bs-danger-border-subtle: var(--brand-danger-subtle);
+  --bs-danger-text-emphasis: var(--brand-danger-emphasis);
+  --bs-light: var(--brand-light);
+  --bs-light-rgb: var(--brand-light-rgb);
+  --bs-light-bg-subtle: var(--brand-light-subtle);
+  --bs-light-border-subtle: var(--brand-light-subtle);
+  --bs-light-text-emphasis: var(--brand-light-emphasis);
+  --bs-dark: var(--brand-dark);
+  --bs-dark-rgb: var(--brand-dark-rgb);
+  --bs-dark-bg-subtle: var(--brand-dark-subtle);
+  --bs-dark-border-subtle: var(--brand-dark-subtle);
+  --bs-dark-text-emphasis: var(--brand-dark-emphasis);
+  --bs-body-color: var(--brand-body-color);
+  --bs-body-color-rgb: var(--brand-body-color-rgb);
+  --bs-body-bg: var(--brand-body-bg);
+  --bs-body-bg-rgb: var(--brand-body-bg-rgb);
+  --bs-emphasis-color: var(--brand-body-color);
+  --bs-emphasis-color-rgb: var(--brand-body-color-rgb);
+  --bs-secondary-color: rgba(var(--brand-body-color-rgb), 0.75);
+  --bs-secondary-color-rgb: var(--brand-body-color-rgb);
+  --bs-secondary-bg: var(--brand-light);
+  --bs-secondary-bg-rgb: var(--brand-light-rgb);
+  --bs-tertiary-color: rgba(var(--brand-body-color-rgb), 0.5);
+  --bs-tertiary-color-rgb: var(--brand-body-color-rgb);
+  --bs-tertiary-bg: var(--brand-light);
+  --bs-tertiary-bg-rgb: var(--brand-light-rgb);
+  --bs-link-color: var(--brand-primary);
+  --bs-link-color-rgb: var(--brand-primary-rgb);
+  --bs-link-hover-color: var(--brand-primary-hover);
+  --bs-focus-ring-color: rgba(var(--brand-primary-rgb), 0.25);
+  --bs-border-color: rgba(var(--brand-body-color-rgb), 0.15);
+  --bs-body-font-family: var(--brand-font-family);
+  --bs-font-sans-serif: var(--brand-font-family);
+
+  font-family: var(--brand-font-family);
+  color: var(--brand-body-color);
+  background-color: var(--brand-body-bg);
+
+  h1, h2, h3, h4, h5, h6,
+  .h1, .h2, .h3, .h4, .h5, .h6,
+  .btn,
+  .form-label,
+  .card-title {
+    font-family: var(--brand-font-family);
+  }
+
+  // Components below compile their colours as literals, so `--bs-*` is
+  // not enough and each one has to be remapped explicitly.
+
+  .btn-primary {
+    --bs-btn-bg: var(--brand-primary);
+    --bs-btn-border-color: var(--brand-primary);
+    --bs-btn-hover-bg: var(--brand-primary-hover);
+    --bs-btn-hover-border-color: var(--brand-primary-hover);
+    --bs-btn-active-bg: var(--brand-primary-hover);
+    --bs-btn-active-border-color: var(--brand-primary-hover);
+    --bs-btn-disabled-bg: var(--brand-primary);
+    --bs-btn-disabled-border-color: var(--brand-primary);
+    --bs-btn-focus-shadow-rgb: var(--brand-primary-rgb);
+  }
+
+  .btn-outline-primary {
+    --bs-btn-color: var(--brand-primary);
+    --bs-btn-border-color: var(--brand-primary);
+    --bs-btn-hover-bg: var(--brand-primary);
+    --bs-btn-hover-border-color: var(--brand-primary);
+    --bs-btn-active-bg: var(--brand-primary);
+    --bs-btn-active-border-color: var(--brand-primary);
+    --bs-btn-disabled-color: var(--brand-primary);
+    --bs-btn-disabled-border-color: var(--brand-primary);
+    --bs-btn-focus-shadow-rgb: var(--brand-primary-rgb);
+  }
+
+  .btn-secondary {
+    --bs-btn-bg: var(--brand-secondary);
+    --bs-btn-border-color: var(--brand-secondary);
+    --bs-btn-hover-bg: var(--brand-secondary-hover);
+    --bs-btn-hover-border-color: var(--brand-secondary-hover);
+    --bs-btn-active-bg: var(--brand-secondary-hover);
+    --bs-btn-active-border-color: var(--brand-secondary-hover);
+    --bs-btn-disabled-bg: var(--brand-secondary);
+    --bs-btn-disabled-border-color: var(--brand-secondary);
+  }
+
+  .btn-outline-secondary {
+    --bs-btn-color: var(--brand-secondary);
+    --bs-btn-border-color: var(--brand-secondary);
+    --bs-btn-hover-bg: var(--brand-secondary);
+    --bs-btn-hover-border-color: var(--brand-secondary);
+    --bs-btn-active-bg: var(--brand-secondary);
+    --bs-btn-active-border-color: var(--brand-secondary);
+  }
+
+  .btn-success {
+    --bs-btn-bg: var(--brand-success);
+    --bs-btn-border-color: var(--brand-success);
+    --bs-btn-hover-bg: var(--brand-success);
+    --bs-btn-hover-border-color: var(--brand-success);
+    --bs-btn-active-bg: var(--brand-success);
+    --bs-btn-active-border-color: var(--brand-success);
+    --bs-btn-disabled-bg: var(--brand-success);
+    --bs-btn-disabled-border-color: var(--brand-success);
+  }
+
+  .btn-info {
+    --bs-btn-bg: var(--brand-info);
+    --bs-btn-border-color: var(--brand-info);
+    --bs-btn-hover-bg: var(--brand-info);
+    --bs-btn-hover-border-color: var(--brand-info);
+  }
+
+  .btn-outline-info {
+    --bs-btn-color: var(--brand-info);
+    --bs-btn-border-color: var(--brand-info);
+    --bs-btn-hover-bg: var(--brand-info);
+    --bs-btn-hover-border-color: var(--brand-info);
+  }
+
+  .btn-danger {
+    --bs-btn-bg: var(--brand-danger);
+    --bs-btn-border-color: var(--brand-danger);
+    --bs-btn-hover-bg: var(--brand-danger);
+    --bs-btn-hover-border-color: var(--brand-danger);
+  }
+
+  .btn-outline-danger {
+    --bs-btn-color: var(--brand-danger);
+    --bs-btn-border-color: var(--brand-danger);
+    --bs-btn-hover-bg: var(--brand-danger);
+    --bs-btn-hover-border-color: var(--brand-danger);
+  }
+
+  .btn-warning {
+    --bs-btn-bg: var(--brand-warning);
+    --bs-btn-border-color: var(--brand-warning);
+    --bs-btn-hover-bg: var(--brand-warning);
+    --bs-btn-hover-border-color: var(--brand-warning);
+  }
+
+  .btn-light {
+    --bs-btn-bg: var(--brand-light);
+    --bs-btn-border-color: var(--brand-light);
+  }
+
+  .btn-outline-light {
+    --bs-btn-color: var(--brand-light);
+    --bs-btn-border-color: var(--brand-light);
+  }
+
+  .btn-outline-dark {
+    --bs-btn-color: var(--brand-dark);
+    --bs-btn-border-color: var(--brand-dark);
+    --bs-btn-hover-bg: var(--brand-dark);
+    --bs-btn-hover-border-color: var(--brand-dark);
+  }
+
+  .btn-link {
+    --bs-btn-color: var(--brand-primary);
+    --bs-btn-hover-color: var(--brand-primary-hover);
+    --bs-btn-active-color: var(--brand-primary-hover);
+  }
+
+  .alert-primary {
+    --bs-alert-color: var(--brand-primary-hover);
+    --bs-alert-bg: var(--brand-primary-subtle);
+    --bs-alert-border-color: var(--brand-primary-subtle);
+    --bs-alert-link-color: var(--brand-primary-hover);
+  }
+
+  .alert-success {
+    --bs-alert-color: var(--brand-success);
+    --bs-alert-border-color: var(--brand-success);
+  }
+
+  .alert-info {
+    --bs-alert-color: var(--brand-info);
+    --bs-alert-border-color: var(--brand-info);
+  }
+
+  .alert-warning {
+    --bs-alert-color: var(--brand-warning);
+    --bs-alert-border-color: var(--brand-warning);
+  }
+
+  .alert-danger {
+    --bs-alert-color: var(--brand-danger);
+    --bs-alert-border-color: var(--brand-danger);
+  }
+
+  .progress,
+  .progress-stacked {
+    --bs-progress-bar-bg: var(--brand-primary);
+  }
+
+  .form-check-input:checked {
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+  }
+
+  .form-check-input:focus,
+  .form-control:focus,
+  .form-select:focus {
+    border-color: var(--brand-primary-subtle);
+    box-shadow: 0 0 0 0.25rem rgba(var(--brand-primary-rgb), 0.25);
+  }
+
+  .nav-tabs .nav-link.active,
+  .nav-pills .nav-link.active {
+    color: var(--brand-primary);
+  }
+
+  .page-link {
+    --bs-pagination-color: var(--brand-primary);
+    --bs-pagination-hover-color: var(--brand-primary-hover);
+    --bs-pagination-active-bg: var(--brand-primary);
+    --bs-pagination-active-border-color: var(--brand-primary);
+    --bs-pagination-focus-color: var(--brand-primary-hover);
+  }
+
+  // `.link-*` utilities compile their hover colour as a literal, so the
+  // `--bs-*-rgb` remap above only reaches their resting state.
+  .link-primary:hover,
+  .link-primary:focus {
+    color: rgba(var(--brand-primary-rgb), var(--bs-link-opacity, 1)) !important;
+    text-decoration-color: rgba(var(--brand-primary-rgb), var(--bs-link-underline-opacity, 1)) !important;
+  }
+
+  .link-secondary:hover,
+  .link-secondary:focus {
+    color: rgba(var(--brand-secondary-rgb), var(--bs-link-opacity, 1)) !important;
+    text-decoration-color: rgba(var(--brand-secondary-rgb), var(--bs-link-underline-opacity, 1)) !important;
+  }
+
+  .link-success:hover,
+  .link-success:focus {
+    color: rgba(var(--brand-success-rgb), var(--bs-link-opacity, 1)) !important;
+    text-decoration-color: rgba(var(--brand-success-rgb), var(--bs-link-underline-opacity, 1)) !important;
+  }
+
+  .link-info:hover,
+  .link-info:focus {
+    color: rgba(var(--brand-info-rgb), var(--bs-link-opacity, 1)) !important;
+    text-decoration-color: rgba(var(--brand-info-rgb), var(--bs-link-underline-opacity, 1)) !important;
+  }
+
+  .link-warning:hover,
+  .link-warning:focus {
+    color: rgba(var(--brand-warning-rgb), var(--bs-link-opacity, 1)) !important;
+    text-decoration-color: rgba(var(--brand-warning-rgb), var(--bs-link-underline-opacity, 1)) !important;
+  }
+
+  .link-danger:hover,
+  .link-danger:focus {
+    color: rgba(var(--brand-danger-rgb), var(--bs-link-opacity, 1)) !important;
+    text-decoration-color: rgba(var(--brand-danger-rgb), var(--bs-link-underline-opacity, 1)) !important;
+  }
+
+  a:not(.btn):not(.nav-link):not(.dropdown-item) {
+    color: var(--brand-primary);
+
+    &:hover,
+    &:focus {
+      color: var(--brand-primary-hover);
+    }
+  }
+}

@@ -21,6 +21,11 @@ services:
     App\Balance\Application\ContributionCertificate\Generate\GenerateContributionCertificateService:
         arguments:
             $localeList: '%app.locale_list%'
+            $documentAuthor: '%company.name%'
+
+    App\Balance\Infrastructure\Tcpdf\ThemeAwareContributionCertificatePdfGenerator:
+        arguments:
+            $themeGenerators: !tagged_locator { tag: 'app.theme.certificate_generator', index_by: 'theme' }
 
     App\Balance\Infrastructure\Storage\LocalContributionCertificateStorage:
         arguments:

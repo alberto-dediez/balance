@@ -73,7 +73,7 @@ final class TcpdfEventCarbonFootprintReportPdfGenerator implements EventCarbonFo
     {
         $pdf->AddPage();
         $this->renderSectionTitle($pdf, $this->trans('Datos del evento', $locale));
-        $this->setFont($pdf, 10, self::FONT_STYLE_REGULAR, self::COLOR_BODY_TEXT);
+        $this->setFont($pdf, 10, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
 
         $rows = [
             [$this->trans('Nombre del evento', $locale), $data->eventName],
@@ -96,7 +96,7 @@ final class TcpdfEventCarbonFootprintReportPdfGenerator implements EventCarbonFo
     {
         $pdf->AddPage();
         $this->renderSectionTitle($pdf, $title);
-        $this->setFont($pdf, 10.5, self::FONT_STYLE_REGULAR, self::COLOR_BODY_TEXT);
+        $this->setFont($pdf, 10.5, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
 
         $pdf->writeHTML($this->markdownToStyledHtml($markdown), true, false, true, false, '');
     }
@@ -105,7 +105,7 @@ final class TcpdfEventCarbonFootprintReportPdfGenerator implements EventCarbonFo
     {
         $pdf->AddPage();
         $this->renderSectionTitle($pdf, $this->trans('Resultados', $locale));
-        $this->setFont($pdf, 10, self::FONT_STYLE_REGULAR, self::COLOR_BODY_TEXT);
+        $this->setFont($pdf, 10, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
 
         $totalsRows = [
             ['CO₂eq (kg)', number_format((float) $data->totalEmissions->co2eq(), 2, ',', '.')],
@@ -155,7 +155,7 @@ final class TcpdfEventCarbonFootprintReportPdfGenerator implements EventCarbonFo
 
         $pdf->AddPage();
         $this->renderSectionTitle($pdf, $this->trans('Exclusiones de fuentes de emisión', $locale));
-        $this->setFont($pdf, 10, self::FONT_STYLE_REGULAR, self::COLOR_BODY_TEXT);
+        $this->setFont($pdf, 10, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
 
         $header = [
             $this->trans('Fase', $locale),
@@ -217,7 +217,7 @@ final class TcpdfEventCarbonFootprintReportPdfGenerator implements EventCarbonFo
             ];
         }
 
-        $this->setFont($pdf, 7.5, self::FONT_STYLE_REGULAR, self::COLOR_BODY_TEXT);
+        $this->setFont($pdf, 7.5, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
         $columnWidths = ['22%', '9%', '13%', '11%', '11%', '6%', '17%', '11%'];
         $pdf->writeHTML($this->buildTableHtml($header, $rows, $columnWidths), true, false, true, false, '');
     }

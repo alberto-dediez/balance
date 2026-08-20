@@ -1012,6 +1012,15 @@ final readonly class CarbonFootprintContext implements Context
         );
     }
 
+    #[When('I email the certificate of the only contribution with attendee survey token :token')]
+    public function iEmailTheCertificateOfTheOnlyContribution(string $token): void
+    {
+        $this->client->request(
+            'POST',
+            sprintf('/es/carbon-footprint/attendee-survey/%s/contribution/%s/certificate/email', $token, $this->onlyContributionId()),
+        );
+    }
+
     private function onlyContributionId(): string
     {
         $projectContributionRepository = $this->client->getContainer()->get(ProjectContributionRepository::class);

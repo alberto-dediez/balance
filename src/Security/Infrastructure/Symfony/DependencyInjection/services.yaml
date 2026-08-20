@@ -74,6 +74,16 @@ services:
         arguments:
             $uploadsDir: '%app.uploads_dir%'
 
+    App\Shared\Domain\Model\Theme\ThemeRegistry:
+        alias: App\Shared\Infrastructure\Theme\TaggedThemeRegistry
+
+    App\Shared\Infrastructure\Theme\TaggedThemeRegistry:
+        arguments:
+            $themes: !tagged_iterator app.theme
+
+    App\Security\Application\Branding\Resolve\BrandingResolver:
+        alias: App\Security\Application\Branding\Resolve\ResolveBrandingService
+
     App\Security\Domain\Model\SignatureRequest\PdfSigner:
         alias: App\Security\Infrastructure\Pdf\HmacPdfSigner
 

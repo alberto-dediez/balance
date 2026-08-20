@@ -19,6 +19,7 @@ twig:
         'templates/library': 'library'
         'templates/balance': 'balance'
         'templates/payments': 'payments'
+        'templates/themes': 'themes'
         '%kernel.project_dir%/assets': assets
 
 when@test:

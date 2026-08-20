@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkToke
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\PropertyTripPublicControllerTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\Trip\LegInputsHttpMapper;
+use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +23,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 class TripController extends AbstractController
 {
     use PropertyTripPublicControllerTrait;
+    use BrandedPublicControllerTrait;
 
     public function __construct(
         private PublicFormRateLimiter $propertyTripRateLimiter,
@@ -42,6 +44,8 @@ class TripController extends AbstractController
         } catch (TripCalculationLinkTokenInvalidException) {
             return $this->propertyTripInvalidResponse($this->propertyTripRateLimiter, $request);
         }
+
+        $this->brandFor($response->tripCalculationLink->accountId());
 
         if ($request->isMethod('POST')) {
             if (!$this->isCsrfTokenValid('property_trip_' . $token, $request->request->getString('_token'))) {

@@ -1,0 +1,11 @@
+{% set google_fonts_url = branding_google_fonts_url() %}
+{% if google_fonts_url %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="{{ google_fonts_url }}" rel="stylesheet">
+{% endif %}
+{% set theme_stylesheet = branding_stylesheet() %}
+{% if theme_stylesheet %}
+    <link href="{{ theme_stylesheet }}" rel="stylesheet" type="text/css">
+{% endif %}
+<style>body.branded-page{ {{ branding_css_vars()|raw }} }</style>

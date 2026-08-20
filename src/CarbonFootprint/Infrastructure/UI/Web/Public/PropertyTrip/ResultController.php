@@ -14,6 +14,7 @@ use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +24,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class ResultController extends AbstractController
 {
     use PropertyTripPublicControllerTrait;
+    use BrandedPublicControllerTrait;
 
     public function __construct(
         private PublicFormRateLimiter $propertyTripRateLimiter,
@@ -45,6 +47,8 @@ class ResultController extends AbstractController
         } catch (TripCalculationLinkTokenInvalidException) {
             return $this->propertyTripInvalidResponse($this->propertyTripRateLimiter, $request);
         }
+
+        $this->brandFor($response->tripCalculationLink->accountId());
 
         $tripCalculation = $tripCalculationRepository->find(new TripCalculationId($tripCalculationId));
         $linkId = $tripCalculation?->tripCalculationLinkId();

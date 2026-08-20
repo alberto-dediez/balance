@@ -19,6 +19,7 @@ use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionTo
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\Answer\PhaseAnswerHttpMapper;
 use App\CarbonFootprint\Infrastructure\UI\Web\ProviderContribution\View\ProviderContributionPhaseStepView;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\ProviderContribution\ProviderContributionPublicControllerTrait;
+use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,6 +30,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 #[Route('/carbon-footprint/contribution/{token}/breakdown', name: 'public_carbon_footprint_contribution_breakdown')]
 class BreakdownController extends AbstractController
 {
+    use BrandedPublicControllerTrait;
     use ProviderContributionPublicControllerTrait;
 
     private const Phase PHASE = Phase::Breakdown;
@@ -86,6 +88,8 @@ class BreakdownController extends AbstractController
         } catch (ProviderContributionTokenInvalidException|ProviderContributionIgnoredException) {
             return $this->providerContributionInvalidResponse($this->providerContributionInvalidTokenLimiter, $request);
         }
+
+        $this->brandFor($response->providerContribution->accountId());
 
         return $this->render('@carbon_footprint/public/contribution/step/breakdown.html.twig', $stepView->build($response->sections) + [
             'token' => $token,
