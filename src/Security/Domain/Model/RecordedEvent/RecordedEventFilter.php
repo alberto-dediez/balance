@@ -13,6 +13,7 @@ class RecordedEventFilter
 
     public function __construct(
         public ?UserId $userId = null,
+        public ?UserId $impersonatorId = null,
         public ?string $eventName = null,
         public ?string $context = null,
         public ?string $aggregateRootId = null,

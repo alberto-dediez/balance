@@ -6725,6 +6725,58 @@
         <source>Heredar del tema</source>
         <target>Inherit from the theme</target>
       </trans-unit>
+      <trans-unit id="CGDey1J" resname="Incluye los archivos que otras cuentas han compartido en su biblioteca">
+        <source>Incluye los archivos que otras cuentas han compartido en su biblioteca</source>
+        <target>Includes the files the other accounts shared in their library</target>
+      </trans-unit>
+      <trans-unit id="Rzkrw12" resname="Quién puede abrir este archivo allí donde se use">
+        <source>Quién puede abrir este archivo allí donde se use</source>
+        <target>Who may open this file wherever it is used</target>
+      </trans-unit>
+      <trans-unit id="2o9kXr." resname="Compartir en la biblioteca">
+        <source>Compartir en la biblioteca</source>
+        <target>Share in the library</target>
+      </trans-unit>
+      <trans-unit id="GIDivqy" resname="El archivo aparecerá en la biblioteca del resto de cuentas, que podrán usarlo">
+        <source>El archivo aparecerá en la biblioteca del resto de cuentas, que podrán usarlo</source>
+        <target>The file will show up in the library of the other accounts, which will be able to use it</target>
+      </trans-unit>
+      <trans-unit id="40LlMAe" resname="Quién puede abrir los archivos subidos allí donde se usen">
+        <source>Quién puede abrir los archivos subidos allí donde se usen</source>
+        <target>Who may open the uploaded files wherever they are used</target>
+      </trans-unit>
+      <trans-unit id="4K3.3KB" resname="Los archivos aparecerán en la biblioteca del resto de cuentas, que podrán usarlos">
+        <source>Los archivos aparecerán en la biblioteca del resto de cuentas, que podrán usarlos</source>
+        <target>The files will show up in the library of the other accounts, which will be able to use them</target>
+      </trans-unit>
+      <trans-unit id="P5bm0P4" resname="Compartido en la biblioteca">
+        <source>Compartido en la biblioteca</source>
+        <target>Shared in the library</target>
+      </trans-unit>
+      <trans-unit id="Bd.IblR" resname="Suplantado por">
+        <source>Suplantado por</source>
+        <target>Impersonated by</target>
+      </trans-unit>
+      <trans-unit id="AE6Wexu" resname="Suplantando a">
+        <source>Suplantando a</source>
+        <target>Impersonating</target>
+      </trans-unit>
+      <trans-unit id="QupisYN" resname="Suplantar">
+        <source>Suplantar</source>
+        <target>Impersonate</target>
+      </trans-unit>
+      <trans-unit id="CmbrCta" resname="Cambiar de cuenta">
+        <source>Cambiar de cuenta</source>
+        <target>Switch account</target>
+      </trans-unit>
+      <trans-unit id="SplCtaC" resname="Suplantando cuenta">
+        <source>Suplantando cuenta</source>
+        <target>Impersonating account</target>
+      </trans-unit>
+      <trans-unit id="VlvrMCta" resname="Volver a mi cuenta">
+        <source>Volver a mi cuenta</source>
+        <target>Back to my account</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

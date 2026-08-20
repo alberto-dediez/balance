@@ -42,6 +42,11 @@ class MediaMother
         return self::from(MediaId::generate(), $name, 'image/png', $accountId, null, $visibility);
     }
 
+    public static function sharedMedia(string $name = 'logo.png', ?AccountId $accountId = null): Media
+    {
+        return self::from(MediaId::generate(), $name, 'image/png', $accountId, null, MediaVisibility::System, true);
+    }
+
     public static function document(): Media
     {
         return self::fromName('contract.pdf', 'application/pdf');
@@ -59,6 +64,7 @@ class MediaMother
         ?AccountId $accountId = null,
         ?UserId $uploadedBy = null,
         MediaVisibility $visibility = MediaVisibility::Account,
+        bool $shared = false,
     ): Media {
         $media = new Media(id: $mediaId);
 
@@ -72,6 +78,7 @@ class MediaMother
             accountId: $accountId,
             uploadedBy: $uploadedBy,
             visibility: $visibility,
+            shared: $shared,
         );
 
         return $media;

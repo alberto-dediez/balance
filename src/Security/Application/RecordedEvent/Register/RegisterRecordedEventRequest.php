@@ -10,5 +10,5 @@ use App\Shared\Domain\Event\DomainEvent;
 
 class RegisterRecordedEventRequest implements Command
 {
-    public function __construct(public ?UserId $userId, public DomainEvent $event) {}
+    public function __construct(public ?UserId $userId, public DomainEvent $event, public ?UserId $impersonatorId = null) {}
 }

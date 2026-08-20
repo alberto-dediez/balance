@@ -101,7 +101,7 @@
                   data-error-text="{{ 'No se ha podido subir el archivo' | trans }}"></span>
         </div>
 
-        {% if visibility is not null and visibility.isShared %}
+        {% if visibility is not null and visibility.isAccessibleOutsideAccount %}
             <div class="form-text">
                 {% trans with {'{visibility}': visibility.value | trans({}, 'mediaVisibility')} %}Los archivos de este campo son accesibles para: {visibility}{% endtrans %}
             </div>
@@ -124,6 +124,18 @@
                                    placeholder="{{ 'Buscar archivos' | trans }}"
                                    data-media-picker-target="query"
                                    data-action="input->media-picker#search">
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input type="checkbox"
+                                   class="form-check-input"
+                                   id="{{ id }}_include_shared"
+                                   data-media-picker-target="includeShared"
+                                   data-action="change->media-picker#search">
+
+                            <label class="form-check-label" for="{{ id }}_include_shared">
+                                {% trans %}Ver archivos compartidos{% endtrans %}
+                            </label>
                         </div>
 
                         <div class="row g-2"

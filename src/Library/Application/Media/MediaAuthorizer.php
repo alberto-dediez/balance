@@ -20,7 +20,7 @@ final class MediaAuthorizer extends AbstractAuthorizer
 
     protected function canView(mixed $subject, User $user): bool
     {
-        if ($subject->isShared()) {
+        if ($subject->isAccessibleOutsideAccount()) {
             return true;
         }
 
@@ -29,7 +29,7 @@ final class MediaAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        return true;
+        return $this->canView($subject, $user);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
@@ -42,7 +42,7 @@ final class MediaAuthorizer extends AbstractAuthorizer
             return true;
         }
 
-        if ($user->hasRole(Role::Owner)) {
+        if ($this->userHasRole($user, Role::Owner)) {
             return true;
         }
 
@@ -70,19 +70,21 @@ final class MediaAuthorizer extends AbstractAuthorizer
 
     private function isAdmin(User $user): bool
     {
-        if ($user->hasRole(Role::SuperAdmin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin)) {
             return true;
         }
 
-        return $user->hasRole(Role::Admin);
+        return $this->userHasRole($user, Role::Admin);
     }
 
     private function belongsToUserAccount(Media $media, User $user): bool
     {
+        $currentAccountId = $this->currentAccountId($user);
+
         if (!$media->accountId() instanceof AccountId) {
-            return !$user->accountId() instanceof AccountId;
+            return !$currentAccountId instanceof AccountId;
         }
 
-        return $user->accountId() instanceof AccountId && $media->accountId()->equals($user->accountId());
+        return $currentAccountId instanceof AccountId && $media->accountId()->equals($currentAccountId);
     }
 }

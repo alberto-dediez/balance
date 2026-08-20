@@ -32,8 +32,6 @@ parameters:
             identifier: nullsafe.neverNull
             path: src/Notifications/Infrastructure/Notification/DispatchingSystemNotifier.php
         -
-            message: '#Trait App\\Security\\Infrastructure\\UI\\Web\\User\\OnlyUsersFromAccountTrait is used zero times and is not analysed\.#'
-        -
             message: '#Parameter \#1 .* of method .*::__invoke\(\) expects .*, .*Command given\.#'
             path: src/Shared/Application/CommandBus/CommandInvokeHandlerTrait.php
         -

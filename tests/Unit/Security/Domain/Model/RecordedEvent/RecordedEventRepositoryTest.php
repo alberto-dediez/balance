@@ -73,6 +73,27 @@ abstract class RecordedEventRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
+    public function testFindByFilterByImpersonator(): void
+    {
+        $repository = $this->createSUT();
+
+        $impersonatorId = UserId::generate();
+
+        $repository->add(RecordedEventMother::random());
+        $repository->add(RecordedEventMother::random());
+        $repository->add(RecordedEventMother::impersonated(UserId::generate(), $impersonatorId));
+
+        $filter = new RecordedEventFilter(
+            impersonatorId: $impersonatorId,
+        );
+
+        $result = $repository->findByFilter($filter);
+
+        $this->assertCount(1, $result);
+        $this->assertTrue($result[0]->isImpersonated());
+        $this->assertEquals($impersonatorId, $result[0]->impersonatorId());
+    }
+
     public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();

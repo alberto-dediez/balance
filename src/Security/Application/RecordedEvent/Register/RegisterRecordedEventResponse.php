@@ -10,5 +10,5 @@ use App\Shared\Application\CommandBus\CommandResponse;
 
 class RegisterRecordedEventResponse implements CommandResponse
 {
-    public function __construct(public RecordedEventId $recordedEventId, public ?UserId $userId) {}
+    public function __construct(public RecordedEventId $recordedEventId, public ?UserId $userId, public ?UserId $impersonatorId = null) {}
 }

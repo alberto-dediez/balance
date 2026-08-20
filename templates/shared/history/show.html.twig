@@ -31,7 +31,12 @@
                                             'event': event.rebuild()
                                         } %}
                                     </td>
-                                    <td>{{ event.userId | user_name | trans | raw }}</td>
+                                    <td>
+                                        {{ event.userId | user_name | trans | raw }}
+                                        {% if event.isImpersonated %}
+                                            <span class="badge bg-warning-subtle text-warning">{{ 'Suplantado por' | trans }}: {{ event.impersonatorId | user_name | trans | raw }}</span>
+                                        {% endif %}
+                                    </td>
                                     <td class="text-nowrap">{{ event.occurredOn | date('H:i d/m/Y') }}</td>
                                 </tr>
                             {% else %}

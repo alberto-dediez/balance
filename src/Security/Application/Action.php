@@ -10,6 +10,8 @@ enum Action: string
 
     case History = 'history';
 
+    case Impersonate = 'impersonate';
+
     case List = 'list';
 
     case Edit = 'edit';

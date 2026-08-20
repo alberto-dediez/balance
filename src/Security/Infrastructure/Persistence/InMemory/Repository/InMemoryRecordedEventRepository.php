@@ -61,6 +61,10 @@ class InMemoryRecordedEventRepository implements RecordedEventRepository
                 continue;
             }
 
+            if ($filter->impersonatorId instanceof UserId && (null == $event->impersonatorId() || false === $filter->impersonatorId->equals($event->impersonatorId()))) {
+                continue;
+            }
+
             if (!in_array($filter->eventName, [null, '', '0', $event->eventName()], true)) {
                 continue;
             }

@@ -7,6 +7,7 @@ namespace App\Library\Infrastructure\Symfony\Form;
 use App\Library\Application\Media\Update\UpdateMediaRequest;
 use App\Library\Domain\Model\Media\MediaVisibility;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -40,7 +41,7 @@ class UpdateMediaType extends AbstractType
             ->add('visibility', EnumType::class, [
                 'class' => MediaVisibility::class,
                 'label' => new TranslatableMessage('Visibilidad'),
-                'help' => new TranslatableMessage('Quién puede acceder a este archivo'),
+                'help' => new TranslatableMessage('Quién puede abrir este archivo allí donde se use'),
                 'required' => true,
                 'choice_translation_domain' => 'mediaVisibility',
             ])
@@ -51,12 +52,23 @@ class UpdateMediaType extends AbstractType
                 'label' => new TranslatableMessage('Guardar y salir'),
             ])
         ;
+
+        if (true === $options['shareable']) {
+            $builder->add('shared', CheckboxType::class, [
+                'label' => new TranslatableMessage('Compartir en la biblioteca'),
+                'help' => new TranslatableMessage('El archivo aparecerá en la biblioteca del resto de cuentas, que podrán usarlo'),
+                'required' => false,
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => UpdateMediaRequest::class,
+            'shareable' => false,
         ]);
+
+        $resolver->setAllowedTypes('shareable', 'bool');
     }
 }

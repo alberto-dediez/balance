@@ -17,6 +17,7 @@
         <field name="mimeType" type="string" length="255" column="mime_type" nullable="false"/>
         <field name="type" type="string" enum-type="App\Library\Domain\Model\Media\MediaType" nullable="false"/>
         <field name="visibility" type="string" enum-type="App\Library\Domain\Model\Media\MediaVisibility" nullable="false"/>
+        <field name="shared" type="boolean" nullable="false"/>
         <field name="size" type="integer" nullable="false"/>
         <field name="description" type="text" nullable="true"/>
         <field name="alternativeText" type="string" length="255" column="alternative_text" nullable="true"/>

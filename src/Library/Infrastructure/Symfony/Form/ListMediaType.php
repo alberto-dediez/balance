@@ -32,7 +32,7 @@ class ListMediaType extends BaseFilterType
             ])
             ->add('includeShared', CheckboxType::class, [
                 'label' => new TranslatableMessage('Ver archivos compartidos'),
-                'help' => new TranslatableMessage('Incluye los archivos compartidos con toda la plataforma'),
+                'help' => new TranslatableMessage('Incluye los archivos que otras cuentas han compartido en su biblioteca'),
                 'required' => false,
             ])
         ;

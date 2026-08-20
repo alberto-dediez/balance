@@ -4,11 +4,35 @@ declare(strict_types=1);
 
 namespace App\Security\Application;
 
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CurrentAccount\CurrentAccountIdProvider;
+use App\Shared\Application\CurrentRoles\CurrentRolesProvider;
 
 abstract class AbstractAuthorizer implements Authorizer
 {
+    public function __construct(
+        private readonly ?CurrentAccountIdProvider $currentAccountIdProvider = null,
+        private readonly ?CurrentRolesProvider $currentRolesProvider = null,
+    ) {}
+
+    protected function currentAccountId(User $user): ?AccountId
+    {
+        return $this->currentAccountIdProvider?->currentAccountId() ?? $user->accountId();
+    }
+
+    protected function userHasRole(User $user, Role $role): bool
+    {
+        $currentRoles = $this->currentRolesProvider?->currentRoles($user);
+
+        if (null === $currentRoles) {
+            return $user->hasRole($role);
+        }
+
+        return in_array($role, $currentRoles, true);
+    }
+
     public function canDoThat(mixed $subject, Action $action, User $user): bool
     {
         if (!$this->supports($subject)) {
@@ -26,6 +50,7 @@ abstract class AbstractAuthorizer implements Authorizer
             Action::Import => $this->canImport($subject, $user),
             Action::Export => $this->canExport($subject, $user),
             Action::History => $this->canHistory($subject, $user),
+            Action::Impersonate => $this->canImpersonate($subject, $user),
         };
     }
 
@@ -38,11 +63,11 @@ abstract class AbstractAuthorizer implements Authorizer
 
     protected function canAdmin(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::Admin)) {
+        if ($this->userHasRole($user, Role::Admin)) {
             return true;
         }
 
-        return $user->hasRole(Role::SuperAdmin);
+        return $this->userHasRole($user, Role::SuperAdmin);
     }
 
     protected function canAutocomplete(mixed $subject, User $user): bool
@@ -53,6 +78,11 @@ abstract class AbstractAuthorizer implements Authorizer
     protected function canHistory(mixed $subject, User $user): bool
     {
         return $this->canAdmin($subject, $user);
+    }
+
+    protected function canImpersonate(mixed $subject, User $user): bool
+    {
+        return false;
     }
 
     protected function canImport(mixed $subject, User $user): bool

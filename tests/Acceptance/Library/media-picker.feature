@@ -38,6 +38,34 @@ Feature:
         Then I see a text "terms.png"
         Then I do not see a text "private.png"
 
+    Scenario: The search stays in my own account unless the shared files are asked for
+        Given account "Minotour" with id "1111" exists
+        Given account "Bioscore" with id "2222" exists
+        Given user "user1@dediez.software" with role "ROLE_USER" of account "1111" exists
+        Given media "own.png" of account "1111" exists
+        Given media "manual.png" with id "3333" shared in the library of account "2222" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media/search"
+        Then the response status should be 200
+        Then I see a text "own.png"
+        Then I do not see a text "manual.png"
+
+    Scenario: As a user I can pick the files the other accounts shared in the library
+        Given account "Minotour" with id "1111" exists
+        Given account "Bioscore" with id "2222" exists
+        Given user "user1@dediez.software" with role "ROLE_USER" of account "1111" exists
+        Given media "own.png" of account "1111" exists
+        Given media "foreign.png" of account "2222" exists
+        Given media "manual.png" with id "3333" shared in the library of account "2222" exists
+        Given media "avatar.png" with id "4444" and visibility "System" of account "2222" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media/search?includeShared=1"
+        Then the response status should be 200
+        Then I see a text "own.png"
+        Then I see a text "manual.png"
+        Then I do not see a text "foreign.png"
+        Then I do not see a text "avatar.png"
+
     Scenario: As a user I can upload a new file by ajax from a form holding a picker
         Given user "user1@dediez.software" with role "ROLE_USER" exists
         When I am logged as "user1@dediez.software"

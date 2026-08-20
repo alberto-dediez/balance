@@ -61,6 +61,45 @@ class UpdateMediaServiceTest extends TestCase
         $this->assertEquals('Logotipo', $lastEvent->alternativeText());
     }
 
+    public function testOnlyAnAdminSharesAFileWithTheOtherAccounts(): void
+    {
+        $repository = new InMemoryMediaRepository();
+
+        $accountId = AccountId::generate();
+
+        $media = MediaMother::fromNameAndAccount('logo.png', $accountId);
+
+        $repository->add($media);
+
+        $sut = $this->createSUT($repository);
+
+        $this->expectException(UnauthorizedActionException::class);
+
+        $sut(
+            new UpdateMediaRequest(mediaId: $media->id(), name: $media->name(), shared: true),
+            UserMother::fromUsernameAndRoleAndAccount('owner@dediez.software', Role::Owner, $accountId),
+        );
+    }
+
+    public function testAnAdminSharesAFileWithTheOtherAccounts(): void
+    {
+        $repository = new InMemoryMediaRepository();
+
+        $media = MediaMother::uploadedMedia();
+
+        $repository->add($media);
+
+        $sut = $this->createSUT($repository);
+
+        $result = $sut(
+            new UpdateMediaRequest(mediaId: $media->id(), name: $media->name(), shared: true),
+            UserMother::adminUser(),
+        );
+
+        $this->assertTrue($result->shared);
+        $this->assertEquals(MediaVisibility::System, $result->visibility);
+    }
+
     public function testNothingIsRecordedWhenNothingChanges(): void
     {
         $repository = new InMemoryMediaRepository();

@@ -46,6 +46,12 @@ class UpdateMediaService implements CommandHandler
             $media->changeVisibility($request->visibility);
         }
 
+        if ($request->shared !== $media->isShared()) {
+            $this->authorizer->denyUnlessCanDoThat($media, Action::Admin, $user);
+
+            $media->changeSharing($request->shared);
+        }
+
         $this->repository->add($media);
 
         return new UpdateMediaResponse(
@@ -54,6 +60,7 @@ class UpdateMediaService implements CommandHandler
             description: $media->description(),
             alternativeText: $media->alternativeText(),
             visibility: $media->visibility(),
+            shared: $media->isShared(),
         );
     }
 

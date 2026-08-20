@@ -12,6 +12,7 @@
 
         <field name="aggregateRootId" type="string" length="36" column="aggregate_root_id" nullable="true" />
         <field name="userId" type="user_id" nullable="true" />
+        <field name="impersonatorId" type="user_id" column="impersonator_id" nullable="true" />
         <field name="occurredOn" type="datetime_immutable" column="occurred_on" nullable="false" />
         <field name="eventName" type="string" length="255" column="event_name" nullable="false" />
         <field name="context" type="string" length="255" nullable="false" />

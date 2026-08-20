@@ -87,6 +87,12 @@ final class LibraryContext implements Context
         $this->addMedia(MediaMother::from(new MediaId($id), $name, 'image/png', new AccountId($account), null, MediaVisibility::from($visibility)));
     }
 
+    #[Given('media :name with id :id shared in the library of account :account exists')]
+    public function mediaSharedInTheLibraryOfAccountExists(string $name, string $id, string $account): void
+    {
+        $this->addMedia(MediaMother::from(new MediaId($id), $name, 'image/png', new AccountId($account), null, MediaVisibility::System, true));
+    }
+
     #[When('I submit the upload form with file :fileName')]
     public function iSubmitTheUploadFormWithFile(string $fileName): void
     {
@@ -178,6 +184,24 @@ final class LibraryContext implements Context
 
         Assert::assertCount(1, $media);
         Assert::assertEquals(MediaVisibility::from($visibility), $media[0]->visibility());
+    }
+
+    #[Then('the file :fileName is shared in the library')]
+    public function theFileIsSharedInTheLibrary(string $fileName): void
+    {
+        $media = $this->getMediaRepository()->findByFilter(new MediaFilter(name: $fileName, limit: 0));
+
+        Assert::assertCount(1, $media);
+        Assert::assertTrue($media[0]->isShared());
+    }
+
+    #[Then('the file :fileName is not shared in the library')]
+    public function theFileIsNotSharedInTheLibrary(string $fileName): void
+    {
+        $media = $this->getMediaRepository()->findByFilter(new MediaFilter(name: $fileName, limit: 0));
+
+        Assert::assertCount(1, $media);
+        Assert::assertFalse($media[0]->isShared());
     }
 
     #[Then('the library contains :total files')]

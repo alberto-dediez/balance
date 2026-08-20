@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\UI\Web\CRUD;
 
+use App\Shared\Application\CurrentAccount\CurrentAccountIdProvider;
 use App\Shared\Infrastructure\Persistence\Doctrine\DoctrineEntityReattacher;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
@@ -15,10 +16,18 @@ trait FilterTrait
 {
     private readonly DoctrineEntityReattacher $doctrineEntityReattacher;
 
+    private ?CurrentAccountIdProvider $currentAccountIdProvider = null;
+
     #[Required]
     public function setDoctrineEntityReattacher(DoctrineEntityReattacher $doctrineEntityReattacher): void
     {
         $this->doctrineEntityReattacher = $doctrineEntityReattacher;
+    }
+
+    #[Required]
+    public function setCurrentAccountIdProvider(CurrentAccountIdProvider $currentAccountIdProvider): void
+    {
+        $this->currentAccountIdProvider = $currentAccountIdProvider;
     }
 
     /**
@@ -32,7 +41,11 @@ trait FilterTrait
         $session = $request->getSession();
         $route = $request->attributes->get('_route');
 
-        $key = sprintf('%s-%s', $route, md5($formClass));
+        $accountId = $this->currentAccountIdProvider instanceof CurrentAccountIdProvider
+            ? ($this->currentAccountIdProvider->currentAccountId() ?? 'none')
+            : 'none';
+
+        $key = sprintf('%s-%s-%s', $route, md5($formClass), (string) $accountId);
 
         $filter = $session->has($key) ? $session->get($key) : null;
 

@@ -27,6 +27,7 @@ class RegisterRecordedEventService implements CommandHandler
         $recordedEvent = new RecordedEvent(
             userId: $request->userId,
             event: $request->event,
+            impersonatorId: $request->impersonatorId,
         );
 
         if (null == $performBy) {
@@ -37,7 +38,7 @@ class RegisterRecordedEventService implements CommandHandler
 
         $this->recordedEventRepository->add($recordedEvent);
 
-        return new RegisterRecordedEventResponse($recordedEvent->id(), $recordedEvent->userId());
+        return new RegisterRecordedEventResponse($recordedEvent->id(), $recordedEvent->userId(), $recordedEvent->impersonatorId());
     }
 
     public function isHandled(Command $command): bool

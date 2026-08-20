@@ -35,6 +35,10 @@ class UploadMediaService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($media, Action::Register, $user);
 
+        if ($request->shared) {
+            $this->authorizer->denyUnlessCanDoThat($media, Action::Admin, $user);
+        }
+
         $path = $this->storage->store($id, $request->accountId, $request->extension, $request->localPath);
 
         $media->upload(
@@ -49,6 +53,7 @@ class UploadMediaService implements CommandHandler
             description: $request->description,
             alternativeText: $request->alternativeText,
             visibility: $request->visibility,
+            shared: $request->shared,
         );
 
         $this->repository->add($media);
@@ -62,6 +67,7 @@ class UploadMediaService implements CommandHandler
             type: $media->type(),
             size: $media->size(),
             visibility: $media->visibility(),
+            shared: $media->isShared(),
         );
     }
 

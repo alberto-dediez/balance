@@ -32,6 +32,12 @@ class AutocompleteRemoteType extends AbstractType
             ]);
         }
 
+        if (!empty($options['submit-on-change'])) {
+            $attr = array_merge($attr, [
+                'data-autocomplete-submit-on-change-value' => '1',
+            ]);
+        }
+
         $view->vars['attr'] = $attr;
         $view->vars['placeholder'] = $options['placeholder'];
         $view->vars['valueLabel'] = $this->valueLabel($form, $options);
@@ -44,6 +50,7 @@ class AutocompleteRemoteType extends AbstractType
             'placeholder' => null,
             'repository' => null,
             'value_label' => null,
+            'submit-on-change' => false,
         ]);
     }
 

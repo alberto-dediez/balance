@@ -13,11 +13,23 @@ use App\Shared\Domain\Event\DomainEvent;
 
 class RecordedEventMother
 {
-    public static function from(UserId $userId, DomainEvent $event): RecordedEvent
+    public static function from(UserId $userId, DomainEvent $event, ?UserId $impersonatorId = null): RecordedEvent
     {
         return new RecordedEvent(
             userId: $userId,
             event: $event,
+            impersonatorId: $impersonatorId,
+        );
+    }
+
+    public static function impersonated(UserId $userId, UserId $impersonatorId): RecordedEvent
+    {
+        return self::from(
+            userId: $userId,
+            event: new AccountRemoved(
+                AccountId::generate(),
+            ),
+            impersonatorId: $impersonatorId,
         );
     }
 

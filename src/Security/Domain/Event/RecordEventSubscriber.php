@@ -29,12 +29,14 @@ class RecordEventSubscriber implements DomainEventSubscriber
         }
 
         $loggedUser = $this->loggedUser->getLoggedUserOrNull();
+        $impersonator = $this->loggedUser->getImpersonatorOrNull();
         $registerRecordedEvent = $this->registerRecordedEvent;
 
         $registerRecordedEvent(
             new RegisterRecordedEventRequest(
                 userId: $loggedUser instanceof User ? $loggedUser->id() : UserMother::systemUser()->id(),
                 event: $event,
+                impersonatorId: $impersonator instanceof User ? $impersonator->id() : null,
             ),
             $loggedUser,
         );

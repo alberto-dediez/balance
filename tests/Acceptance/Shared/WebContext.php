@@ -14,7 +14,7 @@ use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\DomCrawler\Field\FileFormField;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 final class WebContext implements Context
 {
@@ -177,8 +177,8 @@ final class WebContext implements Context
         if (null == $exception) {
             $code = $this->client->getResponse()->getStatusCode();
         } else {
-            $code = match ($exception::class) {
-                NotFoundHttpException::class => 404,
+            $code = match (true) {
+                $exception instanceof HttpExceptionInterface => $exception->getStatusCode(),
                 default => $exception->getCode(),
             };
         }

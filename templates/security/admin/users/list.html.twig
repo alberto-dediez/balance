@@ -32,6 +32,10 @@
         <td>{{ element.active | show_field_value | trans }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
+            {% if element | is_authorized('impersonate') %}
+                <twig:List:Action:Impersonate path="{{ path('home', {'_switch_user': element.username}) }}" />
+            {% endif %}
+
             {% if element | is_authorized('history') %}
                 <twig:List:Action:History path="{{ path('admin_user_history', {'userId': element.id}) }}" />
             {% endif %}

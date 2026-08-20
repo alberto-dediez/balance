@@ -20,5 +20,6 @@ class UploadMediaResponse implements CommandResponse
         public MediaType $type,
         public int $size,
         public MediaVisibility $visibility = MediaVisibility::Account,
+        public bool $shared = false,
     ) {}
 }

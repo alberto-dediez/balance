@@ -21,6 +21,7 @@
                     <img src="{{ asset('images/logo-dark.png') }}" class="light-logo" height="36" alt="{{ company_name }}" />
                 {% endif %}
             </div>
+            <twig:Topbar:AccountSwitch></twig:Topbar:AccountSwitch>
             <a class="navbar-toggler p-0 border-0 nav-icon-hover" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="p-2">
                     <twig:Icon name="ph:dots-three" class="icon" />
@@ -30,6 +31,15 @@
                 <div class="d-flex align-items-center justify-content-between">
                     <ul class="navbar-nav flex-row mx-auto ms-lg-auto align-items-center justify-content-center">
                         {% if not public %}
+                            {% if is_granted('IS_IMPERSONATOR') %}
+                                <li class="nav-item me-2">
+                                    <a href="{{ path('home', {'_switch_user': '_exit'}) }}" class="badge bg-warning-subtle text-warning d-flex align-items-center gap-1">
+                                        <twig:Icon name="solar:masks-line-duotone" />
+                                        <span>{% trans -%}Suplantando a{%- endtrans %} {{ app.user.username }}</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+
                             <li class="nav-item nav-icon-hover">
                                 <a class="nav-link moon dark-layout" href="javascript:void(0)">
                                     <twig:Icon name="solar:moon-line-duotone" class="moon" />
@@ -39,6 +49,7 @@
                                 </a>
                             </li>
                         {% endif %}
+
                         <li class="nav-item nav-icon-hover dropdown">
                             <twig:Topbar:LanguageSwitch></twig:Topbar:LanguageSwitch>
                         </li>

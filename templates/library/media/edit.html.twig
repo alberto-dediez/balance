@@ -40,6 +40,9 @@
                     {{ form_row(form.description) }}
 
                     {{ form_row(form.visibility) }}
+                    {% if form.shared is defined %}
+                        {{ form_row(form.shared) }}
+                    {% endif %}
 
                     {% if media.public %}
                         <twig:View:Field label="{{ 'Enlace público' | trans }}">

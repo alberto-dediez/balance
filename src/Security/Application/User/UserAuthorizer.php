@@ -23,22 +23,25 @@ final class UserAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        $isFromSameAccount = null !== $subject->accountId() && $user->accountId() instanceof AccountId && $user->accountId()->equals($subject->accountId());
-        if ($user->hasRole(Role::SuperAdmin)) {
+        $currentAccountId = $this->currentAccountId($user);
+        $isFromSameAccount = null !== $subject->accountId() && $currentAccountId instanceof AccountId && $currentAccountId->equals($subject->accountId());
+        if ($this->userHasRole($user, Role::SuperAdmin)) {
             return true;
         }
-        if ($user->hasRole(Role::Admin)) {
+        if ($this->userHasRole($user, Role::Admin)) {
             return true;
         }
 
-        return $user->hasRole(Role::Owner) && $isFromSameAccount;
+        return $this->userHasRole($user, Role::Owner) && $isFromSameAccount;
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::Admin)
-            || $user->hasRole(Role::SuperAdmin)
-            || ($user->hasRole(Role::Owner) && ($user->accountId() instanceof AccountId && $user->accountId()->equals($subject->accountId())))
+        $currentAccountId = $this->currentAccountId($user);
+
+        return $this->userHasRole($user, Role::Admin)
+            || $this->userHasRole($user, Role::SuperAdmin)
+            || ($this->userHasRole($user, Role::Owner) && ($currentAccountId instanceof AccountId && $currentAccountId->equals($subject->accountId())))
             || $subject->id()->equals($user->id())
         ;
     }
@@ -48,6 +51,14 @@ final class UserAuthorizer extends AbstractAuthorizer
         return $this->canEdit($subject, $user);
     }
 
+    protected function canImpersonate(mixed $subject, User $user): bool
+    {
+        return $this->userHasRole($user, Role::SuperAdmin)
+            && $subject->isActive()
+            && !$subject->id()->equals($user->id())
+        ;
+    }
+
     protected function canExport(mixed $subject, User $user): bool
     {
         return $this->canList($subject, $user);
@@ -55,26 +66,28 @@ final class UserAuthorizer extends AbstractAuthorizer
 
     protected function canAutocomplete(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::Admin)) {
+        if ($this->userHasRole($user, Role::Admin)) {
             return true;
         }
 
-        return $user->hasRole(Role::SuperAdmin);
+        return $this->userHasRole($user, Role::SuperAdmin);
     }
 
     public function canChangeRole(User $subject, Role $role, User $user): bool
     {
-        if ($user->hasRole(Role::SuperAdmin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin)) {
             return true;
         }
-        if ($user->hasRole(Role::Admin)) {
+        if ($this->userHasRole($user, Role::Admin)) {
             return true;
         }
 
-        return $user->hasRole(Role::Owner)
-        && $user->accountId() instanceof AccountId
+        $currentAccountId = $this->currentAccountId($user);
+
+        return $this->userHasRole($user, Role::Owner)
+        && $currentAccountId instanceof AccountId
         && $subject->accountId() instanceof AccountId
-        && $user->accountId()->equals($subject->accountId())
+        && $currentAccountId->equals($subject->accountId())
         && (
             in_array($role, Role::casesForOwners())
             || Role::Provider === $role

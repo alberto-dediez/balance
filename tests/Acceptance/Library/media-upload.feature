@@ -24,6 +24,20 @@ Feature:
         When I go to "/es/library/media/upload"
         Then I see a text "Visibilidad"
 
+    Scenario: As a user I cannot share the files I upload with the other accounts
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media/upload"
+        Then the response status should be 200
+        Then I do not see a text "Compartir en la biblioteca"
+
+    Scenario: As an admin I can share the files I upload with the other accounts
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/library/media/upload"
+        Then the response status should be 200
+        Then I see a text "Compartir en la biblioteca"
+
     Scenario: As a user I can upload several files at once
         Given user "user1@dediez.software" with role "ROLE_USER" exists
         When I am logged as "user1@dediez.software"

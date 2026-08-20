@@ -7,13 +7,13 @@ import 'tom-select/dist/css/tom-select.bootstrap5.min.css';
 export default class extends Controller {
     static values = {
         path: String,
-        selectedLabel: String
+        selectedLabel: String,
+        submitOnChange: Boolean
     }
 
     connect() {
         let options = {
             'create': false,
-            // On a text input TomSelect would otherwise allow unlimited items.
             'maxItems': this.element.multiple ? null : 1,
         };
 
@@ -46,11 +46,17 @@ export default class extends Controller {
             }
         }
 
+        if (this.submitOnChangeValue) {
+            options.onChange = () => {
+                if (this.element.form) {
+                    this.element.form.requestSubmit();
+                }
+            };
+        }
+
         new TomSelect(this.element, options);
     }
 
-    // Passing options to TomSelect discards the ones read from the <select>,
-    // so the label of the pre-selected option has to be carried over.
     selectedOptionLabel() {
         if (this.selectedLabelValue.length > 0) {
             return this.selectedLabelValue;

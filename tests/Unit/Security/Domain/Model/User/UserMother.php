@@ -38,6 +38,14 @@ class UserMother
         );
     }
 
+    public static function superAdminUser(): User
+    {
+        return self::from(
+            userId: UserId::generate(),
+            role: Role::SuperAdmin,
+        );
+    }
+
     public static function ownerUser(): User
     {
         return self::from(

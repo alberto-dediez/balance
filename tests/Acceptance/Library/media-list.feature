@@ -66,14 +66,14 @@ Feature:
         Then I do not see a text "manual.png"
         Then I do not see a text "terms.png"
 
-    Scenario: As a user I can filter to see the media shared with the whole platform
+    Scenario: As a user I can filter to see the media shared by the other accounts
         Given account "Minotour" with id "1111" exists
         Given account "Bioscore" with id "2222" exists
         Given user "user1@dediez.software" with role "ROLE_USER" of account "1111" exists
         Given media "own.png" of account "1111" exists
         Given media "foreign.png" of account "2222" exists
-        Given media "manual.png" with id "3333" and visibility "System" of account "2222" exists
-        Given media "terms.png" with id "4444" and visibility "Public" of account "2222" exists
+        Given media "manual.png" with id "3333" shared in the library of account "2222" exists
+        Given media "terms.png" with id "4444" shared in the library of account "2222" exists
         When I am logged as "user1@dediez.software"
         When I go to "/es/library/media"
         When I filter the library including the shared media
@@ -82,3 +82,18 @@ Feature:
         Then I see a text "manual.png"
         Then I see a text "terms.png"
         Then I do not see a text "foreign.png"
+
+    Scenario: A file reachable by everybody stays out of the library of the other accounts
+        Given account "Minotour" with id "1111" exists
+        Given account "Bioscore" with id "2222" exists
+        Given user "user1@dediez.software" with role "ROLE_USER" of account "1111" exists
+        Given media "own.png" of account "1111" exists
+        Given media "avatar.png" with id "3333" and visibility "System" of account "2222" exists
+        Given media "terms.png" with id "4444" and visibility "Public" of account "2222" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media"
+        When I filter the library including the shared media
+        Then the response status should be 200
+        Then I see a table with 3 rows
+        Then I do not see a text "avatar.png"
+        Then I do not see a text "terms.png"

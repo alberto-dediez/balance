@@ -24,11 +24,11 @@ final class ExportationAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::SuperAdmin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin)) {
             return true;
         }
 
-        return $user->hasRole(Role::Admin);
+        return $this->userHasRole($user, Role::Admin);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
@@ -44,10 +44,10 @@ final class ExportationAuthorizer extends AbstractAuthorizer
     private function haveAccess(mixed $subject, User $user): bool
     {
         /* @var Exportation $subject */
-        if ($user->hasRole(Role::Admin)) {
+        if ($this->userHasRole($user, Role::Admin)) {
             return true;
         }
-        if ($user->hasRole(Role::SuperAdmin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin)) {
             return true;
         }
 
@@ -57,10 +57,12 @@ final class ExportationAuthorizer extends AbstractAuthorizer
             return true;
         }
 
-        return $user->hasRole(Role::Owner)
-            && $user->accountId() instanceof AccountId
+        $currentAccountId = $this->currentAccountId($user);
+
+        return $this->userHasRole($user, Role::Owner)
+            && $currentAccountId instanceof AccountId
             && null !== $subject->accountId()
-            && $subject->accountId()->equals($user->accountId());
+            && $subject->accountId()->equals($currentAccountId);
     }
 
     public function supports(mixed $subject): bool
