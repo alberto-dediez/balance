@@ -189,4 +189,49 @@ class InMemoryCreditPurchaseRepository implements CreditPurchaseRepository
 
         return $purchased;
     }
+
+    public function latestValidatedFor(AccountId $accountId, ProjectId $projectId): ?CreditPurchase
+    {
+        $validated = $this->validatedPurchases(new CreditPurchaseFilter(
+            accountId: $accountId,
+            projectId: $projectId,
+            status: CreditPurchaseStatus::Validated,
+            limit: 0,
+        ));
+
+        return array_pop($validated);
+    }
+
+    /** @return list<CreditPurchase> */
+    public function latestValidatedPurchases(): array
+    {
+        $latest = [];
+
+        foreach ($this->validatedPurchases(new CreditPurchaseFilter(status: CreditPurchaseStatus::Validated, limit: 0)) as $creditPurchase) {
+            $accountId = $creditPurchase->accountId();
+            $projectId = $creditPurchase->projectId();
+
+            if (!$accountId instanceof AccountId || !$projectId instanceof ProjectId) {
+                continue;
+            }
+
+            $latest[(string) $accountId . '|' . (string) $projectId] = $creditPurchase;
+        }
+
+        return array_values($latest);
+    }
+
+    /** @return list<CreditPurchase> */
+    private function validatedPurchases(CreditPurchaseFilter $filter): array
+    {
+        $purchases = array_values($this->findByFilter($filter));
+
+        usort(
+            $purchases,
+            static fn(CreditPurchase $a, CreditPurchase $b): int => [$a->resolvedAt()?->getTimestamp() ?? 0, (string) $a->id()]
+                <=> [$b->resolvedAt()?->getTimestamp() ?? 0, (string) $b->id()],
+        );
+
+        return $purchases;
+    }
 }

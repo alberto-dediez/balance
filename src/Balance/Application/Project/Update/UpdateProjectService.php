@@ -6,6 +6,7 @@ namespace App\Balance\Application\Project\Update;
 
 use App\Balance\Application\Project\Credits\ProjectCreditAvailability;
 use App\Balance\Application\Project\ProjectAuthorizer;
+use App\Balance\Domain\Model\CreditPurchase\CreditBalance;
 use App\Balance\Domain\Model\Project\Project;
 use App\Balance\Domain\Model\Project\ProjectHasUnconsumedCreditsException;
 use App\Balance\Domain\Model\Project\ProjectRepository;
@@ -72,7 +73,7 @@ class UpdateProjectService implements CommandHandler
 
         $unconsumedTonnes = $this->projectCreditAvailability->unconsumedTonnes($project->id());
 
-        if ($unconsumedTonnes > ProjectCreditAvailability::TONNE_TOLERANCE) {
+        if ($unconsumedTonnes > CreditBalance::TONNE_TOLERANCE) {
             throw new ProjectHasUnconsumedCreditsException($project->id(), $unconsumedTonnes);
         }
     }

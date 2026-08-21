@@ -8,7 +8,7 @@ use App\Balance\Domain\Model\Project\ProjectId;
 
 final class CreditBalance
 {
-    private const TONNE_TOLERANCE = 0.000001;
+    public const float TONNE_TOLERANCE = 0.000001;
 
     public function __construct(
         private ProjectId $projectId,

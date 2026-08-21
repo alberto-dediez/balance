@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Application\CommandBus;
 
+use App\Balance\Application\CreditPurchase\Alerts\CheckCreditAlertsRequest;
 use App\Balance\Application\LedgerEntry\Check\CheckLedgerRequest;
 use App\Balance\Application\ProjectContribution\Expire\ExpirePendingContributionsRequest;
 use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsRequest;
@@ -42,6 +43,11 @@ class CommandSchedule
                     to: new \DateTimeImmutable('NOW'),
                 ),
                 time: '03:00',
+            ),
+            ScheduledCommand::dailyAt(
+                id: 'balance:check-credit-alerts',
+                command: new CheckCreditAlertsRequest(now: new \DateTimeImmutable('NOW')),
+                time: '04:30',
             ),
         ];
     }

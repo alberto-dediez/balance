@@ -26,4 +26,9 @@ interface CreditPurchaseRepository
     public function balanceFor(AccountId $accountId, ProjectId $projectId): CreditBalance;
 
     public function purchasedTonnesForProject(ProjectId $projectId): float;
+
+    public function latestValidatedFor(AccountId $accountId, ProjectId $projectId): ?CreditPurchase;
+
+    /** @return list<CreditPurchase> */
+    public function latestValidatedPurchases(): array;
 }

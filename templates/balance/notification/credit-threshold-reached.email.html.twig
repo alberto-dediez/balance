@@ -1,0 +1,45 @@
+{% if threshold >= 100 %}
+    <h3>{% trans with {'{project}': projectName} -%}Se ha quedado sin crédito en el proyecto {project}{%- endtrans -%}</h3>
+    <p>
+        {% trans with {
+            '{project}': projectName,
+            '{purchased}': purchasedTonnes | number_format(4, ',', '.')
+        } -%}
+            Se ha agotado el crédito de su última compra en el proyecto {project}: ha consumido las {purchased} t compradas. Las nuevas compensaciones no podrán respaldarse hasta que compre más crédito.
+        {%- endtrans %}
+    </p>
+{% elseif threshold >= 90 %}
+    <h3>{% trans with {'{project}': projectName} -%}Su crédito en el proyecto {project} está casi agotado{%- endtrans -%}</h3>
+    <p>
+        {% trans with {
+            '{project}': projectName,
+            '{available}': availableTonnes | number_format(4, ',', '.'),
+            '{purchased}': purchasedTonnes | number_format(4, ',', '.')
+        } -%}
+            Su crédito en el proyecto {project} está casi agotado: quedan {available} t de las {purchased} t compradas. Le recomendamos comprar más crédito para no interrumpir sus compensaciones.
+        {%- endtrans %}
+    </p>
+{% else %}
+    <h3>{% trans with {'{project}': projectName} -%}Le queda poco crédito en el proyecto {project}{%- endtrans -%}</h3>
+    <p>
+        {% trans with {
+            '{project}': projectName,
+            '{available}': availableTonnes | number_format(4, ',', '.'),
+            '{purchased}': purchasedTonnes | number_format(4, ',', '.')
+        } -%}
+            Le queda poco crédito en el proyecto {project}: quedan {available} t de las {purchased} t compradas. Le recomendamos planificar una nueva compra.
+        {%- endtrans %}
+    </p>
+{% endif %}
+<p>
+    {% trans with {
+        '{reference}': purchaseReference,
+        '{consumed}': consumedTonnes | number_format(4, ',', '.'),
+        '{projectAvailable}': projectAvailableTonnes | number_format(4, ',', '.')
+    } -%}
+        Compra de referencia {reference}: {consumed} t consumidas. Saldo total disponible en el proyecto: {projectAvailable} t.
+    {%- endtrans %}
+</p>
+<a href="{{ url('credits') }}" class="btn btn-primary">
+    {% trans -%}Ver mis créditos{%- endtrans -%}
+</a>

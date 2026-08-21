@@ -22,6 +22,7 @@
         <field name="certificate" type="string" column="certificate" length="36" nullable="true"/>
         <field name="resolvedBy" type="user_id" column="resolved_by" nullable="true"/>
         <field name="rejectionReason" type="text" column="rejection_reason" nullable="true"/>
+        <field name="notifiedThresholds" type="json" column="notified_thresholds" nullable="false"/>
         <field name="requestedAt" type="datetime_immutable" column="requested_at" nullable="false"/>
         <field name="resolvedAt" type="datetime_immutable" column="resolved_at" nullable="true"/>
         <field name="cancelledAt" type="datetime_immutable" column="cancelled_at" nullable="true"/>

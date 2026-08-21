@@ -14,7 +14,10 @@ class CreditPurchase
 {
     use AggregateRoot;
 
-    /** @param array<mixed> $events */
+    /**
+     * @param list<int>    $notifiedThresholds
+     * @param array<mixed> $events
+     */
     public function __construct(
         private CreditPurchaseId $id,
         private ?AccountId $accountId = null,
@@ -29,6 +32,7 @@ class CreditPurchase
         private ?string $certificate = null,
         private ?UserId $resolvedBy = null,
         private ?string $rejectionReason = null,
+        private array $notifiedThresholds = [],
         array $events = [],
         private \DateTimeImmutable $requestedAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $resolvedAt = null,
@@ -126,6 +130,20 @@ class CreditPurchase
         return $this->cancelledAt;
     }
 
+    /** @return list<CreditAlertThreshold> */
+    public function notifiedThresholds(): array
+    {
+        return array_values(array_filter(array_map(
+            static fn(int $threshold): ?CreditAlertThreshold => CreditAlertThreshold::tryFrom($threshold),
+            $this->notifiedThresholds,
+        )));
+    }
+
+    public function hasNotified(CreditAlertThreshold $threshold): bool
+    {
+        return in_array($threshold->value, $this->notifiedThresholds, true);
+    }
+
     public function isPartiallyFulfilled(): bool
     {
         return CreditPurchaseStatus::Validated === $this->status
@@ -219,6 +237,55 @@ class CreditPurchase
                 creditPurchaseId: $this->id(),
             ),
         );
+    }
+
+    public function reachThreshold(
+        CreditAlertThreshold $threshold,
+        float $consumedTonnes,
+        float $availableTonnes,
+        float $projectAvailableTonnes,
+    ): void {
+        if (CreditPurchaseStatus::Validated !== $this->status || null === $this->purchasedTonnes) {
+            return;
+        }
+
+        if ($this->hasNotified($threshold)) {
+            return;
+        }
+
+        $accountId = $this->accountId;
+        $projectId = $this->projectId;
+
+        if (!$accountId instanceof AccountId || !$projectId instanceof ProjectId) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CreditThresholdReached(
+                creditPurchaseId: $this->id(),
+                accountId: $accountId,
+                projectId: $projectId,
+                threshold: $threshold,
+                purchasedTonnes: $this->purchasedTonnes,
+                consumedTonnes: $consumedTonnes,
+                availableTonnes: $availableTonnes,
+                projectAvailableTonnes: $projectAvailableTonnes,
+                purchaseReference: $this->reference,
+            ),
+        );
+    }
+
+    public function applyCreditThresholdReached(CreditThresholdReached $event): void
+    {
+        foreach ($event->threshold()->andLower() as $threshold) {
+            if (in_array($threshold->value, $this->notifiedThresholds, true)) {
+                continue;
+            }
+
+            $this->notifiedThresholds[] = $threshold->value;
+        }
+
+        sort($this->notifiedThresholds);
     }
 
     public function applyCreditPurchaseRequested(CreditPurchaseRequested $event): void

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Balance;
 
+use App\Balance\Application\CreditPurchase\Alerts\CheckCreditAlertsRequest;
+use App\Balance\Application\CreditPurchase\Alerts\CheckCreditAlertsService;
 use App\Balance\Application\CreditPurchase\Balance\CreditAvailability;
 use App\Balance\Application\ProjectContribution\Expire\ExpirePendingContributionsRequest;
 use App\Balance\Application\ProjectContribution\Expire\ExpirePendingContributionsService;
@@ -29,6 +31,9 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionStatus;
+use App\Notifications\Domain\Model\Notification\NotificationChannel;
+use App\Notifications\Domain\Model\Notification\NotificationFilter;
+use App\Notifications\Domain\Model\Notification\NotificationRepository;
 use App\Payments\Domain\Model\Payment\PaymentId;
 use App\Payments\Domain\Model\Payment\PaymentRepository;
 use App\Payments\Domain\Model\Vat\VatExemptionReason;
@@ -348,6 +353,53 @@ final class BalanceContext implements Context
         );
 
         $this->getProjectContributionRepository()->add($contribution);
+    }
+
+    #[When('the credit alerts are checked')]
+    public function theCreditAlertsAreChecked(): void
+    {
+        $this->client->getContainer()->get(CheckCreditAlertsService::class)->__invoke(
+            new CheckCreditAlertsRequest(now: new \DateTimeImmutable('NOW')),
+            UserMother::systemUser(),
+        );
+    }
+
+    #[Then('user :username should have :count internal notifications')]
+    public function userShouldHaveInternalNotifications(string $username, string $count): void
+    {
+        $user = $this->getUserRepository()->findByUsername($username);
+
+        Assert::assertNotNull($user, sprintf('User "%s" not found', $username));
+
+        $notifications = $this->getNotificationRepository()->findByFilter(new NotificationFilter(
+            recipientId: $user->id(),
+            channel: NotificationChannel::Internal,
+            limit: 0,
+        ));
+
+        Assert::assertCount((int) $count, $notifications);
+    }
+
+    #[Then('the last internal notification of user :username should contain :text')]
+    public function theLastInternalNotificationOfUserShouldContain(string $username, string $text): void
+    {
+        $user = $this->getUserRepository()->findByUsername($username);
+
+        Assert::assertNotNull($user, sprintf('User "%s" not found', $username));
+
+        $notifications = $this->getNotificationRepository()->findByFilter(new NotificationFilter(
+            recipientId: $user->id(),
+            channel: NotificationChannel::Internal,
+            limit: 0,
+        ));
+
+        Assert::assertNotEmpty($notifications);
+        Assert::assertStringContainsString($text, $notifications[0]->subject() . ' ' . $notifications[0]->body());
+    }
+
+    private function getNotificationRepository(): NotificationRepository
+    {
+        return $this->client->getContainer()->get(NotificationRepository::class);
     }
 
     #[When('the pending contributions are expired')]

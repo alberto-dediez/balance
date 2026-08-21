@@ -34,6 +34,13 @@ interface ProjectContributionRepository
     /** @return array<string, float> */
     public function allocatedTonnesByPurchase(AccountId $accountId, ProjectId $projectId): array;
 
+    /** @return array<string, float> */
+    public function committedAllocatedTonnesByPurchase(
+        AccountId $accountId,
+        ProjectId $projectId,
+        \DateTimeImmutable $now,
+    ): array;
+
     /** @return list<ProjectContributionCreditAllocation> */
     public function findAllocationsByCreditPurchase(CreditPurchaseId $creditPurchaseId): array;
 

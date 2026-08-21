@@ -253,6 +253,48 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
         return $allocated;
     }
 
+    /** @return array<string, float> */
+    public function committedAllocatedTonnesByPurchase(
+        AccountId $accountId,
+        ProjectId $projectId,
+        \DateTimeImmutable $now,
+    ): array {
+        $qb = $this->manager->createQueryBuilder();
+
+        $rows = $qb
+            ->select('a.creditPurchaseId as creditPurchaseId, SUM(a.tonnes) as tonnes')
+            ->from(ProjectContributionCreditAllocation::class, 'a')
+            ->innerJoin('a.projectContribution', 'pc')
+            ->andWhere($qb->expr()->eq('pc.accountId', ':accountId'))
+            ->andWhere($qb->expr()->eq('pc.projectId', ':projectId'))
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('pc.status', ':paid'),
+                    $qb->expr()->andX(
+                        $qb->expr()->eq('pc.status', ':pending'),
+                        $qb->expr()->gt('pc.expiresAt', ':now'),
+                    ),
+                ),
+            )
+            ->groupBy('a.creditPurchaseId')
+            ->setParameter('accountId', (string) $accountId)
+            ->setParameter('projectId', (string) $projectId)
+            ->setParameter('paid', ProjectContributionStatus::Paid->value)
+            ->setParameter('pending', ProjectContributionStatus::Pending->value)
+            ->setParameter('now', $now)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        $allocated = [];
+
+        foreach ($rows as $row) {
+            $allocated[(string) $row['creditPurchaseId']] = (float) $row['tonnes'];
+        }
+
+        return $allocated;
+    }
+
     /** @return list<ProjectContributionCreditAllocation> */
     public function findAllocationsByCreditPurchase(CreditPurchaseId $creditPurchaseId): array
     {

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Balance\Domain\Model\ProjectContribution;
 
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\Project\ProjectId;
+use App\Balance\Domain\Model\ProjectContribution\AllocatedCreditLine;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFilter;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionStatus;
@@ -162,6 +165,69 @@ abstract class ProjectContributionRepositoryTest extends KernelTestCase
         );
 
         $this->assertSame(0.0, $committed);
+    }
+
+    public function testCommittedAllocatedTonnesByPurchaseOnlyCountsLiveContributions(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+        $creditPurchaseId = CreditPurchaseId::generate();
+
+        $repository->add($this->allocated(
+            ProjectContributionMother::paid($accountId, $projectId, tonnes: 3.0),
+            $creditPurchaseId,
+            3.0,
+        ));
+        $repository->add($this->allocated(
+            ProjectContributionMother::pending($accountId, $projectId, tonnes: 2.0),
+            $creditPurchaseId,
+            2.0,
+        ));
+        $repository->add($this->allocated(
+            ProjectContributionMother::expired($accountId, $projectId, tonnes: 5.0),
+            $creditPurchaseId,
+            5.0,
+        ));
+
+        $now = new \DateTimeImmutable('NOW');
+
+        $allocated = $repository->committedAllocatedTonnesByPurchase($accountId, $projectId, $now);
+
+        $this->assertSame(5.0, $allocated[(string) $creditPurchaseId]);
+        $this->assertSame(10.0, $repository->allocatedTonnesByPurchase($accountId, $projectId)[(string) $creditPurchaseId]);
+    }
+
+    public function testCommittedAllocatedTonnesByPurchaseOfAnUnknownProjectIsEmpty(): void
+    {
+        $repository = $this->createSUT();
+
+        $allocated = $repository->committedAllocatedTonnesByPurchase(
+            AccountId::generate(),
+            ProjectId::generate(),
+            new \DateTimeImmutable('NOW'),
+        );
+
+        $this->assertSame([], $allocated);
+    }
+
+    private function allocated(
+        ProjectContribution $projectContribution,
+        CreditPurchaseId $creditPurchaseId,
+        float $tonnes,
+    ): ProjectContribution {
+        $projectContribution->allocateCredits([
+            new AllocatedCreditLine(
+                position: 0,
+                creditPurchaseId: $creditPurchaseId,
+                purchaseReference: 'ref-' . $creditPurchaseId,
+                tonnes: $tonnes,
+                startTonnes: 0.0,
+            ),
+        ]);
+
+        return $projectContribution;
     }
 
     abstract protected function createSUT(): ProjectContributionRepository;

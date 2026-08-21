@@ -179,6 +179,34 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
         return $allocated;
     }
 
+    /** @return array<string, float> */
+    public function committedAllocatedTonnesByPurchase(
+        AccountId $accountId,
+        ProjectId $projectId,
+        \DateTimeImmutable $now,
+    ): array {
+        $allocated = [];
+
+        $contributions = $this->findByFilter(new ProjectContributionFilter(
+            accountId: $accountId,
+            projectId: $projectId,
+            limit: 0,
+        ));
+
+        foreach ($contributions as $projectContribution) {
+            if (!$projectContribution->reservesCredit($now)) {
+                continue;
+            }
+
+            foreach ($projectContribution->creditAllocations() as $allocation) {
+                $key = (string) $allocation->creditPurchaseId();
+                $allocated[$key] = ($allocated[$key] ?? 0.0) + $allocation->tonnes();
+            }
+        }
+
+        return $allocated;
+    }
+
     /** @return list<ProjectContributionCreditAllocation> */
     public function findAllocationsByCreditPurchase(CreditPurchaseId $creditPurchaseId): array
     {

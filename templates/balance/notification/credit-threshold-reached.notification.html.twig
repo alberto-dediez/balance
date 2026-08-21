@@ -1,0 +1,31 @@
+<p>
+    {% if threshold >= 100 %}
+        {% trans with {
+            '{project}': projectName,
+            '{purchased}': purchasedTonnes | number_format(4, ',', '.')
+        } -%}
+            Se ha agotado el crédito de su última compra en el proyecto {project}: ha consumido las {purchased} t compradas. Las nuevas compensaciones no podrán respaldarse hasta que compre más crédito.
+        {%- endtrans %}
+    {% elseif threshold >= 90 %}
+        {% trans with {
+            '{project}': projectName,
+            '{available}': availableTonnes | number_format(4, ',', '.'),
+            '{purchased}': purchasedTonnes | number_format(4, ',', '.')
+        } -%}
+            Su crédito en el proyecto {project} está casi agotado: quedan {available} t de las {purchased} t compradas.
+        {%- endtrans %}
+    {% else %}
+        {% trans with {
+            '{project}': projectName,
+            '{available}': availableTonnes | number_format(4, ',', '.'),
+            '{purchased}': purchasedTonnes | number_format(4, ',', '.')
+        } -%}
+            Le queda poco crédito en el proyecto {project}: quedan {available} t de las {purchased} t compradas.
+        {%- endtrans %}
+    {% endif %}
+</p>
+<p>
+    <a href="{{ path('credits') }}">
+        {% trans -%}Ver mis créditos{%- endtrans -%}
+    </a>
+</p>

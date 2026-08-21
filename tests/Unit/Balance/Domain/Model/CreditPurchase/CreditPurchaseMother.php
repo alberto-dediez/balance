@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Balance\Domain\Model\CreditPurchase;
 
+use App\Balance\Domain\Model\CreditPurchase\CreditAlertThreshold;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
@@ -45,12 +46,14 @@ class CreditPurchaseMother
         return $creditPurchase;
     }
 
+    /** @param list<CreditAlertThreshold> $notifiedThresholds */
     public static function validatedAt(
         \DateTimeImmutable $resolvedAt,
         AccountId $accountId,
         ProjectId $projectId,
         float $tonnes = 10.0,
         CreditPurchasePaymentType $paymentType = CreditPurchasePaymentType::PaidByClient,
+        array $notifiedThresholds = [],
     ): CreditPurchase {
         $id = CreditPurchaseId::generate();
 
@@ -65,6 +68,10 @@ class CreditPurchaseMother
             paymentType: $paymentType,
             reference: 'ref-' . $id,
             resolvedBy: UserId::generate(),
+            notifiedThresholds: array_map(
+                static fn(CreditAlertThreshold $threshold): int => $threshold->value,
+                $notifiedThresholds,
+            ),
             resolvedAt: $resolvedAt,
         );
     }

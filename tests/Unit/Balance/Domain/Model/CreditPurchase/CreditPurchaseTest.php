@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Balance\Domain\Model\CreditPurchase;
 
+use App\Balance\Domain\Model\CreditPurchase\CreditAlertThreshold;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseCancelled;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
@@ -12,6 +13,7 @@ use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRejected;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRequested;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseValidated;
+use App\Balance\Domain\Model\CreditPurchase\CreditThresholdReached;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -175,6 +177,56 @@ class CreditPurchaseTest extends TestCase
         $creditPurchase = CreditPurchaseMother::pending();
 
         $this->assertSame(0.0, $creditPurchase->availableTonnes());
+    }
+
+    public function testReachThresholdPublishesCreditThresholdReached(): void
+    {
+        $creditPurchase = CreditPurchaseMother::validated(tonnes: 10.0);
+
+        $creditPurchase->reachThreshold(CreditAlertThreshold::Warning, 8.5, 1.5, 1.5);
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(CreditThresholdReached::class, $lastEvent);
+        $this->assertSame(CreditAlertThreshold::Warning, $lastEvent->threshold());
+        $this->assertSame(8.5, $lastEvent->consumedTonnes());
+        $this->assertSame(1.5, $lastEvent->availableTonnes());
+        $this->assertTrue($creditPurchase->hasNotified(CreditAlertThreshold::Warning));
+    }
+
+    public function testReachThresholdMarksLowerThresholdsAsNotified(): void
+    {
+        $creditPurchase = CreditPurchaseMother::validated(tonnes: 10.0);
+
+        $creditPurchase->reachThreshold(CreditAlertThreshold::Depleted, 10.0, 0.0, 0.0);
+
+        $this->assertSame(
+            [CreditAlertThreshold::Warning, CreditAlertThreshold::High, CreditAlertThreshold::Depleted],
+            $creditPurchase->notifiedThresholds(),
+        );
+    }
+
+    public function testReachThresholdDoesNotRepeatANotifiedThreshold(): void
+    {
+        $creditPurchase = CreditPurchaseMother::validated(tonnes: 10.0);
+
+        $creditPurchase->reachThreshold(CreditAlertThreshold::High, 9.0, 1.0, 1.0);
+        $eventsAfterFirst = count($this->spySubscriber->events());
+
+        $creditPurchase->reachThreshold(CreditAlertThreshold::High, 9.5, 0.5, 0.5);
+        $creditPurchase->reachThreshold(CreditAlertThreshold::Warning, 9.5, 0.5, 0.5);
+
+        $this->assertCount($eventsAfterFirst, $this->spySubscriber->events());
+    }
+
+    public function testReachThresholdDoesNothingUnlessValidated(): void
+    {
+        $creditPurchase = CreditPurchaseMother::pending();
+
+        $creditPurchase->reachThreshold(CreditAlertThreshold::Depleted, 10.0, 0.0, 0.0);
+
+        $this->assertSame([], $creditPurchase->notifiedThresholds());
+        $this->assertNotInstanceOf(CreditThresholdReached::class, $this->spySubscriber->lastEvent());
     }
 
     public function testRebuildReconstructsState(): void

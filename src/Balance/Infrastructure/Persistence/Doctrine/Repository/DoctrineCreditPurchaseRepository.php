@@ -196,4 +196,61 @@ class DoctrineCreditPurchaseRepository implements CreditPurchaseRepository
             ->getSingleScalarResult()
         ;
     }
+
+    public function latestValidatedFor(AccountId $accountId, ProjectId $projectId): ?CreditPurchase
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        /** @var list<CreditPurchase> $purchases */
+        $purchases = $qb
+            ->select('cp')
+            ->from(CreditPurchase::class, 'cp')
+            ->andWhere($qb->expr()->eq('cp.accountId', ':accountId'))
+            ->andWhere($qb->expr()->eq('cp.projectId', ':projectId'))
+            ->andWhere($qb->expr()->eq('cp.status', ':status'))
+            ->orderBy('cp.resolvedAt', 'DESC')
+            ->addOrderBy('cp.id', 'DESC')
+            ->setMaxResults(1)
+            ->setParameter('accountId', (string) $accountId)
+            ->setParameter('projectId', (string) $projectId)
+            ->setParameter('status', CreditPurchaseStatus::Validated->value)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        return $purchases[0] ?? null;
+    }
+
+    /** @return list<CreditPurchase> */
+    public function latestValidatedPurchases(): array
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        /** @var list<CreditPurchase> $purchases */
+        $purchases = $qb
+            ->select('cp')
+            ->from(CreditPurchase::class, 'cp')
+            ->andWhere($qb->expr()->eq('cp.status', ':status'))
+            ->orderBy('cp.resolvedAt', 'ASC')
+            ->addOrderBy('cp.id', 'ASC')
+            ->setParameter('status', CreditPurchaseStatus::Validated->value)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        $latest = [];
+
+        foreach ($purchases as $creditPurchase) {
+            $accountId = $creditPurchase->accountId();
+            $projectId = $creditPurchase->projectId();
+
+            if (!$accountId instanceof AccountId || !$projectId instanceof ProjectId) {
+                continue;
+            }
+
+            $latest[(string) $accountId . '|' . (string) $projectId] = $creditPurchase;
+        }
+
+        return array_values($latest);
+    }
 }

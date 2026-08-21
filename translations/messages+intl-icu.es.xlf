@@ -6765,17 +6765,53 @@
         <source>Suplantar</source>
         <target>Suplantar</target>
       </trans-unit>
-      <trans-unit id="CmbrCta" resname="Cambiar de cuenta">
+      <trans-unit id="1DXIpBS" resname="Cambiar de cuenta">
         <source>Cambiar de cuenta</source>
         <target>Cambiar de cuenta</target>
       </trans-unit>
-      <trans-unit id="SplCtaC" resname="Suplantando cuenta">
+      <trans-unit id="IA6MfOG" resname="Suplantando cuenta">
         <source>Suplantando cuenta</source>
         <target>Suplantando cuenta</target>
       </trans-unit>
-      <trans-unit id="VlvrMCta" resname="Volver a mi cuenta">
+      <trans-unit id="AXSZGUu" resname="Volver a mi cuenta">
         <source>Volver a mi cuenta</source>
         <target>Volver a mi cuenta</target>
+      </trans-unit>
+      <trans-unit id="ByzJ1fi" resname="Le queda poco crédito en el proyecto {project}">
+        <source>Le queda poco crédito en el proyecto {project}</source>
+        <target>Le queda poco crédito en el proyecto {project}</target>
+      </trans-unit>
+      <trans-unit id="GYQ_Gd5" resname="Su crédito en el proyecto {project} está casi agotado">
+        <source>Su crédito en el proyecto {project} está casi agotado</source>
+        <target>Su crédito en el proyecto {project} está casi agotado</target>
+      </trans-unit>
+      <trans-unit id="bEX0dQm" resname="Se ha quedado sin crédito en el proyecto {project}">
+        <source>Se ha quedado sin crédito en el proyecto {project}</source>
+        <target>Se ha quedado sin crédito en el proyecto {project}</target>
+      </trans-unit>
+      <trans-unit id="zSiIOlr" resname="Se ha agotado el crédito de su última compra en el proyecto {project}: ha consumido las {purchased} t compradas. Las nuevas compensaciones no podrán respaldarse hasta que compre más crédito.">
+        <source>Se ha agotado el crédito de su última compra en el proyecto {project}: ha consumido las {purchased} t compradas. Las nuevas compensaciones no podrán respaldarse hasta que compre más crédito.</source>
+        <target>Se ha agotado el crédito de su última compra en el proyecto {project}: ha consumido las {purchased} t compradas. Las nuevas compensaciones no podrán respaldarse hasta que compre más crédito.</target>
+      </trans-unit>
+      <trans-unit id="AT4P0gz" resname="Su crédito en el proyecto {project} está casi agotado: quedan {available} t de las {purchased} t compradas.">
+        <source>Su crédito en el proyecto {project} está casi agotado: quedan {available} t de las {purchased} t compradas.</source>
+        <target>Su crédito en el proyecto {project} está casi agotado: quedan {available} t de las {purchased} t compradas.</target>
+      </trans-unit>
+      <trans-unit id="90v7IeS" resname="Le queda poco crédito en el proyecto {project}: quedan {available} t de las {purchased} t compradas.">
+        <source>Le queda poco crédito en el proyecto {project}: quedan {available} t de las {purchased} t compradas.</source>
+        <target>Le queda poco crédito en el proyecto {project}: quedan {available} t de las {purchased} t compradas.</target>
+      </trans-unit>
+      <trans-unit id="Fidj92s" resname="Su crédito en el proyecto {project} está casi agotado: quedan {available} t de las {purchased} t compradas. Le recomendamos comprar más crédito para no interrumpir sus compensaciones.">
+        <source>Su crédito en el proyecto {project} está casi agotado: quedan {available} t de las {purchased} t compradas. Le recomendamos comprar más crédito para no interrumpir sus compensaciones.</source>
+        <target>Su crédito en el proyecto {project} está casi agotado: quedan {available} t de las {purchased} t compradas. Le recomendamos comprar más crédito para no interrumpir sus compensaciones.</target>
+      </trans-unit>
+      <trans-unit id="s.QWgTh" resname="Le queda poco crédito en el proyecto {project}: quedan {available} t de las {purchased} t compradas. Le recomendamos planificar una nueva compra.">
+        <source>Le queda poco crédito en el proyecto {project}: quedan {available} t de las {purchased} t compradas. Le recomendamos planificar una nueva compra.</source>
+        <target>Le queda poco crédito en el proyecto {project}: quedan {available} t de las {purchased} t compradas. Le recomendamos planificar una nueva compra.</target>
+      </trans-unit>
+      <trans-unit id="LZnYTK2" resname="Compra de referencia {reference}: {consumed} t consumidas. Saldo total disponible en el proyecto: {projectAvailable} t.">
+        <source>Compra de referencia {reference}: {consumed} t consumidas. Saldo total disponible en el proyecto: {projectAvailable} t.</source>
+        <target>Compra de referencia {reference}: {consumed} t consumidas. Saldo total disponible en el proyecto: {projectAvailable} t.</target>
       </trans-unit>
     </body>
   </file>
