@@ -27,6 +27,7 @@ class PropertyIdType extends AggregateRootIdType
         $properties = $this->propertyRepository->findByFilter(
             new PropertyFilter(
                 accountId: null == $account ? null : $account->id(),
+                limit: 0,
             ),
         );
 

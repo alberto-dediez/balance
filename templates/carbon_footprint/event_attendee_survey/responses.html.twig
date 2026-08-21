@@ -1,6 +1,8 @@
 {% extends '@shared/layout/edit.html.twig' %}
 
 {% block top_actions %}
+    <twig:TopAction:Export path="{{ path('export', {'code': 'event_attendee_surveys', 'eventId': event.id}) }}" />
+
     <twig:TopAction:Return path="{{ path('events') }}" />
 {% endblock %}
 

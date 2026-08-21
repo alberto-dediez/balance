@@ -6941,6 +6941,62 @@
         <source>Cuéntanos cuántas noches te quedaste y te diremos la huella de carbono de tu estancia.</source>
         <target>Cuéntanos cuántas noches te quedaste y te diremos la huella de carbono de tu estancia.</target>
       </trans-unit>
+      <trans-unit id="JvBZBf9" resname="Cálculos de propiedad">
+        <source>Cálculos de propiedad</source>
+        <target>Cálculos de propiedad</target>
+      </trans-unit>
+      <trans-unit id="1zZk2us" resname="Origen">
+        <source>Origen</source>
+        <target>Origen</target>
+      </trans-unit>
+      <trans-unit id="w3gosSU" resname="Viajes">
+        <source>Viajes</source>
+        <target>Viajes</target>
+      </trans-unit>
+      <trans-unit id="zl4edto" resname="Emisiones movilidad (kg CO₂eq)">
+        <source>Emisiones movilidad (kg CO₂eq)</source>
+        <target>Emisiones movilidad (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="53w2yTR" resname="Emisiones pernoctación (kg CO₂eq)">
+        <source>Emisiones pernoctación (kg CO₂eq)</source>
+        <target>Emisiones pernoctación (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="rkJ0XvC" resname="Emisiones totales (kg CO₂eq)">
+        <source>Emisiones totales (kg CO₂eq)</source>
+        <target>Emisiones totales (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="qnrMgtR" resname="Encuestas de asistentes">
+        <source>Encuestas de asistentes</source>
+        <target>Encuestas de asistentes</target>
+      </trans-unit>
+      <trans-unit id="O224zTk" resname="¿Se alojó?">
+        <source>¿Se alojó?</source>
+        <target>¿Se alojó?</target>
+      </trans-unit>
+      <trans-unit id="lxEXgs6" resname="Ida y vuelta intercity">
+        <source>Ida y vuelta intercity</source>
+        <target>Ida y vuelta intercity</target>
+      </trans-unit>
+      <trans-unit id="1pG6fpW" resname="Viajes intercity">
+        <source>Viajes intercity</source>
+        <target>Viajes intercity</target>
+      </trans-unit>
+      <trans-unit id="Zi86C8S" resname="Ida y vuelta urbana">
+        <source>Ida y vuelta urbana</source>
+        <target>Ida y vuelta urbana</target>
+      </trans-unit>
+      <trans-unit id="RpQ.wwi" resname="Viajes urbanos">
+        <source>Viajes urbanos</source>
+        <target>Viajes urbanos</target>
+      </trans-unit>
+      <trans-unit id="DLahU6S" resname="Aportación (€)">
+        <source>Aportación (€)</source>
+        <target>Aportación (€)</target>
+      </trans-unit>
+      <trans-unit id="T6ERvL4" resname="Emisiones compensadas (kg CO₂eq)">
+        <source>Emisiones compensadas (kg CO₂eq)</source>
+        <target>Emisiones compensadas (kg CO₂eq)</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

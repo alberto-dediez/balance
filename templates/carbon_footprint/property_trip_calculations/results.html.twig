@@ -9,6 +9,8 @@
         </twig:TopAction>
     {% endif %}
 
+    <twig:TopAction:Export path="{{ path('export', {'code': 'property_trip_calculations', 'propertyId': property.id, 'from': from|default(''), 'to': to|default('')}) }}" />
+
     <twig:TopAction:Return path="{{ path('properties') }}" />
 {% endblock %}
 
