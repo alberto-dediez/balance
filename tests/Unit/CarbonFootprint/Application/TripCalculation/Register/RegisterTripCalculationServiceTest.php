@@ -25,6 +25,7 @@ use App\CarbonFootprint\Domain\Model\Trip\TripLegsResolver;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationScope;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEmissionFactorGroupRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMobilityRepository;
@@ -215,6 +216,70 @@ class RegisterTripCalculationServiceTest extends TestCase
         ));
     }
 
+    public function testIgnoresTheNightsWhenTheScopeIsTransportOnly(): void
+    {
+        $link = $this->linkToLocatedProperty(TripCalculationScope::Transport);
+        $mobility = $this->mobilityWithFactor('Coche', '0.2');
+        $this->overnightStayWithFactor('4.0');
+
+        $response = ($this->sut)($this->request(
+            token: $link->token(),
+            nights: 3,
+            legs: [new LegInput(mobilityId: (string) $mobility->id(), manualDistanceKm: 100.0)],
+        ));
+
+        $stored = $this->tripCalculationRepository->find($response->tripCalculationId);
+
+        $this->assertNotNull($stored);
+        $this->assertSame(0, $stored->nights());
+        $this->assertEqualsWithDelta(0.0, (float) $response->overnightEmissions->co2eq(), 0.001);
+    }
+
+    public function testIgnoresTheLegsWhenTheScopeIsOvernightStayOnly(): void
+    {
+        $link = $this->linkToLocatedProperty(TripCalculationScope::OvernightStay);
+        $mobility = $this->mobilityWithFactor('Coche', '0.2');
+        $this->overnightStayWithFactor('4.0');
+
+        $this->placeFinder->add('sevilla', 'Sevilla, España', 37.3891, -5.9845);
+
+        $response = ($this->sut)($this->request(
+            token: $link->token(),
+            originPlaceReference: 'sevilla',
+            roundTrip: true,
+            trips: 4,
+            nights: 2,
+            legs: [new LegInput(mobilityId: (string) $mobility->id(), manualDistanceKm: 100.0)],
+        ));
+
+        $stored = $this->tripCalculationRepository->find($response->tripCalculationId);
+
+        $this->assertNotNull($stored);
+        $this->assertSame([], $stored->legs());
+        $this->assertNull($stored->originLabel());
+        $this->assertSame(2, $stored->nights());
+        $this->assertEqualsWithDelta(0.0, (float) $response->mobilityEmissions->co2eq(), 0.001);
+        $this->assertEqualsWithDelta(8.0, (float) $response->overnightEmissions->co2eq(), 0.001);
+    }
+
+    public function testThrowsWhenTheScopeIsTransportOnlyAndThereAreNoLegs(): void
+    {
+        $link = $this->linkToLocatedProperty(TripCalculationScope::Transport);
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        ($this->sut)($this->request(token: $link->token(), originPlaceReference: 'sevilla'));
+    }
+
+    public function testThrowsWhenTheScopeIsOvernightStayOnlyAndThereAreNoNights(): void
+    {
+        $link = $this->linkToLocatedProperty(TripCalculationScope::OvernightStay);
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        ($this->sut)($this->request(token: $link->token(), nights: 0));
+    }
+
     public function testThrowsWhenALegHasNoDistanceAtAll(): void
     {
         $link = $this->linkToUnlocatedProperty();
@@ -247,9 +312,9 @@ class RegisterTripCalculationServiceTest extends TestCase
         );
     }
 
-    private function linkToLocatedProperty(): TripCalculationLink
+    private function linkToLocatedProperty(?TripCalculationScope $scope = null): TripCalculationLink
     {
-        return $this->link(new PropertyInfo(latitude: '40.4680', longitude: '-3.6160'));
+        return $this->link(new PropertyInfo(latitude: '40.4680', longitude: '-3.6160'), $scope);
     }
 
     private function linkToUnlocatedProperty(): TripCalculationLink
@@ -257,7 +322,7 @@ class RegisterTripCalculationServiceTest extends TestCase
         return $this->link(new PropertyInfo());
     }
 
-    private function link(PropertyInfo $info): TripCalculationLink
+    private function link(PropertyInfo $info, ?TripCalculationScope $scope = null): TripCalculationLink
     {
         $property = PropertyMother::from(
             propertyId: PropertyId::generate(),
@@ -273,6 +338,10 @@ class RegisterTripCalculationServiceTest extends TestCase
             accountId: AccountId::generate(),
             token: TripCalculationLink::generateToken(),
         );
+
+        if (null !== $scope) {
+            $link->updateScope($scope);
+        }
 
         $this->tripCalculationLinkRepository->add($link);
 

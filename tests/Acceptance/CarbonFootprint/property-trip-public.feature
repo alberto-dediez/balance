@@ -72,3 +72,38 @@ Feature:
         When I go to "/es/carbon-footprint/property-trip/this-token-does-not-exist"
         Then the response status should be 404
         Then I see a text "Este enlace no es válido"
+
+    Scenario: A calculator limited to overnight stays does not ask about the trip
+        Given account "MyCompany" with id "666" exists
+        Given property "Hotel A" with id "777" of account "666" exists
+        Given overnight stay "Hotel" with id "O1" and emission factor for the current year exists
+        Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" with scope "overnight_stay" exists
+        When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        Then the response status should be 200
+        Then I do not see a text "¿Te has desplazado desde otra ciudad?"
+        Then I do not see a text "¿Dormiste alguna noche fuera de tu casa?"
+        Then I see a text "Nº de noches"
+        When I submit a form with "nights:2" and button "Calcular mi huella"
+        Then I am redirected to route "public_carbon_footprint_property_trip_result"
+        Then the response status should be 200
+        Then I see a text "Noches declaradas: 2"
+        Then I do not see a text "Desplazamientos"
+        Then trip calculation link "TL1" should have 1 trip calculations
+
+    Scenario: A calculator limited to transport does not ask about the overnight stays
+        Given account "MyCompany" with id "666" exists
+        Given property "Hotel A" with id "777" of account "666" exists
+        Given mobility "Coche" with id "M1" and emission factor for the current year exists
+        Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" with scope "transport" exists
+        Given the places provider is disabled
+        When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        Then the response status should be 200
+        Then I do not see a text "¿Te has desplazado desde otra ciudad?"
+        Then I do not see a text "¿Dormiste alguna noche fuera de tu casa?"
+        Then I see a text "¿Desde dónde viajaste?"
+        When I submit a form with "originPlaceReference:Sevilla|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:120|roundTrip:no|trips:1" and button "Calcular mi huella"
+        Then I am redirected to route "public_carbon_footprint_property_trip_result"
+        Then the response status should be 200
+        Then I see a text "Desplazamientos"
+        Then I do not see a text "Pernoctaciones"
+        Then trip calculation link "TL1" should have 1 trip calculations

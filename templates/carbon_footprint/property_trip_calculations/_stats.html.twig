@@ -30,7 +30,9 @@
                         <twig:Icon name="solar:users-group-rounded-line-duotone" size="lg" class="text-primary" />
                     </span>
                 </div>
-                <small class="text-muted">{{ 'Pernoctaciones' | trans }}: {{ aggregation.nights | number_format(0, ',', '.') }}</small>
+                {% if showOvernightStay %}
+                    <small class="text-muted">{{ 'Pernoctaciones' | trans }}: {{ aggregation.nights | number_format(0, ',', '.') }}</small>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -123,68 +125,72 @@
         </div>
     </div>
 
-    <div class="col-lg-4 d-flex">
-        <div class="card flex-fill">
-            <div class="card-header fw-semibold">{{ 'Emisiones por concepto' | trans }} <span class="text-muted fw-normal">(kg CO₂eq)</span></div>
-            <div class="card-body">
-                {% if emissionsSplitChart.values is not empty %}
-                    <twig:Chart:Donut
-                        title="{{ 'Emisiones' | trans }}"
-                        :values="emissionsSplitChart.values"
-                        :categories="emissionsSplitChart.categories"
-                        :colors="['var(--bs-primary)', 'var(--bs-warning)']"
-                        unit="kg"
-                        :decimals="0"
-                        :legend="true"
-                    />
-                {% else %}
-                    <p class="text-muted mb-0">{{ 'Todavía no hay emisiones registradas.' | trans }}</p>
-                {% endif %}
+    {% if showTransport and showOvernightStay %}
+        <div class="col-lg-4 d-flex">
+            <div class="card flex-fill">
+                <div class="card-header fw-semibold">{{ 'Emisiones por concepto' | trans }} <span class="text-muted fw-normal">(kg CO₂eq)</span></div>
+                <div class="card-body">
+                    {% if emissionsSplitChart.values is not empty %}
+                        <twig:Chart:Donut
+                            title="{{ 'Emisiones' | trans }}"
+                            :values="emissionsSplitChart.values"
+                            :categories="emissionsSplitChart.categories"
+                            :colors="['var(--bs-primary)', 'var(--bs-warning)']"
+                            unit="kg"
+                            :decimals="0"
+                            :legend="true"
+                        />
+                    {% else %}
+                        <p class="text-muted mb-0">{{ 'Todavía no hay emisiones registradas.' | trans }}</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 </div>
 
-<div class="row">
-    <div class="col-lg-7 d-flex">
-        <div class="card flex-fill">
-            <div class="card-header fw-semibold">{{ 'Distancia por medio de transporte' | trans }} <span class="text-muted fw-normal">(km)</span></div>
-            <div class="card-body">
-                {% if mobilityKmChart.values is not empty %}
-                    <twig:Chart:Bar
-                        title="{{ 'Distancia' | trans }}"
-                        :values="mobilityKmChart.values"
-                        :categories="mobilityKmChart.categories"
-                        unit="km"
-                        :decimals="0"
-                    />
-                {% else %}
-                    <p class="text-muted mb-0">{{ 'Todavía no hay desplazamientos registrados.' | trans }}</p>
-                {% endif %}
+{% if showTransport %}
+    <div class="row">
+        <div class="col-lg-7 d-flex">
+            <div class="card flex-fill">
+                <div class="card-header fw-semibold">{{ 'Distancia por medio de transporte' | trans }} <span class="text-muted fw-normal">(km)</span></div>
+                <div class="card-body">
+                    {% if mobilityKmChart.values is not empty %}
+                        <twig:Chart:Bar
+                            title="{{ 'Distancia' | trans }}"
+                            :values="mobilityKmChart.values"
+                            :categories="mobilityKmChart.categories"
+                            unit="km"
+                            :decimals="0"
+                        />
+                    {% else %}
+                        <p class="text-muted mb-0">{{ 'Todavía no hay desplazamientos registrados.' | trans }}</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="col-lg-5 d-flex">
-        <div class="card flex-fill">
-            <div class="card-header fw-semibold">{{ 'Emisiones por medio de transporte' | trans }} <span class="text-muted fw-normal">(kg CO₂eq)</span></div>
-            <div class="card-body">
-                {% if mobilityEmissionsChart.values is not empty %}
-                    <twig:Chart:Donut
-                        title="{{ 'Emisiones' | trans }}"
-                        :values="mobilityEmissionsChart.values"
-                        :categories="mobilityEmissionsChart.categories"
-                        unit="kg"
-                        :decimals="0"
-                        :legend="true"
-                    />
-                {% else %}
-                    <p class="text-muted mb-0">{{ 'Todavía no hay emisiones de movilidad.' | trans }}</p>
-                {% endif %}
+        <div class="col-lg-5 d-flex">
+            <div class="card flex-fill">
+                <div class="card-header fw-semibold">{{ 'Emisiones por medio de transporte' | trans }} <span class="text-muted fw-normal">(kg CO₂eq)</span></div>
+                <div class="card-body">
+                    {% if mobilityEmissionsChart.values is not empty %}
+                        <twig:Chart:Donut
+                            title="{{ 'Emisiones' | trans }}"
+                            :values="mobilityEmissionsChart.values"
+                            :categories="mobilityEmissionsChart.categories"
+                            unit="kg"
+                            :decimals="0"
+                            :legend="true"
+                        />
+                    {% else %}
+                        <p class="text-muted mb-0">{{ 'Todavía no hay emisiones de movilidad.' | trans }}</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
-</div>
+{% endif %}
 
 <div class="row">
     <div class="col-lg-4 d-flex">
@@ -226,25 +232,27 @@
         </div>
     </div>
 
-    <div class="col-lg-4 d-flex">
-        <div class="card flex-fill">
-            <div class="card-header fw-semibold">{{ 'Principales orígenes' | trans }}</div>
-            <div class="card-body">
-                {% if originsChart.values is not empty %}
-                    <twig:Chart:Bar
-                        title="{{ 'Respuestas' | trans }}"
-                        :values="originsChart.values"
-                        :categories="originsChart.categories"
-                        :colors="['var(--bs-info)']"
-                        :decimals="0"
-                        :labelDecimals="0"
-                    />
-                {% else %}
-                    <p class="text-muted mb-0">{{ 'Todavía no hay orígenes registrados.' | trans }}</p>
-                {% endif %}
+    {% if showTransport %}
+        <div class="col-lg-4 d-flex">
+            <div class="card flex-fill">
+                <div class="card-header fw-semibold">{{ 'Principales orígenes' | trans }}</div>
+                <div class="card-body">
+                    {% if originsChart.values is not empty %}
+                        <twig:Chart:Bar
+                            title="{{ 'Respuestas' | trans }}"
+                            :values="originsChart.values"
+                            :categories="originsChart.categories"
+                            :colors="['var(--bs-info)']"
+                            :decimals="0"
+                            :labelDecimals="0"
+                        />
+                    {% else %}
+                        <p class="text-muted mb-0">{{ 'Todavía no hay orígenes registrados.' | trans }}</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 </div>
 
 <div class="row">
@@ -273,32 +281,34 @@
         </twig:Card>
     </div>
 
-    <div class="col-lg-6 d-flex">
-        <twig:Card title="{{ 'Desglose por medio de transporte' | trans }}" class="flex-fill">
-            {% if mobilityBreakdown is empty %}
-                <p class="text-muted mb-0">{{ 'Todavía no hay respuestas en este periodo.' | trans }}</p>
-            {% else %}
-                <div class="table-responsive">
-                    <table class="table table-sm mb-0">
-                        <thead>
-                            <tr>
-                                <th scope="col">{{ 'Medio de transporte' | trans }}</th>
-                                <th scope="col" class="text-end">{{ 'Distancia (km)' | trans }}</th>
-                                <th scope="col" class="text-end">{{ 'Emisiones' | trans }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for row in mobilityBreakdown %}
+    {% if showTransport %}
+        <div class="col-lg-6 d-flex">
+            <twig:Card title="{{ 'Desglose por medio de transporte' | trans }}" class="flex-fill">
+                {% if mobilityBreakdown is empty %}
+                    <p class="text-muted mb-0">{{ 'Todavía no hay respuestas en este periodo.' | trans }}</p>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <thead>
                                 <tr>
-                                    <td>{{ row.mobility.name }}</td>
-                                    <td class="text-end text-nowrap">{{ row.km | number_format(2, ',', '.') }}</td>
-                                    <td class="text-end text-nowrap">{{ row.emissions.co2eq | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</td>
+                                    <th scope="col">{{ 'Medio de transporte' | trans }}</th>
+                                    <th scope="col" class="text-end">{{ 'Distancia (km)' | trans }}</th>
+                                    <th scope="col" class="text-end">{{ 'Emisiones' | trans }}</th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
-        </twig:Card>
-    </div>
+                            </thead>
+                            <tbody>
+                                {% for row in mobilityBreakdown %}
+                                    <tr>
+                                        <td>{{ row.mobility.name }}</td>
+                                        <td class="text-end text-nowrap">{{ row.km | number_format(2, ',', '.') }}</td>
+                                        <td class="text-end text-nowrap">{{ row.emissions.co2eq | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </twig:Card>
+        </div>
+    {% endif %}
 </div>

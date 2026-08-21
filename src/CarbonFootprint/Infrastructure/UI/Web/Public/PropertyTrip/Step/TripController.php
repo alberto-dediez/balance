@@ -47,6 +47,8 @@ class TripController extends AbstractController
 
         $this->brandFor($response->tripCalculationLink->accountId());
 
+        $scope = $response->tripCalculationLink->scope();
+
         if ($request->isMethod('POST')) {
             if (!$this->isCsrfTokenValid('property_trip_' . $token, $request->request->getString('_token'))) {
                 throw $this->createAccessDeniedException('Token CSRF no válido');
@@ -54,8 +56,10 @@ class TripController extends AbstractController
 
             $trip = $request->request->all('trip');
 
-            $cameFromAnotherCity = 'yes' === ($trip['cameFromAnotherCity'] ?? null);
-            $overnight = 'yes' === ($trip['overnight'] ?? null);
+            $cameFromAnotherCity = $scope->includesTransport()
+                && (!$scope->asksForBoth() || 'yes' === ($trip['cameFromAnotherCity'] ?? null));
+            $overnight = $scope->includesOvernightStay()
+                && (!$scope->asksForBoth() || 'yes' === ($trip['overnight'] ?? null));
 
             try {
                 $registered = $registerTripCalculation(new RegisterTripCalculationRequest(
@@ -86,6 +90,7 @@ class TripController extends AbstractController
             'mobilities' => $response->mobilities,
             'geoEnabled' => $response->geoEnabled,
             'maxLegs' => $response->maxLegs,
+            'scope' => $scope,
         ]);
     }
 }

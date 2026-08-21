@@ -6897,6 +6897,50 @@
         <source>Reintentar generación</source>
         <target>Reintentar generación</target>
       </trans-unit>
+      <trans-unit id="CT5ZtT0" resname="Calculadora actualizada con éxito">
+        <source>Calculadora actualizada con éxito</source>
+        <target>Calculadora actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id="_OI4tBG" resname="Desplazamientos y pernoctaciones">
+        <source>Desplazamientos y pernoctaciones</source>
+        <target>Desplazamientos y pernoctaciones</target>
+      </trans-unit>
+      <trans-unit id="mkZzwtX" resname="Solo desplazamientos">
+        <source>Solo desplazamientos</source>
+        <target>Solo desplazamientos</target>
+      </trans-unit>
+      <trans-unit id="Vv5szu5" resname="Solo pernoctaciones">
+        <source>Solo pernoctaciones</source>
+        <target>Solo pernoctaciones</target>
+      </trans-unit>
+      <trans-unit id="ky._2VR" resname="Aplicar">
+        <source>Aplicar</source>
+        <target>Aplicar</target>
+      </trans-unit>
+      <trans-unit id="WQdyW0L" resname="Comparte este QR o su enlace con los huéspedes para recoger sus desplazamientos.">
+        <source>Comparte este QR o su enlace con los huéspedes para recoger sus desplazamientos.</source>
+        <target>Comparte este QR o su enlace con los huéspedes para recoger sus desplazamientos.</target>
+      </trans-unit>
+      <trans-unit id="FDetDPu" resname="Comparte este QR o su enlace con los huéspedes para recoger sus pernoctaciones.">
+        <source>Comparte este QR o su enlace con los huéspedes para recoger sus pernoctaciones.</source>
+        <target>Comparte este QR o su enlace con los huéspedes para recoger sus pernoctaciones.</target>
+      </trans-unit>
+      <trans-unit id="5LflmvB" resname="Elige qué se le pregunta al huésped. Lo que quede fuera no se le pedirá ni se tendrá en cuenta en su huella.">
+        <source>Elige qué se le pregunta al huésped. Lo que quede fuera no se le pedirá ni se tendrá en cuenta en su huella.</source>
+        <target>Elige qué se le pregunta al huésped. Lo que quede fuera no se le pedirá ni se tendrá en cuenta en su huella.</target>
+      </trans-unit>
+      <trans-unit id="vQ.uacE" resname="Qué recoge la calculadora">
+        <source>Qué recoge la calculadora</source>
+        <target>Qué recoge la calculadora</target>
+      </trans-unit>
+      <trans-unit id="luZ_Hgw" resname="Cuéntanos cómo llegaste hasta aquí y te diremos la huella de carbono de tu desplazamiento.">
+        <source>Cuéntanos cómo llegaste hasta aquí y te diremos la huella de carbono de tu desplazamiento.</source>
+        <target>Cuéntanos cómo llegaste hasta aquí y te diremos la huella de carbono de tu desplazamiento.</target>
+      </trans-unit>
+      <trans-unit id="Wk1b3t1" resname="Cuéntanos cuántas noches te quedaste y te diremos la huella de carbono de tu estancia.">
+        <source>Cuéntanos cuántas noches te quedaste y te diremos la huella de carbono de tu estancia.</source>
+        <target>Cuéntanos cuántas noches te quedaste y te diremos la huella de carbono de tu estancia.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

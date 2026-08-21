@@ -11,14 +11,18 @@
 
     <table class="table table-sm mb-4">
         <tbody>
-            <tr>
-                <th scope="row" class="fw-normal">{{ 'Desplazamientos' | trans }}</th>
-                <td class="text-end text-nowrap">{{ tripCalculation.mobilityEmissions.co2eq | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</td>
-            </tr>
-            <tr>
-                <th scope="row" class="fw-normal">{{ 'Pernoctaciones' | trans }}</th>
-                <td class="text-end text-nowrap">{{ tripCalculation.overnightEmissions.co2eq | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</td>
-            </tr>
+            {% if scope.includesTransport or tripCalculation.mobilityEmissions.co2eq > 0 %}
+                <tr>
+                    <th scope="row" class="fw-normal">{{ 'Desplazamientos' | trans }}</th>
+                    <td class="text-end text-nowrap">{{ tripCalculation.mobilityEmissions.co2eq | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</td>
+                </tr>
+            {% endif %}
+            {% if scope.includesOvernightStay or tripCalculation.nights %}
+                <tr>
+                    <th scope="row" class="fw-normal">{{ 'Pernoctaciones' | trans }}</th>
+                    <td class="text-end text-nowrap">{{ tripCalculation.overnightEmissions.co2eq | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</td>
+                </tr>
+            {% endif %}
         </tbody>
     </table>
 
@@ -40,7 +44,7 @@
                 {% endfor %}
             </tbody>
         </table>
-    {% else %}
+    {% elseif scope.asksForBoth %}
         <p class="text-muted small">
             {{ 'No te has desplazado desde otra ciudad, así que tu visita no genera emisiones de desplazamiento.' | trans }}
         </p>

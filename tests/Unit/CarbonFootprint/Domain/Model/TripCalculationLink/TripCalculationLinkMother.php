@@ -6,6 +6,7 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink;
 
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationScope;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 
@@ -30,10 +31,20 @@ class TripCalculationLinkMother
         );
     }
 
+    public static function fromPropertyIdAndScope(string $propertyId, TripCalculationScope $scope): TripCalculationLink
+    {
+        return self::from(
+            propertyId: $propertyId,
+            id: (string) TripCalculationLinkId::generate(),
+            scope: $scope,
+        );
+    }
+
     public static function from(
         string $propertyId,
         string $id,
         ?string $accountId = null,
+        ?TripCalculationScope $scope = null,
     ): TripCalculationLink {
         $tripCalculationLink = new TripCalculationLink(id: new TripCalculationLinkId($id));
         $tripCalculationLink->register(
@@ -41,6 +52,10 @@ class TripCalculationLinkMother
             accountId: new AccountId($accountId ?? 'account-id'),
             token: TripCalculationLink::generateToken(),
         );
+
+        if (null !== $scope) {
+            $tripCalculationLink->updateScope($scope);
+        }
 
         return $tripCalculationLink;
     }

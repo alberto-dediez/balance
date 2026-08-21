@@ -22,6 +22,7 @@ class TripCalculationLink implements \Stringable
         private string $token = '',
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
+        private TripCalculationScope $scope = TripCalculationScope::Both,
     ) {
         $this->events = $events;
     }
@@ -44,6 +45,11 @@ class TripCalculationLink implements \Stringable
     public function token(): string
     {
         return $this->token;
+    }
+
+    public function scope(): TripCalculationScope
+    {
+        return $this->scope;
     }
 
     public function registeredAt(): \DateTimeImmutable
@@ -72,12 +78,27 @@ class TripCalculationLink implements \Stringable
         );
     }
 
+    public function updateScope(TripCalculationScope $scope): void
+    {
+        $this->recordApplyAndPublish(
+            new TripCalculationLinkScopeUpdated(
+                tripCalculationLinkId: $this->id(),
+                scope: $scope,
+            ),
+        );
+    }
+
     public function applyTripCalculationLinkRegistered(TripCalculationLinkRegistered $event): void
     {
         $this->propertyId = $event->propertyId();
         $this->accountId = $event->accountId();
         $this->token = $event->token();
         $this->registeredAt = $event->occurredOn();
+    }
+
+    public function applyTripCalculationLinkScopeUpdated(TripCalculationLinkScopeUpdated $event): void
+    {
+        $this->scope = $event->scope();
     }
 
     public function __toString(): string

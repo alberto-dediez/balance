@@ -64,6 +64,7 @@ use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationScope;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
 use App\CarbonFootprint\Domain\Model\Waste\WasteRepository;
@@ -1089,6 +1090,25 @@ final readonly class CarbonFootprintContext implements Context
             accountId: new AccountId($account),
             token: $token,
         );
+
+        $this->getTripCalculationLinkRepository()->add($tripCalculationLink);
+    }
+
+    #[Given('trip calculation link with id :id and token :token for property :propertyId of account :account with scope :scope exists')]
+    public function tripCalculationLinkWithIdAndTokenForPropertyOfAccountWithScopeExists(string $id, string $token, string $propertyId, string $account, string $scope): void
+    {
+        $this->tripCalculationLinkWithIdAndTokenForPropertyOfAccountExists($id, $token, $propertyId, $account);
+        $this->tripCalculationLinkHasScope($id, $scope);
+    }
+
+    #[Given('trip calculation link :id has scope :scope')]
+    public function tripCalculationLinkHasScope(string $id, string $scope): void
+    {
+        $tripCalculationLink = $this->getTripCalculationLinkRepository()->find(new TripCalculationLinkId($id));
+
+        Assert::assertNotNull($tripCalculationLink);
+
+        $tripCalculationLink->updateScope(TripCalculationScope::from($scope));
 
         $this->getTripCalculationLinkRepository()->add($tripCalculationLink);
     }

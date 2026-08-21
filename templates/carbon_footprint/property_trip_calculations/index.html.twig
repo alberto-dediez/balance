@@ -12,13 +12,35 @@
 
 {% block content %}
     {% if property.accountId %}
+        {% set scope = scopeForm.vars.value.scope %}
+
         <twig:Card title="{{ 'Calculadora de huella de huéspedes' | trans }}">
             <p class="text-muted">
-                {{ 'Comparte este QR o su enlace con los huéspedes para recoger sus desplazamientos y sus pernoctaciones.' | trans }}
+                {% if scope.asksForBoth %}
+                    {{ 'Comparte este QR o su enlace con los huéspedes para recoger sus desplazamientos y sus pernoctaciones.' | trans }}
+                {% elseif scope.includesTransport %}
+                    {{ 'Comparte este QR o su enlace con los huéspedes para recoger sus desplazamientos.' | trans }}
+                {% else %}
+                    {{ 'Comparte este QR o su enlace con los huéspedes para recoger sus pernoctaciones.' | trans }}
+                {% endif %}
             </p>
 
             <twig:CarbonFootprint:PropertyTripQr propertyId="{{ property.id }}" />
         </twig:Card>
+
+        {{ form_start(scopeForm) }}
+            <twig:Card title="{{ 'Qué recoge la calculadora' | trans }}">
+                <p class="text-muted">
+                    {{ 'Elige qué se le pregunta al huésped. Lo que quede fuera no se le pedirá ni se tendrá en cuenta en su huella.' | trans }}
+                </p>
+
+                {{ form_row(scopeForm.scope) }}
+
+                <twig:ActionBar>
+                    <twig:ActionBar:Button type="primary" :button="scopeForm.save" />
+                </twig:ActionBar>
+            </twig:Card>
+        {{ form_end(scopeForm) }}
     {% endif %}
 
     {% include '@carbon_footprint/public_landing/_tab.html.twig' with {form: landingForm} %}

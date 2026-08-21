@@ -81,6 +81,7 @@ class ResultController extends AbstractController
             'tripCalculation' => $tripCalculation,
             'mobilityNames' => $mobilityNames,
             'hasContributionOptions' => $hasContributionOptions,
+            'scope' => $response->tripCalculationLink->scope(),
         ]);
     }
 }
