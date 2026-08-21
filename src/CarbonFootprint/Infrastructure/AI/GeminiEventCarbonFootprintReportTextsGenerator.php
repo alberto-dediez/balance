@@ -44,7 +44,7 @@ final class GeminiEventCarbonFootprintReportTextsGenerator implements EventCarbo
 
     private function hasCorruptedCharacters(EventCarbonFootprintReportTexts $texts): bool
     {
-        $content = $texts->executiveSummary . $texts->methodology . $texts->emissionFactorSources . $texts->analysisAndRecommendations;
+        $content = $texts->executiveSummary . $texts->methodology . $texts->emissionFactorSources . $texts->analysisAndRecommendations . $texts->compensation;
 
         return 1 === preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', $content);
     }
@@ -57,6 +57,7 @@ final class GeminiEventCarbonFootprintReportTextsGenerator implements EventCarbo
             methodology: $this->cleanMarkdownContent($this->stringOrEmpty($result, 'methodology')),
             emissionFactorSources: $this->cleanMarkdownContent($this->stringOrEmpty($result, 'emissionFactorSources')),
             analysisAndRecommendations: $this->cleanMarkdownContent($this->stringOrEmpty($result, 'analysisAndRecommendations')),
+            compensation: $this->cleanMarkdownContent($this->stringOrEmpty($result, 'compensation')),
         );
     }
 

@@ -63,12 +63,47 @@ final class GenerateReportTextsPrompt implements GeminiPrompt
             }
         }
 
+        $compensation = $this->data->compensation;
+        $hasCompensation = null !== $compensation && $compensation->hasCompensations();
+
+        if ($hasCompensation) {
+            $lines[] = '';
+            $lines[] = 'Emission compensation achieved for this event:';
+            $lines[] = sprintf('- Compensated by the organizing company: %s tonnes CO2eq (%d contributions)', $this->number($compensation->ownTonnes), $compensation->ownContributions);
+            $lines[] = sprintf('- Compensated by the attendees: %s tonnes CO2eq (%d contributions)', $this->number($compensation->attendeesTonnes), $compensation->attendeesContributions);
+            $lines[] = sprintf('- Total compensated: %s tonnes CO2eq', $this->number($compensation->totalTonnes));
+            $lines[] = sprintf('- Coverage over the total emissions of the event: %s %%', $this->number($compensation->coveragePercentage));
+            $lines[] = sprintf('- Data cut-off date: %s', $compensation->cutOffAt->format('Y-m-d'));
+            $lines[] = 'Projects (scope | project | location | registry id | contributions | tonnes):';
+
+            foreach ($compensation->projectLines as $projectLine) {
+                $lines[] = sprintf(
+                    '- %s | %s | %s | %s | %d | %s',
+                    $projectLine->scope->value,
+                    $projectLine->projectName,
+                    $projectLine->projectLocation ?? 'n/a',
+                    $projectLine->projectRegistryId ?? 'n/a',
+                    $projectLine->contributions,
+                    $this->number($projectLine->tonnes),
+                );
+            }
+        }
+
         $lines[] = '';
-        $lines[] = 'Write four sections:';
+        $lines[] = $hasCompensation ? 'Write five sections:' : 'Write four sections:';
         $lines[] = '1. executiveSummary: a concise executive summary of the event carbon footprint results.';
         $lines[] = '2. methodology: an explanation of the calculation methodology used (emission factors, phases, sources).';
         $lines[] = '3. emissionFactorSources: a description of the origin/references of the emission factors applied.';
         $lines[] = '4. analysisAndRecommendations: an analysis of the results and concrete recommendations to reduce emissions.';
+
+        if ($hasCompensation) {
+            $lines[] = '5. compensation: a description of the emission compensation achieved for this event, covering the contributions of the organizing company and of the attendees, the coverage reached and the projects involved.';
+            $lines[] = '';
+            $lines[] = 'Rules for the compensation section:';
+            $lines[] = '- Do not claim carbon neutrality or full compensation if the coverage is below 100 %.';
+            $lines[] = '- Place compensation after emission reduction in the mitigation hierarchy: compensation complements reduction, it does not replace it.';
+            $lines[] = '- Do not invent figures, project names or registries beyond the ones supplied above.';
+        }
 
         if ([] !== $this->data->exclusionLines) {
             $lines[] = '';
@@ -82,9 +117,23 @@ final class GenerateReportTextsPrompt implements GeminiPrompt
         $lines[] = 'Format each section in Markdown using paragraphs, bold text and bullet lists (and ### subheadings where helpful); do not use tables, code blocks or links.';
         $lines[] = '';
         $lines[] = 'Respond strictly as a JSON object with this exact shape:';
-        $lines[] = '{"executiveSummary": "string", "methodology": "string", "emissionFactorSources": "string", "analysisAndRecommendations": "string"}';
+        $lines[] = $hasCompensation
+            ? '{"executiveSummary": "string", "methodology": "string", "emissionFactorSources": "string", "analysisAndRecommendations": "string", "compensation": "string"}'
+            : '{"executiveSummary": "string", "methodology": "string", "emissionFactorSources": "string", "analysisAndRecommendations": "string"}';
 
         return implode("\n", $lines);
+    }
+
+    private function hasCompensation(): bool
+    {
+        $compensation = $this->data->compensation;
+
+        return null !== $compensation && $compensation->hasCompensations();
+    }
+
+    private function number(float $value): string
+    {
+        return number_format($value, 3, '.', '');
     }
 
     /** @return list<string> */
@@ -113,7 +162,7 @@ final class GenerateReportTextsPrompt implements GeminiPrompt
 
     public function responseSchema(): array
     {
-        return [
+        $schema = [
             'type' => 'OBJECT',
             'properties' => [
                 'executiveSummary' => ['type' => 'STRING'],
@@ -123,6 +172,13 @@ final class GenerateReportTextsPrompt implements GeminiPrompt
             ],
             'required' => ['executiveSummary', 'methodology', 'emissionFactorSources', 'analysisAndRecommendations'],
         ];
+
+        if ($this->hasCompensation()) {
+            $schema['properties']['compensation'] = ['type' => 'STRING'];
+            $schema['required'][] = 'compensation';
+        }
+
+        return $schema;
     }
 
     public function temperature(): float

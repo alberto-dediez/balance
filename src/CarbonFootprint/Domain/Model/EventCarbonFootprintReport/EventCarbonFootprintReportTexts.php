@@ -11,5 +11,6 @@ final class EventCarbonFootprintReportTexts
         public readonly string $methodology,
         public readonly string $emissionFactorSources,
         public readonly string $analysisAndRecommendations,
+        public readonly string $compensation = '',
     ) {}
 }

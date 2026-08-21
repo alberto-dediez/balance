@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Shared\Infrastructure\Messenger;
 
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Infrastructure\Symfony\Security\ImpersonatedAccount;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\DeferredCommand;
@@ -20,13 +22,15 @@ use Symfony\Component\Messenger\Stamp\StampInterface;
 class DeferredCommandMessengerTest extends TestCase
 {
     private FakeMessageBus $messageBus;
+    private StubImpersonatedAccount $impersonatedAccount;
     private DeferredCommandMessenger $sut;
 
     protected function setUp(): void
     {
         CommandBusDispatcher::instance()->reset();
         $this->messageBus = new FakeMessageBus();
-        $this->sut = new DeferredCommandMessenger($this->messageBus);
+        $this->impersonatedAccount = new StubImpersonatedAccount();
+        $this->sut = new DeferredCommandMessenger($this->messageBus, $this->impersonatedAccount);
     }
 
     public function testIsHandledForDeferredCommand(): void
@@ -53,6 +57,33 @@ class DeferredCommandMessengerTest extends TestCase
         $this->assertInstanceOf(DeferredMessage::class, $dispatched);
         $this->assertSame($inner, $dispatched->command());
         $this->assertTrue($user->id()->equals($dispatched->userId()));
+    }
+
+    public function testHandleDispatchesDeferredMessageWithoutImpersonatedAccountWhenNotImpersonating(): void
+    {
+        $command = new DeferredCommand(new FakeInnerCommand());
+
+        $this->sut->handle($command, UserMother::adminUser());
+
+        $dispatched = $this->messageBus->lastDispatched();
+        $this->assertInstanceOf(DeferredMessage::class, $dispatched);
+        $this->assertNull($dispatched->impersonatedAccountId());
+    }
+
+    public function testHandleDispatchesDeferredMessageWithImpersonatedAccountWhenImpersonating(): void
+    {
+        $accountId = AccountId::generate();
+        $this->impersonatedAccount->setAccountId($accountId);
+
+        $command = new DeferredCommand(new FakeInnerCommand());
+
+        $this->sut->handle($command, UserMother::adminUser());
+
+        $dispatched = $this->messageBus->lastDispatched();
+        $this->assertInstanceOf(DeferredMessage::class, $dispatched);
+        $dispatchedAccountId = $dispatched->impersonatedAccountId();
+        $this->assertInstanceOf(AccountId::class, $dispatchedAccountId);
+        $this->assertTrue($accountId->equals($dispatchedAccountId));
     }
 
     public function testHandleReturnsEnqueueCommandResponse(): void
@@ -100,6 +131,23 @@ class DeferredCommandMessengerTest extends TestCase
 }
 
 class FakeInnerCommand implements Command {}
+
+class StubImpersonatedAccount extends ImpersonatedAccount
+{
+    private ?AccountId $accountId = null;
+
+    public function __construct() {}
+
+    public function setAccountId(?AccountId $accountId): void
+    {
+        $this->accountId = $accountId;
+    }
+
+    public function accountId(): ?AccountId
+    {
+        return $this->accountId;
+    }
+}
 
 class FakeMessageBus implements MessageBusInterface
 {

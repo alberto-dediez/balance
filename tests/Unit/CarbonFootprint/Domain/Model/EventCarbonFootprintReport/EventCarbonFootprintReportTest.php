@@ -10,6 +10,7 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootp
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportGenerated;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportRegistered;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportReissued;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportRemoved;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportStatus;
 use App\Security\Domain\Model\Account\AccountId;
@@ -63,6 +64,32 @@ class EventCarbonFootprintReportTest extends TestCase
         $this->assertSame(EventCarbonFootprintReportStatus::Failed, $report->status());
         $this->assertSame('something went wrong', $report->errorMessage());
         $this->assertInstanceOf(EventCarbonFootprintReportFailed::class, $this->spySubscriber->lastEvent());
+    }
+
+    public function testReissuePublishesEventAndReturnsToPendingStatus(): void
+    {
+        $report = EventCarbonFootprintReportMother::failed();
+
+        $report->reissue();
+
+        $this->assertSame(EventCarbonFootprintReportStatus::Pending, $report->status());
+        $this->assertNull($report->errorMessage());
+        $this->assertInstanceOf(EventCarbonFootprintReportReissued::class, $this->spySubscriber->lastEvent());
+    }
+
+    public function testReissueKeepsTheGeneratedAtOfThePreviousIssueUntilItIsGeneratedAgain(): void
+    {
+        $report = EventCarbonFootprintReportMother::generated();
+        $previousGeneratedAt = $report->generatedAt();
+
+        $report->reissue();
+
+        $this->assertSame($previousGeneratedAt, $report->generatedAt());
+        $this->assertSame('shared/report-es.pdf', $report->filePathFor(Locale::Spanish));
+
+        $report->generate();
+
+        $this->assertSame(EventCarbonFootprintReportStatus::Generated, $report->status());
     }
 
     public function testRemovePublishesEvent(): void

@@ -1,0 +1,6 @@
+<p>{% trans -%}Se ha registrado una compensación posterior a la última emisión del informe de huella de carbono. Puedes reemitirlo para incluirla.{%- endtrans %}</p>
+<p>
+    <a href="{{ path('events_carbon_footprint_results', {eventId: eventId}) }}">
+        {% trans -%}Ver resultados{%- endtrans -%}
+    </a>
+</p>

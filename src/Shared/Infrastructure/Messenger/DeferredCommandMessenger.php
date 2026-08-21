@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\Messenger;
 
 use App\Security\Domain\Model\User\User;
+use App\Security\Infrastructure\Symfony\Security\ImpersonatedAccount;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandResponse;
 use App\Shared\Application\CommandBus\DeferredCommand;
@@ -19,7 +20,10 @@ class DeferredCommandMessenger implements DeferredCommandHandler
 {
     use RegisterHandlerTrait;
 
-    public function __construct(private MessageBusInterface $messageBus) {}
+    public function __construct(
+        private MessageBusInterface $messageBus,
+        private ImpersonatedAccount $impersonatedAccount,
+    ) {}
 
     public function isHandled(Command $command): bool
     {
@@ -31,10 +35,12 @@ class DeferredCommandMessenger implements DeferredCommandHandler
      */
     public function handle(Command $command, User $user): ?CommandResponse
     {
+        $impersonatedAccountId = $this->impersonatedAccount->accountId();
+
         $message = match ($command->priority()) {
-            Priority::HIGH => new DeferredHighMessage($command->command(), $user->id()),
-            Priority::LOW  => new DeferredLowMessage($command->command(), $user->id()),
-            default        => new DeferredMediumMessage($command->command(), $user->id()),
+            Priority::HIGH => new DeferredHighMessage($command->command(), $user->id(), $impersonatedAccountId),
+            Priority::LOW  => new DeferredLowMessage($command->command(), $user->id(), $impersonatedAccountId),
+            default        => new DeferredMediumMessage($command->command(), $user->id(), $impersonatedAccountId),
         };
 
         $this->messageBus->dispatch($message, $this->stamps($command));

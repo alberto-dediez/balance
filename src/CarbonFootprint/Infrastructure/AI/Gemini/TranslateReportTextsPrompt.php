@@ -22,7 +22,12 @@ final class TranslateReportTextsPrompt implements GeminiPrompt
     {
         $lines = [
             'You are a professional translator specialized in sustainability and carbon footprint reports.',
-            sprintf('Translate the following four Markdown sections of an event carbon footprint report from %s to %s.', $this->from->name, $this->to->name),
+            sprintf(
+                'Translate the following %s Markdown sections of an event carbon footprint report from %s to %s.',
+                $this->hasCompensation() ? 'five' : 'four',
+                $this->from->name,
+                $this->to->name,
+            ),
             '',
             'Each section is delimited by an XML-like tag; the tags are not part of the content.',
             '',
@@ -46,17 +51,32 @@ final class TranslateReportTextsPrompt implements GeminiPrompt
             '<analysisAndRecommendations>',
             $this->texts->analysisAndRecommendations,
             '</analysisAndRecommendations>',
-            '',
-            'Respond strictly as a JSON object with this exact shape:',
-            '{"executiveSummary": "string", "methodology": "string", "emissionFactorSources": "string", "analysisAndRecommendations": "string"}',
         ];
+
+        if ($this->hasCompensation()) {
+            $lines[] = '';
+            $lines[] = '<compensation>';
+            $lines[] = $this->texts->compensation;
+            $lines[] = '</compensation>';
+        }
+
+        $lines[] = '';
+        $lines[] = 'Respond strictly as a JSON object with this exact shape:';
+        $lines[] = $this->hasCompensation()
+            ? '{"executiveSummary": "string", "methodology": "string", "emissionFactorSources": "string", "analysisAndRecommendations": "string", "compensation": "string"}'
+            : '{"executiveSummary": "string", "methodology": "string", "emissionFactorSources": "string", "analysisAndRecommendations": "string"}';
 
         return implode("\n", $lines);
     }
 
+    private function hasCompensation(): bool
+    {
+        return '' !== $this->texts->compensation;
+    }
+
     public function responseSchema(): array
     {
-        return [
+        $schema = [
             'type' => 'OBJECT',
             'properties' => [
                 'executiveSummary' => ['type' => 'STRING'],
@@ -66,6 +86,13 @@ final class TranslateReportTextsPrompt implements GeminiPrompt
             ],
             'required' => ['executiveSummary', 'methodology', 'emissionFactorSources', 'analysisAndRecommendations'],
         ];
+
+        if ($this->hasCompensation()) {
+            $schema['properties']['compensation'] = ['type' => 'STRING'];
+            $schema['required'][] = 'compensation';
+        }
+
+        return $schema;
     }
 
     public function temperature(): float

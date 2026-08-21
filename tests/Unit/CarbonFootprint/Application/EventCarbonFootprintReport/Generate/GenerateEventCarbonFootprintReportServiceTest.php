@@ -9,6 +9,7 @@ use App\CarbonFootprint\Application\Activity\Catalog\MaterialCatalogProvider;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetResults\GetResultsService;
 use App\CarbonFootprint\Application\EventCarbonFootprintReport\Generate\ActivityItemNameResolver;
+use App\CarbonFootprint\Application\EventCarbonFootprintReport\Generate\EventCompensationCollector;
 use App\CarbonFootprint\Application\EventCarbonFootprintReport\Generate\GenerateEventCarbonFootprintReportRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprintReport\Generate\GenerateEventCarbonFootprintReportService;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
@@ -22,13 +23,20 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootp
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEventCarbonFootprintReportRepository;
 use App\CarbonFootprint\Infrastructure\Storage\InMemoryEventCarbonFootprintReportStorage;
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\Balance\Application\ContributionCertificate\Generate\FakeContributionCertificateVerificationUrlGenerator;
+use App\Tests\Unit\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepositoryMother;
+use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
+use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\MaterialActivityMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
@@ -74,7 +82,7 @@ class GenerateEventCarbonFootprintReportServiceTest extends TestCase
         $this->assertSame([Locale::English], $textsGenerator->translateCalls());
     }
 
-    public function testFailureMarksReportFailedAndCleansUpStorage(): void
+    public function testFailureMarksReportFailedWithoutStoringAnything(): void
     {
         [$sut, $reportRepository, $storage, $textsGenerator, $report] = $this->createSUT();
 
@@ -91,6 +99,61 @@ class GenerateEventCarbonFootprintReportServiceTest extends TestCase
             $this->assertSame('Gemini failure', $persisted->errorMessage());
             $this->assertCount(0, $storage->paths());
         }
+    }
+
+    public function testFailureBeforeTheGenerationMarksReportFailed(): void
+    {
+        [$sut, $reportRepository, , , $report] = $this->createSUT();
+
+        $this->expectException(UnauthorizedActionException::class);
+
+        try {
+            ($sut)(new GenerateEventCarbonFootprintReportRequest($report->id()), UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('another-account-id')));
+        } finally {
+            $persisted = $reportRepository->find($report->id());
+            $this->assertNotNull($persisted);
+            $this->assertSame(EventCarbonFootprintReportStatus::Failed, $persisted->status());
+        }
+    }
+
+    public function testFailureOnAReissueKeepsThePreviouslyStoredFiles(): void
+    {
+        [$sut, $reportRepository, $storage, $textsGenerator, $report] = $this->createSUT();
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id'));
+
+        ($sut)(new GenerateEventCarbonFootprintReportRequest($report->id()), $user);
+
+        $storedPaths = $storage->paths();
+
+        $report->reissue();
+        $reportRepository->add($report);
+        $textsGenerator->failOnGenerate();
+
+        $this->expectException(\RuntimeException::class);
+
+        try {
+            ($sut)(new GenerateEventCarbonFootprintReportRequest($report->id()), $user);
+        } finally {
+            $this->assertSame($storedPaths, $storage->paths());
+            $this->assertSame([], $storage->deleted());
+
+            $persisted = $reportRepository->find($report->id());
+            $this->assertNotNull($persisted);
+            $this->assertSame(EventCarbonFootprintReportStatus::Failed, $persisted->status());
+            $this->assertNotNull($persisted->filePathFor(Locale::Spanish));
+        }
+    }
+
+    public function testReportDataContainsTheCompensation(): void
+    {
+        [$sut, , , $textsGenerator, $report] = $this->createSUT();
+
+        ($sut)(new GenerateEventCarbonFootprintReportRequest($report->id()), UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id')));
+
+        $data = $textsGenerator->lastData();
+        $this->assertNotNull($data);
+        $this->assertNotNull($data->compensation);
+        $this->assertFalse($data->compensation->hasCompensations());
     }
 
     public function testReportDataContainsTheExclusionLines(): void
@@ -170,6 +233,15 @@ class GenerateEventCarbonFootprintReportServiceTest extends TestCase
             new FakeTranslator(),
         );
 
+        $compensationCollector = new EventCompensationCollector(
+            ProjectContributionRepositoryMother::inMemory(),
+            ContributionCertificateRepositoryMother::inMemory(),
+            new FakeContributionCertificateVerificationUrlGenerator(),
+            ProjectRepositoryMother::inMemory(),
+            AttendeeSurveyRepositoryMother::inMemory(),
+            AttendeeSurveyResponseRepositoryMother::inMemory(),
+        );
+
         $textsGenerator = new FakeReportTextsGenerator();
         $storage = new InMemoryEventCarbonFootprintReportStorage();
 
@@ -181,6 +253,7 @@ class GenerateEventCarbonFootprintReportServiceTest extends TestCase
             $activityRepository,
             $getResultsService,
             $itemNameResolver,
+            $compensationCollector,
             $textsGenerator,
             new FakeReportChartsGenerator(),
             new FakeReportPdfGenerator(),

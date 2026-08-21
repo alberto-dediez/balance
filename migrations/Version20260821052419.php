@@ -22,6 +22,7 @@ final class Version20260821052419 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE credit_purchases ADD notified_thresholds JSON NOT NULL');
         $this->addSql('UPDATE credit_purchases SET notified_thresholds = \'[]\'');
+        $this->addSql("UPDATE contribution_certificates SET credit_lots = JSON_ARRAY() WHERE JSON_TYPE(credit_lots) = 'NULL'");
     }
 
     public function down(Schema $schema): void

@@ -10,5 +10,6 @@ final class EventCarbonFootprintReportCharts
         public readonly string $bySource,
         public readonly string $byPhase,
         public readonly string $byPhaseAndSource,
+        public readonly ?string $compensation = null,
     ) {}
 }

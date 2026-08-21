@@ -37,5 +37,6 @@ final class EventCarbonFootprintReportData
         public readonly array $emissionsByPhaseAndSource,
         public readonly array $activityLines,
         public readonly array $exclusionLines = [],
+        public readonly ?EventCarbonFootprintReportCompensation $compensation = null,
     ) {}
 }

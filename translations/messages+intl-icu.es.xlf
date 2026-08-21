@@ -6813,6 +6813,90 @@
         <source>Compra de referencia {reference}: {consumed} t consumidas. Saldo total disponible en el proyecto: {projectAvailable} t.</source>
         <target>Compra de referencia {reference}: {consumed} t consumidas. Saldo total disponible en el proyecto: {projectAvailable} t.</target>
       </trans-unit>
+      <trans-unit id="VkWg8x6" resname="Emisiones totales del evento (kg CO₂eq)">
+        <source>Emisiones totales del evento (kg CO₂eq)</source>
+        <target>Emisiones totales del evento (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="smmiB1Y" resname="Compensado por la empresa organizadora (t CO₂eq)">
+        <source>Compensado por la empresa organizadora (t CO₂eq)</source>
+        <target>Compensado por la empresa organizadora (t CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="f95TQjj" resname="Compensado por los asistentes (t CO₂eq)">
+        <source>Compensado por los asistentes (t CO₂eq)</source>
+        <target>Compensado por los asistentes (t CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="d0TgYz6" resname="Total compensado (t CO₂eq)">
+        <source>Total compensado (t CO₂eq)</source>
+        <target>Total compensado (t CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="HqYrXhC" resname="Cobertura sobre las emisiones totales">
+        <source>Cobertura sobre las emisiones totales</source>
+        <target>Cobertura sobre las emisiones totales</target>
+      </trans-unit>
+      <trans-unit id="Z3g1KJM" resname="Fecha de corte de los datos de compensación">
+        <source>Fecha de corte de los datos de compensación</source>
+        <target>Fecha de corte de los datos de compensación</target>
+      </trans-unit>
+      <trans-unit id="6d8liRq" resname="Ámbito">
+        <source>Ámbito</source>
+        <target>Ámbito</target>
+      </trans-unit>
+      <trans-unit id="Jv7.oun" resname="Anexo: trazabilidad de las compensaciones">
+        <source>Anexo: trazabilidad de las compensaciones</source>
+        <target>Anexo: trazabilidad de las compensaciones</target>
+      </trans-unit>
+      <trans-unit id="qTj75je" resname="Serials y lotes">
+        <source>Serials y lotes</source>
+        <target>Serials y lotes</target>
+      </trans-unit>
+      <trans-unit id="Y.D8p8s" resname="Verificación">
+        <source>Verificación</source>
+        <target>Verificación</target>
+      </trans-unit>
+      <trans-unit id="Cl20bF9" resname="Empresa organizadora">
+        <source>Empresa organizadora</source>
+        <target>Empresa organizadora</target>
+      </trans-unit>
+      <trans-unit id="7FTEksK" resname="No se ha podido reemitir el informe: {error}">
+        <source>No se ha podido reemitir el informe: {error}</source>
+        <target>No se ha podido reemitir el informe: {error}</target>
+      </trans-unit>
+      <trans-unit id="FoLfJmq" resname="Se está reemitiendo el informe, te notificaremos cuando esté disponible.">
+        <source>Se está reemitiendo el informe, te notificaremos cuando esté disponible.</source>
+        <target>Se está reemitiendo el informe, te notificaremos cuando esté disponible.</target>
+      </trans-unit>
+      <trans-unit id="dZS1EGX" resname="Sin compensar">
+        <source>Sin compensar</source>
+        <target>Sin compensar</target>
+      </trans-unit>
+      <trans-unit id="dokHx6B" resname="Compensado">
+        <source>Compensado</source>
+        <target>Compensado</target>
+      </trans-unit>
+      <trans-unit id="Zw4zo4K" resname="Puedes reemitir el informe de huella de carbono">
+        <source>Puedes reemitir el informe de huella de carbono</source>
+        <target>Puedes reemitir el informe de huella de carbono</target>
+      </trans-unit>
+      <trans-unit id="YkHkJE2" resname="Se han registrado compensaciones posteriores a la última emisión del informe. Reemítelo para incluirlas.">
+        <source>Se han registrado compensaciones posteriores a la última emisión del informe. Reemítelo para incluirlas.</source>
+        <target>Se han registrado compensaciones posteriores a la última emisión del informe. Reemítelo para incluirlas.</target>
+      </trans-unit>
+      <trans-unit id="e7iGVea" resname="Reemitir informe">
+        <source>Reemitir informe</source>
+        <target>Reemitir informe</target>
+      </trans-unit>
+      <trans-unit id="VkkPSL." resname="Compensado por la empresa (t CO₂eq)">
+        <source>Compensado por la empresa (t CO₂eq)</source>
+        <target>Compensado por la empresa (t CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="MjbZDbk" resname="Se ha registrado una compensación posterior a la última emisión del informe de huella de carbono. Puedes reemitirlo para incluirla.">
+        <source>Se ha registrado una compensación posterior a la última emisión del informe de huella de carbono. Puedes reemitirlo para incluirla.</source>
+        <target>Se ha registrado una compensación posterior a la última emisión del informe de huella de carbono. Puedes reemitirlo para incluirla.</target>
+      </trans-unit>
+      <trans-unit id="Us6tsM6" resname="Reintentar generación">
+        <source>Reintentar generación</source>
+        <target>Reintentar generación</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -10,6 +10,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReport;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportActivityLine;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportChartsGenerator;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportData;
@@ -38,6 +39,7 @@ class GenerateEventCarbonFootprintReportService implements CommandHandler
         private ActivityRepository $activityRepository,
         private GetResultsService $getResultsService,
         private ActivityItemNameResolver $itemNameResolver,
+        private EventCompensationCollector $compensationCollector,
         private EventCarbonFootprintReportTextsGenerator $textsGenerator,
         private EventCarbonFootprintReportChartsGenerator $chartsGenerator,
         private EventCarbonFootprintReportPdfGenerator $pdfGenerator,
@@ -57,6 +59,18 @@ class GenerateEventCarbonFootprintReportService implements CommandHandler
             return;
         }
 
+        try {
+            $this->generate($report, $user);
+        } catch (\Throwable $e) {
+            $report->fail($e->getMessage());
+            $this->reportRepository->add($report);
+
+            throw $e;
+        }
+    }
+
+    private function generate(EventCarbonFootprintReport $report, User $user): void
+    {
         $eventCarbonFootprintId = $report->eventCarbonFootprintId();
         $eventCarbonFootprint = null !== $eventCarbonFootprintId ? $this->eventCarbonFootprintRepository->find($eventCarbonFootprintId) : null;
 
@@ -133,6 +147,7 @@ class GenerateEventCarbonFootprintReportService implements CommandHandler
             emissionsByPhaseAndSource: $results->emissionsByPhaseAndSource,
             activityLines: $activityLines,
             exclusionLines: $exclusionLines,
+            compensation: $this->compensationCollector->__invoke($event->id(), $results->totalEmissions),
         );
 
         $locales = Locale::listFrom($this->localeList);
@@ -142,7 +157,9 @@ class GenerateEventCarbonFootprintReportService implements CommandHandler
         }
 
         $baseLocale = $locales[0];
-        $storedPaths = [];
+
+        /** @var list<array{0: Locale, 1: string}> $generatedFiles */
+        $generatedFiles = [];
 
         try {
             $baseTexts = $this->textsGenerator->generate($data, $baseLocale);
@@ -154,26 +171,19 @@ class GenerateEventCarbonFootprintReportService implements CommandHandler
 
                 $charts = $this->chartsGenerator->generate($data, $locale);
 
-                $localPath = $this->pdfGenerator->generate($data, $texts, $charts, $locale);
+                $generatedFiles[] = [$locale, $this->pdfGenerator->generate($data, $texts, $charts, $locale)];
+            }
 
-                $storedPath = $this->storage->store($report->id(), $report->accountId(), $locale, $localPath);
-                @unlink($localPath);
-                $storedPaths[] = $storedPath;
-
-                $report->translate($storedPath, $locale);
+            foreach ($generatedFiles as [$locale, $localPath]) {
+                $report->translate($this->storage->store($report->id(), $report->accountId(), $locale, $localPath), $locale);
             }
 
             $report->generate();
             $this->reportRepository->add($report);
-        } catch (\Throwable $e) {
-            foreach ($storedPaths as $storedPath) {
-                $this->storage->delete($storedPath);
+        } finally {
+            foreach ($generatedFiles as [, $localPath]) {
+                @unlink($localPath);
             }
-
-            $report->fail($e->getMessage());
-            $this->reportRepository->add($report);
-
-            throw $e;
         }
     }
 

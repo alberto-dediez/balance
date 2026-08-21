@@ -11,6 +11,16 @@
         {% elseif report.status.isFailed %}
             <div class="alert alert-danger mt-3" role="alert">
                 {{ 'No se ha podido generar el informe de esta huella de carbono: {error}' | trans({'{error}': report.errorMessage}) }}
+
+                {% if eventCarbonFootprint | is_authorized('edit') %}
+                    <form method="post" action="{{ path('events_carbon_footprint_report_reissue', {eventId: eventId}) }}" class="mt-2">
+                        <input type="hidden" name="_token" value="{{ csrf_token('reissue_report_' ~ eventCarbonFootprint.id) }}">
+                        <button type="submit" class="btn btn-outline-danger">
+                            <twig:Icon name="solar:refresh-line-duotone" />
+                            {{ 'Reintentar generación' | trans }}
+                        </button>
+                    </form>
+                {% endif %}
             </div>
         {% endif %}
 
@@ -87,7 +97,41 @@
             <div class="col-3">
                 {% if report is not null and report.status.isGenerated %}
                     <twig:Card title="{{ 'Informe de huella de carbono' | trans }}">
+                        {% if reportOutdated %}
+                            <div class="alert alert-warning" role="alert">
+                                {{ 'Se han registrado compensaciones posteriores a la última emisión del informe. Reemítelo para incluirlas.' | trans }}
+                            </div>
+                        {% endif %}
+
                         <a href="{{ path('events_carbon_footprint_report_download', {eventId: eventId}) }}" class="btn btn-outline-primary">{{ 'Descargar informe' | trans }}</a>
+
+                        {% if eventCarbonFootprint | is_authorized('edit') %}
+                            <form method="post" action="{{ path('events_carbon_footprint_report_reissue', {eventId: eventId}) }}" class="mt-2">
+                                <input type="hidden" name="_token" value="{{ csrf_token('reissue_report_' ~ eventCarbonFootprint.id) }}">
+                                <button type="submit" class="btn btn-outline-secondary">
+                                    <twig:Icon name="solar:refresh-line-duotone" />
+                                    {{ 'Reemitir informe' | trans }}
+                                </button>
+                            </form>
+                        {% endif %}
+                    </twig:Card>
+                {% endif %}
+
+                {% if compensation is defined and compensation is not null and compensation.hasCompensations %}
+                    <twig:Card title="{{ 'Compensación de emisiones' | trans }}">
+                        <dl class="row mt-3">
+                            <dt class="col-sm-7">{{ 'Compensado por la empresa (t CO₂eq)' | trans }}</dt>
+                            <dd class="col-sm-5">{{ compensation.ownTonnes | number_format(3, ',', '.') }}</dd>
+
+                            <dt class="col-sm-7">{{ 'Compensado por los asistentes (t CO₂eq)' | trans }}</dt>
+                            <dd class="col-sm-5">{{ compensation.attendeesTonnes | number_format(3, ',', '.') }}</dd>
+
+                            <dt class="col-sm-7">{{ 'Total compensado (t CO₂eq)' | trans }}</dt>
+                            <dd class="col-sm-5">{{ compensation.totalTonnes | number_format(3, ',', '.') }}</dd>
+
+                            <dt class="col-sm-7">{{ 'Cobertura sobre las emisiones totales' | trans }}</dt>
+                            <dd class="col-sm-5">{{ min(compensation.coveragePercentage, 100) | number_format(2, ',', '.') }} %</dd>
+                        </dl>
                     </twig:Card>
                 {% endif %}
 

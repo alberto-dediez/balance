@@ -10,6 +10,8 @@ use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseReques
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetResults\GetResultsRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetResults\GetResultsService;
+use App\CarbonFootprint\Application\EventCarbonFootprintReport\GetCompensationSummary\GetCompensationSummaryRequest;
+use App\CarbonFootprint\Application\EventCarbonFootprintReport\GetCompensationSummary\GetCompensationSummaryService;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
@@ -44,6 +46,7 @@ class ResultsController extends AbstractController
         GetResultsService $getResultsService,
         GetPhaseService $getPhase,
         GetAttendeeSurveyStatsService $getAttendeeSurveyStatsService,
+        GetCompensationSummaryService $getCompensationSummary,
         EventCarbonFootprintReportRepository $reportRepository,
         MaterialsStepView $materialsStepView,
         AssemblyBreakdownStepView $assemblyBreakdownStepView,
@@ -131,12 +134,21 @@ class ResultsController extends AbstractController
         }
 
         $report = $reportRepository->findByEventCarbonFootprintId($eventCarbonFootprint->id());
+        $compensation = $getCompensationSummary(new GetCompensationSummaryRequest($eventCarbonFootprint->id()), $user)->compensation;
+        $reportGeneratedAt = $report?->generatedAt();
+        $lastCompensatedAt = $compensation->lastCompensatedAt;
 
         return $this->render('@carbon_footprint/event_carbon_footprints/step/results.html.twig', array_merge(
             $resultsView->build($event, $eventCarbonFootprint, $results, $surveyStats),
             [
                 'eventId' => $eventId,
                 'report' => $report,
+                'compensation' => $compensation,
+                'reportOutdated' => null !== $report
+                    && $report->status()->isGenerated()
+                    && null !== $reportGeneratedAt
+                    && null !== $lastCompensatedAt
+                    && $lastCompensatedAt > $reportGeneratedAt,
             ],
         ));
     }

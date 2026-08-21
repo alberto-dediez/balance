@@ -142,6 +142,15 @@ class EventCarbonFootprintReport implements Translatable, \Stringable
         );
     }
 
+    public function reissue(): void
+    {
+        $this->recordApplyAndPublish(
+            new EventCarbonFootprintReportReissued(
+                eventCarbonFootprintReportId: $this->id,
+            ),
+        );
+    }
+
     public function fail(string $errorMessage): void
     {
         $this->recordApplyAndPublish(
@@ -186,6 +195,12 @@ class EventCarbonFootprintReport implements Translatable, \Stringable
         $this->status = EventCarbonFootprintReportStatus::Generated;
         $this->errorMessage = null;
         $this->generatedAt = $event->occurredOn();
+    }
+
+    public function applyEventCarbonFootprintReportReissued(EventCarbonFootprintReportReissued $event): void
+    {
+        $this->status = EventCarbonFootprintReportStatus::Pending;
+        $this->errorMessage = null;
     }
 
     public function applyEventCarbonFootprintReportFailed(EventCarbonFootprintReportFailed $event): void

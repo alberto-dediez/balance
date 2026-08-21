@@ -7,6 +7,8 @@ namespace App\CarbonFootprint\Infrastructure\Tcpdf;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportCharts;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportCompensationLine;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportCompensationScope;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportPdfGenerator;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportTexts;
@@ -50,10 +52,12 @@ final class TcpdfEventCarbonFootprintReportPdfGenerator implements EventCarbonFo
             $this->renderTextSection($pdf, $this->trans('Resumen ejecutivo', $locale), $texts->executiveSummary);
             $this->renderTextSection($pdf, $this->trans('Metodología de cálculo', $locale), $texts->methodology);
             $this->renderResultsSection($pdf, $data, $charts, $locale);
+            $this->renderCompensationSection($pdf, $data, $texts, $charts, $locale);
             $this->renderExclusionsSection($pdf, $data, $locale);
             $this->renderTextSection($pdf, $this->trans('Fuentes de los factores de emisión', $locale), $texts->emissionFactorSources);
             $this->renderTextSection($pdf, $this->trans('Análisis y recomendaciones', $locale), $texts->analysisAndRecommendations);
             $this->renderAnnexSection($pdf, $data, $locale);
+            $this->renderCompensationAnnexSection($pdf, $data, $locale);
 
             $path = sys_get_temp_dir() . '/' . uniqid('ecf-report-', true) . '-' . $locale->value . '.pdf';
             $this->savePDF($pdf, $path);
@@ -145,6 +149,132 @@ final class TcpdfEventCarbonFootprintReportPdfGenerator implements EventCarbonFo
         $pdf->AddPage();
         $pdf->writeHTML($this->buildTableHtml([$this->trans('Fase', $locale), $this->trans('Fuente', $locale), 'CO₂eq (kg)'], $matrixRows), true, false, true, false, '');
         $this->embedChart($pdf, $charts->byPhaseAndSource);
+    }
+
+    private function renderCompensationSection(\TCPDF $pdf, EventCarbonFootprintReportData $data, EventCarbonFootprintReportTexts $texts, EventCarbonFootprintReportCharts $charts, Locale $locale): void
+    {
+        $compensation = $data->compensation;
+
+        if (null === $compensation || !$compensation->hasCompensations()) {
+            return;
+        }
+
+        $pdf->AddPage();
+        $this->renderSectionTitle($pdf, $this->trans('Compensación de emisiones', $locale));
+        $this->setFont($pdf, 10, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+
+        $summaryRows = [
+            [$this->trans('Emisiones totales del evento (kg CO₂eq)', $locale), number_format((float) $data->totalEmissions->co2eq(), 2, ',', '.')],
+            [$this->trans('Compensado por la empresa organizadora (t CO₂eq)', $locale), number_format($compensation->ownTonnes, 3, ',', '.')],
+            [$this->trans('Compensado por los asistentes (t CO₂eq)', $locale), number_format($compensation->attendeesTonnes, 3, ',', '.')],
+            [$this->trans('Total compensado (t CO₂eq)', $locale), number_format($compensation->totalTonnes, 3, ',', '.')],
+            [$this->trans('Cobertura sobre las emisiones totales', $locale), number_format(min(100.0, $compensation->coveragePercentage), 2, ',', '.') . ' %'],
+            [$this->trans('Fecha de corte de los datos de compensación', $locale), $compensation->cutOffAt->format('d/m/Y')],
+        ];
+
+        $pdf->writeHTML($this->buildTableHtml([$this->trans('Magnitud', $locale), $this->trans('Valor', $locale)], $summaryRows, ['60%', '40%']), true, false, true, false, '');
+
+        if ([] !== $compensation->projectLines) {
+            $header = [
+                $this->trans('Ámbito', $locale),
+                $this->trans('Proyecto', $locale),
+                $this->trans('Ubicación', $locale),
+                $this->trans('Registro', $locale),
+                $this->trans('Compensaciones', $locale),
+                $this->trans('Toneladas', $locale),
+            ];
+
+            $rows = [];
+            foreach ($compensation->projectLines as $projectLine) {
+                $rows[] = [
+                    $this->transScope($projectLine->scope, $locale),
+                    $projectLine->projectName,
+                    $projectLine->projectLocation ?? '-',
+                    $projectLine->projectRegistryId ?? '-',
+                    (string) $projectLine->contributions,
+                    number_format($projectLine->tonnes, 3, ',', '.'),
+                ];
+            }
+
+            $pdf->Ln(4);
+            $pdf->writeHTML($this->buildTableHtml($header, $rows, ['16%', '28%', '18%', '16%', '11%', '11%']), true, false, true, false, '');
+        }
+
+        if (null !== $charts->compensation) {
+            $this->embedChart($pdf, $charts->compensation);
+        }
+
+        if ('' !== $texts->compensation) {
+            $pdf->Ln(4);
+            $this->setFont($pdf, 10.5, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+            $pdf->writeHTML($this->markdownToStyledHtml($texts->compensation), true, false, true, false, '');
+        }
+    }
+
+    private function renderCompensationAnnexSection(\TCPDF $pdf, EventCarbonFootprintReportData $data, Locale $locale): void
+    {
+        $compensation = $data->compensation;
+
+        if (null === $compensation || !$compensation->hasCompensations()) {
+            return;
+        }
+
+        $pdf->AddPage();
+        $this->renderSectionTitle($pdf, $this->trans('Anexo: trazabilidad de las compensaciones', $locale));
+
+        $header = [
+            $this->trans('Certificado', $locale),
+            $this->trans('Fecha', $locale),
+            $this->trans('Ámbito', $locale),
+            $this->trans('Beneficiario', $locale),
+            $this->trans('Proyecto', $locale),
+            $this->trans('Registro', $locale),
+            $this->trans('Toneladas', $locale),
+            $this->trans('Serials y lotes', $locale),
+            $this->trans('Verificación', $locale),
+        ];
+
+        $rows = [];
+        foreach ($compensation->traceabilityLines as $line) {
+            $rows[] = [
+                $line->certificateCode ?? '-',
+                $line->issuedAt->format('d/m/Y'),
+                $this->transScope($line->scope, $locale),
+                $line->beneficiaryName ?? '-',
+                $line->projectName,
+                $line->projectRegistryId ?? '-',
+                number_format($line->tonnes, 3, ',', '.'),
+                $this->serialsCell($line),
+                $line->verificationUrl ?? '-',
+            ];
+        }
+
+        $this->setFont($pdf, 7, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+        $columnWidths = ['11%', '8%', '9%', '13%', '13%', '9%', '7%', '15%', '15%'];
+        $pdf->writeHTML($this->buildTableHtml($header, $rows, $columnWidths), true, false, true, false, '');
+    }
+
+    private function serialsCell(EventCarbonFootprintReportCompensationLine $line): string
+    {
+        $parts = [];
+
+        foreach ($line->creditLots as $creditLot) {
+            $parts[] = sprintf('%s (%s–%s)', $creditLot['serial'], number_format($creditLot['startTonnes'], 3, ',', '.'), number_format($creditLot['endTonnes'], 3, ',', '.'));
+        }
+
+        if ([] === $parts) {
+            $parts = $line->masterSerials;
+        }
+
+        return [] === $parts ? '-' : implode('<br />', $parts);
+    }
+
+    private function transScope(EventCarbonFootprintReportCompensationScope $scope, Locale $locale): string
+    {
+        return match ($scope) {
+            EventCarbonFootprintReportCompensationScope::OwnCompany => $this->trans('Empresa organizadora', $locale),
+            EventCarbonFootprintReportCompensationScope::Attendees => $this->trans('Asistentes', $locale),
+        };
     }
 
     private function renderExclusionsSection(\TCPDF $pdf, EventCarbonFootprintReportData $data, Locale $locale): void

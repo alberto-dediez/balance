@@ -33,7 +33,31 @@ final class ApexChartEventCarbonFootprintReportChartsGenerator implements EventC
             bySource: $this->generateBySource($data, $locale),
             byPhase: $this->generateByPhase($data, $locale),
             byPhaseAndSource: $this->generateByPhaseAndSource($data, $locale),
+            compensation: $this->generateCompensation($data, $locale),
         );
+    }
+
+    private function generateCompensation(EventCarbonFootprintReportData $data, Locale $locale): ?string
+    {
+        $compensation = $data->compensation;
+
+        if (null === $compensation || !$compensation->hasCompensations()) {
+            return null;
+        }
+
+        $emitted = (float) $data->totalEmissions->co2eq();
+        $compensated = min($compensation->totalTonnes * 1000, $emitted);
+
+        return $this->chartClient->generate([
+            'chart' => ['type' => 'donut', 'animations' => ['enabled' => false], 'height' => 600, 'width' => 800],
+            'series' => [round($emitted - $compensated, 0), round($compensated, 0)],
+            'labels' => [
+                $this->translator->trans('Sin compensar', [], 'messages', $locale->value),
+                $this->translator->trans('Compensado', [], 'messages', $locale->value),
+            ],
+            'colors' => [self::COLOR_FALLBACK, self::COLOR_LIME],
+            'legend' => ['show' => true],
+        ]);
     }
 
     private function generateBySource(EventCarbonFootprintReportData $data, Locale $locale): string
