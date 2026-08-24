@@ -92,6 +92,24 @@
                             </div>
                         </div>
                     </div>
+
+                    {% if originsChart.values is not empty %}
+                        <div class="col-lg-12 d-flex">
+                            <div class="card flex-fill">
+                                <div class="card-header fw-semibold">{{ 'Principales orígenes de los asistentes' | trans }} <span class="text-muted fw-normal">({{ 'respuestas' | trans }})</span></div>
+                                <div class="card-body">
+                                    <twig:Chart:Bar
+                                        title="{{ 'Respuestas' | trans }}"
+                                        :values="originsChart.values"
+                                        :categories="originsChart.categories"
+                                        :colors="['var(--bs-info)']"
+                                        :decimals="0"
+                                        :labelDecimals="0"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
             <div class="col-3">
@@ -117,24 +135,6 @@
                     </twig:Card>
                 {% endif %}
 
-                {% if compensation is defined and compensation is not null and compensation.hasCompensations %}
-                    <twig:Card title="{{ 'Compensación de emisiones' | trans }}">
-                        <dl class="row mt-3">
-                            <dt class="col-sm-7">{{ 'Compensado por la empresa (t CO₂eq)' | trans }}</dt>
-                            <dd class="col-sm-5">{{ compensation.ownTonnes | number_format(3, ',', '.') }}</dd>
-
-                            <dt class="col-sm-7">{{ 'Compensado por los asistentes (t CO₂eq)' | trans }}</dt>
-                            <dd class="col-sm-5">{{ compensation.attendeesTonnes | number_format(3, ',', '.') }}</dd>
-
-                            <dt class="col-sm-7">{{ 'Total compensado (t CO₂eq)' | trans }}</dt>
-                            <dd class="col-sm-5">{{ compensation.totalTonnes | number_format(3, ',', '.') }}</dd>
-
-                            <dt class="col-sm-7">{{ 'Cobertura sobre las emisiones totales' | trans }}</dt>
-                            <dd class="col-sm-5">{{ min(compensation.coveragePercentage, 100) | number_format(2, ',', '.') }} %</dd>
-                        </dl>
-                    </twig:Card>
-                {% endif %}
-
                 {% if eventCarbonFootprint | is_authorized('edit') %}
                     <twig:Card title="{{ 'Reabrir cálculo' | trans }}">
                         <p class="text-muted">
@@ -151,26 +151,35 @@
                     </twig:Card>
                 {% endif %}
 
-                <twig:Card title="{{ 'Desglose por fase' | trans }}">
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th>{{ 'Fase' | trans }}</th>
-                                <th class="text-end">{{ 'CO₂eq (kg)' | trans }}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for phase, emissions in results.emissionsByPhase %}
-                                <tr>
-                                    <td>{{ phase | trans({}, 'phase') }}</td>
-                                    <td class="text-end">{{ emissions.co2eq | number_format(2, ',', '.') }}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </twig:Card>
+                {% if compensation is defined and compensation is not null and compensation.hasCompensations %}
+                    <twig:Card title="{{ 'Compensación de emisiones' | trans }}">
+                        {% if compensationChart.values is not empty %}
+                            <twig:Chart:SemiDonut
+                                title="{{ 'Compensación' | trans }}"
+                                :values="compensationChart.values"
+                                :categories="compensationChart.categories"
+                                :colors="['var(--bs-success)', 'var(--bs-info)', 'var(--bs-light)']"
+                                unit="t"
+                                :decimals="3"
+                                :legend="true"
+                            />
+                        {% endif %}
+
+                        <dl class="row mt-3">
+                            <dt class="col-sm-7">{{ 'Compensado por la empresa (t CO₂eq)' | trans }}</dt>
+                            <dd class="col-sm-5">{{ compensation.ownTonnes | number_format(3, ',', '.') }}</dd>
+
+                            <dt class="col-sm-7">{{ 'Compensado por los asistentes (t CO₂eq)' | trans }}</dt>
+                            <dd class="col-sm-5">{{ compensation.attendeesTonnes | number_format(3, ',', '.') }}</dd>
+
+                            <dt class="col-sm-7">{{ 'Total compensado (t CO₂eq)' | trans }}</dt>
+                            <dd class="col-sm-5">{{ compensation.totalTonnes | number_format(3, ',', '.') }}</dd>
+
+                            <dt class="col-sm-7">{{ 'Cobertura sobre las emisiones totales' | trans }}</dt>
+                            <dd class="col-sm-5">{{ min(compensation.coveragePercentage, 100) | number_format(2, ',', '.') }} %</dd>
+                        </dl>
+                    </twig:Card>
+                {% endif %}
 
                 {% if surveyStats is not null %}
                     <twig:Card title="{{ 'Encuesta de asistentes' | trans }}">
@@ -198,6 +207,27 @@
                 {% endif %}
             </div>
         </div>
+
+        <twig:Card title="{{ 'Desglose por fase' | trans }}">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>{{ 'Fase' | trans }}</th>
+                        <th class="text-end">{{ 'CO₂eq (kg)' | trans }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for phase, emissions in results.emissionsByPhase %}
+                        <tr>
+                            <td>{{ phase | trans({}, 'phase') }}</td>
+                            <td class="text-end">{{ emissions.co2eq | number_format(2, ',', '.') }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </twig:Card>
 
         <twig:Card title="{{ 'Desglose por fuente' | trans }}">
             <div class="table-responsive">

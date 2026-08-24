@@ -48,6 +48,18 @@ class InMemoryAttendeeSurveyResponseRepository implements AttendeeSurveyResponse
         return count($this->findByAttendeeSurveyId($attendeeSurveyId));
     }
 
+    /** @param list<AttendeeSurveyId> $attendeeSurveyIds */
+    public function countByAttendeeSurveyIds(array $attendeeSurveyIds): int
+    {
+        $count = 0;
+
+        foreach ($attendeeSurveyIds as $attendeeSurveyId) {
+            $count += $this->countByAttendeeSurveyId($attendeeSurveyId);
+        }
+
+        return $count;
+    }
+
     /** @return array<string, int> */
     public function countLegsByDistanceSource(AttendeeSurveyId $attendeeSurveyId): array
     {

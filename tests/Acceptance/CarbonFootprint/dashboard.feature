@@ -11,6 +11,10 @@ Feature:
         Then the response status should be 200
         Then I see a text "Panel de control"
         Then I see a text "Huellas completadas"
+        Then I see a text "CO₂eq compensado"
+        Then I see a text "Fondos canalizados"
+        Then I see a text "Participación voluntaria"
+        Then I see a text "Respuestas de asistentes"
         Then I see a text "Últimas huellas de carbono"
 
     Scenario: As admin I can see the platform dashboard in the home page
@@ -23,6 +27,10 @@ Feature:
         Then the response status should be 200
         Then I see a text "Panel de control"
         Then I see a text "Cuentas con más emisiones"
+        Then I see a text "CO₂eq compensado"
+        Then I see a text "Fondos canalizados"
+        Then I see a text "Participación voluntaria"
+        Then I see a text "Cálculos de huéspedes"
         Then I see a text "Últimas huellas de carbono"
 
     Scenario: As owner without account I see the standard home page

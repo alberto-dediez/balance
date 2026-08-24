@@ -11,8 +11,10 @@ class TripCalculationFilter
 {
     use Filter;
 
+    /** @param list<TripCalculationLinkId>|null $tripCalculationLinkIds */
     public function __construct(
         public ?TripCalculationLinkId $tripCalculationLinkId = null,
+        public ?array $tripCalculationLinkIds = null,
         public ?\DateTimeImmutable $from = null,
         public ?\DateTimeImmutable $to = null,
         int $limit = 10,

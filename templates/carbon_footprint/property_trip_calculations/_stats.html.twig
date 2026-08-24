@@ -98,6 +98,7 @@
                 <div class="progress mt-2" style="height: 6px;">
                     <div class="progress-bar bg-info" role="progressbar" style="width: {{ paidPercent }}%" aria-valuenow="{{ paidPercent }}" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
+                <small class="text-muted d-block">{{ 'Participación voluntaria' | trans }}: {{ contributions.paidRate | number_format(1, ',', '.') }} %</small>
                 <small class="text-muted">{{ 'Aportación media' | trans }}: {{ contributions.aggregation.averagePaidAmount | number_format(2, ',', '.') }} €</small>
             </div>
         </div>

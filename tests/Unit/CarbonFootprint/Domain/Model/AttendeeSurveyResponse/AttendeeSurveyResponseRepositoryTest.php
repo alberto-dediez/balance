@@ -75,6 +75,31 @@ abstract class AttendeeSurveyResponseRepositoryTest extends KernelTestCase
         $this->assertSame(2, $repository->countByAttendeeSurveyId(new AttendeeSurveyId($attendeeSurveyId)));
     }
 
+    public function testCountByAttendeeSurveyIds(): void
+    {
+        $repository = $this->createSUT();
+
+        $firstAttendeeSurveyId = (string) AttendeeSurveyId::generate();
+        $secondAttendeeSurveyId = (string) AttendeeSurveyId::generate();
+
+        $repository->add(AttendeeSurveyResponseMother::fromAttendeeSurveyId($firstAttendeeSurveyId));
+        $repository->add(AttendeeSurveyResponseMother::fromAttendeeSurveyId($firstAttendeeSurveyId));
+        $repository->add(AttendeeSurveyResponseMother::fromAttendeeSurveyId($secondAttendeeSurveyId));
+        $repository->add(AttendeeSurveyResponseMother::random());
+
+        $this->assertSame(3, $repository->countByAttendeeSurveyIds([
+            new AttendeeSurveyId($firstAttendeeSurveyId),
+            new AttendeeSurveyId($secondAttendeeSurveyId),
+        ]));
+    }
+
+    public function testCountByAttendeeSurveyIdsReturnsZeroWithoutIds(): void
+    {
+        $repository = $this->createSUT();
+
+        $this->assertSame(0, $repository->countByAttendeeSurveyIds([]));
+    }
+
     public function testCountByAttendeeSurveyIdReturnsZeroWhenNoResponses(): void
     {
         $repository = $this->createSUT();

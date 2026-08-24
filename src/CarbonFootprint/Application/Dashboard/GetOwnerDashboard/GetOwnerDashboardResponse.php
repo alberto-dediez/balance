@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard;
 
+use App\CarbonFootprint\Application\Dashboard\DashboardCompensations;
+
 class GetOwnerDashboardResponse
 {
     /**
@@ -34,5 +36,6 @@ class GetOwnerDashboardResponse
         public readonly array $latestFootprints,
         public readonly array $emissionsByProperty,
         public readonly array $emissionsByCompany,
+        public readonly DashboardCompensations $compensations,
     ) {}
 }

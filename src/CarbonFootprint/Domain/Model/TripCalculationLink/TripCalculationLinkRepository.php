@@ -14,5 +14,10 @@ interface TripCalculationLinkRepository
 
     public function findByPropertyId(PropertyId $propertyId): ?TripCalculationLink;
 
+    /** @return list<TripCalculationLink> */
+    public function findByFilter(TripCalculationLinkFilter $filter): array;
+
+    public function totalResultsByFilter(TripCalculationLinkFilter $filter): int;
+
     public function findByToken(#[\SensitiveParameter] string $token): ?TripCalculationLink;
 }

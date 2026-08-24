@@ -83,6 +83,20 @@ class InMemoryTripCalculationRepository implements TripCalculationRepository
             }
         }
 
+        if (null !== $filter->tripCalculationLinkIds) {
+            $linkId = $tripCalculation->tripCalculationLinkId();
+
+            if (!$linkId instanceof TripCalculationLinkId) {
+                return false;
+            }
+
+            $linkIds = array_map(static fn(TripCalculationLinkId $tripCalculationLinkId): string => (string) $tripCalculationLinkId, $filter->tripCalculationLinkIds);
+
+            if (!in_array((string) $linkId, $linkIds, true)) {
+                return false;
+            }
+        }
+
         if (null !== $filter->from && $tripCalculation->registeredAt() < $filter->from) {
             return false;
         }

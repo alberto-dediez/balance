@@ -22,6 +22,7 @@
     {% else %}
         {% set surveyedPercent = stats.surveyedPercentage is not null ? stats.surveyedPercentage | round : 0 %}
         {% set compensatedPercent = min(100, stats.contributions.compensatedEmissionsRate | round) %}
+        {% set paidPercent = min(100, stats.contributions.paidRate | round) %}
 
         <div class="row">
             <div class="col-sm-6 col-xl-3 d-flex">
@@ -107,6 +108,10 @@
                                 <twig:Icon name="solar:hand-money-line-duotone" size="lg" class="text-info" />
                             </span>
                         </div>
+                        <div class="progress mt-2" style="height: 6px;">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: {{ paidPercent }}%" aria-valuenow="{{ paidPercent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted d-block">{{ 'Participación voluntaria' | trans }}: {{ stats.contributions.paidRate | number_format(1, ',', '.') }} %</small>
                         <small class="text-muted">
                             {{ stats.contributions.aggregation.paid }} {{ 'aportaciones pagadas de' | trans }} {{ stats.contributions.aggregation.contributions }}
                         </small>

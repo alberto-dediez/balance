@@ -73,6 +73,25 @@ class DoctrineAttendeeSurveyResponseRepository implements AttendeeSurveyResponse
         ;
     }
 
+    /** @param list<AttendeeSurveyId> $attendeeSurveyIds */
+    public function countByAttendeeSurveyIds(array $attendeeSurveyIds): int
+    {
+        if ([] === $attendeeSurveyIds) {
+            return 0;
+        }
+
+        $qb = $this->manager->createQueryBuilder();
+
+        return (int) $qb
+            ->select('COUNT(a.id)')
+            ->from(AttendeeSurveyResponse::class, 'a')
+            ->where($qb->expr()->in('a.attendeeSurveyId', ':attendeeSurveyIds'))
+            ->setParameter('attendeeSurveyIds', array_map(static fn(AttendeeSurveyId $attendeeSurveyId): string => (string) $attendeeSurveyId, $attendeeSurveyIds))
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
     /** @return array<string, int> */
     public function countLegsByDistanceSource(AttendeeSurveyId $attendeeSurveyId): array
     {

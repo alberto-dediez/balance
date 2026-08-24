@@ -40,6 +40,26 @@ abstract class TripCalculationRepositoryTest extends TestCase
         $this->assertCount(2, $repository->findByLinkId(new TripCalculationLinkId($linkId)));
     }
 
+    public function testFindByFilterRestrictsToSeveralLinks(): void
+    {
+        $repository = $this->createSUT();
+
+        $firstLinkId = (string) TripCalculationLinkId::generate();
+        $secondLinkId = (string) TripCalculationLinkId::generate();
+
+        $repository->add(TripCalculationMother::fromLinkId($firstLinkId));
+        $repository->add(TripCalculationMother::fromLinkId($secondLinkId));
+        $repository->add(TripCalculationMother::random());
+
+        $filter = new TripCalculationFilter(
+            tripCalculationLinkIds: [new TripCalculationLinkId($firstLinkId), new TripCalculationLinkId($secondLinkId)],
+            limit: 0,
+        );
+
+        $this->assertCount(2, $repository->findByFilter($filter));
+        $this->assertSame(2, $repository->totalResultsByFilter($filter));
+    }
+
     public function testFindByFilterRestrictsToThePeriod(): void
     {
         $repository = $this->createSUT();

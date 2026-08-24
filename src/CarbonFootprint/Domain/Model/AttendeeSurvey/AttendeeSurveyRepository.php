@@ -14,5 +14,10 @@ interface AttendeeSurveyRepository
 
     public function findByEventId(EventId $eventId): ?AttendeeSurvey;
 
+    /** @return list<AttendeeSurvey> */
+    public function findByFilter(AttendeeSurveyFilter $filter): array;
+
+    public function totalResultsByFilter(AttendeeSurveyFilter $filter): int;
+
     public function findByToken(#[\SensitiveParameter] string $token): ?AttendeeSurvey;
 }

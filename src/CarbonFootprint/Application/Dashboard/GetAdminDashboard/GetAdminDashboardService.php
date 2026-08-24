@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\Dashboard\GetAdminDashboard;
 
+use App\CarbonFootprint\Application\Dashboard\DashboardCompensationsCalculator;
 use App\CarbonFootprint\Application\Dashboard\EmissionsBreakdownCalculator;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
@@ -28,6 +29,7 @@ class GetAdminDashboardService
         private EventRepository $eventRepository,
         private EventCarbonFootprintRepository $eventCarbonFootprintRepository,
         private EmissionsBreakdownCalculator $emissionsBreakdownCalculator,
+        private DashboardCompensationsCalculator $dashboardCompensationsCalculator,
         private EventCarbonFootprintAuthorizer $authorizer,
     ) {}
 
@@ -137,6 +139,7 @@ class GetAdminDashboardService
             topAccountsByEmissions: $topAccountsByEmissions,
             eventsByTypology: $eventsByTypology,
             latestFootprints: $latestFootprints,
+            compensations: ($this->dashboardCompensationsCalculator)(null, $currentYear),
         );
     }
 }

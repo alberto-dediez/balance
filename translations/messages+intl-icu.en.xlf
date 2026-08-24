@@ -6997,6 +6997,102 @@
         <source>Emisiones compensadas (kg CO₂eq)</source>
         <target>Offset emissions (kg CO₂eq)</target>
       </trans-unit>
+      <trans-unit id="BrKXpul" resname="Participación voluntaria">
+        <source>Participación voluntaria</source>
+        <target>Voluntary participation</target>
+      </trans-unit>
+      <trans-unit id="6RYDoik" resname="CO₂eq compensado">
+        <source>CO₂eq compensado</source>
+        <target>Offset CO₂eq</target>
+      </trans-unit>
+      <trans-unit id="NRJMZrJ" resname="Compensado en">
+        <source>Compensado en</source>
+        <target>Offset in</target>
+      </trans-unit>
+      <trans-unit id="w7WAdPE" resname="Fondos canalizados">
+        <source>Fondos canalizados</source>
+        <target>Funds channelled</target>
+      </trans-unit>
+      <trans-unit id="R_qBWaM" resname="Canalizado en">
+        <source>Canalizado en</source>
+        <target>Channelled in</target>
+      </trans-unit>
+      <trans-unit id="F1YcBHJ" resname="a proyectos sociales y culturales">
+        <source>a proyectos sociales y culturales</source>
+        <target>to social and cultural projects</target>
+      </trans-unit>
+      <trans-unit id="TxkoKtR" resname="asistentes y huéspedes">
+        <source>asistentes y huéspedes</source>
+        <target>attendees and guests</target>
+      </trans-unit>
+      <trans-unit id="Tr6kwnH" resname="kg propios">
+        <source>kg propios</source>
+        <target>kg from the organisation</target>
+      </trans-unit>
+      <trans-unit id="ntmBWut" resname="kg voluntarios">
+        <source>kg voluntarios</source>
+        <target>kg voluntary</target>
+      </trans-unit>
+      <trans-unit id="tTvnU2J" resname="CO₂eq compensado por año">
+        <source>CO₂eq compensado por año</source>
+        <target>Offset CO₂eq by year</target>
+      </trans-unit>
+      <trans-unit id="EFji9c8" resname="Todavía no se ha compensado ninguna aportación.">
+        <source>Todavía no se ha compensado ninguna aportación.</source>
+        <target>No contribution has been offset yet.</target>
+      </trans-unit>
+      <trans-unit id="2yHfoC1" resname="Fondos por proyecto">
+        <source>Fondos por proyecto</source>
+        <target>Funds by project</target>
+      </trans-unit>
+      <trans-unit id="bRZq2xo" resname="Fondos">
+        <source>Fondos</source>
+        <target>Funds</target>
+      </trans-unit>
+      <trans-unit id="874ROjo" resname="Todavía no hay fondos canalizados a proyectos.">
+        <source>Todavía no hay fondos canalizados a proyectos.</source>
+        <target>No funds have been channelled to projects yet.</target>
+      </trans-unit>
+      <trans-unit id=".KJowlF" resname="Todavía no se ha registrado ninguna aportación.">
+        <source>Todavía no se ha registrado ninguna aportación.</source>
+        <target>No contribution has been registered yet.</target>
+      </trans-unit>
+      <trans-unit id="8lbZ968" resname="Respuestas de asistentes">
+        <source>Respuestas de asistentes</source>
+        <target>Attendee responses</target>
+      </trans-unit>
+      <trans-unit id="VXavhX8" resname="encuestas de asistentes creadas">
+        <source>encuestas de asistentes creadas</source>
+        <target>attendee surveys created</target>
+      </trans-unit>
+      <trans-unit id="YV0HhY1" resname="Cálculos de huéspedes">
+        <source>Cálculos de huéspedes</source>
+        <target>Guest calculations</target>
+      </trans-unit>
+      <trans-unit id="vU_gYuh" resname="alojamientos con calculadora">
+        <source>alojamientos con calculadora</source>
+        <target>properties with a calculator</target>
+      </trans-unit>
+      <trans-unit id="tVHRBgb" resname="Eventos con encuesta">
+        <source>Eventos con encuesta</source>
+        <target>Events with a survey</target>
+      </trans-unit>
+      <trans-unit id="k_wVj6m" resname="eventos con encuesta creada">
+        <source>eventos con encuesta creada</source>
+        <target>events with a survey created</target>
+      </trans-unit>
+      <trans-unit id="xQMQci7" resname="Compensación">
+        <source>Compensación</source>
+        <target>Offsetting</target>
+      </trans-unit>
+      <trans-unit id="HkWbuAM" resname="Principales orígenes de los asistentes">
+        <source>Principales orígenes de los asistentes</source>
+        <target>Main attendee origins</target>
+      </trans-unit>
+      <trans-unit id="VZkXsZQ" resname="respuestas">
+        <source>respuestas</source>
+        <target>responses</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -90,6 +90,13 @@ class DoctrineTripCalculationRepository implements TripCalculationRepository
             ;
         }
 
+        if (null !== $filter->tripCalculationLinkIds) {
+            $qb
+                ->andWhere($qb->expr()->in('t.tripCalculationLinkId', ':tripCalculationLinkIds'))
+                ->setParameter('tripCalculationLinkIds', array_map(static fn(TripCalculationLinkId $tripCalculationLinkId): string => (string) $tripCalculationLinkId, $filter->tripCalculationLinkIds))
+            ;
+        }
+
         if (null !== $filter->from) {
             $qb
                 ->andWhere($qb->expr()->gte('t.registeredAt', ':from'))

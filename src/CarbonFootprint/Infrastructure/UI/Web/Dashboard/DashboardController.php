@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\Dashboard;
 
+use App\CarbonFootprint\Application\Dashboard\DashboardCompensations;
 use App\CarbonFootprint\Application\Dashboard\GetAdminDashboard\AccountEmissions;
 use App\CarbonFootprint\Application\Dashboard\GetAdminDashboard\GetAdminDashboardRequest;
 use App\CarbonFootprint\Application\Dashboard\GetAdminDashboard\GetAdminDashboardService;
@@ -70,7 +71,7 @@ class DashboardController extends AbstractController
             'propertyValues' => $this->roundValues($dashboard->emissionsByProperty),
             'companyCategories' => array_keys($dashboard->emissionsByCompany),
             'companyValues' => $this->roundValues($dashboard->emissionsByCompany),
-        ]);
+        ] + $this->compensationParameters($dashboard->compensations, $translator));
     }
 
     private function adminDashboard(
@@ -96,7 +97,33 @@ class DashboardController extends AbstractController
             'topAccountValues' => array_map(static fn(AccountEmissions $accountEmissions): float => round($accountEmissions->co2eq, 2), $dashboard->topAccountsByEmissions),
             'typologyCategories' => $this->translateKeys($dashboard->eventsByTypology, 'eventTypologyType', $translator),
             'typologyValues' => array_values($dashboard->eventsByTypology),
-        ]);
+        ] + $this->compensationParameters($dashboard->compensations, $translator));
+    }
+
+    /** @return array<string, mixed> */
+    private function compensationParameters(DashboardCompensations $compensations, TranslatorInterface $translator): array
+    {
+        $aggregation = $compensations->aggregation;
+
+        return [
+            'compensations' => $compensations,
+            'compensatedYearCategories' => array_keys($compensations->compensatedByYear),
+            'compensatedYearValues' => $this->roundValues($compensations->compensatedByYear),
+            'fundsProjectCategories' => array_keys($compensations->fundsByProject),
+            'fundsProjectValues' => $this->roundValues($compensations->fundsByProject),
+            'contributionStatusCategories' => [
+                $translator->trans('Pagadas'),
+                $translator->trans('Pendientes'),
+                $translator->trans('Fallidas'),
+                $translator->trans('Caducadas'),
+            ],
+            'contributionStatusValues' => [
+                (float) $aggregation->paid,
+                (float) $aggregation->pending,
+                (float) $aggregation->failed,
+                (float) $aggregation->expired,
+            ],
+        ];
     }
 
     /**

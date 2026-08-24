@@ -139,7 +139,7 @@ class ResultsController extends AbstractController
         $lastCompensatedAt = $compensation->lastCompensatedAt;
 
         return $this->render('@carbon_footprint/event_carbon_footprints/step/results.html.twig', array_merge(
-            $resultsView->build($event, $eventCarbonFootprint, $results, $surveyStats),
+            $resultsView->build($event, $eventCarbonFootprint, $results, $surveyStats, $compensation),
             [
                 'eventId' => $eventId,
                 'report' => $report,

@@ -9,12 +9,17 @@ use App\CarbonFootprint\Application\EventCarbonFootprint\GetResults\GetResultsRe
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportCompensation;
+use App\CarbonFootprint\Infrastructure\UI\Web\Chart\TripChartBuilder;
 use App\EventOperations\Domain\Model\Event\Event;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ResultsView
 {
-    public function __construct(private TranslatorInterface $translator) {}
+    public function __construct(
+        private TranslatorInterface $translator,
+        private TripChartBuilder $chartBuilder,
+    ) {}
 
     /** @return array<string, mixed> */
     public function build(
@@ -22,6 +27,7 @@ final class ResultsView
         EventCarbonFootprint $eventCarbonFootprint,
         GetResultsResponse $results,
         ?GetAttendeeSurveyStatsResponse $surveyStats,
+        ?EventCarbonFootprintReportCompensation $compensation = null,
     ): array {
         $attendeeSurvey = $surveyStats?->attendeeSurvey;
         $realAttendees = $attendeeSurvey?->realAttendees();
@@ -41,6 +47,34 @@ final class ResultsView
                 Phase::cases(),
             ),
             'exclusions' => $this->exclusions($results),
+            'compensationChart' => $this->compensationChart($results, $compensation),
+            'originsChart' => $this->chartBuilder->counts(null === $surveyStats ? [] : $surveyStats->topOrigins),
+        ];
+    }
+
+    /** @return array{categories: list<string>, values: list<float>} */
+    private function compensationChart(
+        GetResultsResponse $results,
+        ?EventCarbonFootprintReportCompensation $compensation,
+    ): array {
+        if (null === $compensation || !$compensation->hasCompensations()) {
+            return ['categories' => [], 'values' => []];
+        }
+
+        $totalTonnes = (float) $results->totalEmissions->co2eq() / 1000;
+        $pendingTonnes = max(0.0, $totalTonnes - $compensation->totalTonnes);
+
+        return [
+            'categories' => [
+                $this->translator->trans('Empresa organizadora'),
+                $this->translator->trans('Asistentes'),
+                $this->translator->trans('Sin compensar'),
+            ],
+            'values' => [
+                round($compensation->ownTonnes, 3),
+                round($compensation->attendeesTonnes, 3),
+                round($pendingTonnes, 3),
+            ],
         ];
     }
 

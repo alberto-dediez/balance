@@ -1,0 +1,156 @@
+{% set currentYear = 'now' | date('Y') %}
+{% set compensatedInTonnes = compensations.compensatedCo2eqKg >= 1000 %}
+{% set coverageRate = dashboard.totalEmissionsCo2eq > 0 ? min(100, compensations.compensatedCo2eqKg * 100 / dashboard.totalEmissionsCo2eq) : 0 %}
+{% set participationPercent = min(100, compensations.voluntaryParticipationRate | round) %}
+
+<div class="row">
+    <div class="col-sm-6 col-xl-3 d-flex">
+        <div class="card flex-fill">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="text-muted fw-normal mb-1">{{ 'CO₂eq compensado' | trans }}</h6>
+                        <h3 class="fw-semibold mb-0">
+                            {{ compensatedInTonnes
+                                ? (compensations.compensatedCo2eqKg / 1000) | number_format(2, ',', '.')
+                                : compensations.compensatedCo2eqKg | number_format(0, ',', '.') }}
+                            <small class="fs-4 text-muted">{{ compensatedInTonnes ? 't CO₂eq' : 'kg CO₂eq' }}</small>
+                        </h3>
+                    </div>
+                    <span class="p-2 bg-success-subtle rounded d-flex">
+                        <twig:Icon name="solar:leaf-line-duotone" size="lg" class="text-success" />
+                    </span>
+                </div>
+                <small class="text-muted">{{ 'Compensado en' | trans }} {{ currentYear }}: {{ compensations.periodCompensatedCo2eqKg | number_format(0, ',', '.') }} kg</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3 d-flex">
+        <div class="card flex-fill">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="text-muted fw-normal mb-1">{{ 'Fondos canalizados' | trans }}</h6>
+                        <h3 class="fw-semibold mb-0">{{ compensations.fundsAmount | number_format(2, ',', '.') }} <small class="fs-4 text-muted">€</small></h3>
+                    </div>
+                    <span class="p-2 bg-primary-subtle rounded d-flex">
+                        <twig:Icon name="solar:hand-heart-line-duotone" size="lg" class="text-primary" />
+                    </span>
+                </div>
+                <small class="text-muted d-block">{{ 'Canalizado en' | trans }} {{ currentYear }}: {{ compensations.periodFundsAmount | number_format(2, ',', '.') }} €</small>
+                <small class="text-muted">{{ compensations.socialFundsAmount | number_format(2, ',', '.') }} € {{ 'a proyectos sociales y culturales' | trans }}</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3 d-flex">
+        <div class="card flex-fill">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="text-muted fw-normal mb-1">{{ 'Participación voluntaria' | trans }}</h6>
+                        <h3 class="fw-semibold mb-0">{{ compensations.voluntaryParticipationRate | number_format(1, ',', '.') }} <small class="fs-4 text-muted">%</small></h3>
+                    </div>
+                    <span class="p-2 bg-info-subtle rounded d-flex">
+                        <twig:Icon name="solar:users-group-rounded-line-duotone" size="lg" class="text-info" />
+                    </span>
+                </div>
+                <div class="progress mt-2" style="height: 6px;">
+                    <div class="progress-bar bg-info" role="progressbar" style="width: {{ participationPercent }}%" aria-valuenow="{{ participationPercent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <small class="text-muted">
+                    {{ compensations.voluntaryContributors }} / {{ compensations.surveyResponses + compensations.tripCalculations }} {{ 'asistentes y huéspedes' | trans }}
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3 d-flex">
+        <div class="card flex-fill">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="text-muted fw-normal mb-1">{{ 'Emisiones compensadas' | trans }}</h6>
+                        <h3 class="fw-semibold mb-0">{{ coverageRate | number_format(1, ',', '.') }} <small class="fs-4 text-muted">%</small></h3>
+                    </div>
+                    <span class="p-2 bg-warning-subtle rounded d-flex">
+                        <twig:Icon name="carbon:sustainability" size="lg" class="text-warning" />
+                    </span>
+                </div>
+                <div class="progress mt-2" style="height: 6px;">
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: {{ coverageRate | round }}%" aria-valuenow="{{ coverageRate | round }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <small class="text-muted">
+                    {{ compensations.ownCompensatedCo2eqKg | number_format(0, ',', '.') }} {{ 'kg propios' | trans }} ·
+                    {{ compensations.voluntaryCompensatedCo2eqKg | number_format(0, ',', '.') }} {{ 'kg voluntarios' | trans }}
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-5 d-flex">
+        <div class="card flex-fill">
+            <div class="card-header fw-semibold">{{ 'CO₂eq compensado por año' | trans }} <span class="text-muted fw-normal">(kg CO₂eq)</span></div>
+            <div class="card-body">
+                {% if compensatedYearValues is not empty %}
+                    <twig:Chart:Bar
+                        title="{{ 'Compensado' | trans }}"
+                        :values="compensatedYearValues"
+                        :categories="compensatedYearCategories"
+                        :colors="['var(--bs-success)']"
+                        unit="kg"
+                        :decimals="0"
+                    />
+                {% else %}
+                    <p class="text-muted mb-0">{{ 'Todavía no se ha compensado ninguna aportación.' | trans }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 d-flex">
+        <div class="card flex-fill">
+            <div class="card-header fw-semibold">{{ 'Fondos por proyecto' | trans }} <span class="text-muted fw-normal">(€)</span></div>
+            <div class="card-body">
+                {% if fundsProjectValues is not empty %}
+                    <twig:Chart:Bar
+                        title="{{ 'Fondos' | trans }}"
+                        :values="fundsProjectValues"
+                        :categories="fundsProjectCategories"
+                        :colors="['var(--bs-primary)']"
+                        unit="€"
+                        :decimals="2"
+                    />
+                {% else %}
+                    <p class="text-muted mb-0">{{ 'Todavía no hay fondos canalizados a proyectos.' | trans }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 d-flex">
+        <div class="card flex-fill">
+            <div class="card-header fw-semibold">{{ 'Aportaciones por estado' | trans }}</div>
+            <div class="card-body">
+                {% if compensations.aggregation.contributions > 0 %}
+                    <twig:Chart:Donut
+                        title="{{ 'Aportaciones' | trans }}"
+                        :values="contributionStatusValues"
+                        :categories="contributionStatusCategories"
+                        :decimals="0"
+                        :labelDecimals="0"
+                        :legend="true"
+                    />
+                    <small class="text-muted d-block mt-2">
+                        {{ 'Aportación media' | trans }}: {{ compensations.aggregation.averagePaidAmount | number_format(2, ',', '.') }} €
+                    </small>
+                {% else %}
+                    <p class="text-muted mb-0">{{ 'Todavía no se ha registrado ninguna aportación.' | trans }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

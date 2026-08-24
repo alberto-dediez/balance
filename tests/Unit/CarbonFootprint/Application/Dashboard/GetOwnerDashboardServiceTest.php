@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Application\Dashboard;
 
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregator;
+use App\CarbonFootprint\Application\Dashboard\DashboardCompensationsCalculator;
 use App\CarbonFootprint\Application\Dashboard\EmissionsBreakdownCalculator;
 use App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard\GetOwnerDashboardRequest;
 use App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard\GetOwnerDashboardService;
@@ -23,10 +25,16 @@ use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
+use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
+use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\MaterialActivityMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepositoryMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Company\CompanyMother;
@@ -141,7 +149,21 @@ class GetOwnerDashboardServiceTest extends TestCase
             propertyRepository: $propertyRepository,
             companyRepository: $companyRepository,
             emissionsBreakdownCalculator: new EmissionsBreakdownCalculator($activityRepository),
+            dashboardCompensationsCalculator: $this->createCompensationsCalculator(),
             authorizer: new EventCarbonFootprintAuthorizer(),
+        );
+    }
+
+    private function createCompensationsCalculator(): DashboardCompensationsCalculator
+    {
+        return new DashboardCompensationsCalculator(
+            projectContributionRepository: ProjectContributionRepositoryMother::inMemory(),
+            contributionsAggregator: new ProjectContributionsAggregator(),
+            projectRepository: ProjectRepositoryMother::inMemory(),
+            attendeeSurveyRepository: AttendeeSurveyRepositoryMother::inMemory(),
+            attendeeSurveyResponseRepository: AttendeeSurveyResponseRepositoryMother::inMemory(),
+            tripCalculationLinkRepository: TripCalculationLinkRepositoryMother::inMemory(),
+            tripCalculationRepository: TripCalculationRepositoryMother::inMemory(),
         );
     }
 }

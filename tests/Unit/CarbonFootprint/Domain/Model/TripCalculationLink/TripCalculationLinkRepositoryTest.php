@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink;
 
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkFilter;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
 use App\Property\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
 use PHPUnit\Framework\TestCase;
 
 abstract class TripCalculationLinkRepositoryTest extends TestCase
@@ -46,6 +48,22 @@ abstract class TripCalculationLinkRepositoryTest extends TestCase
         $repository = $this->createSUT();
 
         $this->assertNull($repository->findByPropertyId(PropertyId::generate()));
+    }
+
+    public function testFindByFilterByAccountId(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = (string) AccountId::generate();
+        $repository->add(TripCalculationLinkMother::fromPropertyIdAndAccount((string) PropertyId::generate(), $accountId));
+        $repository->add(TripCalculationLinkMother::fromPropertyIdAndAccount((string) PropertyId::generate(), $accountId));
+        $repository->add(TripCalculationLinkMother::fromPropertyIdAndAccount((string) PropertyId::generate(), (string) AccountId::generate()));
+
+        $filter = new TripCalculationLinkFilter(accountId: new AccountId($accountId), limit: 0);
+
+        $this->assertCount(2, $repository->findByFilter($filter));
+        $this->assertSame(2, $repository->totalResultsByFilter($filter));
+        $this->assertSame(3, $repository->totalResultsByFilter(new TripCalculationLinkFilter(limit: 0)));
     }
 
     public function testFindByToken(): void

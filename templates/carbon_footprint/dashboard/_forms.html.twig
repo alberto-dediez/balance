@@ -1,0 +1,57 @@
+{% set surveyAdoption = dashboard.totalEvents > 0 ? min(100, compensations.attendeeSurveys * 100 / dashboard.totalEvents) : 0 %}
+
+<div class="row">
+    <div class="col-sm-6 col-xl-4 d-flex">
+        <div class="card flex-fill">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="text-muted fw-normal mb-1">{{ 'Respuestas de asistentes' | trans }}</h6>
+                        <h3 class="fw-semibold mb-0">{{ compensations.surveyResponses | number_format(0, ',', '.') }}</h3>
+                    </div>
+                    <span class="p-2 bg-info-subtle rounded d-flex">
+                        <twig:Icon name="solar:clipboard-list-line-duotone" size="lg" class="text-info" />
+                    </span>
+                </div>
+                <small class="text-muted">{{ compensations.attendeeSurveys }} {{ 'encuestas de asistentes creadas' | trans }}</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-4 d-flex">
+        <div class="card flex-fill">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="text-muted fw-normal mb-1">{{ 'Cálculos de huéspedes' | trans }}</h6>
+                        <h3 class="fw-semibold mb-0">{{ compensations.tripCalculations | number_format(0, ',', '.') }}</h3>
+                    </div>
+                    <span class="p-2 bg-secondary-subtle rounded d-flex">
+                        <twig:Icon name="solar:map-point-wave-line-duotone" size="lg" class="text-secondary" />
+                    </span>
+                </div>
+                <small class="text-muted">{{ compensations.tripCalculationLinks }} {{ 'alojamientos con calculadora' | trans }}</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-4 d-flex">
+        <div class="card flex-fill">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="text-muted fw-normal mb-1">{{ 'Eventos con encuesta' | trans }}</h6>
+                        <h3 class="fw-semibold mb-0">{{ surveyAdoption | number_format(1, ',', '.') }} <small class="fs-4 text-muted">%</small></h3>
+                    </div>
+                    <span class="p-2 bg-primary-subtle rounded d-flex">
+                        <twig:Icon name="solar:chart-square-line-duotone" size="lg" class="text-primary" />
+                    </span>
+                </div>
+                <div class="progress mt-2" style="height: 6px;">
+                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ surveyAdoption | round }}%" aria-valuenow="{{ surveyAdoption | round }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <small class="text-muted">{{ compensations.attendeeSurveys }} / {{ dashboard.totalEvents }} {{ 'eventos con encuesta creada' | trans }}</small>
+            </div>
+        </div>
+    </div>
+</div>
