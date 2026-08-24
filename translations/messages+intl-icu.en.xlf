@@ -7093,6 +7093,50 @@
         <source>respuestas</source>
         <target>responses</target>
       </trans-unit>
+      <trans-unit id="xhH_phn" resname="Debes aceptar el tratamiento de tus datos para continuar.">
+        <source>Debes aceptar el tratamiento de tus datos para continuar.</source>
+        <target>You must accept the processing of your data to continue.</target>
+      </trans-unit>
+      <trans-unit id="C76YqYT" resname="Política de privacidad">
+        <source>Política de privacidad</source>
+        <target>Privacy policy</target>
+      </trans-unit>
+      <trans-unit id="v8QWURd" resname="Aviso legal">
+        <source>Aviso legal</source>
+        <target>Legal notice</target>
+      </trans-unit>
+      <trans-unit id="u.__OdC" resname="Configuración de cookies">
+        <source>Configuración de cookies</source>
+        <target>Cookie settings</target>
+      </trans-unit>
+      <trans-unit id="QvUVHoz" resname="Utilizamos cookies y recursos de terceros no esenciales, como las fuentes tipográficas de Google, para mejorar tu experiencia. Puedes aceptarlos o rechazarlos; si los rechazas, la página seguirá funcionando con normalidad.">
+        <source>Utilizamos cookies y recursos de terceros no esenciales, como las fuentes tipográficas de Google, para mejorar tu experiencia. Puedes aceptarlos o rechazarlos; si los rechazas, la página seguirá funcionando con normalidad.</source>
+        <target>We use non-essential cookies and third-party resources, such as Google fonts, to improve your experience. You can accept or reject them; if you reject them, the page will keep working as usual.</target>
+      </trans-unit>
+      <trans-unit id="U3u47cO" resname="Configurar">
+        <source>Configurar</source>
+        <target>Settings</target>
+      </trans-unit>
+      <trans-unit id="dxNNcWA" resname="Aceptar">
+        <source>Aceptar</source>
+        <target>Accept</target>
+      </trans-unit>
+      <trans-unit id="A3GWLhL" resname="Utilizaremos tu correo electrónico únicamente para enviarte lo que has solicitado. Consulta la &lt;a href=&quot;{url}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;política de privacidad&lt;/a&gt;.">
+        <source>Utilizaremos tu correo electrónico únicamente para enviarte lo que has solicitado. Consulta la &lt;a href="{url}" target="_blank" rel="noopener noreferrer"&gt;política de privacidad&lt;/a&gt;.</source>
+        <target><![CDATA[We will use your email address only to send you what you asked for. See the <a href="{url}" target="_blank" rel="noopener noreferrer">privacy policy</a>.]]></target>
+      </trans-unit>
+      <trans-unit id="EYIQKjp" resname="He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono del evento, tal y como se describe en la &lt;a href=&quot;{url}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;política de privacidad&lt;/a&gt;.">
+        <source>He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono del evento, tal y como se describe en la &lt;a href="{url}" target="_blank" rel="noopener noreferrer"&gt;política de privacidad&lt;/a&gt;.</source>
+        <target><![CDATA[I have read and accept the processing of my personal data by {company} in order to calculate and aggregate the carbon footprint of the event, as described in the <a href="{url}" target="_blank" rel="noopener noreferrer">privacy policy</a>.]]></target>
+      </trans-unit>
+      <trans-unit id="WYsIysu" resname="He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono del evento.">
+        <source>He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono del evento.</source>
+        <target>I have read and accept the processing of my personal data by {company} in order to calculate and aggregate the carbon footprint of the event.</target>
+      </trans-unit>
+      <trans-unit id="m0O8wOv" resname="El pago se procesa íntegramente por nuestro proveedor de pagos; no almacenamos los datos de tu tarjeta.">
+        <source>El pago se procesa íntegramente por nuestro proveedor de pagos; no almacenamos los datos de tu tarjeta.</source>
+        <target>The payment is processed entirely by our payment provider; we do not store your card details.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -1,10 +1,11 @@
 {% extends theme_template('@shared/base.html.twig') %}
 
 {% block branding %}
+    {% set consent_required = true %}
     {{ include(theme_template('@shared/layout/_branding.html.twig')) }}
 {% endblock %}
 
-{% block body_tag %}class="public-page branded-page" data-bs-theme-locked="true"{% endblock %}
+{% block body_tag %}class="public-page branded-page" data-bs-theme-locked="true" data-controller="consent-gate" data-consent-gate-name-value="{{ cookie_consent_name() }}"{% endblock %}
 
 {% block body %}
     <div id="main-wrapper">
@@ -29,9 +30,12 @@
 
                     {% block content %}{% endblock %}
                 </div>
+
+                {% block footer %}<twig:Footer :public="true" />{% endblock %}
             </div>
         </div>
     </div>
 
     <twig:Messages></twig:Messages>
+    {% block cookie_consent %}<twig:CookieConsent />{% endblock %}
 {% endblock body %}

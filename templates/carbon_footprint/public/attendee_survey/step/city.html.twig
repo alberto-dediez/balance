@@ -59,6 +59,8 @@
             </div>
         </div>
 
+        {% include '@shared/form/_consent_field.html.twig' %}
+
         <div class="d-flex flex-column-reverse flex-md-row justify-content-md-between gap-2 mt-4">
             <a href="{{ path('public_carbon_footprint_attendee_survey_intercity', {token: token}) }}" class="btn btn-outline-primary">
                 &larr; {{ 'Anterior' | trans }}

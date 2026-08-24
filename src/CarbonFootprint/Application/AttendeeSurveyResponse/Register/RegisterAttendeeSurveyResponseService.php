@@ -28,6 +28,7 @@ use App\CarbonFootprint\Domain\Model\Trip\TripWaypoint;
 use App\EventOperations\Application\Event\EventVenueLocator;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
+use App\Shared\Domain\Model\Consent\ConsentProof;
 use App\Shared\Domain\Model\Geo\PlaceFinder;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
 
@@ -45,6 +46,7 @@ final class RegisterAttendeeSurveyResponseService
         private TripEmissionsCalculator $tripEmissionsCalculator,
         private EmissionFactorGroupRepository $emissionFactorGroupRepository,
         private EventCarbonFootprintRepository $eventCarbonFootprintRepository,
+        private string $consentPolicyVersion,
     ) {}
 
     public function __invoke(RegisterAttendeeSurveyResponseRequest $request): RegisterAttendeeSurveyResponseResponse
@@ -157,6 +159,15 @@ final class RegisterAttendeeSurveyResponseService
             emissionFactorGroupId: $emissionFactorGroupId,
             calculationYear: $calculationYear,
         );
+
+        $attendeeSurveyResponse->grantConsent(new ConsentProof(
+            consentedAt: new \DateTimeImmutable('NOW'),
+            policyVersion: $this->consentPolicyVersion,
+            locale: LocaleGetter::locale()->value,
+            ip: $request->consentIp,
+            userAgent: $request->consentUserAgent,
+            acceptLanguage: $request->consentAcceptLanguage,
+        ));
 
         $this->attendeeSurveyResponseRepository->add($attendeeSurveyResponse);
 

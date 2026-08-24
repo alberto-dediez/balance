@@ -22,6 +22,7 @@ use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Trip\TripLegsAccumulator;
 use App\CarbonFootprint\Domain\Model\Trip\TripLegsResolver;
+use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationConsentGranted;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
@@ -37,10 +38,13 @@ use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Shared\Domain\Model\Locale\LocaleGetter;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Shared\Domain\Model\Consent\ConsentProofMother;
 use App\Tests\Unit\Shared\Domain\Model\Geo\InMemoryPlaceFinder;
 use PHPUnit\Framework\TestCase;
 
@@ -62,6 +66,8 @@ class RegisterTripCalculationServiceTest extends TestCase
 
     private int $calculationYear;
 
+    private SpyDomainEventSubscriber $spySubscriber;
+
     private RegisterTripCalculationService $sut;
 
     protected function setUp(): void
@@ -74,6 +80,7 @@ class RegisterTripCalculationServiceTest extends TestCase
         $this->overnightStayRepository = new InMemoryOvernightStayRepository();
         $this->propertyRepository = new InMemoryPropertyRepository();
         $this->placeFinder = new InMemoryPlaceFinder();
+        $this->spySubscriber = new SpyDomainEventSubscriber();
 
         $emissionFactorGroupRepository = new InMemoryEmissionFactorGroupRepository();
         $emissionFactorGroup = EmissionFactorGroupMother::default();
@@ -101,6 +108,7 @@ class RegisterTripCalculationServiceTest extends TestCase
             new TripLegsAccumulator(),
             new TripEmissionsCalculator($activityEmissionsResolver, $this->overnightStayRepository),
             $emissionFactorGroupRepository,
+            ConsentProofMother::POLICY_VERSION,
         );
     }
 
@@ -291,6 +299,37 @@ class RegisterTripCalculationServiceTest extends TestCase
             token: $link->token(),
             legs: [new LegInput(mobilityId: (string) $mobility->id())],
         ));
+    }
+
+    public function testStoresTheConsentProofOfTheVisitor(): void
+    {
+        $link = $this->linkToLocatedProperty();
+        $mobility = $this->mobilityWithFactor('Coche', '0.2');
+
+        $response = ($this->sut)(new RegisterTripCalculationRequest(
+            token: $link->token(),
+            originPlaceReference: null,
+            roundTrip: false,
+            trips: 1,
+            nights: 0,
+            legs: [new LegInput(mobilityId: (string) $mobility->id(), vehicleOccupants: 1, manualDistanceKm: 100.0)],
+            consentIp: '203.0.113.9',
+            consentUserAgent: 'Mozilla/5.0',
+            consentAcceptLanguage: 'es-ES',
+        ));
+
+        $stored = $this->tripCalculationRepository->find($response->tripCalculationId);
+
+        $this->assertNotNull($stored);
+        $this->assertTrue($stored->hasConsent());
+
+        $consentProof = $stored->consentProof();
+
+        $this->assertNotNull($consentProof);
+        $this->assertSame('203.0.113.9', $consentProof->ip());
+        $this->assertSame(ConsentProofMother::POLICY_VERSION, $consentProof->policyVersion());
+        $this->assertSame(LocaleGetter::locale()->value, $consentProof->locale());
+        $this->assertNotEmpty(array_filter($this->spySubscriber->events(), static fn($e) => $e instanceof TripCalculationConsentGranted));
     }
 
     /** @param list<LegInput> $legs */

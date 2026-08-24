@@ -1,0 +1,18 @@
+{% props public = false %}
+
+<footer class="public-footer | d-print-none text-center small py-4">
+    <span class="text-muted">&copy; {{ 'now' | date('Y') }} {{ company_name }}</span>
+    {% if privacy_policy_url or legal_notice_url or cookie_config_url %}
+        <span class="d-inline-flex flex-wrap justify-content-center gap-3 ms-3">
+            {% if privacy_policy_url %}
+                <a href="{{ privacy_policy_url }}" target="_blank" rel="noopener noreferrer">{{ 'Política de privacidad' | trans }}</a>
+            {% endif %}
+            {% if legal_notice_url %}
+                <a href="{{ legal_notice_url }}" target="_blank" rel="noopener noreferrer">{{ 'Aviso legal' | trans }}</a>
+            {% endif %}
+            {% if cookie_config_url %}
+                <a href="{{ cookie_config_url }}" target="_blank" rel="noopener noreferrer">{{ 'Configuración de cookies' | trans }}</a>
+            {% endif %}
+        </span>
+    {% endif %}
+</footer>

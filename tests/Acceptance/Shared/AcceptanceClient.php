@@ -7,6 +7,7 @@ namespace App\Tests\Acceptance\Shared;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\BrowserKit\CookieJar;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
@@ -58,13 +59,14 @@ final class AcceptanceClient
     }
 
     /**
-     * @param array<string, mixed> $parameters
-     * @param array<string, mixed> $files
+     * @param array<string, mixed>  $parameters
+     * @param array<string, mixed>  $files
+     * @param array<string, string> $server
      */
-    public function requestWithFiles(string $method, string $path, array $parameters = [], array $files = []): void
+    public function requestWithFiles(string $method, string $path, array $parameters = [], array $files = [], array $server = []): void
     {
         try {
-            $this->crawler = $this->client->request($method, $path, $parameters, $files, $this->server);
+            $this->crawler = $this->client->request($method, $path, $parameters, $files, array_merge($server, $this->server));
 
             $this->exception = null;
         } catch (\Exception $e) {
@@ -130,6 +132,11 @@ final class AcceptanceClient
     public function getContainer(): ContainerInterface
     {
         return $this->client->getContainer();
+    }
+
+    public function getCookieJar(): CookieJar
+    {
+        return $this->client->getCookieJar();
     }
 
     public function loginUser(SecurityUser $user): void

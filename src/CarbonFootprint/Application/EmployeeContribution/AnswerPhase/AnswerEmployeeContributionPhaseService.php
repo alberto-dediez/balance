@@ -9,6 +9,8 @@ use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionCl
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionRepository;
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionTokenInvalidException;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
+use App\Shared\Domain\Model\Consent\ConsentProof;
+use App\Shared\Domain\Model\Locale\LocaleGetter;
 
 final class AnswerEmployeeContributionPhaseService
 {
@@ -16,6 +18,7 @@ final class AnswerEmployeeContributionPhaseService
         private EmployeeContributionAuthenticator $authenticator,
         private EmployeeContributionRepository $employeeContributionRepository,
         private EventCarbonFootprintRepository $eventCarbonFootprintRepository,
+        private string $consentPolicyVersion,
     ) {}
 
     public function __invoke(AnswerEmployeeContributionPhaseRequest $request): void
@@ -37,6 +40,17 @@ final class AnswerEmployeeContributionPhaseService
 
         if ($eventCarbonFootprint->status()->isCompleted()) {
             throw new EmployeeContributionClosedException();
+        }
+
+        if ($request->consentGranted) {
+            $employeeContribution->grantConsent(new ConsentProof(
+                consentedAt: new \DateTimeImmutable('NOW'),
+                policyVersion: $this->consentPolicyVersion,
+                locale: LocaleGetter::locale()->value,
+                ip: $request->consentIp,
+                userAgent: $request->consentUserAgent,
+                acceptLanguage: $request->consentAcceptLanguage,
+            ));
         }
 
         $employeeContribution->answerPhase(

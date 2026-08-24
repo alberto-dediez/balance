@@ -17,6 +17,7 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurvey;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyClosedException;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyTokenInvalidException;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\ConfidenceLevel;
+use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseConsentGranted;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
@@ -40,12 +41,15 @@ use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Infrastructure\Persistence\InMemory\Repository\InMemoryEventRepository;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Shared\Domain\Model\Locale\LocaleGetter;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Shared\Domain\Model\Consent\ConsentProofMother;
 use App\Tests\Unit\Shared\Domain\Model\Geo\InMemoryPlaceFinder;
 use PHPUnit\Framework\TestCase;
 
@@ -73,6 +77,8 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
 
     private int $calculationYear;
 
+    private SpyDomainEventSubscriber $spySubscriber;
+
     private RegisterAttendeeSurveyResponseService $sut;
 
     protected function setUp(): void
@@ -87,6 +93,7 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
         $this->emissionFactorGroupRepository = new InMemoryEmissionFactorGroupRepository();
         $this->eventCarbonFootprintRepository = new InMemoryEventCarbonFootprintRepository();
         $this->placeFinder = new InMemoryPlaceFinder();
+        $this->spySubscriber = new SpyDomainEventSubscriber();
 
         $emissionFactorGroup = EmissionFactorGroupMother::default();
         $this->emissionFactorGroupRepository->add($emissionFactorGroup);
@@ -119,6 +126,7 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
             new TripEmissionsCalculator($activityEmissionsResolver, $this->overnightStayRepository),
             $emissionFactorGroupRepository,
             $this->eventCarbonFootprintRepository,
+            ConsentProofMother::POLICY_VERSION,
         );
     }
 
@@ -583,6 +591,45 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
         $this->mobilityRepository->add($mobility);
 
         return $mobility;
+    }
+
+    public function testStoresTheConsentProofOfTheAttendee(): void
+    {
+        $attendeeSurvey = $this->surveyWithVenue();
+        $mobility = $this->mobility('Coche', TravelMode::Driving);
+
+        $response = ($this->sut)(new RegisterAttendeeSurveyResponseRequest(
+            token: $attendeeSurvey->token(),
+            cameFromAnotherCity: true,
+            originPlaceReference: null,
+            usedHotel: false,
+            accommodationPlaceReference: null,
+            hotelNights: null,
+            intercityRoundTrip: false,
+            intercityTrips: 1,
+            intercityLegs: [new LegInput(mobilityId: (string) $mobility->id(), manualDistanceKm: 100.0)],
+            movedWithinCity: false,
+            cityOriginPlaceReference: null,
+            cityRoundTrip: false,
+            cityTrips: null,
+            cityLegs: [],
+            consentIp: '203.0.113.9',
+            consentUserAgent: 'Mozilla/5.0',
+            consentAcceptLanguage: 'es-ES',
+        ));
+
+        $stored = $this->attendeeSurveyResponseRepository->find($response->attendeeSurveyResponseId);
+
+        $this->assertNotNull($stored);
+        $this->assertTrue($stored->hasConsent());
+
+        $consentProof = $stored->consentProof();
+
+        $this->assertNotNull($consentProof);
+        $this->assertSame('203.0.113.9', $consentProof->ip());
+        $this->assertSame(ConsentProofMother::POLICY_VERSION, $consentProof->policyVersion());
+        $this->assertSame(LocaleGetter::locale()->value, $consentProof->locale());
+        $this->assertNotEmpty(array_filter($this->spySubscriber->events(), static fn($e) => $e instanceof AttendeeSurveyResponseConsentGranted));
     }
 
     /**

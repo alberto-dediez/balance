@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionIg
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionTokenInvalidException;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\ConsentRequestReader;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\EmployeeContribution\EmployeeContributionPublicControllerTrait;
 use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -51,35 +52,43 @@ class AssemblyController extends AbstractController
                 throw $this->createAccessDeniedException('Token CSRF no válido');
             }
 
-            $worked = $request->request->getBoolean('worked');
-            $mobilityId = $request->request->getString('mobilityId');
-            $distanceKm = $request->request->getString('distanceKm');
-            $vehicleOccupants = $request->request->getString('vehicleOccupants');
-            $days = $request->request->getString('days');
-            $hotelNights = $request->request->getString('hotelNights');
+            if (ConsentRequestReader::accepted($request)) {
+                $worked = $request->request->getBoolean('worked');
+                $mobilityId = $request->request->getString('mobilityId');
+                $distanceKm = $request->request->getString('distanceKm');
+                $vehicleOccupants = $request->request->getString('vehicleOccupants');
+                $days = $request->request->getString('days');
+                $hotelNights = $request->request->getString('hotelNights');
 
-            try {
-                $answerPhase(new AnswerEmployeeContributionPhaseRequest(
-                    token: $token,
-                    phase: self::PHASE,
-                    worked: $worked,
-                    mobilityId: $worked && '' !== $mobilityId ? new MobilityId($mobilityId) : null,
-                    distanceKm: $worked && '' !== $distanceKm ? (float) $distanceKm : null,
-                    vehicleOccupants: $worked && '' !== $vehicleOccupants ? (int) $vehicleOccupants : null,
-                    days: $worked && '' !== $days ? (int) $days : null,
-                    hotelNights: $worked && '' !== $hotelNights ? (int) $hotelNights : null,
-                ));
-            } catch (EmployeeContributionTokenInvalidException|EmployeeContributionIgnoredException) {
-                return $this->employeeContributionInvalidResponse($this->employeeContributionInvalidTokenLimiter, $request);
-            } catch (EmployeeContributionClosedException) {
-                return $this->employeeContributionClosedResponse();
-            } catch (\InvalidArgumentException $e) {
-                $this->addFlash('danger', new TranslatableMessage('No se han podido guardar los datos: {error}', ['{error}' => $e->getMessage()]));
+                try {
+                    $answerPhase(new AnswerEmployeeContributionPhaseRequest(
+                        token: $token,
+                        phase: self::PHASE,
+                        worked: $worked,
+                        mobilityId: $worked && '' !== $mobilityId ? new MobilityId($mobilityId) : null,
+                        distanceKm: $worked && '' !== $distanceKm ? (float) $distanceKm : null,
+                        vehicleOccupants: $worked && '' !== $vehicleOccupants ? (int) $vehicleOccupants : null,
+                        days: $worked && '' !== $days ? (int) $days : null,
+                        hotelNights: $worked && '' !== $hotelNights ? (int) $hotelNights : null,
+                        consentGranted: true,
+                        consentIp: ConsentRequestReader::ip($request),
+                        consentUserAgent: ConsentRequestReader::userAgent($request),
+                        consentAcceptLanguage: ConsentRequestReader::acceptLanguage($request),
+                    ));
+                } catch (EmployeeContributionTokenInvalidException|EmployeeContributionIgnoredException) {
+                    return $this->employeeContributionInvalidResponse($this->employeeContributionInvalidTokenLimiter, $request);
+                } catch (EmployeeContributionClosedException) {
+                    return $this->employeeContributionClosedResponse();
+                } catch (\InvalidArgumentException $e) {
+                    $this->addFlash('danger', new TranslatableMessage('No se han podido guardar los datos: {error}', ['{error}' => $e->getMessage()]));
 
-                return $this->redirectToRoute('public_carbon_footprint_employee_contribution_assembly', ['token' => $token]);
+                    return $this->redirectToRoute('public_carbon_footprint_employee_contribution_assembly', ['token' => $token]);
+                }
+
+                return $this->redirectToRoute(self::NEXT_ROUTE, ['token' => $token]);
             }
 
-            return $this->redirectToRoute(self::NEXT_ROUTE, ['token' => $token]);
+            $this->addFlash('danger', new TranslatableMessage('Debes aceptar el tratamiento de tus datos para continuar.'));
         }
 
         try {

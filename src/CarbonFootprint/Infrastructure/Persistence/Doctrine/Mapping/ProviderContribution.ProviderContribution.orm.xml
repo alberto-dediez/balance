@@ -28,6 +28,8 @@
 
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
         <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true" />
+
+        <embedded name="consentProof" class="App\Shared\Domain\Model\Consent\ConsentProof" use-column-prefix="true" column-prefix="consent_" />
     </entity>
 
 </doctrine-mapping>

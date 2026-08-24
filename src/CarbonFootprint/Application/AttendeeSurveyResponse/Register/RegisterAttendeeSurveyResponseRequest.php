@@ -28,5 +28,8 @@ final class RegisterAttendeeSurveyResponseRequest
         public readonly bool $cityRoundTrip,
         public readonly ?int $cityTrips,
         public readonly array $cityLegs,
+        public readonly string $consentIp = '',
+        public readonly string $consentUserAgent = '',
+        public readonly string $consentAcceptLanguage = '',
     ) {}
 }

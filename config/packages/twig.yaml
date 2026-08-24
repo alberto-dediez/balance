@@ -3,6 +3,9 @@ twig:
     globals:
         locale_list: '%app.locale_list%'
         company_name: '%company.name%'
+        privacy_policy_url: '%app.privacy_policy_url%'
+        legal_notice_url: '%app.legal_notice_url%'
+        cookie_config_url: '%app.cookie_config_url%'
         account_impersonation_enabled: '%app.account_impersonation_enabled%'
     form_themes: 
         - 'bootstrap_5_layout.html.twig'

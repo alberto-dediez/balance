@@ -14,6 +14,8 @@ use App\CarbonFootprint\Domain\Model\Trip\TripWaypoint;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculation;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationId;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
+use App\Shared\Domain\Model\Consent\ConsentProof;
+use App\Tests\Unit\Shared\Domain\Model\Consent\ConsentProofMother;
 
 class TripCalculationMother
 {
@@ -72,6 +74,14 @@ class TripCalculationMother
             emissionFactorGroupId: new EmissionFactorGroupId($emissionFactorGroupId ?? (string) EmissionFactorGroupId::generate()),
             calculationYear: $calculationYear,
         );
+
+        return $tripCalculation;
+    }
+
+    public static function withConsent(string $tripCalculationLinkId, ?ConsentProof $consentProof = null): TripCalculation
+    {
+        $tripCalculation = self::fromLinkId($tripCalculationLinkId);
+        $tripCalculation->grantConsent($consentProof ?? ConsentProofMother::granted());
 
         return $tripCalculation;
     }

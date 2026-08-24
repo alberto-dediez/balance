@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\EmployeeContribution\EmployeeContributionAut
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContribution;
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionClosedException;
+use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionConsentGranted;
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionIgnoredException;
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionStepStatus;
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionTokenInvalidException;
@@ -18,14 +19,18 @@ use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEmployeeContributionRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEventCarbonFootprintRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Shared\Domain\Model\Locale\LocaleGetter;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Shared\Domain\Model\Consent\ConsentProofMother;
 use PHPUnit\Framework\TestCase;
 
 class AnswerEmployeeContributionPhaseServiceTest extends TestCase
 {
     private InMemoryEventCarbonFootprintRepository $eventCarbonFootprintRepository;
     private InMemoryEmployeeContributionRepository $employeeContributionRepository;
+    private SpyDomainEventSubscriber $spySubscriber;
     private AnswerEmployeeContributionPhaseService $sut;
 
     protected function setUp(): void
@@ -34,11 +39,13 @@ class AnswerEmployeeContributionPhaseServiceTest extends TestCase
 
         $this->eventCarbonFootprintRepository = new InMemoryEventCarbonFootprintRepository();
         $this->employeeContributionRepository = new InMemoryEmployeeContributionRepository();
+        $this->spySubscriber = new SpyDomainEventSubscriber();
 
         $this->sut = new AnswerEmployeeContributionPhaseService(
             new EmployeeContributionAuthenticator($this->employeeContributionRepository),
             $this->employeeContributionRepository,
             $this->eventCarbonFootprintRepository,
+            ConsentProofMother::POLICY_VERSION,
         );
     }
 
@@ -67,6 +74,41 @@ class AnswerEmployeeContributionPhaseServiceTest extends TestCase
 
         $this->assertSame(EmployeeContributionStepStatus::Completed, $contribution->stepStatus());
         $this->assertTrue($contribution->status()->isAnswered());
+    }
+
+    public function testTheAssemblyPhaseStoresTheConsentProof(): void
+    {
+        $contribution = $this->registeredContribution();
+
+        ($this->sut)($this->request($contribution->token(), Phase::Assembly, consentGranted: true));
+
+        $this->assertTrue($contribution->hasConsent());
+
+        $consentProof = $contribution->consentProof();
+
+        $this->assertNotNull($consentProof);
+        $this->assertSame('203.0.113.9', $consentProof->ip());
+        $this->assertSame(ConsentProofMother::POLICY_VERSION, $consentProof->policyVersion());
+        $this->assertSame(LocaleGetter::locale()->value, $consentProof->locale());
+        $this->assertNotEmpty(array_filter($this->spySubscriber->events(), static fn($e) => $e instanceof EmployeeContributionConsentGranted));
+    }
+
+    public function testTheRemainingPhasesDoNotTouchTheConsentProof(): void
+    {
+        $contribution = $this->registeredContribution();
+
+        ($this->sut)($this->request($contribution->token(), Phase::Assembly, consentGranted: true));
+
+        $consentedAt = $contribution->consentProof()?->consentedAt();
+
+        ($this->sut)($this->request($contribution->token(), Phase::Celebration));
+        ($this->sut)($this->request($contribution->token(), Phase::Breakdown));
+
+        $consentProof = $contribution->consentProof();
+
+        $this->assertNotNull($consentProof);
+        $this->assertSame('203.0.113.9', $consentProof->ip());
+        $this->assertEquals($consentedAt, $consentProof->consentedAt());
     }
 
     public function testInvalidTokenThrows(): void
@@ -101,7 +143,7 @@ class AnswerEmployeeContributionPhaseServiceTest extends TestCase
         ($this->sut)($this->request($contribution->token(), Phase::Assembly));
     }
 
-    private function request(string $token, Phase $phase): AnswerEmployeeContributionPhaseRequest
+    private function request(string $token, Phase $phase, bool $consentGranted = false): AnswerEmployeeContributionPhaseRequest
     {
         return new AnswerEmployeeContributionPhaseRequest(
             token: $token,
@@ -112,6 +154,10 @@ class AnswerEmployeeContributionPhaseServiceTest extends TestCase
             vehicleOccupants: 2,
             days: 3,
             hotelNights: 2,
+            consentGranted: $consentGranted,
+            consentIp: $consentGranted ? '203.0.113.9' : '',
+            consentUserAgent: $consentGranted ? 'Mozilla/5.0' : '',
+            consentAcceptLanguage: $consentGranted ? 'es-ES' : '',
         );
     }
 

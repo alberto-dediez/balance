@@ -14,6 +14,8 @@ use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Trip\LegKind;
 use App\CarbonFootprint\Domain\Model\Trip\ResolvedLeg;
 use App\CarbonFootprint\Domain\Model\Trip\TripWaypoint;
+use App\Shared\Domain\Model\Consent\ConsentProof;
+use App\Tests\Unit\Shared\Domain\Model\Consent\ConsentProofMother;
 
 class AttendeeSurveyResponseMother
 {
@@ -139,6 +141,14 @@ class AttendeeSurveyResponseMother
         );
 
         return $response;
+    }
+
+    public static function withConsent(string $attendeeSurveyId, ?ConsentProof $consentProof = null): AttendeeSurveyResponse
+    {
+        $attendeeSurveyResponse = self::from(attendeeSurveyId: $attendeeSurveyId, cameFromAnotherCity: true, intercityTrips: 1, legs: [self::leg(1, LegKind::Intercity, (string) MobilityId::generate(), 300.0)]);
+        $attendeeSurveyResponse->grantConsent($consentProof ?? ConsentProofMother::granted());
+
+        return $attendeeSurveyResponse;
     }
 
     public static function random(): AttendeeSurveyResponse

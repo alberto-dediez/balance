@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContribution;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionAnswered;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionClosedException;
+use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionConsentGranted;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionIgnoredException;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionTokenInvalidException;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEventCarbonFootprintRepository;
@@ -31,11 +32,13 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use App\Security\Infrastructure\Symfony\Security\Md5PasswordHasher;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Shared\Domain\Model\Locale\LocaleGetter;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Provider\ProviderMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Shared\Domain\Model\Consent\ConsentProofMother;
 use PHPUnit\Framework\TestCase;
 
 class AnswerProviderContributionGeneralInfoServiceTest extends TestCase
@@ -61,6 +64,7 @@ class AnswerProviderContributionGeneralInfoServiceTest extends TestCase
             new ProviderContributionAuthenticator($this->providerContributionRepository, $this->providerRepository, $this->userRepository),
             $this->providerContributionRepository,
             $this->eventCarbonFootprintRepository,
+            ConsentProofMother::POLICY_VERSION,
         );
     }
 
@@ -82,6 +86,37 @@ class AnswerProviderContributionGeneralInfoServiceTest extends TestCase
         $this->assertNotNull($persisted);
         $this->assertSame('New name', $persisted->companyName());
         $this->assertSame(2, $persisted->workersAssembly());
+    }
+
+    public function testStoresTheConsentProofOfTheProvider(): void
+    {
+        $contribution = $this->registeredContribution();
+
+        ($this->sut)(new AnswerProviderContributionGeneralInfoRequest(
+            $contribution->token(),
+            companyName: 'New name',
+            companyType: 'Catering',
+            service: 'Comida',
+            workersAssembly: 2,
+            workersCelebration: 3,
+            workersBreakdown: 1,
+            consentIp: '203.0.113.9',
+            consentUserAgent: 'Mozilla/5.0',
+            consentAcceptLanguage: 'es-ES',
+        ));
+
+        $persisted = $this->providerContributionRepository->find($contribution->id());
+
+        $this->assertNotNull($persisted);
+        $this->assertTrue($persisted->hasConsent());
+
+        $consentProof = $persisted->consentProof();
+
+        $this->assertNotNull($consentProof);
+        $this->assertSame('203.0.113.9', $consentProof->ip());
+        $this->assertSame(ConsentProofMother::POLICY_VERSION, $consentProof->policyVersion());
+        $this->assertSame(LocaleGetter::locale()->value, $consentProof->locale());
+        $this->assertNotEmpty(array_filter($this->spySubscriber->events(), static fn($e) => $e instanceof ProviderContributionConsentGranted));
     }
 
     public function testDoesNotMarkTheContributionAsAnswered(): void

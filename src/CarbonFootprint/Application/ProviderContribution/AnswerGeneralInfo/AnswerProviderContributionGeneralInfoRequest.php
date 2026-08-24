@@ -15,5 +15,8 @@ final class AnswerProviderContributionGeneralInfoRequest
         public readonly ?int $workersAssembly,
         public readonly ?int $workersCelebration,
         public readonly ?int $workersBreakdown,
+        public readonly string $consentIp = '',
+        public readonly string $consentUserAgent = '',
+        public readonly string $consentAcceptLanguage = '',
     ) {}
 }

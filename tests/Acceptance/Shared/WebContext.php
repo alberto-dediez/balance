@@ -12,6 +12,7 @@ use Behat\Step\Then;
 use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\DomCrawler\Field\FileFormField;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -22,6 +23,12 @@ final class WebContext implements Context
 
     /** @var array<string, string> */
     private array $files = [];
+
+    /** @var list<string> */
+    private array $checkboxes = [];
+
+    /** @var array<string, string> */
+    private array $unprefixedFields = [];
 
     public function __construct(KernelBrowser $client)
     {
@@ -135,6 +142,17 @@ final class WebContext implements Context
             }
         }
 
+        foreach ($this->unprefixedFields as $name => $value) {
+            $formData[$name] = $value;
+        }
+
+        foreach ($this->checkboxes as $checkbox) {
+            $field = $formData[$checkbox];
+            assert($field instanceof ChoiceFormField);
+
+            $field->tick();
+        }
+
         foreach ($this->files as $field => $path) {
             $key = '[' === $field[0] ? sprintf('%s%s', $formName, $field) : sprintf('%s[%s]', $formName, $field);
 
@@ -147,6 +165,8 @@ final class WebContext implements Context
         $this->client->submit($formData, $serverParameters);
 
         $this->files = [];
+        $this->checkboxes = [];
+        $this->unprefixedFields = [];
     }
 
     #[When('I pick :value in the autocomplete :field')]
@@ -161,6 +181,18 @@ final class WebContext implements Context
         $option->setAttribute('value', $value);
 
         $select->appendChild($option);
+    }
+
+    #[When('I fill the unprefixed field :name with :value')]
+    public function iFillTheUnprefixedField(string $name, string $value): void
+    {
+        $this->unprefixedFields[$name] = $value;
+    }
+
+    #[When('I tick the checkbox :name')]
+    public function iTickTheCheckbox(string $name): void
+    {
+        $this->checkboxes[] = $name;
     }
 
     #[When('I attach the file :path to :field')]
@@ -207,7 +239,9 @@ final class WebContext implements Context
     {
         $crawler = $this->client->getCrawler();
 
-        $forms = $crawler->filter('form');
+        $forms = $crawler->filter('form')->reduce(
+            static fn(Crawler $form): bool => null === $form->closest('.cookie-consent'),
+        );
 
         Assert::assertCount(1, $forms);
     }

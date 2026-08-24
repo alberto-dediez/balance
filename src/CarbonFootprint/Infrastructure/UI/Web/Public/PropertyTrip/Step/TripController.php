@@ -9,6 +9,7 @@ use App\CarbonFootprint\Application\TripCalculation\Register\RegisterTripCalcula
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenRequest;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenService;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\ConsentRequestReader;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\PropertyTripPublicControllerTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\Trip\LegInputsHttpMapper;
@@ -54,34 +55,41 @@ class TripController extends AbstractController
                 throw $this->createAccessDeniedException('Token CSRF no válido');
             }
 
-            $trip = $request->request->all('trip');
+            if (ConsentRequestReader::accepted($request)) {
+                $trip = $request->request->all('trip');
 
-            $cameFromAnotherCity = $scope->includesTransport()
-                && (!$scope->asksForBoth() || 'yes' === ($trip['cameFromAnotherCity'] ?? null));
-            $overnight = $scope->includesOvernightStay()
-                && (!$scope->asksForBoth() || 'yes' === ($trip['overnight'] ?? null));
+                $cameFromAnotherCity = $scope->includesTransport()
+                    && (!$scope->asksForBoth() || 'yes' === ($trip['cameFromAnotherCity'] ?? null));
+                $overnight = $scope->includesOvernightStay()
+                    && (!$scope->asksForBoth() || 'yes' === ($trip['overnight'] ?? null));
 
-            try {
-                $registered = $registerTripCalculation(new RegisterTripCalculationRequest(
-                    token: $token,
-                    originPlaceReference: $cameFromAnotherCity && !empty($trip['originPlaceReference']) ? (string) $trip['originPlaceReference'] : null,
-                    roundTrip: $cameFromAnotherCity && 'yes' === ($trip['roundTrip'] ?? null),
-                    trips: $cameFromAnotherCity && !empty($trip['trips']) ? (int) $trip['trips'] : 1,
-                    nights: $overnight && !empty($trip['nights']) ? (int) $trip['nights'] : 0,
-                    legs: $cameFromAnotherCity ? LegInputsHttpMapper::toLegInputs(LegInputsHttpMapper::toSessionData($trip)) : [],
-                ));
-            } catch (TripCalculationLinkTokenInvalidException) {
-                return $this->propertyTripInvalidResponse($this->propertyTripRateLimiter, $request);
-            } catch (\InvalidArgumentException $e) {
-                $this->addFlash('danger', new TranslatableMessage('No se ha podido calcular tu huella: {error}', ['{error}' => $e->getMessage()]));
+                try {
+                    $registered = $registerTripCalculation(new RegisterTripCalculationRequest(
+                        token: $token,
+                        originPlaceReference: $cameFromAnotherCity && !empty($trip['originPlaceReference']) ? (string) $trip['originPlaceReference'] : null,
+                        roundTrip: $cameFromAnotherCity && 'yes' === ($trip['roundTrip'] ?? null),
+                        trips: $cameFromAnotherCity && !empty($trip['trips']) ? (int) $trip['trips'] : 1,
+                        nights: $overnight && !empty($trip['nights']) ? (int) $trip['nights'] : 0,
+                        legs: $cameFromAnotherCity ? LegInputsHttpMapper::toLegInputs(LegInputsHttpMapper::toSessionData($trip)) : [],
+                        consentIp: ConsentRequestReader::ip($request),
+                        consentUserAgent: ConsentRequestReader::userAgent($request),
+                        consentAcceptLanguage: ConsentRequestReader::acceptLanguage($request),
+                    ));
+                } catch (TripCalculationLinkTokenInvalidException) {
+                    return $this->propertyTripInvalidResponse($this->propertyTripRateLimiter, $request);
+                } catch (\InvalidArgumentException $e) {
+                    $this->addFlash('danger', new TranslatableMessage('No se ha podido calcular tu huella: {error}', ['{error}' => $e->getMessage()]));
 
-                return $this->redirectToRoute('public_carbon_footprint_property_trip_trip', ['token' => $token]);
+                    return $this->redirectToRoute('public_carbon_footprint_property_trip_trip', ['token' => $token]);
+                }
+
+                return $this->redirectToRoute('public_carbon_footprint_property_trip_result', [
+                    'token' => $token,
+                    'tripCalculationId' => (string) $registered->tripCalculationId,
+                ]);
             }
 
-            return $this->redirectToRoute('public_carbon_footprint_property_trip_result', [
-                'token' => $token,
-                'tripCalculationId' => (string) $registered->tripCalculationId,
-            ]);
+            $this->addFlash('danger', new TranslatableMessage('Debes aceptar el tratamiento de tus datos para continuar.'));
         }
 
         return $this->render('@carbon_footprint/public/property_trip/step/trip.html.twig', [

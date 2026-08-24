@@ -29,6 +29,9 @@ use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepo
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContribution;
+use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionId;
+use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
@@ -72,6 +75,7 @@ use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\EventOperations\Domain\Model\Provider\ProviderRepository;
+use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Domain\Model\Property\PropertyRepository;
@@ -177,6 +181,11 @@ final readonly class CarbonFootprintContext implements Context
     public function getProviderContributionRepository(): ProviderContributionRepository
     {
         return $this->client->getContainer()->get(ProviderContributionRepository::class);
+    }
+
+    public function getEmployeeContributionRepository(): EmployeeContributionRepository
+    {
+        return $this->client->getContainer()->get(EmployeeContributionRepository::class);
     }
 
     public function getAttendeeSurveyRepository(): AttendeeSurveyRepository
@@ -661,6 +670,21 @@ final readonly class CarbonFootprintContext implements Context
         $this->getProviderContributionRepository()->add($providerContribution);
     }
 
+    #[Given('employee contribution with id :id for event carbon footprint :eventCarbonFootprintId and employee :employeeId of account :account with token :token exists')]
+    public function employeeContributionWithIdExists(string $id, string $eventCarbonFootprintId, string $employeeId, string $account, string $token): void
+    {
+        $employeeContribution = new EmployeeContribution(new EmployeeContributionId($id));
+        $employeeContribution->register(
+            eventCarbonFootprintId: new EventCarbonFootprintId($eventCarbonFootprintId),
+            accountId: new AccountId($account),
+            employeeId: new EmployeeId($employeeId),
+            token: $token,
+            employeeName: 'Employee Name',
+        );
+
+        $this->getEmployeeContributionRepository()->add($employeeContribution);
+    }
+
     #[Given('provider :providerId has a linked user')]
     public function providerHasALinkedUser(string $providerId): void
     {
@@ -695,6 +719,104 @@ final readonly class CarbonFootprintContext implements Context
 
         Assert::assertNotNull($providerContribution);
         Assert::assertSame($status, $providerContribution->status()->value);
+    }
+
+    #[Then('provider contribution :id should not have consent')]
+    public function providerContributionShouldNotHaveConsent(string $id): void
+    {
+        $providerContribution = $this->getProviderContributionRepository()->find(new ProviderContributionId($id));
+
+        Assert::assertNotNull($providerContribution);
+        Assert::assertFalse($providerContribution->hasConsent());
+    }
+
+    #[Then('provider contribution :id should have company name :companyName')]
+    public function providerContributionShouldHaveCompanyName(string $id, string $companyName): void
+    {
+        $providerContribution = $this->getProviderContributionRepository()->find(new ProviderContributionId($id));
+
+        Assert::assertNotNull($providerContribution);
+        Assert::assertSame($companyName, $providerContribution->companyName());
+    }
+
+    #[Then('employee contribution :id should not have consent')]
+    public function employeeContributionShouldNotHaveConsent(string $id): void
+    {
+        $employeeContribution = $this->getEmployeeContributionRepository()->find(new EmployeeContributionId($id));
+
+        Assert::assertNotNull($employeeContribution);
+        Assert::assertFalse($employeeContribution->hasConsent());
+    }
+
+    #[Then('employee contribution :id should have consent')]
+    public function employeeContributionShouldHaveConsent(string $id): void
+    {
+        $employeeContribution = $this->getEmployeeContributionRepository()->find(new EmployeeContributionId($id));
+
+        Assert::assertNotNull($employeeContribution);
+        Assert::assertTrue($employeeContribution->hasConsent());
+    }
+
+    #[Then('employee contribution :id should have status :status')]
+    public function employeeContributionShouldHaveStatus(string $id, string $status): void
+    {
+        $employeeContribution = $this->getEmployeeContributionRepository()->find(new EmployeeContributionId($id));
+
+        Assert::assertNotNull($employeeContribution);
+        Assert::assertSame($status, $employeeContribution->status()->value);
+    }
+
+    #[Then('employee contribution :id should have :phase data with mobility :mobilityId, distance :distanceKm, occupants :occupants, days :days and hotel nights :hotelNights')]
+    public function employeeContributionShouldHavePhaseData(string $id, string $phase, string $mobilityId, float $distanceKm, int $occupants, int $days, int $hotelNights): void
+    {
+        $employeeContribution = $this->getEmployeeContributionRepository()->find(new EmployeeContributionId($id));
+
+        Assert::assertNotNull($employeeContribution);
+
+        [$worked, $mobility, $distance, $vehicleOccupants, $phaseDays, $hotelNightsAnswered] = match ($phase) {
+            'assembly' => [
+                $employeeContribution->workedAssembly(),
+                $employeeContribution->assemblyMobilityId(),
+                $employeeContribution->assemblyDistanceKm(),
+                $employeeContribution->assemblyVehicleOccupants(),
+                $employeeContribution->assemblyDays(),
+                $employeeContribution->assemblyHotelNights(),
+            ],
+            'celebration' => [
+                $employeeContribution->workedCelebration(),
+                $employeeContribution->celebrationMobilityId(),
+                $employeeContribution->celebrationDistanceKm(),
+                $employeeContribution->celebrationVehicleOccupants(),
+                $employeeContribution->celebrationDays(),
+                $employeeContribution->celebrationHotelNights(),
+            ],
+            'breakdown' => [
+                $employeeContribution->workedBreakdown(),
+                $employeeContribution->breakdownMobilityId(),
+                $employeeContribution->breakdownDistanceKm(),
+                $employeeContribution->breakdownVehicleOccupants(),
+                $employeeContribution->breakdownDays(),
+                $employeeContribution->breakdownHotelNights(),
+            ],
+            default => throw new \InvalidArgumentException(sprintf('Unknown phase "%s".', $phase)),
+        };
+
+        Assert::assertTrue($worked);
+        Assert::assertNotNull($mobility);
+        Assert::assertSame($mobilityId, $mobility->id());
+        Assert::assertSame($distanceKm, $distance);
+        Assert::assertSame($occupants, $vehicleOccupants);
+        Assert::assertSame($days, $phaseDays);
+        Assert::assertSame($hotelNights, $hotelNightsAnswered);
+    }
+
+    #[Then('employee contribution :id should have step status :status')]
+    public function employeeContributionShouldHaveStepStatus(string $id, string $status): void
+    {
+        $employeeContribution = $this->getEmployeeContributionRepository()->find(new EmployeeContributionId($id));
+
+        Assert::assertNotNull($employeeContribution);
+        Assert::assertSame($status, $employeeContribution->stepStatus()->value);
     }
 
     #[Then('provider :providerId should have a linked user')]

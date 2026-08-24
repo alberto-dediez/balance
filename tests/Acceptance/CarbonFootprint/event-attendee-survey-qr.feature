@@ -42,6 +42,7 @@ Feature:
         When I go to "/es/carbon-footprint/attendee-survey/token-abc/intercity"
         When I submit a form with "cameFromAnotherCity:yes|originPlaceReference:sevilla|usedHotel:no|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes" and button "Continuar"
         When I go to "/es/carbon-footprint/attendee-survey/token-abc/city"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "moved:no" and button "Enviar respuesta"
         When I am logged as "owner@dediez.software"
         When I go to "/es/events/333/attendee-survey/responses"

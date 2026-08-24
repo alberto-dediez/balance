@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <embeddable name="App\Shared\Domain\Model\Consent\ConsentProof">
+        <field name="consentedAt" type="datetime_immutable" column="consented_at" nullable="true"/>
+        <field name="policyVersion" type="string" length="64" column="policy_version" nullable="true"/>
+        <field name="locale" type="string" length="5" nullable="true"/>
+        <field name="ip" type="string" length="45" nullable="true"/>
+        <field name="userAgent" type="string" length="512" column="user_agent" nullable="true"/>
+        <field name="acceptLanguage" type="string" length="255" column="accept_language" nullable="true"/>
+    </embeddable>
+
+</doctrine-mapping>

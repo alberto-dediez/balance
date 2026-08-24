@@ -1,0 +1,40 @@
+{% set consent = cookie_consent_value() %}
+
+<div class="cookie-consent | d-print-none position-fixed bottom-0 start-0 end-0 p-3"
+     style="z-index: 1080;"
+     data-controller="cookie-consent"
+     data-cookie-consent-name-value="{{ cookie_consent_name() }}"
+     data-cookie-consent-max-age-value="{{ cookie_consent_max_age() }}"
+     {% if consent is not null %}hidden{% endif %}>
+    <div class="card shadow mx-auto" style="max-width: 46rem;">
+        <div class="card-body">
+            <p class="mb-3">
+                {{ 'Utilizamos cookies y recursos de terceros no esenciales, como las fuentes tipográficas de Google, para mejorar tu experiencia. Puedes aceptarlos o rechazarlos; si los rechazas, la página seguirá funcionando con normalidad.' | trans }}
+            </p>
+            <div class="d-flex flex-column flex-sm-row justify-content-end gap-2">
+                {% if cookie_config_url %}
+                    <a href="{{ cookie_config_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-link">{{ 'Configurar' | trans }}</a>
+                {% endif %}
+                <button type="button" class="btn btn-outline-primary" data-action="cookie-consent#reject">{{ 'Rechazar' | trans }}</button>
+                <button type="button" class="btn btn-primary" data-action="cookie-consent#accept">{{ 'Aceptar' | trans }}</button>
+            </div>
+        </div>
+    </div>
+
+    <noscript>
+        <div class="card shadow mx-auto mt-2" style="max-width: 46rem;">
+            <div class="card-body d-flex flex-column flex-sm-row justify-content-end gap-2">
+                <form method="post" action="{{ path('public_cookie_consent') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('cookie_consent') }}">
+                    <input type="hidden" name="decision" value="rejected">
+                    <button type="submit" class="btn btn-outline-primary">{{ 'Rechazar' | trans }}</button>
+                </form>
+                <form method="post" action="{{ path('public_cookie_consent') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('cookie_consent') }}">
+                    <input type="hidden" name="decision" value="accepted">
+                    <button type="submit" class="btn btn-primary">{{ 'Aceptar' | trans }}</button>
+                </form>
+            </div>
+        </div>
+    </noscript>
+</div>

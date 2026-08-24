@@ -61,6 +61,8 @@
         <indexes>
             <index name="idx_attendee_survey_responses_attendee_survey_id" columns="attendee_survey_id" />
         </indexes>
+
+        <embedded name="consentProof" class="App\Shared\Domain\Model\Consent\ConsentProof" use-column-prefix="true" column-prefix="consent_" />
     </entity>
 
 </doctrine-mapping>

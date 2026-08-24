@@ -9,6 +9,8 @@ use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContribution;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionId;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Model\Consent\ConsentProof;
+use App\Tests\Unit\Shared\Domain\Model\Consent\ConsentProofMother;
 
 class ProviderContributionMother
 {
@@ -57,6 +59,14 @@ class ProviderContributionMother
             token: ProviderContribution::generateToken(),
             companyName: $companyName,
         );
+
+        return $providerContribution;
+    }
+
+    public static function withConsent(?ConsentProof $consentProof = null): ProviderContribution
+    {
+        $providerContribution = self::registeredProviderContribution();
+        $providerContribution->grantConsent($consentProof ?? ConsentProofMother::granted());
 
         return $providerContribution;
     }

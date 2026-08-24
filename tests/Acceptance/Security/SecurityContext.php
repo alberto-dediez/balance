@@ -44,6 +44,7 @@ use PHPUnit\Framework\Assert;
 use function PHPUnit\Framework\assertNotEmpty;
 
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 final class SecurityContext implements Context
@@ -400,7 +401,9 @@ final class SecurityContext implements Context
     #[When('I resend the OTP to :path')]
     public function iResendTheOtpTo(string $path): void
     {
-        $forms = $this->client->getCrawler()->filter('form');
+        $forms = $this->client->getCrawler()->filter('form')->reduce(
+            static fn(Crawler $form): bool => null === $form->closest('.cookie-consent'),
+        );
         $resendForm = $forms->count() > 1 ? $forms->last()->form() : $forms->first()->form();
         $this->client->submit($resendForm);
     }

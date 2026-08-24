@@ -19,5 +19,9 @@ final class AnswerEmployeeContributionPhaseRequest
         public readonly ?int $vehicleOccupants,
         public readonly ?int $days,
         public readonly ?int $hotelNights,
+        public readonly bool $consentGranted = false,
+        public readonly string $consentIp = '',
+        public readonly string $consentUserAgent = '',
+        public readonly string $consentAcceptLanguage = '',
     ) {}
 }

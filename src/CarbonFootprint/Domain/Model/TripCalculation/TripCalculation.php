@@ -11,6 +11,7 @@ use App\CarbonFootprint\Domain\Model\Trip\TripWaypoint;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
+use App\Shared\Domain\Model\Consent\ConsentProof;
 use Doctrine\Common\Collections\Collection;
 
 class TripCalculation implements \Stringable
@@ -38,6 +39,7 @@ class TripCalculation implements \Stringable
         private ?int $calculationYear = null,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
+        private ?ConsentProof $consentProof = null,
     ) {
         $this->events = $events;
     }
@@ -201,6 +203,26 @@ class TripCalculation implements \Stringable
             ),
             $event->legs(),
         );
+    }
+
+    public function consentProof(): ?ConsentProof
+    {
+        return $this->consentProof;
+    }
+
+    public function hasConsent(): bool
+    {
+        return null !== $this->consentProof?->consentedAt();
+    }
+
+    public function grantConsent(ConsentProof $consentProof): void
+    {
+        $this->recordApplyAndPublish(new TripCalculationConsentGranted($this->id(), $consentProof));
+    }
+
+    public function applyTripCalculationConsentGranted(TripCalculationConsentGranted $event): void
+    {
+        $this->consentProof = $event->consentProof();
     }
 
     public function __toString(): string

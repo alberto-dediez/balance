@@ -1,0 +1,5 @@
+{% if privacy_policy_url %}
+    <p class="text-muted small mt-2 mb-0">
+        {{ 'Utilizaremos tu correo electrónico únicamente para enviarte lo que has solicitado. Consulta la <a href="{url}" target="_blank" rel="noopener noreferrer">política de privacidad</a>.' | trans({'{url}': privacy_policy_url|e('html_attr')}) | raw }}
+    </p>
+{% endif %}

@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\Trip\ResolvedLeg;
 use App\CarbonFootprint\Domain\Model\Trip\TripWaypoint;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
+use App\Shared\Domain\Model\Consent\ConsentProof;
 use Doctrine\Common\Collections\Collection;
 
 class AttendeeSurveyResponse implements \Stringable
@@ -52,6 +53,7 @@ class AttendeeSurveyResponse implements \Stringable
         private ?int $calculationYear = null,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
+        private ?ConsentProof $consentProof = null,
     ) {
         $this->events = $events;
     }
@@ -329,6 +331,26 @@ class AttendeeSurveyResponse implements \Stringable
             ),
             $event->legs(),
         );
+    }
+
+    public function consentProof(): ?ConsentProof
+    {
+        return $this->consentProof;
+    }
+
+    public function hasConsent(): bool
+    {
+        return null !== $this->consentProof?->consentedAt();
+    }
+
+    public function grantConsent(ConsentProof $consentProof): void
+    {
+        $this->recordApplyAndPublish(new AttendeeSurveyResponseConsentGranted($this->id(), $consentProof));
+    }
+
+    public function applyAttendeeSurveyResponseConsentGranted(AttendeeSurveyResponseConsentGranted $event): void
+    {
+        $this->consentProof = $event->consentProof();
     }
 
     public function __toString(): string

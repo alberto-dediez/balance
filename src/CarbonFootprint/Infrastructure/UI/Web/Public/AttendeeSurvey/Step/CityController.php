@@ -11,6 +11,7 @@ use App\CarbonFootprint\Application\AttendeeSurveyResponse\Register\RegisterAtte
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyClosedException;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyTokenInvalidException;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\AttendeeSurveyPublicControllerTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\ConsentRequestReader;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\Trip\LegInputsHttpMapper;
 use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
@@ -67,52 +68,59 @@ class CityController extends AbstractController
                 throw $this->createAccessDeniedException('Token CSRF no válido');
             }
 
-            $city = $request->request->all('city');
+            if (ConsentRequestReader::accepted($request)) {
+                $city = $request->request->all('city');
 
-            $hotelNights = $intercityData['hotelNights'] ?? null;
-            $intercityTrips = $intercityData['intercityTrips'] ?? null;
+                $hotelNights = $intercityData['hotelNights'] ?? null;
+                $intercityTrips = $intercityData['intercityTrips'] ?? null;
 
-            /** @var array<mixed> $intercityLegs */
-            $intercityLegs = is_array($intercityData['intercityLegs'] ?? null) ? $intercityData['intercityLegs'] : [];
+                /** @var array<mixed> $intercityLegs */
+                $intercityLegs = is_array($intercityData['intercityLegs'] ?? null) ? $intercityData['intercityLegs'] : [];
 
-            try {
-                $registered = $registerResponse(new RegisterAttendeeSurveyResponseRequest(
-                    token: $token,
-                    cameFromAnotherCity: (bool) $intercityData['cameFromAnotherCity'],
-                    originPlaceReference: null !== ($intercityData['originPlaceReference'] ?? null) ? (string) $intercityData['originPlaceReference'] : null,
-                    usedHotel: (bool) ($intercityData['usedHotel'] ?? false),
-                    accommodationPlaceReference: null !== ($intercityData['accommodationPlaceReference'] ?? null) ? (string) $intercityData['accommodationPlaceReference'] : null,
-                    hotelNights: null !== $hotelNights ? (int) $hotelNights : null,
-                    intercityRoundTrip: (bool) ($intercityData['intercityRoundTrip'] ?? false),
-                    intercityTrips: null !== $intercityTrips ? (int) $intercityTrips : null,
-                    intercityLegs: LegInputsHttpMapper::toLegInputs($intercityLegs),
-                    movedWithinCity: 'yes' === ($city['moved'] ?? null),
-                    cityOriginPlaceReference: !empty($city['originPlaceReference']) ? (string) $city['originPlaceReference'] : null,
-                    cityRoundTrip: 'yes' === ($city['roundTrip'] ?? null),
-                    cityTrips: !empty($city['trips']) ? (int) $city['trips'] : null,
-                    cityLegs: LegInputsHttpMapper::toLegInputs(LegInputsHttpMapper::toSessionData($city)),
-                ));
-            } catch (AttendeeSurveyTokenInvalidException) {
-                return $this->attendeeSurveyInvalidResponse($this->attendeeSurveyRateLimiter, $request);
-            } catch (AttendeeSurveyClosedException) {
-                return $this->attendeeSurveyClosedResponse();
-            } catch (\InvalidArgumentException $e) {
-                $this->addFlash('danger', new TranslatableMessage('No se ha podido guardar la respuesta: {error}', ['{error}' => $e->getMessage()]));
+                try {
+                    $registered = $registerResponse(new RegisterAttendeeSurveyResponseRequest(
+                        token: $token,
+                        cameFromAnotherCity: (bool) $intercityData['cameFromAnotherCity'],
+                        originPlaceReference: null !== ($intercityData['originPlaceReference'] ?? null) ? (string) $intercityData['originPlaceReference'] : null,
+                        usedHotel: (bool) ($intercityData['usedHotel'] ?? false),
+                        accommodationPlaceReference: null !== ($intercityData['accommodationPlaceReference'] ?? null) ? (string) $intercityData['accommodationPlaceReference'] : null,
+                        hotelNights: null !== $hotelNights ? (int) $hotelNights : null,
+                        intercityRoundTrip: (bool) ($intercityData['intercityRoundTrip'] ?? false),
+                        intercityTrips: null !== $intercityTrips ? (int) $intercityTrips : null,
+                        intercityLegs: LegInputsHttpMapper::toLegInputs($intercityLegs),
+                        movedWithinCity: 'yes' === ($city['moved'] ?? null),
+                        cityOriginPlaceReference: !empty($city['originPlaceReference']) ? (string) $city['originPlaceReference'] : null,
+                        cityRoundTrip: 'yes' === ($city['roundTrip'] ?? null),
+                        cityTrips: !empty($city['trips']) ? (int) $city['trips'] : null,
+                        cityLegs: LegInputsHttpMapper::toLegInputs(LegInputsHttpMapper::toSessionData($city)),
+                        consentIp: ConsentRequestReader::ip($request),
+                        consentUserAgent: ConsentRequestReader::userAgent($request),
+                        consentAcceptLanguage: ConsentRequestReader::acceptLanguage($request),
+                    ));
+                } catch (AttendeeSurveyTokenInvalidException) {
+                    return $this->attendeeSurveyInvalidResponse($this->attendeeSurveyRateLimiter, $request);
+                } catch (AttendeeSurveyClosedException) {
+                    return $this->attendeeSurveyClosedResponse();
+                } catch (\InvalidArgumentException $e) {
+                    $this->addFlash('danger', new TranslatableMessage('No se ha podido guardar la respuesta: {error}', ['{error}' => $e->getMessage()]));
 
-                return $this->redirectToRoute('public_carbon_footprint_attendee_survey_city', ['token' => $token]);
+                    return $this->redirectToRoute('public_carbon_footprint_attendee_survey_city', ['token' => $token]);
+                }
+
+                $session->remove($sessionKey);
+                $session->set('attendee_survey_' . $token . '_answered', true);
+
+                if ((float) $registered->emissions->co2eq() <= 0.0) {
+                    return $this->redirectToRoute('public_carbon_footprint_attendee_survey_thanks', ['token' => $token]);
+                }
+
+                return $this->redirectToRoute('public_carbon_footprint_attendee_survey_result', [
+                    'token' => $token,
+                    'responseId' => (string) $registered->attendeeSurveyResponseId,
+                ]);
             }
 
-            $session->remove($sessionKey);
-            $session->set('attendee_survey_' . $token . '_answered', true);
-
-            if ((float) $registered->emissions->co2eq() <= 0.0) {
-                return $this->redirectToRoute('public_carbon_footprint_attendee_survey_thanks', ['token' => $token]);
-            }
-
-            return $this->redirectToRoute('public_carbon_footprint_attendee_survey_result', [
-                'token' => $token,
-                'responseId' => (string) $registered->attendeeSurveyResponseId,
-            ]);
+            $this->addFlash('danger', new TranslatableMessage('Debes aceptar el tratamiento de tus datos para continuar.'));
         }
 
         return $this->render('@carbon_footprint/public/attendee_survey/step/city.html.twig', [

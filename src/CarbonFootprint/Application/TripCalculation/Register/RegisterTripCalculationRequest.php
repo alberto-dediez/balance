@@ -17,5 +17,8 @@ final class RegisterTripCalculationRequest
         public readonly ?int $trips,
         public readonly ?int $nights,
         public readonly array $legs,
+        public readonly string $consentIp = '',
+        public readonly string $consentUserAgent = '',
+        public readonly string $consentAcceptLanguage = '',
     ) {}
 }

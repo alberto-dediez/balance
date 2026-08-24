@@ -109,6 +109,11 @@
         <div id="contribution_summary">
             {{ include(theme_template('@carbon_footprint/project_contribution/_summary.html.twig')) }}
         </div>
+
+        {% include '@shared/form/_privacy_notice.html.twig' %}
+        <p class="text-muted small mt-2 mb-0">
+            {{ 'El pago se procesa íntegramente por nuestro proveedor de pagos; no almacenamos los datos de tu tarjeta.' | trans }}
+        </p>
     </form>
 
     <script>

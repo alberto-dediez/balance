@@ -10,6 +10,7 @@ use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
+use App\Shared\Domain\Model\Consent\ConsentProof;
 
 class ProviderContribution implements \Stringable
 {
@@ -36,6 +37,7 @@ class ProviderContribution implements \Stringable
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $updatedAt = null,
+        private ?ConsentProof $consentProof = null,
     ) {
         $this->events = $events;
     }
@@ -323,6 +325,26 @@ class ProviderContribution implements \Stringable
         $this->workersBreakdown = $event->workersBreakdown();
         $this->advanceStepStatus(ProviderContributionStepStatus::GeneralAnswered);
         $this->updatedAt = $event->occurredOn();
+    }
+
+    public function consentProof(): ?ConsentProof
+    {
+        return $this->consentProof;
+    }
+
+    public function hasConsent(): bool
+    {
+        return null !== $this->consentProof?->consentedAt();
+    }
+
+    public function grantConsent(ConsentProof $consentProof): void
+    {
+        $this->recordApplyAndPublish(new ProviderContributionConsentGranted($this->id(), $consentProof));
+    }
+
+    public function applyProviderContributionConsentGranted(ProviderContributionConsentGranted $event): void
+    {
+        $this->consentProof = $event->consentProof();
     }
 
     public function __toString(): string

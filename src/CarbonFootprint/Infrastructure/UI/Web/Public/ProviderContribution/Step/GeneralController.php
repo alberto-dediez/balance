@@ -11,6 +11,7 @@ use App\CarbonFootprint\Application\ProviderContribution\GetGeneralInfo\GetProvi
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionClosedException;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionIgnoredException;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionTokenInvalidException;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\ConsentRequestReader;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\ProviderContribution\ProviderContributionPublicControllerTrait;
 use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/carbon-footprint/contribution/{token}/general', name: 'public_carbon_footprint_contribution_general')]
 class GeneralController extends AbstractController
@@ -45,25 +47,32 @@ class GeneralController extends AbstractController
                 throw $this->createAccessDeniedException('Token CSRF no válido');
             }
 
-            $general = $request->request->all('general');
+            if (ConsentRequestReader::accepted($request)) {
+                $general = $request->request->all('general');
 
-            try {
-                $answerGeneralInfo(new AnswerProviderContributionGeneralInfoRequest(
-                    token: $token,
-                    companyName: !empty($general['companyName']) ? (string) $general['companyName'] : null,
-                    companyType: !empty($general['companyType']) ? (string) $general['companyType'] : null,
-                    service: !empty($general['service']) ? (string) $general['service'] : null,
-                    workersAssembly: !empty($general['workersAssembly']) ? (int) $general['workersAssembly'] : null,
-                    workersCelebration: !empty($general['workersCelebration']) ? (int) $general['workersCelebration'] : null,
-                    workersBreakdown: !empty($general['workersBreakdown']) ? (int) $general['workersBreakdown'] : null,
-                ));
-            } catch (ProviderContributionTokenInvalidException|ProviderContributionIgnoredException) {
-                return $this->providerContributionInvalidResponse($this->providerContributionInvalidTokenLimiter, $request);
-            } catch (ProviderContributionClosedException) {
-                return $this->providerContributionClosedResponse();
+                try {
+                    $answerGeneralInfo(new AnswerProviderContributionGeneralInfoRequest(
+                        token: $token,
+                        companyName: !empty($general['companyName']) ? (string) $general['companyName'] : null,
+                        companyType: !empty($general['companyType']) ? (string) $general['companyType'] : null,
+                        service: !empty($general['service']) ? (string) $general['service'] : null,
+                        workersAssembly: !empty($general['workersAssembly']) ? (int) $general['workersAssembly'] : null,
+                        workersCelebration: !empty($general['workersCelebration']) ? (int) $general['workersCelebration'] : null,
+                        workersBreakdown: !empty($general['workersBreakdown']) ? (int) $general['workersBreakdown'] : null,
+                        consentIp: ConsentRequestReader::ip($request),
+                        consentUserAgent: ConsentRequestReader::userAgent($request),
+                        consentAcceptLanguage: ConsentRequestReader::acceptLanguage($request),
+                    ));
+                } catch (ProviderContributionTokenInvalidException|ProviderContributionIgnoredException) {
+                    return $this->providerContributionInvalidResponse($this->providerContributionInvalidTokenLimiter, $request);
+                } catch (ProviderContributionClosedException) {
+                    return $this->providerContributionClosedResponse();
+                }
+
+                return $this->redirectToRoute('public_carbon_footprint_contribution_assembly', ['token' => $token]);
             }
 
-            return $this->redirectToRoute('public_carbon_footprint_contribution_assembly', ['token' => $token]);
+            $this->addFlash('danger', new TranslatableMessage('Debes aceptar el tratamiento de tus datos para continuar.'));
         }
 
         try {

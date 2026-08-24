@@ -15,6 +15,7 @@ Feature:
         When I go to "/es/carbon-footprint/attendee-survey/token-abc/intercity"
         When I submit a form with "cameFromAnotherCity:yes|usedHotel:no|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes|trips:1" and button "Continuar"
         When I go to "/es/carbon-footprint/attendee-survey/token-abc/city"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "moved:no" and button "Enviar respuesta"
         Then I am redirected to route "public_carbon_footprint_attendee_survey_result"
 
@@ -142,6 +143,7 @@ Feature:
         When I go to "/es/carbon-footprint/attendee-survey/token-xyz/intercity"
         When I submit a form with "cameFromAnotherCity:yes|usedHotel:no|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes|trips:1" and button "Continuar"
         When I go to "/es/carbon-footprint/attendee-survey/token-xyz/city"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "moved:no" and button "Enviar respuesta"
         Then I am redirected to route "public_carbon_footprint_attendee_survey_result"
         Then the response status should be 200

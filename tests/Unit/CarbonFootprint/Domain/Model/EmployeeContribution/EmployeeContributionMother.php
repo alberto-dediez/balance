@@ -11,6 +11,8 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Model\Consent\ConsentProof;
+use App\Tests\Unit\Shared\Domain\Model\Consent\ConsentProofMother;
 
 class EmployeeContributionMother
 {
@@ -84,6 +86,14 @@ class EmployeeContributionMother
             token: EmployeeContribution::generateToken(),
             employeeName: $employeeName,
         );
+
+        return $employeeContribution;
+    }
+
+    public static function withConsent(?ConsentProof $consentProof = null): EmployeeContribution
+    {
+        $employeeContribution = self::registeredEmployeeContribution();
+        $employeeContribution->grantConsent($consentProof ?? ConsentProofMother::granted());
 
         return $employeeContribution;
     }

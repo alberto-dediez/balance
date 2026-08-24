@@ -15,6 +15,7 @@ Feature:
         Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
         Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:yes|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes|trips:1|overnight:no" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         Then the response status should be 200
@@ -43,6 +44,7 @@ Feature:
         Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
         Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:yes|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes|trips:1|overnight:no" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         When I click on link "Compensar mi huella"
@@ -61,6 +63,7 @@ Feature:
         Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
         Given project "Otro" with id "9999" and price per tonne "20" exists
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:yes|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes|trips:1|overnight:no" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         When I click on link "Compensar mi huella"
@@ -75,6 +78,7 @@ Feature:
         Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
         Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:no|overnight:no" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         When I click on link "Compensar mi huella"
@@ -98,6 +102,7 @@ Feature:
         Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
         Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:no|overnight:no" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         When I click on link "Compensar mi huella"
@@ -114,6 +119,7 @@ Feature:
         Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
         Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:no|overnight:no" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         When I click on link "Compensar mi huella"
@@ -131,6 +137,7 @@ Feature:
         Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
         Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:no|overnight:no" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         When I click on link "Compensar mi huella"
@@ -148,6 +155,7 @@ Feature:
         Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
         Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:no|overnight:no" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         When I click on link "Compensar mi huella"
@@ -162,6 +170,7 @@ Feature:
         Given project "Reforestación" with id "1111" and price per tonne "20" exists
         Given project "1111" is adhered to account "666"
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:yes|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes|trips:1|overnight:no" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         Then the response status should be 200
@@ -173,6 +182,7 @@ Feature:
         Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
         Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:no|overnight:no" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         Then I do not see a text "Compensa tu huella"
@@ -181,6 +191,7 @@ Feature:
         Given social project "Escuela rural" with id "3333" and price per tonne "20" exists
         Given project "3333" is adhered to account "666"
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:yes|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes|trips:1|overnight:no" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         Then I see a text "Compensa tu huella"

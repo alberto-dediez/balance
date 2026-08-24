@@ -9,6 +9,8 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRe
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionClosedException;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionRepository;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionTokenInvalidException;
+use App\Shared\Domain\Model\Consent\ConsentProof;
+use App\Shared\Domain\Model\Locale\LocaleGetter;
 
 final class AnswerProviderContributionGeneralInfoService
 {
@@ -16,6 +18,7 @@ final class AnswerProviderContributionGeneralInfoService
         private ProviderContributionAuthenticator $authenticator,
         private ProviderContributionRepository $providerContributionRepository,
         private EventCarbonFootprintRepository $eventCarbonFootprintRepository,
+        private string $consentPolicyVersion,
     ) {}
 
     public function __invoke(AnswerProviderContributionGeneralInfoRequest $request): void
@@ -33,6 +36,15 @@ final class AnswerProviderContributionGeneralInfoService
         if ($eventCarbonFootprint->status()->isCompleted()) {
             throw new ProviderContributionClosedException();
         }
+
+        $providerContribution->grantConsent(new ConsentProof(
+            consentedAt: new \DateTimeImmutable('NOW'),
+            policyVersion: $this->consentPolicyVersion,
+            locale: LocaleGetter::locale()->value,
+            ip: $request->consentIp,
+            userAgent: $request->consentUserAgent,
+            acceptLanguage: $request->consentAcceptLanguage,
+        ));
 
         $providerContribution->updateGeneralInfo(
             companyName: $request->companyName,

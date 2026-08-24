@@ -59,6 +59,16 @@ Feature:
         Then I see a text '--brand-font-family:"Poppins", sans-serif'
         Then I see a text "--brand-primary:#8A2432"
 
+    Scenario: The preview does not show the public cookie banner nor the public footer
+        Given account "MyCompany" with id "666" exists
+        Given account "666" has branding with primary colour "#8A2432"
+        Given user "owner" with role "ROLE_OWNER" of account "666" exists
+        When I am logged as "owner"
+        When I go to the branding preview of account "666"
+        Then the response status should be 200
+        Then I do not see a text "cookie-consent"
+        Then I do not see a text "public-footer"
+
     Scenario: An owner cannot reach the branding of another account
         Given account "MyCompany" with id "666" exists
         Given account "Other" with id "777" exists

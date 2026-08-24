@@ -21,6 +21,7 @@ Feature:
         Given provider "444" has a linked user
         Given provider contribution with id "111" for event carbon footprint "999" and provider "444" of account "666" with token "token-abc" exists
         When I go to "/es/carbon-footprint/contribution/token-abc/general"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "companyName:New Company Name" and button "Siguiente"
         Then I am redirected to route "public_carbon_footprint_contribution_assembly"
 
@@ -42,6 +43,7 @@ Feature:
         Given provider "444" has a linked user
         Given provider contribution with id "111" for event carbon footprint "999" and provider "444" of account "666" with token "token-abc" exists
         When I go to "/es/carbon-footprint/contribution/token-abc/general"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "companyName:New Company Name" and button "Siguiente"
         When I go to "/es/carbon-footprint/contribution/token-abc"
         Then I am redirected to route "public_carbon_footprint_contribution_assembly"

@@ -14,6 +14,7 @@ Feature:
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
         Then the response status should be 200
         Then I see a text "Calculadora de huella de tu viaje"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:yes|originPlaceReference:sevilla|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes|trips:1|overnight:yes|nights:2" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         Then the response status should be 200
@@ -32,6 +33,7 @@ Feature:
         Then the response status should be 200
         Then I see a text "¿Te has desplazado desde otra ciudad?"
         Then I see a text "¿Dormiste alguna noche fuera de tu casa?"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:no|overnight:yes|nights:2" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         Then the response status should be 200
@@ -47,6 +49,7 @@ Feature:
         Given the places provider is disabled
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
         Then the response status should be 200
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:yes|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:120|roundTrip:no|trips:1|overnight:no" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         Then trip calculation link "TL1" should have 1 trip calculations
@@ -83,6 +86,7 @@ Feature:
         Then I do not see a text "¿Te has desplazado desde otra ciudad?"
         Then I do not see a text "¿Dormiste alguna noche fuera de tu casa?"
         Then I see a text "Nº de noches"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "nights:2" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         Then the response status should be 200
@@ -101,6 +105,7 @@ Feature:
         Then I do not see a text "¿Te has desplazado desde otra ciudad?"
         Then I do not see a text "¿Dormiste alguna noche fuera de tu casa?"
         Then I see a text "¿Desde dónde viajaste?"
+        When I tick the checkbox "consent_accepted"
         When I submit a form with "originPlaceReference:Sevilla|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:120|roundTrip:no|trips:1" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         Then the response status should be 200

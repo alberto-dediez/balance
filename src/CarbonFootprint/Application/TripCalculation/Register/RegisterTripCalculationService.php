@@ -24,6 +24,7 @@ use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepo
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationScope;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Shared\Domain\Model\Consent\ConsentProof;
 use App\Shared\Domain\Model\Geo\PlaceFinder;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
 
@@ -40,6 +41,7 @@ final class RegisterTripCalculationService
         private TripLegsAccumulator $tripLegsAccumulator,
         private TripEmissionsCalculator $tripEmissionsCalculator,
         private EmissionFactorGroupRepository $emissionFactorGroupRepository,
+        private string $consentPolicyVersion,
     ) {}
 
     public function __invoke(RegisterTripCalculationRequest $request): RegisterTripCalculationResponse
@@ -120,6 +122,15 @@ final class RegisterTripCalculationService
             emissionFactorGroupId: $emissionFactorGroup->id(),
             calculationYear: $calculationYear,
         );
+
+        $tripCalculation->grantConsent(new ConsentProof(
+            consentedAt: new \DateTimeImmutable('NOW'),
+            policyVersion: $this->consentPolicyVersion,
+            locale: LocaleGetter::locale()->value,
+            ip: $request->consentIp,
+            userAgent: $request->consentUserAgent,
+            acceptLanguage: $request->consentAcceptLanguage,
+        ));
 
         $this->tripCalculationRepository->add($tripCalculation);
 
