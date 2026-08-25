@@ -7165,6 +7165,14 @@
         <source>Equivale a {emissions} kg CO₂eq por persona.</source>
         <target>Equivale a {emissions} kg CO₂eq por persona.</target>
       </trans-unit>
+      <trans-unit id="ilnd7bE" resname="¿Seguro que quieres reemitir el informe?">
+        <source>¿Seguro que quieres reemitir el informe?</source>
+        <target>¿Seguro que quieres reemitir el informe?</target>
+      </trans-unit>
+      <trans-unit id="HJqmyj4" resname="¿Seguro que quieres volver a generar el informe?">
+        <source>¿Seguro que quieres volver a generar el informe?</source>
+        <target>¿Seguro que quieres volver a generar el informe?</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -13,12 +13,11 @@ use App\Security\Application\Action as SecurityAction;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-#[Route('/events/{eventId}/carbon-footprint/report/reissue', name: 'events_carbon_footprint_report_reissue', methods: ['POST'])]
+#[Route('/events/{eventId}/carbon-footprint/report/reissue', name: 'events_carbon_footprint_report_reissue', methods: ['GET'])]
 class ReissueReportController extends AbstractController
 {
     use GetEventCarbonFootprintFromEventIdTrait;
@@ -29,15 +28,10 @@ class ReissueReportController extends AbstractController
         EventCarbonFootprintReportRepository $reportRepository,
         ReissueEventCarbonFootprintReportService $reissueReport,
         LoggedUser $loggedUser,
-        Request $request,
     ): Response {
         $eventCarbonFootprint = $this->getEventCarbonFootprintFromEventId($eventId, $eventCarbonFootprintRepository);
 
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $eventCarbonFootprint);
-
-        if (!$this->isCsrfTokenValid('reissue_report_' . $eventCarbonFootprint->id(), $request->request->getString('_token'))) {
-            throw $this->createAccessDeniedException('Token CSRF no válido');
-        }
 
         $report = $reportRepository->findByEventCarbonFootprintId($eventCarbonFootprint->id())
             ?? throw $this->createNotFoundException('Informe no encontrado');

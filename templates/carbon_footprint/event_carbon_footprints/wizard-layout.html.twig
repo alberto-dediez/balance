@@ -10,6 +10,16 @@
             {{ 'Descargar informe' | trans }}
         </twig:TopAction>
 
+        {% if carbonFootprintReport | is_authorized('edit') %}
+            <twig:TopAction path="{{ path('events_carbon_footprint_report_reissue', {eventId: eventId}) }}"
+                onclick="return confirm('{{ '¿Seguro que quieres reemitir el informe?' | trans | e('js') }}');"
+            >
+                <twig:Icon name="solar:refresh-line-duotone" size="lg" class="me-2" />
+
+                {{ 'Reemitir informe' | trans }}
+            </twig:TopAction>
+        {% endif %}
+
         {% if is_granted('ROLE_OWNER') %}
             <twig:TopAction path="{{ path('owner_contribution_choose', {origin: 'event_carbon_footprint', originId: eventId}) }}" target="_blank">
                 <twig:Icon name="solar:hand-heart-bold" size="lg" class="me-2" />

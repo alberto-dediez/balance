@@ -14,7 +14,7 @@ Feature:
         Then the response status should be 200
         Then I see a text "Compensación de emisiones"
         Then I see a text "Reemitir informe"
-        When I submit a form with "" and button "Reemitir informe"
+        When I click on link "Reemitir informe"
         Then I am redirected to route "events_carbon_footprint_results"
         Then the report of event carbon footprint "999" should be "pending" keeping its file path
 
@@ -30,6 +30,6 @@ Feature:
         Then the response status should be 200
         Then I see a text "No se ha podido generar el informe de esta huella de carbono: Gemini failure"
         Then I see a text "Reintentar generación"
-        When I submit a form with "" and button "Reintentar generación"
+        When I click on link "Reintentar generación"
         Then I am redirected to route "events_carbon_footprint_results"
         Then the report of event carbon footprint "999" should be "pending"
