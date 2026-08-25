@@ -53,6 +53,8 @@ Feature:
         Then I see a text "Perfil de los asistentes"
         Then I see a text "Coche"
         Then I see a text "Sevilla"
+        Then I see a text "Mapa de orígenes"
+        Then I see a text "Cada línea une un origen con el destino"
 
     Scenario: An owner of another account cannot see the responses page of an event
         Given account "MyCompany" with id "666" exists

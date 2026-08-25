@@ -14,6 +14,7 @@ use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAut
 use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Application\Trip\MobilityBreakdownCalculator;
 use App\CarbonFootprint\Application\Trip\MobilityBreakdownRow;
+use App\CarbonFootprint\Application\Trip\OriginFlowsCalculator;
 use App\CarbonFootprint\Application\Trip\PerPersonTripEmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepository;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
@@ -52,6 +53,7 @@ class GetAttendeeSurveyStatsService implements CommandHandler
         private MobilityBreakdownCalculator $mobilityBreakdownCalculator,
         private MobilityFactorBasisProvider $mobilityFactorBasisProvider,
         private PerPersonTripEmissionsCalculator $perPersonTripEmissionsCalculator,
+        private OriginFlowsCalculator $originFlowsCalculator,
     ) {}
 
     public function __invoke(GetAttendeeSurveyStatsRequest $request, User $user): GetAttendeeSurveyStatsResponse
@@ -81,6 +83,7 @@ class GetAttendeeSurveyStatsService implements CommandHandler
             : null;
 
         $totalEmissions = $this->sumEmissions($responses, static fn(AttendeeSurveyResponse $response): Emissions => $response->emissions());
+        $venue = $this->eventVenueLocator->locate($event);
 
         return new GetAttendeeSurveyStatsResponse(
             attendeeSurvey: $attendeeSurvey,
@@ -88,7 +91,7 @@ class GetAttendeeSurveyStatsService implements CommandHandler
             estimatedAttendees: $estimatedAttendees,
             surveyedPercentage: $surveyedPercentage,
             contributions: $this->contributions($responses),
-            venueLocated: null !== $this->eventVenueLocator->locate($event),
+            venueLocated: null !== $venue,
             venueLabel: $event?->venueLabel(),
             legsByDistanceSource: $this->attendeeSurveyResponseRepository->countLegsByDistanceSource($attendeeSurvey->id()),
             multimodalResponsesCount: $this->attendeeSurveyResponseRepository->countMultimodalResponses($attendeeSurvey->id()),
@@ -104,7 +107,19 @@ class GetAttendeeSurveyStatsService implements CommandHandler
             usedHotelCount: count(array_filter($responses, static fn(AttendeeSurveyResponse $response): bool => $response->usedHotel())),
             movedWithinCityCount: count(array_filter($responses, static fn(AttendeeSurveyResponse $response): bool => $response->movedWithinCity())),
             totalNights: array_sum(array_map(static fn(AttendeeSurveyResponse $response): int => $response->overnightStays(), $responses)),
+            originFlows: $this->originFlowsCalculator->forAttendeeSurveyResponses($responses),
+            destination: $venue,
+            unlocatedResponses: $this->unlocatedResponses($responses),
         );
+    }
+
+    /** @param list<AttendeeSurveyResponse> $responses */
+    private function unlocatedResponses(array $responses): int
+    {
+        return count(array_filter(
+            $responses,
+            static fn(AttendeeSurveyResponse $response): bool => null === $response->originLatitude() || null === $response->originLongitude(),
+        ));
     }
 
     /**

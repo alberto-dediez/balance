@@ -17,6 +17,7 @@ use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveySta
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Application\Trip\MobilityBreakdownCalculator;
+use App\CarbonFootprint\Application\Trip\OriginFlowsCalculator;
 use App\CarbonFootprint\Application\Trip\PerPersonTripEmissionsCalculator;
 use App\CarbonFootprint\Application\Trip\TripEmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurvey;
@@ -94,6 +95,7 @@ class GetAttendeeSurveyStatsServiceTest extends TestCase
                     new InMemoryOvernightStayRepository(),
                 ),
             ),
+            new OriginFlowsCalculator(),
         );
     }
 

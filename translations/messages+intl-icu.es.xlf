@@ -7173,6 +7173,38 @@
         <source>¿Seguro que quieres volver a generar el informe?</source>
         <target>¿Seguro que quieres volver a generar el informe?</target>
       </trans-unit>
+      <trans-unit id="QDA5RWe" resname="Viajeros">
+        <source>Viajeros</source>
+        <target>Viajeros</target>
+      </trans-unit>
+      <trans-unit id="fKD5M_c" resname="Distancia media">
+        <source>Distancia media</source>
+        <target>Distancia media</target>
+      </trans-unit>
+      <trans-unit id="qCkrMdy" resname="Añade la ubicación de la propiedad para ver el mapa de orígenes.">
+        <source>Añade la ubicación de la propiedad para ver el mapa de orígenes.</source>
+        <target>Añade la ubicación de la propiedad para ver el mapa de orígenes.</target>
+      </trans-unit>
+      <trans-unit id="jDS7073" resname="Añade la ubicación del recinto del evento para ver el mapa de orígenes.">
+        <source>Añade la ubicación del recinto del evento para ver el mapa de orígenes.</source>
+        <target>Añade la ubicación del recinto del evento para ver el mapa de orígenes.</target>
+      </trans-unit>
+      <trans-unit id="ZMtoddL" resname="Todavía no hay orígenes geolocalizados.">
+        <source>Todavía no hay orígenes geolocalizados.</source>
+        <target>Todavía no hay orígenes geolocalizados.</target>
+      </trans-unit>
+      <trans-unit id="1z32VkJ" resname="Cada línea une un origen con el destino. El grosor indica el número de viajeros.">
+        <source>Cada línea une un origen con el destino. El grosor indica el número de viajeros.</source>
+        <target>Cada línea une un origen con el destino. El grosor indica el número de viajeros.</target>
+      </trans-unit>
+      <trans-unit id="jKpf9hg" resname="Hay {count} respuestas sin ubicación.">
+        <source>Hay {count} respuestas sin ubicación.</source>
+        <target>Hay {count} respuestas sin ubicación.</target>
+      </trans-unit>
+      <trans-unit id="1vR2gCh" resname="Mapa de orígenes">
+        <source>Mapa de orígenes</source>
+        <target>Mapa de orígenes</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

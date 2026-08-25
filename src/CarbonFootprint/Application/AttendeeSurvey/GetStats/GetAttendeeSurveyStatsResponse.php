@@ -6,9 +6,11 @@ namespace App\CarbonFootprint\Application\AttendeeSurvey\GetStats;
 
 use App\CarbonFootprint\Application\Contribution\ContributionsSummary;
 use App\CarbonFootprint\Application\Trip\MobilityBreakdownRow;
+use App\CarbonFootprint\Application\Trip\OriginFlow;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurvey;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\Shared\Application\CommandBus\CommandResponse;
+use App\Shared\Domain\Model\Geo\GeoPoint;
 
 class GetAttendeeSurveyStatsResponse implements CommandResponse
 {
@@ -17,6 +19,7 @@ class GetAttendeeSurveyStatsResponse implements CommandResponse
      * @param list<MobilityBreakdownRow> $mobilityBreakdown
      * @param array<string, int>         $responsesByDay
      * @param array<string, int>         $topOrigins
+     * @param list<OriginFlow>           $originFlows
      */
     public function __construct(
         public AttendeeSurvey $attendeeSurvey,
@@ -40,5 +43,8 @@ class GetAttendeeSurveyStatsResponse implements CommandResponse
         public int $usedHotelCount = 0,
         public int $movedWithinCityCount = 0,
         public int $totalNights = 0,
+        public array $originFlows = [],
+        public ?GeoPoint $destination = null,
+        public int $unlocatedResponses = 0,
     ) {}
 }

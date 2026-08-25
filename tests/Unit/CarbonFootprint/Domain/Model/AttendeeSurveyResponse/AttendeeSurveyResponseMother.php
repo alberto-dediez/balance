@@ -121,12 +121,13 @@ class AttendeeSurveyResponseMother
         Emissions $overnightEmissions = new Emissions(),
         ?EmissionFactorGroupId $emissionFactorGroupId = null,
         ?int $calculationYear = null,
+        ?TripWaypoint $origin = null,
     ): AttendeeSurveyResponse {
         $response = new AttendeeSurveyResponse(id: new AttendeeSurveyResponseId($id ?? (string) AttendeeSurveyResponseId::generate()));
         $response->register(
             attendeeSurveyId: new AttendeeSurveyId($attendeeSurveyId),
             cameFromAnotherCity: $cameFromAnotherCity,
-            origin: null,
+            origin: $origin,
             usedHotel: $usedHotel,
             accommodation: null,
             hotelNights: $hotelNights,

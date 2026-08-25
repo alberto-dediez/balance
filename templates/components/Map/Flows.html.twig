@@ -1,0 +1,14 @@
+{% set labels = {
+    travellers: 'Viajeros' | trans,
+    responses: 'Respuestas' | trans,
+    distance: 'Distancia media' | trans,
+    emissions: 'Emisiones' | trans,
+} %}
+
+<div
+    data-controller="flows-map"
+    data-flows-map-flows-value="{{ flows | json_encode }}"
+    data-flows-map-destination-value="{{ destination | json_encode }}"
+    data-flows-map-labels-value="{{ labels | json_encode }}"
+    style="height: {{ height }}px;"
+></div>

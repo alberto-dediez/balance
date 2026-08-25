@@ -7,12 +7,14 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\PropertyTripCalculation\View
 use App\CarbonFootprint\Application\TripCalculation\GetResults\GetTripCalculationResultsResponse;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationScope;
 use App\CarbonFootprint\Infrastructure\UI\Web\Chart\TripChartBuilder;
+use App\CarbonFootprint\Infrastructure\UI\Web\Map\TripFlowsMapBuilder;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ResultsView
 {
     public function __construct(
         private TripChartBuilder $chartBuilder,
+        private TripFlowsMapBuilder $mapBuilder,
         private TranslatorInterface $translator,
     ) {}
 
@@ -37,6 +39,9 @@ final class ResultsView
             'contributionsChart' => $this->chartBuilder->contributions($results->contributions->aggregation),
             'originsChart' => $this->chartBuilder->counts($results->topOrigins),
             'profileChart' => $this->chartBuilder->counts($this->profile($results, $showTransport, $showOvernightStay)),
+            'mapFlows' => $this->mapBuilder->flows($results->originFlows),
+            'mapDestination' => $this->mapBuilder->destination($results->destination, $results->property->name()),
+            'unlocatedResponses' => $results->unlocatedCalculations,
             'showTransport' => $showTransport,
             'showOvernightStay' => $showOvernightStay,
         ];

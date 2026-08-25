@@ -12,7 +12,9 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregator;
 use App\CarbonFootprint\Application\Contribution\ContributionsSummary;
 use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Application\Trip\MobilityBreakdownCalculator;
+use App\CarbonFootprint\Application\Trip\OriginFlowsCalculator;
 use App\CarbonFootprint\Application\Trip\PerPersonTripEmissionsCalculator;
+use App\CarbonFootprint\Application\Trip\PropertyLocator;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculation;
@@ -41,6 +43,8 @@ final class GetTripCalculationResultsService
         private ProjectContributionsAggregator $contributionsAggregator,
         private MobilityFactorBasisProvider $mobilityFactorBasisProvider,
         private PerPersonTripEmissionsCalculator $perPersonTripEmissionsCalculator,
+        private OriginFlowsCalculator $originFlowsCalculator,
+        private PropertyLocator $propertyLocator,
     ) {}
 
     public function __invoke(GetTripCalculationResultsRequest $request, User $user): GetTripCalculationResultsResponse
@@ -71,6 +75,7 @@ final class GetTripCalculationResultsService
                 topOrigins: [],
                 withOvernightStayCount: 0,
                 roundTripCount: 0,
+                destination: $this->propertyLocator->locate($property),
             );
         }
 
@@ -99,7 +104,19 @@ final class GetTripCalculationResultsService
             topOrigins: $this->topOrigins($tripCalculations),
             withOvernightStayCount: count(array_filter($tripCalculations, static fn(TripCalculation $tripCalculation): bool => ($tripCalculation->nights() ?? 0) > 0)),
             roundTripCount: count(array_filter($tripCalculations, static fn(TripCalculation $tripCalculation): bool => $tripCalculation->roundTrip())),
+            originFlows: $this->originFlowsCalculator->forTripCalculations($tripCalculations),
+            destination: $this->propertyLocator->locate($property),
+            unlocatedCalculations: $this->unlocatedCalculations($tripCalculations),
         );
+    }
+
+    /** @param list<TripCalculation> $tripCalculations */
+    private function unlocatedCalculations(array $tripCalculations): int
+    {
+        return count(array_filter(
+            $tripCalculations,
+            static fn(TripCalculation $tripCalculation): bool => null === $tripCalculation->originLatitude() || null === $tripCalculation->originLongitude(),
+        ));
     }
 
     /**

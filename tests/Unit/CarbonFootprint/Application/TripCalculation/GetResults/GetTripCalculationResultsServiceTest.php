@@ -12,7 +12,9 @@ use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Application\Trip\MobilityBreakdownCalculator;
+use App\CarbonFootprint\Application\Trip\OriginFlowsCalculator;
 use App\CarbonFootprint\Application\Trip\PerPersonTripEmissionsCalculator;
+use App\CarbonFootprint\Application\Trip\PropertyLocator;
 use App\CarbonFootprint\Application\Trip\TripEmissionsCalculator;
 use App\CarbonFootprint\Application\TripCalculation\GetResults\GetTripCalculationResultsRequest;
 use App\CarbonFootprint\Application\TripCalculation\GetResults\GetTripCalculationResultsService;
@@ -96,6 +98,8 @@ class GetTripCalculationResultsServiceTest extends TestCase
                     new InMemoryOvernightStayRepository(),
                 ),
             ),
+            new OriginFlowsCalculator(),
+            new PropertyLocator(),
         );
     }
 

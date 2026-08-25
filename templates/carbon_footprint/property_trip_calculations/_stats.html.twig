@@ -257,6 +257,13 @@
     {% endif %}
 </div>
 
+{% if showTransport %}
+    {% include '@carbon_footprint/_origins_map.html.twig' with {
+        missingDestinationMessage: 'Añade la ubicación de la propiedad para ver el mapa de orígenes.' | trans,
+        unlocatedResponses: unlocatedResponses,
+    } %}
+{% endif %}
+
 <div class="row">
     <div class="col-lg-6 d-flex">
         <twig:Card title="{{ 'Conversión' | trans }}" class="flex-fill">

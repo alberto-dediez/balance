@@ -1,0 +1,16 @@
+<twig:Card title="{{ 'Mapa de orígenes' | trans }}">
+    {% if mapDestination is null %}
+        <p class="text-muted mb-0">{{ missingDestinationMessage }}</p>
+    {% elseif mapFlows is empty %}
+        <p class="text-muted mb-0">{{ 'Todavía no hay orígenes geolocalizados.' | trans }}</p>
+    {% else %}
+        <twig:Map:Flows :flows="mapFlows" :destination="mapDestination" />
+
+        <small class="text-muted d-block mt-2">
+            {{ 'Cada línea une un origen con el destino. El grosor indica el número de viajeros.' | trans }}
+            {% if unlocatedResponses > 0 %}
+                {{ 'Hay {count} respuestas sin ubicación.' | trans({'count': unlocatedResponses}) }}
+            {% endif %}
+        </small>
+    {% endif %}
+</twig:Card>

@@ -7173,6 +7173,38 @@
         <source>¿Seguro que quieres volver a generar el informe?</source>
         <target>Are you sure you want to generate the report again?</target>
       </trans-unit>
+      <trans-unit id="QDA5RWe" resname="Viajeros">
+        <source>Viajeros</source>
+        <target>Travellers</target>
+      </trans-unit>
+      <trans-unit id="fKD5M_c" resname="Distancia media">
+        <source>Distancia media</source>
+        <target>Average distance</target>
+      </trans-unit>
+      <trans-unit id="qCkrMdy" resname="Añade la ubicación de la propiedad para ver el mapa de orígenes.">
+        <source>Añade la ubicación de la propiedad para ver el mapa de orígenes.</source>
+        <target>Add the property location to see the origins map.</target>
+      </trans-unit>
+      <trans-unit id="jDS7073" resname="Añade la ubicación del recinto del evento para ver el mapa de orígenes.">
+        <source>Añade la ubicación del recinto del evento para ver el mapa de orígenes.</source>
+        <target>Add the event venue location to see the origins map.</target>
+      </trans-unit>
+      <trans-unit id="ZMtoddL" resname="Todavía no hay orígenes geolocalizados.">
+        <source>Todavía no hay orígenes geolocalizados.</source>
+        <target>There are no geolocated origins yet.</target>
+      </trans-unit>
+      <trans-unit id="1z32VkJ" resname="Cada línea une un origen con el destino. El grosor indica el número de viajeros.">
+        <source>Cada línea une un origen con el destino. El grosor indica el número de viajeros.</source>
+        <target>Each line links an origin with the destination. Thickness reflects the number of travellers.</target>
+      </trans-unit>
+      <trans-unit id="jKpf9hg" resname="Hay {count} respuestas sin ubicación.">
+        <source>Hay {count} respuestas sin ubicación.</source>
+        <target>There are {count} answers without a location.</target>
+      </trans-unit>
+      <trans-unit id="1vR2gCh" resname="Mapa de orígenes">
+        <source>Mapa de orígenes</source>
+        <target>Origins map</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

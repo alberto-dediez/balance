@@ -331,6 +331,11 @@
             </div>
         </div>
 
+        {% include '@carbon_footprint/_origins_map.html.twig' with {
+            missingDestinationMessage: 'Añade la ubicación del recinto del evento para ver el mapa de orígenes.' | trans,
+            unlocatedResponses: unlocatedResponses,
+        } %}
+
         {% if stats.mobilityBreakdown is not empty %}
             <twig:Card title="{{ 'Desglose por medio de transporte' | trans }}">
                 <div class="table-responsive">

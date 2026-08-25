@@ -6,10 +6,12 @@ namespace App\CarbonFootprint\Application\TripCalculation\GetResults;
 
 use App\CarbonFootprint\Application\Contribution\ContributionsSummary;
 use App\CarbonFootprint\Application\Trip\MobilityBreakdownRow;
+use App\CarbonFootprint\Application\Trip\OriginFlow;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationsAggregation;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\Property\Domain\Model\Property\Property;
+use App\Shared\Domain\Model\Geo\GeoPoint;
 
 final class GetTripCalculationResultsResponse
 {
@@ -17,6 +19,7 @@ final class GetTripCalculationResultsResponse
      * @param list<MobilityBreakdownRow> $mobilityBreakdown
      * @param array<string, int>         $calculationsByDay
      * @param array<string, int>         $topOrigins
+     * @param list<OriginFlow>           $originFlows
      */
     public function __construct(
         public readonly Property $property,
@@ -31,5 +34,8 @@ final class GetTripCalculationResultsResponse
         public readonly array $topOrigins,
         public readonly int $withOvernightStayCount,
         public readonly int $roundTripCount,
+        public readonly array $originFlows = [],
+        public readonly ?GeoPoint $destination = null,
+        public readonly int $unlocatedCalculations = 0,
     ) {}
 }

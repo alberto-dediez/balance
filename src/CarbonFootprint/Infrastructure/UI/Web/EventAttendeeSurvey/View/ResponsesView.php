@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\EventAttendeeSurvey\View;
 
 use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveyStatsResponse;
 use App\CarbonFootprint\Infrastructure\UI\Web\Chart\TripChartBuilder;
+use App\CarbonFootprint\Infrastructure\UI\Web\Map\TripFlowsMapBuilder;
 use App\EventOperations\Domain\Model\Event\Event;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -13,6 +14,7 @@ final class ResponsesView
 {
     public function __construct(
         private TripChartBuilder $chartBuilder,
+        private TripFlowsMapBuilder $mapBuilder,
         private TranslatorInterface $translator,
     ) {}
 
@@ -34,6 +36,9 @@ final class ResponsesView
             'contributionsChart' => $this->chartBuilder->contributions($stats->contributions->aggregation),
             'originsChart' => $this->chartBuilder->counts($stats->topOrigins),
             'profileChart' => $this->chartBuilder->counts($this->profile($stats)),
+            'mapFlows' => $this->mapBuilder->flows($stats->originFlows),
+            'mapDestination' => $this->mapBuilder->destination($stats->destination, $stats->venueLabel ?? $event->name()),
+            'unlocatedResponses' => $stats->unlocatedResponses,
         ];
     }
 

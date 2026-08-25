@@ -63,11 +63,12 @@ class TripCalculationMother
         ?string $id = null,
         ?string $emissionFactorGroupId = null,
         int $calculationYear = 2026,
+        ?TripWaypoint $origin = null,
     ): TripCalculation {
         $tripCalculation = new TripCalculation(id: new TripCalculationId($id ?? (string) TripCalculationId::generate()));
         $tripCalculation->register(
             tripCalculationLinkId: new TripCalculationLinkId($tripCalculationLinkId),
-            origin: new TripWaypoint(),
+            origin: $origin ?? new TripWaypoint(),
             roundTrip: $roundTrip,
             trips: $trips,
             nights: $nights,

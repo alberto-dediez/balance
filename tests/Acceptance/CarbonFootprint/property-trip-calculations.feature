@@ -29,6 +29,30 @@ Feature:
         Then I see a text "Desglose por medio de transporte"
         Then I see a text "Coche"
 
+    Scenario: The owner sees the map with the origins of their guests
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given property "Hotel A" with id "777" of account "666" exists
+        Given property "777" is located at "40.4680", "-3.6160"
+        Given mobility "Coche" with id "M1" and emission factor for the current year exists
+        Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
+        Given place "sevilla" named "Sevilla, España" at "37.3891", "-5.9845" exists
+        When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
+        When I submit a form with "cameFromAnotherCity:yes|originPlaceReference:sevilla|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:no|trips:1|overnight:no" and button "Calcular mi huella"
+        When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
+        When I submit a form with "cameFromAnotherCity:yes|originPlaceReference:Cuenca|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:200|roundTrip:no|trips:1|overnight:no" and button "Calcular mi huella"
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/carbon-footprint/property-trip-calculations/777/responses"
+        Then the response status should be 200
+        Then I see a text "Mapa de orígenes"
+        Then I see a text "Cada línea une un origen con el destino"
+        Then I see a text "37.39"
+        Then I do not see a text "37.3891"
+        Then I see a text "Hay 1 respuestas sin ubicación."
+
+
     Scenario: The results screen is empty for a property without answers
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
