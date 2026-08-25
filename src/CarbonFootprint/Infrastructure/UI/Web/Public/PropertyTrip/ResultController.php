@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip;
 
 use App\Balance\Application\ProjectContribution\Options\ListContributionOptionsRequest;
 use App\Balance\Application\ProjectContribution\Options\ListContributionOptionsService;
+use App\CarbonFootprint\Application\Trip\PerPersonTripEmissionsCalculator;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenRequest;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenService;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationId;
@@ -36,6 +37,7 @@ class ResultController extends AbstractController
         GetTripCalculationLinkByTokenService $getByToken,
         TripCalculationRepository $tripCalculationRepository,
         ListContributionOptionsService $listContributionOptions,
+        PerPersonTripEmissionsCalculator $perPersonTripEmissionsCalculator,
         Request $request,
     ): Response {
         if ($limited = $this->propertyTripRateLimiter->check($request)) {
@@ -79,6 +81,7 @@ class ResultController extends AbstractController
             'token' => $token,
             'property' => $response->property,
             'tripCalculation' => $tripCalculation,
+            'emissionsPerPerson' => $perPersonTripEmissionsCalculator->forTripCalculations([$tripCalculation]),
             'mobilityNames' => $mobilityNames,
             'hasContributionOptions' => $hasContributionOptions,
             'scope' => $response->tripCalculationLink->scope(),

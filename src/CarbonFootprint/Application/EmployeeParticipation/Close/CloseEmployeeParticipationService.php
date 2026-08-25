@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\EmployeeParticipation\Close;
 
 use App\CarbonFootprint\Application\Activity\Answer\PhaseAnswersSynchronizer;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\MobilityAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\OvernightStayAnswer;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\ConfidenceLevel;
@@ -44,6 +45,7 @@ class CloseEmployeeParticipationService implements CommandHandler
         private EmployeeParticipationRepository $employeeParticipationRepository,
         private EmployeeContributionRepository $employeeContributionRepository,
         private EmployeeContributionsAggregator $aggregator,
+        private MobilityFactorBasisProvider $mobilityFactorBasisProvider,
         private OvernightStayRepository $overnightStayRepository,
         private PhaseAnswersSynchronizer $answersSynchronizer,
     ) {}
@@ -81,7 +83,7 @@ class CloseEmployeeParticipationService implements CommandHandler
         $overnightStayCatalogMissing = false;
 
         if ($answeredCount >= 1) {
-            $aggregation = $this->aggregator->aggregate($answeredContributions, $totalEmployees);
+            $aggregation = $this->aggregator->aggregate($answeredContributions, $totalEmployees, $this->mobilityFactorBasisProvider->factorBasisByMobilityId());
 
             foreach ([Phase::Assembly, Phase::Celebration, Phase::Breakdown] as $phase) {
                 $overnightStayCatalogMissing = $this->syncPhase($eventCarbonFootprint, $phase, $aggregation, $user) || $overnightStayCatalogMissing;

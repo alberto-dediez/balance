@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\Mobility\MobilityAuthorizer;
 use App\CarbonFootprint\Application\Mobility\Register\RegisterMobilityRequest;
 use App\CarbonFootprint\Application\Mobility\Register\RegisterMobilityService;
 use App\CarbonFootprint\Domain\Model\Geo\TravelMode;
+use App\CarbonFootprint\Domain\Model\Mobility\FactorBasis;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRegistered;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityTranslated;
@@ -41,6 +42,7 @@ class RegisterMobilityServiceTest extends TestCase
         $request = new RegisterMobilityRequest(
             name: 'Movilidad 1',
             unit: Unit::Kilometer,
+            factorBasis: FactorBasis::PerVehicle,
         );
 
         $result = $sut($request, UserMother::adminUser());
@@ -53,6 +55,7 @@ class RegisterMobilityServiceTest extends TestCase
 
         $this->assertNotNull($mobilityPersisted);
         $this->assertSame(Unit::Kilometer, $mobilityPersisted->unit());
+        $this->assertSame(FactorBasis::PerVehicle, $mobilityPersisted->factorBasis());
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

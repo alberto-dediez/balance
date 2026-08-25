@@ -7137,6 +7137,34 @@
         <source>El pago se procesa íntegramente por nuestro proveedor de pagos; no almacenamos los datos de tu tarjeta.</source>
         <target>El pago se procesa íntegramente por nuestro proveedor de pagos; no almacenamos los datos de tu tarjeta.</target>
       </trans-unit>
+      <trans-unit id="Cvv8D5u" resname="Personas alojadas">
+        <source>Personas alojadas</source>
+        <target>Personas alojadas</target>
+      </trans-unit>
+      <trans-unit id="ywUgzUL" resname="Noches declaradas: {nights} · Personas alojadas: {people}">
+        <source>Noches declaradas: {nights} · Personas alojadas: {people}</source>
+        <target>Noches declaradas: {nights} · Personas alojadas: {people}</target>
+      </trans-unit>
+      <trans-unit id="t1EQbTq" resname="Nº de personas alojadas">
+        <source>Nº de personas alojadas</source>
+        <target>Nº de personas alojadas</target>
+      </trans-unit>
+      <trans-unit id="HXJ_SFe" resname="Base del factor de emisión">
+        <source>Base del factor de emisión</source>
+        <target>Base del factor de emisión</target>
+      </trans-unit>
+      <trans-unit id="FAPnpDm" resname="Por pasajero: el factor ya es por persona y los ocupantes no reducen las emisiones. Por vehículo: el factor es del vehículo completo y se reparte entre sus ocupantes.">
+        <source>Por pasajero: el factor ya es por persona y los ocupantes no reducen las emisiones. Por vehículo: el factor es del vehículo completo y se reparte entre sus ocupantes.</source>
+        <target>Por pasajero: el factor ya es por persona y los ocupantes no reducen las emisiones. Por vehículo: el factor es del vehículo completo y se reparte entre sus ocupantes.</target>
+      </trans-unit>
+      <trans-unit id="o0tenrJ" resname="Media por persona">
+        <source>Media por persona</source>
+        <target>Media por persona</target>
+      </trans-unit>
+      <trans-unit id="6i4l2Ig" resname="Equivale a {emissions} kg CO₂eq por persona.">
+        <source>Equivale a {emissions} kg CO₂eq por persona.</source>
+        <target>Equivale a {emissions} kg CO₂eq por persona.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -931,6 +931,7 @@ final readonly class CarbonFootprintContext implements Context
             usedHotel: true,
             accommodation: null,
             hotelNights: 2,
+            hotelPeople: 1,
             intercityRoundTrip: false,
             intercityTrips: 2,
             movedWithinCity: true,

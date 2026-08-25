@@ -81,9 +81,16 @@
         {% endif %}
 
         {% if scope.includesOvernightStay %}
-            <div class="mb-3" id="trip-nights-block">
-                <label class="form-label">{{ 'Nº de noches' | trans }}</label>
-                <input type="number" min="1" step="1" inputmode="numeric" class="form-control" name="trip[nights]" value="1" {% if not scope.asksForBoth %}required{% endif %}>
+            <div id="trip-nights-block">
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Nº de noches' | trans }}</label>
+                    <input type="number" min="1" step="1" inputmode="numeric" class="form-control" name="trip[nights]" value="1" {% if not scope.asksForBoth %}required{% endif %}>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Nº de personas alojadas' | trans }}</label>
+                    <input type="number" min="1" step="1" inputmode="numeric" class="form-control" name="trip[people]" value="1" {% if not scope.asksForBoth %}required{% endif %}>
+                </div>
             </div>
         {% endif %}
 

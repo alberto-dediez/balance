@@ -11,7 +11,7 @@ final class TripCalculationsAggregation
     /** @param array<string, float> $kmByMobilityId */
     public function __construct(
         public readonly array $kmByMobilityId,
-        public readonly float $nights,
+        public readonly float $overnightStays,
         public readonly int $calculations,
         public readonly Emissions $totalEmissions,
         public readonly Emissions $averageEmissions,

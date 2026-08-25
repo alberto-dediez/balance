@@ -26,6 +26,7 @@ final class GetTripCalculationResultsResponse
         public readonly ContributionsSummary $contributions,
         public readonly Emissions $mobilityEmissions,
         public readonly Emissions $overnightEmissions,
+        public readonly Emissions $emissionsPerPerson,
         public readonly array $calculationsByDay,
         public readonly array $topOrigins,
         public readonly int $withOvernightStayCount,

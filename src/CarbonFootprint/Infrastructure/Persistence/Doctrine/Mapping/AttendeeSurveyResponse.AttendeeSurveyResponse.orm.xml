@@ -24,6 +24,7 @@
         <field name="accommodationLatitude" type="float" column="accommodation_latitude" nullable="true" />
         <field name="accommodationLongitude" type="float" column="accommodation_longitude" nullable="true" />
         <field name="hotelNights" type="integer" column="hotel_nights" nullable="true" />
+        <field name="hotelPeople" type="integer" column="hotel_people" nullable="true" />
 
         <field name="intercityRoundTrip" type="boolean" column="intercity_round_trip" nullable="false" />
         <field name="intercityTrips" type="integer" column="intercity_trips" nullable="true" />

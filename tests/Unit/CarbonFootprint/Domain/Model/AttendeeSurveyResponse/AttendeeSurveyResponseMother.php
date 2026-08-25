@@ -33,6 +33,7 @@ class AttendeeSurveyResponseMother
         bool $usedHotel = false,
         ?int $hotelNights = null,
         bool $roundTrip = false,
+        ?int $hotelPeople = null,
     ): AttendeeSurveyResponse {
         return self::from(
             attendeeSurveyId: $attendeeSurveyId,
@@ -41,6 +42,7 @@ class AttendeeSurveyResponseMother
             intercityRoundTrip: $roundTrip,
             usedHotel: $usedHotel,
             hotelNights: $hotelNights,
+            hotelPeople: $hotelPeople,
             legs: [self::leg(1, LegKind::Intercity, $mobilityId, $distanceKm, $occupants)],
         );
     }
@@ -109,6 +111,7 @@ class AttendeeSurveyResponseMother
         ?int $intercityTrips = null,
         bool $usedHotel = false,
         ?int $hotelNights = null,
+        ?int $hotelPeople = null,
         bool $movedWithinCity = false,
         bool $cityRoundTrip = false,
         ?int $cityTrips = null,
@@ -127,6 +130,7 @@ class AttendeeSurveyResponseMother
             usedHotel: $usedHotel,
             accommodation: null,
             hotelNights: $hotelNights,
+            hotelPeople: $hotelPeople,
             intercityRoundTrip: $intercityRoundTrip,
             intercityTrips: $intercityTrips,
             movedWithinCity: $movedWithinCity,

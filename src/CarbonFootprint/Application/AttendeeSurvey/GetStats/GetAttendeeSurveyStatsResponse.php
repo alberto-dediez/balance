@@ -30,6 +30,7 @@ class GetAttendeeSurveyStatsResponse implements CommandResponse
         public int $multimodalResponsesCount = 0,
         public Emissions $totalEmissions = new Emissions(),
         public Emissions $averageEmissions = new Emissions(),
+        public Emissions $emissionsPerPerson = new Emissions(),
         public Emissions $mobilityEmissions = new Emissions(),
         public Emissions $overnightEmissions = new Emissions(),
         public array $mobilityBreakdown = [],

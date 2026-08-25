@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Infrastructure\Symfony\Form;
 
 use App\CarbonFootprint\Application\Mobility\Register\RegisterMobilityRequest;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\FactorBasisType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\TravelModeType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\UnitType;
 use Symfony\Component\Form\AbstractType;
@@ -39,6 +40,12 @@ class RegisterMobilityType extends AbstractType
                 'help' => new TranslatableMessage('Si se deja vacío no se calcularán distancias automáticas para este medio de transporte.'),
                 'required' => false,
                 'placeholder' => new TranslatableMessage('Sin cálculo automático'),
+            ])
+            ->add('factorBasis', FactorBasisType::class, [
+                'label' => new TranslatableMessage('Base del factor de emisión'),
+                'help' => new TranslatableMessage('Por pasajero: el factor ya es por persona y los ocupantes no reducen las emisiones. Por vehículo: el factor es del vehículo completo y se reparte entre sus ocupantes.'),
+                'required' => true,
+                'constraints' => [new Assert\NotNull()],
             ])
             ->add('register', SubmitType::class, [
                 'label' => new TranslatableMessage('Registrar'),

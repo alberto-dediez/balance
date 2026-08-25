@@ -63,6 +63,19 @@ class AttendeeSurveyResponseTest extends TestCase
         $this->assertCount(1, $response->legsOfKind(LegKind::City));
     }
 
+    public function testCountsTheOvernightStaysOfEveryoneWhoStayedAndAlsoThoseOfOnePerson(): void
+    {
+        $response = AttendeeSurveyResponseMother::from(
+            attendeeSurveyId: 'AS1',
+            usedHotel: true,
+            hotelNights: 4,
+            hotelPeople: 3,
+        );
+
+        $this->assertSame(12, $response->overnightStays());
+        $this->assertEqualsWithDelta(4.0, $response->overnightStaysPerPerson(), 0.0001);
+    }
+
     public function testTheRegisteredEventSurvivesASerializationRoundTrip(): void
     {
         $mobilityId = (string) MobilityId::generate();

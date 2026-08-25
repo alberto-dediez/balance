@@ -37,6 +37,7 @@ class AttendeeSurveyResponse implements \Stringable
         private ?float $accommodationLatitude = null,
         private ?float $accommodationLongitude = null,
         private ?int $hotelNights = null,
+        private ?int $hotelPeople = null,
         private bool $intercityRoundTrip = false,
         private ?int $intercityTrips = null,
         private bool $movedWithinCity = false,
@@ -121,6 +122,21 @@ class AttendeeSurveyResponse implements \Stringable
     public function hotelNights(): ?int
     {
         return $this->hotelNights;
+    }
+
+    public function hotelPeople(): ?int
+    {
+        return $this->hotelPeople;
+    }
+
+    public function overnightStays(): int
+    {
+        return ($this->hotelNights ?? 0) * ($this->hotelPeople ?? 1);
+    }
+
+    public function overnightStaysPerPerson(): float
+    {
+        return $this->overnightStays() / max(1, $this->hotelPeople ?? 1);
     }
 
     public function intercityRoundTrip(): bool
@@ -233,6 +249,7 @@ class AttendeeSurveyResponse implements \Stringable
         bool $usedHotel,
         ?TripWaypoint $accommodation,
         ?int $hotelNights,
+        ?int $hotelPeople,
         bool $intercityRoundTrip,
         ?int $intercityTrips,
         bool $movedWithinCity,
@@ -254,6 +271,7 @@ class AttendeeSurveyResponse implements \Stringable
                 usedHotel: $usedHotel,
                 accommodation: $accommodation,
                 hotelNights: $hotelNights,
+                hotelPeople: $hotelPeople,
                 intercityRoundTrip: $intercityRoundTrip,
                 intercityTrips: $intercityTrips,
                 movedWithinCity: $movedWithinCity,
@@ -289,6 +307,7 @@ class AttendeeSurveyResponse implements \Stringable
         $this->accommodationLongitude = $accommodation?->point?->longitude;
 
         $this->hotelNights = $event->hotelNights();
+        $this->hotelPeople = $event->hotelPeople();
         $this->intercityRoundTrip = $event->intercityRoundTrip();
         $this->intercityTrips = $event->intercityTrips();
         $this->movedWithinCity = $event->movedWithinCity();

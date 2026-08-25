@@ -72,6 +72,7 @@ class CityController extends AbstractController
                 $city = $request->request->all('city');
 
                 $hotelNights = $intercityData['hotelNights'] ?? null;
+                $hotelPeople = $intercityData['hotelPeople'] ?? null;
                 $intercityTrips = $intercityData['intercityTrips'] ?? null;
 
                 /** @var array<mixed> $intercityLegs */
@@ -85,6 +86,7 @@ class CityController extends AbstractController
                         usedHotel: (bool) ($intercityData['usedHotel'] ?? false),
                         accommodationPlaceReference: null !== ($intercityData['accommodationPlaceReference'] ?? null) ? (string) $intercityData['accommodationPlaceReference'] : null,
                         hotelNights: null !== $hotelNights ? (int) $hotelNights : null,
+                        hotelPeople: null !== $hotelPeople ? (int) $hotelPeople : null,
                         intercityRoundTrip: (bool) ($intercityData['intercityRoundTrip'] ?? false),
                         intercityTrips: null !== $intercityTrips ? (int) $intercityTrips : null,
                         intercityLegs: LegInputsHttpMapper::toLegInputs($intercityLegs),

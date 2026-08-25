@@ -31,7 +31,7 @@
                     </span>
                 </div>
                 {% if showOvernightStay %}
-                    <small class="text-muted">{{ 'Pernoctaciones' | trans }}: {{ aggregation.nights | number_format(0, ',', '.') }}</small>
+                    <small class="text-muted">{{ 'Pernoctaciones' | trans }}: {{ aggregation.overnightStays | number_format(0, ',', '.') }}</small>
                 {% endif %}
             </div>
         </div>
@@ -52,7 +52,8 @@
                         <twig:Icon name="carbon:sustainability" size="lg" class="text-warning" />
                     </span>
                 </div>
-                <small class="text-muted">{{ 'Media por huésped' | trans }}: {{ aggregation.averageEmissions.co2eq | number_format(2, ',', '.') }} kg</small>
+                <small class="text-muted d-block">{{ 'Media por respuesta' | trans }}: {{ aggregation.averageEmissions.co2eq | number_format(2, ',', '.') }} kg</small>
+                <small class="text-muted d-block">{{ 'Media por persona' | trans }}: {{ emissionsPerPerson.co2eq | number_format(2, ',', '.') }} kg</small>
             </div>
         </div>
     </div>

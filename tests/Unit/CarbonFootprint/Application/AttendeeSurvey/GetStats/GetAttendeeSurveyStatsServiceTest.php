@@ -15,7 +15,10 @@ use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveySta
 use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveyStatsResponse;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveyStatsService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Application\Trip\MobilityBreakdownCalculator;
+use App\CarbonFootprint\Application\Trip\PerPersonTripEmissionsCalculator;
+use App\CarbonFootprint\Application\Trip\TripEmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurvey;
 use App\CarbonFootprint\Domain\Model\Trip\TripLegsAccumulator;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryAttendeeSurveyRepository;
@@ -23,6 +26,7 @@ use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryA
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEmissionFactorGroupRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEventCarbonFootprintRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMobilityRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryOvernightStayRepository;
 use App\EventOperations\Application\Event\EventVenueLocator;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Infrastructure\Persistence\InMemory\Repository\InMemoryEventRepository;
@@ -77,6 +81,18 @@ class GetAttendeeSurveyStatsServiceTest extends TestCase
                     new EmissionsCalculator(),
                 ),
                 new InMemoryEmissionFactorGroupRepository(),
+            ),
+            new MobilityFactorBasisProvider($mobilityRepository),
+            new PerPersonTripEmissionsCalculator(
+                new TripLegsAccumulator(),
+                new MobilityFactorBasisProvider($mobilityRepository),
+                new TripEmissionsCalculator(
+                    new ActivityEmissionsResolver(
+                        new EmissionFactorSelectorRegistry([new MobilityEmissionFactorSelector($mobilityRepository)]),
+                        new EmissionsCalculator(),
+                    ),
+                    new InMemoryOvernightStayRepository(),
+                ),
             ),
         );
     }

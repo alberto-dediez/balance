@@ -65,7 +65,8 @@
                                 <twig:Icon name="carbon:sustainability" size="lg" class="text-warning" />
                             </span>
                         </div>
-                        <small class="text-muted">{{ 'Media por respuesta' | trans }}: {{ stats.averageEmissions.co2eq | number_format(2, ',', '.') }} kg</small>
+                        <small class="text-muted d-block">{{ 'Media por respuesta' | trans }}: {{ stats.averageEmissions.co2eq | number_format(2, ',', '.') }} kg</small>
+                        <small class="text-muted d-block">{{ 'Media por persona' | trans }}: {{ stats.emissionsPerPerson.co2eq | number_format(2, ',', '.') }} kg</small>
                     </div>
                 </div>
             </div>

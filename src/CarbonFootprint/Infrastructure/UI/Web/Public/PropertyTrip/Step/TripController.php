@@ -70,6 +70,7 @@ class TripController extends AbstractController
                         roundTrip: $cameFromAnotherCity && 'yes' === ($trip['roundTrip'] ?? null),
                         trips: $cameFromAnotherCity && !empty($trip['trips']) ? (int) $trip['trips'] : 1,
                         nights: $overnight && !empty($trip['nights']) ? (int) $trip['nights'] : 0,
+                        people: $overnight && !empty($trip['people']) ? (int) $trip['people'] : null,
                         legs: $cameFromAnotherCity ? LegInputsHttpMapper::toLegInputs(LegInputsHttpMapper::toSessionData($trip)) : [],
                         consentIp: ConsentRequestReader::ip($request),
                         consentUserAgent: ConsentRequestReader::userAgent($request),

@@ -48,6 +48,7 @@ class MobilitiesExportationType implements ExportationType
             new ExportColumnDefinition('mobility', new TranslatableMessage('Identificador'), selectedByDefault: false),
             new ExportColumnDefinition('name', new TranslatableMessage('Nombre')),
             new ExportColumnDefinition('unit', new TranslatableMessage('Unidad')),
+            new ExportColumnDefinition('factorBasis', new TranslatableMessage('Base del factor de emisión')),
             new ExportColumnDefinition('year', new TranslatableMessage('Año')),
             new ExportColumnDefinition('co2eq', new TranslatableMessage('CO2eq')),
             new ExportColumnDefinition('co2', new TranslatableMessage('CO2')),
@@ -141,6 +142,7 @@ class MobilitiesExportationType implements ExportationType
             'mobility' => (string) $mobility->id(),
             'name' => $mobility->name(),
             'unit' => $mobility->unit()->value,
+            'factorBasis' => $mobility->factorBasis()->value,
         ];
     }
 

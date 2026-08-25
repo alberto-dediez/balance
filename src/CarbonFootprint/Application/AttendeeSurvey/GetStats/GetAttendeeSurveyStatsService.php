@@ -11,8 +11,10 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregation
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregator;
 use App\CarbonFootprint\Application\Contribution\ContributionsSummary;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Application\Trip\MobilityBreakdownCalculator;
 use App\CarbonFootprint\Application\Trip\MobilityBreakdownRow;
+use App\CarbonFootprint\Application\Trip\PerPersonTripEmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepository;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
@@ -48,6 +50,8 @@ class GetAttendeeSurveyStatsService implements CommandHandler
         private ProjectContributionsAggregator $contributionsAggregator,
         private TripLegsAccumulator $legsAccumulator,
         private MobilityBreakdownCalculator $mobilityBreakdownCalculator,
+        private MobilityFactorBasisProvider $mobilityFactorBasisProvider,
+        private PerPersonTripEmissionsCalculator $perPersonTripEmissionsCalculator,
     ) {}
 
     public function __invoke(GetAttendeeSurveyStatsRequest $request, User $user): GetAttendeeSurveyStatsResponse
@@ -90,6 +94,7 @@ class GetAttendeeSurveyStatsService implements CommandHandler
             multimodalResponsesCount: $this->attendeeSurveyResponseRepository->countMultimodalResponses($attendeeSurvey->id()),
             totalEmissions: $totalEmissions,
             averageEmissions: [] === $responses ? new Emissions() : $totalEmissions->dividedBy(count($responses)),
+            emissionsPerPerson: $this->perPersonTripEmissionsCalculator->forAttendeeSurveyResponses($responses),
             mobilityEmissions: $this->sumEmissions($responses, static fn(AttendeeSurveyResponse $response): Emissions => $response->mobilityEmissions()),
             overnightEmissions: $this->sumEmissions($responses, static fn(AttendeeSurveyResponse $response): Emissions => $response->overnightEmissions()),
             mobilityBreakdown: $this->mobilityBreakdown($responses),
@@ -98,7 +103,7 @@ class GetAttendeeSurveyStatsService implements CommandHandler
             fromAnotherCityCount: count(array_filter($responses, static fn(AttendeeSurveyResponse $response): bool => $response->cameFromAnotherCity())),
             usedHotelCount: count(array_filter($responses, static fn(AttendeeSurveyResponse $response): bool => $response->usedHotel())),
             movedWithinCityCount: count(array_filter($responses, static fn(AttendeeSurveyResponse $response): bool => $response->movedWithinCity())),
-            totalNights: array_sum(array_map(static fn(AttendeeSurveyResponse $response): int => $response->hotelNights() ?? 0, $responses)),
+            totalNights: array_sum(array_map(static fn(AttendeeSurveyResponse $response): int => $response->overnightStays(), $responses)),
         );
     }
 
@@ -125,6 +130,7 @@ class GetAttendeeSurveyStatsService implements CommandHandler
     private function mobilityBreakdown(array $responses): array
     {
         $kmByMobilityId = [];
+        $factorBasisByMobilityId = $this->mobilityFactorBasisProvider->factorBasisByMobilityId();
 
         foreach ($responses as $response) {
             $this->legsAccumulator->accumulate(
@@ -132,6 +138,7 @@ class GetAttendeeSurveyStatsService implements CommandHandler
                 $response->legsOfKind(LegKind::Intercity),
                 $response->intercityTrips(),
                 $response->intercityRoundTrip(),
+                $factorBasisByMobilityId,
             );
 
             $this->legsAccumulator->accumulate(
@@ -139,6 +146,7 @@ class GetAttendeeSurveyStatsService implements CommandHandler
                 $response->legsOfKind(LegKind::City),
                 $response->cityTrips(),
                 $response->cityRoundTrip(),
+                $factorBasisByMobilityId,
             );
         }
 

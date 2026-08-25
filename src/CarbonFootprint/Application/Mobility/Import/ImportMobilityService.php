@@ -10,6 +10,7 @@ use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Geo\TravelMode;
+use App\CarbonFootprint\Domain\Model\Mobility\FactorBasis;
 use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
@@ -87,6 +88,7 @@ class ImportMobilityService implements CommandHandler
             $name,
             Unit::tryFrom((string) $request->unit) ?? Unit::Kilometer,
             TravelMode::tryFrom((string) $request->travelMode),
+            FactorBasis::tryFrom((string) $request->factorBasis) ?? FactorBasis::PerPassenger,
             $isDefaultLocale ? null : $locale,
         );
 

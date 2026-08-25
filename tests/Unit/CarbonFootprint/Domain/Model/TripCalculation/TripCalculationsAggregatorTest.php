@@ -28,7 +28,7 @@ class TripCalculationsAggregatorTest extends TestCase
         $aggregation = $this->sut->aggregate([]);
 
         $this->assertSame([], $aggregation->kmByMobilityId);
-        $this->assertSame(0.0, $aggregation->nights);
+        $this->assertSame(0.0, $aggregation->overnightStays);
         $this->assertSame(0, $aggregation->calculations);
         $this->assertSame('0', $aggregation->totalEmissions->co2eq());
     }
@@ -44,6 +44,7 @@ class TripCalculationsAggregatorTest extends TestCase
                 mobilityId: $mobilityId,
                 distanceKm: 100.0,
                 nights: 2,
+                people: 2,
                 mobilityEmissions: new Emissions(co2eq: '10'),
             ),
             TripCalculationMother::singleLeg(
@@ -56,7 +57,7 @@ class TripCalculationsAggregatorTest extends TestCase
         ]);
 
         $this->assertEqualsWithDelta(150.0, $aggregation->kmByMobilityId[$mobilityId], 0.001);
-        $this->assertSame(3.0, $aggregation->nights);
+        $this->assertSame(5.0, $aggregation->overnightStays);
         $this->assertSame(2, $aggregation->calculations);
         $this->assertEqualsWithDelta(15.0, (float) $aggregation->totalEmissions->co2eq(), 0.001);
         $this->assertEqualsWithDelta(7.5, (float) $aggregation->averageEmissions->co2eq(), 0.001);

@@ -7,6 +7,11 @@
         <twig:Icon name="solar:leaf-bold" size="xl" class="text-success mb-3" />
         <h3 class="text-success mb-1">{{ attendeeSurveyResponse.emissions.co2eq | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</h3>
         <p class="text-muted mb-0">{{ 'Esta es la huella de carbono de tu asistencia al evento.' | trans }}</p>
+        {% if attendeeSurveyResponse.emissions.co2eq - emissionsPerPerson.co2eq > 0.005 %}
+            <p class="text-muted small mb-0 mt-2">
+                {{ 'Equivale a {emissions} kg CO₂eq por persona.' | trans({'{emissions}': emissionsPerPerson.co2eq | number_format(2, ',', '.')}) }}
+            </p>
+        {% endif %}
     </div>
 
     <table class="table table-sm mb-4">
@@ -44,7 +49,7 @@
 
     {% if attendeeSurveyResponse.hotelNights %}
         <p class="text-muted small mb-0">
-            {{ 'Noches declaradas: {nights}' | trans({'{nights}': attendeeSurveyResponse.hotelNights}) }}
+            {{ 'Noches declaradas: {nights} · Personas alojadas: {people}' | trans({'{nights}': attendeeSurveyResponse.hotelNights, '{people}': attendeeSurveyResponse.hotelPeople ?? 1}) }}
         </p>
     {% endif %}
 

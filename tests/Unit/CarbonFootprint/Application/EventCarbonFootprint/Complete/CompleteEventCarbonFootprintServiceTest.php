@@ -20,6 +20,7 @@ use App\CarbonFootprint\Application\EmployeeParticipation\Close\CloseEmployeePar
 use App\CarbonFootprint\Application\EventCarbonFootprint\Complete\CompleteEventCarbonFootprintRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprint\Complete\CompleteEventCarbonFootprintService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Domain\Model\Activity\MaterialActivity;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\ConfidenceLevel;
 use App\CarbonFootprint\Domain\Model\Emissions;
@@ -119,6 +120,7 @@ class CompleteEventCarbonFootprintServiceTest extends TestCase
             $this->employeeParticipationRepository,
             $this->employeeContributionRepository,
             new EmployeeContributionsAggregator(),
+            new MobilityFactorBasisProvider(new InMemoryMobilityRepository()),
             $overnightStayRepository,
             new PhaseAnswersSynchronizer($handlers),
         );

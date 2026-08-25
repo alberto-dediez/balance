@@ -20,6 +20,7 @@ final class RegisterAttendeeSurveyResponseRequest
         public readonly bool $usedHotel,
         public readonly ?string $accommodationPlaceReference,
         public readonly ?int $hotelNights,
+        public readonly ?int $hotelPeople,
         public readonly bool $intercityRoundTrip,
         public readonly ?int $intercityTrips,
         public readonly array $intercityLegs,

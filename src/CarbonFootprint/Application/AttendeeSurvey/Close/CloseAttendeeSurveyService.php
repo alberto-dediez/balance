@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\AttendeeSurvey\Close;
 
 use App\CarbonFootprint\Application\Activity\Answer\PhaseAnswersSynchronizer;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\MobilityAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\OvernightStayAnswer;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepository;
@@ -42,6 +43,7 @@ class CloseAttendeeSurveyService implements CommandHandler
         private AttendeeSurveyResponsesAggregator $aggregator,
         private OvernightStayRepository $overnightStayRepository,
         private PhaseAnswersSynchronizer $answersSynchronizer,
+        private MobilityFactorBasisProvider $mobilityFactorBasisProvider,
     ) {}
 
     public function __invoke(CloseAttendeeSurveyRequest $request, User $user): CloseAttendeeSurveyResponse
@@ -72,7 +74,7 @@ class CloseAttendeeSurveyService implements CommandHandler
         $overnightStayCatalogMissing = false;
 
         if ($responsesCount >= 1) {
-            $aggregation = $this->aggregator->aggregate($responses, $request->realAttendees);
+            $aggregation = $this->aggregator->aggregate($responses, $request->realAttendees, $this->mobilityFactorBasisProvider->factorBasisByMobilityId());
 
             $sectionAnswers = [];
 
@@ -91,7 +93,7 @@ class CloseAttendeeSurveyService implements CommandHandler
             $sectionAnswers[] = new SectionAnswer($this->attendeesMobilitiesSection(), $mobilityAnswers);
 
             $overnightStayAnswers = [];
-            if ($aggregation->hotelNights > 0.0) {
+            if ($aggregation->overnightStays > 0.0) {
                 $overnightStays = $this->overnightStayRepository->findByFilter(
                     new OvernightStayFilter(category: CategoryOvernight::Attendees, limit: 1),
                 );
@@ -100,7 +102,7 @@ class CloseAttendeeSurveyService implements CommandHandler
                 if (null !== $overnightStay) {
                     $overnightStayAnswers[] = new OvernightStayAnswer(
                         overnightStayId: $overnightStay->id(),
-                        quantity: new Quantity($aggregation->hotelNights, Unit::Pernoctacion),
+                        quantity: new Quantity($aggregation->overnightStays, Unit::Pernoctacion),
                     );
                 } else {
                     $overnightStayCatalogMissing = true;

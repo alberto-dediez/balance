@@ -46,6 +46,7 @@ class EditController extends AbstractController
             name: $mobility->name(),
             unit: $mobility->unit(),
             travelMode: $mobility->travelMode(),
+            factorBasis: $mobility->factorBasis(),
             emissionFactors: $emissionFactors,
         );
 

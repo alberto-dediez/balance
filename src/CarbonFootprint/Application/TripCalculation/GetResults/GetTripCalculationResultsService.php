@@ -10,7 +10,9 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregation;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregator;
 use App\CarbonFootprint\Application\Contribution\ContributionsSummary;
+use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Application\Trip\MobilityBreakdownCalculator;
+use App\CarbonFootprint\Application\Trip\PerPersonTripEmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculation;
@@ -37,6 +39,8 @@ final class GetTripCalculationResultsService
         private MobilityBreakdownCalculator $mobilityBreakdownCalculator,
         private ProjectContributionRepository $projectContributionRepository,
         private ProjectContributionsAggregator $contributionsAggregator,
+        private MobilityFactorBasisProvider $mobilityFactorBasisProvider,
+        private PerPersonTripEmissionsCalculator $perPersonTripEmissionsCalculator,
     ) {}
 
     public function __invoke(GetTripCalculationResultsRequest $request, User $user): GetTripCalculationResultsResponse
@@ -62,6 +66,7 @@ final class GetTripCalculationResultsService
                 contributions: $this->contributions([], $aggregation),
                 mobilityEmissions: new Emissions(),
                 overnightEmissions: new Emissions(),
+                emissionsPerPerson: new Emissions(),
                 calculationsByDay: [],
                 topOrigins: [],
                 withOvernightStayCount: 0,
@@ -78,7 +83,7 @@ final class GetTripCalculationResultsService
             ),
         );
 
-        $aggregation = $this->aggregator->aggregate($tripCalculations);
+        $aggregation = $this->aggregator->aggregate($tripCalculations, $this->mobilityFactorBasisProvider->factorBasisByMobilityId());
         [$emissionFactorGroupId, $calculationYear] = $this->factorContext($tripCalculations);
 
         return new GetTripCalculationResultsResponse(
@@ -89,6 +94,7 @@ final class GetTripCalculationResultsService
             contributions: $this->contributions($tripCalculations, $aggregation),
             mobilityEmissions: $this->sumEmissions($tripCalculations, static fn(TripCalculation $tripCalculation): Emissions => $tripCalculation->mobilityEmissions()),
             overnightEmissions: $this->sumEmissions($tripCalculations, static fn(TripCalculation $tripCalculation): Emissions => $tripCalculation->overnightEmissions()),
+            emissionsPerPerson: $this->perPersonTripEmissionsCalculator->forTripCalculations($tripCalculations),
             calculationsByDay: $this->calculationsByDay($tripCalculations),
             topOrigins: $this->topOrigins($tripCalculations),
             withOvernightStayCount: count(array_filter($tripCalculations, static fn(TripCalculation $tripCalculation): bool => ($tripCalculation->nights() ?? 0) > 0)),

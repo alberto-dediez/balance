@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\TripCalculation\Register;
 
+use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Application\Trip\LegInput;
 use App\CarbonFootprint\Application\Trip\PropertyLocator;
 use App\CarbonFootprint\Application\Trip\TripEmissionsCalculator;
@@ -39,6 +40,7 @@ final class RegisterTripCalculationService
         private PlaceFinder $placeFinder,
         private TripLegsResolver $tripLegsResolver,
         private TripLegsAccumulator $tripLegsAccumulator,
+        private MobilityFactorBasisProvider $mobilityFactorBasisProvider,
         private TripEmissionsCalculator $tripEmissionsCalculator,
         private EmissionFactorGroupRepository $emissionFactorGroupRepository,
         private string $consentPolicyVersion,
@@ -59,6 +61,7 @@ final class RegisterTripCalculationService
         $roundTrip = $scope->includesTransport() && $request->roundTrip;
         $trips = $scope->includesTransport() ? $request->trips : 1;
         $nights = $scope->includesOvernightStay() ? $request->nights : 0;
+        $people = $scope->includesOvernightStay() ? $request->people : null;
 
         if (null === $trips || $trips < 1) {
             throw new \InvalidArgumentException('The number of trips must be at least 1.');
@@ -68,12 +71,20 @@ final class RegisterTripCalculationService
             throw new \InvalidArgumentException('The number of nights cannot be negative.');
         }
 
+        if (null !== $people && $people < 1) {
+            throw new \InvalidArgumentException('The number of people must be at least 1.');
+        }
+
         if (TripCalculationScope::Transport === $scope && [] === $legInputs) {
             throw new \InvalidArgumentException('Debes indicar cómo llegaste.');
         }
 
         if (TripCalculationScope::OvernightStay === $scope && (null === $nights || $nights < 1)) {
             throw new \InvalidArgumentException('Debes indicar cuántas noches.');
+        }
+
+        if (null !== $nights && $nights > 0 && null === $people) {
+            throw new \InvalidArgumentException('Debes indicar cuántas personas se alojaron.');
         }
 
         $propertyId = $tripCalculationLink->propertyId();
@@ -91,7 +102,7 @@ final class RegisterTripCalculationService
             $destination = new TripWaypoint(label: $property->name(), point: $this->propertyLocator->locate($property));
             $legs = $this->resolveLegs($origin ?? new TripWaypoint(), $destination, $legInputs);
 
-            $this->tripLegsAccumulator->accumulate($kmByMobilityId, $legs, $trips, $roundTrip);
+            $this->tripLegsAccumulator->accumulate($kmByMobilityId, $legs, $trips, $roundTrip, $this->mobilityFactorBasisProvider->factorBasisByMobilityId());
         }
 
         $emissionFactorGroup = $this->emissionFactorGroupRepository->findDefault();
@@ -107,6 +118,7 @@ final class RegisterTripCalculationService
             nights: (float) ($nights ?? 0),
             emissionFactorGroupId: $emissionFactorGroup->id(),
             year: $calculationYear,
+            people: (float) ($people ?? 1),
         );
 
         $tripCalculation = new TripCalculation(id: TripCalculationId::generate());
@@ -116,6 +128,7 @@ final class RegisterTripCalculationService
             roundTrip: $roundTrip,
             trips: $trips,
             nights: $nights,
+            people: null !== $nights && $nights > 0 ? $people : null,
             legs: $legs,
             mobilityEmissions: $tripEmissions->mobility,
             overnightEmissions: $tripEmissions->overnight,

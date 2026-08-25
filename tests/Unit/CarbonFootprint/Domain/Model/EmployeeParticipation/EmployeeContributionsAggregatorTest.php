@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\EmployeeParticipation;
 use App\CarbonFootprint\Domain\Model\EmployeeParticipation\EmployeeContributionsAggregator;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
+use App\CarbonFootprint\Domain\Model\Mobility\FactorBasis;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionMother;
 use PHPUnit\Framework\TestCase;
@@ -37,7 +38,7 @@ class EmployeeContributionsAggregatorTest extends TestCase
         $aggregation = $this->sut->aggregate([$contribution], 1);
 
         foreach ([Phase::Assembly, Phase::Celebration, Phase::Breakdown] as $phase) {
-            $this->assertSame(200.0, $aggregation->kmByMobilityId($phase)[$mobilityId]);
+            $this->assertSame(400.0, $aggregation->kmByMobilityId($phase)[$mobilityId]);
             $this->assertSame(3.0, $aggregation->hotelNights($phase));
         }
     }
@@ -90,7 +91,7 @@ class EmployeeContributionsAggregatorTest extends TestCase
         $this->assertSame(0.0, $aggregation->hotelNights(Phase::Celebration));
     }
 
-    public function testDividesByVehicleOccupants(): void
+    public function testDividesByVehicleOccupantsWhenTheFactorIsPerVehicle(): void
     {
         $eventCarbonFootprintId = (string) EventCarbonFootprintId::generate();
         $mobilityId = (string) MobilityId::generate();
@@ -103,9 +104,27 @@ class EmployeeContributionsAggregatorTest extends TestCase
             days: 1,
         );
 
-        $aggregation = $this->sut->aggregate([$contribution], 1);
+        $aggregation = $this->sut->aggregate([$contribution], 1, [$mobilityId => FactorBasis::PerVehicle]);
 
         $this->assertSame(30.0, $aggregation->kmByMobilityId(Phase::Assembly)[$mobilityId]);
+    }
+
+    public function testIgnoresVehicleOccupantsWhenTheFactorIsPerPassenger(): void
+    {
+        $eventCarbonFootprintId = (string) EventCarbonFootprintId::generate();
+        $mobilityId = (string) MobilityId::generate();
+
+        $contribution = EmployeeContributionMother::answeredForAllPhases(
+            eventCarbonFootprintId: $eventCarbonFootprintId,
+            mobilityId: $mobilityId,
+            distanceKm: 90.0,
+            vehicleOccupants: 3,
+            days: 1,
+        );
+
+        $aggregation = $this->sut->aggregate([$contribution], 1, [$mobilityId => FactorBasis::PerPassenger]);
+
+        $this->assertSame(90.0, $aggregation->kmByMobilityId(Phase::Assembly)[$mobilityId]);
     }
 
     public function testReturnsEmptyAggregationWithoutContributions(): void

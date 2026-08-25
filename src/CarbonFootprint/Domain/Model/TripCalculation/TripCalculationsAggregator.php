@@ -5,21 +5,25 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\TripCalculation;
 
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\Mobility\FactorBasis;
 use App\CarbonFootprint\Domain\Model\Trip\TripLegsAccumulator;
 
 final class TripCalculationsAggregator
 {
     public function __construct(private readonly TripLegsAccumulator $legsAccumulator) {}
 
-    /** @param list<TripCalculation> $tripCalculations */
-    public function aggregate(array $tripCalculations): TripCalculationsAggregation
+    /**
+     * @param list<TripCalculation>      $tripCalculations
+     * @param array<string, FactorBasis> $factorBasisByMobilityId
+     */
+    public function aggregate(array $tripCalculations, array $factorBasisByMobilityId = []): TripCalculationsAggregation
     {
         $count = count($tripCalculations);
 
         if (0 === $count) {
             return new TripCalculationsAggregation(
                 kmByMobilityId: [],
-                nights: 0.0,
+                overnightStays: 0.0,
                 calculations: 0,
                 totalEmissions: new Emissions(),
                 averageEmissions: new Emissions(),
@@ -27,7 +31,7 @@ final class TripCalculationsAggregator
         }
 
         $kmByMobilityId = [];
-        $nights = 0.0;
+        $overnightStays = 0.0;
         $totalEmissions = new Emissions();
 
         foreach ($tripCalculations as $tripCalculation) {
@@ -36,15 +40,16 @@ final class TripCalculationsAggregator
                 $tripCalculation->legs(),
                 $tripCalculation->trips(),
                 $tripCalculation->roundTrip(),
+                $factorBasisByMobilityId,
             );
 
-            $nights += $tripCalculation->nights() ?? 0;
+            $overnightStays += $tripCalculation->overnightStays();
             $totalEmissions = $totalEmissions->add($tripCalculation->emissions());
         }
 
         return new TripCalculationsAggregation(
             kmByMobilityId: $kmByMobilityId,
-            nights: $nights,
+            overnightStays: $overnightStays,
             calculations: $count,
             totalEmissions: $totalEmissions,
             averageEmissions: $totalEmissions->dividedBy($count),

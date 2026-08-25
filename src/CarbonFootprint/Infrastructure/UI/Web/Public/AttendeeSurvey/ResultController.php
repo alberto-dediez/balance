@@ -8,6 +8,7 @@ use App\Balance\Application\ProjectContribution\Options\ListContributionOptionsR
 use App\Balance\Application\ProjectContribution\Options\ListContributionOptionsService;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetByToken\GetAttendeeSurveyByTokenRequest;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetByToken\GetAttendeeSurveyByTokenService;
+use App\CarbonFootprint\Application\Trip\PerPersonTripEmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyTokenInvalidException;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
@@ -35,6 +36,7 @@ class ResultController extends AbstractController
         GetAttendeeSurveyByTokenService $getByToken,
         AttendeeSurveyResponseRepository $attendeeSurveyResponseRepository,
         ListContributionOptionsService $listContributionOptions,
+        PerPersonTripEmissionsCalculator $perPersonTripEmissionsCalculator,
         Request $request,
     ): Response {
         if ($limited = $this->attendeeSurveyRateLimiter->check($request)) {
@@ -78,6 +80,7 @@ class ResultController extends AbstractController
             'token' => $token,
             'event' => $response->event,
             'attendeeSurveyResponse' => $attendeeSurveyResponse,
+            'emissionsPerPerson' => $perPersonTripEmissionsCalculator->forAttendeeSurveyResponses([$attendeeSurveyResponse]),
             'mobilityNames' => $mobilityNames,
             'hasContributionOptions' => $hasContributionOptions,
         ]);

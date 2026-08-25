@@ -34,7 +34,7 @@ Feature:
         Given place "sevilla" named "Sevilla, España" at "37.3891", "-5.9845" exists
         Given place "hotel" named "Hotel Madrid" at "40.4200", "-3.7000" exists
         When I go to "/es/carbon-footprint/attendee-survey/token-abc/intercity"
-        When I submit a form with "cameFromAnotherCity:yes|originPlaceReference:sevilla|usedHotel:yes|accommodationPlaceReference:hotel|hotelNights:2|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes" and button "Continuar"
+        When I submit a form with "cameFromAnotherCity:yes|originPlaceReference:sevilla|usedHotel:yes|accommodationPlaceReference:hotel|hotelNights:2|hotelPeople:3|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes" and button "Continuar"
         When I go to "/es/carbon-footprint/attendee-survey/token-abc/city"
         When I tick the checkbox "consent_accepted"
         When I submit a form with "moved:no" and button "Enviar respuesta"
@@ -42,7 +42,7 @@ Feature:
         Then the response status should be 200
         Then I see a text "Tu huella de carbono"
         Then I see a text "kg CO₂eq"
-        Then I see a text "Noches declaradas: 2"
+        Then I see a text "Noches declaradas: 2 · Personas alojadas: 3"
         Then attendee survey "AS1" should have 1 responses
 
     Scenario: An attendee can declare a multimodal trip with a plane and a train

@@ -20,6 +20,7 @@ use App\CarbonFootprint\Application\Activity\Update\UpdateOvernightStayActivityS
 use App\CarbonFootprint\Application\AttendeeSurvey\Close\CloseAttendeeSurveyRequest;
 use App\CarbonFootprint\Application\AttendeeSurvey\Close\CloseAttendeeSurveyService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurvey;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyResponsesAggregator;
@@ -106,6 +107,7 @@ class CloseAttendeeSurveyServiceTest extends TestCase
             new AttendeeSurveyResponsesAggregator(new TripLegsAccumulator()),
             $this->overnightStayRepository,
             new PhaseAnswersSynchronizer($handlers),
+            new MobilityFactorBasisProvider($this->mobilityRepository),
         );
     }
 

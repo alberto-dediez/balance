@@ -30,6 +30,7 @@ class Mobility implements Translatable, \Stringable
         private string $name = '',
         private Unit $unit = Unit::Kilometer,
         private ?TravelMode $travelMode = null,
+        private FactorBasis $factorBasis = FactorBasis::PerPassenger,
         private bool $removed = false,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
@@ -61,6 +62,11 @@ class Mobility implements Translatable, \Stringable
     public function travelMode(): ?TravelMode
     {
         return $this->travelMode;
+    }
+
+    public function factorBasis(): FactorBasis
+    {
+        return $this->factorBasis;
     }
 
     public function translations(): Translations
@@ -108,6 +114,7 @@ class Mobility implements Translatable, \Stringable
         string $name,
         Unit $unit,
         ?TravelMode $travelMode = null,
+        FactorBasis $factorBasis = FactorBasis::PerPassenger,
         ?Locale $locale = null,
     ): void {
         $this->recordApplyAndPublish(
@@ -116,6 +123,7 @@ class Mobility implements Translatable, \Stringable
                 name: $name,
                 unit: $unit,
                 travelMode: $travelMode,
+                factorBasis: $factorBasis,
             ),
         );
 
@@ -128,6 +136,7 @@ class Mobility implements Translatable, \Stringable
         string $name,
         Unit $unit,
         ?TravelMode $travelMode = null,
+        FactorBasis $factorBasis = FactorBasis::PerPassenger,
         ?Locale $locale = null,
     ): void {
         $previousUnit = $this->unit;
@@ -138,6 +147,7 @@ class Mobility implements Translatable, \Stringable
                 name: $locale instanceof Locale ? $this->name : $name,
                 unit: $unit,
                 travelMode: $travelMode,
+                factorBasis: $factorBasis,
             ),
         );
 
@@ -256,6 +266,7 @@ class Mobility implements Translatable, \Stringable
         $this->name = $event->name();
         $this->unit = $event->unit();
         $this->travelMode = $event->travelMode();
+        $this->factorBasis = $event->factorBasis();
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -264,6 +275,7 @@ class Mobility implements Translatable, \Stringable
         $this->name = $event->name();
         $this->unit = $event->unit();
         $this->travelMode = $event->travelMode();
+        $this->factorBasis = $event->factorBasis();
         $this->updatedAt = $event->occurredOn();
     }
 

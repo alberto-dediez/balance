@@ -34,11 +34,11 @@ Feature:
         Then I see a text "¿Te has desplazado desde otra ciudad?"
         Then I see a text "¿Dormiste alguna noche fuera de tu casa?"
         When I tick the checkbox "consent_accepted"
-        When I submit a form with "cameFromAnotherCity:no|overnight:yes|nights:2" and button "Calcular mi huella"
+        When I submit a form with "cameFromAnotherCity:no|overnight:yes|nights:2|people:3" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         Then the response status should be 200
         Then I see a text "No te has desplazado desde otra ciudad"
-        Then I see a text "Noches declaradas: 2"
+        Then I see a text "Noches declaradas: 2 · Personas alojadas: 3"
         Then trip calculation link "TL1" should have 1 trip calculations
 
     Scenario: Without a places provider the guest has to type the kilometres of every leg
@@ -86,11 +86,12 @@ Feature:
         Then I do not see a text "¿Te has desplazado desde otra ciudad?"
         Then I do not see a text "¿Dormiste alguna noche fuera de tu casa?"
         Then I see a text "Nº de noches"
+        Then I see a text "Nº de personas alojadas"
         When I tick the checkbox "consent_accepted"
-        When I submit a form with "nights:2" and button "Calcular mi huella"
+        When I submit a form with "nights:2|people:2" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         Then the response status should be 200
-        Then I see a text "Noches declaradas: 2"
+        Then I see a text "Noches declaradas: 2 · Personas alojadas: 2"
         Then I do not see a text "Desplazamientos"
         Then trip calculation link "TL1" should have 1 trip calculations
 

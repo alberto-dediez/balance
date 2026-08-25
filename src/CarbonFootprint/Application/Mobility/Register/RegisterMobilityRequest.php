@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\Mobility\Register;
 
 use App\CarbonFootprint\Domain\Model\Geo\TravelMode;
+use App\CarbonFootprint\Domain\Model\Mobility\FactorBasis;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Application\CommandBus\Command;
 
@@ -14,5 +15,6 @@ class RegisterMobilityRequest implements Command
         public string $name = '',
         public Unit $unit = Unit::Kilometer,
         public ?TravelMode $travelMode = null,
+        public FactorBasis $factorBasis = FactorBasis::PerPassenger,
     ) {}
 }

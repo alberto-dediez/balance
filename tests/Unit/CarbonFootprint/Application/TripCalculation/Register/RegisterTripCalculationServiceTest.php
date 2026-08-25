@@ -9,6 +9,7 @@ use App\CarbonFootprint\Application\Activity\EmissionFactorSelectorRegistry;
 use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\OvernightStayEmissionFactorSelector;
+use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Application\Trip\LegInput;
 use App\CarbonFootprint\Application\Trip\PropertyLocator;
 use App\CarbonFootprint\Application\Trip\TripEmissionsCalculator;
@@ -106,6 +107,7 @@ class RegisterTripCalculationServiceTest extends TestCase
             $this->placeFinder,
             new TripLegsResolver(new GreatCircleRouteDistanceCalculator()),
             new TripLegsAccumulator(),
+            new MobilityFactorBasisProvider($this->mobilityRepository),
             new TripEmissionsCalculator($activityEmissionsResolver, $this->overnightStayRepository),
             $emissionFactorGroupRepository,
             ConsentProofMother::POLICY_VERSION,
@@ -126,6 +128,7 @@ class RegisterTripCalculationServiceTest extends TestCase
             roundTrip: false,
             trips: 1,
             nights: 2,
+            people: 3,
             legs: [new LegInput(mobilityId: (string) $mobility->id(), vehicleOccupants: 1, manualDistanceKm: 100.0)],
         ));
 
@@ -134,6 +137,8 @@ class RegisterTripCalculationServiceTest extends TestCase
         $this->assertNotNull($stored);
         $this->assertSame(1, $stored->trips());
         $this->assertSame(2, $stored->nights());
+        $this->assertSame(3, $stored->people());
+        $this->assertSame(6, $stored->overnightStays());
         $this->assertCount(1, $stored->legs());
         $this->assertSame('Sevilla, España', $stored->originLabel());
         $this->assertFalse($response->overnightStayCatalogMissing);
@@ -142,8 +147,8 @@ class RegisterTripCalculationServiceTest extends TestCase
         $this->assertNotNull($distanceKm);
 
         $this->assertEqualsWithDelta(0.2 * $distanceKm, (float) $response->mobilityEmissions->co2eq(), 0.001);
-        $this->assertEqualsWithDelta(8.0, (float) $response->overnightEmissions->co2eq(), 0.001);
-        $this->assertEqualsWithDelta(0.2 * $distanceKm + 8.0, (float) $response->emissions->co2eq(), 0.001);
+        $this->assertEqualsWithDelta(24.0, (float) $response->overnightEmissions->co2eq(), 0.001);
+        $this->assertEqualsWithDelta(0.2 * $distanceKm + 24.0, (float) $response->emissions->co2eq(), 0.001);
     }
 
     public function testDoublesTheDistanceOfARoundTrip(): void
@@ -312,6 +317,7 @@ class RegisterTripCalculationServiceTest extends TestCase
             roundTrip: false,
             trips: 1,
             nights: 0,
+            people: null,
             legs: [new LegInput(mobilityId: (string) $mobility->id(), vehicleOccupants: 1, manualDistanceKm: 100.0)],
             consentIp: '203.0.113.9',
             consentUserAgent: 'Mozilla/5.0',
@@ -332,6 +338,21 @@ class RegisterTripCalculationServiceTest extends TestCase
         $this->assertNotEmpty(array_filter($this->spySubscriber->events(), static fn($e) => $e instanceof TripCalculationConsentGranted));
     }
 
+    public function testThrowsWhenThereAreNightsWithoutPeople(): void
+    {
+        $link = $this->linkToLocatedProperty();
+        $mobility = $this->mobilityWithFactor('Coche', '0.2');
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        ($this->sut)($this->request(
+            token: $link->token(),
+            nights: 2,
+            people: null,
+            legs: [new LegInput(mobilityId: (string) $mobility->id(), manualDistanceKm: 100.0)],
+        ));
+    }
+
     /** @param list<LegInput> $legs */
     private function request(
         string $token,
@@ -340,6 +361,7 @@ class RegisterTripCalculationServiceTest extends TestCase
         ?int $trips = 1,
         ?int $nights = 0,
         array $legs = [],
+        ?int $people = 1,
     ): RegisterTripCalculationRequest {
         return new RegisterTripCalculationRequest(
             token: $token,
@@ -347,6 +369,7 @@ class RegisterTripCalculationServiceTest extends TestCase
             roundTrip: $roundTrip,
             trips: $trips,
             nights: $nights,
+            people: $people,
             legs: $legs,
         );
     }

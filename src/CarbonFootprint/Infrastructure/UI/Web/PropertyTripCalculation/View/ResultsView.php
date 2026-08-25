@@ -27,6 +27,7 @@ final class ResultsView
             'aggregation' => $results->aggregation,
             'mobilityBreakdown' => $results->mobilityBreakdown,
             'contributions' => $results->contributions,
+            'emissionsPerPerson' => $results->emissionsPerPerson,
             'from' => $from,
             'to' => $to,
             'trendChart' => $this->chartBuilder->trend($results->calculationsByDay),
@@ -51,7 +52,7 @@ final class ResultsView
     private function showOvernightStay(GetTripCalculationResultsResponse $results): bool
     {
         return $this->scope($results)->includesOvernightStay()
-            || $results->aggregation->nights > 0
+            || $results->aggregation->overnightStays > 0
             || $results->withOvernightStayCount > 0;
     }
 

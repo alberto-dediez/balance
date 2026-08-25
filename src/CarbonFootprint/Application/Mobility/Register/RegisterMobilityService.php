@@ -40,6 +40,7 @@ class RegisterMobilityService implements CommandHandler
             $request->name,
             $request->unit,
             $request->travelMode,
+            $request->factorBasis,
             $isDefaultLocale ? null : $locale,
         );
 

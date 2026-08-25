@@ -64,6 +64,7 @@ class IntercityController extends AbstractController
                 'accommodationPlaceReference' => !empty($intercity['accommodationPlaceReference']) ? (string) $intercity['accommodationPlaceReference'] : null,
                 'accommodationLabel' => !empty($intercity['accommodationLabel']) ? (string) $intercity['accommodationLabel'] : null,
                 'hotelNights' => !empty($intercity['hotelNights']) ? (int) $intercity['hotelNights'] : null,
+                'hotelPeople' => !empty($intercity['hotelPeople']) ? (int) $intercity['hotelPeople'] : null,
                 'intercityRoundTrip' => 'yes' === ($intercity['roundTrip'] ?? null),
                 'intercityTrips' => !empty($intercity['trips']) ? (int) $intercity['trips'] : null,
                 'intercityLegs' => LegInputsHttpMapper::toSessionData($intercity),

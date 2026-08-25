@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\Mobility\Update\UpdateMobilityRequest;
 use App\CarbonFootprint\Application\Mobility\Update\UpdateMobilityService;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Geo\TravelMode;
+use App\CarbonFootprint\Domain\Model\Mobility\FactorBasis;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityTranslated;
@@ -55,6 +56,7 @@ class UpdateMobilityServiceTest extends TestCase
             mobilityId: $mobility->id(),
             name: 'changedName',
             unit: Unit::Piece,
+            factorBasis: FactorBasis::PerVehicle,
         );
 
         $result = $sut($request, $user);
@@ -63,6 +65,7 @@ class UpdateMobilityServiceTest extends TestCase
 
         $this->assertNotNull($mobilityPersisted);
         $this->assertSame(Unit::Piece, $mobilityPersisted->unit());
+        $this->assertSame(FactorBasis::PerVehicle, $mobilityPersisted->factorBasis());
 
         $lastEvent = $this->spySubscriber->lastEvent();
 

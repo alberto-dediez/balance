@@ -20,6 +20,7 @@
         <field name="roundTrip" type="boolean" column="round_trip" nullable="false" />
         <field name="trips" type="integer" column="trips" nullable="true" />
         <field name="nights" type="integer" column="nights" nullable="true" />
+        <field name="people" type="integer" column="people" nullable="true" />
 
         <field name="emissionFactorGroupId" type="emission_factor_group_id" column="emission_factor_group_id" nullable="true" />
         <field name="calculationYear" type="integer" column="calculation_year" nullable="true" />

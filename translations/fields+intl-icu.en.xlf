@@ -25,6 +25,10 @@
         <source>travelMode</source>
         <target>Route calculation mode</target>
       </trans-unit>
+      <trans-unit id="qN2Koyh" resname="factorBasis">
+        <source>factorBasis</source>
+        <target>Emission factor basis</target>
+      </trans-unit>
       <trans-unit id="2yur8vv" resname="year">
         <source>year</source>
         <target>Year</target>

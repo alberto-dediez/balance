@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\AttendeeSurveyResponse\Register;
 
+use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Application\Trip\LegInput;
 use App\CarbonFootprint\Application\Trip\TripEmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyClosedException;
@@ -43,6 +44,7 @@ final class RegisterAttendeeSurveyResponseService
         private PlaceFinder $placeFinder,
         private TripLegsResolver $tripLegsResolver,
         private TripLegsAccumulator $tripLegsAccumulator,
+        private MobilityFactorBasisProvider $mobilityFactorBasisProvider,
         private TripEmissionsCalculator $tripEmissionsCalculator,
         private EmissionFactorGroupRepository $emissionFactorGroupRepository,
         private EventCarbonFootprintRepository $eventCarbonFootprintRepository,
@@ -76,6 +78,10 @@ final class RegisterAttendeeSurveyResponseService
 
         if ($usedHotel && (null === $request->hotelNights || $request->hotelNights < 1)) {
             throw new \InvalidArgumentException('Hotel nights must be at least 1 when a hotel was used.');
+        }
+
+        if ($usedHotel && (null === $request->hotelPeople || $request->hotelPeople < 1)) {
+            throw new \InvalidArgumentException('Hotel people must be at least 1 when a hotel was used.');
         }
 
         $origin = $this->waypoint($request->originPlaceReference);
@@ -112,8 +118,9 @@ final class RegisterAttendeeSurveyResponseService
         }
 
         $kmByMobilityId = [];
-        $this->tripLegsAccumulator->accumulate($kmByMobilityId, $intercityLegs, $intercityTrips, $cameFromAnotherCity && $request->intercityRoundTrip);
-        $this->tripLegsAccumulator->accumulate($kmByMobilityId, $cityLegs, $cityTrips, $movedWithinCity && $request->cityRoundTrip);
+        $factorBasisByMobilityId = $this->mobilityFactorBasisProvider->factorBasisByMobilityId();
+        $this->tripLegsAccumulator->accumulate($kmByMobilityId, $intercityLegs, $intercityTrips, $cameFromAnotherCity && $request->intercityRoundTrip, $factorBasisByMobilityId);
+        $this->tripLegsAccumulator->accumulate($kmByMobilityId, $cityLegs, $cityTrips, $movedWithinCity && $request->cityRoundTrip, $factorBasisByMobilityId);
 
         [$emissionFactorGroupId, $calculationYear] = $this->calculationContext($eventId);
 
@@ -128,6 +135,7 @@ final class RegisterAttendeeSurveyResponseService
                     nights: (float) ($usedHotel ? $request->hotelNights ?? 0 : 0),
                     emissionFactorGroupId: $emissionFactorGroupId,
                     year: $calculationYear,
+                    people: (float) ($usedHotel ? $request->hotelPeople ?? 1 : 1),
                 );
 
                 $mobilityEmissions = $tripEmissions->mobility;
@@ -147,6 +155,7 @@ final class RegisterAttendeeSurveyResponseService
             usedHotel: $usedHotel,
             accommodation: $accommodation,
             hotelNights: $usedHotel ? $request->hotelNights : null,
+            hotelPeople: $usedHotel ? $request->hotelPeople : null,
             intercityRoundTrip: $cameFromAnotherCity && $request->intercityRoundTrip,
             intercityTrips: $intercityTrips,
             movedWithinCity: $movedWithinCity,

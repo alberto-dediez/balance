@@ -32,6 +32,7 @@ class TripCalculation implements \Stringable
         private bool $roundTrip = false,
         private ?int $trips = null,
         private ?int $nights = null,
+        private ?int $people = null,
         private ?Emissions $emissions = null,
         private ?Emissions $mobilityEmissions = null,
         private ?Emissions $overnightEmissions = null,
@@ -89,6 +90,21 @@ class TripCalculation implements \Stringable
         return $this->nights;
     }
 
+    public function people(): ?int
+    {
+        return $this->people;
+    }
+
+    public function overnightStays(): int
+    {
+        return ($this->nights ?? 0) * ($this->people ?? 1);
+    }
+
+    public function overnightStaysPerPerson(): float
+    {
+        return $this->overnightStays() / max(1, $this->people ?? 1);
+    }
+
     public function emissions(): Emissions
     {
         return $this->emissions ??= new Emissions();
@@ -137,6 +153,7 @@ class TripCalculation implements \Stringable
         bool $roundTrip,
         int $trips,
         ?int $nights,
+        ?int $people,
         array $legs,
         Emissions $mobilityEmissions,
         Emissions $overnightEmissions,
@@ -151,6 +168,7 @@ class TripCalculation implements \Stringable
                 roundTrip: $roundTrip,
                 trips: $trips,
                 nights: $nights,
+                people: $people,
                 legs: $legs,
                 mobilityEmissions: $mobilityEmissions,
                 overnightEmissions: $overnightEmissions,
@@ -173,6 +191,7 @@ class TripCalculation implements \Stringable
         $this->roundTrip = $event->roundTrip();
         $this->trips = $event->trips();
         $this->nights = $event->nights();
+        $this->people = $event->people();
 
         $this->mobilityEmissions = $event->mobilityEmissions();
         $this->overnightEmissions = $event->overnightEmissions();

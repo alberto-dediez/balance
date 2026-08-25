@@ -6,12 +6,16 @@ namespace App\CarbonFootprint\Domain\Model\EmployeeParticipation;
 
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContribution;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
+use App\CarbonFootprint\Domain\Model\Mobility\FactorBasis;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 
 final class EmployeeContributionsAggregator
 {
-    /** @param list<EmployeeContribution> $contributions */
-    public function aggregate(array $contributions, int $totalEmployees): EmployeeContributionsAggregation
+    /**
+     * @param list<EmployeeContribution> $contributions
+     * @param array<string, FactorBasis> $factorBasisByMobilityId
+     */
+    public function aggregate(array $contributions, int $totalEmployees, array $factorBasisByMobilityId = []): EmployeeContributionsAggregation
     {
         $count = count($contributions);
 
@@ -33,6 +37,7 @@ final class EmployeeContributionsAggregator
                 $contribution->assemblyVehicleOccupants(),
                 $contribution->assemblyDays(),
                 $contribution->assemblyHotelNights(),
+                $factorBasisByMobilityId,
             );
 
             $this->aggregatePhase(
@@ -45,6 +50,7 @@ final class EmployeeContributionsAggregator
                 $contribution->celebrationVehicleOccupants(),
                 $contribution->celebrationDays(),
                 $contribution->celebrationHotelNights(),
+                $factorBasisByMobilityId,
             );
 
             $this->aggregatePhase(
@@ -57,6 +63,7 @@ final class EmployeeContributionsAggregator
                 $contribution->breakdownVehicleOccupants(),
                 $contribution->breakdownDays(),
                 $contribution->breakdownHotelNights(),
+                $factorBasisByMobilityId,
             );
         }
 
@@ -83,6 +90,7 @@ final class EmployeeContributionsAggregator
     /**
      * @param array<string, array<string, float>> $kmByMobilityIdByPhase
      * @param array<string, float>                $hotelNightsByPhase
+     * @param array<string, FactorBasis>          $factorBasisByMobilityId
      */
     private function aggregatePhase(
         array &$kmByMobilityIdByPhase,
@@ -94,14 +102,15 @@ final class EmployeeContributionsAggregator
         ?int $vehicleOccupants,
         ?int $days,
         ?int $hotelNights,
+        array $factorBasisByMobilityId = [],
     ): void {
         if (!$worked) {
             return;
         }
 
         if (null !== $mobilityId && null !== $distanceKm && null !== $days) {
-            $occupants = max(1, $vehicleOccupants ?? 1);
-            $km = $distanceKm * $days / $occupants;
+            $factorBasis = $factorBasisByMobilityId[(string) $mobilityId] ?? FactorBasis::PerPassenger;
+            $km = $factorBasis->kmCoveringOneOccupant($distanceKm * $days, $vehicleOccupants ?? 1);
 
             $kmByMobilityIdByPhase[$phase->value][(string) $mobilityId] = ($kmByMobilityIdByPhase[$phase->value][(string) $mobilityId] ?? 0.0) + $km;
         }

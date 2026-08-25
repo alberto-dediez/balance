@@ -6,6 +6,7 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurvey;
 
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyResponsesAggregator;
+use App\CarbonFootprint\Domain\Model\Mobility\FactorBasis;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Trip\LegKind;
 use App\CarbonFootprint\Domain\Model\Trip\TripLegsAccumulator;
@@ -26,7 +27,7 @@ class AttendeeSurveyResponsesAggregatorTest extends TestCase
         $aggregation = $this->sut->aggregate([], 100);
 
         $this->assertSame([], $aggregation->kmByMobilityId);
-        $this->assertSame(0.0, $aggregation->hotelNights);
+        $this->assertSame(0.0, $aggregation->overnightStays);
     }
 
     public function testCalculatesKmForIntercityBlockOnlyWhenCameFromAnotherCity(): void
@@ -43,7 +44,7 @@ class AttendeeSurveyResponsesAggregatorTest extends TestCase
 
         $aggregation = $this->sut->aggregate([$response], realAttendees: 1);
 
-        $this->assertEqualsWithDelta(200.0, $aggregation->kmByMobilityId[$mobilityId], 0.0001);
+        $this->assertEqualsWithDelta(600.0, $aggregation->kmByMobilityId[$mobilityId], 0.0001);
     }
 
     public function testDoublesTheDistanceOfARoundTrip(): void
@@ -76,7 +77,7 @@ class AttendeeSurveyResponsesAggregatorTest extends TestCase
             occupants: 0,
         );
 
-        $aggregation = $this->sut->aggregate([$response], realAttendees: 1);
+        $aggregation = $this->sut->aggregate([$response], realAttendees: 1, factorBasisByMobilityId: [$mobilityId => FactorBasis::PerVehicle]);
 
         $this->assertEqualsWithDelta(100.0, $aggregation->kmByMobilityId[$mobilityId], 0.0001);
     }
@@ -95,7 +96,7 @@ class AttendeeSurveyResponsesAggregatorTest extends TestCase
 
         $aggregation = $this->sut->aggregate([$response], realAttendees: 1);
 
-        $this->assertEqualsWithDelta(15.0, $aggregation->kmByMobilityId[$mobilityId], 0.0001);
+        $this->assertEqualsWithDelta(30.0, $aggregation->kmByMobilityId[$mobilityId], 0.0001);
     }
 
     public function testIgnoresTheCityLegsWhenTheAttendeeDidNotMoveWithinTheCity(): void
@@ -155,7 +156,7 @@ class AttendeeSurveyResponsesAggregatorTest extends TestCase
         $this->assertEqualsWithDelta(220.0, $aggregation->kmByMobilityId[$sharedMobilityId], 0.0001);
     }
 
-    public function testSumsHotelNightsOnlyWhenUsedHotel(): void
+    public function testSumsOvernightStaysOnlyWhenUsedHotel(): void
     {
         $attendeeSurveyId = (string) AttendeeSurveyId::generate();
 
@@ -163,6 +164,7 @@ class AttendeeSurveyResponsesAggregatorTest extends TestCase
             attendeeSurveyId: $attendeeSurveyId,
             usedHotel: true,
             hotelNights: 2,
+            hotelPeople: 3,
         );
         $withoutHotel = AttendeeSurveyResponseMother::from(
             attendeeSurveyId: $attendeeSurveyId,
@@ -171,10 +173,125 @@ class AttendeeSurveyResponsesAggregatorTest extends TestCase
 
         $aggregation = $this->sut->aggregate([$withHotel, $withoutHotel], realAttendees: 2);
 
-        $this->assertEqualsWithDelta(2.0, $aggregation->hotelNights, 0.0001);
+        $this->assertEqualsWithDelta(2.0, $aggregation->overnightStays, 0.0001);
     }
 
-    public function testExtrapolatesByRealAttendeesDividedByResponsesCount(): void
+    public function testIgnoresTheVehicleOccupantsWhenTheFactorIsPerPassenger(): void
+    {
+        $attendeeSurveyId = (string) AttendeeSurveyId::generate();
+        $mobilityId = (string) MobilityId::generate();
+
+        $shared = AttendeeSurveyResponseMother::intercityOnly(
+            attendeeSurveyId: $attendeeSurveyId,
+            mobilityId: $mobilityId,
+            distanceKm: 100.0,
+            trips: 1,
+            occupants: 3,
+        );
+
+        $alone = AttendeeSurveyResponseMother::intercityOnly(
+            attendeeSurveyId: $attendeeSurveyId,
+            mobilityId: $mobilityId,
+            distanceKm: 100.0,
+            trips: 1,
+            occupants: 1,
+        );
+
+        $sharedAggregation = $this->sut->aggregate([$shared], realAttendees: 30);
+        $aloneAggregation = $this->sut->aggregate([$alone], realAttendees: 30);
+
+        $this->assertEqualsWithDelta(3000.0, $sharedAggregation->kmByMobilityId[$mobilityId], 0.0001);
+        $this->assertEqualsWithDelta(
+            $aloneAggregation->kmByMobilityId[$mobilityId],
+            $sharedAggregation->kmByMobilityId[$mobilityId],
+            0.0001,
+        );
+    }
+
+    public function testExtrapolatesEachLegOfAMultimodalTripByTheSameFactorWhateverItsOccupants(): void
+    {
+        $taxiMobilityId = (string) MobilityId::generate();
+        $busMobilityId = (string) MobilityId::generate();
+
+        $response = AttendeeSurveyResponseMother::multimodalIntercity(
+            attendeeSurveyId: (string) AttendeeSurveyId::generate(),
+            legs: [
+                ['mobilityId' => $taxiMobilityId, 'distanceKm' => 10.0, 'occupants' => 1],
+                ['mobilityId' => $busMobilityId, 'distanceKm' => 100.0, 'occupants' => 30],
+            ],
+        );
+
+        $aggregation = $this->sut->aggregate(
+            [$response],
+            realAttendees: 300,
+            factorBasisByMobilityId: [$taxiMobilityId => FactorBasis::PerVehicle, $busMobilityId => FactorBasis::PerPassenger],
+        );
+
+        $this->assertEqualsWithDelta(3000.0, $aggregation->kmByMobilityId[$taxiMobilityId], 0.0001);
+        $this->assertEqualsWithDelta(30000.0, $aggregation->kmByMobilityId[$busMobilityId], 0.0001);
+    }
+
+    public function testSplitsTheVehicleDistanceBetweenItsOccupantsWhenTheFactorIsPerVehicle(): void
+    {
+        $attendeeSurveyId = (string) AttendeeSurveyId::generate();
+        $mobilityId = (string) MobilityId::generate();
+
+        $response = AttendeeSurveyResponseMother::intercityOnly(
+            $attendeeSurveyId,
+            $mobilityId,
+            distanceKm: 100.0,
+            trips: 1,
+            occupants: 4,
+        );
+
+        $aggregation = $this->sut->aggregate([$response], realAttendees: 4, factorBasisByMobilityId: [$mobilityId => FactorBasis::PerVehicle]);
+
+        $this->assertEqualsWithDelta(100.0, $aggregation->kmByMobilityId[$mobilityId], 0.0001);
+    }
+
+    public function testExtrapolatesMobilityByTheNumberOfResponses(): void
+    {
+        $attendeeSurveyId = (string) AttendeeSurveyId::generate();
+        $mobilityId = (string) MobilityId::generate();
+
+        $response = AttendeeSurveyResponseMother::intercityOnly(
+            $attendeeSurveyId,
+            $mobilityId,
+            distanceKm: 100.0,
+            trips: 1,
+            occupants: 1,
+            usedHotel: true,
+            hotelNights: 1,
+            hotelPeople: 4,
+        );
+
+        $aggregation = $this->sut->aggregate([$response], realAttendees: 40);
+
+        $this->assertEqualsWithDelta(4000.0, $aggregation->kmByMobilityId[$mobilityId], 0.0001);
+    }
+
+    public function testExtrapolatesTheOvernightStaysOfOnePersonByTheNumberOfResponses(): void
+    {
+        $attendeeSurveyId = (string) AttendeeSurveyId::generate();
+        $mobilityId = (string) MobilityId::generate();
+
+        $response = AttendeeSurveyResponseMother::intercityOnly(
+            $attendeeSurveyId,
+            $mobilityId,
+            distanceKm: 100.0,
+            trips: 1,
+            occupants: 4,
+            usedHotel: true,
+            hotelNights: 1,
+            hotelPeople: 4,
+        );
+
+        $aggregation = $this->sut->aggregate([$response], realAttendees: 40);
+
+        $this->assertEqualsWithDelta(40.0, $aggregation->overnightStays, 0.0001);
+    }
+
+    public function testExtrapolatesByRealAttendeesDividedByTheNumberOfResponses(): void
     {
         $attendeeSurveyId = (string) AttendeeSurveyId::generate();
         $mobilityId = (string) MobilityId::generate();
@@ -187,6 +304,6 @@ class AttendeeSurveyResponsesAggregatorTest extends TestCase
         $aggregation = $this->sut->aggregate($responses, realAttendees: 40);
 
         $this->assertEqualsWithDelta(4000.0, $aggregation->kmByMobilityId[$mobilityId], 0.0001);
-        $this->assertEqualsWithDelta(40.0, $aggregation->hotelNights, 0.0001);
+        $this->assertEqualsWithDelta(40.0, $aggregation->overnightStays, 0.0001);
     }
 }

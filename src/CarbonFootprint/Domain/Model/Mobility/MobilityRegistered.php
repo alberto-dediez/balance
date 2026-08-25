@@ -19,6 +19,7 @@ final class MobilityRegistered extends DomainEvent
         private string $name,
         private Unit $unit,
         private ?TravelMode $travelMode = null,
+        private FactorBasis $factorBasis = FactorBasis::PerPassenger,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -45,6 +46,11 @@ final class MobilityRegistered extends DomainEvent
         return $this->travelMode;
     }
 
+    public function factorBasis(): FactorBasis
+    {
+        return $this->factorBasis;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->mobilityId();
@@ -57,6 +63,7 @@ final class MobilityRegistered extends DomainEvent
             'name' => $this->name,
             'unit' => $this->unit->value,
             'travelMode' => $this->travelMode?->value,
+            'factorBasis' => $this->factorBasis->value,
         ];
     }
 
@@ -72,6 +79,7 @@ final class MobilityRegistered extends DomainEvent
             name: $payload['name'],
             unit: $unit,
             travelMode: null !== ($payload['travelMode'] ?? null) ? TravelMode::from($payload['travelMode']) : null,
+            factorBasis: FactorBasis::from($payload['factorBasis'] ?? FactorBasis::PerPassenger->value),
             id: $id,
             occurredOn: $occurredOn,
         );

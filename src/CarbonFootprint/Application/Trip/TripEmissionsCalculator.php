@@ -27,6 +27,7 @@ final class TripEmissionsCalculator
         float $nights,
         EmissionFactorGroupId $emissionFactorGroupId,
         int $year,
+        float $people = 1.0,
     ): TripEmissions {
         $mobilityEmissions = new Emissions();
 
@@ -48,7 +49,9 @@ final class TripEmissionsCalculator
             );
         }
 
-        if ($nights <= 0.0) {
+        $overnightStayCount = $nights * $people;
+
+        if ($overnightStayCount <= 0.0) {
             return new TripEmissions($mobilityEmissions, new Emissions());
         }
 
@@ -67,7 +70,7 @@ final class TripEmissionsCalculator
             ActivityType::OvernightStay,
             (string) $overnightStay->id(),
             null,
-            new Quantity($nights, Unit::Pernoctacion),
+            new Quantity($overnightStayCount, Unit::Pernoctacion),
             null,
         )->emissions;
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\Trip;
 
 use App\CarbonFootprint\Domain\Model\Geo\DistanceSource;
+use App\CarbonFootprint\Domain\Model\Mobility\FactorBasis;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Trip\LegKind;
 use App\CarbonFootprint\Domain\Model\Trip\ResolvedLeg;
@@ -51,14 +52,96 @@ class TripLegsAccumulatorTest extends TestCase
         $this->assertEqualsWithDelta(200.0, $kmByMobilityId[$mobilityId], 0.001);
     }
 
-    public function testSplitsTheDistanceBetweenTheOccupantsOfTheVehicle(): void
+    public function testMultipliesTheDistanceByTheOccupantsWhenTheFactorIsPerPassenger(): void
+    {
+        $mobilityId = (string) MobilityId::generate();
+        $kmByMobilityId = [];
+
+        $this->sut->accumulate(
+            $kmByMobilityId,
+            [$this->leg($mobilityId, 100.0, 4)],
+            1,
+            false,
+            [$mobilityId => FactorBasis::PerPassenger],
+        );
+
+        $this->assertEqualsWithDelta(400.0, $kmByMobilityId[$mobilityId], 0.001);
+    }
+
+    public function testCountsTheVehicleOnceWhenTheFactorIsPerVehicle(): void
+    {
+        $mobilityId = (string) MobilityId::generate();
+        $kmByMobilityId = [];
+
+        $this->sut->accumulate(
+            $kmByMobilityId,
+            [$this->leg($mobilityId, 100.0, 4)],
+            1,
+            false,
+            [$mobilityId => FactorBasis::PerVehicle],
+        );
+
+        $this->assertEqualsWithDelta(100.0, $kmByMobilityId[$mobilityId], 0.001);
+    }
+
+    public function testFallsBackToPerPassengerForAnUnknownMobility(): void
     {
         $mobilityId = (string) MobilityId::generate();
         $kmByMobilityId = [];
 
         $this->sut->accumulate($kmByMobilityId, [$this->leg($mobilityId, 100.0, 4)], 1, false);
 
+        $this->assertEqualsWithDelta(400.0, $kmByMobilityId[$mobilityId], 0.001);
+    }
+
+    public function testAccumulatesPerPersonTheFullDistanceWhenTheFactorIsPerPassenger(): void
+    {
+        $mobilityId = (string) MobilityId::generate();
+        $kmByMobilityId = [];
+
+        $this->sut->accumulatePerPerson(
+            $kmByMobilityId,
+            [$this->leg($mobilityId, 100.0, 4)],
+            1,
+            false,
+            [$mobilityId => FactorBasis::PerPassenger],
+        );
+
+        $this->assertEqualsWithDelta(100.0, $kmByMobilityId[$mobilityId], 0.001);
+    }
+
+    public function testAccumulatesPerPersonTheVehicleDistanceSplitBetweenItsOccupants(): void
+    {
+        $mobilityId = (string) MobilityId::generate();
+        $kmByMobilityId = [];
+
+        $this->sut->accumulatePerPerson(
+            $kmByMobilityId,
+            [$this->leg($mobilityId, 100.0, 4)],
+            1,
+            false,
+            [$mobilityId => FactorBasis::PerVehicle],
+        );
+
         $this->assertEqualsWithDelta(25.0, $kmByMobilityId[$mobilityId], 0.001);
+    }
+
+    public function testAccumulatesPerPersonEachLegByItsOwnOccupants(): void
+    {
+        $carMobilityId = (string) MobilityId::generate();
+        $trainMobilityId = (string) MobilityId::generate();
+        $kmByMobilityId = [];
+
+        $this->sut->accumulatePerPerson(
+            $kmByMobilityId,
+            [$this->leg($carMobilityId, 300.0, 3), $this->leg($trainMobilityId, 200.0, 3)],
+            1,
+            false,
+            [$carMobilityId => FactorBasis::PerVehicle, $trainMobilityId => FactorBasis::PerPassenger],
+        );
+
+        $this->assertEqualsWithDelta(100.0, $kmByMobilityId[$carMobilityId], 0.001);
+        $this->assertEqualsWithDelta(200.0, $kmByMobilityId[$trainMobilityId], 0.001);
     }
 
     public function testAddsUpLegsOfTheSameMeansOfTransport(): void

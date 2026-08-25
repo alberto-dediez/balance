@@ -20,6 +20,7 @@ use App\CarbonFootprint\Application\Activity\Update\UpdateOvernightStayActivityS
 use App\CarbonFootprint\Application\EmployeeParticipation\Close\CloseEmployeeParticipationRequest;
 use App\CarbonFootprint\Application\EmployeeParticipation\Close\CloseEmployeeParticipationService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\ConfidenceLevel;
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContribution;
@@ -106,6 +107,7 @@ class CloseEmployeeParticipationServiceTest extends TestCase
             $this->employeeParticipationRepository,
             $this->employeeContributionRepository,
             new EmployeeContributionsAggregator(),
+            new MobilityFactorBasisProvider($this->mobilityRepository),
             $this->overnightStayRepository,
             new PhaseAnswersSynchronizer($handlers),
         );

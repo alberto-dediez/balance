@@ -30,6 +30,7 @@ final class AttendeeSurveyResponseRegistered extends DomainEvent
         private bool $usedHotel,
         private ?TripWaypoint $accommodation,
         private ?int $hotelNights,
+        private ?int $hotelPeople,
         private bool $intercityRoundTrip,
         private ?int $intercityTrips,
         private bool $movedWithinCity,
@@ -80,6 +81,11 @@ final class AttendeeSurveyResponseRegistered extends DomainEvent
     public function hotelNights(): ?int
     {
         return $this->hotelNights;
+    }
+
+    public function hotelPeople(): ?int
+    {
+        return $this->hotelPeople;
     }
 
     public function intercityRoundTrip(): bool
@@ -153,6 +159,7 @@ final class AttendeeSurveyResponseRegistered extends DomainEvent
             'usedHotel' => $this->usedHotel,
             'accommodation' => self::waypointToPrimitives($this->accommodation),
             'hotelNights' => $this->hotelNights,
+            'hotelPeople' => $this->hotelPeople,
             'intercityRoundTrip' => $this->intercityRoundTrip,
             'intercityTrips' => $this->intercityTrips,
             'movedWithinCity' => $this->movedWithinCity,
@@ -186,6 +193,7 @@ final class AttendeeSurveyResponseRegistered extends DomainEvent
             usedHotel: $payload['usedHotel'],
             accommodation: self::waypointFromPrimitives($payload['accommodation'] ?? null),
             hotelNights: $payload['hotelNights'] ?? null,
+            hotelPeople: null !== ($payload['hotelPeople'] ?? null) ? (int) $payload['hotelPeople'] : null,
             intercityRoundTrip: $payload['intercityRoundTrip'] ?? false,
             intercityTrips: $payload['intercityTrips'] ?? null,
             movedWithinCity: $payload['movedWithinCity'] ?? false,

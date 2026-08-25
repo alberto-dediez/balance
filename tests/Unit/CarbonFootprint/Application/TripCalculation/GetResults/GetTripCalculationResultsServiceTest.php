@@ -10,7 +10,10 @@ use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\EmissionFactorSelectorRegistry;
 use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
+use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Application\Trip\MobilityBreakdownCalculator;
+use App\CarbonFootprint\Application\Trip\PerPersonTripEmissionsCalculator;
+use App\CarbonFootprint\Application\Trip\TripEmissionsCalculator;
 use App\CarbonFootprint\Application\TripCalculation\GetResults\GetTripCalculationResultsRequest;
 use App\CarbonFootprint\Application\TripCalculation\GetResults\GetTripCalculationResultsService;
 use App\CarbonFootprint\Domain\Model\Emissions;
@@ -22,6 +25,7 @@ use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationsAggregator;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEmissionFactorGroupRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMobilityRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryOvernightStayRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryTripCalculationLinkRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryTripCalculationRepository;
 use App\Property\Application\Property\PropertyAuthorizer;
@@ -80,6 +84,18 @@ class GetTripCalculationResultsServiceTest extends TestCase
             ),
             $this->projectContributionRepository,
             new ProjectContributionsAggregator(),
+            new MobilityFactorBasisProvider($this->mobilityRepository),
+            new PerPersonTripEmissionsCalculator(
+                new TripLegsAccumulator(),
+                new MobilityFactorBasisProvider($this->mobilityRepository),
+                new TripEmissionsCalculator(
+                    new ActivityEmissionsResolver(
+                        new EmissionFactorSelectorRegistry([new MobilityEmissionFactorSelector($this->mobilityRepository)]),
+                        new EmissionsCalculator(),
+                    ),
+                    new InMemoryOvernightStayRepository(),
+                ),
+            ),
         );
     }
 
@@ -120,7 +136,7 @@ class GetTripCalculationResultsServiceTest extends TestCase
         $response = ($this->sut)(new GetTripCalculationResultsRequest($property->id()), $this->ownerUser());
 
         $this->assertSame(2, $response->aggregation->calculations);
-        $this->assertSame(3.0, $response->aggregation->nights);
+        $this->assertSame(3.0, $response->aggregation->overnightStays);
         $this->assertEqualsWithDelta(150.0, $response->aggregation->kmByMobilityId[$mobilityId], 0.001);
         $this->assertEqualsWithDelta(15.0, (float) $response->aggregation->totalEmissions->co2eq(), 0.001);
     }

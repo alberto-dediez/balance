@@ -12,6 +12,12 @@
             'label': 'Unidad' | trans,
             'sortable': false
         }, {
+            'label': 'Modo de cálculo de rutas' | trans,
+            'sortable': false
+        }, {
+            'label': 'Base del factor de emisión' | trans,
+            'sortable': false
+        }, {
             'label': 'Fecha de registro' | trans,
             'sortable': true,
             'sortableBy': 'registeredAt'
@@ -27,6 +33,8 @@
     <twig:List:Table :columns="columns" :elements="mobilities" :bulkForm="bulkForm">
         <td>{{ element.name }}</td>
         <td>{{ element.unit.value | trans({}, 'unitType') }}</td>
+        <td>{{ element.travelMode is not null ? (element.travelMode.value | trans({}, 'travelModeType')) : '---' }}</td>
+        <td>{{ element.factorBasis.value | trans({}, 'factorBasisType') }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>{{ element.updatedAt ? element.updatedAt | date('d/m/Y') : '' }}</td>
         <td>

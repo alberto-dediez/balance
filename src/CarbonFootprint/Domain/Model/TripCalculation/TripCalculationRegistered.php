@@ -29,6 +29,7 @@ final class TripCalculationRegistered extends DomainEvent
         private bool $roundTrip,
         private int $trips,
         private ?int $nights,
+        private ?int $people,
         private array $legs,
         private Emissions $mobilityEmissions,
         private Emissions $overnightEmissions,
@@ -68,6 +69,11 @@ final class TripCalculationRegistered extends DomainEvent
     public function nights(): ?int
     {
         return $this->nights;
+    }
+
+    public function people(): ?int
+    {
+        return $this->people;
     }
 
     /** @return list<ResolvedLeg> */
@@ -110,6 +116,7 @@ final class TripCalculationRegistered extends DomainEvent
             'roundTrip' => $this->roundTrip,
             'trips' => $this->trips,
             'nights' => $this->nights,
+            'people' => $this->people,
             'legs' => array_map(self::legToPrimitives(...), $this->legs),
             'mobilityEmissions' => self::emissionsToPrimitives($this->mobilityEmissions),
             'overnightEmissions' => self::emissionsToPrimitives($this->overnightEmissions),
@@ -136,6 +143,7 @@ final class TripCalculationRegistered extends DomainEvent
             roundTrip: $payload['roundTrip'] ?? false,
             trips: (int) ($payload['trips'] ?? 1),
             nights: null !== ($payload['nights'] ?? null) ? (int) $payload['nights'] : null,
+            people: null !== ($payload['people'] ?? null) ? (int) $payload['people'] : null,
             legs: array_map(self::legFromPrimitives(...), $legs),
             mobilityEmissions: self::emissionsFromPrimitives($mobilityEmissions),
             overnightEmissions: self::emissionsFromPrimitives($overnightEmissions),

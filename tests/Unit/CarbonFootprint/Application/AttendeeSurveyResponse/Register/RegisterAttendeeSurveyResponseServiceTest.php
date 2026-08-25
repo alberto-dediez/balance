@@ -11,6 +11,7 @@ use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\OvernightStayEmissionFactorSelector;
 use App\CarbonFootprint\Application\AttendeeSurveyResponse\Register\RegisterAttendeeSurveyResponseRequest;
 use App\CarbonFootprint\Application\AttendeeSurveyResponse\Register\RegisterAttendeeSurveyResponseService;
+use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Application\Trip\LegInput;
 use App\CarbonFootprint\Application\Trip\TripEmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurvey;
@@ -24,6 +25,7 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId
 use App\CarbonFootprint\Domain\Model\Geo\DistanceSource;
 use App\CarbonFootprint\Domain\Model\Geo\GreatCircleRouteDistanceCalculator;
 use App\CarbonFootprint\Domain\Model\Geo\TravelMode;
+use App\CarbonFootprint\Domain\Model\Mobility\FactorBasis;
 use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Trip\LegKind;
@@ -123,6 +125,7 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
             $this->placeFinder,
             new TripLegsResolver(new GreatCircleRouteDistanceCalculator()),
             new TripLegsAccumulator(),
+            new MobilityFactorBasisProvider($this->mobilityRepository),
             new TripEmissionsCalculator($activityEmissionsResolver, $this->overnightStayRepository),
             $emissionFactorGroupRepository,
             $this->eventCarbonFootprintRepository,
@@ -145,6 +148,7 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
             usedHotel: true,
             accommodationPlaceReference: 'hotel',
             hotelNights: 2,
+            hotelPeople: 1,
             intercityRoundTrip: true,
             intercityTrips: 5,
             intercityLegs: [new LegInput(mobilityId: (string) $mobility->id(), vehicleOccupants: 2)],
@@ -178,6 +182,7 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
             token: $attendeeSurvey->token(),
             usedHotel: true,
             hotelNights: 2,
+            hotelPeople: 1,
             intercityLegs: [new LegInput(mobilityId: (string) $mobility->id(), manualDistanceKm: 100.0)],
         ));
 
@@ -190,6 +195,28 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
         $this->assertEqualsWithDelta(28.0, (float) $response->emissions->co2eq(), 0.001);
         $this->assertEquals($this->emissionFactorGroupId, $stored->emissionFactorGroupId());
         $this->assertSame($this->calculationYear, $stored->calculationYear());
+    }
+
+    public function testMultipliesTheOvernightEmissionsByThePeopleWhoStayed(): void
+    {
+        $attendeeSurvey = $this->surveyWithVenue();
+        $mobility = $this->mobilityWithFactor('Coche', '0.2');
+        $this->overnightStayWithFactor('4.0');
+
+        $response = ($this->sut)($this->request(
+            token: $attendeeSurvey->token(),
+            usedHotel: true,
+            hotelNights: 2,
+            hotelPeople: 3,
+            intercityLegs: [new LegInput(mobilityId: (string) $mobility->id(), manualDistanceKm: 100.0)],
+        ));
+
+        $stored = $this->attendeeSurveyResponseRepository->find($response->attendeeSurveyResponseId);
+
+        $this->assertNotNull($stored);
+        $this->assertSame(3, $stored->hotelPeople());
+        $this->assertSame(6, $stored->overnightStays());
+        $this->assertEqualsWithDelta(24.0, (float) $stored->overnightEmissions()->co2eq(), 0.001);
     }
 
     public function testAddsTheEmissionsOfBothBlocksApplyingTripsRoundTripAndOccupants(): void
@@ -212,7 +239,23 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
         $stored = $this->attendeeSurveyResponseRepository->find($response->attendeeSurveyResponseId);
 
         $this->assertNotNull($stored);
-        $this->assertEqualsWithDelta(43.0, (float) $stored->mobilityEmissions()->co2eq(), 0.001);
+        $this->assertEqualsWithDelta(163.0, (float) $stored->mobilityEmissions()->co2eq(), 0.001);
+    }
+
+    public function testCountsTheSharedVehicleOnceWhenTheFactorIsPerVehicle(): void
+    {
+        $attendeeSurvey = $this->surveyWithVenue();
+        $mobility = $this->mobilityWithFactor('Coche', '0.2', factorBasis: FactorBasis::PerVehicle);
+
+        $response = ($this->sut)($this->request(
+            token: $attendeeSurvey->token(),
+            intercityLegs: [new LegInput(mobilityId: (string) $mobility->id(), vehicleOccupants: 4, manualDistanceKm: 100.0)],
+        ));
+
+        $stored = $this->attendeeSurveyResponseRepository->find($response->attendeeSurveyResponseId);
+
+        $this->assertNotNull($stored);
+        $this->assertEqualsWithDelta(20.0, (float) $stored->mobilityEmissions()->co2eq(), 0.001);
     }
 
     public function testUsesTheEmissionFactorsOfTheEventCarbonFootprint(): void
@@ -313,6 +356,7 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
             usedHotel: true,
             accommodationPlaceReference: 'hotel',
             hotelNights: 3,
+            hotelPeople: 1,
             intercityTrips: 9,
             intercityLegs: [new LegInput(mobilityId: (string) $mobility->id())],
         ));
@@ -337,6 +381,7 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
             usedHotel: true,
             accommodationPlaceReference: 'hotel',
             hotelNights: 1,
+            hotelPeople: 1,
             intercityLegs: [new LegInput(mobilityId: (string) $mobility->id())],
             movedWithinCity: true,
             cityTrips: 2,
@@ -412,6 +457,7 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
             usedHotel: true,
             accommodationPlaceReference: 'hotel',
             hotelNights: 1,
+            hotelPeople: 1,
             intercityLegs: [
                 new LegInput(mobilityId: (string) $flight->id(), destinationPlaceReference: 'madrid'),
                 new LegInput(mobilityId: (string) $train->id()),
@@ -513,6 +559,23 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
             token: $attendeeSurvey->token(),
             usedHotel: true,
             hotelNights: null,
+            hotelPeople: null,
+            intercityLegs: [new LegInput(mobilityId: (string) $mobility->id(), manualDistanceKm: 10.0)],
+        ));
+    }
+
+    public function testThrowsWhenHotelUsedWithoutPeople(): void
+    {
+        $attendeeSurvey = $this->surveyWithVenue();
+        $mobility = $this->mobility('Coche', TravelMode::Driving);
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        ($this->sut)($this->request(
+            token: $attendeeSurvey->token(),
+            usedHotel: true,
+            hotelNights: 2,
+            hotelPeople: null,
             intercityLegs: [new LegInput(mobilityId: (string) $mobility->id(), manualDistanceKm: 10.0)],
         ));
     }
@@ -546,9 +609,9 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
         return $attendeeSurvey;
     }
 
-    private function mobilityWithFactor(string $name, string $co2eq, TravelMode $travelMode = TravelMode::Driving): Mobility
+    private function mobilityWithFactor(string $name, string $co2eq, TravelMode $travelMode = TravelMode::Driving, FactorBasis $factorBasis = FactorBasis::PerPassenger): Mobility
     {
-        $mobility = MobilityMother::fromNameIdAndTravelMode($name, (string) MobilityId::generate(), $travelMode);
+        $mobility = MobilityMother::from($name, (string) MobilityId::generate(), travelMode: $travelMode, factorBasis: $factorBasis);
 
         $mobility->setEmissionFactor(new EmissionFactor(
             $co2eq,
@@ -605,6 +668,7 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
             usedHotel: false,
             accommodationPlaceReference: null,
             hotelNights: null,
+            hotelPeople: null,
             intercityRoundTrip: false,
             intercityTrips: 1,
             intercityLegs: [new LegInput(mobilityId: (string) $mobility->id(), manualDistanceKm: 100.0)],
@@ -643,6 +707,7 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
         bool $usedHotel = false,
         ?string $accommodationPlaceReference = null,
         ?int $hotelNights = null,
+        ?int $hotelPeople = null,
         bool $intercityRoundTrip = false,
         ?int $intercityTrips = 1,
         array $intercityLegs = [],
@@ -659,6 +724,7 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
             usedHotel: $usedHotel,
             accommodationPlaceReference: $accommodationPlaceReference,
             hotelNights: $hotelNights,
+            hotelPeople: $hotelPeople,
             intercityRoundTrip: $intercityRoundTrip,
             intercityTrips: $intercityTrips,
             intercityLegs: $intercityLegs,

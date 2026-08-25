@@ -9,6 +9,6 @@ final class AttendeeSurveyAggregation
     /** @param array<string, float> $kmByMobilityId */
     public function __construct(
         public readonly array $kmByMobilityId,
-        public readonly float $hotelNights,
+        public readonly float $overnightStays,
     ) {}
 }
