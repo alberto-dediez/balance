@@ -35,7 +35,7 @@
                         <div class="alert alert-warning">
                             {{ 'Código incorrecto.' | trans }}
                             {% if attemptsLeft is not null %}
-                                {{ 'Te quedan %n% intentos.' | trans({'%n%': attemptsLeft}) }}
+                                {{ 'Te quedan {n} intentos.' | trans({'n': attemptsLeft}) }}
                             {% endif %}
                         </div>
                     {% endif %}

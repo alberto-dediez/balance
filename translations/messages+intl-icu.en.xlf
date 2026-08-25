@@ -969,9 +969,9 @@
         <source>Código incorrecto.</source>
         <target>Incorrect code.</target>
       </trans-unit>
-      <trans-unit id="cXxD2Ir" resname="Te quedan %n% intentos.">
-        <source>Te quedan %n% intentos.</source>
-        <target>You have %n% attempts remaining.</target>
+      <trans-unit id="4S6RMyl" resname="Te quedan {n} intentos.">
+        <source>Te quedan {n} intentos.</source>
+        <target>You have {n} attempts remaining.</target>
       </trans-unit>
       <trans-unit id="5187CUS" resname="Verificar">
         <source>Verificar</source>

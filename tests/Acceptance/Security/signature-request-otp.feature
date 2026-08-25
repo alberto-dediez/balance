@@ -31,6 +31,7 @@ Feature:
         When I submit a wrong OTP to "/es/sign/otp-test-token-ddd/otp"
         Then the response status should be 200
         Then I see a text "Código incorrecto"
+        Then I see a text "Te quedan 2 intentos."
 
     Scenario: After three wrong attempts the OTP is locked
         Given account "MyCompany" with id "mycompany" exists
