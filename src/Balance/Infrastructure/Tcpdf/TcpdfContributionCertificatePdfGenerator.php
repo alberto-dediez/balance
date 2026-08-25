@@ -47,6 +47,9 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
 
     private const float FOOTER_RULE_Y = 187.0;
     private const float SIGNATURE_LINE_Y = 194.0;
+    private const float SIGNATURE_WIDTH = 55.0;
+    private const float SIGNATURE_IMAGE_WIDTH = 30.7;
+    private const float SIGNATURE_IMAGE_HEIGHT = 15.0;
 
     /** @var array{0: int, 1: int, 2: int} */
     private const array COLOR_MUTED_TEXT = [122, 132, 140];
@@ -355,7 +358,7 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
 
     private function renderFooter(ReportTcpdf $pdf, ContributionCertificateData $data, Locale $locale): void
     {
-        $pdf->Line(self::LEFT, self::FOOTER_RULE_Y, self::RIGHT, self::FOOTER_RULE_Y, ['width' => 0.2, 'color' => $this->pdfBranding()->faintLine]);
+        $pdf->Line(self::LEFT, self::FOOTER_RULE_Y, self::RIGHT - self::SIGNATURE_WIDTH - 5, self::FOOTER_RULE_Y, ['width' => 0.2, 'color' => $this->pdfBranding()->faintLine]);
 
         $notice = $data->type->isCompensation()
             ? $this->trans('Este certificado acredita la retirada de créditos de carbono verificados por los lotes indicados. Los créditos consumidos quedan trazados y no pueden volver a utilizarse ni contabilizarse por ninguna otra parte.', $locale)
@@ -365,9 +368,33 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
         $pdf->setXY(self::LEFT, self::FOOTER_RULE_Y + 4);
         $pdf->MultiCell(self::CONTENT_WIDTH, 4.2, $notice, 0, 'L');
 
-        $pdf->Line(self::RIGHT - 55, self::SIGNATURE_LINE_Y, self::RIGHT, self::SIGNATURE_LINE_Y, ['width' => 0.4, 'color' => $this->pdfBranding()->dark]);
+        $this->renderSignature($pdf);
 
-        $this->renderLabel($pdf, self::RIGHT - 55, self::SIGNATURE_LINE_Y + 2, 55, $this->trans('Firma del emisor', $locale), 'R');
+        $pdf->Line(self::RIGHT - self::SIGNATURE_WIDTH, self::SIGNATURE_LINE_Y, self::RIGHT, self::SIGNATURE_LINE_Y, ['width' => 0.4, 'color' => $this->pdfBranding()->dark]);
+
+        $this->renderLabel($pdf, self::RIGHT - self::SIGNATURE_WIDTH, self::SIGNATURE_LINE_Y + 2, self::SIGNATURE_WIDTH, $this->trans('Firma del emisor', $locale), 'R');
+    }
+
+    private function renderSignature(ReportTcpdf $pdf): void
+    {
+        $path = $this->getImagePath('emitter-signature.jpg');
+
+        if (!is_file($path)) {
+            return;
+        }
+
+        $pdf->Image(
+            $path,
+            self::RIGHT - (self::SIGNATURE_WIDTH + self::SIGNATURE_IMAGE_WIDTH) / 2,
+            self::SIGNATURE_LINE_Y - self::SIGNATURE_IMAGE_HEIGHT - 0.5,
+            self::SIGNATURE_IMAGE_WIDTH,
+            self::SIGNATURE_IMAGE_HEIGHT,
+            '',
+            '',
+            '',
+            false,
+            300,
+        );
     }
 
     private function renderLabel(ReportTcpdf $pdf, float $x, float $y, float $width, string $text, string $align = 'L'): void
