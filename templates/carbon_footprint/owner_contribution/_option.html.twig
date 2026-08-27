@@ -28,15 +28,16 @@
                 </p>
             {% elseif option.suggestedAmount is not null %}
                 <p class="mb-0 fw-semibold text-success">
-                    {{ option.suggestedAmount | number_format(2, ',', '.') }} €
-                    <span class="text-muted fw-normal small">{{ '(sin impuestos)' | trans }}</span>
+                    {{ 'Cantidad sugerida: {amount} €' | trans({
+                        '{amount}': option.suggestedAmount | number_format(2, ',', '.'),
+                    }) }}
                 </p>
             {% endif %}
 
             <div class="d-grid gap-2 mt-auto pt-3">
                 <a class="btn btn-success"
                    href="{{ path(routes.checkout, routes.routeParams | merge({projectId: project.id})) }}">
-                    {{ option.funding.isOwnCredit ? 'Compensar' | trans : 'Aportar' | trans }}
+                    {{ option.funding.isOwnCredit ? 'Compensar' | trans : 'Aportar cantidad sugerida o libre' | trans }}
                 </a>
                 <a class="btn btn-outline-dark btn-sm" href="{{ detailPath }}">
                     {{ 'Ver detalles' | trans }}

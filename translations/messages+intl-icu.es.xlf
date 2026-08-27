@@ -7209,6 +7209,30 @@
         <source>Mapa de orígenes</source>
         <target>Mapa de orígenes</target>
       </trans-unit>
+      <trans-unit id="VnhbnVh" resname="Unión Europea">
+        <source>Unión Europea</source>
+        <target>Unión Europea</target>
+      </trans-unit>
+      <trans-unit id="TJ3QN60" resname="Tipo de IVA (%)">
+        <source>Tipo de IVA (%)</source>
+        <target>Tipo de IVA (%)</target>
+      </trans-unit>
+      <trans-unit id="UwAQGsf" resname="Cantidad sugerida: {amount} €">
+        <source>Cantidad sugerida: {amount} €</source>
+        <target>Cantidad sugerida: {amount} €</target>
+      </trans-unit>
+      <trans-unit id="teBTWhA" resname="Aportar cantidad sugerida o libre">
+        <source>Aportar cantidad sugerida o libre</source>
+        <target>Aportar cantidad sugerida o libre</target>
+      </trans-unit>
+      <trans-unit id="oiz3pTm" resname="UE">
+        <source>UE</source>
+        <target>UE</target>
+      </trans-unit>
+      <trans-unit id="gVFOjWe" resname="IVA %">
+        <source>IVA %</source>
+        <target>IVA %</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

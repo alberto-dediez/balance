@@ -52,10 +52,9 @@
 
     {% if option.suggestedAmount is not null %}
         <p class="mb-3 fw-semibold text-success">
-            {{ 'Compensar tu huella en este proyecto cuesta {amount} €.' | trans({
+            {{ 'Cantidad sugerida: {amount} €' | trans({
                 '{amount}': option.suggestedAmount | number_format(2, ',', '.'),
             }) }}
-            <span class="text-muted fw-normal small">{{ '(sin impuestos)' | trans }}</span>
         </p>
     {% endif %}
 
@@ -63,7 +62,7 @@
         <a class="btn btn-success"
            href="{{ path(routes.checkout, routes.routeParams | merge({projectId: project.id})) }}">
             <twig:Icon name="solar:hand-heart-bold" class="me-1" />
-            {{ 'Aportar a este proyecto' | trans }}
+            {{ 'Aportar cantidad sugerida o libre' | trans }}
         </a>
     </div>
 
