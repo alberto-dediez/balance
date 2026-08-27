@@ -17,77 +17,75 @@
                             <twig:Icon name="solar:clock-circle-bold" size="xl" class="text-warning mb-3" />
                             <h5 class="mb-1">{{ 'Certificado en preparación' | trans }}</h5>
                         {% endif %}
-                        <p class="mb-1"><code>{{ certificate.code }}</code></p>
+                        <p class="mb-1"><code class="text-break">{{ certificate.code }}</code></p>
                         <p class="text-muted small mb-0">
                             {{ 'Esta referencia debe coincidir con la impresa en el documento' | trans }}
                         </p>
                     </div>
 
-                    <table class="table table-sm mb-0">
-                        <tbody>
-                            <tr>
-                                <th scope="row" class="fw-normal">{{ 'Tipo de documento' | trans }}</th>
-                                <td class="text-end">
-                                    {{ certificate.type.value | trans({}, 'contributionCertificateType') }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="fw-normal">{{ 'Beneficiario' | trans }}</th>
-                                <td class="text-end">{{ certificate.beneficiaryName }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="fw-normal">{{ 'Proyecto' | trans }}</th>
-                                <td class="text-end">{{ certificate.projectName }}</td>
-                            </tr>
-                            {% if certificate.projectLocation %}
-                                <tr>
-                                    <th scope="row" class="fw-normal">{{ 'Ubicación' | trans }}</th>
-                                    <td class="text-end">{{ certificate.projectLocation }}</td>
-                                </tr>
-                            {% endif %}
-                            {% if certificate.projectRegistryId %}
-                                <tr>
-                                    <th scope="row" class="fw-normal">{{ 'Registro oficial' | trans }}</th>
-                                    <td class="text-end">{{ certificate.projectRegistryId }}</td>
-                                </tr>
-                            {% endif %}
-                            {% if certificate.co2eqKg is not null %}
-                                <tr>
-                                    <th scope="row" class="fw-normal">{{ 'Emisiones compensadas' | trans }}</th>
-                                    <td class="text-end text-nowrap">
-                                        {{ certificate.co2eqKg | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}
-                                    </td>
-                                </tr>
-                            {% endif %}
-                            {% if certificate.creditLots is not empty %}
-                                <tr>
-                                    <th scope="row" class="fw-normal">{{ 'Lotes de créditos' | trans }}</th>
-                                    <td class="text-end">
-                                        {% for lot in certificate.creditLots %}
-                                            <code class="d-block text-nowrap">
-                                                {{ lot.serial }} ·
-                                                {{ lot.startTonnes | number_format(6, ',', '.') }} –
-                                                {{ lot.endTonnes | number_format(6, ',', '.') }} t
-                                            </code>
-                                        {% endfor %}
-                                    </td>
-                                </tr>
-                            {% elseif certificate.masterSerials is not empty %}
-                                <tr>
-                                    <th scope="row" class="fw-normal">{{ 'Números de serie maestros' | trans }}</th>
-                                    <td class="text-end">
-                                        {% for serial in certificate.masterSerials %}
-                                            <code class="d-block">{{ serial }}</code>
-                                        {% endfor %}
-                                    </td>
-                                </tr>
-                            {% endif %}
-                            <tr>
-                                <th scope="row" class="fw-normal">{{ 'Fecha de emisión' | trans }}</th>
-                                <td class="text-end">{{ certificate.issuedAt | date('d/m/Y') }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="border-top">
+                        <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                            <div class="text-muted small flex-shrink-0">{{ 'Tipo de documento' | trans }}</div>
+                            <div class="text-sm-end text-break">
+                                {{ certificate.type.value | trans({}, 'contributionCertificateType') }}
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                            <div class="text-muted small flex-shrink-0">{{ 'Beneficiario' | trans }}</div>
+                            <div class="text-sm-end text-break">{{ certificate.beneficiaryName }}</div>
+                        </div>
+                        <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                            <div class="text-muted small flex-shrink-0">{{ 'Proyecto' | trans }}</div>
+                            <div class="text-sm-end text-break">{{ certificate.projectName }}</div>
+                        </div>
+                        {% if certificate.projectLocation %}
+                            <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                                <div class="text-muted small flex-shrink-0">{{ 'Ubicación' | trans }}</div>
+                                <div class="text-sm-end text-break">{{ certificate.projectLocation }}</div>
+                            </div>
+                        {% endif %}
+                        {% if certificate.projectRegistryId %}
+                            <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                                <div class="text-muted small flex-shrink-0">{{ 'Registro oficial' | trans }}</div>
+                                <div class="text-sm-end text-break">{{ certificate.projectRegistryId }}</div>
+                            </div>
+                        {% endif %}
+                        {% if certificate.co2eqKg is not null %}
+                            <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                                <div class="text-muted small flex-shrink-0">{{ 'Emisiones compensadas' | trans }}</div>
+                                <div class="text-sm-end text-nowrap">
+                                    {{ certificate.co2eqKg | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if certificate.creditLots is not empty %}
+                            <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                                <div class="text-muted small flex-shrink-0">{{ 'Lotes de créditos' | trans }}</div>
+                                <div class="text-sm-end text-break">
+                                    {% for lot in certificate.creditLots %}
+                                        <code class="d-block text-break">{{ lot.serial }}</code>
+                                        <span class="d-block small text-muted mb-2">
+                                            {{ lot.startTonnes | number_format(6, ',', '.') }} –
+                                            {{ lot.endTonnes | number_format(6, ',', '.') }} t
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% elseif certificate.masterSerials is not empty %}
+                            <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                                <div class="text-muted small flex-shrink-0">{{ 'Números de serie maestros' | trans }}</div>
+                                <div class="text-sm-end text-break">
+                                    {% for serial in certificate.masterSerials %}
+                                        <code class="d-block text-break">{{ serial }}</code>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                            <div class="text-muted small flex-shrink-0">{{ 'Fecha de emisión' | trans }}</div>
+                            <div class="text-sm-end">{{ certificate.issuedAt | date('d/m/Y') }}</div>
+                        </div>
+                    </div>
 
                     {% if certificate.creditLots is not empty %}
                         <p class="text-muted small mt-3 mb-0">
