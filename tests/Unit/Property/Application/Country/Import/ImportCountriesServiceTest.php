@@ -88,6 +88,36 @@ class ImportCountriesServiceTest extends TestCase
         $this->assertEquals('234', $england->externalId()->bioscore());
     }
 
+    public function testItKeepsTheTaxConfigurationOfTheMatchedCountries(): void
+    {
+        $repository = CountryRepositoryMother::inMemory();
+
+        $user = UserMother::fromUsernameAndRole('admin', Role::Admin);
+
+        $sut = $this->createSUT($repository);
+
+        $spain = CountryMother::spain();
+
+        $repository->add($spain);
+
+        $request = new ImportCountriesRequest([
+            new CountryRequest(
+                name: 'España',
+                source: ExternalSource::Bioscore,
+                externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, '1234'),
+                createIfNotExists: false,
+            ),
+        ]);
+
+        $sut($request, $user);
+
+        $persisted = $repository->find($spain->id());
+
+        $this->assertNotNull($persisted);
+        $this->assertSame(21.0, $persisted->vatRate());
+        $this->assertTrue($persisted->isEuropeanUnion());
+    }
+
     private function createSUT(InMemoryCountryRepository $repository): ImportCountriesService
     {
         $registerService = $this->createMock(RegisterCountryService::class);

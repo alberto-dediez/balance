@@ -6,7 +6,7 @@ Feature:
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
-        Given country "España" with iso "ES" and id "C-ES" exists
+        Given european union country "España" with iso "ESP" and vat "21" and id "C-ES" exists
         Given project "Reforestación" with id "1111" and price per tonne "20" exists
         Given project "1111" is adhered to account "666"
         Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists

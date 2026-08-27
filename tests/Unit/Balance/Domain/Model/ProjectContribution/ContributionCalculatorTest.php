@@ -6,8 +6,10 @@ namespace App\Tests\Unit\Balance\Domain\Model\ProjectContribution;
 
 use App\Balance\Domain\Model\ProjectContribution\ContributionCalculator;
 use App\Payments\Domain\Model\Vat\VatCalculator;
+use App\Payments\Domain\Model\Vat\VatCountry;
 use App\Payments\Domain\Model\Vat\VatExemptionReason;
 use App\Payments\Domain\Model\Vat\VatNumberFormatValidator;
+use App\Payments\Infrastructure\Vat\InMemory\InMemoryVatCountryProvider;
 use PHPUnit\Framework\TestCase;
 
 class ContributionCalculatorTest extends TestCase
@@ -18,7 +20,7 @@ class ContributionCalculatorTest extends TestCase
             co2eqKg: 2000.0,
             pricePerTonne: 20.0,
             costPerTonne: 15.0,
-            countryCode: 'ES',
+            countryCode: 'ESP',
         );
 
         $this->assertSame(2.0, $amounts->tonnes);
@@ -36,7 +38,7 @@ class ContributionCalculatorTest extends TestCase
             co2eqKg: 1000.0,
             pricePerTonne: 20.0,
             costPerTonne: 20.0,
-            countryCode: 'ES',
+            countryCode: 'ESP',
         );
 
         $this->assertSame(0.0, $amounts->managementFeeAmount);
@@ -49,7 +51,7 @@ class ContributionCalculatorTest extends TestCase
             co2eqKg: 1000.0,
             pricePerTonne: 10.0,
             costPerTonne: 15.0,
-            countryCode: 'ES',
+            countryCode: 'ESP',
         );
 
         $this->assertSame(0.0, $amounts->managementFeeAmount);
@@ -62,7 +64,7 @@ class ContributionCalculatorTest extends TestCase
             amount: 50.0,
             pricePerTonne: 20.0,
             costPerTonne: 15.0,
-            countryCode: 'ES',
+            countryCode: 'ESP',
         );
 
         $this->assertTrue($amounts->freeAmount);
@@ -76,7 +78,7 @@ class ContributionCalculatorTest extends TestCase
 
     public function testAFreeAmountIsChargedToTheContributorAsTyped(): void
     {
-        foreach (['ES', 'DE'] as $countryCode) {
+        foreach (['ESP', 'DEU'] as $countryCode) {
             $amounts = $this->createSUT()->fromFreeAmount(
                 amount: 10.0,
                 pricePerTonne: 20.0,
@@ -95,7 +97,7 @@ class ContributionCalculatorTest extends TestCase
             co2eqKg: 1000.0,
             pricePerTonne: 20.0,
             costPerTonne: 15.0,
-            countryCode: 'DE',
+            countryCode: 'DEU',
             isCompany: true,
             vatNumber: 'DE123456789',
         );
@@ -109,37 +111,39 @@ class ContributionCalculatorTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $this->createSUT()->fromEmissions(1000.0, 0.0, 15.0, 'ES');
+        $this->createSUT()->fromEmissions(1000.0, 0.0, 15.0, 'ESP');
     }
 
     public function testRejectsANonPositiveFreeAmount(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $this->createSUT()->fromFreeAmount(0.0, 20.0, 15.0, 'ES');
+        $this->createSUT()->fromFreeAmount(0.0, 20.0, 15.0, 'ESP');
     }
 
     public function testRejectsAFreeAmountAboveTheCeiling(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $this->createSUT()->fromFreeAmount(ContributionCalculator::MAX_FREE_AMOUNT + 0.01, 20.0, 15.0, 'ES');
+        $this->createSUT()->fromFreeAmount(ContributionCalculator::MAX_FREE_AMOUNT + 0.01, 20.0, 15.0, 'ESP');
     }
 
     public function testRejectsNonPositiveEmissions(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $this->createSUT()->fromEmissions(0.0, 20.0, 15.0, 'ES');
+        $this->createSUT()->fromEmissions(0.0, 20.0, 15.0, 'ESP');
     }
 
     private function createSUT(): ContributionCalculator
     {
         return new ContributionCalculator(new VatCalculator(
             new VatNumberFormatValidator(),
-            rates: ['ES' => 21.0, 'DE' => 19.0],
-            euCountries: ['ES', 'DE'],
-            homeCountry: 'ES',
+            new InMemoryVatCountryProvider([
+                new VatCountry('ESP', 21.0, true),
+                new VatCountry('DEU', 19.0, true),
+            ]),
+            homeCountry: 'ESP',
         ));
     }
 }

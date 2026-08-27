@@ -7,7 +7,7 @@ Feature:
         Given event "Evento A" with id "333" of account "666" exists
         Given mobility "Coche" with id "M1" and emission factor for the current year exists
         Given attendee survey with id "AS1" and token "token-abc" for event "333" of account "666" exists
-        Given country "España" with iso "ES" and id "C-ES" exists
+        Given european union country "España" with iso "ESP" and vat "21" and id "C-ES" exists
         Given project "Reforestación" with id "1111" and price per tonne "20" exists
         Given project "1111" is adhered to account "666"
         Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
@@ -30,12 +30,12 @@ Feature:
         Then the response status should be 200
         Then I see a text "Elige tu país para ver el desglose"
         Then I do not see a text "Margen de gestión"
-        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ES" and button "Recalcular"
+        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ESP" and button "Recalcular"
         Then the response status should be 200
         Then I see a text "Desglose"
         Then I see a text "Aportación al proyecto"
         Then there should be 0 contributions
-        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ES" and button "Pagar"
+        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ESP" and button "Pagar"
         Then I am redirected to the payment gateway
         Then the only contribution should be "pending"
         When the gateway notifies that the payment of the only contribution succeeded
@@ -62,11 +62,11 @@ Feature:
     Scenario: An attendee makes a free contribution instead of offsetting their footprint
         When I click on link "Compensar mi huella"
         When I click on link "Aportar"
-        When I submit a form with "mode:free|amount:40|name:Ana|email:ana@example.com|country:ES" and button "Recalcular"
+        When I submit a form with "mode:free|amount:40|name:Ana|email:ana@example.com|country:ESP" and button "Recalcular"
         Then the response status should be 200
         Then I see a text "Desglose"
         Then I see a text "Pagar 40,00 €"
-        When I submit a form with "mode:free|amount:40|name:Ana|email:ana@example.com|country:ES" and button "Pagar"
+        When I submit a form with "mode:free|amount:40|name:Ana|email:ana@example.com|country:ESP" and button "Pagar"
         Then I am redirected to the payment gateway
         Then the only contribution should be "pending"
         Then account "666" should have "8.347" available tonnes in project "1111"
@@ -74,7 +74,7 @@ Feature:
     Scenario: A free contribution above the credit left is refused before paying
         When I click on link "Compensar mi huella"
         When I click on link "Aportar"
-        When I submit a form with "mode:free|amount:400|name:Ana|email:ana@example.com|country:ES" and button "Recalcular"
+        When I submit a form with "mode:free|amount:400|name:Ana|email:ana@example.com|country:ESP" and button "Recalcular"
         Then the response status should be 200
         Then I see a text "no tiene crédito suficiente para el importe que has indicado"
         Then I do not see a text "Pagar"
@@ -83,7 +83,7 @@ Feature:
     Scenario: A free amount out of range is refused before quoting anything
         When I click on link "Compensar mi huella"
         When I click on link "Aportar"
-        When I submit a form with "mode:free|amount:1e9|name:Ana|email:ana@example.com|country:ES" and button "Recalcular"
+        When I submit a form with "mode:free|amount:1e9|name:Ana|email:ana@example.com|country:ESP" and button "Recalcular"
         Then the response status should be 200
         Then I see a text "El importe debe ser un número"
         Then there should be 0 contributions
@@ -100,7 +100,7 @@ Feature:
     Scenario: The breakdown is refreshed on its own without reloading the page
         When I click on link "Compensar mi huella"
         When I click on link "Aportar"
-        When I submit a form with "mode:free|amount:40|country:ES" and button "Recalcular" as an ajax request
+        When I submit a form with "mode:free|amount:40|country:ESP" and button "Recalcular" as an ajax request
         Then the response status should be 200
         Then I see a text "Desglose"
         Then I see a text "Pagar"
@@ -110,8 +110,8 @@ Feature:
     Scenario: The attendee downloads the certificate of their contribution from the thank-you page
         When I click on link "Compensar mi huella"
         When I click on link "Aportar"
-        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ES" and button "Recalcular"
-        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ES" and button "Pagar"
+        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ESP" and button "Recalcular"
+        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ESP" and button "Pagar"
         Then the only contribution should be "pending"
         When the gateway notifies that the payment of the only contribution succeeded
         When the queued messages are processed
@@ -125,8 +125,8 @@ Feature:
     Scenario: The certificate cannot be downloaded with an invalid survey token
         When I click on link "Compensar mi huella"
         When I click on link "Aportar"
-        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ES" and button "Recalcular"
-        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ES" and button "Pagar"
+        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ESP" and button "Recalcular"
+        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ESP" and button "Pagar"
         When the gateway notifies that the payment of the only contribution succeeded
         When the queued messages are processed
         When I download the certificate of the only contribution with attendee survey token "not-a-token"

@@ -6,15 +6,10 @@ namespace App\Payments\Domain\Model\Vat;
 
 final class VatCalculator
 {
-    /**
-     * @param array<string, float> $rates
-     * @param array<int, string>   $euCountries
-     */
     public function __construct(
         private VatNumberFormatValidator $vatNumberFormatValidator,
-        private array $rates = [],
-        private array $euCountries = [],
-        private string $homeCountry = 'ES',
+        private VatCountryProvider $vatCountryProvider,
+        private string $homeCountry = 'ESP',
     ) {}
 
     public function calculate(
@@ -51,17 +46,26 @@ final class VatCalculator
     private function rateAndReason(string $countryCode, bool $isCompany, ?string $vatNumber): array
     {
         $country = strtoupper(trim($countryCode));
-        $reason = $this->reasonFor($country, $isCompany, $vatNumber);
-        $rate = VatExemptionReason::ReverseCharge === $reason || VatExemptionReason::OutsideEu === $reason
-            ? 0.0
-            : $this->rateFor($country);
+        $vatCountry = $this->vatCountryProvider->findByIso($country);
+        $reason = $this->reasonFor($country, $vatCountry, $isCompany, $vatNumber);
 
-        return [$rate, $reason];
+        if (!$vatCountry instanceof VatCountry
+            || VatExemptionReason::ReverseCharge === $reason
+            || VatExemptionReason::OutsideEu === $reason
+        ) {
+            return [0.0, $reason];
+        }
+
+        return [$vatCountry->rate, $reason];
     }
 
-    private function reasonFor(string $country, bool $isCompany, ?string $vatNumber): VatExemptionReason
-    {
-        if (!$this->isEuCountry($country)) {
+    private function reasonFor(
+        string $country,
+        ?VatCountry $vatCountry,
+        bool $isCompany,
+        ?string $vatNumber,
+    ): VatExemptionReason {
+        if (!$vatCountry instanceof VatCountry || !$vatCountry->europeanUnion) {
             return VatExemptionReason::OutsideEu;
         }
 
@@ -76,18 +80,8 @@ final class VatCalculator
         return VatExemptionReason::OssDestination;
     }
 
-    private function rateFor(string $country): float
-    {
-        return $this->rates[$country] ?? 0.0;
-    }
-
     private function isHomeCountry(string $country): bool
     {
         return strtoupper($this->homeCountry) === $country;
-    }
-
-    private function isEuCountry(string $country): bool
-    {
-        return in_array($country, array_map(strtoupper(...), $this->euCountries), true);
     }
 }

@@ -74,6 +74,8 @@ class ImportCountriesService
                     $countryMatch->externalId()->combine(
                         $request->externalId,
                     ),
+                    vatRate: $countryMatch->vatRate(),
+                    europeanUnion: $countryMatch->isEuropeanUnion(),
                 ), $user);
             }
 
@@ -82,6 +84,8 @@ class ImportCountriesService
                     name: $request->name,
                     iso: $request->iso,
                     externalId: $request->externalId,
+                    vatRate: $request->vatRate,
+                    europeanUnion: $request->europeanUnion,
                 ), $user);
 
                 $countryMatch = new Country($registerResponse->countryId);
@@ -93,6 +97,8 @@ class ImportCountriesService
                 externalId: $request->externalId,
                 createIfNotExists: $request->createIfNotExists,
                 countryId: $countryMatch?->id(),
+                vatRate: $request->vatRate,
+                europeanUnion: $request->europeanUnion,
             );
         }
 

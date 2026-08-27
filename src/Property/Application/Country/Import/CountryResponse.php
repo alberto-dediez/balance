@@ -15,5 +15,7 @@ class CountryResponse
         public ?ExternalId $externalId = null,
         public ?bool $createIfNotExists = false,
         public ?CountryId $countryId = null,
+        public ?float $vatRate = null,
+        public bool $europeanUnion = false,
     ) {}
 }

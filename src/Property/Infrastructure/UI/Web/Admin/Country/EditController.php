@@ -40,6 +40,8 @@ class EditController extends AbstractController
             name: $country->name(),
             iso: $country->iso(),
             externalId: $country->externalId(),
+            vatRate: $country->vatRate(),
+            europeanUnion: $country->isEuropeanUnion(),
         );
 
         $form = $this->createForm(AdminUpdateCountryType::class, $countryRequest);

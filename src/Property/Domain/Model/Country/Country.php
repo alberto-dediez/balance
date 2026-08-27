@@ -19,6 +19,8 @@ class Country implements \Stringable
         private CountryId $id,
         private string $name = '',
         private ?string $iso = null,
+        private ?float $vatRate = null,
+        private bool $europeanUnion = false,
         private ?ExternalId $externalId = null,
         private bool $removed = false,
         array $events = [],
@@ -41,6 +43,16 @@ class Country implements \Stringable
     public function iso(): ?string
     {
         return $this->iso;
+    }
+
+    public function vatRate(): ?float
+    {
+        return $this->vatRate;
+    }
+
+    public function isEuropeanUnion(): bool
+    {
+        return $this->europeanUnion;
     }
 
     public function externalId(): ExternalId
@@ -67,26 +79,40 @@ class Country implements \Stringable
         return $this->removedAt;
     }
 
-    public function register(string $name, ?string $iso, ?ExternalId $externalId = null): void
-    {
+    public function register(
+        string $name,
+        ?string $iso,
+        ?ExternalId $externalId = null,
+        ?float $vatRate = null,
+        bool $europeanUnion = false,
+    ): void {
         $this->recordApplyAndPublish(
             new CountryRegistered(
                 countryId: $this->id(),
                 name: $name,
                 iso: $iso,
                 externalId: $externalId,
+                vatRate: $vatRate,
+                europeanUnion: $europeanUnion,
             ),
         );
     }
 
-    public function update(string $name, ?string $iso, ?ExternalId $externalId = null): void
-    {
+    public function update(
+        string $name,
+        ?string $iso,
+        ?ExternalId $externalId = null,
+        ?float $vatRate = null,
+        bool $europeanUnion = false,
+    ): void {
         $this->recordApplyAndPublish(
             new CountryUpdated(
                 countryId: $this->id(),
                 name: $name,
                 iso: $iso,
                 externalId: $externalId,
+                vatRate: $vatRate,
+                europeanUnion: $europeanUnion,
             ),
         );
     }
@@ -106,6 +132,8 @@ class Country implements \Stringable
         $this->iso = $event->iso();
         $this->registeredAt = $event->occurredOn();
         $this->externalId = $event->externalId() ?? new ExternalId();
+        $this->vatRate = $event->vatRate();
+        $this->europeanUnion = $event->isEuropeanUnion();
     }
 
     public function applyCountryUpdated(CountryUpdated $event): void
@@ -113,6 +141,8 @@ class Country implements \Stringable
         $this->name = $event->name();
         $this->iso = $event->iso();
         $this->externalId = $event->externalId() ?? $this->externalId();
+        $this->vatRate = $event->vatRate();
+        $this->europeanUnion = $event->isEuropeanUnion();
     }
 
     public function applyCountryRemoved(CountryRemoved $event): void

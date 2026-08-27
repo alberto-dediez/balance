@@ -30,7 +30,13 @@ class UpdateCountryService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($country, Action::Edit, $user);
 
-        $country->update($request->name, $request->iso, $request->externalId);
+        $country->update(
+            $request->name,
+            $request->iso,
+            $request->externalId,
+            $request->vatRate,
+            $request->europeanUnion,
+        );
 
         $this->repository->add($country);
 
@@ -38,6 +44,8 @@ class UpdateCountryService implements CommandHandler
             countryId: $country->id(),
             name: $country->name(),
             iso: $country->iso(),
+            vatRate: $country->vatRate(),
+            europeanUnion: $country->isEuropeanUnion(),
         );
     }
 

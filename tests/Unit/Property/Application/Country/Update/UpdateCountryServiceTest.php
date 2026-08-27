@@ -42,6 +42,8 @@ class UpdateCountryServiceTest extends TestCase
             countryId: $country->id(),
             name: 'Spain',
             iso: '6666',
+            vatRate: 21.0,
+            europeanUnion: true,
         );
 
         $user = UserMother::fromUsernameAndRole('user', Role::Admin);
@@ -58,6 +60,8 @@ class UpdateCountryServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof CountryUpdated);
         $this->assertEquals('Spain', $lastEvent->name());
         $this->assertEquals('6666', (string) $lastEvent->iso());
+        $this->assertSame(21.0, $countryPersisted->vatRate());
+        $this->assertTrue($countryPersisted->isEuropeanUnion());
         $this->assertTrue($countryPersisted->id()->equals($lastEvent->countryId()));
     }
 

@@ -24,9 +24,11 @@ use App\Payments\Application\Payment\Start\StartPaymentService;
 use App\Payments\Domain\Model\Payment\PaymentGateway;
 use App\Payments\Domain\Model\Payment\PaymentGatewayException;
 use App\Payments\Domain\Model\Vat\VatCalculator;
+use App\Payments\Domain\Model\Vat\VatCountry;
 use App\Payments\Domain\Model\Vat\VatExemptionReason;
 use App\Payments\Domain\Model\Vat\VatNumberFormatValidator;
 use App\Payments\Infrastructure\Payment\Fake\FakePaymentGateway;
+use App\Payments\Infrastructure\Vat\InMemory\InMemoryVatCountryProvider;
 use App\Security\Application\User\SystemActor\SystemActorResolver;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
@@ -281,7 +283,7 @@ class RegisterProjectContributionServiceTest extends TestCase
             projectId: $this->projectId,
             contributorName: 'Guest',
             contributorEmail: 'guest@example.com',
-            contributorCountry: 'ES',
+            contributorCountry: 'ESP',
             successUrl: 'https://app.test/return',
             cancelUrl: 'https://app.test/cancel',
             originId: 'trip-1',
@@ -326,9 +328,10 @@ class RegisterProjectContributionServiceTest extends TestCase
                 $creditAvailability,
                 new ContributionCalculator(new VatCalculator(
                     new VatNumberFormatValidator(),
-                    rates: ['ES' => 21.0],
-                    euCountries: ['ES'],
-                    homeCountry: 'ES',
+                    new InMemoryVatCountryProvider([
+                        new VatCountry('ESP', 21.0, true),
+                    ]),
+                    homeCountry: 'ESP',
                 )),
             ),
             $this->contributions,

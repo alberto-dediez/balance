@@ -15,5 +15,7 @@ class CountryRequest
         public ExternalId $externalId,
         public ?string $iso = null,
         public ?bool $createIfNotExists = false,
+        public ?float $vatRate = null,
+        public bool $europeanUnion = false,
     ) {}
 }

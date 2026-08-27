@@ -6,7 +6,7 @@ Feature:
         Given account "MyCompany" with id "666" exists
         Given property "Hotel A" with id "777" of account "666" exists
         Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
-        Given country "España" with iso "ES" and id "C-ES" exists
+        Given european union country "España" with iso "ESP" and vat "21" and id "C-ES" exists
 
     Scenario: Paying an offsetting contribution issues a compensation certificate traced to its credit lot
         Given project "Reforestación" with id "1111" and price per tonne "20" exists

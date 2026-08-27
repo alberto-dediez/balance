@@ -37,7 +37,9 @@ class RegisterCountryServiceTest extends TestCase
 
         $request = new RegisterCountryRequest(
             name: 'Spain',
-            iso: 'ES',
+            iso: 'ESP',
+            vatRate: 21.0,
+            europeanUnion: true,
         );
 
         $result = $sut($request, $user);
@@ -54,6 +56,8 @@ class RegisterCountryServiceTest extends TestCase
         $this->assertNotNull($lastEvent);
         $this->assertTrue($lastEvent instanceof CountryRegistered);
         $this->assertEquals('Spain', $lastEvent->name());
+        $this->assertSame(21.0, $countryPersisted->vatRate());
+        $this->assertTrue($countryPersisted->isEuropeanUnion());
         $this->assertTrue($countryPersisted->id()->equals($lastEvent->countryId()));
     }
 

@@ -9,5 +9,11 @@ use App\Shared\Application\CommandBus\Command;
 
 class RegisterCountryRequest implements Command
 {
-    public function __construct(public string $name = '', public ?string $iso = null, public ?ExternalId $externalId = null) {}
+    public function __construct(
+        public string $name = '',
+        public ?string $iso = null,
+        public ?ExternalId $externalId = null,
+        public ?float $vatRate = null,
+        public bool $europeanUnion = false,
+    ) {}
 }

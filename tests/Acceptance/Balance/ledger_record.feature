@@ -5,7 +5,7 @@ Feature:
         Given user "payment" with role "ROLE_ADMIN" exists
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
-        Given country "España" with iso "ES" and id "C-ES" exists
+        Given european union country "España" with iso "ESP" and vat "21" and id "C-ES" exists
 
     Scenario: The net of a contribution backed by a lot paid by the client is accrued to the account
         Given project "Reforestación" with id "1111" and price per tonne "20" exists

@@ -32,11 +32,23 @@ class RegisterCountryService implements CommandHandler
         ), Action::Register, $user);
 
         $country = new Country($id);
-        $country->register($request->name, $request->iso, $request->externalId);
+        $country->register(
+            $request->name,
+            $request->iso,
+            $request->externalId,
+            $request->vatRate,
+            $request->europeanUnion,
+        );
 
         $this->countryRepository->add($country);
 
-        return new RegisterCountryResponse($country->id(), $country->name(), $country->iso());
+        return new RegisterCountryResponse(
+            countryId: $country->id(),
+            name: $country->name(),
+            iso: $country->iso(),
+            vatRate: $country->vatRate(),
+            europeanUnion: $country->isEuropeanUnion(),
+        );
     }
 
     public function isHandled(Command $command): bool

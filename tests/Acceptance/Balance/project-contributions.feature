@@ -7,7 +7,7 @@ Feature:
         Given property "Hotel A" with id "777" of account "666" exists
         Given mobility "Coche" with id "M1" and emission factor for the current year exists
         Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
-        Given country "España" with iso "ES" and id "C-ES" exists
+        Given european union country "España" with iso "ESP" and vat "21" and id "C-ES" exists
 
     Scenario: A guest offsets their emissions and the payment confirms the contribution
         Given project "Reforestación" with id "1111" and price per tonne "20" exists
@@ -28,13 +28,13 @@ Feature:
         Then the response status should be 200
         Then I see a text "Elige tu país para ver el desglose"
         Then I do not see a text "Margen de gestión"
-        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ES" and button "Recalcular"
+        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ESP" and button "Recalcular"
         Then the response status should be 200
         Then I see a text "Desglose"
         Then I see a text "Margen de gestión"
         Then I see a text "Aportación al proyecto"
         Then there should be 0 contributions
-        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ES" and button "Pagar"
+        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ESP" and button "Pagar"
         Then I am redirected to the payment gateway
         Then the only contribution should be "pending"
 
@@ -85,11 +85,11 @@ Feature:
         When I click on link "Aportar"
         Then the response status should be 200
         Then I see a text "Tu visita no genera emisiones que compensar"
-        When I submit a form with "mode:free|amount:40|name:Ana|email:ana@example.com|country:ES" and button "Recalcular"
+        When I submit a form with "mode:free|amount:40|name:Ana|email:ana@example.com|country:ESP" and button "Recalcular"
         Then the response status should be 200
         Then I see a text "Desglose"
         Then I see a text "Pagar 40,00 €"
-        When I submit a form with "mode:free|amount:40|name:Ana|email:ana@example.com|country:ES" and button "Pagar"
+        When I submit a form with "mode:free|amount:40|name:Ana|email:ana@example.com|country:ESP" and button "Pagar"
         Then I am redirected to the payment gateway
         Then the only contribution should be "pending"
         Then account "666" should have "8.347" available tonnes in project "1111"
@@ -108,7 +108,7 @@ Feature:
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         When I click on link "Compensar mi huella"
         When I click on link "Aportar"
-        When I submit a form with "mode:free|amount:400|name:Ana|email:ana@example.com|country:ES" and button "Recalcular"
+        When I submit a form with "mode:free|amount:400|name:Ana|email:ana@example.com|country:ESP" and button "Recalcular"
         Then the response status should be 200
         Then I see a text "no tiene crédito suficiente para el importe que has indicado"
         Then I do not see a text "Pagar"
@@ -125,7 +125,7 @@ Feature:
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         When I click on link "Compensar mi huella"
         When I click on link "Aportar"
-        When I submit a form with "mode:free|amount:40|country:ES" and button "Recalcular" as an ajax request
+        When I submit a form with "mode:free|amount:40|country:ESP" and button "Recalcular" as an ajax request
         Then the response status should be 200
         Then I see a text "Desglose"
         Then I see a text "Pagar"
@@ -161,7 +161,7 @@ Feature:
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         When I click on link "Compensar mi huella"
         When I click on link "Aportar"
-        When I submit a form with "mode:free|amount:1e9|name:Ana|email:ana@example.com|country:ES" and button "Recalcular"
+        When I submit a form with "mode:free|amount:1e9|name:Ana|email:ana@example.com|country:ESP" and button "Recalcular"
         Then the response status should be 200
         Then I see a text "El importe debe ser un número"
         Then I do not see a text "Desglose"

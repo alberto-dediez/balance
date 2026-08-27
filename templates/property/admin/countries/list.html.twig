@@ -11,6 +11,10 @@
         }, {
             'label': 'ISO' | trans,
         }, {
+            'label': 'UE' | trans,
+        }, {
+            'label': 'IVA %' | trans,
+        }, {
             'label': 'Fecha de registro' | trans,
             'sortable': true,
             'sortableBy': 'registeredAt'
@@ -22,6 +26,8 @@
     <twig:List:Table :columns="columns" :elements="countries" :bulkForm="bulkForm">
         <td>{{ element.name }}</td>
         <td>{{ element.iso }}</td>
+        <td>{{ element.europeanUnion ? 'Sí' | trans : 'No' | trans }}</td>
+        <td>{{ element.vatRate is null ? '-' : element.vatRate | number_format(2, ',', '.') }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
             {% if element | is_authorized('edit') %}

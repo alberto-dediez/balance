@@ -25,22 +25,45 @@ class CountryMother
         );
     }
 
-    public static function fromNameAndIsoAndId(string $name, string $iso, string $id): Country
-    {
+    public static function fromNameAndIsoAndId(
+        string $name,
+        string $iso,
+        string $id,
+        ?float $vatRate = null,
+        bool $europeanUnion = false,
+    ): Country {
         return self::from(
             countryId: new CountryId($id),
             name: $name,
             iso: $iso,
+            vatRate: $vatRate,
+            europeanUnion: $europeanUnion,
         );
     }
 
-    public static function from(CountryId $countryId, string $name = 'name', ?string $iso = null): Country
+    public static function spain(string $id = 'C-ES'): Country
     {
+        return self::from(
+            countryId: new CountryId($id),
+            name: 'España',
+            iso: 'ESP',
+            vatRate: 21.0,
+            europeanUnion: true,
+        );
+    }
+
+    public static function from(
+        CountryId $countryId,
+        string $name = 'name',
+        ?string $iso = null,
+        ?float $vatRate = null,
+        bool $europeanUnion = false,
+    ): Country {
         $country = new Country(
             id: $countryId,
         );
 
-        $country->register($name, $iso);
+        $country->register($name, $iso, vatRate: $vatRate, europeanUnion: $europeanUnion);
 
         return $country;
     }

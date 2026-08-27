@@ -18,6 +18,8 @@ final class CountryUpdated extends DomainEvent
         private readonly string $name,
         private readonly ?string $iso = null,
         private readonly ?ExternalId $externalId = null,
+        private readonly ?float $vatRate = null,
+        private readonly bool $europeanUnion = false,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -44,6 +46,16 @@ final class CountryUpdated extends DomainEvent
         return $this->externalId;
     }
 
+    public function vatRate(): ?float
+    {
+        return $this->vatRate;
+    }
+
+    public function isEuropeanUnion(): bool
+    {
+        return $this->europeanUnion;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->countryId;
@@ -56,6 +68,8 @@ final class CountryUpdated extends DomainEvent
             'iso' => $this->iso,
             'name' => $this->name,
             'externalId' => $this->externalId,
+            'vatRate' => $this->vatRate,
+            'europeanUnion' => $this->europeanUnion,
         ];
     }
 
@@ -69,6 +83,8 @@ final class CountryUpdated extends DomainEvent
             name: $payload['name'],
             iso: $payload['iso'],
             externalId: $payload['externalId'] ?? null,
+            vatRate: $payload['vatRate'] ?? null,
+            europeanUnion: $payload['europeanUnion'] ?? false,
             id: $id,
             occurredOn: $occurredOn,
         );

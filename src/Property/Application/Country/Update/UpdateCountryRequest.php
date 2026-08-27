@@ -10,5 +10,12 @@ use App\Shared\Application\CommandBus\Command;
 
 class UpdateCountryRequest implements Command
 {
-    public function __construct(public CountryId $countryId, public string $name, public ?string $iso, public ?ExternalId $externalId = null) {}
+    public function __construct(
+        public CountryId $countryId,
+        public string $name,
+        public ?string $iso,
+        public ?ExternalId $externalId = null,
+        public ?float $vatRate = null,
+        public bool $europeanUnion = false,
+    ) {}
 }

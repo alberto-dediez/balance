@@ -24,9 +24,9 @@ services:
 
     App\Payments\Domain\Model\Vat\VatCalculator:
         arguments:
-            $rates: '%app.vat.rates%'
-            $euCountries: '%app.vat.eu_countries%'
             $homeCountry: '%app.vat.home_country%'
+
+    App\Payments\Domain\Model\Vat\VatCountryProvider: '@App\Payments\Infrastructure\Vat\Doctrine\CountryVatCountryProvider'
 
     App\Payments\Infrastructure\Payment\Stripe\StripePaymentGateway:
         arguments:

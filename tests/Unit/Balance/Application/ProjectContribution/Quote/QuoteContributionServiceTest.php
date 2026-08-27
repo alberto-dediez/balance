@@ -13,8 +13,10 @@ use App\Balance\Domain\Model\ProjectContribution\ContributionCalculator;
 use App\Balance\Domain\Model\ProjectContribution\ProjectNotContributableException;
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryProjectContributionRepository;
 use App\Payments\Domain\Model\Vat\VatCalculator;
+use App\Payments\Domain\Model\Vat\VatCountry;
 use App\Payments\Domain\Model\Vat\VatExemptionReason;
 use App\Payments\Domain\Model\Vat\VatNumberFormatValidator;
+use App\Payments\Infrastructure\Vat\InMemory\InMemoryVatCountryProvider;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectRepositoryMother;
@@ -97,7 +99,7 @@ class QuoteContributionServiceTest extends TestCase
 
     public function testTheVatOfTheContributorCountryIsApplied(): void
     {
-        $response = $this->createSUT()($this->request(country: 'FR'));
+        $response = $this->createSUT()($this->request(country: 'FRA'));
 
         $this->assertSame(20.0, $response->amounts->vatRate);
         $this->assertSame(VatExemptionReason::OssDestination, $response->amounts->vatReason);
@@ -107,7 +109,7 @@ class QuoteContributionServiceTest extends TestCase
     public function testAnEuCompanyWithAValidVatNumberIsReverseCharged(): void
     {
         $response = $this->createSUT()(
-            $this->request(country: 'FR', isCompany: true, vatNumber: 'FR12345678901'),
+            $this->request(country: 'FRA', isCompany: true, vatNumber: 'FR12345678901'),
         );
 
         $this->assertSame(0.0, $response->amounts->vatAmount);
@@ -146,7 +148,7 @@ class QuoteContributionServiceTest extends TestCase
             accountId: $this->accountId,
             projectId: ProjectId::generate(),
             co2eqKg: 2000.0,
-            contributorCountry: 'ES',
+            contributorCountry: 'ESP',
         ));
     }
 
@@ -162,7 +164,7 @@ class QuoteContributionServiceTest extends TestCase
     private function request(
         ?float $co2eqKg = 2000.0,
         ?float $freeAmount = null,
-        string $country = 'ES',
+        string $country = 'ESP',
         bool $isCompany = false,
         ?string $vatNumber = null,
     ): QuoteContributionRequest {
@@ -212,9 +214,11 @@ class QuoteContributionServiceTest extends TestCase
             new CreditAvailability($creditPurchases, $this->contributions),
             new ContributionCalculator(new VatCalculator(
                 new VatNumberFormatValidator(),
-                rates: ['ES' => 21.0, 'FR' => 20.0],
-                euCountries: ['ES', 'FR'],
-                homeCountry: 'ES',
+                new InMemoryVatCountryProvider([
+                    new VatCountry('ESP', 21.0, true),
+                    new VatCountry('FRA', 20.0, true),
+                ]),
+                homeCountry: 'ESP',
             )),
         );
     }

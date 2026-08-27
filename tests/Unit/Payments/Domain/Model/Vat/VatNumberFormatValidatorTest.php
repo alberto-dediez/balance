@@ -13,16 +13,16 @@ class VatNumberFormatValidatorTest extends TestCase
     public static function validNumbers(): array
     {
         return [
-            'spanish company' => ['ESB12345678', 'ES'],
-            'spanish with spaces' => ['ES B-1234 5678', 'ES'],
-            'german' => ['DE123456789', 'DE'],
-            'french' => ['FRAB123456789', 'FR'],
-            'italian' => ['IT12345678901', 'IT'],
-            'dutch' => ['NL123456789B01', 'NL'],
-            'german without prefix' => ['123456789', 'DE'],
-            'greek with its EL prefix' => ['EL123456789', 'GR'],
-            'greek with the ISO prefix' => ['GR123456789', 'GR'],
-            'greek without prefix' => ['123456789', 'GR'],
+            'spanish company' => ['ESB12345678', 'ESP'],
+            'spanish with spaces' => ['ES B-1234 5678', 'ESP'],
+            'german' => ['DE123456789', 'DEU'],
+            'french' => ['FRAB123456789', 'FRA'],
+            'italian' => ['IT12345678901', 'ITA'],
+            'dutch' => ['NL123456789B01', 'NLD'],
+            'german without prefix' => ['123456789', 'DEU'],
+            'greek with its EL prefix' => ['EL123456789', 'GRC'],
+            'greek with the ISO prefix' => ['GRC123456789', 'GRC'],
+            'greek without prefix' => ['123456789', 'GRC'],
         ];
     }
 
@@ -30,12 +30,13 @@ class VatNumberFormatValidatorTest extends TestCase
     public static function invalidNumbers(): array
     {
         return [
-            'null' => [null, 'ES'],
-            'empty' => ['', 'ES'],
-            'too short' => ['DE123', 'DE'],
-            'wrong country prefix' => ['FR123456789', 'DE'],
-            'too long without prefix' => ['1234567890', 'DE'],
-            'unknown country' => ['US123456789', 'US'],
+            'null' => [null, 'ESP'],
+            'empty' => ['', 'ESP'],
+            'too short' => ['DE123', 'DEU'],
+            'wrong country prefix' => ['FR123456789', 'DEU'],
+            'too long without prefix' => ['1234567890', 'DEU'],
+            'unknown country' => ['US123456789', 'USA'],
+            'alpha-2 country code' => ['ESB12345678', 'ES'],
         ];
     }
 

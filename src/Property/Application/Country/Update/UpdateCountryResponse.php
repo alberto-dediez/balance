@@ -9,5 +9,11 @@ use App\Shared\Application\CommandBus\CommandResponse;
 
 class UpdateCountryResponse implements CommandResponse
 {
-    public function __construct(public CountryId $countryId, public string $name, public ?string $iso) {}
+    public function __construct(
+        public CountryId $countryId,
+        public string $name,
+        public ?string $iso,
+        public ?float $vatRate = null,
+        public bool $europeanUnion = false,
+    ) {}
 }

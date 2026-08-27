@@ -7,7 +7,7 @@ Feature:
         Given event "Evento A" with id "333" of account "666" exists
         Given mobility "Coche" with id "M1" and emission factor for the current year exists
         Given attendee survey with id "AS1" and token "token-abc" for event "333" of account "666" exists
-        Given country "España" with iso "ES" and id "C-ES" exists
+        Given european union country "España" with iso "ESP" and vat "21" and id "C-ES" exists
         Given project "Reforestación" with id "1111" and price per tonne "20" exists
         Given project "1111" is adhered to account "666"
         Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
@@ -23,8 +23,8 @@ Feature:
         Then I am redirected to route "public_carbon_footprint_attendee_survey_result"
         When I click on link "Compensar mi huella"
         When I click on link "Aportar"
-        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ES" and button "Recalcular"
-        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ES" and button "Pagar"
+        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ESP" and button "Recalcular"
+        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ESP" and button "Pagar"
         When the gateway notifies that the payment of the only contribution succeeded
         When the queued messages are processed
         When I email the certificate of the only contribution with attendee survey token "token-abc"
@@ -40,8 +40,8 @@ Feature:
         Then I am redirected to route "public_carbon_footprint_attendee_survey_result"
         When I click on link "Compensar mi huella"
         When I click on link "Aportar"
-        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ES" and button "Recalcular"
-        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ES" and button "Pagar"
+        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ESP" and button "Recalcular"
+        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ESP" and button "Pagar"
         When the gateway notifies that the payment of the only contribution succeeded
         When the queued messages are processed
         When I email the certificate of the only contribution with attendee survey token "token-abc"

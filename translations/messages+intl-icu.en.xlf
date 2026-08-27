@@ -147,7 +147,7 @@
       </trans-unit>
       <trans-unit id="hrL9ZOh" resname="Guardar">
         <source>Guardar</source>
-        <target>Save welcome page</target>
+        <target>Save</target>
       </trans-unit>
       <trans-unit id="0WQ3rNG" resname="Guardar y salir">
         <source>Guardar y salir</source>

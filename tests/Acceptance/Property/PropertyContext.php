@@ -99,6 +99,14 @@ final readonly class PropertyContext implements Context
         $this->getCountryRepository()->add($country);
     }
 
+    #[Given('european union country :name with iso :iso and vat :vatRate and id :id exists')]
+    public function europeanUnionCountryWithIsoAndVatAndIdExists(string $name, string $iso, string $vatRate, string $id): void
+    {
+        $country = CountryMother::fromNameAndIsoAndId($name, $iso, $id, (float) $vatRate, true);
+
+        $this->getCountryRepository()->add($country);
+    }
+
     #[Given('destination :name with id :id exists')]
     public function destinationWithIdExists(string $name, string $id): void
     {
