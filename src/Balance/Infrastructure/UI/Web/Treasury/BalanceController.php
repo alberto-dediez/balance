@@ -21,10 +21,12 @@ use App\Payments\Domain\Model\Payee\PayeeRepository;
 use App\Payments\Domain\Model\Payee\PayeeType;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/my-balance', name: 'my_balance')]
 class BalanceController extends AbstractController
@@ -37,12 +39,16 @@ class BalanceController extends AbstractController
         CreditPurchaseRepository $creditPurchaseRepository,
         PayeeRepository $payeeRepository,
         LoggedUser $loggedUser,
+        LoggedAccount $loggedAccount,
+        TranslatorInterface $translator,
     ): Response {
-        $accountId = $loggedUser()->accountId();
+        $account = $loggedAccount();
 
-        if (!$accountId instanceof AccountId) {
-            throw $this->createAccessDeniedException('El usuario no pertenece a ninguna cuenta');
+        if (null === $account) {
+            throw $this->createAccessDeniedException($translator->trans('Debes pertenecer a una cuenta para poder acceder'));
         }
+
+        $accountId = $account->id();
 
         $filter = new ListLedgerEntriesRequest(limit: 0);
         $filter->orderBy = 'occurredAt';

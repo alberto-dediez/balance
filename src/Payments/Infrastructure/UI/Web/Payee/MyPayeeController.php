@@ -15,6 +15,7 @@ use App\Payments\Infrastructure\Symfony\Form\RegisterMyPayeeType;
 use App\Payments\Infrastructure\Symfony\Form\UpdateMyPayeeType;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
 use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
@@ -23,6 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/my-payee', name: 'my_payee')]
 class MyPayeeController extends AbstractController
@@ -35,13 +37,17 @@ class MyPayeeController extends AbstractController
         RegisterPayeeService $registerPayee,
         UpdatePayeeService $updatePayee,
         LoggedUser $loggedUser,
+        LoggedAccount $loggedAccount,
+        TranslatorInterface $translator,
         Request $request,
     ): Response {
-        $accountId = $loggedUser()->accountId();
+        $account = $loggedAccount();
 
-        if (!$accountId instanceof AccountId) {
-            throw $this->createAccessDeniedException('El usuario no pertenece a ninguna cuenta');
+        if (null === $account) {
+            throw $this->createAccessDeniedException($translator->trans('Debes pertenecer a una cuenta para poder acceder'));
         }
+
+        $accountId = $account->id();
 
         $payee = $payeeRepository->findOneBySubject(PayeeType::Account, (string) $accountId);
 
