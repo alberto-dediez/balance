@@ -140,6 +140,19 @@ class Property implements \Stringable
         );
     }
 
+    public function releaseAccount(): void
+    {
+        if (!$this->accountId instanceof AccountId) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new PropertyAccountReleased(
+                propertyId: $this->id(),
+            ),
+        );
+    }
+
     public function remove(): void
     {
         $this->recordApplyAndPublish(
@@ -193,6 +206,11 @@ class Property implements \Stringable
 
         $this->numberOfEmployees = $event->numberOfEmployees();
         $this->dailyClients = $event->dailyClients();
+    }
+
+    public function applyPropertyAccountReleased(PropertyAccountReleased $event): void
+    {
+        $this->accountId = null;
     }
 
     public function applyPropertyRemoved(PropertyRemoved $event): void
