@@ -3061,6 +3061,10 @@
         <source>Alojamiento</source>
         <target>Alojamiento</target>
       </trans-unit>
+      <trans-unit id="1T4wAdT" resname="Propiedad">
+        <source>Propiedad</source>
+        <target>Propiedad</target>
+      </trans-unit>
       <trans-unit id=".hIzKEw" resname="Combustibles fijos en instalaciones">
         <source>Combustibles fijos en instalaciones</source>
         <target>Combustibles fijos en instalaciones</target>

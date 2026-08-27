@@ -220,7 +220,7 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
         return match ($data->origin) {
             ProjectContributionOrigin::AttendeeSurveyResponse => $this->trans('Evento', $locale),
             ProjectContributionOrigin::EventCarbonFootprint => $this->trans('Evento', $locale),
-            ProjectContributionOrigin::PropertyTripCalculation, ProjectContributionOrigin::Property => $this->trans('Alojamiento', $locale),
+            ProjectContributionOrigin::PropertyTripCalculation, ProjectContributionOrigin::Property => $this->trans('Propiedad', $locale),
             ProjectContributionOrigin::Account => $this->trans('Cuenta', $locale),
             null => null,
         };
