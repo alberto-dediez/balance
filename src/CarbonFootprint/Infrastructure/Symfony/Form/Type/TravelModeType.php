@@ -16,6 +16,7 @@ class TravelModeType extends AbstractType
     {
         $resolver->setDefaults([
             'class' => TravelMode::class,
+            'choice_label' => fn(?TravelMode $case) => $case?->value,
             'choice_value' => fn(?TravelMode $case) => $case?->value,
             'translation_domain' => 'travelModeType',
         ]);
