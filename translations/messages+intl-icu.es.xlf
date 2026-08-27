@@ -5143,19 +5143,19 @@
       </trans-unit>
       <trans-unit id="WwhaHmv" resname="vat.reason.standard">
         <source>vat.reason.standard</source>
-        <target>vat.reason.standard</target>
+        <target>IVA aplicado al tipo vigente en España.</target>
       </trans-unit>
       <trans-unit id="AUzUiAW" resname="vat.reason.oss_destination">
         <source>vat.reason.oss_destination</source>
-        <target>vat.reason.oss_destination</target>
+        <target>IVA aplicado al tipo del país de destino (régimen de ventanilla única, OSS).</target>
       </trans-unit>
       <trans-unit id="FCWf5He" resname="vat.reason.reverse_charge">
         <source>vat.reason.reverse_charge</source>
-        <target>vat.reason.reverse_charge</target>
+        <target>Operación exenta por inversión del sujeto pasivo (art. 196 de la Directiva 2006/112/CE).</target>
       </trans-unit>
       <trans-unit id="ly_GpH6" resname="vat.reason.outside_eu">
         <source>vat.reason.outside_eu</source>
-        <target>vat.reason.outside_eu</target>
+        <target>Operación no sujeta a IVA por realizarse fuera de la Unión Europea.</target>
       </trans-unit>
       <trans-unit id="1d608oO" resname="Aportaciones a proyectos">
         <source>Aportaciones a proyectos</source>

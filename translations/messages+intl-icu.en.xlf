@@ -5143,19 +5143,19 @@
       </trans-unit>
       <trans-unit id="WwhaHmv" resname="vat.reason.standard">
         <source>vat.reason.standard</source>
-        <target>vat.reason.standard</target>
+        <target>VAT applied at the rate in force in Spain.</target>
       </trans-unit>
       <trans-unit id="AUzUiAW" resname="vat.reason.oss_destination">
         <source>vat.reason.oss_destination</source>
-        <target>vat.reason.oss_destination</target>
+        <target>VAT applied at the rate of the customer's country (One-Stop Shop scheme).</target>
       </trans-unit>
       <trans-unit id="FCWf5He" resname="vat.reason.reverse_charge">
         <source>vat.reason.reverse_charge</source>
-        <target>vat.reason.reverse_charge</target>
+        <target>VAT reverse charge — Article 196 of Directive 2006/112/EC.</target>
       </trans-unit>
       <trans-unit id="ly_GpH6" resname="vat.reason.outside_eu">
         <source>vat.reason.outside_eu</source>
-        <target>vat.reason.outside_eu</target>
+        <target>Not subject to VAT — supply made outside the European Union.</target>
       </trans-unit>
       <trans-unit id="1d608oO" resname="Aportaciones a proyectos">
         <source>Aportaciones a proyectos</source>
