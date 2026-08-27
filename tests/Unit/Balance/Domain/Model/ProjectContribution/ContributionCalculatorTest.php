@@ -67,10 +67,26 @@ class ContributionCalculatorTest extends TestCase
 
         $this->assertTrue($amounts->freeAmount);
         $this->assertNull($amounts->co2eqKg);
-        $this->assertSame(2.5, $amounts->tonnes);
-        $this->assertSame(50.0, $amounts->taxableAmount);
-        $this->assertSame(12.5, $amounts->managementFeeAmount);
-        $this->assertSame(60.5, $amounts->totalAmount);
+        $this->assertSame(2.066, $amounts->tonnes);
+        $this->assertSame(41.32, $amounts->taxableAmount);
+        $this->assertSame(8.68, $amounts->vatAmount);
+        $this->assertSame(10.33, $amounts->managementFeeAmount);
+        $this->assertSame(50.0, $amounts->totalAmount);
+    }
+
+    public function testAFreeAmountIsChargedToTheContributorAsTyped(): void
+    {
+        foreach (['ES', 'DE'] as $countryCode) {
+            $amounts = $this->createSUT()->fromFreeAmount(
+                amount: 10.0,
+                pricePerTonne: 20.0,
+                costPerTonne: 15.0,
+                countryCode: $countryCode,
+            );
+
+            $this->assertSame(10.0, $amounts->totalAmount);
+            $this->assertSame(10.0, round($amounts->taxableAmount + $amounts->vatAmount, 2));
+        }
     }
 
     public function testACompanyOutsideTheHomeCountryPaysNoVat(): void

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Balance\Domain\Model\ProjectContribution;
 
 use App\Payments\Domain\Model\Vat\VatCalculator;
+use App\Payments\Domain\Model\Vat\VatResult;
 
 final class ContributionCalculator
 {
@@ -29,17 +30,16 @@ final class ContributionCalculator
         }
 
         $tonnes = $co2eqKg / 1000;
+        $taxableAmount = round($tonnes * $pricePerTonne, 2);
 
         return $this->build(
             co2eqKg: $co2eqKg,
             tonnes: $tonnes,
-            taxableAmount: round($tonnes * $pricePerTonne, 2),
+            taxableAmount: $taxableAmount,
             pricePerTonne: $pricePerTonne,
             costPerTonne: $costPerTonne,
             freeAmount: false,
-            countryCode: $countryCode,
-            isCompany: $isCompany,
-            vatNumber: $vatNumber,
+            vat: $this->vatCalculator->calculate($taxableAmount, $countryCode, $isCompany, $vatNumber),
         );
     }
 
@@ -61,7 +61,9 @@ final class ContributionCalculator
             throw new \InvalidArgumentException(sprintf('The contribution amount cannot exceed %s.', self::MAX_FREE_AMOUNT));
         }
 
-        $taxableAmount = round($amount, 2);
+        $totalAmount = round($amount, 2);
+        $vat = $this->vatCalculator->extractFromTotal($totalAmount, $countryCode, $isCompany, $vatNumber);
+        $taxableAmount = round($totalAmount - $vat->amount, 2);
 
         return $this->build(
             co2eqKg: null,
@@ -70,9 +72,7 @@ final class ContributionCalculator
             pricePerTonne: $pricePerTonne,
             costPerTonne: $costPerTonne,
             freeAmount: true,
-            countryCode: $countryCode,
-            isCompany: $isCompany,
-            vatNumber: $vatNumber,
+            vat: $vat,
         );
     }
 
@@ -83,12 +83,9 @@ final class ContributionCalculator
         float $pricePerTonne,
         float $costPerTonne,
         bool $freeAmount,
-        string $countryCode,
-        bool $isCompany,
-        ?string $vatNumber,
+        VatResult $vat,
     ): ContributionAmounts {
         $managementFeeAmount = $this->managementFee($tonnes, $pricePerTonne, $costPerTonne, $taxableAmount);
-        $vat = $this->vatCalculator->calculate($taxableAmount, $countryCode, $isCompany, $vatNumber);
 
         return new ContributionAmounts(
             co2eqKg: $co2eqKg,

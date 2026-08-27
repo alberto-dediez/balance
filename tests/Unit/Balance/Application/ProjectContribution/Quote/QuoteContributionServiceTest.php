@@ -58,8 +58,9 @@ class QuoteContributionServiceTest extends TestCase
 
         $this->assertTrue($response->amounts->freeAmount);
         $this->assertNull($response->amounts->co2eqKg);
-        $this->assertSame(2.5, $response->amounts->tonnes);
-        $this->assertSame(50.0, $response->amounts->taxableAmount);
+        $this->assertSame(2.066, $response->amounts->tonnes);
+        $this->assertSame(41.32, $response->amounts->taxableAmount);
+        $this->assertSame(50.0, $response->amounts->totalAmount);
     }
 
     public function testAnOffsettingProjectIsLimitedByTheCreditLeft(): void

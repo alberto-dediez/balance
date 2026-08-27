@@ -88,13 +88,14 @@ Feature:
         When I submit a form with "mode:free|amount:40|name:Ana|email:ana@example.com|country:ES" and button "Recalcular"
         Then the response status should be 200
         Then I see a text "Desglose"
+        Then I see a text "Pagar 40,00 €"
         When I submit a form with "mode:free|amount:40|name:Ana|email:ana@example.com|country:ES" and button "Pagar"
         Then I am redirected to the payment gateway
         Then the only contribution should be "pending"
-        Then account "666" should have "8" available tonnes in project "1111"
+        Then account "666" should have "8.347" available tonnes in project "1111"
         When the gateway notifies that the payment of the only contribution succeeded
         Then the only contribution should be "paid"
-        Then account "666" should have "8" available tonnes in project "1111"
+        Then account "666" should have "8.347" available tonnes in project "1111"
 
     Scenario: A free contribution above the credit left is refused before paying
         Given project "Reforestación" with id "1111" and price per tonne "20" exists

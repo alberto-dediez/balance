@@ -148,7 +148,9 @@ final class ContributionCheckoutHandler
             return null;
         }
 
-        return floor($quote->availableTonnes * $quote->amounts->pricePerTonne * 100) / 100;
+        $maxTaxableAmount = $quote->availableTonnes * $quote->amounts->pricePerTonne;
+
+        return floor($maxTaxableAmount * (1 + $quote->amounts->vatRate / 100) * 100) / 100;
     }
 
     /** @param array<string, mixed> $contribution */

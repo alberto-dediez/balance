@@ -140,8 +140,9 @@ class RegisterProjectContributionServiceTest extends TestCase
         $this->assertNotNull($contribution);
         $this->assertTrue($contribution->isFreeAmount());
         $this->assertNull($contribution->co2eqKg());
-        $this->assertSame(2.5, $contribution->tonnes());
-        $this->assertSame(50.0, $contribution->taxableAmount());
+        $this->assertSame(2.066, $contribution->tonnes());
+        $this->assertSame(41.32, $contribution->taxableAmount());
+        $this->assertSame(50.0, $contribution->totalAmount());
     }
 
     public function testRejectsAnOffsettingProjectWithoutEnoughCredit(): void

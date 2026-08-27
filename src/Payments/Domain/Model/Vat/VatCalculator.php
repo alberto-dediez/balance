@@ -23,17 +23,40 @@ final class VatCalculator
         bool $isCompany = false,
         ?string $vatNumber = null,
     ): VatResult {
-        $country = strtoupper(trim($countryCode));
-        $reason = $this->reasonFor($country, $isCompany, $vatNumber);
-        $rate = VatExemptionReason::ReverseCharge === $reason || VatExemptionReason::OutsideEu === $reason
-            ? 0.0
-            : $this->rateFor($country);
+        [$rate, $reason] = $this->rateAndReason($countryCode, $isCompany, $vatNumber);
 
         return new VatResult(
             rate: $rate,
             amount: round($taxableAmount * $rate / 100, 2),
             reason: $reason,
         );
+    }
+
+    public function extractFromTotal(
+        float $totalAmount,
+        string $countryCode,
+        bool $isCompany = false,
+        ?string $vatNumber = null,
+    ): VatResult {
+        [$rate, $reason] = $this->rateAndReason($countryCode, $isCompany, $vatNumber);
+
+        return new VatResult(
+            rate: $rate,
+            amount: round($totalAmount - $totalAmount / (1 + $rate / 100), 2),
+            reason: $reason,
+        );
+    }
+
+    /** @return array{float, VatExemptionReason} */
+    private function rateAndReason(string $countryCode, bool $isCompany, ?string $vatNumber): array
+    {
+        $country = strtoupper(trim($countryCode));
+        $reason = $this->reasonFor($country, $isCompany, $vatNumber);
+        $rate = VatExemptionReason::ReverseCharge === $reason || VatExemptionReason::OutsideEu === $reason
+            ? 0.0
+            : $this->rateFor($country);
+
+        return [$rate, $reason];
     }
 
     private function reasonFor(string $country, bool $isCompany, ?string $vatNumber): VatExemptionReason
