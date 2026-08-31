@@ -1577,17 +1577,69 @@
         <source>Suplantar</source>
         <target>Suplantar</target>
       </trans-unit>
-      <trans-unit id="CmbrCta" resname="Cambiar de cuenta">
+      <trans-unit id="1DXIpBS" resname="Cambiar de cuenta">
         <source>Cambiar de cuenta</source>
         <target>Cambiar de cuenta</target>
       </trans-unit>
-      <trans-unit id="SplCtaC" resname="Suplantando cuenta">
+      <trans-unit id="IA6MfOG" resname="Suplantando cuenta">
         <source>Suplantando cuenta</source>
         <target>Suplantando cuenta</target>
       </trans-unit>
-      <trans-unit id="VlvrMCta" resname="Volver a mi cuenta">
+      <trans-unit id="AXSZGUu" resname="Volver a mi cuenta">
         <source>Volver a mi cuenta</source>
         <target>Volver a mi cuenta</target>
+      </trans-unit>
+      <trans-unit id="lrSd8tr" resname="No tienes acceso a esta página">
+        <source>No tienes acceso a esta página</source>
+        <target>No tienes acceso a esta página</target>
+      </trans-unit>
+      <trans-unit id="ETCqPys" resname="Tu usuario no tiene permisos para ver este contenido. Si crees que se trata de un error, contacta con el administrador de tu cuenta.">
+        <source>Tu usuario no tiene permisos para ver este contenido. Si crees que se trata de un error, contacta con el administrador de tu cuenta.</source>
+        <target>Tu usuario no tiene permisos para ver este contenido. Si crees que se trata de un error, contacta con el administrador de tu cuenta.</target>
+      </trans-unit>
+      <trans-unit id="YWFZ15I" resname="Esta página no existe">
+        <source>Esta página no existe</source>
+        <target>Esta página no existe</target>
+      </trans-unit>
+      <trans-unit id="QvjxHW4" resname="La dirección que has abierto no existe o el contenido ya no está disponible.">
+        <source>La dirección que has abierto no existe o el contenido ya no está disponible.</source>
+        <target>La dirección que has abierto no existe o el contenido ya no está disponible.</target>
+      </trans-unit>
+      <trans-unit id="ePTeCMX" resname="Ir al inicio">
+        <source>Ir al inicio</source>
+        <target>Ir al inicio</target>
+      </trans-unit>
+      <trans-unit id="46z5PKP" resname="Volver atrás">
+        <source>Volver atrás</source>
+        <target>Volver atrás</target>
+      </trans-unit>
+      <trans-unit id="Mvsu4J7" resname="Algo no ha ido bien">
+        <source>Algo no ha ido bien</source>
+        <target>Algo no ha ido bien</target>
+      </trans-unit>
+      <trans-unit id="BvFeN3M" resname="Se ha producido un error inesperado. Puedes volver a intentarlo en unos instantes.">
+        <source>Se ha producido un error inesperado. Puedes volver a intentarlo en unos instantes.</source>
+        <target>Se ha producido un error inesperado. Puedes volver a intentarlo en unos instantes.</target>
+      </trans-unit>
+      <trans-unit id="1JxVYEw" resname="Algo ha fallado por nuestra parte">
+        <source>Algo ha fallado por nuestra parte</source>
+        <target>Algo ha fallado por nuestra parte</target>
+      </trans-unit>
+      <trans-unit id="zDsGpPQ" resname="El equipo técnico ya ha sido avisado automáticamente y está trabajando en ello. El resto de la aplicación sigue funcionando con normalidad.">
+        <source>El equipo técnico ya ha sido avisado automáticamente y está trabajando en ello. El resto de la aplicación sigue funcionando con normalidad.</source>
+        <target>El equipo técnico ya ha sido avisado automáticamente y está trabajando en ello. El resto de la aplicación sigue funcionando con normalidad.</target>
+      </trans-unit>
+      <trans-unit id="v2K4fre" resname="Si necesitas ayuda, facilítanos este código de incidencia">
+        <source>Si necesitas ayuda, facilítanos este código de incidencia</source>
+        <target>Si necesitas ayuda, facilítanos este código de incidencia</target>
+      </trans-unit>
+      <trans-unit id="YlOx2_R" resname="Estamos en mantenimiento">
+        <source>Estamos en mantenimiento</source>
+        <target>Estamos en mantenimiento</target>
+      </trans-unit>
+      <trans-unit id="l6T7LlT" resname="Estamos realizando tareas de mantenimiento para mejorar el servicio. Vuelve a intentarlo en unos minutos.">
+        <source>Estamos realizando tareas de mantenimiento para mejorar el servicio. Vuelve a intentarlo en unos minutos.</source>
+        <target>Estamos realizando tareas de mantenimiento para mejorar el servicio. Vuelve a intentarlo en unos minutos.</target>
       </trans-unit>
     </body>
   </file>

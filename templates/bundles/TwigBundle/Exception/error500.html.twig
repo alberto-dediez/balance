@@ -1,0 +1,18 @@
+{% extends 'bundles/TwigBundle/Exception/error.html.twig' %}
+
+{% block error_code %}500{% endblock %}
+
+{% block error_title %}{% trans %}Algo ha fallado por nuestra parte{% endtrans %}{% endblock %}
+
+{% block error_message %}
+    {% trans %}El equipo técnico ya ha sido avisado automáticamente y está trabajando en ello. El resto de la aplicación sigue funcionando con normalidad.{% endtrans %}
+{% endblock %}
+
+{% block error_incident %}
+    {% if incident_id() %}
+        <p class="text-muted small mb-4">
+            {% trans %}Si necesitas ayuda, facilítanos este código de incidencia{% endtrans %}:
+            <span class="badge bg-light text-dark fs-3">{{ incident_id() }}</span>
+        </p>
+    {% endif %}
+{% endblock %}

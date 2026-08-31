@@ -1,0 +1,9 @@
+{% extends 'bundles/TwigBundle/Exception/error.html.twig' %}
+
+{% block error_code %}403{% endblock %}
+
+{% block error_title %}{% trans %}No tienes acceso a esta página{% endtrans %}{% endblock %}
+
+{% block error_message %}
+    {% trans %}Tu usuario no tiene permisos para ver este contenido. Si crees que se trata de un error, contacta con el administrador de tu cuenta.{% endtrans %}
+{% endblock %}

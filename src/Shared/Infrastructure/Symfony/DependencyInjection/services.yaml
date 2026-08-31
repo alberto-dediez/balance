@@ -4,6 +4,10 @@ parameters:
     company.name: '%env(COMPANY_NAME)%'
     mailer.from: '%env(MAILER_FROM)%'
     app.uploads_dir: '%kernel.project_dir%/var/uploads'
+    app.maintenance_mode: '%env(bool:MAINTENANCE_MODE)%'
+    error_report.enabled: '%env(bool:ERROR_NOTIFICATIONS_ENABLED)%'
+    error_report.recipients: '%env(ERROR_NOTIFICATION_RECIPIENTS)%'
+    error_report.throttle_minutes: '%env(int:ERROR_NOTIFICATIONS_THROTTLE_MINUTES)%'
 
 services:
     _defaults:
@@ -39,6 +43,30 @@ services:
     App\Shared\Infrastructure\Symfony\Event\EmailListener:
         public: true
         shared: true
+
+    App\Shared\Infrastructure\ErrorReport\ErrorReportFactory:
+        arguments:
+            $environment: '%kernel.environment%'
+
+    App\Shared\Infrastructure\ErrorReport\CacheErrorReportThrottle:
+        arguments:
+            $cache: '@cache.app'
+            $throttleMinutes: '%error_report.throttle_minutes%'
+
+    App\Shared\Infrastructure\ErrorReport\EmailErrorReportNotifier:
+        arguments:
+            $enabled: '%error_report.enabled%'
+            $recipients: '%error_report.recipients%'
+        tags:
+            - { name: monolog.logger, channel: error_report }
+
+    App\Shared\Domain\Model\ErrorReport\ErrorReportNotifier: '@App\Shared\Infrastructure\ErrorReport\EmailErrorReportNotifier'
+
+    App\Shared\Domain\Model\ErrorReport\ErrorReportThrottle: '@App\Shared\Infrastructure\ErrorReport\CacheErrorReportThrottle'
+
+    App\Shared\Infrastructure\Symfony\Event\MaintenanceModeListener:
+        arguments:
+            $maintenanceMode: '%app.maintenance_mode%'
 
     App\Shared\Domain\Model\Sms\SmsSender: '@App\Shared\Infrastructure\Sms\TwilioSmsSender'
 
