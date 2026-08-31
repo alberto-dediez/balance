@@ -9,6 +9,7 @@ use App\Security\Application\User\RecoverPassword\RecoverPasswordService;
 use App\Security\Application\User\RecoverToken\RecoverTokenRequest;
 use App\Security\Application\User\RecoverToken\RecoverTokenService;
 use App\Security\Domain\Model\User\RecoverToken;
+use App\Security\Domain\Model\User\RecoverTokenInvalidException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -85,7 +86,7 @@ class RecoverPasswordController extends AbstractController
                         password: $form->get('password')->getData(),
                     ),
                 );
-            } catch (\InvalidArgumentException) {
+            } catch (\InvalidArgumentException|RecoverTokenInvalidException) {
                 return $this->render('@security/password/error.html.twig');
             }
 

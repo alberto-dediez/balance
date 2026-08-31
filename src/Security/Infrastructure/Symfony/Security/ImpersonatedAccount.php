@@ -22,6 +22,8 @@ class ImpersonatedAccount implements ResetInterface
 
     private bool $loaded = false;
 
+    private ?UserId $forcedImpersonatorId = null;
+
     public function __construct(
         private readonly RequestStack $requestStack,
         private readonly AccountRepository $accountRepository,
@@ -71,6 +73,10 @@ class ImpersonatedAccount implements ResetInterface
             return null;
         }
 
+        if ($this->forcedImpersonatorId instanceof UserId) {
+            return $this->forcedImpersonatorId;
+        }
+
         $session = $this->getSession();
 
         if (null === $session || !$session->has(self::IMPERSONATOR_KEY)) {
@@ -94,6 +100,25 @@ class ImpersonatedAccount implements ResetInterface
         $this->loaded = true;
     }
 
+    public function force(?AccountId $accountId, ?UserId $impersonatorId): void
+    {
+        if (!$this->accountImpersonationEnabled) {
+            return;
+        }
+
+        $this->forcedImpersonatorId = $impersonatorId;
+
+        if (!$accountId instanceof AccountId) {
+            $this->account = null;
+            $this->loaded = false;
+
+            return;
+        }
+
+        $this->account = $this->accountRepository->find($accountId);
+        $this->loaded = true;
+    }
+
     public function exit(): void
     {
         $this->clearSession();
@@ -106,6 +131,7 @@ class ImpersonatedAccount implements ResetInterface
     {
         $this->account = null;
         $this->loaded = false;
+        $this->forcedImpersonatorId = null;
     }
 
     private function readSession(): ?AccountId
@@ -149,7 +175,7 @@ class ImpersonatedAccount implements ResetInterface
     {
         $request = $this->requestStack->getMainRequest();
 
-        if (null === $request) {
+        if (null === $request || $request->attributes->getBoolean('_stateless')) {
             return null;
         }
 

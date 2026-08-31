@@ -211,7 +211,7 @@ class User implements \Stringable
     public function recoverPassword(RecoverToken $token, string $password): void
     {
         if (!$this->isRecoverTokenValid($token)) {
-            throw new RecoverTokenInvalidException($token);
+            throw new RecoverTokenInvalidException($token, $this->recoverToken?->expirateAt());
         }
 
         $this->recordApplyAndPublish(

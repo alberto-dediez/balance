@@ -6,6 +6,8 @@ namespace App\Shared\Infrastructure\Messenger;
 
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserRepository;
+use App\Security\Infrastructure\Symfony\Security\ImpersonatedAccount;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -16,6 +18,8 @@ class DeferredMessageHandler
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly LoggedUser $loggedUser,
+        private readonly ImpersonatedAccount $impersonatedAccount,
+        private readonly LoggedAccount $loggedAccount,
     ) {}
 
     public function __invoke(DeferredMessage $message): void
@@ -27,6 +31,8 @@ class DeferredMessageHandler
         }
 
         $this->loggedUser->forceUser($user);
+        $this->impersonatedAccount->force($message->impersonatedAccountId(), $user->id());
+        $this->loggedAccount->reset();
 
         try {
             CommandBusDispatcher::instance()->dispatch(
@@ -35,6 +41,8 @@ class DeferredMessageHandler
             );
         } finally {
             $this->loggedUser->forceUser(null);
+            $this->impersonatedAccount->force(null, null);
+            $this->loggedAccount->reset();
         }
     }
 }
