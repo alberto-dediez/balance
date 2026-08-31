@@ -52,7 +52,7 @@ Feature:
         Then the response status should be 200
         Then I see a text "Reforestación"
         Then I see a text "project-description"
-        When I click on link "Aportar a este proyecto"
+        When I click on link "Aportar cantidad sugerida o libre"
         Then the response status should be 200
         Then I see a text "Elige tu país para ver el desglose"
 

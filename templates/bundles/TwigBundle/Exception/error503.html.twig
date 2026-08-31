@@ -1,0 +1,9 @@
+{% extends 'bundles/TwigBundle/Exception/error.html.twig' %}
+
+{% block error_code %}503{% endblock %}
+
+{% block error_title %}{% trans %}Estamos en mantenimiento{% endtrans %}{% endblock %}
+
+{% block error_message %}
+    {% trans %}Estamos realizando tareas de mantenimiento para mejorar el servicio. Vuelve a intentarlo en unos minutos.{% endtrans %}
+{% endblock %}

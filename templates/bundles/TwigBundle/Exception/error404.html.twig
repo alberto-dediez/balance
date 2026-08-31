@@ -1,0 +1,9 @@
+{% extends 'bundles/TwigBundle/Exception/error.html.twig' %}
+
+{% block error_code %}404{% endblock %}
+
+{% block error_title %}{% trans %}Esta página no existe{% endtrans %}{% endblock %}
+
+{% block error_message %}
+    {% trans %}La dirección que has abierto no existe o el contenido ya no está disponible.{% endtrans %}
+{% endblock %}

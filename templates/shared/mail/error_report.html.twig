@@ -1,0 +1,81 @@
+{% extends '@shared/layout/email.html.twig' %}
+
+{% macro rows(values) %}
+    <table width="100%" cellpadding="4" cellspacing="0">
+        {% for key, value in values %}
+            {% if value is not empty %}
+                <tr>
+                    <td width="30%" valign="top"><strong>{{ key }}</strong></td>
+                    <td valign="top">{{ value }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+{% endmacro %}
+
+{% block content %}
+    {% import _self as tables %}
+
+    <h3>Error {{ report.statusCode }} en {{ report.environment }} &mdash; incidencia #{{ report.incidentId }}</h3>
+
+    <p>{{ report.occurredAt | date('d/m/Y H:i:s') }}</p>
+
+    <h4>Excepción</h4>
+    {{ tables.rows({
+        'Clase': report.exception.class,
+        'Mensaje': report.exception.message,
+        'Origen': report.exception.file ~ ':' ~ report.exception.line,
+        'Huella': report.fingerprint,
+    }) }}
+
+    {% if report.request %}
+        <h4>Petición</h4>
+        {{ tables.rows({
+            'URL': report.request.uri,
+            'Método': report.request.method,
+            'Ruta': report.request.route,
+            'IP': report.request.clientIp,
+            'Idioma': report.request.locale,
+            'Referer': report.request.referer,
+            'User agent': report.request.userAgent,
+        }) }}
+    {% endif %}
+
+    {% if report.command %}
+        <h4>Comando</h4>
+        {{ tables.rows({'Comando': report.command, 'Código de salida': report.statusCode}) }}
+    {% endif %}
+
+    <h4>Usuario</h4>
+    {{ tables.rows({
+        'Usuario': report.context.username ?: 'Anónimo',
+        'Id de usuario': report.context.userId,
+        'Roles efectivos': report.context.roles | join(', '),
+        'Impersonado': report.context.impersonated ? 'Sí' : 'No',
+        'Impersonador': report.context.impersonatorUsername,
+        'Id del impersonador': report.context.impersonatorId,
+        'Cuenta actual': report.context.currentAccountName,
+        'Id de cuenta actual': report.context.currentAccountId,
+        'Id de cuenta propietaria': report.context.ownerAccountId,
+    }) }}
+
+    {% if report.request and (report.request.query is not empty or report.request.body is not empty) %}
+        <h4>Parámetros</h4>
+        {{ tables.rows(report.request.query) }}
+        {{ tables.rows(report.request.body) }}
+    {% endif %}
+
+    {% if report.request and report.request.headers is not empty %}
+        <h4>Cabeceras</h4>
+        {{ tables.rows(report.request.headers) }}
+    {% endif %}
+
+    <h4>Traza</h4>
+    <pre style="font-size: 11px; white-space: pre-wrap; word-break: break-all;">{{ report.exception.trace }}</pre>
+
+    {% for previous in report.previous %}
+        <h4>Excepción anterior: {{ previous.class }}</h4>
+        <p>{{ previous.message }}<br>{{ previous.file }}:{{ previous.line }}</p>
+        <pre style="font-size: 11px; white-space: pre-wrap; word-break: break-all;">{{ previous.trace }}</pre>
+    {% endfor %}
+{% endblock %}
