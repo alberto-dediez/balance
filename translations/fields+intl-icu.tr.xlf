@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="tr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="dtnBSsv" resname="combustible">
+        <source>combustible</source>
+        <target>Yakıt</target>
+      </trans-unit>
+      <trans-unit id="yWqRg5C" resname="name">
+        <source>name</source>
+        <target>Ad</target>
+      </trans-unit>
+      <trans-unit id="M3Q.P7x" resname="unit">
+        <source>unit</source>
+        <target>Birim</target>
+      </trans-unit>
+      <trans-unit id="2yur8vv" resname="year">
+        <source>year</source>
+        <target>Yıl</target>
+      </trans-unit>
+      <trans-unit id="Ryo8_OL" resname="co2eq">
+        <source>co2eq</source>
+        <target>CO2eq</target>
+      </trans-unit>
+      <trans-unit id="Xm8lsrf" resname="co2">
+        <source>co2</source>
+        <target>CO2</target>
+      </trans-unit>
+      <trans-unit id="f8U4oTn" resname="ch4">
+        <source>ch4</source>
+        <target>CH4</target>
+      </trans-unit>
+      <trans-unit id="xAfN1w1" resname="n2o">
+        <source>n2o</source>
+        <target>N2O</target>
+      </trans-unit>
+      <trans-unit id="6DbIfYI" resname="source">
+        <source>source</source>
+        <target>Kaynak</target>
+      </trans-unit>
+      <trans-unit id="pj3Nv_A" resname="emissionFactorGroup">
+        <source>emissionFactorGroup</source>
+        <target>Emisyon faktörü grubu</target>
+      </trans-unit>
+      <trans-unit id="PNcBVeE" resname="mobility">
+        <source>mobility</source>
+        <target>Hareketlilik</target>
+      </trans-unit>
+      <trans-unit id="bEOU3DZ" resname="travelMode">
+        <source>travelMode</source>
+        <target>Rota hesaplama yöntemi</target>
+      </trans-unit>
+      <trans-unit id="qN2Koyh" resname="factorBasis">
+        <source>factorBasis</source>
+        <target>Emisyon faktörü bazı</target>
+      </trans-unit>
+      <trans-unit id="GcgVL0w" resname="material">
+        <source>material</source>
+        <target>Malzeme</target>
+      </trans-unit>
+      <trans-unit id="gpwpUUb" resname="category">
+        <source>category</source>
+        <target>Kategori</target>
+      </trans-unit>
+      <trans-unit id="eaXhSi7" resname="recycledCo2eq">
+        <source>recycledCo2eq</source>
+        <target>CO2eq (geri dönüştürülmüş)</target>
+      </trans-unit>
+      <trans-unit id="SrFXKNt" resname="recycledCo2">
+        <source>recycledCo2</source>
+        <target>CO2 (geri dönüştürülmüş)</target>
+      </trans-unit>
+      <trans-unit id="900cMD3" resname="recycledCh4">
+        <source>recycledCh4</source>
+        <target>CH4 (geri dönüştürülmüş)</target>
+      </trans-unit>
+      <trans-unit id=".Z4Vh.C" resname="recycledN2o">
+        <source>recycledN2o</source>
+        <target>N2O (geri dönüştürülmüş)</target>
+      </trans-unit>
+      <trans-unit id="Ien2BhG" resname="waste">
+        <source>waste</source>
+        <target>Atık</target>
+      </trans-unit>
+      <trans-unit id="40HUZZa" resname="density">
+        <source>density</source>
+        <target>Yoğunluk</target>
+      </trans-unit>
+      <trans-unit id="nUnzxCh" resname="machinery_fuel">
+        <source>machinery_fuel</source>
+        <target>Makine yakıtı</target>
+      </trans-unit>
+      <trans-unit id="MnoO9NF" resname="machinery_type">
+        <source>machinery_type</source>
+        <target>Makine türü</target>
+      </trans-unit>
+      <trans-unit id="H.x9jS4" resname="road_transport">
+        <source>road_transport</source>
+        <target>Karayolu taşımacılığı</target>
+      </trans-unit>
+      <trans-unit id="SQK8P2M" resname="vehicle">
+        <source>vehicle</source>
+        <target>Araç</target>
+      </trans-unit>
+      <trans-unit id="LxBED5_" resname="cateringItem">
+        <source>cateringItem</source>
+        <target>Catering öğesi</target>
+      </trans-unit>
+      <trans-unit id="jH.H0Uo" resname="merchandisingItem">
+        <source>merchandisingItem</source>
+        <target>Merchandising ürünü</target>
+      </trans-unit>
+      <trans-unit id="Uz0Vy.F" resname="gdOFactor">
+        <source>gdOFactor</source>
+        <target>GdO Faktörü</target>
+      </trans-unit>
+      <trans-unit id="Dahp53j" resname="overnight_stay">
+        <source>overnight_stay</source>
+        <target>Konaklama</target>
+      </trans-unit>
+      <trans-unit id="FXT9ONL" resname="electricityMarketer">
+        <source>electricityMarketer</source>
+        <target>Elektrik tedarikçisi</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

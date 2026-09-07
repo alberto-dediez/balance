@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="tr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id=".ku3jMu" resname="Pending">
+        <source>Pending</source>
+        <target>Beklemede</target>
+      </trans-unit>
+      <trans-unit id="8Ql_h_n" resname="Viewed">
+        <source>Viewed</source>
+        <target>Görüntülendi</target>
+      </trans-unit>
+      <trans-unit id="FvIJG6I" resname="Signed">
+        <source>Signed</source>
+        <target>İmzalandı</target>
+      </trans-unit>
+      <trans-unit id="srrpRxM" resname="Expired">
+        <source>Expired</source>
+        <target>Süresi doldu</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

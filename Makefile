@@ -179,6 +179,7 @@ icon-lock:
 translation:
 	@$(PHP) ./bin/console trans:extract es --force --prefix="NEW_" -q
 	@$(PHP) ./bin/console trans:extract en --force --prefix="NEW_" -q
+	@$(PHP) ./bin/console trans:extract tr --force --prefix="NEW_" -q
 
 ## —— Messages ————————————————————————————————————————————————————————————
 queues: ## Start workers for all priority queues (high, medium, low)

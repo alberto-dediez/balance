@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="tr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="1zngY4o" resname="breakfast">
+        <source>breakfast</source>
+        <target>Kahvaltı</target>
+      </trans-unit>
+      <trans-unit id="R8l7LfS" resname="snack">
+        <source>snack</source>
+        <target>Atıştırmalık</target>
+      </trans-unit>
+      <trans-unit id="EJfS2AR" resname="drink">
+        <source>drink</source>
+        <target>İçecek</target>
+      </trans-unit>
+      <trans-unit id="Iy.5S7k" resname="menu">
+        <source>menu</source>
+        <target>Menü</target>
+      </trans-unit>
+      <trans-unit id="XZNMBEL" resname="general">
+        <source>general</source>
+        <target>Genel</target>
+      </trans-unit>
+      <trans-unit id="BcyPUqi" resname="others">
+        <source>others</source>
+        <target>Diğer</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

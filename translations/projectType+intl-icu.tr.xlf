@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="tr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="G83UmPH" resname="emission_compensation">
+        <source>emission_compensation</source>
+        <target>Emisyon telafisi</target>
+      </trans-unit>
+      <trans-unit id="KKu3VyS" resname="social_project">
+        <source>social_project</source>
+        <target>Sosyal proje</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

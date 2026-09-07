@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="tr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="OEwpn9k" resname="sports">
+        <source>sports</source>
+        <target>Spor</target>
+      </trans-unit>
+      <trans-unit id="ai00ohl" resname="music">
+        <source>music</source>
+        <target>Müzik</target>
+      </trans-unit>
+      <trans-unit id="jf3vUcM" resname="cultural">
+        <source>cultural</source>
+        <target>Kültürel</target>
+      </trans-unit>
+      <trans-unit id="oNJiEv8" resname="tourism">
+        <source>tourism</source>
+        <target>Turizm</target>
+      </trans-unit>
+      <trans-unit id="Ff1SQ_8" resname="social">
+        <source>social</source>
+        <target>Sosyal</target>
+      </trans-unit>
+      <trans-unit id="5Y8_iL4" resname="business">
+        <source>business</source>
+        <target>Ticari</target>
+      </trans-unit>
+      <trans-unit id="C9Djyv3" resname="academic">
+        <source>academic</source>
+        <target>Akademik</target>
+      </trans-unit>
+      <trans-unit id="6wW96aJ" resname="religious">
+        <source>religious</source>
+        <target>Dini</target>
+      </trans-unit>
+      <trans-unit id="YIPYpD5" resname="technology">
+        <source>technology</source>
+        <target>Teknoloji</target>
+      </trans-unit>
+      <trans-unit id="rvFmKmZ" resname="charity">
+        <source>charity</source>
+        <target>Hayır Amaçlı</target>
+      </trans-unit>
+      <trans-unit id="8IfhDSf" resname="political">
+        <source>political</source>
+        <target>Siyasi</target>
+      </trans-unit>
+      <trans-unit id="iITpKnn" resname="convention">
+        <source>convention</source>
+        <target>Kongre</target>
+      </trans-unit>
+      <trans-unit id=".Fbf42v" resname="fair">
+        <source>fair</source>
+        <target>Fuar</target>
+      </trans-unit>
+      <trans-unit id="YAq0UGa" resname="institutional">
+        <source>institutional</source>
+        <target>Kurumsal</target>
+      </trans-unit>
+      <trans-unit id="8aHe0YP" resname="other">
+        <source>other</source>
+        <target>Diğer</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

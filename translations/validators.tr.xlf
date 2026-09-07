@@ -1,0 +1,702 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="tr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="jysioaA" resname="This value should be false.">
+        <source>This value should be false.</source>
+        <target>Bu değer olumsuz olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="1zVPJo4" resname="This value should be true.">
+        <source>This value should be true.</source>
+        <target>Bu değer olumlu olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="HL55su4" resname="This value should be of type {{ type }}.">
+        <source>This value should be of type {{ type }}.</source>
+        <target>Bu değerin tipi {{ type }} olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="K5oLZkw" resname="This value should be blank.">
+        <source>This value should be blank.</source>
+        <target>Bu değer boş olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="KaWXEsW" resname="The value you selected is not a valid choice.">
+        <source>The value you selected is not a valid choice.</source>
+        <target>Seçtiğiniz değer geçerli bir seçenek değildir.</target>
+      </trans-unit>
+      <trans-unit id="4xOpbwN" resname="You must select at least {{ limit }} choice.|You must select at least {{ limit }} choices.">
+        <source>You must select at least {{ limit }} choice.|You must select at least {{ limit }} choices.</source>
+        <target>En az {{ limit }} seçenek belirtmelisiniz.</target>
+      </trans-unit>
+      <trans-unit id="65n9dGQ" resname="You must select at most {{ limit }} choice.|You must select at most {{ limit }} choices.">
+        <source>You must select at most {{ limit }} choice.|You must select at most {{ limit }} choices.</source>
+        <target>En çok {{ limit }} seçenek belirtmelisiniz.</target>
+      </trans-unit>
+      <trans-unit id="bV9ETHe" resname="One or more of the given values is invalid.">
+        <source>One or more of the given values is invalid.</source>
+        <target>Verilen değerlerden bir veya daha fazlası geçersiz.</target>
+      </trans-unit>
+      <trans-unit id="hzMv9Ky" resname="This field was not expected.">
+        <source>This field was not expected.</source>
+        <target>Bu alan beklenen olmadı.</target>
+      </trans-unit>
+      <trans-unit id="m5HGv6j" resname="This field is missing.">
+        <source>This field is missing.</source>
+        <target>Bu alan, eksiktir</target>
+      </trans-unit>
+      <trans-unit id="ccjuUaj" resname="This value is not a valid date.">
+        <source>This value is not a valid date.</source>
+        <target>Bu değer doğru bir tarih biçimi değildir.</target>
+      </trans-unit>
+      <trans-unit id="4jAy6GT" resname="This value is not a valid datetime.">
+        <source>This value is not a valid datetime.</source>
+        <target>Bu değer doğru bir tarihsaat biçimi değildir.</target>
+      </trans-unit>
+      <trans-unit id="J8MwqDW" resname="This value is not a valid email address.">
+        <source>This value is not a valid email address.</source>
+        <target>Bu değer doğru bir e-mail adresi değildir.</target>
+      </trans-unit>
+      <trans-unit id="OW6NCiE" resname="The file could not be found.">
+        <source>The file could not be found.</source>
+        <target>Dosya bulunamadı.</target>
+      </trans-unit>
+      <trans-unit id="uuuT8w4" resname="The file is not readable.">
+        <source>The file is not readable.</source>
+        <target>Dosya okunabilir değildir.</target>
+      </trans-unit>
+      <trans-unit id="xmVWVqA" resname="The file is too large ({{ size }} {{ suffix }}). Allowed maximum size is {{ limit }} {{ suffix }}.">
+        <source>The file is too large ({{ size }} {{ suffix }}). Allowed maximum size is {{ limit }} {{ suffix }}.</source>
+        <target>Dosya çok büyük ({{ size }} {{ suffix }}). İzin verilen en büyük dosya boyutu {{ limit }} {{ suffix }}.</target>
+      </trans-unit>
+      <trans-unit id="COERTaP" resname="The mime type of the file is invalid ({{ type }}). Allowed mime types are {{ types }}.">
+        <source>The mime type of the file is invalid ({{ type }}). Allowed mime types are {{ types }}.</source>
+        <target>Dosyanın mime tipi geçersiz ({{ type }}). İzin verilen mime tipleri {{ types }}.</target>
+      </trans-unit>
+      <trans-unit id="xJV2eT8" resname="This value should be {{ limit }} or less.">
+        <source>This value should be {{ limit }} or less.</source>
+        <target>Bu değer {{ limit }} ve altında olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="Zuairxy" resname="This value is too long. It should have {{ limit }} character or less.|This value is too long. It should have {{ limit }} characters or less.">
+        <source>This value is too long. It should have {{ limit }} character or less.|This value is too long. It should have {{ limit }} characters or less.</source>
+        <target>Bu değer çok uzun. {{ limit }} karakter veya daha az olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="3bh29vT" resname="This value should be {{ limit }} or more.">
+        <source>This value should be {{ limit }} or more.</source>
+        <target>Bu değer {{ limit }} veya daha fazla olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="Muq3W.6" resname="This value is too short. It should have {{ limit }} character or more.|This value is too short. It should have {{ limit }} characters or more.">
+        <source>This value is too short. It should have {{ limit }} character or more.|This value is too short. It should have {{ limit }} characters or more.</source>
+        <target>Bu değer çok kısa. {{ limit }} karakter veya daha fazla olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="vLBiKCD" resname="This value should not be blank.">
+        <source>This value should not be blank.</source>
+        <target>Bu değer boş bırakılmamalıdır.</target>
+      </trans-unit>
+      <trans-unit id="FUEH3cZ" resname="This value should not be null.">
+        <source>This value should not be null.</source>
+        <target>Bu değer boş bırakılmamalıdır.</target>
+      </trans-unit>
+      <trans-unit id="yIMqPF6" resname="This value should be null.">
+        <source>This value should be null.</source>
+        <target>Bu değer boş bırakılmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="TZg2uqx" resname="This value is not valid.">
+        <source>This value is not valid.</source>
+        <target>Bu değer geçerli değildir.</target>
+      </trans-unit>
+      <trans-unit id="Uu2fZ7m" resname="This value is not a valid time.">
+        <source>This value is not a valid time.</source>
+        <target>Bu değer doğru bir saat değildir.</target>
+      </trans-unit>
+      <trans-unit id="X5msM9I" resname="This value is not a valid URL.">
+        <source>This value is not a valid URL.</source>
+        <target>Bu değer doğru bir URL değildir.</target>
+      </trans-unit>
+      <trans-unit id="yShl.HD" resname="The two values should be equal.">
+        <source>The two values should be equal.</source>
+        <target>İki değer eşit olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="UPTnJIu" resname="The file is too large. Allowed maximum size is {{ limit }} {{ suffix }}.">
+        <source>The file is too large. Allowed maximum size is {{ limit }} {{ suffix }}.</source>
+        <target>Dosya çok büyük. İzin verilen en büyük dosya boyutu {{ limit }} {{ suffix }}.</target>
+      </trans-unit>
+      <trans-unit id="OEeVt7G" resname="The file is too large.">
+        <source>The file is too large.</source>
+        <target>Dosya çok büyük.</target>
+      </trans-unit>
+      <trans-unit id="DAd59Rr" resname="The file could not be uploaded.">
+        <source>The file could not be uploaded.</source>
+        <target>Dosya yüklenemiyor.</target>
+      </trans-unit>
+      <trans-unit id="jpVY2B5" resname="This value should be a valid number.">
+        <source>This value should be a valid number.</source>
+        <target>Bu değer geçerli bir rakam olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="aeFJJFS" resname="This file is not a valid image.">
+        <source>This file is not a valid image.</source>
+        <target>Bu dosya geçerli bir resim değildir.</target>
+      </trans-unit>
+      <trans-unit id="r9nOjqT" resname="This is not a valid IP address.">
+        <source>This is not a valid IP address.</source>
+        <target>Bu değer geçerli bir IP adresi değildir.</target>
+      </trans-unit>
+      <trans-unit id="izWIhKR" resname="This value is not a valid language.">
+        <source>This value is not a valid language.</source>
+        <target>Bu değer geçerli bir lisan değildir.</target>
+      </trans-unit>
+      <trans-unit id="gBF5fE7" resname="This value is not a valid locale.">
+        <source>This value is not a valid locale.</source>
+        <target>Bu değer geçerli bir yer değildir.</target>
+      </trans-unit>
+      <trans-unit id="QUviSFS" resname="This value is not a valid country.">
+        <source>This value is not a valid country.</source>
+        <target>Bu değer geçerli bir ülke değildir.</target>
+      </trans-unit>
+      <trans-unit id="nmXj9fT" resname="This value is already used.">
+        <source>This value is already used.</source>
+        <target>Bu değer şu anda kullanımda.</target>
+      </trans-unit>
+      <trans-unit id="LAGu_iq" resname="The size of the image could not be detected.">
+        <source>The size of the image could not be detected.</source>
+        <target>Resmin boyutu saptanamıyor.</target>
+      </trans-unit>
+      <trans-unit id="YD_yE46" resname="The image width is too big ({{ width }}px). Allowed maximum width is {{ max_width }}px.">
+        <source>The image width is too big ({{ width }}px). Allowed maximum width is {{ max_width }}px.</source>
+        <target>Resmin genişliği çok büyük ({{ width }}px). İzin verilen en büyük genişlik {{ max_width }}px.</target>
+      </trans-unit>
+      <trans-unit id="pfL2.fo" resname="The image width is too small ({{ width }}px). Minimum width expected is {{ min_width }}px.">
+        <source>The image width is too small ({{ width }}px). Minimum width expected is {{ min_width }}px.</source>
+        <target>Resmin genişliği çok küçük ({{ width }}px). En az {{ min_width }}px olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="zV9L7pv" resname="The image height is too big ({{ height }}px). Allowed maximum height is {{ max_height }}px.">
+        <source>The image height is too big ({{ height }}px). Allowed maximum height is {{ max_height }}px.</source>
+        <target>Resmin yüksekliği çok büyük ({{ height }}px). İzin verilen en büyük yükseklik {{ max_height }}px.</target>
+      </trans-unit>
+      <trans-unit id="A7vLGPA" resname="The image height is too small ({{ height }}px). Minimum height expected is {{ min_height }}px.">
+        <source>The image height is too small ({{ height }}px). Minimum height expected is {{ min_height }}px.</source>
+        <target>Resmin yüksekliği çok küçük ({{ height }}px). En az {{ min_height }}px olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="hbSSYMh" resname="This value should be the user's current password.">
+        <source>This value should be the user's current password.</source>
+        <target>Bu değer kullanıcının şu anki şifresi olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="A1Hv7nv" resname="This value should have exactly {{ limit }} character.|This value should have exactly {{ limit }} characters.">
+        <source>This value should have exactly {{ limit }} character.|This value should have exactly {{ limit }} characters.</source>
+        <target>Bu değer tam olarak {{ limit }} karakter olmaldır.</target>
+      </trans-unit>
+      <trans-unit id="H.ZNP57" resname="The file was only partially uploaded.">
+        <source>The file was only partially uploaded.</source>
+        <target>Dosya sadece kısmen yüklendi.</target>
+      </trans-unit>
+      <trans-unit id="qUKi9W_" resname="No file was uploaded.">
+        <source>No file was uploaded.</source>
+        <target>Hiçbir dosya yüklenmedi.</target>
+      </trans-unit>
+      <trans-unit id="MRZ.kUM" resname="No temporary folder was configured in php.ini.">
+        <source>No temporary folder was configured in php.ini.</source>
+        <target>php.ini'de geçici bir klasör yapılandırılmadı veya yapılandırılan klasör mevcut değildir.</target>
+      </trans-unit>
+      <trans-unit id="ivltd6_" resname="Cannot write temporary file to disk.">
+        <source>Cannot write temporary file to disk.</source>
+        <target>Geçici dosya diske yazılamıyor.</target>
+      </trans-unit>
+      <trans-unit id="_x64C6y" resname="A PHP extension caused the upload to fail.">
+        <source>A PHP extension caused the upload to fail.</source>
+        <target>Bir PHP eklentisi dosyanın yüklemesini başarısız kıldı.</target>
+      </trans-unit>
+      <trans-unit id=".K7ySMo" resname="This collection should contain {{ limit }} element or more.|This collection should contain {{ limit }} elements or more.">
+        <source>This collection should contain {{ limit }} element or more.|This collection should contain {{ limit }} elements or more.</source>
+        <target>Bu derlem {{ limit }} veya daha çok eleman içermelidir.</target>
+      </trans-unit>
+      <trans-unit id="aSvx2eb" resname="This collection should contain {{ limit }} element or less.|This collection should contain {{ limit }} elements or less.">
+        <source>This collection should contain {{ limit }} element or less.|This collection should contain {{ limit }} elements or less.</source>
+        <target>Bu derlem {{ limit }} veya daha az eleman içermelidir.</target>
+      </trans-unit>
+      <trans-unit id="d4HuxpA" resname="This collection should contain exactly {{ limit }} element.|This collection should contain exactly {{ limit }} elements.">
+        <source>This collection should contain exactly {{ limit }} element.|This collection should contain exactly {{ limit }} elements.</source>
+        <target>Bu derlem {{ limit }} eleman içermelidir.</target>
+      </trans-unit>
+      <trans-unit id="Ia5ts7h" resname="Invalid card number.">
+        <source>Invalid card number.</source>
+        <target>Geçersiz kart numarası.</target>
+      </trans-unit>
+      <trans-unit id="Y8YNvWG" resname="Unsupported card type or invalid card number.">
+        <source>Unsupported card type or invalid card number.</source>
+        <target>Desteklenmeyen kart tipi veya geçersiz kart numarası.</target>
+      </trans-unit>
+      <trans-unit id="Bp_BiDs" resname="This is not a valid International Bank Account Number (IBAN).">
+        <source>This is not a valid International Bank Account Number (IBAN).</source>
+        <target>Bu değer geçerli bir Uluslararası Banka Hesap Numarası (IBAN) değildir.</target>
+      </trans-unit>
+      <trans-unit id="HqngxWf" resname="This value is not a valid ISBN-10.">
+        <source>This value is not a valid ISBN-10.</source>
+        <target>Bu değer geçerli bir ISBN-10 değildir.</target>
+      </trans-unit>
+      <trans-unit id="Pm2IygX" resname="This value is not a valid ISBN-13.">
+        <source>This value is not a valid ISBN-13.</source>
+        <target>Bu değer geçerli bir ISBN-13 değildir.</target>
+      </trans-unit>
+      <trans-unit id="w8oSYvN" resname="This value is neither a valid ISBN-10 nor a valid ISBN-13.">
+        <source>This value is neither a valid ISBN-10 nor a valid ISBN-13.</source>
+        <target>Bu değer geçerli bir ISBN-10 veya ISBN-13 değildir.</target>
+      </trans-unit>
+      <trans-unit id="aEf2fyJ" resname="This value is not a valid ISSN.">
+        <source>This value is not a valid ISSN.</source>
+        <target>Bu değer geçerli bir ISSN değildir.</target>
+      </trans-unit>
+      <trans-unit id="OeFZFII" resname="This value is not a valid currency.">
+        <source>This value is not a valid currency.</source>
+        <target>Bu değer geçerli bir para birimi değildir.</target>
+      </trans-unit>
+      <trans-unit id="G8HNxQM" resname="This value should be equal to {{ compared_value }}.">
+        <source>This value should be equal to {{ compared_value }}.</source>
+        <target>Bu değer {{ compared_value }} ile eşit olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="Xgf_Y8C" resname="This value should be greater than {{ compared_value }}.">
+        <source>This value should be greater than {{ compared_value }}.</source>
+        <target>Bu değer {{ compared_value }} değerinden büyük olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="OrsJXWO" resname="This value should be greater than or equal to {{ compared_value }}.">
+        <source>This value should be greater than or equal to {{ compared_value }}.</source>
+        <target>Bu değer {{ compared_value }} ile eşit veya büyük olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="wni8iKB" resname="This value should be identical to {{ compared_value_type }} {{ compared_value }}.">
+        <source>This value should be identical to {{ compared_value_type }} {{ compared_value }}.</source>
+        <target>Bu değer {{ compared_value_type }} {{ compared_value }} ile aynı olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="EgRc_Qq" resname="This value should be less than {{ compared_value }}.">
+        <source>This value should be less than {{ compared_value }}.</source>
+        <target>Bu değer {{ compared_value }} değerinden düşük olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="vNn72MQ" resname="This value should be less than or equal to {{ compared_value }}.">
+        <source>This value should be less than or equal to {{ compared_value }}.</source>
+        <target>.Bu değer {{ compared_value }} ile eşit veya düşük olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="N4F464Y" resname="This value should not be equal to {{ compared_value }}.">
+        <source>This value should not be equal to {{ compared_value }}.</source>
+        <target>Bu değer {{ compared_value }} ile eşit olmamalıdır.</target>
+      </trans-unit>
+      <trans-unit id="T8lYq4L" resname="This value should not be identical to {{ compared_value_type }} {{ compared_value }}.">
+        <source>This value should not be identical to {{ compared_value_type }} {{ compared_value }}.</source>
+        <target>Bu değer {{ compared_value_type }} {{ compared_value }} ile aynı olmamalıdır.</target>
+      </trans-unit>
+      <trans-unit id="x5xpcfK" resname="The image ratio is too big ({{ ratio }}). Allowed maximum ratio is {{ max_ratio }}.">
+        <source>The image ratio is too big ({{ ratio }}). Allowed maximum ratio is {{ max_ratio }}.</source>
+        <target>Resim oranı çok büyük ({{ ratio }}). İzin verilen maksimum oran: {{ max_ratio }}.</target>
+      </trans-unit>
+      <trans-unit id="5cB4RCN" resname="The image ratio is too small ({{ ratio }}). Minimum ratio expected is {{ min_ratio }}.">
+        <source>The image ratio is too small ({{ ratio }}). Minimum ratio expected is {{ min_ratio }}.</source>
+        <target>Resim oranı çok ufak ({{ ratio }}). Beklenen minimum oran {{ min_ratio }}.</target>
+      </trans-unit>
+      <trans-unit id="SVgw5SP" resname="The image is square ({{ width }}x{{ height }}px). Square images are not allowed.">
+        <source>The image is square ({{ width }}x{{ height }}px). Square images are not allowed.</source>
+        <target>Resim karesi ({{ width }}x{{ height }}px). Kare resimlerine izin verilmiyor.</target>
+      </trans-unit>
+      <trans-unit id="wpV7oxR" resname="The image is landscape oriented ({{ width }}x{{ height }}px). Landscape oriented images are not allowed.">
+        <source>The image is landscape oriented ({{ width }}x{{ height }}px). Landscape oriented images are not allowed.</source>
+        <target>Resim manzara odaklı ({{ width }}x{{ height }}px). Manzara odaklı resimlere izin verilmiyor.</target>
+      </trans-unit>
+      <trans-unit id="t7f5lY9" resname="The image is portrait oriented ({{ width }}x{{ height }}px). Portrait oriented images are not allowed.">
+        <source>The image is portrait oriented ({{ width }}x{{ height }}px). Portrait oriented images are not allowed.</source>
+        <target>Resim portre odaklı ({{ width }}x{{ height }}px). Portre odaklı resimlere izin verilmiyor.</target>
+      </trans-unit>
+      <trans-unit id="L9tKe2y" resname="An empty file is not allowed.">
+        <source>An empty file is not allowed.</source>
+        <target>Boş bir dosyaya izin verilmiyor.</target>
+      </trans-unit>
+      <trans-unit id="4421dQm" resname="The host could not be resolved.">
+        <source>The host could not be resolved.</source>
+        <target>Sunucu çözülemedi.</target>
+      </trans-unit>
+      <trans-unit id="tD.RkRe" resname="This value does not match the expected {{ charset }} charset.">
+        <source>This value does not match the expected {{ charset }} charset.</source>
+        <target>Bu değer beklenen {{ charset }} karakter kümesiyle eşleşmiyor.</target>
+      </trans-unit>
+      <trans-unit id="w2dRFcU" resname="This is not a valid Business Identifier Code (BIC).">
+        <source>This is not a valid Business Identifier Code (BIC).</source>
+        <target>Bu değer geçerli bir İşletme Tanımlama Kodu (BIC) değildir.</target>
+      </trans-unit>
+      <trans-unit id="B9r0Hn5" resname="Error">
+        <source>Error</source>
+        <target>Hata</target>
+      </trans-unit>
+      <trans-unit id="GO8.wou" resname="This is not a valid UUID.">
+        <source>This is not a valid UUID.</source>
+        <target>Bu değer geçerli bir UUID değildir.</target>
+      </trans-unit>
+      <trans-unit id="BmDYW0B" resname="This value should be a multiple of {{ compared_value }}.">
+        <source>This value should be a multiple of {{ compared_value }}.</source>
+        <target>Bu değer {{ compare_value }} değerinin katlarından biri olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="7urGdp4" resname="This Business Identifier Code (BIC) is not associated with IBAN {{ iban }}.">
+        <source>This Business Identifier Code (BIC) is not associated with IBAN {{ iban }}.</source>
+        <target>Bu İşletme Tanımlayıcı Kodu (BIC), IBAN {{ iban }} ile ilişkili değildir.</target>
+      </trans-unit>
+      <trans-unit id="NpIt6EV" resname="This value should be valid JSON.">
+        <source>This value should be valid JSON.</source>
+        <target>Bu değer için geçerli olmalıdır JSON.</target>
+      </trans-unit>
+      <trans-unit id="NAJHeXU" resname="This collection should contain only unique elements.">
+        <source>This collection should contain only unique elements.</source>
+        <target>Bu grup yalnızca benzersiz öğeler içermelidir.</target>
+      </trans-unit>
+      <trans-unit id="mBNZ2p4" resname="This value should be positive.">
+        <source>This value should be positive.</source>
+        <target>Bu değer pozitif olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="Q07tS4h" resname="This value should be either positive or zero.">
+        <source>This value should be either positive or zero.</source>
+        <target>Bu değer pozitif veya sıfır olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="cwaFWZt" resname="This value should be negative.">
+        <source>This value should be negative.</source>
+        <target>Bu değer negatif olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="INgX870" resname="This value should be either negative or zero.">
+        <source>This value should be either negative or zero.</source>
+        <target>Bu değer, negatif veya sıfır olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="0bSR5cp" resname="This value is not a valid timezone.">
+        <source>This value is not a valid timezone.</source>
+        <target>Bu değer, geçerli bir saat dilimi değildir.</target>
+      </trans-unit>
+      <trans-unit id="o0vqbDQ" resname="This password has been leaked in a data breach, it must not be used. Please use another password.">
+        <source>This password has been leaked in a data breach, it must not be used. Please use another password.</source>
+        <target>Bu parola, bir veri ihlali nedeniyle sızdırılmıştır ve kullanılmamalıdır. Lütfen başka bir şifre kullanın.</target>
+      </trans-unit>
+      <trans-unit id="nNegxai" resname="This value should be between {{ min }} and {{ max }}.">
+        <source>This value should be between {{ min }} and {{ max }}.</source>
+        <target>Bu değer {{ min }} ve {{ max }} arasında olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="q0JXpA2" resname="This value is not a valid hostname.">
+        <source>This value is not a valid hostname.</source>
+        <target>Bu değer, geçerli bir ana bilgisayar adı değildir.</target>
+      </trans-unit>
+      <trans-unit id="Co_98pi" resname="The number of elements in this collection should be a multiple of {{ compared_value }}.">
+        <source>The number of elements in this collection should be a multiple of {{ compared_value }}.</source>
+        <target>Bu gruptaki öğe sayısı birden fazla olmalıdır {{ compared_value }}.</target>
+      </trans-unit>
+      <trans-unit id="rfebLrY" resname="This value should satisfy at least one of the following constraints:">
+        <source>This value should satisfy at least one of the following constraints:</source>
+        <target>Bu değer aşağıdaki kısıtlamalardan birini karşılamalıdır:</target>
+      </trans-unit>
+      <trans-unit id="lxL.CBF" resname="Each element of this collection should satisfy its own set of constraints.">
+        <source>Each element of this collection should satisfy its own set of constraints.</source>
+        <target>Bu gruptaki her öğe kendi kısıtlamalarını karşılamalıdır.</target>
+      </trans-unit>
+      <trans-unit id="1nUIbF0" resname="This value is not a valid International Securities Identification Number (ISIN).">
+        <source>This value is not a valid International Securities Identification Number (ISIN).</source>
+        <target>Bu değer geçerli bir Uluslararası Menkul Kıymetler Kimlik Numarası (ISIN) değildir.</target>
+      </trans-unit>
+      <trans-unit id="kG_VGA1" resname="This value should be a valid expression.">
+        <source>This value should be a valid expression.</source>
+        <target>Bu değer geçerli bir ifade olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="2_9V4lo" resname="This value is not a valid CSS color.">
+        <source>This value is not a valid CSS color.</source>
+        <target>Bu değer geçerli bir CSS rengi değildir.</target>
+      </trans-unit>
+      <trans-unit id="fye9wG1" resname="This value is not a valid CIDR notation.">
+        <source>This value is not a valid CIDR notation.</source>
+        <target>Bu değer geçerli bir CIDR yazımı değildir.</target>
+      </trans-unit>
+      <trans-unit id="ERGRJhK" resname="The value of the netmask should be between {{ min }} and {{ max }}.">
+        <source>The value of the netmask should be between {{ min }} and {{ max }}.</source>
+        <target>Netmask'in değeri {{ min }} ve {{ max }} arasında olmaldır.</target>
+      </trans-unit>
+      <trans-unit id="7db7kQD" resname="The filename is too long. It should have {{ filename_max_length }} character or less.|The filename is too long. It should have {{ filename_max_length }} characters or less.">
+        <source>The filename is too long. It should have {{ filename_max_length }} character or less.|The filename is too long. It should have {{ filename_max_length }} characters or less.</source>
+        <target>Dosya adı çok uzun. {{ filename_max_length }} karakter veya daha az olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="7JLHuYX" resname="The password strength is too low. Please use a stronger password.">
+        <source>The password strength is too low. Please use a stronger password.</source>
+        <target>Şifre gücü çok düşük. Lütfen daha güçlü bir şifre kullanın.</target>
+      </trans-unit>
+      <trans-unit id="Pgo2CSS" resname="This value contains characters that are not allowed by the current restriction-level.">
+        <source>This value contains characters that are not allowed by the current restriction-level.</source>
+        <target>Bu değer, mevcut kısıtlama seviyesi tarafından izin verilmeyen karakterler içeriyor.</target>
+      </trans-unit>
+      <trans-unit id="7hhZedg" resname="Using invisible characters is not allowed.">
+        <source>Using invisible characters is not allowed.</source>
+        <target>Görünmez karakterlerin kullanılması izin verilmez.</target>
+      </trans-unit>
+      <trans-unit id="DpnrQ0a" resname="Mixing numbers from different scripts is not allowed.">
+        <source>Mixing numbers from different scripts is not allowed.</source>
+        <target>Farklı yazı türlerinden sayıların karıştırılması izin verilmez.</target>
+      </trans-unit>
+      <trans-unit id="Z4taMVn" resname="Using hidden overlay characters is not allowed.">
+        <source>Using hidden overlay characters is not allowed.</source>
+        <target>Gizli üstü kaplama karakterlerinin kullanılması izin verilmez.</target>
+      </trans-unit>
+      <trans-unit id="1seErdG" resname="The extension of the file is invalid ({{ extension }}). Allowed extensions are {{ extensions }}.">
+        <source>The extension of the file is invalid ({{ extension }}). Allowed extensions are {{ extensions }}.</source>
+        <target>Dosya uzantısı geçersiz ({{ extension }}). İzin verilen uzantılar {{ extensions }}.</target>
+      </trans-unit>
+      <trans-unit id="uyl6nQ7" resname="The detected character encoding is invalid ({{ detected }}). Allowed encodings are {{ encodings }}.">
+        <source>The detected character encoding is invalid ({{ detected }}). Allowed encodings are {{ encodings }}.</source>
+        <target>Tespit edilen karakter kodlaması geçersiz ({{ detected }}). İzin verilen kodlamalar: {{ encodings }}.</target>
+      </trans-unit>
+      <trans-unit id="65jFl8b" resname="This value is not a valid MAC address.">
+        <source>This value is not a valid MAC address.</source>
+        <target>Bu değer geçerli bir MAC adresi değildir.</target>
+      </trans-unit>
+      <trans-unit id="Pm0aj_f" resname="This URL is missing a top-level domain.">
+        <source>This URL is missing a top-level domain.</source>
+        <target>Bu URL bir üst seviye alan adı eksik.</target>
+      </trans-unit>
+      <trans-unit id="gbpWGsC" resname="This value is too short. It should contain at least one word.|This value is too short. It should contain at least {{ min }} words.">
+        <source>This value is too short. It should contain at least one word.|This value is too short. It should contain at least {{ min }} words.</source>
+        <target>Bu değer çok kısa. En az bir kelime içermelidir.|Bu değer çok kısa. En az {{ min }} kelime içermelidir.</target>
+      </trans-unit>
+      <trans-unit id="1WpHUSt" resname="This value is too long. It should contain one word.|This value is too long. It should contain {{ max }} words or less.">
+        <source>This value is too long. It should contain one word.|This value is too long. It should contain {{ max }} words or less.</source>
+        <target>Bu değer çok uzun. Tek bir kelime içermelidir.|Bu değer çok uzun. {{ max }} veya daha az kelime içermelidir.</target>
+      </trans-unit>
+      <trans-unit id="egUw40j" resname="This value does not represent a valid week in the ISO 8601 format.">
+        <source>This value does not represent a valid week in the ISO 8601 format.</source>
+        <target>Bu değer ISO 8601 formatında geçerli bir haftayı temsil etmezdir.</target>
+      </trans-unit>
+      <trans-unit id="qj68TOe" resname="This value is not a valid week.">
+        <source>This value is not a valid week.</source>
+        <target>Bu değer geçerli hafta değildir.</target>
+      </trans-unit>
+      <trans-unit id="RX1vHSU" resname="This value should not be before week &quot;{{ min }}&quot;.">
+        <source>This value should not be before week "{{ min }}".</source>
+        <target>Bu değer “{{ min }}” haftasından önce olmamalıdır.</target>
+      </trans-unit>
+      <trans-unit id="pOcsUec" resname="This value should not be after week &quot;{{ max }}&quot;.">
+        <source>This value should not be after week "{{ max }}".</source>
+        <target>Bu değer “{{ max }}” haftasından sonra olmamalıdır</target>
+      </trans-unit>
+      <trans-unit id="3QNCFgi" resname="This value is not a valid Twig template.">
+        <source>This value is not a valid Twig template.</source>
+        <target>Bu değer geçerli bir Twig şablonu olarak kabul edilmiyor.</target>
+      </trans-unit>
+      <trans-unit id="ZuGpyhA" resname="This file is not a valid video.">
+        <source>This file is not a valid video.</source>
+        <target>Bu dosya geçerli bir video dosyası değil.</target>
+      </trans-unit>
+      <trans-unit id="7ZjICRC" resname="The size of the video could not be detected.">
+        <source>The size of the video could not be detected.</source>
+        <target>Videonun boyutu tespit edilemedi.</target>
+      </trans-unit>
+      <trans-unit id="WS2rIIU" resname="The video width is too big ({{ width }}px). Allowed maximum width is {{ max_width }}px.">
+        <source>The video width is too big ({{ width }}px). Allowed maximum width is {{ max_width }}px.</source>
+        <target>Video genişliği çok büyük ({{ width }}px). İzin verilen maksimum genişlik {{ max_width }}px.</target>
+      </trans-unit>
+      <trans-unit id="Ey8lNRo" resname="The video width is too small ({{ width }}px). Minimum width expected is {{ min_width }}px.">
+        <source>The video width is too small ({{ width }}px). Minimum width expected is {{ min_width }}px.</source>
+        <target>Video genişliği çok küçük ({{ width }}px). Beklenen minimum genişlik {{ min_width }}px.</target>
+      </trans-unit>
+      <trans-unit id="Liu7sjp" resname="The video height is too big ({{ height }}px). Allowed maximum height is {{ max_height }}px.">
+        <source>The video height is too big ({{ height }}px). Allowed maximum height is {{ max_height }}px.</source>
+        <target>Video yüksekliği çok büyük ({{ height }}px). İzin verilen maksimum yükseklik {{ max_height }}px.</target>
+      </trans-unit>
+      <trans-unit id="2FkdfHN" resname="The video height is too small ({{ height }}px). Minimum height expected is {{ min_height }}px.">
+        <source>The video height is too small ({{ height }}px). Minimum height expected is {{ min_height }}px.</source>
+        <target>Video yüksekliği çok küçük ({{ height }}px). Beklenen minimum yükseklik {{ min_height }}px.</target>
+      </trans-unit>
+      <trans-unit id="Dp2k5ge" resname="The video has too few pixels ({{ pixels }} pixels). Minimum amount expected is {{ min_pixels }} pixels.">
+        <source>The video has too few pixels ({{ pixels }} pixels). Minimum amount expected is {{ min_pixels }} pixels.</source>
+        <target>Videodaki piksel sayısı çok az ({{ pixels }} piksel). Beklenen minimum miktar {{ min_pixels }} pikseldir.</target>
+      </trans-unit>
+      <trans-unit id="IDGrrj_" resname="The video has too many pixels ({{ pixels }} pixels). Maximum amount expected is {{ max_pixels }} pixels.">
+        <source>The video has too many pixels ({{ pixels }} pixels). Maximum amount expected is {{ max_pixels }} pixels.</source>
+        <target>Videodaki piksel sayısı çok fazla ({{ pixels }} piksel). Beklenen maksimum miktar {{ max_pixels }} pikseldir.</target>
+      </trans-unit>
+      <trans-unit id="J1cZmuA" resname="The video ratio is too big ({{ ratio }}). Allowed maximum ratio is {{ max_ratio }}.">
+        <source>The video ratio is too big ({{ ratio }}). Allowed maximum ratio is {{ max_ratio }}.</source>
+        <target>Video oranı çok büyük ({{ ratio }}). İzin verilen maksimum oran {{ max_ratio }}.</target>
+      </trans-unit>
+      <trans-unit id="WQTwvFh" resname="The video ratio is too small ({{ ratio }}). Minimum ratio expected is {{ min_ratio }}.">
+        <source>The video ratio is too small ({{ ratio }}). Minimum ratio expected is {{ min_ratio }}.</source>
+        <target>Video oranı çok küçük ({{ ratio }}). Beklenen minimum oran {{ min_ratio }}.</target>
+      </trans-unit>
+      <trans-unit id="OT6Evve" resname="The video is square ({{ width }}x{{ height }}px). Square videos are not allowed.">
+        <source>The video is square ({{ width }}x{{ height }}px). Square videos are not allowed.</source>
+        <target>Video kare biçimde ({{ width }}x{{ height }}px). Kare videolara izin verilmez.</target>
+      </trans-unit>
+      <trans-unit id="mXgOwd4" resname="The video is landscape oriented ({{ width }}x{{ height }}px). Landscape oriented videos are not allowed.">
+        <source>The video is landscape oriented ({{ width }}x{{ height }}px). Landscape oriented videos are not allowed.</source>
+        <target>Video yatay biçimde ({{ width }}x{{ height }}px). Yatay videolara izin verilmez.</target>
+      </trans-unit>
+      <trans-unit id="VrsdBNF" resname="The video is portrait oriented ({{ width }}x{{ height }}px). Portrait oriented videos are not allowed.">
+        <source>The video is portrait oriented ({{ width }}x{{ height }}px). Portrait oriented videos are not allowed.</source>
+        <target>Video dikey biçimde ({{ width }}x{{ height }}px). Dikey videolara izin verilmez.</target>
+      </trans-unit>
+      <trans-unit id="x8fsjeI" resname="The video file is corrupted.">
+        <source>The video file is corrupted.</source>
+        <target>Video dosyası bozuk.</target>
+      </trans-unit>
+      <trans-unit id="nzXY1iu" resname="The video contains multiple streams. Only one stream is allowed.">
+        <source>The video contains multiple streams. Only one stream is allowed.</source>
+        <target>Video birden fazla akış içeriyor. Yalnızca tek akışa izin verilir.</target>
+      </trans-unit>
+      <trans-unit id="hCzL7Mv" resname="Unsupported video codec &quot;{{ codec }}&quot;.">
+        <source>Unsupported video codec "{{ codec }}".</source>
+        <target>Desteklenmeyen video codec'i "{{ codec }}".</target>
+      </trans-unit>
+      <trans-unit id="nTnX6nj" resname="Unsupported video container &quot;{{ container }}&quot;.">
+        <source>Unsupported video container "{{ container }}".</source>
+        <target>Desteklenmeyen video kapsayıcısı "{{ container }}".</target>
+      </trans-unit>
+      <trans-unit id="jAJTV_I" resname="The image file is corrupted.">
+        <source>The image file is corrupted.</source>
+        <target>Görüntü dosyası bozulmuş.</target>
+      </trans-unit>
+      <trans-unit id="aw1rRIE" resname="The image has too few pixels ({{ pixels }} pixels). Minimum amount expected is {{ min_pixels }} pixels.">
+        <source>The image has too few pixels ({{ pixels }} pixels). Minimum amount expected is {{ min_pixels }} pixels.</source>
+        <target>Görüntüdeki piksel sayısı çok az ({{ pixels }}). Beklenen minimum miktar {{ min_pixels }}.</target>
+      </trans-unit>
+      <trans-unit id="KbWb1FD" resname="The image has too many pixels ({{ pixels }} pixels). Maximum amount expected is {{ max_pixels }} pixels.">
+        <source>The image has too many pixels ({{ pixels }} pixels). Maximum amount expected is {{ max_pixels }} pixels.</source>
+        <target>Görüntüdeki piksel sayısı çok fazla ({{ pixels }}). Beklenen maksimum miktar {{ max_pixels }}.</target>
+      </trans-unit>
+      <trans-unit id="tPeCNvN" resname="This filename does not match the expected charset.">
+        <source>This filename does not match the expected charset.</source>
+        <target>Bu dosya adı beklenen karakter kümesiyle eşleşmiyor.</target>
+      </trans-unit>
+      <trans-unit id="tDkL4Jc" resname="This form should not contain extra fields.">
+        <source>This form should not contain extra fields.</source>
+        <target>Form ekstra alanlar içeremez.</target>
+      </trans-unit>
+      <trans-unit id="SlPljy." resname="The uploaded file was too large. Please try to upload a smaller file.">
+        <source>The uploaded file was too large. Please try to upload a smaller file.</source>
+        <target>Yüklenen dosya boyutu çok yüksek. Lütfen daha küçük bir dosya yüklemeyi deneyin.</target>
+      </trans-unit>
+      <trans-unit id="b_5.52u" resname="The CSRF token is invalid. Please try to resubmit the form.">
+        <source>The CSRF token is invalid. Please try to resubmit the form.</source>
+        <target>CSRF fişi geçersiz. Formu tekrar göndermeyi deneyin.</target>
+      </trans-unit>
+      <trans-unit id="wlGn1pP" resname="This value is not a valid HTML5 color.">
+        <source>This value is not a valid HTML5 color.</source>
+        <target>Bu değer, geçerli bir HTML5 rengi değil.</target>
+      </trans-unit>
+      <trans-unit id="e_2ZUCK" resname="Please enter a valid birthdate.">
+        <source>Please enter a valid birthdate.</source>
+        <target>Lütfen geçerli bir doğum tarihi girin.</target>
+      </trans-unit>
+      <trans-unit id="TPma293" resname="The selected choice is invalid.">
+        <source>The selected choice is invalid.</source>
+        <target>Seçilen seçim geçersiz.</target>
+      </trans-unit>
+      <trans-unit id="Fkuy1Kw" resname="The collection is invalid.">
+        <source>The collection is invalid.</source>
+        <target>Koleksiyon geçersiz.</target>
+      </trans-unit>
+      <trans-unit id="qiPYgGj" resname="Please select a valid color.">
+        <source>Please select a valid color.</source>
+        <target>Lütfen geçerli bir renk seçin.</target>
+      </trans-unit>
+      <trans-unit id="qf.GaaJ" resname="Please select a valid country.">
+        <source>Please select a valid country.</source>
+        <target>Lütfen geçerli bir ülke seçin.</target>
+      </trans-unit>
+      <trans-unit id="WtFFCQ8" resname="Please select a valid currency.">
+        <source>Please select a valid currency.</source>
+        <target>Lütfen geçerli bir para birimi seçin.</target>
+      </trans-unit>
+      <trans-unit id="gwI.OzY" resname="Please choose a valid date interval.">
+        <source>Please choose a valid date interval.</source>
+        <target>Lütfen geçerli bir tarih aralığı seçin.</target>
+      </trans-unit>
+      <trans-unit id="yeUbmWc" resname="Please enter a valid date and time.">
+        <source>Please enter a valid date and time.</source>
+        <target>Lütfen geçerli bir tarih ve saat girin.</target>
+      </trans-unit>
+      <trans-unit id="eC1bGok" resname="Please enter a valid date.">
+        <source>Please enter a valid date.</source>
+        <target>Lütfen geçerli bir tarih giriniz.</target>
+      </trans-unit>
+      <trans-unit id=".3DoUU." resname="Please select a valid file.">
+        <source>Please select a valid file.</source>
+        <target>Lütfen geçerli bir dosya seçin.</target>
+      </trans-unit>
+      <trans-unit id="wwjjKAn" resname="The hidden field is invalid.">
+        <source>The hidden field is invalid.</source>
+        <target>Gizli alan geçersiz.</target>
+      </trans-unit>
+      <trans-unit id="o.y86J1" resname="Please enter an integer.">
+        <source>Please enter an integer.</source>
+        <target>Lütfen bir tam sayı girin.</target>
+      </trans-unit>
+      <trans-unit id="MhFFYoK" resname="Please select a valid language.">
+        <source>Please select a valid language.</source>
+        <target>Lütfen geçerli bir dil seçin.</target>
+      </trans-unit>
+      <trans-unit id="LKAkY.h" resname="Please select a valid locale.">
+        <source>Please select a valid locale.</source>
+        <target>Lütfen geçerli bir yerel ayar seçin.</target>
+      </trans-unit>
+      <trans-unit id="GoIKSyM" resname="Please enter a valid money amount.">
+        <source>Please enter a valid money amount.</source>
+        <target>Lütfen geçerli bir para tutarı girin.</target>
+      </trans-unit>
+      <trans-unit id="c5ToMGG" resname="Please enter a number.">
+        <source>Please enter a number.</source>
+        <target>Lütfen bir numara giriniz.</target>
+      </trans-unit>
+      <trans-unit id="AKUMRqn" resname="The password is invalid.">
+        <source>The password is invalid.</source>
+        <target>Şifre geçersiz.</target>
+      </trans-unit>
+      <trans-unit id="HviZ2Cc" resname="Please enter a percentage value.">
+        <source>Please enter a percentage value.</source>
+        <target>Lütfen bir yüzde değeri girin.</target>
+      </trans-unit>
+      <trans-unit id="u4rxsHj" resname="The values do not match.">
+        <source>The values do not match.</source>
+        <target>Değerler eşleşmiyor.</target>
+      </trans-unit>
+      <trans-unit id="beHTTAG" resname="Please enter a valid time.">
+        <source>Please enter a valid time.</source>
+        <target>Lütfen geçerli bir zaman girin.</target>
+      </trans-unit>
+      <trans-unit id="MDu2tNQ" resname="Please select a valid timezone.">
+        <source>Please select a valid timezone.</source>
+        <target>Lütfen geçerli bir saat dilimi seçin.</target>
+      </trans-unit>
+      <trans-unit id="ywSABzT" resname="Please enter a valid URL.">
+        <source>Please enter a valid URL.</source>
+        <target>Lütfen geçerli bir giriniz URL.</target>
+      </trans-unit>
+      <trans-unit id="58j92KU" resname="Please enter a valid search term.">
+        <source>Please enter a valid search term.</source>
+        <target>Lütfen geçerli bir arama terimi girin.</target>
+      </trans-unit>
+      <trans-unit id="9RtYCIm" resname="Please provide a valid phone number.">
+        <source>Please provide a valid phone number.</source>
+        <target>lütfen geçerli bir telefon numarası sağlayın.</target>
+      </trans-unit>
+      <trans-unit id="eXUouzq" resname="The checkbox has an invalid value.">
+        <source>The checkbox has an invalid value.</source>
+        <target>Onay kutusunda geçersiz bir değer var.</target>
+      </trans-unit>
+      <trans-unit id="sv_zo_u" resname="Please enter a valid email address.">
+        <source>Please enter a valid email address.</source>
+        <target>Lütfen geçerli bir e-posta adresi girin.</target>
+      </trans-unit>
+      <trans-unit id="WGMBjaJ" resname="Please select a valid option.">
+        <source>Please select a valid option.</source>
+        <target>Lütfen geçerli bir seçenek seçin.</target>
+      </trans-unit>
+      <trans-unit id="X1pJkwv" resname="Please select a valid range.">
+        <source>Please select a valid range.</source>
+        <target>Lütfen geçerli bir aralık seçin.</target>
+      </trans-unit>
+      <trans-unit id="2MEQpjY" resname="Please enter a valid week.">
+        <source>Please enter a valid week.</source>
+        <target>Lütfen geçerli bir hafta girin.</target>
+      </trans-unit>
+      <trans-unit id="zMjGhvy" resname="Usa solo números separados por punto y coma.">
+        <source>Usa solo números separados por punto y coma.</source>
+        <target>Yalnızca noktalı virgülle ayrılmış sayılar kullanın.</target>
+      </trans-unit>
+      <trans-unit id="KDstS.U" resname="Ya existe un factor de emisión para el año {{ year }}">
+        <source>Ya existe un factor de emisión para el año {{ year }}</source>
+        <target>{{ year }} yılı için zaten bir emisyon faktörü mevcut</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
