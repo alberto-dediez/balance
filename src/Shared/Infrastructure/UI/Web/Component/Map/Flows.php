@@ -16,4 +16,13 @@ final class Flows
     public ?array $destination = null;
 
     public int $height = 420;
+
+    public function __construct(
+        private readonly string $tileKey,
+    ) {}
+
+    public function tileKey(): string
+    {
+        return $this->tileKey;
+    }
 }

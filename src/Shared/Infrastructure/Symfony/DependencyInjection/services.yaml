@@ -17,6 +17,7 @@ parameters:
     app.google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
     app.google_maps_enabled: '%env(bool:GOOGLE_MAPS_ENABLED)%'
     app.google_maps_region: '%env(GOOGLE_MAPS_REGION)%'
+    app.carto_basemap_key: '%env(CARTO_BASEMAP_KEY)%'
     app.maintenance_mode: '%env(bool:MAINTENANCE_MODE)%'
     error_report.enabled: '%env(bool:ERROR_NOTIFICATIONS_ENABLED)%'
     error_report.recipients: '%env(ERROR_NOTIFICATION_RECIPIENTS)%'
@@ -113,6 +114,10 @@ services:
             $apiKey: '%app.google_maps_api_key%'
             $enabled: '%app.google_maps_enabled%'
             $region: '%app.google_maps_region%'
+
+    App\Shared\Infrastructure\UI\Web\Component\Map\Flows:
+        arguments:
+            $tileKey: '%app.carto_basemap_key%'
 
     App\Shared\Infrastructure\Geo\CachedPlaceFinder:
         arguments:

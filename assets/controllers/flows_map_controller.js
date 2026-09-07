@@ -12,6 +12,7 @@ export default class extends Controller {
         flows: Array,
         destination: Object,
         labels: Object,
+        tileKey: String,
     }
 
     connect() {
@@ -137,7 +138,9 @@ export default class extends Controller {
     tileUrl() {
         const style = document.documentElement.dataset.bsTheme === 'dark' ? 'dark_all' : 'light_all';
 
-        return `https://{s}.basemaps.cartocdn.com/${style}/{z}/{x}/{y}{r}.png`;
+        const url = `https://{s}.basemaps.cartocdn.com/${style}/{z}/{x}/{y}{r}.png`;
+
+        return this.tileKeyValue.length > 0 ? `${url}?key=${encodeURIComponent(this.tileKeyValue)}` : url;
     }
 
     color(variable, fallback) {
