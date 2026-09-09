@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Library\Infrastructure\UI\Web\Media;
 
 use App\Library\Application\Media\Download\DownloadMediaResponse;
-use Symfony\Component\HttpFoundation\HeaderUtils;
+use App\Shared\Infrastructure\UI\Web\Download\ContentDisposition;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 trait StreamMediaTrait
@@ -28,10 +28,9 @@ trait StreamMediaTrait
         $streamedResponse->headers->set('Content-Type', $response->mimeType);
         $streamedResponse->headers->set(
             'Content-Disposition',
-            HeaderUtils::makeDisposition(
-                $asAttachment ? HeaderUtils::DISPOSITION_ATTACHMENT : HeaderUtils::DISPOSITION_INLINE,
-                $response->fileName,
-            ),
+            $asAttachment
+                ? ContentDisposition::attachment($response->fileName)
+                : ContentDisposition::inline($response->fileName),
         );
 
         return $streamedResponse;

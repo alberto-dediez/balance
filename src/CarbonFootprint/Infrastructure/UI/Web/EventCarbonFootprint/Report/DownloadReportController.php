@@ -12,8 +12,8 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootp
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\GetEventCarbonFootprintFromEventIdTrait;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\Download\ContentDisposition;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -67,7 +67,7 @@ class DownloadReportController extends AbstractController
         $streamedResponse->headers->set('Content-Type', 'application/pdf');
         $streamedResponse->headers->set(
             'Content-Disposition',
-            HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $response->filename),
+            ContentDisposition::attachment($response->filename),
         );
 
         return $streamedResponse;

@@ -14,8 +14,8 @@ use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionCe
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\AttendeeSurveyPublicControllerTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Infrastructure\UI\Web\Download\ContentDisposition;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -96,7 +96,7 @@ class CertificateController extends AbstractController
         $streamedResponse->headers->set('Content-Type', $response->mimeType);
         $streamedResponse->headers->set(
             'Content-Disposition',
-            HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $response->filename),
+            ContentDisposition::attachment($response->filename),
         );
 
         return $streamedResponse;

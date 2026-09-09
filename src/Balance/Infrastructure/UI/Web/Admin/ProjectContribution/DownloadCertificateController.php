@@ -11,8 +11,8 @@ use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepo
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\Download\ContentDisposition;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -66,7 +66,7 @@ class DownloadCertificateController extends AbstractController
         $streamedResponse->headers->set('Content-Type', $response->mimeType);
         $streamedResponse->headers->set(
             'Content-Disposition',
-            HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $response->filename),
+            ContentDisposition::attachment($response->filename),
         );
 
         return $streamedResponse;
