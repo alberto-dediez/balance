@@ -131,5 +131,25 @@ abstract class AccountRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($account->id()));
     }
 
+    public function testTotalResultsByFilterIgnoresPagination(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(AccountMother::random());
+        $repository->add(AccountMother::random());
+        $repository->add(AccountMother::random());
+        $repository->add(AccountMother::random());
+        $repository->add(AccountMother::random());
+        $repository->add(AccountMother::random());
+
+        $filter = new AccountFilter(
+            limit: 2,
+        );
+
+        $this->assertCount(2, $repository->findByFilter($filter));
+
+        $this->assertEquals(6, $repository->totalResultsByFilter($filter));
+    }
+
     abstract protected function createSUT(): AccountRepository;
 }

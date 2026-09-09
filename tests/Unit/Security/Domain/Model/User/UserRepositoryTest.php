@@ -194,5 +194,25 @@ abstract class UserRepositoryTest extends KernelTestCase
         $repository->add($newUser);
     }
 
+    public function testTotalResultsByFilterIgnoresPagination(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(UserMother::random());
+        $repository->add(UserMother::random());
+        $repository->add(UserMother::random());
+        $repository->add(UserMother::random());
+        $repository->add(UserMother::random());
+        $repository->add(UserMother::random());
+
+        $filter = new UserFilter(
+            limit: 2,
+        );
+
+        $this->assertCount(2, $repository->findByFilter($filter));
+
+        $this->assertEquals(6, $repository->totalResultsByFilter($filter));
+    }
+
     abstract protected function createSUT(): UserRepository;
 }

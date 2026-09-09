@@ -158,5 +158,23 @@ abstract class SignatureRequestRepositoryTest extends KernelTestCase
         }
     }
 
+    public function testTotalResultsByFilterIgnoresPagination(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(SignatureRequestMother::random());
+        $repository->add(SignatureRequestMother::random());
+        $repository->add(SignatureRequestMother::random());
+        $repository->add(SignatureRequestMother::random());
+
+        $filter = new SignatureRequestFilter(
+            limit: 2,
+        );
+
+        $this->assertCount(2, $repository->findByFilter($filter));
+
+        $this->assertEquals(4, $repository->totalResultsByFilter($filter));
+    }
+
     abstract protected function createSUT(): SignatureRequestRepository;
 }
