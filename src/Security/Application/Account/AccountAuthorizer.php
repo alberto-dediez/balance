@@ -67,11 +67,7 @@ final class AccountAuthorizer extends AbstractAuthorizer
 
     protected function canAutocomplete(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::Admin)) {
-            return true;
-        }
-
-        return $user->hasRole(Role::SuperAdmin);
+        return $this->impersonationPolicy->canImpersonateAccounts($user);
     }
 
     public function canImpersonateAccounts(User $user): bool

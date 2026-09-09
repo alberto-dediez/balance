@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Security\Infrastructure\UI\Web\Component\Topbar;
 
 use App\Security\Application\Account\AccountAuthorizer;
+use App\Security\Application\Account\ImpersonationPolicy;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountFilter;
 use App\Security\Domain\Model\Account\AccountRepository;
@@ -25,6 +26,7 @@ final readonly class AccountSwitch
         private Security $security,
         private CsrfTokenManagerInterface $csrfTokenManager,
         private AccountRepository $accountRepository,
+        private ImpersonationPolicy $impersonationPolicy,
         private bool $accountImpersonationEnabled,
     ) {}
 
@@ -62,6 +64,18 @@ final readonly class AccountSwitch
      */
     public function accounts(): array
     {
-        return $this->accountRepository->findByFilter(new AccountFilter(active: true, limit: 0));
+        $user = $this->loggedUser->getLoggedUserOrNull();
+
+        if (!$user instanceof User) {
+            return [];
+        }
+
+        $filter = $this->impersonationPolicy->impersonableAccountsFilter($user, limit: 0);
+
+        if (!$filter instanceof AccountFilter) {
+            return [];
+        }
+
+        return $this->accountRepository->findByFilter($filter);
     }
 }

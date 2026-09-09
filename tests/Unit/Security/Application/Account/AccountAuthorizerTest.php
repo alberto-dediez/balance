@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Security\Application\Account;
 
 use App\Security\Application\Account\AccountAuthorizer;
+use App\Security\Application\Account\ImpersonationPolicy;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\Account\Account;
+use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\User;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
@@ -137,13 +141,71 @@ class AccountAuthorizerTest extends TestCase
         $this->assertFalse($sut->canImpersonateAccounts(UserMother::fromUsername('user')));
     }
 
+    public function testConsultantOwnerCanImpersonateAssignedAccount(): void
+    {
+        $consultant = AccountMother::consultantAccount();
+        $assigned = AccountMother::fromNameWithConsultant('assigned', $consultant->id());
+
+        $sut = $this->createSUT($consultant, $assigned);
+
+        $this->assertTrue($sut->canDoThat($assigned, Action::Impersonate, $this->ownerOf($consultant)));
+    }
+
+    public function testConsultantOwnerCannotImpersonateUnassignedAccount(): void
+    {
+        $consultant = AccountMother::consultantAccount();
+        $other = AccountMother::fromName('other');
+
+        $sut = $this->createSUT($consultant, $other);
+
+        $this->assertFalse($sut->canDoThat($other, Action::Impersonate, $this->ownerOf($consultant)));
+    }
+
+    public function testConsultantOwnerCanImpersonateAccounts(): void
+    {
+        $consultant = AccountMother::consultantAccount();
+
+        $sut = $this->createSUT($consultant);
+
+        $this->assertTrue($sut->canImpersonateAccounts($this->ownerOf($consultant)));
+    }
+
+    public function testConsultantOwnerCanAutocomplete(): void
+    {
+        $consultant = AccountMother::consultantAccount();
+
+        $sut = $this->createSUT($consultant);
+
+        $this->assertTrue($sut->canDoThat($this->buildSubject(), Action::Autocomplete, $this->ownerOf($consultant)));
+    }
+
+    public function testConsultantOwnerCannotListAccounts(): void
+    {
+        $consultant = AccountMother::consultantAccount();
+
+        $sut = $this->createSUT($consultant);
+
+        $this->assertFalse($sut->canDoThat($this->buildSubject(), Action::List, $this->ownerOf($consultant)));
+    }
+
+    private function ownerOf(Account $account): User
+    {
+        return UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $account->id());
+    }
+
     private function buildSubject(): Account
     {
         return AccountMother::registeredAccount();
     }
 
-    private function createSUT(): AccountAuthorizer
+    private function createSUT(Account ...$accounts): AccountAuthorizer
     {
-        return new AccountAuthorizer();
+        $repository = new InMemoryAccountRepository();
+
+        foreach ($accounts as $account) {
+            $repository->add($account);
+        }
+
+        return new AccountAuthorizer(impersonationPolicy: new ImpersonationPolicy($repository));
     }
 }

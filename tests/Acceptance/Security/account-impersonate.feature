@@ -99,3 +99,77 @@ Feature:
         Then the response status should be 200
         When I go to "/es/"
         Then the response status should be 200
+
+    Scenario: As owner of a consultant account I see the account switch selector
+        Given account "ConsultantAccount" with id "consultant-account-id" is a consultant
+        Given user "consultant@dediez.software" with role "ROLE_OWNER" of account "consultant-account-id" exists
+        When I am logged as "consultant@dediez.software"
+        When I go to "/es/profile"
+        Then the response status should be 200
+        Then I see a text "Cambiar de cuenta"
+
+    Scenario: As owner of a non consultant account I do not see the account switch selector
+        Given account "PlainAccount" with id "plain-account-id" exists
+        Given user "plainowner@dediez.software" with role "ROLE_OWNER" of account "plain-account-id" exists
+        When I am logged as "plainowner@dediez.software"
+        When I go to "/es/profile"
+        Then the response status should be 200
+        Then I do not see a text "Cambiar de cuenta"
+
+    Scenario: As owner of a consultant account I can impersonate an assigned account
+        Given account "ConsultantAccount" with id "consultant-account-id" is a consultant
+        Given account "AcmeAccount" with id "acme-account-id" exists
+        Given account "acme-account-id" has consultant "consultant-account-id"
+        Given user "consultant@dediez.software" with role "ROLE_OWNER" of account "consultant-account-id" exists
+        When I am logged as "consultant@dediez.software"
+        When I impersonate account "AcmeAccount"
+        Then the response status should be 200
+        When I go to "/es/profile"
+        Then the response status should be 200
+        Then I see a text "Volver a mi cuenta"
+
+    Scenario: As owner of a consultant account I cannot impersonate an unassigned account
+        Given account "ConsultantAccount" with id "consultant-account-id" is a consultant
+        Given account "OtherAccount" with id "other-account-id" exists
+        Given user "consultant@dediez.software" with role "ROLE_OWNER" of account "consultant-account-id" exists
+        When I am logged as "consultant@dediez.software"
+        When I impersonate account "OtherAccount"
+        Then the response status should be 403
+
+    Scenario: As owner of a consultant account impersonating I see that account users
+        Given account "ConsultantAccount" with id "consultant-account-id" is a consultant
+        Given account "AcmeAccount" with id "acme-account-id" exists
+        Given account "acme-account-id" has consultant "consultant-account-id"
+        Given user "consultant@dediez.software" with role "ROLE_OWNER" of account "consultant-account-id" exists
+        Given user "acmeuser@dediez.software" with role "ROLE_USER" of account "acme-account-id" exists
+        When I am logged as "consultant@dediez.software"
+        When I impersonate account "AcmeAccount"
+        Then the response status should be 200
+        When I go to "/es/users"
+        Then the response status should be 200
+        Then I see a text "acmeuser@dediez.software"
+
+    Scenario: As owner of a consultant account impersonating I have no access to admin sections
+        Given account "ConsultantAccount" with id "consultant-account-id" is a consultant
+        Given account "AcmeAccount" with id "acme-account-id" exists
+        Given account "acme-account-id" has consultant "consultant-account-id"
+        Given user "consultant@dediez.software" with role "ROLE_OWNER" of account "consultant-account-id" exists
+        When I am logged as "consultant@dediez.software"
+        When I impersonate account "AcmeAccount"
+        Then the response status should be 200
+        When I go to "/es/admin/users"
+        Then the response status should be 403
+
+    Scenario: As owner of a consultant account I can exit account impersonation
+        Given account "ConsultantAccount" with id "consultant-account-id" is a consultant
+        Given account "AcmeAccount" with id "acme-account-id" exists
+        Given account "acme-account-id" has consultant "consultant-account-id"
+        Given user "consultant@dediez.software" with role "ROLE_OWNER" of account "consultant-account-id" exists
+        When I am logged as "consultant@dediez.software"
+        When I impersonate account "AcmeAccount"
+        Then the response status should be 200
+        When I exit account impersonation
+        Then the response status should be 200
+        When I go to "/es/profile"
+        Then the response status should be 200
+        Then I do not see a text "Volver a mi cuenta"
