@@ -13,7 +13,7 @@ use Behat\Step\When;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 /**
  * This context class contains the definitions of the steps used by the demo
@@ -132,8 +132,8 @@ final readonly class ApiContext implements Context
         if (null == $exception) {
             $code = $this->client->getResponse()->getStatusCode();
         } else {
-            $code = match ($exception::class) {
-                NotFoundHttpException::class => 404,
+            $code = match (true) {
+                $exception instanceof HttpExceptionInterface => $exception->getStatusCode(),
                 default => $exception->getCode(),
             };
         }

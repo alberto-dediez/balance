@@ -24,5 +24,16 @@ class AccountResponse
             example: true,
         )]
         public bool $active,
+        #[OA\Property(
+            type: 'boolean',
+            example: false,
+        )]
+        public bool $consultant = false,
+        #[OA\Property(
+            type: 'string',
+            example: '3f1a1b1e-1c9d-4f7a-9c1e-2b3c4d5e6f70',
+            nullable: true,
+        )]
+        public ?string $consultantAccountId = null,
     ) {}
 }

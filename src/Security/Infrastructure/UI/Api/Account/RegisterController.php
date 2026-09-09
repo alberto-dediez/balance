@@ -40,6 +40,7 @@ class RegisterController extends AbstractController
             accountId: $response->accountId->__toString(),
             name: $response->name,
             active: $response->active,
+            consultant: $response->consultant,
         ));
     }
 }
