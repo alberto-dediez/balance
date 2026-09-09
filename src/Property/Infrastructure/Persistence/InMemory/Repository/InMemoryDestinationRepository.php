@@ -131,6 +131,6 @@ class InMemoryDestinationRepository implements DestinationRepository
         $clonedFilter->limit = 99999999999999999;
         $clonedFilter->page = 0;
 
-        return count($this->findByFilter($filter));
+        return count($this->findByFilter($clonedFilter));
     }
 }

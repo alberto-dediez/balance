@@ -131,5 +131,25 @@ abstract class CategoryRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($category->id()));
     }
 
+    public function testTotalResultsByFilterIgnoresPagination(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(CategoryMother::random());
+        $repository->add(CategoryMother::random());
+        $repository->add(CategoryMother::random());
+        $repository->add(CategoryMother::random());
+        $repository->add(CategoryMother::random());
+        $repository->add(CategoryMother::random());
+
+        $filter = new CategoryFilter(
+            limit: 2,
+        );
+
+        $this->assertCount(2, $repository->findByFilter($filter));
+
+        $this->assertEquals(6, $repository->totalResultsByFilter($filter));
+    }
+
     abstract protected function createSUT(): CategoryRepository;
 }

@@ -131,5 +131,25 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($property->id()));
     }
 
+    public function testTotalResultsByFilterIgnoresPagination(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(PropertyMother::random());
+        $repository->add(PropertyMother::random());
+        $repository->add(PropertyMother::random());
+        $repository->add(PropertyMother::random());
+        $repository->add(PropertyMother::random());
+        $repository->add(PropertyMother::random());
+
+        $filter = new PropertyFilter(
+            limit: 2,
+        );
+
+        $this->assertCount(2, $repository->findByFilter($filter));
+
+        $this->assertEquals(6, $repository->totalResultsByFilter($filter));
+    }
+
     abstract protected function createSUT(): PropertyRepository;
 }

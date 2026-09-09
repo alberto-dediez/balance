@@ -131,5 +131,25 @@ abstract class BrandRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($brand->id()));
     }
 
+    public function testTotalResultsByFilterIgnoresPagination(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(BrandMother::random());
+        $repository->add(BrandMother::random());
+        $repository->add(BrandMother::random());
+        $repository->add(BrandMother::random());
+        $repository->add(BrandMother::random());
+        $repository->add(BrandMother::random());
+
+        $filter = new BrandFilter(
+            limit: 2,
+        );
+
+        $this->assertCount(2, $repository->findByFilter($filter));
+
+        $this->assertEquals(6, $repository->totalResultsByFilter($filter));
+    }
+
     abstract protected function createSUT(): BrandRepository;
 }

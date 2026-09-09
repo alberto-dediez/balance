@@ -150,5 +150,25 @@ abstract class CountryRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($country->id()));
     }
 
+    public function testTotalResultsByFilterIgnoresPagination(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(CountryMother::random());
+        $repository->add(CountryMother::random());
+        $repository->add(CountryMother::random());
+        $repository->add(CountryMother::random());
+        $repository->add(CountryMother::random());
+        $repository->add(CountryMother::random());
+
+        $filter = new CountryFilter(
+            limit: 2,
+        );
+
+        $this->assertCount(2, $repository->findByFilter($filter));
+
+        $this->assertEquals(6, $repository->totalResultsByFilter($filter));
+    }
+
     abstract protected function createSUT(): CountryRepository;
 }

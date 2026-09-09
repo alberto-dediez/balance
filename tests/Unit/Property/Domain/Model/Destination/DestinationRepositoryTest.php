@@ -135,5 +135,25 @@ abstract class DestinationRepositoryTest extends KernelTestCase
         $this->assertNull($repository->find($destination->id()));
     }
 
+    public function testTotalResultsByFilterIgnoresPagination(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(DestinationMother::random());
+        $repository->add(DestinationMother::random());
+        $repository->add(DestinationMother::random());
+        $repository->add(DestinationMother::random());
+        $repository->add(DestinationMother::random());
+        $repository->add(DestinationMother::random());
+
+        $filter = new DestinationFilter(
+            limit: 2,
+        );
+
+        $this->assertCount(2, $repository->findByFilter($filter));
+
+        $this->assertEquals(6, $repository->totalResultsByFilter($filter));
+    }
+
     abstract protected function createSUT(): DestinationRepository;
 }
