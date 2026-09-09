@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Security\Application\Account\Update;
 
 use App\Security\Application\Account\AccountAuthorizer;
+use App\Security\Application\Account\ConsultantPolicy;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\Account;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -18,7 +21,11 @@ class UpdateAccountService implements CommandHandler
     use RegisterHandlerTrait;
     use CommandInvokeHandlerTrait;
 
-    public function __construct(private AccountRepository $repository, private AccountAuthorizer $authorizer) {}
+    public function __construct(
+        private AccountRepository $repository,
+        private AccountAuthorizer $authorizer,
+        private ConsultantPolicy $consultantPolicy,
+    ) {}
 
     public function __invoke(UpdateAccountRequest $request, User $user): UpdateAccountResponse
     {
@@ -44,6 +51,14 @@ class UpdateAccountService implements CommandHandler
             $account->changeEmissionFactorGroup($request->emissionFactorGroupId);
         }
 
+        if ($request->consultantAccountId instanceof AccountId) {
+            $this->updateConsultantStatus($account, $request, $user);
+            $this->updateConsultant($account, $request, $user);
+        } else {
+            $this->updateConsultant($account, $request, $user);
+            $this->updateConsultantStatus($account, $request, $user);
+        }
+
         $this->repository->add($account);
 
         return new UpdateAccountResponse(
@@ -51,6 +66,42 @@ class UpdateAccountService implements CommandHandler
             name: $account->name(),
             active: $account->isActive(),
         );
+    }
+
+    private function updateConsultantStatus(Account $account, UpdateAccountRequest $request, User $user): void
+    {
+        if ($request->consultant === $account->isConsultant()) {
+            return;
+        }
+
+        $this->authorizer->denyUnlessCanDoThat($account, Action::Admin, $user);
+
+        if (!$request->consultant) {
+            $this->consultantPolicy->denyUnlessCanBeUnmarked($account);
+        }
+
+        $account->changeConsultantStatus($request->consultant);
+    }
+
+    private function updateConsultant(Account $account, UpdateAccountRequest $request, User $user): void
+    {
+        if ($this->sameConsultant($request->consultantAccountId, $account->consultantAccountId())) {
+            return;
+        }
+
+        $this->authorizer->denyUnlessCanDoThat($account, Action::Admin, $user);
+        $this->consultantPolicy->denyUnlessAssignable($request->consultantAccountId);
+
+        $account->changeConsultant($request->consultantAccountId);
+    }
+
+    private function sameConsultant(?AccountId $requested, ?AccountId $current): bool
+    {
+        if (!$requested instanceof AccountId || !$current instanceof AccountId) {
+            return !$requested instanceof AccountId && !$current instanceof AccountId;
+        }
+
+        return $requested->equals($current);
     }
 
     public function isHandled(Command $command): bool

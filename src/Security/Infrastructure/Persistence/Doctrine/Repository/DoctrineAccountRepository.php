@@ -94,6 +94,24 @@ class DoctrineAccountRepository implements AccountRepository
             ;
         }
 
+        if (null !== $filter->consultant) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('a.consultant', ':consultant'),
+                )
+                ->setParameter('consultant', $filter->consultant)
+            ;
+        }
+
+        if ($filter->consultantAccountId instanceof AccountId) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('a.consultantAccountId', ':consultantAccountId'),
+                )
+                ->setParameter('consultantAccountId', $filter->consultantAccountId)
+            ;
+        }
+
         $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {

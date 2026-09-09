@@ -13,5 +13,6 @@ class RegisterAccountRequest implements Command
         public string $name = '',
         public bool $active = false,
         public ?EmissionFactorGroupId $emissionFactorGroupId = null,
+        public bool $consultant = false,
     ) {}
 }

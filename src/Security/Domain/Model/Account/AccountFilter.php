@@ -13,6 +13,8 @@ class AccountFilter
     public function __construct(
         public ?string $name = null,
         public ?bool $active = null,
+        public ?bool $consultant = null,
+        public ?AccountId $consultantAccountId = null,
         int $limit = 10,
     ) {
         $this->limit = $limit;

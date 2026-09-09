@@ -6945,6 +6945,38 @@
         <source>Contacto para recogidas</source>
         <target>Toplama için iletişim</target>
       </trans-unit>
+      <trans-unit id="2uzk91V" resname="Asignar consultora">
+        <source>Asignar consultora</source>
+        <target>Danışman ata</target>
+      </trans-unit>
+      <trans-unit id="dS7e6ES" resname="Se ha asignado la consultora seleccionada a la cuenta {id}">
+        <source>Se ha asignado la consultora seleccionada a la cuenta {id}</source>
+        <target>Seçilen danışman {id} hesabına atandı</target>
+      </trans-unit>
+      <trans-unit id="HpHuABR" resname="No se ha podido asignar la consultora seleccionada a la cuenta {id}">
+        <source>No se ha podido asignar la consultora seleccionada a la cuenta {id}</source>
+        <target>Seçilen danışman {id} hesabına atanamadı</target>
+      </trans-unit>
+      <trans-unit id="gnyvHh4" resname="Sin consultora">
+        <source>Sin consultora</source>
+        <target>Danışman yok</target>
+      </trans-unit>
+      <trans-unit id="meQ.Fn5" resname="Es consultora">
+        <source>Es consultora</source>
+        <target>Danışman mı</target>
+      </trans-unit>
+      <trans-unit id="wIhm0DW" resname="Consultora">
+        <source>Consultora</source>
+        <target>Danışman</target>
+      </trans-unit>
+      <trans-unit id="7NDp8Lr" resname="Consultoras y no consultoras">
+        <source>Consultoras y no consultoras</source>
+        <target>Danışmanlar ve danışman olmayanlar</target>
+      </trans-unit>
+      <trans-unit id="uKKRJ7A" resname="Todas las consultoras">
+        <source>Todas las consultoras</source>
+        <target>Tüm danışmanlar</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

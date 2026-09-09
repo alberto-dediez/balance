@@ -116,6 +116,26 @@ final class SecurityContext implements Context
         $this->getAccountRepository()->add($account);
     }
 
+    #[Given('account :name with id :id is a consultant')]
+    public function accountWithIdIsAConsultant(string $name, string $id): void
+    {
+        $account = AccountMother::fromNameAndId($name, $id);
+        $account->changeConsultantStatus(true);
+
+        $this->getAccountRepository()->add($account);
+    }
+
+    #[Given('account :accountId has consultant :consultantId')]
+    public function accountHasConsultant(string $accountId, string $consultantId): void
+    {
+        $account = $this->getAccountRepository()->find(new AccountId($accountId));
+        Assert::assertNotNull($account, sprintf('Account "%s" not found', $accountId));
+
+        $account->changeConsultant(new AccountId($consultantId));
+
+        $this->getAccountRepository()->add($account);
+    }
+
     #[Given('account :accountId has branding with primary colour :primary')]
     public function accountHasBrandingWithPrimaryColour(string $accountId, string $primary): void
     {

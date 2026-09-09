@@ -60,3 +60,12 @@ Feature:
             "active": true
         }
         """
+
+    Scenario: As an admin, I can register a consultant account
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/accounts/register"
+        When I submit a form with "name:Minotour|active:1|consultant:1" and button "Registrar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "Cuenta creada correctamente"

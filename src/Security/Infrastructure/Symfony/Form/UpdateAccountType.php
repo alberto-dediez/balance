@@ -7,6 +7,8 @@ namespace App\Security\Infrastructure\Symfony\Form;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\Type\EmissionFactorGroupChoiceType;
 use App\Security\Application\Account\Update\UpdateAccountRequest;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Infrastructure\Symfony\Form\Type\ConsultantAccountChoiceType;
 use App\Shared\Infrastructure\Symfony\Form\DataTransformer\AggregateRootIdTransformer;
 use App\Shared\Infrastructure\Symfony\Form\Type\BooleanType;
 use Symfony\Component\Form\AbstractType;
@@ -36,6 +38,15 @@ class UpdateAccountType extends AbstractType
                 'label' => new TranslatableMessage('Grupo de coeficientes por defecto'),
                 'required' => false,
             ])
+            ->add('consultant', BooleanType::class, [
+                'label' => new TranslatableMessage('Es consultora'),
+                'required' => true,
+            ])
+            ->add('consultantAccountId', ConsultantAccountChoiceType::class, [
+                'label' => new TranslatableMessage('Consultora'),
+                'placeholder' => new TranslatableMessage('Sin consultora'),
+                'required' => false,
+            ])
             ->add('save', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar'),
             ])
@@ -46,6 +57,10 @@ class UpdateAccountType extends AbstractType
 
         $builder->get('emissionFactorGroupId')->addModelTransformer(
             new AggregateRootIdTransformer(EmissionFactorGroupId::class),
+        );
+
+        $builder->get('consultantAccountId')->addModelTransformer(
+            new AggregateRootIdTransformer(AccountId::class),
         );
     }
 

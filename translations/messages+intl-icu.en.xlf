@@ -7285,6 +7285,38 @@
         <source>Estamos realizando tareas de mantenimiento para mejorar el servicio. Vuelve a intentarlo en unos minutos.</source>
         <target>We’re performing maintenance to improve the service. Please try again in a few minutes.</target>
       </trans-unit>
+      <trans-unit id="2uzk91V" resname="Asignar consultora">
+        <source>Asignar consultora</source>
+        <target>Assign consultant</target>
+      </trans-unit>
+      <trans-unit id="dS7e6ES" resname="Se ha asignado la consultora seleccionada a la cuenta {id}">
+        <source>Se ha asignado la consultora seleccionada a la cuenta {id}</source>
+        <target>The selected consultant has been assigned to account {id}</target>
+      </trans-unit>
+      <trans-unit id="HpHuABR" resname="No se ha podido asignar la consultora seleccionada a la cuenta {id}">
+        <source>No se ha podido asignar la consultora seleccionada a la cuenta {id}</source>
+        <target>The selected consultant could not be assigned to account {id}</target>
+      </trans-unit>
+      <trans-unit id="gnyvHh4" resname="Sin consultora">
+        <source>Sin consultora</source>
+        <target>No consultant</target>
+      </trans-unit>
+      <trans-unit id="meQ.Fn5" resname="Es consultora">
+        <source>Es consultora</source>
+        <target>Is a consultant</target>
+      </trans-unit>
+      <trans-unit id="wIhm0DW" resname="Consultora">
+        <source>Consultora</source>
+        <target>Consultant</target>
+      </trans-unit>
+      <trans-unit id="7NDp8Lr" resname="Consultoras y no consultoras">
+        <source>Consultoras y no consultoras</source>
+        <target>Consultants and non-consultants</target>
+      </trans-unit>
+      <trans-unit id="uKKRJ7A" resname="Todas las consultoras">
+        <source>Todas las consultoras</source>
+        <target>All consultants</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

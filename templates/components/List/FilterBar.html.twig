@@ -12,7 +12,7 @@
 
                         {% if field == 'userId' or field == 'impersonatorId' %}
                             {% set value = value | user_name %}
-                        {% elseif field == 'accountId' %}
+                        {% elseif field == 'accountId' or field == 'consultantAccountId' %}
                             {% set value = value | account_name %}
                         {% elseif field == 'propertyId' %}
                             {% set value = value | property_name %}

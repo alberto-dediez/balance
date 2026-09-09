@@ -18,6 +18,7 @@ final class AccountRegistered extends DomainEvent
         private readonly string $name,
         private readonly bool $active,
         private readonly ?EmissionFactorGroupId $emissionFactorGroupId = null,
+        private readonly bool $consultant = false,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -44,6 +45,11 @@ final class AccountRegistered extends DomainEvent
         return $this->emissionFactorGroupId;
     }
 
+    public function consultant(): bool
+    {
+        return $this->consultant;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->accountId;
@@ -56,6 +62,7 @@ final class AccountRegistered extends DomainEvent
             'name' => $this->name,
             'active' => $this->active,
             'emissionFactorGroupId' => $this->emissionFactorGroupId instanceof EmissionFactorGroupId ? (string) $this->emissionFactorGroupId : null,
+            'consultant' => $this->consultant,
         ];
     }
 
@@ -69,6 +76,7 @@ final class AccountRegistered extends DomainEvent
             name: $payload['name'],
             active: $payload['active'],
             emissionFactorGroupId: null !== ($payload['emissionFactorGroupId'] ?? null) ? new EmissionFactorGroupId($payload['emissionFactorGroupId']) : null,
+            consultant: (bool) ($payload['consultant'] ?? false),
             id: $id,
             occurredOn: $occurredOn,
         );

@@ -7285,6 +7285,38 @@
         <source>Estamos realizando tareas de mantenimiento para mejorar el servicio. Vuelve a intentarlo en unos minutos.</source>
         <target>Estamos realizando tareas de mantenimiento para mejorar el servicio. Vuelve a intentarlo en unos minutos.</target>
       </trans-unit>
+      <trans-unit id="2uzk91V" resname="Asignar consultora">
+        <source>Asignar consultora</source>
+        <target>Asignar consultora</target>
+      </trans-unit>
+      <trans-unit id="dS7e6ES" resname="Se ha asignado la consultora seleccionada a la cuenta {id}">
+        <source>Se ha asignado la consultora seleccionada a la cuenta {id}</source>
+        <target>Se ha asignado la consultora seleccionada a la cuenta {id}</target>
+      </trans-unit>
+      <trans-unit id="HpHuABR" resname="No se ha podido asignar la consultora seleccionada a la cuenta {id}">
+        <source>No se ha podido asignar la consultora seleccionada a la cuenta {id}</source>
+        <target>No se ha podido asignar la consultora seleccionada a la cuenta {id}</target>
+      </trans-unit>
+      <trans-unit id="gnyvHh4" resname="Sin consultora">
+        <source>Sin consultora</source>
+        <target>Sin consultora</target>
+      </trans-unit>
+      <trans-unit id="meQ.Fn5" resname="Es consultora">
+        <source>Es consultora</source>
+        <target>Es consultora</target>
+      </trans-unit>
+      <trans-unit id="wIhm0DW" resname="Consultora">
+        <source>Consultora</source>
+        <target>Consultora</target>
+      </trans-unit>
+      <trans-unit id="7NDp8Lr" resname="Consultoras y no consultoras">
+        <source>Consultoras y no consultoras</source>
+        <target>Consultoras y no consultoras</target>
+      </trans-unit>
+      <trans-unit id="uKKRJ7A" resname="Todas las consultoras">
+        <source>Todas las consultoras</source>
+        <target>Todas las consultoras</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -84,6 +84,18 @@ class InMemoryAccountRepository implements AccountRepository
                 continue;
             }
 
+            if (null !== $filter->consultant && $filter->consultant !== $account->isConsultant()) {
+                continue;
+            }
+
+            $consultantAccountId = $account->consultantAccountId();
+
+            if ($filter->consultantAccountId instanceof AccountId
+                && (!$consultantAccountId instanceof AccountId || !$filter->consultantAccountId->equals($consultantAccountId))
+            ) {
+                continue;
+            }
+
             if (true == $account->isRemoved()) {
                 continue;
             }

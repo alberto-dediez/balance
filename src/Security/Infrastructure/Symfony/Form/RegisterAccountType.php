@@ -36,6 +36,10 @@ class RegisterAccountType extends AbstractType
                 'label' => new TranslatableMessage('Grupo de coeficientes por defecto'),
                 'required' => false,
             ])
+            ->add('consultant', BooleanType::class, [
+                'label' => new TranslatableMessage('Es consultora'),
+                'required' => true,
+            ])
             ->add('register', SubmitType::class, [
                 'label' => new TranslatableMessage('Registrar'),
             ])

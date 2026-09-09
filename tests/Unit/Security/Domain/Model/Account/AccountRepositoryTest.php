@@ -151,5 +151,35 @@ abstract class AccountRepositoryTest extends KernelTestCase
         $this->assertEquals(6, $repository->totalResultsByFilter($filter));
     }
 
+    public function testFindByFilterByConsultantFlag(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(AccountMother::random());
+        $repository->add(AccountMother::random());
+        $repository->add(AccountMother::consultantAccount());
+
+        $this->assertCount(1, $repository->findByFilter(new AccountFilter(consultant: true, limit: 0)));
+        $this->assertCount(2, $repository->findByFilter(new AccountFilter(consultant: false, limit: 0)));
+    }
+
+    public function testFindByFilterByConsultantAccountId(): void
+    {
+        $repository = $this->createSUT();
+
+        $consultant = AccountMother::consultantAccount();
+        $otherConsultant = AccountMother::consultantAccount();
+
+        $repository->add($consultant);
+        $repository->add($otherConsultant);
+        $repository->add(AccountMother::fromNameWithConsultant('Minotour', $consultant->id()));
+        $repository->add(AccountMother::fromNameWithConsultant('Bioscore', $consultant->id()));
+        $repository->add(AccountMother::fromNameWithConsultant('Dediez', $otherConsultant->id()));
+
+        $result = $repository->findByFilter(new AccountFilter(consultantAccountId: $consultant->id(), limit: 0));
+
+        $this->assertCount(2, $result);
+    }
+
     abstract protected function createSUT(): AccountRepository;
 }

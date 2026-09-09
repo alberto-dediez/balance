@@ -24,6 +24,8 @@ class Account implements \Stringable
         protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         protected ?\DateTimeImmutable $removedAt = null,
         protected ?EmissionFactorGroupId $emissionFactorGroupId = null,
+        protected bool $consultant = false,
+        protected ?AccountId $consultantAccountId = null,
     ) {
         $this->events = $events;
     }
@@ -63,7 +65,17 @@ class Account implements \Stringable
         return $this->emissionFactorGroupId;
     }
 
-    public function register(string $name, bool $active, ?EmissionFactorGroupId $emissionFactorGroupId = null): void
+    public function isConsultant(): bool
+    {
+        return $this->consultant;
+    }
+
+    public function consultantAccountId(): ?AccountId
+    {
+        return $this->consultantAccountId;
+    }
+
+    public function register(string $name, bool $active, ?EmissionFactorGroupId $emissionFactorGroupId = null, bool $consultant = false): void
     {
         $this->recordApplyAndPublish(
             new AccountRegistered(
@@ -71,6 +83,7 @@ class Account implements \Stringable
                 name: $name,
                 active: $active,
                 emissionFactorGroupId: $emissionFactorGroupId,
+                consultant: $consultant,
             ),
         );
     }
@@ -105,6 +118,34 @@ class Account implements \Stringable
         );
     }
 
+    public function changeConsultantStatus(bool $consultant): void
+    {
+        if ($consultant && $this->consultantAccountId instanceof AccountId) {
+            throw new ConsultantCannotHaveConsultantException($this->id());
+        }
+
+        $this->recordApplyAndPublish(
+            new AccountConsultantStatusChanged(
+                accountId: $this->id(),
+                consultant: $consultant,
+            ),
+        );
+    }
+
+    public function changeConsultant(?AccountId $consultantAccountId): void
+    {
+        if ($consultantAccountId instanceof AccountId && $this->consultant) {
+            throw new ConsultantCannotHaveConsultantException($this->id());
+        }
+
+        $this->recordApplyAndPublish(
+            new AccountConsultantChanged(
+                accountId: $this->id(),
+                consultantAccountId: $consultantAccountId,
+            ),
+        );
+    }
+
     public function remove(): void
     {
         $this->recordApplyAndPublish(
@@ -119,6 +160,7 @@ class Account implements \Stringable
         $this->name = $event->name();
         $this->active = $event->active();
         $this->emissionFactorGroupId = $event->emissionFactorGroupId();
+        $this->consultant = $event->consultant();
 
         $this->registeredAt = $event->occurredOn();
     }
@@ -136,6 +178,16 @@ class Account implements \Stringable
     public function applyAccountEmissionFactorGroupChanged(AccountEmissionFactorGroupChanged $event): void
     {
         $this->emissionFactorGroupId = $event->emissionFactorGroupId();
+    }
+
+    public function applyAccountConsultantStatusChanged(AccountConsultantStatusChanged $event): void
+    {
+        $this->consultant = $event->consultant();
+    }
+
+    public function applyAccountConsultantChanged(AccountConsultantChanged $event): void
+    {
+        $this->consultantAccountId = $event->consultantAccountId();
     }
 
     public function applyAccountRemoved(AccountRemoved $event): void
