@@ -122,5 +122,25 @@ abstract class RecordedEventRepositoryTest extends KernelTestCase
         $this->assertCount(6, $result);
     }
 
+    public function testTotalResultsByFilterIgnoresPagination(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(RecordedEventMother::random());
+        $repository->add(RecordedEventMother::random());
+        $repository->add(RecordedEventMother::random());
+        $repository->add(RecordedEventMother::random());
+        $repository->add(RecordedEventMother::random());
+        $repository->add(RecordedEventMother::random());
+
+        $filter = new RecordedEventFilter(
+            limit: 2,
+        );
+
+        $this->assertCount(2, $repository->findByFilter($filter));
+
+        $this->assertEquals(6, $repository->totalResultsByFilter($filter));
+    }
+
     abstract protected function createSUT(): RecordedEventRepository;
 }
