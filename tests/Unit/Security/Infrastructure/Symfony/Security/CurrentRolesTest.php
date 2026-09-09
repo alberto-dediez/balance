@@ -12,6 +12,7 @@ use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
+use App\Security\Infrastructure\Symfony\Security\CurrentImpersonation;
 use App\Security\Infrastructure\Symfony\Security\CurrentRoles;
 use App\Security\Infrastructure\Symfony\Security\ImpersonatedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
@@ -143,7 +144,7 @@ class CurrentRolesTest extends TestCase
 
         $loggedAccount = new LoggedAccount($security, $repository, $impersonated, $loggedUserService, new ImpersonationPolicy());
 
-        return new CurrentRoles($impersonated, $loggedAccount, $loggedUserService);
+        return new CurrentRoles(new CurrentImpersonation($impersonated, $loggedAccount), $loggedUserService);
     }
 
     private function userOfAccount(Role $role, AccountId $accountId): User
